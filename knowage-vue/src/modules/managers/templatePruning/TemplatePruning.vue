@@ -64,7 +64,7 @@
                                     <p>{{ documentSelectionMessage }}</p>
                                     <Button class="kn-button kn-button--primary" v-if="documentsAvailable" :disabled="deleteDisabled" @click="deleteConfirm" aria-label="Delete Templates" data-test="delete-button">{{ $t('common.delete') }}</Button>
                                 </div>
-                                <div class="kn-flex p-mt-3" v-if="documentsAvailable">
+                                <div class="kn-flex p-mt-3">
                                     <Tree id="document-tree" :value="nodes" selectionMode="checkbox" v-model:selectionKeys="selectedDocuments" :filter="true" filterMode="lenient" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)" data-test="document-tree"></Tree>
                                 </div>
                             </div>
@@ -145,7 +145,7 @@ export default defineComponent({
             this.nodes = []
             const foldersWithMissingParent = [] as iNode[]
             this.folderStructure.forEach((folder: iFile) => {
-                const node = { key: folder.name, icon: 'pi pi-folder', id: folder.id, parentId: folder.parentId, label: folder.name, children: [] as iNode[], data: { name: folder.name, hasDocuments: false } }
+                const node = { key: folder.name, icon: 'pi pi-folder', id: folder.id, parentId: folder.parentId, label: folder.name, children: [] as iNode[], data: { name: folder.name } }
                 node.children = foldersWithMissingParent.filter((folder: iNode) => node.id === folder.parentId)
 
                 this.attachDocumentsToNode(folder, node)
@@ -155,8 +155,8 @@ export default defineComponent({
         attachDocumentsToNode(folder: iFile, node: iNode) {
             folder.biObjects.forEach((document: iFile) => {
                 const index = this.documents.findIndex((file: iFile) => file.id === document.id)
+
                 if (index >= 0) {
-                    node.data.hasDocuments = true
                     node.children?.push({ key: document.id, icon: 'pi pi-file', id: document.id, label: document.name, data: document.name })
                 }
             })
@@ -164,10 +164,17 @@ export default defineComponent({
         attachFolderToTree(folder: iNode, foldersWithMissingParent: iNode[]) {
             if (folder.parentId) {
                 let parentFolder = null as iNode | null
+
+                for (let i = 0; i < foldersWithMissingParent.length; i++) {
+                    if (folder.parentId === foldersWithMissingParent[i].id) {
+                        foldersWithMissingParent[i].children?.push(folder)
+                        break
+                    }
+                }
+
                 for (let i = 0; i < this.nodes.length; i++) {
                     parentFolder = this.findParentFolder(folder, this.nodes[i])
                     if (parentFolder) {
-                        parentFolder.data.hasDocuments = true
                         parentFolder.children?.push(folder)
                         break
                     }
@@ -197,21 +204,24 @@ export default defineComponent({
             }
         },
         filterDocuments(folder: iNode, parentFolder: any) {
-            if (folder.data.hasDocuments && folder.children) {
+            if (folder.children && folder.children.length > 0) {
                 for (let i = folder.children.length - 1; i >= 0; i--) {
                     this.filterDocuments(folder.children[i], folder)
                 }
-            } else {
-                if (folder.children) {
-                    const array = parentFolder.children ? parentFolder.children : parentFolder
-                    const index = array.findIndex((node: iNode) => node.id === folder.id)
-                    array.splice(index, 1)
-                }
+            }
+
+            if (folder.children?.length == 0 && parentFolder && parentFolder.children) {
+                const array = parentFolder.children
+                const index = array.findIndex((node: iNode) => node.id === folder.id)
+                array.splice(index, 1)
             }
         },
         removeEmptyFolders() {
             for (let i = 0; i < this.nodes.length; i++) {
-                this.filterDocuments(this.nodes[i], this.nodes as any)
+                this.filterDocuments(this.nodes[i], null as any)
+                if (this.nodes[i].children?.length === 0) {
+                    this.nodes[i].selectable = false
+                }
             }
         },
         setOpenFolderIcon(node: iNode) {

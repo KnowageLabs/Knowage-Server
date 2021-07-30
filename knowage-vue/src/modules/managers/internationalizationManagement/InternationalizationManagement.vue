@@ -160,6 +160,7 @@ export default defineComponent({
 
         switchTabConfirm(index) {
             if (!this.dirty) {
+                this.showOnlyEmptyFields = false
                 this.activeTab = index
                 this.previousActiveTab = this.activeTab
                 this.selectLanguage(index)
@@ -169,6 +170,7 @@ export default defineComponent({
                     header: this.$t('common.toast.unsavedChangesHeader'),
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
+                        this.showOnlyEmptyFields = false
                         this.dirty = false
                         this.activeTab = index
                         this.selectLanguage(index)
