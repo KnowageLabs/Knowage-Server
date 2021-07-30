@@ -878,6 +878,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							.find(function(e) { return tooltipCol == e.name; });
 						var value = $scope.getPropValueFromProps(props, prop);
 
+						// A little offset just to let the user click the underneath feature
+						coordinate[0] = coordinate[0]+25;
+						coordinate[1] = coordinate[1]+25;
+
 						$scope.tooltipOverlay.setPosition(coordinate);
 						$scope.tooltipContainer.style["visibility"] = 'visible';
 						$scope.tooltip = value || "n.d.";
