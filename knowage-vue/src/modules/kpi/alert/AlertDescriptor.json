@@ -27,8 +27,8 @@
             "align-items": "center",
             "display": "flex",
             "justify-content": "center",
-            "margin-bottom": "3%",
-            "text-align": "center"
+            "text-align": "center",
+            "width": "100%"
         }
     }
 }

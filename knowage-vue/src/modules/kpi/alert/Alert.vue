@@ -31,9 +31,9 @@
                                 <span>{{ slotProps.option.name }}</span>
                                 <span class="kn-list-item-text-secondary">{{ slotProps.option.status }}</span>
                             </div>
-                            <Button icon="pi pi-trash" class="p-button-text p-button-rounded p-button-plain" @click="deleteAlertConfirm(slotProps.option.id)" :data-test="'delete-button'" />
-                            <Button v-if="slotProps.option.status == 'SUSPENDED'" icon="pi pi-play" class="p-button-text p-button-rounded p-button-plain" @click="handleStatus(slotProps.option)" :data-test="'resume-button'" />
-                            <Button v-if="slotProps.option.status == 'ACTIVE'" icon="pi pi-pause" class="p-button-text p-button-rounded p-button-plain" @click="handleStatus(slotProps.option)" :data-test="'suspend-button'" />
+                            <Button icon="pi pi-trash" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteAlertConfirm(slotProps.option.id)" :data-test="'delete-button'" />
+                            <Button v-if="slotProps.option.status == 'SUSPENDED'" icon="pi pi-play" class="p-button-text p-button-rounded p-button-plain" @click.stop="handleStatus(slotProps.option)" :data-test="'resume-button'" />
+                            <Button v-if="slotProps.option.status == 'ACTIVE'" icon="pi pi-pause" class="p-button-text p-button-rounded p-button-plain" @click.stop="handleStatus(slotProps.option)" :data-test="'suspend-button'" />
                         </div>
                     </template>
                 </Listbox>
@@ -101,6 +101,7 @@ export default defineComponent({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })
+                this.$router.push('/alert')
                 this.loadAllAlerts()
             })
         },

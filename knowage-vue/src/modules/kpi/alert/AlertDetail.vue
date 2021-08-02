@@ -1,12 +1,13 @@
 <template>
-    <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0">
+    <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
+        <template #left>{{ selectedAlert.name }} </template>
         <template #right>
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
     </Toolbar>
-    <div class="p-grid p-m-0 p-fluid p-jc-center">
-        <Message v-if="expiredCard" severity="warn" :closable="true" :style="alertDescriptor.styles.message">
+    <div class="p-grid p-m-0 p-fluid p-jc-center" style="overflow:auto">
+        <Message class="p-m-2" v-if="expiredCard" severity="warn" :closable="true" :style="alertDescriptor.styles.message">
             {{ $t('kpi.alert.expiredWarning') }}
         </Message>
         <NameCard :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.selectedAlert" />

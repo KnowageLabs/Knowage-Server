@@ -20,12 +20,13 @@
                 <MultiSelect id="threshold" class="kn-material-input" v-model="selectedThresholds" optionLabel="label" :options="kpi.threshold?.thresholdValues">
                     <template #value="slotProps">
                         <div class="selected-options-container" v-for="option of slotProps.value" :key="option.code">
-                            <Chip :style="{ height: 18 + 'px', 'background-color': option.color }" :label="option.label" />
+                            <div class="color-box" :style="{ 'background-color': option.color }" />
+                            {{ option.label }}
                         </div>
                     </template>
                     <template #option="slotProps">
-                        <div class="item">
-                            <ColorPicker v-model="slotProps.option.color" disabled />
+                        <div class="selected-options-container">
+                            <div class="color-box" :style="{ 'background-color': slotProps.option.color }" />
                             {{ slotProps.option.label }}
                         </div>
                     </template>
@@ -49,7 +50,6 @@ import { iAction } from '../Alert'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import MultiSelect from 'primevue/multiselect'
-import ColorPicker from 'primevue/colorpicker'
 import addActionDialogDescriptor from './AddActionDialogDescriptor.json'
 import ExectuteEtlCard from './ExectuteEtlCard.vue'
 import ContextBrokerCard from './ContextBrokerCard.vue'
@@ -58,11 +58,10 @@ import mockedUsers from './MockedUsers.json'
 import useValidate from '@vuelidate/core'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import alertValidationDescriptor from '../AlertValidationDescriptor.json'
-import Chip from 'primevue/chip'
 
 export default defineComponent({
     name: 'add-action-dialog',
-    components: { Dialog, Dropdown, MultiSelect, ExectuteEtlCard, ContextBrokerCard, ColorPicker, SendMailCard, Chip },
+    components: { Dialog, Dropdown, MultiSelect, ExectuteEtlCard, ContextBrokerCard, SendMailCard },
     props: { dialogVisible: { type: Boolean, default: false }, kpi: { type: Object }, selectedAction: { type: Object as PropType<iAction>, required: true } },
     emits: ['save'],
     data() {
@@ -172,5 +171,10 @@ export default defineComponent({
 .selected-options-container {
     display: inline-flex;
     margin-right: 0.5rem;
+}
+.color-box {
+    height: 20px;
+    width: 20px;
+    margin-right: 5px;
 }
 </style>
