@@ -161,7 +161,8 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 					Path modelsPath = getWorkDirectory(profile).resolve(MODELS);
 
-					boolean modelFolder = path.relativize(modelsPath).getNameCount() == 1;
+					boolean modelFolder = !path.relativize(modelsPath).toString().isEmpty() && path.relativize(modelsPath).getNameCount() == 1;
+
 					String relativePath = Paths.get(currentRelativePath).resolve(fileName).toString();
 					folder.setRelativePath(relativePath);
 
@@ -387,7 +388,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 					for (int i = 0; i < listOfFiles.length; i++) {
 						File f = listOfFiles[i];
 						if (f.isFile()) {
-							if (level == 1 && f.getName().equals(METADATA_JSON)) {
+							if (level == ResourceManagerUtilities.getModelsFolderLevel() && f.getName().equals(METADATA_JSON)) {
 								continue;
 							}
 							LOGGER.debug("File " + listOfFiles[i].getName());
