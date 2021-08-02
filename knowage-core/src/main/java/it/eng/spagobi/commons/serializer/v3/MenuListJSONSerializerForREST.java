@@ -138,7 +138,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		allowedMenuToNotDuplicate.put("menu.importexport.catalog", 8007);
 		allowedMenuToNotDuplicate.put("menu.i18n", 9001);
 
-		technicalMenuCommunityOrEnterprise.put("4012", "8015");
+		technicalMenuCommunityOrEnterprise.put("5008", "5009");
 	}
 
 	@Override

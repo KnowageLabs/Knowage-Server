@@ -32,4 +32,8 @@ public class ResourceManagerUtilities {
 	public static String getBuondedBasePath() {
 		return MODELS;
 	}
+
+	public static int getModelsFolderLevel() {
+		return 1;
+	}
 }
