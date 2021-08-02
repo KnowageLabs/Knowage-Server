@@ -492,7 +492,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				Path relativize = tempDirectory.relativize(currPath);
 				if (!relativize.toString().isEmpty()) {
 					if (Files.isDirectory(currPath)) {
-						ZipEntry zipEntry = new ZipEntry(relativize.toString() + File.pathSeparator);
+						ZipEntry zipEntry = new ZipEntry(relativize.toString() + File.separator);
 						ret.putNextEntry(zipEntry);
 					} else {
 						ZipEntry zipEntry = new ZipEntry(relativize.toString());
