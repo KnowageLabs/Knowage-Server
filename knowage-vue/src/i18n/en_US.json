@@ -706,9 +706,13 @@
 		}
 	},
 	"menu": {
+		"group": {
+			"ImportExport": "Import/Export",
+			"ServerManager": "Server manager"
+		},
 		"importExport": "Import/Export",
-		"modelCatalogResourceManagement": "Models",
-		"resourceManagement": "Resources"
+		"modelCatalogResourceManagement": "Models manager",
+		"resourceManagement": "Resource manager"
 	},
 	"newsDialog": {
 		"description": "Description",
