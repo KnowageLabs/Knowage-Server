@@ -5,18 +5,24 @@
             <div class="p-grid p-mb-1">
                 <span class="p-input-icon-left p-col">
                     <i class="pi pi-search" />
-                    <InputText type="text" v-model="searchText" :placeholder="$tc('common.search')" @click="focusInput($event)" />
+                    <InputText type="text" v-model="searchText" :placeholder="$tc('common.search')" @click="focusInput($event)" @keyup="filter()" />
                 </span>
             </div>
-            <div class="p-grid p-megamenu-data">
-                <div v-for="(column, columnIndex) of model" :key="column.label + '_column_' + columnIndex" :class="getColumnClassName(model)">
-                    <ul class="p-megamenu-submenu">
-                        <li role="presentation" class="kn-truncated" v-tooltip.top="$t(column.label)">{{ $t(column.label) }}</li>
-                        <template v-for="(item, i) of column.items" :key="item.label + i.toString()">
-                            <li role="none" :style="item.style" :class="searched(item.label)">
-                                <router-link v-if="item.to && !item.disabled" :to="item.to" custom v-slot="{ navigate, href }">
-                                    <a :href="href" role="menuitem" @click="onLeafClick($event, item, navigate)">
-                                        <span class="p-menuitem-text">{{ $t(item.label) }}</span>
+            <div style="overflow-y: auto">
+                <Message v-if="tmpModel.length === 0" severity="warn" style="min-width: 400px" :closable="false">{{ $t('common.info.emptySearch') }}</Message>
+                <div class="p-megamenu-data">
+                    <div v-for="(column, columnIndex) of tmpModel" :key="column.label + '_column_' + columnIndex" class="menuColumn p-mb-3">
+                        <ul class="p-megamenu-submenu">
+                            <li role="presentation" class="kn-truncated" v-tooltip.top="$t(column.label)">{{ $t(column.label) }}</li>
+                            <template v-for="(item, i) of column.items" :key="item.label + i.toString()">
+                                <li role="none" :style="item.style">
+                                    <router-link v-if="item.to && !item.disabled" :to="item.to" custom v-slot="{ navigate, href }">
+                                        <a :href="href" role="menuitem" @click="onLeafClick($event, item, navigate)">
+                                            <span class="p-menuitem-text">{{ $t(item.label) }}</span>
+                                        </a>
+                                    </router-link>
+                                    <a v-else :href="item.url" :target="item.target" @click="onLeafClick($event, item, navigate)" role="menuitem" :tabindex="item.disabled ? null : '0'">
+                                        <span class="p-menuitem-text">{{ item.label }}</span>
                                     </a>
                                 </router-link>
                                 <a v-else :href="item.url" :target="item.target" @click="onLeafClick($event, item, navigate)" role="menuitem" :tabindex="item.disabled ? null : '0'">
@@ -33,9 +39,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import Message from 'primevue/message'
 
 export default defineComponent({
     name: 'kn-admin-menu',
+    components: { Message },
     emits: ['click'],
     props: {
         model: Array
@@ -43,12 +51,23 @@ export default defineComponent({
     data() {
         return {
             openedPanel: false,
-            searchText: ''
+            searchText: '',
+            tmpModel: new Array<any>()
         }
+    },
+    mounted() {
+        this.tmpModel = this.model || []
     },
     methods: {
         toggleAdminMenu() {
             this.openedPanel = !this.openedPanel
+        },
+        filter() {
+            const modelToFilter = this.model || []
+            this.tmpModel = modelToFilter.filter((groupItem: any) => {
+                let childItems = groupItem.items.filter((item) => item.label.toLowerCase().includes(this.searchText.toLowerCase()))
+                return childItems.length > 0
+            })
         },
         focusInput(e) {
             e.stopImmediatePropagation()
@@ -106,9 +125,6 @@ export default defineComponent({
                     item: item
                 })
             }
-        },
-        searched(label) {
-            return this.searchText !== '' && label.toLowerCase().includes(this.searchText) ? 'searched' : ''
         }
     },
     computed: {}

@@ -55,7 +55,7 @@ import { mapState } from 'vuex'
 import auth from '@/helpers/commons/authHelper'
 import axios from 'axios'
 import DownloadsDialog from '@/modules/mainMenu/dialogs/DownloadsDialog/DownloadsDialog.vue'
-	import { IMenuItem } from '@/modules/mainMenu/MainMenu'
+import { IMenuItem } from '@/modules/mainMenu/MainMenu'
 
 export default defineComponent({
     name: 'Knmenu',
@@ -72,10 +72,10 @@ export default defineComponent({
     data() {
         return {
             showProfileMenu: false,
-			dynamicUserFunctionalities: new Array<IMenuItem>(),
-			allowedUserFunctionalities: new Array<IMenuItem>(),
-			commonUserFunctionalities: new Array<IMenuItem>(),
-			technicalUserFunctionalities: new Array<IMenuItem>(),
+            dynamicUserFunctionalities: new Array<IMenuItem>(),
+            allowedUserFunctionalities: new Array<IMenuItem>(),
+            commonUserFunctionalities: new Array<IMenuItem>(),
+            technicalUserFunctionalities: new Array<IMenuItem>(),
             display: false,
             languageDisplay: false,
             roleDisplay: false,
