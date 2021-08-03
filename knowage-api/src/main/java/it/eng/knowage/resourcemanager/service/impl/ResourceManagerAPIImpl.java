@@ -46,17 +46,17 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import it.eng.knowage.knowageapi.error.KNRM001Exception;
-import it.eng.knowage.knowageapi.error.KNRM002Exception;
-import it.eng.knowage.knowageapi.error.KNRM003Exception;
-import it.eng.knowage.knowageapi.error.KNRM004Exception;
-import it.eng.knowage.knowageapi.error.KNRM005Exception;
-import it.eng.knowage.knowageapi.error.KNRM006Exception;
-import it.eng.knowage.knowageapi.error.KNRM007Exception;
-import it.eng.knowage.knowageapi.error.KNRM008Exception;
-import it.eng.knowage.knowageapi.error.KNRM009Exception;
-import it.eng.knowage.knowageapi.error.KNRM010Exception;
-import it.eng.knowage.knowageapi.error.KNRM011Exception;
+import it.eng.knowage.knowageapi.error.TenantRepositoryMissingException;
+import it.eng.knowage.knowageapi.error.ImpossibleToReadFolderListException;
+import it.eng.knowage.knowageapi.error.ImpossibleToReadFilesListException;
+import it.eng.knowage.knowageapi.error.ImpossibleToCreateFolderException;
+import it.eng.knowage.knowageapi.error.ImpossibleToCreateFileException;
+import it.eng.knowage.knowageapi.error.ImpossibleToDeleteFolderException;
+import it.eng.knowage.knowageapi.error.ImpossibleToDeleteFileException;
+import it.eng.knowage.knowageapi.error.ImpossibleToDownloadFileException;
+import it.eng.knowage.knowageapi.error.ImpossibleToUploadFileException;
+import it.eng.knowage.knowageapi.error.ImpossibleToSaveMetadataException;
+import it.eng.knowage.knowageapi.error.ImpossibleToReadMetadataException;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.utils.ContextPropertiesConfig;
 import it.eng.knowage.knowageapi.utils.HMACUtilities;
@@ -96,13 +96,13 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public RootFolderDTO getFolders(SpagoBIUserProfile profile) throws KNRM001Exception, KNRM002Exception {
+	public RootFolderDTO getFolders(SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToReadFolderListException {
 
 		Path fullP = null;
 		try {
 			fullP = getWorkDirectory(profile);
-		} catch (KNRM001Exception k) {
-			throw new KNRM001Exception("");
+		} catch (TenantRepositoryMissingException k) {
+			throw new TenantRepositoryMissingException("");
 		}
 		RootFolderDTO newRootFolder = null;
 		LOGGER.debug("Starting resource path json tree");
@@ -124,18 +124,18 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		return newRootFolder;
 	}
 
-	public Path getWorkDirectory(SpagoBIUserProfile profile) throws KNRM001Exception {
+	public Path getWorkDirectory(SpagoBIUserProfile profile) throws TenantRepositoryMissingException {
 		String resourcePathBase = ContextPropertiesConfig.getResourcePath();
 		String tenant = profile.getOrganization();
 		Path totalPath = Paths.get(resourcePathBase).resolve(tenant);
 		if (!Files.isDirectory(totalPath)) {
-			throw new KNRM001Exception("");
+			throw new TenantRepositoryMissingException("");
 		}
 		return totalPath;
 	}
 
 	private FolderDTO createTree(FolderDTO parentFolder, SpagoBIUserProfile profile, String currentRelativePath, int level)
-			throws IOException, KNRM001Exception {
+			throws IOException, TenantRepositoryMissingException {
 		Path node = Paths.get(parentFolder.getFullPath());
 		File nodeFile = node.toFile();
 		Path nodePath = Paths.get(nodeFile.getAbsolutePath());
@@ -230,7 +230,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	// if user can't work with directory it is not necessary
 	// if (canSee(pathToWork, profile)) ...
 	@Override
-	public boolean createFolder(String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM004Exception {
+	public boolean createFolder(String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToCreateFolderException {
 		boolean bool = false;
 		try {
 			Path totalPath = getTotalPath(path, profile);
@@ -240,7 +240,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 				if (file.exists()) {
 					String message = String.format("Directory %s is already existing.", path.substring(path.lastIndexOf(File.separator)));
-					throw new KNRM004Exception(message);
+					throw new ImpossibleToCreateFolderException(message);
 				} else {
 					// Creating the directory
 					bool = file.mkdir();
@@ -249,18 +249,18 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 					} else {
 						String message = "Sorry couldn't create specified directory";
 						LOGGER.info(message);
-						throw new KNRM004Exception(message);
+						throw new ImpossibleToCreateFolderException(message);
 					}
 				}
 			}
 		} catch (Exception e) {
-			throw new KNRM004Exception(e.getMessage());
+			throw new ImpossibleToCreateFolderException(e.getMessage());
 		}
 		return bool;
 	}
 
 	@Override
-	public boolean delete(String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM006Exception, KNRM007Exception {
+	public boolean delete(String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToDeleteFolderException, ImpossibleToDeleteFileException {
 		Path workDir = getWorkBaseDirByPath(path, profile);
 		if (canSee(workDir, profile)) {
 			Path totalPath = getTotalPath(path, profile);
@@ -269,13 +269,13 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				try {
 					FileUtils.deleteDirectory(file);
 				} catch (IOException e) {
-					throw new KNRM006Exception(e.getMessage());
+					throw new ImpossibleToDeleteFolderException(e.getMessage());
 				}
 			} else {
 				try {
 					FileUtils.forceDelete(file);
 				} catch (IOException e) {
-					throw new KNRM007Exception(e.getMessage());
+					throw new ImpossibleToDeleteFileException(e.getMessage());
 				}
 			}
 		}
@@ -283,7 +283,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public Path getDownloadFolderPath(String key, String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM005Exception {
+	public Path getDownloadFolderPath(String key, String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToCreateFileException {
 		Path workingPath = null;
 		Path pathToReturn = null;
 		try {
@@ -294,13 +294,13 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				pathToReturn = createZipFile(key, path, workingPath);
 			}
 		} catch (Exception e) {
-			throw new KNRM005Exception(e.getMessage());
+			throw new ImpossibleToCreateFileException(e.getMessage());
 		}
 		return pathToReturn;
 	}
 
 	@Override
-	public Path getDownloadFilePath(List<String> path, SpagoBIUserProfile profile, boolean multi) throws KNRM001Exception, KNRM008Exception {
+	public Path getDownloadFilePath(List<String> path, SpagoBIUserProfile profile, boolean multi) throws TenantRepositoryMissingException, ImpossibleToDownloadFileException {
 		Path pathToReturn = null;
 		try {
 			if (multi) {
@@ -315,19 +315,19 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				}
 			}
 		} catch (Exception e) {
-			throw new KNRM008Exception(e.getMessage());
+			throw new ImpossibleToDownloadFileException(e.getMessage());
 		}
 		return pathToReturn;
 	}
 
-	public Path getWorkBaseDirByPath(String path, SpagoBIUserProfile profile) throws KNRM001Exception {
+	public Path getWorkBaseDirByPath(String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException {
 		String rootElement = path.split("/")[0];
 		Path rootPath = getTotalPath(rootElement, profile);
 		return rootPath;
 	}
 
 	@Override
-	public String getFolderByKey(String key, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM002Exception {
+	public String getFolderByKey(String key, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToReadFolderListException {
 		String relativePath = null;
 
 		HashMap<String, Object> nodeInfos = cachedNodesInfo.get(key);
@@ -353,7 +353,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		if (relativePath == null) {
 			String message = String.format("No matching node for key [%s]", key);
 			LOGGER.debug(message);
-			throw new KNRM002Exception(message);
+			throw new ImpossibleToReadFolderListException(message);
 		}
 		return relativePath;
 	}
@@ -374,7 +374,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public List<FileDTO> getListOfFiles(String key, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM003Exception, KNRM002Exception {
+	public List<FileDTO> getListOfFiles(String key, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToReadFilesListException, ImpossibleToReadFolderListException {
 		String path = getFolderByKey(key, profile);
 		List<FileDTO> returnList = new ArrayList<FileDTO>();
 		try {
@@ -398,13 +398,13 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				}
 			}
 		} catch (Exception e) {
-			throw new KNRM003Exception("");
+			throw new ImpossibleToReadFilesListException("");
 		}
 		return returnList;
 	}
 
 	@Override
-	public void importFile(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException, KNRM001Exception, KNRM009Exception {
+	public void importFile(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException, TenantRepositoryMissingException, ImpossibleToUploadFileException {
 
 		try {
 			Path workBaseDir = getWorkBaseDirByPath(path, profile);
@@ -416,12 +416,12 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				FileUtils.copyInputStreamToFile(archiveInputStream, tempArchive.toFile());
 			}
 		} catch (Exception e) {
-			throw new KNRM009Exception(e.getMessage());
+			throw new ImpossibleToUploadFileException(e.getMessage());
 		}
 	}
 
 	@Override
-	public void importFileAndExtract(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException, KNRM001Exception {
+	public void importFileAndExtract(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException, TenantRepositoryMissingException {
 		Path workBaseDir = getWorkBaseDirByPath(path, profile);
 		Path fileTotalPath = getTotalPath(path, profile);
 		String totalPathDestinationDir = fileTotalPath.getParent().toFile().getAbsolutePath();
@@ -436,7 +436,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 	}
 
-	public Path getTotalPath(String path, SpagoBIUserProfile profile) throws KNRM001Exception {
+	public Path getTotalPath(String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException {
 		return getWorkDirectory(profile).resolve(path);
 	}
 
@@ -461,7 +461,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		}
 	}
 
-	public Path createZipFileOfFiles(List<String> fullPaths, SpagoBIUserProfile profile) throws KNRM001Exception {
+	public Path createZipFileOfFiles(List<String> fullPaths, SpagoBIUserProfile profile) throws TenantRepositoryMissingException {
 
 		try {
 			Path tempDirectory = Files.createTempDirectory("knowage-zip");
@@ -572,14 +572,14 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		Files.walk(tempDirectory).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
 	}
 
-	private boolean isStartingFromModel(Path path, SpagoBIUserProfile profile) throws KNRM001Exception {
+	private boolean isStartingFromModel(Path path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException {
 		Path workModelDir = getWorkDirectory(profile);
 		Path modelPath = workModelDir.resolve(ResourceManagerUtilities.getBuondedBasePath());
 		return path.startsWith(modelPath);
 	}
 
 	@Override
-	public MetadataDTO getMetadata(String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM011Exception {
+	public MetadataDTO getMetadata(String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToReadMetadataException {
 		MetadataDTO metadata = null;
 		try {
 			Path workPath = getWorkBaseDirByPath(path, profile);
@@ -601,7 +601,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				}
 			}
 		} catch (Exception ex) {
-			throw new KNRM011Exception(ex.getMessage());
+			throw new ImpossibleToReadMetadataException(ex.getMessage());
 		}
 
 		return metadata;
@@ -613,11 +613,11 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	 * fileDTO.getAccuracy()); jsonCode.put("usage", fileDTO.getUsage()); jsonCode.put("format", fileDTO.getFormat()); jsonCode.put("image",
 	 * fileDTO.getImage());
 	 *
-	 * @throws KNRM001Exception
-	 * @throws KNRM010Exception
+	 * @throws TenantRepositoryMissingException
+	 * @throws ImpossibleToSaveMetadataException
 	 */
 	@Override
-	public MetadataDTO saveMetadata(MetadataDTO fileDTO, String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM010Exception {
+	public MetadataDTO saveMetadata(MetadataDTO fileDTO, String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToSaveMetadataException {
 		try {
 			Path workPath = getWorkBaseDirByPath(path, profile);
 			if (isStartingFromModel(workPath, profile) && canSee(workPath, profile)) {
@@ -626,14 +626,14 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				objectMapper.writeValue(totalPath.toFile(), fileDTO);
 			}
 		} catch (Exception e) {
-			throw new KNRM010Exception(e.getMessage());
+			throw new ImpossibleToSaveMetadataException(e.getMessage());
 
 		}
 		return fileDTO;
 	}
 
 	@Override
-	public boolean updateFolder(Path path, String folderName, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM004Exception {
+	public boolean updateFolder(Path path, String folderName, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToCreateFolderException {
 		boolean updated = false;
 
 		File fromDirectory = getWorkBaseDirByPath(path.toString(), profile).toFile();
@@ -641,7 +641,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 		if (toDirectory.exists()) {
 			String message = "Destination folder already existing";
-			throw new KNRM004Exception(message);
+			throw new ImpossibleToCreateFolderException(message);
 		}
 
 		updated = fromDirectory.renameTo(toDirectory);

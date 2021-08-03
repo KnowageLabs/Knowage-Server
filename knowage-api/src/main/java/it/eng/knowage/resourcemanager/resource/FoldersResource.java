@@ -36,12 +36,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import it.eng.knowage.knowageapi.context.BusinessRequestContext;
-import it.eng.knowage.knowageapi.error.KNRM001Exception;
-import it.eng.knowage.knowageapi.error.KNRM002Exception;
-import it.eng.knowage.knowageapi.error.KNRM004Exception;
-import it.eng.knowage.knowageapi.error.KNRM005Exception;
-import it.eng.knowage.knowageapi.error.KNRM008Exception;
+import it.eng.knowage.knowageapi.error.ImpossibleToReadFolderListException;
+import it.eng.knowage.knowageapi.error.KnowageBusinessException;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
+import it.eng.knowage.knowageapi.error.TenantRepositoryMissingException;
 import it.eng.knowage.resourcemanager.resource.dto.CreateFolderDTO;
 import it.eng.knowage.resourcemanager.resource.dto.DownloadFolderDTO;
 import it.eng.knowage.resourcemanager.resource.dto.RootFolderDTO;
@@ -69,21 +67,21 @@ public class FoldersResource {
 
 	/**
 	 * @return folders JSON tree from resource folder
-	 * @throws KNRM001Exception
-	 * @throws KNRM002Exception
+	 * @throws TenantRepositoryMissingException
+	 * @throws ImpossibleToReadFolderListException
 	 */
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public RootFolderDTO getFolders() throws KNRM001Exception, KNRM002Exception {
+	public RootFolderDTO getFolders() throws KnowageBusinessException {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		RootFolderDTO folders = null;
 		try {
 			folders = resourceManagerAPIservice.getFolders(profile);
-		} catch (KNRM001Exception k) {
-			throw new KNRM001Exception(""); // TODO: We have to understand how to handle technical messages inside business errors, how can we show them?
-		} catch (KNRM002Exception e) {
-			throw new KNRM002Exception("");
+		} catch (KnowageBusinessException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new KnowageRuntimeException(e);
 		}
 		return folders;
 	}
@@ -91,7 +89,7 @@ public class FoldersResource {
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createFolder(CreateFolderDTO dto) {
+	public Response createFolder(CreateFolderDTO dto) throws KnowageBusinessException {
 		Response response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		try {
@@ -103,10 +101,10 @@ public class FoldersResource {
 					response = Response.status(Response.Status.OK).build();
 				}
 			}
-		} catch (KNRM004Exception e) {
-			return Response.notModified(e.getMessage()).build();
+		} catch (KnowageBusinessException e) {
+			throw e;
 		} catch (Exception e) {
-			throw new KnowageRuntimeException(e.getMessage());
+			throw new KnowageRuntimeException(e);
 		}
 		return response;
 	}
@@ -114,24 +112,31 @@ public class FoldersResource {
 	@POST
 	@Path("/download")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response downloadFolder(DownloadFolderDTO dto) throws KNRM001Exception, KNRM008Exception, KNRM005Exception, KNRM002Exception {
+	public Response downloadFolder(DownloadFolderDTO dto) throws KnowageBusinessException {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
+		java.nio.file.Path exportArchive = null;
 		String key = dto.getKey();
-		String path = resourceManagerAPIservice.getFolderByKey(key, profile);
-		java.nio.file.Path exportArchive = resourceManagerAPIservice.getDownloadFolderPath(key, path, profile);
-		String filename = exportArchive.getFileName() + ".zip";
 		try {
+			String path = resourceManagerAPIservice.getFolderByKey(key, profile);
+			exportArchive = resourceManagerAPIservice.getDownloadFolderPath(key, path, profile);
+			String filename = exportArchive.getFileName() + ".zip";
+
 			return Response.ok(exportArchive.toFile()).header("Content-length", "" + Files.size(exportArchive))
 					.header("Content-Disposition", String.format("attachment; filename=\"%s\"", filename)).build();
+
+		} catch (KnowageBusinessException e) {
+			throw e;
 		} catch (IOException e) {
 			throw new KnowageRuntimeException("Error calculating file size for " + exportArchive, e);
+		} catch (Exception e) {
+			throw new KnowageRuntimeException(e);
 		}
 	}
 
 	@POST
 	@Path("/update")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateName(CreateFolderDTO dto) {
+	public Response updateName(CreateFolderDTO dto) throws KnowageBusinessException {
 		Response response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		try {
@@ -142,10 +147,10 @@ public class FoldersResource {
 				if (create)
 					response = Response.status(Response.Status.OK).build();
 			}
-		} catch (KNRM004Exception ex) {
-			response = Response.status(Response.Status.NOT_MODIFIED).entity(ex).build();
+		} catch (KnowageBusinessException e) {
+			throw e;
 		} catch (Exception e) {
-			throw new KnowageRuntimeException(e.getMessage());
+			throw new KnowageRuntimeException(e);
 		}
 		return response;
 	}
@@ -155,7 +160,7 @@ public class FoldersResource {
 	@DELETE
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response delete(DownloadFolderDTO dto) {
+	public Response delete(DownloadFolderDTO dto) throws KnowageBusinessException {
 		Response response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		try {
 			SpagoBIUserProfile profile = businessContext.getUserProfile();
@@ -165,8 +170,10 @@ public class FoldersResource {
 			if (create)
 				response = Response.status(Response.Status.OK).build();
 
+		} catch (KnowageBusinessException e) {
+			throw e;
 		} catch (Exception e) {
-			throw new KnowageRuntimeException(e.getMessage());
+			throw new KnowageRuntimeException(e);
 		}
 		return response;
 

@@ -22,17 +22,17 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 
-import it.eng.knowage.knowageapi.error.KNRM001Exception;
-import it.eng.knowage.knowageapi.error.KNRM002Exception;
-import it.eng.knowage.knowageapi.error.KNRM003Exception;
-import it.eng.knowage.knowageapi.error.KNRM004Exception;
-import it.eng.knowage.knowageapi.error.KNRM005Exception;
-import it.eng.knowage.knowageapi.error.KNRM006Exception;
-import it.eng.knowage.knowageapi.error.KNRM007Exception;
-import it.eng.knowage.knowageapi.error.KNRM008Exception;
-import it.eng.knowage.knowageapi.error.KNRM009Exception;
-import it.eng.knowage.knowageapi.error.KNRM010Exception;
-import it.eng.knowage.knowageapi.error.KNRM011Exception;
+import it.eng.knowage.knowageapi.error.TenantRepositoryMissingException;
+import it.eng.knowage.knowageapi.error.ImpossibleToReadFolderListException;
+import it.eng.knowage.knowageapi.error.ImpossibleToReadFilesListException;
+import it.eng.knowage.knowageapi.error.ImpossibleToCreateFolderException;
+import it.eng.knowage.knowageapi.error.ImpossibleToCreateFileException;
+import it.eng.knowage.knowageapi.error.ImpossibleToDeleteFolderException;
+import it.eng.knowage.knowageapi.error.ImpossibleToDeleteFileException;
+import it.eng.knowage.knowageapi.error.ImpossibleToDownloadFileException;
+import it.eng.knowage.knowageapi.error.ImpossibleToUploadFileException;
+import it.eng.knowage.knowageapi.error.ImpossibleToSaveMetadataException;
+import it.eng.knowage.knowageapi.error.ImpossibleToReadMetadataException;
 import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
 import it.eng.knowage.resourcemanager.resource.dto.MetadataDTO;
 import it.eng.knowage.resourcemanager.resource.dto.RootFolderDTO;
@@ -40,53 +40,53 @@ import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
 public interface ResourceManagerAPI {
 
-	public RootFolderDTO getFolders(SpagoBIUserProfile profile) throws KNRM001Exception, KNRM002Exception;
+	public RootFolderDTO getFolders(SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToReadFolderListException;
 
-	boolean createFolder(String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM004Exception;
+	boolean createFolder(String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToCreateFolderException;
 
-	boolean delete(String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM006Exception, KNRM007Exception;
+	boolean delete(String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToDeleteFolderException, ImpossibleToDeleteFileException;
 
-	public List<FileDTO> getListOfFiles(String key, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM003Exception, KNRM002Exception;
+	public List<FileDTO> getListOfFiles(String key, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToReadFilesListException, ImpossibleToReadFolderListException;
 
-	java.nio.file.Path getDownloadFilePath(List<String> path, SpagoBIUserProfile profile, boolean multi) throws KNRM001Exception, KNRM008Exception;
+	java.nio.file.Path getDownloadFilePath(List<String> path, SpagoBIUserProfile profile, boolean multi) throws TenantRepositoryMissingException, ImpossibleToDownloadFileException;
 
 	boolean canSee(Path path, SpagoBIUserProfile profile);
 
 	void importFile(InputStream archiveInputStream, String path, SpagoBIUserProfile profile)
-			throws IOException, KNRM001Exception, KNRM005Exception, KNRM009Exception;
+			throws IOException, TenantRepositoryMissingException, ImpossibleToCreateFileException, ImpossibleToUploadFileException;
 
-	void importFileAndExtract(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException, KNRM001Exception;
+	void importFileAndExtract(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException, TenantRepositoryMissingException;
 
-	MetadataDTO getMetadata(String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM011Exception;
+	MetadataDTO getMetadata(String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToReadMetadataException;
 
-	MetadataDTO saveMetadata(MetadataDTO fileDTO, String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM010Exception;
+	MetadataDTO saveMetadata(MetadataDTO fileDTO, String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToSaveMetadataException;
 
 	/**
 	 * @param key
 	 * @param profile
 	 * @return
-	 * @throws KNRM002Exception
-	 * @throws KNRM001Exception
+	 * @throws ImpossibleToReadFolderListException
+	 * @throws TenantRepositoryMissingException
 	 */
-	public String getFolderByKey(String key, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM002Exception;
+	public String getFolderByKey(String key, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToReadFolderListException;
 
 	/**
 	 * @param key
 	 * @param path
 	 * @param profile
 	 * @return
-	 * @throws KNRM001Exception
-	 * @throws KNRM005Exception
+	 * @throws TenantRepositoryMissingException
+	 * @throws ImpossibleToCreateFileException
 	 */
-	Path getDownloadFolderPath(String key, String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM005Exception;
+	Path getDownloadFolderPath(String key, String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToCreateFileException;
 
 	/**
 	 * @param completePath
 	 * @param folderName
 	 * @param profile
 	 * @return
-	 * @throws KNRM004Exception
-	 * @throws KNRM001Exception
+	 * @throws ImpossibleToCreateFolderException
+	 * @throws TenantRepositoryMissingException
 	 */
-	public boolean updateFolder(Path completePath, String folderName, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM004Exception;
+	public boolean updateFolder(Path completePath, String folderName, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToCreateFolderException;
 }

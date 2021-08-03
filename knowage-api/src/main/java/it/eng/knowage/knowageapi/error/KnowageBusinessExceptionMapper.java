@@ -65,7 +65,8 @@ public class KnowageBusinessExceptionMapper implements ExceptionMapper<KnowageBu
 
 	private Response toResponseFromGenericException(KnowageBusinessException t) {
 		JSONObject serializedMessages = serializeException(t);
-		return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(serializedMessages.toString()).build();
+		// not authenticated , not authorized, not found
+		return Response.status(t.getStatus()).entity(serializedMessages.toString()).build();
 	}
 
 	private JSONObject serializeException(KnowageBusinessException t) {
@@ -87,13 +88,6 @@ public class KnowageBusinessExceptionMapper implements ExceptionMapper<KnowageBu
 			error.put(ERROR_MESSAGE, errorMessage);
 			errors.put(error);
 			if (hints != null && !hints.isEmpty()) {
-//				int i = 0;
-//				for (String hint : hints) {
-//					i++;
-//					String[] hintArray = new String[1];
-//					hintArray[0] = hint;
-//					hintsJson.put(hintJSON);
-//				}
 				error.put("hints", hints);
 			}
 			serializedMessages.put(ERROR_MESSAGES, errors);

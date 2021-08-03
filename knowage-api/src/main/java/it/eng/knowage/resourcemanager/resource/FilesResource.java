@@ -49,14 +49,11 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import it.eng.knowage.knowageapi.context.BusinessRequestContext;
-import it.eng.knowage.knowageapi.error.KNRM001Exception;
-import it.eng.knowage.knowageapi.error.KNRM002Exception;
-import it.eng.knowage.knowageapi.error.KNRM003Exception;
-import it.eng.knowage.knowageapi.error.KNRM008Exception;
-import it.eng.knowage.knowageapi.error.KNRM010Exception;
-import it.eng.knowage.knowageapi.error.KNRM011Exception;
+import it.eng.knowage.knowageapi.error.ImpossibleToReadFilesListException;
+import it.eng.knowage.knowageapi.error.ImpossibleToReadFolderListException;
 import it.eng.knowage.knowageapi.error.KnowageBusinessException;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
+import it.eng.knowage.knowageapi.error.TenantRepositoryMissingException;
 import it.eng.knowage.resourcemanager.resource.dto.DownloadFilesDTO;
 import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
 import it.eng.knowage.resourcemanager.resource.dto.MetadataDTO;
@@ -85,61 +82,69 @@ public class FilesResource {
 	/**
 	 * @param path
 	 * @return list of files, one of them could be "metadata.json", it will be excluded
-	 * @throws KNRM001Exception
-	 * @throws KNRM003Exception
-	 * @throws KNRM002Exception
+	 * @throws TenantRepositoryMissingException
+	 * @throws ImpossibleToReadFilesListException
+	 * @throws ImpossibleToReadFolderListException
 	 */
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<FileDTO> getFiles(@QueryParam("key") String key) throws KNRM001Exception, KNRM003Exception, KNRM002Exception {
+	public List<FileDTO> getFiles(@QueryParam("key") String key) throws KnowageBusinessException {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
-		List<FileDTO> files = resourceManagerAPIservice.getListOfFiles(key, profile);
+		List<FileDTO> files = null;
+		try {
+			files = resourceManagerAPIservice.getListOfFiles(key, profile);
+		} catch (KnowageBusinessException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new KnowageRuntimeException(e);
+		}
 		return files;
 	}
 
 	@POST
 	@Path("/download")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response downloadFiles(DownloadFilesDTO dto) throws KNRM001Exception, KNRM008Exception, KNRM002Exception {
+	public Response downloadFiles(DownloadFilesDTO dto) throws KnowageBusinessException {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
-
+		java.nio.file.Path zipFile = null;
 		List<String> listOfPaths = new ArrayList<String>();
 		String folderPath = resourceManagerAPIservice.getFolderByKey(dto.getKey(), profile);
 		for (String name : dto.getSelectedFilesNames()) {
 			listOfPaths.add(Paths.get(folderPath).resolve(name).toString());
 		}
-
-		if (listOfPaths.size() == 1) {
-			java.nio.file.Path path = resourceManagerAPIservice.getDownloadFilePath(listOfPaths, profile, false);
-			try {
+		try {
+			if (listOfPaths.size() == 1) {
+				java.nio.file.Path path = resourceManagerAPIservice.getDownloadFilePath(listOfPaths, profile, false);
 				File f = path.toFile();
 				MimetypesFileTypeMap fileTypeMap = new MimetypesFileTypeMap();
 				String mimeType = fileTypeMap.getContentType(f.getName());
 				return Response.ok(path.toFile()).header("Content-length", "" + Files.size(path))
 						.header("Content-Disposition", String.format("attachment; filename=\"%s\"", path.getFileName())).header("Content-type", mimeType)
 						.build();
-			} catch (IOException e) {
-				throw new KnowageRuntimeException("Error calculating file size for " + path, e);
-			}
-		} else {
-			java.nio.file.Path zipFile = resourceManagerAPIservice.getDownloadFilePath(listOfPaths, profile, true);
-			String filename = zipFile.getFileName() + ".zip";
-			try {
+
+			} else {
+				zipFile = resourceManagerAPIservice.getDownloadFilePath(listOfPaths, profile, true);
+				String filename = zipFile.getFileName() + ".zip";
 				return Response.ok(zipFile.toFile()).header("Content-length", "" + Files.size(zipFile))
 						.header("Content-Disposition", String.format("attachment; filename=\"%s\"", filename)).header("Content-Type", "application/zip")
 						.build();
-			} catch (IOException e) {
-				throw new KnowageRuntimeException("Error calculating file size for " + zipFile, e);
 			}
+		} catch (KnowageBusinessException e) {
+			throw e;
+		} catch (IOException e) {
+			throw new KnowageRuntimeException("Error calculating file size for " + zipFile, e);
+		} catch (Exception e) {
+			throw new KnowageRuntimeException(e);
 		}
+
 	}
 
 	@POST
 	@Path("/uploadFile")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response uploadFile(MultipartFormDataInput multipartFormDataInput) throws KnowageBusinessException, KNRM001Exception {
+	public Response uploadFile(MultipartFormDataInput multipartFormDataInput) throws KnowageBusinessException {
 
 		Response response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
@@ -206,8 +211,10 @@ public class FilesResource {
 				response = Response.status(Response.Status.NOT_MODIFIED).entity(message).build();
 			}
 			return response;
+		} catch (KnowageBusinessException e) {
+			throw e;
 		} catch (IOException e) {
-			throw new KnowageRuntimeException(e.getMessage());
+			throw new KnowageRuntimeException(e);
 		}
 
 	}
@@ -215,10 +222,17 @@ public class FilesResource {
 	@GET
 	@Path("/metadata")
 	@Produces(MediaType.APPLICATION_JSON)
-	public MetadataDTO getMetadata(@QueryParam("key") String key) throws KNRM001Exception, KNRM011Exception, KNRM002Exception {
+	public MetadataDTO getMetadata(@QueryParam("key") String key) throws KnowageBusinessException {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
+		MetadataDTO file = null;
 		String path = resourceManagerAPIservice.getFolderByKey(key, profile);
-		MetadataDTO file = resourceManagerAPIservice.getMetadata(path, profile);
+		try {
+			file = resourceManagerAPIservice.getMetadata(path, profile);
+		} catch (KnowageBusinessException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new KnowageRuntimeException(e);
+		}
 		return file;
 	}
 
@@ -226,10 +240,17 @@ public class FilesResource {
 	@Path("/metadata")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public MetadataDTO saveMetadata(MetadataDTO fileDTO, @QueryParam("key") String key) throws KNRM001Exception, KNRM010Exception, KNRM002Exception {
+	public MetadataDTO saveMetadata(MetadataDTO fileDTO, @QueryParam("key") String key) throws KnowageBusinessException {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
-		String path = resourceManagerAPIservice.getFolderByKey(key, profile);
-		MetadataDTO file = resourceManagerAPIservice.saveMetadata(fileDTO, path, profile);
+		MetadataDTO file = null;
+		try {
+			String path = resourceManagerAPIservice.getFolderByKey(key, profile);
+			file = resourceManagerAPIservice.saveMetadata(fileDTO, path, profile);
+		} catch (KnowageBusinessException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new KnowageRuntimeException(e);
+		}
 		return file;
 	}
 
@@ -238,7 +259,7 @@ public class FilesResource {
 	@DELETE
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response delete(DownloadFilesDTO dto) {
+	public Response delete(DownloadFilesDTO dto) throws KnowageBusinessException {
 		Response response = null;
 		try {
 			SpagoBIUserProfile profile = businessContext.getUserProfile();
@@ -254,8 +275,10 @@ public class FilesResource {
 					break;
 				}
 			}
+		} catch (KnowageBusinessException e) {
+			throw e;
 		} catch (Exception e) {
-			throw new KnowageRuntimeException(e.getMessage());
+			throw new KnowageRuntimeException(e);
 		}
 		return response;
 

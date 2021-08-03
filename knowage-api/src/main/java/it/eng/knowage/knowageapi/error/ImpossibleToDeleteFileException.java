@@ -21,18 +21,26 @@ package it.eng.knowage.knowageapi.error;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KNRM010Exception extends KnowageBusinessException {
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+public class ImpossibleToDeleteFileException extends KnowageBusinessException {
+
+	/*
+	 * Status
+	 */
+	private Status status = Response.Status.INTERNAL_SERVER_ERROR;
 
 	/*
 	 * Error Code
 	 */
-	private String code = "KN-RM-010";
+	private String code = "KN-RM-007";
 
 	/*
 	 * User oriented description of the exception. It is usually prompted to the user. Instead the message passed to the constructor is developer oriented and
 	 * it should be just logged.
 	 */
-	private String description = "Impossible to save metadata";
+	private String description = "Impossible to delete file";
 
 	/*
 	 * A list of possible solutions to the problem that have caused the exception
@@ -44,7 +52,7 @@ public class KNRM010Exception extends KnowageBusinessException {
 	 *
 	 * @param message Text of the exception
 	 */
-	public KNRM010Exception(String message) {
+	public ImpossibleToDeleteFileException(String message) {
 		super(message);
 	}
 
@@ -54,24 +62,8 @@ public class KNRM010Exception extends KnowageBusinessException {
 	 * @param message Text of the exception
 	 * @param ex      previous Throwable object
 	 */
-	public KNRM010Exception(String message, Throwable ex) {
+	public ImpossibleToDeleteFileException(String message, Throwable ex) {
 		super(message, ex);
-	}
-
-	@Override
-	public String getRootCause() {
-		String rootCause;
-		Throwable rootException;
-
-		rootException = this;
-		while (rootException.getCause() != null) {
-			rootException = rootException.getCause();
-		}
-
-		rootCause = rootException.getMessage() != null ? rootException.getClass().getName() + ": " + rootException.getMessage()
-				: rootException.getClass().getName();
-
-		return rootCause;
 	}
 
 	@Override
@@ -97,6 +89,26 @@ public class KNRM010Exception extends KnowageBusinessException {
 	@Override
 	public void addHint(String hint) {
 		getHints().add(hint);
+	}
+
+	@Override
+	public Status getStatus() {
+		return status;
+	}
+
+	@Override
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	@Override
+	public String getCode() {
+		return code;
+	}
+
+	@Override
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 }
