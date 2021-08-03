@@ -52,6 +52,7 @@ import ResourceManagementDetail from './ResourceManagementDetail.vue'
 import KnHint from '@/components/UI/KnHint.vue'
 import ResourceManagementCreateFolderDialog from './ResourceManagementCreateFolderDialog.vue'
 
+<<<<<<< Upstream, based on branch 'resource-manager' of https://github.com/KnowageLabs/Knowage-Server.git
 export default defineComponent({
     name: 'resource-management',
     components: { KnHint, ResourceManagementMetadataDialog, ResourceManagementCreateFolderDialog, ResourceManagementDetail, Tree },
@@ -133,6 +134,86 @@ export default defineComponent({
                     await axios
                         .post(process.env.VUE_APP_API_PATH + `2.0/resources/folders/update`, obj, {
                             responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
+=======
+	export default defineComponent({
+		name: 'resource-management',
+		components: { KnHint, ResourceManagementMetadataDialog, ResourceManagementCreateFolderDialog, ResourceManagementDetail, Tree },
+		data() {
+			return {
+				descriptor,
+				displayMetadataDialog: false,
+				loading: false,
+				nodes: [] as iFolderTemplate[],
+				expandedKeys: {},
+				selectedKeys: null,
+				metadataKey: null,
+				dirty: false,
+				buttonsVisible: [],
+				showHint: true,
+				touched: false,
+				selectedFolder: {} as iFolderTemplate,
+				folderCreation: false,
+				formVisible: false
+			}
+		},
+		async created() {
+			this.loadPage()
+		},
+		methods: {
+			createFolder(folderName: string) {
+				if (folderName && this.selectedFolder) {
+					let obj = {} as JSON
+					obj['key'] = '' + this.selectedFolder.key
+					obj['folderName'] = folderName
+					axios
+						.post(process.env.VUE_APP_API_PATH + `2.0/resources/folders`, obj, {
+							responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
+
+							headers: {
+								'Content-Type': 'application/json'
+							}
+						})
+						.then(() => {
+							this.$emit('folderCreated', true)
+						})
+						.catch((error) => {
+							this.$store.commit('setError', {
+								title: this.$t('common.error.saving'),
+								msg: this.$t(error)
+							})
+						})
+						.finally(() => {
+							this.loading = false
+							this.openCreateFolderDialog()
+							this.loadPage(this.showHint, this.formVisible)
+						})
+				}
+			},
+			getCurrentFolderPath() {
+				return this.selectedFolder ? this.selectedFolder.relativePath : undefined
+			},
+			getCurrentFolderKey() {
+				return this.selectedFolder ? '' + this.selectedFolder.key : undefined
+			},
+			getButtonClass(node) {
+				let visibility = ' kn-hide'
+				if (this.buttonsVisible[node.key] && !node.edit) visibility = ''
+				return 'p-button-text p-button-sm p-button-rounded p-button-plain p-p-0' + visibility
+			},
+			openCreateFolderDialog() {
+				this.folderCreation = !this.folderCreation
+			},
+			async toggleInput(node) {
+				if (node.edit && node.label !== node.edit) {
+					if (this.selectedFolder) {
+						let obj = {} as JSON
+						obj['key'] = this.selectedFolder.key
+						obj['folderName'] = node.label
+						this.loading = true
+						await axios
+							.post(process.env.VUE_APP_API_PATH + `2.0/resources/folders/update`, obj, {
+								responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
+>>>>>>> af92bc0 [KNOWAGE-6026] - Removed FE check for already existing folder name
 
                             headers: {
                                 'Content-Type': 'application/json'
