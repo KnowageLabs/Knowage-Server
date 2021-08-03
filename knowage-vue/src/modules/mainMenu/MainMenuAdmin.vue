@@ -8,23 +8,25 @@
                     <InputText type="text" v-model="searchText" :placeholder="$tc('common.search')" @click="focusInput($event)" />
                 </span>
             </div>
-            <div class="p-grid p-megamenu-data">
-                <div v-for="(column, columnIndex) of model" :key="column.label + '_column_' + columnIndex" :class="getColumnClassName(model)">
-                    <ul class="p-megamenu-submenu">
-                        <li role="presentation" class="kn-truncated" v-tooltip.top="$t(column.label)">{{ $t(column.label) }}</li>
-                        <template v-for="(item, i) of column.items" :key="item.label + i.toString()">
-                            <li role="none" :style="item.style" :class="searched(item.label)">
-                                <router-link v-if="item.to && !item.disabled" :to="item.to" custom v-slot="{ navigate, href }">
-                                    <a :href="href" role="menuitem" @click="onLeafClick($event, item, navigate)">
-                                        <span class="p-menuitem-text">{{ $t(item.label) }}</span>
+            <div style="overflow-y: auto">
+                <div class="p-megamenu-data">
+                    <div v-for="(column, columnIndex) of model" :key="column.label + '_column_' + columnIndex" class="menuColumn p-mb-3">
+                        <ul class="p-megamenu-submenu">
+                            <li role="presentation" class="kn-truncated" v-tooltip.top="$t(column.label)">{{ $t(column.label) }}</li>
+                            <template v-for="(item, i) of column.items" :key="item.label + i.toString()">
+                                <li role="none" :style="item.style" :class="searched(item.label)">
+                                    <router-link v-if="item.to && !item.disabled" :to="item.to" custom v-slot="{ navigate, href }">
+                                        <a :href="href" role="menuitem" @click="onLeafClick($event, item, navigate)">
+                                            <span class="p-menuitem-text">{{ $t(item.label) }}</span>
+                                        </a>
+                                    </router-link>
+                                    <a v-else :href="item.url" :target="item.target" @click="onLeafClick($event, item, navigate)" role="menuitem" :tabindex="item.disabled ? null : '0'">
+                                        <span class="p-menuitem-text">{{ item.label }}</span>
                                     </a>
-                                </router-link>
-                                <a v-else :href="item.url" :target="item.target" @click="onLeafClick($event, item, navigate)" role="menuitem" :tabindex="item.disabled ? null : '0'">
-                                    <span class="p-menuitem-text">{{ item.label }}</span>
-                                </a>
-                            </li>
-                        </template>
-                    </ul>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </ul>
@@ -52,40 +54,6 @@ export default defineComponent({
         },
         focusInput(e) {
             e.stopImmediatePropagation()
-        },
-        getColumnClassName(model) {
-            let length = model ? model.length : 0
-            let columnClass
-            switch (length) {
-                case 2:
-                    columnClass = 'p-col-6'
-                    break
-                case 3:
-                    columnClass = 'p-col-4'
-                    break
-                case 4:
-                    columnClass = 'p-col-3'
-                    break
-                case 5:
-                    columnClass = 'p-col-4'
-                    break
-                case 6:
-                    columnClass = 'p-col-4'
-                    break
-                case 7:
-                    columnClass = 'p-col-3'
-                    break
-                case 8:
-                    columnClass = 'p-col-3'
-                    break
-                case 9:
-                    columnClass = 'p-col-2'
-                    break
-                default:
-                    columnClass = 'p-col-12'
-                    break
-            }
-            return columnClass
         },
         onLeafClick(event, item, navigate) {
             if (item.disabled) {
@@ -147,8 +115,6 @@ li {
         top: 0;
         left: 100%;
         background-color: $mainmenu-panel-color;
-        width: 1000px;
-        min-height: 200px;
         ul {
             list-style: none;
             padding: 0;
@@ -184,9 +150,16 @@ li {
             border-radius: 0;
         }
         .p-megamenu-data {
-            overflow: auto;
-            max-height: 500px;
-            overflow-x: hidden;
+            overflow: hidden;
+            display: block;
+            column-count: 5;
+            column-gap: 8px;
+            .menuColumn {
+                width: 100%;
+                -webkit-column-break-inside: avoid;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
         }
     }
 }
