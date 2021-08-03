@@ -19,20 +19,29 @@ package it.eng.knowage.knowageapi.error;
 
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
 /**
  * @author Marco Libanori
  */
 public class KnowageBusinessException extends KnowageException {
+
+	/*
+	 * Status
+	 */
+	private Status status = Response.Status.INTERNAL_SERVER_ERROR;
+
 	/*
 	 * Error Code
 	 */
-	private String code = "KN-DA-001";
+	private String code = "";
 
 	/*
 	 * User oriented description of the exception. It is usually prompted to the user. Instead the message passed to the constructor is developer oriented and
 	 * it should be just logged.
 	 */
-	private String description = "The tenant repository is missing";
+	private String description = "";
 
 	/*
 	 * A list of possible solutions to the problem that have caused the exception
@@ -43,6 +52,15 @@ public class KnowageBusinessException extends KnowageException {
 
 	public KnowageBusinessException(String message, Throwable ex) {
 		super(message, ex);
+	}
+
+	public KnowageBusinessException(KnowageBusinessException ex) {
+		super(ex);
+		this.code = ex.getCode();
+		this.status = ex.getStatus();
+		this.description = ex.getDescription();
+		this.hints = ex.getHints();
+
 	}
 
 	public KnowageBusinessException(String message) {
@@ -78,6 +96,14 @@ public class KnowageBusinessException extends KnowageException {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 
 }

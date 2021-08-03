@@ -21,18 +21,26 @@ package it.eng.knowage.knowageapi.error;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KNRM001Exception extends KnowageBusinessException {
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+public class ImpossibleToCreateFileException extends KnowageBusinessException {
+
+	/*
+	 * Status
+	 */
+	private Status status = Response.Status.INTERNAL_SERVER_ERROR;
 
 	/*
 	 * Error Code
 	 */
-	private String code = "KN-RM-001";
+	private String code = "KN-RM-005";
 
 	/*
 	 * User oriented description of the exception. It is usually prompted to the user. Instead the message passed to the constructor is developer oriented and
 	 * it should be just logged.
 	 */
-	private String description = "The tenant repository is missing";
+	private String description = "Impossible to create a new file";
 
 	/*
 	 * A list of possible solutions to the problem that have caused the exception
@@ -44,7 +52,7 @@ public class KNRM001Exception extends KnowageBusinessException {
 	 *
 	 * @param message Text of the exception
 	 */
-	public KNRM001Exception(String message) {
+	public ImpossibleToCreateFileException(String message) {
 		super(message);
 	}
 
@@ -54,24 +62,8 @@ public class KNRM001Exception extends KnowageBusinessException {
 	 * @param message Text of the exception
 	 * @param ex      previous Throwable object
 	 */
-	public KNRM001Exception(String message, Throwable ex) {
+	public ImpossibleToCreateFileException(String message, Throwable ex) {
 		super(message, ex);
-	}
-
-	@Override
-	public String getRootCause() {
-		String rootCause;
-		Throwable rootException;
-
-		rootException = this;
-		while (rootException.getCause() != null) {
-			rootException = rootException.getCause();
-		}
-
-		rootCause = rootException.getMessage() != null ? rootException.getClass().getName() + ": " + rootException.getMessage()
-				: rootException.getClass().getName();
-
-		return rootCause;
 	}
 
 	@Override
@@ -87,8 +79,8 @@ public class KNRM001Exception extends KnowageBusinessException {
 	@Override
 	public List getHints() {
 		if (hints == null) {
-			hints = new ArrayList<String>();
-			String hint = "Contact the administrator to initialize the repository";
+			hints = new ArrayList();
+			String hint = "Contact the administrator to check the repository permission";
 			hints.add(hint);
 		}
 		return hints;
@@ -97,6 +89,16 @@ public class KNRM001Exception extends KnowageBusinessException {
 	@Override
 	public void addHint(String hint) {
 		getHints().add(hint);
+	}
+
+	@Override
+	public Status getStatus() {
+		return status;
+	}
+
+	@Override
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 
 	@Override

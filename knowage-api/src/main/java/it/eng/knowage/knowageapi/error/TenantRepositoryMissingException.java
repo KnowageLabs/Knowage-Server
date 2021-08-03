@@ -21,18 +21,26 @@ package it.eng.knowage.knowageapi.error;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KNRM003Exception extends KnowageBusinessException {
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+public class TenantRepositoryMissingException extends KnowageBusinessException {
+
+	/*
+	 * Status
+	 */
+	private Status status = Response.Status.INTERNAL_SERVER_ERROR;
 
 	/*
 	 * Error Code
 	 */
-	private String code = "KN-RM-003";
+	private String code = "KN-RM-001";
 
 	/*
 	 * User oriented description of the exception. It is usually prompted to the user. Instead the message passed to the constructor is developer oriented and
 	 * it should be just logged.
 	 */
-	private String description = "Impossible to read the files list";
+	private String description = "The tenant repository is missing";
 
 	/*
 	 * A list of possible solutions to the problem that have caused the exception
@@ -44,7 +52,7 @@ public class KNRM003Exception extends KnowageBusinessException {
 	 *
 	 * @param message Text of the exception
 	 */
-	public KNRM003Exception(String message) {
+	public TenantRepositoryMissingException(String message) {
 		super(message);
 	}
 
@@ -54,7 +62,7 @@ public class KNRM003Exception extends KnowageBusinessException {
 	 * @param message Text of the exception
 	 * @param ex      previous Throwable object
 	 */
-	public KNRM003Exception(String message, Throwable ex) {
+	public TenantRepositoryMissingException(String message, Throwable ex) {
 		super(message, ex);
 	}
 
@@ -87,8 +95,8 @@ public class KNRM003Exception extends KnowageBusinessException {
 	@Override
 	public List getHints() {
 		if (hints == null) {
-			hints = new ArrayList();
-			String hint = "Contact the administrator to check the repository permission";
+			hints = new ArrayList<String>();
+			String hint = "Contact the administrator to initialize the repository";
 			hints.add(hint);
 		}
 		return hints;
@@ -97,6 +105,26 @@ public class KNRM003Exception extends KnowageBusinessException {
 	@Override
 	public void addHint(String hint) {
 		getHints().add(hint);
+	}
+
+	@Override
+	public String getCode() {
+		return code;
+	}
+
+	@Override
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	@Override
+	public Status getStatus() {
+		return status;
+	}
+
+	@Override
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 
 }
