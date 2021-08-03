@@ -163,44 +163,17 @@
 		</GROUP_ITEM>
 
 
-		<GROUP_ITEM id="8000" label="menu.ServerManager"
+		<GROUP_ITEM id="8000" label="menu.group.ServerManager"
 			toBeLicensed="" iconCls="fa fa-2x fa-cogs">
 			
-			<ITEM id="8014" label="menu.importExport"
-				requiredFunctionality="ImportExport"
-				to="/import-export" />
+
 			<ITEM id="8001" label="menu.TenantMan"
 				requiredFunctionality="TenantManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=multitenantManagementAngular" />
 			<ITEM id="8002" label="menu.TemplateManagement"
 				requiredFunctionality="TemplateManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=templateManagement" />
-			<ITEM id="8003" label="menu.ImpExpDocument"
-				requiredFunctionality="ImpExpDocument"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportDocuments" />
-			<ITEM id="8004" label="menu.ImpExpMenu"
-				requiredFunctionality="ImpExpMenu"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportMenu" />
-			<ITEM id="8005" label="menu.ImpExpUsers"
-				requiredFunctionality="ImpExpUsers"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportUsers" />
-			<ITEM id="8006" label="menu.ImpExpKpis"
-				requiredFunctionality="ImpExpKpis"
-				toBeLicensed="KnowagePA"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportKpis" />
-			<ITEM id="8007" label="menu.ImpExpCatalog"
-				requiredFunctionality="ImpExpCatalog"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportCatalog" />
-			<ITEM id="8008" label="menu.ImpExpAnalyticalDrivers"
-				requiredFunctionality="ImpExpAnalyticalDrivers"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportAnalyticalDrivers" />
-			<ITEM id="8009" label="menu.ImpExpGlossary"
-				requiredFunctionality="ImpExpGlossary"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportGlossaryTemplate" />
-			<ITEM id="8010" label="menu.ImpExpAlerts"
-				requiredFunctionality="ImpExpAlerts"
-				toBeLicensed="KnowagePA"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportAlerts" />
+				to="/template-pruning" />
+			
 			<ITEM id="8011" label="menu.InstallConf"
 				requiredFunctionality="InstallConfig"
 				to="${SPAGOBI_CONTEXT}/restful-services/2.0/installconfig" />
@@ -215,9 +188,44 @@
 			iconCls="fa fa-flag">
 			<ITEM id="9001" label="menu.manageI18n"
 				requiredFunctionality="ManageInternationalization"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=internationalization"
+				to="/internationalization-management"
 				iconCls="fa fa-2x fa-flag" />
 		</GROUP_ITEM>
+		
+		<GROUP_ITEM id="10000" label="menu.group.ImportExport"
+			toBeLicensed="" iconCls="fas fa-exchange-alt">
+			<ITEM id="10001" label="menu.importExport"
+				requiredFunctionality="ImportExport"
+				to="/import-export" />
+			<ITEM id="10002" label="menu.ImpExpDocument"
+				requiredFunctionality="ImpExpDocument"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportDocuments" />
+			<ITEM id="10003" label="menu.ImpExpMenu"
+				requiredFunctionality="ImpExpMenu"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportMenu" />
+			<ITEM id="10004" label="menu.ImpExpUsers"
+				requiredFunctionality="ImpExpUsers"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportUsers" />
+			<ITEM id="10005" label="menu.ImpExpKpis"
+				requiredFunctionality="ImpExpKpis"
+				toBeLicensed="KnowagePA"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportKpis" />
+			<ITEM id="10006" label="menu.ImpExpCatalog"
+				requiredFunctionality="ImpExpCatalog"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportCatalog" />
+			<ITEM id="10007" label="menu.ImpExpAnalyticalDrivers"
+				requiredFunctionality="ImpExpAnalyticalDrivers"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportAnalyticalDrivers" />
+			<ITEM id="10008" label="menu.ImpExpGlossary"
+				requiredFunctionality="ImpExpGlossary"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportGlossaryTemplate" />
+			<ITEM id="10009" label="menu.ImpExpAlerts"
+				requiredFunctionality="ImpExpAlerts"
+				toBeLicensed="KnowagePA"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportAlerts" />
+		</GROUP_ITEM>
+		
+		
 	</TECHNICAL_USER_FUNCTIONALITIES>
 
 	<COMMON_USER_FUNCTIONALITIES>

@@ -131,11 +131,11 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		allowedMenuToNotDuplicate.put("menu.calendar", 4010);
 		allowedMenuToNotDuplicate.put("menu.lovs.management", 3002);
 		allowedMenuToNotDuplicate.put("menu.template.management", 8002);
-		allowedMenuToNotDuplicate.put("menu.importexport.document", 8003);
+		allowedMenuToNotDuplicate.put("menu.importexport.document", 10002);
 		allowedMenuToNotDuplicate.put("menu.importexport.resources", null);
-		allowedMenuToNotDuplicate.put("menu.importexport.users", 8005);
-		allowedMenuToNotDuplicate.put("menu.importexport.glossary", 8009);
-		allowedMenuToNotDuplicate.put("menu.importexport.catalog", 8007);
+		allowedMenuToNotDuplicate.put("menu.importexport.users", 10004);
+		allowedMenuToNotDuplicate.put("menu.importexport.glossary", 10008);
+		allowedMenuToNotDuplicate.put("menu.importexport.catalog", 10006);
 		allowedMenuToNotDuplicate.put("menu.i18n", 9001);
 
 		technicalMenuCommunityOrEnterprise.put("5008", "5009");
@@ -493,7 +493,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				try {
 					Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
 
-					isLicensed = DocumentUtilities.getValidLicenses().size() > 0;
+					isLicensed = !DocumentUtilities.getValidLicenses().isEmpty();
 				} catch (ClassNotFoundException e) {
 					isLicensed = false;
 				}
@@ -663,8 +663,9 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 				try {
 					switch (titleCode) {
-					case "menu.ServerManager":
+					case "menu.group.ServerManager":
 					case "menu.CacheManagement":
+					case "menu.group.ImportExport":
 						Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
 						break;
 					}
