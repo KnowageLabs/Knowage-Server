@@ -55,6 +55,7 @@ import { mapState } from 'vuex'
 import auth from '@/helpers/commons/authHelper'
 import axios from 'axios'
 import DownloadsDialog from '@/modules/mainMenu/dialogs/DownloadsDialog/DownloadsDialog.vue'
+import { IMenuItem } from '@/modules/mainMenu/MainMenu'
 
 export default defineComponent({
     name: 'Knmenu',
@@ -71,10 +72,10 @@ export default defineComponent({
     data() {
         return {
             showProfileMenu: false,
-            dynamicUserFunctionalities: new Array<MenuItem>(),
-            allowedUserFunctionalities: new Array<MenuItem>(),
-            commonUserFunctionalities: new Array<MenuItem>(),
-            technicalUserFunctionalities: new Array<MenuItem>(),
+            dynamicUserFunctionalities: new Array<IMenuItem>(),
+            allowedUserFunctionalities: new Array<IMenuItem>(),
+            commonUserFunctionalities: new Array<IMenuItem>(),
+            technicalUserFunctionalities: new Array<IMenuItem>(),
             display: false,
             languageDisplay: false,
             roleDisplay: false,
@@ -193,17 +194,6 @@ export default defineComponent({
         }
     }
 })
-
-interface MenuItem {
-    label: string
-    url?: string
-    to?: string
-    iconCls?: string
-    items?: Array<MenuItem> | Array<Array<MenuItem>>
-    conditionedView?: string
-    badge?: number
-    command?: string
-}
 </script>
 
 <style lang="scss" scoped>

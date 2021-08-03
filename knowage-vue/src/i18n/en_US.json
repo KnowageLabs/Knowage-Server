@@ -38,6 +38,7 @@
         "import": "import",
         "info": {
             "dataLoading": "Loading data. Please wait.",
+            "emptySearch": "The search returns no data",
             "noDataFound": "No data found",
             "noElementSelected": "No element selected"
         },
