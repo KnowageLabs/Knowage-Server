@@ -455,6 +455,9 @@
             "valueDescription": "Value description",
             "valueName": "Value name"
         },
+        "driversManagement": {
+            "title": "Drivers management"
+        },
         "functionalitiesManagement": {
             "creation": "Creation",
             "development": "Development",
