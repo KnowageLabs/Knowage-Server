@@ -1,11 +1,11 @@
-export interface iFolderTemplate {
+export interface IFolderTemplate {
 	key: String
 	label: String
 	icon?: String
 	level: Number
 	modelFolder: boolean
 	relativePath: String
-	children?: Array<iFolderTemplate>
+	children?: Array<IFolderTemplate>
 }
 
 export interface IFileTemplate {
