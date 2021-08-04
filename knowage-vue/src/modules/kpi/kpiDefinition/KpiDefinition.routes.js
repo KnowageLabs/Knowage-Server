@@ -1,6 +1,6 @@
 let routes = [
     {
-        path: '/kpidef',
+        path: '/kpi-definition',
         name: 'kpi-definition',
         component: () => import('@/modules/kpi/kpiDefinition/KpiDefinition.vue'),
         children: [

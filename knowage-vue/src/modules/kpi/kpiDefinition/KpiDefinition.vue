@@ -85,12 +85,12 @@ export default defineComponent({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })
-                this.$router.push('/kpidef')
+                this.$router.push('/kpi-definition')
                 this.getKpiList()
             })
         },
         showForm(event: any) {
-            const path = event.value ? `/kpidef/${event.value.id}/${event.value.version}` : '/kpidef/new-kpi'
+            const path = event.value ? `/kpi-definition/${event.value.id}/${event.value.version}` : '/kpi-definition/new-kpi'
             this.hintVisible = false
             if (!this.touched) {
                 this.$router.push(path)
@@ -124,14 +124,14 @@ export default defineComponent({
             let kpiToLoad = this.kpiList.find((kpi) => {
                 if (kpi.name === event) return true
             })
-            const path = `/kpidef/${kpiToLoad.id}/${kpiToLoad.version}`
+            const path = `/kpi-definition/${kpiToLoad.id}/${kpiToLoad.version}`
             this.$router.push(path)
 
             this.touched = false
             this.hintVisible = false
         },
         emitCopyKpi(kpiId, kpiVersion) {
-            this.$router.push('/kpidef/new-kpi')
+            this.$router.push('/kpi-definition/new-kpi')
             this.hintVisible = false
             setTimeout(() => {
                 this.cloneKpiId = kpiId

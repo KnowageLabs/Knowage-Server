@@ -253,7 +253,7 @@ export default defineComponent({
             }
         },
         closeTemplate() {
-            this.$router.push('/kpidef')
+            this.$router.push('/kpi-definition')
             this.$emit('closed')
         },
 

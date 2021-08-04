@@ -126,7 +126,7 @@
 			iconCls="traffic">
 			<ITEM id="6001" label="menu.kpi.kpiDefinition"
 				requiredFunctionality="KpiManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=kpiDefinition" />
+				to="/kpi-definition" />
 			<ITEM id="6002" label="menu.kpi.measureRuleDefinition"
 				requiredFunctionality="KpiManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=measureRuleDefinition" />

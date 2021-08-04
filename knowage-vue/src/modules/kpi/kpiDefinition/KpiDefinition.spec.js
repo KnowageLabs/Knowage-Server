@@ -112,13 +112,13 @@ describe('KPI Definition List', () => {
 
         await openButton.trigger('click')
 
-        expect($router.push).toHaveBeenCalledWith('/kpidef/new-kpi')
+        expect($router.push).toHaveBeenCalledWith('/kpi-definition/new-kpi')
     })
     it('changes url with clicked row id and version when a row is clicked', async () => {
         const wrapper = factory()
         await flushPromises()
         await wrapper.find('[data-test="list-item"]').trigger('click')
 
-        expect($router.push).toHaveBeenCalledWith('/kpidef/' + 1 + '/' + 1)
+        expect($router.push).toHaveBeenCalledWith('/kpi-definition/' + 1 + '/' + 1)
     })
 })
