@@ -1,0 +1,30 @@
+{
+    "validations": {
+        "constraint": [
+            {
+                "fieldName": "label",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "valueTypeId",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            }
+        ]
+    }
+}
