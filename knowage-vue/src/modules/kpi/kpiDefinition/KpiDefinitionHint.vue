@@ -1,5 +1,5 @@
 <template>
-    <KnHint :title="'kpi.kpiDefinition.hintTitle'" :hint="'kpi.kpiDefinition.hint'"></KnHint>
+    <KnHint :title="'kpi.kpiDefinition.title'" :hint="'kpi.kpiDefinition.hint'"></KnHint>
 </template>
 
 <script lang="ts">
