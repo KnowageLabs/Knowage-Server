@@ -189,6 +189,40 @@
         "sourceCode": "Source code available on "
     },
     "kpi": {
+        "kpiDefinition": {
+            "addKpiAssociations": "Add KPI associations",
+            "addNewThreshold": "Add new threshold item",
+            "aliasToolbarTitle": "Alias",
+            "cardinalityTtitle": "Cardinality",
+            "clone": "Clone",
+            "color": "Color",
+            "confirmOverride": "Are you sure to override it?",
+            "copyOf": "Copy of ",
+            "enableVersioning": "Enable Versioning ",
+            "errorformula": {
+                "generic": "Error Formula. Measures Missing..",
+                "malformed": "Error Formula. Malformed Formula at line: ",
+                "missingbracket": "Error Formula. Missing Bracket",
+                "missingfunctions": "Error Formula. Associated function to all measures",
+                "missingmeasure": "Insert at least one measure",
+                "missingoperator": "Error Formula. Operator missing at line: "
+            },
+            "formulaDialogHeader": "Select type Function for",
+            "formulaTitle": "Formula",
+            "hint": "Change the hint to your liking",
+            "hintTitle": "Kpi Definition",
+            "max": "Max",
+            "maxInclude": "Include Max",
+            "min": "Min",
+            "minInclude": "Include Min",
+            "reusedTitle": "Threshold used by other kpi",
+            "severity": "Severity",
+            "thresholdAlreadyPresent": "Threshold is already defined",
+            "thresholdReused": "Warning: this threshold is used elsewhere. Any change will affect other KPIs. Please consider creating a clone",
+            "thresholdsListTitle": "Thresholds List",
+            "tresholdTitle": "Treshold",
+            "useIt": "Use It"
+        },
         "measureDefinition": {
             "alias": "Alias",
             "aliasMissing": "The alias doesn't exist and will be added",
