@@ -12,7 +12,6 @@
             </Toolbar>
         </template>
         <div class="p-fluid p-formgrid p-grid">
-            {{ actionList }}
             <span class="p-field p-col-6 p-mt-4 p-float-label">
                 <Dropdown id="type" class="kn-material-input" v-model="action.idAction" dataKey="id" optionLabel="name" optionValue="id" :options="actionList" @change="setType" />
                 <label for="type" class="kn-material-input-label"> {{ $t('kpi.alert.type') }} * </label>

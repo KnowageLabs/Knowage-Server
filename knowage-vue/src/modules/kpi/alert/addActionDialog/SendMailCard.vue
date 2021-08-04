@@ -1,6 +1,7 @@
 <template>
+    {{ this.action }}
     <span class="p-float-label p-m-4">
-        <AutoComplete id="mailTo" class="p-inputtext-sm" :multiple="true" v-model="selectedUsers" :suggestions="filteredUsers" field="name" @keydown.enter="createMailChip" @blur="createMailChip" @complete="searchUsers($event)" @item-select="setUser($event.value)" />
+        <AutoComplete id="mailTo" class="p-inputtext-sm" :multiple="true" v-model="selectedUsers" :suggestions="filteredUsers" field="name" @keydown.enter="createMailChip" @complete="searchUsers($event)" @item-select="setUser($event.value)" />
         <label for="mailTo" class="kn-material-input-label"> {{ $t('kpi.alert.mailTo') }}</label>
     </span>
     <span class="p-float-label p-m-4">
@@ -43,6 +44,7 @@ export default defineComponent({
         users() {
             this.loadUsers()
         }
+        // mailTo: [{ name: 'demo_admin', userId: '', email: 'demo_admin' }],
     },
     created() {
         this.loadAction()
@@ -72,6 +74,7 @@ export default defineComponent({
                 this.selectedUsers.push({ name: event.target.value, userId: '', email: event.target.value })
                 this.userList.push({ name: event.target.value, userId: '', email: event.target.value })
                 event.target.value = ''
+                this.selectedAction.jsonActionParameters.mailTo = this.selectedUsers
             }
         }
     }
