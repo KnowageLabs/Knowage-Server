@@ -12,8 +12,9 @@
             </Toolbar>
         </template>
         <div class="p-fluid p-formgrid p-grid">
+            {{ actionList }}
             <span class="p-field p-col-6 p-mt-4 p-float-label">
-                <Dropdown id="type" class="kn-material-input" v-model="action.idAction" dataKey="id" optionLabel="name" optionValue="id" :options="addActionDialogDescriptor.actionType" @change="setType" />
+                <Dropdown id="type" class="kn-material-input" v-model="action.idAction" dataKey="id" optionLabel="name" optionValue="id" :options="actionList" @change="setType" />
                 <label for="type" class="kn-material-input-label"> {{ $t('kpi.alert.type') }} * </label>
             </span>
             <span class="p-field p-col-6 p-mt-4 p-float-label">
@@ -38,7 +39,7 @@
             <template #content>
                 <ExectuteEtlCard v-if="action && action.idAction == 63" :loading="loading" :files="etlDocumentList" :data="action" />
                 <ContextBrokerCard v-if="action && action.idAction == 86" :data="action" />
-                <SendMailCard v-else-if="action && action.idAction == 62" :action="selectedAction" :users="formatedUsers" />
+                <SendMailCard v-else-if="action && action.idAction == 62" :action="action" :users="formatedUsers" />
             </template>
         </Card>
     </Dialog>
@@ -54,7 +55,6 @@ import addActionDialogDescriptor from './AddActionDialogDescriptor.json'
 import ExectuteEtlCard from './ExectuteEtlCard.vue'
 import ContextBrokerCard from './ContextBrokerCard.vue'
 import SendMailCard from './SendMailCard.vue'
-import mockedUsers from './MockedUsers.json'
 import useValidate from '@vuelidate/core'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import alertValidationDescriptor from '../AlertValidationDescriptor.json'
@@ -62,7 +62,7 @@ import alertValidationDescriptor from '../AlertValidationDescriptor.json'
 export default defineComponent({
     name: 'add-action-dialog',
     components: { Dialog, Dropdown, MultiSelect, ExectuteEtlCard, ContextBrokerCard, SendMailCard },
-    props: { dialogVisible: { type: Boolean, default: false }, kpi: { type: Object }, selectedAction: { type: Object as PropType<iAction>, required: true } },
+    props: { actionList: [] as any, dialogVisible: { type: Boolean, default: false }, kpi: { type: Object }, selectedAction: { type: Object as PropType<iAction>, required: true } },
     emits: ['save'],
     data() {
         return {
@@ -75,7 +75,6 @@ export default defineComponent({
             etlDocumentList: [] as any[],
             usersList: [] as any[],
             formatedUsers: [] as any[],
-            mockedUsers: mockedUsers,
             loading: false
         }
     },
@@ -139,11 +138,11 @@ export default defineComponent({
         },
         // PROMENITI MOKOVANE USERE U OVE IZ APIJA KADA SE PUSHUJE
         formatUsers() {
-            for (let i = 0; i < this.mockedUsers.length; i++) {
-                const attributes = this.mockedUsers[i].sbiUserAttributeses
+            for (let i = 0; i < this.usersList.length; i++) {
+                const attributes = this.usersList[i].sbiUserAttributeses
                 for (let key in attributes) {
                     if (attributes[key]['email']) {
-                        this.formatedUsers.push({ name: this.mockedUsers[i].fullName, userId: this.mockedUsers[i].userId, email: attributes[key].email })
+                        this.formatedUsers.push({ name: this.usersList[i].fullName, userId: this.usersList[i].userId, email: attributes[key].email })
                     }
                 }
             }
@@ -173,8 +172,8 @@ export default defineComponent({
     margin-right: 0.5rem;
 }
 .color-box {
-    height: 20px;
-    width: 20px;
+    height: 15px;
+    width: 15px;
     margin-right: 5px;
 }
 </style>

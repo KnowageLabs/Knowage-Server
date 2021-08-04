@@ -1,18 +1,4 @@
 {
-    "actionType": [
-        {
-            "id": 62,
-            "name": "Send mail"
-        },
-        {
-            "id": 63,
-            "name": "Execute ETL Document"
-        },
-        {
-            "id": 86,
-            "name": "Notify To Context Broker"
-        }
-    ],
     "columnsDocument": [
         {
             "field": "DOCUMENT_LABEL",

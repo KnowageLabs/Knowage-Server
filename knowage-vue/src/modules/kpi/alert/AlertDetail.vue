@@ -2,7 +2,6 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
         <template #left>{{ selectedAlert.name }} </template>
         <template #right>
-            <Button icon="pi pi-minus" class="p-button-text p-button-rounded p-button-plain" @click="logAlert" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
@@ -16,7 +15,7 @@
         <EventsCard :selectedAlert="selectedAlert" @valueChanged="updateAlert" />
         <KpiCard v-if="isListenerSelected && actionList?.length > 0" :selectedAlert="selectedAlert" :kpiList="kpiList" :actionList="actionList" @showDialog="onShowActionDialog($event)" @kpiLoaded="updateKpi" @touched="touched = true" />
     </div>
-    <AddActionDialog :dialogVisible="isActionDialogVisible" :kpi="kpi" :selectedAction="selectedAction" @close="isActionDialogVisible = false" @save="onActionSave" />
+    <AddActionDialog :dialogVisible="isActionDialogVisible" :kpi="kpi" :selectedAction="selectedAction" :actionList="actionList" @close="isActionDialogVisible = false" @save="onActionSave" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -119,7 +118,6 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/' + this.id + '/load')
                 .then((response) => {
                     this.selectedAlert = { ...response.data }
-                    console.log('RESPONSE ALERT', response.data)
                     this.selectedAlert.jsonOptions = JSON.parse(this.selectedAlert.jsonOptions ? this.selectedAlert.jsonOptions : '')
                     if (this.selectedAlert.frequency) {
                         this.selectedAlert.frequency.cron = JSON.parse(this.selectedAlert.frequency.cron ? this.selectedAlert.frequency.cron : '')
@@ -161,7 +159,7 @@ export default defineComponent({
             }
         },
         async handleSubmit() {
-            let alertToSave = { ...this.selectedAlert }
+            let alertToSave = JSON.parse(JSON.stringify(this.selectedAlert))
             if (alertToSave.jsonOptions) {
                 alertToSave.jsonOptions.actions = alertToSave.jsonOptions.actions.map((action: any) => {
                     return {
@@ -179,6 +177,7 @@ export default defineComponent({
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/save', alertToSave)
                 .then((response) => {
+                    this.touched = false
                     this.$store.commit('setInfo', {
                         title: this.$t(this.alertDescriptor.operation[operation].toastTitle),
                         msg: this.$t(this.alertDescriptor.operation.success)
@@ -245,12 +244,9 @@ export default defineComponent({
             }
         },
         onShowActionDialog(payload) {
-            this.selectedAction = payload && payload.action ? { ...payload.action, idAction: +payload.action.idAction } : {}
+            this.selectedAction = payload && payload.action ? { ...payload.action, idAction: +payload.action.idAction } : { jsonActionParameters: {} }
             this.actionIndexToEdit = payload ? payload.index : -1
             this.isActionDialogVisible = true
-        },
-        logAlert() {
-            console.log(this.selectedAlert)
         }
     }
 })

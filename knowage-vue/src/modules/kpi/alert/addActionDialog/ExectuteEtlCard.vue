@@ -1,6 +1,6 @@
 <template>
     <DataTable
-        v-model:selection="selectedFile"
+        v-model:selection="selectedFiles"
         :value="files"
         :loading="loading"
         class="p-datatable-sm kn-table"
@@ -56,7 +56,7 @@ export default defineComponent({
             type: Boolean
         },
         files: {
-            type: Array
+            type: Array as any
         },
         data: {
             type: Object
@@ -68,7 +68,7 @@ export default defineComponent({
     data() {
         return {
             addActionDialogDescriptor,
-            selectedFile: [],
+            selectedFiles: [] as any,
             myData: {} as any,
             filters: {
                 global: [filterDefault],
@@ -86,9 +86,10 @@ export default defineComponent({
     methods: {
         loadData() {
             this.myData = this.data as any
+            this.selectedFiles = this.myData?.jsonActionParameters?.listDocIdSelected ? [...this.myData.jsonActionParameters.listDocIdSelected] : []
         },
         fileSelected() {
-            this.myData.jsonActionParameters.listDocIdSelected = this.selectedFile.map((doc: any) => {
+            this.myData.jsonActionParameters.listDocIdSelected = this.selectedFiles.map((doc: any) => {
                 return { DOCUMENT_ID: doc.DOCUMENT_ID }
             })
         }
