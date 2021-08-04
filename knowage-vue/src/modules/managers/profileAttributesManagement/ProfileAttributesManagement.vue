@@ -76,7 +76,7 @@ export default defineComponent({
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
                         this.dirty = false
-                        if ( attribute) this.prepareFormData(attribute)
+                        if (attribute) this.prepareFormData(attribute)
                         else this.hideForm = true
                     }
                 })
@@ -85,11 +85,11 @@ export default defineComponent({
                 else this.hideForm = true
             }
         },
-        prepareFormData(attribute: iAttribute) {            
+        prepareFormData(attribute: iAttribute) {
             if (this.hideForm) {
                 this.hideForm = false
             }
-             this.attribute = { ...attribute }
+            this.attribute = { ...attribute }
         },
         onAttributeDelete(id: number) {
             this.deleteAttribute(id)
@@ -120,12 +120,25 @@ export default defineComponent({
                     this.loading = true
                     this.axios
                         .delete(this.apiUrl + 'attributes/' + id)
-                        .then(() => {
-                            this.$store.commit('setInfo', {
+                        .then((response) => {
+                            if (response.data.errors) {
+                                this.$store.commit('setError', {
+                                    title: this.$t('managers.profileAttributesManagement.info.deleteTitle'),
+                                    msg: this.$t('managers.profileAttributesManagement.error.profileAttributeDeletion')
+                                })
+                            } else {
+                                this.$store.commit('setInfo', {
+                                    title: this.$t('managers.profileAttributesManagement.info.deleteTitle'),
+                                    msg: this.$t('managers.profileAttributesManagement.info.deleteMessage')
+                                })
+                                this.loadAllAttributes()
+                            }
+                        })
+                        .catch(() => {
+                            this.$store.commit('setError', {
                                 title: this.$t('managers.profileAttributesManagement.info.deleteTitle'),
-                                msg: this.$t('managers.profileAttributesManagement.info.deleteMessage')
+                                msg: this.$t('managers.profileAttributesManagement.error.profileAttributeDeletion')
                             })
-                            this.loadAllAttributes()
                         })
                         .finally(() => {
                             this.loading = false

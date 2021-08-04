@@ -542,6 +542,8 @@ function mapWidgetEditControllerFunction(
 			$scope.newModel.content.layers[0].targetDefault = true;
 		}
 
+		if(!$scope.newModel.style.legend) $scope.newModel.style.legend = {};
+
 		$scope.addToDatasets();
 		mdPanelRef.close();
 		angular.copy($scope.newModel,model);
