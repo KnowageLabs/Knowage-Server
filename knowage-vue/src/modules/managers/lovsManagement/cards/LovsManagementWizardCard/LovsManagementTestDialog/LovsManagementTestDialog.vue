@@ -1,0 +1,102 @@
+<template>
+    <Dialog :contentStyle="lovsManagementTestDialogDescriptor.dialog.style" :header="$t('managers.lovsManagement.test')" :visible="true" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
+        <div class="p-fluid p-m-4">
+            <div>
+                <span>
+                    <label for="treeType" class="kn-material-input-label" aria-label="dropdown">{{ $t('managers.lovsManagement.testTreeType') }} * </label>
+                    <Dropdown id="treeType" class="kn-material-input" v-model="treeListTypeModel.LOVTYPE" :options="lovsManagementTestDialogDescriptor.treeTypes" optionLabel="name" optionValue="value" />
+                </span>
+            </div>
+        </div>
+        <LovsManagementSimpleDatatable v-if="treeListTypeModel.LOVTYPE === 'simple'" :tableData="model" :treeListTypeModel="treeListTypeModel"></LovsManagementSimpleDatatable>
+        <LovsManagementTree v-else :listData="model" :treeModel="treeModel"></LovsManagementTree>
+        <template #footer>
+            <Button class="kn-button kn-button--primary" @click="$emit('close')"> {{ $t('common.close') }}</Button>
+            <Button class="kn-button kn-button--primary" @click="$emit('save', {treeListTypeModel: this.treeListTypeModel, model: this.model, treeModel: this.treeModel})"> {{ $t('common.save') }}</Button>
+        </template>
+    </Dialog>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { iLov } from '../../../LovsManagement'
+import Dialog from 'primevue/dialog'
+import Dropdown from 'primevue/dropdown'
+import lovsManagementTestDialogDescriptor from './LovsManagementTestDialogDescriptor.json'
+import LovsManagementSimpleDatatable from './LovsManagementSimpleDatatable/LovsManagementSimpleDatatable.vue'
+import LovsManagementTree from './LovsManagementTree/LovsManagementTree.vue'
+
+export default defineComponent({
+    name: 'lovs-management-test-dialog',
+    components: { Dialog, Dropdown, LovsManagementSimpleDatatable, LovsManagementTree },
+    emits: ['close', 'pageChanged', 'save'],
+    props: {
+        testModel: {
+            type: Object
+        },
+        testLovModel: {
+            type: Object
+        },
+        selectedLov: {
+            type: Object
+        },
+        testLovTreeModel: {
+            type: Object
+        }
+    },
+    data() {
+        return {
+            lovsManagementTestDialogDescriptor,
+            lov: {} as iLov,
+            treeListTypeModel: {} as any,
+            model: {} as any,
+            treeModel: {} as any
+        }
+    },
+    watch: {
+        selectedLov() {
+            this.loadLov()
+        },
+        testModel() {
+            this.loadTypeModel()
+        },
+        testLovModel() {
+            this.loadModel()
+        },
+        testLovTreeModel() {
+            this.loadTreeModel()
+        }
+    },
+    created() {
+        this.loadLov()
+        this.loadTypeModel()
+        this.loadModel()
+        this.loadTreeModel()
+    },
+    methods: {
+        loadLov() {
+            this.lov = this.selectedLov as iLov
+            console.log('LOV IN TEST', this.lov)
+        },
+        loadTypeModel() {
+            this.treeListTypeModel = {...this.testModel} as any
+        },
+        loadModel() {
+            this.model = {...this.testLovModel} as any
+            // console.log('MODEL IN TEST DIALOG', this.model)
+        },
+        loadTreeModel() {
+            this.treeModel = {...this.testLovTreeModel} as any
+        }
+    }
+})
+</script>
+
+<style lang="scss">
+.full-screen-dialog.p-dialog {
+    max-height: 100%;
+}
+.full-screen-dialog.p-dialog .p-dialog-content {
+    padding: 0;
+}
+</style>
