@@ -2,6 +2,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
         <template #left>{{ selectedAlert.name }} </template>
         <template #right>
+            <Button icon="pi pi-minus" class="p-button-text p-button-rounded p-button-plain" @click="logAlert" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
@@ -118,6 +119,7 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/' + this.id + '/load')
                 .then((response) => {
                     this.selectedAlert = { ...response.data }
+                    console.log('RESPONSE ALERT', response.data)
                     this.selectedAlert.jsonOptions = JSON.parse(this.selectedAlert.jsonOptions ? this.selectedAlert.jsonOptions : '')
                     if (this.selectedAlert.frequency) {
                         this.selectedAlert.frequency.cron = JSON.parse(this.selectedAlert.frequency.cron ? this.selectedAlert.frequency.cron : '')
@@ -159,8 +161,9 @@ export default defineComponent({
             }
         },
         async handleSubmit() {
-            if (this.selectedAlert.jsonOptions) {
-                this.selectedAlert.jsonOptions.actions = this.selectedAlert.jsonOptions.actions.map((action: any) => {
+            let alertToSave = { ...this.selectedAlert }
+            if (alertToSave.jsonOptions) {
+                alertToSave.jsonOptions.actions = alertToSave.jsonOptions.actions.map((action: any) => {
                     return {
                         jsonActionParameters: JSON.stringify(action.jsonActionParameters),
                         idAction: action.idAction,
@@ -168,24 +171,26 @@ export default defineComponent({
                     }
                 })
             }
-            this.selectedAlert.jsonOptions = JSON.stringify(this.selectedAlert.jsonOptions)
+            alertToSave.jsonOptions = JSON.stringify(alertToSave.jsonOptions)
+            if (alertToSave.frequency) alertToSave.frequency.cron = JSON.stringify(alertToSave.frequency.cron)
 
-            let operation = this.selectedAlert.id ? 'update' : 'insert'
+            let operation = alertToSave.id ? 'update' : 'insert'
 
-            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/save', this.selectedAlert).then((response) => {
-                if (response.data.errors != undefined && response.data.errors.length > 0) {
-                    this.$store.commit('setError', {
-                        title: this.$t('kpi.alert.savingError'),
-                        msg: response.data.errors[0].message
-                    })
-                } else {
+            await axios
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/save', alertToSave)
+                .then((response) => {
                     this.$store.commit('setInfo', {
                         title: this.$t(this.alertDescriptor.operation[operation].toastTitle),
                         msg: this.$t(this.alertDescriptor.operation.success)
                     })
                     this.$emit('saved', response.data.id)
-                }
-            })
+                })
+                .catch((error) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('kpi.alert.savingError'),
+                        msg: error.message
+                    })
+                })
         },
         async checkId() {
             if (this.id) {
@@ -243,6 +248,9 @@ export default defineComponent({
             this.selectedAction = payload && payload.action ? { ...payload.action, idAction: +payload.action.idAction } : {}
             this.actionIndexToEdit = payload ? payload.index : -1
             this.isActionDialogVisible = true
+        },
+        logAlert() {
+            console.log(this.selectedAlert)
         }
     }
 })

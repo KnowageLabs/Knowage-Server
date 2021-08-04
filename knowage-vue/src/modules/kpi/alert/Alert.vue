@@ -131,7 +131,9 @@ export default defineComponent({
             this.$router.replace('/alert')
         },
         reloadAlert(id) {
-            this.$router.replace(`/alert/${id}`)
+            // this.$router.replace(`/alert/${id}`)
+            console.log(id)
+            this.$router.replace('/alert')
             this.touched = false
             this.loadAllAlerts()
         }
