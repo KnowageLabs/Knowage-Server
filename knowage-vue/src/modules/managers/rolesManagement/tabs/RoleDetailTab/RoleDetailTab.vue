@@ -64,7 +64,7 @@
                             :class="{
                                 'p-invalid': v$.role.description.$invalid && v$.role.description.$dirty
                             }"
-                            maxLength="225"
+                            maxLength="150"
                             @blur="v$.role.description.$touch()"
                             @input="onFieldChange('description', $event.target.value)"
                             data-test="description-input"
