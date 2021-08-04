@@ -1,6 +1,6 @@
 <template>
     <span class="p-float-label p-m-4">
-        <AutoComplete id="mailTo" class="p-inputtext-sm" :multiple="true" v-model="selectedUsers" :suggestions="filteredUsers" field="name" @keydown.enter="test" @complete="searchUsers($event)" @item-select="setUser($event.value)" />
+        <AutoComplete id="mailTo" class="p-inputtext-sm" :multiple="true" v-model="selectedUsers" :suggestions="filteredUsers" field="name" @keydown.enter="createMailChip" @blur="createMailChip" @complete="searchUsers($event)" @item-select="setUser($event.value)" />
         <label for="mailTo" class="kn-material-input-label"> {{ $t('kpi.alert.mailTo') }}</label>
     </span>
     <span class="p-float-label p-m-4">
@@ -51,18 +51,7 @@ export default defineComponent({
     methods: {
         loadAction() {
             this.selectedAction = this.action
-            // MOCKED ACTION
-            this.selectedAction = {
-                idAction: '62',
-                jsonActionParameters: {
-                    body: 'Body',
-                    mailTo: [{ name: 'demo_admin', userId: '', email: 'demo_admin' }],
-                    subject: 'Subject'
-                },
-                thresholdValues: [147]
-            }
-
-            this.selectedUsers = this.selectedAction.jsonActionParameters.mailTo
+            this.selectedUsers = this.selectedAction?.jsonActionParameters?.mailTo ? this.selectedAction.jsonActionParameters.mailTo : []
         },
         loadUsers() {
             this.userList = this.users as any[]
@@ -78,10 +67,12 @@ export default defineComponent({
                 }
             }, 250)
         },
-        test(event: any) {
-            this.selectedUsers.push({ name: event.target.value, userId: '', email: event.target.value })
-            this.userList.push({ name: event.target.value, userId: '', email: event.target.value })
-            event.target.value = ''
+        createMailChip(event: any) {
+            if (event.target.value) {
+                this.selectedUsers.push({ name: event.target.value, userId: '', email: event.target.value })
+                this.userList.push({ name: event.target.value, userId: '', email: event.target.value })
+                event.target.value = ''
+            }
         }
     }
 })
