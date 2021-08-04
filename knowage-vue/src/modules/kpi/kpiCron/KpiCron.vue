@@ -255,10 +255,14 @@ export default defineComponent({
 
             this.startDate = new Date(this.currentFrequency.startDate)
             this.startTime = new Date(this.currentFrequency.startDate)
+            this.startDate.setHours(0)
+            this.startDate.setMinutes(0)
 
             if (this.currentFrequency.endDate) {
                 this.endDate = new Date(this.currentFrequency.endDate)
                 this.endTime = new Date(this.currentFrequency.endDate)
+                this.endDate.setHours(0)
+                this.endDate.setMinutes(0)
             } else {
                 this.endDate = null
                 this.endTime = null
