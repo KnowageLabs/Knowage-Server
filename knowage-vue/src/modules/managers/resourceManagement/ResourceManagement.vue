@@ -45,14 +45,13 @@ import { defineComponent } from 'vue'
 import axios from 'axios'
 import descriptor from './ResourceManagementDescriptor.json'
 import Tree from 'primevue/tree'
-import { iFolderTemplate } from '@/modules/managers/resourceManagement/ResourceManagement'
+	import { IFolderTemplate } from '@/modules/managers/resourceManagement/ResourceManagement'
 import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
 import ResourceManagementMetadataDialog from '@/modules/managers/resourceManagement/ResourceManagementMetadataDialog.vue'
 import ResourceManagementDetail from './ResourceManagementDetail.vue'
 import KnHint from '@/components/UI/KnHint.vue'
 import ResourceManagementCreateFolderDialog from './ResourceManagementCreateFolderDialog.vue'
 
-<<<<<<< Upstream, based on branch 'resource-manager' of https://github.com/KnowageLabs/Knowage-Server.git
 export default defineComponent({
     name: 'resource-management',
     components: { KnHint, ResourceManagementMetadataDialog, ResourceManagementCreateFolderDialog, ResourceManagementDetail, Tree },
@@ -61,7 +60,7 @@ export default defineComponent({
             descriptor,
             displayMetadataDialog: false,
             loading: false,
-            nodes: [] as iFolderTemplate[],
+			nodes: [] as IFolderTemplate[],
             expandedKeys: {},
             selectedKeys: null,
             metadataKey: null,
@@ -69,7 +68,7 @@ export default defineComponent({
             buttonsVisible: [],
             showHint: true,
             touched: false,
-            selectedFolder: {} as iFolderTemplate,
+			selectedFolder: {} as IFolderTemplate,
             folderCreation: false,
             formVisible: false
         }
@@ -80,33 +79,31 @@ export default defineComponent({
     methods: {
         createFolder(folderName: string) {
             if (folderName && this.selectedFolder) {
-                let found = false
-                if (!found) {
-                    let obj = {} as JSON
-                    obj['key'] = '' + this.selectedFolder.key
-                    obj['folderName'] = folderName
-                    axios
-                        .post(process.env.VUE_APP_API_PATH + `2.0/resources/folders`, obj, {
-                            responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
+                let obj = {} as JSON
+                obj['key'] = '' + this.selectedFolder.key
+                obj['folderName'] = folderName
+                axios
+                    .post(process.env.VUE_APP_API_PATH + `2.0/resources/folders`, obj, {
+                        responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
 
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(() => {
+                        this.$emit('folderCreated', true)
+                    })
+                    .catch((error) => {
+                        this.$store.commit('setError', {
+                            title: this.$t('common.error.saving'),
+                            msg: this.$t(error)
                         })
-                        .then(() => {
-                            this.$emit('folderCreated', true)
-                        })
-                        .catch((error) => {
-                            this.$store.commit('setError', {
-                                title: this.$t('common.error.saving'),
-                                msg: this.$t(error)
-                            })
-                        })
-                        .finally(() => {
-                            this.loading = false
-                            this.openCreateFolderDialog()
-                            this.loadPage(this.showHint, this.formVisible)
-                        })
+                    })
+                    .finally(() => {
+                        this.loading = false
+                        this.openCreateFolderDialog()
+                        this.loadPage(this.showHint, this.formVisible)
+                    })
                 }
             }
         },
@@ -213,7 +210,6 @@ export default defineComponent({
 						await axios
 							.post(process.env.VUE_APP_API_PATH + `2.0/resources/folders/update`, obj, {
 								responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
->>>>>>> af92bc0 [KNOWAGE-6026] - Removed FE check for already existing folder name
 
                             headers: {
                                 'Content-Type': 'application/json'
@@ -312,7 +308,7 @@ export default defineComponent({
         setDirty(): void {
             this.dirty = true
         },
-        showForm(functionality: iFolderTemplate) {
+		showForm(functionality: IFolderTemplate) {
             /*             this.functionalityParentId = parentId */
             if (!this.touched) {
                 this.setSelected(functionality)
@@ -328,7 +324,7 @@ export default defineComponent({
                 })
             }
         },
-        setSelected(functionality: iFolderTemplate) {
+		setSelected(functionality: IFolderTemplate) {
             this.selectedFolder = functionality
             this.formVisible = true
             this.showHint = false
@@ -351,7 +347,7 @@ export default defineComponent({
             this.dirty = false
 
             this.touched = false
-            this.selectedFolder = {} as iFolderTemplate
+			this.selectedFolder = {} as IFolderTemplate
         }
     }
 })
