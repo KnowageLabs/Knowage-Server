@@ -240,6 +240,10 @@ export default defineComponent({
                 delete this.currentFrequency.cron.parameter.dayRepetition
                 this.updateCronAdvancedDayRepetition(false)
             }
+        },
+        frequency() {
+            if (!this.frequency) return
+            this.loadFrequency()
         }
     },
     async created() {
@@ -255,6 +259,9 @@ export default defineComponent({
             if (this.currentFrequency.endDate) {
                 this.endDate = new Date(this.currentFrequency.endDate)
                 this.endTime = new Date(this.currentFrequency.endDate)
+            } else {
+                this.endDate = null
+                this.endTime = null
             }
 
             this.currentFrequency.startTime = ''
