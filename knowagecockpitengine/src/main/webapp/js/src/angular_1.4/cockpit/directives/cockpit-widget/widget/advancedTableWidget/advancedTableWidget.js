@@ -751,10 +751,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						break;
 					case '>':
 						fullfilledCondition = data[threshold.column] > valueToCompare;
+						break;
 					case '<':
 						fullfilledCondition = data[threshold.column] < valueToCompare;
+						break;
 					case '!=':
 						fullfilledCondition = data[threshold.column] != valueToCompare;
+						break;
 					}
 					
 					if(fullfilledCondition){
