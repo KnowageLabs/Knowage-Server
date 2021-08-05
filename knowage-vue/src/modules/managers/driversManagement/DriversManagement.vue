@@ -42,7 +42,10 @@
                 </template>
             </Listbox>
         </div>
-        <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0"></div>
+        <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0">
+            <KnHint :title="'managers.driversManagement.title'" :hint="'managers.driversManagement.hint'" v-if="!formVisible"></KnHint>
+            <DriversManagementDetail v-else></DriversManagementDetail>
+        </div>
     </div>
 </template>
 <script lang="ts">
@@ -51,15 +54,17 @@ import axios from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
 import Avatar from 'primevue/avatar'
+import DriversManagementDetail from './DriversManagementDetail.vue'
 import driversManagementDescriptor from './DriversManagementDescriptor.json'
-//import KnHint from '@/components/UI/KnHint.vue'
+import KnHint from '@/components/UI/KnHint.vue'
 export default defineComponent({
     name: 'constraint-management',
     components: {
         FabButton,
-        //KnHint,
+        KnHint,
         Listbox,
-        Avatar
+        Avatar,
+        DriversManagementDetail
     },
     data() {
         return {
