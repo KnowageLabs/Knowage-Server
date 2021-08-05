@@ -81,7 +81,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 #filter-info {
-    margin-top: 2rem;
+    margin: 2rem 0;
     font-size: 0.8rem;
     text-transform: uppercase;
     display: flex;

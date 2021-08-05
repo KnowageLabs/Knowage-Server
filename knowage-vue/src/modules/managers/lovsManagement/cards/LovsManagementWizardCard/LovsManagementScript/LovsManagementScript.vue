@@ -21,7 +21,11 @@
             </span>
             <div v-if="!script.language && dirty" class="p-error p-grid">
                 <small class="p-col-12">
-                    {{ $t('common.validation.required', { fieldName: $t('managers.lovsManagement.language') }) }}
+                    {{
+                        $t('common.validation.required', {
+                            fieldName: $t('managers.lovsManagement.language')
+                        })
+                    }}
                 </small>
             </div>
         </div>

@@ -203,7 +203,6 @@ export default defineComponent({
             } else if (this.selectedLov.itypeCd === lovItemEnum.JAVA_CLASS) {
                 return !this.selectedJavaClass.name
             } else if (this.selectedLov.itypeCd === lovItemEnum.DATASET) {
-                console.log('TEST', this.selectedDataset)
                 return !this.selectedDataset.name
             }
 

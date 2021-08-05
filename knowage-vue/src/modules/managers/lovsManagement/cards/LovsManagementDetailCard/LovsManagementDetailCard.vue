@@ -2,7 +2,7 @@
     <Card class="p-m-2">
         <template #content>
             <form class="p-fluid p-m-5">
-                <div class="p-field p-m-4">
+                <div class="p-field p-m-5">
                     <span class="p-float-label">
                         <InputText
                             id="label"
@@ -28,7 +28,7 @@
                         }"
                     />
                 </div>
-                <div class="p-field p-m-4">
+                <div class="p-field p-m-5">
                     <span class="p-float-label">
                         <InputText
                             id="name"
@@ -54,13 +54,13 @@
                         }"
                     />
                 </div>
-                <div class="p-field p-m-4">
+                <div class="p-field p-m-5">
                     <span class="p-float-label">
                         <InputText id="description" class="kn-material-input" type="text" v-model.trim="lov.description" maxLength="160" @input="$emit('touched')" />
                         <label for="description" class="kn-material-input-label"> {{ $t('managers.lovsManagement.description') }}</label>
                     </span>
                 </div>
-                <div class="p-field p-m-4">
+                <div class="p-field p-m-5">
                     <span>
                         <label for="typeLovDropdown" class="kn-material-input-label">{{ $t('managers.lovsManagement.lovType') }} * </label>
                         <Dropdown

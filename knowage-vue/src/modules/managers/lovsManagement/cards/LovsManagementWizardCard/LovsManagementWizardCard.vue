@@ -91,7 +91,7 @@ export default defineComponent({
             dataForPreview: {} as any,
             tableModelForTest: {} as any,
             testDialogVisible: false,
-            testLovModel: {} as any,
+            testLovModel: [] as any,
             treeListTypeModel: {} as any,
             formatedValues: [],
             formatedDescriptionValues: [],
@@ -116,7 +116,9 @@ export default defineComponent({
         },
         async save() {
             this.sendSave = true
+        
             if (this.testValid) {
+                    console.log('STIGAO')
                 await this.handleSubmit(true)
             } else {
                 await this.checkForDependencies(false)
@@ -314,11 +316,11 @@ export default defineComponent({
             this.lov.lovProviderJSON[prop]['VALUE-COLUMN'] = ''
         },
         buildTestTable() {
-            if (this.lov != null) {
+            if (this.lov) {
                 const propName = this.lov.itypeCd
                 const prop = lovProviderEnum[propName]
 
-                if (this.lov.lovProviderJSON[prop].LOVTYPE == '' || this.lov.lovProviderJSON[prop].LOVTYPE == undefined) {
+                if (!this.lov.lovProviderJSON[prop].LOVTYPE) {
                     this.lov.lovProviderJSON[prop].LOVTYPE = 'simple'
                 }
 
@@ -331,7 +333,9 @@ export default defineComponent({
                 }
             }
 
+            console.log('TRUE FALSE', this.tableModelForTest ? true : false)
             this.testLovModel = this.tableModelForTest
+            console.log('testLovModel table', this.testLovModel )
             this.setFormatedVisibleValues()
         },
         setColumnValues() {
@@ -339,11 +343,12 @@ export default defineComponent({
                 this.formatedVisibleValues = this.treeListTypeModel['VISIBLE-COLUMNS'].split(',')
                 this.formatedInvisibleValues = []
                 if (!this.treeListTypeModel.LOVTYPE || this.treeListTypeModel.LOVTYPE == 'simple') {
-                    this.formatedValues = this.treeListTypeModel['VALUE-COLUMN'].split(',')
-                    this.formatedDescriptionValues = this.treeListTypeModel['DESCRIPTION-COLUMN'].split(',')
+                    this.formatedValues = this.treeListTypeModel['VALUE-COLUMN']?.split(',')
+                    this.formatedDescriptionValues = this.treeListTypeModel['DESCRIPTION-COLUMN']?.split(',')
                 } else {
-                    this.formatedValues = this.treeListTypeModel['VALUE-COLUMNS'].split(',')
-                    this.formatedDescriptionValues = this.treeListTypeModel['DESCRIPTION-COLUMNS'].split(',')
+                    console.log('THIS TREELISTTYPEMODEL',  this.treeListTypeModel['VALUE-COLUMNS'])
+                    this.formatedValues = this.treeListTypeModel['VALUE-COLUMNS']?.length > 0 ? this.treeListTypeModel['VALUE-COLUMNS'].split(',') : []
+                    this.formatedDescriptionValues = this.treeListTypeModel['DESCRIPTION-COLUMNS']?.split(',')
                 }
             } else {
                 this.treeListTypeModel.LOVTYPE = 'simple'
@@ -351,6 +356,7 @@ export default defineComponent({
         },
         setTreeLovModel() {
             this.testLovTreeModel = []
+            console.log('FORMATED VALUES', this.formatedValues)
             for (let i = 0; i < this.formatedValues.length; i++) {
                 this.testLovTreeModel.push({ level: this.formatedValues[i], value: this.formatedValues[i], description: this.formatedDescriptionValues[i] })
             }
@@ -369,6 +375,7 @@ export default defineComponent({
         async handleSubmit(save: boolean) {
             this.formatForSave()
             if (this.testValid && save) {
+                console.log('STIGAO 2')
                 await this.saveLov()
             } 
         },
@@ -431,15 +438,15 @@ export default defineComponent({
             }
         },
         validateLov(tempObj: any) {
-            if (tempObj.LOVTYPE == 'simple' && (tempObj['VALUE-COLUMN'] == '' || tempObj['DESCRIPTION-COLUMN'] == '')) {
-                console.log('ERRROR ONE')
+            console.log('tempObj.LOVTYPE ', tempObj.LOVTYPE)
+            console.log('tempObj["VALUE-COLUMN"] = ', tempObj['VALUE-COLUMNS'])
+            if (tempObj.LOVTYPE == 'simple' && (!tempObj['VALUE-COLUMN'] || !tempObj['DESCRIPTION-COLUMN'])) {
                 this.$store.commit('setError', {
                     title: this.$t('common.toast.errorTitle'),
                     msg: this.$t('managers.lovsManagement.emptyField')
                 })
                 this.testValid = false
-            } else if (tempObj.LOVTYPE == 'tree' && (tempObj['VALUE-COLUMNS'] == '' || tempObj['DESCRIPTION-COLUMNS'] == '')) {
-                console.log('ERRROR TWO')
+            } else if (tempObj.LOVTYPE == 'tree' && (!tempObj['VALUE-COLUMNS'] || !tempObj['DESCRIPTION-COLUMNS'])) {
                 this.$store.commit('setError', {
                     title: this.$t('common.toast.errorTitle'),
                     msg: this.$t('managers.lovsManagement.treeNotDefined')
@@ -448,6 +455,7 @@ export default defineComponent({
             } else {
                 this.testValid = true
             }
+            console.log('TEST VALID', this.testValid)
         },
         async saveLov() {
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/save'
