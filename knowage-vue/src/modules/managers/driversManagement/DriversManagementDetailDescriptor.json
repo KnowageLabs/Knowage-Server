@@ -1,0 +1,4 @@
+{
+    "filterFields": ["name"],
+    "options": ["Functional", "Temporal"]
+}
