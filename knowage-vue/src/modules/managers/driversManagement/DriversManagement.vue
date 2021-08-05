@@ -44,7 +44,7 @@
         </div>
         <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0">
             <KnHint :title="'managers.driversManagement.title'" :hint="'managers.driversManagement.hint'" v-if="!formVisible"></KnHint>
-            <DriversManagementDetail v-else></DriversManagementDetail>
+            <DriversManagementDetail :selectedDriver="selectedDriver" @close="formVisible = false" v-else></DriversManagementDetail>
         </div>
     </div>
 </template>
@@ -72,7 +72,8 @@ export default defineComponent({
             touched: false,
             formVisible: false,
             driversManagementDescriptor,
-            drivers: [] as any[]
+            drivers: [] as any[],
+            selectedDriver: {} as any
         }
     },
     created() {
@@ -86,7 +87,15 @@ export default defineComponent({
                 .then((response) => (this.drivers = response.data))
                 .finally(() => (this.loading = false))
         },
-        showForm() {},
+        showForm(event: any) {
+            this.setSelectedDriver(event)
+        },
+        setSelectedDriver(event: any) {
+            if (event) {
+                this.selectedDriver = event.value
+            }
+            this.formVisible = true
+        },
         deleteDriverConfirm(id: number) {
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
