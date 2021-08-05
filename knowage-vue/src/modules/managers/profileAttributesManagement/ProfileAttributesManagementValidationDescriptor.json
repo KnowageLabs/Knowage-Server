@@ -10,10 +10,10 @@
                     {
                         "key": "maximumCharacters",
                         "validator": {
-                            "type": "maxLength",
                             "params": {
-                                "max": 255
-                            }
+                                "max": 100
+                            },
+                            "type": "maxLength"
                         }
                     },
                     {
@@ -33,10 +33,10 @@
                     {
                         "key": "maximumCharacters",
                         "validator": {
-                            "type": "maxLength",
                             "params": {
-                                "max": 500
-                            }
+                                "max": 250
+                            },
+                            "type": "maxLength"
                         }
                     },
                     {
@@ -49,9 +49,11 @@
             },
             {
                 "fieldName": "value",
-                "validators": [{
-                    "key": "required"
-                }]
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
             },
             {
                 "fieldName": "lov",
@@ -60,7 +62,12 @@
             {
                 "fieldName": "lovId",
                 "validators": [
-                    { "key": "required", "validator": { "type": "custom-required" } }
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "custom-required"
+                        }
+                    }
                 ]
             },
             {
