@@ -4,7 +4,7 @@
             <div>
                 <span>
                     <label for="treeType" class="kn-material-input-label" aria-label="dropdown">{{ $t('managers.lovsManagement.testTreeType') }} * </label>
-                    <Dropdown id="treeType" class="kn-material-input" v-model="treeListTypeModel.LOVTYPE" :options="lovsManagementTestDialogDescriptor.treeTypes" optionLabel="name" optionValue="value" @change="resetValues"/>
+                    <Dropdown id="treeType" class="kn-material-input" v-model="treeListTypeModel.LOVTYPE" :options="lovsManagementTestDialogDescriptor.treeTypes" optionLabel="name" optionValue="value" @change="resetValues" />
                 </span>
             </div>
         </div>
@@ -81,11 +81,10 @@ export default defineComponent({
             this.treeListTypeModel = { ...this.testModel } as any
         },
         loadModel() {
-            console.log('TEST MODEL', this.testLovModel)
             this.model = [...(this.testLovModel as any[])]
         },
         loadTreeModel() {
-            this.treeModel = [ ...this.testLovTreeModel as any[]]
+            this.treeModel = [...(this.testLovTreeModel as any[])]
         },
         resetValues() {
             this.treeModel = []

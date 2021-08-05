@@ -31,7 +31,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iLov } from '../../LovsManagement'
-import {lovProviderEnum} from '../../LovsManagementDetail.vue'
+import { lovProviderEnum } from '../../LovsManagementDetail.vue'
 import X2JS from 'x2js'
 import axios from 'axios'
 import Card from 'primevue/card'
@@ -116,9 +116,8 @@ export default defineComponent({
         },
         async save() {
             this.sendSave = true
-        
+
             if (this.testValid) {
-                    console.log('STIGAO')
                 await this.handleSubmit(true)
             } else {
                 await this.checkForDependencies(false)
@@ -170,10 +169,6 @@ export default defineComponent({
             this.formatForTest()
             let listOfEmptyDependencies = [] as any[]
 
-            if (this.lov.lovProviderJSON.QUERY && this.lov.id) {
-                this.lov.lovProviderJSON.QUERY.STMT = this.lov.lovProviderJSON.QUERY.decoded_STMT
-            }
-
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/checkdependecies', { provider: this.x2js.js2xml(this.lov.lovProviderJSON) })
                 .then((response) => {
@@ -187,7 +182,7 @@ export default defineComponent({
                 })
 
             if (listOfEmptyDependencies.length > 0 && !this.dependenciesReady) {
-                  this.dependenciesList = []
+                this.dependenciesList = []
                 for (let i = 0; i < listOfEmptyDependencies.length; i++) {
                     this.dependenciesList.push({
                         name: listOfEmptyDependencies[i].name,
@@ -198,7 +193,6 @@ export default defineComponent({
             } else {
                 await this.previewLov(this.pagination, false, showPreview)
                 this.buildTestTable()
-                this.testDialogVisible = !showPreview
             }
         },
         async previewLov(value: any, hasDependencies: boolean, showPreview: boolean) {
@@ -224,11 +218,13 @@ export default defineComponent({
                             title: this.$t('common.toast.errorTitle'),
                             msg: this.$t('managers.lovsManagement.syntaxError')
                         })
+                        this.tableModelForTest = []
                     } else {
                         this.dataForPreview = response.data
                         this.tableModelForTest = response.data.metaData.fields
                         this.pagination.size = response.data.results
                         this.previewDialogVisible = showPreview
+                        this.testDialogVisible = !showPreview
                         this.paramsDialogVisible = hasDependencies
                     }
                 })
@@ -333,9 +329,7 @@ export default defineComponent({
                 }
             }
 
-            console.log('TRUE FALSE', this.tableModelForTest ? true : false)
             this.testLovModel = this.tableModelForTest
-            console.log('testLovModel table', this.testLovModel )
             this.setFormatedVisibleValues()
         },
         setColumnValues() {
@@ -346,7 +340,6 @@ export default defineComponent({
                     this.formatedValues = this.treeListTypeModel['VALUE-COLUMN']?.split(',')
                     this.formatedDescriptionValues = this.treeListTypeModel['DESCRIPTION-COLUMN']?.split(',')
                 } else {
-                    console.log('THIS TREELISTTYPEMODEL',  this.treeListTypeModel['VALUE-COLUMNS'])
                     this.formatedValues = this.treeListTypeModel['VALUE-COLUMNS']?.length > 0 ? this.treeListTypeModel['VALUE-COLUMNS'].split(',') : []
                     this.formatedDescriptionValues = this.treeListTypeModel['DESCRIPTION-COLUMNS']?.split(',')
                 }
@@ -356,7 +349,6 @@ export default defineComponent({
         },
         setTreeLovModel() {
             this.testLovTreeModel = []
-            console.log('FORMATED VALUES', this.formatedValues)
             for (let i = 0; i < this.formatedValues.length; i++) {
                 this.testLovTreeModel.push({ level: this.formatedValues[i], value: this.formatedValues[i], description: this.formatedDescriptionValues[i] })
             }
@@ -375,9 +367,8 @@ export default defineComponent({
         async handleSubmit(save: boolean) {
             this.formatForSave()
             if (this.testValid && save) {
-                console.log('STIGAO 2')
                 await this.saveLov()
-            } 
+            }
         },
         formatForSave() {
             let result = {}
@@ -438,8 +429,6 @@ export default defineComponent({
             }
         },
         validateLov(tempObj: any) {
-            console.log('tempObj.LOVTYPE ', tempObj.LOVTYPE)
-            console.log('tempObj["VALUE-COLUMN"] = ', tempObj['VALUE-COLUMNS'])
             if (tempObj.LOVTYPE == 'simple' && (!tempObj['VALUE-COLUMN'] || !tempObj['DESCRIPTION-COLUMN'])) {
                 this.$store.commit('setError', {
                     title: this.$t('common.toast.errorTitle'),
@@ -455,7 +444,6 @@ export default defineComponent({
             } else {
                 this.testValid = true
             }
-            console.log('TEST VALID', this.testValid)
         },
         async saveLov() {
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/save'
@@ -515,11 +503,11 @@ export default defineComponent({
         dependenciesSet() {
             let ready = true
             this.dependenciesList.forEach((el: any) => {
-                 if (!el.value) {
-                    ready =false;
-                 }
+                if (!el.value) {
+                    ready = false
+                }
             })
-            return ready;
+            return ready
         }
     }
 })

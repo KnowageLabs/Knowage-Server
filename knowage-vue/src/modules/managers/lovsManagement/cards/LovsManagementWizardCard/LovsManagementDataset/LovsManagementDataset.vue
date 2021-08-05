@@ -1,12 +1,12 @@
 <template>
     <div class="p-fluid p-formgrid p-grid" v-if="selectedDataset">
         <span class="p-field p-col-6 p-float-label">
-            <InputText id="label" class="kn-material-input" type="text" v-model.trim="selectedDataset.label" disabled />
-            <label for="javaClassName" class="kn-material-input-label"> {{ $t('common.label') }} * </label>
+            <InputText id="datasetLabel" class="kn-material-input" type="text" v-model.trim="selectedDataset.label" disabled />
+            <label for="datasetLabel" class="kn-material-input-label"> {{ $t('common.label') }} * </label>
         </span>
         <span class="p-field p-col-5 p-float-label">
-            <InputText id="name" class="kn-material-input" type="text" v-model.trim="selectedDataset.name" disabled />
-            <label for="javaClassName" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
+            <InputText id="datasetName" class="kn-material-input" type="text" v-model.trim="selectedDataset.name" disabled />
+            <label for="datasetName" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
         </span>
         <span class="p-field">
             <Button icon="pi pi-search-plus" class="p-button-text p-button-rounded p-button-plain" @click="showDatasetsDialog = true" />

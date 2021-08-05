@@ -105,7 +105,6 @@ export default defineComponent({
         },
         loadModel() {
             this.selectedValues = this.treeModel as any[]
-            console.log('SELECTED VALUES', this.treeModel)
         },
         setSelectedValue(value: any) {
             const index = this.selectedValues.findIndex((el: any) => el.level === value.name)
