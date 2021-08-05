@@ -102,8 +102,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	static protected Logger logger = Logger.getLogger(DataSetResource.class);
 
 	/**
-	 * @deprecated Use {@link it.eng.spagobi.api.v3.DataSetResource#getDataSets(String, List)}
-	 * TODO : Delete
+	 * @deprecated Use {@link it.eng.spagobi.api.v3.DataSetResource#getDataSets(String, List)} TODO : Delete
 	 */
 	@GET
 	@Path("/")
@@ -208,8 +207,8 @@ public class DataSetResource extends AbstractDataSetResource {
 	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 * @author Nikola Simovic (nsimovic, nikola.simovic@mht.net)
-	 * @deprecated Use {@link it.eng.spagobi.api.v3.DataSetResource#getDataSetsPaginationOption(String, String, int, int, JSONObject, JSONObject, List)}
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated Use {@link it.eng.spagobi.api.v3.DataSetResource#getDataSetsPaginationOption(String, String, int, int, JSONObject, JSONObject, List)} TODO
+	 *             ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	@GET
@@ -361,6 +360,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataSet(@PathParam("label") String label) {
+
 		return super.getDataSet(label);
 	}
 
@@ -670,8 +670,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	}
 
 	/**
-	 * @deprecated {@link it.eng.spagobi.api.v3.DataSetResource#getEnterpriseDataSet(String)}
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated {@link it.eng.spagobi.api.v3.DataSetResource#getEnterpriseDataSet(String)} TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	@GET
@@ -691,8 +690,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	}
 
 	/**
-	 * @deprecated {@link it.eng.spagobi.api.v3.DataSetResource#getOwnedDataSet(String)}
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated {@link it.eng.spagobi.api.v3.DataSetResource#getOwnedDataSet(String)} TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	@GET
@@ -712,8 +710,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	}
 
 	/**
-	 * @deprecated {@link it.eng.spagobi.api.v3.DataSetResource#getSharedDataSet(String)}
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated {@link it.eng.spagobi.api.v3.DataSetResource#getSharedDataSet(String)} TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	@GET
@@ -733,8 +730,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	}
 
 	/**
-	 * @deprecated {@link it.eng.spagobi.api.v3.DataSetResource#getUncertifiedDataSet(String)}
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated {@link it.eng.spagobi.api.v3.DataSetResource#getUncertifiedDataSet(String)} TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	@GET
@@ -756,8 +752,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	/**
 	 * @param typeDoc
 	 * @return List of Datasets that Final User can see. All DataSet Tab in Workspace.
-	 * @deprecated {@link it.eng.spagobi.api.v3.DataSetResource#getMyDataDataSet(String)}
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated {@link it.eng.spagobi.api.v3.DataSetResource#getMyDataDataSet(String)} TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	@GET
@@ -1191,8 +1186,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	}
 
 	/**
-	 * @deprecated
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	protected List<IDataSet> getListOfGenericDatasets(IDataSetDAO dsDao, Integer start, Integer limit, JSONObject filters, JSONObject ordering,
@@ -1222,8 +1216,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	}
 
 	/**
-	 * @deprecated
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	private String getCommonQuery(JSONObject ordering) throws JSONException {
