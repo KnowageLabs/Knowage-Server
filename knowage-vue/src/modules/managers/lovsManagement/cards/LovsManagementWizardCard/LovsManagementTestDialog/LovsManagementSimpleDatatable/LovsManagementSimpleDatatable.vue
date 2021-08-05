@@ -49,6 +49,7 @@ export default defineComponent({
             required: true
         }
     },
+    emits: ['modelChanged'],
     data() {
         return {
             lovsManagementSimpleDatatableDescriptor,
@@ -90,12 +91,15 @@ export default defineComponent({
         },
         setSelectedValue() {
             this.model['VALUE-COLUMN'] = this.selectedValue
+            this.$emit('modelChanged', this.model)
         },
         setSelectedDescription() {
             this.model['DESCRIPTION-COLUMN'] = this.selectedDescription
+            this.$emit('modelChanged', this.model)
         },
         setSelectedVisible() {
             this.model['VISIBLE-COLUMNS'] = this.selectedVisible.toString()
+            this.$emit('modelChanged', this.model)
         }
     }
 })

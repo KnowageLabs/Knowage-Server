@@ -34,7 +34,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iDatasource, iDomain, iLov, iFixedValue, iProfileAttribute} from './LovsManagement'
+import { iDatasource, iDomain, iLov, iFixedValue, iProfileAttribute } from './LovsManagement'
 import { decode } from 'js-base64'
 import X2JS from 'x2js'
 import axios from 'axios'

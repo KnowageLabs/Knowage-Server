@@ -80,7 +80,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import {lovItemEnum} from '../../../LovsManagementDetail.vue'
+import { lovItemEnum } from '../../../LovsManagementDetail.vue'
 import Dialog from 'primevue/dialog'
 import lovsManagementInfoDialogDescriptor from './LovsManagementInfoDialogDescriptor.json'
 

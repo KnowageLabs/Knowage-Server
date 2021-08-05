@@ -145,21 +145,86 @@ export default defineComponent({
                 case 'SCRIPT':
                     this.toolbarTitle = this.$t('managers.lovsManagement.scriptWizard')
                     this.infoTitle = this.$t('managers.lovsManagement.infoSyntax')
+                    if (!this.lov.lovProviderJSON.SCRIPTLOV) {
+                        this.lov.lovProviderJSON = {
+                            SCRIPTLOV: {
+                                'DESCRIPTION-COLUMN': '',
+                                'INVISIBLE-COLUMNS': '',
+                                LANGUAGE: '',
+                                LOVTYPE: 'simple',
+                                SCRIPT: '',
+                                'TREE-LEVELS-COLUMNS': '',
+                                'VALUE-COLUMN': '',
+                                'VISIBLE-COLUMNS': ''
+                            }
+                        }
+                    }
                     break
                 case 'QUERY':
                     this.toolbarTitle = this.$t('managers.lovsManagement.queryWizard')
                     this.infoTitle = this.$t('managers.lovsManagement.infoSyntax')
+                    if (!this.lov.lovProviderJSON.QUERY) {
+                        this.lov.lovProviderJSON = {
+                            QUERY: {
+                                'DESCRIPTION-COLUMN': '',
+                                'INVISIBLE-COLUMNS': '',
+                                JAVA_CLASS_NAME: 'simple',
+                                LOVTYPE: 'simple',
+                                'TREE-LEVELS-COLUMNS': '',
+                                'VALUE-COLUMN': ''
+                            }
+                        }
+                    }
                     break
                 case 'FIX_LOV':
                     this.toolbarTitle = this.$t('managers.lovsManagement.fixedListWizard')
                     this.infoTitle = this.$t('managers.lovsManagement.infoRules')
+                    if (!this.lov.lovProviderJSON.FIXLISTLOV) {
+                        this.lov.lovProviderJSON = {
+                            FIXLISTLOV: {
+                                'DESCRIPTION-COLUMN': '',
+                                ROWS: {},
+                                'INVISIBLE-COLUMNS': '',
+                                LABEL: '',
+                                LOVTYPE: 'simple',
+                                'VALUE-COLUMN': '',
+                                'VISIBLE-COLUMNS': ''
+                            }
+                        }
+                    }
                     break
                 case 'JAVA_CLASS':
                     this.toolbarTitle = this.$t('managers.lovsManagement.javaClassWizard')
                     this.infoTitle = this.$t('managers.lovsManagement.infoRules')
+                    if (!this.lov.lovProviderJSON.JAVACLASSLOV) {
+                        this.lov.lovProviderJSON = {
+                            JAVACLASSLOV: {
+                                'DESCRIPTION-COLUMN': '',
+                                ROWS: {},
+                                'INVISIBLE-COLUMNS': '',
+                                LABEL: '',
+                                LOVTYPE: 'simple',
+                                'VALUE-COLUMN': '',
+                                'VISIBLE-COLUMNS': ''
+                            }
+                        }
+                    }
                     break
                 case 'DATASET':
                     this.toolbarTitle = this.$t('managers.lovsManagement.datasetWizard')
+                    if (!this.lov.lovProviderJSON.DATASET) {
+                        this.lov.lovProviderJSON = {
+                            DATASET: {
+                                'DESCRIPTION-COLUMN': '',
+                                ID: '',
+                                'INVISIBLE-COLUMNS': '',
+                                LABEL: '',
+                                LOVTYPE: 'simple',
+                                'VALUE-COLUMN': '',
+                                'VISIBLE-COLUMNS': ''
+                            }
+                        }
+                    }
             }
         },
         setCodeInput(event: any) {
@@ -321,7 +386,6 @@ export default defineComponent({
                 }
 
                 this.treeListTypeModel = this.lov.lovProviderJSON[prop]
-
                 this.setColumnValues()
 
                 if (this.treeListTypeModel && this.treeListTypeModel.LOVTYPE != 'simple' && this.treeListTypeModel.LOVTYPE != '') {

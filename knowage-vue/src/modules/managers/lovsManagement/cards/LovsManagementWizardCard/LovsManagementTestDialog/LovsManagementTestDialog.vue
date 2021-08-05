@@ -8,11 +8,11 @@
                 </span>
             </div>
         </div>
-        <LovsManagementSimpleDatatable v-if="treeListTypeModel.LOVTYPE === 'simple'" :tableData="model" :treeListTypeModel="treeListTypeModel"></LovsManagementSimpleDatatable>
+        <LovsManagementSimpleDatatable v-if="treeListTypeModel.LOVTYPE === 'simple'" :tableData="model" :treeListTypeModel="treeListTypeModel" @modelChanged="onModelChange($event)"></LovsManagementSimpleDatatable>
         <LovsManagementTree v-else :listData="model" :treeModel="treeModel"></LovsManagementTree>
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="$emit('close')"> {{ $t('common.close') }}</Button>
-            <Button class="kn-button kn-button--primary" @click="$emit('save', { treeListTypeModel: this.treeListTypeModel, model: this.model, treeModel: this.treeModel })"> {{ $t('common.save') }}</Button>
+            <Button class="kn-button kn-button--primary" @click="onSave"> {{ $t('common.save') }}</Button>
         </template>
     </Dialog>
 </template>
@@ -91,6 +91,12 @@ export default defineComponent({
             this.treeListTypeModel['VALUE-COLUMN'] = ''
             this.treeListTypeModel['DESCRIPTION-COLUMN'] = ''
             this.treeListTypeModel['VISIBLE-COLUMNS'] = ''
+        },
+        onSave() {
+            this.$emit('save', { treeListTypeModel: this.treeListTypeModel, model: this.model, treeModel: this.treeModel })
+        },
+        onModelChange(event: any) {
+            this.treeListTypeModel = event
         }
     }
 })

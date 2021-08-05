@@ -93,6 +93,12 @@ export default defineComponent({
             options: [] as any[]
         }
     },
+    watch: {
+        listData() {
+            this.loadData()
+            this.loadModel()
+        }
+    },
     created() {
         this.loadData()
         this.loadModel()
