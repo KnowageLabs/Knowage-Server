@@ -69,6 +69,7 @@ export default defineComponent({
     },
     methods: {
         async loadLovs() {
+            this.touched = false
             this.loading = true
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all')

@@ -25,7 +25,10 @@
                 </small>
             </div>
         </div>
-        <VCodeMirror ref="codeMirror" class="p-mt-5" v-model:value="code" :autoHeight="true" :options="options" @keyup="onKeyUp" />
+        <div v-if="script.language" class="p-mt-4">
+            <label class="kn-material-input-label">{{ $t('managers.lovsManagement.script') }}</label>
+            <VCodeMirror ref="codeMirror" class="p-mt-2" v-model:value="code" :autoHeight="true" :options="options" @keyup="onKeyUp" />
+        </div>
     </div>
 </template>
 
@@ -99,12 +102,13 @@ export default defineComponent({
         },
         onKeyUp() {
             this.script.text = this.code
-            // console.log('SCRIPT', this.script)
         },
         onLanguageChanged(value: string) {
             const mode = value === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
-            this.setupCodeMirror()
-            this.codeMirror.setOption('mode', mode)
+            setTimeout(() => {
+                this.setupCodeMirror()
+                this.codeMirror.setOption('mode', mode)
+            }, 250)
             this.$emit('touched')
         },
         setupCodeMirror() {

@@ -38,7 +38,7 @@
                 <Column class="kn-truncated" field="level" :header="$t('managers.lovsManagement.level')"></Column>
                 <Column class="kn-truncated p-mr-2" field="value" :header="$t('managers.lovsManagement.value')">
                     <template #editor="slotProps">
-                        <Dropdown class="p-mr-2" v-model.trim="slotProps.data[slotProps.column.props.field]" optionLabel="name" optionValue="name" :options="options" @change="test" />
+                        <Dropdown class="p-mr-2" v-model.trim="slotProps.data[slotProps.column.props.field]" optionLabel="name" optionValue="name" :options="options" />
                         <i class="pi pi-pencil edit-icon" />
                     </template>
                     <template #body="slotProps">
@@ -48,7 +48,7 @@
                 </Column>
                 <Column class="kn-truncated p-mr-2" field="description" :header="$t('managers.lovsManagement.value')">
                     <template #editor="slotProps">
-                        <Dropdown class="p-mr-2" v-model.trim="slotProps.data[slotProps.column.props.field]" optionLabel="name" optionValue="name" :options="options" @change="test" />
+                        <Dropdown class="p-mr-2" v-model.trim="slotProps.data[slotProps.column.props.field]" optionLabel="name" optionValue="name" :options="options" />
                         <i class="pi pi-pencil edit-icon" />
                     </template>
                     <template #body="slotProps">
@@ -82,7 +82,7 @@ export default defineComponent({
             type: Object
         },
         treeModel: {
-            type: Object
+            type: Array
         }
     },
     data() {
@@ -105,15 +105,12 @@ export default defineComponent({
         },
         loadModel() {
             this.selectedValues = this.treeModel as any[]
-            console.log('TREE MODEL', this.treeModel)
         },
         setSelectedValue(value: any) {
-            // console.log('SELECTED VALUE: ', value)
             const index = this.selectedValues.findIndex((el: any) => el.level === value.name)
             if (index === -1) {
                 this.selectedValues.push({ level: value.name, value: value.name, description: value.name })
             }
-            // console.log('SELECTED VALUES ARRAY AFTER PUSH: ', this.selectedValues)
         },
         removeValueConfirm(index: number) {
             this.$confirm.require({
@@ -127,9 +124,6 @@ export default defineComponent({
         },
         removeValue(index: number) {
             this.selectedValues.splice(index, 1)
-        },
-        test() {
-            console.log('TEST', this.selectedValues)
         }
     }
 })

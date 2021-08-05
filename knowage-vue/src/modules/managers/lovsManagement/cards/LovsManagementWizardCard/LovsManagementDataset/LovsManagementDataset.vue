@@ -18,7 +18,7 @@
             <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0 p-col">
                 <template #left>Select Dataset</template>
                 <template #right>
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="showDatasetsDialog = false" data-test="submit-button" />
+                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="onSave" data-test="submit-button" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="showDatasetsDialog = false" data-test="close-button" />
                 </template>
             </Toolbar>
@@ -88,11 +88,9 @@ export default defineComponent({
             lovsManagementDatasetDescriptor,
             dirty: false,
             showDatasetsDialog: false,
-            test: 'test',
             datasets: [] as any,
             selectedDataset: {} as any,
             columns: lovsManagementDatasetDescriptor.columns,
-
             filters: {
                 global: [filterDefault],
                 label: {
@@ -124,23 +122,24 @@ export default defineComponent({
     },
     watch: {
         dataset() {
-            console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', this.dataset?.label)
             this.loadDataset()
         }
     },
     methods: {
         async loadDatasets() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/datasetsforlov/').then((response) => {
-                this.datasets = response.data
-                // console.log(this.datasets)
-            })
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/datasetsforlov/').then((response) => (this.datasets = response.data))
         },
         loadDataset() {
-                     this.selectedDataset = this.dataset
+            this.selectedDataset = { ...this.dataset }
+        },
+        onSave() {
+            this.showDatasetsDialog = false
+            this.$emit('selected', this.selectedDataset)
         }
     }
 })
 </script>
+
 <style lang="scss">
 .full-screen-dialog.p-dialog {
     max-height: 100%;

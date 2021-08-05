@@ -12,7 +12,7 @@
         <LovsManagementTree v-else :listData="model" :treeModel="treeModel"></LovsManagementTree>
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="$emit('close')"> {{ $t('common.close') }}</Button>
-            <Button class="kn-button kn-button--primary" @click="$emit('save', {treeListTypeModel: this.treeListTypeModel, model: this.model, treeModel: this.treeModel})"> {{ $t('common.save') }}</Button>
+            <Button class="kn-button kn-button--primary" @click="$emit('save', { treeListTypeModel: this.treeListTypeModel, model: this.model, treeModel: this.treeModel })"> {{ $t('common.save') }}</Button>
         </template>
     </Dialog>
 </template>
@@ -35,13 +35,13 @@ export default defineComponent({
             type: Object
         },
         testLovModel: {
-            type: Object
+            type: Array
         },
         selectedLov: {
             type: Object
         },
         testLovTreeModel: {
-            type: Object
+            type: Array
         }
     },
     data() {
@@ -76,17 +76,15 @@ export default defineComponent({
     methods: {
         loadLov() {
             this.lov = this.selectedLov as iLov
-            console.log('LOV IN TEST', this.lov)
         },
         loadTypeModel() {
-            this.treeListTypeModel = {...this.testModel} as any
+            this.treeListTypeModel = { ...this.testModel } as any
         },
         loadModel() {
-            this.model = {...this.testLovModel} as any
-            // console.log('MODEL IN TEST DIALOG', this.model)
+            this.model = [...(this.testLovModel as any[])]
         },
         loadTreeModel() {
-            this.treeModel = {...this.testLovTreeModel} as any
+            this.treeModel = [ ...this.testLovTreeModel as any[]]
         }
     }
 })

@@ -31,7 +31,7 @@
         </Column>
         <Column class="kn-truncated" :style="lovsManagementFixedLovsTableDescriptor.table.textAreaColumnStyle" field="DESCRIPTION" :header="$t('managers.lovsManagement.description')">
             <template #editor="slotProps">
-                <Textarea class="p-mr-2" type="text" v-model.trim="slotProps.data[slotProps.column.props.field]" maxLength="160" rows="2" cols="80" @input="$emit('touched')" data-test="description-input"/>
+                <Textarea class="p-mr-2" type="text" v-model.trim="slotProps.data[slotProps.column.props.field]" maxLength="160" rows="2" cols="80" @input="$emit('touched')" data-test="description-input" />
                 <i class="pi pi-pencil edit-icon" />
             </template>
             <template #body="slotProps">
@@ -73,17 +73,15 @@ export default defineComponent({
             filters: { global: [filterDefault] } as Object
         }
     },
-    created() { 
+    created() {
         this.load()
     },
     methods: {
         load() {
             this.values = this.listForFixLov as any[]
-         //console.log('VALUES', this.values)
         },
         addFixedValue() {
             this.values.push({ VALUE: '', DESCRIPTION: '' })
-            // console.log('VALUES AFTER PUSH', this.values)
         },
         setPositionOnReorder(event) {
             this.values = event.value
@@ -99,9 +97,7 @@ export default defineComponent({
             })
         },
         deleteValue(index: number) {
-            // console.log('INDEX', index)
             this.values.splice(index, 1)
-            // console.log('VALUES AFTER DELETE', this.values)
         }
     }
 })

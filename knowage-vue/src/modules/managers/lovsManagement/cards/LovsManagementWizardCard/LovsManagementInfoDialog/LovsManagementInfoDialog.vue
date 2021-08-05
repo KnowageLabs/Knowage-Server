@@ -80,16 +80,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import {lovItemEnum} from '../../../LovsManagementDetail.vue'
 import Dialog from 'primevue/dialog'
 import lovsManagementInfoDialogDescriptor from './LovsManagementInfoDialogDescriptor.json'
-
-enum lovItemEnum {
-    SCRIPT = 'SCRIPT',
-    QUERY = 'QUERY',
-    FIX_LOV = 'FIX_LOV',
-    JAVA_CLASS = 'JAVA_CLASS',
-    DATASET = 'DATASET'
-}
 
 export default defineComponent({
     name: 'lovs-management-info-dialog',

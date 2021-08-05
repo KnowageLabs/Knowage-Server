@@ -13,8 +13,8 @@
         </div>
         <div class="card">
             <LovsManagementWizardCard
+                v-if="selectedLov.itypeCd"
                 :selectedLov="selectedLov"
-                :lovs="lovs"
                 :selectedQuery="selectedQuery"
                 :selectedScript="selectedScript"
                 :datasources="datasources"
@@ -24,15 +24,17 @@
                 :selectedJavaClass="selectedJavaClass"
                 :selectedDataset="selectedDataset"
                 :save="save"
+                :previewDisabled="saveButtonDisabled"
                 @touched="setTouched"
                 @created="$emit('created')"
+                @selectedDataset="setSelectedDataset($event)"
             ></LovsManagementWizardCard>
         </div>
     </div>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iDatasource, iDomain, iLov, iFixedValue, iProfileAttribute } from './LovsManagement'
+import { iDatasource, iDomain, iLov, iFixedValue, iProfileAttribute} from './LovsManagement'
 import { decode } from 'js-base64'
 import X2JS from 'x2js'
 import axios from 'axios'
@@ -40,8 +42,7 @@ import LovsManagementDetailCard from './cards/LovsManagementDetailCard/LovsManag
 import LovsManagementWizardCard from './cards/LovsManagementWizardCard/LovsManagementWizardCard.vue'
 import useValidate from '@vuelidate/core'
 
-// TODO Put in d.ts.
-enum lovProviderEnum {
+export enum lovProviderEnum {
     SCRIPT = 'SCRIPTLOV',
     QUERY = 'QUERY',
     FIX_LOV = 'FIXLISTLOV',
@@ -49,7 +50,7 @@ enum lovProviderEnum {
     DATASET = 'DATASET'
 }
 
-enum lovItemEnum {
+export enum lovItemEnum {
     SCRIPT = 'SCRIPT',
     QUERY = 'QUERY',
     FIX_LOV = 'FIX_LOV',
@@ -137,7 +138,7 @@ export default defineComponent({
                 this.selectedLov.lovProviderJSON.SCRIPTLOV.SCRIPT = this.escapeXml(decode(this.selectedLov.lovProviderJSON.SCRIPTLOV.SCRIPT))
             } else if (this.selectedLov.lovProviderJSON.QUERY) {
                 this.selectedLov.lovProviderJSON.QUERY.decoded_STMT = this.escapeXml(decode(this.selectedLov.lovProviderJSON.QUERY.STMT))
-            }   
+            }
         },
         async formatLov() {
             if (lovProviderEnum.SCRIPT in this.selectedLov.lovProviderJSON) {
@@ -149,7 +150,7 @@ export default defineComponent({
             } else if (lovProviderEnum.FIX_LOV in this.selectedLov.lovProviderJSON) {
                 this.listForFixLov = []
                 if (Array.isArray(this.selectedLov.lovProviderJSON.FIXLISTLOV.ROWS.ROW)) {
-                              this.listForFixLov = this.selectedLov.lovProviderJSON.FIXLISTLOV.ROWS.ROW
+                    this.listForFixLov = this.selectedLov.lovProviderJSON.FIXLISTLOV.ROWS.ROW
                 } else {
                     this.listForFixLov.push(this.selectedLov.lovProviderJSON.FIXLISTLOV.ROWS.ROW)
                 }
@@ -159,9 +160,7 @@ export default defineComponent({
                 await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.selectedLov.lovProviderJSON.DATASET.ID}`).then((response) => {
                     this.selectedDataset = response.data[0]
                 })
-                // console.log('LOADED SELECTED DATASET', this.selectedDataset)
             }
-            // console.log('FORMATED LOV', this.selectedLov, 'SCRIPT', this.selectedScript)
         },
         escapeXml(value: string) {
             return value
@@ -176,7 +175,6 @@ export default defineComponent({
             this.save = !this.save
         },
         closeTemplate() {
-            // console.log('IS TOUCHED', this.touched)
             const path = '/lovs-management'
             if (!this.touched) {
                 this.$router.push(path)
@@ -194,14 +192,10 @@ export default defineComponent({
             }
         },
         setTouched() {
-            // console.log('CAAAAAAAAAAAAAAAAAAAAAAAAAAAAALED TOUCHED')
             this.touched = true
             this.$emit('touched')
         },
         emptyRequiredFields() {
-            // console.log('test datasource', !this.selectedQuery.datasource)
-            // console.log('test datasource query', this.selectedQuery)
-            // console.log('test datasource json', this.selectedLov.lovProviderJSON)
             if (this.selectedLov.itypeCd === lovItemEnum.SCRIPT) {
                 return !this.selectedScript.language
             } else if (this.selectedLov.itypeCd === lovItemEnum.QUERY) {
@@ -209,6 +203,7 @@ export default defineComponent({
             } else if (this.selectedLov.itypeCd === lovItemEnum.JAVA_CLASS) {
                 return !this.selectedJavaClass.name
             } else if (this.selectedLov.itypeCd === lovItemEnum.DATASET) {
+                console.log('TEST', this.selectedDataset)
                 return !this.selectedDataset.name
             }
 
@@ -220,6 +215,9 @@ export default defineComponent({
             this.listForFixLov = []
             this.selectedJavaClass = { name: '' }
             this.selectedDataset = {}
+        },
+        setSelectedDataset(dataset: any) {
+            this.selectedDataset = dataset
         }
     }
 })

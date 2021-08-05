@@ -142,8 +142,6 @@ export default defineComponent({
     },
     async created() {
         this.loadLov()
-        // console.log('LOADED LOVS', this.lovs)
-        // console.log('LOADED LOV', this.lov)
     },
     methods: {
         loadLov() {
