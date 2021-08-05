@@ -24,6 +24,17 @@
                         "key": "required"
                     }
                 ]
+            },
+            {
+                "fieldName": "secondValue",
+                "validators": [
+                    {
+                        "key": "range_check",
+                        "validator": {
+                            "type": "range-check"
+                        }
+                    }
+                ]
             }
         ]
     }

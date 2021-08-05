@@ -440,6 +440,7 @@
             "lowerRangeValue": "Lower range value",
             "maxLenghtValue": "Max lenght value",
             "minLenghtValue": "Min lenght value",
+            "rangeCheck": "Must be higher than lower value",
             "regexpValue": "Regular expression",
             "saveError": "Error, not saved",
             "title": "Constraints",

@@ -82,9 +82,24 @@
                     </div>
                     <div v-if="!constraint.predifined && constraint.valueTypeId && constraint.valueTypeId == 46" :class="constraintsManagmentDetailDescriptor.firstValue[constraint.valueTypeId].class">
                         <span class="p-float-label">
-                            <InputNumber id="typeTwo" inputClass="kn-material-input" v-model="constraint.secondValue" @input="$emit('touched')" />
+                            <InputNumber
+                                id="typeTwo"
+                                inputClass="kn-material-input"
+                                v-model="v$.constraint.secondValue.$model"
+                                :class="{
+                                    'p-invalid': v$.constraint.secondValue.$invalid && v$.constraint.secondValue.$dirty
+                                }"
+                                @blur="v$.constraint.secondValue.$touch()"
+                                @input="$emit('touched')"
+                            />
                             <label for="typeTwo" class="kn-material-input-label">{{ $t(constraintsManagmentDetailDescriptor.firstValue[constraint.valueTypeId].labelTwo) }}</label>
                         </span>
+                        <KnValidationMessages
+                            class="p-mt-1"
+                            :vComp="v$.constraint.secondValue"
+                            :additionalTranslateParams="{ fieldName: $t(constraintsManagmentDetailDescriptor.firstValue[constraint.valueTypeId].labelTwo) }"
+                            :specificTranslateKeys="{ range_check: 'managers.constraintManagment.rangeCheck' }"
+                        ></KnValidationMessages>
                     </div>
                 </form>
             </template>
@@ -95,7 +110,7 @@
 import { defineComponent, PropType } from 'vue'
 import axios from 'axios'
 import { iConstraint } from './ConstraintsManagment'
-import { createValidations } from '@/helpers/commons/validationHelper'
+import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import useValidate from '@vuelidate/core'
 import Dropdown from 'primevue/dropdown'
 import InputNumber from 'primevue/inputnumber'
@@ -126,8 +141,13 @@ export default defineComponent({
         }
     },
     validations() {
+        const customValidators: ICustomValidatorMap = {
+            'range-check': () => {
+                return (this.constraint && this.constraint.firstValue && this.constraint.secondValue && this.constraint.firstValue < this.constraint.secondValue) || this.constraint.valueTypeId != 46
+            }
+        }
         return {
-            constraint: createValidations('constraint', constraintsManagmentValidatioDescriptor.validations.constraint)
+            constraint: createValidations('constraint', constraintsManagmentValidatioDescriptor.validations.constraint, customValidators)
         }
     },
     computed: {
