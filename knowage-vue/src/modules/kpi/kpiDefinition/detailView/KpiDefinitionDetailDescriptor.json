@@ -1,0 +1,46 @@
+{
+    "emptyKpi": {
+        "cardinality": "{\"measureList\":[],\"checkedAttribute\":{\"attributeUnion\":{},\"attributeIntersection\":{}}}",
+        "definition": "{\"formula\":\"\",\"measures\":[],\"functions\":[],\"formulaDecoded\":\"\",\"formulaSimple\":\"\"}",
+        "name": "",
+        "placeholder": "",
+        "threshold": {
+            "description": "",
+            "thresholdValues": []
+        }
+    },
+    "filterFields": ["alias", "name"],
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "success": "common.toast.success",
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
+        }
+    },
+    "style": {
+        "card": {
+            "margin-bottom": "2em",
+            "width": "100%"
+        },
+        "cardinalityCard": {
+            "font-size": "large",
+            "margin-bottom": "2em",
+            "text-align": "center"
+        },
+        "cardinalityColumn": {
+            "text-align": "center",
+            "width": "100%"
+        },
+        "cardinalityTable": {
+            "text-align": "center"
+        },
+        "formulaDialog": {
+            "width": "20%"
+        },
+        "saveDialog": {
+            "width": "20%"
+        }
+    }
+}

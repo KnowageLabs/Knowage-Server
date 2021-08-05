@@ -21,7 +21,7 @@
                         <div class="p-field">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
-                                    <InputText id="userId" type="text" :disabled="!formInsert" v-model.trim="userDetailsForm.userId" @input="onDataChange(vobj.userDetailsForm.userId)" class="p-inputtext p-component kn-material-input" />
+                                    <InputText id="userId" maxlength="100" type="text" :disabled="!formInsert" v-model.trim="userDetailsForm.userId" @input="onDataChange(vobj.userDetailsForm.userId)" class="p-inputtext p-component kn-material-input" />
                                     <label for="userId">{{ $t('managers.usersManagement.form.userId') }} *</label>
                                 </span>
                             </div>
@@ -31,7 +31,7 @@
                         <div class="p-field">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
-                                    <InputText id="fullName" type="text" v-model.trim="userDetailsForm.fullName" @input="onDataChange(vobj.userDetailsForm.fullName)" class="p-inputtext p-component kn-material-input" />
+                                    <InputText id="fullName" maxlength="250" type="text" v-model.trim="userDetailsForm.fullName" @input="onDataChange(vobj.userDetailsForm.fullName)" class="p-inputtext p-component kn-material-input" />
                                     <label for="fullName">{{ $t('managers.usersManagement.fullName') }} *</label>
                                 </span>
                             </div>
