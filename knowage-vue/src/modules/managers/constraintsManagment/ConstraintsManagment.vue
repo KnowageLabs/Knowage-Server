@@ -76,14 +76,6 @@ export default defineComponent({
             constraintManagmentDescriptor
         }
     },
-    // computed:{
-    //     all(){
-    //         // const all = this.predefinedChecks.concat(this.customChecks)
-    //         // return all
-    //         return this.predefinedChecks.concat(this.customCheks)
-    //         // return [this.predefinedChecks,this.customCheks]
-    //     }
-    // },
     created() {
         this.loadAll()
     },
@@ -132,7 +124,6 @@ export default defineComponent({
         loadCheks() {
             this.allCheks = this.customChecks.concat(this.predefinedChecks)
             this.loading = false
-            console.log(this.allCheks)
         },
         showForm(event: any) {
             if (!this.touched) {
@@ -163,7 +154,6 @@ export default defineComponent({
             })
         },
         async deleteConstraint(id: number) {
-            console.log(id)
             await axios
                 .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/customChecks/' + id)
                 .then(() => {

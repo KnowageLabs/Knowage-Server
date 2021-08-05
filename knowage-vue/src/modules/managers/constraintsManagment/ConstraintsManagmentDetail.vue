@@ -163,8 +163,6 @@ export default defineComponent({
             })
             this.constraint.valueTypeCd = selectedDomain[0].VALUE_CD
 
-            console.log('SAVE', this.constraint)
-
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/customChecks/'
             if (this.constraint.checkId) {
                 this.operation = 'update'
@@ -173,7 +171,6 @@ export default defineComponent({
 
             await this.sendRequest(url)
                 .then((response) => {
-                    console.log('RESPONSE', response)
                     this.constraint.checkId = response.data
                     this.$store.commit('setInfo', {
                         title: this.$t(this.constraintsManagmentDetailDescriptor.operation[this.operation].toastTitle),
