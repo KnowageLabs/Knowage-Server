@@ -31,11 +31,12 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.platform.commons.util.StringUtils;
 import org.springframework.stereotype.Component;
 
 /**
  *
- * @author Alberto Ghedin (alberto.ghedin@eng.it)
+ * @author Matteo Massarotto
  *
  *         Updates the audit log for the services that throw exceptions
  *
@@ -65,24 +66,17 @@ public class KnowageBusinessExceptionMapper implements ExceptionMapper<KnowageBu
 
 	private Response toResponseFromGenericException(KnowageBusinessException t) {
 		JSONObject serializedMessages = serializeException(t);
-		// not authenticated , not authorized, not found
 		return Response.status(t.getStatus()).entity(serializedMessages.toString()).build();
 	}
 
 	private JSONObject serializeException(KnowageBusinessException t) {
-		// TODO manage localized messages ASAP
 		String localizedMessage = t.getLocalizedMessage();
-
-		String errorMessage = t.getDescription();
+		String errorMessage = StringUtils.isNotBlank(localizedMessage) ? localizedMessage : t.getDescription();
 		String errorCode = t.getCode();
 		List<String> hints = t.getHints();
-
-//		errorMessage = localizedMessage;
-
 		JSONObject error = new JSONObject();
 		JSONObject serializedMessages = new JSONObject();
 		JSONArray errors = new JSONArray();
-		JSONArray hintsJson = new JSONArray();
 		try {
 			error.put(ERROR_CODE, errorCode);
 			error.put(ERROR_MESSAGE, errorMessage);

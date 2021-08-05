@@ -79,7 +79,7 @@ public class FoldersResource {
 		try {
 			folders = resourceManagerAPIservice.getFolders(profile);
 		} catch (KnowageBusinessException e) {
-			throw e;
+			throw new KnowageBusinessException(e, businessContext.getLocale());
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e);
 		}
@@ -102,7 +102,7 @@ public class FoldersResource {
 				}
 			}
 		} catch (KnowageBusinessException e) {
-			throw e;
+			throw new KnowageBusinessException(e, businessContext.getLocale());
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e);
 		}
@@ -125,7 +125,7 @@ public class FoldersResource {
 					.header("Content-Disposition", String.format("attachment; filename=\"%s\"", filename)).build();
 
 		} catch (KnowageBusinessException e) {
-			throw e;
+			throw new KnowageBusinessException(e, businessContext.getLocale());
 		} catch (IOException e) {
 			throw new KnowageRuntimeException("Error calculating file size for " + exportArchive, e);
 		} catch (Exception e) {
@@ -148,7 +148,7 @@ public class FoldersResource {
 					response = Response.status(Response.Status.OK).build();
 			}
 		} catch (KnowageBusinessException e) {
-			throw e;
+			throw new KnowageBusinessException(e, businessContext.getLocale());
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e);
 		}
@@ -171,7 +171,7 @@ public class FoldersResource {
 				response = Response.status(Response.Status.OK).build();
 
 		} catch (KnowageBusinessException e) {
-			throw e;
+			throw new KnowageBusinessException(e, businessContext.getLocale());
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e);
 		}
