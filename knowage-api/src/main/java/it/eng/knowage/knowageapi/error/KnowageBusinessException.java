@@ -18,14 +18,22 @@
 package it.eng.knowage.knowageapi.error;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import it.eng.knowage.knowageapi.utils.messages.EngineMessageBundle;
 
 /**
  * @author Marco Libanori
  */
 public class KnowageBusinessException extends KnowageException {
+
+	/*
+	 * Locale
+	 */
+	private Locale locale = Locale.US;
 
 	/*
 	 * Status
@@ -54,12 +62,13 @@ public class KnowageBusinessException extends KnowageException {
 		super(message, ex);
 	}
 
-	public KnowageBusinessException(KnowageBusinessException ex) {
+	public KnowageBusinessException(KnowageBusinessException ex, Locale locale) {
 		super(ex);
 		this.code = ex.getCode();
 		this.status = ex.getStatus();
 		this.description = ex.getDescription();
 		this.hints = ex.getHints();
+		this.locale = locale;
 
 	}
 
@@ -106,4 +115,17 @@ public class KnowageBusinessException extends KnowageException {
 		this.status = status;
 	}
 
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
+	@Override
+	public String getLocalizedMessage() {
+		String localizedMessage = EngineMessageBundle.getMessage(this.getCode(), this.getLocale());
+		return localizedMessage;
+	}
 }

@@ -95,7 +95,7 @@ public class FilesResource {
 		try {
 			files = resourceManagerAPIservice.getListOfFiles(key, profile);
 		} catch (KnowageBusinessException e) {
-			throw e;
+			throw new KnowageBusinessException(e, businessContext.getLocale());
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e);
 		}
@@ -131,7 +131,7 @@ public class FilesResource {
 						.build();
 			}
 		} catch (KnowageBusinessException e) {
-			throw e;
+			throw new KnowageBusinessException(e, businessContext.getLocale());
 		} catch (IOException e) {
 			throw new KnowageRuntimeException("Error calculating file size for " + zipFile, e);
 		} catch (Exception e) {
@@ -212,7 +212,7 @@ public class FilesResource {
 			}
 			return response;
 		} catch (KnowageBusinessException e) {
-			throw e;
+			throw new KnowageBusinessException(e, businessContext.getLocale());
 		} catch (IOException e) {
 			throw new KnowageRuntimeException(e);
 		}
@@ -229,7 +229,7 @@ public class FilesResource {
 		try {
 			file = resourceManagerAPIservice.getMetadata(path, profile);
 		} catch (KnowageBusinessException e) {
-			throw e;
+			throw new KnowageBusinessException(e, businessContext.getLocale());
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e);
 		}
@@ -247,7 +247,7 @@ public class FilesResource {
 			String path = resourceManagerAPIservice.getFolderByKey(key, profile);
 			file = resourceManagerAPIservice.saveMetadata(fileDTO, path, profile);
 		} catch (KnowageBusinessException e) {
-			throw e;
+			throw new KnowageBusinessException(e, businessContext.getLocale());
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e);
 		}
@@ -276,7 +276,7 @@ public class FilesResource {
 				}
 			}
 		} catch (KnowageBusinessException e) {
-			throw e;
+			throw new KnowageBusinessException(e, businessContext.getLocale());
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e);
 		}

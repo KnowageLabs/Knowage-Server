@@ -62,11 +62,17 @@ public class KnowageApiConfiguration {
 		return factoryBean;
 	}
 
+	@Bean("knowage-config")
+	public LocalEntityManagerFactoryBean entityManagerFactoryForWidgetConfig() {
+		LocalEntityManagerFactoryBean factoryBean = new LocalEntityManagerFactoryBean();
+		factoryBean.setPersistenceUnitName("knowage-config");
+		return factoryBean;
+	}
+
 	@Primary
 	@Bean
 	public PlatformTransactionManager mainTransactionManager() {
-		return new ChainedTransactionManager(
-				new JpaTransactionManager(entityManagerFactoryForWidgetGallery().getObject()),
+		return new ChainedTransactionManager(new JpaTransactionManager(entityManagerFactoryForWidgetGallery().getObject()),
 				new JpaTransactionManager(entityManagerFactoryForWidgetFunctionCatalog().getObject()));
 	}
 
