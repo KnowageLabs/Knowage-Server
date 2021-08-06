@@ -1687,8 +1687,8 @@ public class ManageDataSetsForREST {
 			IDataSet dataset = iDatasetDao.loadDataSetByLabel(ds.getLabel());
 			checkFileDataset(((VersionedDataSet) dataset).getWrappedDataset());
 
-			JSONArray parsListJSON = json.getJSONArray(DataSetConstants.PARS);
-			if (parsListJSON.length() > 0) {
+			JSONArray parsListJSON = json.optJSONArray(DataSetConstants.PARS);
+			if (parsListJSON != null && parsListJSON.length() > 0) {
 				logger.error("The dataset cannot be persisted because uses parameters!");
 				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsCannotPersist");
 			}
