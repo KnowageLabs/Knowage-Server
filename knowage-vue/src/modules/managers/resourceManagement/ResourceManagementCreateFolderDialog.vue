@@ -42,6 +42,7 @@
 		},
 		methods: {
 			closeDialog(): void {
+				this.folderName = ''
 				this.$emit('update:visibility', false)
 			},
 			emitCreateFolder(): void {

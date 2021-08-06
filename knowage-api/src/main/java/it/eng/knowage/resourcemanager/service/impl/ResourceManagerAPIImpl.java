@@ -46,18 +46,18 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import it.eng.knowage.knowageapi.error.TenantRepositoryMissingException;
-import it.eng.knowage.knowageapi.error.ImpossibleToReadFolderListException;
-import it.eng.knowage.knowageapi.error.ImpossibleToReadFilesListException;
-import it.eng.knowage.knowageapi.error.ImpossibleToCreateFolderException;
 import it.eng.knowage.knowageapi.error.ImpossibleToCreateFileException;
-import it.eng.knowage.knowageapi.error.ImpossibleToDeleteFolderException;
+import it.eng.knowage.knowageapi.error.ImpossibleToCreateFolderException;
 import it.eng.knowage.knowageapi.error.ImpossibleToDeleteFileException;
+import it.eng.knowage.knowageapi.error.ImpossibleToDeleteFolderException;
 import it.eng.knowage.knowageapi.error.ImpossibleToDownloadFileException;
-import it.eng.knowage.knowageapi.error.ImpossibleToUploadFileException;
-import it.eng.knowage.knowageapi.error.ImpossibleToSaveMetadataException;
+import it.eng.knowage.knowageapi.error.ImpossibleToReadFilesListException;
+import it.eng.knowage.knowageapi.error.ImpossibleToReadFolderListException;
 import it.eng.knowage.knowageapi.error.ImpossibleToReadMetadataException;
+import it.eng.knowage.knowageapi.error.ImpossibleToSaveMetadataException;
+import it.eng.knowage.knowageapi.error.ImpossibleToUploadFileException;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
+import it.eng.knowage.knowageapi.error.TenantRepositoryMissingException;
 import it.eng.knowage.knowageapi.utils.ContextPropertiesConfig;
 import it.eng.knowage.knowageapi.utils.HMACUtilities;
 import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
@@ -260,7 +260,8 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public boolean delete(String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToDeleteFolderException, ImpossibleToDeleteFileException {
+	public boolean delete(String path, SpagoBIUserProfile profile)
+			throws TenantRepositoryMissingException, ImpossibleToDeleteFolderException, ImpossibleToDeleteFileException {
 		Path workDir = getWorkBaseDirByPath(path, profile);
 		if (canSee(workDir, profile)) {
 			Path totalPath = getTotalPath(path, profile);
@@ -283,7 +284,8 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public Path getDownloadFolderPath(String key, String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToCreateFileException {
+	public Path getDownloadFolderPath(String key, String path, SpagoBIUserProfile profile)
+			throws TenantRepositoryMissingException, ImpossibleToCreateFileException {
 		Path workingPath = null;
 		Path pathToReturn = null;
 		try {
@@ -291,7 +293,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			if (canSee(workDirr, profile)) {
 				Path workDir = getWorkDirectory(profile);
 				workingPath = workDir.resolve(path);
-				pathToReturn = createZipFile(key, path, workingPath);
+				pathToReturn = createZipFile(key, workingPath);
 			}
 		} catch (Exception e) {
 			throw new ImpossibleToCreateFileException(e.getMessage());
@@ -300,7 +302,8 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public Path getDownloadFilePath(List<String> path, SpagoBIUserProfile profile, boolean multi) throws TenantRepositoryMissingException, ImpossibleToDownloadFileException {
+	public Path getDownloadFilePath(List<String> path, SpagoBIUserProfile profile, boolean multi)
+			throws TenantRepositoryMissingException, ImpossibleToDownloadFileException {
 		Path pathToReturn = null;
 		try {
 			if (multi) {
@@ -374,7 +377,8 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public List<FileDTO> getListOfFiles(String key, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToReadFilesListException, ImpossibleToReadFolderListException {
+	public List<FileDTO> getListOfFiles(String key, SpagoBIUserProfile profile)
+			throws TenantRepositoryMissingException, ImpossibleToReadFilesListException, ImpossibleToReadFolderListException {
 		String path = getFolderByKey(key, profile);
 		List<FileDTO> returnList = new ArrayList<FileDTO>();
 		try {
@@ -404,13 +408,15 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public void importFile(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException, TenantRepositoryMissingException, ImpossibleToUploadFileException {
+	public void importFile(InputStream archiveInputStream, String path, SpagoBIUserProfile profile)
+			throws IOException, TenantRepositoryMissingException, ImpossibleToUploadFileException {
 
 		try {
 			Path workBaseDir = getWorkBaseDirByPath(path, profile);
 			Path fileTotalPath = getTotalPath(path, profile);
 
 			if (canSee(workBaseDir, profile)) {
+				Files.deleteIfExists(fileTotalPath);
 				Files.createFile(fileTotalPath);
 				Path tempArchive = fileTotalPath.getParent().resolve(fileTotalPath.getFileName());
 				FileUtils.copyInputStreamToFile(archiveInputStream, tempArchive.toFile());
@@ -421,11 +427,13 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public void importFileAndExtract(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException, TenantRepositoryMissingException {
+	public void importFileAndExtract(InputStream archiveInputStream, String path, SpagoBIUserProfile profile)
+			throws IOException, TenantRepositoryMissingException {
 		Path workBaseDir = getWorkBaseDirByPath(path, profile);
 		Path fileTotalPath = getTotalPath(path, profile);
 		String totalPathDestinationDir = fileTotalPath.getParent().toFile().getAbsolutePath();
 		if (canSee(workBaseDir, profile)) {
+			Files.deleteIfExists(fileTotalPath);
 			Files.createFile(fileTotalPath);
 			Path tempArchive = fileTotalPath.getParent().resolve(fileTotalPath.getFileName());
 			File zipFile = tempArchive.toFile();
@@ -440,13 +448,13 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		return getWorkDirectory(profile).resolve(path);
 	}
 
-	public Path createZipFile(String key, String fileName, Path fullPath) {
+	public Path createZipFile(String key, Path fullPath) {
 
 		try {
 			Path tempDirectory = Files.createTempDirectory("knowage-zip");
 			Path tempFile = Files.createTempFile("knowage-zip", key);
 
-			File fileDest = tempDirectory.resolve(fileName).toFile();
+			File fileDest = tempDirectory.resolve(fullPath.getName(fullPath.getNameCount() - 1)).toFile();
 			FileUtils.copyDirectory(fullPath.toFile(), fileDest);
 			List<Path> files = Files.walk(tempDirectory).collect(toList());
 
@@ -617,7 +625,8 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	 * @throws ImpossibleToSaveMetadataException
 	 */
 	@Override
-	public MetadataDTO saveMetadata(MetadataDTO fileDTO, String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToSaveMetadataException {
+	public MetadataDTO saveMetadata(MetadataDTO fileDTO, String path, SpagoBIUserProfile profile)
+			throws TenantRepositoryMissingException, ImpossibleToSaveMetadataException {
 		try {
 			Path workPath = getWorkBaseDirByPath(path, profile);
 			if (isStartingFromModel(workPath, profile) && canSee(workPath, profile)) {
@@ -633,7 +642,8 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public boolean updateFolder(Path path, String folderName, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToCreateFolderException {
+	public boolean updateFolder(Path path, String folderName, SpagoBIUserProfile profile)
+			throws TenantRepositoryMissingException, ImpossibleToCreateFolderException {
 		boolean updated = false;
 
 		File fromDirectory = getWorkBaseDirByPath(path.toString(), profile).toFile();

@@ -12,7 +12,7 @@
 			</template>
 		</FileUpload>
 
-		<span :class="notifyExtractionWarning() ? 'inputFileToggleWithToolbar' : 'inputFileToggle'" v-if="isArchive()">
+		<span :class="notifyExtractionWarning() || checkExistingFile() ? 'inputFileToggleWithToolbar' : 'inputFileToggle'" v-if="isArchive()">
 			<label for="active" class="kn-material-input-label p-mr-3"> {{ $t('managers.resourceManagement.extract') }}</label>
 			<InputSwitch v-model="checked" />
 		</span>
@@ -78,7 +78,7 @@
 					}
 				}
 
-				return found
+				return found && !this.checked
 			},
 			notifyExtractionWarning() {
 				return this.isArchive() && this.checked
