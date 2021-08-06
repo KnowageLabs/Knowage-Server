@@ -1,0 +1,28 @@
+{
+    "columns": [
+        {
+            "field": "errorCount",
+            "header": "kpi.kpiScheduler.errorCount"
+        },
+        {
+            "field": "successCount",
+            "header": "kpi.kpiScheduler.successCount"
+        },
+        {
+            "field": "totalCount",
+            "header": "kpi.kpiScheduler.totalCount"
+        }
+    ],
+    "table": {
+        "columns": {
+            "style": {
+                "width": "24%"
+            }
+        },
+        "iconColumn": {
+            "style": {
+                "text-align": "end"
+            }
+        }
+    }
+}
