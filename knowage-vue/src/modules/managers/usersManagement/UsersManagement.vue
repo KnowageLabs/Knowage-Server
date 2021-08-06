@@ -17,7 +17,7 @@
             </div>
 
             <KnHint :title="'managers.usersManagement.title'" :hint="'managers.usersManagement.hint'" v-if="hiddenForm"></KnHint>
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0" :hidden="hiddenForm">
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page" :hidden="hiddenForm">
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
                     <template #left>
                         {{ userDetailsForm.userId }}
@@ -28,7 +28,7 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <div class="card">
+                <div class="kn-page-content">
                     <TabView class="tabview-custom kn-tab" ref="usersFormTab">
                         <TabPanel>
                             <template #header>
