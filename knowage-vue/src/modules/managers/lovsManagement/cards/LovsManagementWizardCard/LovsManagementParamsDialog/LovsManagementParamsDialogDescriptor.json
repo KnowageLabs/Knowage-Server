@@ -5,7 +5,7 @@
         }
     },
     "info": {
-        "parameter": "anagers.lovsManagement.parameterDependencyText",
+        "parameter": "managers.lovsManagement.parameterDependencyText",
         "profile": "managers.lovsManagement.profileDependencyText"
     }
 }

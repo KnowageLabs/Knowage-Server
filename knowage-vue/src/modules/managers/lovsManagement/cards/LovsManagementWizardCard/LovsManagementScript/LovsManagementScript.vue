@@ -99,6 +99,7 @@ export default defineComponent({
             this.options.mode = this.script.type === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
         },
         onKeyUp() {
+            this.$emit('touched')
             this.script.text = this.code
         },
         onLanguageChanged(value: string) {

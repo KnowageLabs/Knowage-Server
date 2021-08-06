@@ -14,11 +14,12 @@
             </Toolbar>
         </template>
         <template #content>
+            {{ ('lov type', this.lov.lovProviderJSON) }}
             <LovsManagementQuery v-if="lovType === 'QUERY'" :selectedLov="lov" :selectedQuery="selectedQuery" :datasources="datasources" :codeInput="codeInput" @touched="onTouched"></LovsManagementQuery>
             <LovsManagementScript v-else-if="lovType === 'SCRIPT'" :selectedLov="lov" :selectedScript="selectedScript" :listOfScriptTypes="listOfScriptTypes" @touched="onTouched"></LovsManagementScript>
             <LovsManagementFixedLovsTable v-else-if="lovType === 'FIX_LOV'" :listForFixLov="listForFixLov" @touched="$emit('touched')" @sorted="$emit('sorted', $event)"></LovsManagementFixedLovsTable>
             <LovsManagementJavaClassInput v-else-if="lovType === 'JAVA_CLASS'" :selectedJavaClass="selectedJavaClass" @touched="onTouched"></LovsManagementJavaClassInput>
-            <LovsManagementDataset v-else-if="lovType === 'DATASET'" :dataset="selectedDataset" @selected="onTouched" />
+            <LovsManagementDataset v-else-if="lovType === 'DATASET'" :dataset="selectedDataset" @selected="$emit('selectedDataset', $event)" />
         </template>
     </Card>
     <LovsManagementInfoDialog v-if="infoDialogVisible" :infoTitle="infoTitle" :lovType="lov.itypeCd" @close="infoDialogVisible = false"></LovsManagementInfoDialog>
@@ -118,6 +119,10 @@ export default defineComponent({
         async save() {
             this.sendSave = true
 
+            if (!this.touchedForTest) {
+                this.buildTestTable()
+                this.formatForTest()
+            }
             if (this.testValid && !this.touchedForTest) {
                 await this.handleSubmit(true)
             } else {
@@ -308,6 +313,10 @@ export default defineComponent({
             const propName = this.lov.itypeCd
             const prop = lovProviderEnum[propName]
 
+            if (!this.lov.lovProviderJSON[prop].LOVTYPE) {
+                this.lov.lovProviderJSON[prop].LOVTYPE = 'simple'
+            }
+
             if (!this.lov.id) {
                 this.setLovProviderJsonValues(prop)
             }
@@ -433,9 +442,7 @@ export default defineComponent({
             this.formatedVisibleValues = newFormatedVisibleValues as any
         },
         async handleSubmit(save: boolean) {
-            if (this.touchedForTest) {
-                this.formatForSave()
-            }
+            this.formatForSave()
 
             if (this.testValid && save) {
                 await this.saveLov()
@@ -573,8 +580,8 @@ export default defineComponent({
             this.sendSave = false
             this.checkForDependencies(false)
         },
-        onPreview() {
-            this.previewLov(lovsManagementWizardCardDescriptor.defaultPagination, true, true)
+        async onPreview() {
+            await this.previewLov(lovsManagementWizardCardDescriptor.defaultPagination, true, true)
             this.dependenciesReady = this.dependenciesSet()
         },
         dependenciesSet() {

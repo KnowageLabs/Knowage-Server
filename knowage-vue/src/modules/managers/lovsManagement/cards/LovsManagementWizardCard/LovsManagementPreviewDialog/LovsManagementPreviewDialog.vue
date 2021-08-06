@@ -1,16 +1,14 @@
 <template>
     <Dialog :contentStyle="lovsManagementPreviewDialogDescriptor.dialog.style" :header="$t('managers.lovsManagement.preview')" :visible="true" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
-        <div class="kn-page">
-            <div class="kn-page-content">
-                <div id="filter-info" class="p-d-flex p-ai-center p-jc-center">
-                    <p>{{ $t('managers.lovsManagement.filterNullValues') }}</p>
-                </div>
-
-                <DataTable :value="rows" class="p-datatable-sm kn-table" dataKey="field" :lazy="false" :paginator="true" :rows="20" :totalRecords="lazyParams.size" responsiveLayout="stack" breakpoint="960px" @page="onPage($event)" @sort="onSort">
-                    <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                    <Column class="kn-truncated" v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" :sortable="true"></Column>
-                </DataTable>
+        <div class="p-col">
+            <div id="filter-info" class="p-d-flex p-ai-center p-jc-center">
+                <p>{{ $t('managers.lovsManagement.filterNullValues') }}</p>
             </div>
+
+            <DataTable :value="rows" class="p-datatable-sm kn-table" dataKey="field" :lazy="false" :paginator="true" :rows="20" :totalRecords="lazyParams.size" responsiveLayout="stack" breakpoint="960px" @page="onPage($event)" @sort="onSort">
+                <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                <Column class="kn-truncated" v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" :sortable="true"></Column>
+            </DataTable>
         </div>
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="$emit('close')"> {{ $t('common.close') }}</Button>
