@@ -5,8 +5,8 @@ import kpiDefinitionRoutes from '@/modules/kpi/kpiDefinition/KpiDefinition.route
 const baseRoutes = []
 
 const routes = baseRoutes
-  .concat(measureDefinitionRoutes)
-  .concat(targetDefinitionRoutes)
-  .concat(kpiDefinitionRoutes)
+    .concat(measureDefinitionRoutes)
+    .concat(targetDefinitionRoutes)
+    .concat(kpiDefinitionRoutes)
 
 export default routes
