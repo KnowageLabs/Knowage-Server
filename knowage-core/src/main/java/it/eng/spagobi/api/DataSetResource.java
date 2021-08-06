@@ -238,52 +238,6 @@ public class DataSetResource extends AbstractDataSetResource {
 				if (dataset == null)
 					continue;
 
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				ISchedulerDAO schedulerDAO;
-
-				try {
-					schedulerDAO = DAOFactory.getSchedulerDAO();
-				} catch (Throwable t) {
-					throw new SpagoBIRuntimeException("Impossible to load scheduler DAO", t);
-				}
-
-				if (dataset.isPersisted()) {
-
-					List<Trigger> triggers = schedulerDAO.loadTriggers("PersistDatasetExecutions", dataset.getLabel());
-
-					if (triggers.isEmpty()) {
-						// itemJSON.put("isScheduled", false);
-						dataset.setScheduled(false);
-					} else {
-
-						// Dataset scheduling is mono-trigger
-						Trigger trigger = triggers.get(0);
-
-						if (!trigger.isRunImmediately()) {
-
-							// itemJSON.put("isScheduled", true);
-							dataset.setScheduled(true);
-
-							if (trigger.getStartTime() != null) {
-								dataset.setStartDateField(sdf.format(trigger.getStartTime()));
-							} else {
-								// itemJSON.put("startDate", "");
-								dataset.setStartDateField("");
-							}
-
-							if (trigger.getEndTime() != null) {
-								// itemJSON.put("endDate", sdf.format(trigger.getEndTime()));
-								dataset.setEndDateField(sdf.format(trigger.getEndTime()));
-							} else {
-								// itemJSON.put("endDate", "");
-								dataset.setEndDateField("");
-							}
-
-							// itemJSON.put("schedulingCronLine", trigger.getChronExpression().getExpression());
-							dataset.setSchedulingCronLine(trigger.getChronExpression().getExpression());
-						}
-					}
-				}
 				/**
 				 * alberto ghedin next line is commented because the dao that return the datasets will return just datset owned by user or of same category
 				 */
