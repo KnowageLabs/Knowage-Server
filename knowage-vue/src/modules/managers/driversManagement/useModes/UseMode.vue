@@ -6,7 +6,7 @@
                     <span>{{ $t('managers.driversManagement.useModes') }}</span>
                 </template>
                 <template #right>
-                    <Button :label="$t('managers.driversManagement.add')" class="p-button-text p-button-rounded p-button-plain" :disabled="disableActionButton" @click="$emit('showDialog')" data-test="add-action-button" />
+                    <Button :label="$t('managers.driversManagement.add')" class="p-button-text p-button-rounded p-button-plain" :disabled="disableActionButton" @click="showForm" data-test="add-action-button" />
                 </template>
             </Toolbar>
         </template>
@@ -39,7 +39,7 @@
                     </Listbox>
                 </div>
                 <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0">
-                    {{ modes }}
+                    <DetailsCard :selectedMode="selectedUseMode"></DetailsCard>
                 </div>
             </div>
         </template>
@@ -49,10 +49,11 @@
 import { defineComponent } from 'vue'
 import driversManagemenDetailtDescriptor from '../DriversManagementDetailDescriptor.json'
 import Listbox from 'primevue/listbox'
+import DetailsCard from './DetailsCard.vue'
 //import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 export default defineComponent({
     name: 'use-mode-card',
-    components: { Listbox },
+    components: { Listbox, DetailsCard },
     props: {
         propModes: {
             type: Array,
@@ -62,6 +63,7 @@ export default defineComponent({
     data() {
         return {
             driversManagemenDetailtDescriptor,
+            selectedUseMode: {} as any,
             modes: []
         }
     },
@@ -74,6 +76,17 @@ export default defineComponent({
     mounted() {
         if (this.propModes) {
             this.modes = this.propModes as any
+        }
+    },
+    methods: {
+        showForm(event: any) {
+            this.setSelectedUseMode(event)
+        },
+        setSelectedUseMode(event: any) {
+            if (event) {
+                this.selectedUseMode = event.value
+            }
+            //this.formVisible = true
         }
     }
 })

@@ -7,7 +7,6 @@
         </template>
     </Toolbar>
     <div class="p-grid p-m-0 p-fluid p-jc-center" style="overflow:auto">
-        {{ driver }}
         <DriversDetailCard :selectedDriver="driver" :types="types"></DriversDetailCard>
         <UseMode v-if="modes" :propModes="modes"></UseMode>
     </div>
