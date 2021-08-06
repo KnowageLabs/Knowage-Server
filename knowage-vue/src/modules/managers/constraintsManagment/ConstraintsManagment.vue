@@ -27,9 +27,9 @@
                 <template #option="slotProps">
                     <div class="kn-list-item" data-test="list-item">
                         <Avatar :icon="constraintManagmentDescriptor.iconTypesMap[slotProps.option.predifined].icon" shape="circle" size="medium" />
-                        <div class="kn-list-item-text">
-                            <span>{{ slotProps.option.name }}</span>
-                            <span class="kn-list-item-text-secondary">{{ slotProps.option.label }}</span>
+                        <div class="kn-list-item-text" v-tooltip.top="slotProps.option.description">
+                            <span>{{ slotProps.option.label }}</span>
+                            <span class="kn-list-item-text-secondary">{{ slotProps.option.name }}</span>
                             <span class="kn-list-item-text-secondary">{{ slotProps.option.valueTypeCd }}</span>
                         </div>
                         <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteConstraintConfirm(slotProps.option.checkId)" v-if="!slotProps.option.predifined" data-test="delete-button" />
@@ -53,6 +53,7 @@ import Avatar from 'primevue/avatar'
 import { iConstraint } from './ConstraintsManagment'
 import ConstraintsManagmentDetail from './ConstraintsManagmentDetail.vue'
 import KnHint from '@/components/UI/KnHint.vue'
+import Tooltip from 'primevue/tooltip'
 
 export default defineComponent({
     name: 'constraint-management',
@@ -62,6 +63,9 @@ export default defineComponent({
         Listbox,
         Avatar,
         ConstraintsManagmentDetail
+    },
+    directives: {
+        tooltip: Tooltip
     },
     data() {
         return {
@@ -162,6 +166,9 @@ export default defineComponent({
                         msg: this.$t('common.toast.deleteSuccess')
                     })
                     this.loadAll()
+                    if (this.selectedCheck.checkId == id) {
+                        this.formVisible = false
+                    }
                 })
                 .catch((error) => {
                     this.$store.commit('setError', {
@@ -176,8 +183,10 @@ export default defineComponent({
             }
             this.formVisible = true
         },
-        handleSave() {
-            this.loadAll(), (this.touched = false)
+        handleSave(event: any) {
+            this.loadAll()
+            this.touched = false
+            this.selectedCheck = event
         },
         closeForm() {
             if (!this.touched) {

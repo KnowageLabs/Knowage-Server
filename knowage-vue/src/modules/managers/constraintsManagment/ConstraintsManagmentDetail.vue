@@ -187,6 +187,8 @@ export default defineComponent({
             if (this.constraint.checkId) {
                 this.operation = 'update'
                 url += this.constraint.checkId
+            } else {
+                this.operation = 'insert'
             }
 
             await this.sendRequest(url)
@@ -196,7 +198,7 @@ export default defineComponent({
                         title: this.$t(this.constraintsManagmentDetailDescriptor.operation[this.operation].toastTitle),
                         msg: this.$t(this.constraintsManagmentDetailDescriptor.operation.success)
                     })
-                    this.$emit('created')
+                    this.$emit('created', this.constraint)
                 })
                 .catch((error) => {
                     this.$store.commit('setError', {
