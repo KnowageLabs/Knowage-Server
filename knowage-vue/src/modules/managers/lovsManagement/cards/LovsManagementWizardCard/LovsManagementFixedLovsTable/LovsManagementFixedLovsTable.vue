@@ -64,7 +64,7 @@ export default defineComponent({
             type: Array
         }
     },
-    emits: ['touched'],
+    emits: ['touched', 'sorted'],
     data() {
         return {
             lovsManagementFixedLovsTableDescriptor,
@@ -85,6 +85,7 @@ export default defineComponent({
         },
         setPositionOnReorder(event) {
             this.values = event.value
+            this.$emit('sorted', this.values)
         },
         deleteValueConfirm(index: number) {
             this.$confirm.require({

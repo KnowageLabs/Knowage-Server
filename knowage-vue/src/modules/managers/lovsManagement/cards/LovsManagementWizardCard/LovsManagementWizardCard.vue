@@ -14,11 +14,11 @@
             </Toolbar>
         </template>
         <template #content>
-            <LovsManagementQuery v-if="lovType === 'QUERY'" :selectedLov="lov" :selectedQuery="selectedQuery" :datasources="datasources" :codeInput="codeInput" @touched="$emit('touched')"></LovsManagementQuery>
-            <LovsManagementScript v-else-if="lovType === 'SCRIPT'" :selectedLov="lov" :selectedScript="selectedScript" :listOfScriptTypes="listOfScriptTypes" :codeInput="codeInput" @touched="$emit('touched')"></LovsManagementScript>
-            <LovsManagementFixedLovsTable v-else-if="lovType === 'FIX_LOV'" :listForFixLov="listForFixLov" @touched="$emit('touched')"></LovsManagementFixedLovsTable>
-            <LovsManagementJavaClassInput v-else-if="lovType === 'JAVA_CLASS'" :selectedJavaClass="selectedJavaClass" @touched="$emit('touched')"></LovsManagementJavaClassInput>
-            <LovsManagementDataset v-else-if="lovType === 'DATASET'" :dataset="selectedDataset" @selected="$emit('selectedDataset', $event)" />
+            <LovsManagementQuery v-if="lovType === 'QUERY'" :selectedLov="lov" :selectedQuery="selectedQuery" :datasources="datasources" :codeInput="codeInput" @touched="onTouched"></LovsManagementQuery>
+            <LovsManagementScript v-else-if="lovType === 'SCRIPT'" :selectedLov="lov" :selectedScript="selectedScript" :listOfScriptTypes="listOfScriptTypes" @touched="onTouched"></LovsManagementScript>
+            <LovsManagementFixedLovsTable v-else-if="lovType === 'FIX_LOV'" :listForFixLov="listForFixLov" @touched="$emit('touched')" @sorted="$emit('sorted', $event)"></LovsManagementFixedLovsTable>
+            <LovsManagementJavaClassInput v-else-if="lovType === 'JAVA_CLASS'" :selectedJavaClass="selectedJavaClass" @touched="onTouched"></LovsManagementJavaClassInput>
+            <LovsManagementDataset v-else-if="lovType === 'DATASET'" :dataset="selectedDataset" @selected="onTouched" />
         </template>
     </Card>
     <LovsManagementInfoDialog v-if="infoDialogVisible" :infoTitle="infoTitle" :lovType="lov.itypeCd" @close="infoDialogVisible = false"></LovsManagementInfoDialog>
@@ -103,6 +103,7 @@ export default defineComponent({
             testValid: false,
             sendSave: false,
             dependenciesReady: false,
+            touchedForTest: false,
             x2js: new X2JS()
         }
     },
@@ -117,7 +118,7 @@ export default defineComponent({
         async save() {
             this.sendSave = true
 
-            if (this.testValid) {
+            if (this.testValid && !this.touchedForTest) {
                 await this.handleSubmit(true)
             } else {
                 await this.checkForDependencies(false)
@@ -130,15 +131,15 @@ export default defineComponent({
         }
     },
     async created() {
-        if (this.lov.id) {
-            this.testValid = true
-        }
         this.loadLov()
         this.onLovTypeChanged()
     },
     methods: {
         loadLov() {
             this.lov = this.selectedLov as iLov
+            if (this.lov.id) {
+                this.testValid = true
+            }
         },
         onLovTypeChanged() {
             switch (this.lovType) {
@@ -166,12 +167,14 @@ export default defineComponent({
                     if (!this.lov.lovProviderJSON.QUERY) {
                         this.lov.lovProviderJSON = {
                             QUERY: {
+                                CONNECTION: '',
                                 'DESCRIPTION-COLUMN': '',
                                 'INVISIBLE-COLUMNS': '',
-                                JAVA_CLASS_NAME: 'simple',
+                                STMT: '',
                                 LOVTYPE: 'simple',
-                                'TREE-LEVELS-COLUMNS': '',
-                                'VALUE-COLUMN': ''
+                                'VALUE-COLUMN': '',
+                                'VISIBLE-COLUMNS': '',
+                                decoded_STMT: ''
                             }
                         }
                     }
@@ -245,6 +248,7 @@ export default defineComponent({
                         msg: response
                     })
                 })
+                .finally(() => (this.touchedForTest = false))
 
             if (listOfEmptyDependencies.length > 0 && !this.dependenciesReady) {
                 this.dependenciesList = []
@@ -398,14 +402,14 @@ export default defineComponent({
         },
         setColumnValues() {
             if (this.lov.id) {
-                this.formatedVisibleValues = this.treeListTypeModel['VISIBLE-COLUMNS'].split(',')
+                this.formatedVisibleValues = this.treeListTypeModel['VISIBLE-COLUMNS']?.length > 0 ? this.treeListTypeModel['VISIBLE-COLUMNS'].split(',') : []
                 this.formatedInvisibleValues = []
                 if (!this.treeListTypeModel.LOVTYPE || this.treeListTypeModel.LOVTYPE == 'simple') {
-                    this.formatedValues = this.treeListTypeModel['VALUE-COLUMN']?.split(',')
-                    this.formatedDescriptionValues = this.treeListTypeModel['DESCRIPTION-COLUMN']?.split(',')
+                    this.formatedValues = this.treeListTypeModel['VALUE-COLUMN']?.length > 0 ? this.treeListTypeModel['VALUE-COLUMN']?.split(',') : []
+                    this.formatedDescriptionValues = this.treeListTypeModel['DESCRIPTION-COLUMN']?.length > 0 ? this.treeListTypeModel['DESCRIPTION-COLUMN']?.split(',') : []
                 } else {
                     this.formatedValues = this.treeListTypeModel['VALUE-COLUMNS']?.length > 0 ? this.treeListTypeModel['VALUE-COLUMNS'].split(',') : []
-                    this.formatedDescriptionValues = this.treeListTypeModel['DESCRIPTION-COLUMNS']?.split(',')
+                    this.formatedDescriptionValues = this.treeListTypeModel['DESCRIPTION-COLUMNS']?.length > 0 ? this.treeListTypeModel['DESCRIPTION-COLUMNS']?.split(',') : []
                 }
             } else {
                 this.treeListTypeModel.LOVTYPE = 'simple'
@@ -429,7 +433,10 @@ export default defineComponent({
             this.formatedVisibleValues = newFormatedVisibleValues as any
         },
         async handleSubmit(save: boolean) {
-            this.formatForSave()
+            if (this.touchedForTest) {
+                this.formatForSave()
+            }
+
             if (this.testValid && save) {
                 await this.saveLov()
             }
@@ -441,34 +448,9 @@ export default defineComponent({
             let tempObj = this.lov.lovProviderJSON[prop]
 
             if (!this.treeListTypeModel || this.treeListTypeModel.LOVTYPE == 'simple') {
-                tempObj['DESCRIPTION-COLUMN'] = this.treeListTypeModel['DESCRIPTION-COLUMN']
-                tempObj['VALUE-COLUMN'] = this.treeListTypeModel['VALUE-COLUMN']
-                tempObj['VISIBLE-COLUMNS'] = this.treeListTypeModel['VISIBLE-COLUMNS']
-                for (var i = 0; i < this.testLovModel.length; i++) {
-                    if (this.treeListTypeModel['VISIBLE-COLUMNS'].indexOf(this.testLovModel[i].name) === -1) {
-                        this.formatedInvisibleValues.push(this.testLovModel[i].name)
-                    }
-                }
-                tempObj['INVISIBLE-COLUMNS'] = this.formatedInvisibleValues.join()
+                this.formatSimpleTestTree(tempObj)
             } else {
-                delete tempObj['DESCRIPTION-COLUMN']
-                delete tempObj['VALUE-COLUMN']
-                const formatedDescriptionColumns = [] as any[]
-                const formatedValueColumns = [] as any[]
-                for (let i = 0; i < this.testLovTreeModel.length; i++) {
-                    formatedDescriptionColumns.push(this.testLovTreeModel[i].description)
-                }
-                tempObj['DESCRIPTION-COLUMNS'] = formatedDescriptionColumns.join()
-                for (let i = 0; i < this.testLovTreeModel.length; i++) {
-                    formatedValueColumns.push(this.testLovTreeModel[i].value)
-                }
-                tempObj['VALUE-COLUMNS'] = formatedValueColumns.join()
-                for (let i = 0; i < this.testLovModel.length; i++) {
-                    if (formatedValueColumns.indexOf(this.testLovModel[i].name) === -1) {
-                        this.formatedInvisibleValues.push(this.testLovModel[i].name)
-                    }
-                }
-                tempObj['INVISIBLE-COLUMNS'] = this.formatedInvisibleValues.join()
+                this.formatAdvancedTestTree(tempObj)
             }
             tempObj.LOVTYPE = this.treeListTypeModel.LOVTYPE
 
@@ -477,6 +459,37 @@ export default defineComponent({
             result[prop] = tempObj
             this.lov.lovProvider = this.x2js.js2xml(result)
             this.lov.itypeId = this.setLovInputTypeId(this.lov.itypeCd) as string
+        },
+        formatSimpleTestTree(tempObj: any) {
+            tempObj['DESCRIPTION-COLUMN'] = this.treeListTypeModel['DESCRIPTION-COLUMN']
+            tempObj['VALUE-COLUMN'] = this.treeListTypeModel['VALUE-COLUMN']
+            tempObj['VISIBLE-COLUMNS'] = this.treeListTypeModel['VISIBLE-COLUMNS']
+            for (var i = 0; i < this.testLovModel.length; i++) {
+                if (this.treeListTypeModel['VISIBLE-COLUMNS'].indexOf(this.testLovModel[i].name) === -1) {
+                    this.formatedInvisibleValues.push(this.testLovModel[i].name)
+                }
+            }
+            tempObj['INVISIBLE-COLUMNS'] = this.formatedInvisibleValues.join()
+        },
+        formatAdvancedTestTree(tempObj: any) {
+            delete tempObj['DESCRIPTION-COLUMN']
+            delete tempObj['VALUE-COLUMN']
+            const formatedDescriptionColumns = [] as any[]
+            const formatedValueColumns = [] as any[]
+            for (let i = 0; i < this.testLovTreeModel.length; i++) {
+                formatedDescriptionColumns.push(this.testLovTreeModel[i].description)
+            }
+            tempObj['DESCRIPTION-COLUMNS'] = formatedDescriptionColumns.join()
+            for (let i = 0; i < this.testLovTreeModel.length; i++) {
+                formatedValueColumns.push(this.testLovTreeModel[i].value)
+            }
+            tempObj['VALUE-COLUMNS'] = formatedValueColumns.join()
+            for (let i = 0; i < this.testLovModel.length; i++) {
+                if (formatedValueColumns.indexOf(this.testLovModel[i].name) === -1) {
+                    this.formatedInvisibleValues.push(this.testLovModel[i].name)
+                }
+            }
+            tempObj['INVISIBLE-COLUMNS'] = this.formatedInvisibleValues.join()
         },
         setLovInputTypeId(inputType: string) {
             switch (inputType) {
@@ -572,6 +585,10 @@ export default defineComponent({
                 }
             })
             return ready
+        },
+        onTouched() {
+            this.touchedForTest = true
+            this.$emit('touched')
         }
     }
 })

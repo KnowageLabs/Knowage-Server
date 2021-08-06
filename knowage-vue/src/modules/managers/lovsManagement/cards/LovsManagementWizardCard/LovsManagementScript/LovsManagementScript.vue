@@ -48,8 +48,7 @@ export default defineComponent({
     props: {
         selectedLov: { type: Object, required: true },
         selectedScript: { type: Object, required: true },
-        listOfScriptTypes: { type: Array },
-        codeInput: { type: Object }
+        listOfScriptTypes: { type: Array }
     },
     emits: ['touched'],
     data() {
@@ -68,18 +67,13 @@ export default defineComponent({
                 autofocus: true,
                 theme: 'eclipse',
                 lineNumbers: true
-            },
-            cursorPosition: null
+            }
         }
     },
     watch: {
         selectedLov() {
             this.loadLov()
             this.loadSelectedScript()
-        },
-        codeInput() {
-            this.cursorPosition = this.codeMirror.getCursor()
-            this.codeMirror.replaceRange(this.codeInput?.code, this.cursorPosition)
         }
     },
     computed: {

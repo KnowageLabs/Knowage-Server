@@ -1,8 +1,7 @@
 <template>
     <Dialog :style="lovsManagementParamsDialogDescriptor.dialog.style" :header="$t('managers.lovsManagement.dependenciesTitle')" :visible="true" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
         <div v-for="(dependency, index) in dependenciesList" :key="index">
-            <p v-if="dependency.type === 'profile'">{{ $t('managers.lovsManagement.profileDependencyText') }}</p>
-            <p v-else-if="dependency.type === 'parameter'">{{ $t('managers.lovsManagement.parameterDependencyText') }}</p>
+            <p>{{ $t(lovsManagementParamsDialogDescriptor.info[dependency.type]) }}</p>
             <div>
                 <span class="p-float-label">
                     <InputText class="kn-material-input" type="text" v-model.trim="dependency.value" />

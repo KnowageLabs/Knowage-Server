@@ -3,5 +3,9 @@
         "style": {
             "width": "60vw"
         }
+    },
+    "info": {
+        "parameter": "anagers.lovsManagement.parameterDependencyText",
+        "profile": "managers.lovsManagement.profileDependencyText"
     }
 }

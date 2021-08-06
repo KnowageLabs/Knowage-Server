@@ -28,6 +28,7 @@
                 @touched="setTouched"
                 @created="$emit('created')"
                 @selectedDataset="setSelectedDataset($event)"
+                @sorted="onSort($event)"
             ></LovsManagementWizardCard>
         </div>
     </div>
@@ -95,7 +96,7 @@ export default defineComponent({
             return this.v$.$invalid || this.emptyRequiredFields()
         }
     },
-    async created() {
+    async mounted() {
         await this.loadPage()
     },
     methods: {
@@ -196,14 +197,15 @@ export default defineComponent({
             this.$emit('touched')
         },
         emptyRequiredFields() {
-            if (this.selectedLov.itypeCd === lovItemEnum.SCRIPT) {
-                return !this.selectedScript.language
-            } else if (this.selectedLov.itypeCd === lovItemEnum.QUERY) {
-                return !this.selectedQuery.datasource
-            } else if (this.selectedLov.itypeCd === lovItemEnum.JAVA_CLASS) {
-                return !this.selectedJavaClass.name
-            } else if (this.selectedLov.itypeCd === lovItemEnum.DATASET) {
-                return !this.selectedDataset.name
+            switch (this.selectedLov.itypeCd) {
+                case lovItemEnum.SCRIPT:
+                    return !this.selectedScript.language
+                case lovItemEnum.QUERY:
+                    return !this.selectedQuery.datasource
+                case lovItemEnum.JAVA_CLASS:
+                    return !this.selectedJavaClass.name
+                case lovItemEnum.DATASET:
+                    return !this.selectedDataset.name
             }
 
             return false
@@ -217,6 +219,9 @@ export default defineComponent({
         },
         setSelectedDataset(dataset: any) {
             this.selectedDataset = dataset
+        },
+        onSort(sortedArray: any[]) {
+            this.listForFixLov = sortedArray
         }
     }
 })

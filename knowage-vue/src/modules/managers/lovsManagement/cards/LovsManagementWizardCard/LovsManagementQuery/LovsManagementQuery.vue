@@ -81,7 +81,7 @@ export default defineComponent({
         codeInput() {
             this.setupCodeMirror()
             this.cursorPosition = this.codeMirror.getCursor()
-            this.codeMirror.replaceRange(this.codeInput?.code, this.cursorPosition)
+            this.codeMirror.replaceRange('${' + this.codeInput?.code + '}', this.cursorPosition)
         }
     },
     computed: {
