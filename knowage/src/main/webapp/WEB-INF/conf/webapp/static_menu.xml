@@ -135,7 +135,7 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=targetDefinition" />
 			<ITEM id="6004" label="menu.kpi.schedulerKpi"
 				requiredFunctionality="KpiManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=schedulerKpi" />
+				to="/kpi-scheduler" />
 			<ITEM id="6005" label="menu.kpi.scorecard"
 				requiredFunctionality="ScorecardsManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=scorecardKpi" />

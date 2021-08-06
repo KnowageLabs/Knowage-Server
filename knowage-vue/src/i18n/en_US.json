@@ -245,7 +245,7 @@
             "expiredInterval": "The schedulation has expired",
             "filters": "Filters",
             "frequency": "Frequency",
-            "hint": "No kpi schedulers selected",
+            "hint": "The KPI scheduler allows you to define a time schedulation to monitor one or more KPI behaviour. It's possible to set the frequency and the table persistance of the KPI result. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "insertAndUpdate": "Insert and Update",
             "kpiName": "KPI Name",
             "logExecution": "Log Execution",
@@ -258,7 +258,7 @@
             "saveScheduler": "Save Scheduler",
             "successCount": "Success Count",
             "timeRun": "TimeRun",
-            "title": "Scheduler List",
+            "title": "KPI Scheduler",
             "totalCount": "Total Count",
             "wrongCronInterval": "Error: the schedulation set will never be executed"
         },
