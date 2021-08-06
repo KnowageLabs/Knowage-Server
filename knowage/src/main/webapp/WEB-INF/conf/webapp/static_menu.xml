@@ -114,7 +114,7 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=crossDefinition" />
 			<ITEM id="5006" label="menu.Alert"
 				requiredFunctionality="AlertManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=alertDefinition" />
+				to="/alert" />
 			<ITEM id="5007" label="menu.NewsManagement"
 				requiredFunctionality="NewsManagement"
 				to="/news-management" />

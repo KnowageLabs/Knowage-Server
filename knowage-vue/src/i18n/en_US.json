@@ -207,7 +207,7 @@
             "brokerUrl": "Context Broker URL",
             "execution": "Single Execution",
             "expiredWarning": "WARNING: The alert is expired",
-            "hint": "Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "hint": "The Alert definition allows you to define a serie of action to start when one or more KPI reach a specific threshold. You can set email alert, execute ETL or call a context broker .Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "kpiListener": "Listener",
             "label": "Label",
             "mailSubject": "Mail Subject",
@@ -216,7 +216,7 @@
             "noOfEvents": "Number of events before triggering actions",
             "savingError": "Error while saving alert",
             "threshold": "Threshold",
-            "title": "Alert",
+            "title": "Alert Definition",
             "type": "Type"
         },
         "kpiDefinition": {
