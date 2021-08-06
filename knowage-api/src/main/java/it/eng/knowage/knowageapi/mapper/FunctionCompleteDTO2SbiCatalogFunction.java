@@ -78,7 +78,7 @@ public class FunctionCompleteDTO2SbiCatalogFunction implements Function<Function
 				})
 				.collect(toList());
 
-		String beKeywords = t.getKeywords()
+		String beKeywords = t.getTags()
 				.stream()
 				.collect(joining(","));
 
