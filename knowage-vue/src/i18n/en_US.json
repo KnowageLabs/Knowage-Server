@@ -200,6 +200,25 @@
         "sourceCode": "Source code available on "
     },
     "kpi": {
+        "alert": {
+            "actionList": "Action List",
+            "addAction": "Add new action",
+            "brokerType": "Context Broker Type",
+            "brokerUrl": "Context Broker URL",
+            "execution": "Single Execution",
+            "expiredWarning": "WARNING: The alert is expired",
+            "hint": "Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "kpiListener": "Listener",
+            "label": "Label",
+            "mailSubject": "Mail Subject",
+            "mailTo": "Mail to",
+            "name": "Name",
+            "noOfEvents": "Number of events before triggering actions",
+            "savingError": "Error while saving alert",
+            "threshold": "Threshold",
+            "title": "Alert",
+            "type": "Type"
+        },
         "kpiDefinition": {
             "addKpiAssociations": "Add KPI associations",
             "addNewThreshold": "Add new threshold item",

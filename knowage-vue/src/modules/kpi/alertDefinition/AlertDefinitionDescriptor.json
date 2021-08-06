@@ -1,0 +1,34 @@
+{
+    "filterFields": ["name"],
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "success": "common.toast.success",
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
+        }
+    },
+    "styles": {
+        "basicCard": {
+            "width": "100%"
+        },
+        "cron": {
+            "width": "100%"
+        },
+        "inputFields": {
+            "width": "45%"
+        },
+        "menuButton": {
+            "height": "24px",
+            "width": "24px"
+        },
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center",
+            "width": "100%"
+        }
+    }
+}
