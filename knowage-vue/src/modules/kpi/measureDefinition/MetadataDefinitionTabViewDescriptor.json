@@ -1,0 +1,14 @@
+{
+    "aliasFilterFields": ["name"],
+    "dialog": {
+        "style": {
+            "width": "60vw"
+        }
+    },
+    "listBox": {
+        "style": {
+            "max-height": "450px"
+        }
+    },
+    "placeholderFilterFields": ["name"]
+}

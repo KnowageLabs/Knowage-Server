@@ -9,7 +9,7 @@
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-    
+
     <div class="p-grid p-m-0 p-fluid">
         <div class="p-col-12">
             <Card>
@@ -18,7 +18,7 @@
                         <div class="p-field">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
-                                    <InputText id="attributeName" type="text" v-model.trim="v$.attribute.attributeName.$model" @change="onDataChange(v$.attribute.attributeName)" class="p-inputtext p-component kn-material-input" />
+                                    <InputText id="attributeName" maxLength="100" type="text" v-model.trim="v$.attribute.attributeName.$model" @change="onDataChange(v$.attribute.attributeName)" class="p-inputtext p-component kn-material-input" />
                                     <label for="attributeName">{{ $t('managers.profileAttributesManagement.form.name') }} *</label>
                                 </span>
                             </div>
@@ -28,7 +28,7 @@
                         <div class="p-field">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
-                                    <InputText id="attributeDescription" type="text" v-model.trim="v$.attribute.attributeDescription.$model" @blur="onDataChange(v$.attribute.attributeDescription)" class="p-inputtext p-component kn-material-input" />
+                                    <InputText id="attributeDescription" maxLength="250" type="text" v-model.trim="v$.attribute.attributeDescription.$model" @blur="onDataChange(v$.attribute.attributeDescription)" class="p-inputtext p-component kn-material-input" />
                                     <label for="attributeDescription">{{ $t('managers.profileAttributesManagement.form.description') }} *</label>
                                 </span>
                             </div>
@@ -38,8 +38,17 @@
                         <div class="p-field">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
-                                    <Dropdown id="dataType" v-model="v$.attribute.value.$model" @before-show="setDirty(v$.attribute.value)"  :options="attributeTypeValues" optionLabel="name" optionValue="value" class="p-dropdown p-component p-inputwrapper p-inputwrapper-filled kn-material-input" @change="onDataChange(v$.attribute.value)" />
-                                    <label for="dataType">{{ $t('managers.profileAttributesManagement.form.dataType') }} *</label>                                    
+                                    <Dropdown
+                                        id="dataType"
+                                        v-model="v$.attribute.value.$model"
+                                        @before-show="setDirty(v$.attribute.value)"
+                                        :options="attributeTypeValues"
+                                        optionLabel="name"
+                                        optionValue="value"
+                                        class="p-dropdown p-component p-inputwrapper p-inputwrapper-filled kn-material-input"
+                                        @change="onDataChange(v$.attribute.value)"
+                                    />
+                                    <label for="dataType">{{ $t('managers.profileAttributesManagement.form.dataType') }} *</label>
                                 </span>
                             </div>
                             <KnValidationMessages :vComp="v$.attribute.value" :additionalTranslateParams="{ fieldName: $t('managers.profileAttributesManagement.form.dataType') }"></KnValidationMessages>
@@ -66,14 +75,14 @@
                                         optionLabel="name"
                                         optionValue="id"
                                         @change="onLoveDropdownChange"
-                                        @before-show="setDirty(v$.attribute.lovId)"                                       
+                                        @before-show="setDirty(v$.attribute.lovId)"
                                         :filter="true"
                                         :placeholder="$t('managers.profileAttributesManagement.form.lovPlaceholder')"
                                         :showClear="true"
                                         class="p-dropdown p-component p-inputwrapper p-inputwrapper-filled kn-material-input"
                                     />
-                                    <label for="attributeDescription">{{ $t('managers.profileAttributesManagement.form.lov') }} *</label>                                    
-                                </span>                                
+                                    <label for="attributeDescription">{{ $t('managers.profileAttributesManagement.form.lov') }} *</label>
+                                </span>
                             </div>
                             <KnValidationMessages :vComp="v$.attribute.lovId" :additionalTranslateParams="{ fieldName: $t('managers.profileAttributesManagement.form.lov') }"></KnValidationMessages>
                         </div>
@@ -95,14 +104,14 @@
                         <div class="p-col-6 p-sm-12 p-md-6" :hidden="syntaxSelectHidden">
                             <div class="p-grid p-ai-start vertical-container">
                                 <div class="p-col">
-                                    <RadioButton id="simple" name="syntax" value="false" v-model="v$.attribute.syntax.$model" @change="onDataChange(v$.attribute.syntax)" />
+                                    <RadioButton id="simple" name="syntax" :value="false" v-model="v$.attribute.syntax.$model" @change="onDataChange(v$.attribute.syntax)" />
                                     <label class="p-m-2" for="simple">{{ $t('managers.profileAttributesManagement.form.syntax.simple') }}</label>
                                     <div class="p-mt-2" v-if="v$.attribute.syntax.$model === false">
                                         * Simple = ('Italy','USA','Serbia', ...)
                                     </div>
                                 </div>
                                 <div class="p-col">
-                                    <RadioButton id="complex" name="syntax" value="true" v-model="v$.attribute.syntax.$model" @change="onDataChange(v$.attribute.syntax)" />
+                                    <RadioButton id="complex" name="syntax" :value="true" v-model="v$.attribute.syntax.$model" @change="onDataChange(v$.attribute.syntax)" />
                                     <label class="p-m-2" for="complex">{{ $t('managers.profileAttributesManagement.form.syntax.complex') }}</label>
                                     <div class="p-m-2" v-if="v$.attribute.syntax.$model === true">
                                         * Complex = {;{Italy;USA;Serbia; ...}}
@@ -152,7 +161,7 @@ export default defineComponent({
     watch: {
         selectedAttribute: {
             handler: function(attribute) {
-                this.v$.$reset();
+                this.v$.$reset()
                 this.loadAttribute(attribute)
             }
         }
@@ -180,7 +189,7 @@ export default defineComponent({
         const customValidators: ICustomValidatorMap = {
             'custom-required': (value) => {
                 return this.enableLov || value
-            },         
+            }
         }
         return {
             attribute: createValidations('attribute', profileAttributesManagementValidationDescriptor.validations.attribute, customValidators)
@@ -188,11 +197,13 @@ export default defineComponent({
     },
     async created() {
         await this.loadLovs()
-        if ( this.selectedAttribute)  { this.loadAttribute(this.selectedAttribute)}
+        if (this.selectedAttribute) {
+            this.loadAttribute(this.selectedAttribute)
+        }
     },
     methods: {
         onLoveBlur() {
-            this.v$.attribute.lovId.$touch();
+            this.v$.attribute.lovId.$touch()
         },
         async loadLovs() {
             this.loading = true
@@ -305,13 +316,13 @@ export default defineComponent({
         },
         loadAttribute(attribute) {
             if (attribute.attributeId === null) {
-                    this.resetForm()
-                    return
-                }
-                this.populateForm(attribute)
+                this.resetForm()
+                return
+            }
+            this.populateForm(attribute)
         },
         setDirty(v$Comp) {
-            v$Comp.$touch();
+            v$Comp.$touch()
             this.$emit('dataChanged')
         }
     }
