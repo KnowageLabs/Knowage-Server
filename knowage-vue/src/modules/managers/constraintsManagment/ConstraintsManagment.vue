@@ -166,9 +166,7 @@ export default defineComponent({
                         msg: this.$t('common.toast.deleteSuccess')
                     })
                     this.loadAll()
-                    if (this.selectedCheck.checkId == id) {
-                        this.formVisible = false
-                    }
+                    this.formVisible = false
                 })
                 .catch((error) => {
                     this.$store.commit('setError', {
