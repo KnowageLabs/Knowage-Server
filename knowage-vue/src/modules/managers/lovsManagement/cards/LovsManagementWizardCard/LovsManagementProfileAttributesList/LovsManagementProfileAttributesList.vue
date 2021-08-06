@@ -1,5 +1,5 @@
 <template>
-    <Dialog :style="lovsManagementProfileAttributesListDescriptor.dialog.style" :header="$t('managers.lovsManagement.profileAttributes')" :visible="true" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
+    <Dialog :style="lovsManagementProfileAttributesListDescriptor.dialog.style" :header="$t('managers.lovsManagement.profileAttributes')" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
         <Listbox
             class="kn-list"
             :options="profileAttributes"
@@ -37,7 +37,7 @@ export default defineComponent({
     name: 'lovs-management-info-dialog',
     components: { Dialog, Listbox },
     emits: ['close', 'selected'],
-    props: { profileAttributes: { type: Array } },
+    props: { visible: { type: Boolean }, profileAttributes: { type: Array } },
     data() {
         return {
             lovsManagementProfileAttributesListDescriptor

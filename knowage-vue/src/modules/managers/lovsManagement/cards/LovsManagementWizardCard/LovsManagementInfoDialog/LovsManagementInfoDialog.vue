@@ -1,5 +1,5 @@
 <template>
-    <Dialog :style="lovsManagementInfoDialogDescriptor.dialog.style" :header="infoTitle" :visible="true" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
+    <Dialog :style="lovsManagementInfoDialogDescriptor.dialog.style" :header="infoTitle" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
         <div v-if="lovType === lovItemEnum.SCRIPT">
             <p>
                 The script must be written using Groovy or Javascript languages.
@@ -89,6 +89,7 @@ export default defineComponent({
     components: { Dialog },
     emits: ['close'],
     props: {
+        visible: { type: Boolean },
         infoTitle: { type: String },
         lovType: { type: Object }
     },

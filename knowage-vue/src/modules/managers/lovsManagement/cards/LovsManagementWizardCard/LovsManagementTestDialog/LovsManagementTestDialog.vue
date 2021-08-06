@@ -1,5 +1,5 @@
 <template>
-    <Dialog :contentStyle="lovsManagementTestDialogDescriptor.dialog.style" :header="$t('managers.lovsManagement.test')" :visible="true" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
+    <Dialog :contentStyle="lovsManagementTestDialogDescriptor.dialog.style" :header="$t('managers.lovsManagement.test')" :visible="visible" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
         <div class="p-fluid p-m-4">
             <div>
                 <span>
@@ -31,6 +31,7 @@ export default defineComponent({
     components: { Dialog, Dropdown, LovsManagementSimpleDatatable, LovsManagementTree },
     emits: ['close', 'pageChanged', 'save'],
     props: {
+        visible: { type: Boolean },
         testModel: {
             type: Object
         },

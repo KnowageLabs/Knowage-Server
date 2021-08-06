@@ -1,5 +1,5 @@
 <template>
-    <Dialog :contentStyle="lovsManagementPreviewDialogDescriptor.dialog.style" :header="$t('managers.lovsManagement.preview')" :visible="true" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
+    <Dialog :contentStyle="lovsManagementPreviewDialogDescriptor.dialog.style" :header="$t('managers.lovsManagement.preview')" :visible="visible" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
         <div class="p-col">
             <div id="filter-info" class="p-d-flex p-ai-center p-jc-center">
                 <p>{{ $t('managers.lovsManagement.filterNullValues') }}</p>
@@ -28,6 +28,7 @@ export default defineComponent({
     components: { Column, DataTable, Dialog },
     emits: ['close', 'pageChanged'],
     props: {
+        visible: { type: Boolean },
         dataForPreview: { type: Object, required: true },
         pagination: { type: Object }
     },

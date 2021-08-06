@@ -14,7 +14,6 @@
             </Toolbar>
         </template>
         <template #content>
-            {{ ('lov type', this.lov.lovProviderJSON) }}
             <LovsManagementQuery v-if="lovType === 'QUERY'" :selectedLov="lov" :selectedQuery="selectedQuery" :datasources="datasources" :codeInput="codeInput" @touched="onTouched"></LovsManagementQuery>
             <LovsManagementScript v-else-if="lovType === 'SCRIPT'" :selectedLov="lov" :selectedScript="selectedScript" :listOfScriptTypes="listOfScriptTypes" @touched="onTouched"></LovsManagementScript>
             <LovsManagementFixedLovsTable v-else-if="lovType === 'FIX_LOV'" :listForFixLov="listForFixLov" @touched="$emit('touched')" @sorted="$emit('sorted', $event)"></LovsManagementFixedLovsTable>
@@ -22,11 +21,11 @@
             <LovsManagementDataset v-else-if="lovType === 'DATASET'" :dataset="selectedDataset" @selected="$emit('selectedDataset', $event)" />
         </template>
     </Card>
-    <LovsManagementInfoDialog v-if="infoDialogVisible" :infoTitle="infoTitle" :lovType="lov.itypeCd" @close="infoDialogVisible = false"></LovsManagementInfoDialog>
-    <LovsManagementProfileAttributesList v-if="profileAttributesDialogVisible" :profileAttributes="profileAttributes" @selected="setCodeInput($event)" @close="profileAttributesDialogVisible = false"></LovsManagementProfileAttributesList>
-    <LovsManagementParamsDialog v-if="paramsDialogVisible" :dependenciesList="dependenciesList" @preview="onPreview" @close="paramsDialogVisible = false"></LovsManagementParamsDialog>
-    <LovsManagementPreviewDialog v-if="previewDialogVisible" :dataForPreview="dataForPreview" :pagination="pagination" @close="previewDialogVisible = false" @pageChanged="previewLov($event, false)"></LovsManagementPreviewDialog>
-    <LovsManagementTestDialog v-if="testDialogVisible" :selectedLov="lov" :testModel="treeListTypeModel" :testLovModel="testLovModel" :testLovTreeModel="testLovTreeModel" @close="testDialogVisible = false" @save="onTestSave($event)"></LovsManagementTestDialog>
+    <LovsManagementInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :infoTitle="infoTitle" :lovType="lov.itypeCd" @close="infoDialogVisible = false"></LovsManagementInfoDialog>
+    <LovsManagementProfileAttributesList v-show="profileAttributesDialogVisible" :visible="profileAttributesDialogVisible" :profileAttributes="profileAttributes" @selected="setCodeInput($event)" @close="profileAttributesDialogVisible = false"></LovsManagementProfileAttributesList>
+    <LovsManagementParamsDialog v-show="paramsDialogVisible" :visible="paramsDialogVisible" :dependenciesList="dependenciesList" @preview="onPreview" @close="paramsDialogVisible = false"></LovsManagementParamsDialog>
+    <LovsManagementPreviewDialog v-show="previewDialogVisible" :visible="previewDialogVisible" :dataForPreview="dataForPreview" :pagination="pagination" @close="previewDialogVisible = false" @pageChanged="previewLov($event, false)"></LovsManagementPreviewDialog>
+    <LovsManagementTestDialog v-show="testDialogVisible" :visible="testDialogVisible" :selectedLov="lov" :testModel="treeListTypeModel" :testLovModel="testLovModel" :testLovTreeModel="testLovTreeModel" @close="testDialogVisible = false" @save="onTestSave($event)"></LovsManagementTestDialog>
 </template>
 
 <script lang="ts">

@@ -1,5 +1,5 @@
 <template>
-    <Dialog :style="lovsManagementParamsDialogDescriptor.dialog.style" :header="$t('managers.lovsManagement.dependenciesTitle')" :visible="true" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
+    <Dialog :style="lovsManagementParamsDialogDescriptor.dialog.style" :header="$t('managers.lovsManagement.dependenciesTitle')" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
         <div v-for="(dependency, index) in dependenciesList" :key="index">
             <p>{{ $t(lovsManagementParamsDialogDescriptor.info[dependency.type]) }}</p>
             <div>
@@ -26,6 +26,7 @@ export default defineComponent({
     components: { Dialog },
     emits: ['close', 'preview'],
     props: {
+        visible: { type: Boolean },
         dependenciesList: { type: Array }
     },
     data() {
