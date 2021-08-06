@@ -18,6 +18,7 @@
 package it.eng.spagobi.tools.dataset.dao;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -83,6 +84,8 @@ import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.tools.scheduler.bo.Trigger;
+import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -548,6 +551,8 @@ public class DataSetFactory {
 				throw new SpagoBIRuntimeException("Error while defining dataset configuration.", e);
 			}
 
+
+			managePersistedDataset(ds);
 		}
 		logger.debug("OUT");
 		return versionDS;
@@ -1189,4 +1194,54 @@ public class DataSetFactory {
 		res.setSolrQueryParameters(res.getSolrQuery(), res.getParamsMap());
 		return res;
 	}
+
+	private static void managePersistedDataset(IDataSet ds) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		ISchedulerDAO schedulerDAO;
+
+		try {
+			schedulerDAO = DAOFactory.getSchedulerDAO();
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("Impossible to load scheduler DAO", t);
+		}
+
+		if (ds.isPersisted()) {
+
+			List<Trigger> triggers = schedulerDAO.loadTriggers("PersistDatasetExecutions", ds.getLabel());
+
+			if (triggers.isEmpty()) {
+				// itemJSON.put("isScheduled", false);
+				ds.setScheduled(false);
+			} else {
+
+				// Dataset scheduling is mono-trigger
+				Trigger trigger = triggers.get(0);
+
+				if (!trigger.isRunImmediately()) {
+
+					// itemJSON.put("isScheduled", true);
+					ds.setScheduled(true);
+
+					if (trigger.getStartTime() != null) {
+						ds.setStartDateField(sdf.format(trigger.getStartTime()));
+					} else {
+						// itemJSON.put("startDate", "");
+						ds.setStartDateField("");
+					}
+
+					if (trigger.getEndTime() != null) {
+						// itemJSON.put("endDate", sdf.format(trigger.getEndTime()));
+						ds.setEndDateField(sdf.format(trigger.getEndTime()));
+					} else {
+						// itemJSON.put("endDate", "");
+						ds.setEndDateField("");
+					}
+
+					// itemJSON.put("schedulingCronLine", trigger.getChronExpression().getExpression());
+					ds.setSchedulingCronLine(trigger.getChronExpression().getExpression());
+				}
+			}
+		}
+	}
+
 }
