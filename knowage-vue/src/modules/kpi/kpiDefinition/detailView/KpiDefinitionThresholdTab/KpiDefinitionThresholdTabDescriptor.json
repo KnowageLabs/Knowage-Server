@@ -1,0 +1,57 @@
+{
+    "newThreshold": {
+        "color": "#00FFFF",
+        "includeMax": false,
+        "includeMin": false,
+        "label": "",
+        "maxValue": "",
+        "minValue": "",
+        "position": ""
+    },
+    "styles": {
+        "input": {
+            "width": "80%"
+        },
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "margin-bottom": "3%",
+            "text-align": "center"
+        },
+        "table": {
+            "footer": {
+                "float": "right"
+            }
+        }
+    },
+    "validations": {
+        "kpi": [
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "description",
+                "validators": [
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
