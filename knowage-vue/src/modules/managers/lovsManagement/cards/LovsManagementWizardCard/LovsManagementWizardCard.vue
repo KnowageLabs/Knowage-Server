@@ -118,7 +118,7 @@ export default defineComponent({
         async save() {
             this.sendSave = true
 
-            if (!this.touchedForTest) {
+            if (!this.touchedForTest && !this.testValid) {
                 this.buildTestTable()
                 this.formatForTest()
             }
