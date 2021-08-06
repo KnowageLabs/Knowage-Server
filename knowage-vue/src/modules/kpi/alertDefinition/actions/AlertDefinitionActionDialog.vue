@@ -46,17 +46,17 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import axios from 'axios'
-import { iAction } from '../Alert'
+import { iAction } from '../AlertDefinition'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import MultiSelect from 'primevue/multiselect'
-import addActionDialogDescriptor from './AddActionDialogDescriptor.json'
-import ExectuteEtlCard from './ExectuteEtlCard.vue'
-import ContextBrokerCard from './ContextBrokerCard.vue'
-import SendMailCard from './SendMailCard.vue'
+import addActionDialogDescriptor from './AlertDefinitionActionDialogDescriptor.json'
+import ExectuteEtlCard from './AlertDefinitionExectuteEtlCard.vue'
+import ContextBrokerCard from './AlertDefinitionContextBrokerCard.vue'
+import SendMailCard from './AlertDefinitionSendMailCard.vue'
 import useValidate from '@vuelidate/core'
 import { createValidations } from '@/helpers/commons/validationHelper'
-import alertValidationDescriptor from '../AlertValidationDescriptor.json'
+import alertValidationDescriptor from '../AlertDefinitionValidationDescriptor.json'
 
 export default defineComponent({
     name: 'add-action-dialog',

@@ -19,18 +19,18 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iAction, iAlert, iListener } from './Alert'
+import { iAction, iAlert, iListener } from './AlertDefinition'
 import { createValidations } from '@/helpers/commons/validationHelper'
-import alertValidationDescriptor from './AlertValidationDescriptor.json'
-import alertDescriptor from './AlertDescriptor.json'
+import alertValidationDescriptor from './AlertDefinitionValidationDescriptor.json'
+import alertDescriptor from './AlertDefinitionDescriptor.json'
 import axios from 'axios'
 import useValidate from '@vuelidate/core'
 import Message from 'primevue/message'
-import NameCard from './Cards/NameCard.vue'
-import KpiCard from './Cards/KpiCard.vue'
-import EventsCard from './Cards/EventsCard.vue'
+import NameCard from './cards/AlertDefinitionNameCard.vue'
+import KpiCard from './cards/AlertDefinitionKpiCard.vue'
+import EventsCard from './cards/AlertDefinitionEventsCard.vue'
 import KpiCron from '../kpiCron/KpiCron.vue'
-import AddActionDialog from './addActionDialog/AddActionDialog.vue'
+import AddActionDialog from './actions/AlertDefinitionActionDialog.vue'
 
 export default defineComponent({
     name: 'alert-details',

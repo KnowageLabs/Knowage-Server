@@ -46,11 +46,11 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iAlert } from './Alert'
+import { iAlert } from './AlertDefinition'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
 import axios from 'axios'
-import alertDescriptor from './AlertDescriptor.json'
+import alertDescriptor from './AlertDefinitionDescriptor.json'
 
 export default defineComponent({
     name: 'alert',

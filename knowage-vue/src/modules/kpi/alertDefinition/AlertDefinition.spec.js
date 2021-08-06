@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { createRouter, createWebHistory } from 'vue-router'
-import AlertHint from './AlertHint.vue'
+import AlertHint from './AlertDefinitionHint.vue'
 import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'

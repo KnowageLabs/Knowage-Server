@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import AlertDetail from './AlertDetail.vue'
+import AlertDetail from './AlertDefinitionDetail.vue'
 import axios from 'axios'
 import Toolbar from 'primevue/toolbar'
 import Button from 'primevue/button'

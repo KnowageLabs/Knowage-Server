@@ -43,7 +43,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-import alertDescriptor from '../AlertDescriptor.json'
+import alertDescriptor from '../AlertDefinitionDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import Menu from 'primevue/menu'
 

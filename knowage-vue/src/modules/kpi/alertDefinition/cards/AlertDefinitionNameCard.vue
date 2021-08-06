@@ -45,10 +45,10 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iAlert, iListener } from '../Alert'
+import { iAlert, iListener } from '../AlertDefinition'
 import Dropdown from 'primevue/dropdown'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import alertDescriptor from '../AlertDescriptor.json'
+import alertDescriptor from '../AlertDefinitionDescriptor.json'
 export default defineComponent({
     name: 'name-card',
     components: { Dropdown, KnValidationMessages },

@@ -43,7 +43,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { FilterOperator } from 'primevue/api'
-import addActionDialogDescriptor from './AddActionDialogDescriptor.json'
+import addActionDialogDescriptor from './AlertDefinitionActionDialogDescriptor.json'
 
 export default defineComponent({
     name: 'etl-card',

@@ -18,7 +18,7 @@
 import { defineComponent } from 'vue'
 import AutoComplete from 'primevue/autocomplete'
 import Editor from 'primevue/editor'
-import sendMailCardDescriptor from './SendMailCardDescriptor.json'
+import sendMailCardDescriptor from './AlertDefinitionSendMailCardDescriptor.json'
 
 export default defineComponent({
     name: 'send-mail-card',

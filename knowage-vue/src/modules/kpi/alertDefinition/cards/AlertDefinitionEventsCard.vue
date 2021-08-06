@@ -18,10 +18,10 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iAlert } from '../Alert'
+import { iAlert } from '../AlertDefinition'
 import InputNumber from 'primevue/inputnumber'
 import Checkbox from 'primevue/checkbox'
-import alertDescriptor from '../AlertDescriptor.json'
+import alertDescriptor from '../AlertDefinitionDescriptor.json'
 export default defineComponent({
     name: 'events-card',
     components: { InputNumber, Checkbox },

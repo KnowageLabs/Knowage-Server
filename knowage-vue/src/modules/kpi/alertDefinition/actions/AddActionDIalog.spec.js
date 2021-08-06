@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import AddActionDialog from './AddActionDialog.vue'
+import AddActionDialog from './AlertDefinitionActionDialog.vue'
 import Toolbar from 'primevue/toolbar'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
