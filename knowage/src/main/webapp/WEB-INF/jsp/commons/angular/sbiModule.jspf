@@ -6,6 +6,7 @@
 <%@page import="it.eng.spagobi.commons.SingletonConfig"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
+<%@page import="it.eng.spagobi.commons.utilities.PortletUtilities"%>
 
 <script>
 var sbiM=angular.module('sbiModule',["toastr","ngSanitize"]);
@@ -1160,6 +1161,23 @@ sbiM.service('messageHandlerValidatorService',function(){
 
 </script>
 
+<%
+	if ((curr_language == null && curr_country == null) || (curr_language != null && curr_country != null
+	&& ((curr_language.equals("") && curr_country.equals("")) || (curr_language.equals("null") && curr_country.equals("null"))))) {
+		
+		if (sbiMode.equals("PORTLET")) {
+			locale = PortletUtilities.getLocaleForMessage();
+		} else {
+			locale = MessageBuilder.getBrowserLocaleFromSpago();
+		}
+		
+		curr_language = locale.getLanguage();
+		curr_country = locale.getCountry();
+	}
+%>
 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular-localization/" + curr_language + "-" + curr_country + ".js")%>"></script>
+<script type="text/javascript" src="<%=
+
+	urlBuilder.getResourceLink(request,"/js/lib/angular-localization/" + curr_language + "-" + curr_country + ".js")
+%>"></script>
 	 

@@ -150,8 +150,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	String curr_country=(String)permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
 	Locale locale = null;
 	
-
-	if(curr_language!=null && curr_country!=null && !curr_language.equals("") && !curr_country.equals("")){
+	if (curr_language != null && curr_country != null	&& !curr_language.equals("") && !curr_country.equals("") 
+			&& !curr_language.equals("null") && !curr_country.equals("null")) {
 		locale=new Locale(curr_language, curr_country, "");
 	}
 	else {	

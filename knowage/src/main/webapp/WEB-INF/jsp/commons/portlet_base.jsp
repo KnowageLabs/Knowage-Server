@@ -135,21 +135,21 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	String curr_country=(String)permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
 	Locale locale = null;
 	
-
-	if(curr_language!=null && curr_country!=null && !curr_language.equals("") && !curr_country.equals("")){
+	if (curr_language != null && curr_country != null	&& !curr_language.equals("") && !curr_country.equals("") 
+			&& !curr_language.equals("null") && !curr_country.equals("null")) {
 		locale=new Locale(curr_language, curr_country, "");
 	}
 	else {	
-	if (sbiMode.equals("PORTLET")) {
-		locale = PortletUtilities.getLocaleForMessage();
-	} else {
-		locale = MessageBuilder.getBrowserLocaleFromSpago();
-	}
-	// updates locale information on permanent container for Spago messages mechanism
-	if (locale != null) {
-		permanentSession.setAttribute(Constants.USER_LANGUAGE, locale.getLanguage());
-		permanentSession.setAttribute(Constants.USER_COUNTRY, locale.getCountry());
-	}
+		if (sbiMode.equals("PORTLET")) {
+			locale = PortletUtilities.getLocaleForMessage();
+		} else {
+			locale = MessageBuilder.getBrowserLocaleFromSpago();
+		}
+		// updates locale information on permanent container for Spago messages mechanism
+		if (locale != null) {
+			permanentSession.setAttribute(Constants.USER_LANGUAGE, locale.getLanguage());
+			permanentSession.setAttribute(Constants.USER_COUNTRY, locale.getCountry());
+		}
 	}
 	
 	IEngUserProfile userProfile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
