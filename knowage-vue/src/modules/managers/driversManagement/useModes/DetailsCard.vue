@@ -1,5 +1,5 @@
 <template>
-    <Card style="width:100%" class="p-m-2">
+    <Card style="width:100%" class="p-m-2" v-if="mode.id">
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-6">
@@ -20,19 +20,33 @@
                         <label for="description" class="kn-material-input-label">{{ $t('common.description') }} </label>
                     </span>
                 </div>
+                <div class="p-field p-col-4">
+                    <span class="p-float-label">
+                        <Dropdown id="type" class="kn-material-input" v-model="selectedType" :options="useModeDescriptor.types" />
+                        <label for="type" class="kn-material-input-label"> {{ $t('common.type') }} * </label>
+                    </span>
+                    <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
+                </div>
+                <div class="p-field p-col-4">
+                    <span class="p-float-label">
+                        <Dropdown id="type" class="kn-material-input" v-model="selectedDefault" :options="useModeDescriptor.defaultValues" />
+                        <label for="type" class="kn-material-input-label"> {{ $t('common.type') }} * </label>
+                    </span>
+                    <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
+                </div>
             </form>
         </template>
     </Card>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-// import Dropdown from 'primevue/dropdown'
+import Dropdown from 'primevue/dropdown'
 // import MultiSelect from 'primevue/multiselect'
-//import driversManagemenDetailtDescriptor from './DriversManagementDetailDescriptor.json'
+import useModeDescriptor from './UseModesDescriptor.json'
 //import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 export default defineComponent({
     name: 'detail-card',
-    components: {},
+    components: { Dropdown },
     props: {
         selectedMode: {
             type: Object,
@@ -41,7 +55,10 @@ export default defineComponent({
     },
     data() {
         return {
-            mode: {} as any
+            mode: {} as any,
+            useModeDescriptor,
+            selectedType: null,
+            selectedDefault: null
         }
     },
     watch: {

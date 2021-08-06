@@ -1,0 +1,4 @@
+{
+    "defaultValues": ["None", "Use a LOV", "Pick Up"],
+    "types": ["LOV", "Manual Input", "Map Input"]
+}

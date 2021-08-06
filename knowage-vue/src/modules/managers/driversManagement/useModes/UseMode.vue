@@ -11,21 +11,10 @@
             </Toolbar>
         </template>
         <template #content>
-            <div class="p-grid">
+            <div class="p-grid p-m-0">
                 <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
                     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                    <Listbox
-                        v-if="!loading"
-                        class="kn-list--column"
-                        :options="modes"
-                        optionLabel="label"
-                        :filter="true"
-                        :filterPlaceholder="$t('common.search')"
-                        filterMatchMode="contains"
-                        :filterFields="driversManagemenDetailtDescriptor.filterFields"
-                        :emptyFilterMessage="$t('common.info.noDataFound')"
-                        @change="showForm"
-                    >
+                    <Listbox v-if="!loading" class="kn-list" :options="modes" optionLabel="label" @change="showForm">
                         <template #empty>{{ $t('common.info.noDataFound') }}</template>
                         <template #option="slotProps">
                             <div class="kn-list-item" data-test="list-item">
@@ -38,8 +27,8 @@
                         </template>
                     </Listbox>
                 </div>
-                <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0">
-                    <DetailsCard :selectedMode="selectedUseMode"></DetailsCard>
+                <div class="p-col-8 p-sm-8 p-md-9 p-p-0">
+                    <UseModeDetail :selectedMode="selectedUseMode"></UseModeDetail>
                 </div>
             </div>
         </template>
@@ -49,11 +38,11 @@
 import { defineComponent } from 'vue'
 import driversManagemenDetailtDescriptor from '../DriversManagementDetailDescriptor.json'
 import Listbox from 'primevue/listbox'
-import DetailsCard from './DetailsCard.vue'
+import UseModeDetail from './UseModeDetail.vue'
 //import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 export default defineComponent({
     name: 'use-mode-card',
-    components: { Listbox, DetailsCard },
+    components: { Listbox, UseModeDetail },
     props: {
         propModes: {
             type: Array,
