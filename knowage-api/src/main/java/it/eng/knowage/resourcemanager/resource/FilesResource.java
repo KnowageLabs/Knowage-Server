@@ -170,7 +170,7 @@ public class FilesResource {
 			MediaType mediaType = inputPart.getMediaType();
 
 			MultivaluedMap<String, String> multivaluedMap = inputPart.getHeaders();
-			String FILENAME_REGEX = "(form-data; name=\"file\"; filename=\")([a-zA-Z0-9-&_. ]*)(\")";
+			String FILENAME_REGEX = "(form-data; name=\"file\"; filename=\")([\\w,\\s\\-_\\(\\)]+\\.[A-Za-z]{3,5})(\")";
 			Pattern p = Pattern.compile(FILENAME_REGEX);
 			Matcher m = p.matcher(multivaluedMap.get("Content-Disposition").get(0));
 			String fileName = null;
@@ -206,9 +206,6 @@ public class FilesResource {
 					}
 				}
 
-			} else {
-				String message = "Cannot find file name inside uploading file/package";
-				response = Response.status(Response.Status.NOT_MODIFIED).entity(message).build();
 			}
 			return response;
 		} catch (KnowageBusinessException e) {
