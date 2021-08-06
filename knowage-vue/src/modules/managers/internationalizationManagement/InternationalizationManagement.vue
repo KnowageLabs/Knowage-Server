@@ -8,7 +8,7 @@
                 </template>
 
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <DataTable v-if="!loading" editMode="cell" :value="messages" :loading="loading" class="p-datatable kn-table" dataKey="id" responsiveLayout="stack" :scrollable="true" scrollHeight="flex" breakpoint="960px" v-model:filters="filters" data-test="messages-table">
+                <DataTable v-if="!loading" editMode="cell" :value="messages" :loading="loading" class="p-datatable kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" v-model:filters="filters" data-test="messages-table">
                     <template #header>
                         <div class="table-header p-d-flex">
                             <span class="p-input-icon-left p-mr-3" :style="intDescriptor.headerStyles.searchBoxStyle">
@@ -160,6 +160,7 @@ export default defineComponent({
 
         switchTabConfirm(index) {
             if (!this.dirty) {
+                this.showOnlyEmptyFields = false
                 this.activeTab = index
                 this.previousActiveTab = this.activeTab
                 this.selectLanguage(index)
@@ -169,6 +170,7 @@ export default defineComponent({
                     header: this.$t('common.toast.unsavedChangesHeader'),
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
+                        this.showOnlyEmptyFields = false
                         this.dirty = false
                         this.activeTab = index
                         this.selectLanguage(index)

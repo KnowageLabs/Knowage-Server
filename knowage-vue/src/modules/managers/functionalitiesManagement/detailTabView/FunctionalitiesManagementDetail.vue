@@ -68,6 +68,13 @@
             </template>
         </Card>
         <Card class="p-m-3">
+            <template #header>
+                <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                    <template #left>
+                        {{ $t('managers.menuManagement.roles') }}
+                    </template>
+                </Toolbar>
+            </template>
             <template #content>
                 <DataTable v-if="!loading" :value="roles" dataKey="id" class="p-datatable-sm kn-table" responsiveLayout="scroll" data-test="roles-table">
                     <Column field="name" :header="$t('managers.functionalitiesManagement.roles')" :sortable="true" />

@@ -7,51 +7,49 @@
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <div class="card" v-else>
-        <TabView class="tabview-custom">
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('managers.buisnessModelCatalogue.details') }}</span>
-                </template>
+    <TabView class="tabview-custom kn-page-content" v-else>
+        <TabPanel>
+            <template #header>
+                <span>{{ $t('managers.businessModelManager.details') }}</span>
+            </template>
 
-                <BusinessModelDetailsCard
-                    :selectedBusinessModel="selectedBusinessModel"
-                    :domainCategories="categories"
-                    :datasourcesMeta="datasources"
-                    :user="user"
-                    :toGenerate="toGenerate"
-                    @fieldChanged="onFieldChange"
-                    @fileUploaded="uploadedFile = $event"
-                    @datamartGenerated="loadPage"
-                ></BusinessModelDetailsCard>
-            </TabPanel>
+            <BusinessModelDetailsCard
+                :selectedBusinessModel="selectedBusinessModel"
+                :domainCategories="categories"
+                :datasourcesMeta="datasources"
+                :user="user"
+                :toGenerate="toGenerate"
+                @fieldChanged="onFieldChange"
+                @fileUploaded="uploadedFile = $event"
+                @datamartGenerated="loadPage"
+            ></BusinessModelDetailsCard>
+        </TabPanel>
 
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('managers.buisnessModelCatalogue.metadata') }}</span>
-                </template>
+        <TabPanel>
+            <template #header>
+                <span>{{ $t('managers.businessModelManager.metadata') }}</span>
+            </template>
 
-                <MetadataCard v-if="businessModelVersions.length > 0" :id="selectedBusinessModel.id"></MetadataCard>
-            </TabPanel>
+            <MetadataCard v-if="businessModelVersions.length > 0" :id="selectedBusinessModel.id"></MetadataCard>
+        </TabPanel>
 
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('managers.buisnessModelCatalogue.savedVersions') }}</span>
-                </template>
+        <TabPanel>
+            <template #header>
+                <span>{{ $t('managers.businessModelManager.savedVersions') }}</span>
+            </template>
 
-                <BusinessModelVersionsCard :id="selectedBusinessModel.id" :versions="businessModelVersions" @touched="setDirty" @deleted="loadVersions"></BusinessModelVersionsCard>
-            </TabPanel>
+            <BusinessModelVersionsCard :id="selectedBusinessModel.id" :versions="businessModelVersions" @touched="setDirty" @deleted="loadVersions"></BusinessModelVersionsCard>
+        </TabPanel>
 
-            <TabPanel>
-                <template #header v-if="id">
-                    <span>{{ $t('managers.buisnessModelCatalogue.drivers') }}</span>
-                    <Badge :value="invalidDrivers" class="p-ml-2" severity="danger" v-if="invalidDrivers > 0"></Badge>
-                </template>
+        <TabPanel>
+            <template #header v-if="id">
+                <span>{{ $t('managers.businessModelManager.drivers') }}</span>
+                <Badge :value="invalidDrivers" class="p-ml-2" severity="danger" v-if="invalidDrivers > 0"></Badge>
+            </template>
 
-                <BusinessModelDriversCard v-if="id" :id="selectedBusinessModel.id" :drivers="drivers" :driversOptions="analyticalDrivers" @delete="setDriversForDelete"></BusinessModelDriversCard>
-            </TabPanel>
-        </TabView>
-    </div>
+            <BusinessModelDriversCard v-if="id" :id="selectedBusinessModel.id" :drivers="drivers" :driversOptions="analyticalDrivers" @delete="setDriversForDelete"></BusinessModelDriversCard>
+        </TabPanel>
+    </TabView>
 </template>
 
 <script lang="ts">
@@ -259,9 +257,9 @@ export default defineComponent({
             formData.append('file', this.uploadedFile)
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.selectedBusinessModel.id}/versions`, formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then((response) => {
                 if (response.data.errors) {
-                    this.$store.commit('setError', { title: this.$t('managers.buisnessModelCatalogue.toast.uploadFile'), msg: response.data.errors })
+                    this.$store.commit('setError', { title: this.$t('managers.businessModelManager.toast.uploadFile'), msg: response.data.errors })
                 } else {
-                    this.$store.commit('setInfo', { title: this.$t('managers.buisnessModelCatalogue.uploadFile'), msg: this.$t('managers.buisnessModelCatalogue.uploadFileSuccess') })
+                    this.$store.commit('setInfo', { title: this.$t('managers.businessModelManager.uploadFile'), msg: this.$t('managers.businessModelManager.uploadFileSuccess') })
                     this.uploadedFile = null
                 }
             })

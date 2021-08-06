@@ -162,10 +162,19 @@ export default defineComponent({
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'multitenant/save'
 
             await axios.post(url, this.createTenantToSave()).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t(this.tabViewDescriptor.operation[this.operation].toastTitle),
-                    msg: this.$t(this.tabViewDescriptor.operation.success)
-                })
+                if (this.selectedTenant) {
+                    this.$store.commit('setInfo', {
+                        title: this.$t(this.tabViewDescriptor.operation[this.operation].toastTitle),
+                        msg: this.$t(this.tabViewDescriptor.operation.success)
+                    })
+                } else {
+                    this.$store.commit('setInfo', {
+                        title: this.$t(this.tabViewDescriptor.operation[this.operation].toastTitle),
+                        msg: this.$t(this.tabViewDescriptor.operation.success, { username: this.tenant.MULTITENANT_NAME + '_admin', password: this.tenant.MULTITENANT_NAME + '_admin' }),
+                        duration: 0
+                    })
+                }
+
                 this.$emit('inserted')
                 this.$router.replace('/tenants-management')
             })

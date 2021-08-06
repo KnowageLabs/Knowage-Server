@@ -1,38 +1,38 @@
 <template>
-    <Dialog :style="generateDatamartCardDescriptor.dialog.style" :visible="true" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :header="$t('managers.buisnessModelCatalogue.generateDatamart')" :closable="false" aria-label="Generate Datamart Options">
-        <p>{{ $t('managers.buisnessModelCatalogue.generateDatamartHint') }}</p>
+    <Dialog :style="generateDatamartCardDescriptor.dialog.style" :visible="true" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :header="$t('managers.businessModelManager.generateDatamart')" :closable="false" aria-label="Generate Datamart Options">
+        <p>{{ $t('managers.businessModelManager.generateDatamartHint') }}</p>
         <div class="p-m-5">
             <InputSwitch id="advanced-options" class="p-mr-2" v-model="showAdvancedOptions" />
-            <label for="advanced-options" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.showAdvancedOptions') }}</label>
+            <label for="advanced-options" class="kn-material-input-label">{{ $t('managers.businessModelManager.showAdvancedOptions') }}</label>
         </div>
 
         <form class="p-fluid p-m-2" v-if="showAdvancedOptions">
             <div class="p-field">
                 <span class="p-float-label">
                     <InputText id="modelName" class="kn-material-input" type="text" v-model.trim="modelName" />
-                    <label for="modelName" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.modelName') }}</label>
+                    <label for="modelName" class="kn-material-input-label"> {{ $t('managers.businessModelManager.modelName') }}</label>
                 </span>
             </div>
             <div class="p-field">
                 <span class="p-float-label">
                     <InputText id="schemaName" class="kn-material-input" type="text" v-model.trim="schemaName" />
-                    <label for="schemaName" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.schemaName') }}</label>
+                    <label for="schemaName" class="kn-material-input-label"> {{ $t('managers.businessModelManager.schemaName') }}</label>
                 </span>
             </div>
             <div class="p-field">
                 <span class="p-float-label">
                     <InputText id="catalogName" class="kn-material-input" type="text" v-model.trim="catalogName" />
-                    <label for="catalogName" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.catalogName') }}</label>
+                    <label for="catalogName" class="kn-material-input-label"> {{ $t('managers.businessModelManager.catalogName') }}</label>
                 </span>
             </div>
             <div class="p-d-flex p-mt-4">
                 <span class="p-field-checkbox p-mr-3">
                     <Checkbox v-model="isGeneratedForRegistry" :binary="true" aria-label="Generate for Registry" />
-                    <label>{{ $t('managers.buisnessModelCatalogue.forRegistry') }}</label>
+                    <label>{{ $t('managers.businessModelManager.forRegistry') }}</label>
                 </span>
                 <span class="p-field-checkbox">
                     <Checkbox v-model="includeSources" :binary="true" aria-label="Include Sources" />
-                    <label>{{ $t('managers.buisnessModelCatalogue.includeSources') }}</label>
+                    <label>{{ $t('managers.businessModelManager.includeSources') }}</label>
                 </span>
             </div>
         </form>

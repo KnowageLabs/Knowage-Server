@@ -21,7 +21,10 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -30,11 +33,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.context.support.SimpleThreadScope;
 import org.springframework.data.transaction.ChainedTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import it.eng.knowage.knowageapi.context.BusinessRequestContext;
@@ -77,9 +82,19 @@ public class KnowageApiConfiguration {
 	}
 
 	@Bean
-	@RequestScope
+	@Scope(scopeName = "thread", proxyMode = ScopedProxyMode.TARGET_CLASS)
 	public BusinessRequestContext businessRequestContext(@Value("${application.version}") String version) {
 		return new BusinessRequestContext(version);
+	}
+
+	@Bean
+	public static BeanFactoryPostProcessor beanFactoryPostProcessor() {
+		return new BeanFactoryPostProcessor() {
+			@Override
+			public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+				beanFactory.registerScope("thread", new SimpleThreadScope());
+			}
+		};
 	}
 
 	@Lazy
