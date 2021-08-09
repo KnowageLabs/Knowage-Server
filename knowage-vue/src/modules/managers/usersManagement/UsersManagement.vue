@@ -17,7 +17,7 @@
             </div>
 
             <KnHint :title="'managers.usersManagement.title'" :hint="'managers.usersManagement.hint'" v-if="hiddenForm"></KnHint>
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page" :hidden="hiddenForm">
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page" v-show="!hiddenForm">
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
                     <template #left>
                         {{ userDetailsForm.userId }}
@@ -48,7 +48,7 @@
                             <template #header>
                                 <span>{{ $t('managers.usersManagement.attributes') }}</span>
                             </template>
-                            <UserAttributesForm :attributes="attributes" v-model="attributesForm" @formDirty="onFormDirty"></UserAttributesForm>
+                            <UserAttributesForm :attributes="attributes" :model="attributesForm" @formDirty="onFormDirty"></UserAttributesForm>
                         </TabPanel>
                     </TabView>
                 </div>
