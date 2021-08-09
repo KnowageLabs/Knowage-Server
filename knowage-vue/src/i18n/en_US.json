@@ -24,7 +24,7 @@
         "dragAndDropFileHere": "Drag and drop file here.",
         "error": {
             "allowedFileTypes": "File type allowed are {types}",
-            "deleting": "Error deleting",
+            "deleting": "Error while deleting item. Check items associations or parameters and then try to delete it again",
             "downloading": "Error downloading ",
             "exceededSize": "Uploaded file exceedes max size {size}",
             "generic": "Generic Error",
