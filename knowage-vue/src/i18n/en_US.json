@@ -1,98 +1,99 @@
 {
-	"common": {
+    "common": {
         "apply": "Apply",
         "author": "Author",
-		"back": "back",
-		"cancel": "cancel",
+        "back": "back",
+        "cancel": "cancel",
         "category": "Category",
-		"choose": "choose",
+        "choose": "choose",
         "clone": "Clone",
-		"close": "close",
-		"codingLanguages": {
-			"css": "css",
-			"html": "html",
-			"javascript": "javascript",
-			"python": "python"
-		},
-		"collapse": "collapse",
+        "close": "close",
+        "codingLanguages": {
+            "css": "css",
+            "html": "html",
+            "javascript": "javascript",
+            "python": "python"
+        },
+        "collapse": "collapse",
         "copyOf": "Copy of",
-		"delete": "delete",
-		"deleteAll": "delete all",
-		"description": "description",
-		"download": "download",
-		"downloading": "Downloading",
-		"dragAndDropFileHere": "Drag and drop file here.",
-		"error": {
-			"allowedFileTypes": "File type allowed are {types}",
-			"deleting": "Error deleting",
-			"downloading": "Error downloading ",
-			"exceededSize": "Uploaded file exceedes max size {size}",
-			"incompatibleType": "Incompatible file type",
-			"saving": "Error saving",
-			"tags": {
-				"tagIsNotValid": "Tag ({tag}) is not valid'"
-			},
-			"uploading": "Error uploading "
-		},
-		"expand": "expand",
-		"export": "export",
-		"image": "image",
-		"import": "import",
-		"info": {
-			"dataLoading": "Loading data. Please wait.",
+        "delete": "delete",
+        "deleteAll": "delete all",
+        "description": "description",
+        "download": "download",
+        "downloading": "Downloading",
+        "dragAndDropFileHere": "Drag and drop file here.",
+        "error": {
+            "allowedFileTypes": "File type allowed are {types}",
+            "deleting": "Error deleting",
+            "downloading": "Error downloading ",
+            "exceededSize": "Uploaded file exceedes max size {size}",
+            "generic": "Generic Error",
+            "incompatibleType": "Incompatible file type",
+            "saving": "Error saving",
+            "tags": {
+                "tagIsNotValid": "Tag ({tag}) is not valid'"
+            },
+            "uploading": "Error uploading "
+        },
+        "expand": "expand",
+        "export": "export",
+        "image": "image",
+        "import": "import",
+        "info": {
+            "dataLoading": "Loading data. Please wait.",
             "emptySearch": "The search returns no data",
-			"noDataFound": "No data found",
-			"noElementSelected": "No element selected"
-		},
-		"information": "information",
+            "noDataFound": "No data found",
+            "noElementSelected": "No element selected"
+        },
+        "information": "information",
         "kpi": "KPI",
-		"label": "label",
+        "label": "label",
         "load": "Load",
-		"loggedUser": "logged user",
-		"name": "name",
-		"new": "new",
-		"next": "next",
+        "loggedUser": "logged user",
+        "name": "name",
+        "new": "new",
+        "next": "next",
         "reused": "Reused",
         "run": "Run",
-		"save": "save",
-		"search": "search",
+        "save": "save",
+        "search": "search",
         "sort": "sort",
-		"table": {
-			"footer": {
-				"paginated": "Showing {first} to {last} of {totalRecords}"
-			}
-		},
-		"tags": "tags",
-		"tenant": "tenant",
-		"test": "test",
-		"toast": {
+        "table": {
+            "footer": {
+                "paginated": "Showing {first} to {last} of {totalRecords}"
+            }
+        },
+        "tags": "tags",
+        "tenant": "tenant",
+        "test": "test",
+        "toast": {
             "cloneConfirmTitle": "Confirm item clone?",
-			"createTitle": "Created",
-			"deleteConfirmTitle": "Confirm Delete?",
-			"deleteMessage": "This item will be deleted. Are you sure you want to continue with this operation?",
-			"deleteSuccess": "Item was deleted successfully",
-			"deleteTitle": "Deleted",
-			"success": "Operation succeeded",
-			"unsavedChangesHeader": "Unsaved changes",
-			"unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
-			"updateSuccess": "Item was updated successfully",
-			"updateTitle": "Updated",
-			"uploadSuccess": "Item was uploaded successfully"
-		},
-		"type": "type",
-		"upload": "upload",
-		"uploading": "Uploading",
-		"validation": {
+            "createTitle": "Created",
+            "deleteConfirmTitle": "Confirm Delete?",
+            "deleteMessage": "This item will be deleted. Are you sure you want to continue with this operation?",
+            "deleteSuccess": "Item was deleted successfully",
+            "deleteTitle": "Deleted",
+            "success": "Operation succeeded",
+            "unsavedChangesHeader": "Unsaved changes",
+            "unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
+            "updateSuccess": "Item was updated successfully",
+            "updateTitle": "Updated",
+            "uploadSuccess": "Item was uploaded successfully"
+        },
+        "type": "type",
+        "upload": "upload",
+        "uploading": "Uploading",
+        "validation": {
             "maxLength": "This field must have less then {max} characters",
-			"maximumCharacters": "The maximum length allowed is {max}",
-			"minLength": "This field should have at least {min} characters",
-			"regex": "Invalid format",
-			"required": "{fieldName} is required"
-		},
+            "maximumCharacters": "The maximum length allowed is {max}",
+            "minLength": "This field should have at least {min} characters",
+            "regex": "Invalid format",
+            "required": "{fieldName} is required"
+        },
         "value": "Value",
-		"version": "version",
-		"warning": {}
-	},
+        "version": "version",
+        "warning": {}
+    },
     "cron": {
         "advanced": "Advanced",
         "april": "April",
@@ -146,63 +147,63 @@
         "weekday": "Weekday",
         "weekdays": "Weekdays"
     },
-	"downloadsDialog": {
-		"columns": {
-			"creationDate": "Creation Date",
-			"fileName": "File Name",
-			"fileSize": "File Size"
-		},
-		"title": "Downloads"
-	},
-	"home": {
-		"button": {
-			"documentation": "documentation",
-			"qa": "support forum"
-		},
-		"connectYourData": "connect your data",
-		"createYourAnalysis": "create your analysis",
-		"queryYourData": "query your data",
-		"saveAndShare": "save and share",
-		"welcome": "Welcome to Knowage",
-		"welcomeText": "<b>Knowage</b> is the full open source suite for analytics and business intelligence combining traditional and big data sources to provide valuable and meaningful information.<br>Start your analysis now!"
-	},
-	"importExport": {
-		"catalogFunction": {
-			"column": {
-				"label": "Label",
-				"name": "Name",
-				"tags": "Keywords",
-				"type": "Type"
-			},
-			"description": "export functions from catalog",
-			"label": "functions"
-		},
-		"export": {
-			"completedWithErrors": "Export completed with errors. Please read logs for further information.",
-			"successfullyCompleted": "Export successfully completed"
-		},
-		"filenamePlaceholder": "Enter filename here",
-		"gallery": {
-			"column": {
-				"image": "Image",
-				"name": "Name",
-				"tags": "Tags",
-				"type": "Type"
-			},
-			"description": "export gallery templates",
-			"label": "gallery"
-		},
-		"import": {
-			"completedWithErrors": "Import completed with errors. Please read logs for further information.",
-			"successfullyCompleted": "Import successfully completed"
-		},
-		"title": "Import/Export"
-	},
-	"infoDialog": {
-		"aboutKnowage": "About Knowage",
-		"copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
-		"sourceCode": "Source code available on "
-	},
+    "downloadsDialog": {
+        "columns": {
+            "creationDate": "Creation Date",
+            "fileName": "File Name",
+            "fileSize": "File Size"
+        },
+        "title": "Downloads"
+    },
+    "home": {
+        "button": {
+            "documentation": "documentation",
+            "qa": "support forum"
+        },
+        "connectYourData": "connect your data",
+        "createYourAnalysis": "create your analysis",
+        "queryYourData": "query your data",
+        "saveAndShare": "save and share",
+        "welcome": "Welcome to Knowage",
+        "welcomeText": "<b>Knowage</b> is the full open source suite for analytics and business intelligence combining traditional and big data sources to provide valuable and meaningful information.<br>Start your analysis now!"
+    },
+    "importExport": {
+        "catalogFunction": {
+            "column": {
+                "label": "Label",
+                "name": "Name",
+                "tags": "Keywords",
+                "type": "Type"
+            },
+            "description": "export functions from catalog",
+            "label": "functions"
+        },
+        "export": {
+            "completedWithErrors": "Export completed with errors. Please read logs for further information.",
+            "successfullyCompleted": "Export successfully completed"
+        },
+        "filenamePlaceholder": "Enter filename here",
+        "gallery": {
+            "column": {
+                "image": "Image",
+                "name": "Name",
+                "tags": "Tags",
+                "type": "Type"
+            },
+            "description": "export gallery templates",
+            "label": "gallery"
+        },
+        "import": {
+            "completedWithErrors": "Import completed with errors. Please read logs for further information.",
+            "successfullyCompleted": "Import successfully completed"
+        },
+        "title": "Import/Export"
+    },
+    "infoDialog": {
+        "aboutKnowage": "About Knowage",
+        "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
+        "sourceCode": "Source code available on "
+    },
     "kpi": {
         "alert": {
             "actionList": "Action List",
@@ -339,597 +340,597 @@
             "titleAddAssociations": "Add KPI associations"
         }
     },
-	"language": {
-		"en_GB": "english (GB)",
-		"en_US": "english (US)",
-		"es_ES": "espanol",
-		"fr_FR": "french",
-		"it_IT": "italian",
-		"languageSelection": "Language Selection",
-		"pt_BR": "portuguese"
-	},
-	"licenseDialog": {
-		"changeLicense": "Change License",
-		"dataRequired": "This data is required to generate/update licenses",
-		"deleteLicense": "Delete License",
-		"downloadLicense": "Download License",
-		"errorExists": "The license already exists.",
-		"errorLicense": "Error deleting license",
-		"errorMessage": "An error blocked the license deleting action. If the problem persist contact the administrator.",
-		"hardwareId": "Hardware Id",
-		"hostName": "Host name",
-		"invalidLicense": "Invalid License",
-		"licenseId": "License Id",
-		"noLicenses": "No licenses available",
-		"numberOfCpu": "Number of CPUs",
-		"title": "License Management",
-		"updateLicense": "Update license",
-		"validLicense": "Valid License",
-		"warningBeforeDelete": "You are attempting to remove {0} license. This operation cannot be undone. After deletion, you will have to log in again.",
-		"wrongType": "You have chosen wrong type of license"
-	},
-	"managers": {
-		"businessModelManager": {
-			"add": "Add",
-			"addCondition": "Add Condition",
-			"advancedView": "Use Advanced view as QBE default",
-			"analyticalDriver": "Analytical driver",
-			"analyticalDriverPlaceholder": "Select analytical driver",
-			"analyticalDropdownConfirm": "Are you sure you want to change the analytical driver? This will delete all conditions!",
-			"browse": "Browse",
-			"catalogName": "Catalog Name",
-			"check": "Add correlation with this use mode",
-			"configurationTablePrefixTitle": "Meta Web Configuration",
-			"dataSource": "Data Source",
-			"dataSourceLabelPlaceholder": "Select datasource",
-			"description": "Description",
-			"details": "Details",
-			"downloadJar": "Download jar",
-			"downloadLog": "Download log",
-			"downloadModel": "Download model",
-			"driverDataConditions": "Driver data conditions",
-			"driverDepends": "AD {driver} depends from the AD",
-			"driverTitle": "Title",
-			"drivers": "Drivers",
-			"driversDetails": "Driver's details",
-			"driversUrl": "Url name",
-			"driversUrlNotUnique": "The Url name must be unique",
-			"enableMetaweb": "Enable Meta Web",
-			"filterOperator": "Filter operator",
-			"forRegistry": "Generate for registry",
-			"generate": "Generate",
-			"generateDatamart": "Generate Datamart",
-			"generateDatamartHint": "Click on Create to generate the datamart.jar with the default values (recommended), otherwise change the options values for different datamart (for example on another schema/catalog).",
+    "language": {
+        "en_GB": "english (GB)",
+        "en_US": "english (US)",
+        "es_ES": "espanol",
+        "fr_FR": "french",
+        "it_IT": "italian",
+        "languageSelection": "Language Selection",
+        "pt_BR": "portuguese"
+    },
+    "licenseDialog": {
+        "changeLicense": "Change License",
+        "dataRequired": "This data is required to generate/update licenses",
+        "deleteLicense": "Delete License",
+        "downloadLicense": "Download License",
+        "errorExists": "The license already exists.",
+        "errorLicense": "Error deleting license",
+        "errorMessage": "An error blocked the license deleting action. If the problem persist contact the administrator.",
+        "hardwareId": "Hardware Id",
+        "hostName": "Host name",
+        "invalidLicense": "Invalid License",
+        "licenseId": "License Id",
+        "noLicenses": "No licenses available",
+        "numberOfCpu": "Number of CPUs",
+        "title": "License Management",
+        "updateLicense": "Update license",
+        "validLicense": "Valid License",
+        "warningBeforeDelete": "You are attempting to remove {0} license. This operation cannot be undone. After deletion, you will have to log in again.",
+        "wrongType": "You have chosen wrong type of license"
+    },
+    "managers": {
+        "businessModelManager": {
+            "add": "Add",
+            "addCondition": "Add Condition",
+            "advancedView": "Use Advanced view as QBE default",
+            "analyticalDriver": "Analytical driver",
+            "analyticalDriverPlaceholder": "Select analytical driver",
+            "analyticalDropdownConfirm": "Are you sure you want to change the analytical driver? This will delete all conditions!",
+            "browse": "Browse",
+            "catalogName": "Catalog Name",
+            "check": "Add correlation with this use mode",
+            "configurationTablePrefixTitle": "Meta Web Configuration",
+            "dataSource": "Data Source",
+            "dataSourceLabelPlaceholder": "Select datasource",
+            "description": "Description",
+            "details": "Details",
+            "downloadJar": "Download jar",
+            "downloadLog": "Download log",
+            "downloadModel": "Download model",
+            "driverDataConditions": "Driver data conditions",
+            "driverDepends": "AD {driver} depends from the AD",
+            "driverTitle": "Title",
+            "drivers": "Drivers",
+            "driversDetails": "Driver's details",
+            "driversUrl": "Url name",
+            "driversUrlNotUnique": "The Url name must be unique",
+            "enableMetaweb": "Enable Meta Web",
+            "filterOperator": "Filter operator",
+            "forRegistry": "Generate for registry",
+            "generate": "Generate",
+            "generateDatamart": "Generate Datamart",
+            "generateDatamartHint": "Click on Create to generate the datamart.jar with the default values (recommended), otherwise change the options values for different datamart (for example on another schema/catalog).",
             "hint": "No business model selected",
-			"importConfirm": "Confirm import of metadata informations?",
-			"importMetadata": "Import Metadata",
-			"importProgress": "Importing Metadata in progress...",
-			"includeSources": "Include source code",
-			"lockModel": "Lock model",
-			"logicOperator": "Logical operator",
-			"lovsColumn": "LOV's column",
-			"lovsColumnSelect": "Select LOV's Column",
-			"metaWeb": "Meta Web",
-			"metadata": "Metadata",
-			"modality": "Modality",
-			"modelName": "Model Name",
-			"multivalue": "Multivalue",
-			"noDriverSelected": "No driver selected",
-			"noSavedVersions": "No saved versions",
-			"operationInfo": "Filter operator is used for comparing a column value of the AD {driver} and the value of the AD on which it depends",
-			"prefixTooltip": "Prefixes considered ONLY at meta tool table list retrieval",
-			"savedVersions": "Saved versions",
-			"schemaName": "Schema Name",
-			"setActiveVersion": "Set active version",
-			"showAdvancedOptions": "Show advanced options",
-			"smartView": "Use Smart view as QBE default",
-			"smartViewTooltip": "Smart view will show live data changes, can have slower loading times if the query is extended. Use advanced view if that is happening.",
-			"tablePrefixLike": "Table prefixes to consider",
-			"tablePrefixLikeExampleTooltip": "Table prefixes to consider separated by comma (e.g. prefix1,prefix2,...,prefixN)",
-			"tablePrefixNotLike": "Table prefixes to exclude",
-			"tablePrefixNotLikeExampleTooltip": "Table prefixes to exclude separated by comma(e.g. prefix1,prefix2,...,prefixN)",
-			"title": "Business Models' catalogue",
-			"unlockModel": "Unlock model",
-			"uploadFile": "Upload File",
-			"uploadFileSuccess": "File uploaded",
-			"value": "value of the parameter"
-		},
-		"cacheManagement": {
-			"addRemoveDataset": "Add/Remove dataset",
-			"availableMemory": "Available memory",
-			"availableMemoryPercentage": "Available memory percentage",
-			"cacheDimensionSingleDataset": "% of cache dimension for a single dataset",
-			"cacheEnabled": "Cache enabled",
-			"cleanAll": "Clean all",
-			"cleanAllMessage": "All items will be deleted. Are you sure you want to continue with this operation?",
-			"daily": "DAILY",
-			"dimension": "Dimension (byte)",
-			"discard": "Discard",
-			"every_10_mins": "EVERY 10 MINS",
-			"every_15_mins": "EVERY 15 MINS",
-			"every_20_mins": "EVERY 20 MINS",
-			"every_30_mins": "EVERY 30 MINS",
-			"frequencyOfCleaningDaemon": "Frequency of cleaning daemon",
-			"generalSettings": "General settings",
-			"hazelcastTimeToLock": "Timeout (seconds) to acquire a lock (Hazelcast)",
-			"hazelcastTimeToReleaseLock": "Timeout value (seconds) to release a lock (Hazelcast)",
-			"hourly": "HOURLY",
-			"maximumPercentOfCacheCleaningQuota": "Maximum percent of cache cleaning quota",
-			"metadataUnavailable": "Metadata are not available",
-			"monthly": "MONTHLY",
-			"name": "Name",
-			"noDefaultDataset": "No default datasource set, cannot display cache runtime information!",
-			"noDefaultDatasetTitle": "No default datasource",
-			"none": "NONE",
-			"numberOfCachedObjects": "Number of cached objects",
-			"prefixForCacheTablesName": "Prefix for cache tables name",
-			"runtimeInformationTitle": "Runtime information",
-			"signature": "Signature",
-			"table": "Table",
-			"targetDatasource": "Target datasource",
-			"timeToCreateTempTable": "Time (seconds) to create temporary table for the dataset",
-			"timeToLock": "Timeout (seconds) to acquire a lock",
-			"title": "Cache management",
-			"totalBytesAvailableForCache": "Total megabytes available for cache",
-			"totalMemory": "Total memory",
-			"ttlForCachedDataset": "Time To Live (seconds from last access) for cached datasets",
-			"usedMemory": "Used Memory",
-			"weekly": "WEEKLY",
-			"yearly": "YEARLY"
-		},
-		"catalogFunction": {
-			"hint": "The import/export functionality allows you to bulk insert/extract data from your tenant. \n Select the category to view the items present. \n Click on @:common.import if you want to import a package. \n Select the items and click  @:common.export if you want to download them in a zip archive.",
-			"title": "Import/Export"
-		},
-		"configurationManagement": {
-			"createNewHeader": "Create new configuration",
-			"headers": {
-				"active": "Is active",
-				"category": "Category",
-				"description": "Description",
-				"label": "Label",
-				"name": "Name",
-				"valueCheck": "Value"
-			},
-			"title": "Configuration Management"
-		},
-		"dataSourceManagement": {
-			"form": {
-				"advancedOptions": {
-					"abandonedTimeout": "Abandoned Timeout",
-					"abandonedTimeoutInfo": "Timeout in seconds before an abandoned (in use) connection can be removed. The value should be set to the longest running query your applications might have.",
-					"logAbandoned": "Log Abandoned",
-					"logAbandonedInfo": "Flag to log stack traces for application code which abandoned a Statement or Connection. Logging of abandoned Statements and Connections adds overhead for every Connection open or new Statement because a stack trace has to be generated.",
-					"maxIdle": "Max Idle",
-					"maxIdleInfo": "The maximum number of connections that should be kept in the pool at all times. Idle connections are checked periodically and connections that have been idle for longer than (Min Evictable Idle Time) will be released.",
-					"maxTotal": "Max Total",
-					"maxTotalInfo": "Sets the maximum total number of idle and borrows connections that can be active at the same time.",
-					"maxWait": "Max Wait",
-					"maxWaitInfo": "The maximum number of seconds that the pool will wait (when there are no available connections) for a connection to be returned before throwing an exception.",
-					"minEvictableIdleTimeMillis": "Min Evictable Idle Time",
-					"minEvictableIdleTimeMillisInfo": "The minimum amount of time, in milliseconds, an object may sit idle in the pool before it is eligible for eviction.",
-					"removeAbandonedOnBorrow": "Remove Abandoned On Borrow",
-					"removeAbandonedOnBorrowInfo": "Flag to remove abandoned connections if they exceed the Remove Abandoned Timeout when borrowObject is invoked. If set to true a connection is considered abandoned and eligible for removal if it has not been used for more than 'Remove Abandoned Timeout' seconds.",
-					"removeAbandonedOnMaintenance": "Remove Abandoned On Maintenance",
-					"removeAbandonedOnMaintenanceInfo": "Flag to remove abandoned connections if they exceed the Remove Abandoned Timeout during pool maintenance. If set to true a connection is considered abandoned and eligible for removal if it has not been used for more than 'Remove Abandoned Timeout' seconds.",
-					"testOnReturn": "Test On Return",
-					"testOnReturnInfo": "Returns the value of the testOnReturn property. Returns true if objects are validated before being returned to the pool.",
-					"testWhileIdle": "Test While Idle",
-					"testWhileIdleInfo": "Returns the value of the testWhileIdle property. Returns true if objects examined by the idle object evictor are validated.",
-					"timeBetweenEvictionRuns": "Time Between Eviction Runs",
-					"timeBetweenEvictionRunsInfo": "The number of seconds to sleep between runs of the idle connection validation/cleaner thread. This value should not be set under 1 second. It dictates how often we check for idle, abandoned connections, and how often we validate idle connections.",
-					"title": "Advanced Options",
-					"validationQuery": "Validation Query (optional)",
-					"validationQueryInfo": "The SQL query that will be used to validate connections from this pool before returning them to the caller. If specified, this query does not have to return any data, it just can't throw a SQLException. The default value is null. If not specified, connections will be validation by the isValid() method. Example values are SELECT 1(mysql), select 1 from dual(oracle), SELECT 1(MS Sql Server)",
-					"validationQueryTimeout": "Validation Query Timeout",
-					"validationQueryTimeoutInfo": "The timeout in seconds before a connection validation queries fail. A value less than or equal to zero will disable this feature."
-				},
-				"dialect": "Dialect",
-				"driver": "Driver",
-				"errorTitle": "Connection KO",
-				"jndi": "JNDI Name",
-				"jndiInfo": "For the data source configuration you should specify the connection pool configured inside the application server. For example: Tomcat: java:comp/env/jdbc/foodmart; JBoss: jdbc/foodmart.",
-				"multischema": "Multischema",
-				"notOwner": "You are not the owner of this data source.",
-				"pwd": "Password (Only If Changed)",
-				"readAndWrite": "Read and write",
-				"readOnly": "Read Only",
-				"schemaAttribute": "Multischema Attribute",
-				"testOk": "Tested parameters are correct!",
-				"urlConnection": "URL",
-				"user": "User",
-				"writeDefault": "Use as cache"
-			},
-			"hint": "The datasources allows you to define an 'access point' for your document data. It's possible to change the type, the dialect and to set the url or settings. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
-			"title": "Data Source Management"
-		},
-		"domainsManagement": {
-			"domainCode": "Domain code",
-			"domainName": "Domain name",
-			"title": "Domains Management",
-			"valueCode": "Value code",
-			"valueDescription": "Value description",
-			"valueName": "Value name"
-		},
-		"functionalitiesManagement": {
-			"creation": "Creation",
-			"development": "Development",
-			"execution": "Execution",
-			"hint": "The functionalities management page allows you to create folders to contain the users reports and documents. It's also possible to set the folders visibility depending on the users roles. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
-			"moveDown ": " Move down",
-			"moveUp": " Move up",
-			"roles": "Roles",
-			"table": {
-				"creationHeader": "Creation",
-				"developmentHeader": "Development",
-				"executionHeader": "Execution",
-				"nameHeader": "Name",
-				"testHeader": "Test"
-			},
-			"title": "Functionalities management"
-		},
-		"internationalizationManagement": {
-			"defaultLanguage": "(Default)",
-			"delete": {
-				"cantDelete": "Default Message can be deleted only on Default Tab. You can't delete Default Message here.",
-				"deleteConfirm": "Are You sure You want to delete this message?",
-				"deleteDefault": "Note: Deleting Default Message will delete all other messages with this Label. Are You sure You want to delete this message?",
-				"deleteDefaultTitle": "Delete Default Message",
-				"deleteMessage": "Are You sure You want to delete this message?",
-				"deleteMessageTitle": "Delete Message",
-				"deleteOk": "Deleted successfully"
-			},
-			"showBlankMessages": "Show Only Blank Fields",
-			"table": {
-				"addLabel": "Add Label",
-				"defaultMessage": "Default Message Code",
-				"messageCode": "Message Code"
-			}
-		},
+            "importConfirm": "Confirm import of metadata informations?",
+            "importMetadata": "Import Metadata",
+            "importProgress": "Importing Metadata in progress...",
+            "includeSources": "Include source code",
+            "lockModel": "Lock model",
+            "logicOperator": "Logical operator",
+            "lovsColumn": "LOV's column",
+            "lovsColumnSelect": "Select LOV's Column",
+            "metaWeb": "Meta Web",
+            "metadata": "Metadata",
+            "modality": "Modality",
+            "modelName": "Model Name",
+            "multivalue": "Multivalue",
+            "noDriverSelected": "No driver selected",
+            "noSavedVersions": "No saved versions",
+            "operationInfo": "Filter operator is used for comparing a column value of the AD {driver} and the value of the AD on which it depends",
+            "prefixTooltip": "Prefixes considered ONLY at meta tool table list retrieval",
+            "savedVersions": "Saved versions",
+            "schemaName": "Schema Name",
+            "setActiveVersion": "Set active version",
+            "showAdvancedOptions": "Show advanced options",
+            "smartView": "Use Smart view as QBE default",
+            "smartViewTooltip": "Smart view will show live data changes, can have slower loading times if the query is extended. Use advanced view if that is happening.",
+            "tablePrefixLike": "Table prefixes to consider",
+            "tablePrefixLikeExampleTooltip": "Table prefixes to consider separated by comma (e.g. prefix1,prefix2,...,prefixN)",
+            "tablePrefixNotLike": "Table prefixes to exclude",
+            "tablePrefixNotLikeExampleTooltip": "Table prefixes to exclude separated by comma(e.g. prefix1,prefix2,...,prefixN)",
+            "title": "Business Models' catalogue",
+            "unlockModel": "Unlock model",
+            "uploadFile": "Upload File",
+            "uploadFileSuccess": "File uploaded",
+            "value": "value of the parameter"
+        },
+        "cacheManagement": {
+            "addRemoveDataset": "Add/Remove dataset",
+            "availableMemory": "Available memory",
+            "availableMemoryPercentage": "Available memory percentage",
+            "cacheDimensionSingleDataset": "% of cache dimension for a single dataset",
+            "cacheEnabled": "Cache enabled",
+            "cleanAll": "Clean all",
+            "cleanAllMessage": "All items will be deleted. Are you sure you want to continue with this operation?",
+            "daily": "DAILY",
+            "dimension": "Dimension (byte)",
+            "discard": "Discard",
+            "every_10_mins": "EVERY 10 MINS",
+            "every_15_mins": "EVERY 15 MINS",
+            "every_20_mins": "EVERY 20 MINS",
+            "every_30_mins": "EVERY 30 MINS",
+            "frequencyOfCleaningDaemon": "Frequency of cleaning daemon",
+            "generalSettings": "General settings",
+            "hazelcastTimeToLock": "Timeout (seconds) to acquire a lock (Hazelcast)",
+            "hazelcastTimeToReleaseLock": "Timeout value (seconds) to release a lock (Hazelcast)",
+            "hourly": "HOURLY",
+            "maximumPercentOfCacheCleaningQuota": "Maximum percent of cache cleaning quota",
+            "metadataUnavailable": "Metadata are not available",
+            "monthly": "MONTHLY",
+            "name": "Name",
+            "noDefaultDataset": "No default datasource set, cannot display cache runtime information!",
+            "noDefaultDatasetTitle": "No default datasource",
+            "none": "NONE",
+            "numberOfCachedObjects": "Number of cached objects",
+            "prefixForCacheTablesName": "Prefix for cache tables name",
+            "runtimeInformationTitle": "Runtime information",
+            "signature": "Signature",
+            "table": "Table",
+            "targetDatasource": "Target datasource",
+            "timeToCreateTempTable": "Time (seconds) to create temporary table for the dataset",
+            "timeToLock": "Timeout (seconds) to acquire a lock",
+            "title": "Cache management",
+            "totalBytesAvailableForCache": "Total megabytes available for cache",
+            "totalMemory": "Total memory",
+            "ttlForCachedDataset": "Time To Live (seconds from last access) for cached datasets",
+            "usedMemory": "Used Memory",
+            "weekly": "WEEKLY",
+            "yearly": "YEARLY"
+        },
+        "catalogFunction": {
+            "hint": "The import/export functionality allows you to bulk insert/extract data from your tenant. \n Select the category to view the items present. \n Click on @:common.import if you want to import a package. \n Select the items and click  @:common.export if you want to download them in a zip archive.",
+            "title": "Import/Export"
+        },
+        "configurationManagement": {
+            "createNewHeader": "Create new configuration",
+            "headers": {
+                "active": "Is active",
+                "category": "Category",
+                "description": "Description",
+                "label": "Label",
+                "name": "Name",
+                "valueCheck": "Value"
+            },
+            "title": "Configuration Management"
+        },
+        "dataSourceManagement": {
+            "form": {
+                "advancedOptions": {
+                    "abandonedTimeout": "Abandoned Timeout",
+                    "abandonedTimeoutInfo": "Timeout in seconds before an abandoned (in use) connection can be removed. The value should be set to the longest running query your applications might have.",
+                    "logAbandoned": "Log Abandoned",
+                    "logAbandonedInfo": "Flag to log stack traces for application code which abandoned a Statement or Connection. Logging of abandoned Statements and Connections adds overhead for every Connection open or new Statement because a stack trace has to be generated.",
+                    "maxIdle": "Max Idle",
+                    "maxIdleInfo": "The maximum number of connections that should be kept in the pool at all times. Idle connections are checked periodically and connections that have been idle for longer than (Min Evictable Idle Time) will be released.",
+                    "maxTotal": "Max Total",
+                    "maxTotalInfo": "Sets the maximum total number of idle and borrows connections that can be active at the same time.",
+                    "maxWait": "Max Wait",
+                    "maxWaitInfo": "The maximum number of seconds that the pool will wait (when there are no available connections) for a connection to be returned before throwing an exception.",
+                    "minEvictableIdleTimeMillis": "Min Evictable Idle Time",
+                    "minEvictableIdleTimeMillisInfo": "The minimum amount of time, in milliseconds, an object may sit idle in the pool before it is eligible for eviction.",
+                    "removeAbandonedOnBorrow": "Remove Abandoned On Borrow",
+                    "removeAbandonedOnBorrowInfo": "Flag to remove abandoned connections if they exceed the Remove Abandoned Timeout when borrowObject is invoked. If set to true a connection is considered abandoned and eligible for removal if it has not been used for more than 'Remove Abandoned Timeout' seconds.",
+                    "removeAbandonedOnMaintenance": "Remove Abandoned On Maintenance",
+                    "removeAbandonedOnMaintenanceInfo": "Flag to remove abandoned connections if they exceed the Remove Abandoned Timeout during pool maintenance. If set to true a connection is considered abandoned and eligible for removal if it has not been used for more than 'Remove Abandoned Timeout' seconds.",
+                    "testOnReturn": "Test On Return",
+                    "testOnReturnInfo": "Returns the value of the testOnReturn property. Returns true if objects are validated before being returned to the pool.",
+                    "testWhileIdle": "Test While Idle",
+                    "testWhileIdleInfo": "Returns the value of the testWhileIdle property. Returns true if objects examined by the idle object evictor are validated.",
+                    "timeBetweenEvictionRuns": "Time Between Eviction Runs",
+                    "timeBetweenEvictionRunsInfo": "The number of seconds to sleep between runs of the idle connection validation/cleaner thread. This value should not be set under 1 second. It dictates how often we check for idle, abandoned connections, and how often we validate idle connections.",
+                    "title": "Advanced Options",
+                    "validationQuery": "Validation Query (optional)",
+                    "validationQueryInfo": "The SQL query that will be used to validate connections from this pool before returning them to the caller. If specified, this query does not have to return any data, it just can't throw a SQLException. The default value is null. If not specified, connections will be validation by the isValid() method. Example values are SELECT 1(mysql), select 1 from dual(oracle), SELECT 1(MS Sql Server)",
+                    "validationQueryTimeout": "Validation Query Timeout",
+                    "validationQueryTimeoutInfo": "The timeout in seconds before a connection validation queries fail. A value less than or equal to zero will disable this feature."
+                },
+                "dialect": "Dialect",
+                "driver": "Driver",
+                "errorTitle": "Connection KO",
+                "jndi": "JNDI Name",
+                "jndiInfo": "For the data source configuration you should specify the connection pool configured inside the application server. For example: Tomcat: java:comp/env/jdbc/foodmart; JBoss: jdbc/foodmart.",
+                "multischema": "Multischema",
+                "notOwner": "You are not the owner of this data source.",
+                "pwd": "Password (Only If Changed)",
+                "readAndWrite": "Read and write",
+                "readOnly": "Read Only",
+                "schemaAttribute": "Multischema Attribute",
+                "testOk": "Tested parameters are correct!",
+                "urlConnection": "URL",
+                "user": "User",
+                "writeDefault": "Use as cache"
+            },
+            "hint": "The datasources allows you to define an 'access point' for your document data. It's possible to change the type, the dialect and to set the url or settings. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "title": "Data Source Management"
+        },
+        "domainsManagement": {
+            "domainCode": "Domain code",
+            "domainName": "Domain name",
+            "title": "Domains Management",
+            "valueCode": "Value code",
+            "valueDescription": "Value description",
+            "valueName": "Value name"
+        },
+        "functionalitiesManagement": {
+            "creation": "Creation",
+            "development": "Development",
+            "execution": "Execution",
+            "hint": "The functionalities management page allows you to create folders to contain the users reports and documents. It's also possible to set the folders visibility depending on the users roles. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "moveDown ": " Move down",
+            "moveUp": " Move up",
+            "roles": "Roles",
+            "table": {
+                "creationHeader": "Creation",
+                "developmentHeader": "Development",
+                "executionHeader": "Execution",
+                "nameHeader": "Name",
+                "testHeader": "Test"
+            },
+            "title": "Functionalities management"
+        },
+        "internationalizationManagement": {
+            "defaultLanguage": "(Default)",
+            "delete": {
+                "cantDelete": "Default Message can be deleted only on Default Tab. You can't delete Default Message here.",
+                "deleteConfirm": "Are You sure You want to delete this message?",
+                "deleteDefault": "Note: Deleting Default Message will delete all other messages with this Label. Are You sure You want to delete this message?",
+                "deleteDefaultTitle": "Delete Default Message",
+                "deleteMessage": "Are You sure You want to delete this message?",
+                "deleteMessageTitle": "Delete Message",
+                "deleteOk": "Deleted successfully"
+            },
+            "showBlankMessages": "Show Only Blank Fields",
+            "table": {
+                "addLabel": "Add Label",
+                "defaultMessage": "Default Message Code",
+                "messageCode": "Message Code"
+            }
+        },
         "menuManagement": {
-			"chooseIcon": "Choose Icon",
-			"descrHelp": "This value will be displayed in the main menu.",
-			"description": "Description",
-			"form": {
-				"document": "Related document",
-				"externalApplicationUrl": "Application's url",
-				"functionality": "Choose Functionality",
-				"initialPath": "Open workspace on:",
-				"menuNodeContent": "Menu node content",
-				"name": "Name",
-				"objParameters": "Document parameters",
-				"staticPage": "HTML Page"
-			},
-			"hint": "Menu configuration allows you to manage menu entries.",
-			"info": {
-				"createMessage": "Menu item created",
-				"createTitle": "Create menu item",
-				"deleteMessage": "Menu item deleted",
-				"deleteTitle": "Delete menu item",
-				"errorMessage": "Error saving menu item",
-				"errorTitle": "Error",
-				"saveMessage": "Menu item saved",
-				"saveTitle": "Save menu item",
-				"updateMessage": "Menu item updated",
-				"updateTitle": "Update menu item"
-			},
-			"roles": "Roles",
-			"selectDocument": "Select document",
-			"title": "List of menus"
-		},
-		"metadata": {
-			"hint": "The metadata allows you to access and write metadata inside your users document. It's possible to change the type between the allowed ones and to name and describe it. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
-			"title": "Metadata Management"
-		},
-		"mondrianSchemasManagement": {
-			"detail": {
-				"savedVersions": "Saved versions",
-				"title": "Detail"
-			},
-			"headers": {
-				"active": "Active",
-				"creationDate": "Creation Date",
-				"creator": "Creator",
-				"fileName": "File Name"
-			},
+            "chooseIcon": "Choose Icon",
+            "descrHelp": "This value will be displayed in the main menu.",
+            "description": "Description",
+            "form": {
+                "document": "Related document",
+                "externalApplicationUrl": "Application's url",
+                "functionality": "Choose Functionality",
+                "initialPath": "Open workspace on:",
+                "menuNodeContent": "Menu node content",
+                "name": "Name",
+                "objParameters": "Document parameters",
+                "staticPage": "HTML Page"
+            },
+            "hint": "Menu configuration allows you to manage menu entries.",
+            "info": {
+                "createMessage": "Menu item created",
+                "createTitle": "Create menu item",
+                "deleteMessage": "Menu item deleted",
+                "deleteTitle": "Delete menu item",
+                "errorMessage": "Error saving menu item",
+                "errorTitle": "Error",
+                "saveMessage": "Menu item saved",
+                "saveTitle": "Save menu item",
+                "updateMessage": "Menu item updated",
+                "updateTitle": "Update menu item"
+            },
+            "roles": "Roles",
+            "selectDocument": "Select document",
+            "title": "List of menus"
+        },
+        "metadata": {
+            "hint": "The metadata allows you to access and write metadata inside your users document. It's possible to change the type between the allowed ones and to name and describe it. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "title": "Metadata Management"
+        },
+        "mondrianSchemasManagement": {
+            "detail": {
+                "savedVersions": "Saved versions",
+                "title": "Detail"
+            },
+            "headers": {
+                "active": "Active",
+                "creationDate": "Creation Date",
+                "creator": "Creator",
+                "fileName": "File Name"
+            },
             "hint": "The Mondrian Schema management allows you to upload and manage your OLAP documents schema. It's possible to set an active version from the saved ones list and to set a workflow. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
-			"hintTitle": "Mondrian Schema Management",
-			"noResults": "No schemas' available for the selected filter.",
-			"title": "Mondrian schemas catalogue",
-			"toast": {
-				"downloadFile": {
-					"downloaded": "Version Downloaded",
-					"ok": "New version downloaded successfully"
-				},
-				"schema": {
-					"error": "Error creating schema"
-				},
-				"uploadFile": {
-					"error": "Error uploading version",
-					"ok": "New version uploaded successfully",
-					"uploaded": "Version Uploaded"
-				},
-				"workflow": {
-					"ok": "Workflow updated successfully",
-					"startFailed": "Error starting workflow",
-					"started": "Workflow Started",
-					"startedOk": "Workflow started successfully",
-					"updated": "Workflow Updated"
-				}
-			},
-			"workFlow": {
-				"availableUsers": "Available Users",
-				"title": "Work Flow",
-				"tooltips": {
-					"noSchema": "Schema is not created!",
-					"noWfUsers": "Save users in workflow!",
-					"wfInProgress": "Workflow is in progress!"
-				},
-				"userWf": "Users Work Flow"
-			}
-		},
-		"newsManagement": {
-			"active": "Active",
-			"detailTitle": "News Detail",
-			"form": {
-				"description": "Description",
-				"descriptionPlaceholder": "This is the text that will appear on the news notification",
-				"expirationDate": "Expiration Date",
-				"title": "News Title",
-				"type": "News Type"
-			},
-			"hint": "The news management page allows you to create news and notifications for the user. Creating a news or enabling one will show the notification to end users menu. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
-			"noResults": "No roles available for the selected filter",
-			"role": "Role",
-			"roles": "Roles permissions",
-			"settings": "News Settings",
-			"title": "News Management"
-		},
-		"profileAttributesManagement": {
-			"description": "Description",
-			"form": {
-				"allowUser": "Allow user to see field",
-				"dataType": "Data type",
-				"description": "Description",
-				"lov": "Lov",
-				"lovPlaceholder": "Select a Lov",
-				"manualInput": "Manual input",
-				"multiValue": "Multivalue",
-				"name": "Name",
-				"syntax": {
-					"complex": "Complex",
-					"simple": "Simple"
-				}
-			},
-			"hint": "Profile attributes allows you to better define different users properties. It's possible to change the name, the description or the types. It's also possible to get a value from a LOV. <br> Click on one existing item from the list on the side, or press the \"+\" button to add one.",
-			"info": {
-				"createMessage": "Attribute created",
-				"createTitle": "Create attribute",
-				"deleteMessage": "Attribute deleted",
-				"deleteTitle": "Delete attribute",
-				"saveMessage": "Attribute saved",
-				"saveTitle": "Save attribute",
-				"updateMessage": "Attribute updated",
-				"updateTitle": "Update attribute"
-			},
-			"name": "Name",
-			"title": "Profile Attributes Management",
-			"valueDescription": "Value description"
-		},
-		"resourceManagement": {
-			"column": {
-				"lastModified": "Last modified date",
-				"name": "Name",
-				"size": "Size"
-			},
-			"createFolder": "Create folder",
-			"detailTitle": "Deta",
-			"extract": "Extract files",
-			"folderRenamedSuccessfully": "Folder successfully renamed",
-			"foldernamePlaceholder": "Enter foldername here",
-			"hint": "Click on a folder to navigate its content.<br>Click on <i class=\"fas fa-table\"></i> if you want to edit metadata.<br>Click on <i class=\"fa fa-download\"></i> to download folder and its content.<br>Click on <i class=\"fas fa-folder-plus\"></i> to create a new folder inside your current path.<br>Click on <i class=\"fas fa-upload\"></i> to upload file inside your current path.<br>Click on <i class=\"fas fa-sync-alt\"></i> to refresh view items",
-			"metadata": {
-				"accuracyAndPerformance": "Accuracy and performance",
-				"dialog": {
-					"title": "Metadata"
-				},
-				"formatOfData": "Format of data input and related output",
-				"openSource": "Is open source",
-				"typeOfAnalytics": {
-					"label": "Type of analytic to be executed ",
-					"options": {
-						"descriptive": "Descriptive",
-						"predictive": "Predictive",
-						"prescriptive": "Prescriptive"
-					}
-				},
-				"usageOfTheModel": "Usage of the model",
-				"version": "Version"
-			},
-			"openMetadata": "Open metadata",
-			"renameFolder": "Rename folder",
-			"selectedFiles": "One file selected | {num} files selected",
-			"title": "Resource management",
-			"uploadFile": {
-				"fileAndFoldersContentWillBeOverwritten": "You chose to unzip the archive. Existing files and folders will be overwritten",
-				"fileWillBeOverwritten": "A file with the same name was found. It will be overwritten"
-			}
-		},
-		"rolesManagement": {
-			"authorizations": {
-				"name": {
-					"build": "Build",
-					"buildQbe": "Build QbE Queries",
-					"createCustomChart": "Create custom chart",
-					"createDocuments": "Create Documents",
-					"createSelfSelviceCockpit": "Create Cockpit report",
-					"createSelfSelviceGeoreport": "Create Geographic report",
-					"createSelfSelviceKpi": "Create KPI report",
-					"createSocialAnalysis": "Create social analysis",
-					"doMassiveExport": "Do massive export",
-					"editPythonScripts": "Edit Python/R Scripts",
-					"enable": "Enable",
-					"enableDatasetPersistence": "Dataset Persistence",
-					"enableFederatedDataset": "Federated Dataset",
-					"enableToCopyAndEmbed": "Copy and Embed link",
-					"enableToPrint": "Print Documents",
-					"enableToRate": "Rate Documents",
-					"enterprise": "Enterprise",
-					"functionsCatalogUsage": "Functions Catalog Usage",
-					"hierarchiesManagement": "Manage Hierarchies",
-					"items": "Items for user menu",
-					"manage": "Manage",
-					"manageCalendar": "Manage Calendar",
-					"manageGlossaryBusiness": "Manage Glossary Business",
-					"manageGlossaryTechnical": "Manage Glossary Technical",
-					"manageInternationalization": "Manage Internationalization",
-					"manageKpiValue": "Manage Kpi Value",
-					"manageUsers": "Users",
-					"manageWidgetGallery": "Manage widget gallery",
-					"newsVisualization": "News Visualization",
-					"runSnapshot": "Run Scheduled execution",
-					"saveMeta": "Save Metadata",
-					"savePersonalFolder": "Save into My Workspace",
-					"saveRemember": "Save to remember",
-					"saveSubobj": "Save OLAP View",
-					"see": "See",
-					"seeDocBrowser": "View Document Browser",
-					"seeFavourites": "See favourites",
-					"seeMeta": "View Metadata",
-					"seeMyData": "View 'My Data'",
-					"seeMyWorkspace": "View My Workspace",
-					"seeNotes": "View Notes",
-					"seeSnapshot": "View Scheduled execution",
-					"seeSubobj": "See subobject",
-					"seeSubscriptions": "See subscriptions",
-					"seeToDoList": "See ToDo list",
-					"seeViewpoints": "View Saved Parameters",
-					"send": "Send",
-					"sendMail": "Send Mail",
-					"viewSocialAnalysis": "View social analysis",
-					"widgets": "Widgets"
-				},
-				"title": "Authorizations"
-			},
-			"businessModels": "Business models",
-			"categories": "Categories",
-			"dataSets": "Data sets",
-			"detail": {
-				"code": "Code",
-				"isPublic": "Is public role?",
-				"roleTypeID": "Role Type",
-				"title": "Detail"
-			},
-			"hint": "Roles allows you to specify different users properties and authorizations. It's possible to change the role name, the roles authorizations and dataset visibility. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
-			"kpiCategories": "KPI Categories",
-			"noResults": "No roles available for the selected filter",
-			"rolesDropdown": {
-				"ADMIN": "Administrator",
-				"DEV_ROLE": "Developer",
-				"MODEL_ADMIN": "Model Administrator",
-				"TEST_ROLE": "Test User",
-				"USER": "User"
-			},
-			"title": "Roles Management"
-		},
-		"templatePruning": {
-			"documentSelection": "Document Selection",
-			"documentSelectionMessage": "Select the documents you want to delete whose template is older than the date entered above",
-			"enterDateMessage": "Enter a date from which the templates will be maintained",
-			"noDocuments": "No available documents",
-			"referenceDate": "Reference Date",
-			"selectDate": "Select Date",
-			"title": "Template Pruning"
-		},
-		"tenantManagement": {
-			"dataSource": {
-				"title": "Data Source"
-			},
-			"detail": {
-				"theme": "Theme",
-				"title": "Detail"
-			},
-			"hint": "Tenants management allows you to define different tenants and set name and settings for each one. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
-			"hintTitle": "Tenant Management",
-			"productTypes": {
-				"title": "Product Types"
-			},
-			"tenantSaved": "Tenant correctly saved. The administrator of the tenant has been created too and his username and password are",
-			"title": "Tenant Management"
-		},
-		"usersManagement": {
-			"attributes": "Attributes",
-			"blockedUserInfo": "This user reached the maximum number of failed login attempts and therefore he was locked. Do you want to unlock him?",
-			"defaultRoleInfo": "Select a role if you want to set it as the default. If no role is selected, it will be possible switch between roles from the Knowage Administration menu",
-			"detail": "Detail",
+            "hintTitle": "Mondrian Schema Management",
+            "noResults": "No schemas' available for the selected filter.",
+            "title": "Mondrian schemas catalogue",
+            "toast": {
+                "downloadFile": {
+                    "downloaded": "Version Downloaded",
+                    "ok": "New version downloaded successfully"
+                },
+                "schema": {
+                    "error": "Error creating schema"
+                },
+                "uploadFile": {
+                    "error": "Error uploading version",
+                    "ok": "New version uploaded successfully",
+                    "uploaded": "Version Uploaded"
+                },
+                "workflow": {
+                    "ok": "Workflow updated successfully",
+                    "startFailed": "Error starting workflow",
+                    "started": "Workflow Started",
+                    "startedOk": "Workflow started successfully",
+                    "updated": "Workflow Updated"
+                }
+            },
+            "workFlow": {
+                "availableUsers": "Available Users",
+                "title": "Work Flow",
+                "tooltips": {
+                    "noSchema": "Schema is not created!",
+                    "noWfUsers": "Save users in workflow!",
+                    "wfInProgress": "Workflow is in progress!"
+                },
+                "userWf": "Users Work Flow"
+            }
+        },
+        "newsManagement": {
+            "active": "Active",
+            "detailTitle": "News Detail",
+            "form": {
+                "description": "Description",
+                "descriptionPlaceholder": "This is the text that will appear on the news notification",
+                "expirationDate": "Expiration Date",
+                "title": "News Title",
+                "type": "News Type"
+            },
+            "hint": "The news management page allows you to create news and notifications for the user. Creating a news or enabling one will show the notification to end users menu. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "noResults": "No roles available for the selected filter",
+            "role": "Role",
+            "roles": "Roles permissions",
+            "settings": "News Settings",
+            "title": "News Management"
+        },
+        "profileAttributesManagement": {
+            "description": "Description",
+            "form": {
+                "allowUser": "Allow user to see field",
+                "dataType": "Data type",
+                "description": "Description",
+                "lov": "Lov",
+                "lovPlaceholder": "Select a Lov",
+                "manualInput": "Manual input",
+                "multiValue": "Multivalue",
+                "name": "Name",
+                "syntax": {
+                    "complex": "Complex",
+                    "simple": "Simple"
+                }
+            },
+            "hint": "Profile attributes allows you to better define different users properties. It's possible to change the name, the description or the types. It's also possible to get a value from a LOV. <br> Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "info": {
+                "createMessage": "Attribute created",
+                "createTitle": "Create attribute",
+                "deleteMessage": "Attribute deleted",
+                "deleteTitle": "Delete attribute",
+                "saveMessage": "Attribute saved",
+                "saveTitle": "Save attribute",
+                "updateMessage": "Attribute updated",
+                "updateTitle": "Update attribute"
+            },
+            "name": "Name",
+            "title": "Profile Attributes Management",
+            "valueDescription": "Value description"
+        },
+        "resourceManagement": {
+            "column": {
+                "lastModified": "Last modified date",
+                "name": "Name",
+                "size": "Size"
+            },
+            "createFolder": "Create folder",
+            "detailTitle": "Deta",
+            "extract": "Extract files",
+            "folderRenamedSuccessfully": "Folder successfully renamed",
+            "foldernamePlaceholder": "Enter foldername here",
+            "hint": "Click on a folder to navigate its content.<br>Click on <i class=\"fas fa-table\"></i> if you want to edit metadata.<br>Click on <i class=\"fa fa-download\"></i> to download folder and its content.<br>Click on <i class=\"fas fa-folder-plus\"></i> to create a new folder inside your current path.<br>Click on <i class=\"fas fa-upload\"></i> to upload file inside your current path.<br>Click on <i class=\"fas fa-sync-alt\"></i> to refresh view items",
+            "metadata": {
+                "accuracyAndPerformance": "Accuracy and performance",
+                "dialog": {
+                    "title": "Metadata"
+                },
+                "formatOfData": "Format of data input and related output",
+                "openSource": "Is open source",
+                "typeOfAnalytics": {
+                    "label": "Type of analytic to be executed ",
+                    "options": {
+                        "descriptive": "Descriptive",
+                        "predictive": "Predictive",
+                        "prescriptive": "Prescriptive"
+                    }
+                },
+                "usageOfTheModel": "Usage of the model",
+                "version": "Version"
+            },
+            "openMetadata": "Open metadata",
+            "renameFolder": "Rename folder",
+            "selectedFiles": "One file selected | {num} files selected",
+            "title": "Resource management",
+            "uploadFile": {
+                "fileAndFoldersContentWillBeOverwritten": "You chose to unzip the archive. Existing files and folders will be overwritten",
+                "fileWillBeOverwritten": "A file with the same name was found. It will be overwritten"
+            }
+        },
+        "rolesManagement": {
+            "authorizations": {
+                "name": {
+                    "build": "Build",
+                    "buildQbe": "Build QbE Queries",
+                    "createCustomChart": "Create custom chart",
+                    "createDocuments": "Create Documents",
+                    "createSelfSelviceCockpit": "Create Cockpit report",
+                    "createSelfSelviceGeoreport": "Create Geographic report",
+                    "createSelfSelviceKpi": "Create KPI report",
+                    "createSocialAnalysis": "Create social analysis",
+                    "doMassiveExport": "Do massive export",
+                    "editPythonScripts": "Edit Python/R Scripts",
+                    "enable": "Enable",
+                    "enableDatasetPersistence": "Dataset Persistence",
+                    "enableFederatedDataset": "Federated Dataset",
+                    "enableToCopyAndEmbed": "Copy and Embed link",
+                    "enableToPrint": "Print Documents",
+                    "enableToRate": "Rate Documents",
+                    "enterprise": "Enterprise",
+                    "functionsCatalogUsage": "Functions Catalog Usage",
+                    "hierarchiesManagement": "Manage Hierarchies",
+                    "items": "Items for user menu",
+                    "manage": "Manage",
+                    "manageCalendar": "Manage Calendar",
+                    "manageGlossaryBusiness": "Manage Glossary Business",
+                    "manageGlossaryTechnical": "Manage Glossary Technical",
+                    "manageInternationalization": "Manage Internationalization",
+                    "manageKpiValue": "Manage Kpi Value",
+                    "manageUsers": "Users",
+                    "manageWidgetGallery": "Manage widget gallery",
+                    "newsVisualization": "News Visualization",
+                    "runSnapshot": "Run Scheduled execution",
+                    "saveMeta": "Save Metadata",
+                    "savePersonalFolder": "Save into My Workspace",
+                    "saveRemember": "Save to remember",
+                    "saveSubobj": "Save OLAP View",
+                    "see": "See",
+                    "seeDocBrowser": "View Document Browser",
+                    "seeFavourites": "See favourites",
+                    "seeMeta": "View Metadata",
+                    "seeMyData": "View 'My Data'",
+                    "seeMyWorkspace": "View My Workspace",
+                    "seeNotes": "View Notes",
+                    "seeSnapshot": "View Scheduled execution",
+                    "seeSubobj": "See subobject",
+                    "seeSubscriptions": "See subscriptions",
+                    "seeToDoList": "See ToDo list",
+                    "seeViewpoints": "View Saved Parameters",
+                    "send": "Send",
+                    "sendMail": "Send Mail",
+                    "viewSocialAnalysis": "View social analysis",
+                    "widgets": "Widgets"
+                },
+                "title": "Authorizations"
+            },
+            "businessModels": "Business models",
+            "categories": "Categories",
+            "dataSets": "Data sets",
+            "detail": {
+                "code": "Code",
+                "isPublic": "Is public role?",
+                "roleTypeID": "Role Type",
+                "title": "Detail"
+            },
+            "hint": "Roles allows you to specify different users properties and authorizations. It's possible to change the role name, the roles authorizations and dataset visibility. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "kpiCategories": "KPI Categories",
+            "noResults": "No roles available for the selected filter",
+            "rolesDropdown": {
+                "ADMIN": "Administrator",
+                "DEV_ROLE": "Developer",
+                "MODEL_ADMIN": "Model Administrator",
+                "TEST_ROLE": "Test User",
+                "USER": "User"
+            },
+            "title": "Roles Management"
+        },
+        "templatePruning": {
+            "documentSelection": "Document Selection",
+            "documentSelectionMessage": "Select the documents you want to delete whose template is older than the date entered above",
+            "enterDateMessage": "Enter a date from which the templates will be maintained",
+            "noDocuments": "No available documents",
+            "referenceDate": "Reference Date",
+            "selectDate": "Select Date",
+            "title": "Template Pruning"
+        },
+        "tenantManagement": {
+            "dataSource": {
+                "title": "Data Source"
+            },
+            "detail": {
+                "theme": "Theme",
+                "title": "Detail"
+            },
+            "hint": "Tenants management allows you to define different tenants and set name and settings for each one. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "hintTitle": "Tenant Management",
+            "productTypes": {
+                "title": "Product Types"
+            },
+            "tenantSaved": "Tenant correctly saved. The administrator of the tenant has been created too and his username and password are",
+            "title": "Tenant Management"
+        },
+        "usersManagement": {
+            "attributes": "Attributes",
+            "blockedUserInfo": "This user reached the maximum number of failed login attempts and therefore he was locked. Do you want to unlock him?",
+            "defaultRoleInfo": "Select a role if you want to set it as the default. If no role is selected, it will be possible switch between roles from the Knowage Administration menu",
+            "detail": "Detail",
             "error": {
                 "missingDefaultRole": "Default role is not selected"
             },
-			"form": {
-				"defaultRole": "Default role",
-				"password": "Password",
-				"passwordConfirm": "Confirm Password",
-				"userId": "User ID"
-			},
-			"fullName": "Full Name",
-			"hint": "Users management allows you to define different users roles and permissions. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
-			"info": {
-				"createMessage": "User created successfully",
-				"createTitle": "Create user",
-				"deleteMessage": "User deleted",
-				"deleteTitle": "Delete user"
-			},
-			"roles": "Roles",
-			"title": "Users Management",
-			"unlockUser": "Unlock user",
-			"userId": "User ID",
-			"validation": {
-				"sameAsPassword": "Username must not be found inside the password"
-			},
-			"valueDescription": "Value description"
-		},
-		"widgetGallery": {
-			"deleteTemplate": "Delete template",
-			"downloadTemplate": "Download template",
-			"hint": "The templates allow you to access ready-made elements to proceed more quickly to the creation of dashboards. To view the details of a template, select one of those on the side, or press the \"+\" button to add or import one.",
-			"importTemplate": "Import template",
-			"newTemplate": "New template",
-			"noResults": "No templates available for the selected filter",
-			"outputType": "Output Type",
-			"saveTemplate": "Save template",
-			"tags": {
-				"availableCharacters": "Allowed values for tags: uppercase and lowercase letters, numbers, '-', '_'. The space character is not allowed.",
-				"tagIsNotValid": "Tag ({tag}) is not valid'"
-			},
-			"templateDoYouWantToDeleteTemplate": "Do you want to delete this template?",
-			"templateIsNotSaved": "The template was not saved. Do you want to download it anyway?",
-			"templateSuccessfully": "Template successfully",
-			"templateSuccessfullyDeleted": "@:managers.widgetGallery.templateSuccessfully deleted",
-			"templateSuccessfullySaved": "@:managers.widgetGallery.templateSuccessfully saved",
-			"templateSuccessfullyUploaded": "@:managers.widgetGallery.templateSuccessfully uploaded",
-			"title": "Gallery management",
-			"uploadTemplate": "Upload template"
-		}
-	},
-	"menu": {
-		"group": {
-			"ImportExport": "Import/Export",
-			"ServerManager": "Server manager"
-		},
-		"importExport": "Import/Export",
-		"modelCatalogResourceManagement": "Models manager",
-		"resourceManagement": "Resource manager"
-	},
-	"newsDialog": {
-		"description": "Description",
-		"expirationDate": "Expiration date",
-		"news": "news",
-		"notifications": "notifications",
-		"title": "Knowage news",
-		"warnings": "warnings"
-	},
-	"role": {
-		"defaultRolePlaceholder": "No default role selected",
-		"roleSelection": "Role Selection"
-	}
+            "form": {
+                "defaultRole": "Default role",
+                "password": "Password",
+                "passwordConfirm": "Confirm Password",
+                "userId": "User ID"
+            },
+            "fullName": "Full Name",
+            "hint": "Users management allows you to define different users roles and permissions. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "info": {
+                "createMessage": "User created successfully",
+                "createTitle": "Create user",
+                "deleteMessage": "User deleted",
+                "deleteTitle": "Delete user"
+            },
+            "roles": "Roles",
+            "title": "Users Management",
+            "unlockUser": "Unlock user",
+            "userId": "User ID",
+            "validation": {
+                "sameAsPassword": "Username must not be found inside the password"
+            },
+            "valueDescription": "Value description"
+        },
+        "widgetGallery": {
+            "deleteTemplate": "Delete template",
+            "downloadTemplate": "Download template",
+            "hint": "The templates allow you to access ready-made elements to proceed more quickly to the creation of dashboards. To view the details of a template, select one of those on the side, or press the \"+\" button to add or import one.",
+            "importTemplate": "Import template",
+            "newTemplate": "New template",
+            "noResults": "No templates available for the selected filter",
+            "outputType": "Output Type",
+            "saveTemplate": "Save template",
+            "tags": {
+                "availableCharacters": "Allowed values for tags: uppercase and lowercase letters, numbers, '-', '_'. The space character is not allowed.",
+                "tagIsNotValid": "Tag ({tag}) is not valid'"
+            },
+            "templateDoYouWantToDeleteTemplate": "Do you want to delete this template?",
+            "templateIsNotSaved": "The template was not saved. Do you want to download it anyway?",
+            "templateSuccessfully": "Template successfully",
+            "templateSuccessfullyDeleted": "@:managers.widgetGallery.templateSuccessfully deleted",
+            "templateSuccessfullySaved": "@:managers.widgetGallery.templateSuccessfully saved",
+            "templateSuccessfullyUploaded": "@:managers.widgetGallery.templateSuccessfully uploaded",
+            "title": "Gallery management",
+            "uploadTemplate": "Upload template"
+        }
+    },
+    "menu": {
+        "group": {
+            "ImportExport": "Import/Export",
+            "ServerManager": "Server manager"
+        },
+        "importExport": "Import/Export",
+        "modelCatalogResourceManagement": "Models manager",
+        "resourceManagement": "Resource manager"
+    },
+    "newsDialog": {
+        "description": "Description",
+        "expirationDate": "Expiration date",
+        "news": "news",
+        "notifications": "notifications",
+        "title": "Knowage news",
+        "warnings": "warnings"
+    },
+    "role": {
+        "defaultRolePlaceholder": "No default role selected",
+        "roleSelection": "Role Selection"
+    }
 }
