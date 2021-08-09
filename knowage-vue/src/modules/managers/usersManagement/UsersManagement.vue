@@ -195,7 +195,13 @@ export default defineComponent({
         },
         async saveUser() {
             this.loading = true
-            if (this.selectedRoles?.length > 1 && !this.defaultRole) {
+            if (!this.selectedRoles || this.selectedRoles.length == 0) {
+                this.$store.commit('setError', {
+                    title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
+                    msg: this.$t('managers.usersManagement.error.noRolesSelected')
+                })
+                this.loading = false
+            } else if (this.selectedRoles?.length > 1 && !this.defaultRole) {
                 this.$store.commit('setError', {
                     title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
                     msg: this.$t('managers.usersManagement.error.missingDefaultRole')
