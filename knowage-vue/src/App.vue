@@ -128,7 +128,7 @@ export default defineComponent({
                 severity: 'error',
                 summary: newError.title,
                 detail: newError.msg,
-                life: 5000
+                life: typeof newError.duration == 'undefined' ? 5000 : newError.duration
             })
         },
         info(newInfo) {
@@ -136,7 +136,7 @@ export default defineComponent({
                 severity: 'info',
                 summary: newInfo.title,
                 detail: newInfo.msg,
-                life: newInfo.duration
+                life: typeof newInfo.duration == 'undefined' ? 5000 : newInfo.duration
             })
         },
         loading(newLoading) {

@@ -19,7 +19,7 @@ const store = createStore({
             state.user = user
         },
         setError(state, error) {
-            state.error = { title: error.title, msg: error.msg }
+            state.error = error
         },
         setInfo(state, info) {
             state.info = info
@@ -28,7 +28,7 @@ const store = createStore({
             state.loading = loading
         },
         setWarning(state, warning) {
-            state.warning = { title: warning.title, msg: warning.msg }
+            state.warning = warning
         },
         setLocale(state, locale) {
             state.locale = locale
