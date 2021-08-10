@@ -340,7 +340,7 @@ $aggrid-border-color: #d9dcde;
 	    		}
 			}
 			&.cell-span {
-				background-color: $lightTextColor;
+				background-color: $lightTextColor !important;
 				border-bottom: 1px solid $aggrid-border-color !important;
 			}
 		}
