@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.httpclient.HttpStatus;
@@ -266,7 +267,10 @@ public class RESTDataProxy extends AbstractDataProxy {
 			for (Entry<String, String> entry : entrySet) {
 				String key = entry.getKey();
 				String value = entry.getValue();
-				value = value.replaceAll("^'", "").replaceAll("'$", "");
+				value = Optional.ofNullable(value)
+						.orElse("" /* TODO "" or "null" ??? */)
+						.replaceAll("^'", "")
+						.replaceAll("'$", "");
 				String keyPlaceholderRegex = "\\$P\\{" + key  + "\\}";
 
 				unparametrizedAddress = unparametrizedAddress.replaceAll(keyPlaceholderRegex, /* TODO : needs some escapes? */ value);
