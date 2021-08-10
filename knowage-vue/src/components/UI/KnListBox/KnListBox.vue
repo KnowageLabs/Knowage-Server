@@ -1,0 +1,110 @@
+<template>
+    <Listbox class="kn-list knListBox" :options="options" listStyle="max-height:calc(100% - 62px)" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="settings.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')">
+        <template #header>
+            <Button icon="fas fa-sort-amount-down-alt" class="p-button-text p-button-rounded p-button-plain headerButton" @click="toggleSort" v-tooltip.bottom="$t('common.sort')" />
+            <Menu id="sortMenu" ref="sortMenu" :model="settings.sortFields" :popup="true">
+                <template #item="{item}">
+                    <a class="p-menuitem-link" role="menuitem" tabindex="0" @click="sort($event, item)">
+                        <span v-if="selectedDirection === 'asc'" class="p-menuitem-icon fas" :class="{ 'fa-sort-amount-up-alt': selectedSort === item }"></span>
+                        <span v-else class="p-menuitem-icon fas" :class="{ 'fa-sort-amount-down-alt': selectedSort === item }"></span>
+                        <span class="p-menuitem-text">{{ $t(item) }}</span>
+                    </a>
+                </template>
+            </Menu>
+        </template>
+        <template #option="slotProps">
+            <router-link class="kn-decoration-none" :to="{ name: settings.interaction.path, params: { id: slotProps.option.id } }" exact v-if="settings.interaction.type === 'router'">
+                <div class="kn-list-item" v-tooltip="slotProps.option.description">
+                    <Avatar v-if="settings.avatar" :icon="settings.avatar.icons[slotProps.option[settings.avatar.property]].icon" shape="circle" size="medium" :style="settings.avatar.icons[slotProps.option[settings.avatar.property]].style" />
+                    <div class="kn-list-item-text">
+                        <span>{{ slotProps.option.label }}</span>
+                        <span class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option.name }}</span>
+                    </div>
+                    <KnListButtonRenderer :buttons="settings.buttons" @click="clickedButton($event, slotProps.option)" />
+                </div>
+            </router-link>
+            <div class="kn-list-item" v-tooltip="slotProps.option.description" v-if="!settings.interaction || settings.interaction.type === 'event'" @click="clickedButton($event, slotProps.option)" :class="{ 'router-link-active': selected && selected == slotProps.option }">
+                <Avatar v-if="settings.avatar" :icon="settings.avatar.icons[slotProps.option[settings.avatar.property]].icon" shape="circle" size="medium" :style="settings.avatar.icons[slotProps.option[settings.avatar.property]].style" />
+                <div class="kn-list-item-text">
+                    <span>{{ slotProps.option.label }}</span>
+                    <span class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option.name }}</span>
+                </div>
+                <KnListButtonRenderer :buttons="settings.buttons" @click="clickedButton($event, slotProps.option)" />
+            </div>
+        </template>
+    </Listbox>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue'
+import Avatar from 'primevue/avatar'
+import Listbox from 'primevue/listbox'
+import KnListButtonRenderer from './KnListButtonRenderer.vue'
+import Menu from 'primevue/menu'
+
+export default defineComponent({
+    name: 'gallery-management',
+    components: {
+        Avatar,
+        KnListButtonRenderer,
+        Listbox,
+        Menu
+    },
+    props: {
+        settings: {
+            type: Object,
+            required: true
+        },
+        options: Array,
+        selected: Object
+    },
+    data() {
+        return {
+            selectedSort: 'label',
+            selectedDirection: 'desc'
+        }
+    },
+    emits: ['click'],
+    created() {
+        this.selectedSort = this.settings.defaultSortField || 'label'
+    },
+    methods: {
+        clickedButton(e, item) {
+            const emits = e.item && e.item.emits
+            e.item = item
+            this.$emit(emits || 'click', e)
+        },
+        toggleSort(e) {
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs.sortMenu.toggle(e)
+        },
+        sort(e, item) {
+            if (this.selectedSort === item) this.selectedDirection = this.selectedDirection === 'desc' ? 'asc' : 'desc'
+            else {
+                this.selectedSort = item
+                this.selectedDirection = 'desc'
+            }
+            if (this.selectedDirection === 'desc') this.options?.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? 1 : -1))
+            else this.options?.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? -1 : 1))
+        }
+    }
+})
+</script>
+<style lang="scss">
+.knListBox {
+    position: relative;
+    flex: 1;
+    overflow-y: auto;
+    .headerButton {
+        position: absolute;
+        right: 8px;
+        top: 16px;
+    }
+    .p-listbox-header {
+        .p-listbox-filter-container {
+            width: calc(100% - 36px);
+        }
+    }
+}
+</style>

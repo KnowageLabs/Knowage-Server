@@ -13,9 +13,6 @@
         <div class="p-grid p-m-0 p-fluid">
             <div class="p-col-9">
                 <Card>
-                    <template #title>
-                        {{ $t('common.information') }}
-                    </template>
                     <template #content>
                         <div class="p-grid">
                             <div class="p-col-3">
@@ -62,7 +59,6 @@
             <div class="p-col-3 kn-height-full">
                 <Card class="imageUploader">
                     <template #title>
-                        {{ $t('common.image') }}
                         <input id="inputImage" type="file" @change="uploadFile" accept="image/png, image/jpeg" />
                         <label for="inputImage" v-tooltip.bottom="$t('common.upload')">
                             <i class="pi pi-upload" />
@@ -330,7 +326,7 @@ export default defineComponent({
         }
     }
     &:deep(.p-card-content) {
-        height: 210px;
+        height: 220px;
     }
 }
 </style>
