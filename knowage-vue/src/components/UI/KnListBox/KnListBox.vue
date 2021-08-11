@@ -14,20 +14,26 @@
         </template>
         <template #option="slotProps">
             <router-link class="kn-decoration-none" :to="{ name: settings.interaction.path, params: { id: slotProps.option.id } }" exact v-if="settings.interaction.type === 'router'">
-                <div class="kn-list-item" v-tooltip="slotProps.option.description">
+                <div class="kn-list-item" v-tooltip="slotProps.option[settings.tooltipField || 'description']">
                     <Avatar v-if="settings.avatar" :icon="settings.avatar.icons[slotProps.option[settings.avatar.property]].icon" shape="circle" size="medium" :style="settings.avatar.icons[slotProps.option[settings.avatar.property]].style" />
                     <div class="kn-list-item-text">
-                        <span>{{ slotProps.option.label }}</span>
-                        <span class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option.name }}</span>
+                        <span>{{ slotProps.option[settings.titleField || 'label'] }}</span>
+                        <span class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option[settings.textField || 'name'] }}</span>
                     </div>
                     <KnListButtonRenderer :buttons="settings.buttons" @click="clickedButton($event, slotProps.option)" />
                 </div>
             </router-link>
-            <div class="kn-list-item" v-tooltip="slotProps.option.description" v-if="!settings.interaction || settings.interaction.type === 'event'" @click="clickedButton($event, slotProps.option)" :class="{ 'router-link-active': selected && selected == slotProps.option }">
+            <div
+                class="kn-list-item"
+                v-tooltip="slotProps.option[settings.tooltipField || 'description']"
+                v-if="!settings.interaction || settings.interaction.type === 'event'"
+                @click="clickedButton($event, slotProps.option)"
+                :class="{ 'router-link-active': selected && selected == slotProps.option }"
+            >
                 <Avatar v-if="settings.avatar" :icon="settings.avatar.icons[slotProps.option[settings.avatar.property]].icon" shape="circle" size="medium" :style="settings.avatar.icons[slotProps.option[settings.avatar.property]].style" />
                 <div class="kn-list-item-text">
-                    <span>{{ slotProps.option.label }}</span>
-                    <span class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option.name }}</span>
+                    <span>{{ slotProps.option[settings.titleField || 'label'] }}</span>
+                    <span class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option[settings.textField || 'name'] }}</span>
                 </div>
                 <KnListButtonRenderer :buttons="settings.buttons" @click="clickedButton($event, slotProps.option)" />
             </div>

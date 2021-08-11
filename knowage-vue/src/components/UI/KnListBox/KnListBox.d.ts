@@ -1,5 +1,7 @@
 export interface IKnListBoxOptions {
     avatar?: IAvatar
+    titleField?: string
+    textField?: string
     filterFields: Array<string>
     sortFields: Array<string>
     interaction?: object
