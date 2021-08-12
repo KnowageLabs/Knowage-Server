@@ -274,7 +274,7 @@ public class RESTDataProxy extends AbstractDataProxy {
 				String keyPlaceholderRegex = "\\$P\\{" + key  + "\\}";
 
 				unparametrizedAddress = unparametrizedAddress.replaceAll(keyPlaceholderRegex, /* TODO : needs some escapes? */ value);
-				unparametrizedRequestBody = unparametrizedRequestBody.replaceAll(keyPlaceholderRegex, value);
+				unparametrizedRequestBody = Optional.ofNullable(unparametrizedRequestBody).orElse("").replaceAll(keyPlaceholderRegex, value);
 
 				Set<Entry<String, String>> headersEntrySet = unparametrizedRequestHeaders.entrySet();
 				for (Entry<String, String> headerEntry : headersEntrySet) {
