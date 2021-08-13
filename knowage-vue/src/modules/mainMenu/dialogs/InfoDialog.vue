@@ -25,10 +25,10 @@
 </template>
 
 <script lang="ts">
-	import { defineComponent } from 'vue'
-	import Dialog from 'primevue/dialog'
-	import { mapState } from 'vuex'
-	import moment from 'moment'
+import { defineComponent } from 'vue'
+import Dialog from 'primevue/dialog'
+import { mapState } from 'vuex'
+import moment from 'moment'
 
 export default defineComponent({
     name: 'InfoDialog',
