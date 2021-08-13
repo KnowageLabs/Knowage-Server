@@ -14,12 +14,13 @@
         </template>
         <template #option="slotProps">
             <router-link class="kn-decoration-none" :to="{ name: settings.interaction.path, params: { id: slotProps.option.id } }" exact v-if="settings.interaction.type === 'router'">
-                <div class="kn-list-item" v-tooltip="slotProps.option[settings.tooltipField || 'description']">
-                    <Avatar v-if="settings.avatar" :icon="settings.avatar.icons[slotProps.option[settings.avatar.property]].icon" shape="circle" size="medium" :style="settings.avatar.icons[slotProps.option[settings.avatar.property]].style" />
+                <div class="kn-list-item" v-tooltip="slotProps.option[settings.tooltipField || 'description']" :class="getBorderClass(slotProps.option)">
+                    <Avatar v-if="settings.avatar" :icon="settings.avatar.values[slotProps.option[settings.avatar.property]].icon" shape="circle" size="medium" :style="settings.avatar.values[slotProps.option[settings.avatar.property]].style" />
                     <div class="kn-list-item-text">
                         <span>{{ slotProps.option[settings.titleField || 'label'] }}</span>
                         <span class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option[settings.textField || 'name'] }}</span>
                     </div>
+                    <Badge v-if="settings.badgeField" :value="slotProps.option[settings.badgeField]" :severity="settings.badgeSeverity || 'info'"></Badge>
                     <KnListButtonRenderer :buttons="settings.buttons" @click="clickedButton($event, slotProps.option)" />
                 </div>
             </router-link>
@@ -28,13 +29,14 @@
                 v-tooltip="slotProps.option[settings.tooltipField || 'description']"
                 v-if="!settings.interaction || settings.interaction.type === 'event'"
                 @click="clickedButton($event, slotProps.option)"
-                :class="{ 'router-link-active': selected && selected == slotProps.option }"
+                :class="[{ 'router-link-active': selected && selected == slotProps.option }, getBorderClass(slotProps.option)]"
             >
-                <Avatar v-if="settings.avatar" :icon="settings.avatar.icons[slotProps.option[settings.avatar.property]].icon" shape="circle" size="medium" :style="settings.avatar.icons[slotProps.option[settings.avatar.property]].style" />
+                <Avatar v-if="settings.avatar" :icon="settings.avatar.values[slotProps.option[settings.avatar.property]].icon" shape="circle" size="medium" :style="settings.avatar.values[slotProps.option[settings.avatar.property]].style" />
                 <div class="kn-list-item-text">
                     <span>{{ slotProps.option[settings.titleField || 'label'] }}</span>
                     <span class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option[settings.textField || 'name'] }}</span>
                 </div>
+                <Badge v-if="settings.badgeField" :value="slotProps.option[settings.badgeField]" :severity="settings.badgeSeverity || 'info'"></Badge>
                 <KnListButtonRenderer :buttons="settings.buttons" @click="clickedButton($event, slotProps.option)" />
             </div>
         </template>
@@ -44,6 +46,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Avatar from 'primevue/avatar'
+import Badge from 'primevue/badge'
 import Listbox from 'primevue/listbox'
 import KnListButtonRenderer from './KnListButtonRenderer.vue'
 import Menu from 'primevue/menu'
@@ -52,6 +55,7 @@ export default defineComponent({
     name: 'gallery-management',
     components: {
         Avatar,
+        Badge,
         KnListButtonRenderer,
         Listbox,
         Menu
@@ -79,6 +83,11 @@ export default defineComponent({
             const emits = e.item && e.item.emits
             e.item = item
             this.$emit(emits || 'click', e)
+        },
+        getBorderClass(item): string {
+            if (this.settings.statusBorder) {
+                return 'kn-list-item-' + this.settings.statusBorder.values[item[this.settings.statusBorder.property]]
+            } else return ''
         },
         toggleSort(e) {
             // eslint-disable-next-line
