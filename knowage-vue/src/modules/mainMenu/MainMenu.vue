@@ -12,6 +12,8 @@
                     <button class="p-link" @click="toggleProfile" v-tooltip="user && user.fullName">
                         <img alt="Profile" class="profile-image" :src="getGravatarSrc(user)" />
                         <span v-if="user" class="profile-name">{{ user.fullName }}</span>
+                        <i class="pi pi-fw pi-chevron-down"></i>
+                        <span class="profile-role">Marketing</span>
                     </button>
                 </div>
                 <transition name="slide-down">
