@@ -47,7 +47,8 @@
     },
     "knListSettings": {
         "avatar": {
-            "icons": {
+            "property": "type",
+            "values": {
                 "chart": {
                     "icon": "fab fa-js-square",
                     "style": {
@@ -69,8 +70,7 @@
                         "color": "white"
                     }
                 }
-            },
-            "property": "type"
+            }
         },
         "buttons": [
             {
