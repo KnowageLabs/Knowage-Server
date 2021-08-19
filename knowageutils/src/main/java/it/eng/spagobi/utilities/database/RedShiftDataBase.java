@@ -102,12 +102,12 @@ public class RedShiftDataBase extends AbstractDataBase implements CacheDataBase 
 	 */
 	@Override
 	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
-		String query = " SELECT " + " CASE count(*) " + " WHEN 0 THEN 0 "
-				+ " ELSE SUM(pg_total_relation_size('\"' || table_schema || '\".\"' || table_name || '\"')) " + " END AS size "
-				+ " FROM information_schema.tables " + " WHERE " + " table_name like '" + tableNamePrefix + "%'";
+		String query = "SELECT size FROM SVV_TABLE_INFO WHERE table LIKE '" + tableNamePrefix + "%";
+
 		if ((schema != null) && (!schema.isEmpty())) {
-			query += " AND table_schema = '" + schema + "'";
+			query += " AND schema = '" + schema + "'";
 		}
+
 		return query;
 	}
 

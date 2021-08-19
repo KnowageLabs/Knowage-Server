@@ -313,6 +313,7 @@
 			}
 
 			var currView = map.getView();
+			if (model.content.autoCentering) {
 				var extent = ol.extent.createEmpty();
 
 				// TODO : we do this every time for every layer: this is not the right position
@@ -325,7 +326,7 @@
 					}
 				});
 
-				currView.fit(source.getExtent());
+				currView.fit(extent);
 			} else if (model.content.currentView.center[0] == 0 && model.content.currentView.center[1] == 0) {
 				source = l.getSource();
 

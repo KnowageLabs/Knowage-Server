@@ -44,7 +44,7 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 
 	private ISchedulerDAO schedulerDAO;
 
-	static private Logger logger = Logger.getLogger(XSchedulerServiceSupplier.class);
+	private static Logger LOGGER = Logger.getLogger(XSchedulerServiceSupplier.class);
 
 	public XSchedulerServiceSupplier() {
 		try {
@@ -58,21 +58,21 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 	public String getJobList() {
 		String xml;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		xml = null;
 		try {
 			List<Job> jobs = schedulerDAO.loadJobs();
-			logger.trace("Succesfully loaded [" + jobs.size() + "] job(s)");
+			LOGGER.trace("Succesfully loaded [" + jobs.size() + "] job(s)");
 			XMLSerializer xmlSerializer = (XMLSerializer) SerializerFactory.getSerializer("application/xml");
 			xmlSerializer.setProperty(JobXMLSerializer.PROPERTY_CONSUMER, "list");
 			xml = (String) xmlSerializer.serialize(jobs, null);
-			logger.debug("Job list succesfully serialized");
-			logger.trace("Job list encoded in xml is uqual to: " + xml);
+			LOGGER.debug("Job list succesfully serialized");
+			LOGGER.trace("Job list encoded in xml is uqual to: " + xml);
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("An unexpected error occured while loading job list", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return xml;
@@ -118,17 +118,17 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 					triggersToSerialize.add(trigger);
 				}
 			}
-			logger.trace("Succesfully loaded [" + triggersToSerialize.size() + "] trigger(s)");
+			LOGGER.trace("Succesfully loaded [" + triggersToSerialize.size() + "] trigger(s)");
 
 			XMLSerializer xmlSerializer = (XMLSerializer) SerializerFactory.getSerializer("application/xml");
 			xmlSerializer.setProperty(TriggerXMLDeserializer.PROPERTY_CONSUMER, "list");
 			xml = (String) xmlSerializer.serialize(triggersToSerialize, null);
-			logger.debug("Trigger list succesfully serialized");
-			logger.trace("Trigger list encoded in xml is uqual to: " + xml);
+			LOGGER.debug("Trigger list succesfully serialized");
+			LOGGER.trace("Trigger list encoded in xml is uqual to: " + xml);
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("An unexpected error occured while loading trigger list", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return xml;
 	}
@@ -146,13 +146,13 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 			if (trigger == null) {
 				throw new SpagoBIRuntimeException("Trigger with name [" + triggerName + "] not found in group [" + triggerGroupName + "]");
 			}
-			logger.debug("Trigger [" + triggerName + "] succesfully loaded from group [" + triggerGroupName + "]");
+			LOGGER.debug("Trigger [" + triggerName + "] succesfully loaded from group [" + triggerGroupName + "]");
 
 			XMLSerializer xmlSerializer = (XMLSerializer) SerializerFactory.getSerializer("application/xml");
 			xmlSerializer.setProperty(JobXMLSerializer.PROPERTY_CONSUMER, "service");
 			xml = (String) xmlSerializer.serialize(trigger, null);
-			logger.debug("Trigger succesfully serialized");
-			logger.trace("Trigger encoded in xml is uqual to: " + xml);
+			LOGGER.debug("Trigger succesfully serialized");
+			LOGGER.trace("Trigger encoded in xml is uqual to: " + xml);
 
 			// xml = serializeTrigger(trigger);
 		} catch (SpagoBIRuntimeException t) {
@@ -161,7 +161,7 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 			throw new SpagoBIRuntimeException("An unexpected error occured while loading trigger [" + triggerName + "] from group [" + triggerGroupName + "]",
 					t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return xml;
@@ -169,12 +169,12 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 
 	@Override
 	public String deleteSchedulation(String triggerName, String triggerGroup) {
-		StringBuffer servreponse = new StringBuffer();
+		StringBuilder servreponse = new StringBuilder();
 		try {
 			servreponse.append("<EXECUTION_OUTCOME ");
 			schedulerDAO.deleteTrigger(triggerName, triggerGroup);
 		} catch (Exception e) {
-			logger.error("Cannot delete trigger", e);
+			LOGGER.error("Cannot delete trigger", e);
 			servreponse.append("outcome=\"fault\"/>");
 		}
 		servreponse.append("outcome=\"perform\"/>");
@@ -183,13 +183,13 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 
 	@Override
 	public String deleteJob(String jobName, String jobGroupName) {
-		StringBuffer servreponse = new StringBuffer();
+		StringBuilder servreponse = new StringBuilder();
 		try {
 			servreponse.append("<EXECUTION_OUTCOME ");
 			schedulerDAO.deleteJob(jobName, jobGroupName);
 			servreponse.append("outcome=\"perform\"/>");
 		} catch (Exception e) {
-			logger.error("Cannot delete job", e);
+			LOGGER.error("Cannot delete job", e);
 			servreponse.append("outcome=\"fault\"/>");
 		}
 		return servreponse.toString();
@@ -197,14 +197,14 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 
 	@Override
 	public String defineJob(String xmlRequest) {
-		StringBuffer servreponse = new StringBuffer();
+		StringBuilder servreponse = new StringBuilder();
 		try {
 			Deserializer deserializer = DeserializerFactory.getDeserializer("application/xml");
 			Job job = (Job) deserializer.deserialize(xmlRequest, Job.class);
 			schedulerDAO.insertJob(job);
 			servreponse.append("<EXECUTION_OUTCOME outcome=\"perform\"/>");
 		} catch (Exception e) {
-			logger.error("Cannot insert job", e);
+			LOGGER.error("Cannot insert job", e);
 			servreponse.append("<EXECUTION_OUTCOME outcome=\"fault\"/>");
 		}
 		return servreponse.toString();
@@ -212,7 +212,7 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 
 	@Override
 	public String scheduleJob(String xmlRequest) {
-		// StringBuffer servreponse = new StringBuffer();
+		// StringBuilder servreponse = new StringBuilder();
 		JSONObject resp = new JSONObject();
 		Trigger trigger = null;
 		try {
@@ -226,7 +226,7 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 			// servreponse.append("<EXECUTION_OUTCOME outcome=\"perform\"/>");
 		} catch (Exception e) {
 			// something wrong
-			logger.error("Cannot save trigger", e);
+			LOGGER.error("Cannot save trigger", e);
 			try {
 				resp.put("Status", "NON OK");
 				JSONArray ja = new JSONArray();
@@ -238,8 +238,7 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 				}
 				resp.put("Errors", ja);
 			} catch (JSONException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				LOGGER.error("Error showing the saving trigger error", e1);
 			}
 
 			// servreponse.append("<EXECUTION_OUTCOME outcome=\"fault\"/>");
@@ -249,11 +248,11 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 
 	@Override
 	public String existJobDefinition(String jobName, String jobGroupName) {
-		StringBuffer buffer;
+		StringBuilder buffer;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
-		buffer = new StringBuffer();
+		buffer = new StringBuilder();
 		try {
 			Assert.assertTrue(StringUtilities.isNotEmpty(jobName), "Input parameter [jobName] cannot be empty");
 			Assert.assertTrue(StringUtilities.isNotEmpty(jobGroupName), "Input parameter [jobGroupName] cannot be empty");
@@ -266,7 +265,7 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("An unexpected error occured while checking for existence of job [" + jobName + "]", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return buffer.toString();
