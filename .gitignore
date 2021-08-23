@@ -50,7 +50,6 @@ Temporary Items
 .settings/
 .classpath
 .project
-.gitignore
 .eclipse
 .metadata
 
