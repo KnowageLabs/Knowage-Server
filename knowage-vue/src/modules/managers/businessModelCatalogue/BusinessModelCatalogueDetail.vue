@@ -19,6 +19,7 @@
                 :datasourcesMeta="datasources"
                 :user="user"
                 :toGenerate="toGenerate"
+                :readonly="readonly"
                 @fieldChanged="onFieldChange"
                 @fileUploaded="uploadedFile = $event"
                 @datamartGenerated="loadPage"
@@ -30,7 +31,7 @@
                 <span>{{ $t('managers.businessModelManager.metadata') }}</span>
             </template>
 
-            <MetadataCard v-if="businessModelVersions.length > 0" :id="selectedBusinessModel.id"></MetadataCard>
+            <MetadataCard v-if="businessModelVersions.length > 0 && !readonly" :id="selectedBusinessModel.id"></MetadataCard>
         </TabPanel>
 
         <TabPanel>
@@ -38,7 +39,7 @@
                 <span>{{ $t('managers.businessModelManager.savedVersions') }}</span>
             </template>
 
-            <BusinessModelVersionsCard :id="selectedBusinessModel.id" :versions="businessModelVersions" @touched="setDirty" @deleted="loadVersions"></BusinessModelVersionsCard>
+            <BusinessModelVersionsCard :id="selectedBusinessModel.id" :versions="businessModelVersions" :readonly="readonly" @touched="setDirty" @deleted="loadVersions"></BusinessModelVersionsCard>
         </TabPanel>
 
         <TabPanel>
@@ -47,7 +48,7 @@
                 <Badge :value="invalidDrivers" class="p-ml-2" severity="danger" v-if="invalidDrivers > 0"></Badge>
             </template>
 
-            <BusinessModelDriversCard v-if="id" :id="selectedBusinessModel.id" :drivers="drivers" :driversOptions="analyticalDrivers" @delete="setDriversForDelete"></BusinessModelDriversCard>
+            <BusinessModelDriversCard v-if="id" :id="selectedBusinessModel.id" :drivers="drivers" :driversOptions="analyticalDrivers" :readonly="readonly" @delete="setDriversForDelete"></BusinessModelDriversCard>
         </TabPanel>
     </TabView>
 </template>
@@ -104,10 +105,13 @@ export default defineComponent({
     },
     computed: {
         buttonDisabled(): any {
-            return this.invalidDrivers > 0 || !this.selectedBusinessModel.name || !this.selectedBusinessModel.category || !this.selectedBusinessModel.dataSourceLabel
+            return this.invalidDrivers > 0 || !this.selectedBusinessModel.name || !this.selectedBusinessModel.category || !this.selectedBusinessModel.dataSourceLabel || this.readonly
         },
         invalidDrivers(): number {
             return this.drivers.filter((driver: any) => driver.numberOfErrors > 0).length
+        },
+        readonly(): any {
+            return this.selectedBusinessModel.id && this.selectedBusinessModel.modelLocked && this.user && this.selectedBusinessModel.modelLocker && this.selectedBusinessModel.modelLocker !== this.user.userId
         }
     },
     watch: {
