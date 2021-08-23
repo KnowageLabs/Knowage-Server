@@ -14,7 +14,6 @@
             </Toolbar>
         </template>
         <template #content>
-            {{ this.tableModelForTest }}
             <LovsManagementQuery v-if="lovType === 'QUERY'" :selectedLov="lov" :selectedQuery="selectedQuery" :datasources="datasources" :codeInput="codeInput" @touched="onTouched"></LovsManagementQuery>
             <LovsManagementScript v-else-if="lovType === 'SCRIPT'" :selectedLov="lov" :selectedScript="selectedScript" :listOfScriptTypes="listOfScriptTypes" @touched="onTouched"></LovsManagementScript>
             <LovsManagementFixedLovsTable v-else-if="lovType === 'FIX_LOV'" :listForFixLov="listForFixLov" @touched="$emit('touched')" @sorted="$emit('sorted', $event)"></LovsManagementFixedLovsTable>
