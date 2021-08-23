@@ -98,7 +98,6 @@ export default defineComponent({
             uploadedFile: null as any,
             loading: false,
             touched: false,
-            operation: 'insert',
             uploadingError: false,
             v$: useValidate() as any
         }
@@ -129,7 +128,7 @@ export default defineComponent({
         },
         async loadSelectedBusinessModelData() {
             if (this.id) {
-                await this.loadselectedBusinessModel()
+                await this.loadSelectedBusinessModel()
                 await this.loadVersions()
                 await this.loadDrivers()
 
@@ -141,7 +140,7 @@ export default defineComponent({
                 this.analyticalDrivers = []
             }
         },
-        async loadselectedBusinessModel() {
+        async loadSelectedBusinessModel() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}`).then((response) => (this.selectedBusinessModel = response.data))
         },
         async loadVersions() {
@@ -214,6 +213,7 @@ export default defineComponent({
                     title: this.$t('common.toast.updateTitle'),
                     msg: this.$t('common.toast.success')
                 })
+                this.$router.replace(`/business-model-catalogue/${this.selectedBusinessModel.id}`)
             }
             this.loadPage()
             this.touched = false
