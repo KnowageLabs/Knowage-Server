@@ -18,11 +18,12 @@
                         <template #empty>{{ $t('common.info.noDataFound') }}</template>
                         <template #option="slotProps">
                             <div class="kn-list-item" data-test="list-item">
+                                <Badge :value="slotProps.option.numberOfErrors" class="p-ml-2" severity="danger" v-if="slotProps.option.numberOfErrors > 0"></Badge>
                                 <div class="kn-list-item-text" v-tooltip.top="slotProps.option.description">
                                     <span>{{ slotProps.option.label }}</span>
                                     <span class="kn-list-item-text-secondary">{{ slotProps.option.name }}</span>
                                 </div>
-                                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteModeConfirm(slotProps.option.id)" data-test="delete-button" />
+                                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteModeConfirm(slotProps.option)" data-test="delete-button" />
                             </div>
                         </template>
                     </Listbox>
@@ -36,6 +37,8 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import axios from 'axios'
+import Badge from 'primevue/badge'
 import driversManagemenDetailtDescriptor from '../DriversManagementDetailDescriptor.json'
 import Listbox from 'primevue/listbox'
 import UseModeDetail from './UseModeDetail.vue'
@@ -43,7 +46,7 @@ import Tooltip from 'primevue/tooltip'
 //import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 export default defineComponent({
     name: 'use-mode-card',
-    components: { Listbox, UseModeDetail },
+    components: { Listbox, UseModeDetail, Badge },
     directives: {
         tooltip: Tooltip
     },
@@ -73,7 +76,7 @@ export default defineComponent({
         return {
             driversManagemenDetailtDescriptor,
             selectedUseMode: {} as any,
-            modes: []
+            modes: [] as any[]
         }
     },
     watch: {
@@ -90,13 +93,44 @@ export default defineComponent({
     },
     methods: {
         showForm(event: any) {
-            this.setSelectedUseMode(event)
-        },
-        setSelectedUseMode(event: any) {
-            if (event) {
+            if (event.value) {
                 this.selectedUseMode = event.value
+            } else {
+                this.selectedUseMode = { useID: -1 }
+                this.modes.push(this.selectedUseMode)
             }
-            //this.formVisible = true
+        },
+        deleteModeConfirm(useMode: any) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteMode(useMode)
+            })
+        },
+        async deleteMode(useMode: any) {
+            console.log('id useMode', useMode)
+            if (useMode.useID != -1) {
+                await axios
+                    .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/modes/' + useMode.useID)
+                    .then(() => {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.deleteTitle'),
+                            msg: this.$t('common.toast.deleteSuccess')
+                        })
+                        this.modes.splice(this.modes.indexOf(useMode), 1)
+                    })
+                    .catch((error) => {
+                        this.$store.commit('setError', {
+                            title: this.$t('managers.driversManagement.deleteError'),
+                            msg: error.message
+                        })
+                    })
+            } else this.modes.splice(this.modes.indexOf(useMode))
+            if (this.selectedUseMode === useMode) {
+                this.selectedUseMode.useID = null
+            }
+            console.log('id useMode', useMode)
         }
     }
 })

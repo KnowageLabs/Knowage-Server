@@ -1,5 +1,5 @@
 <template>
-    <Card style="width:100%" class="p-m-2" v-if="mode.id">
+    <Card style="width:100%" class="p-m-2" v-if="mode.useID">
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-6">
@@ -13,7 +13,7 @@
                                 'p-invalid': v$.mode.label.$invalid && v$.mode.label.$dirty
                             }"
                             @blur="v$.mode.label.$touch()"
-                            @change="setDirty"
+                            @input="modeChanged"
                         />
                         <label for="label" class="kn-material-input-label">{{ $t('common.label') }} * </label>
                     </span>
@@ -30,7 +30,7 @@
                                 'p-invalid': v$.mode.name.$invalid && v$.mode.name.$dirty
                             }"
                             @blur="v$.mode.name.$touch()"
-                            @change="setDirty"
+                            @input="modeChanged"
                         />
                         <label for="name" class="kn-material-input-label">{{ $t('common.name') }} * </label>
                     </span>
@@ -180,16 +180,20 @@ export default defineComponent({
     },
     watch: {
         selectedMode() {
-            //this.v$.$reset()
-            this.mode = { ...this.selectedMode } as any
+            this.v$.$reset()
+            this.mode = this.selectedMode as any
             this.handleDropdowns()
+            this.v$.$touch()
+            this.modeChanged()
         }
     },
     mounted() {
         if (this.selectedMode) {
-            this.mode = { ...this.selectedMode } as any
+            this.mode = this.selectedMode as any
             this.handleDropdowns()
         }
+        this.v$.$touch()
+        this.modeChanged()
     },
     methods: {
         showLovsDialog() {
@@ -218,6 +222,9 @@ export default defineComponent({
         },
         setDirty() {
             this.$emit('touched')
+        },
+        modeChanged() {
+            this.mode.numberOfErrors = this.v$.$errors.length
         }
     }
 })

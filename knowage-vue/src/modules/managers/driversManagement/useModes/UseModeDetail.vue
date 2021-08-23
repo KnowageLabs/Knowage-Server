@@ -1,9 +1,10 @@
 <template>
-    <KnHint :title="'managers.driversManagement.useModes.title'" :hint="'managers.driversManagement.useModes.hint'" v-if="!selectedMode.id" data-test="mode-hint"></KnHint>
+    <KnHint :title="'managers.driversManagement.useModes.title'" :hint="'managers.driversManagement.useModes.hint'" v-if="!selectedMode.useID" data-test="mode-hint"></KnHint>
     <TabView class="tabview-custom kn-page-content" v-else>
         <TabPanel>
             <template #header>
                 <span>{{ $t('managers.driversManagement.useModes.details') }}</span>
+                <Badge :value="invalidModes" class="p-ml-2" severity="danger" v-if="invalidModes > 0"></Badge>
             </template>
             <DetailsCard :selectedMode="mode" :selectionTypes="selectionTypes" :layers="layers" :isDate="isDate"></DetailsCard>
         </TabPanel>
@@ -25,6 +26,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import Badge from 'primevue/badge'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import DetailsCard from './DetailsCard.vue'
@@ -34,6 +36,7 @@ import KnHint from '@/components/UI/KnHint.vue'
 export default defineComponent({
     name: 'business-model-catalogue-detail',
     components: {
+        Badge,
         TabView,
         TabPanel,
         DetailsCard,
@@ -67,15 +70,19 @@ export default defineComponent({
             mode: {} as any
         }
     },
+    computed: {
+        invalidModes(): number {
+            return this.mode.numberOfErrors
+        }
+    },
     watch: {
         selectedMode() {
-            //this.v$.$reset()
-            this.mode = { ...this.selectedMode } as any
+            this.mode = this.selectedMode as any
         }
     },
     mounted() {
         if (this.selectedMode) {
-            this.mode = { ...this.selectedMode } as any
+            this.mode = this.selectedMode as any
         }
     }
 })

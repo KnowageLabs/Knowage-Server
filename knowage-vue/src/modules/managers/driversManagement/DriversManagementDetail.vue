@@ -8,7 +8,7 @@
     </Toolbar>
     <div class="p-grid p-m-0 p-fluid p-jc-center" style="overflow:auto">
         <DriversDetailCard :selectedDriver="driver" :types="filteredTypes" @touched="setDirty"></DriversDetailCard>
-        <UseMode v-if="modes" :propModes="modes" :roles="roles" :layers="layers" :selectionTypes="filteredSelectionTypes" :isDate="isDateType"></UseMode>
+        <UseMode :propModes="modes" :roles="roles" :layers="layers" :selectionTypes="filteredSelectionTypes" :isDate="isDateType"></UseMode>
     </div>
 </template>
 <script lang="ts">
@@ -76,7 +76,9 @@ export default defineComponent({
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '/domains/listValueDescriptionByType?DOMAIN_TYPE=PAR_TYPE').then((response) => (this.types = response.data))
         },
         async getModes() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/' + this.driver.id + '/modes/').then((response) => (this.modes = response.data))
+            if (this.driver.id) {
+                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/' + this.driver.id + '/modes/').then((response) => (this.modes = response.data))
+            } else this.modes = []
         },
         async getRoles() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles').then((response) => (this.roles = response.data))
