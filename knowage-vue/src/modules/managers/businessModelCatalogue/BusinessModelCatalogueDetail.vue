@@ -175,6 +175,7 @@ export default defineComponent({
             this.driversForDelete = drivers
         },
         async handleSubmit() {
+            this.loading = true
             if (this.selectedBusinessModel.id) {
                 await this.updateBusinessModel()
             } else {
@@ -219,6 +220,7 @@ export default defineComponent({
             this.touched = false
             this.$emit('inserted')
             this.uploadingError = false
+            this.loading = false
         },
         setUploadingError(title: string, message: string) {
             this.uploadingError = true
