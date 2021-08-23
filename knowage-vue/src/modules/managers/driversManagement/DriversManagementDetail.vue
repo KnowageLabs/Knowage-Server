@@ -7,18 +7,16 @@
         </template>
     </Toolbar>
     <div class="p-grid p-m-0 p-fluid p-jc-center" style="overflow:auto">
-        <DriversDetailCard :selectedDriver="driver" :types="types"></DriversDetailCard>
-        <UseMode v-if="modes" :propModes="modes"></UseMode>
+        <DriversDetailCard :selectedDriver="driver" :types="filteredTypes" @touched="setDirty"></DriversDetailCard>
+        <UseMode v-if="modes" :propModes="modes" :roles="roles" :layers="layers" :selectionTypes="filteredSelectionTypes" :isDate="isDateType"></UseMode>
     </div>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import DriversDetailCard from './DriversDetailCard.vue'
 import UseMode from './useModes/UseMode.vue'
-//import { createValidations } from '@/helpers/commons/validationHelper'
 import axios from 'axios'
-//import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-//import useValidate from '@vuelidate/core'
+import driversManagemenDetailtDescriptor from './DriversManagementDetailDescriptor.json'
 
 export default defineComponent({
     name: 'metadata-management-detail',
@@ -31,22 +29,36 @@ export default defineComponent({
     },
     computed: {
         buttonDisabled(): any {
-            return false //this.v$.$invalid
+            return !this.driver.label || !this.driver.name || !this.driver.typeId
         },
         title(): any {
             return this.driver.id ? this.driver.name : this.$t('common.new')
+        },
+        filteredTypes(): any {
+            return this.types.filter((type) => type.VALUE_CD != 'DATE_RANGE')
+        },
+        filteredSelectionTypes(): any {
+            return this.selectionTypes.filter((type) => type.VALUE_CD != 'SLIDER')
+        },
+        isDateType(): any {
+            return this.driver.type === 'DATE'
         }
     },
     data() {
         return {
             driver: {} as any,
             types: [] as any[],
-            modes: [] as any[]
+            modes: [] as any[],
+            roles: [] as any[],
+            constraints: [] as any[],
+            selectionTypes: [] as any[],
+            layers: [] as any[],
+            operation: 'insert',
+            driversManagemenDetailtDescriptor
         }
     },
     watch: {
         selectedDriver() {
-            //this.v$.$reset()
             this.driver = { ...this.selectedDriver } as any
             this.getModes()
         }
@@ -66,10 +78,71 @@ export default defineComponent({
         async getModes() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/' + this.driver.id + '/modes/').then((response) => (this.modes = response.data))
         },
+        async getRoles() {
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles').then((response) => (this.roles = response.data))
+        },
+        async getConstraints() {
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/checks').then((response) => (this.constraints = response.data))
+        },
+        async getselectionTypes() {
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '/domains/listValueDescriptionByType?DOMAIN_TYPE=SELECTION_TYPE').then((response) => (this.selectionTypes = response.data))
+        },
+        async getLayers() {
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '/2.0/analyticalDriversee/layers').then((response) => (this.layers = response.data))
+        },
         loadAll() {
             this.getTypes()
+            this.getRoles()
+            this.getConstraints()
+            this.getselectionTypes()
+            this.getLayers()
         },
-        handleSubmit() {},
+        formatDriver() {
+            this.driver.length = 0
+            let selectedType = this.types.filter((val) => {
+                return val.VALUE_ID === this.driver.typeId
+            })
+            this.driver.type = selectedType[0].VALUE_CD
+        },
+        async handleSubmit() {
+            this.formatDriver()
+
+            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/'
+            if (this.driver.id) {
+                this.operation = 'update'
+                url += this.driver.id
+            } else {
+                this.operation = 'insert'
+            }
+
+            await this.sendRequest(url)
+                .then((response) => {
+                    if (this.operation === 'insert') {
+                        this.driver = response.data
+                    }
+                    this.$emit('created', this.driver)
+                    this.$store.commit('setInfo', {
+                        title: this.$t(this.driversManagemenDetailtDescriptor.operation[this.operation].toastTitle),
+                        msg: this.$t(this.driversManagemenDetailtDescriptor.operation.success)
+                    })
+                })
+                .catch((error) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('managers.constraintManagment.saveError'),
+                        msg: error.message
+                    })
+                })
+        },
+        sendRequest(url: string) {
+            if (this.operation === 'insert') {
+                return axios.post(url, this.driver)
+            } else {
+                return axios.put(url, this.driver)
+            }
+        },
+        setDirty(): void {
+            this.$emit('touched')
+        },
         closeTemplate() {
             this.$emit('close')
         }

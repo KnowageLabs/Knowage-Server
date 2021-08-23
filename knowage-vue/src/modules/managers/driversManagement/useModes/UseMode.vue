@@ -3,7 +3,7 @@
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
-                    <span>{{ $t('managers.driversManagement.useModes') }}</span>
+                    <span>{{ $t('managers.driversManagement.useModes.title') }}</span>
                 </template>
                 <template #right>
                     <Button :label="$t('managers.driversManagement.add')" class="p-button-text p-button-rounded p-button-plain" :disabled="disableActionButton" @click="showForm" data-test="add-action-button" />
@@ -18,9 +18,9 @@
                         <template #empty>{{ $t('common.info.noDataFound') }}</template>
                         <template #option="slotProps">
                             <div class="kn-list-item" data-test="list-item">
-                                <div class="kn-list-item-text">
-                                    <span>{{ slotProps.option.name }}</span>
-                                    <span class="kn-list-item-text-secondary">{{ slotProps.option.label }}</span>
+                                <div class="kn-list-item-text" v-tooltip.top="slotProps.option.description">
+                                    <span>{{ slotProps.option.label }}</span>
+                                    <span class="kn-list-item-text-secondary">{{ slotProps.option.name }}</span>
                                 </div>
                                 <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteModeConfirm(slotProps.option.id)" data-test="delete-button" />
                             </div>
@@ -28,7 +28,7 @@
                     </Listbox>
                 </div>
                 <div class="p-col-8 p-sm-8 p-md-9 p-p-0">
-                    <UseModeDetail :selectedMode="selectedUseMode"></UseModeDetail>
+                    <UseModeDetail :selectedMode="selectedUseMode" :selectionTypes="selectionTypes" :roles="roles" :layers="layers" :isDate="isDate"></UseModeDetail>
                 </div>
             </div>
         </template>
@@ -39,14 +39,34 @@ import { defineComponent } from 'vue'
 import driversManagemenDetailtDescriptor from '../DriversManagementDetailDescriptor.json'
 import Listbox from 'primevue/listbox'
 import UseModeDetail from './UseModeDetail.vue'
+import Tooltip from 'primevue/tooltip'
 //import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 export default defineComponent({
     name: 'use-mode-card',
     components: { Listbox, UseModeDetail },
+    directives: {
+        tooltip: Tooltip
+    },
     props: {
         propModes: {
             type: Array,
             required: false
+        },
+        roles: {
+            type: Array,
+            requierd: true
+        },
+        selectionTypes: {
+            type: Array,
+            requierd: true
+        },
+        layers: {
+            type: Array,
+            requierd: true
+        },
+        isDate: {
+            type: Boolean,
+            requierd: true
         }
     },
     data() {
@@ -60,6 +80,7 @@ export default defineComponent({
         propModes() {
             //this.v$.$reset()
             this.modes = this.propModes as any
+            this.selectedUseMode = {}
         }
     },
     mounted() {

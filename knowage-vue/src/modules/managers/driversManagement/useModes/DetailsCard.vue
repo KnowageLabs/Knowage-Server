@@ -4,15 +4,37 @@
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-6">
                     <span class="p-float-label">
-                        <InputText id="label" class="kn-material-input" type="text" v-model="mode.label" />
+                        <InputText
+                            id="label"
+                            class="kn-material-input"
+                            type="text"
+                            v-model="v$.mode.label.$model"
+                            :class="{
+                                'p-invalid': v$.mode.label.$invalid && v$.mode.label.$dirty
+                            }"
+                            @blur="v$.mode.label.$touch()"
+                            @change="setDirty"
+                        />
                         <label for="label" class="kn-material-input-label">{{ $t('common.label') }} * </label>
                     </span>
+                    <KnValidationMessages class="p-mt-1" :vComp="v$.mode.label" :additionalTranslateParams="{ fieldName: $t('common.label') }"></KnValidationMessages>
                 </div>
                 <div class="p-field p-col-6">
                     <span class="p-float-label">
-                        <InputText id="name" class="kn-material-input" type="text" v-model="mode.name" />
+                        <InputText
+                            id="name"
+                            class="kn-material-input"
+                            type="text"
+                            v-model="v$.mode.name.$model"
+                            :class="{
+                                'p-invalid': v$.mode.name.$invalid && v$.mode.name.$dirty
+                            }"
+                            @blur="v$.mode.name.$touch()"
+                            @change="setDirty"
+                        />
                         <label for="name" class="kn-material-input-label">{{ $t('common.name') }} * </label>
                     </span>
+                    <KnValidationMessages class="p-mt-1" :vComp="v$.mode.name" :additionalTranslateParams="{ fieldName: $t('common.name') }"></KnValidationMessages>
                 </div>
                 <div class="p-field p-col-12">
                     <span class="p-float-label">
@@ -22,15 +44,79 @@
                 </div>
                 <div class="p-field p-col-4">
                     <span class="p-float-label">
-                        <Dropdown id="type" class="kn-material-input" v-model="selectedType" :options="useModeDescriptor.types" />
+                        <Dropdown id="type" class="kn-material-input" v-model="mode.valueSelection" :options="useModeDescriptor.types" optionLabel="name" optionValue="valueSelection" @change="handelDefaul" />
                         <label for="type" class="kn-material-input-label"> {{ $t('common.type') }} * </label>
                     </span>
                     <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
                 </div>
                 <div class="p-field p-col-4">
                     <span class="p-float-label">
-                        <Dropdown id="type" class="kn-material-input" v-model="selectedDefault" :options="useModeDescriptor.defaultValues" />
-                        <label for="type" class="kn-material-input-label"> {{ $t('common.type') }} * </label>
+                        <Dropdown id="default" class="kn-material-input" v-model="selectedDefault" :options="defaults" optionLabel="name" optionValue="label" />
+                        <label for="default" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.defaultValue') }} * </label>
+                    </span>
+                    <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
+                </div>
+                <div class="p-field p-col-4" v-if="isDate">
+                    <span class="p-float-label">
+                        <Dropdown id="max" class="kn-material-input" v-model="selectedMax" :options="useModeDescriptor.maxValues" optionLabel="name" optionValue="label" />
+                        <label for="max" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.maxValue') }} * </label>
+                    </span>
+                    <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
+                </div>
+                <div class="p-field p-col-6" v-if="mode.valueSelection === 'lov'">
+                    <span class="p-input-icon-right">
+                        <span class="p-float-label">
+                            <InputText id="lov" class="kn-material-input" type="text" disabled />
+                            <label for="lov" class="kn-material-input-label"> LOV * </label>
+                        </span>
+                        <i class="pi pi-search input-buton" @click="showLovsDialog" />
+                    </span>
+                    <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
+                </div>
+                <div class="p-field p-col-6" v-if="mode.valueSelection === 'lov'">
+                    <span class="p-float-label">
+                        <Dropdown id="type" class="kn-material-input" v-model="mode.selectionType" :options="selectionTypes" optionLabel="VALUE_NM" optionValue="VALUE_CD" />
+                        <label for="type" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.modality') }} * </label>
+                    </span>
+                    <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
+                </div>
+                <div class="p-field p-col-6" v-if="mode.valueSelection === 'map_in'">
+                    <span class="p-float-label">
+                        <Dropdown id="type" class="kn-material-input" v-model="mode.selectedLayer" :options="layers" optionLabel="name" optionValue="name" />
+                        <label for="type" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.layer') }} * </label>
+                    </span>
+                    <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
+                </div>
+                <div class="p-field p-col-6" v-if="mode.valueSelection === 'map_in'">
+                    <span class="p-float-label">
+                        <InputText id="prop" class="kn-material-input" type="text" v-model="mode.selectedLayerProp" />
+                        <label for="prop" class="kn-material-input-label">{{ $t('managers.driversManagement.useModes.layerProp') }} * </label>
+                    </span>
+                </div>
+                <div class="p-field p-col-6" v-if="selectedDefault === 'lov'">
+                    <span class="p-input-icon-right">
+                        <span class="p-float-label">
+                            <InputText id="lov" class="kn-material-input" type="text" disabled />
+                            <label for="lov" class="kn-material-input-label"> LOV * </label>
+                        </span>
+                        <i class="pi pi-search input-buton" @click="showLovsDialog" />
+                    </span>
+                    <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
+                </div>
+                <div class="p-field p-col-6" v-if="selectedDefault === 'pickUp'">
+                    <span class="p-float-label">
+                        <Dropdown id="defaultFormula" class="kn-material-input" v-model="mode.defaultFormula" :options="useModeDescriptor.defaultFormula" optionLabel="name" optionValue="f_value" />
+                        <label for="defaultFormula" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.selectDefaultFormula') }} * </label>
+                    </span>
+                    <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
+                </div>
+                <div class="p-field p-col-6" v-if="selectedMax === 'lov'">
+                    <span class="p-input-icon-right">
+                        <span class="p-float-label">
+                            <InputText id="lov" class="kn-material-input" type="text" disabled />
+                            <label for="lov" class="kn-material-input-label"> LOV * </label>
+                        </span>
+                        <i class="pi pi-search input-buton" @click="showLovsDialog" />
                     </span>
                     <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
                 </div>
@@ -40,17 +126,31 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { createValidations } from '@/helpers/commons/validationHelper'
 import Dropdown from 'primevue/dropdown'
-// import MultiSelect from 'primevue/multiselect'
+import useValidate from '@vuelidate/core'
 import useModeDescriptor from './UseModesDescriptor.json'
-//import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import useModeValidationtDescriptor from './UseModeValidationDescriptor.json'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 export default defineComponent({
     name: 'detail-card',
-    components: { Dropdown },
+    components: { Dropdown, KnValidationMessages },
     props: {
         selectedMode: {
             type: Object,
             required: false
+        },
+        selectionTypes: {
+            type: Array,
+            requierd: true
+        },
+        layers: {
+            type: Array,
+            requierd: true
+        },
+        isDate: {
+            type: Boolean,
+            requierd: true
         }
     },
     data() {
@@ -58,19 +158,72 @@ export default defineComponent({
             mode: {} as any,
             useModeDescriptor,
             selectedType: null,
-            selectedDefault: null
+            selectedDefault: null as any,
+            selectedMax: null as any,
+            v$: useValidate() as any,
+            useModeValidationtDescriptor
+        }
+    },
+    validations() {
+        const validationObject = {
+            mode: createValidations('mode', useModeValidationtDescriptor.validations.mode)
+        }
+        return validationObject
+    },
+    computed: {
+        defaults(): any {
+            if (this.mode.valueSelection === 'map_in') {
+                return this.useModeDescriptor.defaultValues.filter((type) => type.label != 'pickUp')
+            }
+            return this.useModeDescriptor.defaultValues
         }
     },
     watch: {
         selectedMode() {
             //this.v$.$reset()
             this.mode = { ...this.selectedMode } as any
+            this.handleDropdowns()
         }
     },
     mounted() {
         if (this.selectedMode) {
             this.mode = { ...this.selectedMode } as any
+            this.handleDropdowns()
+        }
+    },
+    methods: {
+        showLovsDialog() {
+            console.log('LOVs dialog')
+        },
+        handleDropdowns() {
+            if (this.mode.defaultFormula == null) {
+                this.selectedDefault = 'none'
+            } else {
+                this.selectedDefault = 'pickUp'
+            }
+            if (this.mode.idLovForDefault != null) {
+                this.selectedDefault = 'lov'
+            }
+
+            if (this.mode.idLovForMax != null) {
+                this.selectedMax = 'lov'
+            } else {
+                this.selectedMax = 'none'
+            }
+        },
+        handelDefaul() {
+            if (this.mode.valueSelection == 'map_in') {
+                this.selectedDefault = null
+            }
+        },
+        setDirty() {
+            this.$emit('touched')
         }
     }
 })
 </script>
+<style lang="scss">
+.input-buton {
+    cursor: pointer;
+}
+</style>

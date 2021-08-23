@@ -33,9 +33,9 @@
                             shape="circle"
                             size="medium"
                         />
-                        <div class="kn-list-item-text">
-                            <span>{{ slotProps.option.name }}</span>
-                            <span class="kn-list-item-text-secondary">{{ slotProps.option.label }}</span>
+                        <div class="kn-list-item-text" v-tooltip.top="slotProps.option.description">
+                            <span>{{ slotProps.option.label }}</span>
+                            <span class="kn-list-item-text-secondary">{{ slotProps.option.name }}</span>
                         </div>
                         <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteDriverConfirm(slotProps.option.id)" data-test="delete-button" />
                     </div>
@@ -44,7 +44,7 @@
         </div>
         <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0">
             <KnHint :title="'managers.driversManagement.title'" :hint="'managers.driversManagement.hint'" v-if="!formVisible"></KnHint>
-            <DriversManagementDetail :selectedDriver="selectedDriver" @close="formVisible = false" v-else></DriversManagementDetail>
+            <DriversManagementDetail :selectedDriver="selectedDriver" @created="handleSave" @close="closeForm" @touched="touched = true" v-else></DriversManagementDetail>
         </div>
     </div>
 </template>
@@ -57,6 +57,7 @@ import Avatar from 'primevue/avatar'
 import DriversManagementDetail from './DriversManagementDetail.vue'
 import driversManagementDescriptor from './DriversManagementDescriptor.json'
 import KnHint from '@/components/UI/KnHint.vue'
+import Tooltip from 'primevue/tooltip'
 export default defineComponent({
     name: 'constraint-management',
     components: {
@@ -65,6 +66,9 @@ export default defineComponent({
         Listbox,
         Avatar,
         DriversManagementDetail
+    },
+    directives: {
+        tooltip: Tooltip
     },
     data() {
         return {
@@ -88,13 +92,46 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         showForm(event: any) {
-            this.setSelectedDriver(event)
+            if (!this.touched) {
+                this.setSelectedDriver(event)
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.setSelectedDriver(event)
+                    }
+                })
+            }
+        },
+        closeForm() {
+            if (!this.touched) {
+                this.formVisible = false
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.formVisible = false
+                    }
+                })
+            }
         },
         setSelectedDriver(event: any) {
             if (event) {
                 this.selectedDriver = event.value
             }
             this.formVisible = true
+        },
+        handleSave(event: any) {
+            this.loadAllDrivers()
+            this.touched = false
+            this.selectedDriver = event
+            console.log('selected after post', this.selectedDriver)
         },
         deleteDriverConfirm(id: number) {
             this.$confirm.require({
@@ -105,13 +142,22 @@ export default defineComponent({
             })
         },
         async deleteDriver(id: number) {
-            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/' + id).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.deleteTitle'),
-                    msg: this.$t('common.toast.deleteSuccess')
+            await axios
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/' + id)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                    this.loadAllDrivers()
+                    this.formVisible = false
                 })
-                this.loadAllDrivers()
-            })
+                .catch((error) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('managers.driversManagement.deleteError'),
+                        msg: error.message
+                    })
+                })
         }
     }
 })
