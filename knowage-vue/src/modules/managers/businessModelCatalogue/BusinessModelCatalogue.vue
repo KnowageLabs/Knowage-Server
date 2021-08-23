@@ -73,7 +73,6 @@ export default defineComponent({
         }
     },
     async created() {
-        console.log('ROUTE PATH: ', this.$route.path)
         if (this.$route.path !== '/business-model-catalogue') {
             this.showHint = false
         }

@@ -179,7 +179,6 @@ export default defineComponent({
             }
 
             if (this.selectedBusinessModel.id && this.uploadedFile && !this.uploadingError) {
-                console.log('UPLODADED FILE', this.uploadedFile)
                 await this.uploadFile()
             }
 
