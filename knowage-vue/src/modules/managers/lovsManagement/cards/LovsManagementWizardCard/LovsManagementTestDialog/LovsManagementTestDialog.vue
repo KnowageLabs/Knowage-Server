@@ -9,10 +9,10 @@
             </div>
         </div>
         <LovsManagementSimpleDatatable v-if="treeListTypeModel.LOVTYPE === 'simple'" :tableData="model" :treeListTypeModel="treeListTypeModel" @modelChanged="onModelChange($event)"></LovsManagementSimpleDatatable>
-        <LovsManagementTree v-else :listData="model" :treeModel="treeModel"></LovsManagementTree>
+        <LovsManagementTree v-else :listData="model" :treeModel="treeModel" @modelChanged="onTreeModelChange($event)"></LovsManagementTree>
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="$emit('close')"> {{ $t('common.close') }}</Button>
-            <Button class="kn-button kn-button--primary" @click="onSave"> {{ $t('common.save') }}</Button>
+            <Button class="kn-button kn-button--primary" @click="onSave" :disabled="buttonDisabled"> {{ $t('common.save') }}</Button>
         </template>
     </Dialog>
 </template>
@@ -54,6 +54,14 @@ export default defineComponent({
             treeModel: {} as any
         }
     },
+    computed: {
+        buttonDisabled(): boolean {
+            if (this.treeListTypeModel.LOVTYPE !== 'simple') {
+                return this.treeModel.length === 0
+            }
+            return false
+        }
+    },
     watch: {
         selectedLov() {
             this.loadLov()
@@ -89,8 +97,17 @@ export default defineComponent({
         },
         resetValues() {
             this.treeModel = []
-            this.treeListTypeModel['VALUE-COLUMN'] = ''
-            this.treeListTypeModel['DESCRIPTION-COLUMN'] = ''
+            if (this.treeListTypeModel.LOVTYPE === 'simple') {
+                delete this.treeListTypeModel['VALUE-COLUMNS']
+                delete this.treeListTypeModel['DESCRIPTION-COLUMNS']
+                this.treeListTypeModel['VALUE-COLUMN'] = ''
+                this.treeListTypeModel['DESCRIPTION-COLUMN'] = ''
+            } else {
+                delete this.treeListTypeModel['VALUE-COLUMN']
+                delete this.treeListTypeModel['DESCRIPTION-COLUMN']
+                this.treeListTypeModel['VALUE-COLUMNS'] = ''
+                this.treeListTypeModel['DESCRIPTION-COLUMNS'] = ''
+            }
             this.treeListTypeModel['VISIBLE-COLUMNS'] = ''
         },
         onSave() {
@@ -98,6 +115,9 @@ export default defineComponent({
         },
         onModelChange(event: any) {
             this.treeListTypeModel = event
+        },
+        onTreeModelChange(event: any) {
+            this.treeModel = event
         }
     }
 })

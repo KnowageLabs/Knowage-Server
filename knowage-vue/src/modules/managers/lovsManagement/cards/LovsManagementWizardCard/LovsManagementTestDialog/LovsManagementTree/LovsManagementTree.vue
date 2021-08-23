@@ -85,6 +85,7 @@ export default defineComponent({
             type: Array
         }
     },
+    emits: ['modelChanged'],
     data() {
         return {
             lovsManagementTreeDescriptor,
@@ -117,6 +118,7 @@ export default defineComponent({
             if (index === -1) {
                 this.selectedValues.push({ level: value.name, value: value.name, description: value.name })
             }
+            this.$emit('modelChanged', this.selectedValues)
         },
         removeValueConfirm(index: number) {
             this.$confirm.require({
@@ -130,6 +132,7 @@ export default defineComponent({
         },
         removeValue(index: number) {
             this.selectedValues.splice(index, 1)
+            this.$emit('modelChanged', this.selectedValues)
         }
     }
 })
