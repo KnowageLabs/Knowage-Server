@@ -98,6 +98,10 @@ export default defineComponent({
         listData() {
             this.loadData()
             this.loadModel()
+        },
+        treeModel() {
+            this.loadData()
+            this.loadModel()
         }
     },
     created() {
