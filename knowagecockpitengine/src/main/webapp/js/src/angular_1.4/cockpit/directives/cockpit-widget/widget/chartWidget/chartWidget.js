@@ -1437,6 +1437,9 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 					obj['formula'] = wconf.columnSelectedOfDatasetAggregations[index].formula;
 					obj['datasetOrTableFlag'] = wconf.columnSelectedOfDatasetAggregations[index].datasetOrTableFlag;
 				}
+				if(wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
+					obj.boundFunction = wconf.columnSelectedOfDatasetAggregations[index].boundFunction; 
+				}
 				aggregations.push(obj);
 			}
 
@@ -1448,7 +1451,7 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 
 			if(Array.isArray(chartCategory)){
 				for(var i = 0; i < chartCategory.length; i++){
-
+                    var index = sbiModule_util.findInArray(wconf.columnSelectedOfDatasetAggregations, 'alias', chartCategory[i].column);
 					var obj = {};
 					obj['name'] = chartCategory[i].column;
 					obj['alias'] = chartCategory[i].name;
@@ -1456,6 +1459,9 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 					obj['fieldType'] = "ATTRIBUTE";
 					obj['orderType'] = chartCategory[i].orderType;
 					obj['orderColumn'] = chartCategory[i].orderColumn;
+					if(wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
+						obj.boundFunction = wconf.columnSelectedOfDatasetAggregations[index].boundFunction; 
+					}
 					aggregations.push(obj);
 				}
 			} else {
@@ -1463,13 +1469,16 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 					chartCategory.name=chartCategory.column
 				}
 				var obj = {};
+				var index = sbiModule_util.findInArray(wconf.columnSelectedOfDatasetAggregations, 'alias', chartCategory.column);
 				obj['name'] = chartCategory.column;
 				obj['alias'] = chartCategory.name;
 				obj['aliasToShow'] = chartCategory.alias;
 				obj['orderType'] = chartCategory.drillOrder && chartCategory.drillOrder[chartCategory.column] ? chartCategory.drillOrder[chartCategory.column].orderType : chartCategory.orderType ;
 				obj['orderColumn'] =  chartCategory.drillOrder && chartCategory.drillOrder[chartCategory.column] ? chartCategory.drillOrder[chartCategory.column].orderColumn : chartCategory.orderColumn ;
 				obj['fieldType'] = "ATTRIBUTE";
-
+				if(wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
+					obj.boundFunction = wconf.columnSelectedOfDatasetAggregations[index].boundFunction;
+				}
 				aggregations.push(obj);
 
 				if(chartTemplate.CHART.type.toLowerCase()=="bubble" || (chartsForGrouping.indexOf(chartTemplate.CHART.type.toLowerCase() )>-1) && ( chartTemplate.CHART.groupCategories || chartTemplate.CHART.groupSeries || chartTemplate.CHART.groupSeriesCateg) && chartCategory.groupby!=""){
@@ -1504,7 +1513,23 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 	}
 	wconf.columnSelectedOfDataset = aggregations;
 }
+	buildCatalogFunctionConfiguration = function(catalogFunc, colDef) {
+		var functionConfig = {};
+		functionConfig.inputColumns = catalogFunc.inputColumns;
+		functionConfig.inputVariables = catalogFunc.inputVariables;
+		functionConfig.outputColumns = catalogFunc.outputColumns;
+		functionConfig.environment = JSON.parse(catalogFunc.environment).label;
 
+		if (colDef) {
+			for (var i=0; i<functionConfig.outputColumns.length; i++) {
+				if (functionConfig.outputColumns[i].name == colDef.name) {
+					functionConfig.outputColumns[i].alias = colDef.aliasToShow;
+				}
+			}
+		}
+
+		return functionConfig;
+	}
 // this function register the widget in the cockpitModule_widgetConfigurator
 // factory
 addWidgetFunctionality("chart",{'initialDimension':{'width':5, 'height':5},'updateble':true,'cliccable':true, 'drillable' : false});
