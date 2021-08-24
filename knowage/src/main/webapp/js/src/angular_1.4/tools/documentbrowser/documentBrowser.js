@@ -456,7 +456,7 @@ function documentBrowserFunction($window,
  		      clickOutsideToClose:false,
  		      escapeToClose :false,
  		      fullscreen: true,
- 		      locals:{document:document, folderDocument : $scope.folderDocuments , searchDocuments:$scope.searchDocuments, folderId : $scope.selectedFolder.id}
+ 		      locals:{document:document, folderDocument : $scope.folderDocuments , searchDocuments:$scope.searchDocuments, folderId : $scope.selectedFolder && $scope.selectedFolder.id}
 
 		 })
 		 .then(function(answer) {

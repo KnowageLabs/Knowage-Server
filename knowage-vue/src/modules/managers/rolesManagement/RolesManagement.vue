@@ -120,7 +120,8 @@ export default defineComponent({
                 .catch((error) => {
                     if (error) {
                         this.$store.commit('setError', {
-                            msg: error.message
+                            title: this.$t('common.toast.deleteTitle'),
+                            msg: this.$t('common.error.deleting')
                         })
                     }
                 })
