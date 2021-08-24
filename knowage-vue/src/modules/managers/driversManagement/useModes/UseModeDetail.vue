@@ -6,7 +6,7 @@
                 <span>{{ $t('managers.driversManagement.useModes.details') }}</span>
                 <Badge :value="invalidModes" class="p-ml-2" severity="danger" v-if="invalidModes > 0"></Badge>
             </template>
-            <DetailsCard :selectedMode="mode" :selectionTypes="selectionTypes" :layers="layers" :isDate="isDate" :selectedLov="selectedLov"></DetailsCard>
+            <DetailsCard :selectedMode="mode" :selectionTypes="selectionTypes" :layers="layers" :isDate="isDate" :lovs="lovs" :selectedLov="selectedLov"></DetailsCard>
         </TabPanel>
 
         <TabPanel>

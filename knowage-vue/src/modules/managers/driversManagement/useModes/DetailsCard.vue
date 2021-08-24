@@ -143,6 +143,7 @@
                     <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
                 </div>
             </form>
+            <LovsDialog :dialogVisible="dialogVisiable" :lovs="lovs" :selectedLovProp="selectedLov" @close="dialogVisiable = false"></LovsDialog>
         </template>
     </Card>
 </template>
@@ -154,9 +155,10 @@ import useValidate from '@vuelidate/core'
 import useModeDescriptor from './UseModesDescriptor.json'
 import useModeValidationtDescriptor from './UseModeValidationDescriptor.json'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import LovsDialog from './LovsDialog.vue'
 export default defineComponent({
     name: 'detail-card',
-    components: { Dropdown, KnValidationMessages },
+    components: { Dropdown, KnValidationMessages, LovsDialog },
     props: {
         selectedMode: {
             type: Object,
@@ -174,6 +176,10 @@ export default defineComponent({
             type: Array,
             requierd: true
         },
+        lovs: {
+            type: Array,
+            requierd: true
+        },
         isDate: {
             type: Boolean,
             requierd: true
@@ -187,6 +193,7 @@ export default defineComponent({
             selectedDefault: null as any,
             selectedMax: null as any,
             lov: null as any,
+            dialogVisiable: false,
             v$: useValidate() as any,
             useModeValidationtDescriptor
         }
@@ -227,6 +234,7 @@ export default defineComponent({
     methods: {
         showLovsDialog() {
             console.log('LOVs dialog')
+            this.dialogVisiable = true
         },
         handleDropdowns() {
             if (this.mode.defaultFormula == null) {

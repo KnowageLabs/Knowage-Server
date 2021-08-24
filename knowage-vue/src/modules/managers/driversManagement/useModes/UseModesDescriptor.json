@@ -1,4 +1,18 @@
 {
+    "columnsLov": [
+        {
+            "field": "label",
+            "header": "common.label"
+        },
+        {
+            "field": "name",
+            "header": "common.name"
+        },
+        {
+            "field": "description",
+            "header": "common.description"
+        }
+    ],
     "defaultFormula": [
         {
             "f_value": "FIRST",
@@ -23,6 +37,15 @@
             "name": "Pick Up"
         }
     ],
+    "dialog": {
+        "breakpoints": {
+            "640px": "100vw",
+            "960px": "85vw"
+        },
+        "style": {
+            "width": "70vw"
+        }
+    },
     "maxValues": [
         {
             "label": "none",

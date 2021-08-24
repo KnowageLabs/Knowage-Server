@@ -569,6 +569,7 @@
                 "modality": "Select modality",
                 "roles": "Roles",
                 "selectDefaultFormula": "Select",
+                "selectLov": "Select LOV",
                 "title": "Use modes"
             }
         },
