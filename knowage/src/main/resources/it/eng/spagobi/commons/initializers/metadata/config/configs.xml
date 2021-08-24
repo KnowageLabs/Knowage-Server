@@ -612,7 +612,11 @@
 		description="Maximum rows number for front-end table pagination. Default is 5000"
 		isActive="true" valueCheck="5000" valueType="NUM"
 		category="GENERIC_CONFIGURATION" />
-	
+		
+	<CONFIG label="KNOWAGE.WSEVENTCLEANJOB.PERIOD" name="SBI_WS_EVENT records' validity time period"
+		description="Time period of validity of records into SBI_WS_EVENT in seconds"
+		isActive="true" valueCheck="31536000" valueType="NUM"
+		category="GENERIC_CONFIGURATION" />
 	
 </CONFIGS>
 
