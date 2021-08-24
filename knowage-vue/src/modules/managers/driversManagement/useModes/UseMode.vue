@@ -30,7 +30,7 @@
                     </Listbox>
                 </div>
                 <div class="p-col-8 p-sm-8 p-md-9 p-p-0">
-                    <UseModeDetail :selectedMode="selectedUseMode" :selectionTypes="selectionTypes" :roles="roles" :layers="layers" :isDate="isDate"></UseModeDetail>
+                    <UseModeDetail :selectedMode="selectedUseMode" :selectionTypes="selectionTypes" :roles="roles" :disabledRoles="disabledRoles" :layers="layers" :isDate="isDate"></UseModeDetail>
                 </div>
             </div>
         </template>
@@ -77,7 +77,8 @@ export default defineComponent({
         return {
             driversManagemenDetailtDescriptor,
             selectedUseMode: {} as any,
-            modes: [] as any[]
+            modes: [] as any[],
+            disabledRoles: [] as any[]
         }
     },
     watch: {
@@ -100,6 +101,13 @@ export default defineComponent({
                 this.selectedUseMode = { useID: -1 }
                 this.modes.push(this.selectedUseMode)
             }
+            this.disabledRoles = []
+            this.modes.forEach((mode) => {
+                if (mode != this.selectedUseMode) {
+                    this.disabledRoles = this.disabledRoles.concat(mode.associatedRoles)
+                }
+            })
+            console.log('Disabled:', this.disabledRoles)
         },
         deleteModeConfirm(useMode: any) {
             this.$confirm.require({

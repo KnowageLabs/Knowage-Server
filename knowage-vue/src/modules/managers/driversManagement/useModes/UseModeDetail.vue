@@ -14,8 +14,7 @@
                 <span>{{ $t('managers.driversManagement.useModes.roles') }}</span>
                 <Badge value="1" class="p-ml-2" severity="danger" v-if="!mode.associatedRoles || mode.associatedRoles.lenght < 1"></Badge>
             </template>
-            <RolesCard :roles="roles" :selectedModeProp="mode"></RolesCard>
-            {{ mode.associatedRoles }}
+            <RolesCard :roles="availableRoles" :selectedModeProp="mode"></RolesCard>
         </TabPanel>
 
         <TabPanel>
@@ -64,6 +63,10 @@ export default defineComponent({
         isDate: {
             type: Boolean,
             requierd: true
+        },
+        disabledRoles: {
+            type: Array,
+            required: true
         }
     },
     data() {
@@ -74,11 +77,16 @@ export default defineComponent({
     computed: {
         invalidModes(): number {
             return this.mode.numberOfErrors
+        },
+        availableRoles(): any {
+            return this.roles?.filter((role: any) => this.disabledRoles.findIndex((disabledRole: any) => role.id === disabledRole.id) < 0)
         }
     },
     watch: {
         selectedMode() {
             this.mode = this.selectedMode as any
+            console.log('roles', this.roles)
+            console.log('disabled roles', this.disabledRoles)
         }
     },
     mounted() {
