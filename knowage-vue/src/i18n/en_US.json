@@ -24,9 +24,12 @@
         "dragAndDropFileHere": "Drag and drop file here.",
         "error": {
             "allowedFileTypes": "File type allowed are {types}",
+            "deleting": "Error while deleting item. Check items associations or parameters and then try to delete it again",
             "downloading": "Error downloading ",
             "exceededSize": "Uploaded file exceedes max size {size}",
+            "generic": "Generic Error",
             "incompatibleType": "Incompatible file type",
+            "saving": "Error saving",
             "tags": {
                 "tagIsNotValid": "Tag ({tag}) is not valid'"
             },
@@ -45,6 +48,7 @@
         "information": "information",
         "kpi": "KPI",
         "label": "label",
+        "load": "Load",
         "loggedUser": "logged user",
         "name": "name",
         "new": "new",
@@ -73,9 +77,11 @@
             "unsavedChangesHeader": "Unsaved changes",
             "unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
             "updateSuccess": "Item was updated successfully",
-            "updateTitle": "Updated"
+            "updateTitle": "Updated",
+            "uploadSuccess": "Item was uploaded successfully"
         },
         "type": "type",
+        "upload": "upload",
         "uploading": "Uploading",
         "validation": {
             "maxLength": "This field must have less then {max} characters",
@@ -84,16 +90,19 @@
             "regex": "Invalid format",
             "required": "{fieldName} is required"
         },
+        "value": "Value",
         "version": "version",
         "warning": {}
     },
     "cron": {
+        "advanced": "Advanced",
         "april": "April",
         "august": "August",
         "day": "Day",
         "days": "Days",
         "december": "December",
-        "endDate": "End date",
+        "endDate": "End Date",
+        "endTime": "End Time",
         "everyHour": "Every Hour",
         "everyMinute": "Every Minute",
         "everyMonth": "Every Month",
@@ -103,6 +112,8 @@
         "friday": "Friday",
         "hour": "Hour",
         "hours": "Hours",
+        "inDay": "In day",
+        "inMonth": "In month",
         "january": "January",
         "july": "July",
         "june": "June",
@@ -116,6 +127,7 @@
         "nextExecution": "Next execution",
         "november": "November",
         "october": "October",
+        "repeatInterval": "Repeat Interval",
         "saturday": "Saturday",
         "selectDays": "Select day(s)",
         "selectHours": "Select hour(s)",
@@ -123,8 +135,12 @@
         "selectMonths": "Select month(s)",
         "selectWeekdays": "Select weekday(s)",
         "september": "September",
-        "startDate": "Start date",
+        "simple": "Simple",
+        "startDate": "Start Date",
+        "startTime": "Start Time",
         "sunday": "Sunday",
+        "theDay": "The day",
+        "theWeek": "The week",
         "thursday": "Thursday",
         "tuesday": "Tuesday",
         "wednesday": "Wednesday",
@@ -189,6 +205,25 @@
         "sourceCode": "Source code available on "
     },
     "kpi": {
+        "alert": {
+            "actionList": "Action List",
+            "addAction": "Add new action",
+            "brokerType": "Context Broker Type",
+            "brokerUrl": "Context Broker URL",
+            "execution": "Single Execution",
+            "expiredWarning": "WARNING: The alert is expired",
+            "hint": "The Alert definition allows you to define a serie of action to start when one or more KPI reach a specific threshold. You can set email alert, execute ETL or call a context broker .Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "kpiListener": "Listener",
+            "label": "Label",
+            "mailSubject": "Mail Subject",
+            "mailTo": "Mail to",
+            "name": "Name",
+            "noOfEvents": "Number of events before triggering actions",
+            "savingError": "Error while saving alert",
+            "threshold": "Threshold",
+            "title": "Alert Definition",
+            "type": "Type"
+        },
         "kpiDefinition": {
             "addKpiAssociations": "Add KPI associations",
             "addNewThreshold": "Add new threshold item",
@@ -222,6 +257,34 @@
             "title": "KPI Definition",
             "tresholdTitle": "Treshold",
             "useIt": "Use It"
+        },
+        "kpiScheduler": {
+            "addKpiAssociation": "Add KPI associations",
+            "dateError": "Start date must be before end date. End date must be in future.",
+            "deleteAndInsert": "Delete and Insert",
+            "errorCount": "Error Count",
+            "every": "Every",
+            "execute": "Execute",
+            "executionType": "Execution Type",
+            "expiredInterval": "The schedulation has expired",
+            "filters": "Filters",
+            "frequency": "Frequency",
+            "hint": "The KPI scheduler allows you to define a time schedulation to monitor one or more KPI behaviour. It's possible to set the frequency and the table persistance of the KPI result. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "insertAndUpdate": "Insert and Update",
+            "kpiName": "KPI Name",
+            "logExecution": "Log Execution",
+            "missingExecuteValue": "Error:you must set \"EXECUTION TYPE\" in Execute tab",
+            "missingKpiList": "Error:you must set the Kpi list in KPI tab",
+            "missingRepeatInterval": "Error:you must set 'Repeat Interval' in Frequency tab",
+            "newScheduler": "New Scheduler",
+            "numberOfExecutions": "Number of Executions",
+            "saveKpiAssociation": "Save new KPI",
+            "saveScheduler": "Save Scheduler",
+            "successCount": "Success Count",
+            "timeRun": "TimeRun",
+            "title": "KPI Scheduler",
+            "totalCount": "Total Count",
+            "wrongCronInterval": "Error: the schedulation set will never be executed"
         },
         "measureDefinition": {
             "alias": "Alias",
@@ -654,6 +717,45 @@
             "title": "Profile Attributes Management",
             "valueDescription": "Value description"
         },
+        "resourceManagement": {
+            "column": {
+                "lastModified": "Last modified date",
+                "name": "Name",
+                "size": "Size"
+            },
+            "createFolder": "Create folder",
+            "detailTitle": "Deta",
+            "extract": "Extract files",
+            "folderRenamedSuccessfully": "Folder successfully renamed",
+            "foldernamePlaceholder": "Enter foldername here",
+            "hint": "Click on a folder to navigate its content.<br>Click on <i class=\"fas fa-table\"></i> if you want to edit metadata.<br>Click on <i class=\"fa fa-download\"></i> to download folder and its content.<br>Click on <i class=\"fas fa-folder-plus\"></i> to create a new folder inside your current path.<br>Click on <i class=\"fas fa-upload\"></i> to upload file inside your current path.<br>Click on <i class=\"fas fa-sync-alt\"></i> to refresh view items",
+            "metadata": {
+                "accuracyAndPerformance": "Accuracy and performance",
+                "dialog": {
+                    "title": "Metadata"
+                },
+                "formatOfData": "Format of data input and related output",
+                "openSource": "Is open source",
+                "typeOfAnalytics": {
+                    "label": "Type of analytic to be executed ",
+                    "options": {
+                        "descriptive": "Descriptive",
+                        "predictive": "Predictive",
+                        "prescriptive": "Prescriptive"
+                    }
+                },
+                "usageOfTheModel": "Usage of the model",
+                "version": "Version"
+            },
+            "openMetadata": "Open metadata",
+            "renameFolder": "Rename folder",
+            "selectedFiles": "One file selected | {num} files selected",
+            "title": "Resource management",
+            "uploadFile": {
+                "fileAndFoldersContentWillBeOverwritten": "You chose to unzip the archive. Existing files and folders will be overwritten",
+                "fileWillBeOverwritten": "A file with the same name was found. It will be overwritten"
+            }
+        },
         "rolesManagement": {
             "authorizations": {
                 "name": {
@@ -753,7 +855,7 @@
             "productTypes": {
                 "title": "Product Types"
             },
-            "tenantSaved": "Tenant correctly saved. The administrator of the tenant has been created with username {username} and password {password}",
+            "tenantSaved": "Tenant correctly saved. The administrator of the tenant has been created too and his username and password are",
             "title": "Tenant Management"
         },
         "usersManagement": {
@@ -762,7 +864,8 @@
             "defaultRoleInfo": "Select a role if you want to set it as the default. If no role is selected, it will be possible switch between roles from the Knowage Administration menu",
             "detail": "Detail",
             "error": {
-                "missingDefaultRole": "Default role is not selected"
+                "missingDefaultRole": "Default role is not selected",
+                "noRolesSelected": "No roles selected for the user. At least one role must be selected for the user to be valid"
             },
             "form": {
                 "defaultRole": "Default role",
@@ -811,9 +914,13 @@
         }
     },
     "menu": {
-        "admin": {
-            "importExport": "Import/Export"
-        }
+        "group": {
+            "ImportExport": "Import/Export",
+            "ServerManager": "Server manager"
+        },
+        "importExport": "Import/Export",
+        "modelCatalogResourceManagement": "Models manager",
+        "resourceManagement": "Resource manager"
     },
     "newsDialog": {
         "description": "Description",

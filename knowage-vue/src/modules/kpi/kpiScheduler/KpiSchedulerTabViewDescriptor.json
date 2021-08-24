@@ -1,0 +1,15 @@
+{
+    "dialog": {
+        "contentStyle": {
+            "min-height": "200px"
+        },
+        "style": {
+            "width": "40vw"
+        }
+    },
+    "errorDialog": {
+        "style": {
+            "width": "60vw"
+        }
+    }
+}

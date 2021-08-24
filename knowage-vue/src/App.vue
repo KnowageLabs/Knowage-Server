@@ -128,7 +128,7 @@ export default defineComponent({
                 severity: 'error',
                 summary: newError.title,
                 detail: newError.msg,
-                life: 5000
+                life: typeof newError.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newError.duration
             })
         },
         info(newInfo) {
@@ -136,7 +136,7 @@ export default defineComponent({
                 severity: 'info',
                 summary: newInfo.title,
                 detail: newInfo.msg,
-                life: newInfo.duration
+                life: typeof newInfo.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newInfo.duration
             })
         },
         loading(newLoading) {

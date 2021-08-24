@@ -223,23 +223,24 @@ export default defineComponent({
             })
         },
         async deleteFunctionality(functionalityId: number) {
-            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/${functionalityId}`).then((response) => {
-                if (response.data.errors) {
-                    this.$store.commit('setError', {
-                        title: this.$t('common.toast.deleteTitle'),
-                        msg: response.data.errors[0].message
-                    })
-                } else {
+            await axios
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/${functionalityId}`)
+                .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })
-                }
-                this.selectedFunctionality = null
-                this.formVisible = false
-                this.showHint = true
-                this.loadPage(null)
-            })
+                    this.selectedFunctionality = null
+                    this.formVisible = false
+                    this.showHint = true
+                    this.loadPage(null)
+                })
+                .catch((error) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: error.message
+                    })
+                })
         },
         async loadPage(functionalityId: any) {
             this.loading = true

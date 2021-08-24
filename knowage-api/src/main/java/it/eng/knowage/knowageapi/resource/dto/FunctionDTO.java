@@ -30,7 +30,7 @@ public class FunctionDTO {
 	private String name;
 	private String label;
 	private String type;
-	private final List<String> keywords = new ArrayList<>();
+	private final List<String> tags = new ArrayList<>();
 
 	public UUID getId() {
 		return id;
@@ -56,8 +56,8 @@ public class FunctionDTO {
 		this.type = type;
 	}
 
-	public List<String> getKeywords() {
-		return keywords;
+	public List<String> getTags() {
+		return tags;
 	}
 
 	public String getLabel() {
@@ -73,7 +73,7 @@ public class FunctionDTO {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((keywords == null) ? 0 : keywords.hashCode());
+		result = prime * result + ((tags == null) ? 0 : tags.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
@@ -93,10 +93,10 @@ public class FunctionDTO {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
-		if (keywords == null) {
-			if (other.keywords != null)
+		if (tags == null) {
+			if (other.tags != null)
 				return false;
-		} else if (!keywords.equals(other.keywords))
+		} else if (!tags.equals(other.tags))
 			return false;
 		if (name == null) {
 			if (other.name != null)
@@ -113,7 +113,7 @@ public class FunctionDTO {
 
 	@Override
 	public String toString() {
-		return "FunctionDTO [id=" + id + ", name=" + name + ", type=" + type + ", keywords=" + keywords + "]";
+		return "FunctionDTO [id=" + id + ", name=" + name + ", type=" + type + ", tags=" + tags + "]";
 	}
 
 }
