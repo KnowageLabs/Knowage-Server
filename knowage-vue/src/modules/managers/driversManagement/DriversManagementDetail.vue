@@ -8,7 +8,7 @@
     </Toolbar>
     <div class="p-grid p-m-0 p-fluid p-jc-center" style="overflow:auto">
         <DriversDetailCard :selectedDriver="driver" :types="filteredTypes" @touched="setDirty"></DriversDetailCard>
-        <UseMode :propModes="modes" :roles="roles" :layers="layers" :selectionTypes="filteredSelectionTypes" :isDate="isDateType"></UseMode>
+        <UseMode :propModes="modes" :roles="roles" :constraints="constraints" :layers="layers" :selectionTypes="filteredSelectionTypes" :isDate="isDateType"></UseMode>
     </div>
 </template>
 <script lang="ts">

@@ -30,7 +30,7 @@
                     </Listbox>
                 </div>
                 <div class="p-col-8 p-sm-8 p-md-9 p-p-0">
-                    <UseModeDetail :selectedMode="selectedUseMode" :selectionTypes="selectionTypes" :roles="roles" :disabledRoles="disabledRoles" :layers="layers" :isDate="isDate"></UseModeDetail>
+                    <UseModeDetail :selectedMode="selectedUseMode" :selectionTypes="selectionTypes" :roles="roles" :constraints="constraints" :disabledRoles="disabledRoles" :layers="layers" :isDate="isDate"></UseModeDetail>
                 </div>
             </div>
         </template>
@@ -57,6 +57,10 @@ export default defineComponent({
             required: false
         },
         roles: {
+            type: Array,
+            requierd: true
+        },
+        constraints: {
             type: Array,
             requierd: true
         },
@@ -107,7 +111,6 @@ export default defineComponent({
                     this.disabledRoles = this.disabledRoles.concat(mode.associatedRoles)
                 }
             })
-            console.log('Disabled:', this.disabledRoles)
         },
         deleteModeConfirm(useMode: any) {
             this.$confirm.require({

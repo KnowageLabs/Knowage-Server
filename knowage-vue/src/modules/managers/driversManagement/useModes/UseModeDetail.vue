@@ -21,6 +21,7 @@
             <template #header>
                 <span>{{ $t('managers.driversManagement.useModes.constraints') }}</span>
             </template>
+            <ConstraintsCard :constraints="constraints" :selectedModeProp="mode"></ConstraintsCard>
         </TabPanel>
     </TabView>
 </template>
@@ -31,6 +32,7 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import DetailsCard from './DetailsCard.vue'
 import RolesCard from './RolesCard.vue'
+import ConstraintsCard from './ConstraintsCard.vue'
 import KnHint from '@/components/UI/KnHint.vue'
 
 export default defineComponent({
@@ -41,6 +43,7 @@ export default defineComponent({
         TabPanel,
         DetailsCard,
         RolesCard,
+        ConstraintsCard,
         KnHint
     },
     props: {
@@ -49,6 +52,10 @@ export default defineComponent({
             required: false
         },
         roles: {
+            type: Array,
+            requierd: true
+        },
+        constraints: {
             type: Array,
             requierd: true
         },
@@ -85,8 +92,6 @@ export default defineComponent({
     watch: {
         selectedMode() {
             this.mode = this.selectedMode as any
-            console.log('roles', this.roles)
-            console.log('disabled roles', this.disabledRoles)
         }
     },
     mounted() {
