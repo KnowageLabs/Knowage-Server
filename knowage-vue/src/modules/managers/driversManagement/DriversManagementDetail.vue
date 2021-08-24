@@ -8,7 +8,7 @@
     </Toolbar>
     <div class="p-grid p-m-0 p-fluid p-jc-center" style="overflow:auto">
         <DriversDetailCard :selectedDriver="driver" :types="filteredTypes" @touched="setDirty"></DriversDetailCard>
-        <UseMode :propModes="modes" :roles="roles" :constraints="constraints" :layers="layers" :selectionTypes="filteredSelectionTypes" :isDate="isDateType"></UseMode>
+        <UseMode :propModes="modes" :roles="roles" :constraints="constraints" :layers="layers" :lovs="lovs" :selectionTypes="filteredSelectionTypes" :isDate="isDateType"></UseMode>
     </div>
 </template>
 <script lang="ts">
@@ -53,6 +53,7 @@ export default defineComponent({
             constraints: [] as any[],
             selectionTypes: [] as any[],
             layers: [] as any[],
+            lovs: [] as any[],
             operation: 'insert',
             driversManagemenDetailtDescriptor
         }
@@ -92,12 +93,16 @@ export default defineComponent({
         async getLayers() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '/2.0/analyticalDriversee/layers').then((response) => (this.layers = response.data))
         },
+        async getLovs() {
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all').then((response) => (this.lovs = response.data))
+        },
         loadAll() {
             this.getTypes()
             this.getRoles()
             this.getConstraints()
             this.getselectionTypes()
             this.getLayers()
+            this.getLovs()
         },
         formatDriver() {
             this.driver.length = 0

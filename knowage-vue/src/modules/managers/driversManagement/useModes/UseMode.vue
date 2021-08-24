@@ -30,7 +30,7 @@
                     </Listbox>
                 </div>
                 <div class="p-col-8 p-sm-8 p-md-9 p-p-0">
-                    <UseModeDetail :selectedMode="selectedUseMode" :selectionTypes="selectionTypes" :roles="roles" :constraints="constraints" :disabledRoles="disabledRoles" :layers="layers" :isDate="isDate"></UseModeDetail>
+                    <UseModeDetail :selectedMode="selectedUseMode" :selectionTypes="selectionTypes" :roles="roles" :constraints="constraints" :lovs="lovs" :disabledRoles="disabledRoles" :layers="layers" :isDate="isDate"></UseModeDetail>
                 </div>
             </div>
         </template>
@@ -72,6 +72,10 @@ export default defineComponent({
             type: Array,
             requierd: true
         },
+        lovs: {
+            type: Array,
+            requierd: true
+        },
         isDate: {
             type: Boolean,
             requierd: true
@@ -102,7 +106,7 @@ export default defineComponent({
             if (event.value) {
                 this.selectedUseMode = event.value
             } else {
-                this.selectedUseMode = { useID: -1 }
+                this.selectedUseMode = { useID: -1, defaultFormula: null, idLovForMax: null }
                 this.modes.push(this.selectedUseMode)
             }
             this.disabledRoles = []

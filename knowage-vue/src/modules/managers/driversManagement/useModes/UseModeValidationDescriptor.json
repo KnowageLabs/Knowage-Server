@@ -28,6 +28,22 @@
                         }
                     }
                 ]
+            },
+            {
+                "fieldName": "valueSelection",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "selectionType",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
             }
         ]
     }
