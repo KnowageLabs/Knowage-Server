@@ -25,7 +25,7 @@ public class SbiFunctionCatalog2FunctionDTO implements Function<SbiCatalogFuncti
 		ret.setId(transformedFuntionId);
 		ret.setName(name);
 		ret.setType(type);
-		ret.getKeywords().addAll(keywords);
+		ret.getTags().addAll(keywords);
 
 		return ret;
 	}

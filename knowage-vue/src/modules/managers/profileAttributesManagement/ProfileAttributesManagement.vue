@@ -120,24 +120,17 @@ export default defineComponent({
                     this.loading = true
                     this.axios
                         .delete(this.apiUrl + 'attributes/' + id)
-                        .then((response) => {
-                            if (response.data.errors) {
-                                this.$store.commit('setError', {
-                                    title: this.$t('managers.profileAttributesManagement.info.deleteTitle'),
-                                    msg: this.$t('managers.profileAttributesManagement.error.profileAttributeDeletion')
-                                })
-                            } else {
-                                this.$store.commit('setInfo', {
-                                    title: this.$t('managers.profileAttributesManagement.info.deleteTitle'),
-                                    msg: this.$t('managers.profileAttributesManagement.info.deleteMessage')
-                                })
-                                this.loadAllAttributes()
-                            }
+                        .then(() => {
+                            this.$store.commit('setInfo', {
+                                title: this.$t('managers.profileAttributesManagement.info.deleteTitle'),
+                                msg: this.$t('managers.profileAttributesManagement.info.deleteMessage')
+                            })
+                            this.loadAllAttributes()
                         })
-                        .catch(() => {
+                        .catch((error) => {
                             this.$store.commit('setError', {
                                 title: this.$t('managers.profileAttributesManagement.info.deleteTitle'),
-                                msg: this.$t('managers.profileAttributesManagement.error.profileAttributeDeletion')
+                                msg: error.message
                             })
                         })
                         .finally(() => {
