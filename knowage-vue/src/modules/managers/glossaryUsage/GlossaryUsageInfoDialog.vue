@@ -1,7 +1,7 @@
 <template>
-    <Dialog :style="glossaryUsageDescriptor.dialog.style" :header="$t('managers.glossaryUsage.details')" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
-        <div v-if="contentInfo">
-            <div v-if="contentInfo.CONTENT_ID">
+    <div>
+        <Dialog :style="glossaryUsageDescriptor.dialog.style" :header="$t('managers.glossaryUsage.details')" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
+            <div v-if="contentInfo && contentInfo.CONTENT_ID">
                 <ul>
                     <li>
                         <span>{{ $t('common.name') }}:</span>
@@ -44,7 +44,7 @@
                         <ul>
                             <li v-for="(link, index) in contentInfo.LINK" :key="index">
                                 <span>
-                                    {{ link.WORD }}
+                                    <p>{{ link.WORD }}</p>
                                     <a v-if="index != contentInfo.LINK.length - 1">-</a>
                                 </span>
                             </li>
@@ -54,7 +54,8 @@
                         <span>{{ $t('managers.glossaryUsage.attributes') }}:</span>
                         <ul>
                             <li v-for="(attribute, index) in contentInfo.SBI_GL_WORD_ATTR" :key="index">
-                                {{ attribute.ATTRIBUTE_NM }}:
+                                <p>{{ attribute.ATTRIBUTE_NM }}:</p>
+                                <p></p>
                                 <ul>
                                     <li>{{ attribute.VALUE }}</li>
                                 </ul>
@@ -63,11 +64,11 @@
                     </li>
                 </ul>
             </div>
-        </div>
-        <template #footer>
-            <Button class="kn-button kn-button--primary" @click="$emit('close')"> {{ $t('common.close') }}</Button>
-        </template>
-    </Dialog>
+            <template #footer>
+                <Button class="kn-button kn-button--primary" @click="$emit('close')"> {{ $t('common.close') }}</Button>
+            </template>
+        </Dialog>
+    </div>
 </template>
 
 <script lang="ts">

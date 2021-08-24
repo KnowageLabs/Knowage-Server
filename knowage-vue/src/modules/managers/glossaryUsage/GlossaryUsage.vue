@@ -16,16 +16,21 @@
                     <div v-if="!selectedGlossaryId" id="glossary-hint">
                         <p>{{ $t('managers.glossaryUsage.glossaryHint') }}</p>
                     </div>
-                    <Tree v-else id="glossary-tree" :value="nodes" selectionMode="single" :filter="true" filterMode="lenient" @nodeExpand="listContents(selectedGlossaryId, $event)" data-test="functionality-tree">
-                        <template #default="slotProps">
-                            <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonVisible[slotProps.node.id] = true" @mouseleave="buttonVisible[slotProps.node.id] = false" :data-test="'tree-item-' + slotProps.node.id">
-                                <span>{{ slotProps.node.label }}</span>
-                                <div v-show="buttonVisible[slotProps.node.id]" class="p-ml-2">
-                                    <Button icon="pi pi-info-circle" class="p-button-link p-button-sm p-p-0" @click.stop="showInfo(slotProps.node.data)" />
+                    <div v-else>
+                        <div class="p-m-3">
+                            <InputText id="search-input" class="kn-material-input" v-model="searchWord" :placeholder="$t('common.search')" @input="filterGlossaryTree" />
+                        </div>
+                        <Tree id="glossary-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" @nodeExpand="listContents(selectedGlossaryId, $event)" data-test="functionality-tree">
+                            <template #default="slotProps">
+                                <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonVisible[slotProps.node.id] = true" @mouseleave="buttonVisible[slotProps.node.id] = false" :data-test="'tree-item-' + slotProps.node.id">
+                                    <span>{{ slotProps.node.label }}</span>
+                                    <div v-show="buttonVisible[slotProps.node.id]" class="p-ml-2">
+                                        <Button icon="pi pi-info-circle" class="p-button-link p-button-sm p-p-0" @click.stop="showInfo(slotProps.node.data)" />
+                                    </div>
                                 </div>
-                            </div>
-                        </template>
-                    </Tree>
+                            </template>
+                        </Tree>
+                    </div>
                 </div>
             </div>
 
@@ -59,6 +64,9 @@ export default defineComponent({
             buttonVisible: [],
             infoDialogVisible: false,
             contentInfo: null,
+            searchWord: null,
+            timer: null as any,
+            expandedKeys: {},
             loading: false
         }
     },
@@ -78,7 +86,8 @@ export default defineComponent({
             this.loading = true
             // console.log('glossary', glossaryId, 'Parent', parent)
 
-            if (parent?.WORD_ID) {
+            if (parent?.WORD_ID || this.searchWord) {
+                this.loading = false
                 return
             }
 
@@ -124,6 +133,62 @@ export default defineComponent({
                     this.infoDialogVisible = true
                 })
                 .finally(() => (this.loading = false))
+        },
+        async filterGlossaryTree() {
+            if (this.timer) {
+                clearTimeout(this.timer)
+                this.timer = null
+            }
+            let tempData = []
+            this.timer = setTimeout(() => {
+                this.loading = true
+                console.log('SEARCH WORD: ', this.searchWord)
+
+                axios
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/glosstreeLike?WORD=${this.searchWord}&GLOSSARY_ID=${this.selectedGlossaryId}`)
+                    .then((response) => (tempData = response.data))
+                    .finally(() => {
+                        // console.log('TEMP DATA', tempData)
+                        this.createGlossaryTree(tempData)
+                        this.loading = false
+                    })
+            }, 1000)
+        },
+        createGlossaryTree(data: any) {
+            console.log('DATA', data)
+            this.nodes = []
+            this.expandedKeys = {}
+            data.GlossSearch.SBI_GL_CONTENTS.forEach((el: any) => {
+                const tempNode = {
+                    key: el.CONTENT_ID ?? el.WORD_ID,
+                    id: el.CONTENT_ID ?? el.WORD_ID,
+                    label: el.CONTENT_NM ?? el.WORD,
+                    children: [] as iNode[],
+                    data: el,
+                    style: this.glossaryUsageDescriptor.node.style,
+                    leaf: !(el.HAVE_WORD_CHILD || el.HAVE_CONTENTS_CHILD)
+                }
+                el.CHILD?.forEach((el: any) => {
+                    tempNode.children.push({ key: el.CONTENT_ID ?? el.WORD_ID, id: el.CONTENT_ID ?? el.WORD_ID, label: el.CONTENT_NM ?? el.WORD, children: [] as iNode[], data: el, style: this.glossaryUsageDescriptor.node.style, leaf: !(el.HAVE_WORD_CHILD || el.HAVE_CONTENTS_CHILD) })
+                })
+                this.nodes.push(tempNode)
+            })
+            this.expandAll()
+            console.log('NODES AFTER SEARCH:', this.nodes)
+        },
+        expandAll() {
+            for (let node of this.nodes) {
+                this.expandNode(node)
+            }
+            this.expandedKeys = { ...this.expandedKeys }
+        },
+        expandNode(node: iNode) {
+            if (node.children && node.children.length) {
+                this.expandedKeys[node.key] = true
+                for (let child of node.children) {
+                    this.expandNode(child)
+                }
+            }
         }
     }
 })
@@ -143,5 +208,13 @@ export default defineComponent({
     p {
         margin: 0.3rem;
     }
+}
+
+#search-input {
+    width: 100%;
+}
+
+#glossary-tree {
+    border: none;
 }
 </style>
