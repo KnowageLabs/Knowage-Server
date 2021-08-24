@@ -506,6 +506,20 @@
             },
             "title": "Functionalities management"
         },
+        "glossaryUsage": {
+            "attributes": "Attributes",
+            "category": "Category",
+            "code": "Code",
+            "details": "Details",
+            "formula": "Formula",
+            "glossaryHint": "Select a glossary to read the available words",
+            "hint": "Lorem ipsum dolor sit amet...",
+            "link": "Link",
+            "selectGlossary": "Select Glossary",
+            "status": "Status",
+            "title": "Glossary",
+            "word": "Word"
+        },
         "internationalizationManagement": {
             "defaultLanguage": "(Default)",
             "delete": {
