@@ -1,7 +1,7 @@
 <template>
     <Card style="width:100%" class="p-m-2">
         <template #content>
-            <DataTable :paginator="true" :rows="10" v-model:selection="selectedRoles" :value="roles" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack">
+            <DataTable :paginator="true" :rows="10" v-model:selection="selectedMode.associatedRoles" :value="roles" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack">
                 <!-- <template #header>
                     <div class="table-header">
                         <span class="p-input-icon-left">
@@ -18,15 +18,8 @@
                 </template>
 
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-                <!-- <Column v-for="col of targetDefinitionDetailDescriptor.columnsAllKPI" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" class="kn-truncated">
-                    <template #body="slotProps">
-                        <span v-if="!col.dateField">{{ slotProps.data[slotProps.column.props.field] }}</span>
-                        <span v-else>{{ formatDate(slotProps.data[slotProps.column.props.field]) }}</span>
-                    </template>
-                </Column> -->
                 <Column field="name" header="Roles" class="kn-truncated"></Column>
             </DataTable>
-            {{ selectedRoles }}
         </template>
     </Card>
 </template>
@@ -42,25 +35,25 @@ export default defineComponent({
             type: Array,
             required: false
         },
-        selectedRolesProp: {
+        selectedModeProp: {
             type: Array,
             required: false
         }
     },
     data() {
         return {
-            selectedRoles: [] as any
+            selectedMode: [] as any
         }
     },
     watch: {
-        selectedRolesProp() {
+        selectedModeProp() {
             //this.v$.$reset()
-            this.selectedRoles = this.selectedRolesProp as any[]
+            this.selectedMode = this.selectedModeProp as any[]
         }
     },
     mounted() {
-        if (this.selectedRolesProp) {
-            this.selectedRoles = this.selectedRolesProp as any[]
+        if (this.selectedModeProp) {
+            this.selectedMode = this.selectedModeProp as any[]
         }
     }
 })

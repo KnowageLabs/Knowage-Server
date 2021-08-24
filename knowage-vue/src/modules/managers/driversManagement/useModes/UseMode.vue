@@ -7,6 +7,7 @@
                 </template>
                 <template #right>
                     <Button :label="$t('managers.driversManagement.add')" class="p-button-text p-button-rounded p-button-plain" :disabled="disableActionButton" @click="showForm" data-test="add-action-button" />
+                    <Button label="Save" class="p-button-text p-button-rounded p-button-plain" @click="saveUsemode" />
                 </template>
             </Toolbar>
         </template>
@@ -131,6 +132,9 @@ export default defineComponent({
                 this.selectedUseMode.useID = null
             }
             console.log('id useMode', useMode)
+        },
+        saveUsemode() {
+            console.log('UseModes:', this.modes)
         }
     }
 })

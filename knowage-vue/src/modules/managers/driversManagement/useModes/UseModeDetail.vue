@@ -12,8 +12,9 @@
         <TabPanel>
             <template #header>
                 <span>{{ $t('managers.driversManagement.useModes.roles') }}</span>
+                <Badge value="1" class="p-ml-2" severity="danger" v-if="!mode.associatedRoles || mode.associatedRoles.lenght < 1"></Badge>
             </template>
-            <RolesCard :roles="roles" :selectedRolesProp="mode.associatedRoles"></RolesCard>
+            <RolesCard :roles="roles" :selectedModeProp="mode"></RolesCard>
             {{ mode.associatedRoles }}
         </TabPanel>
 
