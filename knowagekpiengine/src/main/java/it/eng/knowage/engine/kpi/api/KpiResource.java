@@ -3,7 +3,9 @@ package it.eng.knowage.engine.kpi.api;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
@@ -32,6 +34,7 @@ public class KpiResource extends AbstractFullKpiEngineResource {
 
 	@POST
 	@Path("/getKpiTemplate")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String loadTemplate(@Context HttpServletRequest req)
 			throws EMFUserError, EMFInternalError, JSONException, TransformerFactoryConfigurationError, TransformerException {
 		ObjTemplate template;
