@@ -1,20 +1,21 @@
 <template>
     <div>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-        <div class="p-grid">
+        <div class="p-grid" v-if="!linkTableVisible">
             <div class="p-col-6">
-                <GlossaryUsageNavigationCard class="p-m-2" :title="$t('managers.glossaryUsage.documents')" :items="documents" @infoClicked="showDocumentInfo($event)"></GlossaryUsageNavigationCard>
+                <GlossaryUsageNavigationCard class="p-m-2" :title="$t('managers.glossaryUsage.documents')" :items="documents" @infoClicked="showDocumentInfo($event)" @linkClicked="onLinkClicked($event)"></GlossaryUsageNavigationCard>
             </div>
             <div class="p-col-6">
-                <GlossaryUsageNavigationCard class="p-m-2" :title="$t('managers.glossaryUsage.dataset')" :items="datasets" @infoClicked="showDatasetInfo($event)"></GlossaryUsageNavigationCard>
+                <GlossaryUsageNavigationCard class="p-m-2" :title="$t('managers.glossaryUsage.dataset')" :items="datasets" @infoClicked="showDatasetInfo($event)" @linkClicked="onLinkClicked($event)"></GlossaryUsageNavigationCard>
             </div>
             <div class="p-col-6">
-                <GlossaryUsageNavigationCard class="p-m-2" :title="$t('managers.glossaryUsage.businessClass')" :items="businessClasses" @infoClicked="showBusinessClassInfo($event)"></GlossaryUsageNavigationCard>
+                <GlossaryUsageNavigationCard class="p-m-2" :title="$t('managers.glossaryUsage.businessClass')" :items="businessClasses" @infoClicked="showBusinessClassInfo($event)" @linkClicked="onLinkClicked($event)"></GlossaryUsageNavigationCard>
             </div>
             <div class="p-col-6">
-                <GlossaryUsageNavigationCard class="p-m-2" :title="$t('managers.glossaryUsage.tables')" :items="tables" @infoClicked="showTableInfo($event)"></GlossaryUsageNavigationCard>
+                <GlossaryUsageNavigationCard class="p-m-2" :title="$t('managers.glossaryUsage.tables')" :items="tables" @infoClicked="showTableInfo($event)" @linkClicked="onLinkClicked($event)"></GlossaryUsageNavigationCard>
             </div>
         </div>
+        <GlossaryUsageLinkCard v-else :title="linkTableTitle" :items="linkTableItems"></GlossaryUsageLinkCard>
     </div>
 </template>
 
@@ -22,12 +23,13 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import GlossaryUsageNavigationCard from './card/GlossaryUsageNavigationCard.vue'
+import GlossaryUsageLinkCard from './card/GlossaryUsageLinkCard.vue'
 
 export default defineComponent({
     name: 'glossary-usage-detail',
-    components: { GlossaryUsageNavigationCard },
+    components: { GlossaryUsageNavigationCard, GlossaryUsageLinkCard },
     props: { glossaryId: { type: Number }, selectedWords: { type: Array } },
-    emits: ['infoClicked'],
+    emits: ['infoClicked', 'linkClicked'],
     data() {
         return {
             documents: [] as any[],
@@ -38,6 +40,9 @@ export default defineComponent({
             selectedBusinessClasses: [] as any[],
             tables: [] as any[],
             selectedTables: [] as any[],
+            linkTableVisible: false,
+            linkTableTitle: '',
+            linkTableItems: [] as any[],
             loading: false
         }
     },
@@ -45,9 +50,11 @@ export default defineComponent({
         async glossaryId() {
             await this.loadNavigationItems('all', 'word')
         },
-        async selectedWords() {
-            console.log('CAAAAAAAAAAAALED')
-            await this.loadNavigationItems('all', 'word')
+        selectedWords: {
+            async handler() {
+                await this.loadNavigationItems('all', 'word')
+            },
+            deep: true
         }
     },
     async created() {
@@ -134,11 +141,26 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getMetaTableInfo?META_TABLE_ID=${table.id}`)
                 .then((response) => this.$emit('infoClicked', { data: response.data, type: 'table' }))
                 .finally(() => (this.loading = false))
+        },
+        onLinkClicked(type: string) {
+            console.log('LINK CLICKED!', type)
+            switch (type) {
+                case 'Documents':
+                    this.loadDocuments()
+            }
+        },
+        async loadDocuments() {
+            this.linkTableItems = []
+            this.loading = true
+            await axios
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/listDocument?Page=1&ItemPerPage=&label=&scope=GLOSSARY')
+                .then((response) => {
+                    response.data.item.forEach((el: any) => this.linkTableItems.push({ id: el.DOCUMENT_ID, name: el.DOCUMENT_LABEL, description: '', type: '', author: '' }))
+                    this.linkTableTitle = this.$t('managers.glossaryUsage.documents')
+                    this.linkTableVisible = true
+                })
+                .finally(() => (this.loading = false))
         }
-        // async loadDocuments() {
-        //     this.documents = []
-        //     await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/listDocument?Page=1&ItemPerPage=&label=&scope=GLOSSARY').then((response) => response.data.item.forEach((el: any) => this.documents.push({ id: el.DOCUMENT_ID, label: el.DOCUMENT_LABEL })))
-        // }
     }
 })
 </script>

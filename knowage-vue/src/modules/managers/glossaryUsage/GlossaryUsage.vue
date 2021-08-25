@@ -102,6 +102,10 @@ export default defineComponent({
             this.loading = true
             // console.log('glossary', glossaryId, 'Parent', parent)
 
+            if (!parent) {
+                this.selectedWords = []
+            }
+
             if (parent?.WORD_ID || this.searchWord) {
                 this.loading = false
                 return

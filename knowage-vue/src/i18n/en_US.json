@@ -572,9 +572,7 @@
         "glossaryUsage": {
             "associatedWord": "Associated Word",
             "attributes": "Attributes",
-            "metaModel": "Meta Model",
             "businessClass": "Business Class",
-            "metaSource": "Meta Source",
             "category": "Category",
             "code": "Code",
             "column": "Column",
@@ -587,6 +585,8 @@
             "hierarchyScope": "Hierarchy Scope",
             "hint": "Lorem ipsum dolor sit amet...",
             "link": "Link",
+            "metaModel": "Meta Model",
+            "metaSource": "Meta Source",
             "noWordsPresent": "No {type} link to words present",
             "profiledVisibility": "visibility conditions",
             "selectGlossary": "Select Glossary",

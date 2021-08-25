@@ -1,0 +1,20 @@
+{
+    "columns": [
+        {
+            "field": "name",
+            "header": "common.name"
+        },
+        {
+            "field": "description",
+            "header": "common.description"
+        },
+        {
+            "field": "type",
+            "header": "common.type"
+        },
+        {
+            "field": "author",
+            "header": "common.author"
+        }
+    ]
+}

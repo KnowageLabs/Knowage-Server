@@ -5,6 +5,9 @@
                 <template #left>
                     {{ title }}
                 </template>
+                <template #right>
+                    <Button class="kn-button p-button-text" @click="$emit('linkClicked', title)" data-test="close-button">{{ $t('managers.glossaryUsage.link') }}</Button>
+                </template>
             </Toolbar>
         </template>
         <template #content>
@@ -38,7 +41,7 @@ export default defineComponent({
         title: { type: String },
         items: { type: Object }
     },
-    emits: ['infoClicked'],
+    emits: ['infoClicked', 'linkClicked'],
     data() {
         return {
             glossaryUsageNavigationCardDescriptor
