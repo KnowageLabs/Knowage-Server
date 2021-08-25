@@ -5,7 +5,7 @@
                 <p>{{ $t('managers.lovsManagement.filterNullValues') }}</p>
             </div>
 
-            <DataTable :value="rows" class="p-datatable-sm kn-table" dataKey="field" :lazy="false" :paginator="true" :rows="20" :totalRecords="lazyParams.size" responsiveLayout="stack" breakpoint="960px" @page="onPage($event)" @sort="onSort">
+            <DataTable :value="rows" class="p-datatable-sm kn-table" dataKey="field" :lazy="true" :paginator="true" :rows="20" :totalRecords="lazyParams.size" responsiveLayout="stack" breakpoint="960px" @page="onPage($event)" @sort="onSort">
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <Column class="kn-truncated" v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" :sortable="true"></Column>
             </DataTable>
