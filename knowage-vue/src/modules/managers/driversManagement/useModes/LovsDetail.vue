@@ -1,5 +1,7 @@
 <template>
-    <Button :label="$t('managers.driversManagement.useModes.backToList')" icon="pi pi-arrow-left" class="p-button-text" style="pading:5px" @click="$emit('close')" />
+    <div class="p-mb-3">
+        <Button :label="$t('managers.driversManagement.useModes.backToList')" icon="pi pi-arrow-left" class="p-button-text" style="width:120px;" @click="$emit('close')" />
+    </div>
     <form class="p-fluid p-formgrid p-grid">
         <div class="p-field p-col-4">
             <span class="p-float-label">
@@ -25,16 +27,27 @@
                 <label for="desc" class="kn-material-input-label">{{ $t('common.description') }} </label>
             </span>
         </div>
-        <VCodeMirror ref="codeMirror" class="p-mt-2" :options="options" v-model:value="code" :autoHeight="true" />
+        <VCodeMirror v-if="codeMirrorVisiable" ref="codeMirror" class="p-mt-2" :options="options" v-model:value="code" :autoHeight="true" />
+        <DataTable v-else :value="rows" class="p-datatable-sm kn-table" responsiveLayout="stack">
+            <template #empty>
+                {{ $t('common.info.noDataFound') }}
+            </template>
+
+            <Column field="VALUE" :header="$t('common.value')" class="kn-truncated"></Column>
+            <Column field="DESCRIPTION" :header="$t('common.description')" class="kn-truncated"></Column>
+        </DataTable>
     </form>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import useModeDescriptor from './UseModesDescriptor.json'
 import { VCodeMirror } from 'vue3-code-mirror'
+import { decode } from 'js-base64'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
 export default defineComponent({
     name: 'lovs-detail',
-    components: { VCodeMirror },
+    components: { VCodeMirror, Column, DataTable },
     props: {
         lov: {
             type: Object,
@@ -47,7 +60,9 @@ export default defineComponent({
             selectedLov: {} as any,
             useModeDescriptor,
             code: '',
+            rows: [],
             codeMirror: {} as any,
+            codeMirrorVisiable: false,
             options: {
                 mode: 'text/x-mysql',
                 indentWithTabs: true,
@@ -56,17 +71,20 @@ export default defineComponent({
                 matchBrackets: true,
                 autofocus: true,
                 theme: 'eclipse',
-                lineNumbers: true
+                lineNumbers: true,
+                readOnly: true
             }
         }
     },
     mounted() {
         this.selectedLov = { ...this.lov }
+        this.decode()
         this.setupCodeMirror()
     },
     watch: {
         lov() {
             this.selectedLov = { ...this.lov }
+            this.decode()
             this.setupCodeMirror()
         }
     },
@@ -74,6 +92,34 @@ export default defineComponent({
         setupCodeMirror() {
             if (this.$refs.codeMirror) {
                 this.codeMirror = (this.$refs.codeMirror as any).editor as any
+            }
+        },
+        escapeXml(value: string) {
+            return value
+                .replace(/'/g, "'")
+                .replace(/"/g, '"')
+                .replace(/>/g, '>')
+                .replace(/</g, '<')
+                .replace(/&/g, '&')
+                .replace(/&apos;/g, "'")
+        },
+        decode() {
+            if (this.selectedLov.itypeCd === 'QUERY') {
+                this.codeMirrorVisiable = true
+                this.options.mode = 'text/x-mysql'
+                let x = JSON.parse(this.lov?.lovProviderJSON)
+                this.code = this.escapeXml(decode(x.QUERY.STMT))
+            } else if (this.selectedLov.itypeCd === 'SCRIPT') {
+                this.codeMirrorVisiable = true
+                this.options.mode = 'text/javascript'
+                let x = JSON.parse(this.lov?.lovProviderJSON)
+                this.code = this.escapeXml(decode(x.SCRIPTLOV.SCRIPT))
+            } else if (this.selectedLov.itypeCd === 'FIX_LOV') {
+                this.codeMirrorVisiable = false
+                let x = JSON.parse(this.lov?.lovProviderJSON)
+                Array.isArray(x.FIXLISTLOV.ROWS.ROW) ? (this.rows = x.FIXLISTLOV.ROWS.ROW) : (this.rows = Object.values(x.FIXLISTLOV.ROWS))
+            } else {
+                console.log(JSON.parse(this.lov?.lovProviderJSON))
             }
         }
     }
