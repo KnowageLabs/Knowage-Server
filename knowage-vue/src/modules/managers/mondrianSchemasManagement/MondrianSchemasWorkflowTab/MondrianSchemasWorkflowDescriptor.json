@@ -22,10 +22,6 @@
         },
         "targetIcon": {
             "margin-left": "70%"
-        },
-        "workflowList": {
-            "height": "50vh",
-            "width": "70vh"
         }
     }
 }

@@ -79,7 +79,7 @@ public class SbiFunctionCatalog2FunctionCompleteDTO implements Function<SbiCatal
 		ret.setOwner(t.getOwner());
 		ret.getInputColumns().addAll(feInputCols);
 		ret.getInputVariables().addAll(feInputVars);
-		ret.getKeywords().addAll(feKeywords);
+		ret.getTags().addAll(feKeywords);
 		ret.getOutputColumns().addAll(feOutputCols);
 		ret.setType(t.getType());
 

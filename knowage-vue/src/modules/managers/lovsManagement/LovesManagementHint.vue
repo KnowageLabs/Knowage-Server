@@ -6,7 +6,7 @@
 import { defineComponent } from 'vue'
 import KnHint from '@/components/UI/KnHint.vue'
 export default defineComponent({
-    name: 'kpi-scheduler-hint',
+    name: 'lovs-management-hint',
     components: { KnHint }
 })
 </script>

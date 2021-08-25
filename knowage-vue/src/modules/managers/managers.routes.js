@@ -16,6 +16,7 @@ import functionalitiesManagementRoutes from '@/modules/managers/functionalitiesM
 import menuConfigurationRoutes from '@/modules/managers/menuManagement/MenuManagement.routes.js'
 import businessModelCatalogueRoutes from '@/modules/managers/businessModelCatalogue/BusinessModelCatalogue.routes.js'
 import lovsManagementRoutes from '@/modules/managers/lovsManagement/LovsManagement.routes.js'
+import resourceManagementRoutes from '@/modules/managers/resourceManagement/ResourceManagement.routes.js'
 
 const baseRoutes = []
 
@@ -38,5 +39,6 @@ const routes = baseRoutes
     .concat(menuConfigurationRoutes)
     .concat(businessModelCatalogueRoutes)
     .concat(lovsManagementRoutes)
+    .concat(resourceManagementRoutes)
 
 export default routes

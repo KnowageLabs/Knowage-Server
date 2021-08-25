@@ -17,10 +17,44 @@
  */
 package it.eng.knowage.knowageapi.error;
 
+import java.util.List;
+import java.util.Locale;
+
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import it.eng.knowage.knowageapi.utils.messages.EngineMessageBundle;
+
 /**
  * @author Marco Libanori
  */
 public class KnowageBusinessException extends KnowageException {
+
+	/*
+	 * Locale
+	 */
+	private Locale locale = Locale.US;
+
+	/*
+	 * Status
+	 */
+	private Status status = Response.Status.INTERNAL_SERVER_ERROR;
+
+	/*
+	 * Error Code
+	 */
+	private String code = "";
+
+	/*
+	 * User oriented description of the exception. It is usually prompted to the user. Instead the message passed to the constructor is developer oriented and
+	 * it should be just logged.
+	 */
+	private String description = "";
+
+	/*
+	 * A list of possible solutions to the problem that have caused the exception
+	 */
+	private List hints;
 
 	private static final long serialVersionUID = 2696409463468997530L;
 
@@ -28,8 +62,70 @@ public class KnowageBusinessException extends KnowageException {
 		super(message, ex);
 	}
 
+	public KnowageBusinessException(KnowageBusinessException ex, Locale locale) {
+		super(ex);
+		this.code = ex.getCode();
+		this.status = ex.getStatus();
+		this.description = ex.getDescription();
+		this.hints = ex.getHints();
+		this.locale = locale;
+
+	}
+
 	public KnowageBusinessException(String message) {
 		super(message);
 	}
 
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	@Override
+	public String getDescription() {
+		return description;
+	}
+
+	@Override
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	@Override
+	public List getHints() {
+		return hints;
+	}
+
+	public void setHints(List hints) {
+		this.hints = hints;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
+	@Override
+	public String getLocalizedMessage() {
+		String localizedMessage = EngineMessageBundle.getMessage(this.getCode(), this.getLocale());
+		return localizedMessage;
+	}
 }

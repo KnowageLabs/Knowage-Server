@@ -107,7 +107,7 @@ export default defineComponent({
             return canBeMoved
         },
         canBeDeleted(node: iMenuNode) {
-            return node.parentId
+            return !(node.children?.length > 0)
         },
         deleteMenuNode(elementID: number) {
             this.$emit('deleteMenuNode', elementID)

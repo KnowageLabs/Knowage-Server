@@ -1,0 +1,9 @@
+# IntelliJ Idea files
+.idea/
+*.iml
+/pythonwebservice/app/config.xml
+/pythonwebservice/cert.pem
+/pythonwebservice/key.pem
+/src/hmackey
+/src/cert.pem
+/src/key.pem

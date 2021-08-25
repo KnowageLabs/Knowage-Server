@@ -64,6 +64,12 @@ export default defineComponent({
                         msg: this.$t('common.toast.success')
                     })
                 )
+                .catch((error) =>
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: error.message
+                    })
+                )
                 .finally(() => (this.importing = false))
         }
     }

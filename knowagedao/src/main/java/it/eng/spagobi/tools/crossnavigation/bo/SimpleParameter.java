@@ -21,7 +21,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleParameter implements Serializable {
+public class SimpleParameter implements Serializable, Comparable<SimpleParameter> {
 
 	private static final long serialVersionUID = 5806561890901779736L;
 	/**
@@ -160,6 +160,11 @@ public class SimpleParameter implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	@Override
+	public int compareTo(SimpleParameter o) {
+		return Integer.compare(o.getId(), this.getId());
 	}
 
 }

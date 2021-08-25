@@ -17,7 +17,7 @@
             </div>
 
             <KnHint :title="'managers.usersManagement.title'" :hint="'managers.usersManagement.hint'" v-if="hiddenForm"></KnHint>
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0" :hidden="hiddenForm">
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page" v-show="!hiddenForm">
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
                     <template #left>
                         {{ userDetailsForm.userId }}
@@ -28,7 +28,7 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <div class="card">
+                <div class="kn-page-content">
                     <TabView class="tabview-custom kn-tab" ref="usersFormTab">
                         <TabPanel>
                             <template #header>
@@ -48,7 +48,7 @@
                             <template #header>
                                 <span>{{ $t('managers.usersManagement.attributes') }}</span>
                             </template>
-                            <UserAttributesForm :attributes="attributes" v-model="attributesForm" @formDirty="onFormDirty"></UserAttributesForm>
+                            <UserAttributesForm :attributes="attributes" :model="attributesForm" @formDirty="onFormDirty"></UserAttributesForm>
                         </TabPanel>
                     </TabView>
                 </div>
@@ -172,16 +172,17 @@ export default defineComponent({
         },
         getRoleId() {
             let defaultRoleId: any
-            this.selectedRoles.length == 1 ? (defaultRoleId = this.selectedRoles[0]) : (defaultRoleId = this.defaultRole)
-
-            if (typeof defaultRoleId === 'object') {
-                defaultRoleId = defaultRoleId.id
+            if (this.selectedRoles.length == 1) {
+                defaultRoleId = this.selectedRoles[0].id
+            } else {
+                defaultRoleId = this.defaultRole
             }
             return defaultRoleId
         },
         formatUserObject() {
             delete this.userDetailsForm.passwordConfirm
             this.userDetailsForm['defaultRoleId'] = this.getRoleId()
+
             this.userDetailsForm['sbiUserAttributeses'] = { ...this.attributesForm }
             this.userDetailsForm['sbiExtUserRoleses'] = this.selectedRoles ? [...this.selectedRoles.map((selRole) => selRole.id)] : []
         },
@@ -194,22 +195,39 @@ export default defineComponent({
         },
         async saveUser() {
             this.loading = true
-            this.formatUserObject()
-            this.saveOrUpdateUser(this.userDetailsForm)
-                .then(() => {
-                    this.dirty = false
-                    this.loadAllUsers()
-                    this.$store.commit('setInfo', {
-                        title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
-                        msg: this.userDetailsForm.id ? this.$t('common.toast.updateSuccess') : this.$t('managers.usersManagement.info.createMessage')
+            if (!this.selectedRoles || this.selectedRoles.length == 0) {
+                this.$store.commit('setError', {
+                    title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
+                    msg: this.$t('managers.usersManagement.error.noRolesSelected')
+                })
+                this.loading = false
+            } else if (this.selectedRoles?.length > 1 && !this.defaultRole) {
+                this.$store.commit('setError', {
+                    title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
+                    msg: this.$t('managers.usersManagement.error.missingDefaultRole')
+                })
+                this.loading = false
+            } else {
+                this.formatUserObject()
+                this.saveOrUpdateUser(this.userDetailsForm)
+                    .then(() => {
+                        this.dirty = false
+                        this.loadAllUsers()
+                        this.$store.commit('setInfo', {
+                            title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
+                            msg: this.userDetailsForm.id ? this.$t('common.toast.updateSuccess') : this.$t('managers.usersManagement.info.createMessage')
+                        })
                     })
-                })
-                .catch((error) => {
-                    console.log(error.response)
-                })
-                .finally(() => {
-                    this.loading = false
-                })
+                    .catch((error) => {
+                        this.$store.commit('setError', {
+                            title: error.title,
+                            msg: error.msg
+                        })
+                    })
+                    .finally(() => {
+                        this.loading = false
+                    })
+            }
         },
         onUserDelete(id: number) {
             this.loading = true
@@ -223,7 +241,10 @@ export default defineComponent({
                     })
                 })
                 .catch((error) => {
-                    console.log(error.response)
+                    this.$store.commit('setError', {
+                        title: error.title,
+                        msg: error.msg
+                    })
                 })
                 .finally(() => {
                     this.hiddenForm = true

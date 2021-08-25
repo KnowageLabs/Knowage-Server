@@ -1,6 +1,6 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-        <template #left> Template {{ template.name }} </template>
+        <template #left> Template {{ template.label }} </template>
         <template #right>
             <Button icon="pi pi-download" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.download')" @click="downloadTemplate" :disabled="!template.id" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" :disabled="!dirty" @click="saveTemplate" />
@@ -13,12 +13,15 @@
         <div class="p-grid p-m-0 p-fluid">
             <div class="p-col-9">
                 <Card>
-                    <template #title>
-                        {{ $t('common.information') }}
-                    </template>
                     <template #content>
                         <div class="p-grid">
-                            <div class="p-col-6">
+                            <div class="p-col-3">
+                                <span class="p-float-label">
+                                    <InputText id="label" class="kn-material-input" type="text" v-model="template.label" @change="setDirty" />
+                                    <label class="kn-material-input-label" for="label">{{ $t('common.label') }}</label>
+                                </span>
+                            </div>
+                            <div class="p-col-3">
                                 <span class="p-float-label">
                                     <InputText id="name" class="kn-material-input" type="text" v-model="template.name" @change="setDirty" />
                                     <label class="kn-material-input-label" for="name">{{ $t('common.name') }}</label>
@@ -56,7 +59,6 @@
             <div class="p-col-3 kn-height-full">
                 <Card class="imageUploader">
                     <template #title>
-                        {{ $t('common.image') }}
                         <input id="inputImage" type="file" @change="uploadFile" accept="image/png, image/jpeg" />
                         <label for="inputImage" v-tooltip.bottom="$t('common.upload')">
                             <i class="pi pi-upload" />
@@ -166,6 +168,8 @@ export default defineComponent({
                     .get(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/' + (id || this.id))
                     .then((response) => {
                         this.template = response.data
+                        // TODO remove after backend implementation
+                        this.template.label = this.template.label || this.template.name
                     })
                     .catch((error) => console.error(error))
                     .finally(() => {
@@ -322,7 +326,7 @@ export default defineComponent({
         }
     }
     &:deep(.p-card-content) {
-        height: 210px;
+        height: 220px;
     }
 }
 </style>

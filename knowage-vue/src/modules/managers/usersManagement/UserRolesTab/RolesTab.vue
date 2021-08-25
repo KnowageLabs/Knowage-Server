@@ -19,13 +19,26 @@
                         </div>
                     </div>
                     <p>
-                        <Message severity="info">{{ $t('managers.usersManagement.defaultRoleInfo') }}</Message>
+                        <Message severity="info" v-if="selectedRoles.length > 0">{{ $t('managers.usersManagement.defaultRoleInfo') }}</Message>
                     </p>
-                    <DataTable :value="rolesList" v-model:selection="selectedRoles" class="p-datatable-sm kn-table" dataKey="id" :paginator="true" :rows="20" responsiveLayout="stack" breakpoint="960px" @rowSelect="onRowSelect" @rowUnselect="onRowUnselect">
+                    <DataTable
+                        :value="rolesList"
+                        @row-select-all="onRowSelect"
+                        @row-unselect-all="onRowUnselect"
+                        v-model:selection="selectedRoles"
+                        class="p-datatable-sm kn-table"
+                        dataKey="id"
+                        :paginator="true"
+                        :rows="20"
+                        responsiveLayout="stack"
+                        breakpoint="960px"
+                        @rowSelect="onRowSelect"
+                        @rowUnselect="onRowUnselect"
+                    >
                         <template #empty>
                             {{ $t('common.info.noDataFound') }}
                         </template>
-                        <Column selectionMode="multiple" dataKey="id"></Column>
+                        <Column selectionMode="multiple" dataKey="id" style="width:50px"></Column>
                         <Column field="name" :header="$t('common.name')"></Column>
                     </DataTable>
                 </template>
@@ -84,9 +97,20 @@ export default defineComponent({
         },
         onRowUnselect() {
             this.$emit('changed', this.selectedRoles)
+            if (this.selectedRoles?.length <= 1) {
+                this.defaultRole = null
+                this.onSelectDefaultRole()
+            }
         },
         onSelectDefaultRole() {
             this.$emit('setDefaultRole', this.defaultRole)
+        },
+        onSelectAll() {
+            this.$emit('changed', this.selectedRoles)
+            if (this.selectedRoles?.length <= 1) {
+                this.defaultRole = null
+                this.onSelectDefaultRole()
+            }
         }
     }
 })
