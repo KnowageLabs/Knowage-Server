@@ -6,7 +6,7 @@
                 <span>{{ $t('managers.driversManagement.useModes.details') }}</span>
                 <Badge :value="invalidModes" class="p-ml-2" severity="danger" v-if="invalidModes > 0"></Badge>
             </template>
-            <DetailsCard :selectedMode="mode" :selectionTypes="selectionTypes" :layers="layers" :isDate="isDate" :lovs="lovs" :selectedLov="selectedLov"></DetailsCard>
+            <DetailsCard :selectedMode="mode" :selectionTypes="selectionTypes" :layers="layers" :isDate="isDate" :lovs="lovs" :selectedLov="selectedLov" @apply="changeLov"></DetailsCard>
         </TabPanel>
 
         <TabPanel>
@@ -111,6 +111,11 @@ export default defineComponent({
             if (this.mode.idLov) {
                 this.selectedLov = this.lovs.filter((lov: any) => lov.id == this.mode.idLov)[0]
             }
+        },
+        changeLov(lov: any) {
+            this.mode.idLov = lov.id
+            this.selectedLov = lov
+            console.log(this.selectedLov)
         }
     }
 })

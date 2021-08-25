@@ -7,7 +7,7 @@
                 </template>
             </Toolbar>
         </template>
-        <DataTable v-model:selection="selectedLov" :value="lovs" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" selectionMode="single">
+        <DataTable v-if="!detailVisiable" v-model:selection="selectedLov" :value="lovs" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" selectionMode="single">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -17,13 +17,19 @@
 
             <Column v-for="col of useModeDescriptor.columnsLov" :field="col.field" :header="$t(col.header)" :key="col.field" class="kn-truncated">
                 <template #body="slotProps">
-                    <span v-if="!col.dateField">{{ slotProps.data[slotProps.column.props.field] }}</span>
+                    <span>{{ slotProps.data[slotProps.column.props.field] }}</span>
+                </template>
+            </Column>
+            <Column headerStyle="useModeDescriptor.table.iconColumn.style" :style="useModeDescriptor.table.iconColumn.style">
+                <template #body="slotProps">
+                    <Button icon="pi pi-info-circle" class="p-button-link" @click="lovDetail(slotProps.data)" />
                 </template>
             </Column>
         </DataTable>
+        <LovsDetail v-else :lov="lovDetails" @close="detailVisiable = false"></LovsDetail>
         <template #footer>
             <Button :label="$t('common.cancel')" @click="closeLovDialog" class="kn-button kn-button--secondary" />
-            <Button :label="$t('common.apply')" class="kn-button kn-button--primary" />
+            <Button :label="$t('common.apply')" @click="applyLov" class="kn-button kn-button--primary" />
         </template>
     </Dialog>
 </template>
@@ -33,12 +39,14 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
 import useModeDescriptor from './UseModesDescriptor.json'
+import LovsDetail from './LovsDetail.vue'
 export default defineComponent({
     name: 'lovs-dialog',
     components: {
         DataTable,
         Column,
-        Dialog
+        Dialog,
+        LovsDetail
     },
     props: {
         dialogVisible: {
@@ -54,19 +62,37 @@ export default defineComponent({
             required: false
         }
     },
-    emits: ['close', 'add'],
+    emits: ['close', 'apply'],
     data() {
         return {
             selectedLov: {} as any,
+            detailVisiable: false,
+            lovDetails: {} as any,
             useModeDescriptor
         }
     },
+    mounted() {
+        this.selectedLov = { ...this.selectedLovProp }
+    },
+    watch: {
+        selectedLovProp() {
+            this.selectedLov = { ...this.selectedLovProp }
+        }
+    },
     methods: {
-        addLov() {
-            this.$emit('add', this.selectedLov)
+        applyLov() {
+            console.log(this.selectedLov)
+            this.$emit('apply', this.selectedLov)
+            this.detailVisiable = false
         },
         closeLovDialog() {
             this.$emit('close')
+            this.detailVisiable = false
+        },
+        lovDetail(lov: any) {
+            this.detailVisiable = true
+            this.lovDetails = lov
+            console.log(this.lovDetails)
         }
     }
 })

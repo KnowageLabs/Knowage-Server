@@ -56,6 +56,20 @@
             "name": "Use a LOV"
         }
     ],
+    "table": {
+        "column": {
+            "style": {
+                "width": "45%",
+                "word-break": "break-all"
+            }
+        },
+        "iconColumn": {
+            "style": {
+                "text-align": "end",
+                "width": "5%"
+            }
+        }
+    },
     "types": [
         {
             "name": "LOV",

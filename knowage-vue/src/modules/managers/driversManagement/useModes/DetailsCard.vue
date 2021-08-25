@@ -143,7 +143,7 @@
                     <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
                 </div>
             </form>
-            <LovsDialog :dialogVisible="dialogVisiable" :lovs="lovs" :selectedLovProp="selectedLov" @close="dialogVisiable = false"></LovsDialog>
+            <LovsDialog :dialogVisible="dialogVisiable" :lovs="lovs" :selectedLovProp="selectedLov" @close="dialogVisiable = false" @apply="applyLov"></LovsDialog>
         </template>
     </Card>
 </template>
@@ -233,7 +233,6 @@ export default defineComponent({
     },
     methods: {
         showLovsDialog() {
-            console.log('LOVs dialog')
             this.dialogVisiable = true
         },
         handleDropdowns() {
@@ -263,6 +262,11 @@ export default defineComponent({
         },
         modeChanged() {
             this.mode.numberOfErrors = this.v$.$errors.length
+        },
+        applyLov(lov: any) {
+            this.dialogVisiable = false
+            this.lov = lov
+            this.$emit('apply', lov)
         }
     }
 })
