@@ -1,12 +1,12 @@
 <template>
     <div class="kn-page">
         <div class="kn-page-content p-grid p-m-0">
+            <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
+                <template #left>
+                    {{ $t('managers.glossaryUsage.title') }}
+                </template>
+            </Toolbar>
             <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
-                <Toolbar class="kn-toolbar kn-toolbar--primary">
-                    <template #left>
-                        {{ $t('managers.glossaryUsage.title') }}
-                    </template>
-                </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
                 <div class="p-d-flex p-flex-column p-m-3">
                     <label v-if="selectedGlossaryId" for="glossary" class="kn-material-input-label">{{ $t('managers.glossaryUsage.title') }}</label>
@@ -20,7 +20,18 @@
                         <div class="p-m-3">
                             <InputText id="search-input" class="kn-material-input" v-model="searchWord" :placeholder="$t('common.search')" @input="filterGlossaryTree" />
                         </div>
-                        <Tree id="glossary-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" @nodeExpand="listContents(selectedGlossaryId, $event)" data-test="functionality-tree">
+                        <Tree
+                            id="glossary-tree"
+                            :value="nodes"
+                            selectionMode="multiple"
+                            v-model:selectionKeys="selectedKeys"
+                            :metaKeySelection="false"
+                            :expandedKeys="expandedKeys"
+                            @nodeExpand="listContents(selectedGlossaryId, $event)"
+                            @nodeSelect="onNodeSelect"
+                            @nodeUnselect="onNodeUnselect"
+                            data-test="functionality-tree"
+                        >
                             <template #default="slotProps">
                                 <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonVisible[slotProps.node.id] = true" @mouseleave="buttonVisible[slotProps.node.id] = false" :data-test="'tree-item-' + slotProps.node.id">
                                     <span>{{ slotProps.node.label }}</span>
@@ -37,7 +48,8 @@
             <GlossaryUsageInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :contentInfo="contentInfo" @close="infoDialogVisible = false"></GlossaryUsageInfoDialog>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <router-view />
+                <GlossaryUsageHint v-if="!selectedGlossaryId"></GlossaryUsageHint>
+                <GlossaryUsageDetail v-else :glossaryId="selectedGlossaryId" :selectedWords="selectedWords" @infoClicked="showNavigationItemInfo($event)"></GlossaryUsageDetail>
             </div>
         </div>
     </div>
@@ -50,11 +62,13 @@ import axios from 'axios'
 import Dropdown from 'primevue/dropdown'
 import glossaryUsageDescriptor from './GlossaryUsageDescriptor.json'
 import GlossaryUsageInfoDialog from './GlossaryUsageInfoDialog.vue'
+import GlossaryUsageHint from './GlossaryUsageHint.vue'
+import GlossaryUsageDetail from './GlossaryUsageDetail.vue'
 import Tree from 'primevue/tree'
 
 export default defineComponent({
     name: 'glossary-usage',
-    components: { Dropdown, GlossaryUsageInfoDialog, Tree },
+    components: { Dropdown, GlossaryUsageInfoDialog, GlossaryUsageHint, GlossaryUsageDetail, Tree },
     data() {
         return {
             glossaryUsageDescriptor,
@@ -67,6 +81,8 @@ export default defineComponent({
             searchWord: null,
             timer: null as any,
             expandedKeys: {},
+            selectedKeys: [],
+            selectedWords: [] as any[],
             loading: false
         }
     },
@@ -94,17 +110,8 @@ export default defineComponent({
             const parentId = parent ? parent.id : null
             let content = [] as iNode[]
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listContents?GLOSSARY_ID=${glossaryId}&PARENT_ID=${parentId}`).then((response) => {
-                response.data.forEach((el: any) =>
-                    content.push({
-                        key: el.CONTENT_ID ?? el.WORD_ID,
-                        id: el.CONTENT_ID ?? el.WORD_ID,
-                        label: el.CONTENT_NM ?? el.WORD,
-                        children: [] as iNode[],
-                        data: el,
-                        style: this.glossaryUsageDescriptor.node.style,
-                        leaf: !(el.HAVE_WORD_CHILD || el.HAVE_CONTENTS_CHILD)
-                    })
-                )
+                response.data.forEach((el: any) => content.push(this.createNode(el)))
+                content.sort((a: any, b: any) => (a.label > b.label ? 1 : -1))
             })
 
             this.attachContentToTree(parent, content)
@@ -142,7 +149,7 @@ export default defineComponent({
             let tempData = []
             this.timer = setTimeout(() => {
                 this.loading = true
-                console.log('SEARCH WORD: ', this.searchWord)
+                // console.log('SEARCH WORD: ', this.searchWord)
 
                 axios
                     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/glosstreeLike?WORD=${this.searchWord}&GLOSSARY_ID=${this.selectedGlossaryId}`)
@@ -155,26 +162,30 @@ export default defineComponent({
             }, 1000)
         },
         createGlossaryTree(data: any) {
-            console.log('DATA', data)
+            // console.log('DATA', data)
             this.nodes = []
             this.expandedKeys = {}
             data.GlossSearch.SBI_GL_CONTENTS.forEach((el: any) => {
-                const tempNode = {
-                    key: el.CONTENT_ID ?? el.WORD_ID,
-                    id: el.CONTENT_ID ?? el.WORD_ID,
-                    label: el.CONTENT_NM ?? el.WORD,
-                    children: [] as iNode[],
-                    data: el,
-                    style: this.glossaryUsageDescriptor.node.style,
-                    leaf: !(el.HAVE_WORD_CHILD || el.HAVE_CONTENTS_CHILD)
-                }
+                const tempNode = this.createNode(el)
                 el.CHILD?.forEach((el: any) => {
-                    tempNode.children.push({ key: el.CONTENT_ID ?? el.WORD_ID, id: el.CONTENT_ID ?? el.WORD_ID, label: el.CONTENT_NM ?? el.WORD, children: [] as iNode[], data: el, style: this.glossaryUsageDescriptor.node.style, leaf: !(el.HAVE_WORD_CHILD || el.HAVE_CONTENTS_CHILD) })
+                    tempNode.children.push(this.createNode(el))
                 })
                 this.nodes.push(tempNode)
             })
             this.expandAll()
-            console.log('NODES AFTER SEARCH:', this.nodes)
+            // console.log('NODES AFTER SEARCH:', this.nodes)
+        },
+        createNode(el: any) {
+            return {
+                key: el.CONTENT_ID ?? el.WORD_ID,
+                id: el.CONTENT_ID ?? el.WORD_ID,
+                label: el.CONTENT_NM ?? el.WORD,
+                children: [] as iNode[],
+                data: el,
+                style: this.glossaryUsageDescriptor.node.style,
+                leaf: !(el.HAVE_WORD_CHILD || el.HAVE_CONTENTS_CHILD),
+                selectable: !(el.HAVE_WORD_CHILD || el.HAVE_CONTENTS_CHILD)
+            }
         },
         expandAll() {
             for (let node of this.nodes) {
@@ -189,6 +200,20 @@ export default defineComponent({
                     this.expandNode(child)
                 }
             }
+        },
+        showNavigationItemInfo(info: any) {
+            // console.log('INFO: ', info)
+            this.contentInfo = info
+            this.infoDialogVisible = true
+        },
+        onNodeSelect(node) {
+            this.selectedWords.push(node.data)
+            // console.log('SELECTED WORDS: ', this.selectedWords)
+        },
+        onNodeUnselect(node) {
+            const index = this.selectedWords.findIndex((el: any) => el.id === node.data.WORD_ID)
+            this.selectedWords.splice(index, 1)
+            // console.log('SELECTED WORDS: ', this.selectedWords)
         }
     }
 })

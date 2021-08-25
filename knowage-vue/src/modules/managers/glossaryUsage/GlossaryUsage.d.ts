@@ -11,5 +11,6 @@ export interface iNode {
     children: iNode[],
     data: iFunctionality,
     style: any,
-    leaf: boolean
+    leaf: boolean,
+    selectable: boolean
 }

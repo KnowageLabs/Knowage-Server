@@ -17,7 +17,7 @@
                     </li>
                 </ul>
             </div>
-            <div v-else>
+            <div v-else-if="contentInfo.WORD_ID">
                 <ul>
                     <li>
                         <span>{{ $t('managers.glossaryUsage.word') }}:</span>
@@ -64,6 +64,135 @@
                     </li>
                 </ul>
             </div>
+            <div v-else-if="contentInfo.type && contentInfo.type === 'document'">
+                <ul>
+                    <li>
+                        <span>{{ $t('common.label') }}:</span>
+                        <p>{{ contentInfo.data.label }}</p>
+                    </li>
+                    <li>
+                        <span>{{ $t('common.name') }}:</span>
+                        <p>{{ contentInfo.data.name }}</p>
+                    </li>
+                    <li>
+                        <span>{{ $t('managers.glossaryUsage.hierarchyScope') }}:</span>
+                        <p>{{ contentInfo.data.functionalities[0] }}</p>
+                    </li>
+                    <li>
+                        <span>{{ $t('managers.glossaryUsage.profiledVisibility') }}:</span>
+                        <ul class="p-mt-3">
+                            <li class="inline-list-item" v-for="(link, index) in contentInfo.data.access" :key="index">{{ link }}</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div v-else-if="contentInfo.type && contentInfo.type === 'dataset'">
+                <ul>
+                    <li>
+                        <span>{{ $t('common.label') }}:</span>
+                        <p>{{ contentInfo.data.DataSet.label }}</p>
+                    </li>
+                    <li>
+                        <span>{{ $t('common.name') }}:</span>
+                        <p>{{ contentInfo.data.DataSet.name }}</p>
+                    </li>
+                    <li>
+                        <span>{{ $t('common.type') }}:</span>
+                        <p>{{ contentInfo.data.DataSet.type }}</p>
+                    </li>
+                    <li>
+                        <span>{{ $t('managers.glossaryUsage.dataSource') }}:</span>
+                        <p>{{ contentInfo.data.DataSet.configuration.dataSource }}</p>
+                    </li>
+                    <li>
+                        <span>{{ $t('managers.glossaryUsage.associatedWord') }}:</span>
+                        <ul class="p-my-3">
+                            <li v-for="(column, index) in contentInfo.data.Word" :key="index">
+                                {{ column.WORD }}
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span>{{ $t('managers.glossaryUsage.column') }}:</span>
+                        <ul class="p-my-3">
+                            <li v-for="(column, index) in contentInfo.data.SbiGlDataSetWlist" :key="index">
+                                {{ column.alias }}
+                                <ul>
+                                    <li v-for="(word, index) in column.word" :key="index">
+                                        {{ word.WORD }}
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div v-else-if="contentInfo.type && contentInfo.type === 'businessClass'">
+                <ul>
+                    <li>
+                        <span>{{ $t('managers.glossaryUsage.metaModel') }}:</span>
+                        <p>{{ contentInfo.data.metaBc.sbiMetaModel.name }}</p>
+                    </li>
+                    <li>
+                        <span>{{ $t('managers.glossaryUsage.businessClass') }}:</span>
+                        <p>{{ contentInfo.data.metaBc.name }}</p>
+                    </li>
+                    <li>
+                        <span>{{ $t('managers.glossaryUsage.associatedWord') }}:</span>
+                        <ul class="p-my-3">
+                            <li v-for="(column, index) in contentInfo.data.words" :key="index">
+                                {{ column.WORD }}
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span>{{ $t('managers.glossaryUsage.column') }}:</span>
+                        <ul class="p-my-3">
+                            <li v-for="(column, index) in contentInfo.data.sbiGlBnessClsWlist" :key="index">
+                                {{ column.name }}
+                                <ul>
+                                    <li v-for="(word, index) in column.word" :key="index">
+                                        {{ word.WORD }}
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div v-else-if="contentInfo.type && contentInfo.type === 'table'">
+                <ul>
+                    <li>
+                        <span>{{ $t('managers.glossaryUsage.metaSource') }}:</span>
+                        <p>{{ contentInfo.data.metaSource.name }}</p>
+                    </li>
+                    <li>
+                        <span>{{ $t('common.label') }}:</span>
+                        <p>{{ contentInfo.data.metaTable.name }}</p>
+                    </li>
+                    <li>
+                        <span>{{ $t('managers.glossaryUsage.associatedWord') }}:</span>
+                        <ul class="p-my-3">
+                            <li v-for="(column, index) in contentInfo.data.words" :key="index">
+                                {{ column.WORD }}
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span>{{ $t('managers.glossaryUsage.column') }}:</span>
+                        <ul class="p-my-3">
+                            <li v-for="(column, index) in contentInfo.data.sbiGlTableWlist" :key="index">
+                                {{ column.alias }}
+                                <ul>
+                                    <li v-for="(word, index) in column.word" :key="index">
+                                        {{ word.WORD }}
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
             <template #footer>
                 <Button class="kn-button kn-button--primary" @click="$emit('close')"> {{ $t('common.close') }}</Button>
             </template>
@@ -75,6 +204,8 @@
 import { defineComponent } from 'vue'
 import Dialog from 'primevue/dialog'
 import glossaryUsageDescriptor from './GlossaryUsageDescriptor.json'
+
+// TODO Add class for selected words, if possible
 
 export default defineComponent({
     name: 'glossary-usage-info-dialog',
@@ -104,5 +235,10 @@ span {
 
 p {
     margin: 1rem 0 1rem 1.5rem;
+}
+
+.inline-list-item {
+    display: inline-block;
+    margin-right: 1rem;
 }
 </style>
