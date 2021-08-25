@@ -16,5 +16,6 @@
             "field": "author",
             "header": "common.author"
         }
-    ]
+    ],
+    "globalFilterFields": ["name", "description", "type", "author"]
 }

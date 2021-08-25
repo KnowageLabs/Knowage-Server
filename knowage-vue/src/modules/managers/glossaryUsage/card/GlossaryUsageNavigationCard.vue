@@ -6,7 +6,7 @@
                     {{ title }}
                 </template>
                 <template #right>
-                    <Button class="kn-button p-button-text" @click="$emit('linkClicked', title)" data-test="close-button">{{ $t('managers.glossaryUsage.link') }}</Button>
+                    <Button class="kn-button p-button-text" @click="$emit('linkClicked', title)">{{ $t('managers.glossaryUsage.link') }}</Button>
                 </template>
             </Toolbar>
         </template>

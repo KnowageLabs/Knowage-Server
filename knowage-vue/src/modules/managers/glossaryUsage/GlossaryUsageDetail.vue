@@ -15,7 +15,7 @@
                 <GlossaryUsageNavigationCard class="p-m-2" :title="$t('managers.glossaryUsage.tables')" :items="tables" @infoClicked="showTableInfo($event)" @linkClicked="onLinkClicked($event)"></GlossaryUsageNavigationCard>
             </div>
         </div>
-        <GlossaryUsageLinkCard v-else :title="linkTableTitle" :items="linkTableItems"></GlossaryUsageLinkCard>
+        <GlossaryUsageLinkCard v-else :title="linkTableTitle" class="p-m-2" :items="linkTableItems" @close="linkTableVisible = false"></GlossaryUsageLinkCard>
     </div>
 </template>
 
@@ -142,11 +142,20 @@ export default defineComponent({
                 .then((response) => this.$emit('infoClicked', { data: response.data, type: 'table' }))
                 .finally(() => (this.loading = false))
         },
-        onLinkClicked(type: string) {
+        async onLinkClicked(type: string) {
             console.log('LINK CLICKED!', type)
             switch (type) {
                 case 'Documents':
-                    this.loadDocuments()
+                    await this.loadDocuments()
+                    break
+                case 'Dataset':
+                    await this.loadDatasets()
+                    break
+                case 'Business Class':
+                    await this.loadBusinessClasses()
+                    break
+                case 'Tables':
+                    await this.loadTables()
             }
         },
         async loadDocuments() {
@@ -155,8 +164,44 @@ export default defineComponent({
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/listDocument?Page=1&ItemPerPage=&label=&scope=GLOSSARY')
                 .then((response) => {
-                    response.data.item.forEach((el: any) => this.linkTableItems.push({ id: el.DOCUMENT_ID, name: el.DOCUMENT_LABEL, description: '', type: '', author: '' }))
+                    response.data.item.forEach((el: any) => this.linkTableItems.push({ id: el.DOCUMENT_ID, name: el.DOCUMENT_LABEL, description: el.DOCUMENT_DESCR, type: '', author: el.DOCUMENT_AUTH }))
                     this.linkTableTitle = this.$t('managers.glossaryUsage.documents')
+                    this.linkTableVisible = true
+                })
+                .finally(() => (this.loading = false))
+        },
+        async loadDatasets() {
+            this.linkTableItems = []
+            this.loading = true
+            await axios
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasets/?asPagedList=true&Page=1&ItemPerPage=&label=')
+                .then((response) => {
+                    response.data.item.forEach((el: any) => this.linkTableItems.push({ id: el.id.dsId, name: el.name, description: el.description, type: el.type, author: el.owner }))
+                    this.linkTableTitle = this.$t('managers.glossaryUsage.dataset')
+                    this.linkTableVisible = true
+                })
+                .finally(() => (this.loading = false))
+        },
+        async loadBusinessClasses() {
+            this.linkTableItems = []
+            this.loading = true
+            await axios
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/metaBC/listMetaBC?Page=1&ItemPerPage=&label=')
+                .then((response) => {
+                    response.data.forEach((el: any) => this.linkTableItems.push({ id: el.id, name: el.name, description: '', type: '', author: '' }))
+                    this.linkTableTitle = this.$t('managers.glossaryUsage.businessClass')
+                    this.linkTableVisible = true
+                })
+                .finally(() => (this.loading = false))
+        },
+        async loadTables() {
+            this.linkTableItems = []
+            this.loading = true
+            await axios
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/metaTable/listMetaTable?Page=1&ItemPerPage=&label=')
+                .then((response) => {
+                    response.data.forEach((el: any) => this.linkTableItems.push({ id: el.id, name: el.name, description: '', type: '', author: '' }))
+                    this.linkTableTitle = this.$t('managers.glossaryUsage.tables')
                     this.linkTableVisible = true
                 })
                 .finally(() => (this.loading = false))
