@@ -15,15 +15,17 @@
                 <GlossaryUsageNavigationCard class="p-m-2" :type="'table'" :items="tables" @infoClicked="showTableInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onTablesSelected"></GlossaryUsageNavigationCard>
             </div>
         </div>
-        <GlossaryUsageLinkCard v-else :title="linkTableTitle" class="p-m-2" :items="linkTableItems" :words="selectedLinkItemWords" @close="linkTableVisible = false" @selected="onLinkItemSelect"></GlossaryUsageLinkCard>
+        <GlossaryUsageLinkCard v-else :title="linkTableTitle" class="p-m-2" :items="linkTableItems" :words="selectedLinkItemWords" :treeWords="selectedLinkItemTree" @close="linkTableVisible = false" @selected="onLinkItemSelect"></GlossaryUsageLinkCard>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { iNode } from './GlossaryUsage'
 import axios from 'axios'
 import GlossaryUsageNavigationCard from './card/GlossaryUsageNavigationCard.vue'
 import GlossaryUsageLinkCard from './card/GlossaryUsageLinkCard.vue'
+import glossaryUsageDescriptor from './GlossaryUsageDescriptor.json'
 
 export default defineComponent({
     name: 'glossary-usage-detail',
@@ -32,6 +34,7 @@ export default defineComponent({
     emits: ['infoClicked', 'linkClicked'],
     data() {
         return {
+            glossaryUsageDescriptor,
             documents: [] as any[],
             selectedDocuments: [] as any[],
             datasets: [] as any[],
@@ -44,6 +47,7 @@ export default defineComponent({
             linkTableTitle: '',
             linkTableItems: [] as any[],
             selectedLinkItemWords: {} as any,
+            selectedLinkItemTree: {} as any,
             loading: false
         }
     },
@@ -148,16 +152,14 @@ export default defineComponent({
         async showDatasetInfo(dataset: any) {
             // console.log('DATASET FOR INFO: ', dataset)
             this.loading = true
-            await axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getDataSetInfo?DATASET_ID=${dataset.id}&ORGANIZATION=${dataset.organization}`)
+            await this.loadDatasetInfo(dataset)
                 .then((response) => this.$emit('infoClicked', { data: response.data, type: 'dataset' }))
                 .finally(() => (this.loading = false))
         },
         async showBusinessClassInfo(businessClass: any) {
             // console.log('BUSINESS CLASS FOR INFO: ', businessClass)
             this.loading = true
-            await axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getMetaBcInfo?META_BC_ID=${businessClass.id}`)
+            await this.loadBusinessClassInfo(businessClass)
                 .then((response) =>
                     this.$emit('infoClicked', {
                         data: response.data,
@@ -169,8 +171,7 @@ export default defineComponent({
         async showTableInfo(table: any) {
             // console.log('TABLE FOR INFO: ', table)
             this.loading = true
-            await axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getMetaTableInfo?META_TABLE_ID=${table.id}`)
+            await this.loadTableInfo(table)
                 .then((response) => this.$emit('infoClicked', { data: response.data, type: 'table' }))
                 .finally(() => (this.loading = false))
         },
@@ -206,6 +207,7 @@ export default defineComponent({
                             itemType: 'document'
                         })
                     )
+                    this.linkTableItems.sort((a: any, b: any) => (a.name > b.name ? 1 : -1))
                     this.linkTableTitle = this.$t('managers.glossaryUsage.documents')
                     this.linkTableVisible = true
                 })
@@ -224,9 +226,11 @@ export default defineComponent({
                             description: el.description,
                             type: el.type,
                             author: el.owner,
+                            organization: el.id.organization,
                             itemType: 'dataset'
                         })
                     )
+                    this.linkTableItems.sort((a: any, b: any) => (a.name > b.name ? 1 : -1))
                     this.linkTableTitle = this.$t('managers.glossaryUsage.dataset')
                     this.linkTableVisible = true
                 })
@@ -248,6 +252,7 @@ export default defineComponent({
                             itemType: 'businessClass'
                         })
                     )
+                    this.linkTableItems.sort((a: any, b: any) => (a.name > b.name ? 1 : -1))
                     this.linkTableTitle = this.$t('managers.glossaryUsage.businessClass')
                     this.linkTableVisible = true
                 })
@@ -259,9 +264,10 @@ export default defineComponent({
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/metaTable/listMetaTable?Page=1&ItemPerPage=&label=')
                 .then((response) => {
+                    console.log('RESPONSE ', response)
                     response.data.forEach((el: any) =>
                         this.linkTableItems.push({
-                            id: el.id,
+                            id: el.tableId,
                             name: el.name,
                             description: '',
                             type: '',
@@ -269,6 +275,7 @@ export default defineComponent({
                             itemType: 'table'
                         })
                     )
+                    this.linkTableItems.sort((a: any, b: any) => (a.name > b.name ? 1 : -1))
                     this.linkTableTitle = this.$t('managers.glossaryUsage.tables')
                     this.linkTableVisible = true
                 })
@@ -310,6 +317,14 @@ export default defineComponent({
                 case 'document':
                     await this.loadDocumentWords(item)
                     break
+                case 'dataset':
+                    await this.loadDatasetWords(item)
+                    break
+                case 'businessClass':
+                    await this.loadBusinessClassWords(item)
+                    break
+                case 'table':
+                    await this.loadTableWords(item)
             }
             console.log('SELECTED LINK ITEM WORDS: ', this.selectedLinkItemWords)
         },
@@ -319,6 +334,41 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getDocumentInfo?DOCUMENT_ID=${document.id}`)
                 .then((response) => (this.selectedLinkItemWords[document.id] = response.data.word))
                 .finally(() => (this.loading = false))
+        },
+        async loadDatasetWords(dataset: any) {
+            this.loading = true
+            await this.loadDatasetInfo(dataset)
+                .then((response) => {
+                    this.selectedLinkItemWords[dataset.id] = response.data.Word
+                    this.selectedLinkItemTree[dataset.id] = []
+                    response.data.SbiGlDataSetWlist.forEach((el: any) => {
+                        const tempNode = { key: el.alias, id: el.alias, label: el.alias, children: [] as iNode[], data: el, leaf: false }
+                        el.word.forEach((el: any) => tempNode.children.push({ key: el.WORD_ID, id: el.WORD_ID, label: el.WORD, children: [] as iNode[], data: el, style: this.glossaryUsageDescriptor.node.style, leaf: true }))
+                        this.selectedLinkItemTree[dataset.id].push(tempNode)
+                    })
+                })
+                .finally(() => (this.loading = false))
+        },
+        async loadBusinessClassWords(businessClass: any) {
+            this.loading = true
+            await this.loadBusinessClassInfo(businessClass)
+                .then((response) => (this.selectedLinkItemWords[businessClass.id] = response.data.words))
+                .finally(() => (this.loading = false))
+        },
+        async loadTableWords(table: any) {
+            this.loading = true
+            await this.loadTableInfo(table)
+                .then((response) => (this.selectedLinkItemWords[table.id] = response.data.words))
+                .finally(() => (this.loading = false))
+        },
+        loadDatasetInfo(dataset: any) {
+            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getDataSetInfo?DATASET_ID=${dataset.id}&ORGANIZATION=${dataset.organization}`)
+        },
+        loadBusinessClassInfo(businessClass: any) {
+            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getMetaBcInfo?META_BC_ID=${businessClass.id}`)
+        },
+        loadTableInfo(table: any) {
+            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getMetaTableInfo?META_TABLE_ID=${table.id}`)
         }
     }
 })

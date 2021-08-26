@@ -11,42 +11,44 @@
             </Toolbar>
         </template>
         <template #content>
-            {{ associatedWords }}
-            <DataTable
-                :value="items"
-                class="p-datatable-sm kn-table"
-                v-model:selection="selectedItem"
-                selectionMode="single"
-                v-model:expandedRows="expandedRows"
-                :loading="loading"
-                dataKey="id"
-                v-model:filters="filters"
-                :globalFilterFields="glossaryUsageLinkCardDescriptor.globalFilterFields"
-                :paginator="true"
-                :rows="20"
-                responsiveLayout="stack"
-                breakpoint="960px"
-                @rowSelect="onRowSelect($event.data)"
-                @rowExpand="onRowExpand"
-            >
-                <template #header>
-                    <div class="table-header p-d-flex p-ai-center">
-                        <span id="search-container" class="p-input-icon-left p-mr-3">
-                            <i class="pi pi-search" />
-                            <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" />
-                        </span>
-                    </div>
-                </template>
-                <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                <template #loading> {{ $t('common.info.dataLoading') }}</template>
-                <template #expansion="slotProps">
-                    <div :style="glossaryUsageLinkCardDescriptor.dropZoneStyle" @drop="onDragDrop($event, slotProps.data)" @dragover.prevent @dragenter.prevent>
-                        <Chip class="p-m-2" v-for="word in associatedWords[slotProps.data.id]" :key="word.WORD_ID" :label="word.WORD" @click="deleteWordConfirm(word.WORD_ID, slotProps.data.id)" />
-                    </div>
-                </template>
-                <Column :expander="true" :headerStyle="glossaryUsageLinkCardDescriptor.expanderHeaderStyle" />
-                <Column class="kn-truncated" v-for="col of glossaryUsageLinkCardDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"></Column>
-            </DataTable>
+            <div class="p-d-flex p-flex-row">
+                <DataTable
+                    :value="items"
+                    class="p-datatable-sm kn-table p-col-9"
+                    v-model:selection="selectedItem"
+                    selectionMode="single"
+                    v-model:expandedRows="expandedRows"
+                    :loading="loading"
+                    dataKey="id"
+                    v-model:filters="filters"
+                    :globalFilterFields="glossaryUsageLinkCardDescriptor.globalFilterFields"
+                    :paginator="true"
+                    :rows="20"
+                    responsiveLayout="stack"
+                    breakpoint="960px"
+                    @rowExpand="onRowExpand"
+                >
+                    <template #header>
+                        <div class="table-header p-d-flex p-ai-center">
+                            <span id="search-container" class="p-input-icon-left p-mr-3">
+                                <i class="pi pi-search" />
+                                <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" />
+                            </span>
+                        </div>
+                    </template>
+                    <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                    <template #loading> {{ $t('common.info.dataLoading') }}</template>
+                    <template #expansion="slotProps">
+                        <div :style="glossaryUsageLinkCardDescriptor.dropZoneStyle" @drop="onDragDrop($event, slotProps.data)" @dragover.prevent @dragenter.prevent>
+                            <Chip class="p-m-2" v-for="word in associatedWords[slotProps.data.id]" :key="word.WORD_ID" :label="word.WORD" @click="deleteWordConfirm(word.WORD_ID, slotProps.data)" />
+                        </div>
+                    </template>
+                    <Column :expander="true" :headerStyle="glossaryUsageLinkCardDescriptor.expanderHeaderStyle" />
+                    <Column class="kn-truncated" v-for="col of glossaryUsageLinkCardDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"></Column>
+                </DataTable>
+                <!-- <div v-if="selectedItem && selectedItem.id">{{ treeWords[selectedItem.id] }}</div> -->
+                <GlossaryUsageLinkTree v-if="selectedItem && selectedItem.id" class="p-col-3" :treeWords="treeWords[selectedItem.id]"></GlossaryUsageLinkTree>
+            </div>
         </template>
     </Card>
 </template>
@@ -60,11 +62,12 @@ import Chip from 'primevue/chip'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import glossaryUsageLinkCardDescriptor from './GlossaryUsageLinkCardDescriptor.json'
+import GlossaryUsageLinkTree from './GlossaryUsageLinkTree.vue'
 
 export default defineComponent({
     name: 'glossary-usage-link-card',
-    components: { Card, Chip, Column, DataTable },
-    props: { title: { type: String }, items: { type: Array }, words: { type: Object } },
+    components: { Card, Chip, Column, DataTable, GlossaryUsageLinkTree },
+    props: { title: { type: String }, items: { type: Array }, words: { type: Object }, treeWords: { type: Object } },
     emits: ['selected'],
     data() {
         return {
@@ -96,7 +99,16 @@ export default defineComponent({
             console.log('ON DRAG DROP LINK ITEM: ', item)
             switch (item.itemType) {
                 case 'document':
-                    await this.addAssociatedWord(item.id, JSON.parse(event.dataTransfer.getData('text/plain')))
+                    await this.addAssociatedWordDocument(item.id, JSON.parse(event.dataTransfer.getData('text/plain')))
+                    break
+                case 'dataset':
+                    await this.addAssociatedWordDataset(item, JSON.parse(event.dataTransfer.getData('text/plain')))
+                    break
+                case 'businessClass':
+                    await this.addAssociatedWordBusinessClass(item.id, JSON.parse(event.dataTransfer.getData('text/plain')))
+                    break
+                case 'table':
+                    await this.addAssociatedWordTables(item.id, JSON.parse(event.dataTransfer.getData('text/plain')))
                     break
             }
         },
@@ -104,7 +116,7 @@ export default defineComponent({
             this.selectedItem = item.data
             this.$emit('selected', item.data)
         },
-        async addAssociatedWord(documentId: number, word: any) {
+        async addAssociatedWordDocument(documentId: number, word: any) {
             this.loading = true
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/addDocWlist', { DOCUMENT_ID: documentId, WORD_ID: word.WORD_ID })
@@ -125,15 +137,100 @@ export default defineComponent({
                 })
                 .finally(() => (this.loading = false))
         },
-        deleteWordConfirm(wordId: number, documentId: number) {
+        async addAssociatedWordDataset(dataset: any, word: any) {
+            // console.log('DATASET FOR ADD WORD: ', dataset)
+            // console.log('WORD FOR ADD WORD: ', word)
+            this.loading = true
+            await axios
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/addDataSetWlist', { COLUMN_NAME: '.SELF', DATASET_ID: dataset.id, ORGANIZATION: dataset.organization, WORD_ID: word.WORD_ID })
+                .then((response) => {
+                    if (!response.data.errors) {
+                        this.associatedWords[dataset.id].push(word)
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.createTitle'),
+                            msg: this.$t('common.toast.success')
+                        })
+                    }
+                })
+                .catch((response) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: response
+                    })
+                })
+                .finally(() => (this.loading = false))
+        },
+        async addAssociatedWordBusinessClass(businessClassId: number, word: any) {
+            console.log('BUSINESS CLASS FOR ADD WORD: ', businessClassId)
+            console.log('WORD FOR ADD WORD: ', word)
+            this.loading = true
+            await axios
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/addMetaBcWlist', { COLUMN_NAME: '.SELF', META_BC_ID: businessClassId, WORD_ID: word.WORD_ID })
+                .then((response) => {
+                    if (!response.data.errors) {
+                        this.associatedWords[businessClassId].push(word)
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.createTitle'),
+                            msg: this.$t('common.toast.success')
+                        })
+                    }
+                })
+                .catch((response) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: response
+                    })
+                })
+                .finally(() => (this.loading = false))
+        },
+        async addAssociatedWordTables(tableId: number, word: any) {
+            console.log('TABLE FOR ADD WORD: ', tableId)
+            console.log('WORD FOR ADD WORD: ', word)
+            this.loading = true
+            await axios
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/addMetaTableWlist', { COLUMN_NAME: '.SELF', META_TABLE_ID: tableId, WORD_ID: word.WORD_ID })
+                .then((response) => {
+                    if (!response.data.errors) {
+                        this.associatedWords[tableId].push(word)
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.createTitle'),
+                            msg: this.$t('common.toast.success')
+                        })
+                    }
+                })
+                .catch((response) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: response
+                    })
+                })
+                .finally(() => (this.loading = false))
+        },
+        deleteWordConfirm(wordId: number, item: any) {
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
                 header: this.$t('common.toast.deleteTitle'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => this.deleteWord(wordId, documentId)
+                accept: () => this.handleDelete(wordId, item)
             })
         },
-        async deleteWord(wordId: number, documentId: number) {
+        async handleDelete(wordId: number, item: any) {
+            console.log('ITEM FOR DELETE: ', item)
+            switch (item.itemType) {
+                case 'document':
+                    await this.deleteDocumentWord(wordId, item.id)
+                    break
+                case 'dataset':
+                    await this.deleteDatasetWord(wordId, item)
+                    break
+                case 'businessClass':
+                    await this.deleteBusinessClassWord(wordId, item.id)
+                    break
+                case 'table':
+                    await this.deleteTablesWord(wordId, item.id)
+            }
+        },
+        async deleteDocumentWord(wordId: number, documentId: number) {
             console.log('WORD ID FOR DELETE: ', wordId)
             console.log('DOCUMENT ID FOR DELETE: ', documentId)
             this.loading = true
@@ -142,6 +239,75 @@ export default defineComponent({
                 .then((response) => {
                     if (response.data.Status === 'OK') {
                         this.removeWordFromAssociatedWords(wordId, documentId)
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.deleteTitle'),
+                            msg: this.$t('common.toast.deleteSuccess')
+                        })
+                    }
+                })
+                .catch((response) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: response
+                    })
+                })
+                .finally(() => (this.loading = false))
+        },
+        async deleteDatasetWord(wordId: number, dataset: any) {
+            console.log('WORD ID FOR DELETE: ', wordId)
+            console.log('DATASET FOR DELETE: ', dataset)
+            this.loading = true
+            await axios
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/deleteDatasetWlist?WORD_ID=${wordId}&DATASET_ID=${dataset.id}&ORGANIZATION=${dataset.organization}&COLUMN=.SELF`, {})
+                .then((response) => {
+                    if (response.data.Status === 'OK') {
+                        this.removeWordFromAssociatedWords(wordId, dataset.id)
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.deleteTitle'),
+                            msg: this.$t('common.toast.deleteSuccess')
+                        })
+                    }
+                })
+                .catch((response) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: response
+                    })
+                })
+                .finally(() => (this.loading = false))
+        },
+        async deleteBusinessClassWord(wordId: number, businessClassId: number) {
+            console.log('WORD ID FOR DELETE: ', wordId)
+            console.log('BUSINESS CLASS ID FOR DELETE: ', businessClassId)
+            this.loading = true
+            await axios
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/deleteMetaBcWlist?WORD_ID=${wordId}&BC_ID=${businessClassId}&COLUMN=.SELF`)
+                .then((response) => {
+                    if (!response.data.errors) {
+                        this.removeWordFromAssociatedWords(wordId, businessClassId)
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.deleteTitle'),
+                            msg: this.$t('common.toast.deleteSuccess')
+                        })
+                    }
+                })
+                .catch((response) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: response
+                    })
+                })
+                .finally(() => (this.loading = false))
+        },
+        async deleteTablesWord(wordId: number, tableId: number) {
+            console.log('WORD ID FOR DELETE: ', wordId)
+            console.log('TABLE ID FOR DELETE: ', tableId)
+            this.loading = true
+            await axios
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/deleteMetaTableWlist?WORD_ID=${wordId}&TABLE_ID=${tableId}&COLUMN=.SELF`)
+                .then((response) => {
+                    if (!response.data.errors) {
+                        this.removeWordFromAssociatedWords(wordId, tableId)
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.deleteTitle'),
                             msg: this.$t('common.toast.deleteSuccess')
