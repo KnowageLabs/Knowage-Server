@@ -20,18 +20,7 @@
                         <div class="p-m-3">
                             <InputText id="search-input" class="kn-material-input" v-model="searchWord" :placeholder="$t('common.search')" @input="filterGlossaryTree" />
                         </div>
-                        <Tree
-                            id="glossary-tree"
-                            :value="nodes"
-                            selectionMode="multiple"
-                            v-model:selectionKeys="selectedKeys"
-                            :metaKeySelection="false"
-                            :expandedKeys="expandedKeys"
-                            @nodeExpand="listContents(selectedGlossaryId, $event)"
-                            @nodeSelect="onNodeSelect"
-                            @nodeUnselect="onNodeUnselect"
-                            data-test="functionality-tree"
-                        >
+                        <Tree id="glossary-tree" :value="nodes" selectionMode="multiple" v-model:selectionKeys="selectedKeys" :metaKeySelection="false" :expandedKeys="expandedKeys" @nodeExpand="listContents(selectedGlossaryId, $event)" @nodeSelect="onNodeSelect" @nodeUnselect="onNodeUnselect">
                             <template #default="slotProps">
                                 <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonVisible[slotProps.node.id] = true" @mouseleave="buttonVisible[slotProps.node.id] = false" :data-test="'tree-item-' + slotProps.node.id">
                                     <span>{{ slotProps.node.label }}</span>
@@ -45,7 +34,7 @@
                 </div>
             </div>
 
-            <GlossaryUsageInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :contentInfo="contentInfo" @close="infoDialogVisible = false"></GlossaryUsageInfoDialog>
+            <GlossaryUsageInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :contentInfo="contentInfo" :selectedWords="selectedWords" @close="infoDialogVisible = false"></GlossaryUsageInfoDialog>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
                 <GlossaryUsageHint v-if="!selectedGlossaryId"></GlossaryUsageHint>

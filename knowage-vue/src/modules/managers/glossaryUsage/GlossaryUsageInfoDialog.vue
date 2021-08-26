@@ -107,7 +107,7 @@
                     <li>
                         <span>{{ $t('managers.glossaryUsage.associatedWord') }}:</span>
                         <ul class="p-my-3">
-                            <li v-for="(column, index) in contentInfo.data.Word" :key="index">
+                            <li v-for="(column, index) in contentInfo.data.Word" :key="index" :class="{ 'selected-word': wordIsSelected(column) }">
                                 {{ column.WORD }}
                             </li>
                         </ul>
@@ -118,7 +118,7 @@
                             <li v-for="(column, index) in contentInfo.data.SbiGlDataSetWlist" :key="index">
                                 {{ column.alias }}
                                 <ul>
-                                    <li v-for="(word, index) in column.word" :key="index">
+                                    <li v-for="(word, index) in column.word" :key="index" :class="{ 'selected-word': wordIsSelected(word) }">
                                         {{ word.WORD }}
                                     </li>
                                 </ul>
@@ -140,7 +140,7 @@
                     <li>
                         <span>{{ $t('managers.glossaryUsage.associatedWord') }}:</span>
                         <ul class="p-my-3">
-                            <li v-for="(column, index) in contentInfo.data.words" :key="index">
+                            <li v-for="(column, index) in contentInfo.data.words" :key="index" :class="{ 'selected-word': wordIsSelected(column) }">
                                 {{ column.WORD }}
                             </li>
                         </ul>
@@ -151,7 +151,7 @@
                             <li v-for="(column, index) in contentInfo.data.sbiGlBnessClsWlist" :key="index">
                                 {{ column.name }}
                                 <ul>
-                                    <li v-for="(word, index) in column.word" :key="index">
+                                    <li v-for="(word, index) in column.word" :key="index" :class="{ 'selected-word': wordIsSelected(word) }">
                                         {{ word.WORD }}
                                     </li>
                                 </ul>
@@ -173,7 +173,7 @@
                     <li>
                         <span>{{ $t('managers.glossaryUsage.associatedWord') }}:</span>
                         <ul class="p-my-3">
-                            <li v-for="(column, index) in contentInfo.data.words" :key="index">
+                            <li v-for="(column, index) in contentInfo.data.words" :key="index" :class="{ 'selected-word': wordIsSelected(word) }">
                                 {{ column.WORD }}
                             </li>
                         </ul>
@@ -184,7 +184,7 @@
                             <li v-for="(column, index) in contentInfo.data.sbiGlTableWlist" :key="index">
                                 {{ column.alias }}
                                 <ul>
-                                    <li v-for="(word, index) in column.word" :key="index">
+                                    <li v-for="(word, index) in column.word" :key="index" :class="{ 'selected-word': wordIsSelected(word) }">
                                         {{ word.WORD }}
                                     </li>
                                 </ul>
@@ -213,11 +213,19 @@ export default defineComponent({
     emits: ['close'],
     props: {
         visible: { type: Boolean },
-        contentInfo: { type: Object }
+        contentInfo: { type: Object },
+        selectedWords: { type: Array, required: true }
     },
     data() {
         return {
             glossaryUsageDescriptor
+        }
+    },
+    methods: {
+        wordIsSelected(word: any) {
+            console.log('WORD: ', word)
+            console.log('SELECTED WORDS: ', this.selectedWords)
+            return this.selectedWords.findIndex((el: any) => word.WORD_ID === el.WORD_ID) > -1
         }
     }
 })
@@ -240,5 +248,9 @@ p {
 .inline-list-item {
     display: inline-block;
     margin-right: 1rem;
+}
+
+.selected-word {
+    color: red;
 }
 </style>

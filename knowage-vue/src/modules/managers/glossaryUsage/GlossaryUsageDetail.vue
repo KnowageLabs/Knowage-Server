@@ -3,16 +3,16 @@
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         <div class="p-grid" v-if="!linkTableVisible">
             <div class="p-col-6">
-                <GlossaryUsageNavigationCard class="p-m-2" :title="$t('managers.glossaryUsage.documents')" :items="documents" @infoClicked="showDocumentInfo($event)" @linkClicked="onLinkClicked($event)"></GlossaryUsageNavigationCard>
+                <GlossaryUsageNavigationCard class="p-m-2" :type="'document'" :items="documents" @infoClicked="showDocumentInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onDocumentsSelected"></GlossaryUsageNavigationCard>
             </div>
             <div class="p-col-6">
-                <GlossaryUsageNavigationCard class="p-m-2" :title="$t('managers.glossaryUsage.dataset')" :items="datasets" @infoClicked="showDatasetInfo($event)" @linkClicked="onLinkClicked($event)"></GlossaryUsageNavigationCard>
+                <GlossaryUsageNavigationCard class="p-m-2" :type="'dataset'" :items="datasets" @infoClicked="showDatasetInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onDatasetsSelected"></GlossaryUsageNavigationCard>
             </div>
             <div class="p-col-6">
-                <GlossaryUsageNavigationCard class="p-m-2" :title="$t('managers.glossaryUsage.businessClass')" :items="businessClasses" @infoClicked="showBusinessClassInfo($event)" @linkClicked="onLinkClicked($event)"></GlossaryUsageNavigationCard>
+                <GlossaryUsageNavigationCard class="p-m-2" :type="'businessClass'" :items="businessClasses" @infoClicked="showBusinessClassInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onBusinessClassesSelected"></GlossaryUsageNavigationCard>
             </div>
             <div class="p-col-6">
-                <GlossaryUsageNavigationCard class="p-m-2" :title="$t('managers.glossaryUsage.tables')" :items="tables" @infoClicked="showTableInfo($event)" @linkClicked="onLinkClicked($event)"></GlossaryUsageNavigationCard>
+                <GlossaryUsageNavigationCard class="p-m-2" :type="'table'" :items="tables" @infoClicked="showTableInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onTablesSelected"></GlossaryUsageNavigationCard>
             </div>
         </div>
         <GlossaryUsageLinkCard v-else :title="linkTableTitle" class="p-m-2" :items="linkTableItems" @close="linkTableVisible = false"></GlossaryUsageLinkCard>
@@ -66,7 +66,13 @@ export default defineComponent({
             const postData = {
                 type: type,
                 item: item,
-                word: { selected: this.selectedWords, search: '', item_number: 9000, page: 1, GLOSSARY_ID: this.glossaryId },
+                word: {
+                    selected: this.selectedWords,
+                    search: '',
+                    item_number: 9000,
+                    page: 1,
+                    GLOSSARY_ID: this.glossaryId
+                },
                 document: { selected: [], search: '', item_number: 9000, page: 1 },
                 dataset: { selected: [], search: '', item_number: 9000, page: 1 },
                 table: { selected: [], search: '', item_number: 9000, page: 1 },
@@ -90,15 +96,34 @@ export default defineComponent({
             }
             if ('dataset' in data) {
                 this.datasets = []
-                data.dataset.forEach((el: any) => this.datasets.push({ id: el.DATASET_ID, label: el.DATASET_NM, organization: el.DATASET_ORG, type: 'dataset' }))
+                data.dataset.forEach((el: any) =>
+                    this.datasets.push({
+                        id: el.DATASET_ID,
+                        label: el.DATASET_NM,
+                        organization: el.DATASET_ORG,
+                        type: 'dataset'
+                    })
+                )
             }
             if ('bness_cls' in data) {
                 this.businessClasses = []
-                data.bness_cls.forEach((el: any) => this.businessClasses.push({ id: el.BC_ID, label: el.META_MODEL_NAME + '.' + el.BC_NAME, type: 'businessClass' }))
+                data.bness_cls.forEach((el: any) =>
+                    this.businessClasses.push({
+                        id: el.BC_ID,
+                        label: el.META_MODEL_NAME + '.' + el.BC_NAME,
+                        type: 'businessClass'
+                    })
+                )
             }
             if ('table' in data) {
                 this.tables = []
-                data.table.forEach((el: any) => this.tables.push({ id: el.TABLE_ID, label: el.META_SOURCE_NAME + '.' + el.TABLE_NM, type: 'table' }))
+                data.table.forEach((el: any) =>
+                    this.tables.push({
+                        id: el.TABLE_ID,
+                        label: el.META_SOURCE_NAME + '.' + el.TABLE_NM,
+                        type: 'table'
+                    })
+                )
             }
             // console.log('DOCUMENTS LOADED: ', this.documents)
             // console.log('BUSINESS CLASSES LOADED: ', this.businessClasses)
@@ -131,7 +156,12 @@ export default defineComponent({
             this.loading = true
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getMetaBcInfo?META_BC_ID=${businessClass.id}`)
-                .then((response) => this.$emit('infoClicked', { data: response.data, type: 'businessClass' }))
+                .then((response) =>
+                    this.$emit('infoClicked', {
+                        data: response.data,
+                        type: 'businessClass'
+                    })
+                )
                 .finally(() => (this.loading = false))
         },
         async showTableInfo(table: any) {
@@ -143,18 +173,18 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         async onLinkClicked(type: string) {
-            console.log('LINK CLICKED!', type)
+            // console.log('LINK CLICKED!', type)
             switch (type) {
-                case 'Documents':
+                case 'document':
                     await this.loadDocuments()
                     break
-                case 'Dataset':
+                case 'dataset':
                     await this.loadDatasets()
                     break
-                case 'Business Class':
+                case 'businessClass':
                     await this.loadBusinessClasses()
                     break
-                case 'Tables':
+                case 'table':
                     await this.loadTables()
             }
         },
@@ -164,7 +194,15 @@ export default defineComponent({
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/listDocument?Page=1&ItemPerPage=&label=&scope=GLOSSARY')
                 .then((response) => {
-                    response.data.item.forEach((el: any) => this.linkTableItems.push({ id: el.DOCUMENT_ID, name: el.DOCUMENT_LABEL, description: el.DOCUMENT_DESCR, type: '', author: el.DOCUMENT_AUTH }))
+                    response.data.item.forEach((el: any) =>
+                        this.linkTableItems.push({
+                            id: el.DOCUMENT_ID,
+                            name: el.DOCUMENT_LABEL,
+                            description: el.DOCUMENT_DESCR,
+                            type: '',
+                            author: el.DOCUMENT_AUTH
+                        })
+                    )
                     this.linkTableTitle = this.$t('managers.glossaryUsage.documents')
                     this.linkTableVisible = true
                 })
@@ -176,7 +214,15 @@ export default defineComponent({
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasets/?asPagedList=true&Page=1&ItemPerPage=&label=')
                 .then((response) => {
-                    response.data.item.forEach((el: any) => this.linkTableItems.push({ id: el.id.dsId, name: el.name, description: el.description, type: el.type, author: el.owner }))
+                    response.data.item.forEach((el: any) =>
+                        this.linkTableItems.push({
+                            id: el.id.dsId,
+                            name: el.name,
+                            description: el.description,
+                            type: el.type,
+                            author: el.owner
+                        })
+                    )
                     this.linkTableTitle = this.$t('managers.glossaryUsage.dataset')
                     this.linkTableVisible = true
                 })
@@ -188,7 +234,15 @@ export default defineComponent({
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/metaBC/listMetaBC?Page=1&ItemPerPage=&label=')
                 .then((response) => {
-                    response.data.forEach((el: any) => this.linkTableItems.push({ id: el.id, name: el.name, description: '', type: '', author: '' }))
+                    response.data.forEach((el: any) =>
+                        this.linkTableItems.push({
+                            id: el.id,
+                            name: el.name,
+                            description: '',
+                            type: '',
+                            author: ''
+                        })
+                    )
                     this.linkTableTitle = this.$t('managers.glossaryUsage.businessClass')
                     this.linkTableVisible = true
                 })
@@ -200,11 +254,49 @@ export default defineComponent({
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/metaTable/listMetaTable?Page=1&ItemPerPage=&label=')
                 .then((response) => {
-                    response.data.forEach((el: any) => this.linkTableItems.push({ id: el.id, name: el.name, description: '', type: '', author: '' }))
+                    response.data.forEach((el: any) =>
+                        this.linkTableItems.push({
+                            id: el.id,
+                            name: el.name,
+                            description: '',
+                            type: '',
+                            author: ''
+                        })
+                    )
                     this.linkTableTitle = this.$t('managers.glossaryUsage.tables')
                     this.linkTableVisible = true
                 })
                 .finally(() => (this.loading = false))
+        },
+        onDocumentsSelected(documents: any) {
+            // console.log('SELECTED DOCUMENTS: ', documents)
+            this.selectedDocuments = []
+            documents.forEach((el: any) => this.selectedDocuments.push({ DOCUMENT_ID: el.id, DOCUMENT_LABEL: el.label }))
+            console.log('SELECTED DOCUMENTS AFTER FORMATING: ', this.selectedDocuments)
+        },
+        onDatasetsSelected(datasets: any) {
+            // console.log('SELECTED DATASETS: ', datasets)
+            this.selectedDatasets = []
+            datasets.forEach((el: any) => this.selectedDatasets.push({ DATASET_ID: el.id, DATASET_NM: el.label, DATASET_ORG: el.organization }))
+            console.log('SELECTED DATASETS AFTER FORMATING: ', this.selectedDatasets)
+        },
+        onBusinessClassesSelected(businessClasses: any) {
+            // console.log('SELECTED BUSINESS CLASSES: ', businessClasses)
+            this.selectedBusinessClasses = []
+            businessClasses.forEach((el: any) => {
+                const label = el.label.split('.')
+                this.selectedBusinessClasses.push({ BC_ID: el.id, META_MODEL_NAME: label[0], BC_NAME: label[1] })
+            })
+            console.log('SELECTED BUSINESS CLASSES AFTER FORMATING: ', this.selectedBusinessClasses)
+        },
+        onTablesSelected(tables: any) {
+            // console.log('SELECTED TABLES: ', tables)
+            this.selectedTables = []
+            tables.forEach((el: any) => {
+                const label = el.label.split('.')
+                this.selectedTables.push({ TABLE_ID: el.id, META_SOURCE_NAME: label[0], TABLE_NM: label[1] })
+            })
+            console.log('SELECTED TABLES AFTER FORMATING: ', this.selectedTables)
         }
     }
 })
