@@ -22,7 +22,14 @@
                         </div>
                         <Tree id="glossary-tree" :value="nodes" selectionMode="multiple" v-model:selectionKeys="selectedKeys" :metaKeySelection="false" :expandedKeys="expandedKeys" @nodeExpand="listContents(selectedGlossaryId, $event)" @nodeSelect="onNodeSelect" @nodeUnselect="onNodeUnselect">
                             <template #default="slotProps">
-                                <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonVisible[slotProps.node.id] = true" @mouseleave="buttonVisible[slotProps.node.id] = false" draggable="true" @dragstart="onDragStart($event, slotProps.node)" :data-test="'tree-item-' + slotProps.node.id">
+                                <div
+                                    class="p-d-flex p-flex-row p-ai-center"
+                                    @mouseover="buttonVisible[slotProps.node.id] = true"
+                                    @mouseleave="buttonVisible[slotProps.node.id] = false"
+                                    :draggable="slotProps.node.leaf"
+                                    @dragstart="onDragStart($event, slotProps.node)"
+                                    :data-test="'tree-item-' + slotProps.node.id"
+                                >
                                     <span>{{ slotProps.node.label }}</span>
                                     <div v-show="buttonVisible[slotProps.node.id]" class="p-ml-2">
                                         <Button icon="pi pi-info-circle" class="p-button-link p-button-sm p-p-0" @click.stop="showInfo(slotProps.node.data)" />
@@ -209,11 +216,10 @@ export default defineComponent({
             // console.log('SELECTED WORDS: ', this.selectedWords)
         },
         onDragStart(event: any, node: iNode) {
-            event.dataTransfer.setData('word', node)
+            event.dataTransfer.setData('text/plain', JSON.stringify(node.data))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
             // console.log('NODE', node)
-            console.log('IT WORKS', event)
         }
     }
 })

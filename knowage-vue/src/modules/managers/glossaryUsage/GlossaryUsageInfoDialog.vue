@@ -205,8 +205,6 @@ import { defineComponent } from 'vue'
 import Dialog from 'primevue/dialog'
 import glossaryUsageDescriptor from './GlossaryUsageDescriptor.json'
 
-// TODO Add class for selected words, if possible
-
 export default defineComponent({
     name: 'glossary-usage-info-dialog',
     components: { Dialog },

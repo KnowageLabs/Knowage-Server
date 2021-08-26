@@ -17,5 +17,11 @@
             "header": "common.author"
         }
     ],
-    "globalFilterFields": ["name", "description", "type", "author"]
+    "expanderHeaderStyle": {
+        "width": "3rem"
+    },
+    "globalFilterFields": ["name", "description", "type", "author"],
+    "dropZoneStyle": {
+        "min-height": "100px"
+    }
 }

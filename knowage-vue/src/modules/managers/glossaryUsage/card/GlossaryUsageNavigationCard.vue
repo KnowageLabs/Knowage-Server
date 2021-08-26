@@ -11,7 +11,39 @@
             </Toolbar>
         </template>
         <template #content>
-            <Listbox
+            <DataTable
+                :value="items"
+                class="p-datatable-sm kn-table"
+                dataKey="id"
+                v-model:selection="selectedItems"
+                selectionMode="multiple"
+                :metaKeySelection="false"
+                v-model:filters="filters"
+                :globalFilterFields="glossaryUsageNavigationCardDescriptor.globalFilterFields"
+                :paginator="true"
+                :rows="20"
+                responsiveLayout="stack"
+                breakpoint="960px"
+                @rowSelect="onItemsSelected"
+                @rowUnselect="onItemsSelected"
+            >
+                <template #header>
+                    <div class="table-header p-d-flex p-ai-center">
+                        <span id="search-container" class="p-input-icon-left p-mr-3">
+                            <i class="pi pi-search" />
+                            <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" />
+                        </span>
+                    </div>
+                </template>
+                <template #empty>{{ $t('managers.glossaryUsage.noWordsPresent', { type: title }) }}</template>
+                <Column class="kn-truncated" field="label" key="label"></Column>
+                <Column class="p-text-right">
+                    <template #body="slotProps">
+                        <Button icon="pi pi-info-circle" class="p-button-link" @click.stop="$emit('infoClicked', slotProps.data)" />
+                    </template>
+                </Column>
+            </DataTable>
+            <!-- <Listbox
                 class="kn-list"
                 v-model="selectedItems"
                 :multiple="true"
@@ -34,20 +66,22 @@
                         </div>
                     </div>
                 </template>
-            </Listbox>
+            </Listbox> -->
         </template>
     </Card>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { filterDefault } from '@/helpers/commons/filterHelper'
 import Card from 'primevue/card'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
 import glossaryUsageNavigationCardDescriptor from './GlossaryUsageNavigationCardDescriptor.json'
-import Listbox from 'primevue/listbox'
 
 export default defineComponent({
     name: 'glossary-usage-navigation-card',
-    components: { Card, Listbox },
+    components: { Card, Column, DataTable },
     props: {
         items: { type: Object },
         type: { type: String }
@@ -56,6 +90,7 @@ export default defineComponent({
     data() {
         return {
             glossaryUsageNavigationCardDescriptor,
+            filters: { global: [filterDefault] } as Object,
             selectedItems: []
         }
     },

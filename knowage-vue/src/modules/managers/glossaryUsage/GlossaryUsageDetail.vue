@@ -15,7 +15,7 @@
                 <GlossaryUsageNavigationCard class="p-m-2" :type="'table'" :items="tables" @infoClicked="showTableInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onTablesSelected"></GlossaryUsageNavigationCard>
             </div>
         </div>
-        <GlossaryUsageLinkCard v-else :title="linkTableTitle" class="p-m-2" :items="linkTableItems" @close="linkTableVisible = false"></GlossaryUsageLinkCard>
+        <GlossaryUsageLinkCard v-else :title="linkTableTitle" class="p-m-2" :items="linkTableItems" :words="selectedLinkItemWords" @close="linkTableVisible = false" @selected="onLinkItemSelect"></GlossaryUsageLinkCard>
     </div>
 </template>
 
@@ -43,11 +43,13 @@ export default defineComponent({
             linkTableVisible: false,
             linkTableTitle: '',
             linkTableItems: [] as any[],
+            selectedLinkItemWords: {} as any,
             loading: false
         }
     },
     watch: {
         async glossaryId() {
+            this.linkTableVisible = false
             await this.loadNavigationItems('all', 'word')
         },
         selectedWords: {
@@ -200,7 +202,8 @@ export default defineComponent({
                             name: el.DOCUMENT_LABEL,
                             description: el.DOCUMENT_DESCR,
                             type: '',
-                            author: el.DOCUMENT_AUTH
+                            author: el.DOCUMENT_AUTH,
+                            itemType: 'document'
                         })
                     )
                     this.linkTableTitle = this.$t('managers.glossaryUsage.documents')
@@ -220,7 +223,8 @@ export default defineComponent({
                             name: el.name,
                             description: el.description,
                             type: el.type,
-                            author: el.owner
+                            author: el.owner,
+                            itemType: 'dataset'
                         })
                     )
                     this.linkTableTitle = this.$t('managers.glossaryUsage.dataset')
@@ -240,7 +244,8 @@ export default defineComponent({
                             name: el.name,
                             description: '',
                             type: '',
-                            author: ''
+                            author: '',
+                            itemType: 'businessClass'
                         })
                     )
                     this.linkTableTitle = this.$t('managers.glossaryUsage.businessClass')
@@ -260,7 +265,8 @@ export default defineComponent({
                             name: el.name,
                             description: '',
                             type: '',
-                            author: ''
+                            author: '',
+                            itemType: 'table'
                         })
                     )
                     this.linkTableTitle = this.$t('managers.glossaryUsage.tables')
@@ -297,6 +303,22 @@ export default defineComponent({
                 this.selectedTables.push({ TABLE_ID: el.id, META_SOURCE_NAME: label[0], TABLE_NM: label[1] })
             })
             console.log('SELECTED TABLES AFTER FORMATING: ', this.selectedTables)
+        },
+        async onLinkItemSelect(item: any) {
+            console.log('LINK ITEM SELECTED: ', item)
+            switch (item.itemType) {
+                case 'document':
+                    await this.loadDocumentWords(item)
+                    break
+            }
+            console.log('SELECTED LINK ITEM WORDS: ', this.selectedLinkItemWords)
+        },
+        async loadDocumentWords(document: any) {
+            this.loading = true
+            await axios
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getDocumentInfo?DOCUMENT_ID=${document.id}`)
+                .then((response) => (this.selectedLinkItemWords[document.id] = response.data.word))
+                .finally(() => (this.loading = false))
         }
     }
 })
