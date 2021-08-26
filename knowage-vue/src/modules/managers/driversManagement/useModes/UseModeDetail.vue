@@ -6,13 +6,13 @@
                 <span>{{ $t('managers.driversManagement.useModes.details') }}</span>
                 <Badge :value="invalidModes" class="p-ml-2" severity="danger" v-if="invalidModes > 0"></Badge>
             </template>
-            <DetailsCard :selectedMode="mode" :selectionTypes="selectionTypes" :layers="layers" :isDate="isDate" :lovs="lovs" :selectedLov="selectedLov" @apply="changeLov"></DetailsCard>
+            <DetailsCard :selectedMode="mode" :selectionTypes="selectionTypes" :layers="layers" :isDate="isDate" :lovs="lovs"></DetailsCard>
         </TabPanel>
 
         <TabPanel>
             <template #header>
                 <span>{{ $t('managers.driversManagement.useModes.roles') }}</span>
-                <Badge value="1" class="p-ml-2" severity="danger" v-if="!mode.associatedRoles || mode.associatedRoles.lenght < 1"></Badge>
+                <Badge value="1" class="p-ml-2" severity="danger" v-if="invalidRoles"></Badge>
             </template>
             <RolesCard :roles="availableRoles" :selectedModeProp="mode"></RolesCard>
         </TabPanel>
@@ -82,41 +82,30 @@ export default defineComponent({
     },
     data() {
         return {
-            mode: {} as any,
-            selectedLov: {} as any
+            mode: {} as any
         }
     },
     computed: {
         invalidModes(): number {
             return this.mode.numberOfErrors
         },
+        invalidRoles(): boolean {
+            return this.mode.associatedRoles.length === 0
+        },
         availableRoles(): any {
-            return this.roles?.filter((role: any) => this.disabledRoles.findIndex((disabledRole: any) => role.id === disabledRole.id) < 0)
+            return this.roles?.filter((role: any) => this.disabledRoles.findIndex((disabledRole: any) => role.id === disabledRole?.id) < 0)
         }
     },
     watch: {
         selectedMode() {
             this.mode = this.selectedMode as any
-            this.setLov()
         }
     },
     mounted() {
         if (this.selectedMode) {
             this.mode = this.selectedMode as any
-            this.setLov()
         }
     },
-    methods: {
-        setLov() {
-            if (this.mode.idLov) {
-                this.selectedLov = this.lovs.filter((lov: any) => lov.id == this.mode.idLov)[0]
-            }
-        },
-        changeLov(lov: any) {
-            this.mode.idLov = lov.id
-            this.selectedLov = lov
-            console.log(this.selectedLov)
-        }
-    }
+    methods: {}
 })
 </script>

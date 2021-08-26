@@ -76,10 +76,10 @@
                 <div class="p-field p-col-6" v-if="mode.valueSelection === 'lov'">
                     <span class="p-input-icon-right">
                         <span class="p-float-label">
-                            <InputText id="lov" v-model="lov.name" class="kn-material-input" type="text" disabled />
+                            <InputText id="lov" v-model="typeLov.name" class="kn-material-input" type="text" disabled />
                             <label for="lov" class="kn-material-input-label"> LOV * </label>
                         </span>
-                        <i class="pi pi-search input-buton" @click="showLovsDialog" />
+                        <i class="pi pi-search input-buton" @click="showLovsDialog('type')" />
                     </span>
                     <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
                 </div>
@@ -118,10 +118,10 @@
                 <div class="p-field p-col-6" v-if="selectedDefault === 'lov'">
                     <span class="p-input-icon-right">
                         <span class="p-float-label">
-                            <InputText id="lov" class="kn-material-input" type="text" disabled />
+                            <InputText id="lov" v-model="defLov.name" class="kn-material-input" type="text" disabled />
                             <label for="lov" class="kn-material-input-label"> LOV * </label>
                         </span>
-                        <i class="pi pi-search input-buton" @click="showLovsDialog" />
+                        <i class="pi pi-search input-buton" @click="showLovsDialog('default')" />
                     </span>
                     <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
                 </div>
@@ -135,15 +135,15 @@
                 <div class="p-field p-col-6" v-if="selectedMax === 'lov'">
                     <span class="p-input-icon-right">
                         <span class="p-float-label">
-                            <InputText id="lov" class="kn-material-input" type="text" disabled />
+                            <InputText id="lov" v-model="maxLov.name" class="kn-material-input" type="text" disabled />
                             <label for="lov" class="kn-material-input-label"> LOV * </label>
                         </span>
-                        <i class="pi pi-search input-buton" @click="showLovsDialog" />
+                        <i class="pi pi-search input-buton" @click="showLovsDialog('max')" />
                     </span>
                     <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
                 </div>
             </form>
-            <LovsDialog :dialogVisible="dialogVisiable" :lovs="lovs" :selectedLovProp="selectedLov" @close="dialogVisiable = false" @apply="applyLov"></LovsDialog>
+            <LovsDialog :dialogVisible="dialogVisiable" :lovs="lovs" :selectedLovProp="lov" @close="dialogVisiable = false" @apply="applyLov"></LovsDialog>
         </template>
     </Card>
 </template>
@@ -161,10 +161,6 @@ export default defineComponent({
     components: { Dropdown, KnValidationMessages, LovsDialog },
     props: {
         selectedMode: {
-            type: Object,
-            required: false
-        },
-        selectedLov: {
             type: Object,
             required: false
         },
@@ -193,6 +189,10 @@ export default defineComponent({
             selectedDefault: null as any,
             selectedMax: null as any,
             lov: null as any,
+            typeLov: null as any,
+            defLov: null as any,
+            maxLov: null as any,
+            lovType: null as any,
             dialogVisiable: false,
             v$: useValidate() as any,
             useModeValidationtDescriptor
@@ -216,10 +216,11 @@ export default defineComponent({
         selectedMode() {
             this.v$.$reset()
             this.mode = this.selectedMode as any
-            this.lov = this.selectedLov as any
             this.handleDropdowns()
             this.v$.$touch()
             this.modeChanged()
+
+            this.handleLovs()
         }
     },
     mounted() {
@@ -227,13 +228,28 @@ export default defineComponent({
             this.mode = this.selectedMode as any
             this.handleDropdowns()
         }
-        this.lov = this.selectedLov as any
         this.v$.$touch()
         this.modeChanged()
+
+        this.handleLovs()
     },
     methods: {
-        showLovsDialog() {
+        showLovsDialog(lovType: string) {
             this.dialogVisiable = true
+            switch (lovType) {
+                case 'type':
+                    this.lov = this.typeLov
+                    this.lovType = 'type'
+                    break
+                case 'default':
+                    this.lov = this.defLov
+                    this.lovType = 'default'
+                    break
+                case 'max':
+                    this.lov = this.maxLov
+                    this.lovType = 'max'
+                    break
+            }
         },
         handleDropdowns() {
             if (this.mode.defaultFormula == null) {
@@ -265,8 +281,31 @@ export default defineComponent({
         },
         applyLov(lov: any) {
             this.dialogVisiable = false
-            this.lov = lov
-            this.$emit('apply', lov)
+            switch (this.lovType) {
+                case 'type':
+                    this.typeLov = lov
+                    this.mode.idLov = lov.id
+                    break
+                case 'default':
+                    this.defLov = lov
+                    this.mode.idLovForDefault = lov.id
+                    break
+                case 'max':
+                    this.maxLov = lov
+                    this.mode.idLovForMax = lov.id
+                    break
+            }
+        },
+        handleLovs() {
+            if (this.mode.idLov) {
+                this.typeLov = this.lovs?.filter((lov: any) => lov.id == this.mode.idLov)[0]
+            } else this.typeLov = { name: null }
+            if (this.mode.idLovForDefault) {
+                this.defLov = this.lovs?.filter((lov: any) => lov.id == this.mode.idLovForDefault)[0]
+            } else this.defLov = { name: null }
+            if (this.mode.idLovForMax) {
+                this.maxLov = this.lovs?.filter((lov: any) => lov.id == this.mode.idLovForMax)[0]
+            } else this.maxLov = { name: null }
         }
     }
 })

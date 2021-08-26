@@ -19,7 +19,7 @@
                         <template #empty>{{ $t('common.info.noDataFound') }}</template>
                         <template #option="slotProps">
                             <div class="kn-list-item" data-test="list-item">
-                                <Badge :value="slotProps.option.numberOfErrors" class="p-ml-2" severity="danger" v-if="slotProps.option.numberOfErrors > 0"></Badge>
+                                <Badge value="!" class="p-ml-2" severity="danger" v-if="slotProps.option.numberOfErrors > 0 || slotProps.option.associatedRoles.length === 0"></Badge>
                                 <div class="kn-list-item-text" v-tooltip.top="slotProps.option.description">
                                     <span>{{ slotProps.option.label }}</span>
                                     <span class="kn-list-item-text-secondary">{{ slotProps.option.name }}</span>
@@ -106,7 +106,7 @@ export default defineComponent({
             if (event.value) {
                 this.selectedUseMode = event.value
             } else {
-                this.selectedUseMode = { useID: -1, defaultFormula: null, idLovForMax: null }
+                this.selectedUseMode = { useID: -1, defaultFormula: null, idLovForMax: null, associatedRoles: [] }
                 this.modes.push(this.selectedUseMode)
             }
             this.disabledRoles = []
@@ -115,6 +115,7 @@ export default defineComponent({
                     this.disabledRoles = this.disabledRoles.concat(mode.associatedRoles)
                 }
             })
+            console.log(this.disabledRoles)
         },
         deleteModeConfirm(useMode: any) {
             this.$confirm.require({
