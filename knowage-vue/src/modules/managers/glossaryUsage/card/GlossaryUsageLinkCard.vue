@@ -11,6 +11,10 @@
             </Toolbar>
         </template>
         <template #content>
+            <div @drop="onDragDrop" @dragover.prevent @dragenter.prevent>
+                <h2>Test</h2>
+                <p>DROPZONE TEST!</p>
+            </div>
             <DataTable :value="items" class="p-datatable-sm kn-table" dataKey="id" v-model:filters="filters" :globalFilterFields="glossaryUsageLinkCardDescriptor.globalFilterFields" :paginator="true" :rows="20" responsiveLayout="stack" breakpoint="960px">
                 <template #header>
                     <div class="table-header p-d-flex p-ai-center">
@@ -46,6 +50,13 @@ export default defineComponent({
         }
     },
     async created() {},
-    methods: {}
+    methods: {
+        onDragDrop(event: any) {
+            console.log('ON DRAG DROP: ', event)
+            console.log('DROPED ITEM: ')
+            const word = event.dataTransfer.getData('word')
+            console.log(word)
+        }
+    }
 })
 </script>
