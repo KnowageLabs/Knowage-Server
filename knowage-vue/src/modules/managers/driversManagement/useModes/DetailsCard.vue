@@ -76,12 +76,12 @@
                 <div class="p-field p-col-6" v-if="mode.valueSelection === 'lov'">
                     <span class="p-input-icon-right">
                         <span class="p-float-label">
-                            <InputText id="lov" v-model="typeLov.name" class="kn-material-input" type="text" disabled />
+                            <InputText id="lov" v-model="mode.typeLov.name" class="kn-material-input" type="text" disabled />
                             <label for="lov" class="kn-material-input-label"> LOV * </label>
                         </span>
                         <i class="pi pi-search input-buton" @click="showLovsDialog('type')" />
                     </span>
-                    <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
+                    <!-- <KnValidationMessages class="p-mt-1" :vComp="v$.mode.typeLov" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.modality') }"></KnValidationMessages> -->
                 </div>
                 <div class="p-field p-col-6" v-if="mode.valueSelection === 'lov'">
                     <span class="p-float-label">
@@ -104,21 +104,33 @@
                 </div>
                 <div class="p-field p-col-6" v-if="mode.valueSelection === 'map_in'">
                     <span class="p-float-label">
-                        <Dropdown id="type" class="kn-material-input" v-model="mode.selectedLayer" :options="layers" optionLabel="name" optionValue="name" />
+                        <Dropdown
+                            id="type"
+                            class="kn-material-input"
+                            v-model="v$.mode.selectedLayer.$model"
+                            :options="layers"
+                            optionLabel="name"
+                            optionValue="name"
+                            :class="{
+                                'p-invalid': v$.mode.selectedLayer.$invalid && v$.mode.selectedLayer.$dirty
+                            }"
+                            @blur="v$.mode.selectedLayer.$touch()"
+                            @change="modeChanged"
+                        />
                         <label for="type" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.layer') }} * </label>
                     </span>
-                    <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
+                    <KnValidationMessages class="p-mt-1" :vComp="v$.mode.selectedLayer" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.layer') }"></KnValidationMessages>
                 </div>
                 <div class="p-field p-col-6" v-if="mode.valueSelection === 'map_in'">
                     <span class="p-float-label">
                         <InputText id="prop" class="kn-material-input" type="text" v-model="mode.selectedLayerProp" />
-                        <label for="prop" class="kn-material-input-label">{{ $t('managers.driversManagement.useModes.layerProp') }} * </label>
+                        <label for="prop" class="kn-material-input-label">{{ $t('managers.driversManagement.useModes.layerProp') }} </label>
                     </span>
                 </div>
                 <div class="p-field p-col-6" v-if="selectedDefault === 'lov'">
                     <span class="p-input-icon-right">
                         <span class="p-float-label">
-                            <InputText id="lov" v-model="defLov.name" class="kn-material-input" type="text" disabled />
+                            <InputText id="lov" v-model="mode.defLov.name" class="kn-material-input" type="text" disabled />
                             <label for="lov" class="kn-material-input-label"> LOV * </label>
                         </span>
                         <i class="pi pi-search input-buton" @click="showLovsDialog('default')" />
@@ -127,15 +139,27 @@
                 </div>
                 <div class="p-field p-col-6" v-if="selectedDefault === 'pickUp'">
                     <span class="p-float-label">
-                        <Dropdown id="defaultFormula" class="kn-material-input" v-model="mode.defaultFormula" :options="useModeDescriptor.defaultFormula" optionLabel="name" optionValue="f_value" />
+                        <Dropdown
+                            id="defaultFormula"
+                            class="kn-material-input"
+                            v-model="v$.mode.defaultFormula.$model"
+                            :options="useModeDescriptor.defaultFormula"
+                            optionLabel="name"
+                            optionValue="f_value"
+                            :class="{
+                                'p-invalid': v$.mode.defaultFormula.$invalid && v$.mode.defaultFormula.$dirty
+                            }"
+                            @blur="v$.mode.defaultFormula.$touch()"
+                            @change="modeChanged"
+                        />
                         <label for="defaultFormula" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.selectDefaultFormula') }} * </label>
                     </span>
-                    <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
+                    <KnValidationMessages class="p-mt-1" :vComp="v$.mode.defaultFormula" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.selectDefaultFormula') }"></KnValidationMessages>
                 </div>
                 <div class="p-field p-col-6" v-if="selectedMax === 'lov'">
                     <span class="p-input-icon-right">
                         <span class="p-float-label">
-                            <InputText id="lov" v-model="maxLov.name" class="kn-material-input" type="text" disabled />
+                            <InputText id="lov" v-model="mode.maxLov.name" class="kn-material-input" type="text" disabled />
                             <label for="lov" class="kn-material-input-label"> LOV * </label>
                         </span>
                         <i class="pi pi-search input-buton" @click="showLovsDialog('max')" />
@@ -149,7 +173,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { createValidations } from '@/helpers/commons/validationHelper'
+import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import Dropdown from 'primevue/dropdown'
 import useValidate from '@vuelidate/core'
 import useModeDescriptor from './UseModesDescriptor.json'
@@ -199,8 +223,22 @@ export default defineComponent({
         }
     },
     validations() {
+        const customValidators: ICustomValidatorMap = {
+            required_type_for_lov: () => {
+                return this.mode.valueSelection != 'lov' || this.mode.selectionType != null
+            },
+            required_lovId_for_lov: () => {
+                return this.mode.valueSelection != 'lov' || this.mode.typeLov != null
+            },
+            required_for_map_in: () => {
+                return this.mode.valueSelection != 'map_in' || (this.mode.selectedLayer != '' && this.mode.selectedLayer != null)
+            },
+            required_for_pick_up: () => {
+                return this.selectedDefault != 'pickUp' || (this.mode.defaultFormula != '' && this.mode.defaultFormula != null)
+            }
+        }
         const validationObject = {
-            mode: createValidations('mode', useModeValidationtDescriptor.validations.mode)
+            mode: createValidations('mode', useModeValidationtDescriptor.validations.mode, customValidators)
         }
         return validationObject
     },
@@ -238,15 +276,15 @@ export default defineComponent({
             this.dialogVisiable = true
             switch (lovType) {
                 case 'type':
-                    this.lov = this.typeLov
+                    this.lov = this.mode.typeLov
                     this.lovType = 'type'
                     break
                 case 'default':
-                    this.lov = this.defLov
+                    this.lov = this.mode.defLov
                     this.lovType = 'default'
                     break
                 case 'max':
-                    this.lov = this.maxLov
+                    this.lov = this.mode.maxLov
                     this.lovType = 'max'
                     break
             }
@@ -269,7 +307,7 @@ export default defineComponent({
         },
         handelDefaul() {
             if (this.mode.valueSelection == 'map_in') {
-                this.selectedDefault = null
+                this.selectedDefault = 'none'
             }
             this.modeChanged()
         },
@@ -278,34 +316,35 @@ export default defineComponent({
         },
         modeChanged() {
             this.mode.numberOfErrors = this.v$.$errors.length
+            console.log(this.selectedDefault)
         },
         applyLov(lov: any) {
             this.dialogVisiable = false
             switch (this.lovType) {
                 case 'type':
-                    this.typeLov = lov
+                    this.mode.typeLov = lov
                     this.mode.idLov = lov.id
                     break
                 case 'default':
-                    this.defLov = lov
+                    this.mode.defLov = lov
                     this.mode.idLovForDefault = lov.id
                     break
                 case 'max':
-                    this.maxLov = lov
+                    this.mode.maxLov = lov
                     this.mode.idLovForMax = lov.id
                     break
             }
         },
         handleLovs() {
             if (this.mode.idLov) {
-                this.typeLov = this.lovs?.filter((lov: any) => lov.id == this.mode.idLov)[0]
-            } else this.typeLov = { name: null }
+                this.mode.typeLov = this.lovs?.filter((lov: any) => lov.id == this.mode.idLov)[0]
+            } else this.mode.typeLov = { name: null }
             if (this.mode.idLovForDefault) {
-                this.defLov = this.lovs?.filter((lov: any) => lov.id == this.mode.idLovForDefault)[0]
-            } else this.defLov = { name: null }
+                this.mode.defLov = this.lovs?.filter((lov: any) => lov.id == this.mode.idLovForDefault)[0]
+            } else this.mode.defLov = { name: null }
             if (this.mode.idLovForMax) {
-                this.maxLov = this.lovs?.filter((lov: any) => lov.id == this.mode.idLovForMax)[0]
-            } else this.maxLov = { name: null }
+                this.mode.maxLov = this.lovs?.filter((lov: any) => lov.id == this.mode.idLovForMax)[0]
+            } else this.mode.maxLov = { name: null }
         }
     }
 })

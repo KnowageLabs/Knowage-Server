@@ -41,7 +41,23 @@
                 "fieldName": "selectionType",
                 "validators": [
                     {
-                        "key": "required"
+                        "key": "required_type_for_lov"
+                    }
+                ]
+            },
+            {
+                "fieldName": "selectedLayer",
+                "validators": [
+                    {
+                        "key": "required_for_map_in"
+                    }
+                ]
+            },
+            {
+                "fieldName": "defaultFormula",
+                "validators": [
+                    {
+                        "key": "required_for_pick_up"
                     }
                 ]
             }
