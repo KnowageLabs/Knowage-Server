@@ -49,6 +49,7 @@ export default defineComponent({
             driver: {} as any,
             types: [] as any[],
             modes: [] as any[],
+            modesToSave: [] as any[],
             roles: [] as any[],
             constraints: [] as any[],
             selectionTypes: [] as any[],
@@ -111,8 +112,20 @@ export default defineComponent({
             })
             this.driver.type = selectedType[0].VALUE_CD
         },
+        formatUseMode() {
+            this.modesToSave = this.modes.filter((mode) => mode.edited)
+            console.log('modesToSave', this.modesToSave)
+            this.modesToSave.forEach((mode) => {
+                mode.manualInput = mode.valueSelection == 'man_in' ? 1 : 0
+                if (mode.typeLov === { name: null }) {
+                    mode.idLov = -1
+                }
+            })
+            console.log('modesToSave after', this.modesToSave)
+        },
         async handleSubmit() {
             this.formatDriver()
+            this.formatUseMode()
 
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/'
             if (this.driver.id) {

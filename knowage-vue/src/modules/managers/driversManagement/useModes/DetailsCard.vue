@@ -308,6 +308,7 @@ export default defineComponent({
         handelDefaul() {
             if (this.mode.valueSelection == 'map_in') {
                 this.selectedDefault = 'none'
+                this.mode.typeLov = { name: null }
             }
             this.modeChanged()
         },
@@ -316,6 +317,7 @@ export default defineComponent({
         },
         modeChanged() {
             this.mode.numberOfErrors = this.v$.$errors.length
+            this.mode.edited = true
             console.log(this.selectedDefault)
         },
         applyLov(lov: any) {
