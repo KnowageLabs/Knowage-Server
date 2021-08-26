@@ -28,7 +28,7 @@
             </span>
         </div>
         <VCodeMirror v-if="codeMirrorVisiable" ref="codeMirror" class="p-mt-2" :options="options" v-model:value="code" :autoHeight="true" />
-        <DataTable v-else :value="rows" class="p-datatable-sm kn-table" responsiveLayout="stack">
+        <DataTable v-if="this.selectedLov.itypeCd === 'FIX_LOV'" :value="rows" class="p-datatable-sm kn-table" responsiveLayout="stack">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -36,6 +36,18 @@
             <Column field="VALUE" :header="$t('common.value')" class="kn-truncated"></Column>
             <Column field="DESCRIPTION" :header="$t('common.description')" class="kn-truncated"></Column>
         </DataTable>
+        <div class="p-field p-col-6" v-if="selectedLov.itypeCd === 'DATASET' || selectedLov.itypeCd === 'JAVACLASS'">
+            <span class="p-float-label">
+                <InputText id="label" class="kn-material-input" type="text" v-model="label" disabled />
+                <label for="label" class="kn-material-input-label">{{ $t('common.label') }} </label>
+            </span>
+        </div>
+        <div class="p-field p-col-6" v-if="selectedLov.itypeCd === 'DATASET' || selectedLov.itypeCd === 'JAVACLASS'">
+            <span class="p-float-label">
+                <InputText id="description" class="kn-material-input" type="text" v-model="name" disabled />
+                <label for="description" class="kn-material-input-label">{{ $t('common.name') }} </label>
+            </span>
+        </div>
     </form>
 </template>
 <script lang="ts">
@@ -63,6 +75,8 @@ export default defineComponent({
             rows: [],
             codeMirror: {} as any,
             codeMirrorVisiable: false,
+            label: null,
+            name: null,
             options: {
                 mode: 'text/x-mysql',
                 indentWithTabs: true,
@@ -118,8 +132,15 @@ export default defineComponent({
                 this.codeMirrorVisiable = false
                 let x = JSON.parse(this.lov?.lovProviderJSON)
                 Array.isArray(x.FIXLISTLOV.ROWS.ROW) ? (this.rows = x.FIXLISTLOV.ROWS.ROW) : (this.rows = Object.values(x.FIXLISTLOV.ROWS))
-            } else {
-                console.log(JSON.parse(this.lov?.lovProviderJSON))
+            } else if (this.selectedLov.itypeCd === 'DATASET') {
+                this.codeMirrorVisiable = false
+                let x = JSON.parse(this.lov?.lovProviderJSON)
+                this.label = x.DATASET.LABEL
+            } else if (this.selectedLov.itypeCd === 'JAVACLASS') {
+                this.codeMirrorVisiable = false
+                let x = JSON.parse(this.lov?.lovProviderJSON)
+                this.label = x.JAVACLASS.label
+                this.name = x.JAVACLASS.name
             }
         }
     }
