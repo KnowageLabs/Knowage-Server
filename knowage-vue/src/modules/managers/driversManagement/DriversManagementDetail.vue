@@ -29,7 +29,13 @@ export default defineComponent({
     },
     computed: {
         buttonDisabled(): any {
-            return !this.driver.label || !this.driver.name || !this.driver.typeId
+            return !this.driver.label || !this.driver.name || !this.driver.typeId || this.invalidUseModes > 0 || this.noRoleSelected > 0
+        },
+        invalidUseModes(): any {
+            return this.modes.filter((mode: any) => mode.numberOfErrors > 0).length
+        },
+        noRoleSelected(): any {
+            return this.modes.filter((mode: any) => mode.associatedRoles.length === 0).length
         },
         title(): any {
             return this.driver.id ? this.driver.name : this.$t('common.new')
@@ -56,6 +62,7 @@ export default defineComponent({
             layers: [] as any[],
             lovs: [] as any[],
             operation: 'insert',
+            useModeOperation: 'insert',
             driversManagemenDetailtDescriptor
         }
     },
@@ -113,15 +120,31 @@ export default defineComponent({
             this.driver.type = selectedType[0].VALUE_CD
         },
         formatUseMode() {
-            this.modesToSave = this.modes.filter((mode) => mode.edited)
+            let tmp = this.modes.filter((mode) => mode.edited)
+            this.modesToSave = [...tmp]
             console.log('modesToSave', this.modesToSave)
             this.modesToSave.forEach((mode) => {
+                mode.maximizerEnabled = false
                 mode.manualInput = mode.valueSelection == 'man_in' ? 1 : 0
-                if (mode.typeLov === { name: null }) {
+                if (mode.idLov === null) {
                     mode.idLov = -1
                 }
+                if (mode.idLovForDefault === null) {
+                    mode.idLovForDefault = -1
+                }
+                if (mode.idLovForMax === null) {
+                    mode.idLovForMax = -1
+                }
+                //if (!this.isDateType) mode.maxrg = 'none'
+
+                delete mode.numberOfErrors
+                delete mode.defLov
+                delete mode.typeLov
+                delete mode.maxLov
+                delete mode.edited
             })
             console.log('modesToSave after', this.modesToSave)
+            console.log('modes after', this.modes)
         },
         async handleSubmit() {
             this.formatDriver()
@@ -152,12 +175,32 @@ export default defineComponent({
                         msg: error.message
                     })
                 })
+            this.modesToSave.forEach(async (mode) => {
+                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/modes/'
+                mode.id = this.driver.id
+                if (mode.useID != -1) {
+                    this.useModeOperation = 'update'
+                    url += mode.id
+                } else {
+                    delete mode.useID
+                    this.useModeOperation = 'insert'
+                }
+                await this.sendUseModeRequest(url, mode)
+                this.getModes()
+            })
         },
         sendRequest(url: string) {
             if (this.operation === 'insert') {
                 return axios.post(url, this.driver)
             } else {
                 return axios.put(url, this.driver)
+            }
+        },
+        sendUseModeRequest(url: string, useMode: any) {
+            if (this.useModeOperation === 'insert') {
+                return axios.post(url, useMode)
+            } else {
+                return axios.put(url, useMode)
             }
         },
         setDirty(): void {

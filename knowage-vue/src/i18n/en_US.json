@@ -566,6 +566,7 @@
                 "hint": "No use mode selected",
                 "layer": "Layer",
                 "layerProp": "Layer property",
+                "lov": "LOV",
                 "maxValue": "Max value",
                 "modality": "Select modality",
                 "roles": "Roles",
