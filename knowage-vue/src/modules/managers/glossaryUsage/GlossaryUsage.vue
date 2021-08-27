@@ -13,14 +13,28 @@
                     <Dropdown id="glossary" class="kn-material-input" v-model="selectedGlossaryId" :options="glossaryList" optionLabel="GLOSSARY_NM" optionValue="GLOSSARY_ID" :placeholder="$t('managers.glossaryUsage.selectGlossary')" @change="listContents($event.value, null)" />
                 </div>
                 <div>
-                    <div v-if="!selectedGlossaryId" id="glossary-hint">
+                    <div v-if="glossaryList.length === 0" data-test="no-glossary-found-hint">
+                        {{ $t('common.info.noDataFound') }}
+                    </div>
+                    <div v-else-if="!selectedGlossaryId" id="glossary-hint" data-test="no-glossary-selected-tree-hint">
                         <p>{{ $t('managers.glossaryUsage.glossaryHint') }}</p>
                     </div>
                     <div v-else>
                         <div class="p-m-3">
-                            <InputText id="search-input" class="kn-material-input" v-model="searchWord" :placeholder="$t('common.search')" @input="filterGlossaryTree" />
+                            <InputText id="search-input" class="kn-material-input" v-model="searchWord" :placeholder="$t('common.search')" @input="filterGlossaryTree" data-test="search-input" />
                         </div>
-                        <Tree id="glossary-tree" :value="nodes" selectionMode="multiple" v-model:selectionKeys="selectedKeys" :metaKeySelection="false" :expandedKeys="expandedKeys" @nodeExpand="listContents(selectedGlossaryId, $event)" @nodeSelect="onNodeSelect" @nodeUnselect="onNodeUnselect">
+                        <Tree
+                            id="glossary-tree"
+                            :value="nodes"
+                            selectionMode="multiple"
+                            v-model:selectionKeys="selectedKeys"
+                            :metaKeySelection="false"
+                            :expandedKeys="expandedKeys"
+                            @nodeExpand="listContents(selectedGlossaryId, $event)"
+                            @nodeSelect="onNodeSelect"
+                            @nodeUnselect="onNodeUnselect"
+                            data-test="glossary-tree"
+                        >
                             <template #default="slotProps">
                                 <div
                                     class="p-d-flex p-flex-row p-ai-center"
@@ -44,7 +58,7 @@
             <GlossaryUsageInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :contentInfo="contentInfo" :selectedWords="selectedWords" @close="infoDialogVisible = false"></GlossaryUsageInfoDialog>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <GlossaryUsageHint v-if="!selectedGlossaryId"></GlossaryUsageHint>
+                <GlossaryUsageHint v-if="!selectedGlossaryId" data-test="no-glossary-selected-hint"></GlossaryUsageHint>
                 <GlossaryUsageDetail v-else :glossaryId="selectedGlossaryId" :selectedWords="selectedWords" @infoClicked="showNavigationItemInfo($event)"></GlossaryUsageDetail>
             </div>
         </div>
@@ -64,7 +78,13 @@ import Tree from 'primevue/tree'
 
 export default defineComponent({
     name: 'glossary-usage',
-    components: { Dropdown, GlossaryUsageInfoDialog, GlossaryUsageHint, GlossaryUsageDetail, Tree },
+    components: {
+        Dropdown,
+        GlossaryUsageInfoDialog,
+        GlossaryUsageHint,
+        GlossaryUsageDetail,
+        Tree
+    },
     data() {
         return {
             glossaryUsageDescriptor,
@@ -117,7 +137,7 @@ export default defineComponent({
             this.attachContentToTree(parent, content)
 
             // console.log('CONTENT: ', content)
-            // console.log('NODES', this.nodes)
+            console.log('NODES', this.nodes)
             this.loading = false
         },
         attachContentToTree(parent: any, content: iNode[]) {
@@ -149,7 +169,7 @@ export default defineComponent({
             let tempData = []
             this.timer = setTimeout(() => {
                 this.loading = true
-                // console.log('SEARCH WORD: ', this.searchWord)
+                console.log('SEARCH WORD: ', this.searchWord)
 
                 axios
                     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/glosstreeLike?WORD=${this.searchWord}&GLOSSARY_ID=${this.selectedGlossaryId}`)

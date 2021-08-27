@@ -31,7 +31,7 @@
                     <div class="table-header p-d-flex p-ai-center">
                         <span id="search-container" class="p-input-icon-left p-mr-3">
                             <i class="pi pi-search" />
-                            <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" />
+                            <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="search-input" />
                         </span>
                     </div>
                 </template>
@@ -39,7 +39,7 @@
                 <Column class="kn-truncated" field="label" key="label"></Column>
                 <Column class="p-text-right">
                     <template #body="slotProps">
-                        <Button icon="pi pi-info-circle" class="p-button-link" @click.stop="$emit('infoClicked', slotProps.data)" />
+                        <Button icon="pi pi-info-circle" class="p-button-link" @click.stop="$emit('infoClicked', slotProps.data)" :data-test="'info-button-' + slotProps.data.id" />
                     </template>
                 </Column>
             </DataTable>

@@ -356,17 +356,27 @@ export default defineComponent({
                     this.selectedLinkItemWords[businessClass.id] = response.data.words
                     this.selectedLinkItemTree[businessClass.id] = []
                     response.data.sbiGlBnessClsWlist.forEach((el: any) => {
-                        const tempNode = { key: el.columnId, id: el.columnId, label: el.name, children: [] as iNode[], data: el, leaf: false, style: '', organization: el.organization, businessClassId: response.data.metaBc.bcId, itemType: 'businessClassTree' }
+                        const tempNode = { key: el.columnId, id: el.columnId, label: el.name, children: [] as iNode[], data: el, leaf: false, style: '', businessClassId: response.data.metaBc.bcId, itemType: 'businessClassTree' }
                         el.word.forEach((el: any) => tempNode.children.push({ key: el.WORD_ID, id: el.WORD_ID, label: el.WORD, children: [] as iNode[], data: el, style: this.glossaryUsageDescriptor.node.style, leaf: true, parent: tempNode, itemType: 'businessClassTree' }))
                         this.selectedLinkItemTree[businessClass.id].push(tempNode)
                     })
+                    this.selectedLinkItemTree[businessClass.id].sort((a: any, b: any) => (a.label.toUpperCase() > b.label.toUpperCase() ? 1 : -1))
                 })
                 .finally(() => (this.loading = false))
         },
         async loadTableWords(table: any) {
             this.loading = true
             await this.loadTableInfo(table)
-                .then((response) => (this.selectedLinkItemWords[table.id] = response.data.words))
+                .then((response) => {
+                    this.selectedLinkItemWords[table.id] = response.data.words
+                    this.selectedLinkItemTree[table.id] = []
+                    response.data.sbiGlTableWlist.forEach((el: any) => {
+                        const tempNode = { key: el.columnId, id: el.columnId, label: el.name, children: [] as iNode[], data: el, leaf: false, style: '', metasourceId: response.data.metaTable.tableId, itemType: 'tableTree' }
+                        el.word.forEach((el: any) => tempNode.children.push({ key: el.WORD_ID, id: el.WORD_ID, label: el.WORD, children: [] as iNode[], data: el, style: this.glossaryUsageDescriptor.node.style, leaf: true, parent: tempNode, itemType: 'tableTree' }))
+                        this.selectedLinkItemTree[table.id].push(tempNode)
+                    })
+                    this.selectedLinkItemTree[table.id].sort((a: any, b: any) => (a.label.toUpperCase() > b.label.toUpperCase() ? 1 : -1))
+                })
                 .finally(() => (this.loading = false))
         },
         loadDatasetInfo(dataset: any) {

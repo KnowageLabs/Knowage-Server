@@ -97,6 +97,7 @@ export default defineComponent({
         treeWords: {
             handler() {
                 this.loadAssociatedWordsTree()
+                console.log('WORDS: ', this.words)
             },
             deep: true
         }
@@ -132,11 +133,14 @@ export default defineComponent({
                     await this.addAssociatedWordBusinessClass(item, JSON.parse(event.dataTransfer.getData('text/plain')), item.label, 'tree')
                     break
                 case 'table':
-                    await this.addAssociatedWordTables(item.id, JSON.parse(event.dataTransfer.getData('text/plain')))
+                    await this.addAssociatedWordTables(item, JSON.parse(event.dataTransfer.getData('text/plain')), '.SELF', 'array')
                     break
+                case 'tableTree':
+                    await this.addAssociatedWordTables(item, JSON.parse(event.dataTransfer.getData('text/plain')), item.label, 'tree')
             }
         },
         onRowExpand(item: any) {
+            console.log('EXPANDED ROWS: ', this.expandedRows)
             this.selectedItem = item.data
             this.$emit('selected', item.data)
         },
@@ -241,19 +245,32 @@ export default defineComponent({
                 })
                 .finally(() => (this.loading = false))
         },
-        async addAssociatedWordTables(tableId: number, word: any) {
-            console.log('TABLE FOR ADD WORD: ', tableId)
+        async addAssociatedWordTables(table: any, word: any, column: string, type: string) {
+            console.log('TABLE FOR ADD WORD: ', table)
             console.log('WORD FOR ADD WORD: ', word)
             this.loading = true
+            const id = type === 'tree' ? table.metasourceId : table.id
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/addMetaTableWlist', {
-                    COLUMN_NAME: '.SELF',
-                    META_TABLE_ID: tableId,
+                    COLUMN_NAME: column,
+                    META_TABLE_ID: id,
                     WORD_ID: word.WORD_ID
                 })
                 .then((response) => {
                     if (!response.data.errors) {
-                        this.associatedWords[tableId].push(word)
+                        type === 'tree'
+                            ? table.children.push({
+                                  key: word.WORD_ID,
+                                  id: word.WORD_ID,
+                                  label: word.WORD,
+                                  children: [] as any[],
+                                  data: word,
+                                  style: '',
+                                  leaf: true,
+                                  parent: table,
+                                  itemType: 'tableTree'
+                              })
+                            : this.associatedWords[id].push(word)
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.createTitle'),
                             msg: this.$t('common.toast.success')
@@ -295,7 +312,10 @@ export default defineComponent({
                     await this.deleteBusinessClassWord(wordId, item, item.parent.label, 'tree')
                     break
                 case 'table':
-                    await this.deleteTablesWord(wordId, item.id)
+                    await this.deleteTablesWord(wordId, item, '.SELF', 'array')
+                    break
+                case 'tableTree':
+                    await this.deleteTablesWord(wordId, item, item.parent.label, 'tree')
             }
         },
         async deleteDocumentWord(wordId: number, documentId: number) {
@@ -369,15 +389,16 @@ export default defineComponent({
                 })
                 .finally(() => (this.loading = false))
         },
-        async deleteTablesWord(wordId: number, tableId: number) {
+        async deleteTablesWord(wordId: number, table: any, column: string, type: string) {
             console.log('WORD ID FOR DELETE: ', wordId)
-            console.log('TABLE ID FOR DELETE: ', tableId)
+            console.log('TABLE FOR DELETE: ', table)
             this.loading = true
+            const id = type === 'tree' ? table.parent.metasourceId : table.id
             await axios
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/deleteMetaTableWlist?WORD_ID=${wordId}&TABLE_ID=${tableId}&COLUMN=.SELF`)
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/deleteMetaTableWlist?WORD_ID=${wordId}&TABLE_ID=${id}&COLUMN=${column}`)
                 .then((response) => {
                     if (!response.data.errors) {
-                        this.removeWordFromAssociatedWords(wordId, tableId)
+                        type === 'tree' ? this.removeWordFromTreeWords(wordId, table.parent) : this.removeWordFromAssociatedWords(wordId, id)
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.deleteTitle'),
                             msg: this.$t('common.toast.deleteSuccess')
