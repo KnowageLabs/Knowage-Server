@@ -12,5 +12,7 @@ export interface iNode {
     data: iFunctionality,
     style: any,
     leaf: boolean,
-    selectable?: boolean
+    selectable?: boolean,
+    parent?: iNode,
+    itemType?: string
 }

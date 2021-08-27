@@ -342,8 +342,8 @@ export default defineComponent({
                     this.selectedLinkItemWords[dataset.id] = response.data.Word
                     this.selectedLinkItemTree[dataset.id] = []
                     response.data.SbiGlDataSetWlist.forEach((el: any) => {
-                        const tempNode = { key: el.alias, id: el.alias, label: el.alias, children: [] as iNode[], data: el, leaf: false }
-                        el.word.forEach((el: any) => tempNode.children.push({ key: el.WORD_ID, id: el.WORD_ID, label: el.WORD, children: [] as iNode[], data: el, style: this.glossaryUsageDescriptor.node.style, leaf: true }))
+                        const tempNode = { key: el.alias, id: el.datasetId, label: el.alias, children: [] as iNode[], data: el, leaf: false, style: '', organization: el.organization, itemType: 'datasetTree' }
+                        el.word.forEach((el: any) => tempNode.children.push({ key: el.WORD_ID, id: el.WORD_ID, label: el.WORD, children: [] as iNode[], data: el, style: this.glossaryUsageDescriptor.node.style, leaf: true, parent: tempNode, itemType: 'datasetTree' }))
                         this.selectedLinkItemTree[dataset.id].push(tempNode)
                     })
                 })
@@ -352,7 +352,15 @@ export default defineComponent({
         async loadBusinessClassWords(businessClass: any) {
             this.loading = true
             await this.loadBusinessClassInfo(businessClass)
-                .then((response) => (this.selectedLinkItemWords[businessClass.id] = response.data.words))
+                .then((response) => {
+                    this.selectedLinkItemWords[businessClass.id] = response.data.words
+                    this.selectedLinkItemTree[businessClass.id] = []
+                    response.data.sbiGlBnessClsWlist.forEach((el: any) => {
+                        const tempNode = { key: el.columnId, id: el.columnId, label: el.name, children: [] as iNode[], data: el, leaf: false, style: '', organization: el.organization, businessClassId: response.data.metaBc.bcId, itemType: 'businessClassTree' }
+                        el.word.forEach((el: any) => tempNode.children.push({ key: el.WORD_ID, id: el.WORD_ID, label: el.WORD, children: [] as iNode[], data: el, style: this.glossaryUsageDescriptor.node.style, leaf: true, parent: tempNode, itemType: 'businessClassTree' }))
+                        this.selectedLinkItemTree[businessClass.id].push(tempNode)
+                    })
+                })
                 .finally(() => (this.loading = false))
         },
         async loadTableWords(table: any) {
