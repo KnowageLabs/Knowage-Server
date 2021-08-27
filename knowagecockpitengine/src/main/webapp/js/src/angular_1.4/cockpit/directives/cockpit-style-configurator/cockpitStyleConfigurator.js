@@ -95,6 +95,8 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 	$scope.cockpitModule_template = cockpitModule_template;
 	if(!$scope.ngModel) $scope.ngModel = {};
+	if ($scope.ngModel.showExcelExport == undefined)
+		$scope.ngModel.showExcelExport = $scope.cockpitModule_template.configuration.showExcelExport; // init widget export visibility according to cockpit settings
 
 	$scope.cockpitStyle={};
 	angular.copy(cockpitModule_template.configuration.style,$scope.cockpitStyle);
@@ -168,7 +170,7 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.changeShowScreenshot = function(){
 		$scope.ngModel.showScreenshot = !cockpitModule_template.configuration.showScreenshot;
 	}
-	
+
 	$scope.changeShowExcelExport = function(){
 		$scope.ngModel.showExcelExport = !cockpitModule_template.configuration.showExcelExport;
 	}
