@@ -48,6 +48,7 @@ public class UserInformationDTO {
 	private Locale locale = null;
 	private Object userUniqueIdentifier = null;
 	private Collection roles = null;
+	private Collection functionalities;
 
 	public UserInformationDTO(UserProfile user) throws EMFInternalError {
 		this.userId = String.valueOf(user.getUserId());
@@ -64,6 +65,10 @@ public class UserInformationDTO {
 		Collection rolesOrDefaultRole = user.getRolesForUse();
 		ArrayList<String> newList = new ArrayList<>(rolesOrDefaultRole);
 		this.defaultRole = newList.size() == 1 ? newList.get(0) : null;
+
+		// aggiungere il tipo
+		//
+		this.functionalities = user.getFunctionalities();
 
 	}
 
@@ -153,6 +158,14 @@ public class UserInformationDTO {
 
 	public void setRoles(Collection roles) {
 		this.roles = roles;
+	}
+
+	public Collection getFunctionalities() {
+		return functionalities;
+	}
+
+	public void setFunctionalities(Collection functionalities) {
+		this.functionalities = functionalities;
 	}
 
 }
