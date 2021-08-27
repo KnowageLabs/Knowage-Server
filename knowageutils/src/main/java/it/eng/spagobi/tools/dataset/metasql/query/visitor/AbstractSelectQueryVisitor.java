@@ -476,12 +476,12 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 			List<DataStoreCalculatedField> projectionsCalcFields = new ArrayList<DataStoreCalculatedField>();
 			int appendedProjectionsCounter = 0;
 			for (AbstractSelectionField abstractSelectionField : projectionsAbs) {
-				if (appendedProjectionsCounter > 0) {
-					queryBuilder.append(", ");
-				}
 				if (abstractSelectionField.getClass().equals(DataStoreCatalogFunctionField.class)) {
 					// skip catalog function columns, they are appended by python engine AFTER the query has been executed
 					continue;
+				}
+				if (appendedProjectionsCounter > 0) {
+					queryBuilder.append(", ");
 				}
 				if (abstractSelectionField.getClass().equals(DataStoreCalculatedField.class)) {
 					DataStoreCalculatedField projCalc = (DataStoreCalculatedField) abstractSelectionField;
