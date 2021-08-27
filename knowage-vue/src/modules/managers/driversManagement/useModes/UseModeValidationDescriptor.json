@@ -60,6 +60,14 @@
                         "key": "required_for_pick_up"
                     }
                 ]
+            },
+            {
+                "fieldName": "typeLov",
+                "validators": [
+                    {
+                        "key": "required_lovId_for_lov"
+                    }
+                ]
             }
         ]
     }

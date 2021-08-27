@@ -73,25 +73,6 @@
                         <label for="max" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.maxValue') }} * </label>
                     </span>
                 </div>
-                <!-- <div class="p-field p-col-6" v-if="mode.valueSelection === 'lov'">
-                    <span class="p-input-icon-right">
-                        <span class="p-float-label">
-                            <InputText
-                                id="lov"
-                                v-model="v$.mode.typeLov.name.$model"
-                                class="kn-material-input"
-                                type="text"
-                                disabled
-                                :class="{
-                                    'p-invalid': v$.mode.typeLov.name.$invalid && v$.mode.typeLov.name.$dirty
-                                }"
-                            />
-                            <label for="lov" class="kn-material-input-label"> LOV * </label>
-                        </span>
-                        <i class="pi pi-search input-buton" @click="showLovsDialog('type')" />
-                    </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.mode.typeLov.name" :additionalTranslateParams="{ fieldName: $t('common.type') }"></KnValidationMessages>
-                </div> -->
                 <div class="p-field p-col-6" v-if="mode.valueSelection === 'lov'">
                     <span class="p-input-icon-right">
                         <span class="p-float-label">
@@ -100,6 +81,7 @@
                         </span>
                         <i class="pi pi-search input-buton" @click="showLovsDialog('type')" />
                     </span>
+                    <KnValidationMessages class="p-mt-1" :vComp="v$.mode.typeLov" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.lov') }" :specificTranslateKeys="{ required_lovId_for_lov: 'common.validation.required' }"></KnValidationMessages>
                 </div>
                 <div class="p-field p-col-6" v-if="mode.valueSelection === 'lov'">
                     <span class="p-float-label">
@@ -247,7 +229,8 @@ export default defineComponent({
                 return this.mode.valueSelection != 'lov' || this.mode.selectionType != null
             },
             required_lovId_for_lov: () => {
-                return this.mode.valueSelection != 'lov' || this.mode.typeLov != null
+                console.log('Valid:', this.mode.valueSelection != 'lov' || this.mode.typeLov.name != null)
+                return this.mode.valueSelection != 'lov' || this.mode.typeLov.name != null
             },
             required_for_map_in: () => {
                 return this.mode.valueSelection != 'map_in' || (this.mode.selectedLayer != '' && this.mode.selectedLayer != null)
@@ -273,15 +256,18 @@ export default defineComponent({
         selectedMode() {
             this.v$.$reset()
             this.mode = this.selectedMode as any
+            console.log('MODE', this.mode)
+            console.log('TYPELOV', this.mode.typeLov)
             this.handleDropdowns()
             this.v$.$touch()
-            this.modeChanged()
+            setTimeout(() => {
+                this.modeChanged()
+            }, 500)
 
             this.handleLovs()
         },
         isDate() {
             this.maxVisiable = this.isDate
-            console.log('isDate:', this.isDate)
         }
     },
     mounted() {
@@ -290,9 +276,10 @@ export default defineComponent({
             this.handleDropdowns()
         }
         this.v$.$touch()
-        this.modeChanged()
-
         this.handleLovs()
+        setTimeout(() => {
+            this.modeChanged()
+        }, 500)
     },
     methods: {
         showLovsDialog(lovType: string) {
@@ -374,6 +361,7 @@ export default defineComponent({
         },
         modeChanged() {
             this.mode.numberOfErrors = this.v$.$errors.length
+            console.log('ERRORS', this.v$.$errors)
             this.mode.edited = true
             console.log(this.selectedDefault)
         },
@@ -383,6 +371,8 @@ export default defineComponent({
                 case 'type':
                     this.mode.typeLov = lov
                     this.mode.idLov = lov.id
+                    this.modeChanged()
+                    //this.v$.mode.typeLov.$touch()
                     break
                 case 'default':
                     this.mode.defLov = lov
