@@ -17,6 +17,9 @@
     	<md-card layout="column" flex class="right" ng-class="{'icon-r': selectedFunction.language=='R', 'icon-python': selectedFunction.language=='Python'}">
         	<md-card-content layout="column" class="noPadding">
         		<div ng-show="selectedFunction">
+        			<div>
+        				<h2>{{selectedFunction.name}}</h2>
+        			</div>
         			<div ng-show="selectedFunction.description">
 	        			<md-subheader> {{::translate.load('sbi.cockpit.widgets.table.catalogFunctions.function.description')}} </md-subheader>
 	        			<p style="margin: 0.5em" ng-bind-html="textToHtml(selectedFunction.description)"></p>
