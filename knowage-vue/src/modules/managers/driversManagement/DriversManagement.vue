@@ -50,6 +50,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { iDriver } from './DriversManagement'
 import axios from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
@@ -76,8 +77,8 @@ export default defineComponent({
             touched: false,
             formVisible: false,
             driversManagementDescriptor,
-            drivers: [] as any[],
-            selectedDriver: {} as any
+            drivers: [] as iDriver[],
+            selectedDriver: {} as iDriver
         }
     },
     created() {

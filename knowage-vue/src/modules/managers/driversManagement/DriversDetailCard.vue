@@ -110,7 +110,6 @@ export default defineComponent({
     },
     watch: {
         selectedDriver() {
-            //this.v$.$reset()
             this.driver = this.selectedDriver as any
             this.handleTypes()
         }

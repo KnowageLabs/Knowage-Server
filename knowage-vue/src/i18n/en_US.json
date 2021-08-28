@@ -558,6 +558,8 @@
             "hint": "Driver models a concept or a piece of data frequently used as a distinguishing criterion on the global data context.Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "options": "Options",
             "title": "Drivers management",
+            "functional": "Functional",
+            "temporal": "Temporal",
             "useModes": {
                 "backToList": "Back to list",
                 "constraints": "Constraints",

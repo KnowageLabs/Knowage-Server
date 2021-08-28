@@ -68,6 +68,22 @@
                         "key": "required_lovId_for_lov"
                     }
                 ]
+            },
+            {
+                "fieldName": "defLov",
+                "validators": [
+                    {
+                        "key": "required_lov_for_default"
+                    }
+                ]
+            },
+            {
+                "fieldName": "maxLov",
+                "validators": [
+                    {
+                        "key": "required_lov_for_max"
+                    }
+                ]
             }
         ]
     }

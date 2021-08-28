@@ -114,7 +114,6 @@ export default defineComponent({
                     this.disabledRoles = this.disabledRoles.concat(mode.associatedRoles)
                 }
             })
-            console.log(this.disabledRoles)
         },
         deleteModeConfirm(useMode: any) {
             this.$confirm.require({
@@ -125,7 +124,6 @@ export default defineComponent({
             })
         },
         async deleteMode(useMode: any) {
-            console.log('id useMode', useMode)
             if (useMode.useID != -1) {
                 await axios
                     .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/modes/' + useMode.useID)

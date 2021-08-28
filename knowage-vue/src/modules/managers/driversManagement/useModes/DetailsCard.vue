@@ -42,7 +42,7 @@
                         <label for="description" class="kn-material-input-label">{{ $t('common.description') }} </label>
                     </span>
                 </div>
-                <div class="p-field p-col-4">
+                <div class="p-field p-col-3">
                     <span class="p-float-label">
                         <Dropdown
                             id="type"
@@ -55,25 +55,13 @@
                                 'p-invalid': v$.mode.valueSelection.$invalid && v$.mode.valueSelection.$dirty
                             }"
                             @blur="v$.mode.valueSelection.$touch()"
-                            @change="handelDefaul"
+                            @change="setType"
                         />
                         <label for="type" class="kn-material-input-label"> {{ $t('common.type') }} * </label>
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.mode.valueSelection" :additionalTranslateParams="{ fieldName: $t('common.type') }"></KnValidationMessages>
                 </div>
-                <div class="p-field p-col-4">
-                    <span class="p-float-label">
-                        <Dropdown id="default" class="kn-material-input" v-model="selectedDefault" :options="defaults" optionLabel="name" optionValue="label" @change="setDefault" />
-                        <label for="default" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.defaultValue') }} * </label>
-                    </span>
-                </div>
-                <div class="p-field p-col-4" v-if="maxVisiable">
-                    <span class="p-float-label">
-                        <Dropdown id="max" class="kn-material-input" v-model="selectedMax" :options="useModeDescriptor.maxValues" optionLabel="name" optionValue="label" @change="setMax" />
-                        <label for="max" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.maxValue') }} * </label>
-                    </span>
-                </div>
-                <div class="p-field p-col-6" v-if="mode.valueSelection === 'lov'">
+                <div class="p-field p-col-5" v-if="mode.valueSelection === 'lov'">
                     <span class="p-input-icon-right">
                         <span class="p-float-label">
                             <InputText id="lov" v-model="mode.typeLov.name" class="kn-material-input" type="text" disabled />
@@ -83,7 +71,7 @@
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.mode.typeLov" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.lov') }" :specificTranslateKeys="{ required_lovId_for_lov: 'common.validation.required' }"></KnValidationMessages>
                 </div>
-                <div class="p-field p-col-6" v-if="mode.valueSelection === 'lov'">
+                <div class="p-field p-col-4" v-if="mode.valueSelection === 'lov'">
                     <span class="p-float-label">
                         <Dropdown
                             id="type"
@@ -102,7 +90,7 @@
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.mode.selectionType" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.modality') }" :specificTranslateKeys="{ required_type_for_lov: 'common.validation.required' }"></KnValidationMessages>
                 </div>
-                <div class="p-field p-col-6" v-if="mode.valueSelection === 'map_in'">
+                <div class="p-field p-col-5" v-if="mode.valueSelection === 'map_in'">
                     <span class="p-float-label">
                         <Dropdown
                             id="type"
@@ -121,10 +109,16 @@
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.mode.selectedLayer" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.layer') }" :specificTranslateKeys="{ required_for_map_in: 'common.validation.required' }"></KnValidationMessages>
                 </div>
-                <div class="p-field p-col-6" v-if="mode.valueSelection === 'map_in'">
+                <div class="p-field p-col-4" v-if="mode.valueSelection === 'map_in'">
                     <span class="p-float-label">
                         <InputText id="prop" class="kn-material-input" type="text" v-model="mode.selectedLayerProp" />
                         <label for="prop" class="kn-material-input-label">{{ $t('managers.driversManagement.useModes.layerProp') }} </label>
+                    </span>
+                </div>
+                <div class="p-field p-col-4">
+                    <span class="p-float-label">
+                        <Dropdown id="default" class="kn-material-input" v-model="selectedDefault" :options="defaults" optionLabel="name" optionValue="label" @change="setDefault" />
+                        <label for="default" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.defaultValue') }} * </label>
                     </span>
                 </div>
                 <div class="p-field p-col-6" v-if="selectedDefault === 'lov'">
@@ -135,7 +129,7 @@
                         </span>
                         <i class="pi pi-search input-buton" @click="showLovsDialog('default')" />
                     </span>
-                    <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
+                    <KnValidationMessages class="p-mt-1" :vComp="v$.mode.defLov" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.lov') }" :specificTranslateKeys="{ required_lov_for_default: 'common.validation.required' }"></KnValidationMessages>
                 </div>
                 <div class="p-field p-col-6" v-if="selectedDefault === 'pickUp'">
                     <span class="p-float-label">
@@ -156,6 +150,12 @@
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.mode.defaultFormula" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.selectDefaultFormula') }" :specificTranslateKeys="{ required_for_pick_up: 'common.validation.required' }"></KnValidationMessages>
                 </div>
+                <div class="p-field p-col-4" v-if="isDate">
+                    <span class="p-float-label">
+                        <Dropdown id="max" class="kn-material-input" v-model="selectedMax" :options="useModeDescriptor.maxValues" optionLabel="name" optionValue="label" @change="setMax" />
+                        <label for="max" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.maxValue') }} * </label>
+                    </span>
+                </div>
                 <div class="p-field p-col-6" v-if="selectedMax === 'lov'">
                     <span class="p-input-icon-right">
                         <span class="p-float-label">
@@ -164,7 +164,7 @@
                         </span>
                         <i class="pi pi-search input-buton" @click="showLovsDialog('max')" />
                     </span>
-                    <!-- <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages> -->
+                    <KnValidationMessages class="p-mt-1" :vComp="v$.mode.maxLov" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.lov') }" :specificTranslateKeys="{ required_lov_for_max: 'common.validation.required' }"></KnValidationMessages>
                 </div>
             </form>
             <LovsDialog :dialogVisible="dialogVisiable" :lovs="lovs" :selectedLovProp="lov" @close="dialogVisiable = false" @apply="applyLov"></LovsDialog>
@@ -212,11 +212,7 @@ export default defineComponent({
             selectedType: null,
             selectedDefault: null as any,
             selectedMax: null as any,
-            maxVisiable: null as any,
             lov: null as any,
-            typeLov: null as any,
-            defLov: null as any,
-            maxLov: null as any,
             lovType: null as any,
             dialogVisiable: false,
             v$: useValidate() as any,
@@ -229,7 +225,6 @@ export default defineComponent({
                 return this.mode.valueSelection != 'lov' || this.mode.selectionType != null
             },
             required_lovId_for_lov: () => {
-                console.log('Valid:', this.mode.valueSelection != 'lov' || this.mode.typeLov.name != null)
                 return this.mode.valueSelection != 'lov' || this.mode.typeLov.name != null
             },
             required_for_map_in: () => {
@@ -237,6 +232,12 @@ export default defineComponent({
             },
             required_for_pick_up: () => {
                 return this.selectedDefault != 'pickUp' || (this.mode.defaultFormula != '' && this.mode.defaultFormula != null)
+            },
+            required_lov_for_default: () => {
+                return this.selectedDefault != 'lov' || this.mode.defLov.name != null
+            },
+            required_lov_for_max: () => {
+                return this.selectedMax != 'lov' || this.mode.maxLov.name != null
             }
         }
         const validationObject = {
@@ -256,8 +257,6 @@ export default defineComponent({
         selectedMode() {
             this.v$.$reset()
             this.mode = this.selectedMode as any
-            console.log('MODE', this.mode)
-            console.log('TYPELOV', this.mode.typeLov)
             this.handleDropdowns()
             this.v$.$touch()
             setTimeout(() => {
@@ -265,9 +264,6 @@ export default defineComponent({
             }, 500)
 
             this.handleLovs()
-        },
-        isDate() {
-            this.maxVisiable = this.isDate
         }
     },
     mounted() {
@@ -315,45 +311,52 @@ export default defineComponent({
                 this.selectedMax = 'none'
             }
         },
-        handelDefaul() {
-            if (this.mode.valueSelection == 'map_in') {
-                this.selectedDefault = 'none'
-                this.mode.typeLov = { name: null }
-            }
-            this.modeChanged()
-        },
         setType() {
             this.selectedDefault = 'none'
             switch (this.mode.valueSelection) {
                 case 'lov':
                     this.mode.manualInput = 0
+                    this.mode.selectedLayer = null
+                    this.mode.selectedLayerProp = null
                     break
                 case 'man_in':
                     this.mode.idLov = null
+                    this.mode.typeLov = { name: null }
+                    this.mode.selectionType = null
+                    this.mode.selectedLayer = null
+                    this.mode.selectedLayerProp = null
                     break
                 case 'map_in':
                     this.mode.idLov = null
+                    this.mode.typeLov = { name: null }
+                    this.mode.selectionType = null
                     this.mode.manualInput = 0
                     break
             }
+            this.modeChanged()
         },
         setDefault() {
             switch (this.selectedDefault) {
                 case 'none':
                     this.mode.defaultFormula = null
                     this.mode.idLovForDefault = null
+                    this.mode.defLov = { name: null }
                     break
                 case 'lov':
                     this.mode.defaultFormula = null
                     break
                 case 'pickUp':
                     this.mode.idLovForDefault = null
+                    this.mode.defLov = { name: null }
                     break
             }
             this.modeChanged()
         },
         setMax() {
-            if (this.selectedMax == 'none') this.mode.idLovForMax = null
+            if (this.selectedMax == 'none') {
+                this.mode.idLovForMax = null
+                this.mode.maxLov = { name: null }
+            }
             this.modeChanged()
         },
         setDirty() {
@@ -361,9 +364,7 @@ export default defineComponent({
         },
         modeChanged() {
             this.mode.numberOfErrors = this.v$.$errors.length
-            console.log('ERRORS', this.v$.$errors)
             this.mode.edited = true
-            console.log(this.selectedDefault)
         },
         applyLov(lov: any) {
             this.dialogVisiable = false
@@ -371,8 +372,6 @@ export default defineComponent({
                 case 'type':
                     this.mode.typeLov = lov
                     this.mode.idLov = lov.id
-                    this.modeChanged()
-                    //this.v$.mode.typeLov.$touch()
                     break
                 case 'default':
                     this.mode.defLov = lov
@@ -383,6 +382,7 @@ export default defineComponent({
                     this.mode.idLovForMax = lov.id
                     break
             }
+            this.modeChanged()
         },
         handleLovs() {
             if (this.mode.idLov) {

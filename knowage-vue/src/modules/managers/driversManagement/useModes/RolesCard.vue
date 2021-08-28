@@ -1,15 +1,15 @@
 <template>
     <Card style="width:100%" class="p-m-2">
         <template #content>
-            <DataTable :paginator="true" :rows="10" v-model:selection="selectedMode.associatedRoles" :value="roles" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack">
-                <!-- <template #header>
+            <DataTable :paginator="true" :rows="10" v-model:selection="selectedMode.associatedRoles" :value="roles" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" v-model:filters="filters" filterDisplay="menu" data-test="values-list">
+                <template #header>
                     <div class="table-header">
                         <span class="p-input-icon-left">
                             <i class="pi pi-search" />
-                            <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
+                            <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="filter-input" />
                         </span>
                     </div>
-                </template> -->
+                </template>
                 <template #empty>
                     {{ $t('common.info.noDataFound') }}
                 </template>
@@ -27,6 +27,8 @@
 import { defineComponent } from 'vue'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
+import { filterDefault } from '@/helpers/commons/filterHelper'
+import { FilterOperator } from 'primevue/api'
 export default defineComponent({
     name: 'roles-card',
     components: { Column, DataTable },
@@ -42,12 +44,18 @@ export default defineComponent({
     },
     data() {
         return {
-            selectedMode: [] as any
+            selectedMode: [] as any,
+            filters: {
+                global: [filterDefault],
+                name: {
+                    operator: FilterOperator.AND,
+                    constraints: [filterDefault]
+                }
+            } as Object
         }
     },
     watch: {
         selectedModeProp() {
-            //this.v$.$reset()
             this.selectedMode = this.selectedModeProp as any[]
         }
     },

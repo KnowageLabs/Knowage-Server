@@ -13,6 +13,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { iDriver } from './DriversManagement'
 import DriversDetailCard from './DriversDetailCard.vue'
 import UseMode from './useModes/UseMode.vue'
 import axios from 'axios'
@@ -52,7 +53,7 @@ export default defineComponent({
     },
     data() {
         return {
-            driver: {} as any,
+            driver: {} as iDriver,
             types: [] as any[],
             modes: [] as any[],
             modesToSave: [] as any[],
@@ -122,7 +123,6 @@ export default defineComponent({
         formatUseMode() {
             let tmp = this.modes.filter((mode) => mode.edited)
             this.modesToSave = [...tmp]
-            console.log('modesToSave', this.modesToSave)
             this.modesToSave.forEach((mode) => {
                 mode.maximizerEnabled = false
                 mode.manualInput = mode.valueSelection == 'man_in' ? 1 : 0
@@ -135,7 +135,6 @@ export default defineComponent({
                 if (mode.idLovForMax === null) {
                     mode.idLovForMax = -1
                 }
-                //if (!this.isDateType) mode.maxrg = 'none'
 
                 delete mode.numberOfErrors
                 delete mode.defLov
@@ -143,8 +142,6 @@ export default defineComponent({
                 delete mode.maxLov
                 delete mode.edited
             })
-            console.log('modesToSave after', this.modesToSave)
-            console.log('modes after', this.modes)
         },
         async handleSubmit() {
             this.formatDriver()
