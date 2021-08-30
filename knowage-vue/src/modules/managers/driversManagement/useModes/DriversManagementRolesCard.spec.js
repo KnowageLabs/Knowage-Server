@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import Column from 'primevue/column'
 import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
-import RolesCard from './RolesCard.vue'
+import RolesCard from './DriversManagementRolesCard.vue'
 import InputText from 'primevue/inputtext'
 
 const mockedRoles = [

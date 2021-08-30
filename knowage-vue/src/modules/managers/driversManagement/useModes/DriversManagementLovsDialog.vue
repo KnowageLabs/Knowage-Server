@@ -39,7 +39,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
 import useModeDescriptor from './UseModesDescriptor.json'
-import LovsDetail from './LovsDetail.vue'
+import LovsDetail from './DriversManagementLovsDetail.vue'
 export default defineComponent({
     name: 'lovs-dialog',
     components: {

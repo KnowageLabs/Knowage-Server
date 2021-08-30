@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import Column from 'primevue/column'
 import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
-import ConstraintsCard from './ConstraintsCard.vue'
+import ConstraintsCard from './DriversManagementConstraintsCard.vue'
 import InputText from 'primevue/inputtext'
 
 const mockedConstraints = [

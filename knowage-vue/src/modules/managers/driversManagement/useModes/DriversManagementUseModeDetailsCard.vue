@@ -179,7 +179,7 @@ import useValidate from '@vuelidate/core'
 import useModeDescriptor from './UseModesDescriptor.json'
 import useModeValidationtDescriptor from './UseModeValidationDescriptor.json'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import LovsDialog from './LovsDialog.vue'
+import LovsDialog from './DriversManagementLovsDialog.vue'
 export default defineComponent({
     name: 'detail-card',
     components: { Dropdown, KnValidationMessages, LovsDialog },

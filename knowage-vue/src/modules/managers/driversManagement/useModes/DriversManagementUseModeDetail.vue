@@ -1,6 +1,6 @@
 <template>
     <KnHint :title="'managers.driversManagement.useModes.title'" :hint="'managers.driversManagement.useModes.hint'" v-if="!selectedMode.useID" data-test="mode-hint"></KnHint>
-    <TabView class="tabview-custom kn-page-content" v-else>
+    <TabView class="tabview-custom kn-page-content" v-else data-test="modes-form">
         <TabPanel>
             <template #header>
                 <span>{{ $t('managers.driversManagement.useModes.details') }}</span>
@@ -30,9 +30,9 @@ import { defineComponent } from 'vue'
 import Badge from 'primevue/badge'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
-import DetailsCard from './DetailsCard.vue'
-import RolesCard from './RolesCard.vue'
-import ConstraintsCard from './ConstraintsCard.vue'
+import DetailsCard from './DriversManagementUseModeDetailsCard.vue'
+import RolesCard from './DriversManagementRolesCard.vue'
+import ConstraintsCard from './DriversManagementConstraintsCard.vue'
 import KnHint from '@/components/UI/KnHint.vue'
 
 export default defineComponent({

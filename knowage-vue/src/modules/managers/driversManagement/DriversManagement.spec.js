@@ -158,7 +158,7 @@ describe('Drivers Management', () => {
     })
     it('shows the detail when clicking on a item', async () => {
         const wrapper = factory()
-        const openButton = wrapper.find('[data-test="open-form-button"]')
+        const openButton = wrapper.find('[data-test="list-item"]')
 
         await openButton.trigger('click')
 
