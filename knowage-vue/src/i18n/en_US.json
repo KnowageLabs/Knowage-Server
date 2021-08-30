@@ -506,6 +506,11 @@
             },
             "title": "Functionalities management"
         },
+        "glossaryDefinition": {
+            "hint": "Lorem ipsum dolor sit amet...",
+            "title": "Glossary Definition",
+            "wordsList": "Words List"
+        },
         "internationalizationManagement": {
             "defaultLanguage": "(Default)",
             "delete": {

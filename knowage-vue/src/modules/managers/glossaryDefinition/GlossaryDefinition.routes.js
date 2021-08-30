@@ -8,17 +8,6 @@ let routes = [
                 path: '',
                 component: () => import('@/modules/managers/glossaryDefinition/GlossaryDefinitionHint.vue')
             }
-            // {
-            //     path: 'new-glossary',
-            //     name: 'new-glossary',
-            //     component: () => import('@/modules/managers/glossaryDefinition/GlossaryDefinitionTabView.vue')
-            // },
-            // {
-            //     path: ':id',
-            //     name: 'edit-glossary',
-            //     component: () => import('@/modules/managers/glossaryDefinition/GlossaryDefinitionTabView.vue'),
-            //     props: true
-            // }
         ]
     }
 ]

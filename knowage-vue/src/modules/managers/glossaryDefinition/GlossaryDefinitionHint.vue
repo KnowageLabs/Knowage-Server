@@ -7,7 +7,7 @@ import { defineComponent } from 'vue'
 import KnHint from '@/components/UI/KnHint.vue'
 
 export default defineComponent({
-    name: 'kpi-definition-hint',
+    name: 'glossary-definition-hint',
     components: { KnHint }
 })
 </script>
