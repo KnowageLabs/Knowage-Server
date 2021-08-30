@@ -61,8 +61,8 @@
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.mode.valueSelection" :additionalTranslateParams="{ fieldName: $t('common.type') }"></KnValidationMessages>
                 </div>
-                <div>
-                    <div class="p-field p-col-5" v-if="mode.valueSelection === 'lov'">
+                <div class="p-col-9 p-fluid p-formgrid p-grid" v-if="mode.valueSelection === 'lov'">
+                    <div class="p-field p-col-6">
                         <span class="p-input-icon-right">
                             <span class="p-float-label">
                                 <InputText id="lov" v-model="mode.typeLov.name" class="kn-material-input" type="text" disabled />
@@ -72,50 +72,52 @@
                         </span>
                         <KnValidationMessages class="p-mt-1" :vComp="v$.mode.typeLov" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.lov') }" :specificTranslateKeys="{ required_lovId_for_lov: 'common.validation.required' }"></KnValidationMessages>
                     </div>
+                    <div class="p-field p-col-6">
+                        <span class="p-float-label">
+                            <Dropdown
+                                id="type"
+                                class="kn-material-input"
+                                v-model="v$.mode.selectionType.$model"
+                                :options="selectionTypes"
+                                optionLabel="VALUE_NM"
+                                optionValue="VALUE_CD"
+                                :class="{
+                                    'p-invalid': v$.mode.selectionType.$invalid && v$.mode.selectionType.$dirty
+                                }"
+                                @blur="v$.mode.selectionType.$touch()"
+                                @change="modeChanged"
+                            />
+                            <label for="type" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.modality') }} * </label>
+                        </span>
+                        <KnValidationMessages class="p-mt-1" :vComp="v$.mode.selectionType" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.modality') }" :specificTranslateKeys="{ required_type_for_lov: 'common.validation.required' }"></KnValidationMessages>
+                    </div>
                 </div>
-                <div class="p-field p-col-4" v-if="mode.valueSelection === 'lov'">
-                    <span class="p-float-label">
-                        <Dropdown
-                            id="type"
-                            class="kn-material-input"
-                            v-model="v$.mode.selectionType.$model"
-                            :options="selectionTypes"
-                            optionLabel="VALUE_NM"
-                            optionValue="VALUE_CD"
-                            :class="{
-                                'p-invalid': v$.mode.selectionType.$invalid && v$.mode.selectionType.$dirty
-                            }"
-                            @blur="v$.mode.selectionType.$touch()"
-                            @change="modeChanged"
-                        />
-                        <label for="type" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.modality') }} * </label>
-                    </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.mode.selectionType" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.modality') }" :specificTranslateKeys="{ required_type_for_lov: 'common.validation.required' }"></KnValidationMessages>
-                </div>
-                <div class="p-field p-col-5" v-if="mode.valueSelection === 'map_in'">
-                    <span class="p-float-label">
-                        <Dropdown
-                            id="type"
-                            class="kn-material-input"
-                            v-model="v$.mode.selectedLayer.$model"
-                            :options="layers"
-                            optionLabel="name"
-                            optionValue="name"
-                            :class="{
-                                'p-invalid': v$.mode.selectedLayer.$invalid && v$.mode.selectedLayer.$dirty
-                            }"
-                            @blur="v$.mode.selectedLayer.$touch()"
-                            @change="modeChanged"
-                        />
-                        <label for="type" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.layer') }} * </label>
-                    </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.mode.selectedLayer" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.layer') }" :specificTranslateKeys="{ required_for_map_in: 'common.validation.required' }"></KnValidationMessages>
-                </div>
-                <div class="p-field p-col-4" v-if="mode.valueSelection === 'map_in'">
-                    <span class="p-float-label">
-                        <InputText id="prop" class="kn-material-input" type="text" v-model="mode.selectedLayerProp" />
-                        <label for="prop" class="kn-material-input-label">{{ $t('managers.driversManagement.useModes.layerProp') }} </label>
-                    </span>
+                <div class="p-col-9 p-fluid p-formgrid p-grid" v-if="mode.valueSelection === 'map_in'">
+                    <div class="p-field p-col-6">
+                        <span class="p-float-label">
+                            <Dropdown
+                                id="type"
+                                class="kn-material-input"
+                                v-model="v$.mode.selectedLayer.$model"
+                                :options="layers"
+                                optionLabel="name"
+                                optionValue="name"
+                                :class="{
+                                    'p-invalid': v$.mode.selectedLayer.$invalid && v$.mode.selectedLayer.$dirty
+                                }"
+                                @blur="v$.mode.selectedLayer.$touch()"
+                                @change="modeChanged"
+                            />
+                            <label for="type" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.layer') }} * </label>
+                        </span>
+                        <KnValidationMessages class="p-mt-1" :vComp="v$.mode.selectedLayer" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.layer') }" :specificTranslateKeys="{ required_for_map_in: 'common.validation.required' }"></KnValidationMessages>
+                    </div>
+                    <div class="p-field p-col-6">
+                        <span class="p-float-label">
+                            <InputText id="prop" class="kn-material-input" type="text" v-model="mode.selectedLayerProp" />
+                            <label for="prop" class="kn-material-input-label">{{ $t('managers.driversManagement.useModes.layerProp') }} </label>
+                        </span>
+                    </div>
                 </div>
                 <div class="p-field p-col-4">
                     <span class="p-float-label">

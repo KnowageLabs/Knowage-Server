@@ -64,7 +64,7 @@ export default defineComponent({
             lovs: [] as any[],
             operation: 'insert',
             useModeOperation: 'insert',
-            showMapDriver: true,
+            showMapDriver: false,
             driversManagemenDetailtDescriptor
         }
     },
@@ -79,6 +79,7 @@ export default defineComponent({
             this.driver = { ...this.selectedDriver } as any
             this.getModes()
         }
+        this.showMapDriver = (this.$store.state as any).user.functionalities.indexOf('MapDriverManagement') > -1
         this.loadAll()
     },
 
@@ -111,6 +112,7 @@ export default defineComponent({
             this.getRoles()
             this.getConstraints()
             this.getselectionTypes()
+            console.log(this.showMapDriver)
             if (this.showMapDriver) this.getLayers()
             this.getLovs()
         },
@@ -138,14 +140,14 @@ export default defineComponent({
                     mode.idLovForMax = -1
                 }
 
-                delete mode.numberOfErrors
-                delete mode.defLov
-                delete mode.typeLov
-                delete mode.maxLov
-                delete mode.edited
-
+                const obj = JSON.parse(JSON.stringify(mode))
+                delete obj.numberOfErrors
+                delete obj.defLov
+                delete obj.typeLov
+                delete obj.maxLov
+                delete obj.edited
                 //this.modesToSave.push({ ...mode })
-                this.modesToSave.push(JSON.parse(JSON.stringify(mode)))
+                this.modesToSave.push(obj)
             })
         },
         async handleSubmit() {
