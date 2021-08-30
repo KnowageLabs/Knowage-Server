@@ -15,7 +15,7 @@
 import { defineComponent } from 'vue'
 import { iDriver } from './DriversManagement'
 import DriversDetailCard from './DriversDetailCard.vue'
-import UseMode from './useModes/UseMode.vue'
+import UseMode from './useModes/DriversManagementUseMode.vue'
 import axios from 'axios'
 import driversManagemenDetailtDescriptor from './DriversManagementDetailDescriptor.json'
 
@@ -121,9 +121,10 @@ export default defineComponent({
             this.driver.type = selectedType[0].VALUE_CD
         },
         formatUseMode() {
+            console.log('Before format', this.modes)
             let tmp = this.modes.filter((mode) => mode.edited)
-            this.modesToSave = [...tmp]
-            this.modesToSave.forEach((mode) => {
+            this.modesToSave = []
+            tmp.forEach((mode) => {
                 mode.maximizerEnabled = false
                 mode.manualInput = mode.valueSelection == 'man_in' ? 1 : 0
                 if (mode.idLov === null) {
@@ -141,50 +142,54 @@ export default defineComponent({
                 delete mode.typeLov
                 delete mode.maxLov
                 delete mode.edited
+
+                this.modesToSave.push({ ...mode })
             })
         },
         async handleSubmit() {
             this.formatDriver()
             this.formatUseMode()
+            console.log(this.modesToSave)
+            console.log(this.modes)
 
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/'
-            if (this.driver.id) {
-                this.operation = 'update'
-                url += this.driver.id
-            } else {
-                this.operation = 'insert'
-            }
+            // let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/'
+            // if (this.driver.id) {
+            //     this.operation = 'update'
+            //     url += this.driver.id
+            // } else {
+            //     this.operation = 'insert'
+            // }
 
-            await this.sendRequest(url)
-                .then((response) => {
-                    if (this.operation === 'insert') {
-                        this.driver = response.data
-                    }
-                    this.$emit('created', this.driver)
-                    this.$store.commit('setInfo', {
-                        title: this.$t(this.driversManagemenDetailtDescriptor.operation[this.operation].toastTitle),
-                        msg: this.$t(this.driversManagemenDetailtDescriptor.operation.success)
-                    })
-                })
-                .catch((error) => {
-                    this.$store.commit('setError', {
-                        title: this.$t('managers.constraintManagment.saveError'),
-                        msg: error.message
-                    })
-                })
-            this.modesToSave.forEach(async (mode) => {
-                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/modes/'
-                mode.id = this.driver.id
-                if (mode.useID != -1) {
-                    this.useModeOperation = 'update'
-                    url += mode.id
-                } else {
-                    delete mode.useID
-                    this.useModeOperation = 'insert'
-                }
-                await this.sendUseModeRequest(url, mode)
-                this.getModes()
-            })
+            // await this.sendRequest(url)
+            //     .then((response) => {
+            //         if (this.operation === 'insert') {
+            //             this.driver = response.data
+            //         }
+            //         this.$emit('created', this.driver)
+            //         this.$store.commit('setInfo', {
+            //             title: this.$t(this.driversManagemenDetailtDescriptor.operation[this.operation].toastTitle),
+            //             msg: this.$t(this.driversManagemenDetailtDescriptor.operation.success)
+            //         })
+            //     })
+            //     .catch((error) => {
+            //         this.$store.commit('setError', {
+            //             title: this.$t('managers.constraintManagment.saveError'),
+            //             msg: error.message
+            //         })
+            //     })
+            // this.modesToSave.forEach(async (mode) => {
+            //     let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/modes/'
+            //     mode.id = this.driver.id
+            //     if (mode.useID != -1) {
+            //         this.useModeOperation = 'update'
+            //         url += mode.id
+            //     } else {
+            //         delete mode.useID
+            //         this.useModeOperation = 'insert'
+            //     }
+            //     await this.sendUseModeRequest(url, mode)
+            //     this.getModes()
+            // })
         },
         sendRequest(url: string) {
             if (this.operation === 'insert') {
