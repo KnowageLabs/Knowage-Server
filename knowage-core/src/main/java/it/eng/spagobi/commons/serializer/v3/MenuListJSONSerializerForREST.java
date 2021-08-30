@@ -28,6 +28,7 @@ import java.util.Set;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -111,6 +112,11 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	 */
 	private Map<String, Integer> allowedMenuToNotDuplicate = new HashMap<String, Integer>();
 
+	/*
+	 * Technical menus that will be available for Community OR Enterprise edition key: Community menu ID Value: Enterprise menu ID
+	 */
+	private Map<String, String> technicalMenuCommunityOrEnterprise = new HashMap<String, String>();
+
 	public MenuListJSONSerializerForREST(IEngUserProfile userProfile, HttpSession session, String currentTheme) {
 		Assert.assertNotNull(userProfile, "User profile in input is null");
 		this.setUserProfile(userProfile);
@@ -125,12 +131,14 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		allowedMenuToNotDuplicate.put("menu.calendar", 4010);
 		allowedMenuToNotDuplicate.put("menu.lovs.management", 3002);
 		allowedMenuToNotDuplicate.put("menu.template.management", 8002);
-		allowedMenuToNotDuplicate.put("menu.importexport.document", 8003);
+		allowedMenuToNotDuplicate.put("menu.importexport.document", 10002);
 		allowedMenuToNotDuplicate.put("menu.importexport.resources", null);
-		allowedMenuToNotDuplicate.put("menu.importexport.users", 8005);
-		allowedMenuToNotDuplicate.put("menu.importexport.glossary", 8009);
-		allowedMenuToNotDuplicate.put("menu.importexport.catalog", 8007);
+		allowedMenuToNotDuplicate.put("menu.importexport.users", 10004);
+		allowedMenuToNotDuplicate.put("menu.importexport.glossary", 10008);
+		allowedMenuToNotDuplicate.put("menu.importexport.catalog", 10006);
 		allowedMenuToNotDuplicate.put("menu.i18n", 9001);
+
+		technicalMenuCommunityOrEnterprise.put("5008", "5009");
 	}
 
 	@Override
@@ -316,33 +324,31 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 					SourceBean groupItemSB = (SourceBean) groupItem;
 
-					boolean isLicensedMenu = isLicensedMenu(groupItemSB);
+					boolean isGroupItemToAdd = isGroupItemToAdd(groupItemSB);
 
-					if (isLicensedMenu) {
+					if (isGroupItemToAdd) {
 
 						List itemsSBList = groupItemSB.getAttributeAsList(ITEM);
 
 						JSONArray children = createItemsArray(locale, messageBuilder, funcs, technicalUserMenuJSONArray, itemsSBList, menuType);
 
 						if (children.length() > 0) {
-
-							SourceBean objSB = (SourceBean) groupItem;
-							JSONObject groupItemJSON = createMenuNode(locale, messageBuilder, objSB, menuType);
+							JSONObject groupItemJSON = createMenuNodeAndRecordGroupMenu(locale, messageBuilder, groupItemSB, menuType);
 							groupItemJSON.put(ITEMS, children);
 
 							tempMenuList.put(groupItemJSON);
 						}
-					} else if (!isLicensedMenu && isEnterpriseEdition() && groupItemSB.getAttribute("id").equals("8000")) {
+					} else if (isEnterpriseEdition() && groupItemSB.getAttribute("id").equals("8000")) {
 
 						List itemsSBList = groupItemSB.getAttributeAsList(ITEM);
-						JSONObject groupItemJSON = createMenuNode(locale, messageBuilder, groupItemSB, menuType);
+						JSONObject groupItemJSON = createMenuNodeAndRecordGroupMenu(locale, messageBuilder, groupItemSB, menuType);
 
 						for (Object object : itemsSBList) {
 							SourceBean objectSB = (SourceBean) object;
 
 							if (objectSB.getAttribute("id").equals("8012")) {
 								JSONArray children = new JSONArray();
-								JSONObject licenseMenu = createMenuNode(locale, messageBuilder, objectSB, menuType);
+								JSONObject licenseMenu = createMenuNodeAndRecordGroupMenu(locale, messageBuilder, objectSB, menuType);
 								children.put(licenseMenu);
 								groupItemJSON.put(ITEMS, children);
 								tempMenuList.put(groupItemJSON);
@@ -386,12 +392,16 @@ public class MenuListJSONSerializerForREST implements Serializer {
 					addElement = menuConditionIsSatisfied(itemSB);
 				} else if (requiredFunctionality != null) {
 					if (isAbleTo(requiredFunctionality, funcs)) {
-						addElement = isLicensedMenu(itemSB);
+						addElement = isGroupItemToAdd(itemSB);
 					} else
 						addElement = false;
 				}
 
-				addElement &= isUserMenuFotNotAdminToAdd(menuType, itemSB);
+				if (addElement)
+					addElement &= isUserMenuForNotAdmin(menuType, itemSB);
+
+				if (addElement)
+					addElement &= isMenuForKnowageCurrentType(menuType, itemSB);
 
 				if (addElement) {
 					JSONObject menu = createMenuNode(locale, messageBuilder, itemSB, menuType);
@@ -411,26 +421,54 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	 *
 	 *                 Method to know if the menu is part of the allowed user functionality that must be added even if the user is not an administrator
 	 */
-	private boolean isUserMenuFotNotAdminToAdd(MenuType menuType, SourceBean itemSB) {
+	private boolean isUserMenuForNotAdmin(MenuType menuType, SourceBean itemSB) {
 		boolean isToAdd = true;
-		List containedAttributes = itemSB.getContainedAttributes();
-		for (Object objAttribute : containedAttributes) {
-			SourceBeanAttribute attribute = (SourceBeanAttribute) objAttribute;
+		if (menuType == MenuType.ALLOWED_USER_FUNCTIONALITIES || menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES) {
+			String menuLabel = (String) itemSB.getAttribute(LABEL);
 
-			if (attribute.getKey().equals(LABEL)) {
-				String menuLabel = (String) attribute.getValue();
+			if (menuType == MenuType.ALLOWED_USER_FUNCTIONALITIES) {
 				// allowed user menu to add only if it is not admin and functionality is permitted in any case
-				if (menuType == MenuType.ALLOWED_USER_FUNCTIONALITIES) {
-					Integer technicalMenuId = allowedMenuToNotDuplicate.get(menuLabel);
-					if (technicalMenuId != null && technicalUserMenuIds.contains(technicalMenuId)) {
-						isToAdd = false;
-						break;
-					}
+				Integer technicalMenuId = allowedMenuToNotDuplicate.get(menuLabel);
+				if (technicalMenuId != null && technicalUserMenuIds.contains(technicalMenuId)) {
+					return false;
+				}
+			}
+
+		}
+
+		return isToAdd;
+
+	}
+
+	/**
+	 *
+	 * @param menuType
+	 * @param itemSB
+	 *
+	 *                 Method handle menus that can be switched from Community to Enterprise
+	 */
+	private boolean isMenuForKnowageCurrentType(MenuType menuType, SourceBean itemSB) {
+		boolean isToAdd = true;
+		if (menuType == MenuType.ALLOWED_USER_FUNCTIONALITIES || menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES) {
+
+			String menuId = (String) itemSB.getAttribute(ID);
+			if (menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES) {
+				if (technicalMenuCommunityOrEnterprise.containsKey(menuId)) {
+					isToAdd = !isEnterpriseEdition();
+					if (!isToAdd)
+						return false;
+				}
+
+				if (technicalMenuCommunityOrEnterprise.containsValue(menuId)) {
+					isToAdd = isEnterpriseEdition();
+					if (!isToAdd)
+						return false;
 				}
 			}
 		}
 
 		return isToAdd;
+
 	}
 
 	private boolean isInTechnicalUserMenu(JSONArray technicalUserMenuJSONArray, SourceBean itemSB, MessageBuilder messageBuilder, Locale locale)
@@ -446,7 +484,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return false;
 	}
 
-	private boolean isLicensedMenu(SourceBean itemSB) {
+	private boolean isGroupItemToAdd(SourceBean itemSB) {
 		Boolean isLicensed = true;
 
 		String requiredLicensesString = (String) itemSB.getAttribute(TO_BE_LICENSED);
@@ -455,7 +493,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				try {
 					Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
 
-					isLicensed = DocumentUtilities.getValidLicenses().size() > 0;
+					isLicensed = !DocumentUtilities.getValidLicenses().isEmpty();
 				} catch (ClassNotFoundException e) {
 					isLicensed = false;
 				}
@@ -540,6 +578,21 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return isSatisfied;
 	}
 
+	private JSONObject createMenuNodeAndRecordGroupMenu(Locale locale, MessageBuilder messageBuilder, SourceBean itemSB, MenuType menuType)
+			throws JSONException {
+		JSONObject menu = createMenuNode(locale, messageBuilder, itemSB, menuType);
+
+		if (menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES) {
+			String strId = (String) itemSB.getAttribute(ID);
+			if (strId != null) {
+				Integer id = Integer.valueOf(strId);
+				technicalUserMenuIds.add(id);
+			}
+		}
+
+		return menu;
+	}
+
 	private JSONObject createMenuNode(Locale locale, MessageBuilder messageBuilder, SourceBean itemSB, MenuType menuType) throws JSONException {
 		JSONObject menu = new JSONObject();
 
@@ -548,38 +601,35 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		for (Object objAttribute : containedAttributes) {
 			SourceBeanAttribute attribute = (SourceBeanAttribute) objAttribute;
 
-			if (!attribute.getKey().equals(ITEM) && attribute.getValue() != null && !String.valueOf(attribute.getValue()).isEmpty()) {
+			if (isAttributeToIgnore(attribute))
+				continue;
+			String value = String.valueOf(attribute.getValue());
+			String key = attribute.getKey();
+			if (!key.equals(ITEM) && StringUtils.isNotBlank(value)) {
 
-				String value = (String) attribute.getValue();
-				if (!attribute.getKey().equals(REQUIRED_FUNCTIONALITY) && !attribute.getKey().equals(CONDITION) && !attribute.getKey().equals(TO_BE_LICENSED)
-						&& !attribute.getKey().equals(ID)) {
+				if (key.equals(LABEL)) {
+					String menuLabel = (String) attribute.getValue();
+					value = messageBuilder.getMessage(menuLabel, locale);
+				} else if (key.equals(TO)) {
+					value = value.replace(PLACEHOLDER_SPAGOBI_CONTEXT, contextName);
+					value = value.replace(PLACEHOLDER_KNOWAGE_VUE_CONTEXT, vueContextName);
 
-					if (attribute.getKey().equals(LABEL)) {
-						String menuLabel = (String) attribute.getValue();
-						value = messageBuilder.getMessage(menuLabel, locale);
-					} else if (attribute.getKey().equals(TO)) {
-						value = value.replace(PLACEHOLDER_SPAGOBI_CONTEXT, contextName);
-						value = value.replace(PLACEHOLDER_KNOWAGE_VUE_CONTEXT, vueContextName);
+					value = value.replace(PLACEHOLDER_SPAGO_ADAPTER_HTTP, GeneralUtilities.getSpagoAdapterHttpUrl());
 
-						value = value.replace(PLACEHOLDER_SPAGO_ADAPTER_HTTP, GeneralUtilities.getSpagoAdapterHttpUrl());
-
-						value = value.replace(PLACEHOLDER_KNOWAGE_THEME, currentTheme);
-					}
-
-					menu.put(attribute.getKey(), value);
+					value = value.replace(PLACEHOLDER_KNOWAGE_THEME, currentTheme);
 				}
 
-			}
-			if (menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES) {
-				String strId = (String) itemSB.getAttribute(ID);
-				if (strId != null) {
-					Integer id = Integer.valueOf(strId);
-					technicalUserMenuIds.add(id);
-				}
+				menu.put(key, value);
+
 			}
 		}
 
 		return menu;
+	}
+
+	private boolean isAttributeToIgnore(SourceBeanAttribute attribute) {
+		return attribute.getKey().equals(REQUIRED_FUNCTIONALITY) || attribute.getKey().equals(CONDITION) || attribute.getKey().equals(TO_BE_LICENSED)
+				|| attribute.getKey().equals(ID);
 	}
 
 	private Object getChildren(List filteredMenuList, List children, int level, Locale locale) throws JSONException {
@@ -613,8 +663,9 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 				try {
 					switch (titleCode) {
-					case "menu.ServerManager":
+					case "menu.group.ServerManager":
 					case "menu.CacheManagement":
+					case "menu.group.ImportExport":
 						Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
 						break;
 					}

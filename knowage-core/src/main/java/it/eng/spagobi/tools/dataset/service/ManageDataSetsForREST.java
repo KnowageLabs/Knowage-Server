@@ -24,6 +24,9 @@ package it.eng.spagobi.tools.dataset.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -1578,8 +1581,10 @@ public class ManageDataSetsForREST {
 		HashMap<String, String> logParam = new HashMap<>();
 
 		if (ds != null) {
-			logParam.put("NAME", ds.getName());
-			logParam.put("LABEL", ds.getLabel());
+			String dsLabel = ds.getLabel();
+			String dsName = ds.getName();
+			logParam.put("NAME", dsName);
+			logParam.put("LABEL", dsLabel);
 			logParam.put("TYPE", ds.getDsType());
 			String id = json.optString(DataSetConstants.ID);
 			try {
@@ -1587,12 +1592,7 @@ public class ManageDataSetsForREST {
 				IDataSet existingByLabel = dsDao.loadDataSetByLabel(ds.getLabel());
 
 				if (id != null && !id.equals("") && !id.equals("0")) {
-					if (existingByName != null && !Integer.valueOf(id).equals(existingByName.getId())) {
-						throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.nameAlreadyExistent");
-					}
-					if (existingByLabel != null && !Integer.valueOf(id).equals(existingByLabel.getId())) {
-						throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.labelAlreadyExistent");
-					}
+					validateLabelAndName(id, dsName, dsLabel, existingByName, existingByLabel);
 					ds.setId(Integer.valueOf(id));
 					modifyPersistence(ds, logParam);
 					dsDao.modifyDataSet(ds);
@@ -1604,7 +1604,7 @@ public class ManageDataSetsForREST {
 					attributesResponseSuccessJSON.put("userIn", ds.getUserIn());
 					attributesResponseSuccessJSON.put("meta", new DataSetMetadataJSONSerializer().metadataSerializerChooser(ds.getDsMetadata()));
 				} else {
-
+					validateLabelAndName(id, dsName, dsLabel, existingByName, existingByLabel);
 					Integer dsID = dsDao.insertDataSet(ds);
 					VersionedDataSet dsSaved = (VersionedDataSet) dsDao.loadDataSetById(dsID);
 					auditlogger.info("[Saved dataset without metadata with id: " + dsID + "]");
@@ -1621,13 +1621,7 @@ public class ManageDataSetsForREST {
 				}
 				String operation = (id != null && !id.equals("") && !id.equals("0")) ? "DATA_SET.MODIFY" : "DATA_SET.ADD";
 				Boolean isFromSaveNoMetadata = json.optBoolean(DataSetConstants.IS_FROM_SAVE_NO_METADATA);
-				if (existingByLabel != null && !Integer.valueOf(id).equals(existingByLabel.getId())) {
-					throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.labelAlreadyExistent");
-				}
-
-				if (existingByName != null && !Integer.valueOf(id).equals(existingByName.getId())) {
-					throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.nameAlreadyExistent");
-				}
+				validateLabelAndName(id, dsName, dsLabel, existingByName, existingByLabel);
 				// handle insert of persistence and scheduling
 				if (!isFromSaveNoMetadata) {
 					auditlogger.info("[Start persisting metadata for dataset with id " + ds.getId() + "]");
@@ -1646,6 +1640,54 @@ public class ManageDataSetsForREST {
 			AuditLogUtilities.updateAudit(req, profile, "DATA_SET.ADD/MODIFY", logParam, "ERR");
 			logger.error("DataSet name, label or type are missing");
 			throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.fillFieldsError");
+		}
+	}
+
+	private void validateLabelAndName(String id, String dsName, String dsLabel, IDataSet existingByName, IDataSet existingByLabel) {
+		try {
+			if (!URLEncoder.encode(dsLabel, StandardCharsets.UTF_8.toString()).equals(dsLabel)) {
+				String message = String.format("The dataset label [%s] contains at least one invalid character", dsLabel);
+				logger.error(message);
+				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.label.invalid");
+			}
+		} catch (UnsupportedEncodingException e) {
+			String message = "Error during dataset label validation";
+			logger.error(message);
+			throw new SpagoBIRuntimeException(message, e);
+		}
+
+		try {
+			if (!URLEncoder.encode(dsName, StandardCharsets.UTF_8.toString()).equals(dsName)) {
+				String message = String.format("The dataset name [%s] contains at least one invalid character", dsLabel);
+				logger.error(message);
+				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.name.invalid");
+			}
+		} catch (UnsupportedEncodingException e) {
+			String message = "Error during dataset name validation";
+			logger.error(message);
+			throw new SpagoBIRuntimeException(message, e);
+		}
+
+		if (existingByName != null) {
+
+			if (!id.equals("") && !id.equals("0")) {
+
+				if (!Integer.valueOf(id).equals(existingByName.getId())) {
+					throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.name.alreadyExistent");
+				}
+			} else {
+				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.name.alreadyExistent");
+			}
+		}
+		if (existingByLabel != null) {
+
+			if (!id.equals("") && !id.equals("0")) {
+				if (!Integer.valueOf(id).equals(existingByLabel.getId())) {
+					throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.label.alreadyExistent");
+				}
+			} else {
+				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.label.alreadyExistent");
+			}
 		}
 	}
 
@@ -1687,8 +1729,8 @@ public class ManageDataSetsForREST {
 			IDataSet dataset = iDatasetDao.loadDataSetByLabel(ds.getLabel());
 			checkFileDataset(((VersionedDataSet) dataset).getWrappedDataset());
 
-			JSONArray parsListJSON = json.getJSONArray(DataSetConstants.PARS);
-			if (parsListJSON.length() > 0) {
+			JSONArray parsListJSON = json.optJSONArray(DataSetConstants.PARS);
+			if (parsListJSON != null && parsListJSON.length() > 0) {
 				logger.error("The dataset cannot be persisted because uses parameters!");
 				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsCannotPersist");
 			}

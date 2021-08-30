@@ -62,7 +62,7 @@
 
                 <div class="p-field">
                     <span>
-                        <label for="category" class="kn-material-input-label">{{ $t('managers.businessModelManager.analyticalDriver') }} * </label>
+                        <label for="category" class="kn-material-input-label">{{ $t('common.category') }} * </label>
                         <Dropdown
                             id="category"
                             class="kn-material-input"
@@ -71,7 +71,7 @@
                             }"
                             v-model="v$.businessModel.category.$model"
                             :options="categories"
-                            :placeholder="$t('managers.businessModelManager.analyticalDriverPlaceholder')"
+                            :placeholder="$t('common.category')"
                             :disabled="readonly"
                             @before-show="v$.businessModel.category.$touch()"
                             @change="onFieldChange('category', $event.value.VALUE_ID)"

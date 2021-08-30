@@ -33,7 +33,7 @@ public class FunctionCompleteDTO {
 	private String family;
 	private final List<FunctionInputColumnDTO> inputColumns = new ArrayList<>();
 	private final List<FunctionInputVariableDTO> inputVariables = new ArrayList<>();
-	private final List<String> keywords = new ArrayList<>();
+	private final List<String> tags = new ArrayList<>();
 	private String label;
 	private String language;
 	private String offlineScriptTrain;
@@ -91,8 +91,8 @@ public class FunctionCompleteDTO {
 		return inputVariables;
 	}
 
-	public List<String> getKeywords() {
-		return keywords;
+	public List<String> getTags() {
+		return tags;
 	}
 
 	public String getLabel() {

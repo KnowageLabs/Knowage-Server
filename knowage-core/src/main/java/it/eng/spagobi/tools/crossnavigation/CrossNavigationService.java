@@ -34,6 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.emory.mathcs.backport.java.util.Collections;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -99,6 +100,11 @@ public class CrossNavigationService {
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			dao.setUserProfile(profile);
 			NavigationDetail nd = dao.loadNavigation(id);
+			List<SimpleParameter> paramList = nd.getToPars();
+			if (paramList != null) {
+				Collections.sort(paramList);
+				nd.setToPars(paramList);
+			}
 			return Response.ok(JsonConverter.objectToJson(nd, nd.getClass())).build();
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
