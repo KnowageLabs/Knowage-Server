@@ -62,6 +62,14 @@ export default defineComponent({
             visibleOptions: [] as any[]
         }
     },
+    watch: {
+        tableData() {
+            this.loadData()
+        },
+        treeListTypeModel() {
+            this.loadModel()
+        }
+    },
     created() {
         this.loadData()
         this.loadSelectedModel()
