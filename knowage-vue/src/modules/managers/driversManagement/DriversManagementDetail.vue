@@ -6,7 +6,7 @@
             <Button class="kn-button p-button-text p-button-rounded" icon="pi pi-times" @click="closeTemplate" />
         </template>
     </Toolbar>
-    <div class="p-grid p-m-0 p-fluid p-jc-center" style="overflow:auto">
+    <div class="p-grid p-m-0 p-fluid p-jc-center" style="overflow:auto" data-test="drivers-form">
         <DriversDetailCard :selectedDriver="driver" :types="filteredTypes" @touched="setDirty"></DriversDetailCard>
         <UseMode :propModes="modes" :roles="roles" :constraints="constraints" :layers="layers" :lovs="lovs" :selectionTypes="filteredSelectionTypes" :isDate="isDateType"></UseMode>
     </div>
@@ -143,53 +143,53 @@ export default defineComponent({
                 delete mode.maxLov
                 delete mode.edited
 
-                this.modesToSave.push({ ...mode })
+                //this.modesToSave.push({ ...mode })
+                this.modesToSave.push(JSON.parse(JSON.stringify(mode)))
             })
         },
         async handleSubmit() {
             this.formatDriver()
             this.formatUseMode()
             console.log(this.modesToSave)
-            console.log(this.modes)
 
-            // let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/'
-            // if (this.driver.id) {
-            //     this.operation = 'update'
-            //     url += this.driver.id
-            // } else {
-            //     this.operation = 'insert'
-            // }
+            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/'
+            if (this.driver.id) {
+                this.operation = 'update'
+                url += this.driver.id
+            } else {
+                this.operation = 'insert'
+            }
 
-            // await this.sendRequest(url)
-            //     .then((response) => {
-            //         if (this.operation === 'insert') {
-            //             this.driver = response.data
-            //         }
-            //         this.$emit('created', this.driver)
-            //         this.$store.commit('setInfo', {
-            //             title: this.$t(this.driversManagemenDetailtDescriptor.operation[this.operation].toastTitle),
-            //             msg: this.$t(this.driversManagemenDetailtDescriptor.operation.success)
-            //         })
-            //     })
-            //     .catch((error) => {
-            //         this.$store.commit('setError', {
-            //             title: this.$t('managers.constraintManagment.saveError'),
-            //             msg: error.message
-            //         })
-            //     })
-            // this.modesToSave.forEach(async (mode) => {
-            //     let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/modes/'
-            //     mode.id = this.driver.id
-            //     if (mode.useID != -1) {
-            //         this.useModeOperation = 'update'
-            //         url += mode.id
-            //     } else {
-            //         delete mode.useID
-            //         this.useModeOperation = 'insert'
-            //     }
-            //     await this.sendUseModeRequest(url, mode)
-            //     this.getModes()
-            // })
+            await this.sendRequest(url)
+                .then((response) => {
+                    if (this.operation === 'insert') {
+                        this.driver = response.data
+                    }
+                    this.$emit('created', this.driver)
+                    this.$store.commit('setInfo', {
+                        title: this.$t(this.driversManagemenDetailtDescriptor.operation[this.operation].toastTitle),
+                        msg: this.$t(this.driversManagemenDetailtDescriptor.operation.success)
+                    })
+                })
+                .catch((error) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('managers.constraintManagment.saveError'),
+                        msg: error.message
+                    })
+                })
+            this.modesToSave.forEach(async (mode) => {
+                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/modes/'
+                mode.id = this.driver.id
+                if (mode.useID != -1) {
+                    this.useModeOperation = 'update'
+                    url += mode.id
+                } else {
+                    delete mode.useID
+                    this.useModeOperation = 'insert'
+                }
+                await this.sendUseModeRequest(url, mode)
+                this.getModes()
+            })
         },
         sendRequest(url: string) {
             if (this.operation === 'insert') {

@@ -43,7 +43,6 @@ import driversManagemenDetailtDescriptor from '../DriversManagementDetailDescrip
 import Listbox from 'primevue/listbox'
 import UseModeDetail from './UseModeDetail.vue'
 import Tooltip from 'primevue/tooltip'
-//import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 export default defineComponent({
     name: 'use-mode-card',
     components: { Listbox, UseModeDetail, Badge },
