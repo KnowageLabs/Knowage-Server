@@ -14,7 +14,8 @@
             <div class="p-d-flex p-flex-row">
                 <DataTable
                     :value="items"
-                    class="p-datatable-sm kn-table p-col-9"
+                    id="link-table"
+                    class="p-datatable-sm kn-table"
                     v-model:selection="selectedItem"
                     selectionMode="single"
                     v-model:expandedRows="expandedRows"
@@ -46,8 +47,7 @@
                     <Column :expander="true" :headerStyle="glossaryUsageLinkCardDescriptor.expanderHeaderStyle" />
                     <Column class="kn-truncated" v-for="col of glossaryUsageLinkCardDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"></Column>
                 </DataTable>
-                <!-- <div v-if="selectedItem && selectedItem.id">{{ treeWords[selectedItem.id] }}</div> -->
-                <GlossaryUsageLinkTree v-if="selectedItem && selectedItem.id" class="p-col-3" :treeWords="associatedWordsTree[selectedItem.id]" @delete="deleteTreeWord" @wordDropped="onDragDrop($event.event, $event.item)"></GlossaryUsageLinkTree>
+                <GlossaryUsageLinkTree class="kn-flex" v-if="selectedItem && selectedItem.id" :treeWords="associatedWordsTree[selectedItem.id]" @delete="deleteTreeWord" @wordDropped="onDragDrop($event.event, $event.item)"></GlossaryUsageLinkTree>
             </div>
         </template>
     </Card>
@@ -56,6 +56,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
+import { iLinkTableItem, iWord } from '../GlossaryUsage'
 import axios from 'axios'
 import Card from 'primevue/card'
 import Chip from 'primevue/chip'
@@ -63,8 +64,6 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import glossaryUsageLinkCardDescriptor from './GlossaryUsageLinkCardDescriptor.json'
 import GlossaryUsageLinkTree from './GlossaryUsageLinkTree.vue'
-
-// TODO dodati style kod dodatih nodova
 
 export default defineComponent({
     name: 'glossary-usage-link-card',
@@ -80,9 +79,9 @@ export default defineComponent({
         return {
             glossaryUsageLinkCardDescriptor,
             filters: { global: [filterDefault] } as Object,
-            selectedItem: null,
+            selectedItem: null as iLinkTableItem | null,
             associatedWords: {} as any,
-            expandedRows: [] as any[],
+            expandedRows: [] as iLinkTableItem[],
             associatedWordsTree: {} as any,
             loading: false
         }
@@ -97,7 +96,6 @@ export default defineComponent({
         treeWords: {
             handler() {
                 this.loadAssociatedWordsTree()
-                console.log('WORDS: ', this.words)
             },
             deep: true
         }
@@ -114,8 +112,6 @@ export default defineComponent({
             this.associatedWordsTree = { ...this.treeWords } as any
         },
         async onDragDrop(event: any, item: any) {
-            console.log('ON DRAG DROP: ', JSON.parse(event.dataTransfer.getData('text/plain')))
-            console.log('ON DRAG DROP LINK ITEM: ', item)
             switch (item.itemType) {
                 case 'document':
                     await this.addAssociatedWordDocument(item.id, JSON.parse(event.dataTransfer.getData('text/plain')))
@@ -140,11 +136,10 @@ export default defineComponent({
             }
         },
         onRowExpand(item: any) {
-            console.log('EXPANDED ROWS: ', this.expandedRows)
             this.selectedItem = item.data
             this.$emit('selected', item.data)
         },
-        async addAssociatedWordDocument(documentId: number, word: any) {
+        async addAssociatedWordDocument(documentId: number, word: iWord) {
             this.loading = true
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/addDocWlist', { DOCUMENT_ID: documentId, WORD_ID: word.WORD_ID })
@@ -165,9 +160,7 @@ export default defineComponent({
                 })
                 .finally(() => (this.loading = false))
         },
-        async addAssociatedWordDataset(dataset: any, word: any, column: string, type: string) {
-            console.log('DATASET FOR ADD WORD: ', dataset)
-            console.log('WORD FOR ADD WORD: ', word)
+        async addAssociatedWordDataset(dataset: any, word: iWord, column: string, type: string) {
             this.loading = true
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/addDataSetWlist', {
@@ -185,7 +178,7 @@ export default defineComponent({
                                   label: word.WORD,
                                   children: [] as any[],
                                   data: word,
-                                  style: '',
+                                  style: glossaryUsageLinkCardDescriptor.node.style,
                                   leaf: true,
                                   parent: dataset,
                                   itemType: 'datasetTree'
@@ -205,9 +198,7 @@ export default defineComponent({
                 })
                 .finally(() => (this.loading = false))
         },
-        async addAssociatedWordBusinessClass(businessClass: any, word: any, column: string, type: string) {
-            console.log('BUSINESS CLASS FOR ADD WORD: ', businessClass)
-            console.log('WORD FOR ADD WORD: ', word)
+        async addAssociatedWordBusinessClass(businessClass: any, word: iWord, column: string, type: string) {
             this.loading = true
             const id = type === 'tree' ? businessClass.businessClassId : businessClass.id
             await axios
@@ -225,7 +216,7 @@ export default defineComponent({
                                   label: word.WORD,
                                   children: [] as any[],
                                   data: word,
-                                  style: '',
+                                  style: glossaryUsageLinkCardDescriptor.node.style,
                                   leaf: true,
                                   parent: businessClass,
                                   itemType: 'businessClassTree'
@@ -245,9 +236,7 @@ export default defineComponent({
                 })
                 .finally(() => (this.loading = false))
         },
-        async addAssociatedWordTables(table: any, word: any, column: string, type: string) {
-            console.log('TABLE FOR ADD WORD: ', table)
-            console.log('WORD FOR ADD WORD: ', word)
+        async addAssociatedWordTables(table: any, word: iWord, column: string, type: string) {
             this.loading = true
             const id = type === 'tree' ? table.metasourceId : table.id
             await axios
@@ -265,7 +254,7 @@ export default defineComponent({
                                   label: word.WORD,
                                   children: [] as any[],
                                   data: word,
-                                  style: '',
+                                  style: glossaryUsageLinkCardDescriptor.node.style,
                                   leaf: true,
                                   parent: table,
                                   itemType: 'tableTree'
@@ -294,7 +283,6 @@ export default defineComponent({
             })
         },
         async handleDelete(wordId: number, item: any) {
-            console.log('ITEM FOR DELETE: ', item)
             switch (item.itemType) {
                 case 'document':
                     await this.deleteDocumentWord(wordId, item.id)
@@ -319,8 +307,6 @@ export default defineComponent({
             }
         },
         async deleteDocumentWord(wordId: number, documentId: number) {
-            console.log('WORD ID FOR DELETE: ', wordId)
-            console.log('DOCUMENT ID FOR DELETE: ', documentId)
             this.loading = true
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/deleteDocWlist?WORD_ID=${wordId}&DOCUMENT_ID=${documentId}`, {})
@@ -342,8 +328,6 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         async deleteDatasetWord(wordId: number, dataset: any, column: string, type: string) {
-            console.log('WORD ID FOR DELETE: ', wordId)
-            console.log('DATASET FOR DELETE: ', dataset)
             this.loading = true
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/deleteDatasetWlist?WORD_ID=${wordId}&DATASET_ID=${dataset.id}&ORGANIZATION=${dataset.organization}&COLUMN=${column}`, {})
@@ -365,11 +349,9 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         async deleteBusinessClassWord(wordId: number, businessClass: any, column: string, type: string) {
-            console.log('WORD ID FOR DELETE: ', wordId)
-
             this.loading = true
             const id = type === 'tree' ? businessClass.parent.businessClassId : businessClass.id
-            console.log('BUSINESS CLASS ID FOR DELETE: ', businessClass.id)
+
             await axios
                 .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/deleteMetaBcWlist?WORD_ID=${wordId}&BC_ID=${id}&COLUMN=${column}`)
                 .then((response) => {
@@ -390,8 +372,6 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         async deleteTablesWord(wordId: number, table: any, column: string, type: string) {
-            console.log('WORD ID FOR DELETE: ', wordId)
-            console.log('TABLE FOR DELETE: ', table)
             this.loading = true
             const id = type === 'tree' ? table.parent.metasourceId : table.id
             await axios
@@ -414,15 +394,10 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         removeWordFromAssociatedWords(wordId: number, documentId: number) {
-            // console.log('ASSOS WORDS', this.associatedWords)
-            // console.log('ASSOS WORDS DOC ID', documentId)
-            // console.log('TEST', this.associatedWords[documentId])
             const index = this.associatedWords[documentId].findIndex((el: any) => el.WORD_ID === wordId)
             this.associatedWords[documentId].splice(index, 1)
         },
         removeWordFromTreeWords(wordId: number, parent: any) {
-            console.log('TREE DELETE - WORD ID: ', wordId)
-            console.log('TREE DELETE - PARENT: ', parent)
             const index = parent.children.findIndex((el: any) => el.id === wordId)
             parent.children.splice(index, 1)
         },
@@ -432,3 +407,9 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+#link-table {
+    flex: 2;
+}
+</style>

@@ -35,7 +35,11 @@
                         </span>
                     </div>
                 </template>
-                <template #empty>{{ $t('managers.glossaryUsage.noWordsPresent', { type: title }) }}</template>
+                <template #empty
+                    ><div id="no-words-present-info">
+                        <p>{{ $t('managers.glossaryUsage.noWordsPresent', { type: title }) }}</p>
+                    </div></template
+                >
                 <Column class="kn-truncated" field="label" key="label"></Column>
                 <Column class="p-text-right">
                     <template #body="slotProps">
@@ -43,30 +47,6 @@
                     </template>
                 </Column>
             </DataTable>
-            <!-- <Listbox
-                class="kn-list"
-                v-model="selectedItems"
-                :multiple="true"
-                :options="items"
-                :filter="true"
-                :filterPlaceholder="$t('common.search')"
-                filterMatchMode="contains"
-                :filterFields="glossaryUsageNavigationCardDescriptor.filterFields"
-                :emptyFilterMessage="$t('managers.glossaryUsage.noWordsPresent', { type: title })"
-                @change="onItemsSelected"
-            >
-                <template #empty>{{ $t('managers.glossaryUsage.noWordsPresent', { type: title }) }}</template>
-                <template #option="slotProps">
-                    <div class="kn-list-item">
-                        <div class="kn-list-item-text">
-                            <div>
-                                <span class="label">{{ slotProps.option.label }}</span>
-                                <Button class="p-button-link p-button-sm" icon="pi pi-info-circle" @click.stop="$emit('infoClicked', slotProps.option)" />
-                            </div>
-                        </div>
-                    </div>
-                </template>
-            </Listbox> -->
         </template>
     </Card>
 </template>
@@ -112,7 +92,6 @@ export default defineComponent({
     },
     methods: {
         onItemsSelected() {
-            // console.log('SELECTED ITEMS: ', this.selectedItems)
             this.$emit('selected', this.selectedItems)
         }
     }
@@ -122,5 +101,20 @@ export default defineComponent({
 <style lang="scss" scoped>
 .label {
     text-transform: uppercase;
+}
+
+#no-words-present-info {
+    margin: 0 2rem;
+    font-size: 0.8rem;
+    display: flex;
+    justify-content: center;
+    border: 1px solid rgba(59, 103, 140, 0.1);
+    border-color: #c2c2c2;
+    border-radius: 2px;
+    background-color: #eaf0f6;
+    color: $color-primary;
+    p {
+        margin: 0.3rem;
+    }
 }
 </style>

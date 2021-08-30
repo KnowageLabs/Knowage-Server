@@ -104,7 +104,6 @@ export default defineComponent({
     },
     async created() {
         await this.loadGlossary()
-        // console.log('LOADED GLOSSARY LIST: ', this.glossaryList)
     },
     methods: {
         async loadGlossary() {
@@ -116,7 +115,6 @@ export default defineComponent({
         },
         async listContents(glossaryId: number, parent: any) {
             this.loading = true
-            // console.log('glossary', glossaryId, 'Parent', parent)
 
             if (!parent) {
                 this.selectedWords = []
@@ -131,16 +129,13 @@ export default defineComponent({
             let content = [] as iNode[]
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listContents?GLOSSARY_ID=${glossaryId}&PARENT_ID=${parentId}`).then((response) => {
                 response.data.forEach((el: any) => content.push(this.createNode(el)))
-                content.sort((a: any, b: any) => (a.label > b.label ? 1 : -1))
+                content.sort((a: iNode, b: iNode) => (a.label > b.label ? 1 : -1))
             })
 
             this.attachContentToTree(parent, content)
-
-            // console.log('CONTENT: ', content)
-            console.log('NODES', this.nodes)
             this.loading = false
         },
-        attachContentToTree(parent: any, content: iNode[]) {
+        attachContentToTree(parent: iNode, content: iNode[]) {
             if (parent) {
                 parent.children = []
                 parent.children = content
@@ -150,7 +145,6 @@ export default defineComponent({
             }
         },
         async showInfo(content: any) {
-            // console.log('CONTENT: ', content)
             this.loading = true
             const url = content.CONTENT_ID ? `1.0/glossary/getContent?CONTENT_ID=${content.CONTENT_ID}` : `1.0/glossary/getWord?WORD_ID=${content.WORD_ID}`
             await axios
@@ -169,20 +163,16 @@ export default defineComponent({
             let tempData = []
             this.timer = setTimeout(() => {
                 this.loading = true
-                console.log('SEARCH WORD: ', this.searchWord)
-
                 axios
                     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/glosstreeLike?WORD=${this.searchWord}&GLOSSARY_ID=${this.selectedGlossaryId}`)
                     .then((response) => (tempData = response.data))
                     .finally(() => {
-                        // console.log('TEMP DATA', tempData)
                         this.createGlossaryTree(tempData)
                         this.loading = false
                     })
             }, 1000)
         },
         createGlossaryTree(data: any) {
-            // console.log('DATA', data)
             this.nodes = []
             this.expandedKeys = {}
             data.GlossSearch.SBI_GL_CONTENTS.forEach((el: any) => {
@@ -193,7 +183,6 @@ export default defineComponent({
                 this.nodes.push(tempNode)
             })
             this.expandAll()
-            // console.log('NODES AFTER SEARCH:', this.nodes)
         },
         createNode(el: any) {
             return {
@@ -222,24 +211,20 @@ export default defineComponent({
             }
         },
         showNavigationItemInfo(info: any) {
-            // console.log('INFO: ', info)
             this.contentInfo = info
             this.infoDialogVisible = true
         },
-        onNodeSelect(node) {
+        onNodeSelect(node: iNode) {
             this.selectedWords.push(node.data)
-            // console.log('SELECTED WORDS: ', this.selectedWords)
         },
-        onNodeUnselect(node) {
+        onNodeUnselect(node: iNode) {
             const index = this.selectedWords.findIndex((el: any) => el.id === node.data.WORD_ID)
             this.selectedWords.splice(index, 1)
-            // console.log('SELECTED WORDS: ', this.selectedWords)
         },
         onDragStart(event: any, node: iNode) {
             event.dataTransfer.setData('text/plain', JSON.stringify(node.data))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
-            // console.log('NODE', node)
         }
     }
 })

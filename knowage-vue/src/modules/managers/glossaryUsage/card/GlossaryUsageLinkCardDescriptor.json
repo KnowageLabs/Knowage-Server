@@ -17,11 +17,16 @@
             "header": "common.author"
         }
     ],
+    "dropZoneStyle": {
+        "min-height": "100px"
+    },
     "expanderHeaderStyle": {
         "width": "3rem"
     },
     "globalFilterFields": ["name", "description", "type", "author"],
-    "dropZoneStyle": {
-        "min-height": "100px"
+    "node": {
+        "style": {
+            "padding": "0"
+        }
     }
 }

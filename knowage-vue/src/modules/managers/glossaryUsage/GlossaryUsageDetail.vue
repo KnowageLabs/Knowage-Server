@@ -21,7 +21,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iNode } from './GlossaryUsage'
+import { iNode, iLinkTableItem, iNavigationTableItem } from './GlossaryUsage'
 import axios from 'axios'
 import GlossaryUsageNavigationCard from './card/GlossaryUsageNavigationCard.vue'
 import GlossaryUsageLinkCard from './card/GlossaryUsageLinkCard.vue'
@@ -35,17 +35,17 @@ export default defineComponent({
     data() {
         return {
             glossaryUsageDescriptor,
-            documents: [] as any[],
+            documents: [] as iNavigationTableItem[],
             selectedDocuments: [] as any[],
-            datasets: [] as any[],
+            datasets: [] as iNavigationTableItem[],
             selectedDatasets: [] as any[],
-            businessClasses: [] as any[],
+            businessClasses: [] as iNavigationTableItem[],
             selectedBusinessClasses: [] as any[],
-            tables: [] as any[],
+            tables: [] as iNavigationTableItem[],
             selectedTables: [] as any[],
             linkTableVisible: false,
             linkTableTitle: '',
-            linkTableItems: [] as any[],
+            linkTableItems: [] as iLinkTableItem[],
             selectedLinkItemWords: {} as any,
             selectedLinkItemTree: {} as any,
             loading: false
@@ -75,14 +75,14 @@ export default defineComponent({
                 word: {
                     selected: this.selectedWords,
                     search: '',
-                    item_number: 9000,
+                    item_number: 9223372036854775807,
                     page: 1,
                     GLOSSARY_ID: this.glossaryId
                 },
-                document: { selected: [], search: '', item_number: 9000, page: 1 },
-                dataset: { selected: [], search: '', item_number: 9000, page: 1 },
-                table: { selected: [], search: '', item_number: 9000, page: 1 },
-                bness_cls: { selected: [], search: '', item_number: 9000, page: 1 }
+                document: { selected: [], search: '', item_number: 9223372036854775807, page: 1 },
+                dataset: { selected: [], search: '', item_number: 9223372036854775807, page: 1 },
+                table: { selected: [], search: '', item_number: 9223372036854775807, page: 1 },
+                bness_cls: { selected: [], search: '', item_number: 9223372036854775807, page: 1 }
             }
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/loadNavigationItem', postData)
@@ -98,7 +98,7 @@ export default defineComponent({
         formatNavigationItems(data: any) {
             if ('document' in data) {
                 this.documents = []
-                data.document.forEach((el: any) => this.documents.push({ id: el.DOCUMENT_ID, label: el.DOCUMENT_LABEL }))
+                data.document.forEach((el: any) => this.documents.push({ id: el.DOCUMENT_ID, label: el.DOCUMENT_LABEL, type: 'document' }))
             }
             if ('dataset' in data) {
                 this.datasets = []
@@ -131,13 +131,8 @@ export default defineComponent({
                     })
                 )
             }
-            // console.log('DOCUMENTS LOADED: ', this.documents)
-            // console.log('BUSINESS CLASSES LOADED: ', this.businessClasses)
-            // console.log('DATASETS LOADED: ', this.datasets)
-            // console.log('TABLES LOADED: ', this.tables)
         },
-        async showDocumentInfo(document: any) {
-            // console.log('DOCUMENT FOR INFO: ', document)
+        async showDocumentInfo(document: iNavigationTableItem) {
             this.loading = true
             let tempDocument = null as any
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${document.label}`).then((response) => (tempDocument = response.data))
@@ -146,18 +141,15 @@ export default defineComponent({
                 await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${tempDocument.id}/roles`).then((response) => (tempDocument.access = response.data))
                 this.$emit('infoClicked', { data: tempDocument, type: 'document' })
             }
-
             this.loading = false
         },
-        async showDatasetInfo(dataset: any) {
-            // console.log('DATASET FOR INFO: ', dataset)
+        async showDatasetInfo(dataset: iNavigationTableItem) {
             this.loading = true
             await this.loadDatasetInfo(dataset)
                 .then((response) => this.$emit('infoClicked', { data: response.data, type: 'dataset' }))
                 .finally(() => (this.loading = false))
         },
-        async showBusinessClassInfo(businessClass: any) {
-            // console.log('BUSINESS CLASS FOR INFO: ', businessClass)
+        async showBusinessClassInfo(businessClass: iNavigationTableItem) {
             this.loading = true
             await this.loadBusinessClassInfo(businessClass)
                 .then((response) =>
@@ -169,14 +161,12 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         async showTableInfo(table: any) {
-            // console.log('TABLE FOR INFO: ', table)
             this.loading = true
             await this.loadTableInfo(table)
                 .then((response) => this.$emit('infoClicked', { data: response.data, type: 'table' }))
                 .finally(() => (this.loading = false))
         },
         async onLinkClicked(type: string) {
-            // console.log('LINK CLICKED!', type)
             switch (type) {
                 case 'document':
                     await this.loadDocuments()
@@ -207,7 +197,7 @@ export default defineComponent({
                             itemType: 'document'
                         })
                     )
-                    this.linkTableItems.sort((a: any, b: any) => (a.name > b.name ? 1 : -1))
+                    this.linkTableItems.sort((a: iLinkTableItem, b: iLinkTableItem) => (a.name > b.name ? 1 : -1))
                     this.linkTableTitle = this.$t('managers.glossaryUsage.documents')
                     this.linkTableVisible = true
                 })
@@ -230,7 +220,7 @@ export default defineComponent({
                             itemType: 'dataset'
                         })
                     )
-                    this.linkTableItems.sort((a: any, b: any) => (a.name > b.name ? 1 : -1))
+                    this.linkTableItems.sort((a: iLinkTableItem, b: iLinkTableItem) => (a.name > b.name ? 1 : -1))
                     this.linkTableTitle = this.$t('managers.glossaryUsage.dataset')
                     this.linkTableVisible = true
                 })
@@ -252,7 +242,7 @@ export default defineComponent({
                             itemType: 'businessClass'
                         })
                     )
-                    this.linkTableItems.sort((a: any, b: any) => (a.name > b.name ? 1 : -1))
+                    this.linkTableItems.sort((a: iLinkTableItem, b: iLinkTableItem) => (a.name > b.name ? 1 : -1))
                     this.linkTableTitle = this.$t('managers.glossaryUsage.businessClass')
                     this.linkTableVisible = true
                 })
@@ -264,7 +254,6 @@ export default defineComponent({
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/metaTable/listMetaTable?Page=1&ItemPerPage=&label=')
                 .then((response) => {
-                    console.log('RESPONSE ', response)
                     response.data.forEach((el: any) =>
                         this.linkTableItems.push({
                             id: el.tableId,
@@ -275,44 +264,35 @@ export default defineComponent({
                             itemType: 'table'
                         })
                     )
-                    this.linkTableItems.sort((a: any, b: any) => (a.name > b.name ? 1 : -1))
+                    this.linkTableItems.sort((a: iLinkTableItem, b: iLinkTableItem) => (a.name > b.name ? 1 : -1))
                     this.linkTableTitle = this.$t('managers.glossaryUsage.tables')
                     this.linkTableVisible = true
                 })
                 .finally(() => (this.loading = false))
         },
-        onDocumentsSelected(documents: any) {
-            // console.log('SELECTED DOCUMENTS: ', documents)
+        onDocumentsSelected(documents: iNavigationTableItem[]) {
             this.selectedDocuments = []
-            documents.forEach((el: any) => this.selectedDocuments.push({ DOCUMENT_ID: el.id, DOCUMENT_LABEL: el.label }))
-            console.log('SELECTED DOCUMENTS AFTER FORMATING: ', this.selectedDocuments)
+            documents.forEach((el: iNavigationTableItem) => this.selectedDocuments.push({ DOCUMENT_ID: el.id, DOCUMENT_LABEL: el.label }))
         },
-        onDatasetsSelected(datasets: any) {
-            // console.log('SELECTED DATASETS: ', datasets)
+        onDatasetsSelected(datasets: iNavigationTableItem[]) {
             this.selectedDatasets = []
-            datasets.forEach((el: any) => this.selectedDatasets.push({ DATASET_ID: el.id, DATASET_NM: el.label, DATASET_ORG: el.organization }))
-            console.log('SELECTED DATASETS AFTER FORMATING: ', this.selectedDatasets)
+            datasets.forEach((el: iNavigationTableItem) => this.selectedDatasets.push({ DATASET_ID: el.id, DATASET_NM: el.label, DATASET_ORG: el.organization }))
         },
-        onBusinessClassesSelected(businessClasses: any) {
-            // console.log('SELECTED BUSINESS CLASSES: ', businessClasses)
+        onBusinessClassesSelected(businessClasses: iNavigationTableItem[]) {
             this.selectedBusinessClasses = []
-            businessClasses.forEach((el: any) => {
+            businessClasses.forEach((el: iNavigationTableItem) => {
                 const label = el.label.split('.')
                 this.selectedBusinessClasses.push({ BC_ID: el.id, META_MODEL_NAME: label[0], BC_NAME: label[1] })
             })
-            console.log('SELECTED BUSINESS CLASSES AFTER FORMATING: ', this.selectedBusinessClasses)
         },
-        onTablesSelected(tables: any) {
-            // console.log('SELECTED TABLES: ', tables)
+        onTablesSelected(tables: iNavigationTableItem[]) {
             this.selectedTables = []
-            tables.forEach((el: any) => {
+            tables.forEach((el: iNavigationTableItem) => {
                 const label = el.label.split('.')
                 this.selectedTables.push({ TABLE_ID: el.id, META_SOURCE_NAME: label[0], TABLE_NM: label[1] })
             })
-            console.log('SELECTED TABLES AFTER FORMATING: ', this.selectedTables)
         },
-        async onLinkItemSelect(item: any) {
-            console.log('LINK ITEM SELECTED: ', item)
+        async onLinkItemSelect(item: iLinkTableItem) {
             switch (item.itemType) {
                 case 'document':
                     await this.loadDocumentWords(item)
@@ -326,16 +306,15 @@ export default defineComponent({
                 case 'table':
                     await this.loadTableWords(item)
             }
-            console.log('SELECTED LINK ITEM WORDS: ', this.selectedLinkItemWords)
         },
-        async loadDocumentWords(document: any) {
+        async loadDocumentWords(document: iLinkTableItem) {
             this.loading = true
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getDocumentInfo?DOCUMENT_ID=${document.id}`)
                 .then((response) => (this.selectedLinkItemWords[document.id] = response.data.word))
                 .finally(() => (this.loading = false))
         },
-        async loadDatasetWords(dataset: any) {
+        async loadDatasetWords(dataset: iLinkTableItem) {
             this.loading = true
             await this.loadDatasetInfo(dataset)
                 .then((response) => {
@@ -349,7 +328,7 @@ export default defineComponent({
                 })
                 .finally(() => (this.loading = false))
         },
-        async loadBusinessClassWords(businessClass: any) {
+        async loadBusinessClassWords(businessClass: iLinkTableItem) {
             this.loading = true
             await this.loadBusinessClassInfo(businessClass)
                 .then((response) => {
@@ -364,7 +343,7 @@ export default defineComponent({
                 })
                 .finally(() => (this.loading = false))
         },
-        async loadTableWords(table: any) {
+        async loadTableWords(table: iLinkTableItem) {
             this.loading = true
             await this.loadTableInfo(table)
                 .then((response) => {

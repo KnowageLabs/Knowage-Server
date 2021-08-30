@@ -16,3 +16,25 @@ export interface iNode {
     parent?: iNode,
     itemType?: string
 }
+
+export interface iNavigationTableItem {
+    id: number,
+    label: string,
+    organization?: string,
+    type: string
+}
+
+export interface iLinkTableItem {
+    id: number,
+    name: strig,
+    description: string,
+    type: string,
+    author: string,
+    itemType: string,
+    organization?: string
+}
+
+export interface iWord {
+    WORD_ID: number,
+    WORD: string
+}

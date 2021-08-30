@@ -221,8 +221,6 @@ export default defineComponent({
     },
     methods: {
         wordIsSelected(word: any) {
-            console.log('WORD: ', word)
-            console.log('SELECTED WORDS: ', this.selectedWords)
             return this.selectedWords.findIndex((el: any) => word.WORD_ID === el.WORD_ID) > -1
         }
     }
