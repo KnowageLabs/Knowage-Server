@@ -173,7 +173,7 @@
                     <li>
                         <span>{{ $t('managers.glossaryUsage.associatedWord') }}:</span>
                         <ul class="p-my-3">
-                            <li v-for="(column, index) in contentInfo.data.words" :key="index" :class="{ 'selected-word': wordIsSelected(word) }">
+                            <li v-for="(column, index) in contentInfo.data.words" :key="index" :class="{ 'selected-word': wordIsSelected(column) }">
                                 {{ column.WORD }}
                             </li>
                         </ul>
@@ -182,7 +182,7 @@
                         <span>{{ $t('managers.glossaryUsage.column') }}:</span>
                         <ul class="p-my-3">
                             <li v-for="(column, index) in contentInfo.data.sbiGlTableWlist" :key="index">
-                                {{ column.alias }}
+                                {{ column.name }}
                                 <ul>
                                     <li v-for="(word, index) in column.word" :key="index" :class="{ 'selected-word': wordIsSelected(word) }">
                                         {{ word.WORD }}

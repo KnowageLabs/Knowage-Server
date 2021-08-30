@@ -15,7 +15,7 @@
                 <GlossaryUsageNavigationCard class="p-m-2" :type="'table'" :items="tables" @infoClicked="showTableInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onTablesSelected"></GlossaryUsageNavigationCard>
             </div>
         </div>
-        <GlossaryUsageLinkCard v-else :title="linkTableTitle" class="p-m-2" :items="linkTableItems" :words="selectedLinkItemWords" :treeWords="selectedLinkItemTree" @close="linkTableVisible = false" @selected="onLinkItemSelect"></GlossaryUsageLinkCard>
+        <GlossaryUsageLinkCard v-else :title="linkTableTitle" class="p-m-2" :items="linkTableItems" :words="selectedLinkItemWords" :treeWords="selectedLinkItemTree" @close="onLinkTableClose" @selected="onLinkItemSelect"></GlossaryUsageLinkCard>
     </div>
 </template>
 
@@ -212,7 +212,7 @@ export default defineComponent({
                     response.data.item.forEach((el: any) =>
                         this.linkTableItems.push({
                             id: el.id.dsId,
-                            name: el.name,
+                            name: el.label,
                             description: el.description,
                             type: el.type,
                             author: el.owner,
@@ -366,6 +366,10 @@ export default defineComponent({
         },
         loadTableInfo(table: any) {
             return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getMetaTableInfo?META_TABLE_ID=${table.id}`)
+        },
+        async onLinkTableClose() {
+            this.linkTableVisible = false
+            await this.loadNavigationItems('all', 'word')
         }
     }
 })

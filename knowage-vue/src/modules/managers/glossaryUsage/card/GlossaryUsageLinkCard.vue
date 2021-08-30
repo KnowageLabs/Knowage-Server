@@ -47,7 +47,7 @@
                     <Column :expander="true" :headerStyle="glossaryUsageLinkCardDescriptor.expanderHeaderStyle" />
                     <Column class="kn-truncated" v-for="col of glossaryUsageLinkCardDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"></Column>
                 </DataTable>
-                <GlossaryUsageLinkTree class="kn-flex" v-if="selectedItem && selectedItem.id" :treeWords="associatedWordsTree[selectedItem.id]" @delete="deleteTreeWord" @wordDropped="onDragDrop($event.event, $event.item)"></GlossaryUsageLinkTree>
+                <GlossaryUsageLinkTree class="kn-flex" v-if="selectedItem && selectedItem.id && selectedItem.itemType !== 'document'" :treeWords="associatedWordsTree[selectedItem.id]" @delete="deleteTreeWord" @wordDropped="onDragDrop($event.event, $event.item)"></GlossaryUsageLinkTree>
             </div>
         </template>
     </Card>
