@@ -507,6 +507,8 @@
             "title": "Functionalities management"
         },
         "glossaryDefinition": {
+            "code": "Code",
+            "glossary": "Glossary",
             "hint": "Lorem ipsum dolor sit amet...",
             "title": "Glossary Definition",
             "wordsList": "Words List"

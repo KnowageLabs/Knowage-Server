@@ -36,7 +36,7 @@
 
             <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
                 <GlossaryDefinitionHint v-if="!selectedWord"></GlossaryDefinitionHint>
-                <GlossaryDefinitionDetail v-else></GlossaryDefinitionDetail>
+                <GlossaryDefinitionDetail v-else :glossaryList="glossaryList"></GlossaryDefinitionDetail>
             </div>
         </div>
     </div>
@@ -44,7 +44,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iWord } from './GlossaryDefinition'
+import { iGlossary, iWord } from './GlossaryDefinition'
 import axios from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
@@ -64,22 +64,29 @@ export default defineComponent({
         return {
             glossaryDefinitionDescriptor,
             wordsList: [] as iWord[],
+            glossaryList: [] as iGlossary[],
             selectedWord: null as iWord | null,
             loading: false,
             touched: false
         }
     },
     async created() {
-        await this.getWordsList()
+        await this.loadPage()
     },
     methods: {
-        async getWordsList() {
+        async loadPage() {
             this.loading = true
-            return axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listWords?Page=1&ItemPerPage=`)
-                .then((response) => (this.wordsList = response.data))
-                .finally(() => (this.loading = false))
+            await this.loadWordsList()
+            await this.loadGlossaryList()
+            this.loading = false
         },
+        async loadWordsList() {
+            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listWords?Page=1&ItemPerPage=`).then((response) => (this.wordsList = response.data))
+        },
+        async loadGlossaryList() {
+            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listGlossary`).then((response) => (this.glossaryList = response.data))
+        },
+
         setSelectedWord(word: iWord) {
             if (!this.touched) {
                 this.selectedWord = word
@@ -113,7 +120,7 @@ export default defineComponent({
                     msg: this.$t('common.toast.deleteSuccess')
                 })
                 this.$router.push('/glossary-definition')
-                this.getWordsList()
+                this.loadWordsList()
             })
         }
     }
