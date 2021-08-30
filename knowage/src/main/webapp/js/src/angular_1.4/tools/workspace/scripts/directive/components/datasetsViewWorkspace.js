@@ -92,7 +92,9 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	$scope.prevUploadedFile = null;
 	$scope.datasetSavedFromQbe = false;
 	$scope.datasetTemp = null;
-
+	$scope.dsCategoriesPromise = null;
+	$scope.datasetsCategories = {};
+	
 	/*
 	  * WATCH ON DATA DEPENDENCIES PARAMETER OBJECT
 	  */
@@ -348,7 +350,24 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	$scope.selectDataset= function (dataset) {
 		$scope.selectedDataSet = dataset;
 		$scope.setDetailOpen(typeof dataset !== "undefined");
+		$scope.updateCategoryOfSelectedDataset();
 	};
+	
+	$scope.updateCategoryOfSelectedDataset = function() {
+		$scope.loadDsCategories()
+			.then(function(resolve, reject) {
+				var ret = $scope.datasetCategoryType
+					.find(function(e) {
+						return e.VALUE_ID == $scope.selectedDataSet.catTypeId;
+					})
+				
+				if (ret != null) {
+					ret = ret.VALUE_NM;
+				}
+				
+				$scope.datasetsCategories[$scope.selectedDataSet.label] = ret;
+			});
+	}
 
 	$scope.shareDatasetWithCategories = function(dataset){
 		$scope.loadDsCategoriesAndHandleEvent(dataset);
@@ -381,32 +400,41 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		$scope.shareDataset($scope.dataset)
 		$mdDialog.cancel();
 	}
-
+	
+	$scope.loadDsCategories = function() {
+		if ($scope.dsCategoriesPromise == null) {
+			$scope.dsCategoriesPromise = sbiModule_restServices.promiseGet("domainsforfinaluser","ds-categories")
+				.then(function(response) {
+					$scope.datasetCategoryType = [];
+					angular.copy(response.data,$scope.datasetCategoryType);
+				});
+		}
+		return $scope.dsCategoriesPromise;
+	}
+	
 	$scope.loadDsCategoriesAndHandleEvent = function(dataset) {
-    	sbiModule_restServices.promiseGet("domainsforfinaluser","ds-categories")
-		.then(function(response) {
-			$scope.datasetCategoryType = [];
-			angular.copy(response.data,$scope.datasetCategoryType);
-			if(dataset.hasOwnProperty('catTypeId')&&$scope.datasetCategoryType.length==0){
-				$scope.unshareDataset(dataset);
-			} else if($scope.datasetCategoryType.length==0&&!dataset.hasOwnProperty('catTypeId')){
-				$scope.showAlert();
-			} else if($scope.datasetCategoryType.length==1){
-				$scope.shareDataset(dataset);
-			} else {
-				$scope.showCategoriesDialog();
-			}
-		},function(response){
-			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-			toastr.error(response.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
-		});
+		$scope.loadDsCategories()
+			.then(function(response) {
+				if($scope.dataset.hasOwnProperty('catTypeId')&&$scope.datasetCategoryType.length==0){
+					$scope.unshareDataset($scope.dataset);
+				} else if($scope.datasetCategoryType.length==0&&!$scope.dataset.hasOwnProperty('catTypeId')){
+					$scope.showAlert();
+				} else if($scope.datasetCategoryType.length==1){
+					$scope.shareDataset($scope.dataset);
+				} else {
+					$scope.showCategoriesDialog();
+				}
+			},function(response){
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.error(response.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
+			});
 	}
 
-    function DialogShareDatasetController($scope,$mdDialog){
-    	$scope.closeShareDialog=function(){
-    		$mdDialog.cancel();
-    	}
-    }
+	function DialogShareDatasetController($scope,$mdDialog){
+		$scope.closeShareDialog=function(){
+			$mdDialog.cancel();
+		}
+	}
 
 	$scope.shareDataset=function(dataset){
 		var dsCatType = $scope.datasetCategoryType;
@@ -420,7 +448,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			catTypeId = dsCatType[0].VALUE_ID;
 		} else {
 			for (var i = 0; i < dsCatType.length; i++) {
-				if($scope.datasetTemp.catTypeId==dsCatType[i].VALUE_ID){
+				if($scope.dataset.catTypeId==dsCatType[i].VALUE_ID){
 					catTypeId=dsCatType[i].VALUE_ID;
 					break;
 				}
@@ -443,7 +471,9 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 				toastr.success(sbiModule_translate.load("sbi.workspace.dataset.unshare.success"),
 							sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
-			  }
+			}
+
+			$scope.updateCategoryOfSelectedDataset();
 		},function(response){
 			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 			toastr.error(response.data, sbiModule_translate.load('sbi.workspace.dataset.fail'), $scope.toasterConfig);
@@ -470,6 +500,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 				toastr.error(response.data, sbiModule_translate.load('sbi.workspace.dataset.fail'), $scope.toasterConfig);
 			}
+
+			$scope.updateCategoryOfSelectedDataset();
 		},function(response){
 			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 			toastr.error(response.data, sbiModule_translate.load('sbi.workspace.dataset.fail'), $scope.toasterConfig);
