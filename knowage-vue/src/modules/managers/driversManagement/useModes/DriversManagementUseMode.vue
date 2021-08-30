@@ -29,7 +29,7 @@
                     </Listbox>
                 </div>
                 <div class="p-col-8 p-sm-8 p-md-9 p-p-0">
-                    <UseModeDetail :selectedMode="selectedUseMode" :selectionTypes="selectionTypes" :roles="roles" :constraints="constraints" :lovs="lovs" :disabledRoles="disabledRoles" :layers="layers" :isDate="isDate"></UseModeDetail>
+                    <UseModeDetail :selectedMode="selectedUseMode" :selectionTypes="selectionTypes" :roles="roles" :constraints="constraints" :lovs="lovs" :disabledRoles="disabledRoles" :layers="layers" :isDate="isDate" :showMapDriver="showMapDriver"></UseModeDetail>
                 </div>
             </div>
         </template>
@@ -75,6 +75,10 @@ export default defineComponent({
             requierd: true
         },
         isDate: {
+            type: Boolean,
+            requierd: true
+        },
+        showMapDriver: {
             type: Boolean,
             requierd: true
         }

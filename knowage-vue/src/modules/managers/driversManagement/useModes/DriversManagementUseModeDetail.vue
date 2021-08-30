@@ -6,7 +6,7 @@
                 <span>{{ $t('managers.driversManagement.useModes.details') }}</span>
                 <Badge :value="invalidModes" class="p-ml-2" severity="danger" v-if="invalidModes > 0"></Badge>
             </template>
-            <DetailsCard :selectedMode="mode" :selectionTypes="selectionTypes" :layers="layers" :isDate="isDate" :lovs="lovs"></DetailsCard>
+            <DetailsCard :selectedMode="mode" :selectionTypes="selectionTypes" :layers="layers" :isDate="isDate" :lovs="lovs" :showMapDriver="showMapDriver"></DetailsCard>
         </TabPanel>
 
         <TabPanel>
@@ -78,6 +78,10 @@ export default defineComponent({
         lovs: {
             type: Array,
             required: true
+        },
+        showMapDriver: {
+            type: Boolean,
+            requierd: true
         }
     },
     data() {

@@ -8,7 +8,7 @@
     </Toolbar>
     <div class="p-grid p-m-0 p-fluid p-jc-center" style="overflow:auto" data-test="drivers-form">
         <DriversDetailCard :selectedDriver="driver" :types="filteredTypes" @touched="setDirty"></DriversDetailCard>
-        <UseMode :propModes="modes" :roles="roles" :constraints="constraints" :layers="layers" :lovs="lovs" :selectionTypes="filteredSelectionTypes" :isDate="isDateType"></UseMode>
+        <UseMode :propModes="modes" :roles="roles" :constraints="constraints" :layers="layers" :lovs="lovs" :selectionTypes="filteredSelectionTypes" :isDate="isDateType" :showMapDriver="showMapDriver"></UseMode>
     </div>
 </template>
 <script lang="ts">
@@ -64,6 +64,7 @@ export default defineComponent({
             lovs: [] as any[],
             operation: 'insert',
             useModeOperation: 'insert',
+            showMapDriver: true,
             driversManagemenDetailtDescriptor
         }
     },
@@ -110,7 +111,7 @@ export default defineComponent({
             this.getRoles()
             this.getConstraints()
             this.getselectionTypes()
-            this.getLayers()
+            if (this.showMapDriver) this.getLayers()
             this.getLovs()
         },
         formatDriver() {

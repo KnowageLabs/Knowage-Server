@@ -8,7 +8,7 @@
                             id="label"
                             class="kn-material-input"
                             type="text"
-                            v-model="v$.mode.label.$model"
+                            v-model.trim="v$.mode.label.$model"
                             :class="{
                                 'p-invalid': v$.mode.label.$invalid && v$.mode.label.$dirty
                             }"
@@ -25,7 +25,7 @@
                             id="name"
                             class="kn-material-input"
                             type="text"
-                            v-model="v$.mode.name.$model"
+                            v-model.trim="v$.mode.name.$model"
                             :class="{
                                 'p-invalid': v$.mode.name.$invalid && v$.mode.name.$dirty
                             }"
@@ -38,7 +38,7 @@
                 </div>
                 <div class="p-field p-col-12">
                     <span class="p-float-label">
-                        <InputText id="description" class="kn-material-input" type="text" v-model="mode.description" @input="modeChanged" />
+                        <InputText id="description" class="kn-material-input" type="text" v-model.trim="mode.description" @input="modeChanged" />
                         <label for="description" class="kn-material-input-label">{{ $t('common.description') }} </label>
                     </span>
                 </div>
@@ -48,7 +48,7 @@
                             id="type"
                             class="kn-material-input"
                             v-model="v$.mode.valueSelection.$model"
-                            :options="useModeDescriptor.types"
+                            :options="availableTypes"
                             optionLabel="name"
                             optionValue="valueSelection"
                             :class="{
@@ -61,15 +61,17 @@
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.mode.valueSelection" :additionalTranslateParams="{ fieldName: $t('common.type') }"></KnValidationMessages>
                 </div>
-                <div class="p-field p-col-5" v-if="mode.valueSelection === 'lov'">
-                    <span class="p-input-icon-right">
-                        <span class="p-float-label">
-                            <InputText id="lov" v-model="mode.typeLov.name" class="kn-material-input" type="text" disabled />
-                            <label for="lov" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.lov') }} * </label>
+                <div>
+                    <div class="p-field p-col-5" v-if="mode.valueSelection === 'lov'">
+                        <span class="p-input-icon-right">
+                            <span class="p-float-label">
+                                <InputText id="lov" v-model="mode.typeLov.name" class="kn-material-input" type="text" disabled />
+                                <label for="lov" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.lov') }} * </label>
+                            </span>
+                            <i class="pi pi-search input-buton" @click="showLovsDialog('type')" />
                         </span>
-                        <i class="pi pi-search input-buton" @click="showLovsDialog('type')" />
-                    </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.mode.typeLov" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.lov') }" :specificTranslateKeys="{ required_lovId_for_lov: 'common.validation.required' }"></KnValidationMessages>
+                        <KnValidationMessages class="p-mt-1" :vComp="v$.mode.typeLov" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.lov') }" :specificTranslateKeys="{ required_lovId_for_lov: 'common.validation.required' }"></KnValidationMessages>
+                    </div>
                 </div>
                 <div class="p-field p-col-4" v-if="mode.valueSelection === 'lov'">
                     <span class="p-float-label">
@@ -203,6 +205,10 @@ export default defineComponent({
         isDate: {
             type: Boolean,
             requierd: true
+        },
+        showMapDriver: {
+            type: Boolean,
+            requierd: true
         }
     },
     data() {
@@ -251,6 +257,12 @@ export default defineComponent({
                 return this.useModeDescriptor.defaultValues.filter((type) => type.label != 'pickUp')
             }
             return this.useModeDescriptor.defaultValues
+        },
+        availableTypes(): any {
+            if (!this.showMapDriver) {
+                return this.useModeDescriptor.types.filter((type) => type.valueSelection != 'map_in')
+            }
+            return this.useModeDescriptor.types
         }
     },
     watch: {
