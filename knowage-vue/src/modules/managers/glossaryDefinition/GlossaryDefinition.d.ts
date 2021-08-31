@@ -6,8 +6,8 @@ export interface iGlossary {
 }
 
 export interface iWord {
-    WORD_ID: number
-    WORD: string
+    WORD_ID?: number
+    WORD?: string
     CATEGORY?: number
     CATEGORY_NM?: string
     DESCR?: string
@@ -16,6 +16,9 @@ export interface iWord {
     SBI_GL_WORD_ATTR?: any[]
     STATE?: number
     STATE_NM?: string
+    oldWord?: iWord
+    NEWWORD?: boolean
+    SaveOrUpdate?: string
 }
 
 export interface iNode {
