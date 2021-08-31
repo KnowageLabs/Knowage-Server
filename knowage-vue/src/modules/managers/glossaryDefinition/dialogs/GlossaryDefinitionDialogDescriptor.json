@@ -1,0 +1,11 @@
+{
+    "dialog": {
+        "breakpoints": {
+            "640px": "100vw",
+            "960px": "85vw"
+        },
+        "style": {
+            "width": "70vw"
+        }
+    }
+}

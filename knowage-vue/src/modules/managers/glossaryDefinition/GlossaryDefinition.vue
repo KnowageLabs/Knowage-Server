@@ -30,7 +30,7 @@
                             </div>
                             <Button icon="pi pi-info-circle" class="p-button-text p-button-rounded p-button-plain" @click.stop="showInfo(slotProps.option)" />
                             <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteWordConfirm(slotProps.option.WORD_ID)" data-test="delete-button" />
-                            <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain" @click.stop="" data-test="edit-button" />
+                            <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain" @click.stop="editWord(slotProps.option.WORD_ID)" data-test="edit-button" />
                         </div>
                     </template>
                 </Listbox>
@@ -43,6 +43,7 @@
                 <GlossaryDefinitionDetail v-else :glossaryList="glossaryList" @infoClicked="showInfo"></GlossaryDefinitionDetail>
             </div>
         </div>
+        <GlossaryDefinitionWordEdit :visible="editWordDialogVisible" @close="editWordDialogVisible = false"></GlossaryDefinitionWordEdit>
     </div>
 </template>
 
@@ -56,6 +57,7 @@ import glossaryDefinitionDescriptor from './GlossaryDefinitionDescriptor.json'
 import GlossaryDefinitionHint from './GlossaryDefinitionHint.vue'
 import GlossaryDefinitionDetail from './GlossaryDefinitionDetail.vue'
 import GlossaryDefinitionInfoDialog from './dialogs/GlossaryDefinitionInfoDialog.vue'
+import GlossaryDefinitionWordEdit from './dialogs/GlossaryDefinitionWordEdit.vue'
 
 export default defineComponent({
     name: 'glossary-definition',
@@ -64,7 +66,8 @@ export default defineComponent({
         Listbox,
         GlossaryDefinitionHint,
         GlossaryDefinitionDetail,
-        GlossaryDefinitionInfoDialog
+        GlossaryDefinitionInfoDialog,
+        GlossaryDefinitionWordEdit
     },
     data() {
         return {
@@ -75,7 +78,8 @@ export default defineComponent({
             contentInfo: null as any,
             infoDialogVisible: false,
             loading: false,
-            touched: false
+            touched: false,
+            editWordDialogVisible: false
         }
     },
     async created() {
@@ -141,6 +145,9 @@ export default defineComponent({
                 this.$router.push('/glossary-definition')
                 this.loadWordsList()
             })
+        },
+        editWord() {
+            this.editWordDialogVisible = true
         }
     }
 })

@@ -512,6 +512,7 @@
             "glossary": "Glossary",
             "hint": "Lorem ipsum dolor sit amet...",
             "title": "Glossary Definition",
+            "word": "Word",
             "wordsList": "Words List"
         },
         "internationalizationManagement": {
