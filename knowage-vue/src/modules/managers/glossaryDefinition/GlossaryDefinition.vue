@@ -25,7 +25,7 @@
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
                         <div class="kn-list-item">
-                            <div class="kn-list-item-text">
+                            <div class="kn-list-item-text" draggable="true" @dragstart="onDragStart($event, slotProps.option)">
                                 <span>{{ slotProps.option.WORD }}</span>
                             </div>
                             <Button icon="pi pi-info-circle" class="p-button-text p-button-rounded p-button-plain" @click.stop="showInfo(slotProps.option)" />
@@ -148,6 +148,11 @@ export default defineComponent({
         },
         editWord() {
             this.editWordDialogVisible = true
+        },
+        onDragStart(event: any, word: iWord) {
+            event.dataTransfer.setData('text/plain', JSON.stringify(word))
+            event.dataTransfer.dropEffect = 'move'
+            event.dataTransfer.effectAllowed = 'move'
         }
     }
 })

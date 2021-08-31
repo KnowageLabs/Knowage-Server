@@ -508,9 +508,12 @@
         },
         "glossaryDefinition": {
             "code": "Code",
+            "deleteNodeConfirmMessage": "Deleting a node all the underlying node (if present) will be deleted. Continue?",
             "details": "Details",
             "glossary": "Glossary",
             "hint": "Lorem ipsum dolor sit amet...",
+            "saveWordConfirmMessage": "Data will be immediately saved.",
+            "saveWordConfirmTitle": "Word will be saved. Continue?",
             "title": "Glossary Definition",
             "word": "Word",
             "wordsList": "Words List"
