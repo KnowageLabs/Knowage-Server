@@ -4,7 +4,7 @@
             <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
                     <template #left>
-                        {{ $t('managers.glossaryDefinition.wordsList') }}
+                        {{ $t('managers.glossary.glossaryDefinition.wordsList') }}
                     </template>
                     <template #right>
                         <FabButton icon="fas fa-plus" />

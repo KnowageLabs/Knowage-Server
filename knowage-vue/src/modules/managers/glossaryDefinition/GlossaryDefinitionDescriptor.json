@@ -6,6 +6,6 @@
         }
     },
     "translation": {
-        "sbi.glossary.content.duplicate.node": "managers.glossaryDefinition.duplicateNode"
+        "sbi.glossary.content.duplicate.node": "managers.glossary.glossaryDefinition.duplicateNode"
     }
 }

@@ -1,5 +1,5 @@
 <template>
-    <KnHint :title="'managers.glossaryDefinition.title'" :hint="'managers.glossaryDefinition.hint'"></KnHint>
+    <KnHint :title="'managers.glossary.glossaryDefinition.title'" :hint="'managers.glossary.glossaryDefinition.hint'"></KnHint>
 </template>
 
 <script lang="ts">

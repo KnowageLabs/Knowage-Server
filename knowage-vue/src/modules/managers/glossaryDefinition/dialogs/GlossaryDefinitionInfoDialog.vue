@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Dialog :header="$t('managers.glossaryDefinition.details')" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
+        <Dialog :header="$t('managers.glossary.glossaryDefinition.details')" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
             <div v-if="contentInfo && contentInfo.CONTENT_ID">
                 <ul>
                     <li>
@@ -8,7 +8,7 @@
                         <p>{{ contentInfo.CONTENT_NM }}</p>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.code') }}:</span>
+                        <span>{{ $t('managers.glossary.common.code') }}:</span>
                         <p>{{ contentInfo.CONTENT_CD }}</p>
                     </li>
                     <li>
@@ -20,27 +20,27 @@
             <div v-else-if="contentInfo.WORD_ID">
                 <ul>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.word') }}:</span>
+                        <span>{{ $t('managers.glossary.common.word') }}:</span>
                         <p>{{ contentInfo.WORD }}</p>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.status') }}:</span>
-                        <p v-if="contentInfo.STATE_NM">{{ $t(contentInfo.STATE_NM) }}</p>
+                        <span>{{ $t('managers.glossary.common.status') }}:</span>
+                        <p v-if="contentInfo.STATE_NM">{{ $t(glossaryUsageDescriptor.translation[contentInfo.STATE_NM]) }}</p>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.category') }}:</span>
-                        <p v-if="contentInfo.CATEGORY_NM">{{ $t(contentInfo.CATEGORY_NM) }}</p>
+                        <span>{{ $t('managers.glossary.common.category') }}:</span>
+                        <p v-if="contentInfo.CATEGORY_NM">{{ $t(glossaryUsageDescriptor.translation[contentInfo.CATEGORY_NM]) }}</p>
                     </li>
                     <li>
                         <span>{{ $t('common.description') }}:</span>
                         <p>{{ contentInfo.DESCR }}</p>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.formula') }}:</span>
+                        <span>{{ $t('managers.glossary.common.formula') }}:</span>
                         <p>{{ contentInfo.FORMULA }}</p>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.link') }}:</span>
+                        <span>{{ $t('managers.glossary.common.link') }}:</span>
                         <ul>
                             <li v-for="(link, index) in contentInfo.LINK" :key="index">
                                 <span>
@@ -51,7 +51,7 @@
                         </ul>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.attributes') }}:</span>
+                        <span>{{ $t('managers.glossary.common.attributes') }}:</span>
                         <ul>
                             <li v-for="(attribute, index) in contentInfo.SBI_GL_WORD_ATTR" :key="index">
                                 <p>{{ attribute.ATTRIBUTE_NM }}:</p>
