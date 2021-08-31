@@ -6,7 +6,7 @@
                     {{ title }}
                 </template>
                 <template #right>
-                    <Button class="kn-button p-button-text" @click="$emit('linkClicked', type)">{{ $t('managers.glossaryUsage.link') }}</Button>
+                    <Button class="kn-button p-button-text" @click="$emit('linkClicked', type)">{{ $t('managers.glossary.glossaryUsage.link') }}</Button>
                 </template>
             </Toolbar>
         </template>
@@ -37,7 +37,7 @@
                 </template>
                 <template #empty
                     ><div id="no-words-present-info">
-                        <p>{{ $t('managers.glossaryUsage.noWordsPresent', { type: title }) }}</p>
+                        <p>{{ $t('managers.glossary.glossaryUsage.noWordsPresent', { type: title }) }}</p>
                     </div></template
                 >
                 <Column class="kn-truncated" field="label" key="label"></Column>
@@ -78,13 +78,13 @@ export default defineComponent({
         title(): string {
             switch (this.type) {
                 case 'document':
-                    return this.$t('managers.glossaryUsage.documents')
+                    return this.$t('managers.glossary.glossaryUsage.documents')
                 case 'dataset':
-                    return this.$t('managers.glossaryUsage.dataset')
+                    return this.$t('managers.glossary.glossaryUsage.dataset')
                 case 'businessClass':
-                    return this.$t('managers.glossaryUsage.businessClass')
+                    return this.$t('managers.glossary.glossaryUsage.businessClass')
                 case 'table':
-                    return this.$t('managers.glossaryUsage.tables')
+                    return this.$t('managers.glossary.glossaryUsage.tables')
                 default:
                     return ''
             }

@@ -3,21 +3,21 @@
         <div class="kn-page-content p-grid p-m-0">
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
                 <template #left>
-                    {{ $t('managers.glossaryUsage.title') }}
+                    {{ $t('managers.glossary.glossaryUsage.title') }}
                 </template>
             </Toolbar>
             <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
                 <div class="p-d-flex p-flex-column p-m-3">
-                    <label v-if="selectedGlossaryId" for="glossary" class="kn-material-input-label">{{ $t('managers.glossaryUsage.title') }}</label>
-                    <Dropdown id="glossary" class="kn-material-input" v-model="selectedGlossaryId" :options="glossaryList" optionLabel="GLOSSARY_NM" optionValue="GLOSSARY_ID" :placeholder="$t('managers.glossaryUsage.selectGlossary')" @change="listContents($event.value, null)" />
+                    <label v-if="selectedGlossaryId" for="glossary" class="kn-material-input-label">{{ $t('managers.glossary.glossaryUsage.title') }}</label>
+                    <Dropdown id="glossary" class="kn-material-input" v-model="selectedGlossaryId" :options="glossaryList" optionLabel="GLOSSARY_NM" optionValue="GLOSSARY_ID" :placeholder="$t('managers.glossary.glossaryUsage.selectGlossary')" @change="listContents($event.value, null)" />
                 </div>
                 <div>
                     <div v-if="glossaryList.length === 0" data-test="no-glossary-found-hint">
                         {{ $t('common.info.noDataFound') }}
                     </div>
                     <div v-else-if="!selectedGlossaryId" id="glossary-hint" data-test="no-glossary-selected-tree-hint">
-                        <p>{{ $t('managers.glossaryUsage.glossaryHint') }}</p>
+                        <p>{{ $t('managers.glossary.glossaryUsage.glossaryHint') }}</p>
                     </div>
                     <div v-else>
                         <div class="p-m-3">

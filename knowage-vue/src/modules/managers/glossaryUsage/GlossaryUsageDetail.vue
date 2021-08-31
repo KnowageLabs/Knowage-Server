@@ -198,7 +198,7 @@ export default defineComponent({
                         })
                     )
                     this.linkTableItems.sort((a: iLinkTableItem, b: iLinkTableItem) => (a.name > b.name ? 1 : -1))
-                    this.linkTableTitle = this.$t('managers.glossaryUsage.documents')
+                    this.linkTableTitle = this.$t('managers.glossary.glossaryUsage.documents')
                     this.linkTableVisible = true
                 })
                 .finally(() => (this.loading = false))
@@ -221,7 +221,7 @@ export default defineComponent({
                         })
                     )
                     this.linkTableItems.sort((a: iLinkTableItem, b: iLinkTableItem) => (a.name > b.name ? 1 : -1))
-                    this.linkTableTitle = this.$t('managers.glossaryUsage.dataset')
+                    this.linkTableTitle = this.$t('managers.glossary.glossaryUsage.dataset')
                     this.linkTableVisible = true
                 })
                 .finally(() => (this.loading = false))
@@ -243,7 +243,7 @@ export default defineComponent({
                         })
                     )
                     this.linkTableItems.sort((a: iLinkTableItem, b: iLinkTableItem) => (a.name > b.name ? 1 : -1))
-                    this.linkTableTitle = this.$t('managers.glossaryUsage.businessClass')
+                    this.linkTableTitle = this.$t('managers.glossary.glossaryUsage.businessClass')
                     this.linkTableVisible = true
                 })
                 .finally(() => (this.loading = false))
@@ -265,7 +265,7 @@ export default defineComponent({
                         })
                     )
                     this.linkTableItems.sort((a: iLinkTableItem, b: iLinkTableItem) => (a.name > b.name ? 1 : -1))
-                    this.linkTableTitle = this.$t('managers.glossaryUsage.tables')
+                    this.linkTableTitle = this.$t('managers.glossary.glossaryUsage.tables')
                     this.linkTableVisible = true
                 })
                 .finally(() => (this.loading = false))

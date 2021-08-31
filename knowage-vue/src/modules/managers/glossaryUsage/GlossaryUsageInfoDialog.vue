@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Dialog :style="glossaryUsageDescriptor.dialog.style" :header="$t('managers.glossaryUsage.details')" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
+        <Dialog :style="glossaryUsageDescriptor.dialog.style" :header="$t('managers.glossary.glossaryUsage.details')" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
             <div v-if="contentInfo && contentInfo.CONTENT_ID">
                 <ul>
                     <li>
@@ -8,7 +8,7 @@
                         <p>{{ contentInfo.CONTENT_NM }}</p>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.code') }}:</span>
+                        <span>{{ $t('managers.glossary.common.code') }}:</span>
                         <p>{{ contentInfo.CONTENT_CD }}</p>
                     </li>
                     <li>
@@ -20,27 +20,27 @@
             <div v-else-if="contentInfo.WORD_ID">
                 <ul>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.word') }}:</span>
+                        <span>{{ $t('managers.glossary.common.word') }}:</span>
                         <p>{{ contentInfo.WORD }}</p>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.status') }}:</span>
-                        <p v-if="contentInfo.STATE_NM">{{ $t(contentInfo.STATE_NM) }}</p>
+                        <span>{{ $t('managers.glossary.common.status') }}:</span>
+                        <p v-if="contentInfo.STATE_NM">{{ $t(glossaryUsageDescriptor.translation[contentInfo.STATE_NM]) }}</p>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.category') }}:</span>
-                        <p v-if="contentInfo.CATEGORY_NM">{{ $t(contentInfo.CATEGORY_NM) }}</p>
+                        <span>{{ $t('managers.glossary.common.category') }}:</span>
+                        <p v-if="contentInfo.CATEGORY_NM">{{ $t(glossaryUsageDescriptor.translation[contentInfo.CATEGORY_NM]) }}</p>
                     </li>
                     <li>
                         <span>{{ $t('common.description') }}:</span>
                         <p>{{ contentInfo.DESCR }}</p>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.formula') }}:</span>
+                        <span>{{ $t('managers.glossary.common.formula') }}:</span>
                         <p>{{ contentInfo.FORMULA }}</p>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.link') }}:</span>
+                        <span>{{ $t('managers.glossary.common.link') }}:</span>
                         <ul>
                             <li v-for="(link, index) in contentInfo.LINK" :key="index">
                                 <span>
@@ -51,7 +51,7 @@
                         </ul>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.attributes') }}:</span>
+                        <span>{{ $t('managers.glossary.common.attributes') }}:</span>
                         <ul>
                             <li v-for="(attribute, index) in contentInfo.SBI_GL_WORD_ATTR" :key="index">
                                 <p>{{ attribute.ATTRIBUTE_NM }}:</p>
@@ -75,11 +75,11 @@
                         <p>{{ contentInfo.data.name }}</p>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.hierarchyScope') }}:</span>
+                        <span>{{ $t('managers.glossary.glossaryUsage.hierarchyScope') }}:</span>
                         <p>{{ contentInfo.data.functionalities[0] }}</p>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.profiledVisibility') }}:</span>
+                        <span>{{ $t('managers.glossary.glossaryUsage.profiledVisibility') }}:</span>
                         <ul class="p-mt-3">
                             <li class="inline-list-item" v-for="(link, index) in contentInfo.data.access" :key="index">{{ link }}</li>
                         </ul>
@@ -101,11 +101,11 @@
                         <p>{{ contentInfo.data.DataSet.type }}</p>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.dataSource') }}:</span>
+                        <span>{{ $t('managers.glossary.glossaryUsage.dataSource') }}:</span>
                         <p>{{ contentInfo.data.DataSet.configuration.dataSource }}</p>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.associatedWord') }}:</span>
+                        <span>{{ $t('managers.glossary.glossaryUsage.associatedWord') }}:</span>
                         <ul class="p-my-3">
                             <li v-for="(column, index) in contentInfo.data.Word" :key="index" :class="{ 'selected-word': wordIsSelected(column) }">
                                 {{ column.WORD }}
@@ -113,7 +113,7 @@
                         </ul>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.column') }}:</span>
+                        <span>{{ $t('managers.glossary.glossaryUsage.column') }}:</span>
                         <ul class="p-my-3">
                             <li v-for="(column, index) in contentInfo.data.SbiGlDataSetWlist" :key="index">
                                 {{ column.alias }}
@@ -130,15 +130,15 @@
             <div v-else-if="contentInfo.type && contentInfo.type === 'businessClass'">
                 <ul>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.metaModel') }}:</span>
+                        <span>{{ $t('managers.glossary.glossaryUsage.metaModel') }}:</span>
                         <p>{{ contentInfo.data.metaBc.sbiMetaModel.name }}</p>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.businessClass') }}:</span>
+                        <span>{{ $t('managers.glossary.glossaryUsage.businessClass') }}:</span>
                         <p>{{ contentInfo.data.metaBc.name }}</p>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.associatedWord') }}:</span>
+                        <span>{{ $t('managers.glossary.glossaryUsage.associatedWord') }}:</span>
                         <ul class="p-my-3">
                             <li v-for="(column, index) in contentInfo.data.words" :key="index" :class="{ 'selected-word': wordIsSelected(column) }">
                                 {{ column.WORD }}
@@ -146,7 +146,7 @@
                         </ul>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.column') }}:</span>
+                        <span>{{ $t('managers.glossary.glossaryUsage.column') }}:</span>
                         <ul class="p-my-3">
                             <li v-for="(column, index) in contentInfo.data.sbiGlBnessClsWlist" :key="index">
                                 {{ column.name }}
@@ -163,7 +163,7 @@
             <div v-else-if="contentInfo.type && contentInfo.type === 'table'">
                 <ul>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.metaSource') }}:</span>
+                        <span>{{ $t('managers.glossary.glossaryUsage.metaSource') }}:</span>
                         <p>{{ contentInfo.data.metaSource.name }}</p>
                     </li>
                     <li>
@@ -171,7 +171,7 @@
                         <p>{{ contentInfo.data.metaTable.name }}</p>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.associatedWord') }}:</span>
+                        <span>{{ $t('managers.glossary.glossaryUsage.associatedWord') }}:</span>
                         <ul class="p-my-3">
                             <li v-for="(column, index) in contentInfo.data.words" :key="index" :class="{ 'selected-word': wordIsSelected(column) }">
                                 {{ column.WORD }}
@@ -179,7 +179,7 @@
                         </ul>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossaryUsage.column') }}:</span>
+                        <span>{{ $t('managers.glossary.glossaryUsage.column') }}:</span>
                         <ul class="p-my-3">
                             <li v-for="(column, index) in contentInfo.data.sbiGlTableWlist" :key="index">
                                 {{ column.name }}
