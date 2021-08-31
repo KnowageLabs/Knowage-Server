@@ -575,6 +575,7 @@
             "common": {
                 "attributes": "Attributes",
                 "category": "Category",
+                "code": "Code",
                 "details": "Details",
                 "formula": "Formula",
                 "link": "Link",
@@ -582,13 +583,15 @@
                 "word": "Word"
             },
             "glossaryDefinition": {
-                "code": "Code",
                 "deleteNodeConfirmMessage": "Deleting a node all the underlying node (if present) will be deleted. Continue?",
                 "details": "Details",
+                "duplicateContent": "Adding two or more nodes with the same name under a single node is not allowed.",
                 "duplicateNode": "Adding the same word more than once under a single glossary is not allowed.",
+                "editNode": "Edit node",
                 "formula": "Formula",
                 "glossary": "Glossary",
                 "hint": "Lorem ipsum dolor sit amet...",
+                "newNode": "New node",
                 "saveWordConfirmMessage": "Data will be immediately saved.",
                 "saveWordConfirmTitle": "Word will be saved. Continue?",
                 "status": "Status",

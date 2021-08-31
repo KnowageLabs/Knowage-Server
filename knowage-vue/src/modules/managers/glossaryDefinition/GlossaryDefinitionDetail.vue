@@ -24,7 +24,7 @@
                     <div v-if="selectedGlossary" class="p-m-3" id="code-container">
                         <span class="p-float-label p-mt-3">
                             <InputText id="code" class="kn-material-input full-width" v-model.trim="selectedGlossary.GLOSSARY_CD" disabled />
-                            <label for="code" class="kn-material-input-label"> {{ $t('managers.glossary.glossaryDefinition.code') }}</label>
+                            <label for="code" class="kn-material-input-label"> {{ $t('managers.glossary.common.code') }}</label>
                         </span>
                     </div>
                 </div>
@@ -44,6 +44,8 @@
                         <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonVisible[slotProps.node.id] = true" @mouseleave="buttonVisible[slotProps.node.id] = false" @drop="saveWordConfirm($event, slotProps.node)" @dragover.prevent @dragenter.prevent>
                             <span>{{ slotProps.node.label }}</span>
                             <div v-show="buttonVisible[slotProps.node.id]" class="p-ml-2">
+                                <Button v-if="!slotProps.node.leaf" icon="pi pi-bars" class="p-button-link p-button-sm p-p-0" @click.stop="showNodeDialog(slotProps.node, 'new')" />
+                                <Button v-if="!slotProps.node.leaf" icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" @click.stop="showNodeDialog(slotProps.node, 'edit')" />
                                 <Button icon="pi pi-info-circle" class="p-button-link p-button-sm p-p-0" @click.stop="$emit('infoClicked', slotProps.node.data)" />
                                 <Button icon="far fa-trash-alt" class="p-button-link p-button-sm p-p-0" @click.stop="deleteNodeConfirm(slotProps.node)" />
                             </div>
@@ -53,20 +55,23 @@
             </div>
         </template>
     </Card>
+
+    <GlossaryDefinitionNodeDialog :visible="newNodeDialogVisible" :selectedContent="selectedContent" @save="saveContent" @close="newNodeDialogVisible = false"></GlossaryDefinitionNodeDialog>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iGlossary, iNode, iWord } from './GlossaryDefinition'
+import { iContent, iGlossary, iNode, iWord } from './GlossaryDefinition'
 import axios from 'axios'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 import glossaryDefinitionDescriptor from './GlossaryDefinitionDescriptor.json'
+import GlossaryDefinitionNodeDialog from './dialogs/GlossaryDefinitionNodeDialog.vue'
 import Tree from 'primevue/tree'
 
 export default defineComponent({
     name: 'glossary-definition-detail',
-    components: { Card, Dropdown, Tree },
+    components: { Card, Dropdown, GlossaryDefinitionNodeDialog, Tree },
     props: { glossaryList: { type: Array } },
     emits: ['infoClicked'],
     data() {
@@ -80,6 +85,9 @@ export default defineComponent({
             searchWord: null,
             timer: null as any,
             expandedKeys: {},
+            newNodeDialogVisible: false,
+            selectedContent: {} as iContent,
+            selectedNode: {} as iNode,
             loading: false
         }
     },
@@ -245,6 +253,94 @@ export default defineComponent({
             }
 
             this.loading = false
+        },
+        async showNodeDialog(node: any, mode: string) {
+            console.log('CONTENT: ', node.data)
+            console.log('MODE: ', mode)
+            console.log('NODE: ', node)
+            this.selectedNode = node
+            if (mode === 'edit') {
+                await this.loadContent(node.data.CONTENT_ID)
+            } else {
+                this.selectedContent = {
+                    CONTENT_ID: '',
+                    CONTENT_NM: '',
+                    CONTENT_CD: '',
+                    CONTENT_DS: '',
+                    GLOSSARY_ID: this.selectedGlossaryId as number,
+                    NEWCONT: true,
+                    PARENT_ID: node.data.CONTENT_ID,
+                    SaveOrUpdate: 'Save'
+                }
+            }
+            this.newNodeDialogVisible = true
+        },
+        async loadContent(contentId: number) {
+            this.loading = true
+            await axios
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getContent?CONTENT_ID=${contentId}`)
+                .then((response) => (this.selectedContent = { ...response.data, CONTENT_ID: contentId, SaveOrUpdate: 'Update' }))
+                .finally(() => (this.loading = false))
+            // console.log('SELECTED CONTENT: ', this.selectedContent)
+        },
+        async saveContent(content: iContent) {
+            console.log('CONTENT FOR SAVE: ', content)
+            this.loading = true
+
+            let result = { status: '', message: '' } as any
+            await axios
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/business/addContents', content)
+                .then((response) => (result = { status: response.data.Status, message: response.data.Message }))
+                .catch((response) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: response
+                    })
+                })
+
+            if (result.status === 'NON OK') {
+                this.$store.commit('setError', {
+                    title: this.$t('common.toast.createTitle'),
+                    msg: this.$t(this.glossaryDefinitionDescriptor.translation[result.message])
+                })
+            } else {
+                this.$store.commit('setInfo', {
+                    title: this.$t('common.toast.createTitle'),
+                    msg: this.$t('common.toast.success')
+                })
+                this.newNodeDialogVisible = false
+
+                content.SaveOrUpdate === 'Save' ? await this.listContents(this.selectedGlossaryId as number, this.selectedNode) : this.test()
+                console.log('SELECTED NODE', this.selectedNode)
+            }
+        },
+        // TODO SREDITI OVO SUTRA
+        test() {
+            let temp = null as any
+            for (let i = 0; i < this.nodes.length; i++) {
+                temp = this.findNode(this.nodes[i], this.selectedNode.id)
+                if (temp) break
+            }
+
+            if (temp) {
+                temp.label = 'TEEEEEEEEEEEEEEEEESTIRANJE'
+            }
+
+            console.log('FOUND!', temp)
+        },
+        findNode(node: iNode, nodeId: number) {
+            console.log('NODE: ', node)
+            console.log('NODE ID: ', nodeId)
+            if (node.id === nodeId) {
+                return node
+            } else if (node.children != null) {
+                let result = null as any
+                for (let i = 0; result == null && i < node.children.length; i++) {
+                    result = this.findNode(node.children[i], nodeId)
+                }
+                return result
+            }
+            return null
         }
     }
 })

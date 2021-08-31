@@ -25,11 +25,11 @@
                     </li>
                     <li>
                         <span>{{ $t('managers.glossary.common.status') }}:</span>
-                        <p v-if="contentInfo.STATE_NM">{{ $t(glossaryUsageDescriptor.translation[contentInfo.STATE_NM]) }}</p>
+                        <p v-if="contentInfo.STATE_NM">{{ $t(glossaryDefinitionDescriptor.translation[contentInfo.STATE_NM]) }}</p>
                     </li>
                     <li>
                         <span>{{ $t('managers.glossary.common.category') }}:</span>
-                        <p v-if="contentInfo.CATEGORY_NM">{{ $t(glossaryUsageDescriptor.translation[contentInfo.CATEGORY_NM]) }}</p>
+                        <p v-if="contentInfo.CATEGORY_NM">{{ $t(glossaryDefinitionDescriptor.translation[contentInfo.CATEGORY_NM]) }}</p>
                     </li>
                     <li>
                         <span>{{ $t('common.description') }}:</span>
@@ -74,6 +74,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Dialog from 'primevue/dialog'
+import glossaryDefinitionDescriptor from '../GlossaryDefinitionDescriptor.json'
 
 export default defineComponent({
     name: 'glossary-definition-info-dialog',
@@ -82,6 +83,11 @@ export default defineComponent({
     props: {
         visible: { type: Boolean },
         contentInfo: { type: Object }
+    },
+    data() {
+        return {
+            glossaryDefinitionDescriptor
+        }
     }
 })
 </script>

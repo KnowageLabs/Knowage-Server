@@ -28,3 +28,14 @@ export interface iNode {
     style: any
     leaf: boolean
 }
+
+export interface iContent {
+    CONTENT_ID: number | string,
+    CONTENT_NM: string,
+    CONTENT_CD: string,
+    CONTENT_DS: string,
+    SaveOrUpdate: string,
+    GLOSSARY_ID?: number,
+    NEWCONT?: boolean,
+    PARENT_ID?: number,
+}
