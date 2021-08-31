@@ -809,6 +809,15 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		return false;
 	}
 
+	$scope.isIterable = function(dataset) {
+		// in order to export to XLSX, dataset must implement an iterator (BE side)
+		notIterableDataSets = ["Federated"];
+		if (notIterableDataSets.includes(dataset.dsTypeCd))
+			return false;
+		else
+			return true;
+	}
+
 	$scope.cloneDataset = function(dataset) {
 		sbiModule_restServices.promiseGet('1.0/datasets', dataset.label).then(function(response) {
 			var dataset = response.data[0];
