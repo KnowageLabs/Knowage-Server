@@ -509,8 +509,10 @@
         "glossaryDefinition": {
             "code": "Code",
             "details": "Details",
+            "formula": "Formula",
             "glossary": "Glossary",
             "hint": "Lorem ipsum dolor sit amet...",
+            "status": "Status",
             "title": "Glossary Definition",
             "word": "Word",
             "wordsList": "Words List"

@@ -43,7 +43,7 @@
                 <GlossaryDefinitionDetail v-else :glossaryList="glossaryList" @infoClicked="showInfo"></GlossaryDefinitionDetail>
             </div>
         </div>
-        <GlossaryDefinitionWordEdit :visible="editWordDialogVisible" @close="editWordDialogVisible = false"></GlossaryDefinitionWordEdit>
+        <GlossaryDefinitionWordEdit :visible="editWordDialogVisible" @close="editWordDialogVisible = false" :state="state" :category="category" :propWord="contentInfo"></GlossaryDefinitionWordEdit>
     </div>
 </template>
 
@@ -155,8 +155,11 @@ export default defineComponent({
                 this.loadWordsList()
             })
         },
-        editWord() {
-            this.editWordDialogVisible = true
+        async editWord(id: number) {
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getWord?WORD_ID=${id}`).then((response) => {
+                this.contentInfo = response.data
+                this.editWordDialogVisible = true
+            })
         }
     }
 })
