@@ -1,5 +1,6 @@
 {
     "common": {
+        "active": "Active",
         "apply": "Apply",
         "author": "Author",
         "back": "back",
@@ -39,6 +40,7 @@
         "export": "export",
         "image": "image",
         "import": "import",
+        "inactive": "Inactive",
         "info": {
             "dataLoading": "Loading data. Please wait.",
             "emptySearch": "The search returns no data",
