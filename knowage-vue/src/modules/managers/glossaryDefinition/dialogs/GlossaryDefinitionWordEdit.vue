@@ -1,5 +1,5 @@
 <template>
-    <Dialog :header="$t('managers.glossaryDefinition.word')" :breakpoints="glossaryDefinitionDialogDescriptor.dialog.breakpoints" :style="glossaryDefinitionDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
+    <Dialog :header="$t('managers.glossary.common.word')" :breakpoints="glossaryDefinitionDialogDescriptor.dialog.breakpoints" :style="glossaryDefinitionDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
         <form class="p-fluid p-formgrid p-grid">
             <div class="p-field p-col-4">
                 <span class="p-float-label">
@@ -14,14 +14,14 @@
                         }"
                         @blur="v$.word.WORD.$touch()"
                     />
-                    <label for="word" class="kn-material-input-label">{{ $t('managers.glossaryDefinition.word') }} * </label>
+                    <label for="word" class="kn-material-input-label">{{ $t('managers.glossary.common.word') }} * </label>
                 </span>
-                <KnValidationMessages class="p-mt-1" :vComp="v$.word.WORD" :additionalTranslateParams="{ fieldName: $t('managers.glossaryDefinition.word') }"></KnValidationMessages>
+                <KnValidationMessages class="p-mt-1" :vComp="v$.word.WORD" :additionalTranslateParams="{ fieldName: $t('managers.glossary.common.word') }"></KnValidationMessages>
             </div>
             <div class="p-field p-col-4">
                 <span class="p-float-label">
                     <Dropdown id="status" class="kn-material-input" v-model="word.STATE" :options="state" optionValue="VALUE_ID" optionLabel="VALUE_NM" />
-                    <label for="status" class="kn-material-input-label"> {{ $t('managers.glossaryDefinition.status') }} </label>
+                    <label for="status" class="kn-material-input-label"> {{ $t('managers.glossary.common.status') }} </label>
                 </span>
             </div>
             <div class="p-field p-col-4">
@@ -50,13 +50,13 @@
             <div class="p-field p-col-12">
                 <span class="p-float-label">
                     <InputText id="formula" class="kn-material-input" type="text" v-model="word.FORMULA" maxLength="500" />
-                    <label for="formula" class="kn-material-input-label">{{ $t('managers.glossaryDefinition.formula') }} </label>
+                    <label for="formula" class="kn-material-input-label">{{ $t('managers.glossary.common.formula') }} </label>
                 </span>
             </div>
             <div class="p-field p-col-12">
                 <span class="p-float-label">
-                    <AutoComplete id="link" class="kn-material-input" :multiple="true" v-model="word.LINK" :suggestions="availableWords" @complete="searchWord($event)" field="WORD"></AutoComplete>
-                    <label for="link" class="kn-material-input-label">{{ $t('managers.glossaryDefinition.formula') }} </label>
+                    <AutoComplete id="link" class="kn-material-input" :multiple="true" v-model="word.LINK" :suggestions="filteredWords" @complete="searchWord($event)" field="WORD"></AutoComplete>
+                    <label for="link" class="kn-material-input-label">{{ $t('managers.glossary.common.link') }} </label>
                 </span>
             </div>
         </form>
