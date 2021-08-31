@@ -1,3 +1,8 @@
 {
-    "filterFields": ["WORD"]
+    "filterFields": ["WORD"],
+    "node": {
+        "style": {
+            "padding": "0"
+        }
+    }
 }

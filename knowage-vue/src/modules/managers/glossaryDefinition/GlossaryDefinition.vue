@@ -28,6 +28,7 @@
                             <div class="kn-list-item-text">
                                 <span>{{ slotProps.option.WORD }}</span>
                             </div>
+                            <Button icon="pi pi-info-circle" class="p-button-text p-button-rounded p-button-plain" @click.stop="showInfo(slotProps.option)" />
                             <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteWordConfirm(slotProps.option.WORD_ID)" data-test="delete-button" />
                             <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain" @click.stop="" data-test="edit-button" />
                         </div>
@@ -35,9 +36,11 @@
                 </Listbox>
             </div>
 
+            <GlossaryDefinitionInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :contentInfo="contentInfo" @close="infoDialogVisible = false"></GlossaryDefinitionInfoDialog>
+
             <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
                 <GlossaryDefinitionHint v-if="!selectedWord"></GlossaryDefinitionHint>
-                <GlossaryDefinitionDetail v-else :glossaryList="glossaryList"></GlossaryDefinitionDetail>
+                <GlossaryDefinitionDetail v-else :glossaryList="glossaryList" @infoClicked="showInfo"></GlossaryDefinitionDetail>
             </div>
         </div>
     </div>
@@ -52,6 +55,7 @@ import Listbox from 'primevue/listbox'
 import glossaryDefinitionDescriptor from './GlossaryDefinitionDescriptor.json'
 import GlossaryDefinitionHint from './GlossaryDefinitionHint.vue'
 import GlossaryDefinitionDetail from './GlossaryDefinitionDetail.vue'
+import GlossaryDefinitionInfoDialog from './dialogs/GlossaryDefinitionInfoDialog.vue'
 
 export default defineComponent({
     name: 'glossary-definition',
@@ -59,7 +63,8 @@ export default defineComponent({
         FabButton,
         Listbox,
         GlossaryDefinitionHint,
-        GlossaryDefinitionDetail
+        GlossaryDefinitionDetail,
+        GlossaryDefinitionInfoDialog
     },
     data() {
         return {
@@ -67,6 +72,8 @@ export default defineComponent({
             wordsList: [] as iWord[],
             glossaryList: [] as iGlossary[],
             selectedWord: null as iWord | null,
+            contentInfo: null as any,
+            infoDialogVisible: false,
             loading: false,
             touched: false
         }
@@ -102,6 +109,17 @@ export default defineComponent({
                     }
                 })
             }
+        },
+        async showInfo(content: any) {
+            this.loading = true
+            const url = content.CONTENT_ID ? `1.0/glossary/getContent?CONTENT_ID=${content.CONTENT_ID}` : `1.0/glossary/getWord?WORD_ID=${content.WORD_ID}`
+            await axios
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
+                .then((response) => {
+                    this.contentInfo = response.data
+                    this.infoDialogVisible = true
+                })
+                .finally(() => (this.loading = false))
         },
         deleteWordConfirm(wordId: number) {
             this.$confirm.require({
