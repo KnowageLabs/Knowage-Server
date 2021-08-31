@@ -1,65 +1,68 @@
 <template>
     <Dialog :header="$t('managers.glossary.common.word')" :breakpoints="glossaryDefinitionDialogDescriptor.dialog.breakpoints" :style="glossaryDefinitionDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
-        <form class="p-fluid p-formgrid p-grid">
-            <div class="p-field p-col-4">
-                <span class="p-float-label">
-                    <InputText
-                        id="word"
-                        class="kn-material-input"
-                        type="text"
-                        v-model.trim="v$.word.WORD.$model"
-                        maxLength="100"
-                        :class="{
-                            'p-invalid': v$.word.WORD.$invalid && v$.word.WORD.$dirty
-                        }"
-                        @blur="v$.word.WORD.$touch()"
-                    />
-                    <label for="word" class="kn-material-input-label">{{ $t('managers.glossary.common.word') }} * </label>
-                </span>
-                <KnValidationMessages class="p-mt-1" :vComp="v$.word.WORD" :additionalTranslateParams="{ fieldName: $t('managers.glossary.common.word') }"></KnValidationMessages>
-            </div>
-            <div class="p-field p-col-4">
-                <span class="p-float-label">
-                    <Dropdown id="status" class="kn-material-input" v-model="word.STATE" :options="state" optionValue="VALUE_ID" optionLabel="VALUE_NM" />
-                    <label for="status" class="kn-material-input-label"> {{ $t('managers.glossary.common.status') }} </label>
-                </span>
-            </div>
-            <div class="p-field p-col-4">
-                <span class="p-float-label">
-                    <Dropdown id="category" class="kn-material-input" v-model="word.CATEGORY" :options="category" optionValue="VALUE_ID" optionLabel="VALUE_NM" />
-                    <label for="category" class="kn-material-input-label"> {{ $t('common.category') }} </label>
-                </span>
-            </div>
-            <div class="p-field p-col-12">
-                <span class="p-float-label">
-                    <InputText
-                        id="description"
-                        class="kn-material-input"
-                        type="text"
-                        v-model="v$.word.DESCR.$model"
-                        maxLength="500"
-                        :class="{
-                            'p-invalid': v$.word.DESCR.$invalid && v$.word.DESCR.$dirty
-                        }"
-                        @blur="v$.word.DESCR.$touch()"
-                    />
-                    <label for="description" class="kn-material-input-label">{{ $t('common.description') }} </label>
-                </span>
-                <KnValidationMessages class="p-mt-1" :vComp="v$.word.DESCR" :additionalTranslateParams="{ fieldName: $t('common.description') }"></KnValidationMessages>
-            </div>
-            <div class="p-field p-col-12">
-                <span class="p-float-label">
-                    <InputText id="formula" class="kn-material-input" type="text" v-model="word.FORMULA" maxLength="500" />
-                    <label for="formula" class="kn-material-input-label">{{ $t('managers.glossary.common.formula') }} </label>
-                </span>
-            </div>
-            <div class="p-field p-col-12">
-                <span class="p-float-label">
-                    <AutoComplete id="link" class="kn-material-input" :multiple="true" v-model="word.LINK" :suggestions="availableWords" @complete="searchWord($event)" field="WORD"></AutoComplete>
-                    <label for="link" class="kn-material-input-label">{{ $t('managers.glossary.common.link') }} </label>
-                </span>
-            </div>
-        </form>
+        <div class="p-mb-3">
+            <form class="p-fluid p-formgrid p-grid">
+                <div class="p-field p-col-4 p-mb-3">
+                    <span class="p-float-label">
+                        <InputText
+                            id="word"
+                            class="kn-material-input"
+                            type="text"
+                            v-model.trim="v$.word.WORD.$model"
+                            maxLength="100"
+                            :class="{
+                                'p-invalid': v$.word.WORD.$invalid && v$.word.WORD.$dirty
+                            }"
+                            @blur="v$.word.WORD.$touch()"
+                        />
+                        <label for="word" class="kn-material-input-label">{{ $t('managers.glossary.common.word') }} * </label>
+                    </span>
+                    <KnValidationMessages class="p-mt-1" :vComp="v$.word.WORD" :additionalTranslateParams="{ fieldName: $t('managers.glossary.common.word') }"></KnValidationMessages>
+                </div>
+                <div class="p-field p-col-4">
+                    <span class="p-float-label">
+                        <Dropdown id="status" class="kn-material-input" v-model="word.STATE" :options="state" optionValue="VALUE_ID" optionLabel="VALUE_NM" />
+                        <label for="status" class="kn-material-input-label"> {{ $t('managers.glossary.common.status') }} </label>
+                    </span>
+                </div>
+                <div class="p-field p-col-4">
+                    <span class="p-float-label">
+                        <Dropdown id="category" class="kn-material-input" v-model="word.CATEGORY" :options="category" optionValue="VALUE_ID" optionLabel="VALUE_NM" />
+                        <label for="category" class="kn-material-input-label"> {{ $t('common.category') }} </label>
+                    </span>
+                </div>
+                <div class="p-field p-col-12">
+                    <span class="p-float-label">
+                        <InputText
+                            id="description"
+                            class="kn-material-input"
+                            type="text"
+                            v-model="v$.word.DESCR.$model"
+                            maxLength="500"
+                            :class="{
+                                'p-invalid': v$.word.DESCR.$invalid && v$.word.DESCR.$dirty
+                            }"
+                            @blur="v$.word.DESCR.$touch()"
+                        />
+                        <label for="description" class="kn-material-input-label">{{ $t('common.description') }} </label>
+                    </span>
+                    <KnValidationMessages class="p-mt-1" :vComp="v$.word.DESCR" :additionalTranslateParams="{ fieldName: $t('common.description') }"></KnValidationMessages>
+                </div>
+                <div class="p-field p-col-12">
+                    <span class="p-float-label">
+                        <InputText id="formula" class="kn-material-input" type="text" v-model="word.FORMULA" maxLength="500" />
+                        <label for="formula" class="kn-material-input-label">{{ $t('managers.glossary.common.formula') }} </label>
+                    </span>
+                </div>
+                <div class="p-field p-col-12">
+                    <span class="p-float-label">
+                        <AutoComplete id="link" class="kn-material-input" :multiple="true" v-model="word.LINK" :suggestions="availableWords" @complete="searchWord($event)" field="WORD"></AutoComplete>
+                        <label for="link" class="kn-material-input-label">{{ $t('managers.glossary.common.link') }} </label>
+                    </span>
+                </div>
+            </form>
+            <AttributesTable></AttributesTable>
+        </div>
         <template #footer>
             <Button :label="$t('common.cancel')" @click="closeDialog" class="kn-button kn-button--secondary" />
             <Button :label="$t('common.save')" @click="saveWord" class="kn-button kn-button--primary" :disabled="buttonDisabled" />
@@ -74,6 +77,7 @@ import axios from 'axios'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import AutoComplete from 'primevue/autocomplete'
+import AttributesTable from './tables/GlossaryDefinitionAttributesTable.vue'
 import glossaryDefinitionDialogDescriptor from './GlossaryDefinitionDialogDescriptor.json'
 import glossaryDefinitionDialogValidationDescriptor from './GlossaryDefinitionDialogValidationDescriptor.json'
 import useValidate from '@vuelidate/core'
@@ -84,7 +88,8 @@ export default defineComponent({
         Dialog,
         Dropdown,
         AutoComplete,
-        KnValidationMessages
+        KnValidationMessages,
+        AttributesTable
     },
     props: {
         visible: {
@@ -186,3 +191,8 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss" scoped>
+.p-dialog-content .p-dialog {
+    padding-top: 3px;
+}
+</style>

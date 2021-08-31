@@ -573,6 +573,7 @@
         },
         "glossary": {
             "common": {
+                "add": "Add",
                 "attributes": "Attributes",
                 "category": "Category",
                 "details": "Details",
