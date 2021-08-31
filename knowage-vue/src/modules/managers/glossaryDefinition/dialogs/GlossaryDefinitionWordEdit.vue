@@ -119,7 +119,7 @@ export default defineComponent({
             return this.v$.$invalid
         },
         availableWords(): any {
-            return this.filteredWords
+            return this.filteredWords.filter
         }
     },
     validations() {

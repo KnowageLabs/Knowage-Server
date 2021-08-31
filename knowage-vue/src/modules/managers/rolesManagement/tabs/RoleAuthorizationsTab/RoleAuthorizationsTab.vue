@@ -8,10 +8,10 @@
                             {{ $t(category.name) }}
                         </template>
                     </Toolbar>
-                    <div v-for="(authCBInfo, index) of authorizationCBs[category.categoryName]" :key="index">
+                    <div v-for="(authCBInfo, ind) of authorizationCBs[category.categoryName]" :key="ind">
                         <div class="p-field-checkbox p-m-3">
-                            <Checkbox :id="category.categoryName + '_' + index" v-model="role[authCBInfo.fieldName]" :binary="true" :disabled="authCBInfo.enableForRole && !authCBInfo.enableForRole.includes(role.roleTypeID)" @change="authChanged(authCBInfo.fieldName, role[authCBInfo.fieldName])" />
-                            <label :for="category.categoryName + '_' + index">{{ $t(authCBInfo.label) }}</label>
+                            <InputSwitch :id="'cb-' + index + '-' + ind" v-model="role[authCBInfo.fieldName]" :disabled="authCBInfo.enableForRole && !authCBInfo.enableForRole.includes(role.roleTypeID)" @change="authChanged(authCBInfo.fieldName, role[authCBInfo.fieldName])" />
+                            <label :for="'cb-' + index + '-' + ind">{{ $t(authCBInfo.label) }}</label>
                         </div>
                     </div>
                 </template>
@@ -23,14 +23,14 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Card from 'primevue/card'
-import Checkbox from 'primevue/checkbox'
+import InputSwitch from 'primevue/inputswitch'
 import rolesManagementTabViewDescriptor from '../../RolesManagementTabViewDescriptor.json'
 
 export default defineComponent({
     name: 'authorizations-tab',
     components: {
         Card,
-        Checkbox
+        InputSwitch
     },
     props: {
         selectedRole: {

@@ -4,5 +4,8 @@
         "style": {
             "padding": "0"
         }
+    },
+    "translation": {
+        "sbi.glossary.content.duplicate.node": "managers.glossary.glossaryDefinition.duplicateNode"
     }
 }

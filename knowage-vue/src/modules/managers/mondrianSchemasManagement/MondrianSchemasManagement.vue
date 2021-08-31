@@ -38,7 +38,7 @@
                     </Listbox>
                 </div>
             </div>
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
                 <router-view @touched="touched = true" @closed="closeForm" @inserted="reloadPage" />
                 <KnHint :title="'managers.mondrianSchemasManagement.hintTitle'" :hint="'managers.mondrianSchemasManagement.hint'" v-if="toggleHint" />
             </div>

@@ -1,13 +1,13 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-        <template #left>{{ $t('managers.glossaryDefinition.title') }}</template>
+        <template #left>{{ $t('managers.glossary.glossaryDefinition.title') }}</template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
     </Toolbar>
     <Card class="p-m-3">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-m-3">
                 <template #left>
-                    {{ $t('managers.glossaryDefinition.glossary') }}
+                    {{ $t('managers.glossary.glossaryDefinition.glossary') }}
                 </template>
                 <template #right>
                     <Button class="kn-button p-button-text">{{ $t('common.delete') }}</Button>
@@ -18,13 +18,13 @@
             <div>
                 <div class="p-field p-d-flex p-ai-center p-m-3">
                     <div class="p-d-flex p-flex-column p-mr-2" id="glossary-select-container">
-                        <label for="glossary" class="kn-material-input-label">{{ $t('managers.glossaryDefinition.title') }}</label>
-                        <Dropdown id="glossary" class="kn-material-input" v-model="selectedGlossaryId" :options="glossaries" optionLabel="GLOSSARY_NM" optionValue="GLOSSARY_ID" :placeholder="$t('managers.glossaryDefinition.glossary')" @change="loadGlossaryInfo($event.value, null)" />
+                        <label for="glossary" class="kn-material-input-label">{{ $t('managers.glossary.glossaryDefinition.title') }}</label>
+                        <Dropdown id="glossary" class="kn-material-input" v-model="selectedGlossaryId" :options="glossaries" optionLabel="GLOSSARY_NM" optionValue="GLOSSARY_ID" :placeholder="$t('managers.glossary.glossaryDefinition.glossary')" @change="loadGlossaryInfo($event.value, null)" />
                     </div>
                     <div v-if="selectedGlossary" class="p-m-3" id="code-container">
                         <span class="p-float-label p-mt-3">
                             <InputText id="code" class="kn-material-input full-width" v-model.trim="selectedGlossary.GLOSSARY_CD" disabled />
-                            <label for="code" class="kn-material-input-label"> {{ $t('managers.glossaryDefinition.code') }}</label>
+                            <label for="code" class="kn-material-input-label"> {{ $t('managers.glossary.glossaryDefinition.code') }}</label>
                         </span>
                     </div>
                 </div>
@@ -186,8 +186,8 @@ export default defineComponent({
         async saveWordConfirm(event: any, item: any) {
             const word = JSON.parse(event.dataTransfer.getData('text/plain'))
             this.$confirm.require({
-                message: this.$t('managers.glossaryDefinition.saveWordConfirmMessage'),
-                header: this.$t('managers.glossaryDefinition.saveWordConfirmTitle'),
+                message: this.$t('managers.glossary.glossaryDefinition.saveWordConfirmMessage'),
+                header: this.$t('managers.glossary.glossaryDefinition.saveWordConfirmTitle'),
                 icon: 'pi pi-exclamation-triangle',
                 accept: async () => await this.saveWord(word, item)
             })
@@ -206,7 +206,7 @@ export default defineComponent({
                     } else {
                         this.$store.commit('setError', {
                             title: this.$t('common.error.generic'),
-                            msg: response.data.Message
+                            msg: this.$t(this.glossaryDefinitionDescriptor.translation[response.data.Message])
                         })
                     }
                 })
@@ -220,7 +220,7 @@ export default defineComponent({
         },
         async deleteNodeConfirm(node: any) {
             this.$confirm.require({
-                message: this.$t('managers.glossaryDefinition.deleteNodeConfirmMessage'),
+                message: this.$t('managers.glossary.glossaryDefinition.deleteNodeConfirmMessage'),
                 header: this.$t('common.toast.deleteTitle'),
                 icon: 'pi pi-exclamation-triangle',
                 accept: async () => await this.deleteNode(node)
