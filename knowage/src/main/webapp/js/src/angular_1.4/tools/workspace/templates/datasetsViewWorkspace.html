@@ -143,7 +143,7 @@
 					<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.qbe.edit')}}</md-tooltip>
 					<md-icon md-font-icon="fa fa-pencil"></md-icon>
 				</md-button>
-				<md-button ng-if="canLoadData(selectedDataSet) && !hasDrivers(selectedDataSet) && !hasParameters(selectedDataSet) && selectedDataSet.dsTypeCd!='File'" aria-label="Export Dataset to XLSX" class="md-icon-button" ng-click="exportDataset(selectedDataSet,'XLSX')">
+				<md-button ng-if="canLoadData(selectedDataSet) && !hasDrivers(selectedDataSet) && !hasParameters(selectedDataSet) && selectedDataSet.dsTypeCd!='File' && isIterable(selectedDataSet)" aria-label="Export Dataset to XLSX" class="md-icon-button" ng-click="exportDataset(selectedDataSet,'XLSX')">
 					<md-icon md-font-icon="fa fa-file-excel-o"></md-icon>
 					<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.export.xlsx')}}</md-tooltip>
 				</md-button>
