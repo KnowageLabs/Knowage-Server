@@ -569,6 +569,17 @@
             },
             "title": "Functionalities management"
         },
+        "glossary": {
+            "common": {
+                "attributes": "Attributes",
+                "category": "Category",
+                "details": "Details",
+                "formula": "Formula",
+                "link": "Link",
+                "status": "Status",
+                "word": "Word"
+            }
+        },
         "internationalizationManagement": {
             "defaultLanguage": "(Default)",
             "delete": {
