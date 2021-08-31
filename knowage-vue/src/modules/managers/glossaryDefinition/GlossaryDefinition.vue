@@ -29,7 +29,7 @@
                                 <span>{{ slotProps.option.WORD }}</span>
                             </div>
                             <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteWordConfirm(slotProps.option.WORD_ID)" data-test="delete-button" />
-                            <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain" @click.stop="" data-test="edit-button" />
+                            <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain" @click.stop="editWord(slotProps.option.WORD_ID)" data-test="edit-button" />
                         </div>
                     </template>
                 </Listbox>
@@ -40,6 +40,7 @@
                 <GlossaryDefinitionDetail v-else :glossaryList="glossaryList"></GlossaryDefinitionDetail>
             </div>
         </div>
+        <GlossaryDefinitionWordEdit :visible="editWordDialogVisible" @close="editWordDialogVisible = false"></GlossaryDefinitionWordEdit>
     </div>
 </template>
 
@@ -52,6 +53,7 @@ import Listbox from 'primevue/listbox'
 import glossaryDefinitionDescriptor from './GlossaryDefinitionDescriptor.json'
 import GlossaryDefinitionHint from './GlossaryDefinitionHint.vue'
 import GlossaryDefinitionDetail from './GlossaryDefinitionDetail.vue'
+import GlossaryDefinitionWordEdit from './dialogs/GlossaryDefinitionWordEdit.vue'
 
 export default defineComponent({
     name: 'glossary-definition',
@@ -59,7 +61,8 @@ export default defineComponent({
         FabButton,
         Listbox,
         GlossaryDefinitionHint,
-        GlossaryDefinitionDetail
+        GlossaryDefinitionDetail,
+        GlossaryDefinitionWordEdit
     },
     data() {
         return {
@@ -68,7 +71,8 @@ export default defineComponent({
             glossaryList: [] as iGlossary[],
             selectedWord: null as iWord | null,
             loading: false,
-            touched: false
+            touched: false,
+            editWordDialogVisible: false
         }
     },
     async created() {
@@ -123,6 +127,9 @@ export default defineComponent({
                 this.$router.push('/glossary-definition')
                 this.loadWordsList()
             })
+        },
+        editWord() {
+            this.editWordDialogVisible = true
         }
     }
 })
