@@ -8,6 +8,7 @@
                         class="kn-material-input"
                         type="text"
                         v-model.trim="v$.word.WORD.$model"
+                        maxLength="100"
                         :class="{
                             'p-invalid': v$.word.WORD.$invalid && v$.word.WORD.$dirty
                         }"
@@ -36,6 +37,7 @@
                         class="kn-material-input"
                         type="text"
                         v-model="v$.word.DESCR.$model"
+                        maxLength="500"
                         :class="{
                             'p-invalid': v$.word.DESCR.$invalid && v$.word.DESCR.$dirty
                         }"
@@ -47,8 +49,14 @@
             </div>
             <div class="p-field p-col-12">
                 <span class="p-float-label">
-                    <InputText id="formula" class="kn-material-input" type="text" v-model="word.FORMULA" />
+                    <InputText id="formula" class="kn-material-input" type="text" v-model="word.FORMULA" maxLength="500" />
                     <label for="formula" class="kn-material-input-label">{{ $t('managers.glossaryDefinition.formula') }} </label>
+                </span>
+            </div>
+            <div class="p-field p-col-12">
+                <span class="p-float-label">
+                    <AutoComplete id="link" class="kn-material-input" :multiple="true" v-model="word.LINK" :suggestions="availableWords" @complete="searchWord($event)" field="WORD"></AutoComplete>
+                    <label for="link" class="kn-material-input-label">{{ $t('managers.glossaryDefinition.formula') }} </label>
                 </span>
             </div>
         </form>
@@ -62,8 +70,10 @@
 import { defineComponent } from 'vue'
 import { iWord } from '../GlossaryDefinition'
 import { createValidations } from '@/helpers/commons/validationHelper'
+import axios from 'axios'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
+import AutoComplete from 'primevue/autocomplete'
 import glossaryDefinitionDialogDescriptor from './GlossaryDefinitionDialogDescriptor.json'
 import glossaryDefinitionDialogValidationDescriptor from './GlossaryDefinitionDialogValidationDescriptor.json'
 import useValidate from '@vuelidate/core'
@@ -73,6 +83,7 @@ export default defineComponent({
     components: {
         Dialog,
         Dropdown,
+        AutoComplete,
         KnValidationMessages
     },
     props: {
@@ -99,12 +110,16 @@ export default defineComponent({
             glossaryDefinitionDialogDescriptor,
             glossaryDefinitionDialogValidationDescriptor,
             word: null as iWord | null,
+            filteredWords: [] as iWord[],
             v$: useValidate() as any
         }
     },
     computed: {
         buttonDisabled(): any {
             return this.v$.$invalid
+        },
+        availableWords(): any {
+            return this.filteredWords
         }
     },
     validations() {
@@ -129,6 +144,12 @@ export default defineComponent({
         },
         closeDialog() {
             this.$emit('close')
+        },
+        async loadWords(word: string) {
+            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listWords?WORD=` + word).then((response) => (this.filteredWords = response.data))
+        },
+        searchWord(event) {
+            this.loadWords(event.query)
         }
     }
 })
