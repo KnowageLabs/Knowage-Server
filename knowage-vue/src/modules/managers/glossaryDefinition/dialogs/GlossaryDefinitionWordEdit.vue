@@ -55,7 +55,7 @@
             </div>
             <div class="p-field p-col-12">
                 <span class="p-float-label">
-                    <AutoComplete id="link" class="kn-material-input" :multiple="true" v-model="word.LINK" :suggestions="filteredWords" @complete="searchWord($event)" field="WORD"></AutoComplete>
+                    <AutoComplete id="link" class="kn-material-input" :multiple="true" v-model="word.LINK" :suggestions="availableWords" @complete="searchWord($event)" field="WORD"></AutoComplete>
                     <label for="link" class="kn-material-input-label">{{ $t('managers.glossary.common.link') }} </label>
                 </span>
             </div>
@@ -104,13 +104,15 @@ export default defineComponent({
             required: true
         }
     },
-    emits: ['close'],
+    emits: ['close', 'saved'],
     data() {
         return {
             glossaryDefinitionDialogDescriptor,
             glossaryDefinitionDialogValidationDescriptor,
-            word: null as iWord | null,
+            word: {} as iWord,
+            oldWordName: null as any,
             filteredWords: [] as iWord[],
+            operation: 'insert',
             v$: useValidate() as any
         }
     },
@@ -119,7 +121,10 @@ export default defineComponent({
             return this.v$.$invalid
         },
         availableWords(): any {
-            return this.filteredWords.filter
+            if (this.word && this.word.LINK) {
+                return this.filteredWords.filter((word: iWord) => this.word && this.word.LINK && this.word.LINK.findIndex((link: any) => word.WORD_ID === link.WORD_ID) < 0)
+            }
+            return this.filteredWords
         }
     },
     validations() {
@@ -131,15 +136,42 @@ export default defineComponent({
     watch: {
         propWord() {
             this.word = { ...this.propWord } as iWord
+            this.oldWordName = this.word.WORD
         }
     },
     mounted() {
         if (this.propWord) {
             this.word = { ...this.propWord } as iWord
+            this.oldWordName = this.word.WORD
         }
     },
     methods: {
-        saveWord() {
+        async saveWord() {
+            if (this.word?.WORD_ID) {
+                this.operation = 'update'
+                this.word.oldWord = { WORD_ID: this.word.WORD_ID, WORD: this.oldWordName }
+                this.word.SaveOrUpdate = 'Update'
+            } else {
+                this.operation = 'insert'
+                this.word.NEWWORD = true
+                this.word.SaveOrUpdate = 'Save'
+            }
+
+            await axios
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/business/addWord', this.word)
+                .then(() => {
+                    this.$emit('saved')
+                    this.$store.commit('setInfo', {
+                        title: this.$t(this.glossaryDefinitionDialogDescriptor.operation[this.operation].toastTitle),
+                        msg: this.$t(this.glossaryDefinitionDialogDescriptor.operation.success)
+                    })
+                })
+                .catch((error) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('managers.constraintManagment.saveError'),
+                        msg: error.message
+                    })
+                })
             console.log(this.word)
         },
         closeDialog() {
