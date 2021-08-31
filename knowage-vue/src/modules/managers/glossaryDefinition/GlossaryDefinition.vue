@@ -29,6 +29,7 @@
                                 <span>{{ slotProps.option.WORD }}</span>
                             </div>
                             <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteWordConfirm(slotProps.option.WORD_ID)" data-test="delete-button" />
+                            <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain" @click.stop="" data-test="edit-button" />
                         </div>
                     </template>
                 </Listbox>
