@@ -77,6 +77,8 @@ export default defineComponent({
             selectedWord: null as iWord | null,
             contentInfo: null as any,
             infoDialogVisible: false,
+            state: [] as any,
+            category: [] as any,
             loading: false,
             touched: false,
             editWordDialogVisible: false
@@ -90,6 +92,8 @@ export default defineComponent({
             this.loading = true
             await this.loadWordsList()
             await this.loadGlossaryList()
+            await this.loadState()
+            await this.loadCategory()
             this.loading = false
         },
         async loadWordsList() {
@@ -98,7 +102,12 @@ export default defineComponent({
         async loadGlossaryList() {
             return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listGlossary`).then((response) => (this.glossaryList = response.data))
         },
-
+        async loadState() {
+            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=GLS_STATE`).then((response) => (this.state = response.data))
+        },
+        async loadCategory() {
+            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=GLS_CATEGORY`).then((response) => (this.category = response.data))
+        },
         setSelectedWord(word: iWord) {
             if (!this.touched) {
                 this.selectedWord = word
