@@ -206,7 +206,7 @@ export default defineComponent({
                     } else {
                         this.$store.commit('setError', {
                             title: this.$t('common.error.generic'),
-                            msg: response.data.Message
+                            msg: this.$t(this.glossaryDefinitionDescriptor.translation[response.data.Message])
                         })
                     }
                 })

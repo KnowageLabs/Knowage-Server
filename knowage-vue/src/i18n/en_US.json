@@ -510,6 +510,7 @@
             "code": "Code",
             "deleteNodeConfirmMessage": "Deleting a node all the underlying node (if present) will be deleted. Continue?",
             "details": "Details",
+            "duplicateNode": "Adding the same word more than once under a single glossary is not allowed.",
             "formula": "Formula",
             "glossary": "Glossary",
             "hint": "Lorem ipsum dolor sit amet...",
