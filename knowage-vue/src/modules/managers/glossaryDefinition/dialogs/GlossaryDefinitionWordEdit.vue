@@ -21,14 +21,14 @@
                 </div>
                 <div class="p-field p-col-4">
                     <span class="p-float-label">
-                        <Dropdown id="status" class="kn-material-input" v-model="word.STATE" :options="state" optionValue="VALUE_ID" optionLabel="VALUE_NM" />
+                        <Dropdown id="status" class="kn-material-input" v-model="word.STATE" :options="tState" optionValue="id" optionLabel="name" />
 
                         <label for="status" class="kn-material-input-label"> {{ $t('managers.glossary.common.status') }} </label>
                     </span>
                 </div>
                 <div class="p-field p-col-4">
                     <span class="p-float-label">
-                        <Dropdown id="category" class="kn-material-input" v-model="word.CATEGORY" :options="category" optionValue="VALUE_ID" optionLabel="VALUE_NM" />
+                        <Dropdown id="category" class="kn-material-input" v-model="word.CATEGORY" :options="tCategory" optionValue="id" optionLabel="name" />
                         <label for="category" class="kn-material-input-label"> {{ $t('common.category') }} </label>
                     </span>
                 </div>
@@ -121,6 +121,8 @@ export default defineComponent({
             glossaryDefinitionDialogValidationDescriptor,
             glossaryDefinitionDescriptor,
             word: {} as iWord,
+            tState: [] as any,
+            tCategory: [] as any,
             oldWordName: null as any,
             filteredWords: [] as iWord[],
             operation: 'insert',
@@ -148,6 +150,22 @@ export default defineComponent({
         propWord() {
             this.word = { ...this.propWord } as iWord
             this.oldWordName = this.word.WORD
+        },
+        state() {
+            this.tState = this.state.map((s: any) => {
+                return {
+                    id: s.VALUE_ID,
+                    name: this.$t(glossaryDefinitionDescriptor.translation[s.VALUE_NM])
+                }
+            })
+        },
+        category() {
+            this.tCategory = this.state.map((c: any) => {
+                return {
+                    id: c.VALUE_ID,
+                    name: this.$t(glossaryDefinitionDescriptor.translation[c.VALUE_NM])
+                }
+            })
         }
     },
     mounted() {
@@ -155,6 +173,18 @@ export default defineComponent({
             this.word = { ...this.propWord } as iWord
             this.oldWordName = this.word.WORD
         }
+        this.tState = this.state.map((s: any) => {
+            return {
+                id: s.VALUE_ID,
+                name: this.$t(glossaryDefinitionDescriptor.translation[s.VALUE_NM])
+            }
+        })
+        this.tCategory = this.state.map((c: any) => {
+            return {
+                id: c.VALUE_ID,
+                name: this.$t(glossaryDefinitionDescriptor.translation[c.VALUE_NM])
+            }
+        })
     },
     methods: {
         async saveWord() {
