@@ -17,22 +17,39 @@
  */
 package it.eng.knowage.resourcemanager.resource.dto;
 
+import it.eng.spagobi.services.validation.AlphanumericWithBrackets;
+import it.eng.spagobi.services.validation.Xss;
+
 public class MetadataDTO {
 
+	@Xss
+	@AlphanumericWithBrackets
 	private String name;
 
+	@Xss
+	@AlphanumericWithBrackets
 	private String version;
 
+	@Xss
+	@AlphanumericWithBrackets
 	private String typeOfAnalytics;
 
 	private boolean openSource;
 
+	@Xss
+	@AlphanumericWithBrackets
 	private String description;
 
+	@Xss
+	@AlphanumericWithBrackets
 	private String accuracyAndPerformance;
 
+	@Xss
+	@AlphanumericWithBrackets
 	private String usageOfTheModel;
 
+	@Xss
+	@AlphanumericWithBrackets
 	private String formatOfData;
 
 	private String image;
