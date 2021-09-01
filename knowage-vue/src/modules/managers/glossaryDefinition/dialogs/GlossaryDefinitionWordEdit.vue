@@ -1,6 +1,6 @@
 <template>
     <Dialog :header="$t('managers.glossary.common.word')" :breakpoints="glossaryDefinitionDialogDescriptor.dialog.breakpoints" :style="glossaryDefinitionDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
-        <div class="p-mb-3">
+        <div class="p-mt-3">
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-4 p-mb-3">
                     <span class="p-float-label">
@@ -22,6 +22,7 @@
                 <div class="p-field p-col-4">
                     <span class="p-float-label">
                         <Dropdown id="status" class="kn-material-input" v-model="word.STATE" :options="state" optionValue="VALUE_ID" optionLabel="VALUE_NM" />
+
                         <label for="status" class="kn-material-input-label"> {{ $t('managers.glossary.common.status') }} </label>
                     </span>
                 </div>
@@ -79,6 +80,7 @@ import Dropdown from 'primevue/dropdown'
 import AutoComplete from 'primevue/autocomplete'
 import AttributesTable from './tables/GlossaryDefinitionAttributesTable.vue'
 import glossaryDefinitionDialogDescriptor from './GlossaryDefinitionDialogDescriptor.json'
+import glossaryDefinitionDescriptor from '../GlossaryDefinitionDescriptor.json'
 import glossaryDefinitionDialogValidationDescriptor from './GlossaryDefinitionDialogValidationDescriptor.json'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
@@ -114,6 +116,7 @@ export default defineComponent({
         return {
             glossaryDefinitionDialogDescriptor,
             glossaryDefinitionDialogValidationDescriptor,
+            glossaryDefinitionDescriptor,
             word: {} as iWord,
             oldWordName: null as any,
             filteredWords: [] as iWord[],

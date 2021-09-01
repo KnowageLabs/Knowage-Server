@@ -7,6 +7,8 @@
     },
     "translation": {
         "sbi.generic.active": "common.active",
+        "sbi.generic.non.active": "common.inactive",
+        "sbi.glossary.attributes": "managers.glossary.common.attributes",
         "sbi.glossary.content.duplicate.content": "managers.glossary.glossaryDefinition.duplicateContent",
         "sbi.glossary.content.duplicate.node": "managers.glossary.glossaryDefinition.duplicateNode",
         "sbi.glossary.word": "managers.glossary.common.word"
