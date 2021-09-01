@@ -41,7 +41,7 @@
 
             <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
                 <GlossaryDefinitionHint v-if="!selectedWord"></GlossaryDefinitionHint>
-                <GlossaryDefinitionDetail v-else :glossaryList="glossaryList" @infoClicked="showInfo" @addWord="editWord($event, -1)" @deleted="loadGlossaryList"></GlossaryDefinitionDetail>
+                <GlossaryDefinitionDetail v-else :glossaryList="glossaryList" @infoClicked="showInfo" @addWord="editWord(-1, $event)" @deleted="loadGlossaryList"></GlossaryDefinitionDetail>
             </div>
         </div>
         <GlossaryDefinitionWordEdit :visible="editWordDialogVisible" @close="editWordDialogVisible = false" @saved="wordSaved" :state="state" :category="category" :propWord="contentInfo"></GlossaryDefinitionWordEdit>
@@ -164,12 +164,15 @@ export default defineComponent({
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
         },
-        async editWord(id: number) {
+        async editWord(id: number, node: any) {
             if (id != -1) {
                 await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getWord?WORD_ID=${id}`).then((response) => {
                     this.contentInfo = response.data
                 })
             } else this.contentInfo = { LINK: [], SBI_GL_WORD_ATTR: [], STATE: '', CATEGORY: '', FORMULA: '' }
+            if (node) {
+                this.contentInfo.PARENT = node
+            }
             console.log(id)
             this.editWordDialogVisible = true
         },
