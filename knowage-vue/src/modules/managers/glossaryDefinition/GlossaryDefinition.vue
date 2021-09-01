@@ -25,12 +25,13 @@
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
                         <div class="kn-list-item">
+                            <i class="pi pi-bars"></i>
                             <div class="kn-list-item-text" draggable="true" @dragstart="onDragStart($event, slotProps.option)">
                                 <span>{{ slotProps.option.WORD }}</span>
                             </div>
                             <Button icon="pi pi-info-circle" class="p-button-text p-button-rounded p-button-plain" @click.stop="showInfo(slotProps.option)" />
-                            <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteWordConfirm(slotProps.option.WORD_ID)" data-test="delete-button" />
                             <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain" @click.stop="editWord(slotProps.option.WORD_ID)" data-test="edit-button" />
+                            <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteWordConfirm(slotProps.option.WORD_ID)" data-test="delete-button" />
                         </div>
                     </template>
                 </Listbox>
@@ -79,6 +80,7 @@ export default defineComponent({
             infoDialogVisible: false,
             state: [] as any,
             category: [] as any,
+            user: {} as any,
             loading: false,
             touched: false,
             editWordDialogVisible: false
@@ -86,6 +88,8 @@ export default defineComponent({
     },
     async created() {
         await this.loadPage()
+        this.user = (this.$store.state as any).user
+        // console.log('USER: ', this.user)
     },
     methods: {
         async loadPage() {

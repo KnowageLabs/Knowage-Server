@@ -11,6 +11,8 @@
                 </template>
                 <template #right>
                     <div v-if="selectedGlossary">
+                        <Button class="kn-button p-button-text" @click="saveGlossary">{{ $t('common.new') }}</Button>
+                        <Button class="kn-button p-button-text" @click="saveGlossary">{{ $t('common.clone') }}</Button>
                         <Button class="kn-button p-button-text" @click="deleteGlossaryConfirm">{{ $t('common.delete') }}</Button>
                     </div>
                 </template>
@@ -371,7 +373,8 @@ export default defineComponent({
                 this.selectedGlossary = null
                 this.$emit('deleted')
             })
-        }
+        },
+        saveGlossary() {}
     }
 })
 </script>
