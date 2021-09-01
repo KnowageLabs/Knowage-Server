@@ -10,10 +10,15 @@
                     {{ $t('managers.glossary.glossaryDefinition.glossary') }}
                 </template>
                 <template #right>
-                    <div v-if="selectedGlossary">
-                        <Button class="kn-button p-button-text" @click="saveGlossary">{{ $t('common.new') }}</Button>
-                        <Button class="kn-button p-button-text" @click="saveGlossary">{{ $t('common.clone') }}</Button>
-                        <Button class="kn-button p-button-text" @click="deleteGlossaryConfirm">{{ $t('common.delete') }}</Button>
+                    <div v-if="selectedGlossary" class="p-d-flex p-flex-row">
+                        <div>
+                            <Button class="kn-button p-button-text" @click="showGlossaryForm('Update')">{{ $t('common.edit') }}</Button>
+                            <Button class="kn-button p-button-text" @click="showGlossaryForm('Clone')">{{ $t('common.clone') }}</Button>
+                            <Button class="kn-button p-button-text" @click="deleteGlossaryConfirm">{{ $t('common.delete') }}</Button>
+                        </div>
+                        <div>
+                            <FabButton icon="fas fa-plus" class="fab-button" @click="showGlossaryForm('Save')" />
+                        </div>
                     </div>
                 </template>
             </Toolbar>
@@ -62,7 +67,8 @@
         </template>
     </Card>
 
-    <GlossaryDefinitionNodeDialog :visible="newNodeDialogVisible" :selectedContent="selectedContent" @save="saveContent" @close="newNodeDialogVisible = false"></GlossaryDefinitionNodeDialog>
+    <GlossaryDefinitionNodeDialog :visible="nodeDialogVisible" :selectedContent="selectedContent" @save="saveContent" @close="nodeDialogVisible = false"></GlossaryDefinitionNodeDialog>
+    <GlossaryDefinitionNodeDialog :visible="nodeDialogVisible" :selectedContent="selectedGlossary" @close="glossaryDialogVisible = false"></GlossaryDefinitionNodeDialog>
 </template>
 
 <script lang="ts">
@@ -87,12 +93,14 @@ export default defineComponent({
             glossaries: [] as iGlossary[],
             selectedGlossaryId: null as number | null,
             selectedGlossary: null as iGlossary | null,
+            glossaryForSave: null as iGlossary | null,
             nodes: [] as iNode[],
             buttonVisible: [],
             searchWord: null,
             timer: null as any,
             expandedKeys: {},
-            newNodeDialogVisible: false,
+            nodeDialogVisible: false,
+            glossaryDialogVisible: false,
             selectedContent: {} as iContent,
             selectedNode: {} as iNode,
             loading: false
@@ -291,7 +299,7 @@ export default defineComponent({
                     SaveOrUpdate: 'Save'
                 }
             }
-            this.newNodeDialogVisible = true
+            this.nodeDialogVisible = true
         },
         async loadContent(contentId: number) {
             this.loading = true
@@ -329,7 +337,7 @@ export default defineComponent({
                     title: this.$t('common.toast.createTitle'),
                     msg: this.$t('common.toast.success')
                 })
-                this.newNodeDialogVisible = false
+                this.nodeDialogVisible = false
 
                 content.SaveOrUpdate === 'Save' ? await this.listContents(this.selectedGlossaryId as number, this.selectedNode) : this.updateNode(content)
                 console.log('SELECTED NODE', this.selectedNode)
@@ -384,7 +392,11 @@ export default defineComponent({
             this.selectedNode = node
             this.$emit('addWord', { parent: node.data, glossaryId: this.selectedGlossaryId })
         },
-        saveGlossary() {}
+        showGlossaryForm(type: string) {
+            console.log('TYPE: ', type)
+
+            console.log('SELECTED GLOSSARY: ', this.selectedGlossary)
+        }
     }
 })
 </script>

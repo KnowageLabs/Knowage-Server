@@ -2,7 +2,10 @@ export interface iGlossary {
     GLOSSARY_ID: number
     GLOSSARY_NM: string
     GLOSSARY_CD: string
-    GLOSSARY_DS: string
+    GLOSSARY_DS: string,
+    NEWGLOSS?: boolean,
+    SBI_GL_CONTENTS?: any[],
+    SaveOrUpdate?: string
 }
 
 export interface iWord {

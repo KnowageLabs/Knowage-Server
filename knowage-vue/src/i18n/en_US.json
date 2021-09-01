@@ -23,6 +23,7 @@
         "download": "download",
         "downloading": "Downloading",
         "dragAndDropFileHere": "Drag and drop file here.",
+        "edit": "edit",
         "error": {
             "allowedFileTypes": "File type allowed are {types}",
             "deleting": "Error while deleting item. Check items associations or parameters and then try to delete it again",
