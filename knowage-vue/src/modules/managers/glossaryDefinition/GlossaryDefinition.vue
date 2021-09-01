@@ -41,10 +41,10 @@
 
             <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
                 <GlossaryDefinitionHint v-if="!selectedWord"></GlossaryDefinitionHint>
-                <GlossaryDefinitionDetail v-else :glossaryList="glossaryList" @infoClicked="showInfo" @addWord="editWord(-1, $event)" @deleted="loadGlossaryList"></GlossaryDefinitionDetail>
+                <GlossaryDefinitionDetail v-else :glossaryList="glossaryList" :savedWordId="savedWordId" :reloadTree="reloadTree" @infoClicked="showInfo" @addWord="editWord(-1, $event)" @deleted="loadGlossaryList" @wordDeleted="loadWordsList"></GlossaryDefinitionDetail>
             </div>
         </div>
-        <GlossaryDefinitionWordEdit :visible="editWordDialogVisible" @close="editWordDialogVisible = false" @saved="wordSaved" :state="state" :category="category" :propWord="contentInfo"></GlossaryDefinitionWordEdit>
+        <GlossaryDefinitionWordEdit :visible="editWordDialogVisible" @close="editWordDialogVisible = false" @saved="wordSaved" :state="state" :category="category" :propWord="contentInfo" :selectedGlossaryId="selectedGlossaryId" @reloadTree="reloadTree = !reloadTree"></GlossaryDefinitionWordEdit>
     </div>
 </template>
 
@@ -80,7 +80,9 @@ export default defineComponent({
             infoDialogVisible: false,
             state: [] as any,
             category: [] as any,
+            selectedGlossaryId: null as any,
             user: {} as any,
+            reloadTree: false,
             loading: false,
             touched: false,
             editWordDialogVisible: false
@@ -156,6 +158,7 @@ export default defineComponent({
                     msg: this.$t('common.toast.deleteSuccess')
                 })
                 this.$router.push('/glossary-definition')
+                this.selectedWord = null
                 this.loadWordsList()
             })
         },
@@ -164,16 +167,18 @@ export default defineComponent({
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
         },
-        async editWord(id: number, node: any) {
+        async editWord(id: number, event: any) {
             if (id != -1) {
                 await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getWord?WORD_ID=${id}`).then((response) => {
                     this.contentInfo = response.data
                 })
             } else this.contentInfo = { LINK: [], SBI_GL_WORD_ATTR: [], STATE: '', CATEGORY: '', FORMULA: '' }
-            if (node) {
-                this.contentInfo.PARENT = node
+            if (event) {
+                this.contentInfo.PARENT = event.parent
+                this.selectedGlossaryId = event.glossaryId
             }
             console.log(id)
+            // console.log('selectedGlossaryId in MAIN: ', this.selectedGlossaryId)
             this.editWordDialogVisible = true
         },
         wordSaved() {

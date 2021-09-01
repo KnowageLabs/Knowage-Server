@@ -18,7 +18,8 @@ export interface iWord {
     STATE_NM?: string
     oldWord?: iWord
     NEWWORD?: boolean
-    SaveOrUpdate?: string
+    SaveOrUpdate?: string,
+    PARENT?: any
 }
 
 export interface iNode {

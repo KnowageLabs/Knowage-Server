@@ -50,7 +50,7 @@
                             <span>{{ slotProps.node.label }}</span>
                             <div v-show="buttonVisible[slotProps.node.id]" class="p-ml-2">
                                 <Button v-if="!slotProps.node.data.HAVE_WORD_CHILD && slotProps.node.data.CONTENT_NM" icon="pi pi-bars" class="p-button-link p-button-sm p-p-0" @click.stop="showNodeDialog(slotProps.node, 'new')" />
-                                <Button v-else-if="!slotProps.node.data.HAVE_CONTENTS_CHILD && slotProps.node.data.CONTENT_NM" icon="pi pi-bars" class="p-button-link p-button-sm p-p-0" @click.stop="$emit('addWord', slotProps.node.data)" />
+                                <Button v-if="!slotProps.node.data.HAVE_CONTENTS_CHILD && slotProps.node.data.CONTENT_NM" icon="pi pi-bars" class="p-button-link p-button-sm p-p-0" @click.stop="addWord(slotProps.node)" />
                                 <Button v-if="slotProps.node.data.CONTENT_NM" icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" @click.stop="showNodeDialog(slotProps.node, 'edit')" />
                                 <Button icon="pi pi-info-circle" class="p-button-link p-button-sm p-p-0" @click.stop="$emit('infoClicked', slotProps.node.data)" />
                                 <Button icon="far fa-trash-alt" class="p-button-link p-button-sm p-p-0" @click.stop="deleteNodeConfirm(slotProps.node)" />
@@ -79,8 +79,8 @@ import Tree from 'primevue/tree'
 export default defineComponent({
     name: 'glossary-definition-detail',
     components: { Card, Dropdown, GlossaryDefinitionNodeDialog, FabButton, Tree },
-    props: { glossaryList: { type: Array } },
-    emits: ['addWord', 'infoClicked', 'deleted'],
+    props: { glossaryList: { type: Array }, reloadTree: { type: Boolean } },
+    emits: ['addWord', 'infoClicked', 'deleted', 'wordDeleted'],
     data() {
         return {
             glossaryDefinitionDescriptor,
@@ -101,6 +101,9 @@ export default defineComponent({
     watch: {
         glossaryList() {
             this.loadGlossaries()
+        },
+        async reloadTree() {
+            await this.listContents(this.selectedGlossaryId as number, this.selectedNode)
         }
     },
     created() {
@@ -261,6 +264,9 @@ export default defineComponent({
                 })
 
             if (status === 'OK') {
+                if (node.data.WORD_ID) {
+                    this.$emit('wordDeleted')
+                }
                 await this.listContents(this.selectedGlossaryId as number, node.parent)
             }
 
@@ -373,6 +379,10 @@ export default defineComponent({
                 this.selectedGlossary = null
                 this.$emit('deleted')
             })
+        },
+        addWord(node: iNode) {
+            this.selectedNode = node
+            this.$emit('addWord', { parent: node.data, glossaryId: this.selectedGlossaryId })
         },
         saveGlossary() {}
     }

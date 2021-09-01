@@ -109,9 +109,12 @@ export default defineComponent({
         category: {
             type: Array,
             required: true
+        },
+        selectedGlossaryId: {
+            type: Number
         }
     },
-    emits: ['close', 'saved'],
+    emits: ['close', 'saved', 'reloadTree'],
     data() {
         return {
             glossaryDefinitionDialogDescriptor,
@@ -167,8 +170,11 @@ export default defineComponent({
 
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/business/addWord', this.word)
-                .then(() => {
+                .then((response) => {
                     this.$emit('saved')
+                    if (this.word.PARENT) {
+                        this.saveContent(response.data.id)
+                    }
                     this.$store.commit('setInfo', {
                         title: this.$t(this.glossaryDefinitionDialogDescriptor.operation[this.operation].toastTitle),
                         msg: this.$t(this.glossaryDefinitionDialogDescriptor.operation.success)
@@ -190,6 +196,27 @@ export default defineComponent({
         },
         searchWord(event) {
             this.loadWords(event.query)
+        },
+        async saveContent(wordId: number) {
+            // console.log('GLOSSARY ID: ', this.selectedGlossaryId)
+            await axios
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/business/addContents', { GLOSSARY_ID: this.selectedGlossaryId, PARENT_ID: this.word.PARENT.CONTENT_ID, WORD_ID: wordId })
+                .then((response) => {
+                    if (response.data.Status !== 'NON OK') {
+                        this.$emit('reloadTree')
+                    } else {
+                        this.$store.commit('setError', {
+                            title: this.$t('common.error.generic'),
+                            msg: this.$t(this.glossaryDefinitionDescriptor.translation[response.data.Message])
+                        })
+                    }
+                })
+                .catch((response) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: response
+                    })
+                })
         }
     }
 })
