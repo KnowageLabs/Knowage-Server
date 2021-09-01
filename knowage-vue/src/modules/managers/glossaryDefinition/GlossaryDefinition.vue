@@ -21,6 +21,7 @@
                     :filterFields="glossaryDefinitionDescriptor.filterFields"
                     :emptyFilterMessage="$t('common.info.noDataFound')"
                     @change="setSelectedWord($event.value)"
+                    data-test="words-list"
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
@@ -100,7 +101,7 @@ export default defineComponent({
     },
     async created() {
         await this.loadPage()
-        this.user = (this.$store.state as any).user
+        //this.user = (this.$store.state as any).user
         // console.log('USER: ', this.user)
     },
     methods: {

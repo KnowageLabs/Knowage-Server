@@ -160,7 +160,7 @@ export default defineComponent({
             })
         },
         category() {
-            this.tCategory = this.state.map((c: any) => {
+            this.tCategory = this.category.map((c: any) => {
                 return {
                     id: c.VALUE_ID,
                     name: this.$t(glossaryDefinitionDescriptor.translation[c.VALUE_NM])
