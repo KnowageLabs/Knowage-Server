@@ -43,9 +43,11 @@
                     <template #default="slotProps">
                         <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonVisible[slotProps.node.id] = true" @mouseleave="buttonVisible[slotProps.node.id] = false" @drop="saveWordConfirm($event, slotProps.node)" @dragover.prevent @dragenter.prevent>
                             <span>{{ slotProps.node.label }}</span>
+                            <span>{{ slotProps.node.data }}</span>
                             <div v-show="buttonVisible[slotProps.node.id]" class="p-ml-2">
-                                <Button v-if="!slotProps.node.leaf" icon="pi pi-bars" class="p-button-link p-button-sm p-p-0" @click.stop="showNodeDialog(slotProps.node, 'new')" />
-                                <Button v-if="!slotProps.node.leaf" icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" @click.stop="showNodeDialog(slotProps.node, 'edit')" />
+                                <Button v-if="!slotProps.node.data.HAVE_WORD_CHILD && slotProps.node.data.CONTENT_NM" icon="pi pi-bars" class="p-button-link p-button-sm p-p-0" @click.stop="showNodeDialog(slotProps.node, 'new')" />
+                                <Button v-else-if="!slotProps.node.data.HAVE_CONTENTS_CHILD && slotProps.node.data.CONTENT_NM" icon="pi pi-bars" class="p-button-link p-button-sm p-p-0" @click.stop="$emit('addWord', slotProps.node.data)" />
+                                <Button v-if="slotProps.node.data.CONTENT_NM" icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" @click.stop="showNodeDialog(slotProps.node, 'edit')" />
                                 <Button icon="pi pi-info-circle" class="p-button-link p-button-sm p-p-0" @click.stop="$emit('infoClicked', slotProps.node.data)" />
                                 <Button icon="far fa-trash-alt" class="p-button-link p-button-sm p-p-0" @click.stop="deleteNodeConfirm(slotProps.node)" />
                             </div>
@@ -298,6 +300,9 @@ export default defineComponent({
                     })
                 })
 
+            await this.updateTree(result, content)
+        },
+        async updateTree(result: { status: string; message: string }, content: iContent) {
             if (result.status === 'NON OK') {
                 this.$store.commit('setError', {
                     title: this.$t('common.toast.createTitle'),
@@ -310,12 +315,11 @@ export default defineComponent({
                 })
                 this.newNodeDialogVisible = false
 
-                content.SaveOrUpdate === 'Save' ? await this.listContents(this.selectedGlossaryId as number, this.selectedNode) : this.test()
+                content.SaveOrUpdate === 'Save' ? await this.listContents(this.selectedGlossaryId as number, this.selectedNode) : this.updateNode(content)
                 console.log('SELECTED NODE', this.selectedNode)
             }
         },
-        // TODO SREDITI OVO SUTRA
-        test() {
+        updateNode(content: iContent) {
             let temp = null as any
             for (let i = 0; i < this.nodes.length; i++) {
                 temp = this.findNode(this.nodes[i], this.selectedNode.id)
@@ -323,14 +327,11 @@ export default defineComponent({
             }
 
             if (temp) {
-                temp.label = 'TEEEEEEEEEEEEEEEEESTIRANJE'
+                temp.data = content
+                temp.label = content.CONTENT_NM
             }
-
-            console.log('FOUND!', temp)
         },
         findNode(node: iNode, nodeId: number) {
-            console.log('NODE: ', node)
-            console.log('NODE ID: ', nodeId)
             if (node.id === nodeId) {
                 return node
             } else if (node.children != null) {

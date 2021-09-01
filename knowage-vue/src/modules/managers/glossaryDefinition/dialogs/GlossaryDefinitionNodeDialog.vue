@@ -85,6 +85,7 @@ export default defineComponent({
     },
     methods: {
         loadContent() {
+            this.contentNameDirty = false
             this.content = { ...this.selectedContent } as iContent
         }
     }

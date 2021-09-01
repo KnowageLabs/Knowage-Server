@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Dialog :header="$t('managers.glossary.glossaryDefinition.details')" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
+        <Dialog :header="$t('managers.glossary.glossaryDefinition.details')" :breakpoints="glossaryDefinitionDialogDescriptor.dialog.breakpoints" :style="glossaryDefinitionDialogDescriptor.dialog.style" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
             <div v-if="contentInfo && contentInfo.CONTENT_ID">
                 <ul>
                     <li>
@@ -75,6 +75,7 @@
 import { defineComponent } from 'vue'
 import Dialog from 'primevue/dialog'
 import glossaryDefinitionDescriptor from '../GlossaryDefinitionDescriptor.json'
+import glossaryDefinitionDialogDescriptor from './GlossaryDefinitionDialogDescriptor.json'
 
 export default defineComponent({
     name: 'glossary-definition-info-dialog',
@@ -86,7 +87,8 @@ export default defineComponent({
     },
     data() {
         return {
-            glossaryDefinitionDescriptor
+            glossaryDefinitionDescriptor,
+            glossaryDefinitionDialogDescriptor
         }
     }
 })
