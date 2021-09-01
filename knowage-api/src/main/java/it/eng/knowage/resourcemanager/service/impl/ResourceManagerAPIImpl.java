@@ -79,7 +79,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	private static Map<String, List<String>> foldersForDevs = new HashMap<>();
 	private Map<String, HashMap<String, Object>> cachedNodesInfo = new HashMap<String, HashMap<String, Object>>();
 
-	private static final String RESOURCE_FUNCTIONALITY_ADMIN = "ResourceManagementAdmin";
+	private static final String RESOURCE_FUNCTIONALITY_DEV = "ResourceManagementDev";
 	private static final String RESOURCE_FUNCTIONALITY = "ResourceManagement";
 	private static final String MODEL_CATALOG_FUNCTIONALITY = "ModelCatalogResourceManagement";
 
@@ -186,7 +186,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	@Override
 	public boolean canSee(Path path, SpagoBIUserProfile profile) {
 		boolean canSee = false;
-		if (profile.isIsSuperadmin() || hasAdministratorFunction(profile)) {
+		if (profile.isIsSuperadmin()) {
 			return true;
 		} else {
 			if (hasDevFunctionality(profile)) {
@@ -202,6 +202,8 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 					}
 
 				}
+			} else {
+				canSee = hasAdministratorFunction(profile);
 			}
 		}
 
@@ -210,7 +212,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 	// Admin functionalities, EE and CE
 	public static boolean hasAdministratorFunction(SpagoBIUserProfile profile) {
-		if (profile.getFunctions().contains(RESOURCE_FUNCTIONALITY_ADMIN)) {
+		if (profile.getFunctions().contains(RESOURCE_FUNCTIONALITY)) {
 			return true;
 		}
 
@@ -219,7 +221,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 	// DEV functionalities, EE and CE
 	public static boolean hasDevFunctionality(SpagoBIUserProfile profile) {
-		if (profile.getFunctions().contains(RESOURCE_FUNCTIONALITY) || profile.getFunctions().contains(MODEL_CATALOG_FUNCTIONALITY)) {
+		if (profile.getFunctions().contains(RESOURCE_FUNCTIONALITY_DEV)) {
 			return true;
 		}
 
