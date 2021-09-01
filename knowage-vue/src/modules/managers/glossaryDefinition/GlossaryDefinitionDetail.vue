@@ -10,7 +10,9 @@
                     {{ $t('managers.glossary.glossaryDefinition.glossary') }}
                 </template>
                 <template #right>
-                    <Button class="kn-button p-button-text">{{ $t('common.delete') }}</Button>
+                    <div v-if="selectedGlossary">
+                        <Button class="kn-button p-button-text" @click="deleteGlossaryConfirm">{{ $t('common.delete') }}</Button>
+                    </div>
                 </template>
             </Toolbar>
         </template>
@@ -36,14 +38,14 @@
                 </div>
             </div>
             <div v-if="selectedGlossary">
-                <div class="p-m-3">
+                <div class="p-d-flex p-flex-row p-m-3">
                     <InputText id="search-input" class="kn-material-input" v-model="searchWord" :placeholder="$t('common.search')" @input="filterGlossaryTree" data-test="search-input" />
+                    <FabButton icon="fas fa-plus" class="fab-button p-mt-3 p-ml-2" @click.stop="showNodeDialog(null, 'new')" />
                 </div>
                 <Tree id="glossary-tree" :value="nodes" :expandedKeys="expandedKeys" @nodeExpand="listContents(selectedGlossary.GLOSSARY_ID, $event)">
                     <template #default="slotProps">
                         <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonVisible[slotProps.node.id] = true" @mouseleave="buttonVisible[slotProps.node.id] = false" @drop="saveWordConfirm($event, slotProps.node)" @dragover.prevent @dragenter.prevent>
                             <span>{{ slotProps.node.label }}</span>
-                            <span>{{ slotProps.node.data }}</span>
                             <div v-show="buttonVisible[slotProps.node.id]" class="p-ml-2">
                                 <Button v-if="!slotProps.node.data.HAVE_WORD_CHILD && slotProps.node.data.CONTENT_NM" icon="pi pi-bars" class="p-button-link p-button-sm p-p-0" @click.stop="showNodeDialog(slotProps.node, 'new')" />
                                 <Button v-else-if="!slotProps.node.data.HAVE_CONTENTS_CHILD && slotProps.node.data.CONTENT_NM" icon="pi pi-bars" class="p-button-link p-button-sm p-p-0" @click.stop="$emit('addWord', slotProps.node.data)" />
@@ -69,13 +71,14 @@ import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 import glossaryDefinitionDescriptor from './GlossaryDefinitionDescriptor.json'
 import GlossaryDefinitionNodeDialog from './dialogs/GlossaryDefinitionNodeDialog.vue'
+import FabButton from '@/components/UI/KnFabButton.vue'
 import Tree from 'primevue/tree'
 
 export default defineComponent({
     name: 'glossary-definition-detail',
-    components: { Card, Dropdown, GlossaryDefinitionNodeDialog, Tree },
+    components: { Card, Dropdown, GlossaryDefinitionNodeDialog, FabButton, Tree },
     props: { glossaryList: { type: Array } },
-    emits: ['infoClicked'],
+    emits: ['addWord', 'infoClicked', 'deleted'],
     data() {
         return {
             glossaryDefinitionDescriptor,
@@ -91,6 +94,11 @@ export default defineComponent({
             selectedContent: {} as iContent,
             selectedNode: {} as iNode,
             loading: false
+        }
+    },
+    watch: {
+        glossaryList() {
+            this.loadGlossaries()
         }
     },
     created() {
@@ -257,7 +265,7 @@ export default defineComponent({
             this.loading = false
         },
         async showNodeDialog(node: any, mode: string) {
-            console.log('CONTENT: ', node.data)
+            console.log('CONTENT: ', node ? node.data : 'top level')
             console.log('MODE: ', mode)
             console.log('NODE: ', node)
             this.selectedNode = node
@@ -271,7 +279,7 @@ export default defineComponent({
                     CONTENT_DS: '',
                     GLOSSARY_ID: this.selectedGlossaryId as number,
                     NEWCONT: true,
-                    PARENT_ID: node.data.CONTENT_ID,
+                    PARENT_ID: node ? node.data.CONTENT_ID : null,
                     SaveOrUpdate: 'Save'
                 }
             }
@@ -342,6 +350,27 @@ export default defineComponent({
                 return result
             }
             return null
+        },
+        deleteGlossaryConfirm() {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    this.deleteGlossary()
+                }
+            })
+        },
+        async deleteGlossary() {
+            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/business/deleteGlossary?GLOSSARY_ID=${this.selectedGlossaryId}`).then(() => {
+                this.$store.commit('setInfo', {
+                    title: this.$t('common.toast.deleteTitle'),
+                    msg: this.$t('common.toast.deleteSuccess')
+                })
+                this.selectedGlossaryId = null
+                this.selectedGlossary = null
+                this.$emit('deleted')
+            })
         }
     }
 })
@@ -362,5 +391,9 @@ export default defineComponent({
 
 #glossary-tree {
     border: none;
+}
+
+.fab-button {
+    color: white;
 }
 </style>
