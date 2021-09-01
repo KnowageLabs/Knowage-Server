@@ -21,12 +21,20 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import it.eng.spagobi.services.validation.AlphanumericWithBrackets;
+import it.eng.spagobi.services.validation.Xss;
+
 public class FolderDTO {
 
+	@NotNull
+	@Xss
+	@AlphanumericWithBrackets
 	private String label;
 
 	private String key;
