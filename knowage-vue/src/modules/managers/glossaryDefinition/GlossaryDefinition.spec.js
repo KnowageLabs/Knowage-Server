@@ -1,12 +1,15 @@
 import { mount } from '@vue/test-utils'
 import axios from 'axios'
 import Button from 'primevue/button'
+import Card from 'primevue/card'
+import Dialog from 'primevue/dialog'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import flushPromises from 'flush-promises'
 import GlossaryDefinition from './GlossaryDefinition.vue'
 import Listbox from 'primevue/listbox'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
+import PrimeVue from 'primevue/config'
 
 const mockedWords = [
     {
@@ -28,7 +31,7 @@ jest.mock('axios')
 axios.get.mockImplementation((url) => {
     switch (url) {
         case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listWords?Page=1&ItemPerPage=`:
-            return Promise.resolve({ wordsList: mockedWords })
+            return Promise.resolve({ data: mockedWords })
         default:
             return Promise.resolve({ data: [] })
     }
@@ -45,8 +48,11 @@ const $store = {
 const factory = () => {
     return mount(GlossaryDefinition, {
         global: {
+            plugins: [PrimeVue],
             stubs: {
                 Button,
+                Card,
+                Dialog,
                 FabButton,
                 Listbox,
                 ProgressBar,
@@ -75,10 +81,33 @@ describe('Glossary Definition loading', () => {
             })
         )
         const wrapper = factory()
-
         await flushPromises()
-
         expect(wrapper.vm.wordsList.length).toBe(0)
         expect(wrapper.find('[data-test="words-list"]').html()).toContain('common.info.noDataFound')
+    })
+})
+describe('Glossary Definition', () => {
+    it('shows a prompt when user click on a word delete button to delete it', async () => {
+        const wrapper = factory()
+        await flushPromises()
+        console.log(wrapper.vm.wordsList)
+        const deleteButton = wrapper.find('[data-test="delete-button"]')
+
+        await deleteButton.trigger('click')
+
+        expect($confirm.require).toHaveBeenCalledTimes(1)
+    })
+    it('shows and empty form dialog when clicking on the add button', async () => {
+        const wrapper = factory()
+        await flushPromises()
+        await wrapper.find('[data-test="new-button"]').trigger('click')
+        expect(wrapper.vm.editWordDialogVisible).toBe(true)
+    })
+    it('shows the detail in a dialog when clicking on a word', async () => {
+        const wrapper = factory()
+
+        await flushPromises()
+        await wrapper.find('[data-test="info-button"]').trigger('click')
+        expect(wrapper.vm.infoDialogVisible).toBe(true)
     })
 })
