@@ -391,14 +391,8 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="PythonDataset" roleType="DEV_ROLE" />
 
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="WidgetGalleryManagement" roleType="ADMIN" />
-	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ResourceManagement" roleType="ADMIN" />
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ResourceManagement" roleType="DEV" />
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ResourceManagement" roleType="TEST" />
-	
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ModelCatalogResourceManagement" roleType="ADMIN" />
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ModelCatalogResourceManagement" roleType="DEV" />
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ModelCatalogResourceManagement" roleType="TEST" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ResourceManagementDev" roleType="DEV_ROLE" />
 		
 	
 </ROLE_TYPE_USER_FUNCTIONALITIES>
