@@ -588,6 +588,7 @@
                 "deleteNodeConfirmMessage": "Deleting a node all the underlying node (if present) will be deleted. Continue?",
                 "details": "Details",
                 "duplicateContent": "Adding two or more nodes with the same name under a single node is not allowed.",
+                "duplicateGlossaryName": "The selected glossary name is not available.",
                 "duplicateNode": "Adding the same word more than once under a single glossary is not allowed.",
                 "editNode": "Edit node",
                 "formula": "Formula",
