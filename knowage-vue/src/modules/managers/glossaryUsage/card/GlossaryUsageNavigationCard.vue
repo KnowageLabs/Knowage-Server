@@ -6,6 +6,7 @@
                     {{ title }}
                 </template>
                 <template #right>
+                    {{ canSeeLinkTable }}
                     <Button class="kn-button p-button-text" @click="$emit('linkClicked', type)">{{ $t('managers.glossary.glossaryUsage.link') }}</Button>
                 </template>
             </Toolbar>
@@ -59,6 +60,8 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import glossaryUsageNavigationCardDescriptor from './GlossaryUsageNavigationCardDescriptor.json'
 
+// TODO See about user functionalities check, BE giving errors for regular user on all tasks
+
 export default defineComponent({
     name: 'glossary-usage-navigation-card',
     components: { Card, Column, DataTable },
@@ -71,7 +74,8 @@ export default defineComponent({
         return {
             glossaryUsageNavigationCardDescriptor,
             filters: { global: [filterDefault] } as Object,
-            selectedItems: []
+            selectedItems: [],
+            user: {} as any
         }
     },
     computed: {
@@ -88,7 +92,16 @@ export default defineComponent({
                 default:
                     return ''
             }
+        },
+        canSeeLinkTable(): boolean {
+            const index = this.user.functionalities.findIndex((el: string) => el === 'ManageGlossaryTechnical')
+            console.log('INDEX: ')
+            return index !== -1
         }
+    },
+    created() {
+        this.user = (this.$store.state as any).user
+        console.log('USER LOADED: ', this.user)
     },
     methods: {
         onItemsSelected() {

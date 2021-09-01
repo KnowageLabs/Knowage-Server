@@ -9,7 +9,7 @@ export interface iNode {
     parentId?: number,
     label: string,
     children: iNode[],
-    data: iFunctionality,
+    data: any,
     style: any,
     leaf: boolean,
     selectable?: boolean,
