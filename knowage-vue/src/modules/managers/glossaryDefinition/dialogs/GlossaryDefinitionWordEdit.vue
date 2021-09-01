@@ -45,7 +45,7 @@
                             }"
                             @blur="v$.word.DESCR.$touch()"
                         />
-                        <label for="description" class="kn-material-input-label">{{ $t('common.description') }} </label>
+                        <label for="description" class="kn-material-input-label">{{ $t('common.description') }} *</label>
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.word.DESCR" :additionalTranslateParams="{ fieldName: $t('common.description') }"></KnValidationMessages>
                 </div>
@@ -148,6 +148,7 @@ export default defineComponent({
     },
     watch: {
         propWord() {
+            this.v$.$reset()
             this.word = { ...this.propWord } as iWord
             this.oldWordName = this.word.WORD
         },
@@ -216,7 +217,6 @@ export default defineComponent({
                         msg: error.message
                     })
                 })
-            console.log(this.word)
         },
         closeDialog() {
             this.$emit('close')
@@ -228,7 +228,6 @@ export default defineComponent({
             this.loadWords(event.query)
         },
         async saveContent(wordId: number) {
-            // console.log('GLOSSARY ID: ', this.selectedGlossaryId)
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/business/addContents', { GLOSSARY_ID: this.selectedGlossaryId, PARENT_ID: this.word.PARENT.CONTENT_ID, WORD_ID: wordId })
                 .then((response) => {

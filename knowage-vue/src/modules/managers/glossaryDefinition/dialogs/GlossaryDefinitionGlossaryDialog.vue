@@ -64,7 +64,6 @@ export default defineComponent({
             this.loadGlossary()
         }
     },
-
     data() {
         return {
             glossaryDefinitionDialogDescriptor,
@@ -74,7 +73,11 @@ export default defineComponent({
     },
     computed: {
         title(): string {
-            return 'TO DO'
+            if (!this.glossary.SaveOrUpdate) {
+                return this.$t('managers.glossary.glossaryDefinition.cloneTitle')
+            } else {
+                return this.glossary.SaveOrUpdate === 'Save' ? this.$t('managers.glossary.glossaryDefinition.saveTitle') : this.$t('managers.glossary.glossaryDefinition.updateTitle')
+            }
         },
         descriptionHelp(): string {
             return (this.glossary.GLOSSARY_DS?.length ?? '0') + ' / 500'
@@ -90,7 +93,6 @@ export default defineComponent({
         loadGlossary() {
             this.glossaryNameDirty = false
             this.glossary = { ...this.selectedGlossary } as iGlossary
-            console.log('LOADED GLOSSARY: ', this.glossary)
         }
     }
 })

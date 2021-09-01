@@ -64,7 +64,6 @@ export default defineComponent({
             this.loadContent()
         }
     },
-
     data() {
         return {
             glossaryDefinitionDialogDescriptor,

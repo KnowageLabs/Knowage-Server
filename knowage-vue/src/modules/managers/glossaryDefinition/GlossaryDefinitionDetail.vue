@@ -1,74 +1,87 @@
 <template>
-    <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-        <template #left>{{ $t('managers.glossary.glossaryDefinition.title') }}</template>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    </Toolbar>
-    <Card class="p-m-3">
-        <template #header>
-            <Toolbar class="kn-toolbar kn-toolbar--primary p-m-3">
-                <template #left>
-                    {{ $t('managers.glossary.glossaryDefinition.glossary') }}
-                </template>
-                <template #right>
-                    <div class="p-d-flex p-flex-row">
-                        <div v-if="selectedGlossary">
-                            <Button class="kn-button p-button-text" @click="showGlossaryForm('Update')">{{ $t('common.edit') }}</Button>
-                            <Button class="kn-button p-button-text" @click="showGlossaryForm('Clone')">{{ $t('common.clone') }}</Button>
-                            <Button class="kn-button p-button-text" @click="deleteGlossaryConfirm">{{ $t('common.delete') }}</Button>
-                        </div>
-                        <div>
-                            <FabButton icon="fas fa-plus" class="fab-button" @click="showGlossaryForm('Save')" />
-                        </div>
-                    </div>
-                </template>
+    <div class="kn-page">
+        <div class="kn-page-content p-m-0">
+            <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
+                <template #left>{{ $t('managers.glossary.glossaryDefinition.title') }}</template>
+                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
             </Toolbar>
-        </template>
-        <template #content>
-            <div>
-                <div class="p-field p-d-flex p-ai-center p-m-3">
-                    <div class="p-d-flex p-flex-column p-mr-2" id="glossary-select-container">
-                        <label for="glossary" class="kn-material-input-label">{{ $t('managers.glossary.glossaryDefinition.title') }}</label>
-                        <Dropdown id="glossary" class="kn-material-input" v-model="selectedGlossaryId" :options="glossaries" optionLabel="GLOSSARY_NM" optionValue="GLOSSARY_ID" :placeholder="$t('managers.glossary.glossaryDefinition.glossary')" @change="loadGlossaryInfo($event.value, null)" />
-                    </div>
-                    <div v-if="selectedGlossary" class="p-m-3" id="code-container">
-                        <span class="p-float-label p-mt-3">
-                            <InputText id="code" class="kn-material-input full-width" v-model.trim="selectedGlossary.GLOSSARY_CD" disabled />
-                            <label for="code" class="kn-material-input-label"> {{ $t('managers.glossary.common.code') }}</label>
-                        </span>
-                    </div>
-                </div>
-                <div v-if="selectedGlossary" class="p-field p-d-flex p-m-3 kn-flex">
-                    <div class="p-float-label kn-flex p-m-3">
-                        <InputText id="description" class="kn-material-input full-width" v-model.trim="selectedGlossary.GLOSSARY_DS" disabled />
-                        <label for="description" class="kn-material-input-label"> {{ $t('common.description') }}</label>
-                    </div>
-                </div>
-            </div>
-            <div v-if="selectedGlossary">
-                <div class="p-d-flex p-flex-row p-m-3">
-                    <InputText id="search-input" class="kn-material-input" v-model="searchWord" :placeholder="$t('common.search')" @input="filterGlossaryTree" data-test="search-input" />
-                    <FabButton icon="fas fa-plus" class="fab-button p-mt-3 p-ml-2" @click.stop="showNodeDialog(null, 'new')" />
-                </div>
-                <Tree id="glossary-tree" :value="nodes" :expandedKeys="expandedKeys" @nodeExpand="listContents(selectedGlossary.GLOSSARY_ID, $event)">
-                    <template #default="slotProps">
-                        <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonVisible[slotProps.node.id] = true" @mouseleave="buttonVisible[slotProps.node.id] = false" @drop="saveWordConfirm($event, slotProps.node)" @dragover.prevent @dragenter.prevent>
-                            <span>{{ slotProps.node.label }}</span>
-                            <div v-show="buttonVisible[slotProps.node.id]" class="p-ml-2">
-                                <Button v-if="!slotProps.node.data.HAVE_WORD_CHILD && slotProps.node.data.CONTENT_NM" icon="pi pi-bars" class="p-button-link p-button-sm p-p-0" @click.stop="showNodeDialog(slotProps.node, 'new')" />
-                                <Button v-if="!slotProps.node.data.HAVE_CONTENTS_CHILD && slotProps.node.data.CONTENT_NM" icon="pi pi-bars" class="p-button-link p-button-sm p-p-0" @click.stop="addWord(slotProps.node)" />
-                                <Button v-if="slotProps.node.data.CONTENT_NM" icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" @click.stop="showNodeDialog(slotProps.node, 'edit')" />
-                                <Button icon="pi pi-info-circle" class="p-button-link p-button-sm p-p-0" @click.stop="$emit('infoClicked', slotProps.node.data)" />
-                                <Button icon="far fa-trash-alt" class="p-button-link p-button-sm p-p-0" @click.stop="deleteNodeConfirm(slotProps.node)" />
+            <Card class="p-m-3">
+                <template #header>
+                    <Toolbar class="kn-toolbar kn-toolbar--primary p-m-3">
+                        <template #left>
+                            {{ $t('managers.glossary.glossaryDefinition.glossary') }}
+                        </template>
+                        <template #right>
+                            <div class="p-d-flex p-flex-row">
+                                <div v-if="selectedGlossary">
+                                    <Button class="kn-button p-button-text" @click="showGlossaryForm('Update')">{{ $t('common.edit') }}</Button>
+                                    <Button class="kn-button p-button-text" @click="showGlossaryForm('Clone')">{{ $t('common.clone') }}</Button>
+                                    <Button class="kn-button p-button-text" @click="deleteGlossaryConfirm">{{ $t('common.delete') }}</Button>
+                                </div>
+                                <div>
+                                    <FabButton icon="fas fa-plus" class="fab-button" @click="showGlossaryForm('Save')" />
+                                </div>
+                            </div>
+                        </template>
+                    </Toolbar>
+                </template>
+                <template #content>
+                    <div>
+                        <div class="p-field p-d-flex p-ai-center p-m-3">
+                            <div class="p-d-flex p-flex-column p-mr-2" id="glossary-select-container">
+                                <label for="glossary" class="kn-material-input-label">{{ $t('managers.glossary.glossaryDefinition.title') }}</label>
+                                <Dropdown
+                                    id="glossary"
+                                    class="kn-material-input"
+                                    v-model="selectedGlossaryId"
+                                    :options="glossaries"
+                                    optionLabel="GLOSSARY_NM"
+                                    optionValue="GLOSSARY_ID"
+                                    :placeholder="$t('managers.glossary.glossaryDefinition.glossary')"
+                                    @change="loadGlossaryInfo($event.value, null)"
+                                />
+                            </div>
+                            <div v-if="selectedGlossary" class="p-m-3" id="code-container">
+                                <span class="p-float-label p-mt-3">
+                                    <InputText id="code" class="kn-material-input full-width" v-model.trim="selectedGlossary.GLOSSARY_CD" disabled />
+                                    <label for="code" class="kn-material-input-label"> {{ $t('managers.glossary.common.code') }}</label>
+                                </span>
                             </div>
                         </div>
-                    </template>
-                </Tree>
-            </div>
-        </template>
-    </Card>
+                        <div v-if="selectedGlossary" class="p-field p-d-flex p-m-3 kn-flex">
+                            <div class="p-float-label kn-flex p-m-3">
+                                <InputText id="description" class="kn-material-input full-width" v-model.trim="selectedGlossary.GLOSSARY_DS" disabled />
+                                <label for="description" class="kn-material-input-label"> {{ $t('common.description') }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="selectedGlossary">
+                        <div class="p-d-flex p-flex-row p-m-3">
+                            <InputText id="search-input" class="kn-material-input" v-model="searchWord" :placeholder="$t('common.search')" @input="filterGlossaryTree" data-test="search-input" />
+                            <FabButton icon="fas fa-plus" class="fab-button p-mt-3 p-ml-2" @click.stop="showNodeDialog(null, 'new')" />
+                        </div>
+                        <Tree id="glossary-tree" :value="nodes" :expandedKeys="expandedKeys" @nodeExpand="listContents(selectedGlossary.GLOSSARY_ID, $event)">
+                            <template #default="slotProps">
+                                <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonVisible[slotProps.node.id] = true" @mouseleave="buttonVisible[slotProps.node.id] = false" @drop="saveWordConfirm($event, slotProps.node)" @dragover.prevent @dragenter.prevent>
+                                    <span>{{ slotProps.node.label }}</span>
+                                    <div v-show="buttonVisible[slotProps.node.id]" class="p-ml-2">
+                                        <Button v-if="!slotProps.node.data.HAVE_WORD_CHILD && slotProps.node.data.CONTENT_NM" icon="pi pi-bars" class="p-button-link p-button-sm p-p-0" @click.stop="showNodeDialog(slotProps.node, 'new')" />
+                                        <Button v-if="!slotProps.node.data.HAVE_CONTENTS_CHILD && slotProps.node.data.CONTENT_NM" icon="pi pi-book" class="p-button-link p-button-sm p-p-0" @click.stop="addWord(slotProps.node)" />
+                                        <Button v-if="slotProps.node.data.CONTENT_NM" icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" @click.stop="showNodeDialog(slotProps.node, 'edit')" />
+                                        <Button icon="pi pi-info-circle" class="p-button-link p-button-sm p-p-0" @click.stop="$emit('infoClicked', slotProps.node.data)" />
+                                        <Button icon="far fa-trash-alt" class="p-button-link p-button-sm p-p-0" @click.stop="deleteNodeConfirm(slotProps.node)" />
+                                    </div>
+                                </div>
+                            </template>
+                        </Tree>
+                    </div>
+                </template>
+            </Card>
 
-    <GlossaryDefinitionNodeDialog :visible="nodeDialogVisible" :selectedContent="selectedContent" @save="saveContent" @close="nodeDialogVisible = false"></GlossaryDefinitionNodeDialog>
-    <GlossaryDefinitionGlossaryDialog :visible="glossaryDialogVisible" :selectedGlossary="glossaryForSave" @save="handleSaveGlossary" @close="glossaryDialogVisible = false"></GlossaryDefinitionGlossaryDialog>
+            <GlossaryDefinitionNodeDialog :visible="nodeDialogVisible" :selectedContent="selectedContent" @save="saveContent" @close="nodeDialogVisible = false"></GlossaryDefinitionNodeDialog>
+            <GlossaryDefinitionGlossaryDialog :visible="glossaryDialogVisible" :selectedGlossary="glossaryForSave" @save="handleSaveGlossary" @close="glossaryDialogVisible = false"></GlossaryDefinitionGlossaryDialog>
+        </div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -87,7 +100,7 @@ export default defineComponent({
     name: 'glossary-definition-detail',
     components: { Card, Dropdown, GlossaryDefinitionNodeDialog, GlossaryDefinitionGlossaryDialog, FabButton, Tree },
     props: { glossaryList: { type: Array }, reloadTree: { type: Boolean } },
-    emits: ['addWord', 'infoClicked', 'deleted', 'glossarySaved', 'wordDeleted'],
+    emits: ['addWord', 'infoClicked', 'deleted', 'glossarySaved'],
     data() {
         return {
             glossaryDefinitionDescriptor,
@@ -112,6 +125,7 @@ export default defineComponent({
             this.loadGlossaries()
         },
         async reloadTree() {
+            this.updateParentNode('HAVE_WORD_CHILD', true)
             await this.listContents(this.selectedGlossaryId as number, this.selectedNode)
         }
     },
@@ -226,6 +240,7 @@ export default defineComponent({
         },
         async saveWord(word: iWord, item: any) {
             this.loading = true
+            this.selectedNode = item
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/business/addContents', { GLOSSARY_ID: this.selectedGlossaryId, PARENT_ID: item.id, WORD_ID: word.WORD_ID })
                 .then(async (response) => {
@@ -234,6 +249,7 @@ export default defineComponent({
                             title: this.$t('common.toast.createTitle'),
                             msg: this.$t('common.toast.success')
                         })
+                        this.updateParentNode('HAVE_WORD_CHILD', true)
                         await this.listContents(this.selectedGlossaryId as number, item)
                     } else {
                         this.$store.commit('setError', {
@@ -260,7 +276,8 @@ export default defineComponent({
         },
         async deleteNode(node: any) {
             this.loading = true
-            const url = node.data.CONTENT_ID ? `1.0/glossary/business/deleteContents?CONTENTS_ID=${node.data.CONTENT_ID}` : `1.0/glossary/business/deleteWord?WORD_ID=${node.data.WORD_ID}`
+            this.selectedNode = node.parent
+            const url = node.data.CONTENT_ID ? `1.0/glossary/business/deleteContents?CONTENTS_ID=${node.data.CONTENT_ID}` : `1.0/glossary/business/deleteContents?PARENT_ID=${node.parent.id}&WORD_ID=${node.data.WORD_ID}`
             let status = ''
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, {})
@@ -273,18 +290,20 @@ export default defineComponent({
                 })
 
             if (status === 'OK') {
+                let property = 'HAVE_CONTENTS_CHILD'
                 if (node.data.WORD_ID) {
-                    this.$emit('wordDeleted')
+                    property = 'HAVE_WORD_CHILD'
                 }
-                await this.listContents(this.selectedGlossaryId as number, node.parent)
+
+                this.searchWord ? await this.filterGlossaryTree() : await this.listContents(this.selectedGlossaryId as number, node.parent)
+                if (this.selectedNode.children.length === 0) {
+                    this.updateParentNode(property, false)
+                }
             }
 
             this.loading = false
         },
         async showNodeDialog(node: any, mode: string) {
-            console.log('CONTENT: ', node ? node.data : 'top level')
-            console.log('MODE: ', mode)
-            console.log('NODE: ', node)
             this.selectedNode = node
             if (mode === 'edit') {
                 await this.loadContent(node.data.CONTENT_ID)
@@ -308,10 +327,8 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getContent?CONTENT_ID=${contentId}`)
                 .then((response) => (this.selectedContent = { ...response.data, CONTENT_ID: contentId, SaveOrUpdate: 'Update' }))
                 .finally(() => (this.loading = false))
-            // console.log('SELECTED CONTENT: ', this.selectedContent)
         },
         async saveContent(content: iContent) {
-            console.log('CONTENT FOR SAVE: ', content)
             this.loading = true
 
             let result = { status: '', message: '' } as any
@@ -326,6 +343,7 @@ export default defineComponent({
                 })
 
             await this.updateTree(result, content)
+            this.loading = false
         },
         async updateTree(result: { status: string; message: string }, content: iContent) {
             if (result.status === 'NON OK') {
@@ -339,9 +357,8 @@ export default defineComponent({
                     msg: this.$t('common.toast.success')
                 })
                 this.nodeDialogVisible = false
-
+                this.updateParentNode('HAVE_CONTENTS_CHILD', true)
                 content.SaveOrUpdate === 'Save' ? await this.listContents(this.selectedGlossaryId as number, this.selectedNode) : this.updateNode(content)
-                console.log('SELECTED NODE', this.selectedNode)
             }
         },
         updateNode(content: iContent) {
@@ -379,6 +396,7 @@ export default defineComponent({
             })
         },
         async deleteGlossary() {
+            this.loading = true
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/business/deleteGlossary?GLOSSARY_ID=${this.selectedGlossaryId}`).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
@@ -388,6 +406,7 @@ export default defineComponent({
                 this.selectedGlossary = null
                 this.$emit('deleted')
             })
+            this.loading = false
         },
         addWord(node: iNode) {
             this.selectedNode = node
@@ -413,8 +432,7 @@ export default defineComponent({
             this.glossaryDialogVisible = true
         },
         async handleSaveGlossary(glossary: iGlossary) {
-            console.log('GLOSSARY FOR SAVE: ', glossary)
-
+            this.loading = true
             const url = glossary.SaveOrUpdate ? '1.0/glossary/business/addGlossary' : '1.0/glossary/business/cloneGlossary'
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, glossary)
@@ -443,6 +461,7 @@ export default defineComponent({
                         msg: response
                     })
                 })
+                .finally(() => (this.loading = false))
         },
         updateGlossary(glossary: iGlossary) {
             this.selectedGlossary = {
@@ -453,8 +472,17 @@ export default defineComponent({
             }
             const index = this.glossaries.findIndex((el: iGlossary) => el.GLOSSARY_ID === this.selectedGlossary?.GLOSSARY_ID)
             this.glossaries[index] = this.selectedGlossary
-            console.log('GLOSSARY AFTER UPDATE: ', this.selectedGlossary)
-            console.log('GLOSSARY ARRAY AFTER UPDATE: ', this.glossaries)
+        },
+        updateParentNode(property: string, value: any) {
+            let temp = null as any
+            for (let i = 0; i < this.nodes.length; i++) {
+                temp = this.findNode(this.nodes[i], this.selectedNode.id)
+                if (temp) break
+            }
+
+            if (temp) {
+                temp.data[property] = value
+            }
         }
     }
 })

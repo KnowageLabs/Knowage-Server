@@ -42,17 +42,7 @@
 
             <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
                 <GlossaryDefinitionHint v-if="!selectedWord"></GlossaryDefinitionHint>
-                <GlossaryDefinitionDetail
-                    v-else
-                    :glossaryList="glossaryList"
-                    :savedWordId="savedWordId"
-                    :reloadTree="reloadTree"
-                    @infoClicked="showInfo"
-                    @addWord="editWord(-1, $event)"
-                    @deleted="loadGlossaryList"
-                    @wordDeleted="loadWordsList"
-                    @glossarySaved="loadGlossaryList"
-                ></GlossaryDefinitionDetail>
+                <GlossaryDefinitionDetail v-else :glossaryList="glossaryList" :savedWordId="savedWordId" :reloadTree="reloadTree" @infoClicked="showInfo" @addWord="editWord(-1, $event)" @deleted="loadGlossaryList" @glossarySaved="loadGlossaryList"></GlossaryDefinitionDetail>
             </div>
         </div>
         <GlossaryDefinitionWordEdit :visible="editWordDialogVisible" @close="editWordDialogVisible = false" @saved="wordSaved" :state="state" :category="category" :propWord="contentInfo" :selectedGlossaryId="selectedGlossaryId" @reloadTree="reloadTree = !reloadTree"></GlossaryDefinitionWordEdit>
@@ -95,14 +85,11 @@ export default defineComponent({
             user: {} as any,
             reloadTree: false,
             loading: false,
-            touched: false,
             editWordDialogVisible: false
         }
     },
     async created() {
         await this.loadPage()
-        //this.user = (this.$store.state as any).user
-        // console.log('USER: ', this.user)
     },
     methods: {
         async loadPage() {
@@ -126,19 +113,7 @@ export default defineComponent({
             return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=GLS_CATEGORY`).then((response) => (this.category = response.data))
         },
         setSelectedWord(word: iWord) {
-            if (!this.touched) {
-                this.selectedWord = word
-            } else {
-                this.$confirm.require({
-                    message: this.$t('common.toast.unsavedChangesMessage'),
-                    header: this.$t('common.toast.unsavedChangesHeader'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => {
-                        this.touched = false
-                        this.selectedWord = word
-                    }
-                })
-            }
+            this.selectedWord = word
         },
         async showInfo(content: any) {
             this.loading = true
@@ -157,7 +132,6 @@ export default defineComponent({
                 header: this.$t('common.toast.deleteTitle'),
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {
-                    this.touched = false
                     this.deleteWord(wordId)
                 }
             })
@@ -188,8 +162,7 @@ export default defineComponent({
                 this.contentInfo.PARENT = event.parent
                 this.selectedGlossaryId = event.glossaryId
             }
-            console.log(id)
-            // console.log('selectedGlossaryId in MAIN: ', this.selectedGlossaryId)
+
             this.editWordDialogVisible = true
         },
         wordSaved() {

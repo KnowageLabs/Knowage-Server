@@ -585,6 +585,7 @@
                 "word": "Word"
             },
             "glossaryDefinition": {
+                "cloneTitle": "Clone a Glossary",
                 "deleteNodeConfirmMessage": "Deleting a node all the underlying node (if present) will be deleted. Continue?",
                 "details": "Details",
                 "duplicateContent": "Adding two or more nodes with the same name under a single node is not allowed.",
@@ -595,10 +596,12 @@
                 "glossary": "Glossary",
                 "hint": "Lorem ipsum dolor sit amet...",
                 "newNode": "New node",
+                "saveTitle": "New glossary",
                 "saveWordConfirmMessage": "Data will be immediately saved.",
                 "saveWordConfirmTitle": "Word will be saved. Continue?",
                 "status": "Status",
                 "title": "Glossary Definition",
+                "updateTitle": "Edit glossary",
                 "wordsList": "Words List"
             }
         },
