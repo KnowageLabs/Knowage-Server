@@ -194,8 +194,3 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss" scoped>
-.p-dialog-content .p-dialog {
-    padding-top: 3px;
-}
-</style>
