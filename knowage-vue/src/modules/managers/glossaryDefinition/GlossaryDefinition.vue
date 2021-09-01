@@ -7,7 +7,7 @@
                         {{ $t('managers.glossary.glossaryDefinition.wordsList') }}
                     </template>
                     <template #right>
-                        <FabButton icon="fas fa-plus" @click.stop="editWord(-1)" />
+                        <FabButton icon="fas fa-plus" @click.stop="editWord(-1)" data-test="new-button" />
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
@@ -25,12 +25,12 @@
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
-                        <div class="kn-list-item">
+                        <div class="kn-list-item" data-test="list-item">
                             <i class="pi pi-bars"></i>
                             <div class="kn-list-item-text" draggable="true" @dragstart="onDragStart($event, slotProps.option)">
                                 <span>{{ slotProps.option.WORD }}</span>
                             </div>
-                            <Button icon="pi pi-info-circle" class="p-button-text p-button-rounded p-button-plain" @click.stop="showInfo(slotProps.option)" />
+                            <Button icon="pi pi-info-circle" class="p-button-text p-button-rounded p-button-plain" @click.stop="showInfo(slotProps.option)" data-test="info-button" />
                             <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain" @click.stop="editWord(slotProps.option.WORD_ID)" data-test="edit-button" />
                             <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteWordConfirm(slotProps.option.WORD_ID)" data-test="delete-button" />
                         </div>
