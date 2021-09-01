@@ -1,5 +1,5 @@
 export interface iGlossary {
-    GLOSSARY_ID: number
+    GLOSSARY_ID?: number
     GLOSSARY_NM: string
     GLOSSARY_CD: string
     GLOSSARY_DS: string,

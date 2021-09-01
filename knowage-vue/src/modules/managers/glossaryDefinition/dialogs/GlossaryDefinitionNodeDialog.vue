@@ -17,7 +17,7 @@
                 />
                 <label for="contentName" class="kn-material-input-label"> {{ $t('common.name') }} *</label>
             </span>
-            <div v-if="content.CONTENT_NM && content.CONTENT_NM.length === 0 && contentNameDirty" class="p-error p-grid p-mt-2">
+            <div v-if="content.CONTENT_NM.length === 0 && contentNameDirty" class="p-error p-grid p-mt-2">
                 {{ $t('common.validation.required', { fieldName: $t('common.name') }) }}
             </div>
         </div>

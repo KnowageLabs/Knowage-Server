@@ -42,7 +42,17 @@
 
             <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
                 <GlossaryDefinitionHint v-if="!selectedWord"></GlossaryDefinitionHint>
-                <GlossaryDefinitionDetail v-else :glossaryList="glossaryList" :savedWordId="savedWordId" :reloadTree="reloadTree" @infoClicked="showInfo" @addWord="editWord(-1, $event)" @deleted="loadGlossaryList" @wordDeleted="loadWordsList"></GlossaryDefinitionDetail>
+                <GlossaryDefinitionDetail
+                    v-else
+                    :glossaryList="glossaryList"
+                    :savedWordId="savedWordId"
+                    :reloadTree="reloadTree"
+                    @infoClicked="showInfo"
+                    @addWord="editWord(-1, $event)"
+                    @deleted="loadGlossaryList"
+                    @wordDeleted="loadWordsList"
+                    @glossarySaved="loadGlossaryList"
+                ></GlossaryDefinitionDetail>
             </div>
         </div>
         <GlossaryDefinitionWordEdit :visible="editWordDialogVisible" @close="editWordDialogVisible = false" @saved="wordSaved" :state="state" :category="category" :propWord="contentInfo" :selectedGlossaryId="selectedGlossaryId" @reloadTree="reloadTree = !reloadTree"></GlossaryDefinitionWordEdit>

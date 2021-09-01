@@ -17,7 +17,7 @@
                 />
                 <label for="glossaryName" class="kn-material-input-label"> {{ $t('common.name') }} *</label>
             </span>
-            <div v-if="glossary.GLOSSARY_NM && glossary.GLOSSARY_NM.length === 0 && glossaryNameDirty" class="p-error p-grid p-mt-2">
+            <div v-if="glossary.GLOSSARY_NM?.length === 0 && glossaryNameDirty" class="p-error p-grid p-mt-2">
                 {{ $t('common.validation.required', { fieldName: $t('common.name') }) }}
             </div>
         </div>
@@ -60,7 +60,7 @@ export default defineComponent({
         selectedGlossary: { type: Object }
     },
     watch: {
-        selectedglossary() {
+        selectedGlossary() {
             this.loadGlossary()
         }
     },
@@ -90,6 +90,7 @@ export default defineComponent({
         loadGlossary() {
             this.glossaryNameDirty = false
             this.glossary = { ...this.selectedGlossary } as iGlossary
+            console.log('LOADED GLOSSARY: ', this.glossary)
         }
     }
 })
