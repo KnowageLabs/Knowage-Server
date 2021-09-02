@@ -26,6 +26,11 @@
                 </template>
                 <template #content>
                     <div>
+                        {{ selectedGlossary }}
+                        <hr />
+                        {{ originalGlossary }}
+                        <hr />
+                        {{ glossaries }}
                         <div class="p-field p-d-flex p-ai-center p-m-3">
                             <div class="p-d-flex p-flex-column p-mr-2" id="glossary-select-container">
                                 <label for="glossary" class="kn-material-input-label">{{ $t('managers.glossary.glossaryDefinition.title') }}</label>
@@ -139,7 +144,7 @@ export default defineComponent({
             await this.listContents(glossaryId, parent)
         },
         async loadGlossaryList() {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listGlossary`).then((response) => (this.glossaries = response.data))
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listGlossary`).then((response) => (this.glossaries = response.data))
         },
         async loadGlossary(glossaryId: number) {
             this.loading = true
@@ -423,6 +428,8 @@ export default defineComponent({
             this.showTree = false
             this.showHint = false
             this.selectedGlossaryId = null
+            this.nodes = []
+            this.expandedKeys = {}
 
             if (type === 'Save') {
                 this.selectedGlossary = {
@@ -464,6 +471,12 @@ export default defineComponent({
                     })
                 })
 
+            console.log('TEMP DATA: ', tempData)
+
+            this.updateGlossaryList(tempData)
+            this.loading = false
+        },
+        async updateGlossaryList(tempData: any) {
             if (tempData.STATUS !== 'NON OK') {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.createTitle'),
@@ -485,9 +498,9 @@ export default defineComponent({
                     title: this.$t('common.error.generic'),
                     msg: this.$t(this.glossaryDefinitionDescriptor.translation[tempData.Message])
                 })
+                this.selectedGlossary = null
+                this.originalGlossary = null
             }
-
-            this.loading = false
         },
         glossaryChanged() {
             return this.selectedGlossary?.GLOSSARY_NM !== this.originalGlossary?.GLOSSARY_NM || this.selectedGlossary?.GLOSSARY_CD !== this.originalGlossary?.GLOSSARY_CD || this.selectedGlossary?.GLOSSARY_DS !== this.originalGlossary?.GLOSSARY_DS

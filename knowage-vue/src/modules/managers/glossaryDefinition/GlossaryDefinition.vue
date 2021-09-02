@@ -39,7 +39,7 @@
             <GlossaryDefinitionInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :contentInfo="contentInfo" @close="infoDialogVisible = false"></GlossaryDefinitionInfoDialog>
 
             <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <GlossaryDefinitionDetail :savedWordId="savedWordId" :reloadTree="reloadTree" @infoClicked="showInfo" @addWord="editWord(-1, $event)" @deleted="loadGlossaryList"></GlossaryDefinitionDetail>
+                <GlossaryDefinitionDetail :reloadTree="reloadTree" @infoClicked="showInfo" @addWord="editWord(-1, $event)"></GlossaryDefinitionDetail>
             </div>
         </div>
         <GlossaryDefinitionWordEdit :visible="editWordDialogVisible" @close="editWordDialogVisible = false" @saved="wordSaved" :state="state" :category="category" :propWord="contentInfo" :selectedGlossaryId="selectedGlossaryId" @reloadTree="reloadTree = !reloadTree"></GlossaryDefinitionWordEdit>

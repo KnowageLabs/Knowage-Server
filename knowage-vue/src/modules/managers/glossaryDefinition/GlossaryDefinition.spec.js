@@ -6,6 +6,7 @@ import Dialog from 'primevue/dialog'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import flushPromises from 'flush-promises'
 import GlossaryDefinition from './GlossaryDefinition.vue'
+import InputText from 'primevue/inputtext'
 import Listbox from 'primevue/listbox'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
@@ -54,6 +55,7 @@ const factory = () => {
                 Card,
                 Dialog,
                 FabButton,
+                InputText,
                 Listbox,
                 ProgressBar,
                 Toolbar
@@ -90,7 +92,7 @@ describe('Glossary Definition', () => {
     it('shows a prompt when user click on a word delete button to delete it', async () => {
         const wrapper = factory()
         await flushPromises()
-        console.log(wrapper.vm.wordsList)
+
         const deleteButton = wrapper.find('[data-test="delete-button"]')
 
         await deleteButton.trigger('click')
