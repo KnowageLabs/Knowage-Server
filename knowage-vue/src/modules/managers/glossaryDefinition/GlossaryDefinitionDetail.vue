@@ -13,13 +13,12 @@
                         </template>
                         <template #right>
                             <div class="p-d-flex p-flex-row">
-                                <div v-if="selectedGlossary">
-                                    <Button class="kn-button p-button-text" @click="showGlossaryForm('Update')">{{ $t('common.edit') }}</Button>
-                                    <Button class="kn-button p-button-text" @click="showGlossaryForm('Clone')">{{ $t('common.clone') }}</Button>
+                                <div v-if="selectedGlossary && selectedGlossaryId && selectedGlossaryId != 999999">
+                                    <Button class="kn-button p-button-text" @click="addNewGlossary('Clone')">{{ $t('common.clone') }}</Button>
                                     <Button class="kn-button p-button-text" @click="deleteGlossaryConfirm">{{ $t('common.delete') }}</Button>
                                 </div>
                                 <div>
-                                    <FabButton icon="fas fa-plus" class="fab-button" @click="showGlossaryForm('Save')" />
+                                    <FabButton icon="fas fa-plus" class="fab-button" @click="addNewGlossary('Save')" />
                                 </div>
                             </div>
                         </template>
@@ -37,25 +36,28 @@
                                     :options="glossaries"
                                     optionLabel="GLOSSARY_NM"
                                     optionValue="GLOSSARY_ID"
+                                    :editable="selectedGlossary"
                                     :placeholder="$t('managers.glossary.glossaryDefinition.glossary')"
                                     @change="loadGlossaryInfo($event.value, null)"
+                                    @input="updateGlossaryName($event.target.value)"
+                                    @blur="handleSaveGlossary"
                                 />
                             </div>
                             <div v-if="selectedGlossary" class="p-m-3" id="code-container">
                                 <span class="p-float-label p-mt-3">
-                                    <InputText id="code" class="kn-material-input full-width" v-model.trim="selectedGlossary.GLOSSARY_CD" disabled />
+                                    <InputText id="code" class="kn-material-input full-width" v-model.trim="selectedGlossary.GLOSSARY_CD" @blur="handleSaveGlossary" />
                                     <label for="code" class="kn-material-input-label"> {{ $t('managers.glossary.common.code') }}</label>
                                 </span>
                             </div>
                         </div>
                         <div v-if="selectedGlossary" class="p-field p-d-flex p-m-3 kn-flex">
                             <div class="p-float-label kn-flex p-m-3">
-                                <InputText id="description" class="kn-material-input full-width" v-model.trim="selectedGlossary.GLOSSARY_DS" disabled />
+                                <InputText id="description" class="kn-material-input full-width" v-model.trim="selectedGlossary.GLOSSARY_DS" @blur="handleSaveGlossary" />
                                 <label for="description" class="kn-material-input-label"> {{ $t('common.description') }}</label>
                             </div>
                         </div>
                     </div>
-                    <div v-if="selectedGlossary">
+                    <div v-if="selectedGlossary && showTree">
                         <div class="p-d-flex p-flex-row p-m-3">
                             <InputText id="search-input" class="kn-material-input" v-model="searchWord" :placeholder="$t('common.search')" @input="filterGlossaryTree" data-test="search-input" />
                             <FabButton icon="fas fa-plus" class="fab-button p-mt-3 p-ml-2" @click.stop="showNodeDialog(null, 'new')" />
@@ -75,11 +77,11 @@
                             </template>
                         </Tree>
                     </div>
+                    <GlossaryDefinitionHint v-if="showHint"></GlossaryDefinitionHint>
                 </template>
             </Card>
 
             <GlossaryDefinitionNodeDialog :visible="nodeDialogVisible" :selectedContent="selectedContent" @save="saveContent" @close="nodeDialogVisible = false"></GlossaryDefinitionNodeDialog>
-            <GlossaryDefinitionGlossaryDialog :visible="glossaryDialogVisible" :selectedGlossary="glossaryForSave" @save="handleSaveGlossary" @close="glossaryDialogVisible = false"></GlossaryDefinitionGlossaryDialog>
         </div>
     </div>
 </template>
@@ -91,60 +93,64 @@ import axios from 'axios'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 import glossaryDefinitionDescriptor from './GlossaryDefinitionDescriptor.json'
+import GlossaryDefinitionHint from './GlossaryDefinitionHint.vue'
 import GlossaryDefinitionNodeDialog from './dialogs/GlossaryDefinitionNodeDialog.vue'
-import GlossaryDefinitionGlossaryDialog from './dialogs/GlossaryDefinitionGlossaryDialog.vue'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Tree from 'primevue/tree'
 
 export default defineComponent({
     name: 'glossary-definition-detail',
-    components: { Card, Dropdown, GlossaryDefinitionNodeDialog, GlossaryDefinitionGlossaryDialog, FabButton, Tree },
-    props: { glossaryList: { type: Array }, reloadTree: { type: Boolean } },
-    emits: ['addWord', 'infoClicked', 'deleted', 'glossarySaved'],
+    components: { Card, Dropdown, GlossaryDefinitionHint, GlossaryDefinitionNodeDialog, FabButton, Tree },
+    props: { reloadTree: { type: Boolean } },
+    emits: ['addWord', 'infoClicked'],
     data() {
         return {
             glossaryDefinitionDescriptor,
             glossaries: [] as iGlossary[],
             selectedGlossaryId: null as number | null,
             selectedGlossary: null as iGlossary | null,
-            glossaryForSave: null as iGlossary | null,
+            originalGlossary: null as iGlossary | null,
             nodes: [] as iNode[],
             buttonVisible: [],
             searchWord: null,
             timer: null as any,
             expandedKeys: {},
             nodeDialogVisible: false,
-            glossaryDialogVisible: false,
             selectedContent: {} as iContent,
             selectedNode: {} as iNode,
+            idForCloning: null as number | null,
+            showTree: false,
+            showHint: true,
             loading: false
         }
     },
     watch: {
-        glossaryList() {
-            this.loadGlossaries()
-        },
         async reloadTree() {
             this.updateParentNode('HAVE_WORD_CHILD', true)
             await this.listContents(this.selectedGlossaryId as number, this.selectedNode)
         }
     },
-    created() {
-        this.loadGlossaries()
+    async created() {
+        await this.loadGlossaryList()
     },
     methods: {
-        loadGlossaries() {
-            this.glossaries = [...(this.glossaryList as iGlossary[])]
-        },
         async loadGlossaryInfo(glossaryId: number, parent: any) {
             await this.loadGlossary(glossaryId)
             await this.listContents(glossaryId, parent)
+        },
+        async loadGlossaryList() {
+            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listGlossary`).then((response) => (this.glossaries = response.data))
         },
         async loadGlossary(glossaryId: number) {
             this.loading = true
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getGlossary?GLOSSARY_ID=${glossaryId}`)
-                .then((response) => (this.selectedGlossary = response.data))
+                .then((response) => {
+                    this.selectedGlossary = { ...response.data, SaveOrUpdate: 'Update' }
+                    this.originalGlossary = { ...response.data, SaveOrUpdate: 'Update' }
+                    this.showTree = true
+                    this.showHint = false
+                })
                 .finally(() => (this.loading = false))
         },
         async listContents(glossaryId: number, parent: any) {
@@ -364,7 +370,7 @@ export default defineComponent({
         updateNode(content: iContent) {
             let temp = null as any
             for (let i = 0; i < this.nodes.length; i++) {
-                temp = this.findNode(this.nodes[i], this.selectedNode.id)
+                temp = this.findNode(this.nodes[i], this.selectedNode?.id)
                 if (temp) break
             }
 
@@ -404,80 +410,104 @@ export default defineComponent({
                 })
                 this.selectedGlossaryId = null
                 this.selectedGlossary = null
-                this.$emit('deleted')
+                this.originalGlossary = null
             })
+            await this.loadGlossaryList()
             this.loading = false
         },
         addWord(node: iNode) {
             this.selectedNode = node
             this.$emit('addWord', { parent: node.data, glossaryId: this.selectedGlossaryId })
         },
-        showGlossaryForm(type: string) {
-            this.glossaryForSave =
-                type === 'Save'
-                    ? {
-                          GLOSSARY_CD: '',
-                          GLOSSARY_DS: '',
-                          GLOSSARY_NM: '',
-                          NEWGLOSS: true,
-                          SBI_GL_CONTENTS: [],
-                          SaveOrUpdate: 'Save'
-                      }
-                    : { ...(this.selectedGlossary as iGlossary) }
+        addNewGlossary(type: string) {
+            this.showTree = false
+            this.showHint = false
+            this.selectedGlossaryId = null
 
-            if (type === 'Update') {
-                this.glossaryForSave.SaveOrUpdate = 'Update'
+            if (type === 'Save') {
+                this.selectedGlossary = {
+                    GLOSSARY_CD: '',
+                    GLOSSARY_DS: '',
+                    GLOSSARY_NM: '',
+                    NEWGLOSS: true,
+                    SBI_GL_CONTENTS: [],
+                    SaveOrUpdate: 'Save'
+                }
+            } else {
+                this.idForCloning = this.selectedGlossary?.GLOSSARY_ID as number
+                this.selectedGlossaryId = 999999
+                this.selectedGlossary = { GLOSSARY_ID: 999999, GLOSSARY_CD: this.selectedGlossary?.GLOSSARY_CD, GLOSSARY_DS: this.selectedGlossary?.GLOSSARY_DS, GLOSSARY_NM: this.$t('common.copyOf') + ' ' + this.selectedGlossary?.GLOSSARY_NM } as iGlossary
+                this.glossaries.push(this.selectedGlossary)
             }
 
-            this.glossaryDialogVisible = true
+            this.originalGlossary = { GLOSSARY_CD: '', GLOSSARY_DS: '', GLOSSARY_NM: '' } as iGlossary
         },
-        async handleSaveGlossary(glossary: iGlossary) {
+        async handleSaveGlossary() {
             this.loading = true
-            const url = glossary.SaveOrUpdate ? '1.0/glossary/business/addGlossary' : '1.0/glossary/business/cloneGlossary'
+
+            if (!this.glossaryChanged()) {
+                return
+            }
+
+            const url = this.selectedGlossary?.SaveOrUpdate ? '1.0/glossary/business/addGlossary' : '1.0/glossary/business/cloneGlossary'
+            if (!this.selectedGlossary?.SaveOrUpdate && this.selectedGlossary) {
+                this.selectedGlossary.GLOSSARY_ID = this.idForCloning as number
+            }
+            let tempData = {} as any
             await axios
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, glossary)
-                .then((response) => {
-                    if (response.data.Status !== 'NON OK') {
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.createTitle'),
-                            msg: this.$t('common.toast.success')
-                        })
-                        this.glossaryDialogVisible = false
-                        if (glossary.SaveOrUpdate === 'Update') {
-                            this.updateGlossary(glossary)
-                        } else {
-                            this.$emit('glossarySaved')
-                        }
-                    } else {
-                        this.$store.commit('setError', {
-                            title: this.$t('common.error.generic'),
-                            msg: this.$t(this.glossaryDefinitionDescriptor.translation[response.data.Message])
-                        })
-                    }
-                })
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, this.selectedGlossary)
+                .then((response) => (tempData = response.data))
                 .catch((response) => {
                     this.$store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: response
                     })
                 })
-                .finally(() => (this.loading = false))
-        },
-        updateGlossary(glossary: iGlossary) {
-            this.selectedGlossary = {
-                GLOSSARY_ID: glossary.GLOSSARY_ID,
-                GLOSSARY_NM: glossary.GLOSSARY_NM,
-                GLOSSARY_CD: glossary.GLOSSARY_CD,
-                GLOSSARY_DS: glossary.GLOSSARY_DS
+
+            if (tempData.STATUS !== 'NON OK') {
+                this.$store.commit('setInfo', {
+                    title: this.$t('common.toast.createTitle'),
+                    msg: this.$t('common.toast.success')
+                })
+                if (this.selectedGlossary?.SaveOrUpdate === 'Update') {
+                    this.updateGlossary()
+                } else {
+                    if (tempData.id && this.selectedGlossary) {
+                        this.selectedGlossary.GLOSSARY_ID = tempData.id
+                        this.selectedGlossaryId = tempData.id
+                    }
+                    await this.loadGlossaryList()
+                }
+                this.showTree = true
+                this.originalGlossary = { ...this.selectedGlossary } as iGlossary
+            } else {
+                this.$store.commit('setError', {
+                    title: this.$t('common.error.generic'),
+                    msg: this.$t(this.glossaryDefinitionDescriptor.translation[tempData.Message])
+                })
             }
+
+            this.loading = false
+        },
+        glossaryChanged() {
+            return this.selectedGlossary?.GLOSSARY_NM !== this.originalGlossary?.GLOSSARY_NM || this.selectedGlossary?.GLOSSARY_CD !== this.originalGlossary?.GLOSSARY_CD || this.selectedGlossary?.GLOSSARY_DS !== this.originalGlossary?.GLOSSARY_DS
+        },
+        updateGlossary() {
             const index = this.glossaries.findIndex((el: iGlossary) => el.GLOSSARY_ID === this.selectedGlossary?.GLOSSARY_ID)
-            this.glossaries[index] = this.selectedGlossary
+            this.glossaries[index] = this.selectedGlossary as iGlossary
+        },
+        updateGlossaryName(newName: any) {
+            if (this.selectedGlossary) {
+                this.selectedGlossary.GLOSSARY_NM = newName
+            }
         },
         updateParentNode(property: string, value: any) {
             let temp = null as any
-            for (let i = 0; i < this.nodes.length; i++) {
-                temp = this.findNode(this.nodes[i], this.selectedNode.id)
-                if (temp) break
+            if (this.selectedNode) {
+                for (let i = 0; i < this.nodes.length; i++) {
+                    temp = this.findNode(this.nodes[i], this.selectedNode.id)
+                    if (temp) break
+                }
             }
 
             if (temp) {

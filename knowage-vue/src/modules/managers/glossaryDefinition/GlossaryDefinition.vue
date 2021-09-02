@@ -20,18 +20,16 @@
                     filterMatchMode="contains"
                     :filterFields="glossaryDefinitionDescriptor.filterFields"
                     :emptyFilterMessage="$t('common.info.noDataFound')"
-                    @change="setSelectedWord($event.value)"
                     data-test="words-list"
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
                         <div class="kn-list-item" data-test="list-item">
                             <i class="pi pi-bars"></i>
-                            <div class="kn-list-item-text" draggable="true" @dragstart="onDragStart($event, slotProps.option)">
+                            <div class="kn-list-item-text" draggable="true" @click.stop="editWord(slotProps.option.WORD_ID)" @dragstart="onDragStart($event, slotProps.option)">
                                 <span>{{ slotProps.option.WORD }}</span>
                             </div>
                             <Button icon="pi pi-info-circle" class="p-button-text p-button-rounded p-button-plain" @click.stop="showInfo(slotProps.option)" data-test="info-button" />
-                            <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain" @click.stop="editWord(slotProps.option.WORD_ID)" data-test="edit-button" />
                             <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteWordConfirm(slotProps.option.WORD_ID)" data-test="delete-button" />
                         </div>
                     </template>
@@ -41,8 +39,7 @@
             <GlossaryDefinitionInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :contentInfo="contentInfo" @close="infoDialogVisible = false"></GlossaryDefinitionInfoDialog>
 
             <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <GlossaryDefinitionHint v-if="!selectedWord"></GlossaryDefinitionHint>
-                <GlossaryDefinitionDetail v-else :glossaryList="glossaryList" :savedWordId="savedWordId" :reloadTree="reloadTree" @infoClicked="showInfo" @addWord="editWord(-1, $event)" @deleted="loadGlossaryList" @glossarySaved="loadGlossaryList"></GlossaryDefinitionDetail>
+                <GlossaryDefinitionDetail :savedWordId="savedWordId" :reloadTree="reloadTree" @infoClicked="showInfo" @addWord="editWord(-1, $event)" @deleted="loadGlossaryList"></GlossaryDefinitionDetail>
             </div>
         </div>
         <GlossaryDefinitionWordEdit :visible="editWordDialogVisible" @close="editWordDialogVisible = false" @saved="wordSaved" :state="state" :category="category" :propWord="contentInfo" :selectedGlossaryId="selectedGlossaryId" @reloadTree="reloadTree = !reloadTree"></GlossaryDefinitionWordEdit>
@@ -51,12 +48,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iGlossary, iWord } from './GlossaryDefinition'
+import { iWord } from './GlossaryDefinition'
 import axios from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
 import glossaryDefinitionDescriptor from './GlossaryDefinitionDescriptor.json'
-import GlossaryDefinitionHint from './GlossaryDefinitionHint.vue'
 import GlossaryDefinitionDetail from './GlossaryDefinitionDetail.vue'
 import GlossaryDefinitionInfoDialog from './dialogs/GlossaryDefinitionInfoDialog.vue'
 import GlossaryDefinitionWordEdit from './dialogs/GlossaryDefinitionWordEdit.vue'
@@ -66,7 +62,6 @@ export default defineComponent({
     components: {
         FabButton,
         Listbox,
-        GlossaryDefinitionHint,
         GlossaryDefinitionDetail,
         GlossaryDefinitionInfoDialog,
         GlossaryDefinitionWordEdit
@@ -75,8 +70,6 @@ export default defineComponent({
         return {
             glossaryDefinitionDescriptor,
             wordsList: [] as iWord[],
-            glossaryList: [] as iGlossary[],
-            selectedWord: null as iWord | null,
             contentInfo: null as any,
             infoDialogVisible: false,
             state: [] as any,
@@ -95,7 +88,6 @@ export default defineComponent({
         async loadPage() {
             this.loading = true
             await this.loadWordsList()
-            await this.loadGlossaryList()
             await this.loadState()
             await this.loadCategory()
             this.loading = false
@@ -103,17 +95,11 @@ export default defineComponent({
         async loadWordsList() {
             return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listWords?Page=1&ItemPerPage=`).then((response) => (this.wordsList = response.data))
         },
-        async loadGlossaryList() {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listGlossary`).then((response) => (this.glossaryList = response.data))
-        },
         async loadState() {
             return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=GLS_STATE`).then((response) => (this.state = response.data))
         },
         async loadCategory() {
             return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=GLS_CATEGORY`).then((response) => (this.category = response.data))
-        },
-        setSelectedWord(word: iWord) {
-            this.selectedWord = word
         },
         async showInfo(content: any) {
             this.loading = true
@@ -143,7 +129,6 @@ export default defineComponent({
                     msg: this.$t('common.toast.deleteSuccess')
                 })
                 this.$router.push('/glossary-definition')
-                this.selectedWord = null
                 this.loadWordsList()
             })
         },
