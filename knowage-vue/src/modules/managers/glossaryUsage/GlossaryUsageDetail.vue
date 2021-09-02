@@ -31,7 +31,7 @@ export default defineComponent({
     name: 'glossary-usage-detail',
     components: { GlossaryUsageNavigationCard, GlossaryUsageLinkCard },
     props: { glossaryId: { type: Number }, selectedWords: { type: Array } },
-    emits: ['infoClicked', 'linkClicked'],
+    emits: ['infoClicked', 'linkClicked', 'wordsFiltered'],
     data() {
         return {
             glossaryUsageDescriptor,
@@ -79,14 +79,19 @@ export default defineComponent({
                     page: 1,
                     GLOSSARY_ID: this.glossaryId
                 },
-                document: { selected: [], search: '', item_number: 9223372036854775807, page: 1 },
-                dataset: { selected: [], search: '', item_number: 9223372036854775807, page: 1 },
-                table: { selected: [], search: '', item_number: 9223372036854775807, page: 1 },
-                bness_cls: { selected: [], search: '', item_number: 9223372036854775807, page: 1 }
+                document: { selected: this.selectedDocuments, search: '', item_number: 9223372036854775807, page: 1 },
+                dataset: { selected: this.selectedDatasets, search: '', item_number: 9223372036854775807, page: 1 },
+                table: { selected: this.selectedTables, search: '', item_number: 9223372036854775807, page: 1 },
+                bness_cls: { selected: this.selectedBusinessClasses, search: '', item_number: 9223372036854775807, page: 1 }
             }
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/loadNavigationItem', postData)
-                .then((response) => this.formatNavigationItems(response.data))
+                .then((response) => {
+                    this.formatNavigationItems(response.data)
+                    if (response.data.word) {
+                        this.$emit('wordsFiltered', response.data.word)
+                    }
+                })
                 .catch((response) => {
                     this.$store.commit('setError', {
                         title: this.$t('common.error.generic'),
@@ -273,10 +278,12 @@ export default defineComponent({
         onDocumentsSelected(documents: iNavigationTableItem[]) {
             this.selectedDocuments = []
             documents.forEach((el: iNavigationTableItem) => this.selectedDocuments.push({ DOCUMENT_ID: el.id, DOCUMENT_LABEL: el.label }))
+            this.loadNavigationItems('all', 'word')
         },
         onDatasetsSelected(datasets: iNavigationTableItem[]) {
             this.selectedDatasets = []
             datasets.forEach((el: iNavigationTableItem) => this.selectedDatasets.push({ DATASET_ID: el.id, DATASET_NM: el.label, DATASET_ORG: el.organization }))
+            this.loadNavigationItems('all', 'word')
         },
         onBusinessClassesSelected(businessClasses: iNavigationTableItem[]) {
             this.selectedBusinessClasses = []
@@ -284,6 +291,7 @@ export default defineComponent({
                 const label = el.label.split('.')
                 this.selectedBusinessClasses.push({ BC_ID: el.id, META_MODEL_NAME: label[0], BC_NAME: label[1] })
             })
+            this.loadNavigationItems('all', 'word')
         },
         onTablesSelected(tables: iNavigationTableItem[]) {
             this.selectedTables = []
@@ -291,6 +299,7 @@ export default defineComponent({
                 const label = el.label.split('.')
                 this.selectedTables.push({ TABLE_ID: el.id, META_SOURCE_NAME: label[0], TABLE_NM: label[1] })
             })
+            this.loadNavigationItems('all', 'word')
         },
         async onLinkItemSelect(item: iLinkTableItem) {
             switch (item.itemType) {

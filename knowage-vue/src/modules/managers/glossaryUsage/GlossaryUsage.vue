@@ -59,7 +59,7 @@
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
                 <GlossaryUsageHint v-if="!selectedGlossaryId" data-test="no-glossary-selected-hint"></GlossaryUsageHint>
-                <GlossaryUsageDetail v-else :glossaryId="selectedGlossaryId" :selectedWords="selectedWords" @infoClicked="showNavigationItemInfo($event)"></GlossaryUsageDetail>
+                <GlossaryUsageDetail v-else :glossaryId="selectedGlossaryId" :selectedWords="selectedWords" @infoClicked="showNavigationItemInfo($event)" @wordsFiltered="setFilteredWords"></GlossaryUsageDetail>
             </div>
         </div>
     </div>
@@ -225,6 +225,11 @@ export default defineComponent({
             event.dataTransfer.setData('text/plain', JSON.stringify(node.data))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
+        },
+        setFilteredWords(words: any) {
+            console.log('FILTERED WORDS: ', words)
+            this.nodes = []
+            words.forEach((el: any) => this.nodes.push(this.createNode(el)))
         }
     }
 })
