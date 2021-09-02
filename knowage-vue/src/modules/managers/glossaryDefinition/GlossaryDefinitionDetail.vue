@@ -13,7 +13,7 @@
                         </template>
                         <template #right>
                             <div class="p-d-flex p-flex-row">
-                                <div v-if="selectedGlossary && selectedGlossaryId && selectedGlossaryId != 999999">
+                                <div v-if="selectedGlossary && selectedGlossaryId && selectedGlossaryId != -1">
                                     <Button class="kn-button p-button-text" @click="addNewGlossary('Clone')">{{ $t('common.clone') }}</Button>
                                     <Button class="kn-button p-button-text" @click="deleteGlossaryConfirm">{{ $t('common.delete') }}</Button>
                                 </div>
@@ -118,7 +118,6 @@ export default defineComponent({
             nodeDialogVisible: false,
             selectedContent: {} as iContent,
             selectedNode: {} as iNode,
-            idForCloning: null as number | null,
             showTree: false,
             showHint: true,
             loading: false
@@ -419,7 +418,7 @@ export default defineComponent({
             this.selectedNode = node
             this.$emit('addWord', { parent: node.data, glossaryId: this.selectedGlossaryId })
         },
-        addNewGlossary(type: string) {
+        async addNewGlossary(type: string) {
             this.showTree = false
             this.showHint = false
             this.selectedGlossaryId = null
@@ -436,10 +435,8 @@ export default defineComponent({
                     SaveOrUpdate: 'Save'
                 }
             } else {
-                this.idForCloning = this.selectedGlossary?.GLOSSARY_ID as number
-                this.selectedGlossaryId = 999999
-                this.selectedGlossary = { GLOSSARY_ID: 999999, GLOSSARY_CD: this.selectedGlossary?.GLOSSARY_CD, GLOSSARY_DS: this.selectedGlossary?.GLOSSARY_DS, GLOSSARY_NM: this.$t('common.copyOf') + ' ' + this.selectedGlossary?.GLOSSARY_NM } as iGlossary
-                this.glossaries.push(this.selectedGlossary)
+                this.selectedGlossary = { GLOSSARY_ID: this.selectedGlossary?.GLOSSARY_ID, GLOSSARY_CD: this.selectedGlossary?.GLOSSARY_CD, GLOSSARY_DS: this.selectedGlossary?.GLOSSARY_DS, GLOSSARY_NM: this.$t('common.copyOf') + ' ' + this.selectedGlossary?.GLOSSARY_NM } as iGlossary
+                await this.handleSaveGlossary()
             }
 
             this.originalGlossary = { GLOSSARY_CD: '', GLOSSARY_DS: '', GLOSSARY_NM: '' } as iGlossary
@@ -452,9 +449,6 @@ export default defineComponent({
             }
 
             const url = this.selectedGlossary?.SaveOrUpdate ? '1.0/glossary/business/addGlossary' : '1.0/glossary/business/cloneGlossary'
-            if (!this.selectedGlossary?.SaveOrUpdate && this.selectedGlossary) {
-                this.selectedGlossary.GLOSSARY_ID = this.idForCloning as number
-            }
             let tempData = {} as any
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, this.selectedGlossary)
@@ -464,7 +458,6 @@ export default defineComponent({
                         title: this.$t('common.error.generic'),
                         msg: response
                     })
-                    this.removeClonedFromList()
                 })
 
             this.updateGlossaryList(tempData)
@@ -486,6 +479,9 @@ export default defineComponent({
                     await this.loadGlossaryList()
                 }
                 this.showTree = true
+                if (this.selectedGlossary) {
+                    this.selectedGlossary.SaveOrUpdate = 'Update'
+                }
                 this.originalGlossary = { ...this.selectedGlossary } as iGlossary
             } else {
                 this.$store.commit('setError', {
@@ -493,14 +489,6 @@ export default defineComponent({
                     msg: this.$t(this.glossaryDefinitionDescriptor.translation[tempData.Message])
                 })
             }
-        },
-        removeClonedFromList() {
-            const index = this.glossaries.findIndex((el: iGlossary) => el.GLOSSARY_ID === this.idForCloning)
-            this.glossaries.splice(index, 1)
-            this.selectedGlossary = null
-            this.originalGlossary = null
-            this.selectedGlossaryId = null
-            this.idForCloning = null
         },
         glossaryChanged() {
             return this.selectedGlossary?.GLOSSARY_NM !== this.originalGlossary?.GLOSSARY_NM || this.selectedGlossary?.GLOSSARY_CD !== this.originalGlossary?.GLOSSARY_CD || this.selectedGlossary?.GLOSSARY_DS !== this.originalGlossary?.GLOSSARY_DS
