@@ -6,8 +6,7 @@
                     {{ title }}
                 </template>
                 <template #right>
-                    {{ canSeeLinkTable }}
-                    <Button class="kn-button p-button-text" @click="$emit('linkClicked', type)">{{ $t('managers.glossary.glossaryUsage.link') }}</Button>
+                    <Button v-if="canSeeLinkTable" class="kn-button p-button-text" @click="$emit('linkClicked', type)">{{ $t('managers.glossary.glossaryUsage.link') }}</Button>
                 </template>
             </Toolbar>
         </template>
@@ -94,14 +93,15 @@ export default defineComponent({
             }
         },
         canSeeLinkTable(): boolean {
-            const index = this.user.functionalities.findIndex((el: string) => el === 'ManageGlossaryTechnical')
-            console.log('INDEX: ')
+            let index = -1
+            if (this.user.functionalities) {
+                index = this.user.functionalities.findIndex((el: string) => el === 'ManageGlossaryTechnical')
+            }
             return index !== -1
         }
     },
     created() {
         this.user = (this.$store.state as any).user
-        console.log('USER LOADED: ', this.user)
     },
     methods: {
         onItemsSelected() {
