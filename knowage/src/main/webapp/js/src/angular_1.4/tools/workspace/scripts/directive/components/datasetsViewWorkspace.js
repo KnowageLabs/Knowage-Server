@@ -94,7 +94,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	$scope.datasetTemp = null;
 	$scope.dsCategoriesPromise = null;
 	$scope.datasetsCategories = {};
-	
+
 	/*
 	  * WATCH ON DATA DEPENDENCIES PARAMETER OBJECT
 	  */
@@ -352,7 +352,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		$scope.setDetailOpen(typeof dataset !== "undefined");
 		$scope.updateCategoryOfSelectedDataset();
 	};
-	
+
 	$scope.updateCategoryOfSelectedDataset = function() {
 		$scope.loadDsCategories()
 			.then(function(resolve, reject) {
@@ -360,11 +360,11 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 					.find(function(e) {
 						return e.VALUE_ID == $scope.selectedDataSet.catTypeId;
 					})
-				
+
 				if (ret != null) {
 					ret = ret.VALUE_NM;
 				}
-				
+
 				$scope.datasetsCategories[$scope.selectedDataSet.label] = ret;
 			});
 	}
@@ -400,7 +400,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		$scope.shareDataset($scope.dataset)
 		$mdDialog.cancel();
 	}
-	
+
 	$scope.loadDsCategories = function() {
 		if ($scope.dsCategoriesPromise == null) {
 			$scope.dsCategoriesPromise = sbiModule_restServices.promiseGet("domainsforfinaluser","ds-categories")
@@ -411,7 +411,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		}
 		return $scope.dsCategoriesPromise;
 	}
-	
+
 	$scope.loadDsCategoriesAndHandleEvent = function(dataset) {
 		$scope.loadDsCategories()
 			.then(function(response) {
@@ -579,10 +579,15 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	}
 
 	$scope.exportDataset = function(dataset, format) {
-		if(format == 'CSV') {
+		if(format == 'CSV' || format == 'XLSX') {
 			$scope.asyncExport(dataset, format);
-		} else if (format == 'XLSX') {
-			$scope.asyncExport(dataset, format);
+			Toastify({
+				text: "The download has started in background. You will find the result file in your download page.",
+				duration: 10000,
+				close: true,
+				className: 'kn-infoToast',
+				stopOnFocus: true
+			}).showToast();
 		} else {
 			console.info("Format " + format + " not supported");
 		}
