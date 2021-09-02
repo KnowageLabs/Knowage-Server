@@ -11,7 +11,7 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 	import ConfirmDialog from 'primevue/confirmdialog'
 	import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 	import MainMenu from '@/modules/mainMenu/MainMenu'
@@ -82,16 +82,39 @@
 					}
 				})
 		},
-		created() {
-			this.newsDownloadHandler()
-		},
+		created() {},
 		mounted() {
-			this.newsDownloadHandler()
+			this.onLoad()
 		},
 		methods: {
 			/* 			closeDialog() {
 				this.$emit('update:visibility', false)
 			}, */
+			/* 			closeDialog() {
+					this.$emit('update:visibility', false)
+				}, */
+			onLoad() {
+				axios
+					.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export/dataset')
+					.then((response) => {
+						let totalDownloads = response.data.length
+						let alreadyDownloaded = response.data.filter((x) => x.alreadyDownloaded).length
+
+						let json = { downloads: { count: { total: 0, alreadyDownloaded: 0 } } }
+						json.downloads.count.total = totalDownloads
+						json.downloads.count.alreadyDownloaded = alreadyDownloaded
+
+						store.commit('setDownloads', json.downloads)
+					})
+					.catch(function(error) {
+						if (error.response) {
+							console.log(error.response.data)
+							console.log(error.response.status)
+							console.log(error.response.headers)
+						}
+					})
+				this.newsDownloadHandler()
+			},
 			newsDownloadHandler() {
 				console.log('Starting connection to WebSocket Server')
 
@@ -128,7 +151,7 @@
 					severity: 'error',
 					summary: newError.title,
 					detail: newError.msg,
-					life: 5000
+					life: typeof newError.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newError.duration
 				})
 			},
 			info(newInfo) {
@@ -136,7 +159,7 @@
 					severity: 'info',
 					summary: newInfo.title,
 					detail: newInfo.msg,
-					life: 5000
+					life: typeof newInfo.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newInfo.duration
 				})
 			},
 			loading(newLoading) {

@@ -16,36 +16,44 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.knowage.websocket;
+/**
+ *
+ */
+package it.eng.knowage.websocket.bo;
 
-import java.io.IOException;
-import java.io.Writer;
+/**
+ * @author albnale
+ *
+ */
+public class WebSocketBO {
 
-import javax.websocket.EncodeException;
-import javax.websocket.Encoder;
-import javax.websocket.EndpointConfig;
+	private WSDownloadBO downloads;
+	private WSNewsBO news;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+	public WebSocketBO() {
 
-import it.eng.knowage.websocket.bo.WebSocketBO;
-
-public class KnowageWebSocketMessageEncoder implements Encoder.TextStream<WebSocketBO> {
-
-	@Override
-	public void init(EndpointConfig endpointConfig) {
-		// Custom initialization logic
 	}
 
-	@Override
-	public void destroy() {
-		// Close resources
+	public WebSocketBO(WSDownloadBO downloads, WSNewsBO news) {
+		super();
+		this.downloads = downloads;
+		this.news = news;
 	}
 
-	@Override
-	public void encode(WebSocketBO object, Writer writer) throws EncodeException, IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		String json = mapper.writeValueAsString(object);
-		writer.write(json);
+	public WSDownloadBO getDownloads() {
+		return downloads;
+	}
+
+	public void setDownloads(WSDownloadBO downloads) {
+		this.downloads = downloads;
+	}
+
+	public WSNewsBO getNews() {
+		return news;
+	}
+
+	public void setNews(WSNewsBO news) {
+		this.news = news;
 	}
 
 }
