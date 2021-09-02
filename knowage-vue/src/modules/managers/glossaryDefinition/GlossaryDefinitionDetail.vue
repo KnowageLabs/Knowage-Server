@@ -471,13 +471,11 @@ export default defineComponent({
                     })
                 })
 
-            console.log('TEMP DATA: ', tempData)
-
             this.updateGlossaryList(tempData)
             this.loading = false
         },
         async updateGlossaryList(tempData: any) {
-            if (tempData.STATUS !== 'NON OK') {
+            if (tempData.Status && tempData.Status !== 'NON OK') {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.createTitle'),
                     msg: this.$t('common.toast.success')
@@ -498,8 +496,6 @@ export default defineComponent({
                     title: this.$t('common.error.generic'),
                     msg: this.$t(this.glossaryDefinitionDescriptor.translation[tempData.Message])
                 })
-                this.selectedGlossary = null
-                this.originalGlossary = null
             }
         },
         glossaryChanged() {
