@@ -26,11 +26,6 @@
                 </template>
                 <template #content>
                     <div>
-                        {{ selectedGlossary }}
-                        <hr />
-                        {{ originalGlossary }}
-                        <hr />
-                        {{ glossaries }}
                         <div class="p-field p-d-flex p-ai-center p-m-3">
                             <div class="p-d-flex p-flex-column p-mr-2" id="glossary-select-container">
                                 <label for="glossary" class="kn-material-input-label">{{ $t('managers.glossary.glossaryDefinition.title') }}</label>
@@ -452,7 +447,7 @@ export default defineComponent({
         async handleSaveGlossary() {
             this.loading = true
 
-            if (!this.glossaryChanged()) {
+            if (!this.selectedGlossary?.GLOSSARY_NM || !this.glossaryChanged()) {
                 return
             }
 
@@ -469,6 +464,7 @@ export default defineComponent({
                         title: this.$t('common.error.generic'),
                         msg: response
                     })
+                    this.removeClonedFromList()
                 })
 
             this.updateGlossaryList(tempData)
@@ -497,6 +493,14 @@ export default defineComponent({
                     msg: this.$t(this.glossaryDefinitionDescriptor.translation[tempData.Message])
                 })
             }
+        },
+        removeClonedFromList() {
+            const index = this.glossaries.findIndex((el: iGlossary) => el.GLOSSARY_ID === this.idForCloning)
+            this.glossaries.splice(index, 1)
+            this.selectedGlossary = null
+            this.originalGlossary = null
+            this.selectedGlossaryId = null
+            this.idForCloning = null
         },
         glossaryChanged() {
             return this.selectedGlossary?.GLOSSARY_NM !== this.originalGlossary?.GLOSSARY_NM || this.selectedGlossary?.GLOSSARY_CD !== this.originalGlossary?.GLOSSARY_CD || this.selectedGlossary?.GLOSSARY_DS !== this.originalGlossary?.GLOSSARY_DS
