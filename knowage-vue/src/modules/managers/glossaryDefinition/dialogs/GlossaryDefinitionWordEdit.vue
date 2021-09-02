@@ -62,7 +62,7 @@
                     </span>
                 </div>
             </form>
-            <AttributesTable></AttributesTable>
+            <!-- <AttributesTable></AttributesTable> -->
         </div>
         <template #footer>
             <Button :label="$t('common.cancel')" @click="closeDialog" class="kn-button kn-button--secondary" />
@@ -78,7 +78,7 @@ import axios from 'axios'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import AutoComplete from 'primevue/autocomplete'
-import AttributesTable from './tables/GlossaryDefinitionAttributesTable.vue'
+//import AttributesTable from './tables/GlossaryDefinitionAttributesTable.vue'
 import glossaryDefinitionDialogDescriptor from './GlossaryDefinitionDialogDescriptor.json'
 import glossaryDefinitionDescriptor from '../GlossaryDefinitionDescriptor.json'
 import glossaryDefinitionDialogValidationDescriptor from './GlossaryDefinitionDialogValidationDescriptor.json'
@@ -90,8 +90,8 @@ export default defineComponent({
         Dialog,
         Dropdown,
         AutoComplete,
-        KnValidationMessages,
-        AttributesTable
+        KnValidationMessages
+        //AttributesTable
     },
     props: {
         visible: {
