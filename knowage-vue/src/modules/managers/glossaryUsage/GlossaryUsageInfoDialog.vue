@@ -104,27 +104,7 @@
                         <span>{{ $t('managers.glossary.glossaryUsage.dataSource') }}:</span>
                         <p>{{ contentInfo.data.DataSet.configuration.dataSource }}</p>
                     </li>
-                    <li>
-                        <span>{{ $t('managers.glossary.glossaryUsage.associatedWord') }}:</span>
-                        <ul class="p-my-3">
-                            <li v-for="(column, index) in contentInfo.data.Word" :key="index" :class="{ 'selected-word': wordIsSelected(column) }">
-                                {{ column.WORD }}
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <span>{{ $t('managers.glossary.glossaryUsage.column') }}:</span>
-                        <ul class="p-my-3">
-                            <li v-for="(column, index) in contentInfo.data.SbiGlDataSetWlist" :key="index">
-                                {{ column.alias }}
-                                <ul>
-                                    <li v-for="(word, index) in column.word" :key="index" :class="{ 'selected-word': wordIsSelected(word) }">
-                                        {{ word.WORD }}
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
+                    <GlossaryUsageInfoDialogWordsColumnList :selectedWords="selectedWords" :wordsList="contentInfo.data.Word" :columnList="contentInfo.data.SbiGlDataSetWlist" :columnField="'alias'"></GlossaryUsageInfoDialogWordsColumnList>
                 </ul>
             </div>
             <div v-else-if="contentInfo.type && contentInfo.type === 'businessClass'">
@@ -137,27 +117,7 @@
                         <span>{{ $t('managers.glossary.glossaryUsage.businessClass') }}:</span>
                         <p>{{ contentInfo.data.metaBc.name }}</p>
                     </li>
-                    <li>
-                        <span>{{ $t('managers.glossary.glossaryUsage.associatedWord') }}:</span>
-                        <ul class="p-my-3">
-                            <li v-for="(column, index) in contentInfo.data.words" :key="index" :class="{ 'selected-word': wordIsSelected(column) }">
-                                {{ column.WORD }}
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <span>{{ $t('managers.glossary.glossaryUsage.column') }}:</span>
-                        <ul class="p-my-3">
-                            <li v-for="(column, index) in contentInfo.data.sbiGlBnessClsWlist" :key="index">
-                                {{ column.name }}
-                                <ul>
-                                    <li v-for="(word, index) in column.word" :key="index" :class="{ 'selected-word': wordIsSelected(word) }">
-                                        {{ word.WORD }}
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
+                    <GlossaryUsageInfoDialogWordsColumnList :selectedWords="selectedWords" :wordsList="contentInfo.data.words" :columnList="contentInfo.data.sbiGlBnessClsWlist" :columnField="'name'"></GlossaryUsageInfoDialogWordsColumnList>
                 </ul>
             </div>
             <div v-else-if="contentInfo.type && contentInfo.type === 'table'">
@@ -170,27 +130,7 @@
                         <span>{{ $t('common.label') }}:</span>
                         <p>{{ contentInfo.data.metaTable.name }}</p>
                     </li>
-                    <li>
-                        <span>{{ $t('managers.glossary.glossaryUsage.associatedWord') }}:</span>
-                        <ul class="p-my-3">
-                            <li v-for="(column, index) in contentInfo.data.words" :key="index" :class="{ 'selected-word': wordIsSelected(column) }">
-                                {{ column.WORD }}
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <span>{{ $t('managers.glossary.glossaryUsage.column') }}:</span>
-                        <ul class="p-my-3">
-                            <li v-for="(column, index) in contentInfo.data.sbiGlTableWlist" :key="index">
-                                {{ column.name }}
-                                <ul>
-                                    <li v-for="(word, index) in column.word" :key="index" :class="{ 'selected-word': wordIsSelected(word) }">
-                                        {{ word.WORD }}
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
+                    <GlossaryUsageInfoDialogWordsColumnList :selectedWords="selectedWords" :wordsList="contentInfo.data.words" :columnList="contentInfo.data.sbiGlTableWlist" :columnField="'name'"></GlossaryUsageInfoDialogWordsColumnList>
                 </ul>
             </div>
             <template #footer>
@@ -204,24 +144,20 @@
 import { defineComponent } from 'vue'
 import Dialog from 'primevue/dialog'
 import glossaryUsageDescriptor from './GlossaryUsageDescriptor.json'
+import GlossaryUsageInfoDialogWordsColumnList from './GlossaryUsageInfoDialogWordsColumnList.vue'
 
 export default defineComponent({
     name: 'glossary-usage-info-dialog',
-    components: { Dialog },
+    components: { Dialog, GlossaryUsageInfoDialogWordsColumnList },
     emits: ['close'],
     props: {
         visible: { type: Boolean },
         contentInfo: { type: Object },
-        selectedWords: { type: Array, required: true }
+        selectedWords: { type: Array }
     },
     data() {
         return {
             glossaryUsageDescriptor
-        }
-    },
-    methods: {
-        wordIsSelected(word: any) {
-            return this.selectedWords.findIndex((el: any) => word.WORD_ID === el.WORD_ID) > -1
         }
     }
 })
