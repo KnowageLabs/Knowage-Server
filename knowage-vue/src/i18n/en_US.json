@@ -1,5 +1,6 @@
 {
     "common": {
+        "active": "Active",
         "apply": "Apply",
         "author": "Author",
         "back": "back",
@@ -39,6 +40,7 @@
         "export": "export",
         "image": "image",
         "import": "import",
+        "inactive": "Inactive",
         "info": {
             "dataLoading": "Loading data. Please wait.",
             "emptySearch": "The search returns no data",
@@ -568,6 +570,17 @@
                 "testHeader": "Test"
             },
             "title": "Functionalities management"
+        },
+        "glossary": {
+            "common": {
+                "attributes": "Attributes",
+                "category": "Category",
+                "details": "Details",
+                "formula": "Formula",
+                "link": "Link",
+                "status": "Status",
+                "word": "Word"
+            }
         },
         "internationalizationManagement": {
             "defaultLanguage": "(Default)",
