@@ -99,19 +99,16 @@ export default defineComponent({
             this.downloadsDisplay = !this.downloadsDisplay
         },
         isItemToDisplay(item) {
-            return !item.conditionedView || (item.conditionedView == 'downloads' && this.downloads && this.downloads.count.total > 0) || (item.conditionedView == 'news' && this.news && this.news.count.total > 0)
+            if (item.conditionedView) {
+                if (item.conditionedView === 'downloads' && this.downloads && this.downloads.count.total > 0) return true
+
+                if (item.conditionedView === 'news' && this.news && this.news.count.total > 0) return true
+
+                return false
+            } else {
+                return true
+            }
         },
-		isItemToDisplay(item) {
-			if (item.conditionedView) {
-				if (item.conditionedView === 'downloads' && this.downloads && this.downloads.count.total > 0) return true
-
-				if (item.conditionedView === 'news' && this.news && this.news.count.total > 0) return true
-
-				return false
-			} else {
-				return true
-			}
-		},
         languageSelection() {
             this.languageDisplay = !this.languageDisplay
         },
@@ -140,13 +137,13 @@ export default defineComponent({
         },
         updateNewsAndDownload() {
             for (var idx in this.allowedUserFunctionalities) {
-				let menu = this.allowedUserFunctionalities[idx] as any
+                let menu = this.allowedUserFunctionalities[idx] as any
                 if (menu.conditionedView) {
-					if (menu.conditionedView === 'downloads') {
-						menu.visible = this.downloads.count.total > 0
-					} else if (menu.conditionedView === 'news') {
-						menu.visible = this.news.count.total > 0
-					}
+                    if (menu.conditionedView === 'downloads') {
+                        menu.visible = this.downloads.count.total > 0
+                    } else if (menu.conditionedView === 'news') {
+                        menu.visible = this.news.count.total > 0
+                    }
 
                     menu.badge = this.getBadgeValue(menu)
                 }
@@ -155,9 +152,9 @@ export default defineComponent({
         getBadgeValue(item) {
             if (item.conditionedView === 'downloads') {
                 if (Object.keys(this.downloads).length !== 0) return this.downloads.count.total - this.downloads.count.alreadyDownloaded
-			} else if (item.conditionedView === 'news') {
-				if (Object.keys(this.news).length !== 0) return this.news.count.unread
-			}
+            } else if (item.conditionedView === 'news') {
+                if (Object.keys(this.news).length !== 0) return this.news.count.unread
+            }
             return 0
         }
     },
@@ -184,19 +181,11 @@ export default defineComponent({
                 let responseAllowedUserFunctionalities = response.data.allowedUserFunctionalities
                 for (var idx in responseAllowedUserFunctionalities) {
                     let item = responseAllowedUserFunctionalities[idx]
-                    if (this.isItemToDisplay(item)) {
-                        this.allowedUserFunctionalities.push(item)
-                    }
+                    item.visible = this.isItemToDisplay(item)
+
+                    this.allowedUserFunctionalities.push(item)
                 }
                 this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities
-				let responseAllowedUserFunctionalities = response.data.allowedUserFunctionalities
-				for (var idx in responseAllowedUserFunctionalities) {
-					let item = responseAllowedUserFunctionalities[idx]
-					item.visible = this.isItemToDisplay(item)
-
-					this.allowedUserFunctionalities.push(item)
-				}
-				this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities
                 this.updateNewsAndDownload()
             })
             .catch((error) => console.error(error))
