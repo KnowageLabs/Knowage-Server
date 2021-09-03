@@ -62,51 +62,63 @@ public class CockpitStatisticsTablesUtils {
 	static private Logger logger = Logger.getLogger(CockpitStatisticsTablesUtils.class);
 
 	public static void deleteCockpitWidgetsTable(BIObject biObject, Session session) {
+		deleteCockpitWidgetsTable(biObject, session, false);
+	}
+
+	public static void deleteCockpitWidgetsTable(BIObject biObject, Session session, boolean isImport) {
 		logger.debug("IN");
-		Transaction tx = session.beginTransaction();
-		try {
-			Integer biobjId = biObject.getId();
-
-			logger.debug("Cleaning SbiCockpitWidget table - START");
-			List<SbiCockpitWidget> sbiCockpitWidgetList = session.createCriteria(SbiCockpitWidget.class).add(Restrictions.eq("biobjId", biobjId)).list();
-			for (SbiCockpitWidget sbiCockpitWidget : sbiCockpitWidgetList) {
-
-				logger.debug(String.format("Removing SbiCockpitWidget with id [%s]", sbiCockpitWidget.getSbiCockpitWidgetId()));
-				session.evict(sbiCockpitWidget);
-				session.delete(sbiCockpitWidget);
-				session.flush();
-
-			}
-
-			logger.debug("Cleaning SbiCockpitWidget table - STOP");
-
-			List<SbiCockpitAssociation> sbiCockpitAssociationList = session.createCriteria(SbiCockpitAssociation.class).add(Restrictions.eq("biobjId", biobjId))
-					.list();
-
-			logger.debug("Cleaning SbiCockpitAssociation table - START");
-			for (SbiCockpitAssociation sbiCockpitAssociation : sbiCockpitAssociationList) {
-				logger.debug(String.format("Removing SbiCockpitAssociation with id [%s]", sbiCockpitAssociation.getSbiCockpitAssociationId()));
-				session.evict(sbiCockpitAssociation);
-				session.delete(sbiCockpitAssociation);
-				session.flush();
-			}
-			logger.debug("Cleaning SbiCockpitAssociation table - STOP");
-
-		} finally {
-			if (!tx.wasCommitted())
-				tx.commit();
+		Transaction tx = null;
+		if (!isImport) {
+			tx = session.beginTransaction();
 		}
+
+		Integer biobjId = biObject.getId();
+
+		logger.debug("Cleaning SbiCockpitWidget table - START");
+		List<SbiCockpitWidget> sbiCockpitWidgetList = session.createCriteria(SbiCockpitWidget.class).add(Restrictions.eq("biobjId", biobjId)).list();
+		for (SbiCockpitWidget sbiCockpitWidget : sbiCockpitWidgetList) {
+
+			logger.debug(String.format("Removing SbiCockpitWidget with id [%s]", sbiCockpitWidget.getSbiCockpitWidgetId()));
+			session.evict(sbiCockpitWidget);
+			session.delete(sbiCockpitWidget);
+			session.flush();
+
+		}
+
+		logger.debug("Cleaning SbiCockpitWidget table - STOP");
+
+		List<SbiCockpitAssociation> sbiCockpitAssociationList = session.createCriteria(SbiCockpitAssociation.class).add(Restrictions.eq("biobjId", biobjId))
+				.list();
+
+		logger.debug("Cleaning SbiCockpitAssociation table - START");
+		for (SbiCockpitAssociation sbiCockpitAssociation : sbiCockpitAssociationList) {
+			logger.debug(String.format("Removing SbiCockpitAssociation with id [%s]", sbiCockpitAssociation.getSbiCockpitAssociationId()));
+			session.evict(sbiCockpitAssociation);
+			session.delete(sbiCockpitAssociation);
+			session.flush();
+		}
+		logger.debug("Cleaning SbiCockpitAssociation table - STOP");
+
+		if (tx != null && !tx.wasCommitted())
+			tx.commit();
 
 		logger.debug("OUT");
 	}
 
 	public static void updateCockpitWidgetsTable(BIObject biObject, Session session) {
+		updateCockpitWidgetsTable(biObject, session, false);
+	}
+
+	public static void updateCockpitWidgetsTable(BIObject biObject, Session session, boolean isImport) {
 		logger.debug("IN");
-		deleteCockpitWidgetsTable(biObject, session);
+		deleteCockpitWidgetsTable(biObject, session, isImport);
 
 		SbiObjects sbiObjects = (SbiObjects) session.createCriteria(SbiObjects.class).add(Restrictions.eq("biobjId", biObject.getId())).uniqueResult();
+		Transaction tx = null;
+		if (!isImport) {
+			tx = session.beginTransaction();
+		}
 
-		Transaction tx = session.beginTransaction();
 		try {
 			parseTemplate(sbiObjects, session, false);
 		} catch (Exception e) {
@@ -114,7 +126,7 @@ public class CockpitStatisticsTablesUtils {
 			if (tx != null)
 				tx.rollback();
 		} finally {
-			if (!tx.wasCommitted())
+			if (tx != null && !tx.wasCommitted())
 				tx.commit();
 		}
 		logger.debug("OUT");
