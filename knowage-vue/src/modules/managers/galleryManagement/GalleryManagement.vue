@@ -110,6 +110,7 @@ export default defineComponent({
             // eslint-disable-next-line
             // @ts-ignore
             this.$refs.menu.toggle(event)
+            this.triggerInputFile(false)
         },
         uploadTemplate(event): void {
             var reader = new FileReader()
@@ -124,112 +125,20 @@ export default defineComponent({
                     () => {
                         this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.uploadTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullyUploaded') })
 
-	export default defineComponent({
-		name: 'gallery-management',
-		components: {
-			FabButton,
-			KnInputFile,
-			KnListBox,
-			Menu
-		},
-		data() {
-			return {
-				galleryTemplates: [] as Array<IGalleryTemplate>,
-				loading: false,
-				typeDescriptor: galleryDescriptor,
-				triggerInput: false,
-				addMenuItems: [
-					{ label: this.$t('managers.widgetGallery.newTemplate'), icon: 'fas fa-plus', command: () => this.newTemplate() },
-					{
-						label: this.$t('managers.widgetGallery.importTemplate'),
-						icon: 'fas fa-file-import',
-						command: () => {
-							this.triggerInputFile(true)
-						}
-					}
-				],
-				importingTemplate: {} as string | ArrayBuffer
-			}
-		},
-		created() {
-			this.loadAllTemplates()
-		},
-		methods: {
-			triggerInputFile(value) {
-				this.triggerInput = value
-			},
-			loadAllTemplates(): void {
-				this.loading = true
-				this.axios
-					.get(process.env.VUE_APP_API_PATH + '1.0/widgetgallery')
-					.then((response) => {
-						this.galleryTemplates = response.data.map((item) => {
-							// TODO remove after backend implementation
-							item.label = item.label || item.name
-							return item
-						})
-					})
-					.catch((error) => console.error(error))
-					.finally(() => (this.loading = false))
-			},
-			deleteTemplate(e, templateId): void {
-				e.preventDefault()
-				if (e.item && e.item.id) templateId = e.item.id
-				this.$confirm.require({
-					message: this.$t('managers.widgetGallery.templateDoYouWantToDeleteTemplate'),
-					header: this.$t('managers.widgetGallery.deleteTemplate'),
-					icon: 'pi pi-exclamation-triangle',
-					accept: () => {
-						this.axios
-							.delete(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/' + templateId)
-							.then(() => {
-								this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.deleteTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullyDeleted') })
-								this.loadAllTemplates()
-								if (templateId === this.$route.params.id) this.$router.push('/gallery-management')
-							})
-							.catch((error) => console.error(error))
-					}
-				})
-			},
-			newTemplate() {
-				this.$router.push('/gallery-management/new-template')
-			},
-			savedElement() {
-				this.loadAllTemplates()
-			},
-			toggleAdd(event) {
-				// eslint-disable-next-line
-				// @ts-ignore
-				this.$refs.menu.toggle(event)
-				this.triggerInputFile(false)
-			},
-			uploadTemplate(event): void {
-				var reader = new FileReader()
-				reader.onload = this.onReaderLoad
-				reader.readAsText(event.target.files[0])
-				this.triggerInputFile(false)
-			},
-			onReaderLoad(event) {
-				try {
-					let json = JSON.parse(event.target.result)
-					axios.post(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/import', json).then(
-						() => {
-							this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.uploadTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullyUploaded') })
-
-							this.loadAllTemplates()
-						},
-						(error) => this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: error.message })
-					)
-				} catch (e) {
-					console.log(e)
-				}
-			}
-		}
-	})
+                        this.loadAllTemplates()
+                    },
+                    (error) => this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: error.message })
+                )
+            } catch (e) {
+                console.log(e)
+            }
+        }
+    }
+})
 </script>
 
 <style lang="scss" scoped>
-	.kn-list-column {
-		border-right: 1px solid #ccc;
-	}
+.kn-list-column {
+    border-right: 1px solid #ccc;
+}
 </style>
