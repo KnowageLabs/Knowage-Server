@@ -139,18 +139,28 @@ export default defineComponent({
             this.selectedItem = item.data
             this.$emit('selected', item.data)
         },
-        async addAssociatedWordDocument(documentId: number, word: iWord) {
+        async addAssociatedWord(linkItem: any, word: iWord, type: string, url: string, postData: any) {
             this.loading = true
             await axios
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/addDocWlist', { DOCUMENT_ID: documentId, WORD_ID: word.WORD_ID })
-                .then((response) => {
-                    if (response.data.Status !== 'NON OK') {
-                        this.associatedWords[documentId].push(word)
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.createTitle'),
-                            msg: this.$t('common.toast.success')
-                        })
-                    }
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)
+                .then(() => {
+                    type === 'tree'
+                        ? linkItem.children.push({
+                              key: word.WORD_ID,
+                              id: word.WORD_ID,
+                              label: word.WORD,
+                              children: [] as any[],
+                              data: word,
+                              style: glossaryUsageLinkCardDescriptor.node.style,
+                              leaf: true,
+                              parent: linkItem,
+                              itemType: 'datasetTree'
+                          })
+                        : this.associatedWords[linkItem.id].push(word)
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.createTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
                 })
                 .catch((response) => {
                     this.$store.commit('setError', {
@@ -161,105 +171,26 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         async addAssociatedWordDataset(dataset: any, word: iWord, column: string, type: string) {
-            this.loading = true
-            await axios
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/addDataSetWlist', {
-                    COLUMN_NAME: column,
-                    DATASET_ID: dataset.id,
-                    ORGANIZATION: dataset.organization,
-                    WORD_ID: word.WORD_ID
-                })
-                .then((response) => {
-                    if (!response.data.errors) {
-                        type === 'tree'
-                            ? dataset.children.push({
-                                  key: word.WORD_ID,
-                                  id: word.WORD_ID,
-                                  label: word.WORD,
-                                  children: [] as any[],
-                                  data: word,
-                                  style: glossaryUsageLinkCardDescriptor.node.style,
-                                  leaf: true,
-                                  parent: dataset,
-                                  itemType: 'datasetTree'
-                              })
-                            : this.associatedWords[dataset.id].push(word)
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.createTitle'),
-                            msg: this.$t('common.toast.success')
-                        })
-                    }
-                })
-                .catch((response) => {
-                    this.$store.commit('setError', {
-                        title: this.$t('common.error.generic'),
-                        msg: response
-                    })
-                })
-                .finally(() => (this.loading = false))
+            const postData = { COLUMN_NAME: column, DATASET_ID: dataset.id, ORGANIZATION: dataset.organization, WORD_ID: word.WORD_ID }
+            await this.addAssociatedWord(dataset, word, type, '1.0/glossary/addDataSetWlist', postData)
         },
         async addAssociatedWordBusinessClass(businessClass: any, word: iWord, column: string, type: string) {
-            this.loading = true
             const id = type === 'tree' ? businessClass.businessClassId : businessClass.id
-            await axios
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/addMetaBcWlist', {
-                    COLUMN_NAME: column,
-                    META_BC_ID: id,
-                    WORD_ID: word.WORD_ID
-                })
-                .then((response) => {
-                    if (!response.data.errors) {
-                        type === 'tree'
-                            ? businessClass.children.push({
-                                  key: word.WORD_ID,
-                                  id: word.WORD_ID,
-                                  label: word.WORD,
-                                  children: [] as any[],
-                                  data: word,
-                                  style: glossaryUsageLinkCardDescriptor.node.style,
-                                  leaf: true,
-                                  parent: businessClass,
-                                  itemType: 'businessClassTree'
-                              })
-                            : this.associatedWords[businessClass.id].push(word)
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.createTitle'),
-                            msg: this.$t('common.toast.success')
-                        })
-                    }
-                })
-                .catch((response) => {
-                    this.$store.commit('setError', {
-                        title: this.$t('common.error.generic'),
-                        msg: response
-                    })
-                })
-                .finally(() => (this.loading = false))
+            const postData = { COLUMN_NAME: column, META_BC_ID: id, WORD_ID: word.WORD_ID }
+            await this.addAssociatedWord(businessClass, word, type, '1.0/glossary/addMetaBcWlist', postData)
         },
         async addAssociatedWordTables(table: any, word: iWord, column: string, type: string) {
-            this.loading = true
             const id = type === 'tree' ? table.metasourceId : table.id
+            const postData = { COLUMN_NAME: column, META_TABLE_ID: id, WORD_ID: word.WORD_ID }
+            await this.addAssociatedWord(table, word, type, '1.0/glossary/addMetaTableWlist', postData)
+        },
+        async addAssociatedWordDocument(documentId: number, word: iWord) {
+            this.loading = true
             await axios
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/addMetaTableWlist', {
-                    COLUMN_NAME: column,
-                    META_TABLE_ID: id,
-                    WORD_ID: word.WORD_ID
-                })
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/addDocWlist', { DOCUMENT_ID: documentId, WORD_ID: word.WORD_ID })
                 .then((response) => {
-                    if (!response.data.errors) {
-                        type === 'tree'
-                            ? table.children.push({
-                                  key: word.WORD_ID,
-                                  id: word.WORD_ID,
-                                  label: word.WORD,
-                                  children: [] as any[],
-                                  data: word,
-                                  style: glossaryUsageLinkCardDescriptor.node.style,
-                                  leaf: true,
-                                  parent: table,
-                                  itemType: 'tableTree'
-                              })
-                            : this.associatedWords[id].push(word)
+                    if (response.data.Status !== 'NON OK') {
+                        this.associatedWords[documentId].push(word)
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.createTitle'),
                             msg: this.$t('common.toast.success')
