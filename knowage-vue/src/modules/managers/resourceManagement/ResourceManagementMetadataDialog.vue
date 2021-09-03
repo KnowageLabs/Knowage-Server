@@ -1,6 +1,5 @@
 <template>
 	<div class="managerDetail">
-		<Toast :baseZIndex="4000"></Toast>
 		<Dialog class="kn-dialog--toolbar--primary knMetadataDialog" v-bind:visible="visibility" footer="footer" :header="$t('managers.resourceManagement.metadata.dialog.title')" :closable="false" modal @id="loadMetadata">
 			<div class="p-grid p-m-3 p-fluid p-ai-start">
 				<span class="p-float-label p-col-4">
@@ -14,13 +13,7 @@
 				</span>
 
 				<span class="p-float-label p-col-3">
-					<Dropdown id="typeOfAnalytics" class="kn-material-input" v-model="metadata.typeOfAnalytics" @change="setDirty" :options="descriptor.metadata.typeOfAnalytics.options" optionLabel="name" optionValue="value">
-						<template #option="slotProps">
-							<div class="p-dropdown-car-option">
-								{{ $t(slotProps.option.name) }}
-							</div>
-						</template>
-					</Dropdown>
+					<Dropdown id="typeOfAnalytics" class="kn-material-input" v-model="metadata.typeOfAnalytics" @change="setDirty" :options="translatedOptions" optionLabel="name" optionValue="value"> </Dropdown>
 					<label class="kn-material-input-label" for="outputType">{{ $t(descriptor.metadata.typeOfAnalytics.label) }}</label>
 				</span>
 				<span class="p-col-3 p-d-flex p-jc-end">
@@ -80,23 +73,27 @@
 	import AccordionTab from 'primevue/accordiontab'
 	import { iModelMetadataTemplate } from './ResourceManagement'
 
-	import Toast from 'primevue/toast'
-
 	export default defineComponent({
 		name: 'metadata-dialog',
-		components: { Dialog, Dropdown, InputSwitch, Accordion, AccordionTab, Textarea, Toast },
+		components: { Dialog, Dropdown, InputSwitch, Accordion, AccordionTab, Textarea },
 		data() {
 			return {
 				dirty: false,
 				loading: true,
 				metadata: {} as iModelMetadataTemplate,
 				checked: false,
-				descriptor: resourceManagementDescriptor
+				descriptor: resourceManagementDescriptor,
+				translatedOptions: Array<any>()
 			}
 		},
-
 		created() {
 			this.loadMetadata()
+			let notTranslatedOptions = this.descriptor.metadata.typeOfAnalytics.options
+			for (var idx in notTranslatedOptions) {
+				let translatedOption = notTranslatedOptions[idx]
+				translatedOption.name = this.$t(translatedOption.name)
+				this.translatedOptions.push(translatedOption)
+			}
 		},
 		props: {
 			id: String,
@@ -141,11 +138,9 @@
 							}
 						})
 						.then(() => {
-							this.$toast.add({
-								severity: 'info',
-								summary: this.$t('common.toast.updateTitle'),
-								detail: this.$t('common.toast.updateSuccess'),
-								life: 5000
+							this.$store.commit('setInfo', {
+								title: this.$t('common.toast.updateTitle'),
+								msg: this.$t('common.toast.updateSuccess')
 							})
 						})
 						.catch((error) => {
@@ -156,6 +151,7 @@
 						})
 				}
 				this.loading = false
+				this.closeDialog()
 			},
 			setDirty(): void {
 				this.dirty = true

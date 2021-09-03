@@ -30,6 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -118,7 +119,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			parentFolder.setKey(HMACUtilities.getKeyHashedValue(fullP.toString()));
 
 			FolderDTO mylist = createTree(parentFolder, profile, buondedBasePath, 0);
-			newRootFolder = new RootFolderDTO(mylist.getChildren());
+			newRootFolder = new RootFolderDTO(Arrays.asList(mylist));
 
 			LOGGER.debug("Finished resource path json tree");
 		} catch (IOException e) {

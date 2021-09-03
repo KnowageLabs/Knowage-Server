@@ -163,7 +163,7 @@
 				if (relativePath) {
 					let pathFolders = relativePath.split('\\')
 					pathFolders.forEach((element) => {
-						let obj = { label: element }
+						let obj = { label: element, to: null }
 						this.items.push(obj)
 					})
 				}
@@ -286,6 +286,12 @@
 		border: none;
 		border-radius: 0;
 		border-bottom: 1px solid $list-border-color;
+
+		cursor: default !important;
+
+		&:deep(.p-menuitem-link) {
+			cursor: default !important;
+		}
 	}
 	.cleanText {
 		text-transform: none;

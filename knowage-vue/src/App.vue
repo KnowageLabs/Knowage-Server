@@ -12,6 +12,7 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 import ConfirmDialog from 'primevue/confirmdialog'
 import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import MainMenu from '@/modules/mainMenu/MainMenu'
@@ -21,6 +22,17 @@ import store from '@/App.store'
 import { mapState } from 'vuex'
 import axios from 'axios'
 import WEB_SOCKET from '@/services/webSocket.js'
+=======
+	import ConfirmDialog from 'primevue/confirmdialog'
+	import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
+	import MainMenu from '@/modules/mainMenu/MainMenu'
+	import Toast from 'primevue/toast'
+	import { defineComponent } from 'vue'
+	import store from '@/App.store'
+	import { mapState } from 'vuex'
+	import axios from 'axios'
+	import WEB_SOCKET from '@/services/webSocket.js'
+>>>>>>> b12049127d... [KNOWAGE-6191] - Added root element and minor fixes
 
 export default defineComponent({
     components: {
@@ -71,6 +83,7 @@ export default defineComponent({
                         (error) => console.error(error)
                     )
 
+<<<<<<< HEAD
                     this.$emit('update:loading', false)
                 }
             })
@@ -96,6 +109,33 @@ export default defineComponent({
                 .then((response) => {
                     let totalDownloads = response.data.length
                     let alreadyDownloaded = response.data.filter((x) => x.alreadyDownloaded).length
+=======
+						this.$emit('update:loading', false)
+					}
+				})
+				.catch(function(error) {
+					if (error.response) {
+						console.log(error.response.data)
+						console.log(error.response.status)
+						console.log(error.response.headers)
+					}
+				})
+		},
+		created() {},
+		mounted() {
+			this.onLoad()
+		},
+		methods: {
+			closeDialog() {
+				this.$emit('update:visibility', false)
+			},
+			onLoad() {
+				axios
+					.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export/dataset')
+					.then((response) => {
+						let totalDownloads = response.data.length
+						let alreadyDownloaded = response.data.filter((x) => x.alreadyDownloaded).length
+>>>>>>> b12049127d... [KNOWAGE-6191] - Added root element and minor fixes
 
                     let json = { downloads: { count: { total: 0, alreadyDownloaded: 0 } } }
                     json.downloads.count.total = totalDownloads
