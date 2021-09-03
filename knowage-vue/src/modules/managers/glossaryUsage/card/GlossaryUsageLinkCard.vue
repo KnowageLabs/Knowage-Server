@@ -110,6 +110,7 @@ export default defineComponent({
         },
         loadAssociatedWordsTree() {
             this.associatedWordsTree = { ...this.treeWords } as any
+            console.log('associatedWordsTree: ', this.associatedWordsTree)
         },
         async onDragDrop(event: any, item: any) {
             switch (item.itemType) {
@@ -139,7 +140,7 @@ export default defineComponent({
             this.selectedItem = item.data
             this.$emit('selected', item.data)
         },
-        async addAssociatedWord(linkItem: any, word: iWord, type: string, url: string, postData: any) {
+        async addAssociatedWord(linkItem: any, word: iWord, type: string, url: string, postData: any, itemType: string) {
             this.loading = true
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)
@@ -154,7 +155,7 @@ export default defineComponent({
                               style: glossaryUsageLinkCardDescriptor.node.style,
                               leaf: true,
                               parent: linkItem,
-                              itemType: 'datasetTree'
+                              itemType: itemType
                           })
                         : this.associatedWords[linkItem.id].push(word)
                     this.$store.commit('setInfo', {
@@ -172,21 +173,21 @@ export default defineComponent({
         },
         async addAssociatedWordDocument(document: any, word: iWord) {
             const postData = { DOCUMENT_ID: document.id, WORD_ID: word.WORD_ID }
-            await this.addAssociatedWord(document, word, 'array', '1.0/glossary/addDocWlist', postData)
+            await this.addAssociatedWord(document, word, 'array', '1.0/glossary/addDocWlist', postData, '')
         },
         async addAssociatedWordDataset(dataset: any, word: iWord, column: string, type: string) {
             const postData = { COLUMN_NAME: column, DATASET_ID: dataset.id, ORGANIZATION: dataset.organization, WORD_ID: word.WORD_ID }
-            await this.addAssociatedWord(dataset, word, type, '1.0/glossary/addDataSetWlist', postData)
+            await this.addAssociatedWord(dataset, word, type, '1.0/glossary/addDataSetWlist', postData, 'datasetTree')
         },
         async addAssociatedWordBusinessClass(businessClass: any, word: iWord, column: string, type: string) {
             const id = type === 'tree' ? businessClass.businessClassId : businessClass.id
             const postData = { COLUMN_NAME: column, META_BC_ID: id, WORD_ID: word.WORD_ID }
-            await this.addAssociatedWord(businessClass, word, type, '1.0/glossary/addMetaBcWlist', postData)
+            await this.addAssociatedWord(businessClass, word, type, '1.0/glossary/addMetaBcWlist', postData, 'businessClassTree')
         },
         async addAssociatedWordTables(table: any, word: iWord, column: string, type: string) {
             const id = type === 'tree' ? table.metasourceId : table.id
             const postData = { COLUMN_NAME: column, META_TABLE_ID: id, WORD_ID: word.WORD_ID }
-            await this.addAssociatedWord(table, word, type, '1.0/glossary/addMetaTableWlist', postData)
+            await this.addAssociatedWord(table, word, type, '1.0/glossary/addMetaTableWlist', postData, 'tableTree')
         },
         deleteWordConfirm(wordId: number, item: any) {
             this.$confirm.require({
@@ -205,7 +206,7 @@ export default defineComponent({
                     await this.deleteDatasetWord(wordId, item, '.SELF', 'array')
                     break
                 case 'datasetTree':
-                    await this.deleteDatasetWord(wordId, item.parent, item.parent.data.alias, 'tree')
+                    await this.deleteDatasetWord(wordId, item, item.parent.data.alias, 'tree')
                     break
                 case 'businessClass':
                     await this.deleteBusinessClassWord(wordId, item, '.SELF', 'array')
@@ -221,17 +222,15 @@ export default defineComponent({
             }
         },
         async deleteWord(linkItem: any, wordId: number, type: string, url: string, method: string) {
+            console.log('LINK ITEM: ', linkItem)
             this.loading = true
-            const id = type === 'tree' ? linkItem.parent.metasourceId : linkItem.id
             await axios[method](process.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
-                .then((response) => {
-                    if (!response.data.errors) {
-                        type === 'tree' ? this.removeWordFromTreeWords(wordId, linkItem.parent) : this.removeWordFromAssociatedWords(wordId, id)
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.deleteTitle'),
-                            msg: this.$t('common.toast.deleteSuccess')
-                        })
-                    }
+                .then(() => {
+                    type === 'tree' ? this.removeWordFromTreeWords(wordId, linkItem.parent) : this.removeWordFromAssociatedWords(wordId, linkItem.id)
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
                 })
                 .catch((response) => {
                     this.$store.commit('setError', {
@@ -252,7 +251,8 @@ export default defineComponent({
             await this.deleteWord(businessClass, wordId, type, url, 'delete')
         },
         async deleteDatasetWord(wordId: number, dataset: any, column: string, type: string) {
-            const url = `1.0/glossary/deleteDatasetWlist?WORD_ID=${wordId}&DATASET_ID=${dataset.id}&ORGANIZATION=${dataset.organization}&COLUMN=${column}`
+            console.log('DATASET: ', dataset)
+            const url = `1.0/glossary/deleteDatasetWlist?WORD_ID=${wordId}&DATASET_ID=${dataset.datasetId}&ORGANIZATION=${dataset.organization}&COLUMN=${column}`
             await this.deleteWord(dataset, wordId, type, url, 'post')
         },
         async deleteDocumentWord(wordId: number, document: any) {
@@ -264,6 +264,7 @@ export default defineComponent({
             this.associatedWords[documentId].splice(index, 1)
         },
         removeWordFromTreeWords(wordId: number, parent: any) {
+            console.log('PARENT: ', parent)
             const index = parent.children.findIndex((el: any) => el.id === wordId)
             parent.children.splice(index, 1)
         },

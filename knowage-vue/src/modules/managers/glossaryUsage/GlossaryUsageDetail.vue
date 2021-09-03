@@ -157,12 +157,7 @@ export default defineComponent({
         async showBusinessClassInfo(businessClass: iNavigationTableItem) {
             this.loading = true
             await this.loadBusinessClassInfo(businessClass)
-                .then((response) =>
-                    this.$emit('infoClicked', {
-                        data: response.data,
-                        type: 'businessClass'
-                    })
-                )
+                .then((response) => this.$emit('infoClicked', { data: response.data, type: 'businessClass' }))
                 .finally(() => (this.loading = false))
         },
         async showTableInfo(table: any) {
@@ -202,9 +197,7 @@ export default defineComponent({
                             itemType: 'document'
                         })
                     )
-                    this.linkTableItems.sort((a: iLinkTableItem, b: iLinkTableItem) => (a.name > b.name ? 1 : -1))
-                    this.linkTableTitle = this.$t('managers.glossary.glossaryUsage.documents')
-                    this.linkTableVisible = true
+                    this.showLinkTable(this.$t('managers.glossary.glossaryUsage.documents'))
                 })
                 .finally(() => (this.loading = false))
         },
@@ -225,9 +218,7 @@ export default defineComponent({
                             itemType: 'dataset'
                         })
                     )
-                    this.linkTableItems.sort((a: iLinkTableItem, b: iLinkTableItem) => (a.name > b.name ? 1 : -1))
-                    this.linkTableTitle = this.$t('managers.glossary.glossaryUsage.dataset')
-                    this.linkTableVisible = true
+                    this.showLinkTable(this.$t('managers.glossary.glossaryUsage.dataset'))
                 })
                 .finally(() => (this.loading = false))
         },
@@ -247,9 +238,7 @@ export default defineComponent({
                             itemType: 'businessClass'
                         })
                     )
-                    this.linkTableItems.sort((a: iLinkTableItem, b: iLinkTableItem) => (a.name > b.name ? 1 : -1))
-                    this.linkTableTitle = this.$t('managers.glossary.glossaryUsage.businessClass')
-                    this.linkTableVisible = true
+                    this.showLinkTable(this.$t('managers.glossary.glossaryUsage.businessClass'))
                 })
                 .finally(() => (this.loading = false))
         },
@@ -269,11 +258,14 @@ export default defineComponent({
                             itemType: 'table'
                         })
                     )
-                    this.linkTableItems.sort((a: iLinkTableItem, b: iLinkTableItem) => (a.name > b.name ? 1 : -1))
-                    this.linkTableTitle = this.$t('managers.glossary.glossaryUsage.tables')
-                    this.linkTableVisible = true
+                    this.showLinkTable(this.$t('managers.glossary.glossaryUsage.tables'))
                 })
                 .finally(() => (this.loading = false))
+        },
+        showLinkTable(title: string) {
+            this.linkTableItems.sort((a: iLinkTableItem, b: iLinkTableItem) => (a.name > b.name ? 1 : -1))
+            this.linkTableTitle = title
+            this.linkTableVisible = true
         },
         onDocumentsSelected(documents: iNavigationTableItem[]) {
             this.selectedDocuments = []
@@ -330,8 +322,12 @@ export default defineComponent({
                     this.selectedLinkItemWords[dataset.id] = response.data.Word
                     this.selectedLinkItemTree[dataset.id] = []
                     response.data.SbiGlDataSetWlist.forEach((el: any) => {
-                        const tempNode = { key: el.alias, id: el.datasetId, label: el.alias, children: [] as iNode[], data: el, leaf: false, style: '', organization: el.organization, itemType: 'datasetTree' }
-                        el.word.forEach((el: any) => tempNode.children.push({ key: el.WORD_ID, id: el.WORD_ID, label: el.WORD, children: [] as iNode[], data: el, style: this.glossaryUsageDescriptor.node.style, leaf: true, parent: tempNode, itemType: 'datasetTree' }))
+                        const organization = el.organization
+                        const datasetId = el.datasetId
+                        const tempNode = { key: el.alias, id: datasetId, label: el.alias, children: [] as iNode[], data: el, leaf: false, style: '', organization: organization, itemType: 'datasetTree' }
+                        el.word.forEach((el: any) =>
+                            tempNode.children.push({ key: el.WORD_ID, id: el.WORD_ID, label: el.WORD, children: [] as iNode[], data: el, style: this.glossaryUsageDescriptor.node.style, leaf: true, parent: tempNode, organization: organization, datasetId: datasetId, itemType: 'datasetTree' } as any)
+                        )
                         this.selectedLinkItemTree[dataset.id].push(tempNode)
                     })
                 })
