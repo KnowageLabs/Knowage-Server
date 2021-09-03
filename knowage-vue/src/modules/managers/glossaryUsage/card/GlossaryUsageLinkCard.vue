@@ -199,7 +199,7 @@ export default defineComponent({
         async handleDelete(wordId: number, item: any) {
             switch (item.itemType) {
                 case 'document':
-                    await this.deleteDocumentWord(wordId, item.id)
+                    await this.deleteDocumentWord(wordId, item)
                     break
                 case 'dataset':
                     await this.deleteDatasetWord(wordId, item, '.SELF', 'array')
@@ -220,57 +220,13 @@ export default defineComponent({
                     await this.deleteTablesWord(wordId, item, item.parent.label, 'tree')
             }
         },
-        async deleteDocumentWord(wordId: number, documentId: number) {
+        async deleteWord(linkItem: any, wordId: number, type: string, url: string, method: string) {
             this.loading = true
-            await axios
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/deleteDocWlist?WORD_ID=${wordId}&DOCUMENT_ID=${documentId}`, {})
-                .then((response) => {
-                    if (response.data.Status === 'OK') {
-                        this.removeWordFromAssociatedWords(wordId, documentId)
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.deleteTitle'),
-                            msg: this.$t('common.toast.deleteSuccess')
-                        })
-                    }
-                })
-                .catch((response) => {
-                    this.$store.commit('setError', {
-                        title: this.$t('common.toast.deleteTitle'),
-                        msg: response
-                    })
-                })
-                .finally(() => (this.loading = false))
-        },
-        async deleteDatasetWord(wordId: number, dataset: any, column: string, type: string) {
-            this.loading = true
-            await axios
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/deleteDatasetWlist?WORD_ID=${wordId}&DATASET_ID=${dataset.id}&ORGANIZATION=${dataset.organization}&COLUMN=${column}`, {})
-                .then((response) => {
-                    if (response.data.Status === 'OK') {
-                        type === 'tree' ? this.removeWordFromTreeWords(wordId, dataset) : this.removeWordFromAssociatedWords(wordId, dataset.id)
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.deleteTitle'),
-                            msg: this.$t('common.toast.deleteSuccess')
-                        })
-                    }
-                })
-                .catch((response) => {
-                    this.$store.commit('setError', {
-                        title: this.$t('common.toast.deleteTitle'),
-                        msg: response
-                    })
-                })
-                .finally(() => (this.loading = false))
-        },
-        async deleteBusinessClassWord(wordId: number, businessClass: any, column: string, type: string) {
-            this.loading = true
-            const id = type === 'tree' ? businessClass.parent.businessClassId : businessClass.id
-
-            await axios
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/deleteMetaBcWlist?WORD_ID=${wordId}&BC_ID=${id}&COLUMN=${column}`)
+            const id = type === 'tree' ? linkItem.parent.metasourceId : linkItem.id
+            await axios[method](process.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
                 .then((response) => {
                     if (!response.data.errors) {
-                        type === 'tree' ? this.removeWordFromTreeWords(wordId, businessClass.parent) : this.removeWordFromAssociatedWords(wordId, businessClass.id)
+                        type === 'tree' ? this.removeWordFromTreeWords(wordId, linkItem.parent) : this.removeWordFromAssociatedWords(wordId, id)
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.deleteTitle'),
                             msg: this.$t('common.toast.deleteSuccess')
@@ -286,26 +242,22 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         async deleteTablesWord(wordId: number, table: any, column: string, type: string) {
-            this.loading = true
             const id = type === 'tree' ? table.parent.metasourceId : table.id
-            await axios
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/deleteMetaTableWlist?WORD_ID=${wordId}&TABLE_ID=${id}&COLUMN=${column}`)
-                .then((response) => {
-                    if (!response.data.errors) {
-                        type === 'tree' ? this.removeWordFromTreeWords(wordId, table.parent) : this.removeWordFromAssociatedWords(wordId, id)
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.deleteTitle'),
-                            msg: this.$t('common.toast.deleteSuccess')
-                        })
-                    }
-                })
-                .catch((response) => {
-                    this.$store.commit('setError', {
-                        title: this.$t('common.toast.deleteTitle'),
-                        msg: response
-                    })
-                })
-                .finally(() => (this.loading = false))
+            const url = `1.0/glossary/deleteMetaTableWlist?WORD_ID=${wordId}&TABLE_ID=${id}&COLUMN=${column}`
+            await this.deleteWord(table, wordId, type, url, 'delete')
+        },
+        async deleteBusinessClassWord(wordId: number, businessClass: any, column: string, type: string) {
+            const id = type === 'tree' ? businessClass.parent.businessClassId : businessClass.id
+            const url = `1.0/glossary/deleteMetaBcWlist?WORD_ID=${wordId}&BC_ID=${id}&COLUMN=${column}`
+            await this.deleteWord(businessClass, wordId, type, url, 'delete')
+        },
+        async deleteDatasetWord(wordId: number, dataset: any, column: string, type: string) {
+            const url = `1.0/glossary/deleteDatasetWlist?WORD_ID=${wordId}&DATASET_ID=${dataset.id}&ORGANIZATION=${dataset.organization}&COLUMN=${column}`
+            await this.deleteWord(dataset, wordId, type, url, 'post')
+        },
+        async deleteDocumentWord(wordId: number, document: any) {
+            const url = `1.0/glossary/deleteDocWlist?WORD_ID=${wordId}&DOCUMENT_ID=${document.id}`
+            await this.deleteWord(document, wordId, 'array', url, 'post')
         },
         removeWordFromAssociatedWords(wordId: number, documentId: number) {
             const index = this.associatedWords[documentId].findIndex((el: any) => el.WORD_ID === wordId)
