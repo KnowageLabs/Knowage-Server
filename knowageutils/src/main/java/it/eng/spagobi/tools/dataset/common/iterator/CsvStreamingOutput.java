@@ -25,7 +25,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 
 public class CsvStreamingOutput implements StreamingOutput {
 
-	static protected Logger logger = Logger.getLogger(CsvStreamingOutput.class);
+	private static Logger logger = Logger.getLogger(CsvStreamingOutput.class);
 
 	private IDataStore dataStore = null;
 	private DataIterator iterator;
@@ -85,12 +85,12 @@ public class CsvStreamingOutput implements StreamingOutput {
 		logger.debug("ResultSet iteration");
 		for (int i = 0; i < Integer.MAX_VALUE && i < dataStore.getRecordsCount(); i++) {
 			writer.write("\n");
-			IRecord record = dataStore.getRecordAt(i);
+			IRecord currRecord = dataStore.getRecordAt(i);
 			for (int j = 0; j < fieldCount; j++) {
 				if (j != 0) {
 					writer.write(",");
 				}
-				IField field = record.getFieldAt(j);
+				IField field = currRecord.getFieldAt(j);
 				Object fieldValue = field.getValue();
 				writer.write("\"" + fieldValue + "\"");
 			}
@@ -119,13 +119,13 @@ public class CsvStreamingOutput implements StreamingOutput {
 			logger.debug("ResultSet iteration");
 			while (iterator.hasNext()) {
 				writer.write("\n");
-				IRecord record = iterator.next();
+				IRecord currRecord = iterator.next();
 				for (int j = 0; j < fieldCount; j++) {
 					if (j != 0) {
 						writer.write(",");
 					}
 					Integer realdFieldIndex = indexesOfVisibleFields.get(j);
-					IField field = record.getFieldAt(realdFieldIndex);
+					IField field = currRecord.getFieldAt(realdFieldIndex);
 					Object fieldValue = field.getValue();
 					writer.write("\"" + fieldValue + "\"");
 				}

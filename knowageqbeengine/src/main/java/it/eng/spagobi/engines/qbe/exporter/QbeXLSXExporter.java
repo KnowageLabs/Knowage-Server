@@ -63,7 +63,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class QbeXLSXExporter {
 
 	/** Logger component. */
-	public static Logger logger = Logger.getLogger(QbeXLSXExporter.class);
+	private static final Logger logger = Logger.getLogger(QbeXLSXExporter.class);
 
 	/** Configuration properties */
 	public static final String PROPERTY_HEADER_FONT_SIZE = "HEADER_FONT_SIZE";
@@ -98,7 +98,7 @@ public class QbeXLSXExporter {
 	private Map<String, Object> properties;
 
 	private List<?> extractedFields = null;
-	private Map<Integer, CellStyle> decimalFormats = new HashMap<Integer, CellStyle>();
+	private Map<Integer, CellStyle> decimalFormats = new HashMap<>();
 	private int maxNumOfRows = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
 
 	private final DataIterator iterator;
@@ -123,7 +123,7 @@ public class QbeXLSXExporter {
 		this.visibleFieldCount = visibleFields.size();
 
 		this.locale = locale;
-		this.properties = new HashMap<String, Object>();
+		this.properties = new HashMap<>();
 		this.maxNumOfRows = Math.min(SpreadsheetVersion.EXCEL2007.getLastRowIndex(), recordsLimit);
 	}
 
@@ -146,8 +146,8 @@ public class QbeXLSXExporter {
 		if (iterator.hasNext()) {
 			boolean overflow = false;
 
-			CellStyle[] cellTypes = fillSheetHeader(sheet, wb, createHelper, startRow, DEFAULT_START_COLUMN);
-			overflow = fillSheetData(sheet, wb, createHelper, cellTypes, startRow + 1, DEFAULT_START_COLUMN);
+			CellStyle[] cellTypes = fillSheetHeader(sheet, createHelper, startRow, DEFAULT_START_COLUMN);
+			overflow = fillSheetData(sheet, createHelper, cellTypes, startRow + 1, DEFAULT_START_COLUMN);
 
 			if (overflow) {
 				fillMessageHeader(sheet);
@@ -170,7 +170,7 @@ public class QbeXLSXExporter {
 	 *
 	 * @return ...
 	 */
-	private CellStyle[] fillSheetHeader(Sheet sheet, Workbook workbook, CreationHelper createHelper, int beginRowHeaderData, int beginColumnHeaderData) {
+	private CellStyle[] fillSheetHeader(Sheet sheet, CreationHelper createHelper, int beginRowHeaderData, int beginColumnHeaderData) {
 
 		CellStyle[] cellTypes;
 
@@ -231,7 +231,7 @@ public class QbeXLSXExporter {
 	/**
 	 * @return <code>false</code> if every record is written to the outp, <code>true</code> otherwise
 	 */
-	private boolean fillSheetData(Sheet sheet, Workbook wb, CreationHelper createHelper, CellStyle[] cellTypes, int beginRowData, int beginColumnData) {
+	private boolean fillSheetData(Sheet sheet, CreationHelper createHelper, CellStyle[] cellTypes, int beginRowData, int beginColumnData) {
 		boolean overflow = false;
 
 		CellStyle dCellStyle = this.buildCellStyle(sheet);
