@@ -160,8 +160,6 @@ li {
         top: 0;
         left: 100%;
         background-color: $mainmenu-panel-color;
-        width: 1000px;
-        min-height: 200px;
         ul {
             list-style: none;
             padding: 0;
@@ -197,9 +195,16 @@ li {
             border-radius: 0;
         }
         .p-megamenu-data {
-            overflow: auto;
-            max-height: 500px;
-            overflow-x: hidden;
+            overflow: hidden;
+            display: block;
+            column-count: 5;
+            column-gap: 8px;
+            .menuColumn {
+                width: 100%;
+                -webkit-column-break-inside: avoid;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
         }
     }
 }
