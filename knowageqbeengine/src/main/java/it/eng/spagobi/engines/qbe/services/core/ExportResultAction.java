@@ -30,7 +30,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONObjectDeserializator;
 
@@ -84,7 +83,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 	public static final String DRIVERS = "DRIVERS";
 
 	/** Logger component. */
-	public static transient Logger logger = Logger.getLogger(ExportResultAction.class);
+	private static Logger logger = Logger.getLogger(ExportResultAction.class);
 
 	@Override
 	public void service(SourceBean request, SourceBean response) {
@@ -358,7 +357,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		return "true";
 	}
 
-	private Query deserializeQuery(JSONObject queryJSON) throws SerializationException, JSONException {
+	private Query deserializeQuery(JSONObject queryJSON) throws SerializationException {
 		return SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON.toString(), getEngineInstance().getDataSource());
 	}
 
