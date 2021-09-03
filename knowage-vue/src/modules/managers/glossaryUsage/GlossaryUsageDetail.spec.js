@@ -187,5 +187,6 @@ describe('Glossary Usage Tree', () => {
             { id: 1357, label: 'foodmart_demo.account', type: 'table' },
             { id: 1379, label: 'foodmart_demo.department', type: 'table' }
         ])
+        expect(wrapper.emitted()).toHaveProperty('wordsFiltered')
     })
 })

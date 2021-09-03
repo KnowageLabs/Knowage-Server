@@ -227,7 +227,6 @@ export default defineComponent({
             event.dataTransfer.effectAllowed = 'move'
         },
         setFilteredWords(words: any) {
-            console.log('FILTERED WORDS: ', words)
             this.nodes = []
             words.forEach((el: any) => this.nodes.push(this.createNode(el)))
         }

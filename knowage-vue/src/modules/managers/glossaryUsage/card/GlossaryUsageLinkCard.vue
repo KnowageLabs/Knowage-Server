@@ -110,7 +110,6 @@ export default defineComponent({
         },
         loadAssociatedWordsTree() {
             this.associatedWordsTree = { ...this.treeWords } as any
-            console.log('associatedWordsTree: ', this.associatedWordsTree)
         },
         async onDragDrop(event: any, item: any) {
             switch (item.itemType) {
@@ -222,7 +221,6 @@ export default defineComponent({
             }
         },
         async deleteWord(linkItem: any, wordId: number, type: string, url: string, method: string) {
-            console.log('LINK ITEM: ', linkItem)
             this.loading = true
             await axios[method](process.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
                 .then(() => {
@@ -251,7 +249,6 @@ export default defineComponent({
             await this.deleteWord(businessClass, wordId, type, url, 'delete')
         },
         async deleteDatasetWord(wordId: number, dataset: any, column: string, type: string) {
-            console.log('DATASET: ', dataset)
             const url = `1.0/glossary/deleteDatasetWlist?WORD_ID=${wordId}&DATASET_ID=${dataset.datasetId}&ORGANIZATION=${dataset.organization}&COLUMN=${column}`
             await this.deleteWord(dataset, wordId, type, url, 'post')
         },
@@ -264,7 +261,6 @@ export default defineComponent({
             this.associatedWords[documentId].splice(index, 1)
         },
         removeWordFromTreeWords(wordId: number, parent: any) {
-            console.log('PARENT: ', parent)
             const index = parent.children.findIndex((el: any) => el.id === wordId)
             parent.children.splice(index, 1)
         },

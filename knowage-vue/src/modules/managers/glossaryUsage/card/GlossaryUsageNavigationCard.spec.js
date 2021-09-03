@@ -13,6 +13,11 @@ const mockedItems = [
     { id: 3, label: 'HR VIEW' }
 ]
 
+const $store = {
+    state: { user: {} },
+    commit: jest.fn()
+}
+
 const factory = (items) => {
     return mount(GlossaryUsageNavigationCard, {
         props: {
@@ -21,7 +26,8 @@ const factory = (items) => {
         global: {
             stubs: { Button, Card, Column, DataTable, InputText, Toolbar },
             mocks: {
-                $t: (msg) => msg
+                $t: (msg) => msg,
+                $store
             }
         }
     })

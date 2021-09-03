@@ -32,6 +32,12 @@ const mockedSearchContent = {
     Status: 'OK'
 }
 
+const mockedWords = [
+    { WORD_ID: 1, WORD: 'Customer' },
+    { WORD_ID: 2, WORD: 'Product Store' },
+    { WORD_ID: 3, WORD: 'Product Sales' }
+]
+
 jest.mock('axios')
 
 axios.get.mockImplementation((url) => {
@@ -118,5 +124,17 @@ describe('Glossary Usage Navigation', () => {
 
         expect(wrapper.vm.selectedGlossaryId).toBe(null)
         expect(wrapper.find('[data-test="no-glossary-selected-hint"]').exists()).toBe(true)
+    })
+    it('filters the glossary tree when an element in the card is selected', async () => {
+        const wrapper = factory()
+
+        wrapper.vm.selectedGlossaryId = 45
+        wrapper.vm.setFilteredWords(mockedWords)
+
+        await flushPromises()
+
+        expect(wrapper.html()).toContain('Customer')
+        expect(wrapper.html()).toContain('Product Store')
+        expect(wrapper.html()).toContain('Product Sales')
     })
 })
