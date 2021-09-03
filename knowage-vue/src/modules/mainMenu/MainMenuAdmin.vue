@@ -24,13 +24,10 @@
                                     <a v-else :href="item.url" :target="item.target" @click="onLeafClick($event, item, navigate)" role="menuitem" :tabindex="item.disabled ? null : '0'">
                                         <span class="p-menuitem-text">{{ item.label }}</span>
                                     </a>
-                                </router-link>
-                                <a v-else :href="item.url" :target="item.target" @click="onLeafClick($event, item, navigate)" role="menuitem" :tabindex="item.disabled ? null : '0'">
-                                    <span class="p-menuitem-text">{{ item.label }}</span>
-                                </a>
-                            </li>
-                        </template>
-                    </ul>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </ul>
