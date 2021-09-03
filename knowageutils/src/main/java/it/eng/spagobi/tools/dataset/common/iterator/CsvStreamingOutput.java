@@ -1,10 +1,14 @@
 package it.eng.spagobi.tools.dataset.common.iterator;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.List;
+import java.util.stream.IntStream;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.StreamingOutput;
@@ -15,6 +19,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 
@@ -22,12 +27,28 @@ public class CsvStreamingOutput implements StreamingOutput {
 
 	static protected Logger logger = Logger.getLogger(CsvStreamingOutput.class);
 
-	private DataIterator iterator = null;
 	private IDataStore dataStore = null;
+	private DataIterator iterator;
+	private IMetaData metaData;
+	private int visibleFieldCount;
+	private List<IFieldMetaData> visibleFields;
+	private List<Integer> indexesOfVisibleFields;
 
 	public CsvStreamingOutput(DataIterator iterator) {
 		super();
 		this.iterator = iterator;
+		this.metaData = iterator.getMetaData();
+
+		List<IFieldMetaData> fieldsMetadata = this.metaData.getFieldsMeta();
+
+		this.visibleFields = fieldsMetadata.stream()
+			.filter(e -> (Boolean) e.getProperties().getOrDefault("visible", true))
+			.collect(toList());
+		this.indexesOfVisibleFields = IntStream.range(0, fieldsMetadata.size())
+			.filter(e -> (Boolean) fieldsMetadata.get(e).getProperties().getOrDefault("visible", true))
+			.boxed()
+			.collect(toList());
+		this.visibleFieldCount = visibleFields.size();
 	}
 
 	public CsvStreamingOutput(IDataStore dataStore) {
@@ -83,14 +104,14 @@ public class CsvStreamingOutput implements StreamingOutput {
 		try {
 			Writer writer = new BufferedWriter(new OutputStreamWriter(os));
 
-			int fieldCount = iterator.getMetaData().getFieldCount();
+			int fieldCount = visibleFieldCount;
 			Assert.assertTrue(fieldCount > 0, "Impossible to get fields metadata");
 
 			for (int i = 0; i < fieldCount; i++) {
 				if (i != 0) {
 					writer.write(",");
 				}
-				IFieldMetaData fieldMeta = iterator.getMetaData().getFieldMeta(i);
+				IFieldMetaData fieldMeta = visibleFields.get(i);
 				String columnName = fieldMeta.getAlias() != null ? fieldMeta.getAlias() : fieldMeta.getName();
 				writer.write("\"" + columnName + "\"");
 			}
@@ -103,7 +124,8 @@ public class CsvStreamingOutput implements StreamingOutput {
 					if (j != 0) {
 						writer.write(",");
 					}
-					IField field = record.getFieldAt(j);
+					Integer realdFieldIndex = indexesOfVisibleFields.get(j);
+					IField field = record.getFieldAt(realdFieldIndex);
 					Object fieldValue = field.getValue();
 					writer.write("\"" + fieldValue + "\"");
 				}
