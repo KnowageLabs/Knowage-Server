@@ -114,7 +114,7 @@ export default defineComponent({
         async onDragDrop(event: any, item: any) {
             switch (item.itemType) {
                 case 'document':
-                    await this.addAssociatedWordDocument(item.id, JSON.parse(event.dataTransfer.getData('text/plain')))
+                    await this.addAssociatedWordDocument(item, JSON.parse(event.dataTransfer.getData('text/plain')))
                     break
                 case 'dataset':
                     await this.addAssociatedWordDataset(item, JSON.parse(event.dataTransfer.getData('text/plain')), '.SELF', 'array')
@@ -170,6 +170,10 @@ export default defineComponent({
                 })
                 .finally(() => (this.loading = false))
         },
+        async addAssociatedWordDocument(document: any, word: iWord) {
+            const postData = { DOCUMENT_ID: document.id, WORD_ID: word.WORD_ID }
+            await this.addAssociatedWord(document, word, 'array', '1.0/glossary/addDocWlist', postData)
+        },
         async addAssociatedWordDataset(dataset: any, word: iWord, column: string, type: string) {
             const postData = { COLUMN_NAME: column, DATASET_ID: dataset.id, ORGANIZATION: dataset.organization, WORD_ID: word.WORD_ID }
             await this.addAssociatedWord(dataset, word, type, '1.0/glossary/addDataSetWlist', postData)
@@ -183,27 +187,6 @@ export default defineComponent({
             const id = type === 'tree' ? table.metasourceId : table.id
             const postData = { COLUMN_NAME: column, META_TABLE_ID: id, WORD_ID: word.WORD_ID }
             await this.addAssociatedWord(table, word, type, '1.0/glossary/addMetaTableWlist', postData)
-        },
-        async addAssociatedWordDocument(documentId: number, word: iWord) {
-            this.loading = true
-            await axios
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/addDocWlist', { DOCUMENT_ID: documentId, WORD_ID: word.WORD_ID })
-                .then((response) => {
-                    if (response.data.Status !== 'NON OK') {
-                        this.associatedWords[documentId].push(word)
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.createTitle'),
-                            msg: this.$t('common.toast.success')
-                        })
-                    }
-                })
-                .catch((response) => {
-                    this.$store.commit('setError', {
-                        title: this.$t('common.error.generic'),
-                        msg: response
-                    })
-                })
-                .finally(() => (this.loading = false))
         },
         deleteWordConfirm(wordId: number, item: any) {
             this.$confirm.require({
