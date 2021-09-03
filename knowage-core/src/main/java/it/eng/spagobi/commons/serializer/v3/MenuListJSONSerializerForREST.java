@@ -431,11 +431,36 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 			if (menuType == MenuType.ALLOWED_USER_FUNCTIONALITIES) {
 				// allowed user menu to add only if it is not admin and functionality is permitted in any case
-					Integer technicalMenuId = allowedMenuToNotDuplicate.get(menuLabel);
-					if (technicalMenuId != null && technicalUserMenuIds.contains(technicalMenuId)) {
-						isToAdd = false;
-						break;
-					}
+				Integer technicalMenuId = allowedMenuToNotDuplicate.get(menuLabel);
+				if (technicalMenuId != null && technicalUserMenuIds.contains(technicalMenuId)) {
+					return false;
+				}
+			}
+
+		}
+
+		return isToAdd;
+
+	}
+
+	/**
+	 *
+	 * @param menuType
+	 * @param itemSB
+	 *
+	 *                 Method handle menus that can be switched from Community to Enterprise
+	 */
+	private boolean isMenuForKnowageCurrentType(MenuType menuType, SourceBean itemSB) {
+		boolean isToAdd = true;
+		if (menuType == MenuType.ALLOWED_USER_FUNCTIONALITIES || menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES) {
+
+			String menuId = (String) itemSB.getAttribute(ID);
+			if (menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES) {
+				if (technicalMenuCommunityOrEnterprise.containsKey(menuId)) {
+					isToAdd = !isEnterpriseEdition();
+					if (!isToAdd)
+						return false;
+				}
 
 				if (technicalMenuCommunityOrEnterprise.containsValue(menuId)) {
 					isToAdd = isEnterpriseEdition();
@@ -446,6 +471,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		}
 
 		return isToAdd;
+
 	}
 
 	private boolean isInTechnicalUserMenu(JSONArray technicalUserMenuJSONArray, SourceBean itemSB, MessageBuilder messageBuilder, Locale locale)
@@ -585,24 +611,23 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			if (!key.equals(ITEM) && StringUtils.isNotBlank(value)) {
 
 				if (key.equals(LABEL)) {
-						String menuLabel = (String) attribute.getValue();
-						value = messageBuilder.getMessage(menuLabel, locale);
+					String menuLabel = (String) attribute.getValue();
+					value = messageBuilder.getMessage(menuLabel, locale);
 				} else if (key.equals(TO)) {
-						value = value.replace(PLACEHOLDER_SPAGOBI_CONTEXT, contextName);
-						value = value.replace(PLACEHOLDER_KNOWAGE_VUE_CONTEXT, vueContextName);
+					value = value.replace(PLACEHOLDER_SPAGOBI_CONTEXT, contextName);
+					value = value.replace(PLACEHOLDER_KNOWAGE_VUE_CONTEXT, vueContextName);
 
-						value = value.replace(PLACEHOLDER_SPAGO_ADAPTER_HTTP, GeneralUtilities.getSpagoAdapterHttpUrl());
+					value = value.replace(PLACEHOLDER_SPAGO_ADAPTER_HTTP, GeneralUtilities.getSpagoAdapterHttpUrl());
 
-						value = value.replace(PLACEHOLDER_KNOWAGE_THEME, currentTheme);
-					}
+					value = value.replace(PLACEHOLDER_KNOWAGE_THEME, currentTheme);
+				}
 
 				menu.put(key, value);
 
 			}
-				}
-
+		}
 		return menu;
-			}
+	}
 
 	private boolean isAttributeToIgnore(SourceBeanAttribute attribute) {
 		return attribute.getKey().equals(REQUIRED_FUNCTIONALITY) || attribute.getKey().equals(CONDITION) || attribute.getKey().equals(TO_BE_LICENSED)

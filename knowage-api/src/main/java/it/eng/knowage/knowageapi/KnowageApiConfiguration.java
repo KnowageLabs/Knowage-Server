@@ -49,7 +49,7 @@ import it.eng.knowage.knowageapi.service.impl.FunctionCatalogAPIImpl;
 @Configuration
 @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
 @Profile("production")
-@ComponentScan("it.eng.knowage.knowageapi")
+@ComponentScan({ "it.eng.knowage.knowageapi", "it.eng.knowage.resourcemanager" })
 public class KnowageApiConfiguration {
 
 	@Primary /* just to prevent Spring error */
@@ -67,11 +67,17 @@ public class KnowageApiConfiguration {
 		return factoryBean;
 	}
 
+	@Bean("knowage-config")
+	public LocalEntityManagerFactoryBean entityManagerFactoryForWidgetConfig() {
+		LocalEntityManagerFactoryBean factoryBean = new LocalEntityManagerFactoryBean();
+		factoryBean.setPersistenceUnitName("knowage-config");
+		return factoryBean;
+	}
+
 	@Primary
 	@Bean
 	public PlatformTransactionManager mainTransactionManager() {
-		return new ChainedTransactionManager(
-				new JpaTransactionManager(entityManagerFactoryForWidgetGallery().getObject()),
+		return new ChainedTransactionManager(new JpaTransactionManager(entityManagerFactoryForWidgetGallery().getObject()),
 				new JpaTransactionManager(entityManagerFactoryForWidgetFunctionCatalog().getObject()));
 	}
 
