@@ -173,7 +173,7 @@ public class GraphUtilities {
 			relationshipsNames.add(relationshipsName);
 			JoinType joinType = JoinType.valueOf(relationshipJSON.optString(JOIN_TYPE, JoinType.INNER.toString()));
 			joinTypeMapping.put(relationshipsName, joinType);
-			isConsideredMapping.put(relationshipsName, relationshipJSON.getBoolean(IS_CONSIDERED));
+			isConsideredMapping.put(relationshipsName, relationshipJSON.optBoolean(IS_CONSIDERED, true));
 
 		}
 
