@@ -132,7 +132,6 @@ export default defineComponent({
             this.loadAllDrivers()
             this.touched = false
             this.selectedDriver = event
-            console.log('selected after post', this.selectedDriver)
         },
         deleteDriverConfirm(id: number) {
             this.$confirm.require({
