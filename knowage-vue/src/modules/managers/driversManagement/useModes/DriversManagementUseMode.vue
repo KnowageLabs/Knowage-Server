@@ -6,7 +6,7 @@
                     <span>{{ $t('managers.driversManagement.useModes.title') }}</span>
                 </template>
                 <template #right>
-                    <Button :label="$t('managers.driversManagement.add')" class="p-button-text p-button-rounded p-button-plain" :disabled="disableActionButton" @click="showForm" data-test="add-action-button" />
+                    <Button :label="$t('managers.driversManagement.add')" class="kn-button p-button-text" :disabled="disableActionButton" @click="showForm" data-test="add-action-button" />
                 </template>
             </Toolbar>
         </template>

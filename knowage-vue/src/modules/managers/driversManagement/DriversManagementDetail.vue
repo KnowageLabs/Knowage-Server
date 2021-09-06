@@ -2,8 +2,8 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0">
         <template #left>{{ title }} </template>
         <template #right>
-            <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" :disabled="buttonDisabled" @click="handleSubmit" />
-            <Button class="kn-button p-button-text p-button-rounded" icon="pi pi-times" @click="closeTemplate" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" />
+            <Button class="p-button-text p-button-rounded p-button-plain" icon="pi pi-times" @click="closeTemplate" />
         </template>
     </Toolbar>
     <div class="p-grid p-m-0 p-fluid p-jc-center" style="overflow:auto" data-test="drivers-form">
