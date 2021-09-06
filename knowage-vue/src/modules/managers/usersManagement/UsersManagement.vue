@@ -118,7 +118,7 @@ export default defineComponent({
     methods: {
         async loadAllUsers() {
             this.loading = true
-            axios
+            await axios
                 .get(this.apiUrl + 'users')
                 .then((response) => {
                     this.users = response.data
@@ -144,7 +144,6 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         setDefaultRoleValue(defaultRole: any) {
-            console.log('defaultRole', defaultRole)
             this.defaultRole = defaultRole
         },
         setSelectedRoles(roles: iRole[]) {
@@ -192,7 +191,7 @@ export default defineComponent({
         },
         saveOrUpdateUser(user: iUser) {
             const endpointPath = `${process.env.VUE_APP_RESTFUL_SERVICES_PATH}/2.0/users`
-            return this.userDetailsForm.id ? axios.put<iUser>(`${endpointPath}/${user.id}`, user) : axios.post<iUser>(endpointPath, user)
+            return this.userDetailsForm.id ? axios.put<any>(`${endpointPath}/${user.id}`, user) : axios.post<any>(endpointPath, user)
         },
         async saveUser() {
             this.loading = true
@@ -211,13 +210,8 @@ export default defineComponent({
             } else {
                 this.formatUserObject()
                 this.saveOrUpdateUser(this.userDetailsForm)
-                    .then(() => {
-                        this.dirty = false
-                        this.loadAllUsers()
-                        this.$store.commit('setInfo', {
-                            title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
-                            msg: this.userDetailsForm.id ? this.$t('common.toast.updateSuccess') : this.$t('managers.usersManagement.info.createMessage')
-                        })
+                    .then((response) => {
+                        this.afterSaveOrUpdate(response)
                     })
                     .catch((error) => {
                         this.$store.commit('setError', {
@@ -229,6 +223,22 @@ export default defineComponent({
                         this.loading = false
                     })
             }
+        },
+        async afterSaveOrUpdate(response) {
+            this.dirty = false
+            await this.loadAllUsers()
+            this.formInsert = false
+            const id: number | null = response.data
+            const selectedUser = this.users.find((user) => {
+                return user.id === id
+            })
+            if (selectedUser) {
+                this.onUserSelect(selectedUser)
+            }
+            this.$store.commit('setInfo', {
+                title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
+                msg: this.userDetailsForm.id ? this.$t('common.toast.updateSuccess') : this.$t('managers.usersManagement.info.createMessage')
+            })
         },
         onUserDelete(id: number) {
             this.loading = true
