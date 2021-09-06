@@ -19,6 +19,7 @@
 import pandas as pd
 import json
 import pkg_resources
+from app.utilities import configs
 
 def get_widget_config(data):
     script = data.get("script")
@@ -69,7 +70,11 @@ def dataframe_to_datastore(df):
     for i in range(0, n_rows):
         element = {}
         for j in range(0, n_cols):
-            element.update({df.columns[j]: df.loc[i][df.columns[j]]})
+            key = df.columns[j]
+            value = df.loc[i][df.columns[j]]
+            if type(value) is pd.Timestamp:
+                value = value.strftime(configs.TIMESTAMP_FORMAT)
+            element.update({key: value})
         knowage_json.append(element)
     return knowage_json
 

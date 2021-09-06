@@ -1,5 +1,5 @@
 <template>
-	<li role="none" :style="item.style" :title="item.descr || item.label" @mouseenter="toggleSubMenu" @mouseleave="toggleSubMenu">
+	<li role="menu" :style="[item.style, getVisibilityClass(item)]" :title="item.descr || item.label" @mouseenter="toggleSubMenu" @mouseleave="toggleSubMenu">
 		<router-link v-if="item.to && !item.disabled" :to="item.to" custom v-slot="{ navigate, href, isActive }" exact>
 			<a :href="href" @click="onClick($event, navigate)" role="menuitem" :class="isActive && 'router-link-active'">
 				<Badge v-if="badge > 0" :value="badge" severity="danger"></Badge>
@@ -13,8 +13,9 @@
 		</router-link>
 		<a v-else :href="item.url" @click="onClick" :target="item.target" role="menuitem" :tabindex="item.disabled ? null : '0'">
 			<Badge v-if="badge > 0" :value="badge" severity="danger"></Badge>
-			<span v-if="item.iconCls" :class="['p-menuitem-icon', item.iconCls]"></span>
+			<span v-if="item.iconCls && item.command != 'languageSelection'" :class="['p-menuitem-icon', item.iconCls]"></span>
 			<img v-if="item.custIcon" :src="item.custIcon" />
+			<img v-if="item.iconCls && item.command === 'languageSelection'" :src="require('@/assets/images/flags/' + locale.toLowerCase().substring(3, 5) + '.svg')" />
 			<span v-if="!item.iconCls && !item.custIcon" class="p-menuitem-icon fas fa-file"></span>
 			<span v-if="item.descr" class="p-menuitem-text">{{ $t(item.descr) }}</span>
 			<span v-else class="p-menuitem-text">{{ $t(item.label) }}</span>
@@ -31,6 +32,7 @@
 <script lang="ts">
 	import { defineComponent } from 'vue'
 	import Badge from 'primevue/badge'
+	import { mapState } from 'vuex'
 
 	export default defineComponent({
 		name: 'kn-menu-item',
@@ -55,7 +57,17 @@
 			},
 			toggleSubMenu() {
 				this.openedLi = !this.openedLi
+			},
+			getVisibilityClass(item) {
+				if (!item.conditionedView) return true
+
+				return !item.visible ? 'display:none' : ''
 			}
+		},
+		computed: {
+			...mapState({
+				locale: 'locale'
+			})
 		}
 	})
 </script>

@@ -12,7 +12,7 @@
                 <template #empty>{{ $t('managers.businessModelManager.noSavedVersions') }}</template>
                 <template #option="slotProps">
                     <div class="kn-list-item" :data-test="'version-' + slotProps.option.id">
-                        <RadioButton name="active" :value="slotProps.option" v-model="activeVersion" @change="setActive"></RadioButton>
+                        <RadioButton name="active" :value="slotProps.option" v-model="activeVersion" :disabled="readonly" @change="setActive"></RadioButton>
                         <div class="kn-list-item-text">
                             <span>{{ slotProps.option.fileName }}</span>
                             <span class="kn-list-item-text-secondary">{{ creationDate(slotProps.option.creationDate) }}</span>
@@ -56,6 +56,9 @@ export default defineComponent({
         versions: {
             type: Array,
             required: true
+        },
+        readonly: {
+            type: Boolean
         }
     },
     emits: ['touched', 'deleted'],
@@ -106,7 +109,9 @@ export default defineComponent({
             if (version.hasFileModel) {
                 this.items.push({ label: this.$t('managers.businessModelManager.downloadModel'), icon: 'fa fa-file-code-o', command: () => this.downloadFile(version.id, 'SBIMODEL') })
             }
-            this.items.push({ label: this.$t('common.delete'), icon: 'far fa-trash-alt', command: () => this.deleteVersionConfirm(version.id) })
+            if (!this.readonly) {
+                this.items.push({ label: this.$t('common.delete'), icon: 'far fa-trash-alt', command: () => this.deleteVersionConfirm(version.id) })
+            }
         },
         setActive() {
             this.previousActiveVersion.active = false

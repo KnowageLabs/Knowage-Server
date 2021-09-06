@@ -10,32 +10,18 @@
             "width": "50%"
         }
     },
-    "card": {
-        "style": {
-            "height": "18em",
-            "width": "100%",
-            "margin-bottom": "2em"
-        }
-    },
-    "tableCard": {
-        "style": {
-            "height": "100%",
-            "width": "100%",
-            "margin-bottom": "2em"
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "success": "common.toast.success",
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
         }
     },
     "pField": {
         "style": {
             "margin-bottom": "40px"
         }
-    },
-    "operation": {
-        "insert": {
-            "toastTitle": "common.toast.createTitle"
-        },
-        "update": {
-            "toastTitle": "common.toast.updateTitle"
-        },
-        "success": "common.toast.success"
     }
 }
