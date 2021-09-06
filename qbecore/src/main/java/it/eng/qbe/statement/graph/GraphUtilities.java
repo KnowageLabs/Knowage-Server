@@ -171,7 +171,7 @@ public class GraphUtilities {
 			String relationshipsName = relationshipJSON.getString(RELATIONSHIP_ID);
 
 			relationshipsNames.add(relationshipsName);
-			JoinType joinType = JoinType.valueOf(relationshipJSON.getString(JOIN_TYPE));
+			JoinType joinType = JoinType.valueOf(relationshipJSON.optString(JOIN_TYPE, JoinType.INNER.toString()));
 			joinTypeMapping.put(relationshipsName, joinType);
 			isConsideredMapping.put(relationshipsName, relationshipJSON.getBoolean(IS_CONSIDERED));
 
