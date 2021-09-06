@@ -18,29 +18,42 @@
 
 package it.eng.knowage.websocket;
 
+import java.io.IOException;
+
 import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-public class KnowageWebSocketMessageDecoder implements Decoder.Text<JSONObject> {
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import it.eng.knowage.websocket.bo.WebSocketBO;
+
+public class KnowageWebSocketMessageDecoder implements Decoder.Text<WebSocketBO> {
 	private static final Logger logger = Logger.getLogger(KnowageWebSocketMessageDecoder.class);
 
 	@Override
-	public JSONObject decode(String s) throws DecodeException {
+	public WebSocketBO decode(String s) throws DecodeException {
 
-		JSONObject jsonObject = null;
+		ObjectMapper mapper = new ObjectMapper();
+		WebSocketBO json = null;
 		try {
-			new JSONObject(s);
-		} catch (JSONException e) {
+			json = mapper.readValue(s, WebSocketBO.class);
+		} catch (JsonParseException e) {
+			String message = "Error during decoding KnowageWebSocketMessage";
+			logger.error(message);
+		} catch (JsonMappingException e) {
+			String message = "Error during decoding KnowageWebSocketMessage";
+			logger.error(message);
+		} catch (IOException e) {
 			String message = "Error during decoding KnowageWebSocketMessage";
 			logger.error(message);
 		}
 
-		return jsonObject;
+		return json;
 	}
 
 	@Override

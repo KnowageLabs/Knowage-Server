@@ -19,7 +19,7 @@
                         </div>
                     </div>
                     <p>
-                        <Message severity="info">{{ $t('managers.usersManagement.defaultRoleInfo') }}</Message>
+                        <Message severity="info" v-if="selectedRoles.length > 0">{{ $t('managers.usersManagement.defaultRoleInfo') }}</Message>
                     </p>
                     <DataTable
                         :value="rolesList"
@@ -38,7 +38,7 @@
                         <template #empty>
                             {{ $t('common.info.noDataFound') }}
                         </template>
-                        <Column selectionMode="multiple" dataKey="id"></Column>
+                        <Column selectionMode="multiple" dataKey="id" style="width:50px"></Column>
                         <Column field="name" :header="$t('common.name')"></Column>
                     </DataTable>
                 </template>

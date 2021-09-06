@@ -37,4 +37,6 @@ public interface SbiWsEventsDao extends ISpagoBIDao {
 
 	public void updateEvent(SbiHibernateModel sbiWsEvent);
 
+	public void deleteEvent(SbiWsEvent sbiWsEvent);
+
 }

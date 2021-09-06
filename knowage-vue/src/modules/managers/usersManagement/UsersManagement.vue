@@ -17,7 +17,7 @@
             </div>
 
             <KnHint :title="'managers.usersManagement.title'" :hint="'managers.usersManagement.hint'" v-if="hiddenForm"></KnHint>
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0" :hidden="hiddenForm">
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page" v-show="!hiddenForm">
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
                     <template #left>
                         {{ userDetailsForm.userId }}
@@ -28,7 +28,7 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <div class="card">
+                <div class="kn-page-content">
                     <TabView class="tabview-custom kn-tab" ref="usersFormTab">
                         <TabPanel>
                             <template #header>
@@ -48,7 +48,7 @@
                             <template #header>
                                 <span>{{ $t('managers.usersManagement.attributes') }}</span>
                             </template>
-                            <UserAttributesForm :attributes="attributes" v-model="attributesForm" @formDirty="onFormDirty"></UserAttributesForm>
+                            <UserAttributesForm :attributes="attributes" :model="attributesForm" @formDirty="onFormDirty"></UserAttributesForm>
                         </TabPanel>
                     </TabView>
                 </div>
@@ -183,7 +183,6 @@ export default defineComponent({
         formatUserObject() {
             delete this.userDetailsForm.passwordConfirm
             this.userDetailsForm['defaultRoleId'] = this.getRoleId()
-            console.log('this.userDetailsForm:', this.userDetailsForm['defaultRoleId'])
 
             this.userDetailsForm['sbiUserAttributeses'] = { ...this.attributesForm }
             this.userDetailsForm['sbiExtUserRoleses'] = this.selectedRoles ? [...this.selectedRoles.map((selRole) => selRole.id)] : []
@@ -197,7 +196,13 @@ export default defineComponent({
         },
         async saveUser() {
             this.loading = true
-            if (this.selectedRoles?.length > 1 && !this.defaultRole) {
+            if (!this.selectedRoles || this.selectedRoles.length == 0) {
+                this.$store.commit('setError', {
+                    title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
+                    msg: this.$t('managers.usersManagement.error.noRolesSelected')
+                })
+                this.loading = false
+            } else if (this.selectedRoles?.length > 1 && !this.defaultRole) {
                 this.$store.commit('setError', {
                     title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
                     msg: this.$t('managers.usersManagement.error.missingDefaultRole')
@@ -205,7 +210,6 @@ export default defineComponent({
                 this.loading = false
             } else {
                 this.formatUserObject()
-                console.log('SAVE OR UPDATE')
                 this.saveOrUpdateUser(this.userDetailsForm)
                     .then(() => {
                         this.dirty = false
@@ -216,7 +220,10 @@ export default defineComponent({
                         })
                     })
                     .catch((error) => {
-                        console.log(error.response)
+                        this.$store.commit('setError', {
+                            title: error.title,
+                            msg: error.msg
+                        })
                     })
                     .finally(() => {
                         this.loading = false
@@ -235,7 +242,10 @@ export default defineComponent({
                     })
                 })
                 .catch((error) => {
-                    console.log(error.response)
+                    this.$store.commit('setError', {
+                        title: error.title,
+                        msg: error.msg
+                    })
                 })
                 .finally(() => {
                     this.hiddenForm = true

@@ -67,7 +67,7 @@ public class ExcelExportJob extends AbstractExportJob {
 			SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
 
 			// create WB
-			try(Workbook wb = new SXSSFWorkbook()) {
+			try (Workbook wb = new SXSSFWorkbook()) {
 				Sheet sheet = wb.createSheet("dataset");
 				CreationHelper createHelper = wb.getCreationHelper();
 
@@ -161,8 +161,9 @@ public class ExcelExportJob extends AbstractExportJob {
 											Date date = dateFormat.parse(formatedDate);
 											cell.setCellValue(date);
 											cell.setCellStyle(dateCellStyle);
-										} else if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz) || Double.class.isAssignableFrom(clazz)
-												|| Float.class.isAssignableFrom(clazz) || BigDecimal.class.isAssignableFrom(clazz)) {
+										} else if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz)
+												|| Double.class.isAssignableFrom(clazz) || Float.class.isAssignableFrom(clazz)
+												|| BigDecimal.class.isAssignableFrom(clazz)) {
 											// Format Numbers
 											if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz)) {
 												cell.setCellValue(Double.parseDouble(value.toString()));
@@ -228,7 +229,7 @@ public class ExcelExportJob extends AbstractExportJob {
 
 	@Override
 	protected String mime() {
-		return "application/vnd.ms-excel";
+		return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 	}
 
 }
