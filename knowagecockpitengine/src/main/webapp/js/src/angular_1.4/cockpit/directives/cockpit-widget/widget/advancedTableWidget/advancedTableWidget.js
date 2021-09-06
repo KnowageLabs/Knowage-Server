@@ -751,10 +751,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						break;
 					case '>':
 						fullfilledCondition = data[threshold.column] > valueToCompare;
+						break;
 					case '<':
 						fullfilledCondition = data[threshold.column] < valueToCompare;
+						break;
 					case '!=':
 						fullfilledCondition = data[threshold.column] != valueToCompare;
+						break;
 					}
 					
 					if(fullfilledCondition){
@@ -992,10 +995,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if ($scope.ngModel.settings.modalSelectionColumn!= undefined) {
 
 					var rows = [];
+					var tempAlias = '';
+					
+					for(var i in $scope.ngModel.content.columnSelectedOfDataset){
+						if($scope.ngModel.content.columnSelectedOfDataset[i].name == $scope.ngModel.settings.modalSelectionColumn){
+							tempAlias = $scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow;
+						}
+					}
+					
 					rows.push(mapRow(node.data));
 
 					for(var k in rows){
-						newValue.push(rows[k][$scope.ngModel.settings.modalSelectionColumn]);
+						newValue.push(rows[k][tempAlias]);
 					}
 				}
 				else {

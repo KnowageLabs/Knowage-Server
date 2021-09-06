@@ -79,7 +79,7 @@
 	import axios from 'axios'
 	import { defineComponent } from 'vue'
 	import { FilterMatchMode, FilterOperator } from 'primevue/api'
-	import { IColumn } from './ImportExport'
+	import { ITableColumn } from '../commons/ITableColumn'
 	import Badge from 'primevue/badge'
 	import Column from 'primevue/column'
 	import DataTable from 'primevue/datatable'
@@ -146,7 +146,7 @@
 			emitImport(): void {
 				this.$emit('import', { files: this.uploadedFiles })
 			},
-			getData(type): Array<IColumn> {
+			getData(type): Array<ITableColumn> {
 				let columns = this.importExportDescriptor['import'][type]['column']
 				columns.sort(function(a, b) {
 					if (a.position > b.position) return 1

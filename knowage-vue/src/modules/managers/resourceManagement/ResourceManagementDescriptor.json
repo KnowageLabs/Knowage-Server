@@ -1,0 +1,72 @@
+{
+	"column": [
+		{
+			"displayType": "date",
+			"field": "lastModified",
+			"header": "managers.resourceManagement.column.lastModified",
+			"position": 3,
+			"style": {
+				"width": "20%"
+			}
+		},
+		{
+			"field": "name",
+			"header": "managers.resourceManagement.column.name",
+			"position": 1,
+			"style": {
+				"width": "60%"
+			}
+		},
+		{
+			"field": "selectionMode",
+			"header": "",
+			"position": 0,
+			"style": {
+				"width": "5%"
+			}
+		},
+		{
+			"displayType": "fileSize",
+			"field": "size",
+			"header": "managers.resourceManagement.column.size",
+			"position": 2,
+			"style": {
+				"width": "15%"
+			}
+		}
+	],
+	"metadata": {
+		"accuracyAndPerformance": {
+			"label": "managers.resourceManagement.metadata.accuracyAndPerformance"
+		},
+		"formatOfData": {
+			"label": "managers.resourceManagement.metadata.formatOfData"
+		},
+		"openSource": {
+			"label": "managers.resourceManagement.metadata.openSource"
+		},
+		"typeOfAnalytics": {
+			"label": "managers.resourceManagement.metadata.typeOfAnalytics.label",
+			"options": {
+				"descriptive": {
+					"name": "managers.resourceManagement.metadata.typeOfAnalytics.options.descriptive",
+					"value": "descriptive"
+				},
+				"predictive": {
+					"name": "managers.resourceManagement.metadata.typeOfAnalytics.options.predictive",
+					"value": "predictive"
+				},
+				"prescriptive": {
+					"name": "managers.resourceManagement.metadata.typeOfAnalytics.options.prescriptive",
+					"value": "prescriptive"
+				}
+			}
+		},
+		"usageOfTheModel": {
+			"label": "managers.resourceManagement.metadata.usageOfTheModel"
+		},
+		"version": {
+			"label": "managers.resourceManagement.metadata.version"
+		}
+	}
+}

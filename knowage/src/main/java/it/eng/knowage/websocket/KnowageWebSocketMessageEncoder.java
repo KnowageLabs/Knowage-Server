@@ -21,16 +21,15 @@ package it.eng.knowage.websocket;
 import java.io.IOException;
 import java.io.Writer;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonWriter;
 import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
 
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class KnowageWebSocketMessageEncoder implements Encoder.TextStream<JSONObject> {
+import it.eng.knowage.websocket.bo.WebSocketBO;
+
+public class KnowageWebSocketMessageEncoder implements Encoder.TextStream<WebSocketBO> {
 
 	@Override
 	public void init(EndpointConfig endpointConfig) {
@@ -43,8 +42,10 @@ public class KnowageWebSocketMessageEncoder implements Encoder.TextStream<JSONOb
 	}
 
 	@Override
-	public void encode(JSONObject object, Writer writer) throws EncodeException, IOException {
-		writer.write(object.toString());
+	public void encode(WebSocketBO object, Writer writer) throws EncodeException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		String json = mapper.writeValueAsString(object);
+		writer.write(json);
 	}
 
 }

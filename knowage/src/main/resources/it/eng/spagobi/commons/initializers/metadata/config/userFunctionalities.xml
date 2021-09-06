@@ -119,6 +119,8 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ReadRoles" description="ReadRoles" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="PythonWidget" description="CreatePythonWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="WidgetGalleryManagement" description="WidgetGalleryManagement" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ResourceManagement" description="ResourceManagement" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ResourceManagementDev" description="ResourceManagementDev" />
 	
 	<!-- Authorizations for KnowageER -->
 	<USER_FUNCTIONALITY productType="KnowageER" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -163,6 +165,8 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="SharedDevelopment" description="SharedDevelopment" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="DomainWrite" description="DomainWrite" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="ReadRoles" description="ReadRoles" />
+	<USER_FUNCTIONALITY productType="KnowageER" name="ResourceManagement" description="ResourceManagement" />
+	<USER_FUNCTIONALITY productType="KnowageER" name="ResourceManagementDev" description="ResourceManagementDev" />
 	
 	<!-- Authorizations for KnowagePM -->
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ConstraintManagement" description="ConstraintManagement"/>
