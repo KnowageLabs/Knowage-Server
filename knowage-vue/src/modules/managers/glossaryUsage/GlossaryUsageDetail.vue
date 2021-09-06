@@ -1,7 +1,7 @@
 <template>
     <div>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-        <div class="p-grid" v-if="!linkTableVisible">
+        <div class="p-grid p-m-0" v-if="!linkTableVisible">
             <div class="p-col-6">
                 <GlossaryUsageNavigationCard class="p-m-2" :type="'document'" :items="documents" @infoClicked="showDocumentInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onDocumentsSelected"></GlossaryUsageNavigationCard>
             </div>
