@@ -61,8 +61,8 @@
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.mode.valueSelection" :additionalTranslateParams="{ fieldName: $t('common.type') }"></KnValidationMessages>
                 </div>
-                <div class="p-col-9 p-fluid p-formgrid p-grid" v-if="mode.valueSelection === 'lov'">
-                    <div class="p-field p-col-6">
+                <div class="p-col-9 p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-6" v-if="mode.valueSelection === 'lov'">
                         <span class="p-input-icon-right">
                             <span class="p-float-label">
                                 <InputText id="lov" v-model="mode.typeLov.name" class="kn-material-input" type="text" disabled />
@@ -72,7 +72,7 @@
                         </span>
                         <KnValidationMessages class="p-mt-1" :vComp="v$.mode.typeLov" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.lov') }" :specificTranslateKeys="{ required_lovId_for_lov: 'common.validation.required' }"></KnValidationMessages>
                     </div>
-                    <div class="p-field p-col-6">
+                    <div class="p-field p-col-6" v-if="mode.valueSelection === 'lov'">
                         <span class="p-float-label">
                             <Dropdown
                                 id="type"
@@ -91,9 +91,7 @@
                         </span>
                         <KnValidationMessages class="p-mt-1" :vComp="v$.mode.selectionType" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.modality') }" :specificTranslateKeys="{ required_type_for_lov: 'common.validation.required' }"></KnValidationMessages>
                     </div>
-                </div>
-                <div class="p-col-9 p-fluid p-formgrid p-grid" v-if="mode.valueSelection === 'map_in'">
-                    <div class="p-field p-col-6">
+                    <div class="p-field p-col-6" v-if="mode.valueSelection === 'map_in'">
                         <span class="p-float-label">
                             <Dropdown
                                 id="type"
@@ -112,7 +110,7 @@
                         </span>
                         <KnValidationMessages class="p-mt-1" :vComp="v$.mode.selectedLayer" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.layer') }" :specificTranslateKeys="{ required_for_map_in: 'common.validation.required' }"></KnValidationMessages>
                     </div>
-                    <div class="p-field p-col-6">
+                    <div class="p-field p-col-6" v-if="mode.valueSelection === 'map_in'">
                         <span class="p-float-label">
                             <InputText id="prop" class="kn-material-input" type="text" v-model="mode.selectedLayerProp" />
                             <label for="prop" class="kn-material-input-label">{{ $t('managers.driversManagement.useModes.layerProp') }} </label>
@@ -125,7 +123,7 @@
                         <label for="default" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.defaultValue') }} * </label>
                     </span>
                 </div>
-                <div class="p-field p-col-6" v-if="selectedDefault === 'lov'">
+                <div class="p-field p-col-8" v-if="selectedDefault === 'lov'">
                     <span class="p-input-icon-right">
                         <span class="p-float-label">
                             <InputText id="lov" v-model="mode.defLov.name" class="kn-material-input" type="text" disabled />
@@ -160,7 +158,7 @@
                         <label for="max" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.maxValue') }} * </label>
                     </span>
                 </div>
-                <div class="p-field p-col-6" v-if="selectedMax === 'lov'">
+                <div class="p-field p-col-8" v-if="selectedMax === 'lov'">
                     <span class="p-input-icon-right">
                         <span class="p-float-label">
                             <InputText id="lov" v-model="mode.maxLov.name" class="kn-material-input" type="text" disabled />
