@@ -67,11 +67,17 @@
                                 <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonVisible[slotProps.node.id] = true" @mouseleave="buttonVisible[slotProps.node.id] = false" @drop="saveWordConfirm($event, slotProps.node)" @dragover.prevent @dragenter.prevent>
                                     <span>{{ slotProps.node.label }}</span>
                                     <div v-show="buttonVisible[slotProps.node.id]" class="p-ml-2">
-                                        <Button v-if="!slotProps.node.data.HAVE_WORD_CHILD && slotProps.node.data.CONTENT_NM" icon="pi pi-bars" class="p-button-link p-button-sm p-p-0" @click.stop="showNodeDialog(slotProps.node, 'new')" />
-                                        <Button v-if="!slotProps.node.data.HAVE_CONTENTS_CHILD && slotProps.node.data.CONTENT_NM" icon="pi pi-book" class="p-button-link p-button-sm p-p-0" @click.stop="addWord(slotProps.node)" />
-                                        <Button v-if="slotProps.node.data.CONTENT_NM" icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" @click.stop="showNodeDialog(slotProps.node, 'edit')" />
-                                        <Button icon="pi pi-info-circle" class="p-button-link p-button-sm p-p-0" @click.stop="$emit('infoClicked', slotProps.node.data)" />
-                                        <Button icon="far fa-trash-alt" class="p-button-link p-button-sm p-p-0" @click.stop="deleteNodeConfirm(slotProps.node)" />
+                                        <Button
+                                            v-if="!slotProps.node.data.HAVE_WORD_CHILD && slotProps.node.data.CONTENT_NM"
+                                            icon="pi pi-bars"
+                                            class="p-button-link p-button-sm p-p-0"
+                                            v-tooltip.top="$t('managers.glossary.glossaryDefinition.addNode')"
+                                            @click.stop="showNodeDialog(slotProps.node, 'new')"
+                                        />
+                                        <Button v-if="!slotProps.node.data.HAVE_CONTENTS_CHILD && slotProps.node.data.CONTENT_NM" icon="pi pi-book" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('managers.glossary.glossaryDefinition.addWord')" @click.stop="addWord(slotProps.node)" />
+                                        <Button v-if="slotProps.node.data.CONTENT_NM" icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.edit')" @click.stop="showNodeDialog(slotProps.node, 'edit')" />
+                                        <Button icon="pi pi-info-circle" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('managers.glossary.glossaryDefinition.showInfo')" @click.stop="$emit('infoClicked', slotProps.node.data)" />
+                                        <Button icon="far fa-trash-alt" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.delete')" @click.stop="deleteNodeConfirm(slotProps.node)" />
                                     </div>
                                 </div>
                             </template>

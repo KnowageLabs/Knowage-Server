@@ -585,6 +585,8 @@
                 "word": "Word"
             },
             "glossaryDefinition": {
+                "addNode": "Add node",
+                "addWord": "Add word",
                 "cloneTitle": "Clone a Glossary",
                 "deleteNodeConfirmMessage": "Deleting a node all the underlying node (if present) will be deleted. Continue?",
                 "details": "Details",
@@ -599,6 +601,7 @@
                 "saveTitle": "New glossary",
                 "saveWordConfirmMessage": "Data will be immediately saved.",
                 "saveWordConfirmTitle": "Word will be saved. Continue?",
+                "showInfo": "Show info",
                 "status": "Status",
                 "title": "Glossary Definition",
                 "updateTitle": "Edit glossary",
