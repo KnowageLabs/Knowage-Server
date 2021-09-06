@@ -39,6 +39,7 @@
 		},
 		mounted() {
 			this.setBreadcrumbs()
+			this.folderName = ''
 		},
 		methods: {
 			closeDialog(): void {
@@ -47,8 +48,10 @@
 			},
 			emitCreateFolder(): void {
 				this.$emit('createFolder', this.folderName)
+				this.folderName = ''
 			},
 			setBreadcrumbs() {
+				this.folderName = ''
 				this.items = []
 
 				if (this.path) {
@@ -71,7 +74,7 @@
 <style lang="scss">
 	.createFolderDialog {
 		min-width: 600px;
-		width: 60%;
+		width: 600px;
 		max-width: 1200px;
 
 		.p-fileupload-buttonbar {
@@ -81,15 +84,22 @@
 			}
 		}
 	}
+	.p-breadcrumb {
+		border: none;
+		border-radius: 0;
+		border-bottom: 1px solid $list-border-color;
+
+		cursor: default !important;
+
+		&:deep(.p-menuitem-link) {
+			cursor: default !important;
+		}
+	}
+
 	.folderNameInputText {
 		width: 100%;
 	}
 	.createFolderDialogContent {
 		padding: 16px;
-	}
-	.p-breadcrumb {
-		border: none;
-		border-radius: 0;
-		border-bottom: 1px solid $list-border-color;
 	}
 </style>

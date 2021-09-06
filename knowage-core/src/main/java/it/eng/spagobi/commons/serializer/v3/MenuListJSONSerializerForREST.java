@@ -137,6 +137,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		allowedMenuToNotDuplicate.put("menu.importexport.glossary", 10008);
 		allowedMenuToNotDuplicate.put("menu.importexport.catalog", 10006);
 		allowedMenuToNotDuplicate.put("menu.i18n", 9001);
+		allowedMenuToNotDuplicate.put("menu.news", 5007);
 
 		technicalMenuCommunityOrEnterprise.put("5008", "5009");
 	}
@@ -406,6 +407,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				if (addElement) {
 					JSONObject menu = createMenuNode(locale, messageBuilder, itemSB, menuType);
 					items.put(menu);
+					if (menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES)
+						technicalUserMenuIds.add(Integer.valueOf((String) itemSB.getAttribute(ID)));
 				}
 			}
 
@@ -582,13 +585,13 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			throws JSONException {
 		JSONObject menu = createMenuNode(locale, messageBuilder, itemSB, menuType);
 
-		if (menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES) {
-			String strId = (String) itemSB.getAttribute(ID);
-			if (strId != null) {
-				Integer id = Integer.valueOf(strId);
-				technicalUserMenuIds.add(id);
-			}
-		}
+//		if (menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES) {
+//			String strId = (String) itemSB.getAttribute(ID);
+//			if (strId != null) {
+//				Integer id = Integer.valueOf(strId);
+//				technicalUserMenuIds.add(id);
+//			}
+//		}
 
 		return menu;
 	}

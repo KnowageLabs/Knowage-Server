@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.engines.qbe.exporter;
 
+import static java.util.stream.Collectors.toList;
 import static org.apache.poi.ss.usermodel.BorderStyle.THIN;
 import static org.apache.poi.ss.usermodel.HorizontalAlignment.LEFT;
 import static org.apache.poi.ss.usermodel.HorizontalAlignment.RIGHT;
@@ -27,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -61,7 +63,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class QbeXLSXExporter {
 
 	/** Logger component. */
-	public static transient Logger logger = Logger.getLogger(QbeXLSXExporter.class);
+	private static final Logger logger = Logger.getLogger(QbeXLSXExporter.class);
 
 	/** Configuration properties */
 	public static final String PROPERTY_HEADER_FONT_SIZE = "HEADER_FONT_SIZE";
@@ -95,16 +97,33 @@ public class QbeXLSXExporter {
 	private Locale locale;
 	private Map<String, Object> properties;
 
-	private DataIterator iterator = null;
 	private List<?> extractedFields = null;
-	private Map<Integer, CellStyle> decimalFormats = new HashMap<Integer, CellStyle>();
+	private Map<Integer, CellStyle> decimalFormats = new HashMap<>();
 	private int maxNumOfRows = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
 
+	private final DataIterator iterator;
+	private final IMetaData metaData;
+	private final int visibleFieldCount;
+	private final List<IFieldMetaData> visibleFields;
+	private final List<Integer> indexesOfVisibleFields;
+
 	public QbeXLSXExporter(DataIterator iterator, Locale locale, int recordsLimit) {
-		super();
 		this.iterator = iterator;
+		this.metaData = iterator.getMetaData();
+
+		List<IFieldMetaData> fieldsMetadata = this.metaData.getFieldsMeta();
+
+		this.visibleFields = fieldsMetadata.stream()
+			.filter(e -> (Boolean) e.getProperties().getOrDefault("visible", true))
+			.collect(toList());
+		this.indexesOfVisibleFields = IntStream.range(0, fieldsMetadata.size())
+			.filter(e -> (Boolean) fieldsMetadata.get(e).getProperties().getOrDefault("visible", true))
+			.boxed()
+			.collect(toList());
+		this.visibleFieldCount = visibleFields.size();
+
 		this.locale = locale;
-		this.properties = new HashMap<String, Object>();
+		this.properties = new HashMap<>();
 		this.maxNumOfRows = Math.min(SpreadsheetVersion.EXCEL2007.getLastRowIndex(), recordsLimit);
 	}
 
@@ -127,8 +146,8 @@ public class QbeXLSXExporter {
 		if (iterator.hasNext()) {
 			boolean overflow = false;
 
-			CellStyle[] cellTypes = fillSheetHeader(sheet, wb, createHelper, startRow, DEFAULT_START_COLUMN);
-			overflow = fillSheetData(sheet, wb, createHelper, cellTypes, startRow + 1, DEFAULT_START_COLUMN);
+			CellStyle[] cellTypes = fillSheetHeader(sheet, createHelper, startRow, DEFAULT_START_COLUMN);
+			overflow = fillSheetData(sheet, createHelper, cellTypes, startRow + 1, DEFAULT_START_COLUMN);
 
 			if (overflow) {
 				fillMessageHeader(sheet);
@@ -151,7 +170,7 @@ public class QbeXLSXExporter {
 	 *
 	 * @return ...
 	 */
-	private CellStyle[] fillSheetHeader(Sheet sheet, Workbook workbook, CreationHelper createHelper, int beginRowHeaderData, int beginColumnHeaderData) {
+	private CellStyle[] fillSheetHeader(Sheet sheet, CreationHelper createHelper, int beginRowHeaderData, int beginColumnHeaderData) {
 
 		CellStyle[] cellTypes;
 
@@ -159,18 +178,15 @@ public class QbeXLSXExporter {
 
 		try {
 
-			IMetaData dataStoreMetaData = getMetadata();
-			int colnumCount = getFieldCount();
-
 			Row headerRow = sheet.getRow(beginRowHeaderData);
 			CellStyle headerCellStyle = buildHeaderCellStyle(sheet);
 
-			cellTypes = new CellStyle[colnumCount];
-			for (int j = 0; j < colnumCount; j++) {
+			cellTypes = new CellStyle[visibleFieldCount];
+			for (int j = 0; j < visibleFieldCount; j++) {
 				Cell cell = headerRow.createCell(j + beginColumnHeaderData);
 				cell.setCellType(getCellTypeString());
-				String fieldName = dataStoreMetaData.getFieldAlias(j);
-				IFieldMetaData fieldMetaData = dataStoreMetaData.getFieldMeta(j);
+				IFieldMetaData fieldMetaData = visibleFields.get(j);
+				String fieldName = fieldMetaData.getAlias();
 				String format = (String) fieldMetaData.getProperty("format");
 				String alias = fieldMetaData.getAlias();
 				String scaleFactorHeader = (String) fieldMetaData.getProperty(ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
@@ -215,7 +231,7 @@ public class QbeXLSXExporter {
 	/**
 	 * @return <code>false</code> if every record is written to the outp, <code>true</code> otherwise
 	 */
-	private boolean fillSheetData(Sheet sheet, Workbook wb, CreationHelper createHelper, CellStyle[] cellTypes, int beginRowData, int beginColumnData) {
+	private boolean fillSheetData(Sheet sheet, CreationHelper createHelper, CellStyle[] cellTypes, int beginRowData, int beginColumnData) {
 		boolean overflow = false;
 
 		CellStyle dCellStyle = this.buildCellStyle(sheet);
@@ -228,8 +244,6 @@ public class QbeXLSXExporter {
 		cellStyleDate.cloneStyleFrom(dCellStyle);
 		cellStyleDate.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy"));
 
-		IMetaData d = getMetadata();
-
 		int rownum = beginRowData;
 		while (iterator.hasNext()) {
 
@@ -241,12 +255,13 @@ public class QbeXLSXExporter {
 			Row rowVal = sheet.getRow(rownum);
 			IRecord record = iterator.next();
 			List fields = record.getFields();
-			int length = fields.size();
+			int length = visibleFieldCount;
 			for (int fieldIndex = 0; fieldIndex < length; fieldIndex++) {
-				IField f = (IField) fields.get(fieldIndex);
+				Integer realFieldIndex = indexesOfVisibleFields.get(fieldIndex);
+				IField f = (IField) fields.get(realFieldIndex);
 				if (f != null && f.getValue() != null) {
 
-					Class c = d.getFieldType(fieldIndex);
+					Class c = metaData.getFieldType(fieldIndex);
 					logger.debug("Column [" + (fieldIndex) + "] class is equal to [" + c.getName() + "]");
 					if (rowVal == null) {
 						rowVal = sheet.createRow(rownum);
@@ -255,7 +270,7 @@ public class QbeXLSXExporter {
 					cell.setCellStyle(dCellStyle);
 					if (Integer.class.isAssignableFrom(c) || Short.class.isAssignableFrom(c)) {
 						logger.debug("Column [" + (fieldIndex + 1) + "] type is equal to [" + "INTEGER" + "]");
-						IFieldMetaData fieldMetaData = d.getFieldMeta(fieldIndex);
+						IFieldMetaData fieldMetaData = metaData.getFieldMeta(fieldIndex);
 						String scaleFactor = (String) fieldMetaData.getProperty(ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
 						Number val = (Number) f.getValue();
 						Double doubleValue = MeasureScaleFactorOption.applyScaleFactor(val.doubleValue(), scaleFactor);
@@ -264,7 +279,7 @@ public class QbeXLSXExporter {
 						cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cellStyleInt);
 					} else if (Number.class.isAssignableFrom(c)) {
 						logger.debug("Column [" + (fieldIndex + 1) + "] type is equal to [" + "NUMBER" + "]");
-						IFieldMetaData fieldMetaData = d.getFieldMeta(fieldIndex);
+						IFieldMetaData fieldMetaData = metaData.getFieldMeta(fieldIndex);
 						String decimalPrecision = (String) fieldMetaData.getProperty(IFieldMetaData.DECIMALPRECISION);
 						CellStyle cs;
 						if (decimalPrecision != null) {
@@ -319,7 +334,7 @@ public class QbeXLSXExporter {
 		int dy2 = Units.pixelToEMU(1200);
 
 		// Magic numbers just to show a user friendly comment of suitable size
-		ClientAnchor anchor = drawing.createAnchor(dx1, dy1, dx2, dy2, 0, 1, getFieldCount(), 5);
+		ClientAnchor anchor = drawing.createAnchor(dx1, dy1, dx2, dy2, 0, 1, visibleFieldCount, 5);
 		Comment comment = drawing.createCellComment(anchor);
 
 		comment.setAuthor("Knowage");
@@ -476,14 +491,5 @@ public class QbeXLSXExporter {
 	private CellType getCellTypeBoolean() {
 		return CellType.BOOLEAN;
 	}
-
-	private IMetaData getMetadata() {
-		return iterator.getMetaData();
-	}
-
-	private int getFieldCount() {
-		return getMetadata().getFieldCount();
-	}
-
 
 }

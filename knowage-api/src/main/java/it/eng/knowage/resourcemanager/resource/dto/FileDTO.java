@@ -19,9 +19,18 @@ package it.eng.knowage.resourcemanager.resource.dto;
 
 import java.io.File;
 
+import javax.validation.constraints.NotNull;
+
+import it.eng.spagobi.services.validation.AlphanumericWithBrackets;
+import it.eng.spagobi.services.validation.Xss;
+
 public class FileDTO {
 
+	@NotNull
+	@Xss
+	@AlphanumericWithBrackets
 	private String name;
+
 	private long size;
 	private long lastModified;
 

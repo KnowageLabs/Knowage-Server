@@ -61,4 +61,9 @@ public class SbiWsEventsDaoImpl extends AbstractHibernateDAO implements SbiWsEve
 		return list(new SearchWsEventNotConsumed());
 	}
 
+	@Override
+	public void deleteEvent(SbiWsEvent sbiWsEvent) {
+		delete(SbiWsEvent.class, sbiWsEvent.getId());
+	}
+
 }

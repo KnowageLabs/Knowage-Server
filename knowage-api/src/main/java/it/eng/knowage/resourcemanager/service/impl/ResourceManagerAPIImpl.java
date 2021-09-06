@@ -30,6 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -79,6 +80,10 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	private static Map<String, List<String>> foldersForDevs = new HashMap<>();
 	private Map<String, HashMap<String, Object>> cachedNodesInfo = new HashMap<String, HashMap<String, Object>>();
 
+	private static final String RESOURCE_FUNCTIONALITY_DEV = "ResourceManagementDev";
+	private static final String RESOURCE_FUNCTIONALITY = "ResourceManagement";
+	private static final String MODEL_CATALOG_FUNCTIONALITY = "ModelCatalogResourceManagement";
+
 	@Autowired
 	HMACUtilities HMACUtilities;
 
@@ -114,12 +119,12 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			parentFolder.setKey(HMACUtilities.getKeyHashedValue(fullP.toString()));
 
 			FolderDTO mylist = createTree(parentFolder, profile, buondedBasePath, 0);
-			newRootFolder = new RootFolderDTO(mylist.getChildren());
+			newRootFolder = new RootFolderDTO(Arrays.asList(mylist));
 
 			LOGGER.debug("Finished resource path json tree");
 		} catch (IOException e) {
 			LOGGER.error("[ResourceManagerAPIImpl], [getFolders], ", e);
-			throw new KnowageRuntimeException(e.getMessage());
+			throw new KnowageRuntimeException(e);
 		}
 		return newRootFolder;
 	}
@@ -182,49 +187,46 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	@Override
 	public boolean canSee(Path path, SpagoBIUserProfile profile) {
 		boolean canSee = false;
-		if (profile.isIsSuperadmin() || hasAdministratorRole(profile)) {
+		if (profile.isIsSuperadmin()) {
 			return true;
 		} else {
-			for (String function : profile.getFunctions()) {
-				// TODO: functionality must be present
-				// if (function.equalsIgnoreCase("RESOURCE_FUNCTION")) {
-				// canSee = true;
-				// }
-			}
-			if (hasDevRole(profile)) {
-				if (foldersForDevs.get("DEV").contains(path.getFileName().toString())) {
-					return true;
+			if (hasDevFunctionality(profile)) {
+				List<String> restrictedFolders = foldersForDevs.get("DEV");
+				for (String folder : restrictedFolders) {
+					try {
+						Path completePath = getTotalPath(folder, profile);
+						if (path.startsWith(completePath)) {
+							return true;
+						}
+					} catch (TenantRepositoryMissingException e) {
+						throw new KnowageRuntimeException(e);
+					}
+
 				}
+			} else {
+				canSee = hasAdministratorFunction(profile);
 			}
 		}
 
 		return canSee;
 	}
 
-	public static boolean hasAdministratorRole(SpagoBIUserProfile profile) {
-		try {
-			for (String role : profile.getRoles()) {
-				if (role.equals("admin")) {
-					return true;
-				}
-			}
-			return false;
-		} catch (Exception e) {
-			throw new KnowageRuntimeException(e.getMessage());
+	// Admin functionalities, EE and CE
+	public static boolean hasAdministratorFunction(SpagoBIUserProfile profile) {
+		if (profile.getFunctions().contains(RESOURCE_FUNCTIONALITY)) {
+			return true;
 		}
+
+		return false;
 	}
 
-	public static boolean hasDevRole(SpagoBIUserProfile profile) {
-		try {
-			for (String role : profile.getRoles()) {
-				if (role.equals("dev")) {
-					return true;
-				}
-			}
-			return false;
-		} catch (Exception e) {
-			throw new KnowageRuntimeException(e.getMessage());
+	// DEV functionalities, EE and CE
+	public static boolean hasDevFunctionality(SpagoBIUserProfile profile) {
+		if (profile.getFunctions().contains(RESOURCE_FUNCTIONALITY_DEV)) {
+			return true;
 		}
+
+		return false;
 	}
 
 	// if user can't work with directory it is not necessary
@@ -254,7 +256,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				}
 			}
 		} catch (Exception e) {
-			throw new ImpossibleToCreateFolderException(e.getMessage());
+			throw new ImpossibleToCreateFolderException(e.getMessage(), e);
 		}
 		return bool;
 	}
@@ -270,13 +272,13 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				try {
 					FileUtils.deleteDirectory(file);
 				} catch (IOException e) {
-					throw new ImpossibleToDeleteFolderException(e.getMessage());
+					throw new ImpossibleToDeleteFolderException(e.getMessage(), e);
 				}
 			} else {
 				try {
 					FileUtils.forceDelete(file);
 				} catch (IOException e) {
-					throw new ImpossibleToDeleteFileException(e.getMessage());
+					throw new ImpossibleToDeleteFileException(e.getMessage(), e);
 				}
 			}
 		}
@@ -296,7 +298,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				pathToReturn = createZipFile(key, workingPath);
 			}
 		} catch (Exception e) {
-			throw new ImpossibleToCreateFileException(e.getMessage());
+			throw new ImpossibleToCreateFileException(e.getMessage(), e);
 		}
 		return pathToReturn;
 	}
@@ -318,7 +320,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				}
 			}
 		} catch (Exception e) {
-			throw new ImpossibleToDownloadFileException(e.getMessage());
+			throw new ImpossibleToDownloadFileException(e.getMessage(), e);
 		}
 		return pathToReturn;
 	}
@@ -422,7 +424,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				FileUtils.copyInputStreamToFile(archiveInputStream, tempArchive.toFile());
 			}
 		} catch (Exception e) {
-			throw new ImpossibleToUploadFileException(e.getMessage());
+			throw new ImpossibleToUploadFileException(e.getMessage(), e);
 		}
 	}
 
@@ -560,7 +562,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 			}
 		} catch (Exception e) { // TODO: change it for error handling
-			throw new KnowageRuntimeException(e.getMessage());
+			throw new KnowageRuntimeException(e);
 		} finally {
 			zip.close();
 		}
@@ -609,7 +611,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				}
 			}
 		} catch (Exception ex) {
-			throw new ImpossibleToReadMetadataException(ex.getMessage());
+			throw new ImpossibleToReadMetadataException(ex.getMessage(), ex);
 		}
 
 		return metadata;
@@ -635,7 +637,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				objectMapper.writeValue(totalPath.toFile(), fileDTO);
 			}
 		} catch (Exception e) {
-			throw new ImpossibleToSaveMetadataException(e.getMessage());
+			throw new ImpossibleToSaveMetadataException(e.getMessage(), e);
 
 		}
 		return fileDTO;
