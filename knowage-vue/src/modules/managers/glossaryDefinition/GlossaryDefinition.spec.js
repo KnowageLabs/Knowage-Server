@@ -49,6 +49,9 @@ const $store = {
 const factory = () => {
     return mount(GlossaryDefinition, {
         global: {
+            directives: {
+                tooltip() {}
+            },
             plugins: [PrimeVue],
             stubs: {
                 Button,
