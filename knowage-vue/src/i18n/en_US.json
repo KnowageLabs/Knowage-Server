@@ -496,6 +496,21 @@
             },
             "title": "Configuration Management"
         },
+        "constraintManagment": {
+            "dateValue": "Date value format",
+            "decimalPlaces": "Decimal places",
+            "deleteError": "Delete error",
+            "higherRangeValue": "Higher range value",
+            "hint": "Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "lowerRangeValue": "Lower range value",
+            "maxLenghtValue": "Max lenght value",
+            "minLenghtValue": "Min lenght value",
+            "rangeCheck": "Must be higher than lower value",
+            "regexpValue": "Regular expression",
+            "saveError": "Error, not saved",
+            "title": "Constraints",
+            "type": "Check type"
+        },
         "dataSourceManagement": {
             "form": {
                 "advancedOptions": {
