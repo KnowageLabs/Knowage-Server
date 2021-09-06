@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,18 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.commons.services;
+
+import java.sql.Connection;
+import java.util.List;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.dbaccess.sql.DataConnection;
@@ -36,24 +43,17 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 
-import java.sql.Connection;
-import java.util.List;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-
 public class DelegatedHibernateConnectionListService extends DelegatedBasicListService {
-	
+
 	/**
 	 * Gets the list.
-	 * 
+	 *
 	 * @param service the service
 	 * @param request the request
 	 * @param response the response
-	 * 
+	 *
 	 * @return the list
-	 * 
+	 *
 	 * @throws Exception the exception
 	 */
 	public static ListIFace getList(ServiceIFace service, SourceBean request, SourceBean response) throws Exception {
@@ -67,12 +67,12 @@ public class DelegatedHibernateConnectionListService extends DelegatedBasicListS
 			request.delAttribute("FIELD_ORDER");
 			request.setAttribute("FIELD_ORDER", currentFieldOrder);
 		}
-		
-		String currentTypOrder = (request.getAttribute("TYPE_ORDER") == null || ((String)request.getAttribute("TYPE_ORDER")).equals(""))?"":(String)request.getAttribute("TYPE_ORDER");		
+
+		String currentTypOrder = (request.getAttribute("TYPE_ORDER") == null || ((String)request.getAttribute("TYPE_ORDER")).equals(""))?"":(String)request.getAttribute("TYPE_ORDER");
 		if (currentTypOrder.equals("")){
 			currentTypOrder = " ASC";
 			request.delAttribute("TYPE_ORDER");
-			request.setAttribute("TYPE_ORDER",currentTypOrder);			
+			request.setAttribute("TYPE_ORDER",currentTypOrder);
 		}
 
 		InitializerIFace serviceInitializer = (InitializerIFace) service;
@@ -81,23 +81,24 @@ public class DelegatedHibernateConnectionListService extends DelegatedBasicListS
 		SourceBean rowsSourceBean = null;
 		pagedRows = Integer.parseInt((String) serviceInitializer.getConfig().getAttribute("ROWS"));
 		paginator.setPageSize(pagedRows);
-		SourceBean statement = (SourceBean) serviceInitializer.getConfig().getAttribute("QUERIES.SELECT_QUERY");		
-		
-		try {			
-			
+		SourceBean statement = (SourceBean) serviceInitializer.getConfig().getAttribute("QUERIES.SELECT_QUERY");
+
+		try {
+
 			aSession = HibernateSessionManager.getCurrentSession();
 			tx = aSession.beginTransaction();
 			//Connection jdbcConnection = aSession.connection();
-			Connection jdbcConnection = HibernateSessionManager.getConnection(aSession);
-			DataConnection dataConnection = getDataConnection(jdbcConnection);
-			
-			rowsSourceBean =
-				(SourceBean) DelegatedQueryExecutor.executeQuery(
-					serviceRequestContext.getRequestContainer(),
-					serviceRequestContext.getResponseContainer(),
-					dataConnection,
-					statement,
-					"SELECT");
+			try (Connection jdbcConnection = HibernateSessionManager.getConnection(aSession)) {
+				DataConnection dataConnection = getDataConnection(jdbcConnection);
+
+				rowsSourceBean =
+					(SourceBean) DelegatedQueryExecutor.executeQuery(
+						serviceRequestContext.getRequestContainer(),
+						serviceRequestContext.getResponseContainer(),
+						dataConnection,
+						statement,
+						"SELECT");
+			}
 		} catch (HibernateException he) {
 			logException(he);
 			if (tx != null)
@@ -117,13 +118,13 @@ public class DelegatedHibernateConnectionListService extends DelegatedBasicListS
 		}
 		else
 			for (int i = 0; i < rowsVector.size(); i++)
-				paginator.addRow(rowsVector.get(i));		
-		
+				paginator.addRow(rowsVector.get(i));
+
 		ListIFace list = new GenericList();
 		list.setPaginator(paginator);
-		
-		// filter the list 
-		Object valuefilterObj = (Object)request.getAttribute(SpagoBIConstants.VALUE_FILTER);
+
+		// filter the list
+		Object valuefilterObj = request.getAttribute(SpagoBIConstants.VALUE_FILTER);
 		String valuefilter = null;
 		if(valuefilterObj!=null){
 			valuefilter = valuefilterObj.toString();
@@ -138,17 +139,17 @@ public class DelegatedHibernateConnectionListService extends DelegatedBasicListS
 					.getAttribute(SpagoBIConstants.TYPE_VALUE_FILTER);
 			list = filterList(list, valuefilter, typeValueFilter, columnfilter, typeFilter, serviceRequestContext.getErrorHandler());
 		}
-		
+
 		return list;
 	}
-	
+
    /**
     * Gets the data connection.
-    * 
+    *
     * @param con the con
-    * 
+    *
     * @return the data connection
-    * 
+    *
     * @throws EMFInternalError the EMF internal error
     */
    public static DataConnection getDataConnection(Connection con) throws EMFInternalError {
@@ -164,17 +165,17 @@ public class DelegatedHibernateConnectionListService extends DelegatedBasicListS
        }
        return dataCon;
    }
-   
+
 	/**
 	 * Traces the exception information of a throwable input object.
-	 * 
+	 *
 	 * @param t The input throwable object
 	 */
 	public static void logException(Throwable t){
-		SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, 
-	            t.getClass().getName(), 
-	            "", 
+		SpagoBITracer.major(SpagoBIConstants.NAME_MODULE,
+	            t.getClass().getName(),
+	            "",
 	            t.getMessage());
 	}
-	
+
 }
