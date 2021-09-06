@@ -47,20 +47,20 @@
 		},
 		"typeOfAnalytics": {
 			"label": "managers.resourceManagement.metadata.typeOfAnalytics.label",
-			"options": {
-				"descriptive": {
+			"options": [
+				{
 					"name": "managers.resourceManagement.metadata.typeOfAnalytics.options.descriptive",
 					"value": "descriptive"
 				},
-				"predictive": {
+				{
 					"name": "managers.resourceManagement.metadata.typeOfAnalytics.options.predictive",
 					"value": "predictive"
 				},
-				"prescriptive": {
+				{
 					"name": "managers.resourceManagement.metadata.typeOfAnalytics.options.prescriptive",
 					"value": "prescriptive"
 				}
-			}
+			]
 		},
 		"usageOfTheModel": {
 			"label": "managers.resourceManagement.metadata.usageOfTheModel"
