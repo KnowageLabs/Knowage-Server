@@ -15,7 +15,7 @@
                 <DataTable
                     :value="items"
                     id="link-table"
-                    class="p-datatable-sm kn-table"
+                    class="p-datatable-sm kn-table p-mr-3"
                     v-model:selection="selectedItem"
                     selectionMode="single"
                     v-model:expandedRows="expandedRows"
@@ -41,13 +41,23 @@
                     <template #loading> {{ $t('common.info.dataLoading') }}</template>
                     <template #expansion="slotProps">
                         <div :style="glossaryUsageLinkCardDescriptor.dropZoneStyle" @drop="onDragDrop($event, slotProps.data)" @dragover.prevent @dragenter.prevent>
-                            <Chip class="p-m-2" v-for="word in associatedWords[slotProps.data.id]" :key="word.WORD_ID" :label="word.WORD" @click="deleteWordConfirm(word.WORD_ID, slotProps.data)" />
+                            <Chip class="p-m-2" v-for="word in associatedWords[slotProps.data.id]" :key="word.WORD_ID" :label="word.WORD">
+                                <span>{{ word.WORD }}</span>
+                                <i class="pi pi-times-circle chip-icon p-ml-3" @click="deleteWordConfirm(word.WORD_ID, slotProps.data)" />
+                            </Chip>
                         </div>
                     </template>
                     <Column :expander="true" :headerStyle="glossaryUsageLinkCardDescriptor.expanderHeaderStyle" />
                     <Column class="kn-truncated" v-for="col of glossaryUsageLinkCardDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"></Column>
                 </DataTable>
-                <GlossaryUsageLinkTree class="kn-flex" v-if="selectedItem && selectedItem.id && selectedItem.itemType !== 'document'" :treeWords="associatedWordsTree[selectedItem.id]" @delete="deleteTreeWord" @wordDropped="onDragDrop($event.event, $event.item)"></GlossaryUsageLinkTree>
+                <div class="kn-flex" v-if="selectedItem && selectedItem.id && selectedItem.itemType !== 'document'">
+                    <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                        <template #left>
+                            {{ $t('managers.glossary.glossaryUsage.column') }}
+                        </template>
+                    </Toolbar>
+                    <GlossaryUsageLinkTree :treeWords="associatedWordsTree[selectedItem.id]" @delete="deleteTreeWord" @wordDropped="onDragDrop($event.event, $event.item)"></GlossaryUsageLinkTree>
+                </div>
             </div>
         </template>
     </Card>
@@ -274,5 +284,9 @@ export default defineComponent({
 <style lang="scss" scoped>
 #link-table {
     flex: 2;
+}
+
+.chip-icon {
+    font-size: 0.9rem;
 }
 </style>

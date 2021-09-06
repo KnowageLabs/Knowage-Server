@@ -1,7 +1,14 @@
 <template>
     <Tree id="glossary-link-tree" :value="nodes" :expandedKeys="expandedKeys">
         <template #default="slotProps">
-            <div class="p-d-flex p-flex-row p-ai-center" @drop="onDragDrop($event, slotProps.node)" @dragover.prevent @dragenter.prevent>
+            <div
+                class="p-d-flex p-flex-row p-ai-center"
+                :class="{ dropzone: dropzoneActive[slotProps.node.key] }"
+                @drop="onDragDrop($event, slotProps.node, slotProps.node.key)"
+                @dragover.prevent=""
+                @dragenter.prevent="dropzoneActive[slotProps.node.key] = true"
+                @dragleave.prevent="dropzoneActive[slotProps.node.key] = false"
+            >
                 <div class="p-d-flex p-flex-column">
                     <span>{{ slotProps.node.label }}</span>
                 </div>
@@ -26,13 +33,15 @@ export default defineComponent({
     data() {
         return {
             nodes: [] as iNode[],
-            expandedKeys: {}
+            expandedKeys: {},
+            dropzoneActive: [] as boolean[]
         }
     },
     watch: {
         treeWords: {
             handler() {
                 this.loadAssociatedWords()
+                console.log('NODES: ', this.nodes)
             },
             deep: true
         }
@@ -70,12 +79,22 @@ export default defineComponent({
             })
         },
         deleteWord(word: any) {
+            word.organization = word.parent.organization
+            word.datasetId = word.parent.id
             this.$emit('delete', word)
         },
-        async onDragDrop(event: any, item: any) {
+        async onDragDrop(event: any, item: any, key: any) {
             const tempItem = item.leaf ? item.parent : item
             this.$emit('wordDropped', { event: event, item: tempItem })
+            this.dropzoneActive[key] = false
         }
     }
 })
 </script>
+
+<style scoped>
+.dropzone {
+    background-color: #c2c2c2;
+    color: white;
+}
+</style>

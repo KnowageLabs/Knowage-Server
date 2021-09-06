@@ -20,8 +20,8 @@
                 :metaKeySelection="false"
                 v-model:filters="filters"
                 :globalFilterFields="glossaryUsageNavigationCardDescriptor.globalFilterFields"
-                :paginator="true"
-                :rows="20"
+                :paginator="items.length > 5"
+                :rows="5"
                 responsiveLayout="stack"
                 breakpoint="960px"
                 @rowSelect="onItemsSelected"
@@ -58,8 +58,6 @@ import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import glossaryUsageNavigationCardDescriptor from './GlossaryUsageNavigationCardDescriptor.json'
-
-// TODO See about user functionalities check, BE giving errors for regular user on all tasks
 
 export default defineComponent({
     name: 'glossary-usage-navigation-card',
