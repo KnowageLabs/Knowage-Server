@@ -11,7 +11,7 @@
 	</div>
 </template>
 
-<script lang="ts">
+<script>
 	import ConfirmDialog from 'primevue/confirmdialog'
 	import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 	import MainMenu from '@/modules/mainMenu/MainMenu'
@@ -87,9 +87,9 @@
 			this.onLoad()
 		},
 		methods: {
-			/* 			closeDialog() {
-					this.$emit('update:visibility', false)
-				}, */
+			closeDialog() {
+				this.$emit('update:visibility', false)
+			},
 			onLoad() {
 				axios
 					.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export/dataset')
