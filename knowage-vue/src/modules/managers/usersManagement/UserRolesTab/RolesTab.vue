@@ -13,13 +13,13 @@
                     <div v-if="selectedRoles.length > 1">
                         <div class="p-inputgroup">
                             <span class="p-float-label">
-                                <Dropdown v-model="defaultRole" :options="selectedRoles" @change="onSelectDefaultRole($event)" optionLabel="name" optionValue="id" class="p-inputtext p-component kn-material-input" />
+                                <Dropdown v-model="defaultRole" showClear="true" :options="selectedRoles" @change="onSelectDefaultRole($event)" optionLabel="name" optionValue="id" class="p-inputtext p-component kn-material-input" />
                                 <label for="defaultRole"> {{ $t('managers.usersManagement.form.defaultRole') }}</label>
                             </span>
                         </div>
                     </div>
                     <p>
-                        <Message severity="info" v-if="selectedRoles.length > 0">{{ $t('managers.usersManagement.defaultRoleInfo') }}</Message>
+                        <Message severity="info" v-if="selectedRoles.length > 1">{{ $t('managers.usersManagement.defaultRoleInfo') }}</Message>
                     </p>
                     <DataTable
                         :value="rolesList"
@@ -93,11 +93,9 @@ export default defineComponent({
     },
     methods: {
         onRowSelect() {
-            console.log('selectttttttttt')
             this.$emit('changed', this.selectedRoles)
         },
         onRowUnselect() {
-            console.log('unselectt')
             this.$emit('changed', this.selectedRoles)
             if (this.selectedRoles?.length <= 1) {
                 this.defaultRole = null

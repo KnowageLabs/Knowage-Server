@@ -48,7 +48,7 @@
                             <template #header>
                                 <span>{{ $t('managers.usersManagement.attributes') }}</span>
                             </template>
-                            <UserAttributesForm :attributes="attributes" :model="attributesForm" @formDirty="onFormDirty"></UserAttributesForm>
+                            <UserAttributesForm :attributes="attributes" v-model="attributesForm" @formDirty="onFormDirty"></UserAttributesForm>
                         </TabPanel>
                     </TabView>
                 </div>
