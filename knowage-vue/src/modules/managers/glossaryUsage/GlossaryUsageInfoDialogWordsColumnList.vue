@@ -1,5 +1,4 @@
 <template>
-    =
     <div>
         <li>
             <span>{{ $t('managers.glossary.glossaryUsage.associatedWord') }}:</span>
