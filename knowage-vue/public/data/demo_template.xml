@@ -1,24 +1,31 @@
-<?xml version="1.0" encoding="windows-1250"?>
 <QBE>
-  <DATAMART name="Foodmart_Sales" />
-  <REGISTRY pagination = "false" summaryColor="#b3e5eb">
-    <ENTITY name="it.eng.spagobi.meta.Product">
-      <FILTERS>
-		<FILTER title="Product Subcategory" field="product_subcategory" presentation="COMBO" /> 
-		<FILTER title="Brand Name" field="brand_name" presentation="MANUAL" /> 	 		
-      </FILTERS>
-	  <COLUMNS>		
-		 <COLUMN field="product_id" title="Id." size="200" visible="true" editable ="false" /> 
-		 <COLUMN field="brand_name"  title="Brand Name" size="200" visible="true" editable ="true" /> 		
-		 <COLUMN field="product_family" title="Class Family" size="140" subEntity="rel_product_class_id_in_Product_class" foreignKey="rel_product_class_id_in_product_class" />	
-		 <COLUMN field="product_subcategory" title="Class subcategory" size="160" dependsFrom="product_family" 
-						dependsFromEntity="it.eng.spagobi.meta.Product" 
-						subEntity="rel_product_class_id_in_Product_class" 
-						foreignKey="rel_product_class_id_in_product_class" />									
-	 </COLUMNS>
-	  <CONFIGURATIONS>
+  <DATAMART name="Stores_for_Registry" />
+    <REGISTRY pagination = "true" summaryColor="#00AAAA">
+    <ENTITY name="it.eng.knowage.meta.stores_for_registry.Store">      
+	<FILTERS>
+		<FILTER title="Store type" field="store_type" presentation="MANUAL" /> 
+		<FILTER title="Sales city" field="sales_city" presentation="COMBO" /> 	 		
+	</FILTERS>   
+    <COLUMNS>
+		<COLUMN field="store_id" 			visible="false"	editable="false" 																/>
+		<COLUMN field="store_name" 			visible="true"	editable="true"		title="store name"			editor="MANUAL"	sorter="ASC" 	/>
+		<COLUMN field="store_type" 			visible="true"	editable="true"		title="store type"			editor="COMBO" 					/>
+		<COLUMN field="store_city" 			visible="true"	editable="false"	title="store city" 											/>
+		<COLUMN field="store_state" 		visible="true"	editable="false"	title="store state" 										/>
+		<COLUMN field="florist" 			visible="true"	editable="true"		title="has florist"							 				/> 
+		<COLUMN field="coffee_bar" 			visible="true"	editable="true"		title="has coffee bar"										/>
+		<COLUMN field="video_store" 		visible="true"	editable="false"	title="has video store"										/>
+		<COLUMN field="first_opened_date" 	visible="true"	editable="true"		title="first opened date"	editor="MANUAL" 				/>
+		<COLUMN field="store_sqft" 			visible="true"	editable="true"		title="store square foot"	editor="MANUAL" 				/>
+		<COLUMN field="sales_city" 			visible="true"	editable="true"		title="Foreign key - city"	editor="COMBO"	 				
+								subEntity="rel_region_id_in_region" foreignKey="rel_region_id_in_region"/>
+	</COLUMNS>
+	  
+	   <CONFIGURATIONS>
 		<CONFIGURATION name="enableButtons" value="true"/>
-	  </CONFIGURATIONS>
+       </CONFIGURATIONS>
+	   
     </ENTITY>
+	
   </REGISTRY>
 </QBE>

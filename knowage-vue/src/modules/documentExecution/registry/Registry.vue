@@ -13,7 +13,7 @@
                 FILTERS PLACEHOLDER
             </div>
             <div class="p-col-12" v-if="!loading">
-                <RegistryDatatable :propColumns="columns" :propRows="rows" :columnMap="columnMap"></RegistryDatatable>
+                <RegistryDatatable :propColumns="columns" :propRows="rows" :propConfiguration="configuration" :columnMap="columnMap"></RegistryDatatable>
             </div>
         </div>
     </div>
@@ -33,10 +33,13 @@ export default defineComponent({
         return {
             template: {} as any,
             registry: {} as any,
+            configuration: [] as any[],
             filteredValues: {} as any,
             columns: [] as any[],
             rows: [] as any[],
             columnMap: {} as any,
+            pagination: { start: 0, limit: 20 },
+            isPivot: false,
             loading: false,
             x2js: new X2JS()
         }
@@ -46,8 +49,10 @@ export default defineComponent({
         await this.loadTemplate()
         await this.loadRegistry()
         await this.loadFilteredValues()
+        this.loadConfiguration()
         this.loadColumns()
         this.loadColumnMap()
+        this.loadColumnsInfo()
         this.loadRows()
         this.loading = false
         console.log('LOADED TEMPLATE: ', this.template)
@@ -63,7 +68,7 @@ export default defineComponent({
         },
         async loadRegistry() {
             await axios
-                // .get(`knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=4489870a0fba11ec8b65ed57c30e47f4`)
+                // .post(`knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=4489870a0fba11ec8b65ed57c30e47f4`)
                 .get('data/demo_registry.json')
                 .then((response) => (this.registry = response.data))
         },
@@ -82,11 +87,20 @@ export default defineComponent({
             for (let i = 1; i < this.registry.metaData.fields.length; i++) {
                 this.columnMap[this.registry.metaData.fields[i].header] = this.registry.metaData.fields[i].name
             }
-            console.log('COLUMN MAP: ', this.columnMap)
+            // console.log('COLUMN MAP: ', this.columnMap)
+        },
+        loadColumnsInfo() {
+            for (let i = 1; i < this.registry.metaData.fields.length; i++) {
+                this.columns[i - 1].columnInfo = this.registry.metaData.fields[i]
+            }
         },
         loadRows() {
             this.rows = this.registry.rows
-            console.log('LOADED ROWS: ', this.rows)
+            // console.log('LOADED ROWS: ', this.rows)
+        },
+        loadConfiguration() {
+            this.configuration = this.template.QBE.REGISTRY.ENTITY.CONFIGURATIONS.CONFIGURATION
+            // console.log('LOADED CONFIGURATION: ', this.configuration)
         }
     }
 })
