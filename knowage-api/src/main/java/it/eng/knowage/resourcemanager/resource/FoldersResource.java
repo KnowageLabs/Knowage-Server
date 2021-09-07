@@ -36,6 +36,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import it.eng.knowage.knowageapi.context.BusinessRequestContext;
+import it.eng.knowage.knowageapi.error.ImpossibleToCreateFolderException;
 import it.eng.knowage.knowageapi.error.ImpossibleToReadFolderListException;
 import it.eng.knowage.knowageapi.error.KnowageBusinessException;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
@@ -99,6 +100,8 @@ public class FoldersResource {
 				boolean create = resourceManagerAPIservice.createFolder(completePath.toString(), profile);
 				if (create) {
 					response = Response.status(Response.Status.OK).build();
+				} else {
+					throw new ImpossibleToCreateFolderException("");
 				}
 			}
 		} catch (KnowageBusinessException e) {

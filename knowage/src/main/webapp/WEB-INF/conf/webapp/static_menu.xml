@@ -122,7 +122,7 @@
 				to="/news-management" />
 			<ITEM id="5008" label="menu.modelCatalogResourceManagement"
 				to="/models-management" />
-			<ITEM id="5009" label="menu.resourceManagement" requiredFunctionality="ResourceManagement"
+			<ITEM id="5009" label="menu.resourceManagement" requiredFunctionality="ResourceManagement,ResourceManagementDev"
 				to="/resource-management" />
 		</GROUP_ITEM>
 
