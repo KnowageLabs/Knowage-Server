@@ -151,12 +151,15 @@
     },
     "documentExecution": {
         "dossier": {
+            "activityName": "Activity Name",
             "headers": {
                 "activity": "Activity Name",
                 "partial": "Partial",
                 "status": "State",
                 "total": "Total"
-            }
+            },
+            "launchActivity": "Launch Activity",
+            "launchedActivities": "Launched activities for this document"
         }
     },
     "downloadsDialog": {
