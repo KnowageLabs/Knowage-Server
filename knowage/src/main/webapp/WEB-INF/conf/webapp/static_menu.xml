@@ -20,13 +20,13 @@
 
 			<ITEM id="2001" label="menu.Attributes"
 				requiredFunctionality="ProfileManagement"
-				to="/profile-attributes-management" />
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=profileAttributesManagement" />
 			<ITEM id="2002" label="menu.Roles"
 				requiredFunctionality="ProfileManagement"
-				to="/roles-management" />
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=rolesManagement" />
 			<ITEM id="2003" label="menu.Users"
 				requiredFunctionality="ProfileManagement"
-				to="/users-management" />
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=usersManagement" />
 			<ITEM id="2004" label="menu.menuconfiguration"
 				requiredFunctionality="MenuManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=menuConfiguration" />
@@ -174,7 +174,7 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=multitenantManagementAngular" />
 			<ITEM id="8002" label="menu.TemplateManagement"
 				requiredFunctionality="TemplateManagement"
-				to="/template-pruning" />
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=templateManagement" />
 			
 			<ITEM id="8011" label="menu.InstallConf"
 				requiredFunctionality="InstallConfig"
@@ -190,7 +190,7 @@
 			iconCls="fa fa-flag">
 			<ITEM id="9001" label="menu.manageI18n"
 				requiredFunctionality="ManageInternationalization"
-				to="/internationalization-management"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=internationalization"
 				iconCls="fa fa-2x fa-flag" />
 		</GROUP_ITEM>
 		
