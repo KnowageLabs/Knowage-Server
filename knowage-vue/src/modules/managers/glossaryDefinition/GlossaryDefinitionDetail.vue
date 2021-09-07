@@ -64,7 +64,16 @@
                         </div>
                         <Tree id="glossary-tree" :value="nodes" :expandedKeys="expandedKeys" @nodeExpand="listContents(selectedGlossary.GLOSSARY_ID, $event)">
                             <template #default="slotProps">
-                                <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonVisible[slotProps.node.id] = true" @mouseleave="buttonVisible[slotProps.node.id] = false" @drop="saveWordConfirm($event, slotProps.node)" @dragover.prevent @dragenter.prevent>
+                                <div
+                                    class="p-d-flex p-flex-row p-ai-center"
+                                    :class="{ dropzone: dropzoneActive[slotProps.node.key] }"
+                                    @mouseover="buttonVisible[slotProps.node.id] = true"
+                                    @mouseleave="buttonVisible[slotProps.node.id] = false"
+                                    @drop="saveWordConfirm($event, slotProps.node)"
+                                    @dragover.prevent
+                                    @dragenter.prevent="setDropzoneClass(true, slotProps.node)"
+                                    @dragleave.prevent="setDropzoneClass(false, slotProps.node)"
+                                >
                                     <span>{{ slotProps.node.label }}</span>
                                     <div v-show="buttonVisible[slotProps.node.id]" class="p-ml-2">
                                         <Button
@@ -124,6 +133,7 @@ export default defineComponent({
             nodeDialogVisible: false,
             selectedContent: {} as iContent,
             selectedNode: {} as iNode,
+            dropzoneActive: [] as boolean[],
             showTree: false,
             showHint: true,
             loading: false
@@ -520,6 +530,11 @@ export default defineComponent({
             if (temp) {
                 temp.data[property] = value
             }
+        },
+        setDropzoneClass(value: boolean, node: any) {
+            if (node.data.CONTENT_ID) {
+                this.dropzoneActive[node.key] = value
+            }
         }
     }
 })
@@ -544,5 +559,13 @@ export default defineComponent({
 
 .fab-button {
     color: white;
+}
+
+.dropzone {
+    background-color: #c2c2c2;
+    color: white;
+    width: 200px;
+    height: 30px;
+    border: 1px dashed;
 }
 </style>
