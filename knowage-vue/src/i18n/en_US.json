@@ -149,6 +149,11 @@
         "weekday": "Weekday",
         "weekdays": "Weekdays"
     },
+    "documentExecution": {
+        "registry": {
+            "title": "Registry Document"
+        }
+    },
     "downloadsDialog": {
         "columns": {
             "creationDate": "Creation Date",
