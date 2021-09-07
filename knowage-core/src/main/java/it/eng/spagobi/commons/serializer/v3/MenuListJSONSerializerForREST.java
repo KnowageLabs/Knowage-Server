@@ -391,11 +391,17 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				/* ALL_USERS or ALLOWED_USER_FUNCTIONALITIES */
 				if (condition != null && !condition.isEmpty()) {
 					addElement = menuConditionIsSatisfied(itemSB);
-				} else if (requiredFunctionality != null) {
-					if (isAbleTo(requiredFunctionality, funcs)) {
-						addElement = isGroupItemToAdd(itemSB);
-					} else
-						addElement = false;
+				} else if (StringUtils.isNotBlank(requiredFunctionality)) {
+					addElement = false;
+
+					String[] reqFunc = requiredFunctionality.split(",", -1);
+					for (int i = 0; i < reqFunc.length; i++) {
+						if (isAbleTo(reqFunc[i], funcs)) {
+							addElement = isGroupItemToAdd(itemSB);
+						}
+						if (addElement)
+							break;
+					}
 				}
 
 				if (addElement)
@@ -626,6 +632,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 			}
 		}
+
 		return menu;
 	}
 

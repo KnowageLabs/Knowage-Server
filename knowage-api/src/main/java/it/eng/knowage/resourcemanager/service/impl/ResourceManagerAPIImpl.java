@@ -115,7 +115,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			String buondedBasePath = ResourceManagerUtilities.getBuondedBasePath();
 			fullP = fullP.resolve(buondedBasePath);
 			FolderDTO parentFolder = new FolderDTO(fullP);
-			parentFolder.setRelativePath("");
+			parentFolder.setRelativePath(buondedBasePath);
 			parentFolder.setKey(HMACUtilities.getKeyHashedValue(fullP.toString()));
 
 			FolderDTO mylist = createTree(parentFolder, profile, buondedBasePath, 0);
@@ -236,7 +236,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		boolean bool = false;
 		try {
 			Path totalPath = getTotalPath(path, profile);
-			Path workDir = getWorkBaseDirByPath(path, profile);
+			Path workDir = getFullRootByPath(path, profile);
 			if (canSee(workDir, profile)) {
 				File file = totalPath.toFile();
 
@@ -256,7 +256,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				}
 			}
 		} catch (Exception e) {
-			throw new ImpossibleToCreateFolderException(e.getMessage(), e);
+			throw new KnowageRuntimeException(e.getMessage(), e);
 		}
 		return bool;
 	}
@@ -264,7 +264,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	@Override
 	public boolean delete(String path, SpagoBIUserProfile profile)
 			throws TenantRepositoryMissingException, ImpossibleToDeleteFolderException, ImpossibleToDeleteFileException {
-		Path workDir = getWorkBaseDirByPath(path, profile);
+		Path workDir = getFullRootByPath(path, profile);
 		if (canSee(workDir, profile)) {
 			Path totalPath = getTotalPath(path, profile);
 			File file = totalPath.toFile();
@@ -291,7 +291,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		Path workingPath = null;
 		Path pathToReturn = null;
 		try {
-			Path workDirr = getWorkBaseDirByPath(path, profile);
+			Path workDirr = getFullRootByPath(path, profile);
 			if (canSee(workDirr, profile)) {
 				Path workDir = getWorkDirectory(profile);
 				workingPath = workDir.resolve(path);
@@ -312,7 +312,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				pathToReturn = createZipFileOfFiles(path, profile);
 			} else {
 				String pathFile = path.get(0);
-				Path workDirr = getWorkBaseDirByPath(pathFile, profile);
+				Path workDirr = getFullRootByPath(pathFile, profile);
 
 				if (canSee(workDirr, profile)) {
 					Path workDir = getWorkDirectory(profile);
@@ -325,8 +325,9 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		return pathToReturn;
 	}
 
-	public Path getWorkBaseDirByPath(String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException {
-		String rootElement = path.split("/")[0];
+	public Path getFullRootByPath(String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException {
+		String separator = File.separator.equals("\\") ? "\\\\" : File.separator;
+		String rootElement = path.split(separator)[0];
 		Path rootPath = getTotalPath(rootElement, profile);
 		return rootPath;
 	}
@@ -386,7 +387,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		try {
 			Path totalPath = getTotalPath(path, profile);
 			File folder = totalPath.toFile();
-			Path workDir = getWorkBaseDirByPath(path, profile);
+			Path workDir = getFullRootByPath(path, profile);
 			if (canSee(workDir, profile)) {
 				File[] listOfFiles = folder.listFiles();
 				if (listOfFiles != null) {
@@ -414,7 +415,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			throws IOException, TenantRepositoryMissingException, ImpossibleToUploadFileException {
 
 		try {
-			Path workBaseDir = getWorkBaseDirByPath(path, profile);
+			Path workBaseDir = getFullRootByPath(path, profile);
 			Path fileTotalPath = getTotalPath(path, profile);
 
 			if (canSee(workBaseDir, profile)) {
@@ -431,7 +432,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	@Override
 	public void importFileAndExtract(InputStream archiveInputStream, String path, SpagoBIUserProfile profile)
 			throws IOException, TenantRepositoryMissingException {
-		Path workBaseDir = getWorkBaseDirByPath(path, profile);
+		Path workBaseDir = getFullRootByPath(path, profile);
 		Path fileTotalPath = getTotalPath(path, profile);
 		String totalPathDestinationDir = fileTotalPath.getParent().toFile().getAbsolutePath();
 		if (canSee(workBaseDir, profile)) {
@@ -502,7 +503,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				Path relativize = tempDirectory.relativize(currPath);
 				if (!relativize.toString().isEmpty()) {
 					if (Files.isDirectory(currPath)) {
-						ZipEntry zipEntry = new ZipEntry(relativize.toString() + File.separator);
+						ZipEntry zipEntry = new ZipEntry(relativize.toString() + "/");
 						ret.putNextEntry(zipEntry);
 					} else {
 						ZipEntry zipEntry = new ZipEntry(relativize.toString());
@@ -592,10 +593,10 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	public MetadataDTO getMetadata(String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToReadMetadataException {
 		MetadataDTO metadata = null;
 		try {
-			Path workPath = getWorkBaseDirByPath(path, profile);
+			Path workPath = getFullRootByPath(path, profile);
 			Path totalPath = getTotalPath(path, profile).resolve(METADATA_JSON);
 
-			if (isStartingFromModel(workPath, profile) && canSee(workPath, profile)) {
+			if (isStartingFromModel(totalPath, profile) && canSee(workPath, profile)) {
 				ObjectMapper mapper = new ObjectMapper();
 				if (!new File(totalPath.toString()).exists()) {
 					LOGGER.debug("Metadata file not found. It will be created.");
@@ -630,11 +631,12 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	public MetadataDTO saveMetadata(MetadataDTO fileDTO, String path, SpagoBIUserProfile profile)
 			throws TenantRepositoryMissingException, ImpossibleToSaveMetadataException {
 		try {
-			Path workPath = getWorkBaseDirByPath(path, profile);
-			if (isStartingFromModel(workPath, profile) && canSee(workPath, profile)) {
-				Path totalPath = getTotalPath(path, profile).resolve(METADATA_JSON);
+			Path workPath = getFullRootByPath(path, profile);
+			Path totalPath = getTotalPath(path, profile);
+			if (isStartingFromModel(totalPath, profile) && canSee(workPath, profile)) {
+				Path metadataPath = totalPath.resolve(METADATA_JSON);
 				ObjectMapper objectMapper = new ObjectMapper();
-				objectMapper.writeValue(totalPath.toFile(), fileDTO);
+				objectMapper.writeValue(metadataPath.toFile(), fileDTO);
 			}
 		} catch (Exception e) {
 			throw new ImpossibleToSaveMetadataException(e.getMessage(), e);
@@ -648,8 +650,8 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			throws TenantRepositoryMissingException, ImpossibleToCreateFolderException {
 		boolean updated = false;
 
-		File fromDirectory = getWorkBaseDirByPath(path.toString(), profile).toFile();
-		File toDirectory = getWorkBaseDirByPath(path.getParent().resolve(folderName).toString(), profile).toFile();
+		File fromDirectory = getTotalPath(path.toString(), profile).toFile();
+		File toDirectory = getTotalPath(path.getParent().resolve(folderName).toString(), profile).toFile();
 
 		if (toDirectory.exists()) {
 			String message = "Destination folder already existing";

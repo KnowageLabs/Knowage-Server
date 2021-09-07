@@ -20,13 +20,13 @@
 
 			<ITEM id="2001" label="menu.Attributes"
 				requiredFunctionality="ProfileManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=profileAttributesManagement" />
+				to="/profile-attributes-management" />
 			<ITEM id="2002" label="menu.Roles"
 				requiredFunctionality="ProfileManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=rolesManagement" />
+				to="/roles-management" />
 			<ITEM id="2003" label="menu.Users"
 				requiredFunctionality="ProfileManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=usersManagement" />
+				to="/users-management" />
 			<ITEM id="2004" label="menu.menuconfiguration"
 				requiredFunctionality="MenuManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=menuConfiguration" />
@@ -122,7 +122,7 @@
 				to="/news-management" />
 			<ITEM id="5008" label="menu.modelCatalogResourceManagement"
 				to="/models-management" />
-			<ITEM id="5009" label="menu.resourceManagement" requiredFunctionality="ResourceManagement"
+			<ITEM id="5009" label="menu.resourceManagement" requiredFunctionality="ResourceManagement,ResourceManagementDev"
 				to="/resource-management" />
 		</GROUP_ITEM>
 
@@ -166,7 +166,9 @@
 		<GROUP_ITEM id="8000" label="menu.group.ServerManager"
 			toBeLicensed="" iconCls="fa fa-2x fa-cogs">
 			
-
+			<ITEM id="8014" label="menu.admin.importExport"
+				requiredFunctionality="ImportExport"
+				to="/import-export" />
 			<ITEM id="8001" label="menu.TenantMan"
 				requiredFunctionality="TenantManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=multitenantManagementAngular" />
