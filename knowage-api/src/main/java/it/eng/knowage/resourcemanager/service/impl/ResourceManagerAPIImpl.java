@@ -195,7 +195,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				for (String folder : restrictedFolders) {
 					try {
 						Path completePath = getTotalPath(folder, profile);
-						if (path.startsWith(completePath)) {
+						if (path.toString().toLowerCase().startsWith(completePath.toString().toLowerCase())) {
 							return true;
 						}
 					} catch (TenantRepositoryMissingException e) {
