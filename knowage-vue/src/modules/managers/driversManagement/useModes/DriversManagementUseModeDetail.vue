@@ -1,5 +1,5 @@
 <template>
-    <KnHint :title="'managers.driversManagement.useModes.title'" :hint="'managers.driversManagement.useModes.hint'" v-if="!selectedMode.useID" data-test="mode-hint"></KnHint>
+    <KnHint class="kn-card-reset" :title="'managers.driversManagement.useModes.title'" :hint="'managers.driversManagement.useModes.hint'" v-if="!selectedMode.useID" data-test="mode-hint"></KnHint>
     <TabView class="tabview-custom kn-page-content" v-else data-test="modes-form">
         <TabPanel>
             <template #header>
@@ -113,3 +113,24 @@ export default defineComponent({
     methods: {}
 })
 </script>
+<style lang="scss">
+.kn-card-layout {
+    .p-card-body {
+        padding: 0 !important;
+        height: calc(100% - 35px) !important;
+        .p-card-content {
+            padding: 0 !important;
+        }
+    }
+}
+
+.kn-card-reset {
+    .p-card-body {
+        padding: 0.75rem !important;
+        .p-card-content {
+            display: block !important;
+            padding: 0.75rem 0 !important;
+        }
+    }
+}
+</style>

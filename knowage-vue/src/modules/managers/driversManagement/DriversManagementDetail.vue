@@ -6,9 +6,9 @@
             <Button class="p-button-text p-button-rounded p-button-plain" icon="pi pi-times" @click="closeTemplate" />
         </template>
     </Toolbar>
-    <div class="p-grid p-m-0 p-fluid p-jc-center" style="overflow:auto" data-test="drivers-form">
-        <DriversDetailCard :selectedDriver="driver" :types="filteredTypes" @touched="setDirty"></DriversDetailCard>
-        <UseMode :propModes="modes" :roles="roles" :constraints="constraints" :layers="layers" :lovs="lovs" :selectionTypes="filteredSelectionTypes" :isDate="isDateType" :showMapDriver="showMapDriver"></UseMode>
+    <div class="p-grid p-m-0 p-p-2 p-fluid p-d-flex p-flex-column kn-height-full kn-overflow-y" data-test="drivers-form">
+        <DriversDetailCard class="p-mt-2" :selectedDriver="driver" :types="filteredTypes" @touched="setDirty"></DriversDetailCard>
+        <UseMode class=" kn-flex-grow p-mt-2" :propModes="modes" :roles="roles" :constraints="constraints" :layers="layers" :lovs="lovs" :selectionTypes="filteredSelectionTypes" :isDate="isDateType" :showMapDriver="showMapDriver"></UseMode>
     </div>
 </template>
 <script lang="ts">
@@ -217,3 +217,8 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss" scoped>
+.kn-flex-grow {
+    flex-grow: 1;
+}
+</style>

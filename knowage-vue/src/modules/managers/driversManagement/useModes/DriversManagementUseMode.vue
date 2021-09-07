@@ -1,5 +1,5 @@
 <template>
-    <Card style="width:100%" class="p-m-2">
+    <Card class="p-col-12 kn-card kn-card-layout kn-tab-card">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
@@ -11,10 +11,10 @@
             </Toolbar>
         </template>
         <template #content>
-            <div class="p-grid p-m-0">
-                <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
+            <div class="p-grid p-m-0 p-col-12 p-p-0 kn-height-full">
+                <div class="p-col-4 p-sm-4 p-md-3 p-p-0 kn-height-full">
                     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                    <Listbox v-if="!loading" class="kn-list" :options="modes" optionLabel="label" @change="showForm" data-test="usemodes-list">
+                    <Listbox v-if="!loading" class="kn-list kn-height-full" :options="modes" optionLabel="label" @change="showForm" data-test="usemodes-list">
                         <template #empty>{{ $t('common.info.noDataFound') }}</template>
                         <template #option="slotProps">
                             <div class="kn-list-item" data-test="list-item">
