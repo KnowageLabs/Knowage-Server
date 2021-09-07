@@ -12,7 +12,7 @@
                 <form class="p-fluid p-formgrid p-grid">
                     <div class="p-field p-col-6 p-mb-3">
                         <span class="p-float-label">
-                            <InputText id="name" class="kn-material-input" type="text" v-model.trim="simpleNavigation.name" maxLength="100" />
+                            <InputText id="name" class="kn-material-input" type="text" v-model.trim="simpleNavigation.name" maxLength="40" />
                             <label for="name" class="kn-material-input-label">{{ $t('common.name') }} * </label>
                         </span>
                         <!-- <KnValidationMessages class="p-mt-1" :vComp="v$.word.WORD" :additionalTranslateParams="{ fieldName: $t('managers.glossary.common.word') }"></KnValidationMessages> -->
@@ -22,21 +22,18 @@
                             <Dropdown id="type" class="kn-material-input" v-model="simpleNavigation.type" :options="crossModes" optionValue="value" optionLabel="name" />
                             <label for="type" class="kn-material-input-label"> {{ $t('managers.crossNavigationManagement.modality') }} </label>
                         </span>
-                        <!-- <KnValidationMessages class="p-mt-1" :vComp="v$.word.WORD" :additionalTranslateParams="{ fieldName: $t('managers.glossary.common.word') }"></KnValidationMessages> -->
                     </div>
                     <div class="p-field p-col-6 p-mb-3">
                         <span class="p-float-label">
-                            <InputText id="description" class="kn-material-input" type="text" v-model.trim="simpleNavigation.description" maxLength="100" />
+                            <InputText id="description" class="kn-material-input" type="text" v-model.trim="simpleNavigation.description" maxLength="200" />
                             <label for="description" class="kn-material-input-label">{{ $t('common.description') }} </label>
                         </span>
-                        <!-- <KnValidationMessages class="p-mt-1" :vComp="v$.word.WORD" :additionalTranslateParams="{ fieldName: $t('managers.glossary.common.word') }"></KnValidationMessages> -->
                     </div>
                     <div class="p-field p-col-6 p-mb-3">
                         <span class="p-float-label">
-                            <InputText id="name" class="kn-material-input" type="text" v-model.trim="simpleNavigation.breadcrumb" maxLength="100" />
+                            <InputText id="name" class="kn-material-input" type="text" v-model.trim="simpleNavigation.breadcrumb" maxLength="200" />
                             <label for="name" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.breadCrumbs') }} </label>
                         </span>
-                        <!-- <KnValidationMessages class="p-mt-1" :vComp="v$.word.WORD" :additionalTranslateParams="{ fieldName: $t('managers.glossary.common.word') }"></KnValidationMessages> -->
                     </div>
                 </form>
                 <p>{{ navigation }}</p>
