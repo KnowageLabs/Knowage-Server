@@ -149,6 +149,16 @@
         "weekday": "Weekday",
         "weekdays": "Weekdays"
     },
+    "documentExecution": {
+        "dossier": {
+            "headers": {
+                "activity": "Activity Name",
+                "partial": "Partial",
+                "status": "State",
+                "total": "Total"
+            }
+        }
+    },
     "downloadsDialog": {
         "columns": {
             "creationDate": "Creation Date",

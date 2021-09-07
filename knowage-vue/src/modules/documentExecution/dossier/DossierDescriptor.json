@@ -1,0 +1,78 @@
+{
+    "activities": [
+        {
+            "activity": "Test1",
+            "configContent": null,
+            "creationDate": 1533297477119,
+            "documentId": 697,
+            "hasBinContent": false,
+            "hasDocBinContent": false,
+            "id": 10,
+            "parameters": null,
+            "partial": 1,
+            "pptExists": false,
+            "progressId": 10,
+            "status": "DOWNLOAD",
+            "total": 1
+        },
+        {
+            "activity": "qwerffd",
+            "configContent": null,
+            "creationDate": 1562682615309,
+            "documentId": 697,
+            "hasBinContent": false,
+            "hasDocBinContent": false,
+            "id": 20,
+            "parameters": null,
+            "partial": 0,
+            "pptExists": false,
+            "progressId": 20,
+            "status": "ERROR",
+            "total": 1
+        },
+        {
+            "activity": "aaa",
+            "configContent": null,
+            "creationDate": 1606310013565,
+            "documentId": 697,
+            "hasBinContent": false,
+            "hasDocBinContent": false,
+            "id": 21,
+            "parameters": null,
+            "partial": 1,
+            "pptExists": false,
+            "progressId": 21,
+            "status": "DOWNLOAD",
+            "total": 1
+        },
+        {
+            "activity": "aaa",
+            "configContent": null,
+            "creationDate": 1606320773447,
+            "documentId": 697,
+            "hasBinContent": false,
+            "hasDocBinContent": false,
+            "id": 22,
+            "parameters": null,
+            "partial": 1,
+            "pptExists": false,
+            "progressId": 22,
+            "status": "DOWNLOAD",
+            "total": 1
+        }
+    ],
+    "columns": [
+        {
+            "field": "partial",
+            "header": "documentExecution.dossier.headers.partial"
+        },
+        {
+            "field": "total",
+            "header": "documentExecution.dossier.headers.total"
+        },
+        {
+            "field": "status",
+            "header": "documentExecution.dossier.headers.status"
+        }
+    ]
+}
