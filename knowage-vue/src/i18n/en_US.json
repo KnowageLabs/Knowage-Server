@@ -494,6 +494,10 @@
             },
             "title": "Configuration Management"
         },
+        "crossNavigationManagement": {
+            "hint": "Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "title": "Cross Navigation"
+        },
         "dataSourceManagement": {
             "form": {
                 "advancedOptions": {

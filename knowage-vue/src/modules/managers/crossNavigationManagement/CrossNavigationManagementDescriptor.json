@@ -3,22 +3,22 @@
         "avatar": {
             "property": "type",
             "values": {
-                "chart": {
-                    "icon": "fab fa-js-square",
+                "0": {
+                    "icon": "fas fa-external-link-alt",
                     "style": {
                         "background-color": "#ffc107",
                         "color": "white"
                     }
                 },
-                "html": {
-                    "icon": "fab fa-html5",
+                "1": {
+                    "icon": "far fa-window-maximize",
                     "style": {
                         "background-color": "#c2185b",
                         "color": "white"
                     }
                 },
-                "python": {
-                    "icon": "fab fa-python",
+                "2": {
+                    "icon": "far fa-window-restore",
                     "style": {
                         "background-color": "#4caf50",
                         "color": "white"
@@ -33,14 +33,15 @@
                 "label": "common.delete"
             }
         ],
-        "defaultSortField": "label",
-        "filterFields": ["label", "name", "type", "tags"],
+        "defaultSortField": "name",
+        "filterFields": ["name", "type"],
         "interaction": {
             "parameterLabel": "id",
             "parameterValue": "id",
-            "path": "gallery-detail",
+            "path": "navigation-detail",
             "type": "router"
         },
-        "sortFields": ["label", "name", "type"]
+        "sortFields": ["name", "type"],
+        "titleField": "name"
     }
 }
