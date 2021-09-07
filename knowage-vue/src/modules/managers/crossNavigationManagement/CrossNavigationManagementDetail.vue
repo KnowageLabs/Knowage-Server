@@ -10,10 +10,31 @@
         <Card style="width:100%" class="p-m-2">
             <template #content>
                 <form class="p-fluid p-formgrid p-grid">
-                    <div class="p-field p-col-4 p-mb-3">
+                    <div class="p-field p-col-6 p-mb-3">
                         <span class="p-float-label">
                             <InputText id="name" class="kn-material-input" type="text" v-model.trim="simpleNavigation.name" maxLength="100" />
                             <label for="name" class="kn-material-input-label">{{ $t('common.name') }} * </label>
+                        </span>
+                        <!-- <KnValidationMessages class="p-mt-1" :vComp="v$.word.WORD" :additionalTranslateParams="{ fieldName: $t('managers.glossary.common.word') }"></KnValidationMessages> -->
+                    </div>
+                    <div class="p-field p-col-6 p-mb-3">
+                        <span class="p-float-label">
+                            <Dropdown id="type" class="kn-material-input" v-model="simpleNavigation.type" :options="crossModes" optionValue="value" optionLabel="name" />
+                            <label for="type" class="kn-material-input-label"> {{ $t('managers.crossNavigationManagement.modality') }} </label>
+                        </span>
+                        <!-- <KnValidationMessages class="p-mt-1" :vComp="v$.word.WORD" :additionalTranslateParams="{ fieldName: $t('managers.glossary.common.word') }"></KnValidationMessages> -->
+                    </div>
+                    <div class="p-field p-col-6 p-mb-3">
+                        <span class="p-float-label">
+                            <InputText id="description" class="kn-material-input" type="text" v-model.trim="simpleNavigation.description" maxLength="100" />
+                            <label for="description" class="kn-material-input-label">{{ $t('common.description') }} </label>
+                        </span>
+                        <!-- <KnValidationMessages class="p-mt-1" :vComp="v$.word.WORD" :additionalTranslateParams="{ fieldName: $t('managers.glossary.common.word') }"></KnValidationMessages> -->
+                    </div>
+                    <div class="p-field p-col-6 p-mb-3">
+                        <span class="p-float-label">
+                            <InputText id="name" class="kn-material-input" type="text" v-model.trim="simpleNavigation.breadcrumb" maxLength="100" />
+                            <label for="name" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.breadCrumbs') }} </label>
                         </span>
                         <!-- <KnValidationMessages class="p-mt-1" :vComp="v$.word.WORD" :additionalTranslateParams="{ fieldName: $t('managers.glossary.common.word') }"></KnValidationMessages> -->
                     </div>
@@ -26,8 +47,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import Dropdown from 'primevue/dropdown'
 export default defineComponent({
     name: 'cross-navigation-detail',
+    components: { Dropdown },
     props: {
         id: {
             type: String
@@ -37,7 +60,12 @@ export default defineComponent({
         return {
             navigation: {} as any,
             simpleNavigation: {} as any,
-            loading: false
+            loading: false,
+            crossModes: [
+                { name: this.$t('managers.crossNavigationManagement.normal'), value: 0 },
+                { name: this.$t('managers.crossNavigationManagement.popUp'), value: 1 },
+                { name: this.$t('managers.crossNavigationManagement.popUpWindow'), value: 2 }
+            ]
         }
     },
     created() {
@@ -66,7 +94,10 @@ export default defineComponent({
             this.loading = true
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/' + this.id + '/load/')
-                .then((response) => (this.navigation = response.data))
+                .then((response) => {
+                    this.navigation = response.data
+                    this.simpleNavigation = response.data.simpleNavigation
+                })
                 .finally(() => (this.loading = false))
         }
     }
