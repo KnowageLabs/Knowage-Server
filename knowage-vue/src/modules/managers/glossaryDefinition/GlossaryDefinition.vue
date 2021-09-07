@@ -93,13 +93,13 @@ export default defineComponent({
             this.loading = false
         },
         async loadWordsList() {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listWords?Page=1&ItemPerPage=`).then((response) => (this.wordsList = response.data))
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listWords?Page=1&ItemPerPage=`).then((response) => (this.wordsList = response.data))
         },
         async loadState() {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=GLS_STATE`).then((response) => (this.state = response.data))
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=GLS_STATE`).then((response) => (this.state = response.data))
         },
         async loadCategory() {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=GLS_CATEGORY`).then((response) => (this.category = response.data))
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=GLS_CATEGORY`).then((response) => (this.category = response.data))
         },
         async showInfo(content: any) {
             this.loading = true
