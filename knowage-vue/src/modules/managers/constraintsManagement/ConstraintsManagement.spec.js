@@ -3,8 +3,8 @@ import axios from 'axios'
 import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
-import ConstraintsManagment from './ConstraintsManagment.vue'
-import ConstraintsManagmentDetail from './ConstraintsManagmentDetail.vue'
+import ConstraintsManagement from './ConstraintsManagement.vue'
+import ConstraintsManagementDetail from './ConstraintsManagementDetail.vue'
 import Dropdown from 'primevue/dropdown'
 import flushPromises from 'flush-promises'
 import InputText from 'primevue/inputtext'
@@ -102,14 +102,14 @@ const $store = {
 }
 
 const factory = () => {
-    return mount(ConstraintsManagment, {
+    return mount(ConstraintsManagement, {
         global: {
             plugins: [],
             stubs: {
                 Avatar,
                 Button,
                 Card,
-                ConstraintsManagmentDetail,
+                ConstraintsManagementDetail,
                 Dropdown,
                 InputText,
                 Listbox,

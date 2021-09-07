@@ -3,7 +3,7 @@ import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
-import ConstraintsManagmentDetail from './ConstraintsManagmentDetail.vue'
+import ConstraintsManagementDetail from './ConstraintsManagementDetail.vue'
 import Toolbar from 'primevue/toolbar'
 
 const mockedPredefinedConstraint = {
@@ -61,7 +61,7 @@ const $store = {
 }
 
 const factory = () => {
-    return mount(ConstraintsManagmentDetail, {
+    return mount(ConstraintsManagementDetail, {
         global: {
             props: {
                 selectedConstraint: {},

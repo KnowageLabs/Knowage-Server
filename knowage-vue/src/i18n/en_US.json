@@ -496,12 +496,12 @@
             },
             "title": "Configuration Management"
         },
-        "constraintManagment": {
+        "constraintManagement": {
             "dateValue": "Date value format",
             "decimalPlaces": "Decimal places",
             "deleteError": "Delete error",
             "higherRangeValue": "Higher range value",
-            "hint": "Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "hint": "The constraints management functionality allows you to create some constraint to use inside lovs or drivers to check the data consistancy. Some constaints are available as default from Knowage, and cannot be changed, but you can click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "lowerRangeValue": "Lower range value",
             "maxLenghtValue": "Max lenght value",
             "minLenghtValue": "Min lenght value",

@@ -2,7 +2,7 @@ let routes = [
     {
         path: '/constraint-management',
         name: 'constraint-management',
-        component: () => import('@/modules/managers/constraintsManagment/ConstraintsManagment.vue')
+        component: () => import('@/modules/managers/constraintsManagement/ConstraintsManagement.vue')
     }
 ]
 export default routes

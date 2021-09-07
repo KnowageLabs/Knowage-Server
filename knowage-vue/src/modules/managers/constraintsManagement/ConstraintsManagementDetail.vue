@@ -6,7 +6,7 @@
         </template>
     </Toolbar>
     <div class="p-grid p-m-0 p-fluid p-jc-center">
-        <Card :style="constraintsManagmentDetailDescriptor.styles.basicCard" class="p-m-2">
+        <Card :style="constraintsManagementDetailDescriptor.styles.basicCard" class="p-m-2">
             <template #content>
                 <form class="p-fluid p-formgrid p-grid" data-test="constraints-form">
                     <div class="p-field p-col-6">
@@ -69,18 +69,18 @@
                                 @change="clearInput"
                             />
                             <InputText v-else id="type" class="kn-material-input" type="text" v-model.trim="constraint.valueTypeCd" disabled />
-                            <label for="type" class="kn-material-input-label">{{ $t('managers.constraintManagment.type') }} * </label>
+                            <label for="type" class="kn-material-input-label">{{ $t('managers.constraintManagement.type') }} * </label>
                         </span>
-                        <KnValidationMessages class="p-mt-1" :vComp="v$.constraint.valueTypeId" :additionalTranslateParams="{ fieldName: $t('managers.constraintManagment.type') }"></KnValidationMessages>
+                        <KnValidationMessages class="p-mt-1" :vComp="v$.constraint.valueTypeId" :additionalTranslateParams="{ fieldName: $t('managers.constraintManagement.type') }"></KnValidationMessages>
                     </div>
-                    <div v-if="!constraint.predifined && constraint.valueTypeId" :class="constraintsManagmentDetailDescriptor.firstValue[constraint.valueTypeId].class">
+                    <div v-if="!constraint.predifined && constraint.valueTypeId" :class="constraintsManagementDetailDescriptor.firstValue[constraint.valueTypeId].class">
                         <span class="p-float-label">
                             <InputText v-if="!numberType" id="type" class="kn-material-input" type="text" v-model.trim="constraint.firstValue" @input="$emit('touched')" />
                             <InputNumber v-else id="type" inputClass="kn-material-input" v-model="constraint.firstValue" @input="$emit('touched')" />
-                            <label for="type" class="kn-material-input-label">{{ $t(constraintsManagmentDetailDescriptor.firstValue[constraint.valueTypeId].label) }}</label>
+                            <label for="type" class="kn-material-input-label">{{ $t(constraintsManagementDetailDescriptor.firstValue[constraint.valueTypeId].label) }}</label>
                         </span>
                     </div>
-                    <div v-if="!constraint.predifined && constraint.valueTypeId && constraint.valueTypeId == 46" :class="constraintsManagmentDetailDescriptor.firstValue[constraint.valueTypeId].class">
+                    <div v-if="!constraint.predifined && constraint.valueTypeId && constraint.valueTypeId == 46" :class="constraintsManagementDetailDescriptor.firstValue[constraint.valueTypeId].class">
                         <span class="p-float-label">
                             <InputNumber
                                 id="typeTwo"
@@ -92,13 +92,13 @@
                                 @blur="v$.constraint.secondValue.$touch()"
                                 @input="$emit('touched')"
                             />
-                            <label for="typeTwo" class="kn-material-input-label">{{ $t(constraintsManagmentDetailDescriptor.firstValue[constraint.valueTypeId].labelTwo) }}</label>
+                            <label for="typeTwo" class="kn-material-input-label">{{ $t(constraintsManagementDetailDescriptor.firstValue[constraint.valueTypeId].labelTwo) }}</label>
                         </span>
                         <KnValidationMessages
                             class="p-mt-1"
                             :vComp="v$.constraint.secondValue"
-                            :additionalTranslateParams="{ fieldName: $t(constraintsManagmentDetailDescriptor.firstValue[constraint.valueTypeId].labelTwo) }"
-                            :specificTranslateKeys="{ range_check: 'managers.constraintManagment.rangeCheck' }"
+                            :additionalTranslateParams="{ fieldName: $t(constraintsManagementDetailDescriptor.firstValue[constraint.valueTypeId].labelTwo) }"
+                            :specificTranslateKeys="{ range_check: 'managers.constraintManagement.rangeCheck' }"
                         ></KnValidationMessages>
                     </div>
                 </form>
@@ -109,16 +109,16 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import axios from 'axios'
-import { iConstraint } from './ConstraintsManagment'
+import { iConstraint } from './ConstraintsManagement'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import useValidate from '@vuelidate/core'
 import Dropdown from 'primevue/dropdown'
 import InputNumber from 'primevue/inputnumber'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import constraintsManagmentDetailDescriptor from './ConstraintsManagmentDetailDescriptor.json'
-import constraintsManagmentValidatioDescriptor from './ConstraintsManagmentValidationDescriptor.json'
+import constraintsManagementDetailDescriptor from './ConstraintsManagementDetailDescriptor.json'
+import constraintsManagementValidationDescriptor from './ConstraintsManagementValidationDescriptor.json'
 export default defineComponent({
-    name: 'constraint-managment-detail',
+    name: 'constraint-management-detail',
     components: { Dropdown, KnValidationMessages, InputNumber },
     props: {
         selectedConstraint: {
@@ -133,9 +133,9 @@ export default defineComponent({
     emits: ['close', 'created', 'touched'],
     data() {
         return {
-            constraintsManagmentDetailDescriptor,
+            constraintsManagementDetailDescriptor,
             constraint: {} as iConstraint,
-            constraintsManagmentValidatioDescriptor,
+            constraintsManagementValidationDescriptor,
             operation: 'insert',
             v$: useValidate() as any
         }
@@ -147,7 +147,7 @@ export default defineComponent({
             }
         }
         return {
-            constraint: createValidations('constraint', constraintsManagmentValidatioDescriptor.validations.constraint, customValidators)
+            constraint: createValidations('constraint', constraintsManagementValidationDescriptor.validations.constraint, customValidators)
         }
     },
     computed: {
@@ -195,14 +195,14 @@ export default defineComponent({
                 .then((response) => {
                     this.constraint.checkId = response.data
                     this.$store.commit('setInfo', {
-                        title: this.$t(this.constraintsManagmentDetailDescriptor.operation[this.operation].toastTitle),
-                        msg: this.$t(this.constraintsManagmentDetailDescriptor.operation.success)
+                        title: this.$t(this.constraintsManagementDetailDescriptor.operation[this.operation].toastTitle),
+                        msg: this.$t(this.constraintsManagementDetailDescriptor.operation.success)
                     })
                     this.$emit('created', this.constraint)
                 })
                 .catch((error) => {
                     this.$store.commit('setError', {
-                        title: this.$t('managers.constraintManagment.saveError'),
+                        title: this.$t('managers.constraintManagement.saveError'),
                         msg: error.message
                     })
                 })

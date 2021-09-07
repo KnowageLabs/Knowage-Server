@@ -2,28 +2,28 @@
     "firstValue": {
         "43": {
             "class": "p-field p-col-8",
-            "label": "managers.constraintManagment.dateValue"
+            "label": "managers.constraintManagement.dateValue"
         },
         "44": {
             "class": "p-field p-col-8",
-            "label": "managers.constraintManagment.regexpValue"
+            "label": "managers.constraintManagement.regexpValue"
         },
         "45": {
             "class": "p-field p-col-8",
-            "label": "managers.constraintManagment.maxLenghtValue"
+            "label": "managers.constraintManagement.maxLenghtValue"
         },
         "46": {
             "class": "p-field p-col-4",
-            "label": "managers.constraintManagment.lowerRangeValue",
-            "labelTwo": "managers.constraintManagment.higherRangeValue"
+            "label": "managers.constraintManagement.lowerRangeValue",
+            "labelTwo": "managers.constraintManagement.higherRangeValue"
         },
         "47": {
             "class": "p-field p-col-8",
-            "label": "managers.constraintManagment.decimalPlaces"
+            "label": "managers.constraintManagement.decimalPlaces"
         },
         "48": {
             "class": "p-field p-col-8",
-            "label": "managers.constraintManagment.minLenghtValue"
+            "label": "managers.constraintManagement.minLenghtValue"
         }
     },
     "operation": {

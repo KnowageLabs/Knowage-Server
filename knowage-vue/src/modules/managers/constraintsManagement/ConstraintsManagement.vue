@@ -3,7 +3,7 @@
         <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #left>
-                    {{ $t('managers.constraintManagment.title') }}
+                    {{ $t('managers.constraintManagement.title') }}
                 </template>
                 <template #right>
                     <FabButton icon="fas fa-plus" @click="showForm" data-test="open-form-button" />
@@ -18,7 +18,7 @@
                 :filter="true"
                 :filterPlaceholder="$t('common.search')"
                 filterMatchMode="contains"
-                :filterFields="constraintManagmentDescriptor.filterFields"
+                :filterFields="constraintManagementDescriptor.filterFields"
                 :emptyFilterMessage="$t('common.info.noDataFound')"
                 @change="showForm"
                 data-test="check-list"
@@ -26,7 +26,7 @@
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
                     <div class="kn-list-item" data-test="list-item">
-                        <Avatar :icon="constraintManagmentDescriptor.iconTypesMap[slotProps.option.predifined].icon" shape="circle" size="medium" />
+                        <Avatar :icon="constraintManagementDescriptor.iconTypesMap[slotProps.option.predifined].icon" shape="circle" size="medium" />
                         <div class="kn-list-item-text" v-tooltip.top="slotProps.option.description">
                             <span>{{ slotProps.option.label }}</span>
                             <span class="kn-list-item-text-secondary">{{ slotProps.option.name }}</span>
@@ -38,8 +38,8 @@
             </Listbox>
         </div>
         <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0">
-            <KnHint :title="'managers.constraintManagment.title'" :hint="'managers.constraintManagment.hint'" v-if="!formVisible"></KnHint>
-            <ConstraintsManagmentDetail :selectedConstraint="selectedCheck" :domains="domains" @close="closeForm" @created="handleSave" @touched="touched = true" v-else></ConstraintsManagmentDetail>
+            <KnHint :title="'managers.constraintManagement.title'" :hint="'managers.constraintManagement.hint'" v-if="!formVisible"></KnHint>
+            <ConstraintsManagementDetail :selectedConstraint="selectedCheck" :domains="domains" @close="closeForm" @created="handleSave" @touched="touched = true" v-else></ConstraintsManagementDetail>
         </div>
     </div>
 </template>
@@ -48,10 +48,10 @@ import { defineComponent } from 'vue'
 import axios from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
-import constraintManagmentDescriptor from './ConstraintsManagmentDescriptor.json'
+import constraintManagementDescriptor from './ConstraintsManagementDescriptor.json'
 import Avatar from 'primevue/avatar'
-import { iConstraint } from './ConstraintsManagment'
-import ConstraintsManagmentDetail from './ConstraintsManagmentDetail.vue'
+import { iConstraint } from './ConstraintsManagement'
+import ConstraintsManagementDetail from './ConstraintsManagementDetail.vue'
 import KnHint from '@/components/UI/KnHint.vue'
 import Tooltip from 'primevue/tooltip'
 
@@ -62,7 +62,7 @@ export default defineComponent({
         KnHint,
         Listbox,
         Avatar,
-        ConstraintsManagmentDetail
+        ConstraintsManagementDetail
     },
     directives: {
         tooltip: Tooltip
@@ -77,7 +77,7 @@ export default defineComponent({
             allCheks: [] as iConstraint[],
             selectedCheck: {} as iConstraint,
             domains: [] as any,
-            constraintManagmentDescriptor
+            constraintManagementDescriptor
         }
     },
     created() {
@@ -170,7 +170,7 @@ export default defineComponent({
                 })
                 .catch((error) => {
                     this.$store.commit('setError', {
-                        title: this.$t('managers.constraintManagment.deleteError'),
+                        title: this.$t('managers.constraintManagement.deleteError'),
                         msg: error.message
                     })
                 })
