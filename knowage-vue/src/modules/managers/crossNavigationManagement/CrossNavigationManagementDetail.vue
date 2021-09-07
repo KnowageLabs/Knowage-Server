@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0">
         <template #right>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="showCategoryDialog" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="hadleSave" />
             <Button class="p-button-text p-button-rounded p-button-plain" icon="pi pi-times" @click="closeTemplate" />
         </template>
     </Toolbar>
@@ -12,15 +12,39 @@
                 <form class="p-fluid p-formgrid p-grid">
                     <div class="p-field p-col-6 p-mb-3">
                         <span class="p-float-label">
-                            <InputText id="name" class="kn-material-input" type="text" v-model.trim="simpleNavigation.name" maxLength="40" />
+                            <InputText
+                                id="name"
+                                class="kn-material-input"
+                                type="text"
+                                v-model.trim="v$.simpleNavigation.name.$model"
+                                maxLength="40"
+                                :class="{
+                                    'p-invalid': v$.simpleNavigation.name.$invalid && v$.simpleNavigation.name.$dirty
+                                }"
+                                @blur="v$.simpleNavigation.name.$touch()"
+                            />
                             <label for="name" class="kn-material-input-label">{{ $t('common.name') }} * </label>
                         </span>
-                        <!-- <KnValidationMessages class="p-mt-1" :vComp="v$.word.WORD" :additionalTranslateParams="{ fieldName: $t('managers.glossary.common.word') }"></KnValidationMessages> -->
+                        <KnValidationMessages class="p-mt-1" :vComp="v$.simpleNavigation.name" :additionalTranslateParams="{ fieldName: $t('common.name') }"></KnValidationMessages>
                     </div>
-                    <div class="p-field p-col-6 p-mb-3">
+                    <div :class="simpleNavigation.type === 2 ? 'p-field p-col-2 p-mb-3' : 'p-field p-col-6 p-mb-3'">
                         <span class="p-float-label">
-                            <Dropdown id="type" class="kn-material-input" v-model="simpleNavigation.type" :options="crossModes" optionValue="value" optionLabel="name" />
+                            <Dropdown id="type" class="kn-material-input" v-model="simpleNavigation.type" :options="crossModes" optionValue="value" optionLabel="name" @change="handleDropdown" />
                             <label for="type" class="kn-material-input-label"> {{ $t('managers.crossNavigationManagement.modality') }} </label>
+                        </span>
+                    </div>
+                    <div class="p-field p-col-2 p-mb-3" v-if="simpleNavigation.type === 2">
+                        <span class="p-float-label">
+                            <InputText id="width" class="kn-material-input" type="number" v-model.trim="simpleNavigation.popupOptions.width" />
+                            <label for="width" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.width') }} </label>
+                            <small id="width-help">{{ $t('managers.crossNavigationManagement.widthHelp') }}</small>
+                        </span>
+                    </div>
+                    <div class="p-field p-col-2 p-mb-3" v-if="simpleNavigation.type === 2">
+                        <span class="p-float-label">
+                            <InputText id="height" class="kn-material-input" type="number" v-model.trim="simpleNavigation.popupOptions.height" />
+                            <label for="height" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.height') }} </label>
+                            <small id="height-help">{{ $t('managers.crossNavigationManagement.heightHelp') }}</small>
                         </span>
                     </div>
                     <div class="p-field p-col-6 p-mb-3">
@@ -43,11 +67,15 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { createValidations } from '@/helpers/commons/validationHelper'
 import axios from 'axios'
 import Dropdown from 'primevue/dropdown'
+import useValidate from '@vuelidate/core'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import crossNavigationManagementValidator from './CrossNavigationManagementValidator.json'
 export default defineComponent({
     name: 'cross-navigation-detail',
-    components: { Dropdown },
+    components: { Dropdown, KnValidationMessages },
     props: {
         id: {
             type: String
@@ -62,7 +90,13 @@ export default defineComponent({
                 { name: this.$t('managers.crossNavigationManagement.normal'), value: 0 },
                 { name: this.$t('managers.crossNavigationManagement.popUp'), value: 1 },
                 { name: this.$t('managers.crossNavigationManagement.popUpWindow'), value: 2 }
-            ]
+            ],
+            v$: useValidate() as any
+        }
+    },
+    computed: {
+        buttonDisabled(): any {
+            return this.v$.$invalid
         }
     },
     created() {
@@ -80,6 +114,12 @@ export default defineComponent({
             }
         }
     },
+    validations() {
+        const validationObject = {
+            simpleNavigation: createValidations('simpleNavigation', crossNavigationManagementValidator.validations.simpleNavigation)
+        }
+        return validationObject
+    },
     methods: {
         closeTemplate() {
             this.$emit('close')
@@ -94,8 +134,18 @@ export default defineComponent({
                 .then((response) => {
                     this.navigation = response.data
                     this.simpleNavigation = response.data.simpleNavigation
+                    if (this.simpleNavigation.popupOptions) {
+                        this.simpleNavigation.popupOptions = JSON.parse(this.simpleNavigation.popupOptions)
+                    }
                 })
                 .finally(() => (this.loading = false))
+        },
+        hadleSave() {
+            this.navigation.simpleNavigation = this.simpleNavigation
+            console.log(this.navigation)
+        },
+        handleDropdown() {
+            if (!this.simpleNavigation.popupOptions) this.simpleNavigation.popupOptions = { width: '', height: '' }
         }
     }
 })

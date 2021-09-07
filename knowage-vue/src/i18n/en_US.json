@@ -496,12 +496,16 @@
         },
         "crossNavigationManagement": {
             "breadCrumbs": "Text to show on Bread Crumbs",
+            "height": "Window height",
+            "heightHelp": "Height in px of the popup window.",
             "hint": "Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "modality": "Modality",
             "normal": "Normal",
             "popUp": "Pop-up",
             "popUpWindow": "Pop-up window",
-            "title": "Cross Navigation"
+            "title": "Cross Navigation",
+            "width": "Window width",
+            "widthHelp": "Width in px of the popup window."
         },
         "dataSourceManagement": {
             "form": {
