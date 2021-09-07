@@ -6,7 +6,22 @@
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <p>{{ navigation }}</p>
+    <div class="p-grid p-m-0 p-fluid p-jc-center" style="overflow:auto">
+        <Card style="width:100%" class="p-m-2">
+            <template #content>
+                <form class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-4 p-mb-3">
+                        <span class="p-float-label">
+                            <InputText id="name" class="kn-material-input" type="text" v-model.trim="simpleNavigation.name" maxLength="100" />
+                            <label for="name" class="kn-material-input-label">{{ $t('common.name') }} * </label>
+                        </span>
+                        <!-- <KnValidationMessages class="p-mt-1" :vComp="v$.word.WORD" :additionalTranslateParams="{ fieldName: $t('managers.glossary.common.word') }"></KnValidationMessages> -->
+                    </div>
+                </form>
+                <p>{{ navigation }}</p>
+            </template>
+        </Card>
+    </div>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -21,6 +36,7 @@ export default defineComponent({
     data() {
         return {
             navigation: {} as any,
+            simpleNavigation: {} as any,
             loading: false
         }
     },
@@ -35,6 +51,7 @@ export default defineComponent({
                 await this.loadNavigation()
             } else {
                 this.navigation = {}
+                this.simpleNavigation = {}
             }
         }
     },
