@@ -6,8 +6,8 @@
                 :class="{ dropzone: dropzoneActive[slotProps.node.key] }"
                 @drop="onDragDrop($event, slotProps.node, slotProps.node.key)"
                 @dragover.prevent=""
-                @dragenter.prevent="dropzoneActive[slotProps.node.key] = true"
-                @dragleave.prevent="dropzoneActive[slotProps.node.key] = false"
+                @dragenter.prevent="setDropzoneClass(true, slotProps.node)"
+                @dragleave.prevent="setDropzoneClass(false, slotProps.node)"
             >
                 <div class="p-d-flex p-flex-column">
                     <span>{{ slotProps.node.label }}</span>
@@ -41,7 +41,6 @@ export default defineComponent({
         treeWords: {
             handler() {
                 this.loadAssociatedWords()
-                console.log('NODES: ', this.nodes)
             },
             deep: true
         }
@@ -87,6 +86,11 @@ export default defineComponent({
             const tempItem = item.leaf ? item.parent : item
             this.$emit('wordDropped', { event: event, item: tempItem })
             this.dropzoneActive[key] = false
+        },
+        setDropzoneClass(value: boolean, node: any) {
+            if (!node.leaf) {
+                this.dropzoneActive[node.key] = value
+            }
         }
     }
 })
@@ -96,5 +100,8 @@ export default defineComponent({
 .dropzone {
     background-color: #c2c2c2;
     color: white;
+    width: 200px;
+    height: 30px;
+    border: 1px dashed;
 }
 </style>
