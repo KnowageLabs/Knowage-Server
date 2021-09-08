@@ -1,0 +1,14 @@
+{
+    "filterFields": [
+        "itypeCd",
+        "label",
+        "name"
+    ],
+    "iconTypesMap": {
+        "DATASET": "fas fa-database",
+        "FIX_LOV": "fas fa-list",
+        "JAVA_CLASS": "fab fa-java",
+        "QUERY": "fas fa-table",
+        "SCRIPT": "fab fa-js-square"
+    }
+}
