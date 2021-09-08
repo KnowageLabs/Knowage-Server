@@ -1,0 +1,29 @@
+{
+    "filterFields": ["name", "label"],
+    "iconTypesMap": {
+        "DATE": {
+            "icon": "far fa-calendar",
+            "style": {
+                "background-color": "#FFCC8D",
+                "color": "black"
+            },
+            "tooltip": "Date"
+        },
+        "NUM": {
+            "icon": "fas fa-hashtag",
+            "style": {
+                "background-color": "#B477C0",
+                "color": "black"
+            },
+            "tooltip": "Number"
+        },
+        "STRING": {
+            "icon": "fas fa-quote-right",
+            "style": {
+                "background-color": "#9BCD9B",
+                "color": "black"
+            },
+            "tooltip": "String"
+        }
+    }
+}

@@ -133,7 +133,7 @@
 				to="/kpi-definition" />
 			<ITEM id="6002" label="menu.kpi.measureRuleDefinition"
 				requiredFunctionality="KpiManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=measureRuleDefinition" />
+				to="/measure-definition" />
 			<ITEM id="6003" label="menu.kpi.targetDefinition"
 				requiredFunctionality="KpiTargetsManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=targetDefinition" />
