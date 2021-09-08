@@ -120,10 +120,8 @@
 			<ITEM id="5007" label="menu.NewsManagement"
 				requiredFunctionality="NewsManagement"
 				to="/news-management" />
-			<ITEM id="5008" label="menu.modelCatalogResourceManagement"
-				to="/models-management" />
-			<ITEM id="5009" label="menu.resourceManagement" requiredFunctionality="ResourceManagement,ResourceManagementDev"
-				to="/resource-management" />
+			<ITEM label="menu.WidgetGalleryManagement"
+				to="/gallery-management" />
 		</GROUP_ITEM>
 
 		<GROUP_ITEM id="6000" label="menu.KpiModel"
