@@ -17,7 +17,7 @@
                         </span>
                     </div>
                     <div class="p-field p-md-2">
-                        <Button class="p-button-link" :label="$t('documentExecution.dossier.launchActivity')" />
+                        <Button class="p-button-link" :label="$t('documentExecution.dossier.launchActivity')" @click="getDossier" />
                     </div>
                 </form>
             </template>
@@ -41,9 +41,9 @@
                     </Column>
                     <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :style="col.style" class="kn-truncated" :sortable="true" />
                     <Column header style="text-align:right">
-                        <template #body>
+                        <template #body="slotProps">
                             <Button icon="pi pi-download" class="p-button-link" />
-                            <Button icon="pi pi-trash" class="p-button-link" />
+                            <Button icon="pi pi-trash" class="p-button-link" @click="deleteDossierConfirm(slotProps.data.id)" />
                         </template>
                     </Column>
                 </DataTable>
@@ -55,7 +55,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import dossierDescriptor from './DossierDescriptor.json'
-// import axios from 'axios'
+import axios from 'axios'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -74,13 +74,31 @@ export default defineComponent({
         return {
             name: 'test',
             activities: dossierDescriptor.activities,
-            columns: dossierDescriptor.columns
+            columns: dossierDescriptor.columns,
+            test: [] as any
         }
     },
     methods: {
         formatDate(date) {
             let fDate = new Date(date)
             return fDate.toLocaleString()
+        },
+        getDossier() {
+            // dossier/activities/697
+            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activities/3251`).then((response) => {
+                this.test = response.data
+            })
+        },
+        deleteDossierConfirm(selectedDossierId) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteDossier(selectedDossierId)
+            })
+        },
+        deleteDossier(selectedDossierId) {
+            console.log(selectedDossierId)
         }
     }
 })
