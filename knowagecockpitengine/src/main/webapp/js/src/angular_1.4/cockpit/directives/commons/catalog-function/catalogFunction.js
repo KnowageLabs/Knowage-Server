@@ -199,6 +199,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.rEnvironments = cockpitModule_catalogFunctionService.rEnvironments;
 		$scope.pythonEnvironments = cockpitModule_catalogFunctionService.pythonEnvironments;
 
+		$scope.setLibraries=function() {
+			sbiModule_restServices.restToRootProject();
+			var endpoint = $scope.selectedFunction.language == "R" ? "RWidget" : "python";
+			sbiModule_restServices.promiseGet('2.0/backendservices/widgets/'+ endpoint +'/libraries', JSON.parse($scope.selectedFunction.environment).label)
+			.then(function(response){
+				$scope.selectedFunction.libraries = [];
+				var librariesArray = JSON.parse((response.data.result));
+				for (idx in librariesArray) {
+					lib = librariesArray[idx];
+					$scope.selectedFunction.libraries.push({"name": lib.name, "version": lib.version})
+				}
+				$scope.librariesGrid.api.setRowData($scope.selectedFunction.libraries);
+			}, function(error){
+				debugger;
+			});
+		}
+
+		if($scope.selectedFunction && $scope.selectedFunction.environment) $scope.setLibraries();
+
 		$scope.textToHtml=function(text){
 			return $sce.trustAsHtml(text);
 		}
@@ -344,22 +363,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.librariesGrid.api.redrawRows({rowNodes: [$scope.librariesGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
 		}
 
-		$scope.setLibraries=function() {
-			sbiModule_restServices.restToRootProject();
-			var endpoint = $scope.selectedFunction.language == "Python" ? "python" : "RWidget";
-			sbiModule_restServices.promiseGet('2.0/backendservices/widgets/'+ endpoint +'/libraries', JSON.parse($scope.selectedFunction.environment).label)
-			.then(function(response){
-				$scope.selectedFunction.libraries = [];
-				var librariesArray = JSON.parse((response.data.result));
-				for (idx in librariesArray) {
-					lib = librariesArray[idx];
-					$scope.selectedFunction.libraries.push({"name": lib.name, "version": lib.version})
-				}
-				$scope.librariesGrid.api.setRowData($scope.selectedFunction.libraries);
-			}, function(error){
-			});
-		}
-
 		checkColumnsConfiguration=function(columns){
 			for (var i=0; i<columns.length; i++) {
 				if (!columns[i].dsColumn)
@@ -421,6 +424,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			funcForExecution.id = func.id;
 			funcForExecution.name = func.name;
 			funcForExecution.label = func.label;
+			funcForExecution.description = func.description;
+			funcForExecution.language = func.language;
 			funcForExecution.inputVariables = func.inputVariables;
 			funcForExecution.inputColumns = func.inputColumns;
 			funcForExecution.outputColumns = func.outputColumns;

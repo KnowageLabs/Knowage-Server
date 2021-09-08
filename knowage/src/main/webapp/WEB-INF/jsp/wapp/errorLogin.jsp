@@ -19,8 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@page import="it.eng.spagobi.commons.services.LoginModule"%>
 <%@page import="it.eng.spago.dispatching.httpchannel.AdapterHTTP"%>
-<%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
-
+<%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
+<%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
+<%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
+<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
+<%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
 <%@ page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 <%@ page import="it.eng.spago.navigation.LightNavigationManager,
                  java.util.Map,
@@ -34,7 +37,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
    	loginUrlPars.put(AdapterHTTP.NEW_SESSION, "TRUE");
    	loginUrlPars.put(Constants.PAGE, LoginModule.PAGE_NAME);
    	loginUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_RESET, "TRUE");
+   	IUrlBuilder urlBuilder = UrlBuilderFactory.getUrlBuilder("WEB");
    	loginUrl = urlBuilder.getUrl(request, loginUrlPars);
+   	IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
+    String currTheme = ThemesManager.getDefaultTheme();
 %>
   
    	<html>

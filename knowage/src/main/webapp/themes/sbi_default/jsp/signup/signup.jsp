@@ -128,8 +128,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			  }
 			  $http.post('<%=urlBuilder.getResourceLink(request, "restful-services/signup/create?SBI_EXECUTION_ID=-1")%>', $scope.newUser)
 			  .then(function(response) {
+				  debugger;
 				  if(response.data.errors){
-					  $scope.popup('error',response.data.errors[0].message)
+					  var errorMsg = response.data.errors[0].message == null ? "Error" : response.data.errors[0].message;
+					  $scope.popup('error',errorMsg)
 				  }else{
 					  $scope.popup('message',response.data.message)
 					  $scope.newUser = {};

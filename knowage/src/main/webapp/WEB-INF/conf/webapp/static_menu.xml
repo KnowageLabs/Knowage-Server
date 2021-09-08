@@ -122,7 +122,7 @@
 				to="/news-management" />
 			<ITEM id="5008" label="menu.modelCatalogResourceManagement"
 				to="/models-management" />
-			<ITEM id="5009" label="menu.resourceManagement" requiredFunctionality="ResourceManagement"
+			<ITEM id="5009" label="menu.resourceManagement" requiredFunctionality="ResourceManagement,ResourceManagementDev"
 				to="/resource-management" />
 		</GROUP_ITEM>
 
@@ -244,59 +244,59 @@
 	</COMMON_USER_FUNCTIONALITIES>
 
 
-	<ALLOWED_USER_FUNCTIONALITIES id="10000">
-		<ITEM id="10001" label="menu.Browser" requiredFunctionality="SeeDocBrowser"
+	<ALLOWED_USER_FUNCTIONALITIES id="11000">
+		<ITEM id="11001" label="menu.Browser" requiredFunctionality="SeeDocBrowser"
 			to="${SPAGOBI_CONTEXT}/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 			iconCls="far fa-folder-open" />
 
-		<ITEM id="10002" label="menu.workspace"
+		<ITEM id="11002" label="menu.workspace"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=workspaceManagement"
 			iconCls="fas fa-briefcase" />
 
-		<ITEM id="10003" label="menu.myAccount" condition="my_account"
+		<ITEM id="11003" label="menu.myAccount" condition="my_account"
 			to="${SPAGOBI_CONTEXT}/restful-services/signup/prepareUpdate"
 			iconCls="fas fa-address-card" />
 
-		<ITEM id="10004" label="menu.Users"
+		<ITEM id="11004" label="menu.Users"
 			requiredFunctionality="FinalUsersManagement"
 			iconCls="fa fa-users"
 			to="/users-management/" />
 		
-		<ITEM id="10005" label="menu.HierarchiesEditor"
+		<ITEM id="11005" label="menu.HierarchiesEditor"
 			requiredFunctionality="HierarchiesManagement"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=hierarchiesEditor"
 			iconCls="fas fa-sitemap" />
-		<ITEM id="10006" label="menu.FunctionsCatalog"
+		<ITEM id="11006" label="menu.FunctionsCatalog"
 			requiredFunctionality="FunctionsCatalogUsage"
 			iconCls="fa fa-cubes"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=functionsCatalog" />
 	
-		<ITEM id="10007" label="menu.glossary.technical"
+		<ITEM id="11007" label="menu.glossary.technical"
 			requiredFunctionality="ManageGlossaryTechnical"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=glossaryTechnical"
 			iconCls="fas fa-book" />
-		<ITEM id="10008" label="menu.glossary.business"
+		<ITEM id="11008" label="menu.glossary.business"
 			requiredFunctionality="ManageGlossaryBusiness"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=glossaryBusiness"
 			iconCls="fas fa-building" />
-		<ITEM id="10009" label="menu.cross.definition"
+		<ITEM id="11009" label="menu.cross.definition"
 			requiredFunctionality="ManageCrossNavigation"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=crossDefinition" />
-		<ITEM id="10010" label="menu.calendar" requiredFunctionality="ManageCalendar"
+		<ITEM id="11010" label="menu.calendar" requiredFunctionality="ManageCalendar"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=calendarTemplate"
 			iconCls="fas fa-calendar" />
-		<ITEM id="10011" label="menu.lovs.management"
+		<ITEM id="11011" label="menu.lovs.management"
 			requiredFunctionality="LovsManagement"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=lovsManagement"
 			iconCls="fas fa-list" />
-		<ITEM id="10018" label="menu.i18n"
+		<ITEM id="11018" label="menu.i18n"
 			requiredFunctionality="ManageInternationalization"
 			to="/internationalization-management"
 			iconCls="fas fa-flag" />
-		<ITEM id="10019" label="menu.news" requiredFunctionality="NewsVisualization"
+		<ITEM id="11019" label="menu.news" requiredFunctionality="NewsVisualization"
 			conditionedView="news" iconCls="far fa-newspaper"
 			command="newsSelection" />
-		<ITEM id="10020" label="menu.Download" conditionedView="downloads"
+		<ITEM id="11020" label="menu.Download" conditionedView="downloads"
 			iconCls="fas fa-download" command="downloadsSelection" />
 
 

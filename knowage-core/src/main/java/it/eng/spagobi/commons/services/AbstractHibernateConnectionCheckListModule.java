@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,19 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.commons.services;
+
+import java.sql.Connection;
+import java.util.HashMap;
+import java.util.List;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.dbaccess.sql.DataConnection;
@@ -29,22 +37,13 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.jdbc.Work;
-
 public class AbstractHibernateConnectionCheckListModule extends
 		AbstractBasicCheckListModule {
 
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.commons.services.AbstractBasicCheckListModule#createCheckedObjectMap(it.eng.spago.base.SourceBean)
 	 */
+	@Override
 	public void createCheckedObjectMap(SourceBean request) throws Exception {
 		checkedObjectsMap = new HashMap();
 
@@ -57,7 +56,7 @@ public class AbstractHibernateConnectionCheckListModule extends
 
 		Session aSession = null;
 		Transaction tx = null;
-		
+
 		// exec CHECKED_QUERY
 		ScrollableDataResult scrollableDataResult = null;
 		SQLCommand sqlCommand = null;
@@ -67,27 +66,28 @@ public class AbstractHibernateConnectionCheckListModule extends
 			aSession = HibernateSessionManager.getCurrentSession();
 			tx = aSession.beginTransaction();
 			//Connection jdbcConnection = aSession.connection();
-			Connection jdbcConnection = HibernateSessionManager.getConnection(aSession);
-			dataConnection = DelegatedHibernateConnectionListService.getDataConnection(jdbcConnection);
-        	sqlCommand = dataConnection.createSelectCommand(statement);
-        	dataResult = sqlCommand.execute();
-        	scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
-			SourceBean chekedObjectsBean = scrollableDataResult.getSourceBean();
-			List checkedObjectsList = chekedObjectsBean
-					.getAttributeAsList("ROW");
-			for (int i = 0; i < checkedObjectsList.size(); i++) {
-				SourceBean objects = (SourceBean) checkedObjectsList.get(i);
-				String key = getObjectKey(objects);
-				checkedObjectsMap.put(key, key);
+			try (Connection jdbcConnection = HibernateSessionManager.getConnection(aSession)) {
+				dataConnection = DelegatedHibernateConnectionListService.getDataConnection(jdbcConnection);
+				sqlCommand = dataConnection.createSelectCommand(statement);
+				dataResult = sqlCommand.execute();
+				scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
+				SourceBean chekedObjectsBean = scrollableDataResult.getSourceBean();
+				List checkedObjectsList = chekedObjectsBean
+						.getAttributeAsList("ROW");
+				for (int i = 0; i < checkedObjectsList.size(); i++) {
+					SourceBean objects = (SourceBean) checkedObjectsList.get(i);
+					String key = getObjectKey(objects);
+					checkedObjectsMap.put(key, key);
+				}
+
+//				aSession.doWork(new MyWork(statement));
+
+//				tx.commit();
 			}
-			
-//			aSession.doWork(new MyWork(statement));
-			
-//			tx.commit();
 		} catch (HibernateException he) {
-			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, 
-		            this.getClass().getName(), 
-		            "execCheckedQuery", 
+			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE,
+		            this.getClass().getName(),
+		            "execCheckedQuery",
 		            he.getMessage());
 			if (tx != null)
 				tx.rollback();
@@ -101,41 +101,13 @@ public class AbstractHibernateConnectionCheckListModule extends
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.commons.services.AbstractBasicCheckListModule#getList(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)
 	 */
+	@Override
 	public ListIFace getList(SourceBean request, SourceBean response) throws Exception {
 		return DelegatedHibernateConnectionListService.getList(this, request, response);
 	}
-	
-//	public class MyWork implements Work {
-//		
-//		private String statement = null;
-//		
-//		public MyWork (String statement) {
-//			this.statement = statement;
-//		}
-//		
-//		public void execute(Connection connection) throws SQLException {
-//			try {
-//				DataConnection dataConnection = DelegatedHibernateConnectionListService.getDataConnection(connection);
-//				SQLCommand sqlCommand = dataConnection.createSelectCommand(statement);
-//				DataResult dataResult = sqlCommand.execute();
-//				ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
-//				SourceBean chekedObjectsBean = scrollableDataResult.getSourceBean();
-//				List checkedObjectsList = chekedObjectsBean
-//						.getAttributeAsList("ROW");
-//				for (int i = 0; i < checkedObjectsList.size(); i++) {
-//					SourceBean objects = (SourceBean) checkedObjectsList.get(i);
-//					String key = getObjectKey(objects);
-//					checkedObjectsMap.put(key, key);
-//				}
-//			} catch (Exception e) {
-//				throw new RuntimeException("Error while getting checked objects map", e);
-//			}
-//		}
-//		
-//	}
-	
+
 }

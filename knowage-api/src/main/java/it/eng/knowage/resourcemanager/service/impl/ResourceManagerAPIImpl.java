@@ -30,6 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -79,6 +80,10 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	private static Map<String, List<String>> foldersForDevs = new HashMap<>();
 	private Map<String, HashMap<String, Object>> cachedNodesInfo = new HashMap<String, HashMap<String, Object>>();
 
+	private static final String RESOURCE_FUNCTIONALITY_DEV = "ResourceManagementDev";
+	private static final String RESOURCE_FUNCTIONALITY = "ResourceManagement";
+	private static final String MODEL_CATALOG_FUNCTIONALITY = "ModelCatalogResourceManagement";
+
 	@Autowired
 	HMACUtilities HMACUtilities;
 
@@ -110,16 +115,16 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			String buondedBasePath = ResourceManagerUtilities.getBuondedBasePath();
 			fullP = fullP.resolve(buondedBasePath);
 			FolderDTO parentFolder = new FolderDTO(fullP);
-			parentFolder.setRelativePath("");
+			parentFolder.setRelativePath(buondedBasePath);
 			parentFolder.setKey(HMACUtilities.getKeyHashedValue(fullP.toString()));
 
 			FolderDTO mylist = createTree(parentFolder, profile, buondedBasePath, 0);
-			newRootFolder = new RootFolderDTO(mylist.getChildren());
+			newRootFolder = new RootFolderDTO(Arrays.asList(mylist));
 
 			LOGGER.debug("Finished resource path json tree");
 		} catch (IOException e) {
 			LOGGER.error("[ResourceManagerAPIImpl], [getFolders], ", e);
-			throw new KnowageRuntimeException(e.getMessage());
+			throw new KnowageRuntimeException(e);
 		}
 		return newRootFolder;
 	}
@@ -182,49 +187,46 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	@Override
 	public boolean canSee(Path path, SpagoBIUserProfile profile) {
 		boolean canSee = false;
-		if (profile.isIsSuperadmin() || hasAdministratorRole(profile)) {
+		if (profile.isIsSuperadmin()) {
 			return true;
 		} else {
-			for (String function : profile.getFunctions()) {
-				// TODO: functionality must be present
-				// if (function.equalsIgnoreCase("RESOURCE_FUNCTION")) {
-				// canSee = true;
-				// }
-			}
-			if (hasDevRole(profile)) {
-				if (foldersForDevs.get("DEV").contains(path.getFileName().toString())) {
-					return true;
+			if (hasDevFunctionality(profile)) {
+				List<String> restrictedFolders = foldersForDevs.get("DEV");
+				for (String folder : restrictedFolders) {
+					try {
+						Path completePath = getTotalPath(folder, profile);
+						if (path.toString().toLowerCase().startsWith(completePath.toString().toLowerCase())) {
+							return true;
+						}
+					} catch (TenantRepositoryMissingException e) {
+						throw new KnowageRuntimeException(e);
+					}
+
 				}
+			} else {
+				canSee = hasAdministratorFunction(profile);
 			}
 		}
 
 		return canSee;
 	}
 
-	public static boolean hasAdministratorRole(SpagoBIUserProfile profile) {
-		try {
-			for (String role : profile.getRoles()) {
-				if (role.equals("admin")) {
-					return true;
-				}
-			}
-			return false;
-		} catch (Exception e) {
-			throw new KnowageRuntimeException(e.getMessage());
+	// Admin functionalities, EE and CE
+	public static boolean hasAdministratorFunction(SpagoBIUserProfile profile) {
+		if (profile.getFunctions().contains(RESOURCE_FUNCTIONALITY)) {
+			return true;
 		}
+
+		return false;
 	}
 
-	public static boolean hasDevRole(SpagoBIUserProfile profile) {
-		try {
-			for (String role : profile.getRoles()) {
-				if (role.equals("dev")) {
-					return true;
-				}
-			}
-			return false;
-		} catch (Exception e) {
-			throw new KnowageRuntimeException(e.getMessage());
+	// DEV functionalities, EE and CE
+	public static boolean hasDevFunctionality(SpagoBIUserProfile profile) {
+		if (profile.getFunctions().contains(RESOURCE_FUNCTIONALITY_DEV)) {
+			return true;
 		}
+
+		return false;
 	}
 
 	// if user can't work with directory it is not necessary
@@ -234,7 +236,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		boolean bool = false;
 		try {
 			Path totalPath = getTotalPath(path, profile);
-			Path workDir = getWorkBaseDirByPath(path, profile);
+			Path workDir = getFullRootByPath(path, profile);
 			if (canSee(workDir, profile)) {
 				File file = totalPath.toFile();
 
@@ -254,7 +256,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				}
 			}
 		} catch (Exception e) {
-			throw new ImpossibleToCreateFolderException(e.getMessage());
+			throw new KnowageRuntimeException(e.getMessage(), e);
 		}
 		return bool;
 	}
@@ -262,7 +264,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	@Override
 	public boolean delete(String path, SpagoBIUserProfile profile)
 			throws TenantRepositoryMissingException, ImpossibleToDeleteFolderException, ImpossibleToDeleteFileException {
-		Path workDir = getWorkBaseDirByPath(path, profile);
+		Path workDir = getFullRootByPath(path, profile);
 		if (canSee(workDir, profile)) {
 			Path totalPath = getTotalPath(path, profile);
 			File file = totalPath.toFile();
@@ -270,13 +272,13 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				try {
 					FileUtils.deleteDirectory(file);
 				} catch (IOException e) {
-					throw new ImpossibleToDeleteFolderException(e.getMessage());
+					throw new ImpossibleToDeleteFolderException(e.getMessage(), e);
 				}
 			} else {
 				try {
 					FileUtils.forceDelete(file);
 				} catch (IOException e) {
-					throw new ImpossibleToDeleteFileException(e.getMessage());
+					throw new ImpossibleToDeleteFileException(e.getMessage(), e);
 				}
 			}
 		}
@@ -289,14 +291,14 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		Path workingPath = null;
 		Path pathToReturn = null;
 		try {
-			Path workDirr = getWorkBaseDirByPath(path, profile);
+			Path workDirr = getFullRootByPath(path, profile);
 			if (canSee(workDirr, profile)) {
 				Path workDir = getWorkDirectory(profile);
 				workingPath = workDir.resolve(path);
 				pathToReturn = createZipFile(key, workingPath);
 			}
 		} catch (Exception e) {
-			throw new ImpossibleToCreateFileException(e.getMessage());
+			throw new ImpossibleToCreateFileException(e.getMessage(), e);
 		}
 		return pathToReturn;
 	}
@@ -310,7 +312,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				pathToReturn = createZipFileOfFiles(path, profile);
 			} else {
 				String pathFile = path.get(0);
-				Path workDirr = getWorkBaseDirByPath(pathFile, profile);
+				Path workDirr = getFullRootByPath(pathFile, profile);
 
 				if (canSee(workDirr, profile)) {
 					Path workDir = getWorkDirectory(profile);
@@ -318,13 +320,14 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				}
 			}
 		} catch (Exception e) {
-			throw new ImpossibleToDownloadFileException(e.getMessage());
+			throw new ImpossibleToDownloadFileException(e.getMessage(), e);
 		}
 		return pathToReturn;
 	}
 
-	public Path getWorkBaseDirByPath(String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException {
-		String rootElement = path.split("/")[0];
+	public Path getFullRootByPath(String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException {
+		String separator = File.separator.equals("\\") ? "\\\\" : File.separator;
+		String rootElement = path.split(separator)[0];
 		Path rootPath = getTotalPath(rootElement, profile);
 		return rootPath;
 	}
@@ -384,7 +387,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		try {
 			Path totalPath = getTotalPath(path, profile);
 			File folder = totalPath.toFile();
-			Path workDir = getWorkBaseDirByPath(path, profile);
+			Path workDir = getFullRootByPath(path, profile);
 			if (canSee(workDir, profile)) {
 				File[] listOfFiles = folder.listFiles();
 				if (listOfFiles != null) {
@@ -412,7 +415,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			throws IOException, TenantRepositoryMissingException, ImpossibleToUploadFileException {
 
 		try {
-			Path workBaseDir = getWorkBaseDirByPath(path, profile);
+			Path workBaseDir = getFullRootByPath(path, profile);
 			Path fileTotalPath = getTotalPath(path, profile);
 
 			if (canSee(workBaseDir, profile)) {
@@ -422,14 +425,14 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				FileUtils.copyInputStreamToFile(archiveInputStream, tempArchive.toFile());
 			}
 		} catch (Exception e) {
-			throw new ImpossibleToUploadFileException(e.getMessage());
+			throw new ImpossibleToUploadFileException(e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public void importFileAndExtract(InputStream archiveInputStream, String path, SpagoBIUserProfile profile)
 			throws IOException, TenantRepositoryMissingException {
-		Path workBaseDir = getWorkBaseDirByPath(path, profile);
+		Path workBaseDir = getFullRootByPath(path, profile);
 		Path fileTotalPath = getTotalPath(path, profile);
 		String totalPathDestinationDir = fileTotalPath.getParent().toFile().getAbsolutePath();
 		if (canSee(workBaseDir, profile)) {
@@ -500,7 +503,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				Path relativize = tempDirectory.relativize(currPath);
 				if (!relativize.toString().isEmpty()) {
 					if (Files.isDirectory(currPath)) {
-						ZipEntry zipEntry = new ZipEntry(relativize.toString() + File.separator);
+						ZipEntry zipEntry = new ZipEntry(relativize.toString() + "/");
 						ret.putNextEntry(zipEntry);
 					} else {
 						ZipEntry zipEntry = new ZipEntry(relativize.toString());
@@ -560,7 +563,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 			}
 		} catch (Exception e) { // TODO: change it for error handling
-			throw new KnowageRuntimeException(e.getMessage());
+			throw new KnowageRuntimeException(e);
 		} finally {
 			zip.close();
 		}
@@ -590,10 +593,10 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	public MetadataDTO getMetadata(String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToReadMetadataException {
 		MetadataDTO metadata = null;
 		try {
-			Path workPath = getWorkBaseDirByPath(path, profile);
+			Path workPath = getFullRootByPath(path, profile);
 			Path totalPath = getTotalPath(path, profile).resolve(METADATA_JSON);
 
-			if (isStartingFromModel(workPath, profile) && canSee(workPath, profile)) {
+			if (isStartingFromModel(totalPath, profile) && canSee(workPath, profile)) {
 				ObjectMapper mapper = new ObjectMapper();
 				if (!new File(totalPath.toString()).exists()) {
 					LOGGER.debug("Metadata file not found. It will be created.");
@@ -609,7 +612,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				}
 			}
 		} catch (Exception ex) {
-			throw new ImpossibleToReadMetadataException(ex.getMessage());
+			throw new ImpossibleToReadMetadataException(ex.getMessage(), ex);
 		}
 
 		return metadata;
@@ -628,14 +631,15 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	public MetadataDTO saveMetadata(MetadataDTO fileDTO, String path, SpagoBIUserProfile profile)
 			throws TenantRepositoryMissingException, ImpossibleToSaveMetadataException {
 		try {
-			Path workPath = getWorkBaseDirByPath(path, profile);
-			if (isStartingFromModel(workPath, profile) && canSee(workPath, profile)) {
-				Path totalPath = getTotalPath(path, profile).resolve(METADATA_JSON);
+			Path workPath = getFullRootByPath(path, profile);
+			Path totalPath = getTotalPath(path, profile);
+			if (isStartingFromModel(totalPath, profile) && canSee(workPath, profile)) {
+				Path metadataPath = totalPath.resolve(METADATA_JSON);
 				ObjectMapper objectMapper = new ObjectMapper();
-				objectMapper.writeValue(totalPath.toFile(), fileDTO);
+				objectMapper.writeValue(metadataPath.toFile(), fileDTO);
 			}
 		} catch (Exception e) {
-			throw new ImpossibleToSaveMetadataException(e.getMessage());
+			throw new ImpossibleToSaveMetadataException(e.getMessage(), e);
 
 		}
 		return fileDTO;
@@ -646,8 +650,8 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			throws TenantRepositoryMissingException, ImpossibleToCreateFolderException {
 		boolean updated = false;
 
-		File fromDirectory = getWorkBaseDirByPath(path.toString(), profile).toFile();
-		File toDirectory = getWorkBaseDirByPath(path.getParent().resolve(folderName).toString(), profile).toFile();
+		File fromDirectory = getTotalPath(path.toString(), profile).toFile();
+		File toDirectory = getTotalPath(path.getParent().resolve(folderName).toString(), profile).toFile();
 
 		if (toDirectory.exists()) {
 			String message = "Destination folder already existing";

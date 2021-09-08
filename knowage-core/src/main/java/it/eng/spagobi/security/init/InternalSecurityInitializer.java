@@ -148,7 +148,8 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 						int userIdInt = usersLookupMap.get(userId).intValue();
 						id.setExtRoleId(extRoleId);// role Id
 						id.setId(userIdInt);// user ID
-
+						sbiExtUserRole.getCommonInfo().setOrganization(organization);
+						;
 						sbiExtUserRole.setId(id);
 
 						userDAO.updateSbiUserRoles(sbiExtUserRole);

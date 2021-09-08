@@ -19,6 +19,7 @@ package it.eng.spagobi.tools.dataset.dao;
 
 import static java.util.stream.Collectors.toList;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,6 +58,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.federateddataset.dao.SbiFederationDefinitionDAOHibImpl;
@@ -519,6 +521,18 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					}
 
 					DataSetEventManager.getInstance().notifyDelete(toReturn);
+				}
+				// if dataset is of type FILE, delete associated file as well
+				if (sbiDataSet.getType().equals(DataSetConstants.DS_FILE)) {
+					try {
+						JSONObject config = new JSONObject(sbiDataSet.getConfiguration());
+						String fileName = config.getString("fileName");
+						String fileDir = SpagoBIUtilities.getFileDatasetResourcePath();
+						File toDelete = new File(fileDir + File.separatorChar + fileName);
+						toDelete.delete();
+					} catch (Exception e) {
+						logger.error("Cannot delete file associated to dataset: " + sbiDataSet.getLabel(), e);
+					}
 				}
 			}
 

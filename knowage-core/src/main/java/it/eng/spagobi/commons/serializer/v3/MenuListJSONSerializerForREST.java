@@ -137,6 +137,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		allowedMenuToNotDuplicate.put("menu.importexport.glossary", 10008);
 		allowedMenuToNotDuplicate.put("menu.importexport.catalog", 10006);
 		allowedMenuToNotDuplicate.put("menu.i18n", 9001);
+		allowedMenuToNotDuplicate.put("menu.news", 5007);
 
 		technicalMenuCommunityOrEnterprise.put("5008", "5009");
 	}
@@ -390,11 +391,17 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				/* ALL_USERS or ALLOWED_USER_FUNCTIONALITIES */
 				if (condition != null && !condition.isEmpty()) {
 					addElement = menuConditionIsSatisfied(itemSB);
-				} else if (requiredFunctionality != null) {
-					if (isAbleTo(requiredFunctionality, funcs)) {
-						addElement = isGroupItemToAdd(itemSB);
-					} else
-						addElement = false;
+				} else if (StringUtils.isNotBlank(requiredFunctionality)) {
+					addElement = false;
+
+					String[] reqFunc = requiredFunctionality.split(",", -1);
+					for (int i = 0; i < reqFunc.length; i++) {
+						if (isAbleTo(reqFunc[i], funcs)) {
+							addElement = isGroupItemToAdd(itemSB);
+						}
+						if (addElement)
+							break;
+					}
 				}
 
 				if (addElement)
@@ -406,6 +413,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				if (addElement) {
 					JSONObject menu = createMenuNode(locale, messageBuilder, itemSB, menuType);
 					items.put(menu);
+					if (menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES)
+						technicalUserMenuIds.add(Integer.valueOf((String) itemSB.getAttribute(ID)));
 				}
 			}
 
@@ -582,13 +591,13 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			throws JSONException {
 		JSONObject menu = createMenuNode(locale, messageBuilder, itemSB, menuType);
 
-		if (menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES) {
-			String strId = (String) itemSB.getAttribute(ID);
-			if (strId != null) {
-				Integer id = Integer.valueOf(strId);
-				technicalUserMenuIds.add(id);
-			}
-		}
+//		if (menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES) {
+//			String strId = (String) itemSB.getAttribute(ID);
+//			if (strId != null) {
+//				Integer id = Integer.valueOf(strId);
+//				technicalUserMenuIds.add(id);
+//			}
+//		}
 
 		return menu;
 	}
