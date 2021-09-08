@@ -686,6 +686,23 @@
             "settings": "News Settings",
             "title": "News Management"
         },
+        "newsManagement": {
+            "active": "Active",
+            "detailTitle": "News Detail",
+            "form": {
+                "description": "Description",
+                "descriptionPlaceholder": "This is the text that will appear on the news notification",
+                "expirationDate": "Expiration Date",
+                "title": "News Title",
+                "type": "News Type"
+            },
+            "hint": "This is the placeholder.",
+            "noResults": "No roles available for the selected filter",
+            "role": "Role",
+            "roles": "Roles permissions",
+            "settings": "News Settings",
+            "title": "News Management"
+        },
         "profileAttributesManagement": {
             "description": "Description",
             "form": {
