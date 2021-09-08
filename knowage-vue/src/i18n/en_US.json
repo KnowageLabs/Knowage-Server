@@ -958,6 +958,7 @@
             "blockedUserInfo": "This user reached the maximum number of failed login attempts and therefore he was locked. Do you want to unlock him?",
             "defaultRoleInfo": "Select a role if you want to set it as the default. If no role is selected, it will be possible switch between roles from the Knowage Administration menu",
             "detail": "Detail",
+            "emptyRolesOption": "<no default role>",
             "error": {
                 "missingDefaultRole": "Default role is not selected",
                 "noRolesSelected": "No roles selected for the user. At least one role must be selected for the user to be valid"
