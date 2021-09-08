@@ -59,10 +59,29 @@
                             <label for="name" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.breadCrumbs') }} </label>
                         </span>
                     </div>
+                    <div class="p-field p-col-4 p-mb-3">
+                        <span class="p-float-label">
+                            <InputText id="origin" class="kn-material-input" type="text" v-model.trim="simpleNavigation.fromDoc" disabled />
+                            <label for="origin" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.originDoc') }} </label>
+                        </span>
+                    </div>
+                    <div class="p-field p-col-2 p-mb-3">
+                        <Button :label="$t('common.select')" @click="selectDoc('origin')" class="kn-button kn-button--primary" />
+                    </div>
+                    <div class="p-field p-col-4 p-mb-3">
+                        <span class="p-float-label">
+                            <InputText id="target" class="kn-material-input" type="text" v-model.trim="simpleNavigation.toDoc" disabled />
+                            <label for="target" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.targetDoc') }} </label>
+                        </span>
+                    </div>
+                    <div class="p-field p-col-2 p-mb-3">
+                        <Button :label="$t('common.select')" @click="selectDoc('target')" class="kn-button kn-button--primary" />
+                    </div>
                 </form>
                 <p>{{ navigation }}</p>
             </template>
         </Card>
+        <DocDialog :dialogVisible="dialogVisible" :selectedDoc="docId" @close="dialogVisible = false"></DocDialog>
     </div>
 </template>
 <script lang="ts">
@@ -72,10 +91,11 @@ import axios from 'axios'
 import Dropdown from 'primevue/dropdown'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import DocDialog from './dialogs/CrossNavigationManagementDocDialog.vue'
 import crossNavigationManagementValidator from './CrossNavigationManagementValidator.json'
 export default defineComponent({
     name: 'cross-navigation-detail',
-    components: { Dropdown, KnValidationMessages },
+    components: { Dropdown, DocDialog, KnValidationMessages },
     props: {
         id: {
             type: String
@@ -86,6 +106,9 @@ export default defineComponent({
             navigation: {} as any,
             simpleNavigation: {} as any,
             loading: false,
+            dialogVisible: false,
+            docType: 'origin',
+            docId: null,
             crossModes: [
                 { name: this.$t('managers.crossNavigationManagement.normal'), value: 0 },
                 { name: this.$t('managers.crossNavigationManagement.popUp'), value: 1 },
@@ -146,6 +169,19 @@ export default defineComponent({
         },
         handleDropdown() {
             if (!this.simpleNavigation.popupOptions) this.simpleNavigation.popupOptions = { width: '', height: '' }
+        },
+        selectDoc(type) {
+            console.log(type)
+            this.docType = type
+            switch (type) {
+                case 'origin':
+                    this.docId = this.simpleNavigation.fromDocId
+                    break
+                case 'target':
+                    this.docId = this.simpleNavigation.toDocId
+                    break
+            }
+            this.dialogVisible = true
         }
     }
 })

@@ -59,6 +59,7 @@
         "run": "Run",
         "save": "save",
         "search": "search",
+        "select": "select",
         "sort": "sort",
         "table": {
             "footer": {
@@ -518,11 +519,14 @@
             "hint": "Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "modality": "Modality",
             "normal": "Normal",
+            "originDoc": "Origin doc",
             "popUp": "Pop-up",
             "popUpWindow": "Pop-up window",
+            "targetDoc": "Target doc",
             "title": "Cross Navigation",
             "width": "Window width",
-            "widthHelp": "Width in px of the popup window."
+            "widthHelp": "Width in px of the popup window.",
+            "selectDocument": "Select document"
         },
         "dataSourceManagement": {
             "form": {
