@@ -170,19 +170,9 @@ export default defineComponent({
 
             this.populateForms(this.userDetailsForm)
         },
-        getRoleId() {
-            let defaultRoleId: any
-            if (this.selectedRoles.length == 1) {
-                defaultRoleId = this.selectedRoles[0].id
-            } else {
-                defaultRoleId = this.defaultRole
-            }
-            return defaultRoleId
-        },
         formatUserObject() {
             delete this.userDetailsForm.passwordConfirm
-            this.userDetailsForm['defaultRoleId'] = this.getRoleId()
-
+            this.userDetailsForm['defaultRoleId'] = this.defaultRole
             this.userDetailsForm['sbiUserAttributeses'] = { ...this.attributesForm }
             this.userDetailsForm['sbiExtUserRoleses'] = this.selectedRoles ? [...this.selectedRoles.map((selRole) => selRole.id)] : []
         },

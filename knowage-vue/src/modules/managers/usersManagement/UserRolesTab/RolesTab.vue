@@ -13,7 +13,7 @@
                     <div v-if="selectedRoles.length > 1">
                         <div class="p-inputgroup">
                             <span class="p-float-label">
-                                <Dropdown v-model="defaultRole" showClear="true" :options="selectedRoles" @change="onSelectDefaultRole($event)" optionLabel="name" optionValue="id" class="p-inputtext p-component kn-material-input" />
+                                <Dropdown v-model="defaultRole" showClear="true" :options="selectedRolesWithEmpty()" @change="onSelectDefaultRole($event)" optionLabel="name" optionValue="id" class="p-inputtext p-component kn-material-input" />
                                 <label for="defaultRole"> {{ $t('managers.usersManagement.form.defaultRole') }}</label>
                             </span>
                         </div>
@@ -111,6 +111,11 @@ export default defineComponent({
                 this.defaultRole = null
                 this.onSelectDefaultRole()
             }
+        },
+        selectedRolesWithEmpty() {
+            const selecteRolesArray: iRole[] = this.selectedRoles ? [...this.selectedRoles] : []
+            selecteRolesArray.unshift({ id: null, name: this.$t('managers.usersManagement.emptyRolesOption'), value: '' })
+            return selecteRolesArray
         }
     }
 })
