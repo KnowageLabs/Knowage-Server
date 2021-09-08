@@ -81,7 +81,6 @@ export default defineComponent({
     },
     methods: {
         applyLov() {
-            console.log(this.selectedLov)
             this.$emit('apply', this.selectedLov)
             this.detailVisiable = false
         },
@@ -92,7 +91,6 @@ export default defineComponent({
         lovDetail(lov: any) {
             this.detailVisiable = true
             this.lovDetails = lov
-            console.log(this.lovDetails)
         }
     }
 })

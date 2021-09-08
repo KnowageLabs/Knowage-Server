@@ -112,7 +112,6 @@ export default defineComponent({
             this.getRoles()
             this.getConstraints()
             this.getselectionTypes()
-            console.log(this.showMapDriver)
             if (this.showMapDriver) this.getLayers()
             this.getLovs()
         },
@@ -124,7 +123,6 @@ export default defineComponent({
             this.driver.type = selectedType[0].VALUE_CD
         },
         formatUseMode() {
-            console.log('Before format', this.modes)
             let tmp = this.modes.filter((mode) => mode.edited)
             this.modesToSave = []
             tmp.forEach((mode) => {
@@ -146,14 +144,12 @@ export default defineComponent({
                 delete obj.typeLov
                 delete obj.maxLov
                 delete obj.edited
-                //this.modesToSave.push({ ...mode })
                 this.modesToSave.push(obj)
             })
         },
         async handleSubmit() {
             this.formatDriver()
             this.formatUseMode()
-            console.log(this.modesToSave)
 
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/'
             if (this.driver.id) {
