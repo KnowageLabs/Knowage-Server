@@ -23,12 +23,7 @@
 	import WEB_SOCKET from '@/services/webSocket.js'
 
 	export default defineComponent({
-		components: {
-			ConfirmDialog,
-			KnOverlaySpinnerPanel,
-			MainMenu,
-			Toast
-		},
+		components: { ConfirmDialog, KnOverlaySpinnerPanel, MainMenu, Toast },
 
 		beforeMount() {
 			axios
@@ -46,7 +41,7 @@
 					store.commit('setLocale', storedLocale)
 					this.$i18n.locale = storedLocale
 
-					if (responseLocale != storedLocale) {
+					/* if (responseLocale != storedLocale) {
 						let language = this.$i18n
 						let splittedLanguage = language.locale.split('_')
 
@@ -72,7 +67,7 @@
 						)
 
 						this.$emit('update:loading', false)
-					}
+					} */
 				})
 				.catch(function(error) {
 					if (error.response) {
@@ -146,16 +141,16 @@
 			error(newError) {
 				this.$toast.add({
 					severity: 'error',
-					summary: newError.title,
-					detail: newError.msg,
+					summary: this.$t(newError.title),
+					detail: this.$t(newError.msg),
 					life: typeof newError.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newError.duration
 				})
 			},
 			info(newInfo) {
 				this.$toast.add({
 					severity: 'info',
-					summary: newInfo.title,
-					detail: newInfo.msg,
+					summary: this.$t(newInfo.title),
+					detail: this.$t(newInfo.msg),
 					life: typeof newInfo.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newInfo.duration
 				})
 			},
