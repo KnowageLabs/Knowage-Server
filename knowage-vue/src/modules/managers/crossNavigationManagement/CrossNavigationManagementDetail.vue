@@ -7,7 +7,7 @@
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
     <div class="p-grid p-m-0 p-fluid p-jc-center" style="overflow:auto">
-        <Card style="width:100%" class="p-m-2">
+        <Card class="p-m-2">
             <template #content>
                 <form class="p-fluid p-formgrid p-grid">
                     <div class="p-field p-col-6 p-mb-3">
@@ -37,15 +37,15 @@
                         <span class="p-float-label">
                             <InputText id="width" class="kn-material-input" type="number" v-model.trim="simpleNavigation.popupOptions.width" />
                             <label for="width" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.width') }} </label>
-                            <small id="width-help">{{ $t('managers.crossNavigationManagement.widthHelp') }}</small>
                         </span>
+                        <small id="width-help">{{ $t('managers.crossNavigationManagement.widthHelp') }}</small>
                     </div>
                     <div class="p-field p-col-2 p-mb-3" v-if="simpleNavigation.type === 2">
                         <span class="p-float-label">
                             <InputText id="height" class="kn-material-input" type="number" v-model.trim="simpleNavigation.popupOptions.height" />
                             <label for="height" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.height') }} </label>
-                            <small id="height-help">{{ $t('managers.crossNavigationManagement.heightHelp') }}</small>
                         </span>
+                        <small id="height-help">{{ $t('managers.crossNavigationManagement.heightHelp') }}</small>
                     </div>
                     <div class="p-field p-col-6 p-mb-3">
                         <span class="p-float-label">
@@ -77,11 +77,33 @@
                     <div class="p-field p-col-2 p-mb-3">
                         <Button :label="$t('common.select')" @click="selectDoc('target')" class="kn-button kn-button--primary" />
                     </div>
+                    <div class="p-field p-col-6 p-mb-3">
+                        <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                            <template #left>
+                                {{ $t('managers.crossNavigationManagement.availableIO') }}
+                            </template>
+                        </Toolbar>
+                        <div class="p-inputgroup">
+                            <InputText class="kn-material-input" type="text" v-model="value" />
+                            <KnFabButton icon="fas fa-plus"></KnFabButton>
+                        </div>
+                        <Listbox :options="navigation.fromPars" optionLabel="name"></Listbox>
+                        {{ navigation.fromPars }}
+                    </div>
+                    <div class="p-field p-col-6 p-mb-3">
+                        <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                            <template #left>
+                                {{ $t('managers.crossNavigationManagement.availableInput') }}
+                            </template>
+                        </Toolbar>
+                        <Listbox :options="navigation.toPars" optionLabel="name"></Listbox>
+                        {{ navigation.toPars }}
+                    </div>
                 </form>
                 <p>{{ navigation }}</p>
             </template>
         </Card>
-        <DocDialog :dialogVisible="dialogVisible" :selectedDoc="docId" @close="dialogVisible = false"></DocDialog>
+        <DocDialog :dialogVisible="dialogVisible" :selectedDoc="docId" @close="dialogVisible = false" @apply="hadleDoc"></DocDialog>
     </div>
 </template>
 <script lang="ts">
@@ -89,13 +111,15 @@ import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import axios from 'axios'
 import Dropdown from 'primevue/dropdown'
+import Listbox from 'primevue/listbox'
+import KnFabButton from '@/components/UI/KnFabButton.vue'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import DocDialog from './dialogs/CrossNavigationManagementDocDialog.vue'
 import crossNavigationManagementValidator from './CrossNavigationManagementValidator.json'
 export default defineComponent({
     name: 'cross-navigation-detail',
-    components: { Dropdown, DocDialog, KnValidationMessages },
+    components: { Dropdown, DocDialog, KnValidationMessages, Listbox, KnFabButton },
     props: {
         id: {
             type: String
@@ -182,6 +206,19 @@ export default defineComponent({
                     break
             }
             this.dialogVisible = true
+        },
+        hadleDoc(doc) {
+            this.dialogVisible = false
+            switch (this.docType) {
+                case 'origin':
+                    this.simpleNavigation.fromDocId = doc.DOCUMENT_ID
+                    this.simpleNavigation.fromDoc = doc.DOCUMENT_LABEL
+                    break
+                case 'target':
+                    this.simpleNavigation.toDocId = doc.DOCUMENT_ID
+                    this.simpleNavigation.toDoc = doc.DOCUMENT_LABEL
+                    break
+            }
         }
     }
 })

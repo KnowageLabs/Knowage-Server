@@ -513,6 +513,8 @@
             "type": "Check type"
         },
         "crossNavigationManagement": {
+            "availableIO": "Available Input/Output parameters",
+            "availableInput": "Available Input parameters",
             "breadCrumbs": "Text to show on Bread Crumbs",
             "height": "Window height",
             "heightHelp": "Height in px of the popup window.",
@@ -522,11 +524,11 @@
             "originDoc": "Origin doc",
             "popUp": "Pop-up",
             "popUpWindow": "Pop-up window",
+            "selectDocument": "Select document",
             "targetDoc": "Target doc",
             "title": "Cross Navigation",
             "width": "Window width",
-            "widthHelp": "Width in px of the popup window.",
-            "selectDocument": "Select document"
+            "widthHelp": "Width in px of the popup window."
         },
         "dataSourceManagement": {
             "form": {

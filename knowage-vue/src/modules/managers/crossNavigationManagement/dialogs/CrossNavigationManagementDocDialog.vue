@@ -10,7 +10,7 @@
                 </template>
             </Toolbar>
         </template>
-        <DataTable :paginator="true" :rows="15" :rowsPerPageOptions="[10, 15, 20]" v-model:selection="selected" :value="documents.item" class="p-datatable-sm kn-table" dataKey="DOCUMENT_ID" responsiveLayout="stack" selectionMode="single" :loading="loading">
+        <DataTable :paginator="true" :rows="15" :rowsPerPageOptions="[10, 15, 20]" v-model:selection="selected" :value="documents.item" class="p-datatable-sm kn-table" dataKey="DOCUMENT_ID" responsiveLayout="stack" selectionMode="single" :loading="loading" @row-select="hadleSelect">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -24,8 +24,6 @@
                 </template>
             </Column>
         </DataTable>
-        {{ selectedDoc }}
-        {{ selected }}
     </Dialog>
 </template>
 <script lang="ts">
@@ -77,6 +75,10 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/listDocument')
                 .then((response) => (this.documents = response.data))
                 .finally(() => (this.loading = false))
+        },
+        hadleSelect() {
+            console.log(this.selected)
+            this.$emit('apply', this.selected)
         }
     }
 })
