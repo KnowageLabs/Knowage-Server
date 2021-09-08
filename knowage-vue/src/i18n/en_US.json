@@ -496,6 +496,21 @@
             },
             "title": "Configuration Management"
         },
+        "constraintManagement": {
+            "dateValue": "Date value format",
+            "decimalPlaces": "Decimal places",
+            "deleteError": "Delete error",
+            "higherRangeValue": "Higher range value",
+            "hint": "The constraints management functionality allows you to create some constraint to use inside lovs or drivers to check the data consistancy. Some constaints are available as default from Knowage, and cannot be changed, but you can click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "lowerRangeValue": "Lower range value",
+            "maxLenghtValue": "Max lenght value",
+            "minLenghtValue": "Min lenght value",
+            "rangeCheck": "Must be higher than lower value",
+            "regexpValue": "Regular expression",
+            "saveError": "Error, not saved",
+            "title": "Constraints",
+            "type": "Check type"
+        },
         "dataSourceManagement": {
             "form": {
                 "advancedOptions": {
@@ -868,7 +883,7 @@
             "productTypes": {
                 "title": "Product Types"
             },
-            "tenantSaved": "Tenant correctly saved. The administrator of the tenant has been created too and his username and password are",
+            "tenantSaved": "Tenant correctly saved. The administrator of the tenant has been created too and his username and password are ",
             "title": "Tenant Management"
         },
         "usersManagement": {

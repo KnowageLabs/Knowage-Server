@@ -47,6 +47,7 @@
                             maxLength="500"
                             @blur="v$.businessModel.description.$touch()"
                             @input="onFieldChange('description', $event.target.value)"
+                            :disabled="readonly"
                             data-test="description-input"
                         />
                         <label for="description" class="kn-material-input-label"> {{ $t('managers.businessModelManager.description') }}</label>
@@ -71,6 +72,7 @@
                             v-model="v$.businessModel.category.$model"
                             :options="categories"
                             :placeholder="$t('common.category')"
+                            :disabled="readonly"
                             @before-show="v$.businessModel.category.$touch()"
                             @change="onFieldChange('category', $event.value.VALUE_ID)"
                         >
@@ -106,6 +108,7 @@
                             v-model="v$.businessModel.dataSourceLabel.$model"
                             :options="datasources"
                             :placeholder="$t('managers.businessModelManager.dataSourceLabelPlaceholder')"
+                            :disabled="readonly"
                             @before-show="v$.businessModel.dataSourceLabel.$touch()"
                             @change="onFieldChange('dataSourceLabel', $event.value)"
                         >
@@ -130,11 +133,11 @@
                 </div>
 
                 <div class="p-d-flex p-flex-row">
-                    <div class="input-container" v-if="!metaWebVisible">
+                    <div class="input-container" v-if="!metaWebVisible && !readonly">
                         <label for="upload" class="kn-material-input-label">{{ $t('managers.businessModelManager.uploadFile') }}:</label>
                         <KnInputFile :changeFunction="uploadFile" :visibility="true" />
                     </div>
-                    <div class="input-container p-d-flex p-flex-row" v-else>
+                    <div class="input-container p-d-flex p-flex-row" v-else-if="metaWebVisible">
                         <div class="p-m-2">
                             <Button class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.metaWeb')" @click="goToMetaWeb" data-test="metaweb-button"></Button>
                         </div>
@@ -146,16 +149,16 @@
                     <div class="input-container">
                         <div class="p-d-flex p-flex-row">
                             <div v-if="selectedBusinessModel.id" class="p-mr-2">
-                                <InputSwitch id="enable-metadata" class="p-mr-2" v-model="metaWebVisible" data-test="metaweb-switch" />
+                                <InputSwitch id="enable-metadata" class="p-mr-2" v-model="metaWebVisible" :disabled="readonly" data-test="metaweb-switch" />
                                 <label for="enable-metadata" class="kn-material-input-label">{{ $t('managers.businessModelManager.enableMetaweb') }}</label>
                             </div>
                             <div>
-                                <InputSwitch id="model-lock" class="p-mr-2" v-model="businessModel.modelLocked" @change="onLockedChange" />
+                                <InputSwitch id="model-lock" class="p-mr-2" v-model="businessModel.modelLocked" :disabled="readonly" @change="onLockedChange" />
                                 <label for="model-lock" class="kn-material-input-label">{{ businessModel.modelLocked ? $t('managers.businessModelManager.unlockModel') : $t('managers.businessModelManager.lockModel') }}</label>
                             </div>
                         </div>
                         <div class="p-mt-2">
-                            <InputSwitch id="smart-view" class="p-mr-2" v-model="businessModel.smartView" @change="onSmartViewChange" />
+                            <InputSwitch id="smart-view" class="p-mr-2" v-model="businessModel.smartView" :disabled="readonly" @change="onSmartViewChange" />
                             <label for="smart-view" class="kn-material-input-label" v-tooltip.bottom="$t('managers.businessModelManager.smartViewTooltip')">{{ businessModel.smartView ? $t('managers.businessModelManager.smartView') : $t('managers.businessModelManager.advancedView') }}</label>
                         </div>
                     </div>
@@ -184,6 +187,7 @@
                                         }"
                                         maxLength="500"
                                         v-tooltip.bottom="$t('managers.businessModelManager.tablePrefixLikeExampleTooltip')"
+                                        :disabled="readonly"
                                         @blur="v$.businessModel.tablePrefixLike.$touch()"
                                         @input="onFieldChange('tablePrefixLike', $event.target.value)"
                                         data-test="prefix-input"
@@ -209,6 +213,7 @@
                                         }"
                                         maxLength="500"
                                         v-tooltip.bottom="$t('managers.businessModelManager.tablePrefixNotLikeExampleTooltip')"
+                                        :disabled="readonly"
                                         @blur="v$.businessModel.tablePrefixNotLike.$touch()"
                                         @input="onFieldChange('tablePrefixNotLike', $event.target.value)"
                                         data-test="prefix-not-like-input"
@@ -280,6 +285,9 @@ export default defineComponent({
             required: true
         },
         toGenerate: {
+            type: Boolean
+        },
+        readonly: {
             type: Boolean
         }
     },

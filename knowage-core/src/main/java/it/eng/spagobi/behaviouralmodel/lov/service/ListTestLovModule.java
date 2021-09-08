@@ -17,6 +17,15 @@
  */
 package it.eng.spagobi.behaviouralmodel.lov.service;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
@@ -49,17 +58,13 @@ import it.eng.spagobi.commons.utilities.DataSourceUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
 /**
  * Tests the query and produces the list as output.
  */
 
 public class ListTestLovModule extends AbstractBasicListModule {
+
+	private static final Logger LOGGER = Logger.getLogger(ListTestLovModule.class);
 
 	/**
 	 * Class Constructor.
@@ -70,7 +75,7 @@ public class ListTestLovModule extends AbstractBasicListModule {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.dispatching.service.list.basic.IFaceBasicListService#getList(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)
 	 */
 	@Override
@@ -292,15 +297,18 @@ public class ListTestLovModule extends AbstractBasicListModule {
 			 */
 			// gets connection
 			DataSourceUtilities dsUtil = new DataSourceUtilities();
-			Connection conn = dsUtil.getConnection(requestContainer, datasource);
-			dataConnection = dsUtil.getDataConnection(conn);
+			try (Connection conn = dsUtil.getConnection(requestContainer, datasource)) {
+				dataConnection = dsUtil.getDataConnection(conn);
 
-			sqlCommand = dataConnection.createSelectCommand(statement, false);
-			dataResult = sqlCommand.execute();
-			ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
-			List temp = Arrays.asList(scrollableDataResult.getColumnNames());
-			columnsNames.addAll(temp);
-			result = scrollableDataResult.getSourceBean();
+				sqlCommand = dataConnection.createSelectCommand(statement, false);
+				dataResult = sqlCommand.execute();
+				ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
+				List temp = Arrays.asList(scrollableDataResult.getColumnNames());
+				columnsNames.addAll(temp);
+				result = scrollableDataResult.getSourceBean();
+			} catch (SQLException e) {
+				LOGGER.error("Error closing connection", e);
+			}
 		} finally {
 			Utils.releaseResources(dataConnection, sqlCommand, dataResult);
 		}

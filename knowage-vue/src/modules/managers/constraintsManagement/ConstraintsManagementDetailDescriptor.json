@@ -1,0 +1,57 @@
+{
+    "firstValue": {
+        "43": {
+            "class": "p-field p-col-8",
+            "label": "managers.constraintManagement.dateValue"
+        },
+        "44": {
+            "class": "p-field p-col-8",
+            "label": "managers.constraintManagement.regexpValue"
+        },
+        "45": {
+            "class": "p-field p-col-8",
+            "label": "managers.constraintManagement.maxLenghtValue"
+        },
+        "46": {
+            "class": "p-field p-col-4",
+            "label": "managers.constraintManagement.lowerRangeValue",
+            "labelTwo": "managers.constraintManagement.higherRangeValue"
+        },
+        "47": {
+            "class": "p-field p-col-8",
+            "label": "managers.constraintManagement.decimalPlaces"
+        },
+        "48": {
+            "class": "p-field p-col-8",
+            "label": "managers.constraintManagement.minLenghtValue"
+        }
+    },
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "success": "common.toast.success",
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
+        }
+    },
+    "styles": {
+        "basicCard": {
+            "width": "100%"
+        },
+        "inputFields": {
+            "width": "45%"
+        },
+        "menuButton": {
+            "height": "24px",
+            "width": "24px"
+        },
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "margin-bottom": "3%",
+            "text-align": "center"
+        }
+    }
+}
