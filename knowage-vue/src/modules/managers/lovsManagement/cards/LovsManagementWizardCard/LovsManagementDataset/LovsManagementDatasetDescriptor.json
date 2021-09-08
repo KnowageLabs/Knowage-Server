@@ -1,0 +1,25 @@
+{
+    "columns": [
+        {
+            "field": "name",
+            "header": "common.name"
+        },
+        {
+            "field": "label",
+            "header": "common.label"
+        },
+        {
+            "field": "description",
+            "header": "common.category"
+        },
+        {
+            "field": "owner",
+            "header": "common.owner"
+        },
+        {
+            "field": "scope",
+            "header": "common.scope"
+        }
+    ],
+    "globalFilterFields": ["label", "name", "description", "owner", "scope"]
+}
