@@ -3,6 +3,7 @@ import IframeRenderer from '@/modules/commons/IframeRenderer.vue'
 import managersRoutes from '@/modules/managers/managers.routes.js'
 import importExportRoutes from '@/modules/importExport/ImportExport.routes.js'
 import kpiRoutes from '@/modules/kpi/kpi.routes.js'
+import documentExecution from '@/modules/documentExecution/documentExecution.routes.js'
 
 const baseRoutes = [
     {
@@ -56,6 +57,7 @@ const routes = baseRoutes
     .concat(managersRoutes)
     .concat(importExportRoutes)
     .concat(kpiRoutes)
+    .concat(documentExecution)
 
 const router = createRouter({
     base: process.env.VUE_APP_PUBLIC_PATH,

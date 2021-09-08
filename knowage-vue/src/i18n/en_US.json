@@ -570,6 +570,31 @@
             "valueDescription": "Value description",
             "valueName": "Value name"
         },
+        "driversManagement": {
+            "add": "Add",
+            "deleteError": "Error",
+            "hint": "Driver models a concept or a piece of data frequently used as a distinguishing criterion on the global data context.Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "options": "Options",
+            "title": "Drivers management",
+            "functional": "Functional",
+            "temporal": "Temporal",
+            "useModes": {
+                "backToList": "Back to list",
+                "constraints": "Constraints",
+                "defaultValue": "Default value",
+                "details": "Details",
+                "hint": "No use mode selected",
+                "layer": "Layer",
+                "layerProp": "Layer property",
+                "lov": "LOV",
+                "maxValue": "Max value",
+                "modality": "Select modality",
+                "roles": "Roles",
+                "selectDefaultFormula": "Select",
+                "selectLov": "Select LOV",
+                "title": "Use modes"
+            }
+        },
         "functionalitiesManagement": {
             "creation": "Creation",
             "development": "Development",
