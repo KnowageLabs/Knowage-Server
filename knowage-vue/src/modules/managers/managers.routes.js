@@ -17,6 +17,7 @@ import menuConfigurationRoutes from '@/modules/managers/menuManagement/MenuManag
 import businessModelCatalogueRoutes from '@/modules/managers/businessModelCatalogue/BusinessModelCatalogue.routes.js'
 import driversManagementRoutes from '@/modules/managers/driversManagement/DriversManagement.routes.js'
 import resourceManagementRoutes from '@/modules/managers/resourceManagement/ResourceManagement.routes.js'
+import constraintsManagementRoutes from '@/modules/managers/constraintsManagement/ConstraintsManagement.routes.js'
 
 const baseRoutes = []
 
@@ -40,5 +41,6 @@ const routes = baseRoutes
     .concat(businessModelCatalogueRoutes)
     .concat(driversManagementRoutes)
     .concat(resourceManagementRoutes)
+    .concat(constraintsManagementRoutes)
 
 export default routes
