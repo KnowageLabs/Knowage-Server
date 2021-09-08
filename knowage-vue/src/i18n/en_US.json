@@ -151,6 +151,9 @@
     },
     "documentExecution": {
         "registry": {
+            "clearFilters": "Clear all filters",
+            "filter": "Filter",
+            "filters": "Filters",
             "title": "Registry Document"
         }
     },
