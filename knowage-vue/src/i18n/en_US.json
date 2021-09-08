@@ -516,6 +516,7 @@
             "availableIO": "Available Input/Output parameters",
             "availableInput": "Available Input parameters",
             "breadCrumbs": "Text to show on Bread Crumbs",
+            "fixedValue": "Fixed value parameter",
             "height": "Window height",
             "heightHelp": "Height in px of the popup window.",
             "hint": "Click on one existing item from the list on the side, or press the \"+\" button to add one.",

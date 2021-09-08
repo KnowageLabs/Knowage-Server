@@ -83,9 +83,12 @@
                                 {{ $t('managers.crossNavigationManagement.availableIO') }}
                             </template>
                         </Toolbar>
-                        <div class="p-inputgroup">
-                            <InputText class="kn-material-input" type="text" v-model="value" />
-                            <KnFabButton icon="fas fa-plus"></KnFabButton>
+                        <div class="p-inputgroup p-mt-3">
+                            <span class="p-float-label">
+                                <InputText class="kn-material-input" type="text" v-model="value" />
+                                <label class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.fixedValue') }} </label>
+                            </span>
+                            <FabButton icon="fas fa-plus" class="fab-button p-mt-3 p-ml-2" />
                         </div>
                         <Listbox :options="navigation.fromPars" optionLabel="name"></Listbox>
                         {{ navigation.fromPars }}
@@ -112,14 +115,14 @@ import { createValidations } from '@/helpers/commons/validationHelper'
 import axios from 'axios'
 import Dropdown from 'primevue/dropdown'
 import Listbox from 'primevue/listbox'
-import KnFabButton from '@/components/UI/KnFabButton.vue'
+import FabButton from '@/components/UI/KnFabButton.vue'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import DocDialog from './dialogs/CrossNavigationManagementDocDialog.vue'
 import crossNavigationManagementValidator from './CrossNavigationManagementValidator.json'
 export default defineComponent({
     name: 'cross-navigation-detail',
-    components: { Dropdown, DocDialog, KnValidationMessages, Listbox, KnFabButton },
+    components: { Dropdown, DocDialog, KnValidationMessages, Listbox, FabButton },
     props: {
         id: {
             type: String
