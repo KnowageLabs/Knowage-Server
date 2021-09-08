@@ -145,10 +145,11 @@ export default defineComponent({
         },
         setDefaultRoleValue(defaultRole: any) {
             this.defaultRole = defaultRole
+            this.dirty = true
         },
         setSelectedRoles(roles: iRole[]) {
             this.selectedRoles = roles
-            this.v$.$reset()
+            this.dirty = true
         },
         async showForm() {
             this.tempAttributes = {}
@@ -156,7 +157,6 @@ export default defineComponent({
             this.disableUsername = false
             this.hiddenForm = false
             this.selectedRoles = []
-            // TODO: Izmestiti ove pocetne vrednosti u descriptor ???
             this.userDetailsForm.id = null
             this.userDetailsForm.userId = ''
             this.userDetailsForm.fullName = ''
@@ -283,7 +283,6 @@ export default defineComponent({
             this.userDetailsForm = { ...userObj }
             this.populateAttributesForm(userObj.sbiUserAttributeses)
         },
-        // TODO: na new se ne sklanjaju stare vrednosti
         populateAttributesForm(userAttributeValues: any) {
             const tmp = {}
             this.attributes.forEach((attribute: iAttribute) => {
