@@ -136,7 +136,7 @@
 				to="/measure-definition" />
 			<ITEM id="6003" label="menu.kpi.targetDefinition"
 				requiredFunctionality="KpiTargetsManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=targetDefinition" />
+				to="/target-definition" />
 			<ITEM id="6004" label="menu.kpi.schedulerKpi"
 				requiredFunctionality="KpiManagement"
 				to="/kpi-scheduler" />
