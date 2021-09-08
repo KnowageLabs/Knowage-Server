@@ -30,14 +30,12 @@ import axios from 'axios'
 import ProgressSpinner from 'primevue/progressspinner'
 import RegistryDatatable from './tables/RegistryDatatable.vue'
 import RegistryFiltersCard from './RegistryFiltersCard.vue'
-import X2JS from 'x2js'
 
 export default defineComponent({
     name: 'registry',
     components: { ProgressSpinner, RegistryDatatable, RegistryFiltersCard },
     data() {
         return {
-            template: {} as any,
             registry: {} as any,
             configuration: [] as any[],
             columns: [] as any[],
@@ -47,13 +45,11 @@ export default defineComponent({
             updatedRows: [] as any,
             filters: [] as any[],
             isPivot: false,
-            loading: false,
-            x2js: new X2JS()
+            loading: false
         }
     },
     async created() {
         this.loading = true
-        await this.loadTemplate()
         await this.loadRegistry()
         this.loadConfiguration()
         this.loadColumns()
@@ -68,21 +64,15 @@ export default defineComponent({
         console.log('FILTERS ', this.filters)
     },
     methods: {
-        async loadTemplate() {
-            await axios
-                // .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/996/templates/selected/${templateId}`)
-                .get('../data/demo_template.xml')
-                .then((response) => (this.template = this.x2js.xml2js(response.data)))
-        },
         async loadRegistry() {
             await axios
-                // .post(`knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=4489870a0fba11ec8b65ed57c30e47f4`)
+                // .post(`knowageqbeengine/servlet/AdapterHTTP?ACTIONNAME=LOADREGISTRYACTION&SBIEXECUTIONID=4489870a0fba11ec8b65ed57c30e47f4`)
                 .get('../data/demo_registry.json')
                 .then((response) => (this.registry = response.data))
         },
         loadColumns() {
-            this.columns = this.template.QBE.REGISTRY.ENTITY.COLUMNS.COLUMN
-            this.columns = this.columns.map((el: any) => ({ field: el._field, title: el._title ?? '', visible: el._visible ?? 'true', editable: el._editable ?? 'true', editor: el._editor ?? 'TEXT' }))
+            this.columns = this.registry.registryConfig.columns
+            this.columns = this.columns.map((el: any) => ({ field: el.field, title: el.title, visible: el.isVisible, editable: el.isEditable, editor: el.editorType }))
             console.log('LOADED COLUMNS: ', this.columns)
         },
         loadColumnMap() {
@@ -111,8 +101,8 @@ export default defineComponent({
             // console.log('LOADED ROWS: ', this.rows)
         },
         loadConfiguration() {
-            this.configuration = this.template.QBE.REGISTRY.ENTITY.CONFIGURATIONS.CONFIGURATION
-            // console.log('LOADED CONFIGURATION: ', this.configuration)
+            this.configuration = this.registry.registryConfig.configurations
+            console.log('LOADED CONFIGURATION: ', this.configuration)
         },
         onRowChanged(row: any) {
             console.log('CHANGED ROW: ', row)
@@ -129,16 +119,15 @@ export default defineComponent({
         },
         checkIfFilterColumnExists() {
             this.filters = []
-            const tempFilters = this.template.QBE.REGISTRY.ENTITY.FILTERS.FILTER
-            // console.log('tempFilters: ', tempFilters)
+            const tempFilters = this.registry.registryConfig.filters
+            console.log('tempFilters: ', tempFilters)
             for (let i = 0; i < tempFilters.length; i++) {
                 const filter = tempFilters[i]
-                // console.log('COLUMNS: ', this.columns)
+                console.log('COLUMNS: ', this.columns)
                 for (let j = 0; j < this.columns.length; j++) {
                     const column = this.columns[j]
-                    if (filter._presentation !== 'DRIVER' && filter._field === column.field) {
-                        // HARDCODED static: false
-                        this.filters.push({ title: filter._title, field: filter._field, presentation: filter._presentation, static: false })
+                    if (filter.presentation !== 'DRIVER' && filter.field === column.field) {
+                        this.filters.push({ title: filter.title, field: filter.field, presentation: filter.presentationType, static: filter.isStatic, visible: filter.isVisible })
                     }
                 }
             }

@@ -3,11 +3,11 @@
         <template v-for="col of columns" :key="col.field">
             <Column class="kn-truncated" :field="col.field" :header="col.title">
                 <template #editor="slotProps">
-                    <span v-if="col.editable === 'false' && col.columnInfo.type !== 'boolean'">{{ slotProps.data[col.field] }}</span>
+                    <span v-if="!col.editable && col.columnInfo.type !== 'boolean'">{{ slotProps.data[col.field] }}</span>
                     <!-- Checkbox -->
-                    <Checkbox v-else-if="col.editor === 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @click="$emit('rowChanged', slotProps.data)" :disabled="col.editable === 'false'"></Checkbox>
+                    <Checkbox v-else-if="col.editor === 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @click="$emit('rowChanged', slotProps.data)" :disabled="!col.editable"></Checkbox>
                     <InputText
-                        v-else-if="col.editor !== 'COMBO' && col.editable === 'true' && col.columnInfo.type !== 'date'"
+                        v-else-if="col.editor !== 'COMBO' && col.editable && col.columnInfo.type !== 'date'"
                         class="p-inputtext-sm"
                         :type="setDataType(col.columnInfo.type)"
                         :step="getStep(col.columnInfo.type)"
@@ -17,14 +17,14 @@
                     <!-- Dropdown -->
                     <Dropdown v-else-if="col.editor === 'COMBO'" v-model="slotProps.data[col.field]" :options="this.comboColumnOptions[col.field]" optionValue="column_1" optionLabel="column_1" @change="$emit('rowChanged', slotProps.data)"> </Dropdown>
                     <!-- Calendar -->
-                    <Calendar v-else-if="col.editable === 'true' && col.columnInfo.type === 'date' && col.columnInfo.subType !== 'timestamp'" v-model="slotProps.data[col.field]" @date-select="$emit('rowChanged', slotProps.data)" />
+                    <Calendar v-else-if="col.editable && col.columnInfo.type === 'date' && col.columnInfo.subType !== 'timestamp'" v-model="slotProps.data[col.field]" @date-select="$emit('rowChanged', slotProps.data)" />
                     <span v-else>TODO</span>
                 </template>
                 <template #body="slotProps">
                     <!-- Checkbox -->
-                    <Checkbox v-if="col.editor == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @click="$emit('rowChanged', slotProps.data)" :disabled="col.editable === 'false'"></Checkbox>
+                    <Checkbox v-if="col.editor == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @click="$emit('rowChanged', slotProps.data)" :disabled="!col.editable"></Checkbox>
                     <!-- Formating -->
-                    <div v-else-if="col.editable === 'true'" @click="addColumnOptions(col, slotProps.data)">
+                    <div v-else-if="col.editable" @click="addColumnOptions(col, slotProps.data)">
                         <!-- Calendar -->
                         <span v-if="col.columnInfo.type === 'int'">{{ formatNumber(slotProps.data[col.field]) ?? '' }}</span>
                         <span v-else-if="col.columnInfo.type === 'float'">{{ formatDecimalNumber(slotProps.data[col.field], col.columnInfo.format) }}</span>
@@ -95,8 +95,9 @@ export default defineComponent({
         loadColumns() {
             this.columns = [{ field: 'id', title: '', size: '', visible: 'true', editable: 'false', columnInfo: { type: 'int' } }]
             this.propColumns?.forEach((el: any) => {
-                if (el.visible === 'true') this.columns.push(el)
+                if (el.visible) this.columns.push(el)
             })
+            console.log('PROP COLUMN: ', this.propColumns)
             console.log('COLUMN: ', this.columns)
         },
         loadRows() {
