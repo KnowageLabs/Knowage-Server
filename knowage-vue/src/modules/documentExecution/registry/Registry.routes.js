@@ -1,6 +1,6 @@
 const routes = [
     {
-        path: '/registry',
+        path: '/document-execution/registry',
         name: 'registry',
         component: () => import('@/modules/documentExecution/registry/Registry.vue')
     }

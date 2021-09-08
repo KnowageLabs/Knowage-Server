@@ -5,6 +5,11 @@
                 <template #left>
                     {{ $t('documentExecution.registry.title') }}
                 </template>
+                <template #right>
+                    <div class="p-d-flex p-flex-row">
+                        <Button class="kn-button p-button-text" @click="saveRegistry">{{ $t('common.save') }}</Button>
+                    </div>
+                </template>
             </Toolbar>
             <div id="spinner" v-if="loading">
                 <ProgressSpinner />
@@ -13,7 +18,7 @@
                 FILTERS PLACEHOLDER
             </div>
             <div class="p-col-12" v-if="!loading">
-                <RegistryDatatable :propColumns="columns" :propRows="rows" :propConfiguration="configuration" :columnMap="columnMap"></RegistryDatatable>
+                <RegistryDatatable :propColumns="columns" :propRows="rows" :propConfiguration="configuration" :columnMap="columnMap" @rowChanged="onRowChanged" @rowDeleted="onRowDeleted"></RegistryDatatable>
             </div>
         </div>
     </div>
@@ -39,6 +44,7 @@ export default defineComponent({
             rows: [] as any[],
             columnMap: {} as any,
             pagination: { start: 0, limit: 20 },
+            updatedRows: [] as any,
             isPivot: false,
             loading: false,
             x2js: new X2JS()
@@ -63,31 +69,32 @@ export default defineComponent({
         async loadTemplate() {
             await axios
                 // .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/996/templates/selected/${templateId}`)
-                .get('data/demo_template.xml')
+                .get('../data/demo_template.xml')
                 .then((response) => (this.template = this.x2js.xml2js(response.data)))
         },
         async loadRegistry() {
             await axios
                 // .post(`knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=4489870a0fba11ec8b65ed57c30e47f4`)
-                .get('data/demo_registry.json')
+                .get('../data/demo_registry.json')
                 .then((response) => (this.registry = response.data))
         },
         async loadFilteredValues() {
             await axios
                 // .get(`knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=c75a32e00fbf11ec8b65ed57c30e47f4`)
-                .get('data/demo_filtered_values.json')
+                .get('../data/demo_filtered_values.json')
                 .then((response) => (this.filteredValues = response.data))
         },
         loadColumns() {
             this.columns = this.template.QBE.REGISTRY.ENTITY.COLUMNS.COLUMN
-            // console.log('LOADED COLUMNS: ', this.columns)
+            this.columns = this.columns.map((el: any) => ({ field: el._field, title: el._title ?? '', visible: el._visible ?? 'true', editable: el._editable ?? 'true', editor: el._editor ?? 'TEXT' }))
+            console.log('LOADED COLUMNS: ', this.columns)
         },
         loadColumnMap() {
             this.columnMap = { id: 'id' }
             for (let i = 1; i < this.registry.metaData.fields.length; i++) {
-                this.columnMap[this.registry.metaData.fields[i].header] = this.registry.metaData.fields[i].name
+                this.columnMap[this.registry.metaData.fields[i].name] = this.registry.metaData.fields[i].header
             }
-            // console.log('COLUMN MAP: ', this.columnMap)
+            console.log('COLUMN MAP: ', this.columnMap)
         },
         loadColumnsInfo() {
             for (let i = 1; i < this.registry.metaData.fields.length; i++) {
@@ -95,12 +102,34 @@ export default defineComponent({
             }
         },
         loadRows() {
-            this.rows = this.registry.rows
+            this.rows = []
+            for (let i = 0; i < this.registry.rows.length; i++) {
+                const tempRow = {}
+                Object.keys(this.registry.rows[i]).forEach((key) => {
+                    // console.log(key, this.registry.rows[i][key])
+                    tempRow[this.columnMap[key]] = this.registry.rows[i][key]
+                })
+                this.rows.push(tempRow)
+            }
+
             // console.log('LOADED ROWS: ', this.rows)
         },
         loadConfiguration() {
             this.configuration = this.template.QBE.REGISTRY.ENTITY.CONFIGURATIONS.CONFIGURATION
             // console.log('LOADED CONFIGURATION: ', this.configuration)
+        },
+        onRowChanged(row: any) {
+            console.log('CHANGED ROW: ', row)
+            const index = this.updatedRows.findIndex((el: any) => el.id === row.id)
+            if (index === -1) {
+                this.updatedRows.push(row)
+            }
+        },
+        saveRegistry() {
+            console.log('UPDATED ROWS FOR SAVE: ', this.updatedRows)
+        },
+        onRowDeleted(row: any) {
+            console.log('ROW FOR DELETE: ', row)
         }
     }
 })
