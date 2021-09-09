@@ -2,7 +2,7 @@
     <DataTable class="p-datatable-sm kn-table" :value="rows" editMode="cell" dataKey="id" :lazy="this.lazyParams.size > 1000" :paginator="true" :rows="15" :totalRecords="lazyParams.size" responsiveLayout="stack" breakpoint="960px" @page="onPage($event)">
         <template v-for="col of columns" :key="col.field">
             <Column class="kn-truncated" :field="col.field" :header="col.title">
-                <template #editorType="slotProps">
+                <template #editor="slotProps">
                     <span v-if="!col.isEditable && col.columnInfo.type !== 'boolean'">{{ slotProps.data[col.field] }}</span>
                     <!-- Checkbox -->
                     <Checkbox v-else-if="col.editorType === 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @click="$emit('rowChanged', slotProps.data)" :disabled="!col.isEditable"></Checkbox>
@@ -101,12 +101,12 @@ export default defineComponent({
     },
     methods: {
         loadColumns() {
-            this.columns = [{ field: 'id', title: '', size: '', isVisible: 'true', isEditable: 'false', columnInfo: { type: 'int' } }]
+            this.columns = [{ field: 'id', title: '', size: '', isVisible: true, isEditable: false, columnInfo: { type: 'int' } }]
             this.propColumns?.forEach((el: any) => {
                 if (el.isVisible) this.columns.push(el)
             })
             // console.log('PROP COLUMN: ', this.propColumns)
-            // console.log('COLUMN: ', this.columns)
+            console.log('COLUMNS: ', this.columns)
         },
         loadRows() {
             this.rows = [...(this.propRows as any[])]
@@ -182,7 +182,7 @@ export default defineComponent({
         formatDecimalNumber(number: number, format: string) {
             console.log('NUMBER: ', number, ', FORMAT: ', format)
         },
-        addColumnOption(column: any, row: any) {
+        addColumnOptions(column: any, row: any) {
             row.selected = true
 
             //regular independent combo columns

@@ -18,7 +18,7 @@
                 <RegistryFiltersCard :propFilters="filters" :entity="entity" @filter="filterRegistry"></RegistryFiltersCard>
             </div>
             <div class="p-col-12" v-if="!loading">
-                <RegistryDatatable :propColumns="columns" :propRows="rows" :propConfiguration="configuration" :columnMap="columnMap" :filteredValues="filteredValues" :pagination="pagination" @rowChanged="onRowChanged" @rowDeleted="onRowDeleted" @pageChanged="updatePagination"></RegistryDatatable>
+                <RegistryDatatable :propColumns="columns" :propRows="rows" :propConfiguration="configuration" :columnMap="columnMap" :pagination="pagination" @rowChanged="onRowChanged" @rowDeleted="onRowDeleted" @pageChanged="updatePagination"></RegistryDatatable>
             </div>
         </div>
     </div>
@@ -79,7 +79,9 @@ export default defineComponent({
         async loadRegistry() {
             const postData = new URLSearchParams()
             postData.append('start', '' + this.pagination.start)
-            // postData.append('limit', '15')
+            if (this.pagination.size > 1000) {
+                postData.append('limit', '15')
+            }
             await axios
                 //.post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=e7a8d9ed113e11ec8dd79b53a6e80fe7`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
                 .get('../../data/demo_registry.json')
@@ -133,11 +135,29 @@ export default defineComponent({
                 this.updatedRows.push(row)
             }
         },
-        saveRegistry() {
+        async saveRegistry() {
             console.log('UPDATED ROWS FOR SAVE: ', this.updatedRows)
+            const postData = new URLSearchParams()
+            postData.append('records', '' + JSON.stringify(this.updatedRows))
+            await axios.post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=UPDATE_RECORDS_ACTION&SBI_EXECUTION_ID=5b9d3070116511ec8dd79b53a6e80fe7`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then(() => {
+                this.$store.commit('setInfo', {
+                    title: this.$t('common.toast.updateTitle'),
+                    msg: this.$t('common.toast.updateSuccess')
+                })
+                this.loadPage()
+            })
         },
-        onRowDeleted(row: any) {
+        async onRowDeleted(row: any) {
             console.log('ROW FOR DELETE: ', row)
+            const postData = new URLSearchParams()
+            postData.append('records', '' + JSON.stringify([row]))
+            await axios.post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=DELETE_RECORDS_ACTION&SBI_EXECUTION_ID=3cbb32ac115b11ec8dd79b53a6e80fe7`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then(() => {
+                this.$store.commit('setInfo', {
+                    title: this.$t('common.toast.deleteTitle'),
+                    msg: this.$t('common.toast.deleteSuccess')
+                })
+                this.loadPage()
+            })
         },
         checkIfFilterColumnExists() {
             this.filters = []

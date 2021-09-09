@@ -65,7 +65,7 @@ export default defineComponent({
             postData.append('ORDER_TYPE', 'asc')
             postData.append('QUERY_ROOT_ENTITY', 'true')
             postData.append('query', '')
-            await axios.post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=6b31dc50114811ec8dd79b53a6e80fe7`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then((response) => (this.options = response.data.rows))
+            await axios.post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=5b9d3070116511ec8dd79b53a6e80fe7`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then((response) => (this.options = response.data.rows))
             console.log('FILTER OPTIONS: ', this.filterOptions)
         },
         filterChanged() {
