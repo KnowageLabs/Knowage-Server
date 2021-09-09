@@ -2,12 +2,12 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left>{{ this.selectedLov.label }}</template>
         <template #right>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveButtonDisabled" @click="saveLov" data-test="submit-button" />
-            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" data-test="close-button" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveButtonDisabled" @click="saveLov" data-test="submit-button" v-tooltip="$t('common.save')" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" data-test="close-button" v-tooltip="$t('common.close')" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <div v-else>
+    <div v-else class="kn-page-content">
         <div class="card">
             <LovsManagementDetailCard :selectedLov="selectedLov" :lovs="lovs" :listOfInputTypes="listOfInputTypes" @touched="setTouched" @typeChanged="cleanSelections"></LovsManagementDetailCard>
         </div>
