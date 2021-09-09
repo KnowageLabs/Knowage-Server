@@ -15,7 +15,7 @@
                 <ProgressSpinner />
             </div>
             <div class="p-col-12">
-                <RegistryFiltersCard :propFilters="filters"></RegistryFiltersCard>
+                <RegistryFiltersCard :propFilters="filters" :entity="entity" @filter="filterRegistry"></RegistryFiltersCard>
             </div>
             <div class="p-col-12" v-if="!loading">
                 <RegistryDatatable :propColumns="columns" :propRows="rows" :propConfiguration="configuration" :columnMap="columnMap" :filteredValues="filteredValues" @rowChanged="onRowChanged" @rowDeleted="onRowDeleted"></RegistryDatatable>
@@ -34,6 +34,7 @@ import RegistryFiltersCard from './RegistryFiltersCard.vue'
 export default defineComponent({
     name: 'registry',
     components: { ProgressSpinner, RegistryDatatable, RegistryFiltersCard },
+    props: { id: { type: String } },
     data() {
         return {
             registry: {} as any,
@@ -44,38 +45,48 @@ export default defineComponent({
             pagination: { start: 0, limit: 20 },
             updatedRows: [] as any,
             filters: [] as any[],
+            entity: null as string | null,
             isPivot: false,
             loading: false
         }
     },
+    watch: {
+        async id() {
+            await this.loadPage()
+        }
+    },
     async created() {
-        this.loading = true
-        await this.loadRegistry()
-        this.loadConfiguration()
-        this.loadColumns()
-        this.loadColumnMap()
-        this.loadColumnsInfo()
-        this.loadRows()
-        this.checkIfFilterColumnExists()
-        this.loading = false
+        await this.loadPage()
         // console.log('LOADED TEMPLATE: ', this.template)
         // console.log('LOADED REGISTRY: ', this.registry)
         // console.log('LOADED FILTERED VALUES: ', this.filteredValues)
         console.log('FILTERS ', this.filters)
+        console.log('ID ', this.id)
     },
     methods: {
+        async loadPage() {
+            this.loading = true
+            await this.loadRegistry()
+            this.loadConfiguration()
+            this.loadEntity()
+            this.loadColumns()
+            this.loadColumnMap()
+            this.loadColumnsInfo()
+            this.loadRows()
+            this.checkIfFilterColumnExists()
+            this.loading = false
+        },
         async loadRegistry() {
             const postData = new URLSearchParams()
             postData.append('start', '0')
             postData.append('limit', '15')
             await axios
                 //.post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=e7a8d9ed113e11ec8dd79b53a6e80fe7`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
-                .get('../data/demo_registry.json')
+                .get('../../data/demo_registry.json')
                 .then((response) => (this.registry = response.data))
         },
         loadColumns() {
             this.columns = this.registry.registryConfig.columns
-            this.columns = this.columns.map((el: any) => ({ field: el.field, title: el.title, visible: el.isVisible, editable: el.isEditable, editor: el.editorType }))
             console.log('LOADED COLUMNS: ', this.columns)
         },
         loadColumnMap() {
@@ -105,7 +116,11 @@ export default defineComponent({
         },
         loadConfiguration() {
             this.configuration = this.registry.registryConfig.configurations
-            console.log('LOADED CONFIGURATION: ', this.configuration)
+            // console.log('LOADED CONFIGURATION: ', this.configuration)
+        },
+        loadEntity() {
+            this.entity = this.registry.registryConfig.entity
+            console.log('LOADED ENTITY: ', this.entity)
         },
         onRowChanged(row: any) {
             console.log('CHANGED ROW: ', row)
@@ -123,17 +138,34 @@ export default defineComponent({
         checkIfFilterColumnExists() {
             this.filters = []
             const tempFilters = this.registry.registryConfig.filters
-            console.log('tempFilters: ', tempFilters)
+            // console.log('tempFilters: ', tempFilters)
             for (let i = 0; i < tempFilters.length; i++) {
                 const filter = tempFilters[i]
-                console.log('COLUMNS: ', this.columns)
+                // console.log('COLUMNS: ', this.columns)
                 for (let j = 0; j < this.columns.length; j++) {
                     const column = this.columns[j]
                     if (filter.presentation !== 'DRIVER' && filter.field === column.field) {
-                        this.filters.push({ title: filter.title, field: filter.field, presentation: filter.presentationType, static: filter.isStatic, visible: filter.isVisible })
+                        console.log('TEMP COLMN: ', column)
+                        this.filters.push({ title: filter.title, field: filter.field, presentation: filter.presentationType, static: filter.isStatic, visible: filter.isVisible, column: column })
                     }
                 }
             }
+        },
+        async filterRegistry(filters: any[]) {
+            // console.log('MAIN FILTERS: ', filters)
+            const postData = new URLSearchParams()
+            filters.forEach((el: any) => {
+                // console.log('FILTER TEMP: ', el)
+                if (el.filterValue) {
+                    postData.append(el.field, el.filterValue)
+                }
+            })
+
+            console.log('POST DATA: ', postData)
+
+            await axios
+                .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=51f37ee8115411ec8dd79b53a6e80fe7`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+                .then((response) => console.log('FILTERED SUCCESSFULL: ', response.data))
         }
     }
 })

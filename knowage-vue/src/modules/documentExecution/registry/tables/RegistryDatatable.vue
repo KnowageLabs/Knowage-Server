@@ -2,12 +2,12 @@
     <DataTable class="p-datatable-sm kn-table" :value="rows" editMode="cell" dataKey="id" responsiveLayout="stack" breakpoint="960px">
         <template v-for="col of columns" :key="col.field">
             <Column class="kn-truncated" :field="col.field" :header="col.title">
-                <template #editor="slotProps">
-                    <span v-if="!col.editable && col.columnInfo.type !== 'boolean'">{{ slotProps.data[col.field] }}</span>
+                <template #editorType="slotProps">
+                    <span v-if="!col.isEditable && col.columnInfo.type !== 'boolean'">{{ slotProps.data[col.field] }}</span>
                     <!-- Checkbox -->
-                    <Checkbox v-else-if="col.editor === 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @click="$emit('rowChanged', slotProps.data)" :disabled="!col.editable"></Checkbox>
+                    <Checkbox v-else-if="col.editorType === 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @click="$emit('rowChanged', slotProps.data)" :disabled="!col.isEditable"></Checkbox>
                     <InputText
-                        v-else-if="col.editor !== 'COMBO' && col.editable && col.columnInfo.type !== 'date'"
+                        v-else-if="col.editorType !== 'COMBO' && col.isEditable && col.columnInfo.type !== 'date'"
                         class="p-inputtext-sm"
                         :type="setDataType(col.columnInfo.type)"
                         :step="getStep(col.columnInfo.type)"
@@ -15,16 +15,16 @@
                         @input="$emit('rowChanged', slotProps.data)"
                     />
                     <!-- Dropdown -->
-                    <Dropdown v-else-if="col.editor === 'COMBO'" v-model="slotProps.data[col.field]" :options="this.comboColumnOptions[col.field]" optionValue="column_1" optionLabel="column_1" @change="$emit('rowChanged', slotProps.data)"> </Dropdown>
+                    <Dropdown v-else-if="col.editorType === 'COMBO'" v-model="slotProps.data[col.field]" :options="this.comboColumnOptions[col.field]" optionValue="column_1" optionLabel="column_1" @change="$emit('rowChanged', slotProps.data)"> </Dropdown>
                     <!-- Calendar -->
-                    <Calendar v-else-if="col.editable && col.columnInfo.type === 'date' && col.columnInfo.subType !== 'timestamp'" v-model="slotProps.data[col.field]" @date-select="$emit('rowChanged', slotProps.data)" />
+                    <Calendar v-else-if="col.isEditable && col.columnInfo.type === 'date' && col.columnInfo.subType !== 'timestamp'" v-model="slotProps.data[col.field]" @date-select="$emit('rowChanged', slotProps.data)" />
                     <span v-else>TODO</span>
                 </template>
                 <template #body="slotProps">
                     <!-- Checkbox -->
-                    <Checkbox v-if="col.editor == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @click="$emit('rowChanged', slotProps.data)" :disabled="!col.editable"></Checkbox>
+                    <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @click="$emit('rowChanged', slotProps.data)" :disabled="!col.isEditable"></Checkbox>
                     <!-- Formating -->
-                    <div v-else-if="col.editable" @click="addColumnOptions(col, slotProps.data)">
+                    <div v-else-if="col.isEditable" @click="addColumnOptions(col, slotProps.data)">
                         <!-- Calendar -->
                         <span v-if="col.columnInfo.type === 'int'">{{ formatNumber(slotProps.data[col.field]) ?? '' }}</span>
                         <span v-else-if="col.columnInfo.type === 'float'">{{ formatDecimalNumber(slotProps.data[col.field], col.columnInfo.format) }}</span>
@@ -93,16 +93,16 @@ export default defineComponent({
     },
     methods: {
         loadColumns() {
-            this.columns = [{ field: 'id', title: '', size: '', visible: 'true', editable: 'false', columnInfo: { type: 'int' } }]
+            this.columns = [{ field: 'id', title: '', size: '', isVisible: 'true', isEditable: 'false', columnInfo: { type: 'int' } }]
             this.propColumns?.forEach((el: any) => {
-                if (el.visible) this.columns.push(el)
+                if (el.isVisible) this.columns.push(el)
             })
-            console.log('PROP COLUMN: ', this.propColumns)
-            console.log('COLUMN: ', this.columns)
+            // console.log('PROP COLUMN: ', this.propColumns)
+            // console.log('COLUMN: ', this.columns)
         },
         loadRows() {
             this.rows = [...(this.propRows as any[])]
-            console.log('ROWS: ', this.rows)
+            // console.log('ROWS: ', this.rows)
         },
         loadConfiguration() {
             this.configuration = this.propConfiguration
@@ -153,7 +153,7 @@ export default defineComponent({
             }
         },
         isDependentColumn(column: any) {
-            console.log('IS DEPENDENT ' + column + ' : ' + 'dependsFrom' in column)
+            // console.log('IS DEPENDENT ' + column + ' : ' + 'dependsFrom' in column)
             return 'dependsFrom' in column
         },
         getFormatedDate(date: any) {
@@ -170,7 +170,7 @@ export default defineComponent({
             row.selected = true
 
             //regular independent combo columns
-            if (column.editor === 'COMBO' && !this.isDependentColumn(column)) {
+            if (column.editorType === 'COMBO' && !this.isDependentColumn(column)) {
                 if (!this.comboColumnOptions[column.field]) {
                     this.comboColumnOptions[column.field] = {}
                     this.getData(column.field)
@@ -178,7 +178,7 @@ export default defineComponent({
             }
 
             //dependent combo columns
-            if (column.editor === 'COMBO' && this.isDependentColumn(column)) {
+            if (column.editorType === 'COMBO' && this.isDependentColumn(column)) {
                 if (!this.comboColumnOptions[column.field]) {
                     this.comboColumnOptions[column.field] = {}
 

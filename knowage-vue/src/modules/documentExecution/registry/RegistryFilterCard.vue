@@ -8,8 +8,8 @@
                 </div>
             </div>
             <div v-else>
-                <InputText v-if="filter.presentation === 'MANUAL'" class="p-inputtext-sm" v-model="filter.filterValue" />
-                <Dropdown v-else-if="filter.presentation === 'COMBO'" v-model="filter.filterValue" :options="options" optionValue="column_1" optionLabel="column_1" @change="test"> </Dropdown>
+                <InputText v-if="filter.presentation === 'MANUAL'" class="p-inputtext-sm" v-model="filter.filterValue" @blur="filterChanged" />
+                <Dropdown v-else-if="filter.presentation === 'COMBO'" v-model="filter.filterValue" :options="options" optionValue="column_1" optionLabel="column_1" @change="filterChanged"> </Dropdown>
             </div>
         </template>
     </Card>
@@ -24,7 +24,7 @@ import Dropdown from 'primevue/dropdown'
 export default defineComponent({
     name: 'registry-filter-card',
     components: { Card, Dropdown },
-    props: { propFilter: { type: Object }, filterOptions: { type: Array } },
+    props: { propFilter: { type: Object }, filterOptions: { type: Array }, entity: { type: String }, clearTrigger: { type: Boolean } },
     data() {
         return {
             filter: {} as any,
@@ -34,25 +34,43 @@ export default defineComponent({
     watch: {
         propFilter() {
             this.loadFilter()
+        },
+        clearTrigger() {
+            this.filter.filterValue = ''
         }
     },
     async created() {
         this.loadFilter()
         if (this.filter.presentation === 'COMBO') {
-            await this.loadFilterOptions('sales_city')
-            console.log('OPTIONS: ', this.options)
+            await this.loadFilterOptions()
+            // console.log('OPTIONS: ', this.options)
         }
     },
     methods: {
         loadFilter() {
             this.filter = { ...this.propFilter }
+            // console.log('LOADED FILTER: ', this.filter)
         },
-        async loadFilterOptions(column: string) {
-            console.log('LOADING MOCKED OPTIONS FOR COLUMN: ', column)
-            await axios
-                // .get(`knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=c75a32e00fbf11ec8b65ed57c30e47f4`)
-                .get('../data/demo_dropdown_store_type.json')
-                .then((response) => (this.options = response.data.rows))
+        async loadFilterOptions() {
+            const postData = new URLSearchParams()
+            const subEntity = this.filter.column.subEntity ? '::' + this.filter.column.subEntity + '(' + this.filter.column.foreignKey + ')' : ''
+            // HARDCODED entity
+            const entityId = 'it.eng.knowage.meta.stores_for_registry.Store' + subEntity + ':' + this.filter.field
+            const entityOrder = 'it.eng.knowage.meta.stores_for_registry.Store' + subEntity + ':' + (this.filter.column.orderBy ?? this.filter.field)
+            // console.log('ENTITY ID', entityId)
+            // console.log('ENTITY ORDER', entityOrder)
+            postData.append('ENTITY_ID', entityId) // it.eng.knowage.meta.stores_for_registry.Store::rel_region_id_in_region(rel_region_id_in_region):sales_city
+            postData.append('QUERY_TYPE', 'standard') //
+            postData.append('ORDER_ENTITY', entityOrder) // it.eng.knowage.meta.stores_for_registry.Store::rel_region_id_in_region(rel_region_id_in_region):sales_city
+            postData.append('ORDER_TYPE', 'asc')
+            postData.append('QUERY_ROOT_ENTITY', 'true')
+            postData.append('query', '')
+            await axios.post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=6b31dc50114811ec8dd79b53a6e80fe7`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then((response) => (this.options = response.data.rows))
+            console.log('FILTER OPTIONS: ', this.filterOptions)
+        },
+        filterChanged() {
+            // console.log('VALUE: ', this.filter.filterValue)
+            this.$emit('changed', this.filter.filterValue)
         }
     }
 })

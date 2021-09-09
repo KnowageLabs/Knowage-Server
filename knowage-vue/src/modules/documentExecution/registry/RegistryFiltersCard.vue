@@ -9,10 +9,10 @@
         </template>
         <template #content>
             <div class="p-d-flex p-flex-row p-ai-center">
-                <RegistryFilterCard v-for="(filter, index) in filters" :key="index" :propFilter="filter" class="p-m-2"></RegistryFilterCard>
+                <RegistryFilterCard class="p-m-2" v-for="(filter, index) in filters" :key="index" :propFilter="filter" :entity="entity" :clearTrigger="clearFiltersTrigger" @changed="setFilterValue($event, index)"></RegistryFilterCard>
                 <div class="p-ai-end">
-                    <Button class="kn-button p-button-text">{{ $t('documentExecution.registry.clearFilters') }}</Button>
-                    <Button class="kn-button p-button-text">{{ $t('documentExecution.registry.filter') }}</Button>
+                    <Button class="kn-button p-button-text" @click="clearAllFilters">{{ $t('documentExecution.registry.clearFilters') }}</Button>
+                    <Button class="kn-button p-button-text" @click="filterRegistry">{{ $t('documentExecution.registry.filter') }}</Button>
                 </div>
             </div>
         </template>
@@ -27,11 +27,12 @@ import RegistryFilterCard from './RegistryFilterCard.vue'
 export default defineComponent({
     name: 'registry-filters-card',
     components: { Card, RegistryFilterCard },
-    props: { propFilters: { type: Array } },
+    props: { propFilters: { type: Array }, entity: { type: String } },
+    emits: ['filter'],
     data() {
         return {
             filters: [] as any[],
-            filterOptions: {} as any
+            clearFiltersTrigger: false
         }
     },
     watch: {
@@ -45,6 +46,17 @@ export default defineComponent({
     methods: {
         loadFilters() {
             this.filters = [...(this.propFilters as any[])]
+        },
+        setFilterValue(value: string, index: number) {
+            this.filters[index].filterValue = value
+            console.log('FILTER UPDATED: ', this.filters)
+        },
+        clearAllFilters() {
+            this.filters.forEach((el: any) => (el.filterValue = ''))
+            this.clearFiltersTrigger = !this.clearFiltersTrigger
+        },
+        filterRegistry() {
+            this.$emit('filter', this.filters)
         }
     }
 })
