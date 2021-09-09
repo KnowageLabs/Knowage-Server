@@ -30,12 +30,12 @@
 
 					}])
 			.filter('momentDate', function() {
-				  return function(input, currLanguage) {
+				return function(input, currLanguage) {
 					return input ? moment(input).locale(currLanguage).format("L") : '';
-			  };
+				};
 			})
 			.filter('momentDateAndTime', function() {			
-				  return function(input, currLanguage) {
+				return function(input, currLanguage) {
 					return input ? moment(input).locale(currLanguage).format("L") + ' ' +
 					moment(input).locale(currLanguage).format("HH:mm:ss") : '';
 				};
@@ -80,71 +80,71 @@
 			pivot: false
 		};
 
-		 for(var i = 0 ; i < registryConfiguration.configurations.length;i++){
-			 if(registryConfiguration.configurations[i].name=="enableButtons"){
-				 $scope.configuration.enableButtons = registryConfiguration.configurations[i].value == "true"
-			 } else {
-				 if(registryConfiguration.configurations[i].name=="enableDeleteRecords"){
-					 $scope.configuration.enableDeleteRecords = registryConfiguration.configurations[i].value == "true"
-				 }
-				 if(registryConfiguration.configurations[i].name=="enableAddRecords"){
-					 $scope.configuration.enableAddRecords = registryConfiguration.configurations[i].value == "true"
-				 }
-			 }
-		 }
+		for(var i = 0 ; i < registryConfiguration.configurations.length;i++){
+			if(registryConfiguration.configurations[i].name=="enableButtons"){
+				$scope.configuration.enableButtons = registryConfiguration.configurations[i].value == "true"
+			} else {
+				if(registryConfiguration.configurations[i].name=="enableDeleteRecords"){
+					$scope.configuration.enableDeleteRecords = registryConfiguration.configurations[i].value == "true"
+				}
+				if(registryConfiguration.configurations[i].name=="enableAddRecords"){
+					$scope.configuration.enableAddRecords = registryConfiguration.configurations[i].value == "true"
+				}
+			}
+		}
 
 		//Getting initial data from server
-        var loadInitialData = function(){
-        	if($scope.configuration.pagination == 'true') {
-        		$scope.formParams.start = 0;
-        		$scope.formParams.limit = $scope.configuration.itemsPerPage;
-        	} else {
-        		$scope.formParams.start = 0;
-        	}
-        	$scope.currLanguage = sbiModule_config.curr_language;
-        	readData($scope.formParams);
-        };
+		var loadInitialData = function(){
+			if($scope.configuration.pagination == 'true') {
+				$scope.formParams.start = 0;
+				$scope.formParams.limit = $scope.configuration.itemsPerPage;
+			} else {
+				$scope.formParams.start = 0;
+			}
+			$scope.currLanguage = sbiModule_config.curr_language;
+			readData($scope.formParams);
+		};
 
-        var readData = function(formParameters) {
-        	 $scope.formatNumber= 0;
-        	registryCRUD.read(formParameters).then(function(response) {
+		var readData = function(formParameters) {
+			$scope.formatNumber= 0;
+			registryCRUD.read(formParameters).then(function(response) {
 
-        		$scope.data= $scope.transformDataStore(response.data).rows
-	           	 if($scope.configuration.pagination != 'true'){
-	           	 	$scope.data = orderBy($scope.data,$scope.propertyName,$scope.reverse);
-	           	 }
-	           	dateColumns = dateColumnsFilter(response.data.metaData.fields);
-	           	$scope.data = dateRowsFilter(dateColumns,$scope.data);
-	           	 $scope.resultsNumber = response.data.results;
-	           	$scope.initalizePagination();
-	           	 if($scope.columnSizeInfo.length == 0) {
-	           		$scope.columnSizeInfo = response.data.metaData.columnsInfos;
-	           		$scope.columnFieldTypes = response.data.metaData.fields;
-	           		$scope.columns.length=0
-	           		addColumnsInfo();
-	           	 }
+				$scope.data= $scope.transformDataStore(response.data).rows
+				if($scope.configuration.pagination != 'true'){
+					$scope.data = orderBy($scope.data,$scope.propertyName,$scope.reverse);
+				}
+				dateColumns = dateColumnsFilter(response.data.metaData.fields);
+				$scope.data = dateRowsFilter(dateColumns,$scope.data);
+				$scope.resultsNumber = response.data.results;
+				$scope.initalizePagination();
+				if($scope.columnSizeInfo.length == 0) {
+					$scope.columnSizeInfo = response.data.metaData.columnsInfos;
+					$scope.columnFieldTypes = response.data.metaData.fields;
+					$scope.columns.length=0
+					addColumnsInfo();
+				}
 
 
-	         });
-        };
-        $scope.transformDataStore = function (datastore){
-    		var newDataStore = {};
-    		newDataStore.metaData = datastore.metaData;
-    		newDataStore.results = datastore.results;
-    		newDataStore.rows = [];
+			});
+		};
+		$scope.transformDataStore = function (datastore){
+			var newDataStore = {};
+			newDataStore.metaData = datastore.metaData;
+			newDataStore.results = datastore.results;
+			newDataStore.rows = [];
 
-    		for(var i=0; i<datastore.rows.length; i++){
-    			var obj = {};
-    			for(var j=1; j<datastore.metaData.fields.length; j++){
-    				if(datastore.rows[i][datastore.metaData.fields[j].name]!=undefined){
-    					obj[datastore.metaData.fields[j].header] = datastore.rows[i][datastore.metaData.fields[j].name];
-    				}
-    			}
-    			newDataStore.rows.push(obj);
-    		}
-    		return newDataStore;
-    	}
-        loadInitialData();
+			for(var i=0; i<datastore.rows.length; i++){
+				var obj = {};
+				for(var j=1; j<datastore.metaData.fields.length; j++){
+					if(datastore.rows[i][datastore.metaData.fields[j].name]!=undefined){
+						obj[datastore.metaData.fields[j].header] = datastore.rows[i][datastore.metaData.fields[j].name];
+					}
+				}
+				newDataStore.rows.push(obj);
+			}
+			return newDataStore;
+		}
+		loadInitialData();
 
 		// Filling columns
 		var addColumnsInfo = function() {
@@ -177,139 +177,139 @@
 			if($scope.configuration.pagination != 'true'){
 			$scope.reverse = (propertyName !== null && $scope.propertyName === propertyName) ? !$scope.reverse : false;
 			$scope.propertyName = propertyName;
-		 	$scope.data = orderBy($scope.data,$scope.propertyName,$scope.reverse);
+			$scope.data = orderBy($scope.data,$scope.propertyName,$scope.reverse);
 			}
 		};
 
 		$scope.setDataType = function(columnDataType) {
 			switch(columnDataType) {
-			   case 'string':
-				   return 'text';
-				   break;
-			   case 'int':
-			   case 'float':
-			   case 'decimal':
-			   case 'long':
-				   return 'number';
-				   break;
-			   case 'date':
-				   return 'date';
-				   break;
-			   default:
-				   return 'text';
-			   	   break;
+			case 'string':
+				return 'text';
+				break;
+			case 'int':
+			case 'float':
+			case 'decimal':
+			case 'long':
+				return 'number';
+				break;
+			case 'date':
+				return 'date';
+				break;
+			default:
+				return 'text';
+				break;
 			}
 		};
 
 		$scope.getDecimalPlaces = function(colName){
-            var decimalPlaces;
-            var floatColumns = $filter('filter')($scope.columnFieldTypes, {type: 'float'}, true);
-            floatColumns.forEach(function(col){
-                if(col.header == colName) {
-                    var format = col.format.split(',');
-                    decimalPlaces = format.length;
-                }
-                return decimalPlaces;
-            });
-        };
+			var decimalPlaces;
+			var floatColumns = $filter('filter')($scope.columnFieldTypes, {type: 'float'}, true);
+			floatColumns.forEach(function(col){
+				if(col.header == colName) {
+					var format = col.format.split(',');
+					decimalPlaces = format.length;
+				}
+				return decimalPlaces;
+			});
+		};
 
-        $scope.getStep = function(dataType){
-            if(dataType == 'float'){
-                return '.01';
-            } else if(dataType == 'int') {
-                return '1';
-            } else {
-                return 'any';
-            }
-        };
+		$scope.getStep = function(dataType){
+			if(dataType == 'float'){
+				return '.01';
+			} else if(dataType == 'int') {
+				return '1';
+			} else {
+				return 'any';
+			}
+		};
 
 		/* Pivot Table */
 		$scope.setRowspan = function(rows,rowIndex,columnIndex,columns){
 
-            // count columns to be merged
-            var rowsToMergeCounter = 0;
-            if( columns[columnIndex].type !== 'merge'){
-            	return;
-            }else if(columnIndex>0 && columns[columnIndex-1].type !== 'merge'){
-            	return;
-            }
-            for(var j = rowIndex; j<rows.length; j++){
-                    // Defining variables
-	                var columnField=columns[columnIndex].field;
-	                var row = rows[j];
-	                var previousColumnField = columns[0].field;
-	             if(rows.length >j+1){
-	                  var nextRow = rows[j+1];
-	             }else{
-	            	 rowsToMergeCounter++;
-	                  return rowsToMergeCounter;
-	             }
-	              	var field = row[columnField];
-	                var previousField = row[previousColumnField];
-	                var NextRowField = nextRow[columnField];
-	                var NextRowPreviousField = nextRow[previousColumnField];
-	                var mergedCounter = 0 ;
-	               //Counting how many column pairs are same in comparing rows
-	             for(var i = 0 ; i <= columnIndex;i++){
-	                   if(row[columns[i].field] == nextRow[columns[i].field]){
-	                       mergedCounter++;
-	                   }
-	             }
-                  //Checking are all column pairs same in compared rows if yes compare next row , else return counter as a rowspan
-	             if(mergedCounter == columnIndex+1 ){
-	            	 rowsToMergeCounter++;
-	             } else{
-	            	 rowsToMergeCounter++;
-	                 return rowsToMergeCounter;
-	             }
-             }
-        };
+			// count columns to be merged
+			var rowsToMergeCounter = 0;
+			if( columns[columnIndex].type !== 'merge'){
+				return;
+			}else if(columnIndex>0 && columns[columnIndex-1].type !== 'merge'){
+				return;
+			}
+			for(var j = rowIndex; j<rows.length; j++){
+					// Defining variables
+					var columnField=columns[columnIndex].field;
+					var row = rows[j];
+					var previousColumnField = columns[0].field;
+				if(rows.length >j+1){
+					var nextRow = rows[j+1];
+				}else{
+					rowsToMergeCounter++;
+					return rowsToMergeCounter;
+				}
+					var field = row[columnField];
+					var previousField = row[previousColumnField];
+					var NextRowField = nextRow[columnField];
+					var NextRowPreviousField = nextRow[previousColumnField];
+					var mergedCounter = 0 ;
+				//Counting how many column pairs are same in comparing rows
+				for(var i = 0 ; i <= columnIndex;i++){
+					if(row[columns[i].field] == nextRow[columns[i].field]){
+						mergedCounter++;
+					}
+				}
+				//Checking are all column pairs same in compared rows if yes compare next row , else return counter as a rowspan
+				if(mergedCounter == columnIndex+1 ){
+					rowsToMergeCounter++;
+				} else{
+					rowsToMergeCounter++;
+					return rowsToMergeCounter;
+				}
+			}
+		};
 
-	    $scope.compareRowsForRowspanPrint = function(rows,rowIndex,columnIndex,columns){
+		$scope.compareRowsForRowspanPrint = function(rows,rowIndex,columnIndex,columns){
 
-	    	 if( columns[columnIndex].type !== 'merge'){
-	            	return true;
-	            }else if(columnIndex>0 && columns[columnIndex-1].type !== 'merge'){
-	            	return true;
-	            }
+			if( columns[columnIndex].type !== 'merge'){
+					return true;
+				}else if(columnIndex>0 && columns[columnIndex-1].type !== 'merge'){
+					return true;
+				}
 
-	        for(var j = rowIndex; j<rows.length; j++){
+			for(var j = rowIndex; j<rows.length; j++){
 
-	            // Defining variables
-	            var row = rows[j];
-	            var previousRow ;
-	            var columnField=columns[columnIndex].field;
-	            var previousColumnField = columns[0].field;
+				// Defining variables
+				var row = rows[j];
+				var previousRow ;
+				var columnField=columns[columnIndex].field;
+				var previousColumnField = columns[0].field;
 
-	            if(0 < j){
-	                 previousRow = rows[j-1];
-	            }else{
-	                return true;
-	            }
+				if(0 < j){
+					previousRow = rows[j-1];
+				}else{
+					return true;
+				}
 
-	            var fieldValue = row[columnField];
-	            var previousFieldValue = row[previousColumnField];
-	            var previousRowFieldValue = previousRow[columnField];
-	            var previousRowPreviousFieldValue = previousRow[previousColumnField];
-	            var mergedCounter = 0;
-	            //Counting how many column pairs are same in comparing rows
-	            for(var i = 0 ; i <= columnIndex;i++){
-	                if(row[columns[i].field] == previousRow[columns[i].field]){
-	                    mergedCounter++;
-	                }
-	            }
-	            //if it is first column and values are same with comparing field do not print because it is already merged
+				var fieldValue = row[columnField];
+				var previousFieldValue = row[previousColumnField];
+				var previousRowFieldValue = previousRow[columnField];
+				var previousRowPreviousFieldValue = previousRow[previousColumnField];
+				var mergedCounter = 0;
+				//Counting how many column pairs are same in comparing rows
+				for(var i = 0 ; i <= columnIndex;i++){
+					if(row[columns[i].field] == previousRow[columns[i].field]){
+						mergedCounter++;
+					}
+				}
+				//if it is first column and values are same with comparing field do not print because it is already merged
 
-	            if(columnIndex==0 && fieldValue == previousRowFieldValue || columnIndex>0  && mergedCounter == columnIndex +1 ){
-	                return false;
-	            }else{
-	                return true;
-	            }
+				if(columnIndex==0 && fieldValue == previousRowFieldValue || columnIndex>0  && mergedCounter == columnIndex +1 ){
+					return false;
+				}else{
+					return true;
+				}
 
-	        }
-	    };
+			}
+		};
 
-	    $scope.setSummaryRowColor = function(rows,index,columns){
+		$scope.setSummaryRowColor = function(rows,index,columns){
 			//counter to check is there summaryFunction and type='measure' atributes
 			var counter = 0;
 			var summaryFunctionIndex = 0;
@@ -322,25 +322,25 @@
 			}
 			//if there are at least one summaryFunction and one type='measure' than do the rest of the logic
 			if(counter >= 2){
-                    // Defining variables
-                var row = rows[index];
-                    //if it is not last row set it as the nextRow else color the row because it is last
-                if(rows.length >index+1){
-                    var nextRow = rows[index+1];
-                }else{
-                    return 'blue';
-                }
-                 var field = row[columns[summaryFunctionIndex].field];
-                 var NextRowField = nextRow[columns[summaryFunctionIndex].field];
-                 	//if next field value is not equal to selected one it means that is the summary row and it could be colored
-                 if(field != NextRowField ){
-                    return 'blue';
-                 }
+					// Defining variables
+				var row = rows[index];
+					//if it is not last row set it as the nextRow else color the row because it is last
+				if(rows.length >index+1){
+					var nextRow = rows[index+1];
+				}else{
+					return 'blue';
+				}
+				var field = row[columns[summaryFunctionIndex].field];
+				var NextRowField = nextRow[columns[summaryFunctionIndex].field];
+					//if next field value is not equal to selected one it means that is the summary row and it could be colored
+				if(field != NextRowField ){
+					return 'blue';
+				}
 			}
-                return;
-        };
+				return;
+		};
 
-        $scope.isItSummaryRow = function(rows,indexF,index,columns){
+		$scope.isItSummaryRow = function(rows,indexF,index,columns){
 			var row = rows[indexF];
 			var columnField = columns[index].field;
 			if(index > 0){
@@ -352,149 +352,149 @@
 			var fieldValue = row[columnField];
 
 			return  (previousFieldValue === '      ' && fieldValue !== '      ' );
-        };
+		};
 
 
-	  //Adding options to combo columns
-        var clicked = 0;
-        $scope.dependentColumns = [];
+		//Adding options to combo columns
+		var clicked = 0;
+		$scope.dependentColumns = [];
 
-        $scope.addColumnOptions = function(column, row, $mdOpenMenu) {
-            $mdOpenMenu();
-            row.selected = true;
+		$scope.addColumnOptions = function(column, row, $mdOpenMenu) {
+			$mdOpenMenu();
+			row.selected = true;
 
-            //regular independent combo columns
-            if(column.editor === 'COMBO' && !$scope.isDependentColumn(column)) {
-            	if(!$scope.comboColumnOptions[column.field]) {
-            		$scope.comboColumnOptions[column.field] = {};
-            		var promise = regFilterGetData.getData(column.field);
-                    promise.then(function(response) {
-                        $scope.comboColumnOptions[column.field] = response;
-                    });
-                    return promise;
-            	}
-            }
-
-            //dependent combo columns
-            if(column.editor === 'COMBO' && $scope.isDependentColumn(column)) {
-            	if(!$scope.comboColumnOptions[column.field]) {
-            		$scope.comboColumnOptions[column.field] = {};
-
-            		var dependencesPromise = regFilterGetData.getDependeceOptions(column, row)
-                	dependencesPromise.then(function(response) {
-                		$scope.comboColumnOptions[column.field][row[column.dependsFrom]] = response.data.rows;
-                	});
-                	return dependencesPromise;
-            	} else {
-            		if(!$scope.comboColumnOptions[column.field].hasOwnProperty(row[column.dependsFrom])) {
-            			var dependencesPromise = regFilterGetData.getDependeceOptions(column, row)
-                    	dependencesPromise.then(function(response) {
-                    		$scope.comboColumnOptions[column.field][row[column.dependsFrom]] = response.data.rows;
-                    	});
-                    	return dependencesPromise;
-            		}
-            	}
-            }
-        };
-
-        $scope.stopShow = false;
-
-        $scope.notifyAboutDependency = function(column, event) {
-        	clicked++;
-        	if(clicked == 1) {
-        		fillDependencyColumns(column);
-        		createDialog($scope.dependentColumns);
-        	}
-
-        	if($scope.dependentColumns.length != 0 && !$scope.stopShow) {
-
-        		$mdDialog.show($scope.confirm)
-        				.then(function(result){
-						 $scope.stopShow = result;
-					 }, function(result){
-						 $scope.stopShow = result;
-					 });
-        		$scope.emptyDependentColumns($scope.dependentColumns);
-        	}
-        };
-        
-        var fillDependencyColumns = function(column) {
-        	for(var i = 0; i < $scope.columns.length; i++) {
-        		var col = $scope.columns[i];
-        		if(col.dependsFrom === column.field) {
-        			var dependent = [];
-        			dependent.title = col.title;
-        			dependent.field = col.field;
-        			$scope.dependentColumns.push(dependent);
-        			fillDependencyColumns(col);
-        		}
-        	}
-        	
-        };
-
-        var createDialog = function(dependentColumns) {
-        	$scope.joinedFields = "";
-        	var i = 0;
-        	for (var k in $scope.dependentColumns) {
-        		if (i > 0)
-        			$scope.joinedFields += ", ";
-        		
-        		$scope.joinedFields += $scope.dependentColumns[k].title
-        		i++;
-        	}
-        	
-        	$scope.confirm = $mdDialog.prompt(
-        			{
-    					controller: DialogController,
-    					parent: angular.element(document.body),
-    					templateUrl: sbiModule_config.dynamicResourcesEnginePath + '/registry/dependentColumnsDialog.tpl.html',
-    					locals: {
-    						dontShowAgain: $scope.stopShow,
-    						columns: $scope.joinedFields
-    					},
-    					targetEvent: event,
-    				    clickOutsideToClose: false,
-    				    preserveScope: true,
-    				    fullscreen: true
-        			}
-        	);
-        	
-        };
-        
-        $scope.emptyDependentColumns = function (dependentColumns) {
-        	
-        	for (var i = 0; i < $scope.selectedRow.length; i++) {
-        		
-				for(var property in $scope.selectedRow[i]) {
-					
-		        	for (var k in dependentColumns) {
-		        		if (angular.equals(dependentColumns[k].field, property)) {
-		        			$scope.selectedRow[i][property] = '';
-		        		}
-		        	}
+			//regular independent combo columns
+			if(column.editor === 'COMBO' && !$scope.isDependentColumn(column)) {
+				if(!$scope.comboColumnOptions[column.field]) {
+					$scope.comboColumnOptions[column.field] = {};
+					var promise = regFilterGetData.getData(column.field);
+					promise.then(function(response) {
+						$scope.comboColumnOptions[column.field] = response;
+					});
+					return promise;
 				}
 			}
-        }
-        
-        function DialogController($scope, $mdDialog, dontShowAgain, columns, sbiModule_translate) {
-        	 $scope.dontShowAgain = dontShowAgain;
-        	 $scope.dependentColumns = columns;
-        	 $scope.translate = sbiModule_translate;
 
-        	 $scope.closeDialog = function() {
-         		 dontShowAgain = $scope.dontShowAgain;
-        		 $mdDialog.hide(dontShowAgain);
-             };
+			//dependent combo columns
+			if(column.editor === 'COMBO' && $scope.isDependentColumn(column)) {
+				if(!$scope.comboColumnOptions[column.field]) {
+					$scope.comboColumnOptions[column.field] = {};
 
-        };
+					var dependencesPromise = regFilterGetData.getDependeceOptions(column, row)
+					dependencesPromise.then(function(response) {
+						$scope.comboColumnOptions[column.field][row[column.dependsFrom]] = response.data.rows;
+					});
+					return dependencesPromise;
+				} else {
+					if(!$scope.comboColumnOptions[column.field].hasOwnProperty(row[column.dependsFrom])) {
+						var dependencesPromise = regFilterGetData.getDependeceOptions(column, row)
+						dependencesPromise.then(function(response) {
+							$scope.comboColumnOptions[column.field][row[column.dependsFrom]] = response.data.rows;
+						});
+						return dependencesPromise;
+					}
+				}
+			}
+		};
 
-        $scope.isDependentColumn = function(column) {
-        	if(column.hasOwnProperty('dependsFrom')) {
-        		return true;
-        	} else {
-        		return false;
-        	}
-        };
+		$scope.stopShow = false;
+
+		$scope.notifyAboutDependency = function(column, event) {
+			clicked++;
+			if(clicked == 1) {
+				fillDependencyColumns(column);
+				createDialog($scope.dependentColumns);
+			}
+
+			if($scope.dependentColumns.length != 0 && !$scope.stopShow) {
+
+				$mdDialog.show($scope.confirm)
+						.then(function(result){
+						$scope.stopShow = result;
+					}, function(result){
+						$scope.stopShow = result;
+					});
+				$scope.emptyDependentColumns($scope.dependentColumns);
+			}
+		};
+		
+		var fillDependencyColumns = function(column) {
+			for(var i = 0; i < $scope.columns.length; i++) {
+				var col = $scope.columns[i];
+				if(col.dependsFrom === column.field) {
+					var dependent = [];
+					dependent.title = col.title;
+					dependent.field = col.field;
+					$scope.dependentColumns.push(dependent);
+					fillDependencyColumns(col);
+				}
+			}
+			
+		};
+
+		var createDialog = function(dependentColumns) {
+			$scope.joinedFields = "";
+			var i = 0;
+			for (var k in $scope.dependentColumns) {
+				if (i > 0)
+					$scope.joinedFields += ", ";
+				
+				$scope.joinedFields += $scope.dependentColumns[k].title
+				i++;
+			}
+			
+			$scope.confirm = $mdDialog.prompt(
+					{
+						controller: DialogController,
+						parent: angular.element(document.body),
+						templateUrl: sbiModule_config.dynamicResourcesEnginePath + '/registry/dependentColumnsDialog.tpl.html',
+						locals: {
+							dontShowAgain: $scope.stopShow,
+							columns: $scope.joinedFields
+						},
+						targetEvent: event,
+						clickOutsideToClose: false,
+						preserveScope: true,
+						fullscreen: true
+					}
+			);
+			
+		};
+		
+		$scope.emptyDependentColumns = function (dependentColumns) {
+			
+			for (var i = 0; i < $scope.selectedRow.length; i++) {
+				
+				for(var property in $scope.selectedRow[i]) {
+					
+					for (var k in dependentColumns) {
+						if (angular.equals(dependentColumns[k].field, property)) {
+							$scope.selectedRow[i][property] = '';
+						}
+					}
+				}
+			}
+		}
+		
+		function DialogController($scope, $mdDialog, dontShowAgain, columns, sbiModule_translate) {
+			$scope.dontShowAgain = dontShowAgain;
+			$scope.dependentColumns = columns;
+			$scope.translate = sbiModule_translate;
+
+			$scope.closeDialog = function() {
+				dontShowAgain = $scope.dontShowAgain;
+				$mdDialog.hide(dontShowAgain);
+			};
+
+		};
+
+		$scope.isDependentColumn = function(column) {
+			if(column.dependsFrom && column.dependsFrom != null) {
+				return true;
+			} else {
+				return false;
+			}
+		};
 
 		//Filters handling
 		$scope.addFilterOptions = function(filterField){
@@ -538,23 +538,23 @@
 
 
 		$scope.getFilteredData = function(params) {
-        	$scope.formParams = Object.assign({}, params);
-        	if($scope.configuration.pagination == 'true') {
-        		$scope.formParams.start = 0;
-        		$scope.formParams.limit = $scope.configuration.itemsPerPage;
-            	$scope.page = 1;
-        	} else {
-        		$scope.formParams.start = 0;
-        	}
-     	   	readData($scope.formParams);
-        };
+			$scope.formParams = Object.assign({}, params);
+			if($scope.configuration.pagination == 'true') {
+				$scope.formParams.start = 0;
+				$scope.formParams.limit = $scope.configuration.itemsPerPage;
+				$scope.page = 1;
+			} else {
+				$scope.formParams.start = 0;
+			}
+			readData($scope.formParams);
+		};
 
-        $scope.deleteFilterValues = function(){
+		$scope.deleteFilterValues = function(){
 			$scope.filters = {};
 			$scope.formParams = {};
 			$scope.page = 1;
 			for(var i = 0 ; i<($scope.configuration.filters).length; i++){
-            	$scope.configuration.filters[i].value = null;
+				$scope.configuration.filters[i].value = null;
 			}
 			loadInitialData($scope.formParams);
 		};
@@ -568,9 +568,9 @@
 		$scope.allADFilters = function() {
 			var found = true;
 			for(var i = 0 ; i<($scope.configuration.filters).length; i++){
-	            	if ($scope.configuration.filters[i].presentation != 'DRIVER') {
-	            		return false;
-	            	}
+					if ($scope.configuration.filters[i].presentation != 'DRIVER') {
+						return false;
+					}
 				}
 				
 			return found;
@@ -588,27 +588,27 @@
 		$scope.allADFilters = function() {
 			var found = true;
 			for(var i = 0 ; i<($scope.configuration.filters).length; i++){
-	            	if ($scope.configuration.filters[i].presentation != 'DRIVER') {
-	            		return false;
-	            	}
+					if ($scope.configuration.filters[i].presentation != 'DRIVER') {
+						return false;
+					}
 				}
 				
 			return found;
 		}
 		
-        $scope.updateRow = function() {
+		$scope.updateRow = function() {
 			for (var i = 0; i < $scope.selectedRow.length; i++) {
 				for(var property in $scope.selectedRow[i]) {
-	        		if(!$scope.selectedRow[i].id && $scope.selectedRow[i][property] && typeof $scope.selectedRow[i][property].getMonth === 'function') {
+					if(!$scope.selectedRow[i].id && $scope.selectedRow[i][property] && typeof $scope.selectedRow[i][property].getMonth === 'function') {
 						//var time = $scope.selectedRow[i][property].getTime();
 						//$scope.selectedRow[i][property].setTime(time + new Date().getTimezoneOffset()*60*1000);
-	    	        }
-	        		if($scope.selectedRow[i].$newRow) delete $scope.selectedRow[i].$newRow;
+					}
+					if($scope.selectedRow[i].$newRow) delete $scope.selectedRow[i].$newRow;
 					
 				}
 			}
 			registryCRUD.update($scope.selectedRow).then(function(response) {
-	     	   	readData($scope.formParams);
+				readData($scope.formParams);
 				sbiMessaging.showInfoMessage( $scope.sbiTranslate.load("kn.registry.registryDocument.update.success")
 						+' '+ ($scope.selectedRow.length) + ' ' + $scope.sbiTranslate.load("kn.registry.registryDocument.row"), $scope.sbiTranslate.load("kn.registry.registryDocument.success"));
 				$scope.selectedRow.length = 0;
@@ -620,11 +620,11 @@
 		$scope.deleteRowFromDB = function(row, event) {
 
 			var confirm = $mdDialog.confirm()
-            .title(sbiModule_translate.load('kn.registry.document.delete.row'))
-            .textContent(sbiModule_translate.load('kn.registry.document.delete.confirm.message'))
-            .targetEvent(event)
-            .ok(sbiModule_translate.load('kn.qbe.general.yes'))
-            .cancel(sbiModule_translate.load('kn.qbe.general.no'));
+			.title(sbiModule_translate.load('kn.registry.document.delete.row'))
+			.textContent(sbiModule_translate.load('kn.registry.document.delete.confirm.message'))
+			.targetEvent(event)
+			.ok(sbiModule_translate.load('kn.qbe.general.yes'))
+			.cancel(sbiModule_translate.load('kn.qbe.general.no'));
 			
 			if(row.$newRow){
 				$scope.deleteRow(row.$$hashKey)
@@ -713,51 +713,51 @@
 			$scope.min = pagination.min($scope.resultsNumber,$scope.page,$scope.configuration.itemsPerPage);
 			$scope.max = pagination.max($scope.page,$scope.configuration.itemsPerPage,$scope.resultsNumber);
 			$scope.next = function() {
-				 $scope.page++;
-				 $scope.formParams = pagination.next($scope.page,$scope.formParams,$scope.configuration.itemsPerPage,$scope.filters);
-				 readData($scope.formParams);
+				$scope.page++;
+				$scope.formParams = pagination.next($scope.page,$scope.formParams,$scope.configuration.itemsPerPage,$scope.filters);
+				readData($scope.formParams);
 			};
 			$scope.previous = function() {
-				 $scope.page--;
-				 $scope.formParams = pagination.previous($scope.page,$scope.formParams,$scope.configuration.itemsPerPage,$scope.filters);
-				 readData($scope.formParams);
+				$scope.page--;
+				$scope.formParams = pagination.previous($scope.page,$scope.formParams,$scope.configuration.itemsPerPage,$scope.filters);
+				readData($scope.formParams);
 			};
 			$scope.last = function() {
-				 $scope.page= $scope.getTotalPages.length;
-				 $scope.formParams = pagination.previous($scope.page,$scope.formParams,$scope.configuration.itemsPerPage,$scope.filters);
-				 readData($scope.formParams);
+				$scope.page= $scope.getTotalPages.length;
+				$scope.formParams = pagination.previous($scope.page,$scope.formParams,$scope.configuration.itemsPerPage,$scope.filters);
+				readData($scope.formParams);
 			};
 			$scope.first = function() {
 				$scope.page= 1;
-				 $scope.formParams = pagination.previous($scope.page,$scope.formParams,$scope.configuration.itemsPerPage,$scope.filters);
-				 readData($scope.formParams);
+				$scope.formParams = pagination.previous($scope.page,$scope.formParams,$scope.configuration.itemsPerPage,$scope.filters);
+				readData($scope.formParams);
 			}
 			$scope.goToPage = function() {
 				$scope.formParams = pagination.goToPage($scope.page,$scope.formParams,$scope.configuration.itemsPerPage,$scope.filters);
-				 readData($scope.formParams);
+				readData($scope.formParams);
 			}
 		};
 
 
-        $scope.checkIfSelected = function(row) {
+		$scope.checkIfSelected = function(row) {
 
-        	if(($scope.selectedRow).indexOf(row) !== -1 ){
-        		return 'blue';
-        	}
-        }
-        var dateColumnsFilter = function(columns){
-        	var namesOfDateColumns =[];
-        	for(var i = 0 ; i <columns.length ; i++){
-        		if(columns[i].type === 'date'){
-        			namesOfDateColumns.push({header: columns[i].header, subType: columns[i].subtype});
-        		}
-        	}
-        	return namesOfDateColumns;
-        }
+			if(($scope.selectedRow).indexOf(row) !== -1 ){
+				return 'blue';
+			}
+		}
+		var dateColumnsFilter = function(columns){
+			var namesOfDateColumns =[];
+			for(var i = 0 ; i <columns.length ; i++){
+				if(columns[i].type === 'date'){
+					namesOfDateColumns.push({header: columns[i].header, subType: columns[i].subtype});
+				}
+			}
+			return namesOfDateColumns;
+		}
 
-        var dateRowsFilter= function(columnNames,rows){
-        	for(var i = 0 ; i<columnNames.length ;  i++){
-        		for(var j = 0 ; j < rows.length; j++){
+		var dateRowsFilter= function(columnNames,rows){
+			for(var i = 0 ; i<columnNames.length ;  i++){
+				for(var j = 0 ; j < rows.length; j++){
 					var value  = rows[j][columnNames[i].header]
 					if(value == '') value = null;
 					
@@ -768,9 +768,9 @@
 							//rows[j][columnNames[i].header].setTime(rowDate.getTime() - new Date().getTimezoneOffset()*60*1000);
 						}
 					}
-        		}
-        	}
+				}
+			}
 			return rows;
-        }
+		}
 	}
 })();

@@ -57,6 +57,7 @@ import it.eng.knowage.knowageapi.error.ImpossibleToReadFolderListException;
 import it.eng.knowage.knowageapi.error.ImpossibleToReadMetadataException;
 import it.eng.knowage.knowageapi.error.ImpossibleToSaveMetadataException;
 import it.eng.knowage.knowageapi.error.ImpossibleToUploadFileException;
+import it.eng.knowage.knowageapi.error.KnowageBusinessException;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.error.TenantRepositoryMissingException;
 import it.eng.knowage.knowageapi.utils.ContextPropertiesConfig;
@@ -255,6 +256,8 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 					}
 				}
 			}
+		} catch (KnowageBusinessException e) {
+			throw new ImpossibleToCreateFolderException(e.getMessage(), e);
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e.getMessage(), e);
 		}

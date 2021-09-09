@@ -573,11 +573,11 @@
         "driversManagement": {
             "add": "Add",
             "deleteError": "Error",
+            "functional": "Functional",
             "hint": "Driver models a concept or a piece of data frequently used as a distinguishing criterion on the global data context.Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "options": "Options",
-            "title": "Drivers management",
-            "functional": "Functional",
             "temporal": "Temporal",
+            "title": "Drivers management",
             "useModes": {
                 "backToList": "Back to list",
                 "constraints": "Constraints",
@@ -652,7 +652,7 @@
             "fields": "Fields",
             "filterNullValues": "If a record contains some null values it will be filtered out",
             "fixedListWizard": "WIZARD FIX LOV",
-            "hint": "No LOV selected",
+            "hint": "The LOVs management page allows you to create List Of Values to use inside your drivers or parameters. </br>There are many different type of LOVs that can be generated, using queries, JAVA classes, scripts or entering the data manually. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "infoRules": "Rules",
             "infoSyntax": "Show Syntax...",
             "javaClassName": "Java Class Name",
