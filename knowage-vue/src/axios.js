@@ -29,9 +29,13 @@ axios.interceptors.response.use(
 			if (error.response.status === 500) {
 				console.log(500)
 
-				if (error.response.data.errors) {
-					if (error.response.data.errors[0].code) {
-						let errArray = error.response.data.errors
+				let obj = error.response.data
+				if (error.response.data instanceof ArrayBuffer) {
+					obj = JSON.parse(new TextDecoder().decode(error.response.data))
+				}
+				if (obj.errors) {
+					if (obj.errors[0].code) {
+						let errArray = obj.errors
 
 						for (var idx in errArray) {
 							let err = errArray[idx]
@@ -46,7 +50,7 @@ axios.interceptors.response.use(
 							store.commit('setError', { title: err.message, msg: hints })
 						}
 					} else {
-						store.commit('setError', { title: 'Server error', msg: error.response.data.errors[0].message })
+						store.commit('setError', { title: 'Server error', msg: obj.errors[0].message })
 					}
 				}
 			}
