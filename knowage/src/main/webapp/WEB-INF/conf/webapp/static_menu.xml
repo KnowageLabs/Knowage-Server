@@ -287,7 +287,7 @@
 			iconCls="fas fa-calendar" />
 		<ITEM id="11011" label="menu.lovs.management"
 			requiredFunctionality="LovsManagement"
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=lovsManagement"
+			to="/lovs-management"
 			iconCls="fas fa-list" />
 		<ITEM id="11018" label="menu.i18n"
 			requiredFunctionality="ManageInternationalization"
