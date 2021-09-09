@@ -24,7 +24,7 @@ import Dropdown from 'primevue/dropdown'
 export default defineComponent({
     name: 'registry-filter-card',
     components: { Card, Dropdown },
-    props: { propFilter: { type: Object }, filterOptions: { type: Array }, entity: { type: String }, clearTrigger: { type: Boolean } },
+    props: { propFilter: { type: Object }, filterOptions: { type: Array }, entity: { type: String }, clearTrigger: { type: Boolean }, id: { type: String } },
     data() {
         return {
             filter: {} as any,
@@ -55,8 +55,8 @@ export default defineComponent({
             const postData = new URLSearchParams()
             const subEntity = this.filter.column.subEntity ? '::' + this.filter.column.subEntity + '(' + this.filter.column.foreignKey + ')' : ''
             // HARDCODED entity
-            const entityId = 'it.eng.knowage.meta.stores_for_registry.Store' + subEntity + ':' + this.filter.field
-            const entityOrder = 'it.eng.knowage.meta.stores_for_registry.Store' + subEntity + ':' + (this.filter.column.orderBy ?? this.filter.field)
+            const entityId = this.entity + subEntity + ':' + this.filter.field
+            const entityOrder = this.entity + subEntity + ':' + (this.filter.column.orderBy ?? this.filter.field)
             // console.log('ENTITY ID', entityId)
             // console.log('ENTITY ORDER', entityOrder)
             postData.append('ENTITY_ID', entityId) // it.eng.knowage.meta.stores_for_registry.Store::rel_region_id_in_region(rel_region_id_in_region):sales_city
@@ -65,7 +65,7 @@ export default defineComponent({
             postData.append('ORDER_TYPE', 'asc')
             postData.append('QUERY_ROOT_ENTITY', 'true')
             postData.append('query', '')
-            await axios.post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=5b9d3070116511ec8dd79b53a6e80fe7`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then((response) => (this.options = response.data.rows))
+            await axios.post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then((response) => (this.options = response.data.rows))
             console.log('FILTER OPTIONS: ', this.filterOptions)
         },
         filterChanged() {

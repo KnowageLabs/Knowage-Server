@@ -1,6 +1,7 @@
 <template>
     <Card>
         <template #content>
+            {{ lazyParams }}
             <DataTable class="p-datatable-sm kn-table" :value="rows" editMode="cell" dataKey="id" :lazy="this.lazyParams.size > 1000" :paginator="true" :rows="15" :totalRecords="lazyParams.size" responsiveLayout="stack" breakpoint="960px" @page="onPage($event)">
                 <template v-for="col of columns" :key="col.field">
                     <Column class="kn-truncated" :field="col.field" :header="col.title">

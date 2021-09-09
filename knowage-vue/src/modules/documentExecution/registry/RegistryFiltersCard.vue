@@ -9,7 +9,7 @@
         </template>
         <template #content>
             <div class="p-d-flex p-flex-row p-ai-center">
-                <RegistryFilterCard class="p-m-2" v-for="(filter, index) in filters" :key="index" :propFilter="filter" :entity="entity" :clearTrigger="clearFiltersTrigger" @changed="setFilterValue($event, index)"></RegistryFilterCard>
+                <RegistryFilterCard :id="id" class="p-m-2" v-for="(filter, index) in filters" :key="index" :propFilter="filter" :entity="entity" :clearTrigger="clearFiltersTrigger" @changed="setFilterValue($event, index)"></RegistryFilterCard>
                 <div class="p-ai-end">
                     <Button class="kn-button p-button-text" @click="clearAllFilters">{{ $t('documentExecution.registry.clearFilters') }}</Button>
                     <Button class="kn-button p-button-text" @click="filterRegistry">{{ $t('documentExecution.registry.filter') }}</Button>
@@ -27,7 +27,7 @@ import RegistryFilterCard from './RegistryFilterCard.vue'
 export default defineComponent({
     name: 'registry-filters-card',
     components: { Card, RegistryFilterCard },
-    props: { propFilters: { type: Array }, entity: { type: String } },
+    props: { propFilters: { type: Array }, entity: { type: String }, id: { type: String } },
     emits: ['filter'],
     data() {
         return {
