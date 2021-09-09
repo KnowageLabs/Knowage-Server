@@ -65,8 +65,11 @@ export default defineComponent({
     },
     methods: {
         async loadRegistry() {
+            const postData = new URLSearchParams()
+            postData.append('start', '0')
+            postData.append('limit', '15')
             await axios
-                // .post(`knowageqbeengine/servlet/AdapterHTTP?ACTIONNAME=LOADREGISTRYACTION&SBIEXECUTIONID=4489870a0fba11ec8b65ed57c30e47f4`)
+                //.post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=e7a8d9ed113e11ec8dd79b53a6e80fe7`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
                 .get('../data/demo_registry.json')
                 .then((response) => (this.registry = response.data))
         },
