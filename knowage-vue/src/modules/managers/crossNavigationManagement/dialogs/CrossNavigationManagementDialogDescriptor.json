@@ -22,5 +22,16 @@
             "width": "70vw"
         }
     },
-    "globalFilterFields": ["DOCUMENT_LABEL", "DOCUMENT_NAME"]
+    "globalFilterFields": ["DOCUMENT_LABEL", "DOCUMENT_NAME"],
+    "parType": {
+        "0": {
+            "label": "managers.crossNavigationManagement.output"
+        },
+        "1": {
+            "label": "managers.crossNavigationManagement.input"
+        },
+        "2": {
+            "label": "managers.crossNavigationManagement.fixed"
+        }
+    }
 }

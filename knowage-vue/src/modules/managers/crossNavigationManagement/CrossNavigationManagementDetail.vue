@@ -79,7 +79,6 @@
                     </div>
                     <DocParameters :selectedNavigation="navigation"></DocParameters>
                 </form>
-                <p>{{ navigation }}</p>
             </template>
         </Card>
         <DocDialog :dialogVisible="dialogVisible" :selectedDoc="docId" @close="dialogVisible = false" @apply="hadleDoc"></DocDialog>
@@ -192,11 +191,13 @@ export default defineComponent({
                     this.simpleNavigation.fromDocId = doc.DOCUMENT_ID
                     this.simpleNavigation.fromDoc = doc.DOCUMENT_LABEL
                     this.loadInputParams(doc.DOCUMENT_LABEL).then((response) => (this.navigation.fromPars = response))
-                    this.loadOutputParams(doc.DOCUMENT_ID).then((response) => this.navigation.fromPars.concat(response))
+                    this.loadOutputParams(doc.DOCUMENT_ID).then((response) => (this.navigation.fromPars = this.navigation.fromPars.concat(response)))
+                    //TO-DO: Remove link from toPars
                     break
                 case 'target':
                     this.simpleNavigation.toDocId = doc.DOCUMENT_ID
                     this.simpleNavigation.toDoc = doc.DOCUMENT_LABEL
+                    this.loadInputParams(doc.DOCUMENT_LABEL).then((response) => (this.navigation.toPars = response))
                     break
             }
         },
