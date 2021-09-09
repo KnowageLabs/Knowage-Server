@@ -7,13 +7,13 @@
 						{{ $t('managers.resourceManagement.title') }}
 					</template>
 					<template #right>
-						<Button icon="fas fa-sync-alt" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="loadPage(showHint, formVisible)"/>
-						<Button icon="fas fa-folder-plus" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="openCreateFolderDialog"
+						<Button v-if="nodes && nodes.length > 0" icon="fas fa-sync-alt" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="loadPage(showHint, formVisible)"/>
+						<Button v-if="nodes && nodes.length > 0" icon="fas fa-folder-plus" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="openCreateFolderDialog"
 					/></template>
 				</Toolbar>
 				<ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
 				<ResourceManagementMetadataDialog v-model:visibility="displayMetadataDialog" v-model:id="metadataKey"></ResourceManagementMetadataDialog>
-				<ResourceManagementCreateFolderDialog v-model:visibility="folderCreation" @createFolder="createFolder" v-bind:path="selectedFolder ? selectedFolder.relativePath : ''" />
+				<ResourceManagementCreateFolderDialog v-model:visibility="folderCreation" @createFolder="createFolder" v-bind:path="getCurrentFolderPath()" />
 
 				<Tree id="folders-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" :filter="true" filterMode="lenient" data-test="functionality-tree" class="kn-tree kn-flex p-flex-column foldersTree" @node-select="showForm($event)" v-model:selectionKeys="selectedKeys">
 					<template #default="slotProps">
@@ -92,6 +92,10 @@
 						})
 						.then(() => {
 							this.$emit('folderCreated', true)
+							this.$store.commit('setInfo', {
+								title: this.$t('managers.resourceManagement.createFolder'),
+								msg: this.$t('managers.resourceManagement.folderCreatedSuccessfully')
+							})
 						})
 						.catch((error) => {
 							this.$store.commit('setError', {
@@ -139,13 +143,13 @@
 								.then(() => {
 									delete node.edit
 									this.$store.commit('setInfo', {
-										title: this.$t('managers.resoruceManagement.renameFolder'),
-										msg: this.$t('managers.resoruceManagement.folderRenamedSuccessfully')
+										title: this.$t('managers.resourceManagement.renameFolder'),
+										msg: this.$t('managers.resourceManagement.folderRenamedSuccessfully')
 									})
 								})
 								.catch((error) => {
 									this.$store.commit('setError', {
-										title: this.$t('managers.resoruceManagement.renameFolder'),
+										title: this.$t('managers.resourceManagement.renameFolder'),
 										msg: this.$t(error)
 									})
 								})
@@ -198,16 +202,11 @@
 						}
 					})
 					.then(() => {
+						this.selectedFolder = this.nodes && this.nodes[0]
 						this.loadPage()
 						this.$store.commit('setInfo', {
 							title: this.$t('common.toast.deleteTitle'),
 							msg: this.$t('common.toast.deleteSuccess')
-						})
-					})
-					.catch(() => {
-						this.$store.commit('setError', {
-							title: this.$t('common.toast.deleteTitle'),
-							msg: this.$t('common.toast.deleteFailed')
 						})
 					})
 					.finally(() => (this.loading = false))

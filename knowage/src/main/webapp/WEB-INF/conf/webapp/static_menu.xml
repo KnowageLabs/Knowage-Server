@@ -120,8 +120,10 @@
 			<ITEM id="5007" label="menu.NewsManagement"
 				requiredFunctionality="NewsManagement"
 				to="/news-management" />
-			<ITEM label="menu.WidgetGalleryManagement"
-				to="/gallery-management" />
+			<ITEM id="5008" label="menu.modelCatalogResourceManagement"
+				to="/models-management" />
+			<ITEM id="5009" label="menu.resourceManagement" requiredFunctionality="ResourceManagement,ResourceManagementDev"
+				to="/resource-management" />
 		</GROUP_ITEM>
 
 		<GROUP_ITEM id="6000" label="menu.KpiModel"
@@ -163,10 +165,7 @@
 
 		<GROUP_ITEM id="8000" label="menu.group.ServerManager"
 			toBeLicensed="" iconCls="fa fa-2x fa-cogs">
-			
-			<ITEM id="8014" label="menu.admin.importExport"
-				requiredFunctionality="ImportExport"
-				to="/import-export" />
+
 			<ITEM id="8001" label="menu.TenantMan"
 				requiredFunctionality="TenantManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=multitenantManagementAngular" />
