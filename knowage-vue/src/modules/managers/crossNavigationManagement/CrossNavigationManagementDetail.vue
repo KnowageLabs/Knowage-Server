@@ -35,14 +35,14 @@
                     </div>
                     <div class="p-field p-col-2 p-mb-3" v-if="simpleNavigation.type === 2">
                         <span class="p-float-label">
-                            <InputText id="width" class="kn-material-input" type="number" v-model.trim="simpleNavigation.popupOptions.width" />
+                            <InputText id="width" class="kn-material-input" type="number" v-model.trim="simpleNavigation.popupOptions.width" min="0" />
                             <label for="width" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.width') }} </label>
                         </span>
                         <small id="width-help">{{ $t('managers.crossNavigationManagement.widthHelp') }}</small>
                     </div>
                     <div class="p-field p-col-2 p-mb-3" v-if="simpleNavigation.type === 2">
                         <span class="p-float-label">
-                            <InputText id="height" class="kn-material-input" type="number" v-model.trim="simpleNavigation.popupOptions.height" />
+                            <InputText id="height" class="kn-material-input" type="number" v-model.trim="simpleNavigation.popupOptions.height" min="0" />
                             <label for="height" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.height') }} </label>
                         </span>
                         <small id="height-help">{{ $t('managers.crossNavigationManagement.heightHelp') }}</small>
