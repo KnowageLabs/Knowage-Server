@@ -77,31 +77,7 @@
                     <div class="p-field p-col-2 p-mb-3">
                         <Button :label="$t('common.select')" @click="selectDoc('target')" class="kn-button kn-button--primary" />
                     </div>
-                    <div class="p-field p-col-6 p-mb-3">
-                        <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                            <template #left>
-                                {{ $t('managers.crossNavigationManagement.availableIO') }}
-                            </template>
-                        </Toolbar>
-                        <div class="p-inputgroup p-mt-3">
-                            <span class="p-float-label">
-                                <InputText class="kn-material-input" type="text" v-model="value" />
-                                <label class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.fixedValue') }} </label>
-                            </span>
-                            <FabButton icon="fas fa-plus" class="fab-button p-mt-3 p-ml-2" />
-                        </div>
-                        <Listbox :options="navigation.fromPars" optionLabel="name"></Listbox>
-                        {{ navigation.fromPars }}
-                    </div>
-                    <div class="p-field p-col-6 p-mb-3">
-                        <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                            <template #left>
-                                {{ $t('managers.crossNavigationManagement.availableInput') }}
-                            </template>
-                        </Toolbar>
-                        <Listbox :options="navigation.toPars" optionLabel="name"></Listbox>
-                        {{ navigation.toPars }}
-                    </div>
+                    <DocParameters :selectedNavigation="navigation"></DocParameters>
                 </form>
                 <p>{{ navigation }}</p>
             </template>
@@ -114,15 +90,14 @@ import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import axios from 'axios'
 import Dropdown from 'primevue/dropdown'
-import Listbox from 'primevue/listbox'
-import FabButton from '@/components/UI/KnFabButton.vue'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import DocDialog from './dialogs/CrossNavigationManagementDocDialog.vue'
+import DocParameters from './dialogs/CrossNavigationManagementDocParameters.vue'
 import crossNavigationManagementValidator from './CrossNavigationManagementValidator.json'
 export default defineComponent({
     name: 'cross-navigation-detail',
-    components: { Dropdown, DocDialog, KnValidationMessages, Listbox, FabButton },
+    components: { Dropdown, DocDialog, DocParameters, KnValidationMessages },
     props: {
         id: {
             type: String
@@ -216,12 +191,34 @@ export default defineComponent({
                 case 'origin':
                     this.simpleNavigation.fromDocId = doc.DOCUMENT_ID
                     this.simpleNavigation.fromDoc = doc.DOCUMENT_LABEL
+                    this.loadInputParams(doc.DOCUMENT_LABEL).then((response) => (this.navigation.fromPars = response))
+                    this.loadOutputParams(doc.DOCUMENT_ID).then((response) => this.navigation.fromPars.concat(response))
                     break
                 case 'target':
                     this.simpleNavigation.toDocId = doc.DOCUMENT_ID
                     this.simpleNavigation.toDoc = doc.DOCUMENT_LABEL
                     break
             }
+        },
+        async loadInputParams(label) {
+            let params = []
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/documents/' + label + '/parameters').then(
+                (response) =>
+                    (params = response.data.results.map((param: any) => {
+                        return { id: param.id, name: param.label, type: 1, parType: param.parType }
+                    }))
+            )
+            return params
+        },
+        async loadOutputParams(id) {
+            let params = []
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/' + id + '/listOutParams').then(
+                (response) =>
+                    (params = response.data.map((param: any) => {
+                        return { id: param.id, name: param.name, type: 0, parType: param.type.valueCd }
+                    }))
+            )
+            return params
         }
     }
 })

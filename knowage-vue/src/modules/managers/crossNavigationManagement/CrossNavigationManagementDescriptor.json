@@ -42,6 +42,7 @@
             "type": "router"
         },
         "sortFields": ["name", "type"],
+        "textField": false,
         "titleField": "name"
     }
 }
