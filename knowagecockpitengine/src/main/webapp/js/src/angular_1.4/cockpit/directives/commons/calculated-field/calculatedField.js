@@ -189,6 +189,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(newValue && !newValue.match(/(?:AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT|TOTAL_SUM|TOTAL_AVG|TOTAL_MIN|TOTAL_MAX|TOTAL_COUNT|TOTAL_COUNT_DISTINCT)+\(.+\)/gm)) {
 				$scope.showWarning =   $scope.translate.load('kn.cockpit.calculatedfield.validation.aggregationfunctions');
 			}
+			if(newValue && $scope.isSolrDataset() && newValue.match(/(?:AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)+\((.*[\+\-\*\/].*)\)/gm)) {
+				$scope.showWarning =   $scope.translate.load('kn.cockpit.calculatedfield.validation.solr.wrongformula');
+			}
 			else {
 				$scope.showWarning = false;
 			}
