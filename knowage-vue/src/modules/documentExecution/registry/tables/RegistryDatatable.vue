@@ -1,5 +1,5 @@
 <template>
-    <DataTable class="p-datatable-sm kn-table" :value="rows" editMode="cell" dataKey="id" responsiveLayout="stack" breakpoint="960px">
+    <DataTable class="p-datatable-sm kn-table" :value="rows" editMode="cell" dataKey="id" :lazy="this.lazyParams.size > 1000" :paginator="true" :rows="15" :totalRecords="lazyParams.size" responsiveLayout="stack" breakpoint="960px" @page="onPage($event)">
         <template v-for="col of columns" :key="col.field">
             <Column class="kn-truncated" :field="col.field" :header="col.title">
                 <template #editorType="slotProps">
@@ -58,8 +58,8 @@ import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
 export default defineComponent({
     name: 'registry-datatable',
     components: { Calendar, Checkbox, Column, DataTable, Dropdown },
-    props: { propColumns: { type: Array }, propRows: { type: Array }, columnMap: { type: Object }, propConfiguration: { type: Object } },
-    emits: ['rowChanged', 'rowDeleted'],
+    props: { propColumns: { type: Array }, propRows: { type: Array }, columnMap: { type: Object }, propConfiguration: { type: Object }, pagination: { type: Object } },
+    emits: ['rowChanged', 'rowDeleted', 'pageChanged'],
     data() {
         return {
             registryDatatableDescriptor,
@@ -71,7 +71,8 @@ export default defineComponent({
                 enableButtons: false,
                 enableDeleteRecords: false,
                 enableAddRecords: false
-            }
+            },
+            lazyParams: {} as any
         }
     },
     watch: {
@@ -83,6 +84,12 @@ export default defineComponent({
         },
         propConfiguration() {
             this.loadConfiguration()
+        },
+        pagination: {
+            handler() {
+                this.loadPagination()
+            },
+            deep: true
         }
     },
     created() {
@@ -90,6 +97,7 @@ export default defineComponent({
         this.loadRows()
         this.loadConfiguration()
         this.loadDropdownValues('store_type')
+        this.loadPagination()
     },
     methods: {
         loadColumns() {
@@ -121,6 +129,14 @@ export default defineComponent({
                 // console.log('CONFIGURATION: ', this.configuration)
                 // console.log('BUTTONS: ', this.configuration)
             }
+        },
+        loadPagination() {
+            this.lazyParams = { ...this.pagination } as any
+            console.log('LAZY PARAMS LOADED: ', this.lazyParams)
+        },
+        onPage(event: any) {
+            this.lazyParams = { paginationStart: event.first, paginationLimit: event.rows, paginationEnd: event.first + event.rows, size: this.lazyParams.size }
+            this.$emit('pageChanged', this.lazyParams)
         },
         rowDeleteConfirm(row: any) {
             this.$confirm.require({
@@ -199,7 +215,7 @@ export default defineComponent({
         async loadDropdownValues(column: string) {
             await axios
                 // .get(`knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=c75a32e00fbf11ec8b65ed57c30e47f4`)
-                .get('../data/demo_dropdown_store_type.json')
+                .get('../../data/demo_dropdown_store_type.json')
                 .then((response) => (this.comboColumnOptions[column] = response.data.rows))
         }
     }

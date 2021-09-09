@@ -18,7 +18,7 @@
                 <RegistryFiltersCard :propFilters="filters" :entity="entity" @filter="filterRegistry"></RegistryFiltersCard>
             </div>
             <div class="p-col-12" v-if="!loading">
-                <RegistryDatatable :propColumns="columns" :propRows="rows" :propConfiguration="configuration" :columnMap="columnMap" :filteredValues="filteredValues" @rowChanged="onRowChanged" @rowDeleted="onRowDeleted"></RegistryDatatable>
+                <RegistryDatatable :propColumns="columns" :propRows="rows" :propConfiguration="configuration" :columnMap="columnMap" :filteredValues="filteredValues" :pagination="pagination" @rowChanged="onRowChanged" @rowDeleted="onRowDeleted" @pageChanged="updatePagination"></RegistryDatatable>
             </div>
         </div>
     </div>
@@ -42,7 +42,7 @@ export default defineComponent({
             columns: [] as any[],
             rows: [] as any[],
             columnMap: {} as any,
-            pagination: { start: 0, limit: 20 },
+            pagination: { start: 0, limit: 15 } as any,
             updatedRows: [] as any,
             filters: [] as any[],
             entity: null as string | null,
@@ -78,12 +78,15 @@ export default defineComponent({
         },
         async loadRegistry() {
             const postData = new URLSearchParams()
-            postData.append('start', '0')
-            postData.append('limit', '15')
+            postData.append('start', '' + this.pagination.start)
+            // postData.append('limit', '15')
             await axios
                 //.post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=e7a8d9ed113e11ec8dd79b53a6e80fe7`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
                 .get('../../data/demo_registry.json')
-                .then((response) => (this.registry = response.data))
+                .then((response) => {
+                    this.pagination.size = response.data.results
+                    this.registry = response.data
+                })
         },
         loadColumns() {
             this.columns = this.registry.registryConfig.columns
@@ -103,7 +106,8 @@ export default defineComponent({
         },
         loadRows() {
             this.rows = []
-            for (let i = 0; i < this.registry.rows.length; i++) {
+            const limit = this.pagination.size <= 1000 ? this.registry.rows.length : 15
+            for (let i = 0; i < limit; i++) {
                 const tempRow = {}
                 Object.keys(this.registry.rows[i]).forEach((key) => {
                     // console.log(key, this.registry.rows[i][key])
@@ -166,6 +170,11 @@ export default defineComponent({
             await axios
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=51f37ee8115411ec8dd79b53a6e80fe7`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
                 .then((response) => console.log('FILTERED SUCCESSFULL: ', response.data))
+        },
+        updatePagination(lazyParams: any) {
+            console.log('UPDATE PAGINATION: ', lazyParams)
+            this.pagination = { start: lazyParams.paginationStart, limit: lazyParams.paginationLimit, size: lazyParams.size }
+            console.log('UPDATED PAGINATION: ', this.pagination)
         }
     }
 })

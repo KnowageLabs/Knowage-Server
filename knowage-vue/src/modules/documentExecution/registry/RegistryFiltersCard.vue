@@ -49,7 +49,7 @@ export default defineComponent({
         },
         setFilterValue(value: string, index: number) {
             this.filters[index].filterValue = value
-            console.log('FILTER UPDATED: ', this.filters)
+            // console.log('FILTER UPDATED: ', this.filters)
         },
         clearAllFilters() {
             this.filters.forEach((el: any) => (el.filterValue = ''))
