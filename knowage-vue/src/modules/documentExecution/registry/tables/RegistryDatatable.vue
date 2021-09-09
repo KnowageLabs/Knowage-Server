@@ -1,47 +1,51 @@
 <template>
-    <DataTable class="p-datatable-sm kn-table" :value="rows" editMode="cell" dataKey="id" :lazy="this.lazyParams.size > 1000" :paginator="true" :rows="15" :totalRecords="lazyParams.size" responsiveLayout="stack" breakpoint="960px" @page="onPage($event)">
-        <template v-for="col of columns" :key="col.field">
-            <Column class="kn-truncated" :field="col.field" :header="col.title">
-                <template #editor="slotProps">
-                    <span v-if="!col.isEditable && col.columnInfo.type !== 'boolean'">{{ slotProps.data[col.field] }}</span>
-                    <!-- Checkbox -->
-                    <Checkbox v-else-if="col.editorType === 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @click="$emit('rowChanged', slotProps.data)" :disabled="!col.isEditable"></Checkbox>
-                    <InputText
-                        v-else-if="col.editorType !== 'COMBO' && col.isEditable && col.columnInfo.type !== 'date'"
-                        class="p-inputtext-sm"
-                        :type="setDataType(col.columnInfo.type)"
-                        :step="getStep(col.columnInfo.type)"
-                        v-model="slotProps.data[slotProps.column.props.field]"
-                        @input="$emit('rowChanged', slotProps.data)"
-                    />
-                    <!-- Dropdown -->
-                    <Dropdown v-else-if="col.editorType === 'COMBO'" v-model="slotProps.data[col.field]" :options="this.comboColumnOptions[col.field]" optionValue="column_1" optionLabel="column_1" @change="$emit('rowChanged', slotProps.data)"> </Dropdown>
-                    <!-- Calendar -->
-                    <Calendar v-else-if="col.isEditable && col.columnInfo.type === 'date' && col.columnInfo.subType !== 'timestamp'" v-model="slotProps.data[col.field]" @date-select="$emit('rowChanged', slotProps.data)" />
-                    <span v-else>TODO</span>
+    <Card>
+        <template #content>
+            <DataTable class="p-datatable-sm kn-table" :value="rows" editMode="cell" dataKey="id" :lazy="this.lazyParams.size > 1000" :paginator="true" :rows="15" :totalRecords="lazyParams.size" responsiveLayout="stack" breakpoint="960px" @page="onPage($event)">
+                <template v-for="col of columns" :key="col.field">
+                    <Column class="kn-truncated" :field="col.field" :header="col.title">
+                        <template #editor="slotProps">
+                            <span v-if="!col.isEditable && col.columnInfo.type !== 'boolean'">{{ slotProps.data[col.field] }}</span>
+                            <!-- Checkbox -->
+                            <Checkbox v-else-if="col.editorType === 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @click="$emit('rowChanged', slotProps.data)" :disabled="!col.isEditable"></Checkbox>
+                            <InputText
+                                v-else-if="col.editorType !== 'COMBO' && col.isEditable && col.columnInfo.type !== 'date'"
+                                class="p-inputtext-sm"
+                                :type="setDataType(col.columnInfo.type)"
+                                :step="getStep(col.columnInfo.type)"
+                                v-model="slotProps.data[slotProps.column.props.field]"
+                                @input="$emit('rowChanged', slotProps.data)"
+                            />
+                            <!-- Dropdown -->
+                            <Dropdown v-else-if="col.editorType === 'COMBO'" v-model="slotProps.data[col.field]" :options="this.comboColumnOptions[col.field]" optionValue="column_1" optionLabel="column_1" @change="$emit('rowChanged', slotProps.data)"> </Dropdown>
+                            <!-- Calendar -->
+                            <Calendar v-else-if="col.isEditable && col.columnInfo.type === 'date' && col.columnInfo.subType !== 'timestamp'" v-model="slotProps.data[col.field]" @date-select="$emit('rowChanged', slotProps.data)" />
+                            <span v-else>TODO</span>
+                        </template>
+                        <template #body="slotProps">
+                            <!-- Checkbox -->
+                            <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @click="$emit('rowChanged', slotProps.data)" :disabled="!col.isEditable"></Checkbox>
+                            <!-- Formating -->
+                            <div v-else-if="col.isEditable" @click="addColumnOptions(col, slotProps.data)">
+                                <!-- Calendar -->
+                                <span v-if="col.columnInfo.type === 'int'">{{ formatNumber(slotProps.data[col.field]) ?? '' }}</span>
+                                <span v-else-if="col.columnInfo.type === 'float'">{{ formatDecimalNumber(slotProps.data[col.field], col.columnInfo.format) }}</span>
+                                <span v-else-if="col.columnInfo.type === 'date' && col.columnInfo.subType !== 'timestamp'">{{ getFormatedDate(slotProps.data[col.field]) }}</span>
+                                <span v-else> {{ slotProps.data[col.field] }}</span>
+                            </div>
+                            <span v-else> {{ slotProps.data[col.field] }}</span>
+                        </template>
+                    </Column>
                 </template>
-                <template #body="slotProps">
-                    <!-- Checkbox -->
-                    <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @click="$emit('rowChanged', slotProps.data)" :disabled="!col.isEditable"></Checkbox>
-                    <!-- Formating -->
-                    <div v-else-if="col.isEditable" @click="addColumnOptions(col, slotProps.data)">
-                        <!-- Calendar -->
-                        <span v-if="col.columnInfo.type === 'int'">{{ formatNumber(slotProps.data[col.field]) ?? '' }}</span>
-                        <span v-else-if="col.columnInfo.type === 'float'">{{ formatDecimalNumber(slotProps.data[col.field], col.columnInfo.format) }}</span>
-                        <span v-else-if="col.columnInfo.type === 'date' && col.columnInfo.subType !== 'timestamp'">{{ getFormatedDate(slotProps.data[col.field]) }}</span>
-                        <span v-else> {{ slotProps.data[col.field] }}</span>
-                    </div>
-                    <span v-else> {{ slotProps.data[col.field] }}</span>
-                </template>
-            </Column>
-        </template>
 
-        <Column :style="registryDatatableDescriptor.iconColumn.style">
-            <template #body="slotProps">
-                <Button icon="pi pi-trash" class="p-button-link" @click="rowDeleteConfirm(slotProps.data)" />
-            </template>
-        </Column>
-    </DataTable>
+                <Column :style="registryDatatableDescriptor.iconColumn.style">
+                    <template #body="slotProps">
+                        <Button icon="pi pi-trash" class="p-button-link" @click="rowDeleteConfirm(slotProps.data)" />
+                    </template>
+                </Column>
+            </DataTable>
+        </template>
+    </Card>
 </template>
 
 <script lang="ts">
@@ -49,6 +53,7 @@ import { defineComponent } from 'vue'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import axios from 'axios'
 import Calendar from 'primevue/calendar'
+import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -57,7 +62,7 @@ import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
 
 export default defineComponent({
     name: 'registry-datatable',
-    components: { Calendar, Checkbox, Column, DataTable, Dropdown },
+    components: { Card, Calendar, Checkbox, Column, DataTable, Dropdown },
     props: { propColumns: { type: Array }, propRows: { type: Array }, columnMap: { type: Object }, propConfiguration: { type: Object }, pagination: { type: Object } },
     emits: ['rowChanged', 'rowDeleted', 'pageChanged'],
     data() {
@@ -79,8 +84,11 @@ export default defineComponent({
         propColumns() {
             this.loadColumns()
         },
-        propRows() {
-            this.loadRows()
+        propRows: {
+            handler() {
+                this.loadRows()
+            },
+            deep: true
         },
         propConfiguration() {
             this.loadConfiguration()
