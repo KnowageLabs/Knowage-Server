@@ -42,7 +42,7 @@
 				to="/lovs-management" />
 			<ITEM id="3003" label="menu.ParameterMan"
 				requiredFunctionality="ParameterView"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=analyticalDrivers" />
+				to="/drivers-management" />
 			<ITEM id="3004" label="menu.ConstraintMan"
 				requiredFunctionality="ConstraintView"
 				to="/constraint-management" />
