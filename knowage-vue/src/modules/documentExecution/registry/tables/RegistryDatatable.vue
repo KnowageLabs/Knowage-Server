@@ -1,8 +1,24 @@
 <template>
     <Card>
         <template #content>
-            <DataTable class="p-datatable-sm kn-table" :value="rows" editMode="cell" dataKey="id" :lazy="this.lazyParams.size > 1000" :paginator="true" :rows="15" :totalRecords="lazyParams.size" responsiveLayout="stack" breakpoint="960px" stripedRows showGridlines @page="onPage($event)">
-                <template v-for="col of columns" :key="col.field">
+            <DataTable
+                class="p-datatable-sm kn-table"
+                :value="rows"
+                editMode="cell"
+                dataKey="id"
+                :lazy="this.lazyParams.size > 1000"
+                :paginator="true"
+                :rows="15"
+                :totalRecords="lazyParams.size"
+                :reorderableColumns="true"
+                responsiveLayout="stack"
+                breakpoint="960px"
+                stripedRows
+                showGridlines
+                @page="onPage($event)"
+            >
+                <Column class="kn-truncated" :field="columns[0].field" :header="columns[0].title"></Column>
+                <template v-for="col of columns.slice(1)" :key="col.field">
                     <Column class="kn-truncated" :field="col.field" :header="col.title" :bodyStyle="{ 'background-color': col.color, width: col.size + 'px' }">
                         <template #editor="slotProps">
                             <span v-if="!col.isEditable && col.columnInfo.type !== 'boolean'">{{ slotProps.data[col.field] }}</span>
