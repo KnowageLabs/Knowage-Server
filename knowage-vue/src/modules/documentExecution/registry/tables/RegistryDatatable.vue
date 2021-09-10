@@ -219,6 +219,7 @@ export default defineComponent({
         },
         formatDecimalNumber(number: number, format: string) {
             console.log('NUMBER: ', number, ', FORMAT: ', format)
+            return number
         },
         addColumnOptions(column: any, row: any) {
             console.log('COLUMN: ', column, ', ROW: ', row)
