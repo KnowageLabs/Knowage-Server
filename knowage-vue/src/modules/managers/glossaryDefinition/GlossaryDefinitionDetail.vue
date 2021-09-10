@@ -1,103 +1,101 @@
 <template>
-    <div class="kn-page">
-        <div class="kn-page-content p-m-0">
-            <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-                <template #left>{{ $t('managers.glossary.glossaryDefinition.title') }}</template>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-            </Toolbar>
-            <Card class="p-m-3">
-                <template #header>
-                    <Toolbar class="kn-toolbar kn-toolbar--primary p-m-3">
-                        <template #left>
-                            {{ $t('managers.glossary.glossaryDefinition.glossary') }}
-                        </template>
-                        <template #right>
-                            <div class="p-d-flex p-flex-row">
-                                <div v-if="selectedGlossary && selectedGlossaryId && selectedGlossaryId != -1">
-                                    <Button class="kn-button p-button-text" @click="addNewGlossary('Clone')">{{ $t('common.clone') }}</Button>
-                                    <Button class="kn-button p-button-text" @click="deleteGlossaryConfirm">{{ $t('common.delete') }}</Button>
-                                </div>
-                                <div>
-                                    <FabButton icon="fas fa-plus" class="fab-button" @click="addNewGlossary('Save')" />
-                                </div>
+    <div class="kn-page-content p-m-0">
+        <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
+            <template #left>{{ $t('managers.glossary.glossaryDefinition.title') }}</template>
+            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        </Toolbar>
+        <Card class="p-m-3">
+            <template #header>
+                <Toolbar class="kn-toolbar kn-toolbar--primary">
+                    <template #left>
+                        {{ $t('managers.glossary.glossaryDefinition.glossary') }}
+                    </template>
+                    <template #right>
+                        <div class="p-d-flex p-flex-row">
+                            <div v-if="selectedGlossary && selectedGlossaryId && selectedGlossaryId != -1">
+                                <Button class="kn-button p-button-text" @click="addNewGlossary('Clone')">{{ $t('common.clone') }}</Button>
+                                <Button class="kn-button p-button-text" @click="deleteGlossaryConfirm">{{ $t('common.delete') }}</Button>
                             </div>
-                        </template>
-                    </Toolbar>
-                </template>
-                <template #content>
-                    <div>
-                        <div class="p-field p-d-flex p-ai-center p-m-3">
-                            <div class="p-d-flex p-flex-column p-mr-2" id="glossary-select-container">
-                                <label for="glossary" class="kn-material-input-label">{{ $t('managers.glossary.glossaryDefinition.title') }}</label>
-                                <Dropdown
-                                    id="glossary"
-                                    class="kn-material-input"
-                                    v-model="selectedGlossaryId"
-                                    :options="glossaries"
-                                    optionLabel="GLOSSARY_NM"
-                                    optionValue="GLOSSARY_ID"
-                                    :editable="selectedGlossary"
-                                    :placeholder="$t('managers.glossary.glossaryDefinition.glossary')"
-                                    @change="loadGlossaryInfo($event.value, null)"
-                                    @input="updateGlossaryName($event.target.value)"
-                                    @blur="handleSaveGlossary"
-                                />
-                            </div>
-                            <div v-if="selectedGlossary" class="p-m-3" id="code-container">
-                                <span class="p-float-label p-mt-3">
-                                    <InputText id="code" class="kn-material-input full-width" v-model.trim="selectedGlossary.GLOSSARY_CD" @blur="handleSaveGlossary" />
-                                    <label for="code" class="kn-material-input-label"> {{ $t('managers.glossary.common.code') }}</label>
-                                </span>
+                            <div>
+                                <FabButton icon="fas fa-plus" class="fab-button" @click="addNewGlossary('Save')" />
                             </div>
                         </div>
-                        <div v-if="selectedGlossary" class="p-field p-d-flex p-m-3 kn-flex">
-                            <div class="p-float-label kn-flex p-m-3">
-                                <InputText id="description" class="kn-material-input full-width" v-model.trim="selectedGlossary.GLOSSARY_DS" @blur="handleSaveGlossary" />
-                                <label for="description" class="kn-material-input-label"> {{ $t('common.description') }}</label>
-                            </div>
+                    </template>
+                </Toolbar>
+            </template>
+            <template #content>
+                <div>
+                    <div class="p-field p-d-flex p-ai-center p-m-3">
+                        <div class="p-d-flex p-flex-column p-mr-2" id="glossary-select-container">
+                            <label for="glossary" class="kn-material-input-label">{{ $t('managers.glossary.glossaryDefinition.title') }}</label>
+                            <Dropdown
+                                id="glossary"
+                                class="kn-material-input"
+                                v-model="selectedGlossaryId"
+                                :options="glossaries"
+                                optionLabel="GLOSSARY_NM"
+                                optionValue="GLOSSARY_ID"
+                                :editable="selectedGlossary"
+                                :placeholder="$t('managers.glossary.glossaryDefinition.glossary')"
+                                @change="loadGlossaryInfo($event.value, null)"
+                                @input="updateGlossaryName($event.target.value)"
+                                @blur="handleSaveGlossary"
+                            />
+                            <small id="glossary-help">{{ $t('managers.glossary.glossaryDefinition.glossaryHint') }}</small>
+                        </div>
+                        <div v-if="selectedGlossary" class="p-m-3" id="code-container">
+                            <span class="p-float-label p-mt-3">
+                                <InputText id="code" class="kn-material-input full-width" v-model.trim="selectedGlossary.GLOSSARY_CD" @blur="handleSaveGlossary" />
+                                <label for="code" class="kn-material-input-label"> {{ $t('managers.glossary.common.code') }}</label>
+                            </span>
                         </div>
                     </div>
-                    <div v-if="selectedGlossary && showTree">
-                        <div class="p-d-flex p-flex-row p-m-3">
-                            <InputText id="search-input" class="kn-material-input" v-model="searchWord" :placeholder="$t('common.search')" @input="filterGlossaryTree" data-test="search-input" />
-                            <FabButton icon="fas fa-plus" class="fab-button p-mt-3 p-ml-2" @click.stop="showNodeDialog(null, 'new')" />
+                    <div v-if="selectedGlossary" class="p-field p-d-flex p-m-3 kn-flex">
+                        <div class="p-float-label kn-flex p-m-3">
+                            <InputText id="description" class="kn-material-input full-width" v-model.trim="selectedGlossary.GLOSSARY_DS" @blur="handleSaveGlossary" />
+                            <label for="description" class="kn-material-input-label"> {{ $t('common.description') }}</label>
                         </div>
-                        <Tree id="glossary-tree" :value="nodes" :expandedKeys="expandedKeys" @nodeExpand="listContents(selectedGlossary.GLOSSARY_ID, $event)">
-                            <template #default="slotProps">
-                                <div
-                                    class="p-d-flex p-flex-row p-ai-center"
-                                    :class="{ dropzone: dropzoneActive[slotProps.node.key] }"
-                                    @mouseover="buttonVisible[slotProps.node.id] = true"
-                                    @mouseleave="buttonVisible[slotProps.node.id] = false"
-                                    @drop="saveWordConfirm($event, slotProps.node)"
-                                    @dragover.prevent
-                                    @dragenter.prevent="setDropzoneClass(true, slotProps.node)"
-                                    @dragleave.prevent="setDropzoneClass(false, slotProps.node)"
-                                >
-                                    <span>{{ slotProps.node.label }}</span>
-                                    <div v-show="buttonVisible[slotProps.node.id]" class="p-ml-2">
-                                        <Button
-                                            v-if="!slotProps.node.data.HAVE_WORD_CHILD && slotProps.node.data.CONTENT_NM"
-                                            icon="pi pi-bars"
-                                            class="p-button-link p-button-sm p-p-0"
-                                            v-tooltip.top="$t('managers.glossary.glossaryDefinition.addNode')"
-                                            @click.stop="showNodeDialog(slotProps.node, 'new')"
-                                        />
-                                        <Button v-if="!slotProps.node.data.HAVE_CONTENTS_CHILD && slotProps.node.data.CONTENT_NM" icon="pi pi-book" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('managers.glossary.glossaryDefinition.addWord')" @click.stop="addWord(slotProps.node)" />
-                                        <Button v-if="slotProps.node.data.CONTENT_NM" icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.edit')" @click.stop="showNodeDialog(slotProps.node, 'edit')" />
-                                        <Button icon="pi pi-info-circle" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('managers.glossary.glossaryDefinition.showInfo')" @click.stop="$emit('infoClicked', slotProps.node.data)" />
-                                        <Button icon="far fa-trash-alt" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.delete')" @click.stop="deleteNodeConfirm(slotProps.node)" />
-                                    </div>
-                                </div>
-                            </template>
-                        </Tree>
                     </div>
-                    <GlossaryDefinitionHint v-if="showHint"></GlossaryDefinitionHint>
-                </template>
-            </Card>
-
-            <GlossaryDefinitionNodeDialog :visible="nodeDialogVisible" :selectedContent="selectedContent" @save="saveContent" @close="nodeDialogVisible = false"></GlossaryDefinitionNodeDialog>
-        </div>
+                </div>
+                <div v-if="selectedGlossary && showTree">
+                    <div class="p-d-flex p-flex-row p-m-3">
+                        <InputText id="search-input" class="kn-material-input" v-model="searchWord" :placeholder="$t('common.search')" @input="filterGlossaryTree" data-test="search-input" />
+                        <FabButton icon="fas fa-plus" class="fab-button p-mt-3 p-ml-2" @click.stop="showNodeDialog(null, 'new')" />
+                    </div>
+                    <Tree id="glossary-tree" :value="nodes" :expandedKeys="expandedKeys" @nodeExpand="listContents(selectedGlossary.GLOSSARY_ID, $event)">
+                        <template #default="slotProps">
+                            <div
+                                class="p-d-flex p-flex-row p-ai-center"
+                                :class="{ dropzone: dropzoneActive[slotProps.node.key] }"
+                                @mouseover="buttonVisible[slotProps.node.id] = true"
+                                @mouseleave="buttonVisible[slotProps.node.id] = false"
+                                @drop="saveWordConfirm($event, slotProps.node)"
+                                @dragover.prevent
+                                @dragenter.prevent="setDropzoneClass(true, slotProps.node)"
+                                @dragleave.prevent="setDropzoneClass(false, slotProps.node)"
+                            >
+                                <span>{{ slotProps.node.label }}</span>
+                                <div v-show="buttonVisible[slotProps.node.id]" class="p-ml-2">
+                                    <Button
+                                        v-if="!slotProps.node.data.HAVE_WORD_CHILD && slotProps.node.data.CONTENT_NM"
+                                        icon="pi pi-bars"
+                                        class="p-button-link p-button-sm p-p-0"
+                                        v-tooltip.top="$t('managers.glossary.glossaryDefinition.addNode')"
+                                        @click.stop="showNodeDialog(slotProps.node, 'new')"
+                                    />
+                                    <Button v-if="!slotProps.node.data.HAVE_CONTENTS_CHILD && slotProps.node.data.CONTENT_NM" icon="pi pi-book" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('managers.glossary.glossaryDefinition.addWord')" @click.stop="addWord(slotProps.node)" />
+                                    <Button v-if="slotProps.node.data.CONTENT_NM" icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.edit')" @click.stop="showNodeDialog(slotProps.node, 'edit')" />
+                                    <Button icon="pi pi-info-circle" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('managers.glossary.glossaryDefinition.showInfo')" @click.stop="$emit('infoClicked', slotProps.node.data)" />
+                                    <Button icon="far fa-trash-alt" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.delete')" @click.stop="deleteNodeConfirm(slotProps.node)" />
+                                </div>
+                            </div>
+                        </template>
+                    </Tree>
+                </div>
+            </template>
+        </Card>
+        <GlossaryDefinitionHint v-if="showHint"></GlossaryDefinitionHint>
+        <GlossaryDefinitionNodeDialog :visible="nodeDialogVisible" :selectedContent="selectedContent" @save="saveContent" @close="nodeDialogVisible = false"></GlossaryDefinitionNodeDialog>
     </div>
 </template>
 

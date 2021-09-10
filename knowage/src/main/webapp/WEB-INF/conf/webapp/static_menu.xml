@@ -270,7 +270,7 @@
 	
 		<ITEM id="11007" label="menu.glossary.technical"
 			requiredFunctionality="ManageGlossaryTechnical"
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=glossaryTechnical"
+			to="/glossary-definition"
 			iconCls="fas fa-book" />
 		<ITEM id="11008" label="menu.glossary.business"
 			requiredFunctionality="ManageGlossaryBusiness"

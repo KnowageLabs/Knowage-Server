@@ -38,7 +38,7 @@
 
             <GlossaryDefinitionInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :contentInfo="contentInfo" @close="infoDialogVisible = false"></GlossaryDefinitionInfoDialog>
 
-            <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
                 <GlossaryDefinitionDetail :reloadTree="reloadTree" @infoClicked="showInfo" @addWord="editWord(-1, $event)"></GlossaryDefinitionDetail>
             </div>
         </div>
