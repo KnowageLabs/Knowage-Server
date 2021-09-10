@@ -1,17 +1,17 @@
 <template>
     <Dialog :style="registryDatatableWarningDialogDescriptor.dialog.style" :header="$t('documentExecution.registry.warning')" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
+        <div class="p-mt-5">
+            <p>
+                {{ $t('documentExecution.registry.column') }}
+                <b>{{ columnFileds }}</b>
+                {{ $t('documentExecution.registry.warningDependences') }}
+            </p>
+        </div>
+        <div class="p-mt-3">
+            <Checkbox v-model="stopWarnings" :binary="true"></Checkbox>
+            <label class="p-ml-2"> {{ $t('documentExecution.registry.warningCheckbox') }}</label>
+        </div>
         <template #footer>
-            <div>
-                <p>
-                    {{ $t('documentExecution.registry.column') }}
-                    {{ columnFileds }}
-                    {{ $t('documentExecution.registry.warningDependences') }}
-                </p>
-            </div>
-            <div>
-                <Checkbox v-model="stopWarnings" :binary="true"></Checkbox>
-                <label> {{ $t('documentExecution.registry.warningCheckbox') }}</label>
-            </div>
             <Button class="kn-button kn-button--primary" @click="$emit('close', { stopWarnings: stopWarnings, columnField: columns[0].dependences })"> {{ $t('common.close') }}</Button>
         </template>
     </Dialog>
