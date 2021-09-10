@@ -41,33 +41,27 @@
 					store.commit('setLocale', storedLocale)
 					this.$i18n.locale = storedLocale
 
-					/* if (responseLocale != storedLocale) {
-						let language = this.$i18n
-						let splittedLanguage = language.locale.split('_')
+					let language = this.$i18n
+					let splittedLanguage = language.locale.split('_')
 
-						let url = '/knowage/servlet/AdapterHTTP?'
-						url += 'ACTION_NAME=CHANGE_LANGUAGE'
-						url += '&LANGUAGE_ID=' + splittedLanguage[0]
-						url += '&COUNTRY_ID=' + splittedLanguage[1].toUpperCase()
-						url += '&SCRIPT_ID=' + (splittedLanguage.length > 2 ? splittedLanguage[2].replaceAll('#', '') : '')
-						url += '&THEME_NAME=sbi_default'
+					let url = '/knowage/servlet/AdapterHTTP?'
+					url += 'ACTION_NAME=CHANGE_LANGUAGE'
+					url += '&LANGUAGE_ID=' + splittedLanguage[0]
+					url += '&COUNTRY_ID=' + splittedLanguage[1].toUpperCase()
+					url += '&SCRIPT_ID=' + (splittedLanguage.length > 2 ? splittedLanguage[2].replaceAll('#', '') : '')
+					url += '&THEME_NAME=sbi_default'
 
-						this.$emit('update:loading', true)
-						axios.get(url).then(
-							() => {
-								store.commit('setLocale', language.locale)
-								localStorage.setItem('locale', language.locale)
-								this.$i18n.locale = language.locale
+					this.$emit('update:loading', true)
+					axios.get(url).then(
+						() => {
+							store.commit('setLocale', language.locale)
+							localStorage.setItem('locale', language.locale)
+							this.$i18n.locale = language.locale
+						},
+						(error) => console.error(error)
+					)
 
-								this.closeDialog()
-								this.$router.go(0)
-								this.$forceUpdate()
-							},
-							(error) => console.error(error)
-						)
-
-						this.$emit('update:loading', false)
-					} */
+					this.$emit('update:loading', false)
 				})
 				.catch(function(error) {
 					if (error.response) {
@@ -77,7 +71,6 @@
 					}
 				})
 		},
-		created() {},
 		mounted() {
 			this.onLoad()
 		},
@@ -85,8 +78,8 @@
 			closeDialog() {
 				this.$emit('update:visibility', false)
 			},
-			onLoad() {
-				axios
+			async onLoad() {
+				await axios
 					.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export/dataset')
 					.then((response) => {
 						let totalDownloads = response.data.length
