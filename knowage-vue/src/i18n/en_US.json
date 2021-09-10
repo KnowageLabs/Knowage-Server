@@ -23,6 +23,7 @@
         "download": "download",
         "downloading": "Downloading",
         "dragAndDropFileHere": "Drag and drop file here.",
+        "edit": "edit",
         "error": {
             "allowedFileTypes": "File type allowed are {types}",
             "deleting": "Error while deleting item. Check items associations or parameters and then try to delete it again",
@@ -614,13 +615,38 @@
         },
         "glossary": {
             "common": {
+                "add": "Add",
                 "attributes": "Attributes",
                 "category": "Category",
+                "code": "Code",
                 "details": "Details",
                 "formula": "Formula",
                 "link": "Link",
                 "status": "Status",
                 "word": "Word"
+            },
+            "glossaryDefinition": {
+                "addNode": "Add node",
+                "addWord": "Add word",
+                "cloneTitle": "Clone a Glossary",
+                "deleteNodeConfirmMessage": "Deleting a node all the underlying node (if present) will be deleted. Continue?",
+                "details": "Details",
+                "duplicateContent": "Adding two or more nodes with the same name under a single node is not allowed.",
+                "duplicateGlossaryName": "The selected glossary name is not available.",
+                "duplicateNode": "Adding the same word more than once under a single glossary is not allowed.",
+                "editNode": "Edit node",
+                "formula": "Formula",
+                "glossary": "Glossary",
+                "hint": "Lorem ipsum dolor sit amet...",
+                "newNode": "New node",
+                "saveTitle": "New glossary",
+                "saveWordConfirmMessage": "Data will be immediately saved.",
+                "saveWordConfirmTitle": "Word will be saved. Continue?",
+                "showInfo": "Show info",
+                "status": "Status",
+                "title": "Glossary Definition",
+                "updateTitle": "Edit glossary",
+                "wordsList": "Words List"
             }
         },
         "internationalizationManagement": {

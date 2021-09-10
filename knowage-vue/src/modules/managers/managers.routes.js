@@ -19,6 +19,7 @@ import driversManagementRoutes from '@/modules/managers/driversManagement/Driver
 import resourceManagementRoutes from '@/modules/managers/resourceManagement/ResourceManagement.routes.js'
 import constraintsManagementRoutes from '@/modules/managers/constraintsManagement/ConstraintsManagement.routes.js'
 import lovsManagementRoutes from '@/modules/managers/lovsManagement/LovsManagement.routes.js'
+import glossaryDefinitionRoutes from '@/modules/managers/glossaryDefinition/GlossaryDefinition.routes.js'
 
 const baseRoutes = []
 
@@ -44,5 +45,6 @@ const routes = baseRoutes
     .concat(resourceManagementRoutes)
     .concat(constraintsManagementRoutes)
     .concat(lovsManagementRoutes)
+    .concat(glossaryDefinitionRoutes)
 
 export default routes
