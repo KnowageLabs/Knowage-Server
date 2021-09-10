@@ -508,6 +508,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			id.setExtRoleId(extRoleId); // role Id
 			id.setId(userIdInt); // user Id
 			sbiExtUserRole.setId(id);
+			sbiExtUserRole.getCommonInfo().setOrganization(role.getOrganization());
 			userDAO.updateSbiUserRoles(sbiExtUserRole);
 			// RoleDAOHibImpl roleDAO = new RoleDAOHibImpl();
 			// userDAO.updateSbiUserRoles(sbiExtUserRole);
@@ -785,12 +786,9 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 	 * Restore authorizations valid for specific roles after changing the product types associated with specific tenant
 	 *
 	 * @param aSession
-	 * @param oldAuthMap
-	 *            a map that contains authorizations names as keys and roles as values
-	 * @param aTenant
-	 *            the specific tenant
-	 * @param productTypesIds
-	 *            the new products types associated with the tenant
+	 * @param oldAuthMap      a map that contains authorizations names as keys and roles as values
+	 * @param aTenant         the specific tenant
+	 * @param productTypesIds the new products types associated with the tenant
 	 */
 	private void restorePreviousAuthorizationsRoles(Session aSession, Map<String, Set<SbiExtRoles>> oldAuthMap, SbiTenant aTenant,
 			ArrayList<Integer> productTypesIds) {
@@ -937,8 +935,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 	 * When modifying a tenant if a datasource remains with no tenant delete it
 	 *
 	 * @param aSession
-	 * @param ids:
-	 *            id of <tenant,dataource> modified
+	 * @param ids:     id of <tenant,dataource> modified
 	 * @throws EMFUserError
 	 */
 

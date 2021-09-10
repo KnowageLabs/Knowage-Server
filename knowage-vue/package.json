@@ -35,7 +35,8 @@
 		"vue-i18n": "9.1.6",
 		"vue-router": "4.0.5",
 		"vue3-code-mirror": "1.0.3",
-		"vuex": "4.0.0"
+		"vuex": "4.0.0",
+		"x2js": "^3.4.1"
 	},
 	"devDependencies": {
 		"@babel/plugin-transform-runtime": "^7.13.10",

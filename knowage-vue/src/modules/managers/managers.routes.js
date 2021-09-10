@@ -15,8 +15,11 @@ import dataSourceRoutes from '@/modules/managers/dataSourceManagement/DataSource
 import functionalitiesManagementRoutes from '@/modules/managers/functionalitiesManagement/FunctionalitiesManagement.routes.js'
 import menuConfigurationRoutes from '@/modules/managers/menuManagement/MenuManagement.routes.js'
 import businessModelCatalogueRoutes from '@/modules/managers/businessModelCatalogue/BusinessModelCatalogue.routes.js'
-import glossaryDefinitionRoutes from '@/modules/managers/glossaryDefinition/GlossaryDefinition.routes.js'
+import driversManagementRoutes from '@/modules/managers/driversManagement/DriversManagement.routes.js'
 import resourceManagementRoutes from '@/modules/managers/resourceManagement/ResourceManagement.routes.js'
+import constraintsManagementRoutes from '@/modules/managers/constraintsManagement/ConstraintsManagement.routes.js'
+import lovsManagementRoutes from '@/modules/managers/lovsManagement/LovsManagement.routes.js'
+import glossaryDefinitionRoutes from '@/modules/managers/glossaryDefinition/GlossaryDefinition.routes.js'
 
 const baseRoutes = []
 
@@ -38,7 +41,10 @@ const routes = baseRoutes
     .concat(functionalitiesManagementRoutes)
     .concat(menuConfigurationRoutes)
     .concat(businessModelCatalogueRoutes)
-    .concat(glossaryDefinitionRoutes)
+    .concat(driversManagementRoutes)
     .concat(resourceManagementRoutes)
+    .concat(constraintsManagementRoutes)
+    .concat(lovsManagementRoutes)
+    .concat(glossaryDefinitionRoutes)
 
 export default routes

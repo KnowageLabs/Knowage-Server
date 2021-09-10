@@ -30,7 +30,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONObjectDeserializator;
 
@@ -47,7 +46,6 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
-import it.eng.spagobi.engines.qbe.exporter.QbeCSVExporter;
 import it.eng.spagobi.engines.qbe.exporter.QbeXLSXExporter;
 import it.eng.spagobi.engines.qbe.query.Field;
 import it.eng.spagobi.engines.qbe.query.ReportRunner;
@@ -85,7 +83,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 	public static final String DRIVERS = "DRIVERS";
 
 	/** Logger component. */
-	public static transient Logger logger = Logger.getLogger(ExportResultAction.class);
+	private static Logger logger = Logger.getLogger(ExportResultAction.class);
 
 	@Override
 	public void service(SourceBean request, SourceBean response) {
@@ -204,7 +202,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 				if (isXlsx(mimeType)) {
 					exportIntoXLSX(writeBackResponseInline, mimeType, statement, sqlQuery, extractedFields, exportLimit);
 				} else if (isCsv(mimeType)) {
-					exportIntoCSV(writeBackResponseInline, mimeType, fileExtension, transaction, sqlQuery);
+					throw new UnsupportedOperationException("This service was replaced by /knowageqbeengine/restful-services/qbequery/export");
 				}
 
 			}
@@ -246,35 +244,6 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			userAttributes.put(attributeName, attributeValue);
 		}
 		return userAttributes;
-	}
-
-	private void exportIntoCSV(boolean writeBackResponseInline, String mimeType, String fileExtension, ITransaction transaction, String sqlQuery)
-			throws IOException, SpagoBIEngineException {
-		File csvFile = null;
-		try {
-			csvFile = File.createTempFile("csv", ".csv");
-			QbeCSVExporter exporter = new QbeCSVExporter();
-			Connection connection = null;
-			try {
-
-				IDataSource dataSource = (IDataSource) getEngineInstance().getDataSource().getConfiguration().loadDataSourceProperties().get("datasource");
-
-				connection = dataSource.getConnection();
-			} catch (Exception e) {
-				logger.debug("Query execution aborted because of an internal exception");
-
-			}
-			exporter.export(csvFile, connection, sqlQuery);
-			try {
-				writeBackToClient(csvFile, null, writeBackResponseInline, "report." + fileExtension, mimeType);
-			} catch (IOException ioe) {
-				throw new SpagoBIEngineException("Impossible to write back the responce to the client", ioe);
-			}
-		} finally {
-			if (csvFile != null) {
-				csvFile.delete();
-			}
-		}
 	}
 
 	private void exportIntoXLSX(boolean writeBackResponseInline, String mimeType, IStatement statement, String sqlQuery, List<?> extractedFields,
@@ -388,7 +357,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		return "true";
 	}
 
-	private Query deserializeQuery(JSONObject queryJSON) throws SerializationException, JSONException {
+	private Query deserializeQuery(JSONObject queryJSON) throws SerializationException {
 		return SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON.toString(), getEngineInstance().getDataSource());
 	}
 

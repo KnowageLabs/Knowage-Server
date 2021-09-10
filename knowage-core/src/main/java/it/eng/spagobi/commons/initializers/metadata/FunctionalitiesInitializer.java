@@ -17,12 +17,6 @@
  */
 package it.eng.spagobi.commons.initializers.metadata;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.metadata.SbiProductType;
-import it.eng.spagobi.commons.metadata.SbiUserFunctionality;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +27,12 @@ import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiProductType;
+import it.eng.spagobi.commons.metadata.SbiUserFunctionality;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -139,8 +139,8 @@ public class FunctionalitiesInitializer extends SpagoBIInitializer {
 				Object roleTypesObject = roleTypeUserFunctionalitiesSB.getFilteredSourceBeanAttribute("ROLE_TYPE_USER_FUNCTIONALITY", "userFunctionality",
 						userFunctionalityName);
 				if (roleTypesObject == null) {
-					throw new Exception("No role type found for user functionality [" + userFunctionalityName + "] in product type [" + productType.getLabel()
-							+ "]!!!");
+					throw new Exception(
+							"No role type found for user functionality [" + userFunctionalityName + "] in product type [" + productType.getLabel() + "]!!!");
 				}
 				StringBuffer roleTypesStrBuffer = new StringBuffer();
 				Set roleTypes = new HashSet();

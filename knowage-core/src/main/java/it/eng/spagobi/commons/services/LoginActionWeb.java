@@ -52,7 +52,7 @@ import it.eng.spagobi.wapp.services.ChangeTheme;
  */
 public class LoginActionWeb extends AbstractBaseHttpAction {
 
-	public static final String SERVICE_NAME = "LOGIN_SERVICE";
+	public static final String SERVICE_NAME = "LOGIN_ACTION_WEB";
 
 	// configuration parameter
 	public static String SSO_ACTIVE = "SPAGOBI_SSO.ACTIVE";

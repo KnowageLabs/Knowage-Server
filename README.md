@@ -101,6 +101,39 @@ The official documentantion is available at
 Please visit [the project website](http://www.knowage-suite.com) for information
 about the Enterprise Edition.
 
+## Build
+
+To build Knowage you need:
+- JDK 8
+- [Maven 3](https://maven.apache.org/)
+- [NodeJS 8 or greater](https://nodejs.org/)
+
+N.B.: You need to add the paths containing your ``java``, ``node`` and ``npm`` commands to your ``PATH`` environment variable: see the official documentation of your operating system.
+
+The main project is ``knowage-ce-parent`` and from within that directory you need to launch:
+
+```console
+mvn package
+```
+
+At the end of the build you will find all the WAR files at the following paths:
+ - ``knowage/target/knowage.war``
+ - ``knowage-api/target/knowage-api.war``
+ - ``knowage-vue/target/knowage-vue.war``
+ - ``knowagebirtreportengine/target/knowagebirtreportengine.war``
+ - ``knowagecockpitengine/target/knowagecockpitengine.war``
+ - ``knowagecommonjengine/target/knowagecommonjengine.war``
+ - ``knowagedataminingengine/target/knowagedataminingengine.war``
+ - ``knowagegeoreportengine/target/knowagegeoreportengine.war``
+ - ``knowagejasperreportengine/target/knowagejasperreportengine.war``
+ - ``knowagekpiengine/target/knowagekpiengine.war``
+ - ``knowagemeta/target/knowagemeta.war``
+ - ``knowageqbeengine/target/knowageqbeengine.war``
+ - ``knowagesdk/target/knowagesdk.war``
+ - ``knowagesvgviewerengine/target/knowagesvgviewerengine.war``
+ - ``knowagetalendengine/target/knowagetalendengine.war``
+ - ``knowagewhatifengine/target/knowagewhatifengine.war``
+
 ## Testing
 
 To run tests, type
@@ -109,7 +142,7 @@ To run tests, type
 mvn test -DskipTests=false
 ```
 
-from knowage-ce-parent folder.
+from ``knowage-ce-parent`` folder.
 
 ## License
 

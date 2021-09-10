@@ -18,6 +18,7 @@
 package it.eng.spagobi.tools.scheduler.services;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -336,13 +337,16 @@ public class LovLookupAjaxModule extends AbstractBasicListModule {
 			// dataConnectionManager = DataConnectionManager.getInstance();
 			// dataConnection = dataConnectionManager.getConnection(pool);
 			DataSourceUtilities dsUtil = new DataSourceUtilities();
-			Connection conn = dsUtil.getConnection(requestContainer, datasource);
-			dataConnection = dsUtil.getDataConnection(conn);
+			try (Connection conn = dsUtil.getConnection(requestContainer, datasource)) {
+				dataConnection = dsUtil.getDataConnection(conn);
 
-			sqlCommand = dataConnection.createSelectCommand(statement);
-			dataResult = sqlCommand.execute();
-			ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
-			result = scrollableDataResult.getSourceBean();
+				sqlCommand = dataConnection.createSelectCommand(statement);
+				dataResult = sqlCommand.execute();
+				ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
+				result = scrollableDataResult.getSourceBean();
+			} catch (SQLException e) {
+				logger.error("Error closing connection" ,e);
+			}
 		} finally {
 			Utils.releaseResources(dataConnection, sqlCommand, dataResult);
 		}

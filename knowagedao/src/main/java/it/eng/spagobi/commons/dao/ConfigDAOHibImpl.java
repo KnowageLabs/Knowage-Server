@@ -218,6 +218,7 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 		hibConfig.setLabel(config.getLabel());
 		hibConfig.setDescription(config.getDescription());
 		hibConfig.setCategory(config.getCategory());
+		hibConfig.setIsActive(config.isActive());
 		return hibConfig;
 	}
 

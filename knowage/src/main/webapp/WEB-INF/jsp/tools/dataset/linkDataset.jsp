@@ -65,7 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	<body class="federatedDataset linkDocument" ng-app="linkDatasetModule" id="ng-app">
 		
-		<div ng-controller="linkDatasetCTRL" class="contentdemoBasicUsage" layout="column" layout-fill>		
+		<div ng-controller="linkDatasetCTRL" ng-init="init('<%= datasetID %>')" class="contentdemoBasicUsage" layout="column" layout-fill>		
 			
 			<rest-loading></rest-loading>
 			
