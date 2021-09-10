@@ -281,8 +281,12 @@ export default defineComponent({
                 this.setDependentColumns(column)
 
                 console.log('TEEEEEEEEEEEEST: ', this.dependentColumns)
-                //this.dependentColumns = this.setDependentColumns(column) as any[]
-                this.warningVisible = true
+
+                this.dependentColumns.forEach((el: any) => {
+                    if (this.selectedRow[el.field]) {
+                        this.warningVisible = true
+                    }
+                })
             }
 
             // console.log('WARNING VISIBLE: ', this.warningVisible)
