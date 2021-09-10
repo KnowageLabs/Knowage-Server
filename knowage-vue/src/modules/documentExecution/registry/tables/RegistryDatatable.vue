@@ -49,10 +49,10 @@
 
                 <Column :style="registryDatatableDescriptor.iconColumn.style" :headerStyle="registryDatatableDescriptor.headerIconColumn.style">
                     <template #header>
-                        <KnFabButton icon="fas fa-plus" @click="addNewRow"></KnFabButton>
+                        <KnFabButton v-if="buttons.enableButtons || buttons.enableAddRecords" icon="fas fa-plus" @click="addNewRow"></KnFabButton>
                     </template>
                     <template #body="slotProps">
-                        <Button icon="pi pi-trash" class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)" />
+                        <Button v-if="buttons.enableButtons || buttons.enableDeleteRecords" icon="pi pi-trash" class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)" />
                     </template>
                 </Column>
             </DataTable>
@@ -79,7 +79,7 @@ import RegistryDatatableWarningDialog from './RegistryDatatableWarningDialog.vue
 export default defineComponent({
     name: 'registry-datatable',
     components: { Card, Calendar, Checkbox, Column, DataTable, Dropdown, KnFabButton, RegistryDatatableWarningDialog },
-    props: { propColumns: { type: Array }, propRows: { type: Array }, columnMap: { type: Object }, propConfiguration: { type: Object }, pagination: { type: Object }, entity: { type: String }, id: { type: String } },
+    props: { propColumns: { type: Array }, propRows: { type: Array, required: true }, columnMap: { type: Object }, propConfiguration: { type: Object }, pagination: { type: Object }, entity: { type: String }, id: { type: String } },
     emits: ['rowChanged', 'rowDeleted', 'pageChanged'],
     data() {
         return {
@@ -184,7 +184,7 @@ export default defineComponent({
             })
         },
         deleteRow(index: number, row: any) {
-            row.id ? this.$emit('rowDeleted', row) : this.rows.splice(index, 1)
+            row.id < this.propRows.length ? this.$emit('rowDeleted', row) : this.rows.splice(index, 1)
         },
         setDataType(columnType: string) {
             switch (columnType) {
@@ -222,25 +222,6 @@ export default defineComponent({
             console.log('COLUMN: ', column, ', ROW: ', row)
 
             this.loadColumnOptions(column, row)
-
-            // //regular independent combo columns
-            // if (column.editorType === 'COMBO' && !this.isDependentColumn(column)) {
-            //     if (!this.comboColumnOptions[column.field]) {
-            //         this.comboColumnOptions[column.field] = {}
-            //         this.getData(column.field)
-            //     }
-            // }
-
-            // //dependent combo columns
-            // if (column.editorType === 'COMBO' && this.isDependentColumn(column)) {
-            //     if (!this.comboColumnOptions[column.field]) {
-            //         this.comboColumnOptions[column.field] = {}
-
-            //         this.getDependenciesOptions(column, row)
-            //     } else if (!((row[column.dependsFrom] as any) in this.comboColumnOptions[column.field])) {
-            //         this.getDependenciesOptions(column, row)
-            //     }
-            // }
         },
         // TODO izdvojiti u helper?
         async loadColumnOptions(column: any, row: any) {
@@ -263,7 +244,7 @@ export default defineComponent({
             console.log('DROPDOWN VALUES: ', this.comboColumnOptions[column.field])
         },
         addNewRow() {
-            const newRow = {}
+            const newRow = { id: this.rows.length }
             this.columns.forEach((el: any) => {
                 if (el.isVisible && el.field !== 'id') {
                     newRow[el.field] = el.defaultValue ?? ''

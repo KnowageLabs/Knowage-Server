@@ -135,15 +135,15 @@ export default defineComponent({
             console.log('LOADED ENTITY: ', this.entity)
         },
         onRowChanged(row: any) {
-            // console.log('CHANGED ROW: ', row)
+            console.log('CHANGED ROW: ', row)
             const tempRow = { ...row }
             const index = this.updatedRows.findIndex((el: any) => el.id === tempRow.id)
-            delete tempRow.id
-            delete tempRow.selected
             index === -1 ? this.updatedRows.push(tempRow) : (this.updatedRows[index] = tempRow)
+            console.log('UPDATED ROWS: ', this.updatedRows)
         },
         async saveRegistry() {
-            // console.log('UPDATED ROWS FOR SAVE: ', this.updatedRows)
+            console.log('UPDATED ROWS FOR SAVE: ', this.updatedRows)
+            this.updatedRows.forEach((el: any) => delete el.id)
             const postData = new URLSearchParams()
             postData.append('records', '' + JSON.stringify(this.updatedRows))
             await axios.post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=UPDATE_RECORDS_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then(() => {
