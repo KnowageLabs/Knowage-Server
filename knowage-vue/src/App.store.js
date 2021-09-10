@@ -11,7 +11,8 @@ const store = createStore({
 			downloads: { count: { total: 0, unRead: 0 } },
 			locale: {},
 			news: { count: { total: 0, unRead: 0 } },
-			loading: false
+			loading: false,
+			homePage: {}
 		}
 	},
 	mutations: {
@@ -41,6 +42,9 @@ const store = createStore({
 		},
 		setNews(state, hasNews) {
 			state.news = hasNews
+		},
+		setHomePage(state, homePage) {
+			state.homePage = homePage
 		}
 	}
 })
