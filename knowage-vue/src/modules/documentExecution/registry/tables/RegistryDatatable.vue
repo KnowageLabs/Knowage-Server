@@ -23,7 +23,7 @@
                         <template #editor="slotProps">
                             <span v-if="!col.isEditable && col.columnInfo.type !== 'boolean'">{{ slotProps.data[col.field] }}</span>
                             <!-- Checkbox -->
-                            <Checkbox v-else-if="col.editorType === 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @click="$emit('rowChanged', slotProps.data)" :disabled="!col.isEditable"></Checkbox>
+                            <Checkbox v-else-if="col.editorType === 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('rowChanged', slotProps.data)" :disabled="!col.isEditable"></Checkbox>
                             <InputText
                                 v-else-if="col.editorType !== 'COMBO' && col.isEditable && col.columnInfo.type !== 'date'"
                                 class="p-inputtext-sm"
@@ -49,7 +49,7 @@
                         </template>
                         <template #body="slotProps">
                             <!-- Checkbox -->
-                            <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @click="$emit('rowChanged', slotProps.data)" :disabled="!col.isEditable"></Checkbox>
+                            <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('rowChanged', slotProps.data)" :disabled="!col.isEditable"></Checkbox>
                             <!-- Formating -->
                             <div v-else-if="col.isEditable">
                                 <span v-if="col.columnInfo.type === 'int'">{{ formatNumber(slotProps.data[col.field]) ?? '' }}</span>
@@ -230,8 +230,8 @@ export default defineComponent({
             return formatDate(date, format)
         },
         formatNumber(number: number) {
-            // console.log('NUMBER: ', number)
-            return number ? new Intl.NumberFormat('en-US', { maximumSignificantDigits: 3 }).format(number) : ''
+            console.log('NUMBER: ', number)
+            return number
         },
         formatDecimalNumber(number: number, format: string) {
             console.log('NUMBER: ', number, ', FORMAT: ', format)
