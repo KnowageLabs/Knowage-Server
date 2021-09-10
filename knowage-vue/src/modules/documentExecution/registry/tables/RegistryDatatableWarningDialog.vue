@@ -41,7 +41,6 @@ export default defineComponent({
         columnFileds(): string {
             let fields = ''
             for (let i = 0; i < this.columns.length; i++) {
-                console.log('this.columns[i]', this.columns[i])
                 fields += (this.columns[i] as any).field + (i === this.columns.length - 1 ? ' ' : ', ')
             }
 

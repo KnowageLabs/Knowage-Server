@@ -95,6 +95,7 @@ export default defineComponent({
             },
             lazyParams: {} as any,
             dependentColumns: [] as any[],
+            selectedRow: null as any,
             warningVisible: false,
             stopWarnings: [] as any[]
         }
@@ -255,7 +256,7 @@ export default defineComponent({
             postData.append('ORDER_TYPE', 'asc')
             postData.append('QUERY_ROOT_ENTITY', 'true')
             postData.append('query', '')
-            if (column.dependences && row) {
+            if (column.dependences && row && row[column.dependences]) {
                 postData.append('DEPENDENCES', this.entity + ':' + column.dependences + '=' + row[column.dependences])
             }
             await axios.post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then((response) => (this.comboColumnOptions[column.field] = response.data.rows))
@@ -274,6 +275,7 @@ export default defineComponent({
         },
         onDropdownChange(row: any, column: any) {
             console.log('COLUMN: ', column)
+            this.selectedRow = row
             if (column.hasDependencies && !this.stopWarnings[column.field]) {
                 this.dependentColumns = [] as any[]
                 this.setDependentColumns(column)
@@ -287,12 +289,20 @@ export default defineComponent({
             this.$emit('rowChanged', row)
         },
         onWarningDialogClose(payload: any) {
-            this.warningVisible = false
             // console.log('STOP WARNINGS: ', payload.stopWarnings)
             if (payload.stopWarnings) {
                 this.stopWarnings[payload.columnField] = true
             }
+
+            this.clearDependentColumnsValues()
             // console.log('STOP WARINGGS:', this.stopWarnings)
+            this.warningVisible = false
+        },
+        clearDependentColumnsValues() {
+            console.log('SELECTED ROW: ', this.selectedRow)
+            this.dependentColumns.forEach((el: any) => (this.selectedRow[el.field] = ''))
+
+            console.log('SELECTED ROW AFTER CLEAR: ', this.selectedRow)
         },
         setDependentColumns(column: any) {
             let tempColumn = column
