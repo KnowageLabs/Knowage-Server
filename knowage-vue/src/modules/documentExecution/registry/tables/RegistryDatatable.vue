@@ -28,18 +28,19 @@
                             >
                             </Dropdown>
                             <!-- Calendar -->
-                            <Calendar v-else-if="col.isEditable && col.columnInfo.type === 'date' && col.columnInfo.subType !== 'timestamp'" v-model="slotProps.data[col.field]" @date-select="$emit('rowChanged', slotProps.data)" />
+                            <Calendar v-else-if="col.isEditable && col.columnInfo.type === 'date'" v-model="slotProps.data[col.field]" :showTime="col.columnInfo.subtype === 'timestamp'" :showSeconds="col.columnInfo.subtype === 'timestamp'" @date-select="$emit('rowChanged', slotProps.data)" />
                             <span v-else>TODO</span>
                         </template>
                         <template #body="slotProps">
                             <!-- Checkbox -->
                             <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @click="$emit('rowChanged', slotProps.data)" :disabled="!col.isEditable"></Checkbox>
                             <!-- Formating -->
-                            <div v-else-if="col.isEditable" @click="addColumnOptions(col, slotProps.data)">
-                                <!-- Calendar -->
+                            <div v-else-if="col.isEditable">
                                 <span v-if="col.columnInfo.type === 'int'">{{ formatNumber(slotProps.data[col.field]) ?? '' }}</span>
                                 <span v-else-if="col.columnInfo.type === 'float'">{{ formatDecimalNumber(slotProps.data[col.field], col.columnInfo.format) }}</span>
-                                <span v-else-if="col.columnInfo.type === 'date' && col.columnInfo.subType !== 'timestamp'">{{ getFormatedDate(slotProps.data[col.field]) }}</span>
+                                <!-- Calendar -->
+                                <span v-else-if="col.columnInfo.type === 'date'">{{ slotProps.data[col.field] ? getFormatedDate(slotProps.data[col.field], col.columnInfo.subtype === 'timestamp') : '' }}</span>
+
                                 <span v-else> {{ slotProps.data[col.field] }}</span>
                             </div>
                             <span v-else> {{ slotProps.data[col.field] }}</span>
@@ -147,7 +148,7 @@ export default defineComponent({
         },
         loadRows() {
             this.rows = [...(this.propRows as any[])]
-            // console.log('ROWS: ', this.rows)
+            console.log('ROWS: ', this.rows)
         },
         loadConfiguration() {
             this.configuration = this.propConfiguration
@@ -208,8 +209,9 @@ export default defineComponent({
                 return 'any'
             }
         },
-        getFormatedDate(date: any) {
-            return formatDate(date, 'MM/DD/yyyy')
+        getFormatedDate(date: any, timestamp: boolean) {
+            const format = timestamp ? 'MM/DD/yyy HH:MM:ss' : 'MM/DD/yyyy'
+            return formatDate(date, format)
         },
         formatNumber(number: number) {
             // console.log('NUMBER: ', number)
