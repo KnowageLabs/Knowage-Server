@@ -1,0 +1,13 @@
+{
+    "dialog": {
+        "style": {
+            "width": "60vw"
+        }
+    },
+    "filterFields": ["attributeName"],
+    "listBox": {
+        "style": {
+            "max-height": "450px"
+        }
+    }
+}

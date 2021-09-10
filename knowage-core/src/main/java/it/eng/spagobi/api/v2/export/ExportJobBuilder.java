@@ -46,7 +46,7 @@ public class ExportJobBuilder {
 
 	private static final Logger logger = Logger.getLogger(ExportJobBuilder.class);
 
-	private static final String EXPORT_TYPE_XLS = "xls";
+	private static final String EXPORT_TYPE_XLSX = "xlsx";
 
 	private static final String EXPORT_TYPE_CSV = "csv";
 
@@ -144,17 +144,17 @@ public class ExportJobBuilder {
 		jobDataMap.put(MAP_KEY_RESOURCE_PATH, resoursePath);
 		jobDataMap.put(MAP_KEY_USER_PROFILE, userProfile);
 
-		logger.debug("\t- Dataset id: " +  String.valueOf(dataSetId));
-		logger.debug("\t- UUID: " +  String.valueOf(randomUUID));
-		logger.debug("\t- Resource path: " +  String.valueOf(resoursePath));
-		logger.debug("\t- Type: " +  String.valueOf(type));
+		logger.debug("\t- Dataset id: " + String.valueOf(dataSetId));
+		logger.debug("\t- UUID: " + String.valueOf(randomUUID));
+		logger.debug("\t- Resource path: " + String.valueOf(resoursePath));
+		logger.debug("\t- Type: " + String.valueOf(type));
 
 		JobDetail job = null;
 		switch (type) {
 		case EXPORT_TYPE_CSV:
 			job = new JobDetail(jobName, EXPORT_GROUP, CSVExportJob.class);
 			break;
-		case EXPORT_TYPE_XLS:
+		case EXPORT_TYPE_XLSX:
 			job = new JobDetail(jobName, EXPORT_GROUP, ExcelExportJob.class);
 			break;
 
@@ -225,8 +225,8 @@ public class ExportJobBuilder {
 	 *
 	 * @return Current builder
 	 */
-	public ExportJobBuilder withTypeOfXls() {
-		type = EXPORT_TYPE_XLS;
+	public ExportJobBuilder withTypeOfXlsx() {
+		type = EXPORT_TYPE_XLSX;
 		return this;
 	}
 }

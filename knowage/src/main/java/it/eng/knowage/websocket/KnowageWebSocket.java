@@ -19,6 +19,7 @@
 package it.eng.knowage.websocket;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,11 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.knowage.websocket.bo.WSDownloadBO;
+import it.eng.knowage.websocket.bo.WSDownloadCountBO;
+import it.eng.knowage.websocket.bo.WSNewsBO;
+import it.eng.knowage.websocket.bo.WSNewsCountBO;
+import it.eng.knowage.websocket.bo.WebSocketBO;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.v2.export.Entry;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -47,6 +53,9 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.resource.export.Utilities;
+import it.eng.spagobi.tools.news.bo.AdvancedNews;
+import it.eng.spagobi.tools.news.bo.BasicNews;
+import it.eng.spagobi.tools.news.dao.ISbiNewsDAO;
 import it.eng.spagobi.tools.news.dao.ISbiNewsReadDAO;
 import it.eng.spagobi.tools.news.manager.INewsManager;
 import it.eng.spagobi.tools.news.manager.NewsManagerImpl;
@@ -74,33 +83,28 @@ public class KnowageWebSocket {
 			this.httpSession = (HttpSession) config.getUserProperties().get("HTTP_SESSION");
 
 			if (login) {
-				JSONObject masterJsonObject = getMasterMessageObject();
-				broadcast(masterJsonObject);
+				WebSocketBO masterWebSocketBO = getMasterMessageObject();
+				broadcast(masterWebSocketBO);
 			}
 		} catch (Exception e) {
 			LOGGER.error("Error opening the web socket for notifications", e);
 		}
 	}
 
-	private JSONObject getMasterMessageObject() {
+	private WebSocketBO getMasterMessageObject() {
 		return getMasterMessageObject(true, true);
 	}
 
-	private JSONObject getMasterMessageObject(boolean news, boolean downloads) {
-		JSONObject masterJsonObject = new JSONObject();
+	private WebSocketBO getMasterMessageObject(boolean news, boolean downloads) {
+		WebSocketBO masterWebSocketBO = new WebSocketBO();
 
 		initializeUserProfileAndTenant();
-		try {
-			if (news)
-				masterJsonObject.put("news", handleNews());
+		if (news)
+			handleNews(masterWebSocketBO);
 
-			if (downloads)
-				masterJsonObject.put("downloads", handleDownloads());
-		} catch (JSONException e) {
-			String message = "Error while creating JSON message";
-			LOGGER.error(message);
-		}
-		return masterJsonObject;
+		if (downloads)
+			handleDownloads(masterWebSocketBO);
+		return masterWebSocketBO;
 	}
 
 	private void initializeUserProfileAndTenant() {
@@ -123,61 +127,66 @@ public class KnowageWebSocket {
 		}
 	}
 
-	private JSONObject handleDownloads() {
+	private WebSocketBO handleDownloads(WebSocketBO masterWebSocketBO) {
 		Utilities exportResourceUtilities = new Utilities();
 
 		int total = 0;
 		long alreadyDownloaded = 0;
-		JSONObject downloads = null;
 		try {
 			List<Entry> exportedFilesList = exportResourceUtilities.getAllExportedFiles(true);
 			total = exportedFilesList.size();
 			alreadyDownloaded = exportedFilesList.stream().filter(Entry::isAlreadyDownloaded).count();
-			downloads = new JSONObject();
 
-			JSONObject countJSONObject = new JSONObject();
+			WSDownloadBO downloads = masterWebSocketBO.getDownloads();
+			if (downloads == null)
+				downloads = new WSDownloadBO(new WSDownloadCountBO(0, 0));
 
-			countJSONObject.put("total", total);
-			countJSONObject.put("alreadyDownloaded", alreadyDownloaded);
+			WSDownloadCountBO wsDownloadCountBO = new WSDownloadCountBO(total, alreadyDownloaded);
 
-			downloads.put("count", countJSONObject);
+			downloads.setCount(wsDownloadCountBO);
 
-		} catch (JSONException e) {
-			String message = "Error while creating download JSON message";
-			LOGGER.error(message);
+			masterWebSocketBO.setDownloads(downloads);
+
 		} catch (IOException e1) {
 			String message = "Error while searching exported datasets";
 			LOGGER.error(message);
 		}
 
-		return downloads;
+		return masterWebSocketBO;
 	}
 
-	private JSONObject handleNews() {
+	private WebSocketBO handleNews(WebSocketBO masterWebSocketBO) {
 		UserProfile userProfile = UserProfileManager.getProfile();
 
 		INewsManager newsManager = new NewsManagerImpl();
-		int total = newsManager.getAllNews(userProfile).size();
+		ISbiNewsDAO sbiNewsDAO = DAOFactory.getSbiNewsDAO();
+		List<BasicNews> allNewsList = newsManager.getAllNews(userProfile);
+		int total = 0;
+		for (BasicNews basicNews : allNewsList) {
+			AdvancedNews news = sbiNewsDAO.getNewsById(basicNews.getId(), userProfile);
 
-		ISbiNewsReadDAO newsReadDao = DAOFactory.getSbiNewsReadDAO();
-		newsReadDao.setUserProfile(userProfile);
-		List<Integer> listOfReads = newsReadDao.getReadNews(userProfile);
-		int unread = total - listOfReads.size();
-
-		JSONObject news = new JSONObject();
-		try {
-			JSONObject countJSONObject = new JSONObject();
-
-			countJSONObject.put("total", total);
-			countJSONObject.put("unread", unread);
-
-			news.put("count", countJSONObject);
-		} catch (JSONException e) {
-			String message = "Error while creating news JSON message";
-			LOGGER.error(message);
+			if (news.getActive() && news.getExpirationDate().after(new Date()))
+				total++;
 		}
 
-		return news;
+		WSNewsBO news = masterWebSocketBO.getNews();
+		if (news == null)
+			news = new WSNewsBO(new WSNewsCountBO(0, 0));
+
+		if (total > 0) {
+			ISbiNewsReadDAO newsReadDao = DAOFactory.getSbiNewsReadDAO();
+			newsReadDao.setUserProfile(userProfile);
+			List<Integer> listOfReads = newsReadDao.getReadNews(userProfile);
+			int unread = total - listOfReads.size();
+
+			WSNewsCountBO wsNewsCountBO = new WSNewsCountBO(total, unread);
+
+			news.setCount(wsNewsCountBO);
+
+		}
+		masterWebSocketBO.setNews(news);
+
+		return masterWebSocketBO;
 	}
 
 	@OnMessage
@@ -188,7 +197,7 @@ public class KnowageWebSocket {
 		broadcast(getMasterMessageObject(messageJSON.has("news"), messageJSON.has("downloads")));
 	}
 
-	private void broadcast(JSONObject message) throws IOException, EncodeException {
+	private void broadcast(WebSocketBO message) throws IOException, EncodeException {
 
 		webSocketSet.forEach(x -> {
 

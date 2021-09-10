@@ -10,7 +10,7 @@
                     </Toolbar>
                     <div v-for="(authCBInfo, ind) of authorizationCBs[category.categoryName]" :key="ind">
                         <div class="p-field-checkbox p-m-3">
-                            <InputSwitch :id="'cb-' + index + '-' + ind" v-model="role[authCBInfo.fieldName]" :disabled="authCBInfo.enableForRole && !authCBInfo.enableForRole.includes(role.roleTypeID)" @change="authChanged(authCBInfo.fieldName, role[authCBInfo.fieldName])" />
+                            <InputSwitch :id="'cb-' + index + '-' + ind" v-model="role[authCBInfo.fieldName]" :disabled="authCBInfo.enableForRole && role.roleTypeCD === 'ADMIN'" @change="authChanged(authCBInfo.fieldName, role[authCBInfo.fieldName])" />
                             <label :for="'cb-' + index + '-' + ind">{{ $t(authCBInfo.label) }}</label>
                         </div>
                     </div>

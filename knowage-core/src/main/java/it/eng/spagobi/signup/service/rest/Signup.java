@@ -633,7 +633,13 @@ public class Signup {
 //
 //			mapLocks.put(Integer.valueOf(id).toString(), uuid.toString());
 
-			sendMail(email, subject, mailText);
+			try {
+				sendMail(email, subject, mailText);
+			} catch (Exception e) {
+				logger.error("Cannot send email with user [" + email + "]", e);
+				JSONObject errObj = buildErrorMessage(msgBuilder, locale, "sbi.execution.send.error");
+				return Response.ok(errObj.toString()).build();
+			}
 
 			String okMsg = msgBuilder.getMessage("signup.ok.message", "messages", locale);
 
