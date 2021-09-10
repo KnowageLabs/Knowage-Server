@@ -7,7 +7,7 @@
         </Toolbar>
         <div class="p-inputgroup p-mt-3" v-if="navigation.fromPars">
             <span class="p-float-label">
-                <InputText class="kn-material-input" type="text" v-model.trim="fixedValue" />
+                <InputText class="kn-material-input" type="text" v-model.trim="fixedValue" maxlength="100" />
                 <label class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.fixedValue') }} </label>
             </span>
             <FabButton icon="fas fa-plus" class="fab-button p-mt-3 p-ml-2" @click.stop="addFixedValue" />

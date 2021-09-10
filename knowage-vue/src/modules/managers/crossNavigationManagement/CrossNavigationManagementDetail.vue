@@ -22,6 +22,7 @@
                                     'p-invalid': v$.simpleNavigation.name.$invalid && v$.simpleNavigation.name.$dirty
                                 }"
                                 @blur="v$.simpleNavigation.name.$touch()"
+                                @input="setDirty"
                             />
                             <label for="name" class="kn-material-input-label">{{ $t('common.name') }} * </label>
                         </span>
@@ -35,27 +36,27 @@
                     </div>
                     <div class="p-field p-col-2 p-mb-3" v-if="simpleNavigation.type === 2">
                         <span class="p-float-label">
-                            <InputText id="width" class="kn-material-input" type="number" v-model.trim="simpleNavigation.popupOptions.width" min="0" />
+                            <InputText id="width" class="kn-material-input" type="number" v-model.trim="simpleNavigation.popupOptions.width" min="0" @input="setDirty" />
                             <label for="width" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.width') }} </label>
                         </span>
                         <small id="width-help">{{ $t('managers.crossNavigationManagement.widthHelp') }}</small>
                     </div>
                     <div class="p-field p-col-2 p-mb-3" v-if="simpleNavigation.type === 2">
                         <span class="p-float-label">
-                            <InputText id="height" class="kn-material-input" type="number" v-model.trim="simpleNavigation.popupOptions.height" min="0" />
+                            <InputText id="height" class="kn-material-input" type="number" v-model.trim="simpleNavigation.popupOptions.height" min="0" @input="setDirty" />
                             <label for="height" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.height') }} </label>
                         </span>
                         <small id="height-help">{{ $t('managers.crossNavigationManagement.heightHelp') }}</small>
                     </div>
                     <div class="p-field p-col-6 p-mb-3">
                         <span class="p-float-label">
-                            <InputText id="description" class="kn-material-input" type="text" v-model.trim="simpleNavigation.description" maxLength="200" />
+                            <InputText id="description" class="kn-material-input" type="text" v-model.trim="simpleNavigation.description" maxLength="200" @input="setDirty" />
                             <label for="description" class="kn-material-input-label">{{ $t('common.description') }} </label>
                         </span>
                     </div>
                     <div class="p-field p-col-6 p-mb-3">
                         <span class="p-float-label">
-                            <InputText id="name" class="kn-material-input" type="text" v-model.trim="simpleNavigation.breadcrumb" maxLength="200" />
+                            <InputText id="name" class="kn-material-input" type="text" v-model.trim="simpleNavigation.breadcrumb" maxLength="200" @input="setDirty" />
                             <label for="name" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.breadCrumbs') }} </label>
                         </span>
                     </div>
@@ -174,6 +175,10 @@ export default defineComponent({
                 this.operation = 'insert'
                 this.navigation.newRecord = true
             } else this.operation = 'update'
+            if (this.navigation.simpleNavigation.type === 2) {
+                this.navigation.simpleNavigation.popupOptions = JSON.stringify(this.navigation.simpleNavigation.popupOptions)
+            } else delete this.navigation.simpleNavigation.popupOptions
+            console.log(this.navigation)
             axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/save/', this.navigation)
                 .then(() => {
@@ -188,6 +193,11 @@ export default defineComponent({
                         title: this.$t('common.error.saving'),
                         msg: error.message
                     })
+                })
+                .finally(() => {
+                    if (this.navigation.simpleNavigation.type === 2) {
+                        this.navigation.simpleNavigation.popupOptions = JSON.parse(this.navigation.simpleNavigation.popupOptions)
+                    }
                 })
         },
         handleDropdown() {
@@ -223,6 +233,7 @@ export default defineComponent({
                     this.loadInputParams(doc.DOCUMENT_LABEL).then((response) => (this.navigation.toPars = response))
                     break
             }
+            this.setDirty()
         },
         async loadInputParams(label) {
             let params = []
