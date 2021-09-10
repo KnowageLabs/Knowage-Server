@@ -76,6 +76,7 @@
 	export default defineComponent({
 		name: 'import-export-gallery',
 		components: { Column, DataTable, InputText, OverlayPanel, Tag },
+		props: { selectedItems: Object },
 		data() {
 			return {
 				currentImage: '',
@@ -83,7 +84,8 @@
 				importExportDescriptor: importExportDescriptor,
 				product: {},
 				selectedGalleryItems: [],
-				templates: [] as Array<IGalleryTemplate>
+				templates: [] as Array<IGalleryTemplate>,
+				FUNCTIONALITY: 'gallery'
 			}
 		},
 		created() {
@@ -101,7 +103,14 @@
 				this.$emit('update:loading', true)
 				this.axios
 					.get(process.env.VUE_APP_API_PATH + '1.0/widgetgallery')
-					.then((response) => (this.templates = response.data))
+					.then((response) => {
+						this.templates = response.data
+						if (this.selectedItems) {
+							this.selectedGalleryItems = this.selectedItems[this.FUNCTIONALITY].filter((element) => {
+								return this.templates.filter((el) => el.id === element.id).length == 1
+							})
+						}
+					})
 					.catch((error) => console.error(error))
 					.finally(() => {
 						this.$emit('update:loading', false)
@@ -125,7 +134,7 @@
 		watch: {
 			selectedGalleryItems(newSelectedGalleryItems, oldSelectedGalleryItems) {
 				if (oldSelectedGalleryItems != newSelectedGalleryItems) {
-					this.$emit('onItemSelected', { items: this.selectedGalleryItems, functionality: 'gallery' })
+					this.$emit('onItemSelected', { items: this.selectedGalleryItems, functionality: this.FUNCTIONALITY })
 				}
 			}
 		}

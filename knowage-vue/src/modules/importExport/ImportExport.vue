@@ -17,7 +17,7 @@
 				<KnTabCard :element="functionality" :selected="functionality.route === $route.path" v-for="(functionality, index) in importExportDescriptor.functionalities" v-bind:key="index" @click="selectType(functionality)" :badge="selectedItems[functionality.type].length"> </KnTabCard>
 			</div>
 			<div class="p-col p-pt-0">
-				<router-view v-model:loading="loading" @onItemSelected="getSelectedItems($event)" />
+				<router-view v-model:loading="loading" @onItemSelected="getSelectedItems($event)" :selectedItems="selectedItems" />
 			</div>
 		</div>
 	</div>
@@ -52,7 +52,7 @@
 		emits: ['onItemSelected'],
 		methods: {
 			getSelectedItems(e) {
-				this.selectedItems[e.functionality] = e.items
+				if (e.items) this.selectedItems[e.functionality] = e.items
 			},
 			isExportDisabled() {
 				for (var index in this.selectedItems) {
