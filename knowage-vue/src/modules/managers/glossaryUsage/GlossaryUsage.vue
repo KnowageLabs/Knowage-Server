@@ -1,12 +1,12 @@
 <template>
     <div class="kn-page">
-        <div class="kn-page-content p-grid p-m-0">
-            <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
-                <template #left>
-                    {{ $t('managers.glossary.glossaryUsage.title') }}
-                </template>
-            </Toolbar>
-            <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
+        <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
+            <template #left>
+                {{ $t('managers.glossary.glossaryUsage.title') }}
+            </template>
+        </Toolbar>
+        <div class=" p-grid p-m-0 kn-page-content">
+            <div class="p-col-4 p-sm-4 p-md-3 p-p-0 kn-list">
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
                 <div class="p-d-flex p-flex-column p-m-3">
                     <label v-if="selectedGlossaryId" for="glossary" class="kn-material-input-label">{{ $t('managers.glossary.glossaryUsage.title') }}</label>
@@ -16,9 +16,7 @@
                     <div v-if="glossaryList.length === 0" data-test="no-glossary-found-hint">
                         {{ $t('common.info.noDataFound') }}
                     </div>
-                    <div v-else-if="!selectedGlossaryId" id="glossary-hint" data-test="no-glossary-selected-tree-hint">
-                        <p>{{ $t('managers.glossary.glossaryUsage.glossaryHint') }}</p>
-                    </div>
+                    <Message v-else-if="!selectedGlossaryId" class="p-mx-3" data-test="no-glossary-selected-tree-hint">{{ $t('managers.glossary.glossaryUsage.glossaryHint') }}</Message>
                     <div v-else>
                         <div class="p-m-3">
                             <InputText id="search-input" class="kn-material-input" v-model="searchWord" :placeholder="$t('common.search')" @input="filterGlossaryTree" data-test="search-input" />
@@ -74,6 +72,7 @@ import glossaryUsageDescriptor from './GlossaryUsageDescriptor.json'
 import GlossaryUsageInfoDialog from './GlossaryUsageInfoDialog.vue'
 import GlossaryUsageHint from './GlossaryUsageHint.vue'
 import GlossaryUsageDetail from './GlossaryUsageDetail.vue'
+import Message from 'primevue/message'
 import Tree from 'primevue/tree'
 
 export default defineComponent({
@@ -83,6 +82,7 @@ export default defineComponent({
         GlossaryUsageInfoDialog,
         GlossaryUsageHint,
         GlossaryUsageDetail,
+        Message,
         Tree
     },
     data() {
@@ -235,21 +235,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-#glossary-hint {
-    margin: 0 2rem;
-    font-size: 0.8rem;
-    display: flex;
-    justify-content: center;
-    border: 1px solid rgba(59, 103, 140, 0.1);
-    border-color: green;
-    border-radius: 2px;
-    background-color: #eaf0f6;
-    color: $color-primary;
-    p {
-        margin: 0.3rem;
-    }
-}
-
 #search-input {
     width: 100%;
 }

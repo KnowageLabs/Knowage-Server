@@ -274,7 +274,7 @@
 			iconCls="fas fa-book" />
 		<ITEM id="11008" label="menu.glossary.business"
 			requiredFunctionality="ManageGlossaryBusiness"
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=glossaryBusiness"
+			to="/glossary-usage"
 			iconCls="fas fa-building" />
 		<ITEM id="11009" label="menu.cross.definition"
 			requiredFunctionality="ManageCrossNavigation"
