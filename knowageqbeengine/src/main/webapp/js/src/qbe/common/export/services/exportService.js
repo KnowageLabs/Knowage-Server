@@ -30,40 +30,33 @@
 		return {
 
 			exportQueryResults:function(mimeType){
-				if(mimeType=='text/csv') {
-					var config = {"responseType": "arraybuffer"};
-					var q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID+"&currentQueryId="+query.id;
-					var promise = sbiModule_restServices.promisePost('qbequery/export', q, bodySend, config);
-					var fileName = "report.csv";
-					var fileExtension = 'csv';
-					promise.then(function(response){
+				var fileName = null;
+				var fileExtension = null;
 
-						sbiModuleDownloadService.getBlob(response, fileName, fileExtension);
-
-					},function(response){
-						var decodedString = String.fromCharCode.apply(null, new Uint8Array(response.data));
-						var obj = JSON.parse(decodedString);
-						sbiModule_messaging.showErrorMessage(obj.errors[0].message, 'Error');
-					});
+				if (mimeType=='text/csv') {
+					fileName = "report.csv";
+					fileExtension = 'csv';
+				} else if (mimeType=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+					fileName = "report.xlsx";
+					fileExtension = 'xlsx';
 				} else {
-					var exportResultAction = sbiModule_action_builder.getActionBuilder("POST");
-					exportResultAction.actionName = "EXPORT_RESULT_ACTION";
-					exportResultAction.queryParams.MIME_TYPE = mimeType;
-					exportResultAction.formParams.query = query;
-					exportResultAction.formParams.pars = bodySend.pars;
-					exportResultAction.conf.responseType = 'arraybuffer';
-					exportResultAction.queryParams.limit = exportLimit;
-					exportResultAction.executeAction().then(function(response){
-
-						sbiModuleDownloadService.getBlob(response);
-
-
-					},function(response){
-						var decodedString = String.fromCharCode.apply(null, new Uint8Array(response.data));
-						var obj = JSON.parse(decodedString);
-						sbiModule_messaging.showErrorMessage(obj.errors[0].message, 'Error');
-					});
+					throw "Unsupported mime type: " + mimeType;
 				}
+				
+				var config = {"responseType": "arraybuffer"};
+				var q="?SBI_EXECUTION_ID=" + sbiModule_config.sbiExecutionID
+					+ "&currentQueryId=" + query.id
+					+ "&outputType=" + fileExtension;
+				var promise = sbiModule_restServices.promisePost('qbequery/export', q, bodySend, config);
+				promise.then(function(response){
+
+					sbiModuleDownloadService.getBlob(response, fileName, fileExtension);
+
+				},function(response){
+					var decodedString = String.fromCharCode.apply(null, new Uint8Array(response.data));
+					var obj = JSON.parse(decodedString);
+					sbiModule_messaging.showErrorMessage(obj.errors[0].message, 'Error');
+				});
 
 			},
 
