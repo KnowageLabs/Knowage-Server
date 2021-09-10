@@ -192,7 +192,7 @@ export default defineComponent({
                     this.simpleNavigation.fromDoc = doc.DOCUMENT_LABEL
                     this.loadInputParams(doc.DOCUMENT_LABEL).then((response) => (this.navigation.fromPars = response))
                     this.loadOutputParams(doc.DOCUMENT_ID).then((response) => (this.navigation.fromPars = this.navigation.fromPars.concat(response)))
-                    //TO-DO: Remove link from toPars
+                    this.removeAllLink()
                     break
                 case 'target':
                     this.simpleNavigation.toDocId = doc.DOCUMENT_ID
@@ -220,6 +220,11 @@ export default defineComponent({
                     }))
             )
             return params
+        },
+        removeAllLink() {
+            this.navigation.toPars.forEach((param) => {
+                param.links = []
+            })
         }
     }
 })

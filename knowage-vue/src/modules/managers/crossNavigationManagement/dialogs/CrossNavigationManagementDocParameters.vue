@@ -15,7 +15,7 @@
         <Listbox :options="navigation.fromPars">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
             <template #option="slotProps">
-                <div class="p-d-flex card" draggable="true">
+                <div class="p-d-flex card" draggable="true" @dragstart="onDragStart($event, slotProps.option)">
                     <i class="pi pi-bars p-mr-2"> </i>
                     <div>{{ slotProps.option.name }}</div>
                     <div class="p-ml-auto">{{ $t(dialogDescriptor.parType[slotProps.option.type].label) }}</div>
@@ -32,11 +32,13 @@
         <Listbox :options="navigation.toPars">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
             <template #option="slotProps">
-                <div class="p-d-flex card" @drop="link" @dragover.prevent>
-                    <div v-if="slotProps.option.links && slotProps.option.links.length > 0">{{ slotProps.option.links[0].name }} <i class="fa fa-link"> </i> {{ slotProps.option.name }}</div>
-                    <div v-else>{{ slotProps.option.name }}</div>
-                    <i class="fa fa-times-circle p-mr-2 p-ml-auto" v-if="slotProps.option.links && slotProps.option.links.length > 0"> </i>
-                    <div class="p-ml-auto" v-else>{{ $t(dialogDescriptor.parType[slotProps.option.type].label) }}</div>
+                <div class="p-d-flex card" v-if="slotProps.option.links && slotProps.option.links.length > 0">
+                    <div>{{ slotProps.option.links[0].name }} <i class="fa fa-link"> </i> {{ slotProps.option.name }}</div>
+                    <i class="fa fa-times-circle p-mr-2 p-ml-auto" @click="removeLink(slotProps.option.id)"> </i>
+                </div>
+                <div class="p-d-flex card" @drop="link($event, slotProps.option)" @dragover.prevent v-else>
+                    <div>{{ slotProps.option.name }}</div>
+                    <div class="p-ml-auto">{{ $t(dialogDescriptor.parType[slotProps.option.type].label) }}</div>
                 </div>
             </template>
         </Listbox>
@@ -82,9 +84,36 @@ export default defineComponent({
                 this.fixedValue = ''
             }
         },
-        link() {
-            console.log('DROP')
+        onDragStart(event: any, param: any) {
+            event.dataTransfer.setData('text/plain', JSON.stringify(param))
+            event.dataTransfer.dropEffect = 'move'
+            event.dataTransfer.effectAllowed = 'move'
+        },
+        link(event: any, item: any) {
+            const param = JSON.parse(event.dataTransfer.getData('text/plain'))
+            if (param.type === 2 || param.parType === item.parType) {
+                item.links.push(param)
+            } else {
+                this.$store.commit('setInfo', {
+                    title: this.$t('managers.crossNavigationManagement.incompatibleTypes'),
+                    msg: this.$t('managers.crossNavigationManagement.incompatibleTypesMessage', { originParam: param.name, targetParam: item.name })
+                })
+            }
+        },
+        removeLink(id) {
+            this.navigation.toPars.forEach((param) => {
+                if (param.id === id) {
+                    param.links = []
+                }
+            })
         }
     }
 })
 </script>
+<style lang="scss" scoped>
+::v-deep(.p-listbox) {
+    // .p-listbox-item {
+    //     background: #b4b4b4;
+    // }
+}
+</style>

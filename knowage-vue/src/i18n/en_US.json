@@ -522,6 +522,8 @@
             "height": "Window height",
             "heightHelp": "Height in px of the popup window.",
             "hint": "Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "incompatibleTypes": "Incompatible types",
+            "incompatibleTypesMessage": "{originParam} parameter's type not compatible with type of parameter {targetParam}",
             "input": "Input",
             "modality": "Modality",
             "normal": "Normal",
