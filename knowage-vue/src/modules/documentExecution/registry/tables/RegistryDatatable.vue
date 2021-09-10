@@ -96,7 +96,7 @@ export default defineComponent({
             lazyParams: {} as any,
             dependentColumns: [] as any[],
             warningVisible: false,
-            showWarnings: true
+            stopWarnings: [] as any[]
         }
     },
     watch: {
@@ -274,33 +274,39 @@ export default defineComponent({
         },
         onDropdownChange(row: any, column: any) {
             console.log('COLUMN: ', column)
-            if (column.hasDependencies) {
-                //console.log('TEEEEEEEEEEEEST: ', this.getDependentColumns(column))
-                //this.dependentColumns = this.getDependentColumns(column) as any[]
+            if (column.hasDependencies && !this.stopWarnings[column.field]) {
+                this.dependentColumns = [] as any[]
+                this.setDependentColumns(column)
+
+                console.log('TEEEEEEEEEEEEST: ', this.dependentColumns)
+                //this.dependentColumns = this.setDependentColumns(column) as any[]
                 this.warningVisible = true
             }
 
-            console.log('WARNING VISIBLE: ', this.warningVisible)
+            // console.log('WARNING VISIBLE: ', this.warningVisible)
             this.$emit('rowChanged', row)
         },
-        onWarningDialogClose(stopWarnings: boolean) {
+        onWarningDialogClose(payload: any) {
             this.warningVisible = false
-            console.log('STOP WARNINGS: ', stopWarnings)
-            if (stopWarnings) {
-                this.showWarnings = false
+            // console.log('STOP WARNINGS: ', payload.stopWarnings)
+            if (payload.stopWarnings) {
+                this.stopWarnings[payload.columnField] = true
             }
+            // console.log('STOP WARINGGS:', this.stopWarnings)
         },
-        getDependentColumns(column: any) {
+        setDependentColumns(column: any) {
             let tempColumn = column
-            const columns = [] as any[]
-            if (tempColumn.hasDependencies) {
-                tempColumn.hasDependecies.forEach((el: any) => {
-                    columns.push(el)
-                    this.getDependentColumns(el)
-                })
+
+            if (!tempColumn.hasDependencies) {
+                return
             }
 
-            return columns
+            // console.log('DEPENDENCIES: ', tempColumn.hasDependencies)
+            tempColumn.hasDependencies.forEach((el: any) => {
+                // console.log('DEP COLUMNS: ', el)
+                this.dependentColumns.push(el)
+                this.setDependentColumns(el)
+            })
         }
     }
 })

@@ -12,7 +12,7 @@
                 <Checkbox v-model="stopWarnings" :binary="true"></Checkbox>
                 <label> {{ $t('documentExecution.registry.warningCheckbox') }}</label>
             </div>
-            <Button class="kn-button kn-button--primary" @click="$emit('close', stopWarnings)"> {{ $t('common.close') }}</Button>
+            <Button class="kn-button kn-button--primary" @click="$emit('close', { stopWarnings: stopWarnings, columnField: columns[0].dependences })"> {{ $t('common.close') }}</Button>
         </template>
     </Dialog>
 </template>
@@ -41,8 +41,10 @@ export default defineComponent({
         columnFileds(): string {
             let fields = ''
             for (let i = 0; i < this.columns.length; i++) {
-                fields += (this.columns[i] as any).field + (this.columns.length - 1 != i) ? ', ' : ''
+                console.log('this.columns[i]', this.columns[i])
+                fields += (this.columns[i] as any).field + (i === this.columns.length - 1 ? ' ' : ', ')
             }
+
             return fields
         }
     },
