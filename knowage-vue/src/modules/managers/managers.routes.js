@@ -20,6 +20,7 @@ import resourceManagementRoutes from '@/modules/managers/resourceManagement/Reso
 import constraintsManagementRoutes from '@/modules/managers/constraintsManagement/ConstraintsManagement.routes.js'
 import lovsManagementRoutes from '@/modules/managers/lovsManagement/LovsManagement.routes.js'
 import glossaryDefinitionRoutes from '@/modules/managers/glossaryDefinition/GlossaryDefinition.routes.js'
+import glossaryUsageRoutes from '@/modules/managers/glossaryUsage/GlossaryUsage.routes.js'
 
 const baseRoutes = []
 
@@ -46,5 +47,6 @@ const routes = baseRoutes
     .concat(constraintsManagementRoutes)
     .concat(lovsManagementRoutes)
     .concat(glossaryDefinitionRoutes)
+    .concat(glossaryUsageRoutes)
 
 export default routes
