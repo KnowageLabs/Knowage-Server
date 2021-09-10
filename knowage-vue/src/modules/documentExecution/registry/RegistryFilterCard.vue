@@ -1,29 +1,24 @@
 <template>
-    <Card>
-        <template #content>
-            <label>{{ filter.title }}</label>
-            <div v-if="filter.static">
-                <div v-if="filter.visible">
-                    <InputText class="p-inputtext-sm" v-model="filter.filterValue" disabled />
-                </div>
-            </div>
-            <div v-else>
-                <InputText v-if="filter.presentation === 'MANUAL'" class="p-inputtext-sm" v-model="filter.filterValue" @blur="filterChanged" />
-                <Dropdown v-else-if="filter.presentation === 'COMBO'" v-model="filter.filterValue" :options="options" optionValue="column_1" optionLabel="column_1" @change="filterChanged"> </Dropdown>
-            </div>
-        </template>
-    </Card>
+    <div v-if="filter.static && filter.visible" class="p-field p-col-6 p-md-2">
+        <InputText class="kn-material-input" v-model="filter.filterValue" disabled />
+    </div>
+    <div v-else class="p-field p-col-6 p-md-2">
+        <span class="p-float-label">
+            <InputText v-if="filter.presentation === 'MANUAL'" class="kn-material-input" v-model="filter.filterValue" @blur="filterChanged" />
+            <Dropdown v-else-if="filter.presentation === 'COMBO'" class="kn-material-input" v-model="filter.filterValue" :options="options" optionValue="column_1" optionLabel="column_1" @change="filterChanged"> </Dropdown>
+            <label class="kn-material-input-label"> {{ filter.title }} * </label>
+        </span>
+    </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 
 export default defineComponent({
     name: 'registry-filter-card',
-    components: { Card, Dropdown },
+    components: { Dropdown },
     props: { propFilter: { type: Object }, filterOptions: { type: Array }, entity: { type: String }, clearTrigger: { type: Boolean }, id: { type: String } },
     data() {
         return {

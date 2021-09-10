@@ -151,7 +151,7 @@
     },
     "documentExecution": {
         "registry": {
-            "clearFilters": "Clear all filters",
+            "clearFilters": "Clear",
             "column": "Column/s",
             "filter": "Filter",
             "filters": "Filters",

@@ -1,18 +1,23 @@
 <template>
     <Card>
         <template #header>
-            <Toolbar class="kn-toolbar kn-toolbar--primary">
+            <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
                     {{ $t('documentExecution.registry.filters') }}
                 </template>
             </Toolbar>
         </template>
         <template #content>
-            <div class="p-d-flex p-flex-row p-ai-center">
-                <RegistryFilterCard :id="id" class="p-m-2" v-for="(filter, index) in filters" :key="index" :propFilter="filter" :entity="entity" :clearTrigger="clearFiltersTrigger" @changed="setFilterValue($event, index)"></RegistryFilterCard>
-                <div class="p-ai-end">
-                    <Button class="kn-button p-button-text" @click="clearAllFilters">{{ $t('documentExecution.registry.clearFilters') }}</Button>
-                    <Button class="kn-button p-button-text" @click="filterRegistry">{{ $t('documentExecution.registry.filter') }}</Button>
+            <div class="filter-container" :style="registryDescriptor.styles.filterContainer">
+                <div class="fields-container" :style="registryDescriptor.styles.fieldsContainer">
+                    <form class="p-fluid p-formgrid p-grid">
+                        <RegistryFilterCard :id="id" v-for="(filter, index) in filters" :key="index" :propFilter="filter" :entity="entity" :clearTrigger="clearFiltersTrigger" @changed="setFilterValue($event, index)"></RegistryFilterCard>
+                    </form>
+                </div>
+
+                <div class="button-container" :style="registryDescriptor.styles.buttonsContainer">
+                    <Button class="p-button kn-button--primary p-mx-1" :style="registryDescriptor.styles.filtersButton" @click="clearAllFilters">{{ $t('documentExecution.registry.clearFilters') }}</Button>
+                    <Button class="p-button kn-button--primary p-mx-1" :style="registryDescriptor.styles.filtersButton" @click="filterRegistry">{{ $t('documentExecution.registry.filter') }}</Button>
                 </div>
             </div>
         </template>
@@ -23,6 +28,7 @@
 import { defineComponent } from 'vue'
 import Card from 'primevue/card'
 import RegistryFilterCard from './RegistryFilterCard.vue'
+import registryDescriptor from './RegistryDescriptor.json'
 
 export default defineComponent({
     name: 'registry-filters-card',
@@ -31,6 +37,7 @@ export default defineComponent({
     emits: ['filter'],
     data() {
         return {
+            registryDescriptor,
             filters: [] as any[],
             clearFiltersTrigger: false
         }
