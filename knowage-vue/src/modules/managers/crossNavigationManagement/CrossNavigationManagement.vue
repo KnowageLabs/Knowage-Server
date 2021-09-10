@@ -4,7 +4,7 @@
             <div class="p-col-4 p-sm-4 p-md-3 p-p-0 kn-page">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
                     <template #left>
-                        {{ $t('managers.widgetGallery.title') }}
+                        {{ $t('managers.crossNavigationManagement.title') }}
                     </template>
                     <template #right>
                         <KnFabButton icon="fas fa-plus" @click="showForm" />

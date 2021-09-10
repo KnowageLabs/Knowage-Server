@@ -49,15 +49,21 @@
                         <small id="height-help">{{ $t('managers.crossNavigationManagement.heightHelp') }}</small>
                     </div>
                     <div class="p-field p-col-6 p-mb-3">
-                        <span class="p-float-label">
-                            <InputText id="description" class="kn-material-input" type="text" v-model.trim="simpleNavigation.description" maxLength="200" @input="setDirty" />
-                            <label for="description" class="kn-material-input-label">{{ $t('common.description') }} </label>
+                        <span class="p-input-icon-right">
+                            <span class="p-float-label">
+                                <InputText id="description" class="kn-material-input" type="text" v-model.trim="simpleNavigation.description" maxLength="200" @input="setDirty" />
+                                <label for="description" class="kn-material-input-label">{{ $t('common.description') }} </label>
+                            </span>
+                            <i class="pi pi-info-circle" @click="hintDialog" />
                         </span>
                     </div>
                     <div class="p-field p-col-6 p-mb-3">
-                        <span class="p-float-label">
-                            <InputText id="name" class="kn-material-input" type="text" v-model.trim="simpleNavigation.breadcrumb" maxLength="200" @input="setDirty" />
-                            <label for="name" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.breadCrumbs') }} </label>
+                        <span class="p-input-icon-right">
+                            <span class="p-float-label">
+                                <InputText id="breadcrumb" class="kn-material-input" type="text" v-model.trim="simpleNavigation.breadcrumb" maxLength="200" @input="setDirty" />
+                                <label for="breadcrumb" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.breadCrumbs') }} </label>
+                            </span>
+                            <i class="pi pi-info-circle" @click="hintDialog" />
                         </span>
                     </div>
                     <div class="p-field p-col-4 p-mb-3">
@@ -258,6 +264,12 @@ export default defineComponent({
         removeAllLink() {
             this.navigation.toPars?.forEach((param) => {
                 param.links = []
+            })
+        },
+        hintDialog() {
+            this.$store.commit('setInfo', {
+                title: 'Hint',
+                msg: 'Hint hint hint'
             })
         }
     }
