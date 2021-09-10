@@ -44,5 +44,14 @@
         "sortFields": ["name", "type"],
         "textField": false,
         "titleField": "name"
+    },
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "success": "common.toast.success",
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
+        }
     }
 }

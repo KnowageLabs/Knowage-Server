@@ -49,7 +49,6 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         deleteTemplate(e, itemId): void {
-            console.log(e, itemId)
             e.preventDefault()
             if (e.item && e.item.id) itemId = e.item.id
             this.$confirm.require({
@@ -64,7 +63,12 @@ export default defineComponent({
                             this.loadAll()
                             if (itemId == this.$route.params.id) this.$router.push('/cross-navigation-management')
                         })
-                        .catch((error) => console.error(error))
+                        .catch((error) =>
+                            this.$store.commit('setError', {
+                                title: this.$t('common.error.generic'),
+                                msg: error.message
+                            })
+                        )
                 }
             })
         },
@@ -101,6 +105,10 @@ export default defineComponent({
         },
         handleClose() {
             this.$router.replace('/cross-navigation-management')
+        },
+        reload(operation) {
+            if (operation === 'insert') this.$router.push('/cross-navigation-management')
+            this.loadAll()
         }
     }
 })

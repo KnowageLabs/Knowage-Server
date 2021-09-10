@@ -99,7 +99,6 @@ export default defineComponent({
         async selectedDoc() {
             await this.loadAllDoc()
             this.selected = this.documents.item.find((doc) => doc.DOCUMENT_ID === this.selectedDoc)
-            console.log('watch')
         }
     },
     methods: {
@@ -114,8 +113,8 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         hadleSelect() {
-            console.log(this.selected)
             this.$emit('apply', this.selected)
+            this.selected = null
         }
     }
 })

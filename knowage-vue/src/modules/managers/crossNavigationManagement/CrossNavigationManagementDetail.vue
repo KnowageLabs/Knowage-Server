@@ -94,6 +94,7 @@ import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import DocDialog from './dialogs/CrossNavigationManagementDocDialog.vue'
 import DocParameters from './dialogs/CrossNavigationManagementDocParameters.vue'
 import crossNavigationManagementValidator from './CrossNavigationManagementValidator.json'
+import crossNavigationDescriptor from './CrossNavigationManagementDescriptor.json'
 export default defineComponent({
     name: 'cross-navigation-detail',
     components: { Dropdown, DocDialog, DocParameters, KnValidationMessages },
@@ -110,6 +111,8 @@ export default defineComponent({
             dialogVisible: false,
             docType: 'origin',
             docId: null,
+            operation: 'insert',
+            crossNavigationDescriptor,
             crossModes: [
                 { name: this.$t('managers.crossNavigationManagement.normal'), value: 0 },
                 { name: this.$t('managers.crossNavigationManagement.popUp'), value: 1 },
@@ -126,16 +129,13 @@ export default defineComponent({
     created() {
         if (this.id) {
             this.loadNavigation()
-        }
+        } else this.initNew()
     },
     watch: {
         async id() {
             if (this.id) {
                 await this.loadNavigation()
-            } else {
-                this.navigation = {}
-                this.simpleNavigation = {}
-            }
+            } else this.initNew()
         }
     },
     validations() {
@@ -150,6 +150,10 @@ export default defineComponent({
         },
         setDirty(): void {
             this.$emit('touched')
+        },
+        initNew() {
+            this.navigation = {}
+            this.simpleNavigation = { type: 0 }
         },
         async loadNavigation() {
             this.loading = true
@@ -166,13 +170,30 @@ export default defineComponent({
         },
         hadleSave() {
             this.navigation.simpleNavigation = this.simpleNavigation
-            console.log(this.navigation)
+            if (this.navigation.simpleNavigation.id === undefined) {
+                this.operation = 'insert'
+                this.navigation.newRecord = true
+            } else this.operation = 'update'
+            axios
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/save/', this.navigation)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t(this.crossNavigationDescriptor.operation[this.operation].toastTitle),
+                        msg: this.$t(this.crossNavigationDescriptor.operation.success)
+                    })
+                    this.$emit('saved', this.operation)
+                })
+                .catch((error) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.saving'),
+                        msg: error.message
+                    })
+                })
         },
         handleDropdown() {
             if (!this.simpleNavigation.popupOptions) this.simpleNavigation.popupOptions = { width: '', height: '' }
         },
         selectDoc(type) {
-            console.log(type)
             this.docType = type
             switch (type) {
                 case 'origin':
@@ -190,6 +211,7 @@ export default defineComponent({
                 case 'origin':
                     this.simpleNavigation.fromDocId = doc.DOCUMENT_ID
                     this.simpleNavigation.fromDoc = doc.DOCUMENT_LABEL
+                    this.navigation.simpleNavigation = this.simpleNavigation
                     this.loadInputParams(doc.DOCUMENT_LABEL).then((response) => (this.navigation.fromPars = response))
                     this.loadOutputParams(doc.DOCUMENT_ID).then((response) => (this.navigation.fromPars = this.navigation.fromPars.concat(response)))
                     this.removeAllLink()
@@ -197,6 +219,7 @@ export default defineComponent({
                 case 'target':
                     this.simpleNavigation.toDocId = doc.DOCUMENT_ID
                     this.simpleNavigation.toDoc = doc.DOCUMENT_LABEL
+                    this.navigation.simpleNavigation = this.simpleNavigation
                     this.loadInputParams(doc.DOCUMENT_LABEL).then((response) => (this.navigation.toPars = response))
                     break
             }
@@ -222,7 +245,7 @@ export default defineComponent({
             return params
         },
         removeAllLink() {
-            this.navigation.toPars.forEach((param) => {
+            this.navigation.toPars?.forEach((param) => {
                 param.links = []
             })
         }
