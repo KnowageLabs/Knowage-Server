@@ -1,7 +1,6 @@
 <template>
     <Card>
         <template #content>
-            {{ lazyParams }}
             <DataTable class="p-datatable-sm kn-table" :value="rows" editMode="cell" dataKey="id" :lazy="this.lazyParams.size > 1000" :paginator="true" :rows="15" :totalRecords="lazyParams.size" responsiveLayout="stack" breakpoint="960px" @page="onPage($event)">
                 <template v-for="col of columns" :key="col.field">
                     <Column class="kn-truncated" :field="col.field" :header="col.title">
@@ -18,7 +17,16 @@
                                 @input="$emit('rowChanged', slotProps.data)"
                             />
                             <!-- Dropdown -->
-                            <Dropdown v-else-if="col.editorType === 'COMBO'" v-model="slotProps.data[col.field]" :options="this.comboColumnOptions[col.field]" optionValue="column_1" optionLabel="column_1" @change="$emit('rowChanged', slotProps.data)"> </Dropdown>
+                            <Dropdown
+                                v-else-if="col.editorType === 'COMBO'"
+                                v-model="slotProps.data[col.field]"
+                                :options="this.comboColumnOptions[col.field]"
+                                optionValue="column_1"
+                                optionLabel="column_1"
+                                @change="onDropdownChange(slotProps.data, col)"
+                                @before-show="addColumnOptions(col, slotProps.data)"
+                            >
+                            </Dropdown>
                             <!-- Calendar -->
                             <Calendar v-else-if="col.isEditable && col.columnInfo.type === 'date' && col.columnInfo.subType !== 'timestamp'" v-model="slotProps.data[col.field]" @date-select="$emit('rowChanged', slotProps.data)" />
                             <span v-else>TODO</span>
@@ -39,14 +47,19 @@
                     </Column>
                 </template>
 
-                <Column :style="registryDatatableDescriptor.iconColumn.style">
+                <Column :style="registryDatatableDescriptor.iconColumn.style" :headerStyle="registryDatatableDescriptor.headerIconColumn.style">
+                    <template #header>
+                        <KnFabButton icon="fas fa-plus" @click="addNewRow"></KnFabButton>
+                    </template>
                     <template #body="slotProps">
-                        <Button icon="pi pi-trash" class="p-button-link" @click="rowDeleteConfirm(slotProps.data)" />
+                        <Button icon="pi pi-trash" class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)" />
                     </template>
                 </Column>
             </DataTable>
         </template>
     </Card>
+
+    <RegistryDatatableWarningDialog :visible="warningVisible" :columns="dependentColumns" @close="onWarningDialogClose"></RegistryDatatableWarningDialog>
 </template>
 
 <script lang="ts">
@@ -59,12 +72,14 @@ import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dropdown from 'primevue/dropdown'
+import KnFabButton from '@/components/UI/KnFabButton.vue'
 import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
+import RegistryDatatableWarningDialog from './RegistryDatatableWarningDialog.vue'
 
 export default defineComponent({
     name: 'registry-datatable',
-    components: { Card, Calendar, Checkbox, Column, DataTable, Dropdown },
-    props: { propColumns: { type: Array }, propRows: { type: Array }, columnMap: { type: Object }, propConfiguration: { type: Object }, pagination: { type: Object } },
+    components: { Card, Calendar, Checkbox, Column, DataTable, Dropdown, KnFabButton, RegistryDatatableWarningDialog },
+    props: { propColumns: { type: Array }, propRows: { type: Array }, columnMap: { type: Object }, propConfiguration: { type: Object }, pagination: { type: Object }, entity: { type: String }, id: { type: String } },
     emits: ['rowChanged', 'rowDeleted', 'pageChanged'],
     data() {
         return {
@@ -78,7 +93,10 @@ export default defineComponent({
                 enableDeleteRecords: false,
                 enableAddRecords: false
             },
-            lazyParams: {} as any
+            lazyParams: {} as any,
+            dependentColumns: [] as any[],
+            warningVisible: false,
+            showWarnings: true
         }
     },
     watch: {
@@ -105,7 +123,6 @@ export default defineComponent({
         this.loadColumns()
         this.loadRows()
         this.loadConfiguration()
-        this.loadDropdownValues('store_type')
         this.loadPagination()
     },
     methods: {
@@ -114,7 +131,17 @@ export default defineComponent({
             this.propColumns?.forEach((el: any) => {
                 if (el.isVisible) this.columns.push(el)
             })
-            // console.log('PROP COLUMN: ', this.propColumns)
+            this.setColumnDependencies()
+        },
+        setColumnDependencies() {
+            this.columns.forEach((column: any) => {
+                if (column.dependences) {
+                    const index = this.columns.findIndex((parentColumn: any) => parentColumn.field === column.dependences)
+                    if (index !== -1) {
+                        this.columns[index].hasDependencies ? this.columns[index].hasDependencies.push(column) : (this.columns[index].hasDependencies = [column])
+                    }
+                }
+            })
             console.log('COLUMNS: ', this.columns)
         },
         loadRows() {
@@ -147,13 +174,16 @@ export default defineComponent({
             this.lazyParams = { paginationStart: event.first, paginationLimit: event.rows, paginationEnd: event.first + event.rows, size: this.lazyParams.size }
             this.$emit('pageChanged', this.lazyParams)
         },
-        rowDeleteConfirm(row: any) {
+        rowDeleteConfirm(index: number, row: any) {
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
                 header: this.$t('common.toast.deleteTitle'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => this.$emit('rowDeleted', row)
+                accept: () => this.deleteRow(index, row)
             })
+        },
+        deleteRow(index: number, row: any) {
+            row.id ? this.$emit('rowDeleted', row) : this.rows.splice(index, 1)
         },
         setDataType(columnType: string) {
             switch (columnType) {
@@ -177,10 +207,6 @@ export default defineComponent({
                 return 'any'
             }
         },
-        isDependentColumn(column: any) {
-            // console.log('IS DEPENDENT ' + column + ' : ' + 'dependsFrom' in column)
-            return 'dependsFrom' in column
-        },
         getFormatedDate(date: any) {
             return formatDate(date, 'MM/DD/yyyy')
         },
@@ -192,40 +218,89 @@ export default defineComponent({
             console.log('NUMBER: ', number, ', FORMAT: ', format)
         },
         addColumnOptions(column: any, row: any) {
-            row.selected = true
+            console.log('COLUMN: ', column, ', ROW: ', row)
 
-            //regular independent combo columns
-            if (column.editorType === 'COMBO' && !this.isDependentColumn(column)) {
-                if (!this.comboColumnOptions[column.field]) {
-                    this.comboColumnOptions[column.field] = {}
-                    this.getData(column.field)
+            this.loadColumnOptions(column, row)
+
+            // //regular independent combo columns
+            // if (column.editorType === 'COMBO' && !this.isDependentColumn(column)) {
+            //     if (!this.comboColumnOptions[column.field]) {
+            //         this.comboColumnOptions[column.field] = {}
+            //         this.getData(column.field)
+            //     }
+            // }
+
+            // //dependent combo columns
+            // if (column.editorType === 'COMBO' && this.isDependentColumn(column)) {
+            //     if (!this.comboColumnOptions[column.field]) {
+            //         this.comboColumnOptions[column.field] = {}
+
+            //         this.getDependenciesOptions(column, row)
+            //     } else if (!((row[column.dependsFrom] as any) in this.comboColumnOptions[column.field])) {
+            //         this.getDependenciesOptions(column, row)
+            //     }
+            // }
+        },
+        // TODO izdvojiti u helper?
+        async loadColumnOptions(column: any, row: any) {
+            const postData = new URLSearchParams()
+            const subEntity = column.subEntity ? '::' + column.subEntity + '(' + column.foreignKey + ')' : ''
+
+            const entityId = this.entity + subEntity + ':' + column.field
+            const entityOrder = this.entity + subEntity + ':' + (column.orderBy ?? column.field)
+
+            postData.append('ENTITY_ID', entityId) // it.eng.knowage.meta.stores_for_registry.Store::rel_region_id_in_region(rel_region_id_in_region):sales_city
+            postData.append('QUERY_TYPE', 'standard') //
+            postData.append('ORDER_ENTITY', entityOrder) // it.eng.knowage.meta.stores_for_registry.Store::rel_region_id_in_region(rel_region_id_in_region):sales_city
+            postData.append('ORDER_TYPE', 'asc')
+            postData.append('QUERY_ROOT_ENTITY', 'true')
+            postData.append('query', '')
+            if (column.dependences && row) {
+                postData.append('DEPENDENCES', this.entity + ':' + column.dependences + '=' + row[column.dependences])
+            }
+            await axios.post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then((response) => (this.comboColumnOptions[column.field] = response.data.rows))
+            console.log('DROPDOWN VALUES: ', this.comboColumnOptions[column.field])
+        },
+        addNewRow() {
+            const newRow = {}
+            this.columns.forEach((el: any) => {
+                if (el.isVisible && el.field !== 'id') {
+                    newRow[el.field] = el.defaultValue ?? ''
                 }
+            })
+            console.log('NEW ROW: ', newRow)
+            this.rows.unshift(newRow)
+            this.$emit('rowChanged', newRow)
+        },
+        onDropdownChange(row: any, column: any) {
+            console.log('COLUMN: ', column)
+            if (column.hasDependencies) {
+                //console.log('TEEEEEEEEEEEEST: ', this.getDependentColumns(column))
+                //this.dependentColumns = this.getDependentColumns(column) as any[]
+                this.warningVisible = true
             }
 
-            //dependent combo columns
-            if (column.editorType === 'COMBO' && this.isDependentColumn(column)) {
-                if (!this.comboColumnOptions[column.field]) {
-                    this.comboColumnOptions[column.field] = {}
-
-                    this.getDependenciesOptions(column, row)
-                } else if (!((row[column.dependsFrom] as any) in this.comboColumnOptions[column.field])) {
-                    this.getDependenciesOptions(column, row)
-                }
+            console.log('WARNING VISIBLE: ', this.warningVisible)
+            this.$emit('rowChanged', row)
+        },
+        onWarningDialogClose(stopWarnings: boolean) {
+            this.warningVisible = false
+            console.log('STOP WARNINGS: ', stopWarnings)
+            if (stopWarnings) {
+                this.showWarnings = false
             }
         },
-        async getData(field: string) {
-            console.log('getData', field)
-            //  this.comboColumnOptions[field] = response;
-        },
-        getDependenciesOptions(column: any, row: any) {
-            console.log('getDependenciesOptions', column, row)
-            // this.comboColumnOptions[column.field][row[column.dependsFrom]] = response.data.rows
-        },
-        async loadDropdownValues(column: string) {
-            await axios
-                // .get(`knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=c75a32e00fbf11ec8b65ed57c30e47f4`)
-                .get('../../data/demo_dropdown_store_type.json')
-                .then((response) => (this.comboColumnOptions[column] = response.data.rows))
+        getDependentColumns(column: any) {
+            let tempColumn = column
+            const columns = [] as any[]
+            if (tempColumn.hasDependencies) {
+                tempColumn.hasDependecies.forEach((el: any) => {
+                    columns.push(el)
+                    this.getDependentColumns(el)
+                })
+            }
+
+            return columns
         }
     }
 })

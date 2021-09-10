@@ -18,7 +18,7 @@
                 <RegistryFiltersCard v-if="filters.length > 0" :id="id" :propFilters="filters" :entity="entity" @filter="filterRegistry"></RegistryFiltersCard>
             </div>
             <div class="p-col-12" v-if="!loading">
-                <RegistryDatatable :propColumns="columns" :propRows="rows" :propConfiguration="configuration" :columnMap="columnMap" :pagination="pagination" @rowChanged="onRowChanged" @rowDeleted="onRowDeleted" @pageChanged="updatePagination"></RegistryDatatable>
+                <RegistryDatatable :propColumns="columns" :id="id" :propRows="rows" :propConfiguration="configuration" :columnMap="columnMap" :pagination="pagination" :entity="entity" @rowChanged="onRowChanged" @rowDeleted="onRowDeleted" @pageChanged="updatePagination"></RegistryDatatable>
             </div>
         </div>
     </div>

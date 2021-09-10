@@ -1,4 +1,10 @@
 {
+    "headerIconColumn": {
+        "style": {
+            "color": "white",
+            "margin-bottom": "2rem"
+        }
+    },
     "iconColumn": {
         "style": {
             "text-align": "end"

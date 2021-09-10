@@ -152,9 +152,13 @@
     "documentExecution": {
         "registry": {
             "clearFilters": "Clear all filters",
+            "column": "Column/s",
             "filter": "Filter",
             "filters": "Filters",
-            "title": "Registry Document"
+            "title": "Registry Document",
+            "warning": "Warning",
+            "warningCheckbox": "Don't Warn Me Again",
+            "warningDependences": "depend/s from this value. Please check them and set correct values!"
         }
     },
     "downloadsDialog": {
