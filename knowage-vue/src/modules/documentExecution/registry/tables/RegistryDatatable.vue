@@ -18,7 +18,6 @@
                 @page="onPage($event)"
             >
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                <Column class="kn-truncated" :field="columns[0].field" :header="columns[0].title"></Column>
                 <Column class="kn-truncated" :style="registryDatatableDescriptor.numerationColumn.style" :field="columns[0].field" :header="columns[0].title"></Column>
                 <template v-for="col of columns.slice(1)" :key="col.field">
                     <Column class="kn-truncated" :field="col.field" :header="col.title" :bodyStyle="{ 'background-color': col.color, width: col.size + 'px' }">
