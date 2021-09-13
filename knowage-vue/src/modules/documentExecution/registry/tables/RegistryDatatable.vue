@@ -54,7 +54,7 @@
                                 <Dropdown
                                     v-else-if="col.editorType === 'COMBO'"
                                     v-model="slotProps.data[col.field]"
-                                    :options="this.comboColumnOptions[col.field]"
+                                    :options="this.comboColumnOptions[col.field] ? this.comboColumnOptions[col.field][slotProps.data[col.dependences]] : []"
                                     optionValue="column_1"
                                     optionLabel="column_1"
                                     @change="onDropdownChange(slotProps.data, col)"
@@ -204,6 +204,7 @@ export default defineComponent({
                     const index = this.columns.findIndex((parentColumn: any) => parentColumn.field === column.dependences)
                     if (index !== -1) {
                         this.columns[index].hasDependencies ? this.columns[index].hasDependencies.push(column) : (this.columns[index].hasDependencies = [column])
+                        this.comboColumnOptions[column.dependences] = []
                     }
                 }
             })
@@ -284,7 +285,15 @@ export default defineComponent({
         addColumnOptions(column: any, row: any) {
             //.log('COLUMN: ', column, ', ROW: ', row)
 
+            console.log('TEEEEEEEEEEEST: ', column.field)
+            console.log('TEEEEEEEEEEEST: ', row[column.dependences])
+            console.log('TEEEEEEEEEEEST OPTIONS: ', this.comboColumnOptions)
+
             if (!this.comboColumnOptions[column.field]) {
+                this.comboColumnOptions[column.field] = []
+            }
+
+            if (!this.comboColumnOptions[column.field][row[column.dependences]]) {
                 this.loadColumnOptions(column, row)
             }
         },
@@ -303,10 +312,12 @@ export default defineComponent({
             postData.append('QUERY_ROOT_ENTITY', 'true')
             postData.append('query', '')
             if (column.dependences && row && row[column.dependences]) {
-                postData.append('DEPENDENCES', this.entity + ':' + column.dependences + '=' + row[column.dependences])
+                postData.append('DEPENDENCES', this.entity + subEntity + ':' + column.dependences + '=' + row[column.dependences])
             }
-            await axios.post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then((response) => (this.comboColumnOptions[column.field] = response.data.rows))
-            console.log('DROPDOWN VALUES: ', this.comboColumnOptions[column.field])
+            await axios
+                .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+                .then((response) => (this.comboColumnOptions[column.field][row[column.dependences]] = response.data.rows))
+            console.log('DROPDOWN VALUES: ', this.comboColumnOptions[column.field][row[column.dependences]])
         },
         addNewRow() {
             const newRow = { id: this.rows.length, isNew: true }

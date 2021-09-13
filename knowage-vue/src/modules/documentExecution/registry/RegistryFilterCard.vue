@@ -1,12 +1,12 @@
 <template>
-    <div v-if="filter.static && filter.visible" class="p-field p-col-6 p-md-2">
-        <InputText class="kn-material-input" v-model="filter.filterValue" disabled />
+    <div v-if="filter.static && filter.visible">
+        <InputText class="kn-material-input p-mx-2" v-model="filter.filterValue" disabled />
     </div>
-    <div v-else class="p-field p-col-6 p-md-2">
+    <div v-else-if="!filter.static" class="p-mx-2">
         <span class="p-float-label">
             <InputText v-if="filter.presentation === 'MANUAL'" class="kn-material-input" v-model="filter.filterValue" @blur="filterChanged" />
             <Dropdown v-else-if="filter.presentation === 'COMBO'" class="kn-material-input" v-model="filter.filterValue" :options="options" optionValue="column_1" optionLabel="column_1" @change="filterChanged"> </Dropdown>
-            <label class="kn-material-input-label"> {{ filter.title }} * </label>
+            <label v-if="filter.presentation !== 'DRIVER'" class="kn-material-input-label"> {{ filter.title }} * </label>
         </span>
     </div>
 </template>

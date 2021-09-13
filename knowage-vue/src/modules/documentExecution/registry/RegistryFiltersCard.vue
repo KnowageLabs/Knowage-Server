@@ -12,7 +12,7 @@
                 <div class="fields-container" :style="registryDescriptor.styles.fieldsContainer">
                     <form class="p-fluid p-formgrid p-grid">
                         <template v-for="(filter, index) in filters" :key="index">
-                            <RegistryFilterCard v-if="filter.visible" :id="id" :propFilter="filter" :entity="entity" :clearTrigger="clearFiltersTrigger" @changed="setFilterValue($event, index)"></RegistryFilterCard>
+                            <RegistryFilterCard :id="id" :propFilter="filter" :entity="entity" :clearTrigger="clearFiltersTrigger" @changed="setFilterValue($event, index)"></RegistryFilterCard>
                         </template>
                     </form>
                 </div>
@@ -62,7 +62,7 @@ export default defineComponent({
             this.filters = [...(this.propFilters as any[])]
 
             // TODO delete this, just for showing
-            this.filters.forEach((el: any) => (el.visible = true))
+            // this.filters.forEach((el: any) => (el.visible = true))
         },
         setFilterValue(value: string, index: number) {
             this.filters[index].filterValue = value
