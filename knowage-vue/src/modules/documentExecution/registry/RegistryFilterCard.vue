@@ -20,6 +20,7 @@ export default defineComponent({
     name: 'registry-filter-card',
     components: { Dropdown },
     props: { propFilter: { type: Object }, filterOptions: { type: Array }, entity: { type: String }, clearTrigger: { type: Boolean }, id: { type: String } },
+    emits: ['changed'],
     data() {
         return {
             filter: {} as any,

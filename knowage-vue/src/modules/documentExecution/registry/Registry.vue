@@ -11,9 +11,7 @@
                     </div>
                 </template>
             </Toolbar>
-            <div id="spinner" v-if="loading">
-                <ProgressSpinner />
-            </div>
+            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
             <div class="p-col-12">
                 <RegistryFiltersCard v-if="filters.length > 0" :id="id" :propFilters="filters" :entity="entity" @filter="filterRegistry"></RegistryFiltersCard>
             </div>
@@ -27,13 +25,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-import ProgressSpinner from 'primevue/progressspinner'
 import RegistryDatatable from './tables/RegistryDatatable.vue'
 import RegistryFiltersCard from './RegistryFiltersCard.vue'
 
 export default defineComponent({
     name: 'registry',
-    components: { ProgressSpinner, RegistryDatatable, RegistryFiltersCard },
+    components: { RegistryDatatable, RegistryFiltersCard },
     props: { id: { type: String } },
     data() {
         return {
@@ -91,10 +88,18 @@ export default defineComponent({
             })
 
             postData.append('start', '' + this.pagination.start)
-            await axios.post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then((response) => {
-                this.pagination.size = response.data.results
-                this.registry = response.data
-            })
+            await axios
+                .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+                .then((response) => {
+                    this.pagination.size = response.data.results
+                    this.registry = response.data
+                })
+                .catch((response) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: response
+                    })
+                })
         },
         loadColumns() {
             this.columns = this.registry.registryConfig.columns
@@ -143,34 +148,53 @@ export default defineComponent({
         },
         async saveRegistry() {
             console.log('UPDATED ROWS FOR SAVE: ', this.updatedRows)
-            this.updatedRows.forEach((el: any) => delete el.id)
+            this.updatedRows.forEach((el: any) => {
+                delete el.id
+                delete el.isNew
+            })
             const postData = new URLSearchParams()
             postData.append('records', '' + JSON.stringify(this.updatedRows))
-            await axios.post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=UPDATE_RECORDS_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.updateTitle'),
-                    msg: this.$t('common.toast.updateSuccess')
+            await axios
+                .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=UPDATE_RECORDS_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('common.toast.updateSuccess')
+                    })
+                    this.pagination.start = 0
+                    this.loadPage()
                 })
-                this.pagination.start = 0
-                this.loadPage()
-            })
+                .catch((response) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: response
+                    })
+                })
         },
         async onRowDeleted(row: any) {
             // console.log('ROW FOR DELETE: ', row)
             const postData = new URLSearchParams()
             postData.append('records', '' + JSON.stringify([row]))
-            await axios.post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=DELETE_RECORDS_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then((response) => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.deleteTitle'),
-                    msg: this.$t('common.toast.deleteSuccess')
-                })
+            await axios
+                .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=DELETE_RECORDS_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+                .then((response) => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
 
-                if (response.data.ids[0]) {
-                    const index = this.rows.findIndex((el: any) => el.id === row.id)
-                    this.rows.splice(index, 1)
-                    this.pagination.size--
-                }
-            })
+                    if (response.data.ids[0]) {
+                        const index = this.rows.findIndex((el: any) => el.id === row.id)
+                        this.rows.splice(index, 1)
+                        this.pagination.size--
+                    }
+                })
+                .catch((response) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: response
+                    })
+                })
         },
         checkIfFilterColumnExists() {
             this.filters = []
@@ -183,7 +207,14 @@ export default defineComponent({
                     const column = this.columns[j]
                     if (filter.presentation !== 'DRIVER' && filter.field === column.field) {
                         console.log('TEMP COLMN: ', column)
-                        this.filters.push({ title: filter.title, field: filter.field, presentation: filter.presentationType, static: filter.isStatic, visible: filter.isVisible, column: column })
+                        this.filters.push({
+                            title: filter.title,
+                            field: filter.field,
+                            presentation: filter.presentationType,
+                            static: filter.isStatic,
+                            visible: filter.isVisible,
+                            column: column
+                        })
                     }
                 }
             }
@@ -197,7 +228,11 @@ export default defineComponent({
         },
         async updatePagination(lazyParams: any) {
             console.log('UPDATE PAGINATION: ', lazyParams)
-            this.pagination = { start: lazyParams.paginationStart, limit: lazyParams.paginationLimit, size: lazyParams.size }
+            this.pagination = {
+                start: lazyParams.paginationStart,
+                limit: lazyParams.paginationLimit,
+                size: lazyParams.size
+            }
             console.log('UPDATED PAGINATION: ', this.pagination)
             if (this.pagination.size > 1000) {
                 await this.loadRegistry()

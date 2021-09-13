@@ -17,56 +17,61 @@
                 showGridlines
                 @page="onPage($event)"
             >
+                <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <Column class="kn-truncated" :field="columns[0].field" :header="columns[0].title"></Column>
                 <template v-for="col of columns.slice(1)" :key="col.field">
                     <Column class="kn-truncated" :field="col.field" :header="col.title" :bodyStyle="{ 'background-color': col.color, width: col.size + 'px' }">
                         <template #editor="slotProps">
-                            <span v-if="!col.isEditable && col.columnInfo.type !== 'boolean'">{{ slotProps.data[col.field] }}</span>
-                            <!-- Checkbox -->
-                            <Checkbox v-else-if="col.editorType === 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('rowChanged', slotProps.data)" :disabled="!col.isEditable"></Checkbox>
-                            <InputText
-                                v-else-if="col.editorType !== 'COMBO' && col.isEditable && col.columnInfo.type !== 'date'"
-                                class="p-inputtext-sm"
-                                :type="setDataType(col.columnInfo.type)"
-                                :step="getStep(col.columnInfo.type)"
-                                v-model="slotProps.data[slotProps.column.props.field]"
-                                @input="$emit('rowChanged', slotProps.data)"
-                            />
-                            <!-- Dropdown -->
-                            <Dropdown
-                                v-else-if="col.editorType === 'COMBO'"
-                                v-model="slotProps.data[col.field]"
-                                :options="this.comboColumnOptions[col.field]"
-                                optionValue="column_1"
-                                optionLabel="column_1"
-                                @change="onDropdownChange(slotProps.data, col)"
-                                @before-show="addColumnOptions(col, slotProps.data)"
-                            >
-                            </Dropdown>
-                            <!-- Calendar -->
-                            <Calendar v-else-if="col.isEditable && col.columnInfo.type === 'date'" v-model="slotProps.data[col.field]" :showTime="col.columnInfo.subtype === 'timestamp'" :showSeconds="col.columnInfo.subtype === 'timestamp'" @date-select="$emit('rowChanged', slotProps.data)" />
-                            <span v-else>TODO</span>
+                            <div :data-test="col.field + '-editor'">
+                                <span v-if="!col.isEditable && col.columnInfo.type !== 'boolean'">{{ slotProps.data[col.field] }}</span>
+                                <!-- Checkbox -->
+                                <Checkbox v-else-if="col.editorType === 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('rowChanged', slotProps.data)" :disabled="!col.isEditable"></Checkbox>
+                                <InputText
+                                    v-else-if="col.editorType !== 'COMBO' && col.isEditable && col.columnInfo.type !== 'date'"
+                                    class="p-inputtext-sm"
+                                    :type="setDataType(col.columnInfo.type)"
+                                    :step="getStep(col.columnInfo.type)"
+                                    v-model="slotProps.data[slotProps.column.props.field]"
+                                    @input="$emit('rowChanged', slotProps.data)"
+                                />
+                                <!-- Dropdown -->
+                                <Dropdown
+                                    v-else-if="col.editorType === 'COMBO'"
+                                    v-model="slotProps.data[col.field]"
+                                    :options="this.comboColumnOptions[col.field]"
+                                    optionValue="column_1"
+                                    optionLabel="column_1"
+                                    @change="onDropdownChange(slotProps.data, col)"
+                                    @before-show="addColumnOptions(col, slotProps.data)"
+                                >
+                                </Dropdown>
+                                <!-- Calendar -->
+                                <Calendar v-else-if="col.isEditable && col.columnInfo.type === 'date'" v-model="slotProps.data[col.field]" :showTime="col.columnInfo.subtype === 'timestamp'" :showSeconds="col.columnInfo.subtype === 'timestamp'" @date-select="$emit('rowChanged', slotProps.data)" />
+                                <i v-if="col.isEditable" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" />
+                            </div>
                         </template>
                         <template #body="slotProps">
-                            <!-- Checkbox -->
-                            <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('rowChanged', slotProps.data)" :disabled="!col.isEditable"></Checkbox>
-                            <!-- Formating -->
-                            <div v-else-if="col.isEditable">
-                                <span v-if="col.columnInfo.type === 'int'">{{ formatNumber(slotProps.data[col.field]) ?? '' }}</span>
-                                <span v-else-if="col.columnInfo.type === 'float'">{{ formatDecimalNumber(slotProps.data[col.field], col.columnInfo.format) }}</span>
-                                <!-- Calendar -->
-                                <span v-else-if="col.columnInfo.type === 'date'">{{ slotProps.data[col.field] ? getFormatedDate(slotProps.data[col.field], col.columnInfo.subtype === 'timestamp') : '' }}</span>
-
+                            <div class="p-d-flex p-flex-row" :data-test="col.field + '-body'">
+                                <!-- Checkbox -->
+                                <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('rowChanged', slotProps.data)" :disabled="!col.isEditable"></Checkbox>
+                                <Calendar v-else-if="col.isEditable && col.columnInfo.type === 'date'" v-model="slotProps.data[col.field]" :showTime="col.columnInfo.subtype === 'timestamp'" :showSeconds="col.columnInfo.subtype === 'timestamp'" @date-select="$emit('rowChanged', slotProps.data)" />
+                                <!-- Formating -->
+                                <div v-else-if="col.isEditable">
+                                    <span v-if="col.columnInfo.type === 'int' || col.columnInfo.type === 'float'">{{ slotProps.data[col.field] }}</span>
+                                    <!-- Calendar -->
+                                    <span v-else-if="col.columnInfo.type === 'date'">{{ slotProps.data[col.field] ? getFormatedDate(slotProps.data[col.field], col.columnInfo.subtype === 'timestamp') : '' }}</span>
+                                    <span v-else> {{ slotProps.data[col.field] }}</span>
+                                </div>
                                 <span v-else> {{ slotProps.data[col.field] }}</span>
+                                <i v-if="col.isEditable" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" />
                             </div>
-                            <span v-else> {{ slotProps.data[col.field] }}</span>
                         </template>
                     </Column>
                 </template>
 
                 <Column :style="registryDatatableDescriptor.iconColumn.style" :headerStyle="registryDatatableDescriptor.headerIconColumn.style">
                     <template #header>
-                        <KnFabButton class="p-mb-5" v-if="buttons.enableButtons || buttons.enableAddRecords" icon="fas fa-plus" @click="addNewRow"></KnFabButton>
+                        <KnFabButton class="p-mb-5" v-if="buttons.enableButtons || buttons.enableAddRecords" icon="fas fa-plus" @click="addNewRow" data-test="new-row-button"></KnFabButton>
                     </template>
                     <template #body="slotProps">
                         <Button v-if="buttons.enableButtons || buttons.enableDeleteRecords" icon="pi pi-trash" class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)" />
@@ -160,11 +165,11 @@ export default defineComponent({
                     }
                 }
             })
-            console.log('COLUMNS: ', this.columns)
+            // console.log('COLUMNS: ', this.columns)
         },
         loadRows() {
             this.rows = [...(this.propRows as any[])]
-            console.log('ROWS: ', this.rows)
+            // console.log('ROWS: ', this.rows)
         },
         loadConfiguration() {
             this.configuration = this.propConfiguration
@@ -180,13 +185,13 @@ export default defineComponent({
                         this.buttons.enableAddRecords = this.configuration[i].value === 'true'
                     }
                 }
-                // console.log('CONFIGURATION: ', this.configuration)
+                console.log('CONFIGURATION: ', this.configuration)
                 // console.log('BUTTONS: ', this.configuration)
             }
         },
         loadPagination() {
             this.lazyParams = { ...this.pagination } as any
-            console.log('LAZY PARAMS LOADED: ', this.lazyParams)
+            // console.log('LAZY PARAMS LOADED: ', this.lazyParams)
         },
         onPage(event: any) {
             this.lazyParams = { paginationStart: event.first, paginationLimit: event.rows, paginationEnd: event.first + event.rows, size: this.lazyParams.size }
@@ -201,7 +206,7 @@ export default defineComponent({
             })
         },
         deleteRow(index: number, row: any) {
-            row.id < this.propRows.length ? this.$emit('rowDeleted', row) : this.rows.splice(index, 1)
+            row.isNew ? this.rows.splice(index, 1) : this.$emit('rowDeleted', row)
         },
         setDataType(columnType: string) {
             switch (columnType) {
@@ -229,18 +234,12 @@ export default defineComponent({
             const format = timestamp ? 'MM/DD/yyy HH:MM:ss' : 'MM/DD/yyyy'
             return formatDate(date, format)
         },
-        formatNumber(number: number) {
-            console.log('NUMBER: ', number)
-            return number
-        },
-        formatDecimalNumber(number: number, format: string) {
-            console.log('NUMBER: ', number, ', FORMAT: ', format)
-            return number
-        },
         addColumnOptions(column: any, row: any) {
-            console.log('COLUMN: ', column, ', ROW: ', row)
+            //.log('COLUMN: ', column, ', ROW: ', row)
 
-            this.loadColumnOptions(column, row)
+            if (!this.comboColumnOptions[column.field]) {
+                this.loadColumnOptions(column, row)
+            }
         },
         // TODO izdvojiti u helper?
         async loadColumnOptions(column: any, row: any) {
@@ -263,7 +262,7 @@ export default defineComponent({
             console.log('DROPDOWN VALUES: ', this.comboColumnOptions[column.field])
         },
         addNewRow() {
-            const newRow = { id: this.rows.length }
+            const newRow = { id: this.rows.length, isNew: true }
             this.columns.forEach((el: any) => {
                 if (el.isVisible && el.field !== 'id') {
                     newRow[el.field] = el.defaultValue ?? ''

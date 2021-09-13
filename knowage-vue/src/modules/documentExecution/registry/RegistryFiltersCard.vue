@@ -11,13 +11,15 @@
             <div class="filter-container" :style="registryDescriptor.styles.filterContainer">
                 <div class="fields-container" :style="registryDescriptor.styles.fieldsContainer">
                     <form class="p-fluid p-formgrid p-grid">
-                        <RegistryFilterCard :id="id" v-for="(filter, index) in filters" :key="index" :propFilter="filter" :entity="entity" :clearTrigger="clearFiltersTrigger" @changed="setFilterValue($event, index)"></RegistryFilterCard>
+                        <template v-for="(filter, index) in filters" :key="index">
+                            <RegistryFilterCard v-if="filter.visible" :id="id" :propFilter="filter" :entity="entity" :clearTrigger="clearFiltersTrigger" @changed="setFilterValue($event, index)"></RegistryFilterCard>
+                        </template>
                     </form>
                 </div>
 
                 <div class="button-container" :style="registryDescriptor.styles.buttonsContainer">
                     <Button class="p-button kn-button--primary p-mx-1" :style="registryDescriptor.styles.filtersButton" @click="clearAllFilters">{{ $t('documentExecution.registry.clearFilters') }}</Button>
-                    <Button class="p-button kn-button--primary p-mx-1" :style="registryDescriptor.styles.filtersButton" @click="filterRegistry">{{ $t('documentExecution.registry.filter') }}</Button>
+                    <Button class="p-button kn-button--primary p-mx-1" :style="registryDescriptor.styles.filtersButton" @click="filterRegistry" data-test="filter-button">{{ $t('documentExecution.registry.filter') }}</Button>
                 </div>
             </div>
         </template>
@@ -33,7 +35,11 @@ import registryDescriptor from './RegistryDescriptor.json'
 export default defineComponent({
     name: 'registry-filters-card',
     components: { Card, RegistryFilterCard },
-    props: { propFilters: { type: Array }, entity: { type: String }, id: { type: String } },
+    props: {
+        propFilters: { type: Array },
+        entity: { type: String },
+        id: { type: String }
+    },
     emits: ['filter'],
     data() {
         return {
@@ -44,6 +50,7 @@ export default defineComponent({
     },
     watch: {
         propFilters() {
+            console.log('Entity: ', this.entity)
             this.loadFilters()
         }
     },
@@ -53,6 +60,9 @@ export default defineComponent({
     methods: {
         loadFilters() {
             this.filters = [...(this.propFilters as any[])]
+
+            // TODO delete this, just for showing
+            this.filters.forEach((el: any) => (el.visible = true))
         },
         setFilterValue(value: string, index: number) {
             this.filters[index].filterValue = value
