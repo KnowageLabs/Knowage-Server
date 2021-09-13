@@ -21,6 +21,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { iNavigation } from './CrossNavigationManagement'
 import axios from 'axios'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
@@ -31,7 +32,7 @@ export default defineComponent({
     components: { KnFabButton, KnListBox },
     data() {
         return {
-            navigations: [] as any,
+            navigations: [] as iNavigation[],
             loading: false,
             touched: false,
             crossNavigationDescriptor
@@ -109,7 +110,7 @@ export default defineComponent({
         async reload(operation, name) {
             await this.loadAll()
             if (operation === 'insert') {
-                let id = this.navigations.find((nav) => nav.name === name).id
+                let id = this.navigations.find((nav) => nav.name === name)?.id
                 this.$router.push('/cross-navigation-management/' + id)
             }
         }

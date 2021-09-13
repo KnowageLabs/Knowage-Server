@@ -165,7 +165,7 @@ export default defineComponent({
         },
         initNew() {
             this.navigation = {}
-            this.simpleNavigation = { type: 0 }
+            this.simpleNavigation = { type: 3 }
         },
         async loadNavigation() {
             this.loading = true
