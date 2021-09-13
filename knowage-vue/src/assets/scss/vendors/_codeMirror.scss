@@ -56,3 +56,27 @@ span.cm-variable-2::after,
     background-position: left bottom;
     background-repeat: repeat-x;
 }
+
+/* properties to set a fixed gutter, preventing 0px width in case of successive rendering */
+.CodeMirror-gutters {
+    width: 40px !important;
+}
+.CodeMirror-gutter-wrapper {
+    left: -32px !important;
+}
+.CodeMirror-gutter.CodeMirror-linenumbers {
+    width: 32px !important;
+}
+.CodeMirror-linenumber {
+    padding: 0 !important;
+    &.CodeMirror-gutter-elt {
+        width: 30px !important;
+    }
+}
+
+.CodeMirror-sizer {
+    margin-left: 32px !important;
+}
+pre.CodeMirror-line {
+    left: 10px;
+}
