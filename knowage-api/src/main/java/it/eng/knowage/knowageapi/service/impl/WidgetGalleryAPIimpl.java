@@ -31,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.apache.commons.lang3.StringUtils;
 
 import it.eng.knowage.knowageapi.dao.SbiWidgetGalleryDao;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGallery;
@@ -140,7 +141,8 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	}
 
 	public WidgetGalleryDTO importNewWidget(WidgetGalleryDTO widgetGalleryDTO, SpagoBIUserProfile profile) {
-		return makeNewWidget(widgetGalleryDTO, profile, false);
+		/* The import procedure must also manage widgets with the id field not filled in */
+		return makeNewWidget(widgetGalleryDTO, profile,StringUtils.isBlank(widgetGalleryDTO.getId()));
 	}
 
 	@Override
