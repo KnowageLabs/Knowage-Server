@@ -54,7 +54,7 @@
                                 <InputText id="description" class="kn-material-input" type="text" v-model.trim="simpleNavigation.description" maxLength="200" @input="setDirty" />
                                 <label for="description" class="kn-material-input-label">{{ $t('common.description') }} </label>
                             </span>
-                            <i class="pi pi-info-circle" @click="hintDialog" />
+                            <i class="pi pi-info-circle" @click="hintDialog('desc')" />
                         </span>
                     </div>
                     <div class="p-field p-col-6 p-mb-3">
@@ -63,7 +63,7 @@
                                 <InputText id="breadcrumb" class="kn-material-input" type="text" v-model.trim="simpleNavigation.breadcrumb" maxLength="200" @input="setDirty" />
                                 <label for="breadcrumb" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.breadCrumbs') }} </label>
                             </span>
-                            <i class="pi pi-info-circle" @click="hintDialog" />
+                            <i class="pi pi-info-circle" @click="hintDialog('bread')" />
                         </span>
                     </div>
                     <div class="p-field p-col-4 p-mb-3">
@@ -89,6 +89,7 @@
             </template>
         </Card>
         <DocDialog :dialogVisible="dialogVisible" :selectedDoc="docId" @close="dialogVisible = false" @apply="hadleDoc"></DocDialog>
+        <HintDialog :dialogVisible="hintDialogVisiable" :message="hintDialogMessage" :title="hintDialogTitle" @close="hintDialogVisiable = false"></HintDialog>
     </div>
 </template>
 <script lang="ts">
@@ -99,12 +100,13 @@ import Dropdown from 'primevue/dropdown'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import DocDialog from './dialogs/CrossNavigationManagementDocDialog.vue'
+import HintDialog from './dialogs/CrossNavigationManagementHintDialog.vue'
 import DocParameters from './dialogs/CrossNavigationManagementDocParameters.vue'
 import crossNavigationManagementValidator from './CrossNavigationManagementValidator.json'
 import crossNavigationDescriptor from './CrossNavigationManagementDescriptor.json'
 export default defineComponent({
     name: 'cross-navigation-detail',
-    components: { Dropdown, DocDialog, DocParameters, KnValidationMessages },
+    components: { Dropdown, DocDialog, DocParameters, HintDialog, KnValidationMessages },
     props: {
         id: {
             type: String
@@ -116,12 +118,15 @@ export default defineComponent({
             simpleNavigation: {} as any,
             loading: false,
             dialogVisible: false,
+            hintDialogVisiable: false,
+            hintDialogTitle: '',
+            hintDialogMessage: '',
             docType: 'origin',
             docId: null,
             operation: 'insert',
             crossNavigationDescriptor,
             crossModes: [
-                { name: this.$t('managers.crossNavigationManagement.normal'), value: 0 },
+                { name: this.$t('managers.crossNavigationManagement.normal'), value: 3 },
                 { name: this.$t('managers.crossNavigationManagement.popUp'), value: 1 },
                 { name: this.$t('managers.crossNavigationManagement.popUpWindow'), value: 2 }
             ],
@@ -168,7 +173,8 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/' + this.id + '/load/')
                 .then((response) => {
                     this.navigation = response.data
-                    this.simpleNavigation = response.data.simpleNavigation
+                    if (this.navigation.simpleNavigation.type === 0) this.navigation.simpleNavigation.type = 3
+                    this.simpleNavigation = this.navigation.simpleNavigation
                     if (this.simpleNavigation.popupOptions) {
                         this.simpleNavigation.popupOptions = JSON.parse(this.simpleNavigation.popupOptions)
                     }
@@ -184,7 +190,10 @@ export default defineComponent({
             if (this.navigation.simpleNavigation.type === 2) {
                 this.navigation.simpleNavigation.popupOptions = JSON.stringify(this.navigation.simpleNavigation.popupOptions)
             } else delete this.navigation.simpleNavigation.popupOptions
-            console.log(this.navigation)
+
+            if (this.navigation.simpleNavigation.type === 3) {
+                this.navigation.simpleNavigation.type = 0
+            }
             axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/save/', this.navigation)
                 .then(() => {
@@ -192,7 +201,7 @@ export default defineComponent({
                         title: this.$t(this.crossNavigationDescriptor.operation[this.operation].toastTitle),
                         msg: this.$t(this.crossNavigationDescriptor.operation.success)
                     })
-                    this.$emit('saved', this.operation)
+                    this.$emit('saved', this.operation, this.navigation.simpleNavigation.name)
                 })
                 .catch((error) => {
                     this.$store.commit('setError', {
@@ -203,6 +212,9 @@ export default defineComponent({
                 .finally(() => {
                     if (this.navigation.simpleNavigation.type === 2) {
                         this.navigation.simpleNavigation.popupOptions = JSON.parse(this.navigation.simpleNavigation.popupOptions)
+                    }
+                    if (this.navigation.simpleNavigation.type === 0) {
+                        this.navigation.simpleNavigation.type = 3
                     }
                 })
         },
@@ -266,11 +278,17 @@ export default defineComponent({
                 param.links = []
             })
         },
-        hintDialog() {
-            this.$store.commit('setInfo', {
-                title: 'Hint',
-                msg: 'Hint hint hint'
-            })
+        hintDialog(type: string) {
+            switch (type) {
+                case 'desc':
+                    this.hintDialogTitle = this.$t('managers.crossNavigationManagement.hindDesc')
+                    this.hintDialogMessage = this.$t('managers.crossNavigationManagement.hindDescMessage')
+                    break
+                case 'bread':
+                    this.hintDialogTitle = this.$t('managers.crossNavigationManagement.hindBread')
+                    this.hintDialogMessage = this.$t('managers.crossNavigationManagement.hindBreadMessage')
+            }
+            this.hintDialogVisiable = true
         }
     }
 })

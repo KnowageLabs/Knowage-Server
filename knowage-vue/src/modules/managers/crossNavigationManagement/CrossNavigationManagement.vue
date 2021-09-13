@@ -106,9 +106,12 @@ export default defineComponent({
         handleClose() {
             this.$router.replace('/cross-navigation-management')
         },
-        reload(operation) {
-            if (operation === 'insert') this.$router.push('/cross-navigation-management')
-            this.loadAll()
+        async reload(operation, name) {
+            await this.loadAll()
+            if (operation === 'insert') {
+                let id = this.navigations.find((nav) => nav.name === name).id
+                this.$router.push('/cross-navigation-management/' + id)
+            }
         }
     }
 })
