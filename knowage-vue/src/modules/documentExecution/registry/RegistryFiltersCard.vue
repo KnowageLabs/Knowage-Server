@@ -71,6 +71,7 @@ export default defineComponent({
         clearAllFilters() {
             this.filters.forEach((el: any) => (el.filterValue = ''))
             this.clearFiltersTrigger = !this.clearFiltersTrigger
+            this.$emit('filter', this.filters)
         },
         filterRegistry() {
             this.$emit('filter', this.filters)

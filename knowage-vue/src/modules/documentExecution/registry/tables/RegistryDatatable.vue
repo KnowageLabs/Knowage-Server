@@ -6,9 +6,17 @@
                 :value="rows"
                 editMode="cell"
                 dataKey="id"
+                paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
                 :lazy="this.lazyParams.size > 1000"
                 :paginator="true"
                 :rows="15"
+                :currentPageReportTemplate="
+                    $t('common.table.footer.paginated', {
+                        first: '{first}',
+                        last: '{last}',
+                        totalRecords: '{totalRecords}'
+                    })
+                "
                 :totalRecords="lazyParams.size"
                 :reorderableColumns="true"
                 responsiveLayout="stack"
@@ -20,7 +28,15 @@
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <Column class="kn-truncated" :style="registryDatatableDescriptor.numerationColumn.style" :field="columns[0].field" :header="columns[0].title"></Column>
                 <template v-for="col of columns.slice(1)" :key="col.field">
-                    <Column class="kn-truncated" :field="col.field" :header="col.title" :bodyStyle="{ 'background-color': col.color, width: col.size + 'px' }">
+                    <Column
+                        class="kn-truncated"
+                        :field="col.field"
+                        :header="col.title"
+                        :bodyStyle="{
+                            'background-color': col.color,
+                            width: col.size + 'px'
+                        }"
+                    >
                         <template #editor="slotProps">
                             <div :data-test="col.field + '-editor'">
                                 <span v-if="!col.isEditable && col.columnInfo.type !== 'boolean'">{{ slotProps.data[col.field] }}</span>
@@ -100,8 +116,25 @@ import RegistryDatatableWarningDialog from './RegistryDatatableWarningDialog.vue
 
 export default defineComponent({
     name: 'registry-datatable',
-    components: { Card, Calendar, Checkbox, Column, DataTable, Dropdown, KnFabButton, RegistryDatatableWarningDialog },
-    props: { propColumns: { type: Array }, propRows: { type: Array, required: true }, columnMap: { type: Object }, propConfiguration: { type: Object }, pagination: { type: Object }, entity: { type: String }, id: { type: String } },
+    components: {
+        Card,
+        Calendar,
+        Checkbox,
+        Column,
+        DataTable,
+        Dropdown,
+        KnFabButton,
+        RegistryDatatableWarningDialog
+    },
+    props: {
+        propColumns: { type: Array },
+        propRows: { type: Array, required: true },
+        columnMap: { type: Object },
+        propConfiguration: { type: Object },
+        pagination: { type: Object },
+        entity: { type: String },
+        id: { type: String }
+    },
     emits: ['rowChanged', 'rowDeleted', 'pageChanged'],
     data() {
         return {
@@ -150,7 +183,16 @@ export default defineComponent({
     },
     methods: {
         loadColumns() {
-            this.columns = [{ field: 'id', title: '', size: '', isVisible: true, isEditable: false, columnInfo: { type: 'int' } }]
+            this.columns = [
+                {
+                    field: 'id',
+                    title: '',
+                    size: '',
+                    isVisible: true,
+                    isEditable: false,
+                    columnInfo: { type: 'int' }
+                }
+            ]
             this.propColumns?.forEach((el: any) => {
                 if (el.isVisible) this.columns.push(el)
             })
@@ -194,7 +236,12 @@ export default defineComponent({
             // console.log('LAZY PARAMS LOADED: ', this.lazyParams)
         },
         onPage(event: any) {
-            this.lazyParams = { paginationStart: event.first, paginationLimit: event.rows, paginationEnd: event.first + event.rows, size: this.lazyParams.size }
+            this.lazyParams = {
+                paginationStart: event.first,
+                paginationLimit: event.rows,
+                paginationEnd: event.first + event.rows,
+                size: this.lazyParams.size
+            }
             this.$emit('pageChanged', this.lazyParams)
         },
         rowDeleteConfirm(index: number, row: any) {
@@ -306,6 +353,7 @@ export default defineComponent({
             this.dependentColumns.forEach((el: any) => (this.selectedRow[el.field] = ''))
 
             console.log('SELECTED ROW AFTER CLEAR: ', this.selectedRow)
+            this.$emit('rowChanged', this.selectedRow)
         },
         setDependentColumns(column: any) {
             let tempColumn = column
