@@ -210,24 +210,29 @@ public class DatasetManagementAPI {
 				throw new RuntimeException("Dataset [" + label + "] does not exist");
 			}
 
-			if (DataSetUtilities.isExecutableByUser(dataSet, getUserProfile()) == false) {
+			UserProfile currUserProfile = getUserProfile();
+
+			if (UserUtilities.hasAdministratorRole(currUserProfile) || UserUtilities.hasDeveloperRole(currUserProfile)) {
+				return dataSet;
+			} else if (DataSetUtilities.isExecutableByUser(dataSet, currUserProfile) == false) {
 				Integer dsCategoryId = dataSet.getCategoryId();
 				if (dsCategoryId == null) {
 					throw new RuntimeException("Dataset " + label + " doesn't have category set.");
 				}
 				// check categories of dataset
-				Set<Domain> categoryList = UserUtilities.getDataSetCategoriesByUser(getUserProfile());
+				Set<Domain> categoryList = UserUtilities.getDataSetCategoriesByUser(currUserProfile);
 				if (categoryList != null && categoryList.size() > 0) {
 					for (Iterator iterator = categoryList.iterator(); iterator.hasNext();) {
 						Domain domain = (Domain) iterator.next();
 						Integer domainId = domain.getValueId();
 
-						if (dsCategoryId.equals(domainId))
+						if (dsCategoryId.equals(domainId)) {
 							return dataSet;
+						}
 					}
 				}
 				// just if dataset hasn't a category available for the user gives an error
-				throw new RuntimeException("User [" + getUserProfile().getUserId() + "] cannot access to dataset [" + label + "]");
+				throw new RuntimeException("User [" + currUserProfile.getUserId() + "] cannot access to dataset [" + label + "]");
 			}
 			return dataSet;
 		} catch (Throwable t) {

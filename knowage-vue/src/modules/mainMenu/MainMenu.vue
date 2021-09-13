@@ -156,9 +156,20 @@
 					if (Object.keys(this.news).length !== 0) return this.news.count.unread
 				}
 				return 0
+			},
+			findHomePage(dynMenu) {
+				let toRet = undefined
+				for (var idx in dynMenu) {
+					let menu = dynMenu[idx]
+
+					if (menu.to || menu.url) return menu
+				}
+
+				return toRet
 			}
 		},
 		mounted() {
+			this.$store.commit('setLoading', true)
 			let localObject = { locale: this.$i18n.fallbackLocale.toString() }
 			if (Object.keys(this.locale).length !== 0) localObject = { locale: this.locale }
 			if (localStorage.getItem('locale')) {
@@ -186,9 +197,16 @@
 						this.allowedUserFunctionalities.push(item)
 					}
 					this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities
+
+					if (this.dynamicUserFunctionalities.length > 0) {
+						let homePage = this.findHomePage(this.dynamicUserFunctionalities) || {}
+						if (homePage) this.$store.commit('setHomePage', homePage)
+						this.$router.push({ name: 'home' })
+					}
 					this.updateNewsAndDownload()
 				})
 				.catch((error) => console.error(error))
+				.finally(() => this.$store.commit('setLoading', false))
 		},
 		computed: {
 			...mapState({
