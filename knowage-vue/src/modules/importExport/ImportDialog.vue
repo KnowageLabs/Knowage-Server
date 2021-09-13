@@ -8,6 +8,7 @@
 			</FileUpload>
 		</div>
 		<div v-if="step == 1" class="importExportImport">
+			<Message severity="warn" v-if="step == 1 && getMessageWarningCondition()">{{ $t('importExport.itemsWithEmptyIdWarning') }}</Message>
 			<TabView @change="resetSearchFilter">
 				<TabPanel v-for="functionality in importExportDescriptor.functionalities" :key="functionality.label">
 					<template #header>
@@ -49,11 +50,14 @@
 						<Column v-for="col in getData(functionality.type)" :field="col.field" :header="$t(col.header)" :key="col.field" :style="col.style" :selectionMode="col.field == 'selectionMode' ? 'multiple' : ''" :exportable="col.field == 'selectionMode' ? false : ''">
 							<template #body="{data}" v-if="col.displayType">
 								<span class="p-float-label kn-material-input">
-									<div v-if="col.displayType == 'tags'">
+									<div v-if="col.displayType == 'widgetTags'">
 										<Tag class="importExportTags p-mr-1" v-for="(tag, index) in data.tags" v-bind:key="index" rounded :value="tag"> </Tag>
 									</div>
-									<div v-if="col.displayType == 'widgetGalleryType'">
+									<div v-else-if="col.displayType == 'widgetGalleryType'">
 										<Tag :style="importExportDescriptor.iconTypesMap[data.type].style"> {{ data.type.toUpperCase() }} </Tag>
+									</div>
+									<div v-else-if="col.displayType == 'widgetInfo'">
+										<Avatar v-if="data.id === null || data.id === ''" icon="pi pi-exclamation-triangle" shape="circle" v-tooltip="$t('importExport.itemWithEmptyId')" />
 									</div>
 								</span>
 							</template>
@@ -79,20 +83,24 @@
 	import axios from 'axios'
 	import { defineComponent } from 'vue'
 	import { FilterMatchMode, FilterOperator } from 'primevue/api'
+	import { ICatalogFunctionTemplate } from '@/modules/importExport/catalogFunction/ICatalogFunctionTemplate'
+	import { IGalleryTemplate } from '@/modules/managers/galleryManagement/GalleryManagement'
 	import { ITableColumn } from '../commons/ITableColumn'
+	import Avatar from 'primevue/avatar'
 	import Badge from 'primevue/badge'
 	import Column from 'primevue/column'
 	import DataTable from 'primevue/datatable'
 	import Dialog from 'primevue/dialog'
 	import FileUpload from 'primevue/fileupload'
 	import importExportDescriptor from './ImportExportDescriptor.json'
+	import Message from 'primevue/message'
 	import TabPanel from 'primevue/tabpanel'
 	import TabView from 'primevue/tabview'
 	import Tag from 'primevue/tag'
 
 	export default defineComponent({
 		name: 'import-dialog',
-		components: { Badge, Column, DataTable, Dialog, FileUpload, TabPanel, TabView, Tag },
+		components: { Avatar, Badge, Column, DataTable, Dialog, FileUpload, Message, TabPanel, TabView, Tag },
 		props: {
 			visibility: Boolean
 		},
@@ -104,12 +112,12 @@
 				filters: {},
 				loading: false,
 				packageItems: {
-					gallery: [],
-					catalogFunction: []
+					gallery: Array<IGalleryTemplate>(),
+					catalogFunction: Array<ICatalogFunctionTemplate>()
 				},
 				selectedItems: {
-					gallery: [],
-					catalogFunction: []
+					gallery: Array<IGalleryTemplate>(),
+					catalogFunction: Array<ICatalogFunctionTemplate>()
 				},
 				step: 0,
 				token: ''
@@ -154,6 +162,9 @@
 					return 0
 				})
 				return columns
+			},
+			getMessageWarningCondition() {
+				return this.selectedItems.gallery.filter((e) => !e.id || (e.id && (e.id === '' || e.id === null))).length > 0
 			},
 			getPackageItems(e) {
 				this.packageItems[e.functionality] = e.items
