@@ -10,5 +10,11 @@
             "text-align": "end",
             "width": "3rem"
         }
+    },
+    "numerationColumn": {
+        "style": {
+            "text-align": "center",
+            "width": "3rem"
+        }
     }
 }
