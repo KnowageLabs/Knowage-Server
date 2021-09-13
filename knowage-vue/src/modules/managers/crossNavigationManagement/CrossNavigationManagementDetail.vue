@@ -233,22 +233,22 @@ export default defineComponent({
             }
             this.dialogVisible = true
         },
-        hadleDoc(doc) {
+        async hadleDoc(doc) {
             this.dialogVisible = false
             switch (this.docType) {
                 case 'origin':
                     this.simpleNavigation.fromDocId = doc.DOCUMENT_ID
                     this.simpleNavigation.fromDoc = doc.DOCUMENT_LABEL
                     this.navigation.simpleNavigation = this.simpleNavigation
-                    this.loadInputParams(doc.DOCUMENT_LABEL).then((response) => (this.navigation.fromPars = response))
-                    this.loadOutputParams(doc.DOCUMENT_ID).then((response) => (this.navigation.fromPars = this.navigation.fromPars.concat(response)))
+                    await this.loadInputParams(doc.DOCUMENT_LABEL).then((response) => (this.navigation.fromPars = response))
+                    await this.loadOutputParams(doc.DOCUMENT_ID).then((response) => (this.navigation.fromPars = this.navigation.fromPars.concat(response)))
                     this.removeAllLink()
                     break
                 case 'target':
                     this.simpleNavigation.toDocId = doc.DOCUMENT_ID
                     this.simpleNavigation.toDoc = doc.DOCUMENT_LABEL
                     this.navigation.simpleNavigation = this.simpleNavigation
-                    this.loadInputParams(doc.DOCUMENT_LABEL).then((response) => (this.navigation.toPars = response))
+                    await this.loadInputParams(doc.DOCUMENT_LABEL).then((response) => (this.navigation.toPars = response))
                     break
             }
             this.setDirty()

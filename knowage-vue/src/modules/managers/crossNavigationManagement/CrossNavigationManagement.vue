@@ -7,7 +7,7 @@
                         {{ $t('managers.crossNavigationManagement.title') }}
                     </template>
                     <template #right>
-                        <KnFabButton icon="fas fa-plus" @click="showForm" />
+                        <KnFabButton icon="fas fa-plus" @click="showForm" data-test="new-button"/>
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />

@@ -34,7 +34,7 @@
             <template #option="slotProps">
                 <div class="p-d-flex card" v-if="slotProps.option.links && slotProps.option.links.length > 0">
                     <div>{{ slotProps.option.links[0].name }} <i class="fa fa-link"> </i> {{ slotProps.option.name }}</div>
-                    <i class="fa fa-times-circle p-mr-2 p-ml-auto" @click="removeLink(slotProps.option.id)"> </i>
+                    <i class="fa fa-times-circle p-mr-2 p-ml-auto" @click="removeLink(slotProps.option.id)" data-test="remove"> </i>
                 </div>
                 <div class="p-d-flex card" @drop="link($event, slotProps.option)" @dragover.prevent v-else>
                     <div>{{ slotProps.option.name }}</div>
