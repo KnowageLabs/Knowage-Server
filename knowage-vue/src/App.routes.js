@@ -61,15 +61,15 @@ const baseRoutes = [
 const routes = baseRoutes.concat(managersRoutes).concat(importExportRoutes)
 
 const router = createRouter({
-	base: process.env.VUE_APP_PUBLIC_PATH,
-	history: createWebHistory(process.env.VUE_APP_PUBLIC_PATH),
-	routes
+    base: process.env.VUE_APP_PUBLIC_PATH,
+    history: createWebHistory(process.env.VUE_APP_PUBLIC_PATH),
+    routes
 })
 
 router.beforeEach((to, from, next) => {
-	console.log(from)
+    console.log(from)
 
-	if (to.name === 'home') {
+    /*if (to.name === 'home') {
 		if (store.state.homePage.url) {
 			next({ name: 'homeIFrame', params: { url: store.state.homePage.url } })
 		} else if (store.state.homePage.to) {
@@ -77,7 +77,8 @@ router.beforeEach((to, from, next) => {
 		} else if (!store.state.loading) next()
 	}
 
-	if (!store.state.loading) next()
+	if (!store.state.loading) next()*/
+    next()
 })
 
 /*router.beforeEach((to, from, next) => {
