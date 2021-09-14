@@ -12,7 +12,8 @@ const store = createStore({
 			locale: {},
 			news: { count: { total: 0, unRead: 0 } },
 			loading: false,
-			homePage: {}
+			homePage: {},
+			internationalization: []
 		}
 	},
 	mutations: {
@@ -45,6 +46,9 @@ const store = createStore({
 		},
 		setHomePage(state, homePage) {
 			state.homePage = homePage
+		},
+		setInternationalization(state, internationalization) {
+			state.internationalization = internationalization
 		}
 	}
 })
