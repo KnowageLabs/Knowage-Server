@@ -122,12 +122,15 @@
 			onReaderLoad(event) {
 				let json = JSON.parse(event.target.result)
 
-				if (json.id === '') {
+				if (!json.id || json.id === '') {
 					this.$confirm.require({
 						message: this.$t('importExport.import.itemWithoutIdConfirm'),
 						header: this.$t('common.import'),
 						icon: 'pi pi-exclamation-triangle',
-						accept: () => this.importWidget(json)
+						accept: () => {
+							json.id = ''
+							this.importWidget(json)
+						}
 					})
 				}
 			},
