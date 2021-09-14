@@ -29,7 +29,12 @@
 			axios
 				.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/currentuser')
 				.then((response) => {
-					store.commit('setUser', response.data)
+					let currentUser = response.data
+					if (localStorage.getItem('sessionRole')) {
+						currentUser.sessionRole = localStorage.getItem('sessionRole')
+					} else if (currentUser.defaultRole) currentUser.sessionRole = currentUser.defaultRole
+
+					store.commit('setUser', currentUser)
 
 					let responseLocale = response.data.locale
 					let storedLocale = responseLocale
