@@ -1,9 +1,9 @@
 <div class="kn-table-container" ng-class="customClass">
-    <table class="kn-table" ng-class="customClass">
+    <table class="kn-table" ng-class="customClass" style="table-layout: fixed">
         <thead>
             <tr> 
-                <th ng-repeat="column in columns" ng-style="{'width':column.width}" ng-click="setColumnSorting(column)" ng-class="{'sortable':!column.unsortable}">
-                    <span>{{column.label}}</span>
+                <th ng-repeat="column in columns" ng-style="{'width':column.width}" ng-click="setColumnSorting(column)" ng-class="{'sortable':!column.unsortable}" class="truncated">
+                    <span title="{{column.label}}">{{column.label}}</span>
                     <md-icon ng-if="column.name == sortingColumn" md-font-icon="fa fa-arrow-down" ng-class="{'rotate180':column.name == sortingColumn && sortingDirection}"></md-icon>
                 </th>
             </tr>
@@ -11,8 +11,8 @@
         <tbody>
             <tr ng-repeat-start="row in model | filter:searchModel | orderBy:sortingColumn:sortingDirection" ng-click="clickFunctionWrapper(row,$event)" 
             		ng-class="{'selected':selectedItem == row, 'disabled' : (row.canLoadData != undefined && !row.canLoadData)}">
-                <td ng-repeat="column in columns">
-                    <span ng-if="!column.type || column.type=='text'">{{row[column.name]}}</span>
+                <td ng-repeat="column in columns" class="truncated">
+                    <span ng-if="!column.type || column.type=='text'" title="{{row[column.name]}}">{{row[column.name]}}</span>
                     <span ng-if="column.type=='date'">{{setDate(row[column.name])}}</span>
                     <md-input-container ng-if="column.type=='input'">
                         <input type="text" ng-model="row[column.name]" ng-if="!column.input.type || column.input.type == 'text'" />

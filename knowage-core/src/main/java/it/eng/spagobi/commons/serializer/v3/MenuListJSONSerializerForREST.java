@@ -556,10 +556,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				}
 				break;
 
-			case "multiple_roles":
-				isSatisfied = userProfile.getRoles().size() > 1;
-				break;
-
 			case "public_user":
 				if (PublicProfile.isPublicUser(userProfile.getUserUniqueIdentifier().toString())
 						|| userProfile.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID)) {

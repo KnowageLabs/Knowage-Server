@@ -104,6 +104,8 @@
 
 					if (item.conditionedView === 'news' && this.news && this.news.count.total > 0) return true
 
+					if (item.conditionedView === 'roleSelection' && this.user.roles.length > 1) return true
+
 					return false
 				} else {
 					return true
@@ -188,7 +190,15 @@
 				.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale))
 				.then((response) => {
 					this.technicalUserFunctionalities = response.data.technicalUserFunctionalities
-					this.commonUserFunctionalities = response.data.commonUserFunctionalities
+
+					let responseCommonUserFunctionalities = response.data.commonUserFunctionalities
+					for (var index in responseCommonUserFunctionalities) {
+						let item = responseCommonUserFunctionalities[index]
+						item.visible = this.isItemToDisplay(item)
+
+						this.commonUserFunctionalities.push(item)
+					}
+
 					let responseAllowedUserFunctionalities = response.data.allowedUserFunctionalities
 					for (var idx in responseAllowedUserFunctionalities) {
 						let item = responseAllowedUserFunctionalities[idx]
@@ -196,6 +206,7 @@
 
 						this.allowedUserFunctionalities.push(item)
 					}
+
 					this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities
 
 					if (this.dynamicUserFunctionalities.length > 0) {

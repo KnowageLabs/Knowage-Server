@@ -18,45 +18,49 @@ axios.interceptors.request.use(
 )
 
 axios.interceptors.response.use(
-	(res) => {
-		return res
-	},
-	function(error) {
-		if (error.response.status) {
-			if (error.response.status === 401) {
-				authHelper.logout()
-			}
-			if (error.response.status === 500) {
-				console.log(500)
+    (res) => {
+        if (res.data && res.data.errors) {
+            store.commit('setError', { title: 'Server error', msg: res.data.errors[0].message })
+            return Promise.reject(res.data.errors[0])
+        }
+        return res
+    },
+    function(error) {
+        if (error.response.status) {
+            if (error.response.status === 401) {
+                authHelper.logout()
+            }
+            if (error.response.status === 500) {
+                console.log(500)
 
-				let obj = error.response.data
-				if (error.response.data instanceof ArrayBuffer) {
-					obj = JSON.parse(new TextDecoder().decode(error.response.data))
-				}
-				if (obj.errors) {
-					if (obj.errors[0].code) {
-						let errArray = obj.errors
+                let obj = error.response.data
+                if (error.response.data instanceof ArrayBuffer) {
+                    obj = JSON.parse(new TextDecoder().decode(error.response.data))
+                }
+                if (obj.errors) {
+                    if (obj.errors[0].code) {
+                        let errArray = obj.errors
 
-						for (var idx in errArray) {
-							let err = errArray[idx]
+                        for (var idx in errArray) {
+                            let err = errArray[idx]
 
-							let hints = ''
-							for (var hintIdx in err.hints) {
-								let hint = err.hints[hintIdx]
+                            let hints = ''
+                            for (var hintIdx in err.hints) {
+                                let hint = err.hints[hintIdx]
 
-								if (idx > 0) hints += '\n' + hint
-								else hints += hint
-							}
-							store.commit('setError', { title: err.message, msg: hints })
-						}
-					} else {
-						store.commit('setError', { title: 'Server error', msg: obj.errors[0].message })
-					}
-				}
-			}
-		}
-		return Promise.reject(error)
-	}
+                                if (idx > 0) hints += '\n' + hint
+                                else hints += hint
+                            }
+                            store.commit('setError', { title: err.message, msg: hints })
+                        }
+                    } else {
+                        store.commit('setError', { title: 'Server error', msg: obj.errors[0].message })
+                    }
+                }
+            }
+        }
+        return Promise.reject(error)
+    }
 )
 
 export default axios

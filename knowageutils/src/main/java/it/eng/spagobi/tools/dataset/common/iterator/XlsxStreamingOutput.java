@@ -257,7 +257,7 @@ public class XlsxStreamingOutput implements StreamingOutput {
 				IField f = (IField) fields.get(realFieldIndex);
 				if (f != null && f.getValue() != null) {
 
-					Class c = metaData.getFieldType(fieldIndex);
+					Class c = metaData.getFieldType(realFieldIndex);
 					logger.debug("Column [" + (fieldIndex) + "] class is equal to [" + c.getName() + "]");
 					if (rowVal == null) {
 						rowVal = sheet.createRow(rownum);
@@ -266,7 +266,7 @@ public class XlsxStreamingOutput implements StreamingOutput {
 					cell.setCellStyle(dCellStyle);
 					if (Integer.class.isAssignableFrom(c) || Short.class.isAssignableFrom(c)) {
 						logger.debug("Column [" + (fieldIndex + 1) + "] type is equal to [" + "INTEGER" + "]");
-						IFieldMetaData fieldMetaData = metaData.getFieldMeta(fieldIndex);
+						IFieldMetaData fieldMetaData = metaData.getFieldMeta(realFieldIndex);
 						String scaleFactor = (String) fieldMetaData.getProperty(ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
 						Number val = (Number) f.getValue();
 						Double doubleValue = applyScaleFactor(val.doubleValue(), scaleFactor);
@@ -275,7 +275,7 @@ public class XlsxStreamingOutput implements StreamingOutput {
 						cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cellStyleInt);
 					} else if (Number.class.isAssignableFrom(c)) {
 						logger.debug("Column [" + (fieldIndex + 1) + "] type is equal to [" + "NUMBER" + "]");
-						IFieldMetaData fieldMetaData = metaData.getFieldMeta(fieldIndex);
+						IFieldMetaData fieldMetaData = metaData.getFieldMeta(realFieldIndex);
 						String decimalPrecision = (String) fieldMetaData.getProperty(IFieldMetaData.DECIMALPRECISION);
 						CellStyle cs;
 						if (decimalPrecision != null) {
