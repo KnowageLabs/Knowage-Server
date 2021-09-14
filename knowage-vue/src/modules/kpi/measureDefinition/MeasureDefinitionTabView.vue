@@ -286,21 +286,28 @@ export default defineComponent({
 
             if ((this.rule.placeholders && this.rule.placeholders.length === 0) || hasPlaceholders) {
                 const postData = { rule: this.rule, maxItem: 10 }
-                await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/queryPreview', postData).then((response) => {
-                    if (response.data.errors) {
-                        this.errorTitle = this.$t('kpi.measureDefinition.metadataError') + ' ' + this.$t('kpi.measureDefinition.wrongQuery')
-                        this.errorMessage = response.data.errors[0].message
-                        this.preview = false
-                        this.rows = []
-                    } else {
-                        this.columns = response.data.columns
-                        this.rows = response.data.rows
-                        this.columnToRuleOutputs()
-                        if (this.activeTab === 0) {
-                            this.preview = true
+                await axios
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/queryPreview', postData)
+                    .then((response) => {
+                        if (response.data.errors) {
+                            this.errorTitle = this.$t('kpi.measureDefinition.metadataError') + ' ' + this.$t('kpi.measureDefinition.wrongQuery')
+                            this.errorMessage = response.data.errors[0].message
+                            this.preview = false
+                            this.rows = []
+                        } else {
+                            this.columns = response.data.columns
+                            this.rows = response.data.rows
+                            this.columnToRuleOutputs()
+                            if (this.activeTab === 0) {
+                                this.preview = true
+                            }
                         }
-                    }
-                })
+                    })
+                    .catch((error) => {
+                        this.$store.commit('setError', {
+                            msg: error
+                        })
+                    })
             }
             this.setNewAliases()
             this.setNewPlaceholders()
