@@ -4,6 +4,7 @@ import managersRoutes from '@/modules/managers/managers.routes.js'
 import importExportRoutes from '@/modules/importExport/ImportExport.routes.js'
 import kpiRoutes from '@/modules/kpi/kpi.routes.js'
 import documentExecutionRoutes from '@/modules/documentExecution/documentExecution.routes.js'
+import store from './App.store'
 
 const baseRoutes = [
     {
@@ -74,15 +75,12 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     console.log(from)
 
-    /*if (to.name === 'home') {
-		if (store.state.homePage.url) {
-			next({ name: 'homeIFrame', params: { url: store.state.homePage.url } })
-		} else if (store.state.homePage.to) {
-			next({ name: 'homeIFrame', params: { to: store.state.homePage.to } })
-		} else if (!store.state.loading) next()
-	}
+    if (to.name === 'home') {
+        if (store.state.homePage) {
+            next({ name: 'homeIFrame', params: { url: store.state.homePage.url, to: store.state.homePage.to } })
+        }
+    }
 
-	if (!store.state.loading) next()*/
     next()
 })
 
