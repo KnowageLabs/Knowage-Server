@@ -291,6 +291,7 @@ export default defineComponent({
                         this.errorTitle = this.$t('kpi.measureDefinition.metadataError') + ' ' + this.$t('kpi.measureDefinition.wrongQuery')
                         this.errorMessage = response.data.errors[0].message
                         this.preview = false
+                        this.rows = []
                     } else {
                         this.columns = response.data.columns
                         this.rows = response.data.rows

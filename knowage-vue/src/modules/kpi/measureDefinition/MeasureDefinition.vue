@@ -117,12 +117,20 @@ export default defineComponent({
             })
         },
         async deleteMeasure(measure: iMeasure) {
-            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${measure.ruleId}/${measure.ruleVersion}/deleteRule`).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.deleteTitle'),
-                    msg: this.$t('common.toast.deleteSuccess')
-                })
-                this.loadPage()
+            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${measure.ruleId}/${measure.ruleVersion}/deleteRule`).then((response) => {
+                if (response.data.errors) {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: response.data.errors[0].message
+                    })
+                    this.loadPage()
+                } else {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                    this.loadPage()
+                }
             })
         }
     }

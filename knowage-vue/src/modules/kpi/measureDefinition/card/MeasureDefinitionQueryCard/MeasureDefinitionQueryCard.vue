@@ -1,6 +1,7 @@
 <template>
     <Card>
         <template #content>
+            {{ selectedRule.dataSource }}
             <div class="p-m-3">
                 <span class="p-float-label">
                     <Dropdown id="dataSource" class="kn-material-input" v-model="selectedRule.dataSource" :options="datasourcesList" optionLabel="DATASOURCE_LABEL" @change="loadDataSourceStructure"> </Dropdown>
@@ -17,7 +18,7 @@
             </div>
         </template>
     </Card>
-    <MeasureDefinitionPreviewDialog v-if="previewVisible && preview" :currentRule="selectedRule" :placeholders="placeholders" :columns="columns" :rows="rows" @close="previewVisible = false" @loadPreview="$emit('loadPreview')"></MeasureDefinitionPreviewDialog>
+    <MeasureDefinitionPreviewDialog v-if="previewVisible && preview" :currentRule="selectedRule" :placeholders="placeholders" :columns="columns" :propsRow="rows" @close="previewVisible = false" @loadPreview="$emit('loadPreview')"></MeasureDefinitionPreviewDialog>
 </template>
 
 <script lang="ts">

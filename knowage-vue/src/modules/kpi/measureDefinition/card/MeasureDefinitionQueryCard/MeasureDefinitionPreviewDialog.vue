@@ -55,17 +55,24 @@ export default defineComponent({
             required: true
         },
         columns: { type: Array },
-        rows: { type: Array }
+        propRows: { type: Array }
     },
     emits: ['close', 'loadPreview'],
+    watch: {
+        propRows() {
+            this.loadRows()
+        }
+    },
     data() {
         return {
             previewDialogDescriptor,
-            rule: {} as iRule
+            rule: {} as iRule,
+            rows: [] as any[]
         }
     },
     async created() {
         this.loadRule()
+        this.loadRows()
     },
     methods: {
         loadRule() {
@@ -73,6 +80,9 @@ export default defineComponent({
         },
         loadPreview() {
             this.$emit('loadPreview')
+        },
+        loadRows() {
+            this.rows = this.propRows as any[]
         },
         closeTemplate() {
             this.$emit('close')
