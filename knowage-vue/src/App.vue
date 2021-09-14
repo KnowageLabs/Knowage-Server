@@ -104,6 +104,12 @@
 						}
 					})
 				this.newsDownloadHandler()
+				this.loadInternationalization()
+			},
+			async loadInternationalization() {
+				let currentLocale = localStorage.getItem('locale') ? localStorage.getItem('locale') : store.locale
+				currentLocale = currentLocale.replaceAll('_', '-')
+				await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization?currLanguage=' + currentLocale).then((response) => store.commit('setInternationalization', response.data))
 			},
 			newsDownloadHandler() {
 				console.log('Starting connection to WebSocket Server')

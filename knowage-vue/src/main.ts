@@ -32,25 +32,27 @@ import Tooltip from 'primevue/tooltip'
 import BadgeDirective from 'primevue/badgedirective'
 
 import ConfirmationService from 'primevue/confirmationservice'
+import i18nPlugin from './plugins/internationalization.js'
 
 import i18n from '@/App.i18n'
 
 createApp(App)
-  .use(VueAxios, axios)
-  .use(store)
-  .use(router)
-  .use(i18n)
-  .use(PrimeVue)
-  .use(ToastService)
-  .use(ConfirmationService)
+	.use(VueAxios, axios)
+	.use(store)
+	.use(router)
+	.use(i18n)
+	.use(PrimeVue)
+	.use(ToastService)
+	.use(ConfirmationService)
+	.use(i18nPlugin, store.state.internationalization)
 
-  .directive('badge', BadgeDirective)
-  .directive('tooltip', Tooltip)
+	.directive('badge', BadgeDirective)
+	.directive('tooltip', Tooltip)
 
-  .component('Button', Button)
-  .component('Card', Card)
-  .component('InputText', InputText)
-  .component('ProgressBar', ProgressBar)
-  .component('Toolbar', Toolbar)
+	.component('Button', Button)
+	.component('Card', Card)
+	.component('InputText', InputText)
+	.component('ProgressBar', ProgressBar)
+	.component('Toolbar', Toolbar)
 
-  .mount('#app')
+	.mount('#app')
