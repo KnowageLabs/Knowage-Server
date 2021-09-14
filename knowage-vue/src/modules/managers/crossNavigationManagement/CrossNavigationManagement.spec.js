@@ -12,7 +12,6 @@ import ProgressBar from 'primevue/progressbar'
 import crossNavigationManagement from './CrossNavigationManagement.vue'
 import PrimeVue from 'primevue/config'
 
-
 const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -54,7 +53,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [router,PrimeVue],
+            plugins: [router, PrimeVue],
             stubs: {
                 Button,
                 Card,
@@ -74,13 +73,17 @@ const factory = () => {
     })
 }
 
+describe('Cross-navigation Management loading', () => {
+    it('show progress bar when loading', () => {
+        const wrapper = factory()
 
-describe("Cross-navigation Management", () => {
-    it(
-        "shows a prompt when user click on a list item delete button to delete it",
-        () => {}
-    );
-    it("shows and empty detail when clicking on the add button", async () => {
+        expect(wrapper.vm.loading).toBe(true)
+        expect(wrapper.find('[data-test="progress-bar"]').exists()).toBe(true)
+    })
+})
+describe('Cross-navigation Management', () => {
+    it('shows a prompt when user click on a list item delete button to delete it', () => {})
+    it('shows and empty detail when clicking on the add button', async () => {
         const wrapper = factory()
 
         await wrapper.find('[data-test="new-button"]').trigger('click')
@@ -88,6 +91,6 @@ describe("Cross-navigation Management", () => {
         await flushPromises()
 
         expect($router.push).toHaveBeenCalledWith('/cross-navigation-management/new-navigation')
-    });
-    it("shows the detail when clicking on a item", () => {});
-});
+    })
+    it('shows the detail when clicking on a item', () => {})
+})

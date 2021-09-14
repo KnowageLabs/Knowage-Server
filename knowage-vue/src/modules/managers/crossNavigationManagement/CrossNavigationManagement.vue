@@ -7,10 +7,10 @@
                         {{ $t('managers.crossNavigationManagement.title') }}
                     </template>
                     <template #right>
-                        <KnFabButton icon="fas fa-plus" @click="showForm" data-test="new-button"/>
+                        <KnFabButton icon="fas fa-plus" @click="showForm" data-test="new-button" />
                     </template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
                 <KnListBox :options="navigations" :settings="crossNavigationDescriptor.knListSettings" @delete="deleteTemplate($event, item)"></KnListBox>
             </div>
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
