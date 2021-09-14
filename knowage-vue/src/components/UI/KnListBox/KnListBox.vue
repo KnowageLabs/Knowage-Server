@@ -1,5 +1,5 @@
 <template>
-    <Listbox class="kn-list knListBox" :options="options" listStyle="max-height:calc(100% - 62px)" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="settings.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')">
+    <Listbox class="kn-list knListBox" :options="options" listStyle="max-height:calc(100% - 62px)" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="settings.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')" data-test="list">
         <template #header>
             <Button icon="fas fa-sort-amount-down-alt" class="p-button-text p-button-rounded p-button-plain headerButton" @click="toggleSort" v-tooltip.bottom="$t('common.sort')" />
             <Menu id="sortMenu" ref="sortMenu" :model="settings.sortFields" :popup="true">
