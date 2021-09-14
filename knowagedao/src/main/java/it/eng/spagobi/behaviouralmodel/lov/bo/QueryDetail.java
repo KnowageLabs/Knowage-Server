@@ -780,9 +780,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		DataConnection dataConnection = null;
 		SQLCommand sqlCommand = null;
 		DataResult dataResult = null;
-		try {
-			// gets connection
-			Connection conn = getConnection(profile, dataSource);
+		try(Connection conn = getConnection(profile, dataSource)) {
 			dataConnection = getDataConnection(conn);
 			sqlCommand = dataConnection.createSelectCommand(statement, false);
 			dataResult = sqlCommand.execute();
@@ -835,12 +833,13 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			statement = getValidationQuery(profile, driver, values);
 			logger.debug("Executing validation statement [" + statement + "] ...");
 			// gets connection
-			Connection conn = getConnection(profile, dataSource);
-			dataConnection = getDataConnection(conn);
-			sqlCommand = dataConnection.createSelectCommand(statement, false);
-			dataResult = sqlCommand.execute();
-			ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
-			result = scrollableDataResult.getSourceBean();
+			try (Connection conn = getConnection(profile, dataSource)) {
+				dataConnection = getDataConnection(conn);
+				sqlCommand = dataConnection.createSelectCommand(statement, false);
+				dataResult = sqlCommand.execute();
+				ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
+				result = scrollableDataResult.getSourceBean();
+			}
 		} finally {
 			Utils.releaseResources(dataConnection, sqlCommand, dataResult);
 		}

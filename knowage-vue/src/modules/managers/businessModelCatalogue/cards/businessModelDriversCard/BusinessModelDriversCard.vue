@@ -7,7 +7,7 @@ span<template>
                         {{ $t('managers.businessModelManager.drivers') }}
                     </template>
                     <template #right>
-                        <Button class="kn-button p-button-text" @click="showForm">{{ $t('managers.businessModelManager.add') }}</Button>
+                        <Button class="kn-button p-button-text" :disabled="readonly" @click="showForm">{{ $t('managers.businessModelManager.add') }}</Button>
                     </template>
                 </Toolbar>
             </template>
@@ -25,9 +25,9 @@ span<template>
                                 >
                                 <span class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option.parameterUrlName }}</span>
                             </div>
-                            <Button v-if="slotProps.option.id !== businessModelDrivers[0].id" icon="fa fa-arrow-up" class="p-button-link p-button-sm" @click.stop="movePriority(slotProps.option.id, 'UP')" />
-                            <Button v-if="slotProps.option.id !== businessModelDrivers[businessModelDrivers.length - 1].id" icon="fa fa-arrow-down" class="p-button-link p-button-sm" @click.stop="movePriority(slotProps.option.id, 'DOWN')" />
-                            <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteDriverConfirm(slotProps.index)" />
+                            <Button v-if="slotProps.option.id !== businessModelDrivers[0].id && !readonly" icon="fa fa-arrow-up" class="p-button-link p-button-sm" @click.stop="movePriority(slotProps.option.id, 'UP')" />
+                            <Button v-if="slotProps.option.id !== businessModelDrivers[businessModelDrivers.length - 1].id && !readonly" icon="fa fa-arrow-down" class="p-button-link p-button-sm" @click.stop="movePriority(slotProps.option.id, 'DOWN')" />
+                            <Button v-if="!readonly" icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteDriverConfirm(slotProps.index)" />
                         </div>
                     </template>
                 </Listbox>
@@ -35,7 +35,7 @@ span<template>
         </Card>
 
         <div class="p-col-6 p-p-0 p-m-0">
-            <BuisnessModelDriverDetail :businessModelId="id" :selectedDriver="selectedDriver" :formVisible="formVisible" :driverOptions="analyticalDrivers" :businessModelDrivers="businessModelDrivers"></BuisnessModelDriverDetail>
+            <BuisnessModelDriverDetail :businessModelId="id" :selectedDriver="selectedDriver" :formVisible="formVisible" :driverOptions="analyticalDrivers" :businessModelDrivers="businessModelDrivers" :readonly="readonly"></BuisnessModelDriverDetail>
         </div>
     </div>
 </template>
@@ -66,6 +66,9 @@ export default defineComponent({
         driversOptions: {
             type: Array,
             required: true
+        },
+        readonly: {
+            type: Boolean
         }
     },
     emits: ['delete'],

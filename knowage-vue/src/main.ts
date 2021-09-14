@@ -22,6 +22,7 @@ import 'codemirror/mode/javascript/javascript.js'
 import 'codemirror/mode/python/python.js'
 import 'codemirror/mode/xml/xml.js'
 import 'codemirror/mode/sql/sql.js'
+import 'codemirror/mode/groovy/groovy.js'
 import 'codemirror/mode/clike/clike.js'
 import 'codemirror/mode/mathematica/mathematica.js'
 

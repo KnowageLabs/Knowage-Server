@@ -33,22 +33,19 @@
 			<ITEM id="2005" label="menu.FunctMan"
 				requiredFunctionality="FunctionalitiesManagement"
 				to="/functionalities-management" />
-			<ITEM id="2006" label="menu.community.mng"
-				requiredFunctionality="CommunityManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=ManageCommunity" />
 		</GROUP_ITEM>
 
 		<GROUP_ITEM id="3000" label="menu.BehaviouralModelMenu"
 			iconCls="fa fa-2x fa-users">
 			<ITEM id="3002" label="menu.LovMan"
 				requiredFunctionality="LovsView"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=lovsManagement" />
+				to="/lovs-management" />
 			<ITEM id="3003" label="menu.ParameterMan"
 				requiredFunctionality="ParameterView"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=analyticalDrivers" />
+				to="/drivers-management" />
 			<ITEM id="3004" label="menu.ConstraintMan"
 				requiredFunctionality="ConstraintView"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=modalitiesCheck" />
+				to="/constraint-management" />
 			<ITEM id="3005" label="menu.BehaviouralModelLineage"
 				requiredFunctionality="BehaviouralModelLineage"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=behaviouralModelLineage" />
@@ -122,7 +119,7 @@
 				to="/news-management" />
 			<ITEM id="5008" label="menu.modelCatalogResourceManagement"
 				to="/models-management" />
-			<ITEM id="5009" label="menu.resourceManagement" requiredFunctionality="ResourceManagement"
+			<ITEM id="5009" label="menu.resourceManagement" requiredFunctionality="ResourceManagement,ResourceManagementDev"
 				to="/resource-management" />
 		</GROUP_ITEM>
 
@@ -133,10 +130,10 @@
 				to="/kpi-definition" />
 			<ITEM id="6002" label="menu.kpi.measureRuleDefinition"
 				requiredFunctionality="KpiManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=measureRuleDefinition" />
+				to="/measure-definition" />
 			<ITEM id="6003" label="menu.kpi.targetDefinition"
 				requiredFunctionality="KpiTargetsManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=targetDefinition" />
+				to="/target-definition" />
 			<ITEM id="6004" label="menu.kpi.schedulerKpi"
 				requiredFunctionality="KpiManagement"
 				to="/kpi-scheduler" />
@@ -233,7 +230,7 @@
 		<ITEM label="menu.Languages" iconCls="fab fa-font-awesome-flag"
 			command="languageSelection" />
 		<ITEM label="menu.RoleSelection" iconCls="fas fa-users-cog"
-			command="roleSelection" condition="multiple_roles" />
+			command="roleSelection" conditionedView="roleSelection"/>
 		<ITEM label="menu.info" iconCls="fas fa-info-circle"
 			command="info" />
 		<ITEM label="menu.login"
@@ -273,11 +270,11 @@
 	
 		<ITEM id="11007" label="menu.glossary.technical"
 			requiredFunctionality="ManageGlossaryTechnical"
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=glossaryTechnical"
+			to="/glossary-definition"
 			iconCls="fas fa-book" />
 		<ITEM id="11008" label="menu.glossary.business"
 			requiredFunctionality="ManageGlossaryBusiness"
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=glossaryBusiness"
+			to="/glossary-usage"
 			iconCls="fas fa-building" />
 		<ITEM id="11009" label="menu.cross.definition"
 			requiredFunctionality="ManageCrossNavigation"
@@ -287,7 +284,7 @@
 			iconCls="fas fa-calendar" />
 		<ITEM id="11011" label="menu.lovs.management"
 			requiredFunctionality="LovsManagement"
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=lovsManagement"
+			to="/lovs-management"
 			iconCls="fas fa-list" />
 		<ITEM id="11018" label="menu.i18n"
 			requiredFunctionality="ManageInternationalization"

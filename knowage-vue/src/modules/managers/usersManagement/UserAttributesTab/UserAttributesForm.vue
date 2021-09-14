@@ -96,7 +96,6 @@ export default defineComponent({
             this.lovDialogVisible = true
         },
         onSaveLovValues(selectedLovValues) {
-            console.log('selectedLovValues', this.selectedAttribute?.value)
             let newValue = ''
             if (this.selectedAttribute && Array.isArray(selectedLovValues)) {
                 if (this.selectedAttribute.syntax) {
@@ -106,7 +105,6 @@ export default defineComponent({
                         return prev
                     }, '')
                     newValue = `{;{${newValue}}}`
-                    console.log('newValue', newValue)
                 } else {
                     newValue = selectedLovValues.reduce((prev, curr, ind) => {
                         prev += ind > 0 ? ',' : ''

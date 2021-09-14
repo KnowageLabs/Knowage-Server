@@ -3268,6 +3268,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			// for each role of the user
 			for (String role : userRolesWithPermission) {
 				boolean correct = true;
+				iterParam = idParameters.iterator();
 				// for each parameter get the number of the modality for the
 				// current role
 				while (iterParam.hasNext()) {
