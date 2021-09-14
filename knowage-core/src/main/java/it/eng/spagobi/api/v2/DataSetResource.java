@@ -795,11 +795,15 @@ public class DataSetResource extends AbstractDataSetResource {
 				JSONArray jsonCategories = new JSONArray();
 				IDataSet dataSet = getDatasetManagementAPI().getDataSet(label);
 
+				Set<String> qbeHiddenColumns = getQbeDataSetHiddenColumns(dataSet);
+
 				IMetaData metadata = dataSet.getMetadata();
 				for (int i = 0; i < metadata.getFieldCount(); i++) {
 					IFieldMetaData fieldMetaData = metadata.getFieldMeta(i);
-					JSONObject json = new JSONObject();
 					String alias = fieldMetaData.getAlias();
+					if (qbeHiddenColumns.contains(alias))
+						continue;
+					JSONObject json = new JSONObject();
 					json.put("id", alias);
 					json.put("alias", alias);
 					json.put("columnName", alias);
@@ -849,6 +853,25 @@ public class DataSetResource extends AbstractDataSetResource {
 			logger.error("Error while previewing dataset " + label, e);
 			throw new SpagoBIRuntimeException("Error while previewing dataset " + label + ". " + e.getMessage(), e);
 		}
+	}
+
+	private Set<String> getQbeDataSetHiddenColumns(IDataSet dataSet) {
+		Set<String> hiddenColumns = new HashSet<String>();
+		if (dataSet.getDsType().equals("SbiQbeDataSet")) {
+			try {
+				JSONObject dsConfig = new JSONObject(dataSet.getConfiguration());
+				JSONObject qbeQuery = new JSONObject(dsConfig.getString("qbeJSONQuery"));
+				JSONArray fields = qbeQuery.getJSONObject("catalogue").getJSONArray("queries").getJSONObject(0).getJSONArray("fields");
+				for (int i = 0; i < fields.length(); i++) {
+					JSONObject field = fields.getJSONObject(i);
+					if (field.has("visible") && field.getBoolean("visible") == false)
+						hiddenColumns.add(field.getString("alias"));
+				}
+			} catch (Exception e) {
+				logger.error("Error while getting list of hidden QBE columns.", e);
+			}
+		}
+		return hiddenColumns;
 	}
 
 	@POST
