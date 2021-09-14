@@ -13,6 +13,7 @@
                         <Button class="kn-button p-button-text p-button-rounded" @click="showPreview" :disabled="previewDisabled">{{ $t('kpi.measureDefinition.preview') }}</Button>
                     </template>
                 </Toolbar>
+                {{ previewVisible }}
                 <VCodeMirror ref="codeMirror" v-model:value="code" :autoHeight="true" :options="options" @keyup="onKeyUp" />
             </div>
         </template>
@@ -73,6 +74,7 @@ export default defineComponent({
             this.codeMirror.replaceRange(this.codeInput, this.cursorPosition)
         },
         preview(value) {
+            console.log('CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALED: ', value)
             this.previewVisible = value
         }
     },

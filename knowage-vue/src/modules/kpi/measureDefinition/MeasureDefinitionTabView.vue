@@ -11,6 +11,7 @@
         </Toolbar>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         <div class="p-d-flex p-flex-row kn-page-content">
+            {{ preview }}
             <div class="card kn-flex" v-if="!loading">
                 <TabView v-model:activeIndex="activeTab" @tab-change="setTabChanged($event.index)">
                     <TabPanel>
@@ -120,7 +121,7 @@ export default defineComponent({
             aliasesVisible: false,
             placeholderVisible: false,
             codeInput: null as string | null,
-            preview: true
+            preview: false
         }
     },
     computed: {
@@ -287,6 +288,7 @@ export default defineComponent({
 
             if ((this.rule.placeholders && this.rule.placeholders.length === 0) || hasPlaceholders) {
                 const postData = { rule: this.rule, maxItem: 10 }
+
                 await axios
                     .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/queryPreview', postData)
                     .then((response) => {
@@ -298,10 +300,7 @@ export default defineComponent({
                         }
                     })
                     .catch((error) => {
-                        this.errorTitle = this.$t('kpi.measureDefinition.metadataError') + ' ' + this.$t('kpi.measureDefinition.wrongQuery')
-                        this.errorMessage = error
-                        this.preview = false
-                        this.rows = []
+                        this.setPreviewError(error)
                     })
             }
             this.setNewAliases()
@@ -313,6 +312,12 @@ export default defineComponent({
             this.rule.dataSource = tempDatasource
             this.rule.ruleOutputs = tempRuleOutputs
             this.loading = false
+        },
+        setPreviewError(error: string) {
+            this.errorTitle = this.$t('kpi.measureDefinition.metadataError') + ' ' + this.$t('kpi.measureDefinition.wrongQuery')
+            this.errorMessage = error
+            this.preview = false
+            this.rows = []
         },
         async preSaveRule() {
             this.loading = true
