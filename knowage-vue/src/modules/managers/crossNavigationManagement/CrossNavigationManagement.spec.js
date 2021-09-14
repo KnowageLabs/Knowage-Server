@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { createRouter, createWebHistory } from 'vue-router'
+import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
@@ -11,6 +12,48 @@ import Toolbar from 'primevue/toolbar'
 import ProgressBar from 'primevue/progressbar'
 import crossNavigationManagement from './CrossNavigationManagement.vue'
 import PrimeVue from 'primevue/config'
+
+const mockedNavigations = [
+    {
+        id: 655,
+        name: 'MapToRPTfile',
+        description: null,
+        breadcrumb: null,
+        type: 0,
+        fromDoc: 'DEMO_Report',
+        fromDocId: 2341,
+        toDoc: 'DEMO_Report',
+        toDocId: 2341,
+        fixedValue: null,
+        popupOptions: null
+    },
+    {
+        id: 640,
+        name: 'svgStateToReport',
+        description: null,
+        breadcrumb: null,
+        type: 0,
+        fromDoc: 'DM_SVG_STORE2',
+        fromDocId: null,
+        toDoc: 'BestProductSingPar',
+        toDocId: null,
+        fixedValue: null,
+        popupOptions: null
+    },
+    {
+        id: 673,
+        name: 'Test',
+        description: 'Test description',
+        breadcrumb: 'test text',
+        type: 1,
+        fromDoc: 'KPI_LIST',
+        fromDocId: 2376,
+        toDoc: 'Accident_NYC',
+        toDocId: 3219,
+        fixedValue: null,
+        popupOptions: null
+    }
+]
 
 const router = createRouter({
     history: createWebHistory(),
@@ -34,6 +77,12 @@ const router = createRouter({
         }
     ]
 })
+
+jest.mock('axios')
+
+axios.get.mockImplementation(() => Promise.resolve({ data: mockedNavigations }))
+
+axios.post.mockImplementation(() => Promise.resolve())
 
 const $confirm = {
     require: jest.fn()
@@ -73,6 +122,15 @@ const factory = () => {
     })
 }
 
+beforeEach(async () => {
+    router.push('/cross-navigation-management')
+    await router.isReady()
+})
+
+afterEach(() => {
+    jest.clearAllMocks()
+})
+
 describe('Cross-navigation Management loading', () => {
     it('show progress bar when loading', () => {
         const wrapper = factory()
@@ -82,15 +140,23 @@ describe('Cross-navigation Management loading', () => {
     })
 })
 describe('Cross-navigation Management', () => {
-    it('shows a prompt when user click on a list item delete button to delete it', () => {})
-    it('shows and empty detail when clicking on the add button', async () => {
+    it('shows a prompt when user click on a list item delete button to delete it', async () => {
         const wrapper = factory()
-
-        await wrapper.find('[data-test="new-button"]').trigger('click')
-
         await flushPromises()
-
-        expect($router.push).toHaveBeenCalledWith('/cross-navigation-management/new-navigation')
+        console.log(wrapper.vm.navigations)
+        const deleteButton = wrapper.find('[data-test="delete-button-0"]')
+        await deleteButton.trigger('click')
     })
-    it('shows the detail when clicking on a item', () => {})
+    it('shows and empty detail when clicking on the add button', async () => {
+        // const wrapper = factory()
+        // await wrapper.find('[data-test="new-button"]').trigger('click')
+        // await flushPromises()
+        // expect($router.push).toHaveBeenCalledWith('/cross-navigation-management/new-navigation')
+    })
+    it('shows the detail when clicking on a item', async () => {
+        // const wrapper = factory()
+        // await flushPromises()
+        // await wrapper.find('[data-test="list-item"]').trigger('click')
+        // expect($router.push).toHaveBeenCalledWith('/cross-navigation-management/655')
+    })
 })

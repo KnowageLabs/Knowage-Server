@@ -77,8 +77,8 @@ describe('Cross-navigation Management', () => {
     it('shows a prompt when user click on a list item delete button to delete it', async () => {
         const wrapper = factory()
         console.log(wrapper.html())
-        //const deleteButton = wrapper.find('icon="fas fa-trash-alt"')
-        //await deleteButton.trigger('click')
+        const deleteButton = wrapper.find('[data-test="delete-button-0"]')
+        await deleteButton.trigger('click')
     })
     it('shows the detail when clicking on a item', () => {})
 })
