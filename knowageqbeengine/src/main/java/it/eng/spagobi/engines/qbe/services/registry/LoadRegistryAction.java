@@ -20,16 +20,23 @@ package it.eng.spagobi.engines.qbe.services.registry;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.metamodel.data.DataSet;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.gson.Gson;
+
+import gnu.trove.set.hash.TLongHashSet;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
@@ -62,9 +69,11 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecordMatcher;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.query.IQuery;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
@@ -166,6 +175,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 	public IDataStore executeQuery(Integer start, Integer limit, Query filteredQuery) {
 		IDataStore dataStore = null;
 
+		QbeEngineInstance qbeEngineInstance = (QbeEngineInstance) getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
 		IStatement statement = getEngineInstance().getDataSource().createStatement(filteredQuery);
 
 		IDataSet dataSet = getActiveQueryAsDataSet(filteredQuery);
@@ -189,8 +199,10 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			int startI = start;
 			int limitI = (limit == null ? (maxSize == null ? -1 : maxSize) : limit);
 			int maxI = (maxSize == null ? -1 : maxSize.intValue());
+
 			dataSet.loadData(startI, limitI, maxI);
 			dataStore = dataSet.getDataStore();
+			dataStore = new DecoratedDataStore(dataStore, qbeEngineInstance);
 			changeAlias(dataStore);
 			Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName() + "] cannot be null");
 		} catch (Exception e) {
@@ -231,6 +243,22 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		setSummaryInfos(gridDataFeed);
 		setSummaryColorInfos(gridDataFeed);
 		setFieldsDefaultValue(gridDataFeed);
+
+		if (dataStore instanceof DecoratedDataStore) {
+			DecoratedDataStore _dataStore = (DecoratedDataStore) dataStore;
+
+			try {
+				Gson gson = new Gson();
+
+				String json = gson.toJson(_dataStore.getRegistryConfiguration());
+
+				JSONObject obj = new JSONObject(json);
+
+				gridDataFeed.put("registryConfig", obj);
+			} catch (JSONException e) {
+				// Yes, it's mute!
+			}
+		}
 
 		logger.debug("OUT");
 
@@ -907,5 +935,203 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + dataset.getStatement().getSqlQueryString());
 		}
 	}
+
+}
+
+class DecoratedDataStore implements IDataStore {
+
+	private final IDataStore dataStore;
+
+	private final QbeTemplate template;
+
+	private final RegistryConfiguration registryConfiguration;
+
+	public DecoratedDataStore(IDataStore dataStore, QbeEngineInstance qbeEngineInstance) {
+		super();
+		this.dataStore = dataStore;
+		this.template = qbeEngineInstance.getTemplate();
+
+		if (template.hasRegistryConfiguration()) {
+			registryConfiguration = qbeEngineInstance.getRegistryConfiguration();
+		} else {
+			throw new RuntimeException("We need a QBE Engine with a registry configuration here");
+		}
+
+	}
+
+	@Override
+	public IMetaData getMetaData() {
+		return dataStore.getMetaData();
+	}
+
+	@Override
+	public void setMetaData(IMetaData metaData) {
+		dataStore.setMetaData(metaData);
+	}
+
+	@Override
+	public Iterator iterator() {
+		return dataStore.iterator();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return dataStore.isEmpty();
+	}
+
+	@Override
+	public long getRecordsCount() {
+		return dataStore.getRecordsCount();
+	}
+
+	@Override
+	public List getRecords() {
+		return dataStore.getRecords();
+	}
+
+	@Override
+	public void setRecords(List records) {
+		dataStore.setRecords(records);
+	}
+
+	@Override
+	public IRecord getRecordAt(int i) {
+		return dataStore.getRecordAt(i);
+	}
+
+	@Override
+	public IRecord getRecordByID(Object value) {
+		return dataStore.getRecordByID(value);
+	}
+
+	@Override
+	public List<IRecord> findRecords(int fieldIndex, Object fieldValue) {
+		return dataStore.findRecords(fieldIndex, fieldValue);
+	}
+
+	@Override
+	public List<IRecord> findRecords(List fieldIndexes, List fieldValues) {
+		return dataStore.findRecords(fieldIndexes, fieldValues);
+	}
+
+	@Override
+	public List<IRecord> findRecords(IRecordMatcher... matcher) {
+		return dataStore.findRecords(matcher);
+	}
+
+	@Override
+	public List getFieldValues(int fieldIndex) {
+		return dataStore.getFieldValues(fieldIndex);
+	}
+
+	@Override
+	public Set getFieldDistinctValues(int fieldIndex) {
+		return dataStore.getFieldDistinctValues(fieldIndex);
+	}
+
+	@Override
+	public Set<String> getFieldDistinctValuesAsString(int fieldIndex) {
+		return dataStore.getFieldDistinctValuesAsString(fieldIndex);
+	}
+
+	@Override
+	public Map<Integer, Set<Object>> getFieldsDistinctValues(List<Integer> fieldIndexes) {
+		return dataStore.getFieldsDistinctValues(fieldIndexes);
+	}
+
+	@Override
+	public Map<Integer, Set<String>> getFieldsDistinctValuesAsString(List<Integer> fieldIndexes) {
+		return dataStore.getFieldsDistinctValuesAsString(fieldIndexes);
+	}
+
+	@Override
+	public Map<String, TLongHashSet> getFieldsDistinctValuesAsLongHash(List<Integer> fieldIndexes) {
+		return dataStore.getFieldsDistinctValuesAsLongHash(fieldIndexes);
+	}
+
+	@Override
+	public void sortRecords(int fieldIndex) {
+		dataStore.sortRecords(fieldIndex);
+	}
+
+	@Override
+	public void sortRecords(int fieldIndex, Comparator filedComparator) {
+		dataStore.sortRecords(fieldIndex, filedComparator);
+	}
+
+	@Override
+	public void sortRecords(Comparator recordComparator) {
+		dataStore.sortRecords(recordComparator);
+	}
+
+	@Override
+	public void appendRecord(IRecord r) {
+		dataStore.appendRecord(r);
+	}
+
+	@Override
+	public void prependRecord(IRecord record) {
+		dataStore.prependRecord(record);
+	}
+
+	@Override
+	public void insertRecord(int recordIndex, IRecord record) {
+		dataStore.insertRecord(recordIndex, record);
+	}
+
+	@Override
+	public IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize, String dateFormatJava) {
+		return dataStore.aggregateAndFilterRecords(sqlQuery, offset, fetchSize, dateFormatJava);
+	}
+
+	@Override
+	public IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize, int maxRowCount, String dateFormatJava) {
+		return dataStore.aggregateAndFilterRecords(sqlQuery, offset, fetchSize, maxRowCount, dateFormatJava);
+	}
+
+	@Override
+	public IDataStore aggregateAndFilterRecords(String sqlQuery, List<Object> values, int offset, int fetchSize, int maxRowCount, String dateFormatJava) {
+		return dataStore.aggregateAndFilterRecords(sqlQuery, values, offset, fetchSize, maxRowCount, dateFormatJava);
+	}
+
+	@Override
+	public IDataStore aggregateAndFilterRecords(IQuery query, String dateFormatJava) {
+		return dataStore.aggregateAndFilterRecords(query, dateFormatJava);
+	}
+
+	@Override
+	public DataSet getMetaModelResultSet(String sqlQuery) {
+		return dataStore.getMetaModelResultSet(sqlQuery);
+	}
+
+	@Override
+	public String toXml() {
+		return dataStore.toXml();
+	}
+
+	@Override
+	public SourceBean toSourceBean() throws SourceBeanException {
+		return dataStore.toSourceBean();
+	}
+
+	@Override
+	public Date getCacheDate() {
+		return dataStore.getCacheDate();
+	}
+
+	@Override
+	public void setCacheDate(Date cacheDate) {
+		dataStore.setCacheDate(cacheDate);
+	}
+
+	@Override
+	public void adjustMetadata(IMetaData dataSetMetadata) {
+		dataStore.adjustMetadata(dataSetMetadata);
+	}
+
+	public RegistryConfiguration getRegistryConfiguration() {
+		return registryConfiguration;
+	}
+
 
 }

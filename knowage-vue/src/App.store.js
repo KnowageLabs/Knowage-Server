@@ -8,10 +8,11 @@ const store = createStore({
 			error: {},
 			info: {},
 			warning: {},
-			downloads: {},
+			downloads: { count: { total: 0, unRead: 0 } },
 			locale: {},
-			news: {},
-			loading: false
+			news: { count: { total: 0, unRead: 0 } },
+			loading: false,
+			homePage: {}
 		}
 	},
 	mutations: {
@@ -19,16 +20,16 @@ const store = createStore({
 			state.user = user
 		},
 		setError(state, error) {
-			state.error = { title: error.title, msg: error.msg }
+			state.error = error
 		},
 		setInfo(state, info) {
-			state.info = { title: info.title, msg: info.msg }
+			state.info = info
 		},
 		setLoading(state, loading) {
 			state.loading = loading
 		},
 		setWarning(state, warning) {
-			state.warning = { title: warning.title, msg: warning.msg }
+			state.warning = warning
 		},
 		setLocale(state, locale) {
 			state.locale = locale
@@ -41,6 +42,9 @@ const store = createStore({
 		},
 		setNews(state, hasNews) {
 			state.news = hasNews
+		},
+		setHomePage(state, homePage) {
+			state.homePage = homePage
 		}
 	}
 })

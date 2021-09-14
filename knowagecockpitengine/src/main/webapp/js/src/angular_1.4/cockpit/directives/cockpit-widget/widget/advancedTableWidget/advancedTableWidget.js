@@ -581,7 +581,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             else {
             	var title = $filter('i18n')(params.summaryRows[params.rowIndex].label);
             	if(title && params.style && params.style['pinnedOnly'] && params.column.pinned) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+title+'</b>';
-            	if(params.valueFormatted || params.value){
+            	if(params.valueFormatted || (typeof params.value != "string" && typeof params.value != 'undefined')){
             		if (params.rowIndex == 0 || !params.colDef.isCalculated) {
 	            		if(params.summaryRows[params.rowIndex].aggregation == 'COUNT' || params.summaryRows[params.rowIndex].aggregation == 'COUNT_DISTINCT') {
 	            			var tempValue = $filter('number')(params.value,0);

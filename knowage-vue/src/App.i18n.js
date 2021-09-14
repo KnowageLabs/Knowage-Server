@@ -18,7 +18,7 @@ const messages = {
 	'zh_CN_#Hans': require('@/i18n/zh_Hans_CN.json')
 }
 
-let currentLocale = localStorage.getItem('locale') ? localStorage.getItem('locale') : store.local
+let currentLocale = localStorage.getItem('locale') ? localStorage.getItem('locale') : store.locale
 
 const i18n = createI18n({
 	locale: currentLocale,

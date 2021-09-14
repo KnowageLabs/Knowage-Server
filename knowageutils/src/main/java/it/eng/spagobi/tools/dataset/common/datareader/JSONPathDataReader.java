@@ -270,25 +270,24 @@ public class JSONPathDataReader extends AbstractDataReader {
 					Assert.assertNotNull(jsonPathValue != null, "jsonPathValue!=null");
 					// can be fixed (not real JSONPath) or null (after value calculation)
 					Object value = isRealJsonPath(jsonPathValue) ? getJSONPathValue(o, jsonPathValue) : jsonPathValue;
-					IFieldMetaData fm = fieldMeta;
-					Class<?> type = fm.getType();
+					Class<?> type = fieldMeta.getType();
 					if (type == null) {
 						// dinamically defined, from json data path
 						String typeString = (String) getJSONPathValue(o, (String) fieldMeta.getProperty(JSON_PATH_TYPE_METADATA_PROPERTY));
 						Assert.assertNotNull(typeString, "type of jsonpath type");
 						type = getType(typeString);
-						fm.setType(type);
+						fieldMeta.setType(type);
 						if (type.equals(Date.class) || type.equals(Timestamp.class)) {
-							setDateTypeFormat(fm, typeString);
+							setDateTypeFormat(fieldMeta, typeString);
 						}
 					}
 					Assert.assertNotNull(type != null, "type!=null");
 
 					try {
-						IField field = new Field(getValue(value, fm));
+						IField field = new Field(getValue(value, fieldMeta));
 						record.appendField(field);
 					} catch (Exception e) {
-						String msg = String.format("Error getting value for field %s", fm.getName());
+						String msg = String.format("Error getting value for field %s", fieldMeta.getName());
 						throw new IllegalStateException(msg, e);
 					}
 				}
@@ -346,6 +345,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 			String name = fieldMeta.getName();
 			if (jsonObject.containsKey(name)) {
 				Object value = jsonObject.get(name);
+				value = normalizeTimestamp(value);
 				value = normalizeNumber(value);
 				rec.appendField(new Field(value));
 			} else {
@@ -362,13 +362,9 @@ public class JSONPathDataReader extends AbstractDataReader {
 				continue;
 			}
 
-			// if (key == null || key.trim().isEmpty()) {
-			// logger.error("Found an empy key in the json");
-			// throw new SpagoBIRuntimeException("knowage.rest.empty.field");
-			// }
-
 			// not found
 			Object value = jsonObject.get(key);
+			value = normalizeTimestamp(value);
 			value = normalizeNumber(value);
 			rec.appendField(new Field(value));
 
@@ -403,6 +399,18 @@ public class JSONPathDataReader extends AbstractDataReader {
 			value = ((Number) value).doubleValue();
 		}
 		return value;
+	}
+
+	private static Object normalizeTimestamp(Object value) {
+		if (value == null) {
+			return value;
+		}
+		try {
+			Timestamp ts = Timestamp.valueOf(value.toString());
+			return ts;
+		} catch (Exception e) {
+			return value;
+		}
 	}
 
 	protected Object getJSONPathValue(Object o, String jsonPathValue) throws JSONException {

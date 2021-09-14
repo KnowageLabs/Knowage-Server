@@ -18,6 +18,7 @@
 
 package it.eng.knowage.knowageapi.context;
 
+import java.util.Locale;
 import java.util.UUID;
 
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
@@ -40,6 +41,8 @@ public class BusinessRequestContext {
 	private SpagoBIUserProfile userProfile;
 
 	private String userToken;
+
+	private Locale locale;
 
 	public BusinessRequestContext(String version) {
 		super();
@@ -89,4 +92,13 @@ public class BusinessRequestContext {
 	public void setUserToken(String userToken) {
 		this.userToken = userToken;
 	}
+
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
 }

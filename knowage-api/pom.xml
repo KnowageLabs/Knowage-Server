@@ -150,7 +150,7 @@
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.4</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
@@ -162,6 +162,15 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 
+		<!-- TESTING DEPENDENCIES -->
+
+		<!-- https://mvnrepository.com/artifact/org.jboss.resteasy/resteasy-multipart-provider -->
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-multipart-provider</artifactId>
+			<version>4.6.0.Final</version>
+		</dependency>
+		
 		<!-- 
 			   ____        _          __             _            _       
 			  / __ \      | |        / _|           | |          | |      
@@ -200,7 +209,7 @@
 			<artifactId>mariadb-java-client</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
@@ -208,11 +217,11 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.github.h-thurow</groupId>
-			<artifactId>simple-jndi</artifactId>
-			<version>0.23.0</version>
-			<scope>test</scope>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc8</artifactId>
+			<version>18.3.0.0</version>
 		</dependency>
+
 
 	</dependencies>
 

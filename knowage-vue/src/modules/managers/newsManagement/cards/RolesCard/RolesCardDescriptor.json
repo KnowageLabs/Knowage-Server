@@ -1,0 +1,21 @@
+{
+    "column": {
+        "header": {
+            "style": {
+                "min-width": "70%",
+                "text-transform": "capitalize"
+            }
+        },
+        "style": {
+            "width": "30%"
+        }
+    },
+    "card": {
+        "style": {
+            "margin": "1rem"
+        }
+    },
+    "table": {
+        "scrollHeight": "200px"
+    }
+}

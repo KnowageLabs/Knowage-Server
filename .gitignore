@@ -50,7 +50,6 @@ Temporary Items
 .settings/
 .classpath
 .project
-.gitignore
 .eclipse
 .metadata
 
@@ -71,7 +70,7 @@ target/
 # npm/yarn node Modules
 node_modules/
 dist/
-package-lock.json
+# package-lock.json
 
 # zanata folder
 .zanata-cache/
@@ -96,3 +95,5 @@ Knowage-R/.Rhistory
 Knowage-R/.RData
 
 Knowage-Python/src/hmackey
+
+*.pyc
