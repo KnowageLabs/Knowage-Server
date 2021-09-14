@@ -232,7 +232,7 @@
 		<ITEM label="menu.Languages" iconCls="fab fa-font-awesome-flag"
 			command="languageSelection" />
 		<ITEM label="menu.RoleSelection" iconCls="fas fa-users-cog"
-			command="roleSelection" condition="multiple_roles" />
+			command="roleSelection" conditionedView="roleSelection"/>
 		<ITEM label="menu.info" iconCls="fas fa-info-circle"
 			command="info" />
 		<ITEM label="menu.login"
