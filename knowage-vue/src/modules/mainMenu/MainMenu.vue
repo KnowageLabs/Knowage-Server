@@ -214,7 +214,7 @@ export default defineComponent({
                     if (homePage && Object.keys(homePage).length !== 0) {
                         if (!this.stateHomePage.label) {
                             this.$store.commit('setHomePage', homePage)
-                            this.$router.push({ name: 'home' })
+                            //this.$router.push({ name: 'home' })
                         }
                     }
                 }
