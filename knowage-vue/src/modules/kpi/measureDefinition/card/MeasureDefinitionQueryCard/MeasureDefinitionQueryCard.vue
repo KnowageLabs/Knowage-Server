@@ -94,9 +94,14 @@ export default defineComponent({
             }
         },
         setupCodeMirror() {
-            if (this.$refs.codeMirror) {
+            const interval = setInterval(() => {
+                if (!this.$refs.codeMirror) return
                 this.codeMirror = (this.$refs.codeMirror as any).editor as any
-            }
+                setTimeout(() => {
+                    this.codeMirror.refresh()
+                }, 0)
+                clearInterval(interval)
+            }, 200)
 
             CodeMirror.registerHelper('hint', 'alias', () => {
                 const cur = this.codeMirror.getCursor()

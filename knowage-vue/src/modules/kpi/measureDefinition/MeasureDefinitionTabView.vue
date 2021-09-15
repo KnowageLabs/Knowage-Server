@@ -28,7 +28,7 @@
                             :codeInput="codeInput"
                             :preview="preview"
                             @queryChanged="queryChanged = true"
-                            @loadPreview="previewQuery(false, true)"
+                            @loadPreview="previewQuery(false, true, true)"
                             @closePreview="preview = false"
                         ></MeasureDefinitionQueryCard>
                     </TabPanel>
@@ -198,7 +198,7 @@ export default defineComponent({
             this.activeTab = tabIndex
 
             if (this.activeTab !== 0) {
-                await this.previewQuery(false, false)
+                await this.previewQuery(false, false, true)
             }
 
             this.rule.ruleOutputs.forEach((ruleOutput: any) => {
@@ -273,10 +273,10 @@ export default defineComponent({
             })
             return used
         },
-        async previewQuery(save: boolean, hasPlaceholders: boolean) {
+        async previewQuery(save: boolean, hasPlaceholders: boolean, showDialog: boolean) {
             this.loading = true
 
-            if (this.activeTab === 0) {
+            if (this.activeTab === 0 && showDialog) {
                 this.preview = true
             }
             const tempRuleOutputs = this.rule.ruleOutputs
@@ -465,7 +465,7 @@ export default defineComponent({
         },
         submitConfirm() {
             if (!this.queryChanged) {
-                this.previewQuery(true, false)
+                this.previewQuery(true, false, false)
             } else {
                 this.$confirm.require({
                     message: this.$t('kpi.measureDefinition.metadataChangedMessage'),
@@ -473,7 +473,7 @@ export default defineComponent({
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
                         this.queryChanged = false
-                        this.previewQuery(true, false)
+                        this.previewQuery(true, false, false)
                     }
                 })
             }
