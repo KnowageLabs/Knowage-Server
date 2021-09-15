@@ -300,7 +300,7 @@ export default defineComponent({
                         this.columnToRuleOutputs()
                     })
                     .catch((error) => {
-                        this.setPreviewError(error)
+                        this.setPreviewError(error.message)
                     })
             }
             this.setNewAliases()
