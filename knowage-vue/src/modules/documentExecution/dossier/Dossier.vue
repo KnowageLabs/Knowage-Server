@@ -32,7 +32,8 @@
                 </Toolbar>
             </template>
             <template #content>
-                <DataTable :value="dossierActivities" :loading="loading" :rows="20" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" data-test="activities-table">
+                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <DataTable v-if="dossierActivities.length != 0" :value="dossierActivities" :loading="loading" :rows="20" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" data-test="activities-table">
                     <Column field="activity" :header="$t('documentExecution.dossier.headers.activity')" :sortable="true" />
                     <Column field="creationDate" :header="$t('managers.mondrianSchemasManagement.headers.creationDate')" :sortable="true" dataType="date">
                         <template #body="{data}">
@@ -47,6 +48,7 @@
                         </template>
                     </Column>
                 </DataTable>
+                <KnHint v-else :title="'documentExecution.dossier.title'" :hint="'documentExecution.dossier.hint'"></KnHint>
             </template>
         </Card>
     </div>
@@ -56,6 +58,7 @@
 import { defineComponent } from 'vue'
 import dossierDescriptor from './DossierDescriptor.json'
 import axios from 'axios'
+import KnHint from '@/components/UI/KnHint.vue'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -65,7 +68,8 @@ export default defineComponent({
     components: {
         Card,
         Column,
-        DataTable
+        DataTable,
+        KnHint
     },
     props: {
         id: {
@@ -86,6 +90,7 @@ export default defineComponent({
     data() {
         return {
             activityName: '',
+            loading: false,
             interval: null as any,
             dossierActivities: [] as any,
             columns: dossierDescriptor.columns,
@@ -100,9 +105,15 @@ export default defineComponent({
             return fDate.toLocaleString()
         },
         getDossierActivities() {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activities/${this.id}`).then((response) => {
-                this.dossierActivities = [...response.data]
-            })
+            this.loading = true
+            return axios
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activities/${this.id}`)
+                .then((response) => {
+                    this.dossierActivities = [...response.data]
+                })
+                .finally(() => {
+                    this.loading = false
+                })
         },
         deleteDossierConfirm(selectedDossier) {
             this.$confirm.require({
