@@ -110,10 +110,3 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss" scoped>
-//::v-deep(.p-listbox) {
-// .p-listbox-item {
-//     background: #b4b4b4;
-// }
-//}
-</style>
