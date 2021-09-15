@@ -67,6 +67,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return columnsArray;
 		}
 
+
+	function buildChartColumns(columns){
+			var columnsArray = [];
+			for (var c in  columns) {
+				if (columns[c].aggregationSelected) {
+					columns[c].name = columns[c].alias+"_"+columns[c].aggregationSelected;
+				}
+				columnsArray.push(columns[c]);				
+			}
+			return columnsArray;
+		}
+
+
 		$scope.removeFunctionOutputColumns = function(){
 			if ($scope.ngModel.content == undefined) { // chart widget
 				var columns = $scope.ngModel.columnSelectedOfDatasetAggregations;
@@ -142,12 +155,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					additionalInfo: $scope.additionalInfo,
 					measuresListFunc: $scope.measuresListFunc,
 					callbackAddTo: $scope.callbackAddTo,
-					buildCrossTabColumns: buildCrossTabColumns
+					buildCrossTabColumns: buildCrossTabColumns,
+					buildChartColumns: buildChartColumns
 				},
 				fullscreen: true,
 				controller: catalogFunctionDialogController
 			}).then(function() {
 				deferred.promise.then(function(result){
+//					if($scope.callbackUpdateAlias) {
+//						$scope.callbackUpdateAlias({newAlias: result.alias, oldAlias: $scope.currentRow.alias});
+//					}
 					$scope.removeFunctionOutputColumns();
 					if ($scope.ngModel.content == undefined) { // chart widget
 						for (var i=0; i<result.length; i++) {
@@ -173,6 +190,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 					}
 					$scope.ngModel.selectedFunction = undefined;
+					if($scope.callbackUpdateGrid){
+						$scope.callbackUpdateGrid();
+					}
 				});
 			}, function() {
 			});
@@ -190,9 +210,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 	}
 
-	function catalogFunctionDialogController($scope,$sce,sbiModule_translate,cockpitModule_template,cockpitModule_catalogFunctionService,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,callbackUpdateGrid,callbackUpdateAlias,additionalInfo,measuresListFunc,callbackAddTo,buildCrossTabColumns,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
+	function catalogFunctionDialogController($scope,$sce,sbiModule_translate,cockpitModule_template,cockpitModule_catalogFunctionService,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,callbackUpdateGrid,callbackUpdateAlias,additionalInfo,measuresListFunc,callbackAddTo,buildCrossTabColumns,buildChartColumns,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
 		$scope.translate=sbiModule_translate;
 		$scope.model = model;
+		$scope.callbackUpdateGrid = callbackUpdateGrid;
+		$scope.callbackUpdateAlias = callbackUpdateAlias;
+		$scope.callbackAddTo = callbackAddTo;
 		$scope.selectedFunction = actualItem ? angular.copy(actualItem) : {};
 		var style = {'display': 'inline-flex', 'justify-content':'center', 'align-items':'center'};
 		var typesMap = {'STRING': "fa fa-quote-right", 'NUMBER': "fa fa-hashtag", 'DATE': 'fa fa-calendar'};
@@ -282,7 +305,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		function getDatasetColumns(){
 			var toReturn = [];
 			if ($scope.model.content == undefined) { // chart widget
-				var columns = $scope.model.columnSelectedOfDatasetAggregations;
+				var columns = buildChartColumns($scope.model.columnSelectedOfDatasetAggregations);
 			} else if ($scope.model.content.crosstabDefinition) { // cross tab widget
 				var columns = buildCrossTabColumns($scope.model.content.crosstabDefinition);
 			} else { // other widgets

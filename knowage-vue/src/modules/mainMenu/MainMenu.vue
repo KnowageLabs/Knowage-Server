@@ -211,8 +211,12 @@ export default defineComponent({
 
                 if (this.dynamicUserFunctionalities.length > 0) {
                     let homePage = this.findHomePage(this.dynamicUserFunctionalities) || {}
-                    if (homePage) this.$store.commit('setHomePage', homePage)
-                    // this.$router.push({ name: 'home' })
+                    if (homePage && Object.keys(homePage).length !== 0) {
+                        if (!this.stateHomePage.label) {
+                            this.$store.commit('setHomePage', homePage)
+                            this.$router.push({ name: 'home' })
+                        }
+                    }
                 }
                 this.updateNewsAndDownload()
             })
@@ -224,7 +228,8 @@ export default defineComponent({
             user: 'user',
             downloads: 'downloads',
             locale: 'locale',
-            news: 'news'
+            news: 'news',
+            stateHomePage: 'homePage'
         })
     },
     watch: {

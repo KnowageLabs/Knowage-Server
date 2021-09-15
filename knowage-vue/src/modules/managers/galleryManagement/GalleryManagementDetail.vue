@@ -74,12 +74,12 @@
             </div>
         </div>
         <div class="p-grid p-m-2 flex" v-if="template.type && windowWidth < windowWidthBreakPoint">
-            <TabView class="tabview-custom" style="width:100%">
-                <TabPanel v-for="allowedEditor in galleryDescriptor.allowedEditors[template.type]" v-bind:key="allowedEditor">
+            <TabView class="tabview-custom" style="width:100%" @tab-change="tabChange">
+                <TabPanel v-for="(allowedEditor, index) in galleryDescriptor.allowedEditors[template.type]" v-bind:key="allowedEditor">
                     <template #header>
                         <i :class="['icon', galleryDescriptor.editor[allowedEditor].icon]"></i>&nbsp;<span style="text-transform:uppercase">{{ $t('common.codingLanguages.' + allowedEditor) }}</span>
                     </template>
-                    <VCodeMirror class="flex" v-model:value="template.code[allowedEditor]" :options="galleryDescriptor.options[allowedEditor]" @update:value="onCmCodeChange" />
+                    <VCodeMirror :ref="'editor_' + index" class="flex" v-model:value="template.code[allowedEditor]" :options="galleryDescriptor.options[allowedEditor]" @update:value="onCmCodeChange" />
                 </TabPanel>
             </TabView>
         </div>
@@ -230,6 +230,12 @@ export default defineComponent({
                 }
             }
             return true
+        },
+        tabChange(e) {
+            let ref = 'editor_' + e.index
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs[ref].editor.refresh()
         }
     },
     watch: {

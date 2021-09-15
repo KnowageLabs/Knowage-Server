@@ -29,7 +29,12 @@
 			axios
 				.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/currentuser')
 				.then((response) => {
-					store.commit('setUser', response.data)
+					let currentUser = response.data
+					if (localStorage.getItem('sessionRole')) {
+						currentUser.sessionRole = localStorage.getItem('sessionRole')
+					} else if (currentUser.defaultRole) currentUser.sessionRole = currentUser.defaultRole
+
+					store.commit('setUser', currentUser)
 
 					let responseLocale = response.data.locale
 					let storedLocale = responseLocale
@@ -99,6 +104,12 @@
 						}
 					})
 				this.newsDownloadHandler()
+				this.loadInternationalization()
+			},
+			async loadInternationalization() {
+				let currentLocale = localStorage.getItem('locale') ? localStorage.getItem('locale') : store.state.locale
+				currentLocale = currentLocale.replaceAll('_', '-')
+				await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization?currLanguage=' + currentLocale).then((response) => store.commit('setInternationalization', response.data))
 			},
 			newsDownloadHandler() {
 				console.log('Starting connection to WebSocket Server')

@@ -18,6 +18,7 @@
 
 package it.eng.spagobi.profiling.bo;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class UserInformationDTO {
 	private String userId;
 	private String fullName;
 	private Boolean isSuperadmin;
-	private Integer sessionRole;
+	private String defaultRole = null;
 	private Map<String, Object> attributes;
 	private String organization;
 	private String uniqueIdentifier;
@@ -59,7 +60,11 @@ public class UserInformationDTO {
 		this.userUniqueIdentifier = user.getUserUniqueIdentifier();
 
 		this.locale = GeneralUtilities.getDefaultLocale();
-		this.roles = user.getRolesForUse();
+		this.roles = user.getRoles();
+
+		Collection rolesOrDefaultRole = user.getRolesForUse();
+		ArrayList<String> newList = new ArrayList<>(rolesOrDefaultRole);
+		this.defaultRole = newList.size() == 1 ? newList.get(0) : null;
 
 		// aggiungere il tipo
 		//
@@ -91,12 +96,12 @@ public class UserInformationDTO {
 		this.isSuperadmin = isSuperadmin;
 	}
 
-	public Integer getSessionRole() {
-		return sessionRole;
+	public String getDefaultRole() {
+		return defaultRole;
 	}
 
-	public void setSessionRole(Integer sessionRole) {
-		this.sessionRole = sessionRole;
+	public void setDefaultRole(String defaultRole) {
+		this.defaultRole = defaultRole;
 	}
 
 	public Map<String, Object> getAttributes() {
