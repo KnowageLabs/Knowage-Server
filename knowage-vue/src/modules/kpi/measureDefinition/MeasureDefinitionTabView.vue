@@ -11,7 +11,6 @@
         </Toolbar>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         <div class="p-d-flex p-flex-row kn-page-content">
-            {{ preview }}
             <div class="card kn-flex" v-if="!loading">
                 <TabView v-model:activeIndex="activeTab" @tab-change="setTabChanged($event.index)">
                     <TabPanel>
@@ -30,6 +29,7 @@
                             :preview="preview"
                             @queryChanged="queryChanged = true"
                             @loadPreview="previewQuery(false, true)"
+                            @closePreview="preview = false"
                         ></MeasureDefinitionQueryCard>
                     </TabPanel>
 
@@ -53,7 +53,7 @@
 
     <MeasureDefinitionSubmitDialog v-if="showSaveDialog" :ruleName="rule.name" :newAlias="newAlias" :reusedAlias="reusedAlias" :newPlaceholder="newPlaceholder" :reusedPlaceholder="reusedPlaceholder" @close="showSaveDialog = false" @save="saveRule($event)"></MeasureDefinitionSubmitDialog>
 
-    <Dialog :style="metadataDefinitionTabViewDescriptor.dialog.style" :modal="true" :visible="errorDialogVisible" :header="errorTitle" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false">
+    <Dialog :autoZIndex="false" :style="metadataDefinitionTabViewDescriptor.errorDialog.style" :modal="true" :visible="errorDialogVisible" :header="errorTitle" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false">
         <p>{{ errorMessage }}</p>
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="closeErrorMessageDialog"></Button>
@@ -272,6 +272,9 @@ export default defineComponent({
         },
         async previewQuery(save: boolean, hasPlaceholders: boolean) {
             this.loading = true
+            if (this.activeTab === 0) {
+                this.preview = true
+            }
             const tempRuleOutputs = this.rule.ruleOutputs
             this.rule.ruleOutputs.forEach((ruleOutput) => {
                 delete ruleOutput.aliasIcon
@@ -295,9 +298,6 @@ export default defineComponent({
                         this.columns = response.data.columns
                         this.rows = response.data.rows
                         this.columnToRuleOutputs()
-                        if (this.activeTab === 0) {
-                            this.preview = true
-                        }
                     })
                     .catch((error) => {
                         this.setPreviewError(error)
@@ -316,7 +316,6 @@ export default defineComponent({
         setPreviewError(error: string) {
             this.errorTitle = this.$t('kpi.measureDefinition.metadataError') + ' ' + this.$t('kpi.measureDefinition.wrongQuery')
             this.errorMessage = error
-            this.preview = false
             this.rows = []
         },
         async preSaveRule() {

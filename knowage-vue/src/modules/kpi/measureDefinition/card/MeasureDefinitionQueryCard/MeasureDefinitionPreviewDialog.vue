@@ -7,7 +7,8 @@
                 </template>
                 <Column class="kn-truncated" v-for="col of columns" :field="col.name" :header="col.label" :key="col.field" :sortable="true"> </Column>
             </DataTable>
-            <div v-if="this.rule.placeholders && this.rule.placeholders.length > 0" class="p-col-3">
+
+            <div v-if="rule.placeholders && rule.placeholders.length > 0" class="p-col-3">
                 <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
                     <template #left>
                         {{ $t('kpi.measureDefinition.filters') }}
@@ -61,6 +62,9 @@ export default defineComponent({
     watch: {
         propRows() {
             this.loadRows()
+        },
+        currentRule() {
+            this.loadRule()
         }
     },
     data() {

@@ -13,12 +13,11 @@
                         <Button class="kn-button p-button-text p-button-rounded" @click="showPreview" :disabled="previewDisabled">{{ $t('kpi.measureDefinition.preview') }}</Button>
                     </template>
                 </Toolbar>
-                {{ previewVisible }}
                 <VCodeMirror ref="codeMirror" v-model:value="code" :autoHeight="true" :options="options" @keyup="onKeyUp" />
             </div>
         </template>
     </Card>
-    <MeasureDefinitionPreviewDialog v-if="previewVisible && preview" :currentRule="selectedRule" :placeholders="placeholders" :columns="columns" :propsRow="rows" @close="previewVisible = false" @loadPreview="$emit('loadPreview')"></MeasureDefinitionPreviewDialog>
+    <MeasureDefinitionPreviewDialog v-if="preview" :currentRule="selectedRule" :placeholders="placeholders" :columns="columns" :propRows="rows" @close="$emit('closePreview')" @loadPreview="$emit('loadPreview')"></MeasureDefinitionPreviewDialog>
 </template>
 
 <script lang="ts">
@@ -36,7 +35,7 @@ export default defineComponent({
     name: 'measure-definition-query-card',
     components: { Card, Dropdown, VCodeMirror, MeasureDefinitionPreviewDialog },
     props: { rule: { type: Object, required: true }, datasourcesList: { type: Array, required: true }, aliases: { type: Array }, placeholders: { type: Array }, columns: { type: Array }, rows: { type: Array }, codeInput: { type: String }, preview: { type: Boolean } },
-    emits: ['touched', 'queryChanged', 'loadPreview'],
+    emits: ['touched', 'queryChanged', 'loadPreview', 'closePreview'],
     data() {
         return {
             queryCardDescriptor,
@@ -59,7 +58,6 @@ export default defineComponent({
                 } as any,
                 hintOptions: { tables: this.datasourceStructure }
             },
-            previewVisible: false,
             cursorPosition: null
         }
     },
@@ -72,10 +70,6 @@ export default defineComponent({
         codeInput() {
             this.cursorPosition = this.codeMirror.getCursor()
             this.codeMirror.replaceRange(this.codeInput, this.cursorPosition)
-        },
-        preview(value) {
-            console.log('CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALED: ', value)
-            this.previewVisible = value
         }
     },
     async mounted() {
@@ -190,7 +184,6 @@ export default defineComponent({
         },
         showPreview() {
             this.$emit('loadPreview')
-            this.previewVisible = true
         }
     }
 })
