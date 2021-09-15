@@ -63,20 +63,35 @@
                                 >
                                 </Dropdown>
                                 <!-- Calendar -->
-                                <Calendar v-else-if="col.isEditable && col.columnInfo.type === 'date'" v-model="slotProps.data[col.field]" :showTime="col.columnInfo.subtype === 'timestamp'" :showSeconds="col.columnInfo.subtype === 'timestamp'" @date-select="$emit('rowChanged', slotProps.data)" />
+                                <Calendar
+                                    v-else-if="col.isEditable && col.columnInfo.type === 'date'"
+                                    v-model="slotProps.data[col.field]"
+                                    :showTime="col.columnInfo.subtype === 'timestamp'"
+                                    :showSeconds="col.columnInfo.subtype === 'timestamp'"
+                                    :dateFormat="col.columnInfo.dateFormat"
+                                    @date-select="$emit('rowChanged', slotProps.data)"
+                                />
                                 <i v-if="col.isEditable && col.columnInfo.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" />
                             </div>
                         </template>
                         <template #body="slotProps">
+                            <!-- {{ col.isEditable && col.columnInfo.type === 'date' ? getFormatedDate(slotProps.data[col.field], col.columnInfo.dateFormat) : '' }}
+                            {{ col.columnInfo.dateFormat }} -->
                             <div class="p-d-flex p-flex-row" :data-test="col.field + '-body'">
                                 <!-- Checkbox -->
                                 <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('rowChanged', slotProps.data)" :disabled="!col.isEditable"></Checkbox>
-                                <Calendar v-else-if="col.isEditable && col.columnInfo.type === 'date'" v-model="slotProps.data[col.field]" :showTime="col.columnInfo.subtype === 'timestamp'" :showSeconds="col.columnInfo.subtype === 'timestamp'" @date-select="$emit('rowChanged', slotProps.data)" />
+                                <Calendar
+                                    v-else-if="col.isEditable && col.columnInfo.type === 'date'"
+                                    v-model="slotProps.data[col.field]"
+                                    :showTime="col.columnInfo.subtype === 'timestamp'"
+                                    :showSeconds="col.columnInfo.subtype === 'timestamp'"
+                                    :dateFormat="col.columnInfo.dateFormat"
+                                    @date-select="$emit('rowChanged', slotProps.data)"
+                                />
                                 <!-- Formating -->
                                 <div v-else-if="col.isEditable">
-                                    <span v-if="col.columnInfo.type === 'int' || col.columnInfo.type === 'float'">{{ slotProps.data[col.field] }}</span>
+                                    <span v-if="col.columnInfo.type === 'int' || col.columnInfo.type === 'float'">{{ getFormatedNumber(slotProps.data[col.field]) }}</span>
                                     <!-- Calendar -->
-                                    <span v-else-if="col.columnInfo.type === 'date'">{{ slotProps.data[col.field] ? getFormatedDate(slotProps.data[col.field], col.columnInfo.subtype === 'timestamp') : '' }}</span>
                                     <span v-else> {{ slotProps.data[col.field] }}</span>
                                 </div>
                                 <span v-else> {{ slotProps.data[col.field] }}</span>
@@ -103,7 +118,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { formatDate } from '@/helpers/commons/localeHelper'
+import { formatDateWithLocale, formatNumberWithLocale } from '@/helpers/commons/localeHelper'
 import axios from 'axios'
 import Calendar from 'primevue/calendar'
 import Card from 'primevue/card'
@@ -280,9 +295,11 @@ export default defineComponent({
                 return 'any'
             }
         },
-        getFormatedDate(date: any, timestamp: boolean) {
-            const format = timestamp ? 'MM/DD/yyy HH:MM:ss' : 'MM/DD/yyyy'
-            return formatDate(date, format)
+        getFormatedDate(date: any, format: any) {
+            return formatDateWithLocale(date, format)
+        },
+        getFormatedNumber(number: number, precision?: number, format?: any) {
+            return formatNumberWithLocale(number, precision, format)
         },
         addColumnOptions(column: any, row: any) {
             //.log('COLUMN: ', column, ', ROW: ', row)
