@@ -12,12 +12,12 @@ const baseRoutes = [
         name: 'home',
         component: () => import('@/views/Home.vue')
     },
-	{
-		path: '/',
-		name: 'homeIFrame',
-		component: () => import('@/views/HomeIFrame.vue'),
-		props: true
-	},
+    {
+        path: '/',
+        name: 'homeIFrame',
+        component: () => import('@/views/HomeIFrame.vue'),
+        props: true
+    },
     {
         path: '/about',
         name: 'about',
@@ -67,23 +67,24 @@ const routes = baseRoutes
     .concat(documentExecutionRoutes)
 
 const router = createRouter({
-	base: process.env.VUE_APP_PUBLIC_PATH,
-	history: createWebHistory(process.env.VUE_APP_PUBLIC_PATH),
-	routes
+    base: process.env.VUE_APP_PUBLIC_PATH,
+    history: createWebHistory(process.env.VUE_APP_PUBLIC_PATH),
+    routes
 })
 
 router.beforeEach((to, from, next) => {
-	console.log(from)
+    console.log(from)
 
-	if (to.name === 'home') {
-		if (store.state.homePage.url) {
-			next({ name: 'homeIFrame', params: { url: store.state.homePage.url } })
-		} else if (store.state.homePage.to) {
-			next({ name: 'homeIFrame', params: { to: store.state.homePage.to } })
-		} else if (!store.state.loading) next()
-	}
+    if (to.name === 'home') {
+        if (store.state.homePage.to) {
+            next({ name: 'homeIFrame', params: { to: store.state.homePage.to } })
+        }
+        if (store.state.homePage.url) {
+            next({ name: 'homeIFrame', params: { url: store.state.homePage.url } })
+        }
+    }
 
-	if (!store.state.loading) next()
+    next()
 })
 
 /*router.beforeEach((to, from, next) => {
