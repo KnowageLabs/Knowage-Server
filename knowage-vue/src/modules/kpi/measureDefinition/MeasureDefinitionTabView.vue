@@ -196,7 +196,10 @@ export default defineComponent({
         },
         async setTabChanged(tabIndex: any) {
             this.activeTab = tabIndex
-            await this.previewQuery(false, false)
+
+            if (this.activeTab !== 0) {
+                await this.previewQuery(false, false)
+            }
 
             this.rule.ruleOutputs.forEach((ruleOutput: any) => {
                 this.setAliasIcon(ruleOutput)
@@ -272,6 +275,7 @@ export default defineComponent({
         },
         async previewQuery(save: boolean, hasPlaceholders: boolean) {
             this.loading = true
+
             if (this.activeTab === 0) {
                 this.preview = true
             }
