@@ -212,7 +212,7 @@ export default defineComponent({
                 if (this.dynamicUserFunctionalities.length > 0) {
                     let homePage = this.findHomePage(this.dynamicUserFunctionalities) || {}
                     if (homePage && Object.keys(homePage).length !== 0) {
-                        if (!this.stateHomePage) {
+                        if (!this.stateHomePage.label) {
                             this.$store.commit('setHomePage', homePage)
                             this.$router.push({ name: 'home' })
                         }
