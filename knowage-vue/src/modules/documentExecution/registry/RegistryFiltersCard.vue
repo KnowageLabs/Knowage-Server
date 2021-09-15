@@ -12,12 +12,12 @@
                 <div class="fields-container" :style="registryDescriptor.styles.fieldsContainer">
                     <form class="p-fluid p-formgrid p-grid">
                         <template v-for="(filter, index) in filters" :key="index">
-                            <RegistryFilterCard :id="id" :propFilter="filter" :entity="entity" :clearTrigger="clearFiltersTrigger" @changed="setFilterValue($event, index)"></RegistryFilterCard>
+                            <RegistryFilterCard class="kn-flex p-mx-2" :id="id" :propFilter="filter" :entity="entity" :clearTrigger="clearFiltersTrigger" @changed="setFilterValue($event, index)"></RegistryFilterCard>
                         </template>
                     </form>
                 </div>
 
-                <div class="button-container" :style="registryDescriptor.styles.buttonsContainer">
+                <div class="button-container p-ml-2" :style="registryDescriptor.styles.buttonsContainer">
                     <Button class="p-button kn-button--primary p-mx-1" :style="registryDescriptor.styles.filtersButton" @click="clearAllFilters">{{ $t('documentExecution.registry.clearFilters') }}</Button>
                     <Button class="p-button kn-button--primary p-mx-1" :style="registryDescriptor.styles.filtersButton" @click="filterRegistry" data-test="filter-button">{{ $t('documentExecution.registry.filter') }}</Button>
                 </div>

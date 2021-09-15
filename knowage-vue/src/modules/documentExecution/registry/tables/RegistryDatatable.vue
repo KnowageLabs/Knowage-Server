@@ -3,13 +3,14 @@
         <template #content>
             <DataTable
                 class="p-datatable-sm kn-table"
+                v-model:first="first"
                 :value="rows"
                 editMode="cell"
                 dataKey="id"
                 paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-                :lazy="this.lazyParams.size > 1000"
+                :lazy="this.lazyParams.size > registryDatatableDescriptor.tableOptions.paginationLimit"
                 :paginator="true"
-                :rows="15"
+                :rows="registryDatatableDescriptor.tableOptions.rowsPerPage"
                 :currentPageReportTemplate="
                     $t('common.table.footer.paginated', {
                         first: '{first}',
@@ -152,7 +153,8 @@ export default defineComponent({
             dependentColumns: [] as any[],
             selectedRow: null as any,
             warningVisible: false,
-            stopWarnings: [] as any[]
+            stopWarnings: [] as any[],
+            first: 0
         }
     },
     watch: {
@@ -328,9 +330,14 @@ export default defineComponent({
             })
             console.log('NEW ROW: ', newRow)
             this.rows.unshift(newRow)
+
+            if (this.lazyParams.size <= registryDatatableDescriptor.tableOptions.paginationLimit) {
+                this.first = 0
+            }
             this.$emit('rowChanged', newRow)
         },
         onDropdownChange(row: any, column: any) {
+            console.log('FIRST: ', this.first)
             console.log('COLUMN: ', column)
             this.selectedRow = row
             if (column.hasDependencies && !this.stopWarnings[column.field]) {
