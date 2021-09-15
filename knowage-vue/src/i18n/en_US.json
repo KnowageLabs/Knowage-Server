@@ -151,7 +151,10 @@
     },
     "documentExecution": {
         "dossier": {
-            "activityName": "Activity Name",
+            "deleteConfirm": "Are you sure you want to delete the selected activity?",
+            "deleteSuccess": "Successfully deleted selected activity.",
+            "deleteTitle": "Delete dossier activity",
+            "downloadMissingError": "Download ERROR - Document is missing",
             "headers": {
                 "activity": "Activity Name",
                 "partial": "Partial",
@@ -159,7 +162,9 @@
                 "total": "Total"
             },
             "launchActivity": "Launch Activity",
-            "launchedActivities": "Launched activities for this document"
+            "launchedActivities": "Launched activities for this document",
+            "progressNotFinished": "Please wait until document will be generated.",
+            "saveSuccess": "Activity successfully saved!"
         }
     },
     "downloadsDialog": {

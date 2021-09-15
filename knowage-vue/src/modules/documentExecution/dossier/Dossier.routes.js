@@ -1,8 +1,9 @@
 let routes = [
     {
-        path: '/dossier',
+        path: '/dossier/:id',
         name: 'dossier',
-        component: () => import('@/modules/documentExecution/dossier/Dossier.vue')
+        component: () => import('@/modules/documentExecution/dossier/Dossier.vue'),
+        props: true
     }
 ]
 
