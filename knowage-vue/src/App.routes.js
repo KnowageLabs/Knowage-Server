@@ -76,8 +76,11 @@ router.beforeEach((to, from, next) => {
     console.log(from)
 
     if (to.name === 'home') {
-        if (store.state.homePage) {
-            next({ name: 'homeIFrame', params: { url: store.state.homePage.url, to: store.state.homePage.to } })
+        if (store.state.homePage.to) {
+            next({ name: 'homeIFrame', params: { to: store.state.homePage.to } })
+        }
+        if (store.state.homePage.url) {
+            next({ name: 'homeIFrame', params: { url: store.state.homePage.url } })
         }
     }
 
