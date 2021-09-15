@@ -2,19 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 import IframeRenderer from '@/modules/commons/IframeRenderer.vue'
 import managersRoutes from '@/modules/managers/managers.routes.js'
 import importExportRoutes from '@/modules/importExport/ImportExport.routes.js'
-import store from './App.store'
 
 const baseRoutes = [
 	{
 		path: '/',
 		name: 'home',
 		component: () => import('@/views/Home.vue')
-	},
-	{
-		path: '/',
-		name: 'homeIFrame',
-		component: () => import('@/views/HomeIFrame.vue'),
-		props: true
 	},
 	{
 		path: '/about',
@@ -61,25 +54,24 @@ const baseRoutes = [
 const routes = baseRoutes.concat(managersRoutes).concat(importExportRoutes)
 
 const router = createRouter({
-    base: process.env.VUE_APP_PUBLIC_PATH,
-    history: createWebHistory(process.env.VUE_APP_PUBLIC_PATH),
-    routes
+	base: process.env.VUE_APP_PUBLIC_PATH,
+	history: createWebHistory(process.env.VUE_APP_PUBLIC_PATH),
+	routes
 })
 
-router.beforeEach((to, from, next) => {
-    console.log(from)
+/* router.beforeEach((to, from, next) => {
+	console.log(from)
 
-    if (to.name === 'home') {
-        if (store.state.homePage.to) {
-            next({ name: 'homeIFrame', params: { to: store.state.homePage.to } })
-        }
-        if (store.state.homePage.url) {
-            next({ name: 'homeIFrame', params: { url: store.state.homePage.url } })
-        }
-    }
+	if (to.name === 'home') {
+		if (store.state.homePage.to) {
+			next({ name: 'homeIFrame', params: { to: store.state.homePage.to } })
+		}
+		if (store.state.homePage.url) {
+			next({ name: 'homeIFrame', params: { url: store.state.homePage.url } })
+		}
+	}
 
-    next()
-})
-
+	next()
+}) */
 
 export default router
