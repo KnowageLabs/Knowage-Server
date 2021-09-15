@@ -50,7 +50,7 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         deleteTemplate(e, itemId): void {
-            console.log(e)
+            e.preventDefault()
             if (e.item && e.item.id) itemId = e.item.id
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
