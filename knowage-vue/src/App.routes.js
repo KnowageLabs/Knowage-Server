@@ -4,7 +4,6 @@ import managersRoutes from '@/modules/managers/managers.routes.js'
 import importExportRoutes from '@/modules/importExport/ImportExport.routes.js'
 import kpiRoutes from '@/modules/kpi/kpi.routes.js'
 import documentExecutionRoutes from '@/modules/documentExecution/documentExecution.routes.js'
-import store from './App.store'
 
 const baseRoutes = [
     {
@@ -70,21 +69,6 @@ const router = createRouter({
     base: process.env.VUE_APP_PUBLIC_PATH,
     history: createWebHistory(process.env.VUE_APP_PUBLIC_PATH),
     routes
-})
-
-router.beforeEach((to, from, next) => {
-    console.log(from)
-
-    if (to.name === 'home') {
-        if (store.state.homePage.to) {
-            next({ name: 'homeIFrame', params: { to: store.state.homePage.to } })
-        }
-        if (store.state.homePage.url) {
-            next({ name: 'homeIFrame', params: { url: store.state.homePage.url } })
-        }
-    }
-
-    next()
 })
 
 /*router.beforeEach((to, from, next) => {
