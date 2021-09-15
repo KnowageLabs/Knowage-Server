@@ -1,14 +1,8 @@
 <template>
     <div class="kn-page">
         <div class="kn-page-content p-grid p-m-0">
-            <GlossaryDefinitionInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :contentInfo="contentInfo" @close="infoDialogVisible = false"></GlossaryDefinitionInfoDialog>
-
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
-                <GlossaryDefinitionDetail :reloadTree="reloadTree" @infoClicked="showInfo" @addWord="editWord(-1, $event)"></GlossaryDefinitionDetail>
-            </div>
-
-            <div class="kn-list--column kn-list-border-left p-col-4 p-sm-4 p-md-3 p-p-0">
-                <Toolbar class="kn-toolbar kn-toolbar--secondary">
+            <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
+                <Toolbar class="kn-toolbar kn-toolbar--primary">
                     <template #left>
                         {{ $t('managers.glossary.glossaryDefinition.wordsList') }}
                     </template>
@@ -19,7 +13,7 @@
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
                 <Listbox
                     v-if="!loading"
-                    class="kn-list--column "
+                    class="kn-list--column"
                     :options="wordsList"
                     :filter="true"
                     :filterPlaceholder="$t('common.search')"
@@ -30,7 +24,7 @@
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
-                        <div class="kn-list-item kn-draggable" data-test="list-item">
+                        <div class="kn-list-item" data-test="list-item">
                             <i class="pi pi-bars"></i>
                             <div class="kn-list-item-text" draggable="true" @click.stop="editWord(slotProps.option.WORD_ID)" @dragstart="onDragStart($event, slotProps.option)">
                                 <span>{{ slotProps.option.WORD }}</span>
@@ -40,6 +34,12 @@
                         </div>
                     </template>
                 </Listbox>
+            </div>
+
+            <GlossaryDefinitionInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :contentInfo="contentInfo" @close="infoDialogVisible = false"></GlossaryDefinitionInfoDialog>
+
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
+                <GlossaryDefinitionDetail :reloadTree="reloadTree" @infoClicked="showInfo" @addWord="editWord(-1, $event)"></GlossaryDefinitionDetail>
             </div>
         </div>
         <GlossaryDefinitionWordEdit :visible="editWordDialogVisible" @close="editWordDialogVisible = false" @saved="wordSaved" :state="state" :category="category" :propWord="contentInfo" :selectedGlossaryId="selectedGlossaryId" @reloadTree="reloadTree = !reloadTree"></GlossaryDefinitionWordEdit>

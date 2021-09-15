@@ -1,15 +1,12 @@
 <template>
     <div class="kn-page-content p-m-0">
-        <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
+        <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
             <template #left>{{ $t('managers.glossary.glossaryDefinition.title') }}</template>
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-            <template #right>
-                <FabButton icon="fas fa-plus" class="fab-button" @click="addNewGlossary('Save')" />
-            </template>
         </Toolbar>
         <Card class="p-m-3">
             <template #header>
-                <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                <Toolbar class="kn-toolbar kn-toolbar--primary">
                     <template #left>
                         {{ $t('managers.glossary.glossaryDefinition.glossary') }}
                     </template>
@@ -19,14 +16,16 @@
                                 <Button class="kn-button p-button-text" @click="addNewGlossary('Clone')">{{ $t('common.clone') }}</Button>
                                 <Button class="kn-button p-button-text" @click="deleteGlossaryConfirm">{{ $t('common.delete') }}</Button>
                             </div>
+                            <div>
+                                <FabButton icon="fas fa-plus" class="fab-button" @click="addNewGlossary('Save')" />
+                            </div>
                         </div>
                     </template>
                 </Toolbar>
             </template>
             <template #content>
-                <Message class="p-mt-0">{{ $t('managers.glossary.glossaryDefinition.help') }}</Message>
                 <div>
-                    <div class="p-field p-d-flex p-ai-center">
+                    <div class="p-field p-d-flex p-ai-center p-m-3">
                         <div class="p-d-flex p-flex-column p-mr-2" id="glossary-select-container">
                             <label for="glossary" class="kn-material-input-label">{{ $t('managers.glossary.glossaryDefinition.title') }}</label>
                             <Dropdown
@@ -44,31 +43,24 @@
                             />
                             <small id="glossary-help">{{ $t('managers.glossary.glossaryDefinition.glossaryHint') }}</small>
                         </div>
-                        <div v-if="selectedGlossary" id="code-container">
-                            <span class="p-float-label">
+                        <div v-if="selectedGlossary" class="p-m-3" id="code-container">
+                            <span class="p-float-label p-mt-3">
                                 <InputText id="code" class="kn-material-input full-width" v-model.trim="selectedGlossary.GLOSSARY_CD" @blur="handleSaveGlossary" />
                                 <label for="code" class="kn-material-input-label"> {{ $t('managers.glossary.common.code') }}</label>
                             </span>
                         </div>
                     </div>
-                    <div v-if="selectedGlossary" class="p-field p-d-flex kn-flex">
-                        <div class="p-float-label kn-flex">
+                    <div v-if="selectedGlossary" class="p-field p-d-flex p-m-3 kn-flex">
+                        <div class="p-float-label kn-flex p-m-3">
                             <InputText id="description" class="kn-material-input full-width" v-model.trim="selectedGlossary.GLOSSARY_DS" @blur="handleSaveGlossary" />
                             <label for="description" class="kn-material-input-label"> {{ $t('common.description') }}</label>
                         </div>
                     </div>
                 </div>
                 <div v-if="selectedGlossary && showTree">
-                    <Toolbar class="kn-toolbar kn-toolbar--default">
-                        <template #left>
-                            {{ $tc('managers.glossary.common.word', 2) }}
-                        </template>
-                        <template #right>
-                            <Button v-if="selectedGlossary && selectedGlossaryId && selectedGlossaryId != -1" class="kn-button p-button-text" @click="showNodeDialog(null, 'new')">{{ $t('managers.glossary.glossaryDefinition.addNode') }}</Button>
-                        </template>
-                    </Toolbar>
                     <div class="p-d-flex p-flex-row p-m-3">
                         <InputText id="search-input" class="kn-material-input" v-model="searchWord" :placeholder="$t('common.search')" @input="filterGlossaryTree" data-test="search-input" />
+                        <FabButton icon="fas fa-plus" class="fab-button p-mt-3 p-ml-2" @click.stop="showNodeDialog(null, 'new')" />
                     </div>
                     <Tree id="glossary-tree" :value="nodes" :expandedKeys="expandedKeys" @nodeExpand="listContents(selectedGlossary.GLOSSARY_ID, $event)">
                         <template #default="slotProps">
@@ -113,7 +105,6 @@ import { iContent, iGlossary, iNode, iWord } from './GlossaryDefinition'
 import axios from 'axios'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
-import Message from 'primevue/message'
 import glossaryDefinitionDescriptor from './GlossaryDefinitionDescriptor.json'
 import GlossaryDefinitionHint from './GlossaryDefinitionHint.vue'
 import GlossaryDefinitionNodeDialog from './dialogs/GlossaryDefinitionNodeDialog.vue'
@@ -122,7 +113,7 @@ import Tree from 'primevue/tree'
 
 export default defineComponent({
     name: 'glossary-definition-detail',
-    components: { Card, Dropdown, GlossaryDefinitionHint, GlossaryDefinitionNodeDialog, FabButton, Message, Tree },
+    components: { Card, Dropdown, GlossaryDefinitionHint, GlossaryDefinitionNodeDialog, FabButton, Tree },
     props: { reloadTree: { type: Boolean } },
     emits: ['addWord', 'infoClicked'],
     data() {

@@ -190,7 +190,7 @@
         "gallery": {
             "column": {
                 "image": "Image",
-                "info": "Info",
+				"info": "Info",
                 "name": "Name",
                 "tags": "Tags",
                 "type": "Type"
@@ -200,9 +200,9 @@
         },
         "import": {
             "completedWithErrors": "Import completed with errors. Please read logs for further information.",
-            "itemWithEmptyId": "This item has an empty ID. If checked, it will be imported as new.",
-            "itemWithoutIdConfirm": "This item has an empty ID. It will be imported as new. Do you want to procede?",
-            "itemsWithEmptyIdWarning": "Items with empty IDs were found. They will be imported as new.",
+			"itemWithEmptyId": "This item has an empty ID. If checked, it will be imported as new.",
+			"itemWithoutIdConfirm": "This item has an empty ID. It will be imported as new. Do you want to procede?",
+			"itemsWithEmptyIdWarning": "Items with empty IDs were found. They will be imported as new.",
             "successfullyCompleted": "Import successfully completed"
         },
         "title": "Import/Export"
@@ -263,7 +263,7 @@
             "thresholdReused": "Warning: this threshold is used elsewhere. Any change will affect other KPIs. Please consider creating a clone",
             "thresholdsListTitle": "Thresholds List",
             "title": "KPI Definition",
-            "tresholdTitle": "Threshold",
+            "tresholdTitle": "Treshold",
             "useIt": "Use It"
         },
         "kpiScheduler": {
@@ -627,7 +627,7 @@
                 "formula": "Formula",
                 "link": "Link",
                 "status": "Status",
-                "word": "Word | Words"
+                "word": "Word"
             },
             "glossaryDefinition": {
                 "addNode": "Add node",
@@ -642,7 +642,6 @@
                 "formula": "Formula",
                 "glossary": "Glossary",
                 "glossaryHint": "Edit the input to change the glossary name",
-                "help": "Select a Glossary from the combo box to show its word hierarchy structure or type a name to create a new one. You can edit it by adding nodes or by dropping words from the right side list",
                 "hint": "The Glossary definition page allows you to create glossary to identify a set of words to apply in different documents and datasets. It's also possible to create a word hierarchy for each glossary. Select one existing item from the dropdown, or press the \"+\" button to add one.",
                 "newNode": "New node",
                 "saveTitle": "New glossary",
