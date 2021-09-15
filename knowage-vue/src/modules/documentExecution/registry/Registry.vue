@@ -55,23 +55,12 @@ export default defineComponent({
     },
     async created() {
         await this.loadPage()
-        // console.log('LOADED TEMPLATE: ', this.template)
-        // console.log('LOADED REGISTRY: ', this.registry)
-        // console.log('LOADED FILTERED VALUES: ', this.filteredValues)
-        console.log('FILTERS ', this.filters)
-        console.log('ID ', this.id)
     },
     methods: {
         async loadPage() {
             this.loading = true
             await this.loadRegistry()
-            this.loadConfiguration()
-            this.loadEntity()
-            this.loadColumns()
-            this.loadColumnMap()
-            this.loadColumnsInfo()
-            this.loadRows()
-            this.checkIfFilterColumnExists()
+            this.loadRegistryData()
             this.loading = false
         },
         async loadRegistry() {
@@ -89,7 +78,7 @@ export default defineComponent({
 
             postData.append('start', '' + this.pagination.start)
             await axios
-                .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+                .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded' } })
                 .then((response) => {
                     this.pagination.size = response.data.results
                     this.registry = response.data
@@ -101,16 +90,23 @@ export default defineComponent({
                     })
                 })
         },
+        loadRegistryData() {
+            this.loadConfiguration()
+            this.loadEntity()
+            this.loadColumns()
+            this.loadColumnMap()
+            this.loadColumnsInfo()
+            this.loadRows()
+            this.getFilters()
+        },
         loadColumns() {
             this.columns = this.registry.registryConfig.columns
-            console.log('LOADED COLUMNS: ', this.columns)
         },
         loadColumnMap() {
             this.columnMap = { id: 'id' }
             for (let i = 1; i < this.registry.metaData.fields.length; i++) {
                 this.columnMap[this.registry.metaData.fields[i].name] = this.registry.metaData.fields[i].header
             }
-            console.log('COLUMN MAP: ', this.columnMap)
         },
         loadColumnsInfo() {
             for (let i = 1; i < this.registry.metaData.fields.length; i++) {
@@ -123,31 +119,23 @@ export default defineComponent({
             for (let i = 0; i < limit; i++) {
                 const tempRow = {}
                 Object.keys(this.registry.rows[i]).forEach((key) => {
-                    // console.log(key, this.registry.rows[i][key])
                     tempRow[this.columnMap[key]] = this.registry.rows[i][key]
                 })
                 this.rows.push(tempRow)
             }
-
-            // console.log('LOADED ROWS: ', this.rows)
         },
         loadConfiguration() {
             this.configuration = this.registry.registryConfig.configurations
-            // console.log('LOADED CONFIGURATION: ', this.configuration)
         },
         loadEntity() {
             this.entity = this.registry.registryConfig.entity
-            console.log('LOADED ENTITY: ', this.entity)
         },
         onRowChanged(row: any) {
-            console.log('CHANGED ROW: ', row)
             const tempRow = { ...row }
             const index = this.updatedRows.findIndex((el: any) => el.id === tempRow.id)
             index === -1 ? this.updatedRows.push(tempRow) : (this.updatedRows[index] = tempRow)
-            console.log('UPDATED ROWS: ', this.updatedRows)
         },
         async saveRegistry() {
-            console.log('UPDATED ROWS FOR SAVE: ', this.updatedRows)
             this.updatedRows.forEach((el: any) => {
                 delete el.id
                 delete el.isNew
@@ -172,7 +160,6 @@ export default defineComponent({
                 })
         },
         async onRowDeleted(row: any) {
-            // console.log('ROW FOR DELETE: ', row)
             const postData = new URLSearchParams()
             postData.append('records', '' + JSON.stringify([row]))
             await axios
@@ -196,17 +183,16 @@ export default defineComponent({
                     })
                 })
         },
-        checkIfFilterColumnExists() {
+        getFilters() {
             this.filters = []
             const tempFilters = this.registry.registryConfig.filters
-            // console.log('tempFilters: ', tempFilters)
+
             for (let i = 0; i < tempFilters.length; i++) {
                 const filter = tempFilters[i]
-                // console.log('COLUMNS: ', this.columns)
+
                 for (let j = 0; j < this.columns.length; j++) {
                     const column = this.columns[j]
                     if (filter.presentation !== 'DRIVER' && filter.field === column.field) {
-                        console.log('TEMP COLMN: ', column)
                         this.filters.push({
                             title: filter.title,
                             field: filter.field,
@@ -227,13 +213,12 @@ export default defineComponent({
             this.loadRows()
         },
         async updatePagination(lazyParams: any) {
-            console.log('UPDATE PAGINATION: ', lazyParams)
             this.pagination = {
                 start: lazyParams.paginationStart,
                 limit: lazyParams.paginationLimit,
                 size: lazyParams.size
             }
-            console.log('UPDATED PAGINATION: ', this.pagination)
+
             if (this.pagination.size > 1000) {
                 await this.loadRegistry()
                 this.loadRows()

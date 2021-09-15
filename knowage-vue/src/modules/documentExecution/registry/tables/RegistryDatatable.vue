@@ -33,6 +33,7 @@
                         class="kn-truncated"
                         :field="col.field"
                         :header="col.title"
+                        :style="col.columnInfo.type === 'date' ? registryDatatableDescriptor.dateColumn.style : ''"
                         :bodyStyle="{
                             'background-color': col.color,
                             width: col.size + 'px'
@@ -75,8 +76,6 @@
                             </div>
                         </template>
                         <template #body="slotProps">
-                            <!-- {{ col.isEditable && col.columnInfo.type === 'date' ? getFormatedDate(slotProps.data[col.field], col.columnInfo.dateFormat) : '' }}
-                            {{ col.columnInfo.dateFormat }} -->
                             <div class="p-d-flex p-flex-row" :data-test="col.field + '-body'">
                                 <!-- Checkbox -->
                                 <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('rowChanged', slotProps.data)" :disabled="!col.isEditable"></Checkbox>
@@ -91,9 +90,11 @@
                                 <!-- Formating -->
                                 <div v-else-if="col.isEditable">
                                     <span v-if="col.columnInfo.type === 'int' || col.columnInfo.type === 'float'">{{ getFormatedNumber(slotProps.data[col.field]) }}</span>
-                                    <!-- Calendar -->
+                                    <!-- Text EDITABLE -->
                                     <span v-else> {{ slotProps.data[col.field] }}</span>
                                 </div>
+                                <span v-else-if="col.columnInfo.type === 'date'"> {{ getFormatedDate(slotProps.data[col.field], col.columnInfo.dateFormat) }}</span>
+                                <!-- Text NOT EDITABLE -->
                                 <span v-else> {{ slotProps.data[col.field] }}</span>
                                 <i v-if="col.isEditable && col.columnInfo.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" />
                             </div>
@@ -188,6 +189,7 @@ export default defineComponent({
         pagination: {
             handler() {
                 this.loadPagination()
+                this.first = this.pagination?.start
             },
             deep: true
         }
@@ -225,11 +227,9 @@ export default defineComponent({
                     }
                 }
             })
-            // console.log('COLUMNS: ', this.columns)
         },
         loadRows() {
             this.rows = [...(this.propRows as any[])]
-            // console.log('ROWS: ', this.rows)
         },
         loadConfiguration() {
             this.configuration = this.propConfiguration
@@ -245,13 +245,10 @@ export default defineComponent({
                         this.buttons.enableAddRecords = this.configuration[i].value === 'true'
                     }
                 }
-                console.log('CONFIGURATION: ', this.configuration)
-                // console.log('BUTTONS: ', this.configuration)
             }
         },
         loadPagination() {
             this.lazyParams = { ...this.pagination } as any
-            // console.log('LAZY PARAMS LOADED: ', this.lazyParams)
         },
         onPage(event: any) {
             this.lazyParams = {
@@ -302,12 +299,6 @@ export default defineComponent({
             return formatNumberWithLocale(number, precision, format)
         },
         addColumnOptions(column: any, row: any) {
-            //.log('COLUMN: ', column, ', ROW: ', row)
-
-            console.log('TEEEEEEEEEEEST: ', column.field)
-            console.log('TEEEEEEEEEEEST: ', row[column.dependences])
-            console.log('TEEEEEEEEEEEST OPTIONS: ', this.comboColumnOptions)
-
             if (!this.comboColumnOptions[column.field]) {
                 this.comboColumnOptions[column.field] = []
             }
@@ -316,27 +307,19 @@ export default defineComponent({
                 this.loadColumnOptions(column, row)
             }
         },
-        // TODO izdvojiti u helper?
         async loadColumnOptions(column: any, row: any) {
-            const postData = new URLSearchParams()
             const subEntity = column.subEntity ? '::' + column.subEntity + '(' + column.foreignKey + ')' : ''
 
             const entityId = this.entity + subEntity + ':' + column.field
             const entityOrder = this.entity + subEntity + ':' + (column.orderBy ?? column.field)
 
-            postData.append('ENTITY_ID', entityId) // it.eng.knowage.meta.stores_for_registry.Store::rel_region_id_in_region(rel_region_id_in_region):sales_city
-            postData.append('QUERY_TYPE', 'standard') //
-            postData.append('ORDER_ENTITY', entityOrder) // it.eng.knowage.meta.stores_for_registry.Store::rel_region_id_in_region(rel_region_id_in_region):sales_city
-            postData.append('ORDER_TYPE', 'asc')
-            postData.append('QUERY_ROOT_ENTITY', 'true')
-            postData.append('query', '')
+            const postData = new URLSearchParams({ ENTITY_ID: entityId, QUERY_TYPE: 'standard', ORDER_ENTITY: entityOrder, ORDER_TYPE: 'asc', QUERY_ROOT_ENTITY: 'true' })
             if (column.dependences && row && row[column.dependences]) {
                 postData.append('DEPENDENCES', this.entity + subEntity + ':' + column.dependences + '=' + row[column.dependences])
             }
             await axios
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
                 .then((response) => (this.comboColumnOptions[column.field][row[column.dependences]] = response.data.rows))
-            console.log('DROPDOWN VALUES: ', this.comboColumnOptions[column.field][row[column.dependences]])
         },
         addNewRow() {
             const newRow = { id: this.rows.length, isNew: true }
@@ -345,7 +328,6 @@ export default defineComponent({
                     newRow[el.field] = el.defaultValue ?? ''
                 }
             })
-            console.log('NEW ROW: ', newRow)
             this.rows.unshift(newRow)
 
             if (this.lazyParams.size <= registryDatatableDescriptor.tableOptions.paginationLimit) {
@@ -354,14 +336,10 @@ export default defineComponent({
             this.$emit('rowChanged', newRow)
         },
         onDropdownChange(row: any, column: any) {
-            console.log('FIRST: ', this.first)
-            console.log('COLUMN: ', column)
             this.selectedRow = row
             if (column.hasDependencies && !this.stopWarnings[column.field]) {
                 this.dependentColumns = [] as any[]
                 this.setDependentColumns(column)
-
-                console.log('TEEEEEEEEEEEEST: ', this.dependentColumns)
 
                 this.dependentColumns.forEach((el: any) => {
                     if (this.selectedRow[el.field]) {
@@ -370,24 +348,18 @@ export default defineComponent({
                 })
             }
 
-            // console.log('WARNING VISIBLE: ', this.warningVisible)
             this.$emit('rowChanged', row)
         },
         onWarningDialogClose(payload: any) {
-            // console.log('STOP WARNINGS: ', payload.stopWarnings)
             if (payload.stopWarnings) {
                 this.stopWarnings[payload.columnField] = true
             }
 
             this.clearDependentColumnsValues()
-            // console.log('STOP WARINGGS:', this.stopWarnings)
             this.warningVisible = false
         },
         clearDependentColumnsValues() {
-            console.log('SELECTED ROW: ', this.selectedRow)
             this.dependentColumns.forEach((el: any) => (this.selectedRow[el.field] = ''))
-
-            console.log('SELECTED ROW AFTER CLEAR: ', this.selectedRow)
             this.$emit('rowChanged', this.selectedRow)
         },
         setDependentColumns(column: any) {
@@ -397,9 +369,7 @@ export default defineComponent({
                 return
             }
 
-            // console.log('DEPENDENCIES: ', tempColumn.hasDependencies)
             tempColumn.hasDependencies.forEach((el: any) => {
-                // console.log('DEP COLUMNS: ', el)
                 this.dependentColumns.push(el)
                 this.setDependentColumns(el)
             })

@@ -1,4 +1,9 @@
 {
+    "dateColumn": {
+        "style": {
+            "width": "200px"
+        }
+    },
     "headerIconColumn": {
         "style": {
             "color": "white",

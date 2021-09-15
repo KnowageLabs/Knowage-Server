@@ -50,7 +50,6 @@ export default defineComponent({
     },
     watch: {
         propFilters() {
-            console.log('Entity: ', this.entity)
             this.loadFilters()
         }
     },
@@ -60,13 +59,9 @@ export default defineComponent({
     methods: {
         loadFilters() {
             this.filters = [...(this.propFilters as any[])]
-
-            // TODO delete this, just for showing
-            // this.filters.forEach((el: any) => (el.visible = true))
         },
         setFilterValue(value: string, index: number) {
             this.filters[index].filterValue = value
-            // console.log('FILTER UPDATED: ', this.filters)
         },
         clearAllFilters() {
             this.filters.forEach((el: any) => (el.filterValue = ''))
