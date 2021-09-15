@@ -5,7 +5,7 @@ import Button from 'primevue/button'
 import Card from 'primevue/card'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
-import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
+//import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import flushPromises from 'flush-promises'
 import CrossNavigationManagementHint from './CrossNavigationManagementHint.vue'
 import Toolbar from 'primevue/toolbar'
@@ -107,7 +107,7 @@ const factory = () => {
                 Button,
                 Card,
                 KnFabButton,
-                KnListBox,
+                KnListBox: true,
                 Listbox,
                 ProgressBar,
                 Toolbar
@@ -144,14 +144,14 @@ describe('Cross-navigation Management', () => {
         const wrapper = factory()
         await flushPromises()
         console.log(wrapper.vm.navigations)
-        const deleteButton = wrapper.find('[data-test="delete-button-0"]')
-        await deleteButton.trigger('click')
+        wrapper.vm.deleteTemplate({ item: { id: 655 } }, 655)
+        expect($confirm.require).toHaveBeenCalledTimes(1)
     })
     it('shows and empty detail when clicking on the add button', async () => {
-        // const wrapper = factory()
-        // await wrapper.find('[data-test="new-button"]').trigger('click')
-        // await flushPromises()
-        // expect($router.push).toHaveBeenCalledWith('/cross-navigation-management/new-navigation')
+        const wrapper = factory()
+        await wrapper.find('[data-test="new-button"]').trigger('click')
+        await flushPromises()
+        expect($router.push).toHaveBeenCalledWith('/cross-navigation-management/new-navigation')
     })
     it('shows the detail when clicking on a item', async () => {
         // const wrapper = factory()

@@ -11,7 +11,7 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <KnListBox :options="navigations" :settings="crossNavigationDescriptor.knListSettings" @delete="deleteTemplate($event, item)"></KnListBox>
+                <KnListBox :options="navigations" :settings="crossNavigationDescriptor.knListSettings" @delete.stop="deleteTemplate($event, item)"></KnListBox>
             </div>
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
                 <router-view @close="closeForm" @touched="touched = true" @saved="reload" />
@@ -50,7 +50,7 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         deleteTemplate(e, itemId): void {
-            e.preventDefault()
+            console.log(e)
             if (e.item && e.item.id) itemId = e.item.id
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
