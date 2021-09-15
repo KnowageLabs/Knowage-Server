@@ -16,6 +16,7 @@
                                 class="kn-material-input"
                                 type="text"
                                 v-model.trim="v$.constraint.label.$model"
+                                maxlength="20"
                                 :class="{
                                     'p-invalid': v$.constraint.label.$invalid && v$.constraint.label.$dirty
                                 }"
@@ -34,6 +35,7 @@
                                 class="kn-material-input"
                                 type="text"
                                 v-model.trim="v$.constraint.name.$model"
+                                maxlength="40"
                                 :class="{
                                     'p-invalid': v$.constraint.name.$invalid && v$.constraint.name.$dirty
                                 }"
@@ -47,7 +49,7 @@
                     </div>
                     <div class="p-field p-col-12">
                         <span class="p-float-label">
-                            <InputText id="description" class="kn-material-input" type="text" v-model.trim="constraint.description" :disabled="inputDisabled" @input="$emit('touched')" />
+                            <InputText id="description" class="kn-material-input" type="text" v-model.trim="constraint.description" :disabled="inputDisabled" @input="$emit('touched')" maxlength="160" />
                             <label for="description" class="kn-material-input-label">{{ $t('common.description') }} </label>
                         </span>
                     </div>
