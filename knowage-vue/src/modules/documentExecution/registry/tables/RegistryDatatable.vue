@@ -63,7 +63,7 @@
                                 </Dropdown>
                                 <!-- Calendar -->
                                 <Calendar v-else-if="col.isEditable && col.columnInfo.type === 'date'" v-model="slotProps.data[col.field]" :showTime="col.columnInfo.subtype === 'timestamp'" :showSeconds="col.columnInfo.subtype === 'timestamp'" @date-select="$emit('rowChanged', slotProps.data)" />
-                                <i v-if="col.isEditable" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" />
+                                <i v-if="col.isEditable && col.columnInfo.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" />
                             </div>
                         </template>
                         <template #body="slotProps">
@@ -79,7 +79,7 @@
                                     <span v-else> {{ slotProps.data[col.field] }}</span>
                                 </div>
                                 <span v-else> {{ slotProps.data[col.field] }}</span>
-                                <i v-if="col.isEditable" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" />
+                                <i v-if="col.isEditable && col.columnInfo.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" />
                             </div>
                         </template>
                     </Column>
