@@ -104,6 +104,8 @@
 
 					if (item.conditionedView === 'news' && this.news && this.news.count.total > 0) return true
 
+					if (item.conditionedView === 'roleSelection' && this.user.roles.length > 1) return true
+
 					return false
 				} else {
 					return true
@@ -156,9 +158,20 @@
 					if (Object.keys(this.news).length !== 0) return this.news.count.unread
 				}
 				return 0
+			},
+			findHomePage(dynMenu) {
+				let toRet = undefined
+				for (var idx in dynMenu) {
+					let menu = dynMenu[idx]
+
+					if (menu.to || menu.url) return menu
+				}
+
+				return toRet
 			}
 		},
 		mounted() {
+			this.$store.commit('setLoading', true)
 			let localObject = { locale: this.$i18n.fallbackLocale.toString() }
 			if (Object.keys(this.locale).length !== 0) localObject = { locale: this.locale }
 			if (localStorage.getItem('locale')) {
@@ -177,7 +190,15 @@
 				.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale))
 				.then((response) => {
 					this.technicalUserFunctionalities = response.data.technicalUserFunctionalities
-					this.commonUserFunctionalities = response.data.commonUserFunctionalities
+
+					let responseCommonUserFunctionalities = response.data.commonUserFunctionalities
+					for (var index in responseCommonUserFunctionalities) {
+						let item = responseCommonUserFunctionalities[index]
+						item.visible = this.isItemToDisplay(item)
+
+						this.commonUserFunctionalities.push(item)
+					}
+
 					let responseAllowedUserFunctionalities = response.data.allowedUserFunctionalities
 					for (var idx in responseAllowedUserFunctionalities) {
 						let item = responseAllowedUserFunctionalities[idx]
@@ -185,10 +206,18 @@
 
 						this.allowedUserFunctionalities.push(item)
 					}
+
 					this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities
+
+					if (this.dynamicUserFunctionalities.length > 0) {
+						let homePage = this.findHomePage(this.dynamicUserFunctionalities) || {}
+						if (homePage) this.$store.commit('setHomePage', homePage)
+						this.$router.push({ name: 'home' })
+					}
 					this.updateNewsAndDownload()
 				})
 				.catch((error) => console.error(error))
+				.finally(() => this.$store.commit('setLoading', false))
 		},
 		computed: {
 			...mapState({

@@ -242,7 +242,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				File file = totalPath.toFile();
 
 				if (file.exists()) {
-					String message = String.format("Directory %s is already existing.", path.substring(path.lastIndexOf(File.separator)));
+					String message = String.format("Directory %s is already existing.", totalPath.getName(totalPath.getNameCount()-1));
 					throw new ImpossibleToCreateFolderException(message);
 				} else {
 					// Creating the directory
@@ -654,7 +654,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		boolean updated = false;
 
 		File fromDirectory = getTotalPath(path.toString(), profile).toFile();
-		File toDirectory = getTotalPath(path.getParent().resolve(folderName).toString(), profile).toFile();
+		File toDirectory = getTotalPath(fromDirectory.getParent(), profile).resolve(folderName).toFile();
 
 		if (toDirectory.exists()) {
 			String message = "Destination folder already existing";

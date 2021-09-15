@@ -59,13 +59,15 @@
 	export default defineComponent({
 		name: 'import-export-catalog-function',
 		components: { Column, DataTable, InputText, Tag },
+		props: { selectedItems: Object },
 		data() {
 			return {
 				filters: {},
 				importExportDescriptor: importExportDescriptor,
 				product: {},
 				selectedCatalogFunctionItems: [],
-				functions: [] as Array<ICatalogFunctionTemplate>
+				functions: [] as Array<ICatalogFunctionTemplate>,
+				FUNCTIONALITY: 'catalogFunction'
 			}
 		},
 		created() {
@@ -83,7 +85,15 @@
 				this.$emit('update:loading', true)
 				axios
 					.get(process.env.VUE_APP_API_PATH + '1.0/functioncatalog')
-					.then((response) => (this.functions = response.data))
+					.then((response) => {
+						this.functions = response.data
+
+						if (this.selectedItems) {
+							this.selectedCatalogFunctionItems = this.selectedItems[this.FUNCTIONALITY].filter((element) => {
+								return this.functions.filter((el) => el.id === element.id).length == 1
+							})
+						}
+					})
 					.catch((error) => console.error(error))
 					.finally(() => {
 						this.$emit('update:loading', false)
@@ -93,7 +103,7 @@
 		watch: {
 			selectedCatalogFunctionItems(newSelectedCatalogFunctionItems, oldSelectedCatalogFunctionItems) {
 				if (oldSelectedCatalogFunctionItems != newSelectedCatalogFunctionItems) {
-					this.$emit('onItemSelected', { items: this.selectedCatalogFunctionItems, functionality: 'catalogFunction' })
+					this.$emit('onItemSelected', { items: this.selectedCatalogFunctionItems, functionality: this.FUNCTIONALITY })
 				}
 			}
 		}
