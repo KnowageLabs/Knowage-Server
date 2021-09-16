@@ -12,12 +12,29 @@
                 <form class="p-fluid p-formgrid p-grid">
                     <div class="p-field p-col-12 p-md-10">
                         <span class="p-float-label">
-                            <InputText id="name" class="kn-material-input" type="text" v-model.trim="activityName" maxLength="100" />
-                            <label for="name" class="kn-material-input-label"> {{ $t('documentExecution.dossier.headers.activity') }} * </label>
+                            <InputText
+                                id="activityName"
+                                class="kn-material-input p-mb-2"
+                                type="text"
+                                v-model.trim="v$.activity.activityName.$model"
+                                :class="{
+                                    'p-invalid': v$.activity.activityName.$invalid && v$.activity.activityName.$dirty
+                                }"
+                                maxLength="100"
+                                @blur="v$.activity.activityName.$touch()"
+                                data-test="activityName-input"
+                            />
+                            <label for="activityName" class="kn-material-input-label"> {{ $t('documentExecution.dossier.headers.activity') }} * </label>
                         </span>
+                        <KnValidationMessages
+                            :vComp="v$.activity.activityName"
+                            :additionalTranslateParams="{
+                                fieldName: $t('documentExecution.dossier.headers.activity')
+                            }"
+                        />
                     </div>
                     <div class="p-field p-md-2">
-                        <Button class="p-button-link" :label="$t('documentExecution.dossier.launchActivity')" @click="createNewActivity" />
+                        <Button class="kn-button p-button-text" :disabled="buttonDisabled" :label="$t('documentExecution.dossier.launchActivity')" @click="createNewActivity" data-test="input-button" />
                     </div>
                 </form>
             </template>
@@ -33,7 +50,8 @@
             </template>
             <template #content>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <DataTable v-if="dossierActivities.length != 0" :value="dossierActivities" :loading="loading" :rows="20" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" data-test="activities-table">
+                <KnHint v-if="showHint" :title="'documentExecution.dossier.title'" :hint="'documentExecution.dossier.hint'" data-test="hint"></KnHint>
+                <DataTable v-else :value="dossierActivities" :loading="loading" :rows="20" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" data-test="activities-table">
                     <Column field="activity" :header="$t('documentExecution.dossier.headers.activity')" :sortable="true" />
                     <Column field="creationDate" :header="$t('managers.mondrianSchemasManagement.headers.creationDate')" :sortable="true" dataType="date">
                         <template #body="{data}">
@@ -43,12 +61,11 @@
                     <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :style="col.style" class="kn-truncated" :sortable="true" />
                     <Column header style="text-align:right">
                         <template #body="slotProps">
-                            <Button icon="pi pi-download" class="p-button-link" />
-                            <Button icon="pi pi-trash" class="p-button-link" @click="deleteDossierConfirm(slotProps.data)" />
+                            <Button icon="pi pi-download" class="p-button-link" @click="downloadActivity(slotProps.data)" />
+                            <Button icon="pi pi-trash" class="p-button-link" @click="deleteDossierConfirm(slotProps.data)" data-test="delete-button" />
                         </template>
                     </Column>
                 </DataTable>
-                <KnHint v-else :title="'documentExecution.dossier.title'" :hint="'documentExecution.dossier.hint'"></KnHint>
             </template>
         </Card>
     </div>
@@ -56,25 +73,29 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import dossierDescriptor from './DossierDescriptor.json'
+import { createValidations } from '@/helpers/commons/validationHelper'
 import axios from 'axios'
-import KnHint from '@/components/UI/KnHint.vue'
+import useValidate from '@vuelidate/core'
+import dossierDescriptor from './DossierDescriptor.json'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
+import KnHint from '@/components/UI/KnHint.vue'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 
 export default defineComponent({
-    name: 'configuration-management',
-    components: {
-        Card,
-        Column,
-        DataTable,
-        KnHint
-    },
-    props: {
-        id: {
-            type: String,
-            required: false
+    name: 'dossier',
+    components: { Card, Column, DataTable, KnHint, KnValidationMessages },
+    props: { id: { type: String, required: false } },
+    computed: {
+        showHint() {
+            if (this.dossierActivities.length != 0) {
+                return false
+            }
+            return true
+        },
+        buttonDisabled(): any {
+            return this.v$.$invalid
         }
     },
     created() {
@@ -89,7 +110,8 @@ export default defineComponent({
     },
     data() {
         return {
-            activityName: '',
+            v$: useValidate() as any,
+            activity: { activityName: '' } as any,
             loading: false,
             interval: null as any,
             dossierActivities: [] as any,
@@ -97,6 +119,11 @@ export default defineComponent({
             jsonTemplate: {} as any,
             jsonTemplateString:
                 '{"name":null,"downloadable":null,"uploadable":null,"PPT_TEMPLATE":{"name":"MARE6.pptx","downloadable":null,"uploadable":null,"PPT_TEMPLATE":null,"DOC_TEMPLATE":null,"REPORT":[]},"DOC_TEMPLATE":null,"REPORT":[{"label":"Report-no-parameter","PLACEHOLDER":[{"value":"ph1"}],"PARAMETER":[],"imageName":null,"sheet":null,"sheetHeight":null,"sheetWidth":null,"deviceScaleFactor":null}]}'
+        }
+    },
+    validations() {
+        return {
+            activity: createValidations('activity', dossierDescriptor.validations.activity)
         }
     },
     methods: {
@@ -153,7 +180,7 @@ export default defineComponent({
             }
         },
         async createNewActivity() {
-            let url = `/knowagedossierengine/api/dossier/run?activityName=${this.activityName}&documentId=${this.id}`
+            let url = `/knowagedossierengine/api/dossier/run?activityName=${this.activity.activityName}&documentId=${this.id}`
             await axios.post(url, this.jsonTemplate, { headers: { Accept: 'application/json, text/plain, */*' } }).then((response) => {
                 if (response.data.errors) {
                     this.$store.commit('setError', { msg: response.data.errors })
@@ -198,7 +225,8 @@ export default defineComponent({
                     console.log(link)
                     // $window.location = link
                 } else {
-                    await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`).then((response) => {
+                    link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`
+                    await axios.get(link, { headers: { Accept: 'application/json, text/plain, */*' } }).then((response) => {
                         if (this.jsonTemplate.PPT_TEMPLATE != null) {
                             this.storePPT(selectedActivity.id, response.data, selectedActivity.activity)
                         } else {
@@ -230,5 +258,3 @@ export default defineComponent({
     }
 })
 </script>
-
-<style lang="scss" scoped></style>

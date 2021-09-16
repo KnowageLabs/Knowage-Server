@@ -12,5 +12,23 @@
             "field": "status",
             "header": "documentExecution.dossier.headers.status"
         }
-    ]
+    ],
+    "validations": {
+        "activity": [
+            {
+                "fieldName": "activityName",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
 }
