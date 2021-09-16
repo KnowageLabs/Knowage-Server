@@ -15,7 +15,7 @@
         <Listbox :options="navigation.fromPars" v-if="navigation.fromPars">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
             <template #option="slotProps">
-                <div class="p-d-flex card kn-draggable" draggable="true" @dragstart="onDragStart($event, slotProps.option)">
+                <div class="p-d-flex card p-p-3 kn-draggable" draggable="true" @dragstart="onDragStart($event, slotProps.option)">
                     <i class="pi pi-bars p-mr-2"> </i>
                     <div>{{ slotProps.option.name }}</div>
                     <div class="p-ml-auto">{{ $t(dialogDescriptor.parType[slotProps.option.type].label) }}</div>
@@ -32,11 +32,19 @@
         <Listbox :options="navigation.toPars" v-if="navigation.toPars">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
             <template #option="slotProps">
-                <div class="p-d-flex card" v-if="slotProps.option.links && slotProps.option.links.length > 0">
+                <div class="p-d-flex p-p-3 card" v-if="slotProps.option.links && slotProps.option.links.length > 0">
                     <div>{{ slotProps.option.links[0].name }} <i class="fa fa-link"> </i> {{ slotProps.option.name }}</div>
                     <i class="fa fa-times-circle p-mr-2 p-ml-auto" @click="removeLink(slotProps.option.id)" data-test="remove"> </i>
                 </div>
-                <div class="p-d-flex card" :class="{ dropzone: dropzoneActive[slotProps.option.id] }" @drop="link($event, slotProps.option)" @dragover.prevent @dragenter.prevent="setDropzoneClass(true, slotProps.option)" @dragleave.prevent="setDropzoneClass(false, slotProps.option)" v-else>
+                <div
+                    class="p-d-flex p-p-3 card"
+                    :class="{ dropzone: dropzoneActive[slotProps.option.id] }"
+                    @drop="link($event, slotProps.option)"
+                    @dragenter.prevent
+                    @dragleave.prevent="setDropzoneClass(false, slotProps.option.id)"
+                    @dragover.prevent="setDropzoneClass(true, slotProps.option.id)"
+                    v-else
+                >
                     <div>{{ slotProps.option.name }}</div>
                     <div class="p-ml-auto">{{ $t(dialogDescriptor.parType[slotProps.option.type].label) }}</div>
                 </div>
@@ -104,18 +112,24 @@ export default defineComponent({
             this.navigation.toPars.forEach((param) => {
                 if (param.id === id) {
                     param.links = []
+                    this.setDropzoneClass(false, id)
                 }
             })
         },
-        setDropzoneClass(value: boolean, param: any) {
-            if (param.id) {
-                this.dropzoneActive[param.id] = value
+        setDropzoneClass(value: boolean, paramId: any) {
+            if (paramId) {
+                this.dropzoneActive[paramId] = value
             }
         }
     }
 })
 </script>
 <style lang="scss" scoped>
+::v-deep(.p-listbox) {
+    .p-listbox-item {
+        padding: 0;
+    }
+}
 .dropzone {
     background-color: #c2c2c2;
     color: white;
