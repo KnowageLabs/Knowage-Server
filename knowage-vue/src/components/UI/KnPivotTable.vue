@@ -27,7 +27,7 @@
                         @date-select="$emit('rowChanged', row)"
                     />
                     <span v-else-if="!column.isEditable && column.columnInfo.type === 'date'">{{ getFormatedDate(row[column.field].data, column.columnInfo.dateFormat) }} </span>
-                    <span v-if="(!column.isEditable && column.columnInfo.type === 'int') || column.columnInfo.type === 'float'">{{ getFormatedNumber(row[column.field].data) }}</span>
+                    <span v-else-if="(!column.isEditable && column.columnInfo.type === 'int') || column.columnInfo.type === 'float'">{{ getFormatedNumber(row[column.field].data) }}</span>
                     <span v-else>{{ row[column.field].data }}</span>
                     <i v-if="column.isEditable && column.columnInfo.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" />
                 </td>
