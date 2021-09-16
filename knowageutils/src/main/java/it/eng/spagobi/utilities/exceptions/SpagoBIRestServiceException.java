@@ -53,6 +53,19 @@ public class SpagoBIRestServiceException extends SpagoBIRuntimeException {
 	/**
 	 * Builds a <code>SpagoBIRestServiceException</code>.
 	 *
+	 * @param locale        the locale
+	 * @param messageBundle the messageBundle
+	 * @param ex            the parent exception
+	 */
+	public SpagoBIRestServiceException(Locale locale, Throwable ex, String messageBundle) {
+		super(ex);
+		this.locale = locale;
+		this.messageBundle = messageBundle;
+	}
+
+	/**
+	 * Builds a <code>SpagoBIRestServiceException</code>.
+	 *
 	 * @param localizationCode the error code for localization
 	 * @param locale           the locale
 	 * @param ex               the parent exception
