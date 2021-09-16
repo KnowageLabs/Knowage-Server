@@ -10,7 +10,7 @@
                 <InputText class="kn-material-input" type="text" v-model.trim="fixedValue" maxlength="100" />
                 <label class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.fixedValue') }} </label>
             </span>
-            <FabButton icon="fas fa-plus" class="fab-button p-mt-3 p-ml-2" @click.stop="addFixedValue" />
+            <Button :label="$t('common.add')" @click="addFixedValue" class="kn-button kn-button--primary" />
         </div>
         <Listbox :options="navigation.fromPars" v-if="navigation.fromPars">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
@@ -47,11 +47,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Listbox from 'primevue/listbox'
-import FabButton from '@/components/UI/KnFabButton.vue'
 import dialogDescriptor from './CrossNavigationManagementDialogDescriptor.json'
 export default defineComponent({
     name: 'cross-navigation-detail',
-    components: { Listbox, FabButton },
+    components: { Listbox },
     props: {
         selectedNavigation: {
             type: Object
