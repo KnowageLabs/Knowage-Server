@@ -436,10 +436,10 @@ export default defineComponent({
             this.showTree = false
             this.showHint = false
             this.selectedGlossaryId = null
-            this.nodes = []
             this.expandedKeys = {}
 
             if (type === 'Save') {
+                this.nodes = []
                 this.selectedGlossary = {
                     GLOSSARY_CD: '',
                     GLOSSARY_DS: '',
@@ -466,7 +466,10 @@ export default defineComponent({
             let tempData = {} as any
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, this.selectedGlossary)
-                .then((response) => (tempData = response.data))
+                .then((response) => {
+                    tempData = response.data
+                    this.showTree = true
+                })
                 .catch((response) => {
                     this.$store.commit('setError', {
                         title: this.$t('common.error.generic'),
@@ -500,7 +503,7 @@ export default defineComponent({
             } else {
                 this.$store.commit('setError', {
                     title: this.$t('common.error.generic'),
-                    msg: this.$t(this.glossaryDefinitionDescriptor.translation[tempData.Message])
+                    msg: this.glossaryDefinitionDescriptor.translation[tempData.Message] ? this.$t(this.glossaryDefinitionDescriptor.translation[tempData.Message]) : ''
                 })
             }
         },
