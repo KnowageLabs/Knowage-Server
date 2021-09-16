@@ -121,7 +121,7 @@
 				requiredFunctionality="NewsManagement"
 				to="/news-management" />
 			<ITEM id="5008" label="menu.modelCatalogResourceManagement"
-				to="/models-management" />
+				to="/models-management" toBeLicensed="KnowagePA"/>
 			<ITEM id="5009" label="menu.resourceManagement" requiredFunctionality="ResourceManagement,ResourceManagementDev"
 				to="/resource-management" />
 		</GROUP_ITEM>
