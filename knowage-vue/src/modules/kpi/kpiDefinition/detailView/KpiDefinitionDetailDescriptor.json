@@ -42,5 +42,25 @@
         "saveDialog": {
             "width": "20%"
         }
+    },
+    "validations": {
+        "selectedKpi": [
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "category",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            }
+        ]
     }
 }
