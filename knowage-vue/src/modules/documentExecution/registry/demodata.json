@@ -1,0 +1,179 @@
+{
+    "pivot": {
+        "columns": [
+            {
+                "grouping": true,
+                "name": "column_2"
+            },
+            {
+                "grouping": true,
+                "name": "column_3"
+            },
+            {
+                "grouping": true,
+                "name": "column_4"
+            },
+            {
+                "grouping": true,
+                "name": "column_5"
+            },
+            {
+                "grouping": true,
+                "name": "column_6"
+            },
+            {
+                "grouping": true,
+                "name": "column_7"
+            },
+            {
+                "grouping": false,
+                "name": "column_8"
+            }
+        ],
+        "rows": [
+            {
+                "column_1": 20,
+                "column_2": "Canada",
+                "column_3": "BC",
+                "column_4": "Victoria",
+                "column_5": "Mid-Size Grocery",
+                "column_6": "Store 20",
+                "column_7": "1980-02-05 23:00:00.0",
+                "column_8": 34452,
+                "id": 3
+            },
+            {
+                "column_1": 41,
+                "column_2": "Canada",
+                "column_3": "BC",
+                "column_4": "Victoria",
+                "column_5": "Supermarket",
+                "column_6": "test2",
+                "column_7": "",
+                "column_8": 500,
+                "id": 4
+            },
+            {
+                "column_1": 9,
+                "column_2": "Mexico",
+                "column_3": "DF",
+                "column_4": "Mexico City",
+                "column_5": "Mid-Size Grocery",
+                "column_6": "Store 9",
+                "column_7": "1955-03-18 01:00:00.0",
+                "column_8": 36509,
+                "id": 5
+            },
+            {
+                "column_1": 21,
+                "column_2": "Mexico",
+                "column_3": "DF",
+                "column_4": "San Andres",
+                "column_5": "Deluxe Supermarket",
+                "column_6": "Store 21",
+                "column_7": "1986-02-07 01:00:00.0",
+                "column_8": "",
+                "id": 6
+            },
+            {
+                "column_1": 40,
+                "column_2": "Mexico",
+                "column_3": "Guerrero",
+                "column_4": "Acapulco",
+                "column_5": "àèìòù汉字",
+                "column_6": "test",
+                "column_7": "",
+                "column_8": 1000,
+                "id": 7
+            },
+            {
+                "column_1": 0,
+                "column_2": "Mexico",
+                "column_3": "Jalisco",
+                "column_4": "Guadalajara",
+                "column_5": "Deluxe Supermarket",
+                "column_6": "Store 1",
+                "column_7": "2020-08-31 04:00:00.0",
+                "column_8": 65812,
+                "id": 8
+            },
+            {
+                "column_1": 5,
+                "column_2": "Mexico",
+                "column_3": "Jalisco",
+                "column_4": "Guadalajara",
+                "column_5": "Small Grocery",
+                "column_6": "Store 5",
+                "column_7": "1978-09-18 01:00:00.0",
+                "column_8": 24597,
+                "id": 9
+            },
+            {
+                "column_1": 10,
+                "column_2": "Mexico",
+                "column_3": "Veracruz",
+                "column_4": "Orizaba",
+                "column_5": "Mid-Size Grocery",
+                "column_6": "store diesci",
+                "column_7": "1979-04-13 00:00:00.0",
+                "column_8": 34795,
+                "id": 10
+            },
+            {
+                "column_1": 39,
+                "column_2": "Mexico",
+                "column_3": "Yucatan",
+                "column_4": "",
+                "column_5": "àèìòù汉字",
+                "column_6": "aaa",
+                "column_7": "",
+                "column_8": 8888,
+                "id": 11
+            },
+            {
+                "column_1": 8,
+                "column_2": "Mexico",
+                "column_3": "Yucatan",
+                "column_4": "Merida",
+                "column_5": "Deluxe Supermarket",
+                "column_6": "Store 8",
+                "column_7": "1958-09-23 01:00:00.0",
+                "column_8": 30797,
+                "id": 12
+            },
+            {
+                "column_1": 4,
+                "column_2": "Mexico",
+                "column_3": "Zacatecas",
+                "column_4": "Camacho",
+                "column_5": "Mid-Size Grocery",
+                "column_6": "Store 4",
+                "column_7": "1994-09-27 00:00:00.0",
+                "column_8": 23759,
+                "id": 13
+            },
+            {
+                "column_1": 12,
+                "column_2": "Mexico",
+                "column_3": "Zacatecas",
+                "column_4": "Hidalgo",
+                "column_5": "Deluxe Supermarket",
+                "column_6": "Store 124",
+                "column_7": "1968-03-25 00:00:00.0",
+                "column_8": 30584,
+                "id": 14
+            },
+            {
+                "column_1": 18,
+                "column_2": "Mexico",
+                "column_3": "Zacatecas",
+                "column_4": "Hidalgo",
+                "column_5": "Mid-Size Grocery",
+                "column_6": "Store 18",
+                "column_7": "1969-06-28 01:00:00.0",
+                "column_8": 38382,
+                "id": 15
+            }
+        ]
+    }
+}

@@ -1,14 +1,15 @@
 <template>
-    <table class="pivot-table" v-if="!loading">
+    <table class="pivot-table">
         <thead>
             <th v-for="(column, index) of columns" :key="index">
-                {{ column.name }}
+                {{ column.field }}
             </th>
         </thead>
         <tr v-for="(row, index) of mappedRows" :key="index">
             <template v-for="(column, i) of columns" :key="i">
-                <td v-if="row[column.name].rowSpan > 0" :rowspan="row[column.name].rowSpan">
-                    <span>{{ row[column.name].data }} -- {{ row[column.name].rowSpan }}</span>
+                <td v-if="row[column.field].rowSpan > 0" :rowspan="row[column.field].rowSpan">
+                    <!-- <span>{{ row[column.field].data }} -- {{ row[column.field].rowSpan }}</span> -->
+                    <span>{{ row[column.field].data }} </span>
                 </td>
             </template>
         </tr>
@@ -27,7 +28,7 @@ export default defineComponent({
     created() {
         this.mapRows()
         this.checkForRowSpan(0, this.mappedRows.length - 1, this.mappedRows, this.columns, 0)
-        this.loading = false
+        // this.loading = false
     },
     watch: {
         rows() {
@@ -37,8 +38,8 @@ export default defineComponent({
     },
     data() {
         return {
-            mappedRows: [] as any,
-            loading: true
+            mappedRows: [] as any
+            // loading: true
         }
     },
     computed: {},
@@ -47,27 +48,40 @@ export default defineComponent({
             this.mappedRows = this.rows.map((row) => {
                 let newRow = {}
                 this.columns.forEach((column) => {
-                    newRow[column.name] = { data: row[column.name], rowSpan: 1 }
+                    newRow[column.field] = { data: row[column.field], rowSpan: 1 }
                 })
                 return newRow
             })
+            console.log('MAPPED ROWS: ', this.mappedRows)
+            console.log('COLUMNS: ', this.columns)
         },
         checkForRowSpan(fromIndex, toIndex, rows, columns, columnIndex) {
             const column = columns[columnIndex]
-            console.log(fromIndex, toIndex, column)
+            // console.log(fromIndex, toIndex, column)
+            console.log('LINE 61 fromIndex: ', fromIndex)
+            console.log('LINE 61 toIndex: ', toIndex)
+            console.log('LINE 61 column: ', column)
             let groupCount = 1
             let startIndex = fromIndex
             for (let i = fromIndex + 1; i <= toIndex; i++) {
-                console.log('i', i)
-                console.log(rows[i - 1][column.name].data, '===', rows[i][column.name].data)
-                if (rows[i - 1][column.name].data === rows[i][column.name].data) {
-                    rows[i][column.name].rowSpan = 0
+                // console.log('i', i)
+                // console.log(rows[i - 1][column.field].data, '===', rows[i][column.field].data)
+                console.log('LINE 69 i: ', i)
+                console.log('LINE 70 === ', rows[i - 1][column.field].data, '===', rows[i][column.field].data)
+                if (rows[i - 1][column.field].data === rows[i][column.field].data) {
+                    rows[i][column.field].rowSpan = 0
                     groupCount++
                 }
-                if (rows[i - 1][column.name].data !== rows[i][column.name].data || i === toIndex) {
-                    console.log('groupCount', column.name, rows[startIndex][column.name].data, groupCount)
-                    rows[startIndex][column.name].rowSpan = groupCount
-                    if (i - 1 > startIndex) this.checkForRowSpan(startIndex, i === toIndex ? i : i - 1, rows, columns, columnIndex + 1)
+                if (rows[i - 1][column.field].data !== rows[i][column.field].data || i === toIndex) {
+                    // console.log('groupCount', column.field, rows[startIndex][column.field].data, groupCount)
+                    console.log('LINE 77 groupCount', column.field)
+                    console.log('LINE 78 groupCount', rows[startIndex][column.field].data)
+                    console.log('LINE 79 groupCount', groupCount)
+                    rows[startIndex][column.field].rowSpan = groupCount
+                    if (i - 1 > startIndex) {
+                        console.log('LINE 82: ', i - 1 > startIndex)
+                        this.checkForRowSpan(startIndex, i === toIndex ? i : i - 1, rows, columns, columnIndex + 1)
+                    }
                     startIndex = i
                     groupCount = 1
                 }

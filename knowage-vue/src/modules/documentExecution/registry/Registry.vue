@@ -16,7 +16,8 @@
                 <RegistryFiltersCard v-if="filters.length > 0" :id="id" :propFilters="filters" :entity="entity" @filter="filterRegistry"></RegistryFiltersCard>
             </div>
             <div class="p-col-12" v-if="!loading">
-                <RegistryDatatable :propColumns="columns" :id="id" :propRows="rows" :propConfiguration="configuration" :columnMap="columnMap" :pagination="pagination" :entity="entity" @rowChanged="onRowChanged" @rowDeleted="onRowDeleted" @pageChanged="updatePagination"></RegistryDatatable>
+                <RegistryPivotDatatable v-if="isPivot" :columns="columns" :rows="rows"></RegistryPivotDatatable>
+                <RegistryDatatable v-else :propColumns="columns" :id="id" :propRows="rows" :propConfiguration="configuration" :columnMap="columnMap" :pagination="pagination" :entity="entity" @rowChanged="onRowChanged" @rowDeleted="onRowDeleted" @pageChanged="updatePagination"></RegistryDatatable>
             </div>
         </div>
     </div>
@@ -26,11 +27,12 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import RegistryDatatable from './tables/RegistryDatatable.vue'
+import RegistryPivotDatatable from './tables/RegistryPivotDatatable.vue'
 import RegistryFiltersCard from './RegistryFiltersCard.vue'
 
 export default defineComponent({
     name: 'registry',
-    components: { RegistryDatatable, RegistryFiltersCard },
+    components: { RegistryDatatable, RegistryPivotDatatable, RegistryFiltersCard },
     props: { id: { type: String } },
     data() {
         return {
@@ -100,7 +102,16 @@ export default defineComponent({
             this.getFilters()
         },
         loadColumns() {
-            this.columns = this.registry.registryConfig.columns
+            this.columns = []
+            this.registry.registryConfig.columns.map((el: any) => {
+                if (el.type === 'merge') {
+                    el.grouping = true
+                    this.isPivot = true
+                }
+                this.columns.push(el)
+            })
+            console.log('LOADED COLUMNS IN MAIN: ', this.columns)
+            console.log('IS PIVOT: ', this.isPivot)
         },
         loadColumnMap() {
             this.columnMap = { id: 'id' }
