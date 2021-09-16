@@ -10,7 +10,7 @@
                 <InputText class="kn-material-input" type="text" v-model.trim="fixedValue" maxlength="100" />
                 <label class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.fixedValue') }} </label>
             </span>
-            <Button :label="$t('common.add')" @click="addFixedValue" class="kn-button kn-button--primary" />
+            <Button :label="$t('common.add')" @click="addFixedValue" class="kn-button p-button-text" />
         </div>
         <Listbox :options="navigation.fromPars" v-if="navigation.fromPars">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
