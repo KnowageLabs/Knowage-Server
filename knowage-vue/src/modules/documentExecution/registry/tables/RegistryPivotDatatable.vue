@@ -1,6 +1,5 @@
 <template>
-    <h1>IT WORKS</h1>
-    <KnPivotTable :columns="fitleredColumns" :rows="rows"></KnPivotTable>
+    <KnPivotTable :columns="filteredColumns" :rows="rows" @rowChanged="onRowChanged"></KnPivotTable>
 </template>
 
 <script lang="ts">
@@ -16,7 +15,7 @@ export default defineComponent({
     },
     data() {
         return {
-            fitleredColumns: [] as any
+            filteredColumns: [] as any
         }
     },
     created() {
@@ -24,8 +23,11 @@ export default defineComponent({
     },
     methods: {
         getFilteredColumns() {
-            this.fitleredColumns = this.columns.filter((el: any) => el.isVisible === true)
-            console.log('FILTERED COLUMNS: ', this.fitleredColumns)
+            this.filteredColumns = this.columns.filter((el: any) => el.isVisible === true)
+            console.log('FILTERED COLUMNS: ', this.filteredColumns)
+        },
+        onRowChanged(row: any) {
+            console.log('Changed Row: ', row)
         }
     }
 })
