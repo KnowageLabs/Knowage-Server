@@ -15,7 +15,7 @@
         <Listbox :options="navigation.fromPars" v-if="navigation.fromPars">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
             <template #option="slotProps">
-                <div class="p-d-flex card" draggable="true" @dragstart="onDragStart($event, slotProps.option)">
+                <div class="p-d-flex card kn-draggable" draggable="true" @dragstart="onDragStart($event, slotProps.option)">
                     <i class="pi pi-bars p-mr-2"> </i>
                     <div>{{ slotProps.option.name }}</div>
                     <div class="p-ml-auto">{{ $t(dialogDescriptor.parType[slotProps.option.type].label) }}</div>
@@ -36,7 +36,7 @@
                     <div>{{ slotProps.option.links[0].name }} <i class="fa fa-link"> </i> {{ slotProps.option.name }}</div>
                     <i class="fa fa-times-circle p-mr-2 p-ml-auto" @click="removeLink(slotProps.option.id)" data-test="remove"> </i>
                 </div>
-                <div class="p-d-flex card" @drop="link($event, slotProps.option)" @dragover.prevent v-else>
+                <div class="p-d-flex card" :class="{ dropzone: dropzoneActive[slotProps.option.id] }" @drop="link($event, slotProps.option)" @dragover.prevent @dragenter.prevent="setDropzoneClass(true, slotProps.option)" @dragleave.prevent="setDropzoneClass(false, slotProps.option)" v-else>
                     <div>{{ slotProps.option.name }}</div>
                     <div class="p-ml-auto">{{ $t(dialogDescriptor.parType[slotProps.option.type].label) }}</div>
                 </div>
@@ -60,7 +60,8 @@ export default defineComponent({
         return {
             navigation: {} as any,
             dialogDescriptor,
-            fixedValue: ''
+            fixedValue: '',
+            dropzoneActive: [] as boolean[]
         }
     },
     created() {
@@ -105,7 +106,19 @@ export default defineComponent({
                     param.links = []
                 }
             })
+        },
+        setDropzoneClass(value: boolean, param: any) {
+            if (param.id) {
+                this.dropzoneActive[param.id] = value
+            }
         }
     }
 })
 </script>
+<style lang="scss" scoped>
+.dropzone {
+    background-color: #c2c2c2;
+    color: white;
+    border: 1px dashed;
+}
+</style>
