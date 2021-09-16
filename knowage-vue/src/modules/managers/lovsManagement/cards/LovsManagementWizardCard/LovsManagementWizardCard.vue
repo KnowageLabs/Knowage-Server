@@ -8,7 +8,7 @@
                 <template #right>
                     <Button class="kn-button-sm p-button-text" :label="$t('managers.lovsManagement.preview')" :disabled="previewDisabled" @click="checkForDependencies(true)" />
                     <Button class="kn-button-sm p-button-text" :label="$t('managers.lovsManagement.test')" :disabled="previewDisabled" @click="onTestButtonClick" />
-                    <Button icon="fa fa-info-circle" class="p-button-text p-button-rounded p-button-plain" aria-label="Info" @click="infoDialogVisible = true" />
+                    <Button v-if="lovType !== 'DATASET'" icon="fa fa-info-circle" class="p-button-text p-button-rounded p-button-plain" aria-label="Info" @click="infoDialogVisible = true" />
                     <Button icon="fa fa-users" class="p-button-text p-button-rounded p-button-plain" aria-label="Profiles" @click="profileAttributesDialogVisible = true" />
                 </template>
             </Toolbar>
