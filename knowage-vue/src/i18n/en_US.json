@@ -188,6 +188,7 @@
         "gallery": {
             "column": {
                 "image": "Image",
+                "info": "Info",
                 "name": "Name",
                 "tags": "Tags",
                 "type": "Type"
@@ -197,6 +198,9 @@
         },
         "import": {
             "completedWithErrors": "Import completed with errors. Please read logs for further information.",
+            "itemWithEmptyId": "This item has an empty ID. If checked, it will be imported as new.",
+            "itemWithoutIdConfirm": "This item has an empty ID. It will be imported as new. Do you want to procede?",
+            "itemsWithEmptyIdWarning": "Items with empty IDs were found. They will be imported as new.",
             "successfullyCompleted": "Import successfully completed"
         },
         "title": "Import/Export"
@@ -915,7 +919,7 @@
             "unlockUser": "Unlock user",
             "userId": "User ID",
             "validation": {
-                "sameAsPassword": "Username must not be found inside the password"
+                "sameAsPassword": "Different password values"
             },
             "valueDescription": "Value description"
         },
