@@ -74,11 +74,11 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=layerCatalogue" />
 			<ITEM id="4007" label="menu.glossary.technical"
 				requiredFunctionality="ManageGlossaryTechnical"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=glossaryTechnical"
+				to="/glossary-usage"
 				iconCls="fa fa-2x fa-book" />
 			<ITEM id="4008" label="menu.glossary.business"
 				requiredFunctionality="ManageGlossaryBusiness"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=glossaryBusiness"
+				to="/glossary-definition"
 				iconCls="fa fa-2x fa-building" />
 			<ITEM id="4009" label="menu.timespan"
 				requiredFunctionality="Timespan"
@@ -118,7 +118,7 @@
 				requiredFunctionality="NewsManagement"
 				to="/news-management" />
 			<ITEM id="5008" label="menu.modelCatalogResourceManagement"
-				to="/models-management" />
+				to="/models-management" toBeLicensed="KnowagePA"/>
 			<ITEM id="5009" label="menu.resourceManagement" requiredFunctionality="ResourceManagement,ResourceManagementDev"
 				to="/resource-management" />
 		</GROUP_ITEM>
