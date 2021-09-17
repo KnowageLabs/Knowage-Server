@@ -477,7 +477,6 @@ export default defineComponent({
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, this.selectedGlossary)
                 .then((response) => {
                     tempData = response.data
-                    this.showTree = true
                 })
                 .catch((response) => {
                     this.$store.commit('setError', {
@@ -501,6 +500,7 @@ export default defineComponent({
                     if (tempData.id && this.selectedGlossary) {
                         this.selectedGlossary.GLOSSARY_ID = tempData.id
                         this.selectedGlossaryId = tempData.id
+                        if (this.selectedGlossaryId) await this.loadGlossaryInfo(this.selectedGlossaryId, null)
                     }
                     await this.loadGlossaryList()
                 }
