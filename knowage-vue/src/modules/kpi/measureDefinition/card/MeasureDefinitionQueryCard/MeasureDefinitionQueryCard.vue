@@ -70,6 +70,8 @@ export default defineComponent({
         codeInput() {
             this.cursorPosition = this.codeMirror.getCursor()
             this.codeMirror.replaceRange(this.codeInput, this.cursorPosition)
+            this.selectedRule.definition = this.code
+            this.$emit('queryChanged')
         }
     },
     async mounted() {
