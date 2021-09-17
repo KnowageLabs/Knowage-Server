@@ -265,7 +265,8 @@
             "thresholdsListTitle": "Thresholds List",
             "title": "KPI Definition",
             "tresholdTitle": "Threshold",
-            "useIt": "Use It"
+            "useIt": "Use It",
+            "confirmClone": "Confirm item clone?"
         },
         "kpiScheduler": {
             "addKpiAssociation": "Add KPI associations",

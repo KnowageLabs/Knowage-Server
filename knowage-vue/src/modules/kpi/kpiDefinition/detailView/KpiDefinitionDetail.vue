@@ -2,7 +2,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left>{{ selectedKpi.name }}</template>
         <template #right>
-            <Button icon="pi pi-bars" class="p-button-text p-button-rounded p-button-plain" @click="toggleAlias" />
+            <Button :label="$t('kpi.kpiDefinition.aliasToolbarTitle')" :style="tabViewDescriptor.style.aliasButton" class="p-button-text p-button-rounded p-button-plain" @click="toggleAlias" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="showSaveDialog = true" :disabled="buttonDisabled" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
@@ -53,7 +53,7 @@
         </div>
 
         <div v-if="isAliasVisible">
-            <Toolbar class="kn-toolbar kn-toolbar--secondary" style="height:39px">
+            <Toolbar class="kn-toolbar kn-toolbar--secondary" :style="tabViewDescriptor.style.aliasList">
                 <template #left>{{ $t('kpi.kpiDefinition.aliasToolbarTitle') }}</template>
             </Toolbar>
             <Listbox
@@ -299,11 +299,11 @@ export default defineComponent({
 
         cloneKpiConfirm(kpiId, kpiVersion) {
             this.$confirm.require({
-                message: this.$t('Clone'),
-                header: this.$t('Confirm item clone?'),
+                icon: 'pi pi-exclamation-triangle',
+                message: this.$t('kpi.kpiDefinition.confirmClone'),
+                header: this.$t(' '),
                 kpiId,
                 kpiVersion,
-                icon: 'pi pi-exclamation-triangle',
                 accept: () => this.cloneKpi(kpiId, kpiVersion)
             })
         },
