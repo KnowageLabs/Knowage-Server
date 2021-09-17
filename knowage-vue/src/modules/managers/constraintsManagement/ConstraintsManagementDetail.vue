@@ -16,6 +16,7 @@
                                 class="kn-material-input"
                                 type="text"
                                 v-model.trim="v$.constraint.label.$model"
+                                maxlength="20"
                                 :class="{
                                     'p-invalid': v$.constraint.label.$invalid && v$.constraint.label.$dirty
                                 }"
@@ -34,6 +35,7 @@
                                 class="kn-material-input"
                                 type="text"
                                 v-model.trim="v$.constraint.name.$model"
+                                maxlength="40"
                                 :class="{
                                     'p-invalid': v$.constraint.name.$invalid && v$.constraint.name.$dirty
                                 }"
@@ -47,7 +49,7 @@
                     </div>
                     <div class="p-field p-col-12">
                         <span class="p-float-label">
-                            <InputText id="description" class="kn-material-input" type="text" v-model.trim="constraint.description" :disabled="inputDisabled" @input="$emit('touched')" />
+                            <InputText id="description" class="kn-material-input" type="text" v-model.trim="constraint.description" :disabled="inputDisabled" @input="$emit('touched')" maxlength="160" />
                             <label for="description" class="kn-material-input-label">{{ $t('common.description') }} </label>
                         </span>
                     </div>
@@ -57,30 +59,30 @@
                                 v-if="!constraint.predifined"
                                 id="type"
                                 class="kn-material-input"
-                                v-model="v$.constraint.valueTypeId.$model"
+                                v-model="v$.constraint.valueTypeCd.$model"
                                 dataKey="id"
                                 optionLabel="VALUE_NM"
-                                optionValue="VALUE_ID"
+                                optionValue="VALUE_CD"
                                 :options="domains"
                                 :class="{
-                                    'p-invalid': v$.constraint.valueTypeId.$invalid && v$.constraint.valueTypeId.$dirty
+                                    'p-invalid': v$.constraint.valueTypeCd.$invalid && v$.constraint.valueTypeCd.$dirty
                                 }"
-                                @blur="v$.constraint.valueTypeId.$touch()"
+                                @blur="v$.constraint.valueTypeCd.$touch()"
                                 @change="clearInput"
                             />
                             <InputText v-else id="type" class="kn-material-input" type="text" v-model.trim="constraint.valueTypeCd" disabled />
                             <label for="type" class="kn-material-input-label">{{ $t('managers.constraintManagement.type') }} * </label>
                         </span>
-                        <KnValidationMessages class="p-mt-1" :vComp="v$.constraint.valueTypeId" :additionalTranslateParams="{ fieldName: $t('managers.constraintManagement.type') }"></KnValidationMessages>
+                        <KnValidationMessages class="p-mt-1" :vComp="v$.constraint.valueTypeCd" :additionalTranslateParams="{ fieldName: $t('managers.constraintManagement.type') }"></KnValidationMessages>
                     </div>
-                    <div v-if="!constraint.predifined && constraint.valueTypeId" :class="constraintsManagementDetailDescriptor.firstValue[constraint.valueTypeId].class">
+                    <div v-if="!constraint.predifined && constraint.valueTypeCd" :class="constraintsManagementDetailDescriptor.firstValue[constraint.valueTypeCd].class">
                         <span class="p-float-label">
                             <InputText v-if="!numberType" id="type" class="kn-material-input" type="text" v-model.trim="constraint.firstValue" @input="$emit('touched')" />
                             <InputNumber v-else id="type" inputClass="kn-material-input" v-model="constraint.firstValue" @input="$emit('touched')" />
-                            <label for="type" class="kn-material-input-label">{{ $t(constraintsManagementDetailDescriptor.firstValue[constraint.valueTypeId].label) }}</label>
+                            <label for="type" class="kn-material-input-label">{{ $t(constraintsManagementDetailDescriptor.firstValue[constraint.valueTypeCd].label) }}</label>
                         </span>
                     </div>
-                    <div v-if="!constraint.predifined && constraint.valueTypeId && constraint.valueTypeId == 46" :class="constraintsManagementDetailDescriptor.firstValue[constraint.valueTypeId].class">
+                    <div v-if="!constraint.predifined && constraint.valueTypeCd && constraint.valueTypeCd == 'RANGE'" :class="constraintsManagementDetailDescriptor.firstValue[constraint.valueTypeCd].class">
                         <span class="p-float-label">
                             <InputNumber
                                 id="typeTwo"
@@ -92,12 +94,12 @@
                                 @blur="v$.constraint.secondValue.$touch()"
                                 @input="$emit('touched')"
                             />
-                            <label for="typeTwo" class="kn-material-input-label">{{ $t(constraintsManagementDetailDescriptor.firstValue[constraint.valueTypeId].labelTwo) }}</label>
+                            <label for="typeTwo" class="kn-material-input-label">{{ $t(constraintsManagementDetailDescriptor.firstValue[constraint.valueTypeCd].labelTwo) }}</label>
                         </span>
                         <KnValidationMessages
                             class="p-mt-1"
                             :vComp="v$.constraint.secondValue"
-                            :additionalTranslateParams="{ fieldName: $t(constraintsManagementDetailDescriptor.firstValue[constraint.valueTypeId].labelTwo) }"
+                            :additionalTranslateParams="{ fieldName: $t(constraintsManagementDetailDescriptor.firstValue[constraint.valueTypeCd].labelTwo) }"
                             :specificTranslateKeys="{ range_check: 'managers.constraintManagement.rangeCheck' }"
                         ></KnValidationMessages>
                     </div>
@@ -143,7 +145,7 @@ export default defineComponent({
     validations() {
         const customValidators: ICustomValidatorMap = {
             'range-check': () => {
-                return (this.constraint && this.constraint.firstValue && this.constraint.secondValue && this.constraint.firstValue < this.constraint.secondValue) || this.constraint.valueTypeId != 46
+                return (this.constraint && this.constraint.firstValue && this.constraint.secondValue && this.constraint.firstValue < this.constraint.secondValue) || this.constraint.valueTypeCd != 'RANGE'
             }
         }
         return {
@@ -158,7 +160,7 @@ export default defineComponent({
             return this.constraint.predifined == true || this.v$.$invalid
         },
         numberType(): any {
-            return this.constraint.valueTypeId == 45 || this.constraint.valueTypeId == 46 || this.constraint.valueTypeId == 47 || this.constraint.valueTypeId == 48
+            return this.constraint.valueTypeCd == 'MAXLENGTH' || this.constraint.valueTypeCd == 'RANGE' || this.constraint.valueTypeCd == 'DECIMALS' || this.constraint.valueTypeCd == 'MINLENGTH'
         }
     },
     watch: {
@@ -179,9 +181,9 @@ export default defineComponent({
             }
             delete this.constraint.predifined
             let selectedDomain = this.domains.filter((cd) => {
-                return cd.VALUE_ID == this.constraint?.valueTypeId
+                return cd.VALUE_CD == this.constraint?.valueTypeCd
             })
-            this.constraint.valueTypeCd = selectedDomain[0].VALUE_CD
+            this.constraint.valueTypeId = selectedDomain[0].VALUE_ID
 
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/customChecks/'
             if (this.constraint.checkId) {
