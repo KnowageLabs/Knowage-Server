@@ -165,7 +165,7 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 			return Response.ok().build();
 		} catch (EMFUserError e) {
 			logger.error("Error while deleting resource", e);
-			throw new SpagoBIRestServiceException(getLocale(), e);
+			throw new SpagoBIRestServiceException(getLocale(), e, "MessageFiles.messages");
 
 		}
 	}
