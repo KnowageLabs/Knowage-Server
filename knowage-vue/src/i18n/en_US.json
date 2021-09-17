@@ -246,11 +246,12 @@
                 "generic": "Error Formula. Measures Missing..",
                 "malformed": "Error Formula. Malformed Formula at line: ",
                 "missingbracket": "Error Formula. Missing Bracket",
-                "missingfunctions": "Error Formula. Associated function to all measures",
+                "missingfunctions": "All the aggregation function must be setted on each measures",
                 "missingmeasure": "Insert at least one measure",
                 "missingoperator": "Error Formula. Operator missing at line: "
             },
             "formulaDialogHeader": "Select type Function for",
+            "formulaTabInstructions": "Please change the message to your liking in the translation files!",
             "formulaTitle": "Formula",
             "hint": "The KPI definition allows you to define an indicator to monitor or to add in your visualizations. It's possible to set the formula and the data thresholds to monitor. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "max": "Max",
@@ -264,7 +265,8 @@
             "thresholdsListTitle": "Thresholds List",
             "title": "KPI Definition",
             "tresholdTitle": "Threshold",
-            "useIt": "Use It"
+            "useIt": "Use It",
+            "confirmClone": "Confirm item clone?"
         },
         "kpiScheduler": {
             "addKpiAssociation": "Add KPI associations",
