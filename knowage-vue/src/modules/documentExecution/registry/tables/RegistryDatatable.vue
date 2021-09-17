@@ -8,7 +8,7 @@
                 editMode="cell"
                 dataKey="id"
                 paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-                :lazy="this.lazyParams.size > registryDatatableDescriptor.tableOptions.paginationLimit"
+                :lazy="lazyParams.size > registryDatatableDescriptor.tableOptions.paginationLimit"
                 :paginator="true"
                 :rows="registryDatatableDescriptor.tableOptions.rowsPerPage"
                 :currentPageReportTemplate="
@@ -315,7 +315,13 @@ export default defineComponent({
             const entityId = this.entity + subEntity + ':' + column.field
             const entityOrder = this.entity + subEntity + ':' + (column.orderBy ?? column.field)
 
-            const postData = new URLSearchParams({ ENTITY_ID: entityId, QUERY_TYPE: 'standard', ORDER_ENTITY: entityOrder, ORDER_TYPE: 'asc', QUERY_ROOT_ENTITY: 'true' })
+            const postData = new URLSearchParams({
+                ENTITY_ID: entityId,
+                QUERY_TYPE: 'standard',
+                ORDER_ENTITY: entityOrder,
+                ORDER_TYPE: 'asc',
+                QUERY_ROOT_ENTITY: 'true'
+            })
             if (column.dependences && row && row[column.dependences]) {
                 postData.append('DEPENDENCES', this.entity + subEntity + ':' + column.dependences + '=' + row[column.dependences])
             }

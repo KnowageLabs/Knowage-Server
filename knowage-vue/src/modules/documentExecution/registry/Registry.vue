@@ -12,11 +12,13 @@
                 </template>
             </Toolbar>
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+            {{ 'TODO Pagination MAIN: ' }}
+            {{ pagination }}
             <div class="p-col-12">
                 <RegistryFiltersCard v-if="filters.length > 0" :id="id" :propFilters="filters" :entity="entity" @filter="filterRegistry"></RegistryFiltersCard>
             </div>
             <div class="p-col-12" v-if="!loading">
-                <RegistryPivotDatatable v-if="isPivot" :columns="columns" :id="id" :rows="rows" :entity="entity" :propConfiguration="configuration" @rowChanged="onRowChanged" @rowDeleted="onRowDeleted"></RegistryPivotDatatable>
+                <RegistryPivotDatatable v-if="isPivot" :columns="columns" :id="id" :rows="rows" :entity="entity" :propConfiguration="configuration" :propPagination="pagination" @rowChanged="onRowChanged" @rowDeleted="onRowDeleted" @pageChanged="updatePagination"></RegistryPivotDatatable>
                 <RegistryDatatable v-else :propColumns="columns" :id="id" :propRows="rows" :propConfiguration="configuration" :columnMap="columnMap" :pagination="pagination" :entity="entity" @rowChanged="onRowChanged" @rowDeleted="onRowDeleted" @pageChanged="updatePagination"></RegistryDatatable>
             </div>
         </div>
@@ -32,7 +34,11 @@ import RegistryFiltersCard from './RegistryFiltersCard.vue'
 
 export default defineComponent({
     name: 'registry',
-    components: { RegistryDatatable, RegistryPivotDatatable, RegistryFiltersCard },
+    components: {
+        RegistryDatatable,
+        RegistryPivotDatatable,
+        RegistryFiltersCard
+    },
     props: { id: { type: String } },
     data() {
         return {
@@ -80,7 +86,12 @@ export default defineComponent({
 
             postData.append('start', '' + this.pagination.start)
             await axios
-                .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded' } })
+                .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, {
+                    headers: {
+                        Accept: 'application/json, text/plain, */*',
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
                 .then((response) => {
                     this.pagination.size = response.data.results
                     this.registry = response.data
@@ -110,8 +121,8 @@ export default defineComponent({
                 }
                 this.columns.push(el)
             })
-            console.log('LOADED COLUMNS IN MAIN: ', this.columns)
-            console.log('IS PIVOT: ', this.isPivot)
+            //  console.log('LOADED COLUMNS IN MAIN: ', this.columns)
+            // console.log('IS PIVOT: ', this.isPivot)
         },
         loadColumnMap() {
             this.columnMap = { id: 'id' }
@@ -134,7 +145,7 @@ export default defineComponent({
                 })
                 this.rows.push(tempRow)
             }
-            console.log('LOADED ROWS IN MAIN: ', this.rows)
+            // console.log('LOADED ROWS IN MAIN: ', this.rows)
         },
         loadConfiguration() {
             this.configuration = this.registry.registryConfig.configurations
@@ -146,7 +157,7 @@ export default defineComponent({
             const tempRow = { ...row }
             const index = this.updatedRows.findIndex((el: any) => el.id === tempRow.id)
             index === -1 ? this.updatedRows.push(tempRow) : (this.updatedRows[index] = tempRow)
-            console.log('UPDATED ROWS: ', this.updatedRows)
+            //  console.log('UPDATED ROWS: ', this.updatedRows)
         },
         async saveRegistry() {
             this.updatedRows.forEach((el: any) => {
@@ -244,6 +255,7 @@ export default defineComponent({
                 await this.loadRegistry()
                 this.loadRows()
             }
+            console.log('UPDATED PAGINATION MAIN: ', this.pagination)
         },
         formatPivotRows(row: any) {
             Object.keys(row).forEach((key: any) => {

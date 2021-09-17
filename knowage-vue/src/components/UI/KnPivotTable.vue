@@ -1,4 +1,6 @@
 <template>
+    {{ 'TODO Lazy Params: ' }}
+    {{ lazyParams }}
     <table class="pivot-table">
         <thead>
             <th v-for="(column, index) of columns.slice(1)" :key="index">
@@ -58,8 +60,7 @@
         </tr>
     </table>
 
-    <Paginator :rows="10" :totalRecords="1000"></Paginator>
-
+    <Paginator v-model:first="first" :rows="15" :totalRecords="lazyParams.size" @page="onPage($event)"></Paginator>
     <RegistryDatatableWarningDialog :visible="warningVisible" :columns="dependentColumns" @close="onWarningDialogClose"></RegistryDatatableWarningDialog>
 </template>
 
@@ -82,18 +83,27 @@ export default defineComponent({
         rows: [] as any,
         propConfiguration: { type: Object },
         entity: { type: String },
-        id: { type: String }
+        id: { type: String },
+        pagination: { type: Object }
     },
-    emits: ['rowChanged', 'rowDeleted'],
+    emits: ['rowChanged', 'pageChanged'],
     created() {
         this.mapRows()
         this.checkForRowSpan(0, this.mappedRows.length - 1, this.mappedRows, this.columns, 1)
+        this.loadPagination()
     },
     watch: {
         rows: {
             handler() {
                 this.mapRows()
                 this.checkForRowSpan(0, this.mappedRows.length - 1, this.mappedRows, this.columns, 1)
+            },
+            deep: true
+        },
+        pagination: {
+            handler() {
+                this.loadPagination()
+                this.first = this.pagination?.start
             },
             deep: true
         }
@@ -107,7 +117,8 @@ export default defineComponent({
             selectedRow: null as any,
             warningVisible: false,
             stopWarnings: [] as any[],
-            lazy: true
+            lazyParams: {} as any,
+            first: 0
         }
     },
     computed: {},
@@ -121,7 +132,7 @@ export default defineComponent({
                 return newRow
             })
             console.log('MAPPED ROWS: ', this.mappedRows)
-            console.log('COLUMNS: ', this.columns)
+            // console.log('COLUMNS: ', this.columns)
         },
         checkForRowSpan(fromIndex, toIndex, rows, columns, columnIndex) {
             const column = columns[columnIndex]
@@ -154,6 +165,19 @@ export default defineComponent({
                     groupCount = 1
                 }
             }
+        },
+        loadPagination() {
+            this.lazyParams = { ...this.pagination } as any
+            console.log('LOADED LAZY PARAMS: ', this.lazyParams)
+        },
+        onPage(event: any) {
+            this.lazyParams = {
+                paginationStart: event.first,
+                paginationLimit: event.rows,
+                paginationEnd: event.first + event.rows,
+                size: this.lazyParams.size
+            }
+            this.$emit('pageChanged', this.lazyParams)
         },
         setDataType(columnType: string) {
             return setInputDataType(columnType)
