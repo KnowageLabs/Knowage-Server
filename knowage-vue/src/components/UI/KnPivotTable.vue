@@ -11,7 +11,7 @@
                 <td v-if="row[column.field].rowSpan > 0" :rowspan="row[column.field].rowSpan">
                     <!-- <span>{{ row[column.field].data }}</span>
                     <span>{{ row[column.field] }}</span> -->
-                    <span>{{ row[column.field].data }}</span>
+                    <!-- <span>{{ row[column.field].data }}</span> -->
                     <Checkbox v-if="column.editorType === 'TEXT' && column.columnInfo.type === 'boolean'" v-model="row[column.field].data" :binary="true" :disabled="!column.isEditable || column.type === 'merge'" @change="$emit('rowChanged', row)"></Checkbox>
                     <InputText
                         v-else-if="column.isEditable && column.type !== 'merge' && column.editorType !== 'COMBO' && column.columnInfo.type !== 'date'"
