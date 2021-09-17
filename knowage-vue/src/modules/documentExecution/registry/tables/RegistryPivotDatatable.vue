@@ -5,8 +5,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import KnPivotTable from '@/components/UI/KnPivotTable.vue'
-import mockColumns from './mockColumns.json'
-import mockRows from './mockRows.json'
+// import mockColumns from './mockColumns.json'
+// import mockRows from './mockRows.json'
 
 export default defineComponent({
     name: 'registry-pivot-datatable',
@@ -46,13 +46,13 @@ export default defineComponent({
             this.filteredColumns = this.columns
 
             // MOCK
-            this.filteredColumns = mockColumns
+            // this.filteredColumns = mockColumns
         },
         loadRows() {
             this.tempRows = this.rows
 
             // MOCK
-            this.tempRows = mockRows
+            // this.tempRows = mockRows
         },
         onRowChanged(row: any) {
             console.log('Changed Row: ', row)

@@ -11,14 +11,14 @@
                     <!-- <span>{{ row[column.field].data }}</span>
                     <span>{{ row[column.field] }}</span> -->
                     <!-- <span>{{ row[column.field].data }}</span> -->
-                    <Checkbox v-if="column.editorType === 'TEXT' && column.columnInfo.type === 'boolean'" v-model="row[column.field].data" :binary="true" :disabled="!column.isEditable || column.type === 'merge'" @change="$emit('rowChanged', row)"></Checkbox>
+                    <Checkbox v-if="column.editorType === 'TEXT' && column.columnInfo.type === 'boolean'" v-model="row[column.field].data" :binary="true" :disabled="!column.isEditable || column.type === 'merge'" @change="setRowEdited(row)"></Checkbox>
                     <InputText
                         v-else-if="column.isEditable && column.type !== 'merge' && column.editorType !== 'COMBO' && column.columnInfo.type !== 'date'"
                         class="p-inputtext-sm"
                         :type="setDataType(column.columnInfo.type)"
                         :step="getStep(column.columnInfo.type)"
                         v-model="row[column.field].data"
-                        @input="$emit('rowChanged', row)"
+                        @input="setRowEdited(row)"
                     />
                     <Calendar
                         v-else-if="column.isEditable && column.type !== 'merge' && column.columnInfo.type === 'date'"
@@ -27,7 +27,7 @@
                         :showSeconds="column.columnInfo.subtype === 'timestamp'"
                         :dateFormat="column.columnInfo.dateFormat"
                         :showButtonBar="true"
-                        @date-select="$emit('rowChanged', row)"
+                        @date-select="setRowEdited(row)"
                     />
                     <Dropdown
                         v-else-if="column.isEditable && column.editorType === 'COMBO'"
@@ -51,9 +51,10 @@
                     <span v-else-if="!column.isEditable && column.columnInfo.type === 'date'">{{ getFormatedDate(row[column.field].data, column.columnInfo.dateFormat) }} </span>
                     <span v-else-if="(!column.isEditable && column.columnInfo.type === 'int') || column.columnInfo.type === 'float'">{{ getFormatedNumber(row[column.field].data) }}</span>
                     <span v-else>{{ row[column.field].data }}</span>
-                    <i v-if="column.isEditable && column.type === 'merge' && column.columnInfo.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" />
+                    <i v-if="column.isEditable && column.type !== 'merge' && column.columnInfo.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" />
                 </td>
             </template>
+            <td><i v-if="row.edited" class="pi pi-flag"></i></td>
         </tr>
     </table>
 
@@ -105,7 +106,8 @@ export default defineComponent({
             dependentColumns: [] as any[],
             selectedRow: null as any,
             warningVisible: false,
-            stopWarnings: [] as any[]
+            stopWarnings: [] as any[],
+            lazy: true
         }
     },
     computed: {},
@@ -165,6 +167,10 @@ export default defineComponent({
         getFormatedNumber(number: number, precision?: number, format?: any) {
             return formatNumberWithLocale(number, precision, format)
         },
+        setRowEdited(row: any) {
+            row.edited = true
+            this.$emit('rowChanged', row)
+        },
         onDropdownChange(row: any, column: any) {
             row[column.field] = { data: row[column.field].data['column_1'], rowSpan: 1 }
             this.selectedRow = row
@@ -181,6 +187,7 @@ export default defineComponent({
                 this.clearDependentColumnsValues()
             }
 
+            row.edited = true
             this.$emit('rowChanged', row)
         },
         setDependentColumns(column: any) {
@@ -238,6 +245,7 @@ export default defineComponent({
         },
         clearDependentColumnsValues() {
             this.dependentColumns.forEach((el: any) => (this.selectedRow[el.field] = { data: '', rowSpan: 1 }))
+            this.selectedRow.edited = true
             this.$emit('rowChanged', this.selectedRow)
         }
     }

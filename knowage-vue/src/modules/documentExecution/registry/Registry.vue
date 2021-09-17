@@ -155,6 +155,7 @@ export default defineComponent({
                 }
                 delete el.id
                 delete el.isNew
+                delete el.edited
             })
             const postData = new URLSearchParams()
             postData.append('records', '' + JSON.stringify(this.updatedRows))
