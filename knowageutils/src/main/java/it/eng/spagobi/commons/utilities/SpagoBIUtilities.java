@@ -69,8 +69,7 @@ public class SpagoBIUtilities {
 	/**
 	 * The Main method.
 	 *
-	 * @param args
-	 *            String for command line arguments
+	 * @param args String for command line arguments
 	 */
 	public static void main(String[] args) {
 
@@ -91,8 +90,7 @@ public class SpagoBIUtilities {
 	/**
 	 * Cleans a string from spaces and tabulation characters.
 	 *
-	 * @param original
-	 *            The input string
+	 * @param original The input string
 	 *
 	 * @return The cleaned string
 	 */
@@ -114,8 +112,7 @@ public class SpagoBIUtilities {
 	/**
 	 * Checks if the Spago errorHandler contains only validation errors.
 	 *
-	 * @param errorHandler
-	 *            The error handler to check
+	 * @param errorHandler The error handler to check
 	 *
 	 * @return true if the errorHandler contains only validation error, false if erroHandler is empty or contains not only validation error.
 	 */
@@ -135,8 +132,7 @@ public class SpagoBIUtilities {
 	/**
 	 * Given an <code>InputStream</code> as input, gets the correspondent bytes array.
 	 *
-	 * @param is
-	 *            The input stream
+	 * @param is The input stream
 	 *
 	 * @return An array of bytes obtained from the input stream.
 	 */
@@ -171,10 +167,8 @@ public class SpagoBIUtilities {
 	 * Reads the content from the input <code>InputStream</code> and stores it into a byte array. If the byte array exceeds the max size specified in input, a
 	 * <code>SecurityException</code> is thrown.
 	 *
-	 * @param is
-	 *            The input stream
-	 * @param maximum
-	 *            The maximum number of bytes to read
+	 * @param is      The input stream
+	 * @param maximum The maximum number of bytes to read
 	 * @return An array of bytes obtained from the input stream.
 	 */
 	public static byte[] getByteArrayFromInputStream(InputStream is, int maximum) {
@@ -212,12 +206,9 @@ public class SpagoBIUtilities {
 	/**
 	 * Given an <code>InputStream</code> as input flushs the content into an OutputStream and then close the input and output stream.
 	 *
-	 * @param is
-	 *            The input stream
-	 * @param os
-	 *            The output stream
-	 * @param closeStreams
-	 *            the close streams
+	 * @param is           The input stream
+	 * @param os           The output stream
+	 * @param closeStreams the close streams
 	 */
 	public static void flushFromInputStreamToOutputStream(InputStream is, OutputStream os, boolean closeStreams) {
 		logger.debug("IN");
@@ -253,8 +244,7 @@ public class SpagoBIUtilities {
 	 * From a String identifying the complete name for a file, gets the relative file names, which are substrings of the starting String, according to the java
 	 * separator "/".
 	 *
-	 * @param completeFileName
-	 *            The string representing the file name
+	 * @param completeFileName The string representing the file name
 	 *
 	 * @return relative names substring
 	 */
@@ -339,8 +329,7 @@ public class SpagoBIUtilities {
 	/**
 	 * Quote.
 	 *
-	 * @param s
-	 *            the s
+	 * @param s the s
 	 *
 	 * @return the string
 	 */
@@ -369,11 +358,9 @@ public class SpagoBIUtilities {
 	 * Find the attribute values in case of multi value attribute. The sintax is: {splitter character{list of values separated by the splitter}}. Examples:
 	 * {;{value1;value2;value3....}} {|{value1|value2|value3....}}
 	 *
-	 * @param attributeValue
-	 *            The String representing the list of attribute values
+	 * @param attributeValue The String representing the list of attribute values
 	 * @return The array of attribute values
-	 * @throws Exception
-	 *             in case of sintax error
+	 * @throws Exception in case of sintax error
 	 */
 	public static String[] findAttributeValues(String attributeValue) throws Exception {
 		logger.debug("IN");
@@ -410,13 +397,11 @@ public class SpagoBIUtilities {
 	/**
 	 * Gets the all profile attributes.
 	 *
-	 * @param profile
-	 *            the profile
+	 * @param profile the profile
 	 *
 	 * @return the all profile attributes
 	 *
-	 * @throws EMFInternalError
-	 *             the EMF internal error
+	 * @throws EMFInternalError the EMF internal error
 	 */
 	public static HashMap getAllProfileAttributes(IEngUserProfile profile) throws EMFInternalError {
 		logger.debug("IN");
@@ -440,8 +425,7 @@ public class SpagoBIUtilities {
 	/**
 	 * Delete a folder and its contents.
 	 *
-	 * @param dir
-	 *            The java file object of the directory
+	 * @param dir The java file object of the directory
 	 *
 	 * @return the result of the operation
 	 */
@@ -463,8 +447,7 @@ public class SpagoBIUtilities {
 	/**
 	 * Delete contents of a directory.
 	 *
-	 * @param dir
-	 *            The java file object of the directory
+	 * @param dir The java file object of the directory
 	 *
 	 * @return the result of the operation
 	 */
@@ -488,8 +471,7 @@ public class SpagoBIUtilities {
 	 * Substitutes the substrings with sintax "${code,bundle}" or "${code}" (in the second case bundle is assumed to be the default value "messages") with the
 	 * correspondent internationalized messages in the input String. This method calls <code>PortletUtilities.getMessage(key, bundle)</code>.
 	 *
-	 * @param message
-	 *            The string to be modified
+	 * @param message The string to be modified
 	 *
 	 * @return The message with the internationalized substrings replaced.
 	 */
@@ -497,12 +479,9 @@ public class SpagoBIUtilities {
 	/**
 	 * Questo metodo permette di sostituire una parte di una stringa con un'altra.
 	 *
-	 * @param toParse
-	 *            stringa da manipolare.
-	 * @param replacing
-	 *            parte di stringa da sostituire.
-	 * @param replaced
-	 *            stringa nuova.
+	 * @param toParse   stringa da manipolare.
+	 * @param replacing parte di stringa da sostituire.
+	 * @param replaced  stringa nuova.
 	 *
 	 * @return the string
 	 */
@@ -532,8 +511,7 @@ public class SpagoBIUtilities {
 	/**
 	 * Questo metodo implementa la stessa logica della funzione javascript <em>escape</em>.
 	 *
-	 * @param input
-	 *            stringa da manipolare.
+	 * @param input stringa da manipolare.
 	 *
 	 * @return the string
 	 */
@@ -550,8 +528,7 @@ public class SpagoBIUtilities {
 	/**
 	 * Questo metodo implementa la stessa logica della funzione javascript <em>escape</em>.
 	 *
-	 * @param input
-	 *            stringa da manipolare.
+	 * @param input stringa da manipolare.
 	 *
 	 * @return the string
 	 */
@@ -568,8 +545,7 @@ public class SpagoBIUtilities {
 	/**
 	 * Substitute quotes into string.
 	 *
-	 * @param value
-	 *            the value
+	 * @param value the value
 	 *
 	 * @return the string
 	 */
@@ -593,10 +569,8 @@ public class SpagoBIUtilities {
 	/**
 	 * From list to string.
 	 *
-	 * @param values
-	 *            the values
-	 * @param separator
-	 *            the separator
+	 * @param values    the values
+	 * @param separator the separator
 	 *
 	 * @return the string
 	 */
@@ -713,6 +687,15 @@ public class SpagoBIUtilities {
 	 */
 	public static String getDatasetResourcePath() {
 		return getResourcePath() + File.separatorChar + DataSetConstants.RESOURCE_RELATIVE_FOLDER;
+	}
+
+	/**
+	 * Get the file dataset resource path.
+	 *
+	 * @return the path for file dataset resources without '/' at the end
+	 */
+	public static String getFileDatasetResourcePath() {
+		return getDatasetResourcePath() + File.separatorChar + DataSetConstants.FILES_DATASET_FOLDER;
 	}
 
 	public static String getHmacKey() {

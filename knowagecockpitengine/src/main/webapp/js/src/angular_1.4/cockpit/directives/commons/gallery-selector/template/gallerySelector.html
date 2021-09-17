@@ -14,14 +14,18 @@
 				<md-toolbar class="secondaryToolbar"> 
 			      <div class="md-toolbar-tools">
 			        <h2>{{template.name | i18n}}</h2>
+			        
 			        <span flex></span>
 			      </div>
 			    </md-toolbar>
-				<md-tooltip md-delay="1000">{{template.description | i18n}}</md-tooltip>
 				<md-card-content layout="row" layout-align="center center">
+					<md-tooltip md-delay="1000">{{template.description | i18n}}</md-tooltip>
 					<img ng-if="template.image" ng-src="{{template.image}}"/>
-					<div class="galleryTags" layout="row" layout-align="end center">
-						<span ng-repeat="tag in template.tags" class="chip">{{tag}}</span>
+					<div class="galleryTags" layout="row" layout-align="end center" style="flex-wrap: wrap-reverse; height: auto;">
+						<span ng-repeat="tag in template.tags" class="chip truncated" style="margin-bottom:2px">
+							{{tag}}
+							<md-tooltip md-delay="1000">{{tag}}</md-tooltip>
+						</span>
 					</div>
 				</md-card-content>
 			</md-card>

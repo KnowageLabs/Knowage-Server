@@ -8,6 +8,11 @@
         border-right: none;
     }
 
+    &.kn-list-border-left {
+        border-left: 1px solid $list-border-color;
+        border-right: none;
+    }
+
     &--column {
         @extend .kn-list;
         height: 100vh;

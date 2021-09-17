@@ -1010,48 +1010,28 @@
 			var descr = $scope.newMapDescription ? $scope.newMapDescription : '';
 			var datasetLabel = $scope.selectedDatasetLabel;
 			var formData = {};
-			formData.name = $scope.newMapName;
-			formData.label = docLabel;
-			formData.description = descr;
-			formData.typeid = "MAP";
-			formData.template = JSON.stringify(template);
-			formData.dataset_label = datasetLabel;
+			formData.document = {};
+			formData.customData = {};
+			formData.sourceData = {};
+			formData.document.name = $scope.newMapName;
+			formData.document.label = docLabel;
+			formData.document.description = descr;
+			formData.document.type = "MAP";
+			formData.customData.templateContent = template;
+			formData.sourceData.label = datasetLabel;
+			formData.action = "DOC_SAVE";
 
-			debugger;
-
-
-			var url = sbiModule_config.adapterPath;
-			url = url + "?ACTION_NAME=SAVE_DOCUMENT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE&standardUrl=true&MESSAGE_DET=DOC_SAVE";
-			url = url + "&user_id=" + sbiModule_config.userId;
-			$http({
-				method: 'POST',
-				url: url,
-				data: formData,
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded'
-				},
-
-				transformRequest: function (obj) {
-
-					var str = [];
-
-					for (var p in obj)
-						str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-
-					return str.join("&");
-
-				}
-			}).then(function successCallback(response) {
-				$scope.docLabel = docLabel;
-				$scope.template = template;
-				$scope.editDisabled = false;
-				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('gisengine.designer.tempate.save.message'), sbiModule_translate.load('gisengine.designer.tempate.save.success'));
-				$mdDialog.cancel();
-			}, function errorCallback(response) {
-				sbiModule_messaging.showErrorMessage(response.data, "error saving template");
-			});
-
-
+			 sbiModule_restServices.restToRootProject();
+				sbiModule_restServices.promisePost("/2.0/saveDocument", "", formData)
+				.then(function(response){ //success
+					$scope.docLabel = docLabel;
+					$scope.template = template;
+					$scope.editDisabled = false;
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('gisengine.designer.tempate.save.message'), sbiModule_translate.load('gisengine.designer.tempate.save.success'));
+					$mdDialog.cancel();
+				},function(response){ //failed
+					sbiModule_messaging.showErrorMessage(response.data, "error saving template");
+				})
 		}
 
 	}

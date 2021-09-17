@@ -13,13 +13,20 @@
                     <div v-if="selectedRoles.length > 1">
                         <div class="p-inputgroup">
                             <span class="p-float-label">
-                                <Dropdown v-model="defaultRole" :options="selectedRoles" @change="onSelectDefaultRole($event)" optionLabel="name" optionValue="id" class="p-inputtext p-component kn-material-input" />
+                                <Dropdown v-model="defaultRole" :options="selectedRolesWithEmpty()" @change="onSelectDefaultRole($event)" optionLabel="name" class="p-inputtext p-component kn-material-input">
+                                    <template #value="slotProps">
+                                        <span>{{ slotProps.value?.name }}</span>
+                                    </template>
+                                    <template #option="slotProps">
+                                        <span>{{ slotProps.option.name }}</span>
+                                    </template>
+                                </Dropdown>
                                 <label for="defaultRole"> {{ $t('managers.usersManagement.form.defaultRole') }}</label>
                             </span>
                         </div>
                     </div>
                     <p>
-                        <Message severity="info" v-if="selectedRoles.length > 0">{{ $t('managers.usersManagement.defaultRoleInfo') }}</Message>
+                        <Message severity="info" v-if="selectedRoles.length > 1">{{ $t('managers.usersManagement.defaultRoleInfo') }}</Message>
                     </p>
                     <DataTable
                         :value="rolesList"
@@ -74,24 +81,33 @@ export default defineComponent({
     emits: ['changed', 'setDefaultRole'],
     data() {
         return {
-            defaultRole: null,
+            defaultRole: null as null | iRole,
             rolesTabDescriptor,
-            selectedRoles: [] as iRole[]
+            selectedRoles: [] as iRole[],
+            emptyOption: { id: null, name: this.$t('managers.usersManagement.emptyRolesOption'), value: '' }
         }
     },
+    mounted() {},
     watch: {
         selected: {
             handler: function(selected: iRole[]) {
                 this.selectedRoles = selected
+                this.setDefaultRole(this.defRole)
             }
         },
         defRole: {
             handler: function(defRole) {
-                this.defaultRole = defRole
+                this.setDefaultRole(defRole)
             }
         }
     },
     methods: {
+        setDefaultRole(defRole) {
+            if (this.selectedRoles) {
+                const defaultRoleObj = this.selectedRoles.find((role) => role.id === defRole)
+                this.defaultRole = defaultRoleObj ? defaultRoleObj : this.emptyOption
+            }
+        },
         onRowSelect() {
             this.$emit('changed', this.selectedRoles)
         },
@@ -103,7 +119,7 @@ export default defineComponent({
             }
         },
         onSelectDefaultRole() {
-            this.$emit('setDefaultRole', this.defaultRole)
+            this.$emit('setDefaultRole', this.defaultRole ? this.defaultRole.id : null)
         },
         onSelectAll() {
             this.$emit('changed', this.selectedRoles)
@@ -111,6 +127,11 @@ export default defineComponent({
                 this.defaultRole = null
                 this.onSelectDefaultRole()
             }
+        },
+        selectedRolesWithEmpty() {
+            const selecteRolesArray: iRole[] = this.selectedRoles ? [...this.selectedRoles] : []
+            selecteRolesArray.unshift(this.emptyOption)
+            return selecteRolesArray
         }
     }
 })

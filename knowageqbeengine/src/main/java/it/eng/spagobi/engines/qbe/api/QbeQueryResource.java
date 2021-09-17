@@ -72,6 +72,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.iterator.CsvStreamingOutput;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
+import it.eng.spagobi.tools.dataset.common.iterator.XlsxStreamingOutput;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
@@ -318,6 +319,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		JSONObject queryJSON = null;
 		JSONArray subqueriesJSON = null;
 		JSONObject subqueryJSON = null;
+		JSONArray fields = null;
 
 		try {
 			jsonEncodedReq = RestUtilities.readBodyAsJSONObject(req);
@@ -339,6 +341,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 					queryJSON = queries.getJSONObject(i);
 					if (queryJSON.get("id").equals(id)) {
 						query = deserializeQuery(queryJSON);
+						fields = queryJSON.getJSONArray("fields");
 					} else {
 						subqueriesJSON = queryJSON.getJSONArray("subqueries");
 						for (int j = 0; j < subqueriesJSON.length(); j++) {
@@ -382,7 +385,18 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			logger.debug("Starting iteration to transfer data");
 			iterator = dataSet.iterator();
 
-			StreamingOutput stream = new CsvStreamingOutput(iterator);
+			StreamingOutput stream = null;
+
+			switch (outputType) {
+			case "csv":
+				stream = new CsvStreamingOutput(iterator);
+				break;
+			case "xlsx":
+				stream = new XlsxStreamingOutput(getLocale(), iterator, fields);
+				break;
+			default:
+				throw new RuntimeException("Output type not supported: " + outputType);
+			}
 
 			ResponseBuilder response = Response.ok(stream);
 			response.header("Content-Disposition", "attachment;filename=" + "report" + "." + outputType + "\";");
