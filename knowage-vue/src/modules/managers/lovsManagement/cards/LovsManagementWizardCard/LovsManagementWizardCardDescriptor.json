@@ -1,0 +1,7 @@
+{
+    "defaultPagination": {
+        "paginationEnd": 20,
+        "paginationLimit": 20,
+        "paginationStart": 0
+    }
+}

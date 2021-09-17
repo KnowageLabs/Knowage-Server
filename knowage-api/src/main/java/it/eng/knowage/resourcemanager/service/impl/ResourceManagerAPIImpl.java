@@ -57,6 +57,7 @@ import it.eng.knowage.knowageapi.error.ImpossibleToReadFolderListException;
 import it.eng.knowage.knowageapi.error.ImpossibleToReadMetadataException;
 import it.eng.knowage.knowageapi.error.ImpossibleToSaveMetadataException;
 import it.eng.knowage.knowageapi.error.ImpossibleToUploadFileException;
+import it.eng.knowage.knowageapi.error.KnowageBusinessException;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.error.TenantRepositoryMissingException;
 import it.eng.knowage.knowageapi.utils.ContextPropertiesConfig;
@@ -241,7 +242,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				File file = totalPath.toFile();
 
 				if (file.exists()) {
-					String message = String.format("Directory %s is already existing.", path.substring(path.lastIndexOf(File.separator)));
+					String message = String.format("Directory %s is already existing.", totalPath.getName(totalPath.getNameCount()-1));
 					throw new ImpossibleToCreateFolderException(message);
 				} else {
 					// Creating the directory
@@ -255,6 +256,8 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 					}
 				}
 			}
+		} catch (KnowageBusinessException e) {
+			throw new ImpossibleToCreateFolderException(e.getMessage(), e);
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e.getMessage(), e);
 		}
@@ -651,7 +654,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		boolean updated = false;
 
 		File fromDirectory = getTotalPath(path.toString(), profile).toFile();
-		File toDirectory = getTotalPath(path.getParent().resolve(folderName).toString(), profile).toFile();
+		File toDirectory = getTotalPath(fromDirectory.getParent(), profile).resolve(folderName).toFile();
 
 		if (toDirectory.exists()) {
 			String message = "Destination folder already existing";

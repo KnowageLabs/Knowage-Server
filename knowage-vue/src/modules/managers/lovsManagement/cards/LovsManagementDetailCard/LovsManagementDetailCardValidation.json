@@ -1,0 +1,42 @@
+{
+    "validations": {
+        "lov": [
+            {
+                "fieldName": "label",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "custom_unique_label",
+                        "validator": {
+                            "type": "custom-unique-label"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "custom_unique_name",
+                        "validator": {
+                            "type": "custom-unique-name"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "itypeCd",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            }
+        ]
+    }
+}

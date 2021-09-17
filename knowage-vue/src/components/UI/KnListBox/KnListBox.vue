@@ -17,8 +17,8 @@
                 <div class="kn-list-item" v-tooltip="slotProps.option[settings.tooltipField || 'description']" :class="getBorderClass(slotProps.option)">
                     <Avatar v-if="settings.avatar" :icon="settings.avatar.values[slotProps.option[settings.avatar.property]].icon" shape="circle" size="medium" :style="settings.avatar.values[slotProps.option[settings.avatar.property]].style" />
                     <div class="kn-list-item-text">
-                        <span>{{ slotProps.option[settings.titleField || 'label'] }}</span>
-                        <span class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option[settings.textField || 'name'] }}</span>
+                        <span v-if="settings.titleField !== false">{{ slotProps.option[settings.titleField || 'label'] }}</span>
+                        <span class="kn-list-item-text-secondary kn-truncated" v-if="settings.textField !== false">{{ slotProps.option[settings.textField || 'name'] }}</span>
                     </div>
                     <Badge v-if="settings.badgeField" :value="slotProps.option[settings.badgeField]" :severity="settings.badgeSeverity || 'info'"></Badge>
                     <KnListButtonRenderer :buttons="settings.buttons" @click="clickedButton($event, slotProps.option)" />
@@ -33,8 +33,8 @@
             >
                 <Avatar v-if="settings.avatar" :icon="settings.avatar.values[slotProps.option[settings.avatar.property]].icon" shape="circle" size="medium" :style="settings.avatar.values[slotProps.option[settings.avatar.property]].style" />
                 <div class="kn-list-item-text">
-                    <span>{{ slotProps.option[settings.titleField || 'label'] }}</span>
-                    <span class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option[settings.textField || 'name'] }}</span>
+                    <span v-if="settings.titleField !== false">{{ slotProps.option[settings.titleField || 'label'] }}</span>
+                    <span v-if="settings.textField !== false" class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option[settings.textField || 'name'] }}</span>
                 </div>
                 <Badge v-if="settings.badgeField" :value="slotProps.option[settings.badgeField]" :severity="settings.badgeSeverity || 'info'"></Badge>
                 <KnListButtonRenderer :buttons="settings.buttons" @click="clickedButton($event, slotProps.option)" />

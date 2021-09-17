@@ -1,0 +1,11 @@
+{
+    "dialog": {
+        "style": {
+            "width": "60vw"
+        }
+    },
+    "info": {
+        "parameter": "managers.lovsManagement.parameterDependencyText",
+        "profile": "managers.lovsManagement.profileDependencyText"
+    }
+}
