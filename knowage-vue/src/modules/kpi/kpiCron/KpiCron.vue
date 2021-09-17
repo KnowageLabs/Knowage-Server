@@ -45,6 +45,7 @@
                             }"
                             :showIcon="true"
                             :manualInput="false"
+                            :showButtonBar="true"
                             @date-select="setDate('endDate')"
                         />
                         <div v-if="!validDates" class="p-error p-grid">
