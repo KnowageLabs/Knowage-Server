@@ -70,6 +70,7 @@
                                     :showTime="col.columnInfo.subtype === 'timestamp'"
                                     :showSeconds="col.columnInfo.subtype === 'timestamp'"
                                     :dateFormat="col.columnInfo.dateFormat"
+                                    :showButtonBar="true"
                                     @date-select="$emit('rowChanged', slotProps.data)"
                                 />
                                 <i v-if="col.isEditable && col.columnInfo.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" />
@@ -85,6 +86,7 @@
                                     :showTime="col.columnInfo.subtype === 'timestamp'"
                                     :showSeconds="col.columnInfo.subtype === 'timestamp'"
                                     :dateFormat="col.columnInfo.dateFormat"
+                                    :showButtonBar="true"
                                     @date-select="$emit('rowChanged', slotProps.data)"
                                 />
                                 <!-- Formating -->

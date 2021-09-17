@@ -4,7 +4,6 @@
             <th v-for="(column, index) of columns.slice(1)" :key="index">
                 {{ column.field }}
             </th>
-            <KnFabButton class="p-mb-5" icon="fas fa-plus" @click="addNewRow"></KnFabButton>
         </thead>
         <tr v-for="(row, index) of mappedRows" :key="index">
             <template v-for="(column, i) of columns.slice(1)" :key="i">
@@ -27,6 +26,7 @@
                         :showTime="column.columnInfo.subtype === 'timestamp'"
                         :showSeconds="column.columnInfo.subtype === 'timestamp'"
                         :dateFormat="column.columnInfo.dateFormat"
+                        :showButtonBar="true"
                         @date-select="$emit('rowChanged', row)"
                     />
                     <Dropdown
@@ -54,9 +54,10 @@
                     <i v-if="column.isEditable && column.type === 'merge' && column.columnInfo.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" />
                 </td>
             </template>
-            <td><Button icon="pi pi-trash" class="p-button-link" @click="rowDeleteConfirm(index, row)" /></td>
         </tr>
     </table>
+
+    <Paginator :rows="10" :totalRecords="1000"></Paginator>
 
     <RegistryDatatableWarningDialog :visible="warningVisible" :columns="dependentColumns" @close="onWarningDialogClose"></RegistryDatatableWarningDialog>
 </template>
@@ -69,12 +70,12 @@ import axios from 'axios'
 import Calendar from 'primevue/calendar'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
-import KnFabButton from '@/components/UI/KnFabButton.vue'
+import Paginator from 'primevue/paginator'
 import RegistryDatatableWarningDialog from '@/modules/documentExecution/registry/tables/RegistryDatatableWarningDialog.vue'
 
 export default defineComponent({
     name: 'kn-pivot-table',
-    components: { Calendar, Checkbox, Dropdown, KnFabButton, RegistryDatatableWarningDialog },
+    components: { Calendar, Checkbox, Dropdown, Paginator, RegistryDatatableWarningDialog },
     props: {
         columns: [] as any,
         rows: [] as any,
@@ -100,11 +101,6 @@ export default defineComponent({
         return {
             mappedRows: [] as any,
             configuration: {} as any,
-            buttons: {
-                enableButtons: false,
-                enableDeleteRecords: false,
-                enableAddRecords: false
-            },
             comboColumnOptions: [] as any[],
             dependentColumns: [] as any[],
             selectedRow: null as any,
@@ -168,53 +164,6 @@ export default defineComponent({
         },
         getFormatedNumber(number: number, precision?: number, format?: any) {
             return formatNumberWithLocale(number, precision, format)
-        },
-        loadConfiguration() {
-            this.configuration = this.propConfiguration
-
-            for (let i = 0; i < this.configuration.length; i++) {
-                if (this.configuration[i].name === 'enableButtons') {
-                    this.buttons.enableButtons = this.configuration[i].value === 'true'
-                } else {
-                    if (this.configuration[i].name === 'enableDeleteRecords') {
-                        this.buttons.enableDeleteRecords = this.configuration[i].value === 'true'
-                    }
-                    if (this.configuration[i].name === 'enableAddRecords') {
-                        this.buttons.enableAddRecords = this.configuration[i].value === 'true'
-                    }
-                }
-            }
-            console.log('LOADED CONFIGURATION: ', this.configuration)
-            console.log('LOADED BUTONS: ', this.buttons)
-        },
-        addNewRow() {
-            const newRow = { id: this.rows.length, isNew: true }
-            this.columns.forEach((el: any) => {
-                if (el.isVisible && el.field !== 'id') {
-                    const data = el.defaultValue ?? ''
-                    newRow[el.field] = { data: data, rowSpan: 1 }
-                }
-            })
-            this.mappedRows.unshift(newRow)
-
-            // if (this.lazyParams.size <= registryDatatableDescriptor.tableOptions.paginationLimit) {
-            //     this.first = 0
-            // }
-
-            this.$emit('rowChanged', newRow)
-        },
-        rowDeleteConfirm(index: number, row: any) {
-            this.$confirm.require({
-                message: this.$t('common.toast.deleteMessage'),
-                header: this.$t('common.toast.deleteTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => this.deleteRow(index, row)
-            })
-        },
-        deleteRow(index: number, row: any) {
-            console.log('INDEX FOR DELETE: ', index)
-            console.log('ROW FOR DELETE: ', row)
-            row.isNew ? this.mappedRows.splice(index, 1) : this.$emit('rowDeleted', row)
         },
         onDropdownChange(row: any, column: any) {
             row[column.field] = { data: row[column.field].data['column_1'], rowSpan: 1 }

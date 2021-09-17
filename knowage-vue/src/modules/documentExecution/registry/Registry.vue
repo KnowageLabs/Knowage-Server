@@ -146,6 +146,7 @@ export default defineComponent({
             const tempRow = { ...row }
             const index = this.updatedRows.findIndex((el: any) => el.id === tempRow.id)
             index === -1 ? this.updatedRows.push(tempRow) : (this.updatedRows[index] = tempRow)
+            console.log('UPDATED ROWS: ', this.updatedRows)
         },
         async saveRegistry() {
             this.updatedRows.forEach((el: any) => {
@@ -231,6 +232,7 @@ export default defineComponent({
             this.loadRows()
         },
         async updatePagination(lazyParams: any) {
+            this.updatedRows = []
             this.pagination = {
                 start: lazyParams.paginationStart,
                 limit: lazyParams.paginationLimit,
