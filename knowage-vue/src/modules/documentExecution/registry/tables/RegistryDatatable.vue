@@ -56,7 +56,7 @@
                                 <Dropdown
                                     v-else-if="col.editorType === 'COMBO'"
                                     v-model="slotProps.data[col.field]"
-                                    :options="this.comboColumnOptions[col.field] ? this.comboColumnOptions[col.field][slotProps.data[col.dependences]] : []"
+                                    :options="comboColumnOptions[col.field] ? comboColumnOptions[col.field][slotProps.data[col.dependences]] : []"
                                     optionValue="column_1"
                                     optionLabel="column_1"
                                     @change="onDropdownChange(slotProps.data, col)"
@@ -320,6 +320,10 @@ export default defineComponent({
             await axios
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
                 .then((response) => (this.comboColumnOptions[column.field][row[column.dependences]] = response.data.rows))
+
+            console.log('ROW FOR LOAD COLUMN OPTIONS: ', row)
+            console.log('Column dependences: ', column.dependences)
+            console.log('TEEEEEEEEEST: ', this.comboColumnOptions[column.field][row[column.dependences]])
         },
         addNewRow() {
             const newRow = { id: this.rows.length, isNew: true }
@@ -346,6 +350,8 @@ export default defineComponent({
                         this.warningVisible = true
                     }
                 })
+            } else {
+                this.clearDependentColumnsValues()
             }
 
             this.$emit('rowChanged', row)

@@ -16,7 +16,7 @@
                 <RegistryFiltersCard v-if="filters.length > 0" :id="id" :propFilters="filters" :entity="entity" @filter="filterRegistry"></RegistryFiltersCard>
             </div>
             <div class="p-col-12" v-if="!loading">
-                <RegistryPivotDatatable v-if="isPivot" :columns="columns" :rows="rows"></RegistryPivotDatatable>
+                <RegistryPivotDatatable v-if="isPivot" :columns="columns" :id="id" :rows="rows" :entity="entity" :propConfiguration="configuration" @rowChanged="onRowChanged" @rowDeleted="onRowDeleted"></RegistryPivotDatatable>
                 <RegistryDatatable v-else :propColumns="columns" :id="id" :propRows="rows" :propConfiguration="configuration" :columnMap="columnMap" :pagination="pagination" :entity="entity" @rowChanged="onRowChanged" @rowDeleted="onRowDeleted" @pageChanged="updatePagination"></RegistryDatatable>
             </div>
         </div>
@@ -134,6 +134,7 @@ export default defineComponent({
                 })
                 this.rows.push(tempRow)
             }
+            console.log('LOADED ROWS IN MAIN: ', this.rows)
         },
         loadConfiguration() {
             this.configuration = this.registry.registryConfig.configurations
@@ -148,6 +149,9 @@ export default defineComponent({
         },
         async saveRegistry() {
             this.updatedRows.forEach((el: any) => {
+                if (this.isPivot) {
+                    this.formatPivotRows(el)
+                }
                 delete el.id
                 delete el.isNew
             })
@@ -171,6 +175,9 @@ export default defineComponent({
                 })
         },
         async onRowDeleted(row: any) {
+            if (this.isPivot) {
+                this.formatPivotRows(row)
+            }
             const postData = new URLSearchParams()
             postData.append('records', '' + JSON.stringify([row]))
             await axios
@@ -234,6 +241,13 @@ export default defineComponent({
                 await this.loadRegistry()
                 this.loadRows()
             }
+        },
+        formatPivotRows(row: any) {
+            Object.keys(row).forEach((key: any) => {
+                if (key !== 'id') {
+                    row[key] = row[key].data
+                }
+            })
         }
     }
 })
