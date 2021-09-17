@@ -110,7 +110,7 @@ export default defineComponent({
             return this.drivers.filter((driver: any) => driver.numberOfErrors > 0).length
         },
         readonly(): any {
-            return this.selectedBusinessModel.id && this.selectedBusinessModel.modelLocked && this.user && this.selectedBusinessModel.modelLocker && this.selectedBusinessModel.modelLocker !== this.user.userId
+            return this.selectedBusinessModel.id && this.selectedBusinessModel.modelLocked && this.user && this.selectedBusinessModel.modelLocked && this.selectedBusinessModel.modelLocker && this.selectedBusinessModel.modelLocker !== this.user.userId
         }
     },
     watch: {
@@ -227,7 +227,7 @@ export default defineComponent({
             this.$store.commit('setError', { title: this.$t('common.toast.' + title), msg: message })
         },
         async saveBusinessModel() {
-            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/', { ...this.selectedBusinessModel, modelLocker: this.user.fullName }).then((response) => {
+            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/', { ...this.selectedBusinessModel, modelLocker: this.user.userId }).then((response) => {
                 if (response.data.errors) {
                     this.setUploadingError('createTitle', response.data.errors[0].message)
                 } else {
@@ -240,7 +240,7 @@ export default defineComponent({
                 this.selectedBusinessModel.category = this.selectedBusinessModel.category.VALUE_ID
             }
             await axios
-                .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.selectedBusinessModel.id}`, this.selectedBusinessModel)
+                .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.selectedBusinessModel.id}`, { ...this.selectedBusinessModel, modelLocker: this.user.userId })
                 .then((response) => {
                     if (response.data.errors) {
                         this.setUploadingError('updateTitle', response.data.errors[0].message)
@@ -300,6 +300,9 @@ export default defineComponent({
         },
         onFieldChange(event: any) {
             this.selectedBusinessModel[event.fieldName] = event.value
+            if (event.fieldName === 'modelLocked') {
+                this.selectedBusinessModel.modelLocker = this.user.userId
+            }
             this.touched = true
             this.$emit('touched')
         },
