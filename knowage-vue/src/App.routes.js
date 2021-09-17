@@ -12,12 +12,6 @@ const baseRoutes = [
         component: () => import('@/views/Home.vue')
     },
     {
-        path: '/',
-        name: 'homeIFrame',
-        component: () => import('@/views/HomeIFrame.vue'),
-        props: true
-    },
-    {
         path: '/about',
         name: 'about',
         component: () => import('@/views/About.vue')
@@ -71,11 +65,19 @@ const router = createRouter({
     routes
 })
 
-/*router.beforeEach((to, from, next) => {
-	console.log('to',to)
-	console.log('from',from)
-	console.log('next',next)
+/* router.beforeEach((to, from, next) => {
+	console.log(from)
+
+	if (to.name === 'home') {
+		if (store.state.homePage.to) {
+			next({ name: 'homeIFrame', params: { to: store.state.homePage.to } })
+		}
+		if (store.state.homePage.url) {
+			next({ name: 'homeIFrame', params: { url: store.state.homePage.url } })
+		}
+	}
+
 	next()
-})*/
+}) */
 
 export default router
