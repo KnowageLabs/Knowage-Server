@@ -297,7 +297,7 @@ export default defineComponent({
                 const postData = { rule: this.rule, maxItem: 10 }
 
                 await axios
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/queryPreview', postData)
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/queryPreview', postData, { headers: { 'X-Disable-Errors': true } })
                     .then((response) => {
                         this.columns = response.data.columns
                         this.rows = response.data.rows
@@ -333,7 +333,7 @@ export default defineComponent({
             })
 
             await axios
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/preSaveRule', this.rule)
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/preSaveRule', this.rule, { headers: { 'X-Disable-Errors': true } })
                 .then(() => {
                     if (this.rule.ruleOutputs.length === 0) {
                         this.errorTitle = this.$t('kpi.measureDefinition.presaveErrors.metadataMissing')
