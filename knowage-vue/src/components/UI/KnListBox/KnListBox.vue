@@ -30,6 +30,7 @@
                 v-if="!settings.interaction || settings.interaction.type === 'event'"
                 @click="clickedButton($event, slotProps.option)"
                 :class="[{ 'router-link-active': selected && selected == slotProps.option }, getBorderClass(slotProps.option)]"
+                data-test="list-item"
             >
                 <Avatar v-if="settings.avatar" :icon="settings.avatar.values[slotProps.option[settings.avatar.property]].icon" shape="circle" size="medium" :style="settings.avatar.values[slotProps.option[settings.avatar.property]].style" />
                 <div class="kn-list-item-text">

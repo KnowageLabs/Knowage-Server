@@ -5,7 +5,7 @@ import Button from 'primevue/button'
 import Card from 'primevue/card'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
-//import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
+import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import flushPromises from 'flush-promises'
 import CrossNavigationManagementHint from './CrossNavigationManagementHint.vue'
 import Toolbar from 'primevue/toolbar'
@@ -107,7 +107,7 @@ const factory = () => {
                 Button,
                 Card,
                 KnFabButton,
-                KnListBox: true,
+                KnListBox,
                 Listbox,
                 ProgressBar,
                 Toolbar
@@ -154,9 +154,9 @@ describe('Cross-navigation Management', () => {
         expect($router.push).toHaveBeenCalledWith('/cross-navigation-management/new-navigation')
     })
     it('shows the detail when clicking on a item', async () => {
-        // const wrapper = factory()
-        // await flushPromises()
-        // await wrapper.find('[data-test="list-item"]').trigger('click')
-        // expect($router.push).toHaveBeenCalledWith('/cross-navigation-management/655')
+        const wrapper = factory()
+        await flushPromises()
+        await wrapper.find('[data-test="list-item"]').trigger('click')
+        expect($router.push).toHaveBeenCalledWith('/cross-navigation-management/655')
     })
 })
