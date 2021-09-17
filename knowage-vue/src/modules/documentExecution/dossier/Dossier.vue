@@ -51,7 +51,21 @@
             <template #content>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
                 <KnHint v-if="showHint" :title="'documentExecution.dossier.title'" :hint="'documentExecution.dossier.hint'" data-test="hint"></KnHint>
-                <DataTable v-else :value="dossierActivities" :loading="loading" :rows="20" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" data-test="activities-table">
+                <DataTable v-else :value="dossierActivities" :loading="loading" v-model:filters="filters" :scrollable="true" scrollHeight="40vh" :rows="20" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" data-test="activities-table">
+                    <template #header>
+                        <div class="table-header">
+                            <span class="p-input-icon-left">
+                                <i class="pi pi-search" />
+                                <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
+                            </span>
+                        </div>
+                    </template>
+                    <template #empty>
+                        {{ $t('common.info.noDataFound') }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                    </template>
                     <Column field="activity" :header="$t('documentExecution.dossier.headers.activity')" :sortable="true" />
                     <Column field="creationDate" :header="$t('managers.mondrianSchemasManagement.headers.creationDate')" :sortable="true" dataType="date">
                         <template #body="{data}">
@@ -59,7 +73,7 @@
                         </template>
                     </Column>
                     <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :style="col.style" class="kn-truncated" :sortable="true" />
-                    <Column header style="text-align:right">
+                    <Column header :style="dossierDescriptor.table.iconColumn.style" @rowClick="false">
                         <template #body="slotProps">
                             <Button icon="pi pi-download" class="p-button-link" @click="downloadActivity(slotProps.data)" />
                             <Button icon="pi pi-trash" class="p-button-link" @click="deleteDossierConfirm(slotProps.data)" data-test="delete-button" />
@@ -74,6 +88,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
+import { filterDefault } from '@/helpers/commons/filterHelper'
 import axios from 'axios'
 import useValidate from '@vuelidate/core'
 import dossierDescriptor from './DossierDescriptor.json'
@@ -111,12 +126,16 @@ export default defineComponent({
     data() {
         return {
             v$: useValidate() as any,
+            dossierDescriptor,
             activity: { activityName: '' } as any,
             loading: false,
             interval: null as any,
             dossierActivities: [] as any,
             columns: dossierDescriptor.columns,
             jsonTemplate: {} as any,
+            filters: {
+                global: [filterDefault]
+            } as Object,
             jsonTemplateString:
                 '{"name":null,"downloadable":null,"uploadable":null,"PPT_TEMPLATE":{"name":"MARE6.pptx","downloadable":null,"uploadable":null,"PPT_TEMPLATE":null,"DOC_TEMPLATE":null,"REPORT":[]},"DOC_TEMPLATE":null,"REPORT":[{"label":"Report-no-parameter","PLACEHOLDER":[{"value":"ph1"}],"PARAMETER":[],"imageName":null,"sheet":null,"sheetHeight":null,"sheetWidth":null,"deviceScaleFactor":null}]}'
         }
