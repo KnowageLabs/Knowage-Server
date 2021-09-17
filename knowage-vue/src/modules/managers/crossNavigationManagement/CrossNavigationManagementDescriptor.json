@@ -36,10 +36,7 @@
         "defaultSortField": "name",
         "filterFields": ["name", "type"],
         "interaction": {
-            "parameterLabel": "id",
-            "parameterValue": "id",
-            "path": "navigation-detail",
-            "type": "router"
+            "type": "event"
         },
         "sortFields": ["name", "type"],
         "textField": false,

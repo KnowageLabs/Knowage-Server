@@ -84,7 +84,7 @@
                     <div class="p-field p-col-2 p-mb-3">
                         <Button :label="$t('common.select')" @click="selectDoc('target')" class="kn-button kn-button--primary" />
                     </div>
-                    <DocParameters :selectedNavigation="navigation"></DocParameters>
+                    <DocParameters :selectedNavigation="navigation" @touched="setDirty"></DocParameters>
                 </form>
             </template>
         </Card>
@@ -195,7 +195,7 @@ export default defineComponent({
                 this.navigation.simpleNavigation.type = 0
             }
             axios
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/save/', this.navigation)
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/save/', this.navigation, { headers: { 'X-Disable-Errors': true } })
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t(this.crossNavigationDescriptor.operation[this.operation].toastTitle),

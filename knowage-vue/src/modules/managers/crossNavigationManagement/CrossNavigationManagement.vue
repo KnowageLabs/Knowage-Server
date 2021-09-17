@@ -7,11 +7,11 @@
                         {{ $t('managers.crossNavigationManagement.title') }}
                     </template>
                     <template #right>
-                        <KnFabButton icon="fas fa-plus" @click="showForm" data-test="new-button" />
+                        <KnFabButton icon="fas fa-plus" @click="showForm(-1)" data-test="new-button" />
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <KnListBox :options="navigations" :settings="crossNavigationDescriptor.knListSettings" @delete.prevent="deleteTemplate($event, item)"></KnListBox>
+                <KnListBox :options="navigations" :settings="crossNavigationDescriptor.knListSettings" @click="selected($event, item)" @delete.prevent="deleteTemplate($event, item)"></KnListBox>
             </div>
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
                 <router-view @close="closeForm" @touched="touched = true" @saved="reload" />
@@ -49,6 +49,10 @@ export default defineComponent({
                 .then((response) => (this.navigations = response.data))
                 .finally(() => (this.loading = false))
         },
+        selected(e, itemId) {
+            if (e.item && e.item.id) itemId = e.item.id
+            this.showForm(itemId)
+        },
         deleteTemplate(e, itemId): void {
             if (e.item && e.item.id) itemId = e.item.id
             this.$confirm.require({
@@ -72,8 +76,8 @@ export default defineComponent({
                 }
             })
         },
-        showForm() {
-            const path = '/cross-navigation-management/new-navigation'
+        showForm(id: number) {
+            const path = id !== -1 ? '/cross-navigation-management/' + id : '/cross-navigation-management/new-navigation'
             if (!this.touched) {
                 this.$router.push(path)
             } else {
@@ -108,6 +112,7 @@ export default defineComponent({
         },
         async reload(operation, name) {
             await this.loadAll()
+            this.touched = false
             if (operation === 'insert') {
                 let id = this.navigations.find((nav) => nav.name === name)?.id
                 this.$router.push('/cross-navigation-management/' + id)

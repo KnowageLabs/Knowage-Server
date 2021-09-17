@@ -75,12 +75,14 @@ export default defineComponent({
     created() {
         if (this.selectedNavigation) {
             this.navigation = this.selectedNavigation
+            this.dropzoneActive = []
         }
     },
     watch: {
         selectedNavigation() {
             if (this.selectedNavigation) {
                 this.navigation = this.selectedNavigation
+                this.dropzoneActive = []
             }
         }
     },
@@ -101,6 +103,7 @@ export default defineComponent({
             const param = JSON.parse(event.dataTransfer.getData('text/plain'))
             if (param.type === 2 || param.parType === item.parType) {
                 item.links = [param]
+                this.$emit('touched')
             } else {
                 this.$store.commit('setInfo', {
                     title: this.$t('managers.crossNavigationManagement.incompatibleTypes'),
@@ -112,6 +115,7 @@ export default defineComponent({
             this.navigation.toPars.forEach((param) => {
                 if (param.id === id) {
                     param.links = []
+                    this.$emit('touched')
                     this.setDropzoneClass(false, id)
                 }
             })
