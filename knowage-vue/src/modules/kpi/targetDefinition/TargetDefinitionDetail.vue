@@ -20,7 +20,7 @@
             </span>
         </div>
         <template #footer>
-            <Button :label="$t('common.apply')" icon="pi pi-check" class="kn-button kn-button--primary " @click="handleSubmit" />
+            <Button :label="$t('common.save')" icon="pi pi-check" class="kn-button kn-button--primary " @click="handleSubmit" />
         </template>
     </Dialog>
 </template>
