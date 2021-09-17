@@ -18,7 +18,7 @@
                 ]
             },
             {
-                "fieldName": "valueTypeId",
+                "fieldName": "valueTypeCd",
                 "validators": [
                     {
                         "key": "required"

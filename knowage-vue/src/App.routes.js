@@ -6,51 +6,51 @@ import kpiRoutes from '@/modules/kpi/kpi.routes.js'
 import documentExecutionRoutes from '@/modules/documentExecution/documentExecution.routes.js'
 
 const baseRoutes = [
-	{
-		path: '/',
-		name: 'home',
-		component: () => import('@/views/Home.vue')
-	},
-	{
-		path: '/about',
-		name: 'about',
-		component: () => import('@/views/About.vue')
-	},
-	{
-		path: '/knowage/servlet/:catchAll(.*)',
-		name: 'knowageUrl',
-		component: IframeRenderer,
-		props: (route) => ({ url: route.fullPath })
-	},
-	{
-		path: '/knowage/restful-services/publish:catchAll(.*)',
-		component: IframeRenderer,
-		props: (route) => ({ url: route.fullPath })
-	},
-	{
-		path: '/knowage/restful-services/signup:catchAll(.*)',
-		component: IframeRenderer,
-		props: (route) => ({ url: route.fullPath })
-	},
-	{
-		path: '/knowage/restful-services/2.0/installconfig',
-		component: IframeRenderer,
-		props: (route) => ({ url: route.fullPath })
-	},
-	{
-		path: '/knowage/themes:catchAll(.*)',
-		component: IframeRenderer,
-		props: (route) => ({ url: route.fullPath })
-	},
-	{
-		path: '/login',
-		name: 'login',
-		redirect: process.env.VUE_APP_HOST_URL + '/knowage/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE&NEW_SESSION=TRUE'
-	},
-	{
-		path: '/:catchAll(.*)',
-		component: () => import('@/modules/commons/404.vue')
-	}
+    {
+        path: '/',
+        name: 'home',
+        component: () => import('@/views/Home.vue')
+    },
+    {
+        path: '/about',
+        name: 'about',
+        component: () => import('@/views/About.vue')
+    },
+    {
+        path: '/knowage/servlet/:catchAll(.*)',
+        name: 'knowageUrl',
+        component: IframeRenderer,
+        props: (route) => ({ url: route.fullPath })
+    },
+    {
+        path: '/knowage/restful-services/publish:catchAll(.*)',
+        component: IframeRenderer,
+        props: (route) => ({ url: route.fullPath })
+    },
+    {
+        path: '/knowage/restful-services/signup:catchAll(.*)',
+        component: IframeRenderer,
+        props: (route) => ({ url: route.fullPath })
+    },
+    {
+        path: '/knowage/restful-services/2.0/installconfig',
+        component: IframeRenderer,
+        props: (route) => ({ url: route.fullPath })
+    },
+    {
+        path: '/knowage/themes:catchAll(.*)',
+        component: IframeRenderer,
+        props: (route) => ({ url: route.fullPath })
+    },
+    {
+        path: '/login',
+        name: 'login',
+        redirect: process.env.VUE_APP_HOST_URL + '/knowage/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE&NEW_SESSION=TRUE'
+    },
+    {
+        path: '/:catchAll(.*)',
+        component: () => import('@/modules/commons/404.vue')
+    }
 ]
 
 const routes = baseRoutes
@@ -60,9 +60,9 @@ const routes = baseRoutes
     .concat(documentExecutionRoutes)
 
 const router = createRouter({
-	base: process.env.VUE_APP_PUBLIC_PATH,
-	history: createWebHistory(process.env.VUE_APP_PUBLIC_PATH),
-	routes
+    base: process.env.VUE_APP_PUBLIC_PATH,
+    history: createWebHistory(process.env.VUE_APP_PUBLIC_PATH),
+    routes
 })
 
 /* router.beforeEach((to, from, next) => {
@@ -79,6 +79,5 @@ const router = createRouter({
 
 	next()
 }) */
-
 
 export default router
