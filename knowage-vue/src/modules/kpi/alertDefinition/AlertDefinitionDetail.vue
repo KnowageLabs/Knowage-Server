@@ -6,12 +6,12 @@
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
     </Toolbar>
-    <div class="p-grid p-m-0 p-fluid p-jc-center" style="overflow:auto">
+    <div class="p-grid p-m-0 p-jc-center" style="overflow:auto">
         <Message class="p-m-2" v-if="expiredCard" severity="warn" :closable="true" :style="alertDescriptor.styles.message">
             {{ $t('kpi.alert.expiredWarning') }}
         </Message>
         <NameCard :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.selectedAlert" />
-        <KpiCron class="p-m-2" :style="alertDescriptor.styles.cron" v-if="selectedAlert?.frequency" :frequency="selectedAlert.frequency" @touched="touched = true" />
+        <KpiCron class="p-m-2" v-if="selectedAlert?.frequency" :frequency="selectedAlert.frequency" @touched="touched = true" />
         <EventsCard :selectedAlert="selectedAlert" @valueChanged="updateAlert" />
         <KpiCard v-if="isListenerSelected && actionList?.length > 0" :selectedAlert="selectedAlert" :kpiList="kpiList" :actionList="actionList" @showDialog="onShowActionDialog($event)" @kpiLoaded="updateKpi" @touched="touched = true" />
     </div>
