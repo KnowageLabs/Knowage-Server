@@ -1,17 +1,17 @@
 .CodeMirrorMathematica .CodeMirror-code span.cm-keyword,
-span.cm-variable-2 {
+.CodeMirrorMathematica .CodeMirror-code span.cm-variable-2 {
     color: #7f0055 !important;
     font-weight: bold !important;
 }
 
 .CodeMirrorMathematica .CodeMirror-code span.cm-keyword::before,
-span.cm-variable-2::before {
+.CodeMirrorMathematica .CodeMirror-code span.cm-variable-2::before {
     content: 'f(';
     color: green;
 }
 
 .CodeMirrorMathematica .CodeMirror-code span.cm-keyword::after,
-span.cm-variable-2::after,
+.CodeMirrorMathematica .CodeMirror-code span.cm-variable-2::after,
 .MAX::after,
 .MIN::after,
 .COUNT::after,
@@ -20,33 +20,33 @@ span.cm-variable-2::after,
     color: green;
 }
 
-.MAX,
-.MIN,
-.COUNT,
-.SUM {
+.CodeMirrorMathematica .CodeMirror-code .MAX,
+.CodeMirrorMathematica .CodeMirror-code .MIN,
+.CodeMirrorMathematica .CodeMirror-code .COUNT,
+.CodeMirrorMathematica .CodeMirror-code .SUM {
     color: #80004c;
 }
 
 .CodeMirrorMathematica .CodeMirror-code span.cm-m-max::before,
-.MAX::before {
+.CodeMirrorMathematica .CodeMirror-code .MAX::before {
     content: 'MAX(';
     color: green;
 }
 
 .CodeMirrorMathematica .CodeMirror-code span.cm-m-min::before,
-.MIN::before {
+.CodeMirrorMathematica .CodeMirror-code .MIN::before {
     content: 'min(';
     color: green;
 }
 
 .CodeMirrorMathematica .CodeMirror-code span.cm-m-count::before,
-.COUNT::before {
+.CodeMirrorMathematica .CodeMirror-code .COUNT::before {
     content: 'COUNT(';
     color: green;
 }
 
 .CodeMirrorMathematica .CodeMirror-code span.cm-m-sum::before,
-.SUM::before {
+.CodeMirrorMathematica .CodeMirror-code .SUM::before {
     content: 'Σ(';
     color: green;
 }
