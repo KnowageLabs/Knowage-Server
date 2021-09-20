@@ -111,17 +111,17 @@
                         </template>
                     </Column>
                 </template>
-                <Column :style="registryDatatableDescriptor.pivotStyles.iconColumn">
-                    <template #body="slotProps">
-                        <i v-if="slotProps.data.edited" class="pi pi-flag"></i>
-                    </template>
-                </Column>
                 <Column :style="registryDatatableDescriptor.iconColumn.style" :headerStyle="registryDatatableDescriptor.headerIconColumn.style">
                     <template #header>
                         <KnFabButton class="p-mb-5" v-if="buttons.enableButtons || buttons.enableAddRecords" icon="fas fa-plus" @click="addNewRow" data-test="new-row-button"></KnFabButton>
                     </template>
                     <template #body="slotProps">
-                        <Button v-if="buttons.enableButtons || buttons.enableDeleteRecords" icon="pi pi-trash" class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)" />
+                        <Button v-if="slotProps.data.edited && (buttons.enableButtons || buttons.enableDeleteRecords)" class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)">
+                            <i class="p-button-link pi pi-trash" :style="registryDatatableDescriptor.primevueTableStyles.trashEdited" />
+                        </Button>
+                        <Button v-else class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)">
+                            <i class="p-button-link pi pi-trash" :style="registryDatatableDescriptor.primevueTableStyles.trashNormal" />
+                        </Button>
                     </template>
                 </Column>
             </DataTable>

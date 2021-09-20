@@ -50,6 +50,12 @@
         "inputField": {
             "height": "20px",
             "width": "80%"
+        },
+        "trashEdited": {
+            "color": "#fbc53d"
+        },
+        "trashNormal": {
+            "color": "#a7a7a7"
         }
     },
     "tableOptions": {
