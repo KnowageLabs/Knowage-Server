@@ -119,9 +119,10 @@
                         <Button v-if="slotProps.data.edited && (buttons.enableButtons || buttons.enableDeleteRecords)" class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)">
                             <i class="p-button-link pi pi-trash" :style="registryDatatableDescriptor.primevueTableStyles.trashEdited" />
                         </Button>
-                        <Button v-else class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)">
+                        <Button v-if="buttons.enableButtons || buttons.enableDeleteRecords" class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)">
                             <i class="p-button-link pi pi-trash" :style="registryDatatableDescriptor.primevueTableStyles.trashNormal" />
                         </Button>
+                        <i v-if="slotProps.data.edited && (!buttons.enableButtons || !buttons.enableDeleteRecords)" class="pi pi-flag" :style="registryDatatableDescriptor.primevueTableStyles.trashEdited" />
                     </template>
                 </Column>
             </DataTable>
