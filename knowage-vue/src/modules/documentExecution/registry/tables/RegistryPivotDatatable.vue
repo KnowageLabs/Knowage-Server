@@ -19,7 +19,7 @@ export default defineComponent({
         id: { type: String },
         propPagination: { type: Object }
     },
-    emits: ['rowChanged', 'pageChanged'],
+    emits: ['rowChanged', 'pageChanged', 'resetRows'],
     data() {
         return {
             filteredColumns: [] as any[],
@@ -85,6 +85,7 @@ export default defineComponent({
                 this.$emit('pageChanged', event)
             } else {
                 this.tempRows = this.rows.slice(event.paginationStart, event.paginationStart + 15)
+                this.$emit('resetRows')
             }
 
             console.log('TEMP ROWS AFTER CHANGE: ', this.tempRows)

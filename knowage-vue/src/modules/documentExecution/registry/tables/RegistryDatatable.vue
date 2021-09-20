@@ -43,14 +43,14 @@
                             <div :data-test="col.field + '-editor'">
                                 <span v-if="!col.isEditable && col.columnInfo.type !== 'boolean'">{{ slotProps.data[col.field] }}</span>
                                 <!-- Checkbox -->
-                                <Checkbox v-else-if="col.editorType === 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('rowChanged', slotProps.data)" :disabled="!col.isEditable"></Checkbox>
+                                <Checkbox v-else-if="col.editorType === 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
                                 <InputText
                                     v-else-if="col.editorType !== 'COMBO' && col.isEditable && col.columnInfo.type !== 'date'"
                                     class="p-inputtext-sm"
                                     :type="setDataType(col.columnInfo.type)"
                                     :step="getStep(col.columnInfo.type)"
                                     v-model="slotProps.data[slotProps.column.props.field]"
-                                    @input="$emit('rowChanged', slotProps.data)"
+                                    @input="setRowEdited(slotProps.data)"
                                 />
                                 <!-- Dropdown -->
                                 <Dropdown
@@ -71,7 +71,7 @@
                                     :showSeconds="col.columnInfo.subtype === 'timestamp'"
                                     :dateFormat="col.columnInfo.dateFormat"
                                     :showButtonBar="true"
-                                    @date-select="$emit('rowChanged', slotProps.data)"
+                                    @date-select="setRowEdited(slotProps.data)"
                                 />
                                 <i v-if="col.isEditable && col.columnInfo.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" />
                             </div>
@@ -79,7 +79,7 @@
                         <template #body="slotProps">
                             <div class="p-d-flex p-flex-row" :data-test="col.field + '-body'">
                                 <!-- Checkbox -->
-                                <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('rowChanged', slotProps.data)" :disabled="!col.isEditable"></Checkbox>
+                                <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
                                 <Calendar
                                     v-else-if="col.isEditable && col.columnInfo.type === 'date'"
                                     v-model="slotProps.data[col.field]"
@@ -87,7 +87,7 @@
                                     :showSeconds="col.columnInfo.subtype === 'timestamp'"
                                     :dateFormat="col.columnInfo.dateFormat"
                                     :showButtonBar="true"
-                                    @date-select="$emit('rowChanged', slotProps.data)"
+                                    @date-select="setRowEdited(slotProps.data)"
                                 />
                                 <!-- Formating -->
                                 <div v-else-if="col.isEditable">
@@ -110,6 +110,11 @@
                     </template>
                     <template #body="slotProps">
                         <Button v-if="buttons.enableButtons || buttons.enableDeleteRecords" icon="pi pi-trash" class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)" />
+                    </template>
+                </Column>
+                <Column :style="registryDatatableDescriptor.iconColumn.style" :headerStyle="registryDatatableDescriptor.headerIconColumn.style">
+                    <template #body="slotProps">
+                        <i v-if="slotProps.data.edited" class="pi pi-flag"></i>
                     </template>
                 </Column>
             </DataTable>
@@ -362,6 +367,7 @@ export default defineComponent({
                 this.clearDependentColumnsValues()
             }
 
+            row.edited = true
             this.$emit('rowChanged', row)
         },
         onWarningDialogClose(payload: any) {
@@ -374,6 +380,7 @@ export default defineComponent({
         },
         clearDependentColumnsValues() {
             this.dependentColumns.forEach((el: any) => (this.selectedRow[el.field] = ''))
+            this.selectedRow.edited = true
             this.$emit('rowChanged', this.selectedRow)
         },
         setDependentColumns(column: any) {
@@ -387,6 +394,10 @@ export default defineComponent({
                 this.dependentColumns.push(el)
                 this.setDependentColumns(el)
             })
+        },
+        setRowEdited(row: any) {
+            row.edited = true
+            this.$emit('rowChanged', row)
         }
     }
 })

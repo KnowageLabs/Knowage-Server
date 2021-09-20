@@ -18,7 +18,19 @@
                 <RegistryFiltersCard v-if="filters.length > 0" :id="id" :propFilters="filters" :entity="entity" @filter="filterRegistry"></RegistryFiltersCard>
             </div>
             <div class="p-col-12" v-if="!loading">
-                <RegistryPivotDatatable v-if="isPivot" :columns="columns" :id="id" :rows="rows" :entity="entity" :propConfiguration="configuration" :propPagination="pagination" @rowChanged="onRowChanged" @rowDeleted="onRowDeleted" @pageChanged="updatePagination"></RegistryPivotDatatable>
+                <RegistryPivotDatatable
+                    v-if="isPivot"
+                    :columns="columns"
+                    :id="id"
+                    :rows="rows"
+                    :entity="entity"
+                    :propConfiguration="configuration"
+                    :propPagination="pagination"
+                    @rowChanged="onRowChanged"
+                    @rowDeleted="onRowDeleted"
+                    @pageChanged="updatePagination"
+                    @resetRows="updatedRows = []"
+                ></RegistryPivotDatatable>
                 <RegistryDatatable v-else :propColumns="columns" :id="id" :propRows="rows" :propConfiguration="configuration" :columnMap="columnMap" :pagination="pagination" :entity="entity" @rowChanged="onRowChanged" @rowDeleted="onRowDeleted" @pageChanged="updatePagination"></RegistryDatatable>
             </div>
         </div>
