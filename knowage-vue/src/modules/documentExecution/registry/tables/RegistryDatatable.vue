@@ -32,21 +32,27 @@
                     <Column
                         class="kn-truncated"
                         :field="col.field"
-                        :header="col.title"
                         :style="col.columnInfo.type === 'date' ? registryDatatableDescriptor.dateColumn.style : ''"
                         :bodyStyle="{
                             'background-color': col.color,
                             width: col.size + 'px'
                         }"
                     >
+                        <template #header>
+                            <div class="table-header">
+                                {{ col.title }}
+                                <i v-if="col.isEditable && col.columnInfo.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" />
+                            </div>
+                        </template>
                         <template #editor="slotProps">
                             <div :data-test="col.field + '-editor'">
                                 <span v-if="!col.isEditable && col.columnInfo.type !== 'boolean'">{{ slotProps.data[col.field] }}</span>
                                 <!-- Checkbox -->
                                 <Checkbox v-else-if="col.editorType === 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
                                 <InputText
+                                    :style="registryDatatableDescriptor.primevueTableStyles.inputField"
+                                    class="kn-material-input"
                                     v-else-if="col.editorType !== 'COMBO' && col.isEditable && col.columnInfo.type !== 'date'"
-                                    class="p-inputtext-sm"
                                     :type="setDataType(col.columnInfo.type)"
                                     :step="getStep(col.columnInfo.type)"
                                     v-model="slotProps.data[slotProps.column.props.field]"
@@ -54,6 +60,8 @@
                                 />
                                 <!-- Dropdown -->
                                 <Dropdown
+                                    :style="registryDatatableDescriptor.primevueTableStyles.dropdown"
+                                    class="kn-material-input"
                                     v-else-if="col.editorType === 'COMBO'"
                                     v-model="slotProps.data[col.field]"
                                     :options="comboColumnOptions[col.field] ? comboColumnOptions[col.field][slotProps.data[col.dependences]] : []"
@@ -65,6 +73,7 @@
                                 </Dropdown>
                                 <!-- Calendar -->
                                 <Calendar
+                                    :style="registryDatatableDescriptor.pivotStyles.inputFields"
                                     v-else-if="col.isEditable && col.columnInfo.type === 'date'"
                                     v-model="slotProps.data[col.field]"
                                     :showTime="col.columnInfo.subtype === 'timestamp'"
@@ -73,7 +82,6 @@
                                     :showButtonBar="true"
                                     @date-select="setRowEdited(slotProps.data)"
                                 />
-                                <i v-if="col.isEditable && col.columnInfo.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" />
                             </div>
                         </template>
                         <template #body="slotProps">
@@ -81,6 +89,7 @@
                                 <!-- Checkbox -->
                                 <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
                                 <Calendar
+                                    :style="registryDatatableDescriptor.pivotStyles.inputFields"
                                     v-else-if="col.isEditable && col.columnInfo.type === 'date'"
                                     v-model="slotProps.data[col.field]"
                                     :showTime="col.columnInfo.subtype === 'timestamp'"
@@ -98,7 +107,6 @@
                                 <span v-else-if="col.columnInfo.type === 'date'"> {{ getFormatedDate(slotProps.data[col.field], col.columnInfo.dateFormat) }}</span>
                                 <!-- Text NOT EDITABLE -->
                                 <span v-else> {{ slotProps.data[col.field] }}</span>
-                                <i v-if="col.isEditable && col.columnInfo.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" />
                             </div>
                         </template>
                     </Column>

@@ -1,25 +1,32 @@
 <template>
     {{ 'TODO Lazy Params: ' }}
     {{ lazyParams }}
-    <table class="pivot-table">
+    <table class="pivot-table" :style="descriptor.pivotStyles.table">
         <thead>
-            <th v-for="(column, index) of columns.slice(1)" :key="index">
+            <th v-for="(column, index) of columns.slice(1)" :key="index" :style="descriptor.pivotStyles.header">
                 {{ column.field }}
+                <i v-if="column.isEditable && column.type !== 'merge' && column.columnInfo.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" />
             </th>
+            <th :style="descriptor.pivotStyles.iconColumn" />
         </thead>
+
         <tr v-for="(row, index) of mappedRows" :key="index">
             <template v-for="(column, i) of columns.slice(1)" :key="i">
-                <td v-if="row[column.field].rowSpan > 0" :rowspan="row[column.field].rowSpan">
+                <td v-if="row[column.field].rowSpan > 0" :rowspan="row[column.field].rowSpan" :style="descriptor.pivotStyles.row">
                     <Checkbox v-if="column.editorType === 'TEXT' && column.columnInfo.type === 'boolean'" v-model="row[column.field].data" :binary="true" :disabled="!column.isEditable || column.type === 'merge'" @change="setRowEdited(row)"></Checkbox>
                     <InputText
+                        :style="descriptor.pivotStyles.inputFields"
                         v-else-if="column.isEditable && column.type !== 'merge' && column.editorType !== 'COMBO' && column.columnInfo.type !== 'date'"
-                        class="p-inputtext-sm"
+                        class="kn-material-input"
                         :type="setDataType(column.columnInfo.type)"
                         :step="getStep(column.columnInfo.type)"
                         v-model="row[column.field].data"
                         @input="setRowEdited(row)"
                     />
                     <Calendar
+                        :style="descriptor.pivotStyles.inputFields"
+                        style="height:20px"
+                        class="pivot-calendar"
                         v-else-if="column.isEditable && column.type !== 'merge' && column.columnInfo.type === 'date'"
                         v-model="row[column.field].data"
                         :showTime="column.columnInfo.subtype === 'timestamp'"
@@ -29,6 +36,7 @@
                         @date-select="setRowEdited(row)"
                     />
                     <Dropdown
+                        class="kn-material-input"
                         v-else-if="column.isEditable && column.editorType === 'COMBO'"
                         v-model="row[column.field].data"
                         :options="comboColumnOptions[column.field] ? comboColumnOptions[column.field][row[column.dependences]?.data] : []"
@@ -50,10 +58,9 @@
                     <span v-else-if="!column.isEditable && column.columnInfo.type === 'date'">{{ getFormatedDate(row[column.field].data, column.columnInfo.dateFormat) }} </span>
                     <span v-else-if="!column.isEditable && row[column.field].data && (column.columnInfo.type === 'int' || column.columnInfo.type === 'float')">{{ getFormatedNumber(row[column.field].data) }}</span>
                     <span v-else>{{ row[column.field].data }}</span>
-                    <i v-if="column.isEditable && column.type !== 'merge' && column.columnInfo.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" />
                 </td>
             </template>
-            <td><i v-if="row.edited" class="pi pi-flag"></i></td>
+            <td><i v-if="row.edited" class="pi pi-flag" :style="descriptor.pivotStyles.iconColumn"></i></td>
         </tr>
     </table>
 
@@ -84,6 +91,7 @@ import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import Paginator from 'primevue/paginator'
 import RegistryDatatableWarningDialog from '@/modules/documentExecution/registry/tables/RegistryDatatableWarningDialog.vue'
+import descriptor from '@/modules/documentExecution/registry/tables/RegistryDatatableDescriptor.json'
 
 export default defineComponent({
     name: 'kn-pivot-table',
@@ -120,6 +128,7 @@ export default defineComponent({
     },
     data() {
         return {
+            descriptor,
             mappedRows: [] as any,
             configuration: {} as any,
             comboColumnOptions: [] as any[],
@@ -274,6 +283,16 @@ export default defineComponent({
 .pivot-table table,
 th,
 td {
-    border: 1px solid black;
+    border: 3px solid #5d8dbb93;
+}
+.p-component.p-inputtext {
+    border: none !important;
+}
+.pivot-calendar {
+    .p-inputtext {
+        .p-component {
+            border: none;
+        }
+    }
 }
 </style>

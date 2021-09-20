@@ -22,6 +22,36 @@
             "width": "3rem"
         }
     },
+    "pivotStyles": {
+        "header": {
+            "color": "#3b678c",
+            "height": "25px"
+        },
+        "iconColumn": {
+            "text-align": "center",
+            "width": "30px"
+        },
+        "inputFields": {
+            "height": "20px"
+        },
+        "row": {
+            "padding-left": "15px"
+        },
+        "table": {
+            "border-collapse": "collapse",
+            "table-layout": "fixed",
+            "width": "100%"
+        }
+    },
+    "primevueTableStyles": {
+        "dropdown": {
+            "width": "90%"
+        },
+        "inputField": {
+            "height": "20px",
+            "width": "80%"
+        }
+    },
     "tableOptions": {
         "paginationLimit": 1000,
         "rowsPerPage": 15
