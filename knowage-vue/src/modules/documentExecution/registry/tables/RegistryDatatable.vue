@@ -74,6 +74,7 @@
                                 <!-- Calendar -->
                                 <Calendar
                                     :style="registryDatatableDescriptor.pivotStyles.inputFields"
+                                    class="pivot-calendar"
                                     v-else-if="col.isEditable && col.columnInfo.type === 'date'"
                                     v-model="slotProps.data[col.field]"
                                     :showTime="col.columnInfo.subtype === 'timestamp'"
@@ -90,6 +91,7 @@
                                 <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
                                 <Calendar
                                     :style="registryDatatableDescriptor.pivotStyles.inputFields"
+                                    class="pivot-calendar"
                                     v-else-if="col.isEditable && col.columnInfo.type === 'date'"
                                     v-model="slotProps.data[col.field]"
                                     :showTime="col.columnInfo.subtype === 'timestamp'"
