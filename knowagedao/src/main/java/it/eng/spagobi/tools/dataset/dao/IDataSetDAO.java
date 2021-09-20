@@ -51,8 +51,7 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public List<IDataSet> loadDataSetsByOwner(UserProfile user, Boolean includeOwned, Boolean includePublic, Boolean showDerivedDatasets);
 
 	/**
-	 * @deprecated Use {@link ISbiDataSetDAO#loadEnterpriseDataSets(int, int, UserProfile)}
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated Use {@link ISbiDataSetDAO#loadEnterpriseDataSets(int, int, UserProfile)} TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	public List<IDataSet> loadEnterpriseDataSets(UserProfile user);
@@ -66,22 +65,19 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public List<IDataSet> loadFlatDatasets();
 
 	/**
-	 * @deprecated Use {@link ISbiDataSetDAO#loadDataSetsOwnedByUser(int, int, UserProfile, boolean)}
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated Use {@link ISbiDataSetDAO#loadDataSetsOwnedByUser(int, int, UserProfile, boolean)} TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	public List<IDataSet> loadDataSetsOwnedByUser(UserProfile user, Boolean showDerivedDatasets);
 
 	/**
-	 * @deprecated Use {@link ISbiDataSetDAO#loadDatasetsSharedWithUser(int, int, UserProfile, boolean)}
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated Use {@link ISbiDataSetDAO#loadDatasetsSharedWithUser(int, int, UserProfile, boolean)} TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	public List<IDataSet> loadDatasetsSharedWithUser(UserProfile user, Boolean showDerivedDatasets);
 
 	/**
-	 * @deprecated Use {@link ISbiDataSetDAO#loadDatasetOwnedAndShared(int, int, UserProfile)}
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated Use {@link ISbiDataSetDAO#loadDatasetOwnedAndShared(int, int, UserProfile)} TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	public List<IDataSet> loadDatasetOwnedAndShared(UserProfile user);
@@ -91,8 +87,7 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public List<IDataSet> loadCkanDataSets(UserProfile user);
 
 	/**
-	 * @deprecated Use {@link ISbiDataSetDAO#loadMyDataSets(int, int, UserProfile)}
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated Use {@link ISbiDataSetDAO#loadMyDataSets(int, int, UserProfile)} TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	public List<IDataSet> loadMyDataDataSets(UserProfile owner);
@@ -128,34 +123,29 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public List<IDataSet> loadPagedDatasetList(Integer offset, Integer fetchSize);
 
 	/**
-	 * @deprecated Replaced by {@link #loadFilteredDatasetList(int, int, String, String, boolean, List)}
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated Replaced by {@link #loadFilteredDatasetList(int, int, String, String, boolean, List)} TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	public List<IDataSet> loadFilteredDatasetList(String hsql, Integer offset, Integer fetchSize, String owner);
 
 	/**
-	 * @deprecated Replaced by {@link #loadFilteredDatasetList(int, int, String, String, boolean, List)}
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated Replaced by {@link #loadFilteredDatasetList(int, int, String, String, boolean, List)} TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	public List<IDataSet> loadPagedDatasetList(Integer offset, Integer fetchSize, String owner);
 
 	/**
-	 * @deprecated Replaced by {@link #loadFilteredDatasetList(int, int, String, String, boolean, List)}
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated Replaced by {@link #loadFilteredDatasetList(int, int, String, String, boolean, List)} TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	public List<IDataSet> loadFilteredDatasetList(Integer offset, Integer fetchSize, String owner, JSONObject filters, JSONObject ordering,
 			List<Integer> tagIds);
 
 	/**
-	 * @deprecated Replaced by {@link #loadFilteredDatasetList(int, int, String, String, boolean, List)}
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated Replaced by {@link #loadFilteredDatasetList(int, int, String, String, boolean, List)} TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	public List<SbiDataSet> loadPagedSbiDatasetConfigList(Integer offset, Integer fetchSize);
-
 
 	public default List<IDataSet> loadFilteredDatasetList() {
 		return loadFilteredDatasetList(0, 15);
@@ -177,17 +167,9 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	 */
 	public List<IDataSet> loadFilteredDatasetList(int offset, int fetchSize, String owner, String sortByColumn, boolean reverse, List<Integer> tagIds);
 
-
-
-
-
-
-
 	public Integer countBIObjAssociated(Integer dsId);
 
 	public Integer countDatasets();
-
-	public Integer countDatasetsSearch(String search, List<Integer> tagIds);
 
 	public boolean hasBIObjAssociated(String dsId);
 
