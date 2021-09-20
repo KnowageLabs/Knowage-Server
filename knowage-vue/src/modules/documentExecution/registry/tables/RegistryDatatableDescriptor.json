@@ -12,7 +12,7 @@
     },
     "iconColumn": {
         "style": {
-            "text-align": "end",
+            "text-align": "center",
             "width": "3rem"
         }
     },
