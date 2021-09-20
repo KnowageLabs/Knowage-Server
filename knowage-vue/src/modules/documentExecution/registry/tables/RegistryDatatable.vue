@@ -91,7 +91,7 @@
                                 />
                                 <!-- Formating -->
                                 <div v-else-if="col.isEditable">
-                                    <span v-if="col.columnInfo.type === 'int' || col.columnInfo.type === 'float'">{{ getFormatedNumber(slotProps.data[col.field]) }}</span>
+                                    <span v-if="(col.columnInfo.type === 'int' || col.columnInfo.type === 'float') && slotProps.data[col.field]">{{ getFormatedNumber(slotProps.data[col.field]) }}</span>
                                     <!-- Text EDITABLE -->
                                     <span v-else> {{ slotProps.data[col.field] }}</span>
                                 </div>
@@ -333,10 +333,6 @@ export default defineComponent({
             await axios
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
                 .then((response) => (this.comboColumnOptions[column.field][row[column.dependences]] = response.data.rows))
-
-            console.log('ROW FOR LOAD COLUMN OPTIONS: ', row)
-            console.log('Column dependences: ', column.dependences)
-            console.log('TEEEEEEEEEST: ', this.comboColumnOptions[column.field][row[column.dependences]])
         },
         addNewRow() {
             const newRow = { id: this.rows.length, isNew: true }
@@ -354,21 +350,22 @@ export default defineComponent({
         },
         onDropdownChange(row: any, column: any) {
             this.selectedRow = row
-            if (column.hasDependencies && !this.stopWarnings[column.field]) {
+            if (column.hasDependencies) {
                 this.dependentColumns = [] as any[]
                 this.setDependentColumns(column)
-
-                this.dependentColumns.forEach((el: any) => {
-                    if (this.selectedRow[el.field]) {
-                        this.warningVisible = true
-                    }
-                })
-            } else {
-                this.clearDependentColumnsValues()
+                if (!this.stopWarnings[column.field]) {
+                    this.dependentColumns.forEach((el: any) => {
+                        if (this.selectedRow[el.field]) {
+                            this.warningVisible = true
+                        }
+                    })
+                } else {
+                    this.clearDependentColumnsValues()
+                }
             }
 
-            row.edited = true
             this.$emit('rowChanged', row)
+            row.edited = true
         },
         onWarningDialogClose(payload: any) {
             if (payload.stopWarnings) {

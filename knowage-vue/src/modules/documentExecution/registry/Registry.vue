@@ -128,13 +128,10 @@ export default defineComponent({
             this.columns = []
             this.registry.registryConfig.columns.map((el: any) => {
                 if (el.type === 'merge') {
-                    el.grouping = true
                     this.isPivot = true
                 }
                 this.columns.push(el)
             })
-            //  console.log('LOADED COLUMNS IN MAIN: ', this.columns)
-            // console.log('IS PIVOT: ', this.isPivot)
         },
         loadColumnMap() {
             this.columnMap = { id: 'id' }
@@ -157,7 +154,6 @@ export default defineComponent({
                 })
                 this.rows.push(tempRow)
             }
-            // console.log('LOADED ROWS IN MAIN: ', this.rows)
         },
         loadConfiguration() {
             this.configuration = this.registry.registryConfig.configurations
@@ -169,7 +165,6 @@ export default defineComponent({
             const tempRow = { ...row }
             const index = this.updatedRows.findIndex((el: any) => el.id === tempRow.id)
             index === -1 ? this.updatedRows.push(tempRow) : (this.updatedRows[index] = tempRow)
-            //  console.log('UPDATED ROWS: ', this.updatedRows)
         },
         async saveRegistry() {
             this.updatedRows.forEach((el: any) => {
@@ -267,7 +262,6 @@ export default defineComponent({
                 await this.loadRegistry()
                 this.loadRows()
             }
-            console.log('UPDATED PAGINATION MAIN: ', this.pagination)
         },
         formatPivotRows(row: any) {
             Object.keys(row).forEach((key: any) => {

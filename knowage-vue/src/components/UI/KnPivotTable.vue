@@ -10,9 +10,6 @@
         <tr v-for="(row, index) of mappedRows" :key="index">
             <template v-for="(column, i) of columns.slice(1)" :key="i">
                 <td v-if="row[column.field].rowSpan > 0" :rowspan="row[column.field].rowSpan">
-                    <!-- <span>{{ row[column.field].data }}</span>
-                    <span>{{ row[column.field] }}</span> -->
-                    <!-- <span>{{ row[column.field].data }}</span> -->
                     <Checkbox v-if="column.editorType === 'TEXT' && column.columnInfo.type === 'boolean'" v-model="row[column.field].data" :binary="true" :disabled="!column.isEditable || column.type === 'merge'" @change="setRowEdited(row)"></Checkbox>
                     <InputText
                         v-else-if="column.isEditable && column.type !== 'merge' && column.editorType !== 'COMBO' && column.columnInfo.type !== 'date'"
@@ -51,7 +48,7 @@
                         </template>
                     </Dropdown>
                     <span v-else-if="!column.isEditable && column.columnInfo.type === 'date'">{{ getFormatedDate(row[column.field].data, column.columnInfo.dateFormat) }} </span>
-                    <span v-else-if="(!column.isEditable && column.columnInfo.type === 'int') || column.columnInfo.type === 'float'">{{ getFormatedNumber(row[column.field].data) }}</span>
+                    <span v-else-if="!column.isEditable && row[column.field].data && (column.columnInfo.type === 'int' || column.columnInfo.type === 'float')">{{ getFormatedNumber(row[column.field].data) }}</span>
                     <span v-else>{{ row[column.field].data }}</span>
                     <i v-if="column.isEditable && column.type !== 'merge' && column.columnInfo.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" />
                 </td>
@@ -60,7 +57,20 @@
         </tr>
     </table>
 
-    <Paginator v-model:first="first" :rows="15" :totalRecords="lazyParams.size" @page="onPage($event)"></Paginator>
+    <Paginator
+        v-model:first="first"
+        :rows="15"
+        :totalRecords="lazyParams.size"
+        :currentPageReportTemplate="
+            $t('common.table.footer.paginated', {
+                first: '{first}',
+                last: '{last}',
+                totalRecords: '{totalRecords}'
+            })
+        "
+        paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+        @page="onPage($event)"
+    ></Paginator>
     <RegistryDatatableWarningDialog :visible="warningVisible" :columns="dependentColumns" @close="onWarningDialogClose"></RegistryDatatableWarningDialog>
 </template>
 
@@ -131,34 +141,26 @@ export default defineComponent({
                 })
                 return newRow
             })
-            console.log('MAPPED ROWS: ', this.mappedRows)
+            // console.log('MAPPED ROWS: ', this.mappedRows)
             // console.log('COLUMNS: ', this.columns)
         },
         checkForRowSpan(fromIndex, toIndex, rows, columns, columnIndex) {
             const column = columns[columnIndex]
 
-            if (!column.grouping) {
+            if (column.type !== 'merge') {
                 return
             }
 
-            // console.log(fromIndex, toIndex, column)
-            // console.log('LINE 61 fromIndex: ', fromIndex, ', toIndex: ', toIndex, ', rows: ', rows, ', columns: ', columns, ', columnIndex: ', columnIndex, ', column: ', column)
             let groupCount = 1
             let startIndex = fromIndex
             for (let i = fromIndex + 1; i <= toIndex; i++) {
-                // console.log('i', i)
-                // console.log(rows[i - 1][column.field].data, '===', rows[i][column.field].data)
-                // console.log('LINE 70 i: ', i, ', comparing: ', rows[i - 1][column.field].data, ' === ', rows[i][column.field].data)
                 if (rows[i - 1][column.field].data === rows[i][column.field].data) {
                     rows[i][column.field].rowSpan = 0
                     groupCount++
                 }
                 if (rows[i - 1][column.field].data !== rows[i][column.field].data || i === toIndex) {
-                    // console.log('groupCount', column.field, rows[startIndex][column.field].data, groupCount)
-                    // console.log('LINE 77 columnField: ', column.field, ', rows[startIndex][column.field].data: ', rows[startIndex][column.field].data, ', groupCount: ', groupCount)
                     rows[startIndex][column.field].rowSpan = groupCount
                     if (i - 1 > startIndex && columnIndex < columns.length - 1) {
-                        // console.log('LINE 82: Before recursive call')
                         this.checkForRowSpan(startIndex, i === toIndex ? i : i - 1, rows, columns, columnIndex + 1)
                     }
                     startIndex = i
@@ -168,7 +170,6 @@ export default defineComponent({
         },
         loadPagination() {
             this.lazyParams = { ...this.pagination } as any
-            console.log('LOADED LAZY PARAMS: ', this.lazyParams)
         },
         onPage(event: any) {
             this.lazyParams = {
@@ -198,17 +199,20 @@ export default defineComponent({
         onDropdownChange(row: any, column: any) {
             row[column.field] = { data: row[column.field].data['column_1'], rowSpan: 1 }
             this.selectedRow = row
-            if (column.hasDependencies && !this.stopWarnings[column.field]) {
+
+            if (column.hasDependencies) {
                 this.dependentColumns = [] as any[]
                 this.setDependentColumns(column)
 
-                this.dependentColumns.forEach((el: any) => {
-                    if (this.selectedRow[el.field]) {
-                        this.warningVisible = true
-                    }
-                })
-            } else {
-                this.clearDependentColumnsValues()
+                if (!this.stopWarnings[column.field]) {
+                    this.dependentColumns.forEach((el: any) => {
+                        if (this.selectedRow[el.field]) {
+                            this.warningVisible = true
+                        }
+                    })
+                } else {
+                    this.clearDependentColumnsValues()
+                }
             }
 
             row.edited = true
@@ -227,7 +231,6 @@ export default defineComponent({
             })
         },
         addColumnOptions(column: any, row: any) {
-            console.log('BLA BEFORE: ', row[column.field].data)
             if (!this.comboColumnOptions[column.field]) {
                 this.comboColumnOptions[column.field] = []
             }
@@ -235,13 +238,8 @@ export default defineComponent({
             if (!this.comboColumnOptions[column.field][row[column.dependences]?.data]) {
                 this.loadColumnOptions(column, row)
             }
-            console.log('BLA AFTER: ', row[column.field].data)
         },
         async loadColumnOptions(column: any, row: any) {
-            console.log('ROW FOR LOAD COLUMN OPTIONS BEFORE: ', row)
-            console.log('Column dependences BEFORE: ', column.dependences)
-            console.log('TEEEEEEEEEST BEFORE: ', this.comboColumnOptions[column.field][row[column.dependences]])
-
             const subEntity = column.subEntity ? '::' + column.subEntity + '(' + column.foreignKey + ')' : ''
 
             const entityId = this.entity + subEntity + ':' + column.field
@@ -254,10 +252,6 @@ export default defineComponent({
             await axios
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
                 .then((response) => (this.comboColumnOptions[column.field][row[column.dependences]?.data] = response.data.rows))
-
-            console.log('ROW FOR LOAD COLUMN OPTIONS: ', row)
-            console.log('Column dependences: ', column.dependences)
-            console.log('TEEEEEEEEEST: ', this.comboColumnOptions[column.field][row[column.dependences]])
         },
         onWarningDialogClose(payload: any) {
             if (payload.stopWarnings) {

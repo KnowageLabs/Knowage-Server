@@ -5,8 +5,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import KnPivotTable from '@/components/UI/KnPivotTable.vue'
-// import mockColumns from './mockColumns.json'
-// import mockRows from './mockRows.json'
 
 export default defineComponent({
     name: 'registry-pivot-datatable',
@@ -52,35 +50,26 @@ export default defineComponent({
     },
     methods: {
         getFilteredColumns() {
-            console.log('ZA MOCK: ', this.columns)
             this.filteredColumns = this.columns
-
-            // MOCK
-            // this.filteredColumns = mockColumns
         },
         loadRows() {
             this.tempRows = this.rows
 
             if (this.tempRows.length <= 1000) {
-                console.log('USAO!')
                 this.lazy = false
                 this.tempRows = this.tempRows.slice(0, 15)
             }
-
-            // MOCK
-            // this.tempRows = mockRows
         },
         onRowChanged(row: any) {
-            console.log('Changed Row: ', row)
             this.$emit('rowChanged', row)
         },
         loadPagination() {
             this.pagination = this.propPagination
-            console.log('LOADED PAGINATION WRAPPER: ', this.pagination)
+            // console.log('LOADED PAGINATION WRAPPER: ', this.pagination)
         },
         onPageChange(event: any) {
-            console.log('ON PAGE CHANGE: ', event)
-            console.log('LAZY: ', this.lazy)
+            // console.log('ON PAGE CHANGE: ', event)
+            // console.log('LAZY: ', this.lazy)
             if (this.lazy) {
                 this.$emit('pageChanged', event)
             } else {
@@ -88,7 +77,7 @@ export default defineComponent({
                 this.$emit('resetRows')
             }
 
-            console.log('TEMP ROWS AFTER CHANGE: ', this.tempRows)
+            // console.log('TEMP ROWS AFTER CHANGE: ', this.tempRows)
         }
     }
 })
