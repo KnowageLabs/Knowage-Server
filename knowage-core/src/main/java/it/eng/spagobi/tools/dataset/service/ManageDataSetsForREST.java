@@ -1634,7 +1634,7 @@ public class ManageDataSetsForREST {
 	private void validateLabelAndName(String id, String dsName, String dsLabel, IDataSet existingByName, IDataSet existingByLabel) {
 		String regex = "[!*'\\(\\);:@&=+$,\\/?%#\\[\\]]";
 		Pattern p = Pattern.compile(regex);
-		Matcher m = p.matcher(dsName);
+		Matcher m = p.matcher(dsLabel);
 
 		while (m.find()) {
 			String message = String.format("The dataset label [%s] contains at least one invalid character", dsLabel);
@@ -1644,7 +1644,7 @@ public class ManageDataSetsForREST {
 
 		m = p.matcher(dsName);
 		while (m.find()) {
-			String message = String.format("The dataset name [%s] contains at least one invalid character", dsLabel);
+			String message = String.format("The dataset name [%s] contains at least one invalid character", dsName);
 			logger.error(message);
 			throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.name.invalid");
 		}
