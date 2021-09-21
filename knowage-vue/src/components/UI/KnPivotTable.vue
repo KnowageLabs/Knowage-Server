@@ -3,16 +3,16 @@
     {{ lazyParams }}
     <table class="pivot-table" :style="descriptor.pivotStyles.table">
         <thead>
-            <th v-for="(column, index) of columns.slice(1)" :key="index" :style="descriptor.pivotStyles.header">
+            <th class="pivot-header" v-for="(column, index) of columns.slice(1)" :key="index" :style="descriptor.pivotStyles.header">
                 {{ column.field }}
                 <i v-if="column.isEditable && column.type !== 'merge' && column.columnInfo.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" />
             </th>
-            <th :style="descriptor.pivotStyles.iconColumn" />
+            <th class="pivot-header" :style="descriptor.pivotStyles.iconColumn" />
         </thead>
 
         <tr v-for="(row, index) of mappedRows" :key="index">
             <template v-for="(column, i) of columns.slice(1)" :key="i">
-                <td v-if="row[column.field].rowSpan > 0" :rowspan="row[column.field].rowSpan" :style="descriptor.pivotStyles.row">
+                <td class="pivot-data" v-if="row[column.field].rowSpan > 0" :rowspan="row[column.field].rowSpan" :style="descriptor.pivotStyles.row">
                     <Checkbox v-if="column.editorType === 'TEXT' && column.columnInfo.type === 'boolean'" v-model="row[column.field].data" :binary="true" :disabled="!column.isEditable || column.type === 'merge'" @change="setRowEdited(row)"></Checkbox>
                     <InputText
                         :style="descriptor.pivotStyles.inputFields"
@@ -60,7 +60,7 @@
                     <span v-else>{{ row[column.field].data }}</span>
                 </td>
             </template>
-            <td><i v-if="row.edited" class="pi pi-flag" :style="descriptor.pivotStyles.iconColumn"></i></td>
+            <td class="pivot-data"><i v-if="row.edited" class="pi pi-flag" :style="descriptor.pivotStyles.iconColumn"></i></td>
         </tr>
     </table>
 
@@ -267,20 +267,13 @@ export default defineComponent({
 })
 </script>
 
-<style scoped lang="scss">
-.pivot-table table,
-th,
-td {
+<style lang="scss">
+.pivot-table .pivot-header,
+.pivot-table .pivot-data {
     border: 3px solid #5d8dbb93;
 }
-.p-component.p-inputtext {
-    border: none !important;
-}
-.pivot-calendar {
-    .p-inputtext {
-        .p-component {
-            border: none;
-        }
-    }
+
+.pivot-calendar .p-inputtext {
+    border: none;
 }
 </style>
