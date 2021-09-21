@@ -47,47 +47,20 @@
                         <template #editor="slotProps">
                             <div :data-test="col.field + '-editor'">
                                 <span v-if="!col.isEditable && col.columnInfo.type !== 'boolean'">{{ slotProps.data[col.field] }}</span>
-                                <!-- Checkbox -->
                                 <Checkbox v-else-if="col.editorType === 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
-                                <InputText
-                                    :style="registryDatatableDescriptor.primevueTableStyles.inputField"
-                                    class="kn-material-input"
-                                    v-else-if="col.editorType !== 'COMBO' && col.isEditable && col.columnInfo.type !== 'date'"
-                                    :type="setDataType(col.columnInfo.type)"
-                                    :step="getStep(col.columnInfo.type)"
-                                    v-model="slotProps.data[slotProps.column.props.field]"
-                                    @input="setRowEdited(slotProps.data)"
-                                />
-                                <!-- Dropdown -->
-                                <Dropdown
-                                    :style="registryDatatableDescriptor.primevueTableStyles.dropdown"
-                                    class="kn-material-input"
-                                    v-else-if="col.editorType === 'COMBO'"
-                                    v-model="slotProps.data[col.field]"
-                                    :options="comboColumnOptions[col.field] ? comboColumnOptions[col.field][slotProps.data[col.dependences]] : []"
-                                    optionValue="column_1"
-                                    optionLabel="column_1"
-                                    @change="onDropdownChange(slotProps.data, col)"
-                                    @before-show="addColumnOptions(col, slotProps.data)"
-                                >
-                                </Dropdown>
-                                <!-- Calendar -->
-                                <Calendar
-                                    :style="registryDatatableDescriptor.pivotStyles.inputFields"
-                                    class="pivot-calendar"
-                                    v-else-if="col.isEditable && col.columnInfo.type === 'date'"
-                                    v-model="slotProps.data[col.field]"
-                                    :showTime="col.columnInfo.subtype === 'timestamp'"
-                                    :showSeconds="col.columnInfo.subtype === 'timestamp'"
-                                    :dateFormat="col.columnInfo.dateFormat"
-                                    :showButtonBar="true"
-                                    @date-select="setRowEdited(slotProps.data)"
-                                />
+                                <RegistryDatatableEditableField
+                                    v-else-if="col.isEditable"
+                                    :column="col"
+                                    :propRow="slotProps.data"
+                                    :comboColumnOptions="comboColumnOptions"
+                                    @rowChanged="setRowEdited(slotProps.data)"
+                                    @dropdownChanged="onDropdownChange"
+                                    @dropdownOpened="addColumnOptions"
+                                ></RegistryDatatableEditableField>
                             </div>
                         </template>
                         <template #body="slotProps">
                             <div class="p-d-flex p-flex-row" :data-test="col.field + '-body'">
-                                <!-- Checkbox -->
                                 <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
                                 <Calendar
                                     :style="registryDatatableDescriptor.pivotStyles.inputFields"
@@ -100,14 +73,11 @@
                                     :showButtonBar="true"
                                     @date-select="setRowEdited(slotProps.data)"
                                 />
-                                <!-- Formating -->
                                 <div v-else-if="col.isEditable">
                                     <span v-if="(col.columnInfo.type === 'int' || col.columnInfo.type === 'float') && slotProps.data[col.field]">{{ getFormatedNumber(slotProps.data[col.field]) }}</span>
-                                    <!-- Text EDITABLE -->
                                     <span v-else> {{ slotProps.data[col.field] }}</span>
                                 </div>
                                 <span v-else-if="col.columnInfo.type === 'date'"> {{ getFormatedDate(slotProps.data[col.field], col.columnInfo.dateFormat) }}</span>
-                                <!-- Text NOT EDITABLE -->
                                 <span v-else> {{ slotProps.data[col.field] }}</span>
                             </div>
                         </template>
@@ -143,9 +113,9 @@ import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
-import Dropdown from 'primevue/dropdown'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
+import RegistryDatatableEditableField from './RegistryDatatableEditableField.vue'
 import RegistryDatatableWarningDialog from './RegistryDatatableWarningDialog.vue'
 
 export default defineComponent({
@@ -156,8 +126,8 @@ export default defineComponent({
         Checkbox,
         Column,
         DataTable,
-        Dropdown,
         KnFabButton,
+        RegistryDatatableEditableField,
         RegistryDatatableWarningDialog
     },
     props: {
@@ -315,7 +285,10 @@ export default defineComponent({
         getFormatedNumber(number: number, precision?: number, format?: any) {
             return formatNumberWithLocale(number, precision, format)
         },
-        addColumnOptions(column: any, row: any) {
+        addColumnOptions(payload: any) {
+            const column = payload.column
+            const row = payload.row
+
             if (!this.comboColumnOptions[column.field]) {
                 this.comboColumnOptions[column.field] = []
             }
@@ -358,7 +331,10 @@ export default defineComponent({
             }
             this.$emit('rowChanged', newRow)
         },
-        onDropdownChange(row: any, column: any) {
+        onDropdownChange(payload: any) {
+            const column = payload.column
+            const row = payload.row
+
             this.selectedRow = row
             if (column.hasDependencies) {
                 this.dependentColumns = [] as any[]
@@ -374,8 +350,8 @@ export default defineComponent({
                 }
             }
 
-            this.$emit('rowChanged', row)
             row.edited = true
+            this.$emit('rowChanged', row)
         },
         onWarningDialogClose(payload: any) {
             if (payload.stopWarnings) {

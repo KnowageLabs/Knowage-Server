@@ -1,6 +1,4 @@
 <template>
-    {{ 'TODO Lazy Params: ' }}
-    {{ lazyParams }}
     <table class="pivot-table" :style="descriptor.pivotStyles.table">
         <thead>
             <th class="pivot-header" v-for="(column, index) of columns.slice(1)" :key="index" :style="descriptor.pivotStyles.header">
@@ -22,48 +20,7 @@
                         @dropdownChanged="onDropdownChange"
                         @dropdownOpened="$emit('dropdownOpened', $event)"
                     ></KnPivotTableEditableField>
-                    <!-- <Checkbox v-if="column.editorType === 'TEXT' && column.columnInfo.type === 'boolean'" v-model="row[column.field].data" :binary="true" :disabled="!column.isEditable || column.type === 'merge'" @change="setRowEdited(row)"></Checkbox>
-                    <InputText
-                        :style="descriptor.pivotStyles.inputFields"
-                        v-else-if="column.isEditable && column.type !== 'merge' && column.editorType !== 'COMBO' && column.columnInfo.type !== 'date'"
-                        class="kn-material-input"
-                        :type="setDataType(column.columnInfo.type)"
-                        :step="getStep(column.columnInfo.type)"
-                        v-model="row[column.field].data"
-                        @input="setRowEdited(row)"
-                    />
-                    <Calendar
-                        :style="descriptor.pivotStyles.inputFields"
-                        style="height:20px"
-                        class="pivot-calendar"
-                        v-else-if="column.isEditable && column.type !== 'merge' && column.columnInfo.type === 'date'"
-                        v-model="row[column.field].data"
-                        :showTime="column.columnInfo.subtype === 'timestamp'"
-                        :showSeconds="column.columnInfo.subtype === 'timestamp'"
-                        :dateFormat="column.columnInfo.dateFormat"
-                        :showButtonBar="true"
-                        @date-select="setRowEdited(row)"
-                    />
-                    <Dropdown
-                        class="kn-material-input"
-                        v-else-if="column.isEditable && column.editorType === 'COMBO'"
-                        v-model="row[column.field].data"
-                        :options="columnOptions[column.field] ? columnOptions[column.field][row[column.dependences]?.data] : []"
-                        :placeholder="$t('documentExecution.registry.select')"
-                        @change="onDropdownChange(row, column)"
-                        @before-show="$emit('dropdownOpened', { row: row, column: column })"
-                    >
-                        <template #value="slotProps">
-                            <div v-if="slotProps.value">
-                                <span>{{ slotProps.value }}</span>
-                            </div>
-                        </template>
-                        <template #option="slotProps">
-                            <div>
-                                <span>{{ slotProps.option['column_1'] }}</span>
-                            </div>
-                        </template>
-                    </Dropdown> -->
+                    <Checkbox v-if="column.editorType === 'TEXT' && column.columnInfo.type === 'boolean'" v-model="row[column.field].data" :binary="true" :disabled="!column.isEditable || column.type === 'merge'" @change="setRowEdited(row)"></Checkbox>
                     <span v-else-if="!column.isEditable && column.columnInfo.type === 'date'">{{ getFormatedDate(row[column.field].data, column.columnInfo.dateFormat) }} </span>
                     <span v-else-if="!column.isEditable && row[column.field].data && (column.columnInfo.type === 'int' || column.columnInfo.type === 'float')">{{ getFormatedNumber(row[column.field].data) }}</span>
                     <span v-else>{{ row[column.field].data }}</span>
@@ -94,6 +51,7 @@
 import { defineComponent } from 'vue'
 import { setInputDataType, getInputStep } from '@/helpers/commons/tableHelpers'
 import { formatDateWithLocale, formatNumberWithLocale } from '@/helpers/commons/localeHelper'
+import Checkbox from 'primevue/checkbox'
 import KnPivotTableEditableField from './KnPivotTableEditableField.vue'
 import Paginator from 'primevue/paginator'
 import RegistryDatatableWarningDialog from '@/modules/documentExecution/registry/tables/RegistryDatatableWarningDialog.vue'
@@ -101,7 +59,7 @@ import descriptor from '@/modules/documentExecution/registry/tables/RegistryData
 
 export default defineComponent({
     name: 'kn-pivot-table',
-    components: { KnPivotTableEditableField, Paginator, RegistryDatatableWarningDialog },
+    components: { Checkbox, KnPivotTableEditableField, Paginator, RegistryDatatableWarningDialog },
     props: {
         columns: [] as any,
         rows: [] as any,
@@ -164,8 +122,6 @@ export default defineComponent({
                 })
                 return newRow
             })
-            // console.log('MAPPED ROWS: ', this.mappedRows)
-            // console.log('COLUMNS: ', this.columns)
         },
         checkForRowSpan(fromIndex, toIndex, rows, columns, columnIndex) {
             const column = columns[columnIndex]
@@ -271,7 +227,6 @@ export default defineComponent({
         },
         loadColumnOptions() {
             this.columnOptions = this.comboColumnOptions as any[]
-            console.log('COLUMN OPTIONS LOADED: ', this.columnOptions)
         }
     }
 })
@@ -281,9 +236,5 @@ export default defineComponent({
 .pivot-table .pivot-header,
 .pivot-table .pivot-data {
     border: 3px solid #5d8dbb93;
-}
-
-.pivot-calendar .p-inputtext {
-    border: none;
 }
 </style>

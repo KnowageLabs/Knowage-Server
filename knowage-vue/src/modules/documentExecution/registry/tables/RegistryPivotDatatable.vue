@@ -6,8 +6,6 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import KnPivotTable from '@/components/UI/KnPivotTable/KnPivotTable.vue'
-import mockColumns from './mockColumns.json'
-import mockRows from './mockRows.json'
 
 export default defineComponent({
     name: 'registry-pivot-datatable',
@@ -55,9 +53,6 @@ export default defineComponent({
     methods: {
         getFilteredColumns() {
             this.filteredColumns = this.columns
-
-            // MOCK
-            this.filteredColumns = mockColumns
         },
         loadRows() {
             this.tempRows = this.rows
@@ -66,31 +61,22 @@ export default defineComponent({
                 this.lazy = false
                 this.tempRows = this.tempRows.slice(0, 15)
             }
-
-            // MOCK
-            this.tempRows = mockRows
         },
         onRowChanged(row: any) {
             this.$emit('rowChanged', row)
         },
         loadPagination() {
             this.pagination = this.propPagination
-            // console.log('LOADED PAGINATION WRAPPER: ', this.pagination)
         },
         onPageChange(event: any) {
-            // console.log('ON PAGE CHANGE: ', event)
-            // console.log('LAZY: ', this.lazy)
             if (this.lazy) {
                 this.$emit('pageChanged', event)
             } else {
                 this.tempRows = this.rows.slice(event.paginationStart, event.paginationStart + 15)
                 this.$emit('resetRows')
             }
-
-            // console.log('TEMP ROWS AFTER CHANGE: ', this.tempRows)
         },
         addColumnOptions(payload: any) {
-            console.log('PAYLOAD: ', payload)
             const column = payload.column
             const row = payload.row
             if (!this.comboColumnOptions[column.field]) {
@@ -114,7 +100,6 @@ export default defineComponent({
             await axios
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
                 .then((response) => (this.comboColumnOptions[column.field][row[column.dependences]?.data] = response.data.rows))
-            console.log('COLUMN OPTIONS AXIOS: ', this.comboColumnOptions)
         }
     }
 })
