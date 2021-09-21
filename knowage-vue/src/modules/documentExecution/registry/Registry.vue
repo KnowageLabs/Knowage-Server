@@ -1,5 +1,5 @@
 <template>
-    <div class="kn-page registry-container">
+    <div class="kn-page">
         <div class="kn-page-content p-m-0">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #left>
@@ -274,9 +274,3 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss">
-.registry-container {
-    overflow-y: auto;
-    overflow-x: auto;
-}
-</style>

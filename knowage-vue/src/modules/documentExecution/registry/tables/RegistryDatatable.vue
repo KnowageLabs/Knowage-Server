@@ -2,14 +2,14 @@
     <Card>
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left> {{ ' ' }} </template>
                 <template #right>
                     <div class="p-d-flex p-flex-row">
-                        <Button class="kn-button p-button-text" label="ADD" v-if="buttons.enableButtons || buttons.enableAddRecords" @click="addNewRow" data-test="new-row-button" />
+                        <Button class="kn-button p-button-text" :label="$t('managers.businessModelManager.add')" v-if="buttons.enableButtons || buttons.enableAddRecords" @click="addNewRow" data-test="new-row-button" />
                     </div>
                 </template>
-            </Toolbar> </template
-        >>
+            </Toolbar>
+        </template>
+
         <template #content>
             <DataTable
                 class="p-datatable-sm kn-table"
@@ -30,8 +30,6 @@
                 "
                 :totalRecords="lazyParams.size"
                 :reorderableColumns="true"
-                :resizableColumns="true"
-                columnResizeMode="expand"
                 responsiveLayout="stack"
                 breakpoint="960px"
                 stripedRows
@@ -98,8 +96,8 @@
                 <Column :style="registryDatatableDescriptor.iconColumn.style" :headerStyle="registryDatatableDescriptor.headerIconColumn.style">
                     <template #body="slotProps">
                         <Button v-if="buttons.enableButtons || buttons.enableDeleteRecords" class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)">
-                            <i v-show="slotProps.data.edited" class="pi pi-flag p-mr-2" :style="registryDatatableDescriptor.primevueTableStyles.trashNormal" />
-                            <i class="p-button-link pi pi-trash" :style="registryDatatableDescriptor.primevueTableStyles.trashNormal" />
+                            <i v-show="slotProps.data.edited" class="pi pi-flag" :style="registryDatatableDescriptor.primevueTableStyles.trashNormal" />
+                            <i class="p-button-link pi pi-trash p-ml-2" :style="registryDatatableDescriptor.primevueTableStyles.trashNormal" />
                         </Button>
                     </template>
                 </Column>
