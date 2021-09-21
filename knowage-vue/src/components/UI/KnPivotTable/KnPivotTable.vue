@@ -49,7 +49,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { setInputDataType, getInputStep } from '@/helpers/commons/tableHelpers'
 import { formatDateWithLocale, formatNumberWithLocale } from '@/helpers/commons/localeHelper'
 import Checkbox from 'primevue/checkbox'
 import KnPivotTableEditableField from './KnPivotTableEditableField.vue'
@@ -158,12 +157,6 @@ export default defineComponent({
                 size: this.lazyParams.size
             }
             this.$emit('pageChanged', this.lazyParams)
-        },
-        setDataType(columnType: string) {
-            return setInputDataType(columnType)
-        },
-        getStep(dataType: string) {
-            return getInputStep(dataType)
         },
         getFormatedDate(date: any, format: any) {
             return formatDateWithLocale(date, format)
