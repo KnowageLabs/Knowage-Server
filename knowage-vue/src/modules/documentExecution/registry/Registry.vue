@@ -183,6 +183,7 @@ export default defineComponent({
                         msg: this.$t('common.toast.updateSuccess')
                     })
                     this.pagination.start = 0
+                    this.updatedRows = []
                     this.loadPage()
                 })
                 .catch((response) => {
