@@ -33,7 +33,8 @@
         },
         "inputFields": {
             "border": "none",
-            "height": "20px"
+            "height": "20px",
+            "width": "100%"
         },
         "row": {
             "padding-left": "15px"

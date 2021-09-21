@@ -1,5 +1,15 @@
 <template>
     <Card>
+        <template #header>
+            <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                <template #left> {{ ' ' }} </template>
+                <template #right>
+                    <div class="p-d-flex p-flex-row">
+                        <Button class="kn-button p-button-text" label="ADD" v-if="buttons.enableButtons || buttons.enableAddRecords" @click="addNewRow" data-test="new-row-button" />
+                    </div>
+                </template>
+            </Toolbar> </template
+        >>
         <template #content>
             <DataTable
                 class="p-datatable-sm kn-table"
@@ -20,6 +30,8 @@
                 "
                 :totalRecords="lazyParams.size"
                 :reorderableColumns="true"
+                :resizableColumns="true"
+                columnResizeMode="expand"
                 responsiveLayout="stack"
                 breakpoint="960px"
                 stripedRows
@@ -84,17 +96,11 @@
                     </Column>
                 </template>
                 <Column :style="registryDatatableDescriptor.iconColumn.style" :headerStyle="registryDatatableDescriptor.headerIconColumn.style">
-                    <template #header>
-                        <KnFabButton class="p-mb-5" v-if="buttons.enableButtons || buttons.enableAddRecords" icon="fas fa-plus" @click="addNewRow" data-test="new-row-button"></KnFabButton>
-                    </template>
                     <template #body="slotProps">
-                        <Button v-if="slotProps.data.edited && (buttons.enableButtons || buttons.enableDeleteRecords)" class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)">
-                            <i class="p-button-link pi pi-trash" :style="registryDatatableDescriptor.primevueTableStyles.trashEdited" />
-                        </Button>
-                        <Button v-if="!slotProps.data.edited && (buttons.enableButtons || buttons.enableDeleteRecords)" class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)">
+                        <Button v-if="buttons.enableButtons || buttons.enableDeleteRecords" class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)">
+                            <i v-show="slotProps.data.edited" class="pi pi-flag p-mr-2" :style="registryDatatableDescriptor.primevueTableStyles.trashNormal" />
                             <i class="p-button-link pi pi-trash" :style="registryDatatableDescriptor.primevueTableStyles.trashNormal" />
                         </Button>
-                        <i v-if="slotProps.data.edited && !(buttons.enableButtons || buttons.enableDeleteRecords)" class="pi pi-flag" :style="registryDatatableDescriptor.primevueTableStyles.trashEdited" />
                     </template>
                 </Column>
             </DataTable>
@@ -113,7 +119,6 @@ import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
-import KnFabButton from '@/components/UI/KnFabButton.vue'
 import registryDescriptor from '../RegistryDescriptor.json'
 import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
 import RegistryDatatableEditableField from './RegistryDatatableEditableField.vue'
@@ -127,7 +132,6 @@ export default defineComponent({
         Checkbox,
         Column,
         DataTable,
-        KnFabButton,
         RegistryDatatableEditableField,
         RegistryDatatableWarningDialog
     },

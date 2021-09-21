@@ -86,7 +86,7 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
+<style>
 .pivot-calendar .p-inputtext {
     border: none;
 }
