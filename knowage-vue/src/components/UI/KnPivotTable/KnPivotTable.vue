@@ -13,7 +13,16 @@
         <tr v-for="(row, index) of mappedRows" :key="index">
             <template v-for="(column, i) of columns.slice(1)" :key="i">
                 <td class="pivot-data" v-if="row[column.field].rowSpan > 0" :rowspan="row[column.field].rowSpan" :style="descriptor.pivotStyles.row">
-                    <Checkbox v-if="column.editorType === 'TEXT' && column.columnInfo.type === 'boolean'" v-model="row[column.field].data" :binary="true" :disabled="!column.isEditable || column.type === 'merge'" @change="setRowEdited(row)"></Checkbox>
+                    <KnPivotTableEditableField
+                        v-if="column.isEditable && column.type !== 'merge'"
+                        :column="column"
+                        :propRow="row"
+                        :comboColumnOptions="columnOptions"
+                        @rowChanged="setRowEdited(row)"
+                        @dropdownChanged="onDropdownChange"
+                        @dropdownOpened="$emit('dropdownOpened', $event)"
+                    ></KnPivotTableEditableField>
+                    <!-- <Checkbox v-if="column.editorType === 'TEXT' && column.columnInfo.type === 'boolean'" v-model="row[column.field].data" :binary="true" :disabled="!column.isEditable || column.type === 'merge'" @change="setRowEdited(row)"></Checkbox>
                     <InputText
                         :style="descriptor.pivotStyles.inputFields"
                         v-else-if="column.isEditable && column.type !== 'merge' && column.editorType !== 'COMBO' && column.columnInfo.type !== 'date'"
@@ -54,7 +63,7 @@
                                 <span>{{ slotProps.option['column_1'] }}</span>
                             </div>
                         </template>
-                    </Dropdown>
+                    </Dropdown> -->
                     <span v-else-if="!column.isEditable && column.columnInfo.type === 'date'">{{ getFormatedDate(row[column.field].data, column.columnInfo.dateFormat) }} </span>
                     <span v-else-if="!column.isEditable && row[column.field].data && (column.columnInfo.type === 'int' || column.columnInfo.type === 'float')">{{ getFormatedNumber(row[column.field].data) }}</span>
                     <span v-else>{{ row[column.field].data }}</span>
@@ -85,16 +94,14 @@
 import { defineComponent } from 'vue'
 import { setInputDataType, getInputStep } from '@/helpers/commons/tableHelpers'
 import { formatDateWithLocale, formatNumberWithLocale } from '@/helpers/commons/localeHelper'
-import Calendar from 'primevue/calendar'
-import Checkbox from 'primevue/checkbox'
-import Dropdown from 'primevue/dropdown'
+import KnPivotTableEditableField from './KnPivotTableEditableField.vue'
 import Paginator from 'primevue/paginator'
 import RegistryDatatableWarningDialog from '@/modules/documentExecution/registry/tables/RegistryDatatableWarningDialog.vue'
 import descriptor from '@/modules/documentExecution/registry/tables/RegistryDatatableDescriptor.json'
 
 export default defineComponent({
     name: 'kn-pivot-table',
-    components: { Calendar, Checkbox, Dropdown, Paginator, RegistryDatatableWarningDialog },
+    components: { KnPivotTableEditableField, Paginator, RegistryDatatableWarningDialog },
     props: {
         columns: [] as any,
         rows: [] as any,
@@ -212,7 +219,10 @@ export default defineComponent({
             row.edited = true
             this.$emit('rowChanged', row)
         },
-        onDropdownChange(row: any, column: any) {
+        onDropdownChange(payload: any) {
+            const column = payload.column
+            const row = payload.row
+
             row[column.field] = { data: row[column.field].data['column_1'], rowSpan: 1 }
             this.selectedRow = row
 

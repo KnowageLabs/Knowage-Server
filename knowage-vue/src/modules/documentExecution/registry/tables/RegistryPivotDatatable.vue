@@ -5,9 +5,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-import KnPivotTable from '@/components/UI/KnPivotTable.vue'
-// import mockColumns from './mockColumns.json'
-// import mockRows from './mockRows.json'
+import KnPivotTable from '@/components/UI/KnPivotTable/KnPivotTable.vue'
+import mockColumns from './mockColumns.json'
+import mockRows from './mockRows.json'
 
 export default defineComponent({
     name: 'registry-pivot-datatable',
@@ -57,7 +57,7 @@ export default defineComponent({
             this.filteredColumns = this.columns
 
             // MOCK
-            // this.filteredColumns = mockColumns
+            this.filteredColumns = mockColumns
         },
         loadRows() {
             this.tempRows = this.rows
@@ -68,7 +68,7 @@ export default defineComponent({
             }
 
             // MOCK
-            // this.tempRows = mockRows
+            this.tempRows = mockRows
         },
         onRowChanged(row: any) {
             this.$emit('rowChanged', row)
