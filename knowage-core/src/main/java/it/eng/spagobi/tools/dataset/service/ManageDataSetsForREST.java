@@ -24,9 +24,6 @@ package it.eng.spagobi.tools.dataset.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,6 +31,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -1633,28 +1632,21 @@ public class ManageDataSetsForREST {
 	}
 
 	private void validateLabelAndName(String id, String dsName, String dsLabel, IDataSet existingByName, IDataSet existingByLabel) {
-		try {
-			if (!URLEncoder.encode(dsLabel, StandardCharsets.UTF_8.toString()).equals(dsLabel)) {
-				String message = String.format("The dataset label [%s] contains at least one invalid character", dsLabel);
-				logger.error(message);
-				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.label.invalid");
-			}
-		} catch (UnsupportedEncodingException e) {
-			String message = "Error during dataset label validation";
+		String regex = "[!*'\\(\\);:@&=+$,\\/?%#\\[\\]]";
+		Pattern p = Pattern.compile(regex);
+		Matcher m = p.matcher(dsName);
+
+		while (m.find()) {
+			String message = String.format("The dataset label [%s] contains at least one invalid character", dsLabel);
 			logger.error(message);
-			throw new SpagoBIRuntimeException(message, e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.label.invalid");
 		}
 
-		try {
-			if (!URLEncoder.encode(dsName, StandardCharsets.UTF_8.toString()).equals(dsName)) {
-				String message = String.format("The dataset name [%s] contains at least one invalid character", dsLabel);
-				logger.error(message);
-				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.name.invalid");
-			}
-		} catch (UnsupportedEncodingException e) {
-			String message = "Error during dataset name validation";
+		m = p.matcher(dsName);
+		while (m.find()) {
+			String message = String.format("The dataset name [%s] contains at least one invalid character", dsLabel);
 			logger.error(message);
-			throw new SpagoBIRuntimeException(message, e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.name.invalid");
 		}
 
 		if (existingByName != null) {
