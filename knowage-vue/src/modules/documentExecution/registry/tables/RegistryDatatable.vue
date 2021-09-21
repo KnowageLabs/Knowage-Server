@@ -96,7 +96,7 @@
                 <Column :style="registryDatatableDescriptor.iconColumn.style" :headerStyle="registryDatatableDescriptor.headerIconColumn.style">
                     <template #body="slotProps">
                         <Button v-if="buttons.enableButtons || buttons.enableDeleteRecords" class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)">
-                            <i v-show="slotProps.data.edited" class="pi pi-flag" :style="registryDatatableDescriptor.primevueTableStyles.trashNormal" />
+                            <i class="pi pi-flag" :class="[slotProps.data.edited ? flagShown : flagHidden]" :style="registryDatatableDescriptor.primevueTableStyles.trashNormal" />
                             <i class="p-button-link pi pi-trash p-ml-2" :style="registryDatatableDescriptor.primevueTableStyles.trashNormal" />
                         </Button>
                     </template>
@@ -161,6 +161,8 @@ export default defineComponent({
             selectedRow: null as any,
             warningVisible: false,
             stopWarnings: [] as any[],
+            flagShown: 'flag-shown',
+            flagHidden: 'flag-hidden',
             first: 0
         }
     },
@@ -389,3 +391,11 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss">
+.flag-shown {
+    opacity: 1;
+}
+.flag-hidden {
+    opacity: 0;
+}
+</style>
