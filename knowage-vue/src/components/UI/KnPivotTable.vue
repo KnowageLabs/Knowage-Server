@@ -39,10 +39,10 @@
                         class="kn-material-input"
                         v-else-if="column.isEditable && column.editorType === 'COMBO'"
                         v-model="row[column.field].data"
-                        :options="comboColumnOptions[column.field] ? comboColumnOptions[column.field][row[column.dependences]?.data] : []"
+                        :options="columnOptions[column.field] ? columnOptions[column.field][row[column.dependences]?.data] : []"
                         :placeholder="$t('documentExecution.registry.select')"
                         @change="onDropdownChange(row, column)"
-                        @before-show="addColumnOptions(column, row)"
+                        @before-show="$emit('dropdownOpened', { row: row, column: column })"
                     >
                         <template #value="slotProps">
                             <div v-if="slotProps.value">
@@ -85,7 +85,6 @@
 import { defineComponent } from 'vue'
 import { setInputDataType, getInputStep } from '@/helpers/commons/tableHelpers'
 import { formatDateWithLocale, formatNumberWithLocale } from '@/helpers/commons/localeHelper'
-import axios from 'axios'
 import Calendar from 'primevue/calendar'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
@@ -102,13 +101,15 @@ export default defineComponent({
         propConfiguration: { type: Object },
         entity: { type: String },
         id: { type: String },
-        pagination: { type: Object }
+        pagination: { type: Object },
+        comboColumnOptions: { type: Array }
     },
-    emits: ['rowChanged', 'pageChanged'],
+    emits: ['rowChanged', 'pageChanged', 'dropdownOpened'],
     created() {
         this.mapRows()
         this.checkForRowSpan(0, this.mappedRows.length - 1, this.mappedRows, this.columns, 1)
         this.loadPagination()
+        this.loadColumnOptions()
     },
     watch: {
         rows: {
@@ -124,6 +125,12 @@ export default defineComponent({
                 this.first = this.pagination?.start
             },
             deep: true
+        },
+        comboColumnOptions: {
+            handler() {
+                this.loadColumnOptions()
+            },
+            deep: true
         }
     },
     data() {
@@ -131,7 +138,7 @@ export default defineComponent({
             descriptor,
             mappedRows: [] as any,
             configuration: {} as any,
-            comboColumnOptions: [] as any[],
+            columnOptions: [] as any[],
             dependentColumns: [] as any[],
             selectedRow: null as any,
             warningVisible: false,
@@ -239,29 +246,6 @@ export default defineComponent({
                 this.setDependentColumns(el)
             })
         },
-        addColumnOptions(column: any, row: any) {
-            if (!this.comboColumnOptions[column.field]) {
-                this.comboColumnOptions[column.field] = []
-            }
-
-            if (!this.comboColumnOptions[column.field][row[column.dependences]?.data]) {
-                this.loadColumnOptions(column, row)
-            }
-        },
-        async loadColumnOptions(column: any, row: any) {
-            const subEntity = column.subEntity ? '::' + column.subEntity + '(' + column.foreignKey + ')' : ''
-
-            const entityId = this.entity + subEntity + ':' + column.field
-            const entityOrder = this.entity + subEntity + ':' + (column.orderBy ?? column.field)
-
-            const postData = new URLSearchParams({ ENTITY_ID: entityId, QUERY_TYPE: 'standard', ORDER_ENTITY: entityOrder, ORDER_TYPE: 'asc', QUERY_ROOT_ENTITY: 'true' })
-            if (column.dependences && row && row[column.dependences].data) {
-                postData.append('DEPENDENCES', this.entity + subEntity + ':' + column.dependences + '=' + row[column.dependences].data)
-            }
-            await axios
-                .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
-                .then((response) => (this.comboColumnOptions[column.field][row[column.dependences]?.data] = response.data.rows))
-        },
         onWarningDialogClose(payload: any) {
             if (payload.stopWarnings) {
                 this.stopWarnings[payload.columnField] = true
@@ -274,6 +258,10 @@ export default defineComponent({
             this.dependentColumns.forEach((el: any) => (this.selectedRow[el.field] = { data: '', rowSpan: 1 }))
             this.selectedRow.edited = true
             this.$emit('rowChanged', this.selectedRow)
+        },
+        loadColumnOptions() {
+            this.columnOptions = this.comboColumnOptions as any[]
+            console.log('COLUMN OPTIONS LOADED: ', this.columnOptions)
         }
     }
 })

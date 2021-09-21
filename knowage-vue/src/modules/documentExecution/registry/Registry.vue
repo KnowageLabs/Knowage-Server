@@ -273,32 +273,3 @@ export default defineComponent({
     }
 })
 </script>
-
-<style lang="scss" scoped>
-#spinner {
-    position: fixed;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    opacity: 0.7;
-    background-color: rgba(0, 0, 0, $alpha: 0.5);
-    z-index: 99;
-}
-::v-deep(.p-progress-spinner-circle) {
-    animation: p-progress-spinner-color 4s ease-in-out infinite;
-}
-@keyframes p-progress-spinner-color {
-    100%,
-    0% {
-        stroke: #43749e;
-    }
-    80%,
-    90% {
-        stroke: #d62d20;
-    }
-}
-</style>
