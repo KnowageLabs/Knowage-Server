@@ -8,9 +8,9 @@
                 editMode="cell"
                 dataKey="id"
                 paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-                :lazy="lazyParams.size > registryDatatableDescriptor.tableOptions.paginationLimit"
+                :lazy="lazyParams.size > registryDescriptor.paginationLimit"
                 :paginator="true"
-                :rows="registryDatatableDescriptor.tableOptions.rowsPerPage"
+                :rows="registryDescriptor.paginationNumberOfItems"
                 :currentPageReportTemplate="
                     $t('common.table.footer.paginated', {
                         first: '{first}',
@@ -114,6 +114,7 @@ import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
+import registryDescriptor from '../RegistryDescriptor.json'
 import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
 import RegistryDatatableEditableField from './RegistryDatatableEditableField.vue'
 import RegistryDatatableWarningDialog from './RegistryDatatableWarningDialog.vue'
@@ -142,6 +143,7 @@ export default defineComponent({
     emits: ['rowChanged', 'rowDeleted', 'pageChanged'],
     data() {
         return {
+            registryDescriptor,
             registryDatatableDescriptor,
             columns: [] as any[],
             rows: [] as any[],
@@ -326,7 +328,7 @@ export default defineComponent({
             })
             this.rows.unshift(newRow)
 
-            if (this.lazyParams.size <= registryDatatableDescriptor.tableOptions.paginationLimit) {
+            if (this.lazyParams.size <= registryDescriptor.paginationLimit) {
                 this.first = 0
             }
             this.$emit('rowChanged', newRow)

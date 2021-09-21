@@ -32,7 +32,7 @@
 
     <Paginator
         v-model:first="first"
-        :rows="15"
+        :rows="numberOfRows"
         :totalRecords="lazyParams.size"
         :currentPageReportTemplate="
             $t('common.table.footer.paginated', {
@@ -66,7 +66,8 @@ export default defineComponent({
         entity: { type: String },
         id: { type: String },
         pagination: { type: Object },
-        comboColumnOptions: { type: Array }
+        comboColumnOptions: { type: Array },
+        numberOfRows: { type: Number }
     },
     emits: ['rowChanged', 'pageChanged', 'dropdownOpened'],
     created() {

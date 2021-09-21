@@ -58,9 +58,5 @@
         "trashNormal": {
             "color": "#a7a7a7"
         }
-    },
-    "tableOptions": {
-        "paginationLimit": 1000,
-        "rowsPerPage": 15
     }
 }

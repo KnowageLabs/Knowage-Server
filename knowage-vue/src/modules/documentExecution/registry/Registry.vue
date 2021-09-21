@@ -38,6 +38,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import registryDescriptor from './RegistryDescriptor.json'
 import RegistryDatatable from './tables/RegistryDatatable.vue'
 import RegistryPivotDatatable from './tables/RegistryPivotDatatable.vue'
 import RegistryFiltersCard from './RegistryFiltersCard.vue'
@@ -52,6 +53,7 @@ export default defineComponent({
     props: { id: { type: String } },
     data() {
         return {
+            registryDescriptor,
             registry: {} as any,
             configuration: [] as any[],
             columns: [] as any[],
@@ -84,8 +86,8 @@ export default defineComponent({
         async loadRegistry() {
             const postData = new URLSearchParams()
 
-            if (this.pagination.size > 1000) {
-                postData.append('limit', '15')
+            if (this.pagination.size > registryDescriptor.paginationLimit) {
+                postData.append('limit', '' + registryDescriptor.paginationNumberOfItems)
             }
 
             this.selectedFilters.forEach((el: any) => {
@@ -144,7 +146,7 @@ export default defineComponent({
         },
         loadRows() {
             this.rows = []
-            const limit = this.pagination.size <= 1000 ? this.registry.rows.length : 15
+            const limit = this.pagination.size <= registryDescriptor.paginationLimit ? this.registry.rows.length : registryDescriptor.paginationNumberOfItems
             for (let i = 0; i < limit; i++) {
                 const tempRow = {}
                 Object.keys(this.registry.rows[i]).forEach((key) => {
@@ -257,7 +259,7 @@ export default defineComponent({
                 size: lazyParams.size
             }
 
-            if (this.pagination.size > 1000) {
+            if (this.pagination.size > registryDescriptor.paginationLimit) {
                 await this.loadRegistry()
                 this.loadRows()
             }

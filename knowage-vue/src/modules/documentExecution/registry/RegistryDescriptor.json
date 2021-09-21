@@ -1,4 +1,6 @@
 {
+    "paginationLimit": 1000,
+    "paginationNumberOfItems": 15,
     "styles": {
         "buttonsContainer": {
             "flex-grow": 0

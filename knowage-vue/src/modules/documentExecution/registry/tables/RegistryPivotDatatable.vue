@@ -1,10 +1,23 @@
 <template>
-    <KnPivotTable :id="id" :columns="filteredColumns" :rows="tempRows" :propConfiguration="propConfiguration" :entity="entity" :pagination="pagination" :comboColumnOptions="comboColumnOptions" @rowChanged="onRowChanged" @pageChanged="onPageChange" @dropdownOpened="addColumnOptions"></KnPivotTable>
+    <KnPivotTable
+        :id="id"
+        :columns="filteredColumns"
+        :rows="tempRows"
+        :propConfiguration="propConfiguration"
+        :entity="entity"
+        :pagination="pagination"
+        :comboColumnOptions="comboColumnOptions"
+        :numberOfRows="registryDescriptor.paginationNumberOfItems"
+        @rowChanged="onRowChanged"
+        @pageChanged="onPageChange"
+        @dropdownOpened="addColumnOptions"
+    ></KnPivotTable>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import registryDescriptor from '../RegistryDescriptor.json'
 import KnPivotTable from '@/components/UI/KnPivotTable/KnPivotTable.vue'
 
 export default defineComponent({
@@ -21,6 +34,7 @@ export default defineComponent({
     emits: ['rowChanged', 'pageChanged', 'resetRows'],
     data() {
         return {
+            registryDescriptor,
             filteredColumns: [] as any[],
             tempRows: [] as any[],
             pagination: {} as any,
@@ -57,9 +71,9 @@ export default defineComponent({
         loadRows() {
             this.tempRows = this.rows
 
-            if (this.tempRows.length <= 1000) {
+            if (this.tempRows.length <= registryDescriptor.paginationLimit) {
                 this.lazy = false
-                this.tempRows = this.tempRows.slice(0, 15)
+                this.tempRows = this.tempRows.slice(0, registryDescriptor.paginationNumberOfItems)
             }
         },
         onRowChanged(row: any) {
@@ -72,7 +86,7 @@ export default defineComponent({
             if (this.lazy) {
                 this.$emit('pageChanged', event)
             } else {
-                this.tempRows = this.rows.slice(event.paginationStart, event.paginationStart + 15)
+                this.tempRows = this.rows.slice(event.paginationStart, event.paginationStart + registryDescriptor.paginationNumberOfItems)
                 this.$emit('resetRows')
             }
         },
