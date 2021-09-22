@@ -1,6 +1,7 @@
 {
     "common": {
         "active": "Active",
+        "add": "Add",
         "apply": "Apply",
         "author": "Author",
         "back": "back",
@@ -60,6 +61,7 @@
         "run": "Run",
         "save": "save",
         "search": "search",
+        "select": "select",
         "sort": "sort",
         "table": {
             "footer": {
@@ -518,6 +520,34 @@
             "saveError": "Error, not saved",
             "title": "Constraints",
             "type": "Check type"
+        },
+        "crossNavigationManagement": {
+            "availableIO": "Available Input/Output parameters",
+            "availableInput": "Available Input parameters",
+            "breadCrumbs": "Text to show on Bread Crumbs",
+            "fixed": "Fixed value",
+            "fixedValue": "Fixed value parameter",
+            "height": "Window height",
+            "heightHelp": "Height in px of the popup window.",
+            "hindBread": "Hint about Breadcrumb",
+            "hindBreadMessage": "This field set the breadcrumb text visualizable within a cross navigation.It's possible to use parameters (output or input types) of the original document through the syntax $P(source_parameter_name).",
+            "hindDesc": "Hint about Description",
+            "hindDescMessage": "This field set the description of the navigation visualizable within the selection popup. The popup will be shown if there are multiple cross navigations startable by the same document.It's possible to use parameters (output or input types) of the original document through the syntax $P(source_parameter_name).",
+            "hint": "Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "incompatibleTypes": "Incompatible types",
+            "incompatibleTypesMessage": "{originParam} parameter's type not compatible with type of parameter {targetParam}",
+            "input": "Input",
+            "modality": "Modality",
+            "normal": "Normal",
+            "originDoc": "Origin doc",
+            "output": "Output",
+            "popUp": "Pop-up",
+            "popUpWindow": "Pop-up window",
+            "selectDocument": "Select document",
+            "targetDoc": "Target doc",
+            "title": "Cross Navigation",
+            "width": "Window width",
+            "widthHelp": "Width in px of the popup window."
         },
         "dataSourceManagement": {
             "form": {
