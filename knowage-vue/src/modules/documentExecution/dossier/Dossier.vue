@@ -114,7 +114,7 @@ export default defineComponent({
         }
     },
     created() {
-        this.jsonTemplate = JSON.parse(this.jsonTemplateString)
+        this.getDossierTemplate()
         this.getDossierActivities()
         this.interval = setInterval(() => {
             this.getDossierActivities()
@@ -136,8 +136,7 @@ export default defineComponent({
             filters: {
                 global: [filterDefault]
             } as Object,
-            jsonTemplateString:
-                '{"name":null,"downloadable":null,"uploadable":null,"PPT_TEMPLATE":{"name":"MARE6.pptx","downloadable":null,"uploadable":null,"PPT_TEMPLATE":null,"DOC_TEMPLATE":null,"REPORT":[]},"DOC_TEMPLATE":null,"REPORT":[{"label":"Report-no-parameter","PLACEHOLDER":[{"value":"ph1"}],"PARAMETER":[],"imageName":null,"sheet":null,"sheetHeight":null,"sheetWidth":null,"deviceScaleFactor":null}]}'
+            jsonTemplateString: {} as any
         }
     },
     validations() {
@@ -150,12 +149,24 @@ export default defineComponent({
             let fDate = new Date(date)
             return fDate.toLocaleString()
         },
-        getDossierActivities() {
+        async getDossierActivities() {
             this.loading = true
-            return axios
+            await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activities/${this.id}`)
                 .then((response) => {
                     this.dossierActivities = [...response.data]
+                })
+                .finally(() => {
+                    this.loading = false
+                })
+        },
+        async getDossierTemplate() {
+            this.loading = true
+            let url = `/knowagedossierengine/api/start/dossierTemplate?documentId=${this.id}`
+            await axios
+                .get(url, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .then((response) => {
+                    this.jsonTemplateString = { ...response.data }
                 })
                 .finally(() => {
                     this.loading = false
@@ -213,6 +224,7 @@ export default defineComponent({
             if (selectedActivity.status == 'ERROR') {
                 if (selectedActivity.hasBinContent) {
                     //getCompleteExternalBaseUrl --------------------------------
+                    ///knowagedossierengine/restful-services/
                     var link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/txt?activityName=${selectedActivity.activity}`
                 } else {
                     await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`).then((response) => {
