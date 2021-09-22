@@ -18,8 +18,7 @@
     },
     "numerationColumn": {
         "style": {
-            "text-align": "center",
-            "width": "3rem"
+            "width": "40px"
         }
     },
     "pivotStyles": {
@@ -45,16 +44,6 @@
         }
     },
     "primevueTableStyles": {
-        "dropdown": {
-            "width": "90%"
-        },
-        "inputField": {
-            "height": "20px",
-            "width": "80%"
-        },
-        "trashEdited": {
-            "color": "#fbc53d"
-        },
         "trashNormal": {
             "color": "#a7a7a7"
         }

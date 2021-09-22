@@ -1,15 +1,6 @@
 <template>
-    <InputText
-        :style="registryDatatableDescriptor.primevueTableStyles.inputField"
-        class="kn-material-input"
-        v-if="column.editorType !== 'COMBO' && column.columnInfo.type !== 'date'"
-        :type="setDataType(column.columnInfo.type)"
-        :step="getStep(column.columnInfo.type)"
-        v-model="row[column.field]"
-        @input="$emit('rowChanged', row)"
-    />
+    <InputText class="kn-material-input" v-if="column.editorType !== 'COMBO' && column.columnInfo.type !== 'date'" :type="setDataType(column.columnInfo.type)" :step="getStep(column.columnInfo.type)" v-model="row[column.field]" @input="$emit('rowChanged', row)" />
     <Dropdown
-        :style="registryDatatableDescriptor.primevueTableStyles.dropdown"
         class="kn-material-input"
         v-else-if="column.editorType === 'COMBO'"
         v-model="row[column.field]"

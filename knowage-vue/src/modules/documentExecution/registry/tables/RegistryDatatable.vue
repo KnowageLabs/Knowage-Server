@@ -11,7 +11,7 @@
         </template>
 
         <template #content>
-            <div class="col-12 " :class="tableClass">
+            <div class="col-12 scrollable-table">
                 <DataTable
                     class="p-datatable-sm kn-table"
                     v-model:first="first"
@@ -30,13 +30,10 @@
                         })
                     "
                     :totalRecords="lazyParams.size"
-                    :reorderableColumns="true"
                     responsiveLayout="stack"
                     breakpoint="960px"
                     stripedRows
                     showGridlines
-                    :scrollable="true"
-                    scrollDirection="horizontal"
                     @page="onPage($event)"
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
@@ -44,9 +41,9 @@
                     <template v-for="col of columns.slice(1)" :key="col.field">
                         <Column
                             class="kn-truncated"
+                            style="width:200px"
                             :field="col.field"
                             :style="col.columnInfo.type === 'date' ? registryDatatableDescriptor.dateColumn.style : ''"
-                            style="width: 200px"
                             :bodyStyle="{
                                 'background-color': col.color,
                                 width: col.size + 'px'
@@ -168,8 +165,7 @@ export default defineComponent({
             stopWarnings: [] as any[],
             flagShown: 'flag-shown',
             flagHidden: 'flag-hidden',
-            first: 0,
-            tableClass: ''
+            first: 0
         }
     },
     watch: {
@@ -198,9 +194,6 @@ export default defineComponent({
         this.loadRows()
         this.loadConfiguration()
         this.loadPagination()
-        setTimeout(() => {
-            this.tableClass = 'scrollable-table'
-        }, 1000)
     },
     methods: {
         loadColumns() {
@@ -407,8 +400,11 @@ export default defineComponent({
 .flag-hidden {
     opacity: 0;
 }
-.scrollable-table .p-datatable {
+.scrollable-table .p-datatable-wrapper {
     max-width: 93vw;
     overflow-x: auto;
+}
+.scrollable-table .p-datatable {
+    max-width: 93vw;
 }
 </style>
