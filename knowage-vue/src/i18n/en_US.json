@@ -239,6 +239,7 @@
             "cardinalityTtitle": "Cardinality",
             "clone": "Clone",
             "color": "Color",
+            "confirmClone": "Confirm item clone?",
             "confirmOverride": "Are you sure to override it?",
             "copyOf": "Copy of ",
             "enableVersioning": "Enable Versioning ",
@@ -265,8 +266,7 @@
             "thresholdsListTitle": "Thresholds List",
             "title": "KPI Definition",
             "tresholdTitle": "Threshold",
-            "useIt": "Use It",
-            "confirmClone": "Confirm item clone?"
+            "useIt": "Use It"
         },
         "kpiScheduler": {
             "addKpiAssociation": "Add KPI associations",
@@ -1007,10 +1007,11 @@
             },
             "hint": "Tenants management allows you to define different tenants and set name and settings for each one. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "hintTitle": "Tenant Management",
+            "newTenantSaved": "Tenant correctly saved. The administrator of the tenant has been created too and his username and password are ",
             "productTypes": {
                 "title": "Product Types"
             },
-            "tenantSaved": "Tenant correctly saved. The administrator of the tenant has been created too and his username and password are ",
+            "tenantSaved": "Tenant updated correctly",
             "title": "Tenant Management"
         },
         "usersManagement": {
