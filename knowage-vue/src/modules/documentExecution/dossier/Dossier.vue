@@ -135,8 +135,7 @@ export default defineComponent({
             jsonTemplate: {} as any,
             filters: {
                 global: [filterDefault]
-            } as Object,
-            jsonTemplateString: {} as any
+            } as Object
         }
     },
     validations() {
@@ -166,7 +165,7 @@ export default defineComponent({
             await axios
                 .get(url, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then((response) => {
-                    this.jsonTemplateString = { ...response.data }
+                    this.jsonTemplate = { ...response.data }
                 })
                 .finally(() => {
                     this.loading = false
