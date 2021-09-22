@@ -212,9 +212,9 @@ export default defineComponent({
             let url = `/knowagedossierengine/api/dossier/run?activityName=${this.activity.activityName}&documentId=${this.id}`
             await axios.post(url, this.jsonTemplate, { headers: { Accept: 'application/json, text/plain, */*' } }).then((response) => {
                 if (response.data.errors) {
-                    this.$store.commit('setError', { msg: response.data.errors })
+                    this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: response.data.errors })
                 } else {
-                    this.$store.commit('setInfo', { msg: this.$t('documentExecution.dossier.saveSuccess') })
+                    this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('documentExecution.dossier.saveSuccess') })
                 }
             })
             this.getDossierActivities()
@@ -265,12 +265,12 @@ export default defineComponent({
             }
         },
         storePPT(id, randomKey, activityName) {
-            var link = process.env.VUE_APP_HOST_URL + `/knowagedossierengine/restful-services/api/start/generatePPT?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.PPT_TEMPLATE.name}&activityName=${activityName}`
+            var link = process.env.VUE_APP_HOST_URL + `/knowagedossierengine/api/start/generatePPT?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.PPT_TEMPLATE.name}&activityName=${activityName}`
             window.open(link)
         },
 
         storeDOC(id, randomKey, activityName) {
-            var link = process.env.VUE_APP_HOST_URL + `/knowagedossierengine/restful-services/api/start/generateDOC?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.DOC_TEMPLATE.name}&activityName=${activityName}`
+            var link = process.env.VUE_APP_HOST_URL + `/knowagedossierengine/api/start/generateDOC?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.DOC_TEMPLATE.name}&activityName=${activityName}`
             window.open(link)
         }
     }
