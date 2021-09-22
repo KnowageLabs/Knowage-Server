@@ -1,0 +1,41 @@
+{
+    "validations": {
+        "constraint": [
+            {
+                "fieldName": "label",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "valueTypeCd",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "secondValue",
+                "validators": [
+                    {
+                        "key": "range_check",
+                        "validator": {
+                            "type": "range-check"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

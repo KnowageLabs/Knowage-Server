@@ -156,53 +156,6 @@ public class DataSetResource extends AbstractDataSetResource {
 	}
 
 	/**
-	 * Returns the number of existing datasets. This number is later used for server side pagination.
-	 *
-	 * @author Nikola Simovic (nsimovic, nikola.simovic@mht.net)
-	 */
-	@GET
-	@Path("/countDataSets")
-	@Produces(MediaType.TEXT_PLAIN)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public Number getNumberOfDataSets(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback) {
-		logger.debug("IN");
-
-		try {
-			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
-			dsDao.setUserProfile(getUserProfile());
-			Number numOfDataSets = dsDao.countDatasets();
-			return numOfDataSets;
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
-	/**
-	 * Returns the number of datasets for a particular search. This number is later used for server side pagination when searching.
-	 *
-	 * @author Nikola Simovic (nsimovic, nikola.simovic@mht.net)
-	 */
-	@GET
-	@Path("/countDataSetSearch")
-	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public Number getNumberOfDataSetsSearch(@QueryParam("searchValue") String searchValue, @QueryParam("tags") List<Integer> tags) {
-		logger.debug("IN");
-		try {
-			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
-			dsDao.setUserProfile(getUserProfile());
-			Number numOfDataSets = dsDao.countDatasetsSearch(searchValue, tags);
-			return numOfDataSets;
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
-	/**
 	 * The new implementation that, besides other useful information about datasets, provides also an information about old dataset versions for particular
 	 * dataset. This information was missing before.
 	 *

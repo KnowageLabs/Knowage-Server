@@ -17,7 +17,7 @@
 	<CONFIGURATOR path="/WEB-INF/conf/commons/renderers.xml" />	
 	<CONFIGURATOR path="/WEB-INF/conf/commons/errors.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/commons/traps.xml" />
-
+	<CONFIGURATOR path="/WEB-INF/conf/config/spagobi_dao.xml" />	
 	
 	<!-- start INITIALIZER module -->
 	<CONFIGURATOR path="/WEB-INF/conf/initializer/actions.xml" />
