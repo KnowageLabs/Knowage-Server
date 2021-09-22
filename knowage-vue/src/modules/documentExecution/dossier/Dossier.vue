@@ -223,13 +223,11 @@ export default defineComponent({
         async downloadActivity(selectedActivity) {
             if (selectedActivity.status == 'ERROR') {
                 if (selectedActivity.hasBinContent) {
-                    //getCompleteExternalBaseUrl --------------------------------
-                    ///knowagedossierengine/restful-services/
-                    var link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/txt?activityName=${selectedActivity.activity}`
+                    var link = process.env.VUE_APP_DOSSIER_PATH + `dossier/activity/${selectedActivity.id}/txt?activityName=${selectedActivity.activity}`
+                    window.open(link)
                 } else {
                     await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`).then((response) => {
                         var url = `../api/start/errorFile?activityId=${selectedActivity.id}&randomKey=${response.data}&activityName=${selectedActivity.activity}`
-                        var link = ''
                         if (this.jsonTemplate.PPT_TEMPLATE != null) {
                             url += '&type=PPT'
                             url += '&templateName=' + this.jsonTemplate.PPT_TEMPLATE.name
@@ -237,24 +235,18 @@ export default defineComponent({
                             url += '&type=DOC'
                             url += '&templateName=' + this.jsonTemplate.DOC_TEMPLATE.name
                         }
-                        //getCompleteBaseUrl(url) --------------------------
                         link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + url
-                        console.log(link)
-                        // $window.location = link
+                        window.open(link)
                         response.data.errors ? this.$store.commit('setError', { title: this.$t('common.error.generic'), msg: response.data.errors[0].message }) : ''
                     })
                 }
             } else if (selectedActivity.partial == selectedActivity.total) {
                 if (selectedActivity.hasBinContent) {
-                    //getCompleteExternalBaseUrl --------------------------------
                     link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/pptx?activityName=${selectedActivity.activity}`
-                    console.log(link)
-                    // $window.location = link
+                    window.open(link)
                 } else if (selectedActivity.hasDocBinContent) {
-                    //getCompleteExternalBaseUrl --------------------------------
                     link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/doc?activityName=${selectedActivity.activity}`
-                    console.log(link)
-                    // $window.location = link
+                    window.open(link)
                 } else {
                     link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`
                     await axios.get(link, { headers: { Accept: 'application/json, text/plain, */*' } }).then((response) => {
@@ -274,17 +266,13 @@ export default defineComponent({
             }
         },
         storePPT(id, randomKey, activityName) {
-            //getCompleteBaseUrl(url) --------------------------
-            var link = `../api/start/generatePPT?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.PPT_TEMPLATE.name}&activityName=${activityName}`
-            console.log(link)
-            // $window.location = link
+            var link = process.env.VUE_APP_HOST_URL + `/knowagedossierengine/restful-services/api/start/generatePPT?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.PPT_TEMPLATE.name}&activityName=${activityName}`
+            window.open(link)
         },
 
         storeDOC(id, randomKey, activityName) {
-            //getCompleteBaseUrl(url) --------------------------
-            var link = `../api/start/generateDOC?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.DOC_TEMPLATE.name}&activityName=${activityName}`
-            console.log(link)
-            // $window.location = link
+            var link = process.env.VUE_APP_HOST_URL + `/knowagedossierengine/restful-services/api/start/generateDOC?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.DOC_TEMPLATE.name}&activityName=${activityName}`
+            window.open(link)
         }
     }
 })
