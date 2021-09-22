@@ -185,15 +185,9 @@ export default defineComponent({
                         msg: this.$t('common.toast.updateSuccess')
                     })
                     this.pagination.start = 0
-                    this.updatedRows = []
                     this.loadPage()
                 })
-                .catch((response) => {
-                    this.$store.commit('setError', {
-                        title: this.$t('common.error.generic'),
-                        msg: response
-                    })
-                })
+                .finally(() => (this.updatedRows = []))
         },
         async onRowDeleted(row: any) {
             if (this.isPivot) {
