@@ -1,5 +1,6 @@
-<template>
-	<div class="homeContainer">
+<template
+	><iframe v-if="homePage.label && completeUrl" :src="`${completeUrl}`"></iframe>
+	<div v-else class="homeContainer">
 		<div class="upperSection p-d-flex">
 			<div class="p-d-flex p-flex-column kn-flex">
 				<div class="logo">
@@ -46,11 +47,25 @@
 		name: 'Home',
 		components: {},
 		props: {},
+		data() {
+			return {
+				completeUrl: false
+			}
+		},
+		mounted() {
+			this.completeUrl = this.homePage.to ? process.env.VUE_APP_HOST_URL + this.homePage.to : this.homePage.url
+		},
 		methods: {},
 		computed: {
 			...mapState({
+				homePage: 'homePage',
 				user: 'user'
 			})
+		},
+		watch: {
+			homePage(oldHomePage, newHomePage) {
+				if (oldHomePage !== newHomePage) this.completeUrl = this.homePage.to ? process.env.VUE_APP_HOST_URL + this.homePage.to : this.homePage.url
+			}
 		}
 	})
 </script>
@@ -206,5 +221,11 @@
 				}
 			}
 		}
+	}
+
+	iframe {
+		border: 0;
+		width: 100%;
+		height: 100%;
 	}
 </style>

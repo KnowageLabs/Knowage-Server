@@ -20,7 +20,7 @@
             <div v-else-if="contentInfo.WORD_ID">
                 <ul>
                     <li>
-                        <span>{{ $t('managers.glossary.common.word') }}:</span>
+                        <span>{{ $tc('managers.glossary.common.word', 1) }}:</span>
                         <p>{{ contentInfo.WORD }}</p>
                     </li>
                     <li>
@@ -84,6 +84,7 @@
                             <li class="inline-list-item" v-for="(link, index) in contentInfo.data.access" :key="index">{{ link }}</li>
                         </ul>
                     </li>
+                    <GlossaryUsageInfoDialogWordsColumnList :selectedWords="selectedWords" :wordsList="contentInfo.data.words"></GlossaryUsageInfoDialogWordsColumnList>
                 </ul>
             </div>
             <div v-else-if="contentInfo.type && contentInfo.type === 'dataset'">

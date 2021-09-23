@@ -1,13 +1,14 @@
 <template>
-    <Card>
+    <Card :style="kpiCronDescriptor.style.cardContainer">
         <template #content>
             <div class="p-d-flex p-ai-center p-mt-2">
-                <div class="p-col-6">
+                <div class="p-col-5">
                     <label for="startDate" class="kn-material-input-label p-m-2"> {{ $t('cron.startDate') + ':' }}</label>
                     <span>
                         <Calendar
                             id="startDate"
                             class="kn-material-input"
+                            :style="kpiCronDescriptor.style.calendarInput"
                             v-model="startDate"
                             :class="{
                                 'p-invalid': !validDates
@@ -24,27 +25,29 @@
                     </span>
                 </div>
 
-                <div class="p-col-6 p-d-flex p-ai-center">
+                <div class="p-col-4 p-d-flex p-ai-center">
                     <label for="startTime" class="kn-material-input-label p-m-2"> {{ $t('cron.startTime') + ':' }}</label>
                     <span>
-                        <Calendar id="startTime" class="kn-material-input" v-model="startTime" :manualInput="false" :timeOnly="true" hourFormat="24" :inline="true" @date-select="setDate('startDate')" />
+                        <Calendar id="startTime" :style="kpiCronDescriptor.style.timePicker" class="kn-material-input custom-timepicker" v-model="startTime" :manualInput="false" :timeOnly="true" hourFormat="24" :inline="true" @date-select="setDate('startDate')" />
                     </span>
                 </div>
             </div>
 
             <div class="p-d-flex p-ai-center  p-mt-2">
-                <div class="p-col-6">
+                <div class="p-col-5">
                     <label for="endDate" class="kn-material-input-label p-m-2"> {{ $t('cron.endDate') + ':' }}</label>
                     <span>
                         <Calendar
                             id="endDate"
-                            class="kn-material-input"
+                            class="kn-material-input p-ml-2"
+                            :style="kpiCronDescriptor.style.calendarInput"
                             v-model="endDate"
                             :class="{
                                 'p-invalid': !validDates
                             }"
                             :showIcon="true"
                             :manualInput="false"
+                            :showButtonBar="true"
                             @date-select="setDate('endDate')"
                         />
                         <div v-if="!validDates" class="p-error p-grid">
@@ -58,16 +61,16 @@
                 <div v-if="endDate" class="p-col-6 p-d-flex p-ai-center">
                     <label for="endTime" class="kn-material-input-label p-m-2"> {{ $t('cron.endTime') + ':' }}</label>
                     <span>
-                        <Calendar id="endTime" class="kn-material-input" v-model="endTime" :manualInput="false" :timeOnly="true" hourFormat="24" :inline="true" @date-select="setDate('endDate')" />
+                        <Calendar id="endTime" :style="kpiCronDescriptor.style.timePicker" class="kn-material-input p-ml-2 custom-timepicker" v-model="endTime" :manualInput="false" :timeOnly="true" hourFormat="24" :inline="true" @date-select="setDate('endDate')" />
                     </span>
                 </div>
             </div>
 
-            <div class="p-d-flex p-mt-4">
+            <div class="p-d-flex p-mt-5">
                 <div class="p-mr-4">
                     <label for="endDate" class="kn-material-input-label p-m-2"> {{ $t('cron.repeatInterval') + ':' }}</label>
                     <span>
-                        <Dropdown id="repeatInterval" class="kn-material-input" :style="kpiCronDescriptor.intervalInput.style" optionLabel="name" optionValue="value" v-model="repeatInterval" :options="kpiCronDescriptor.intervals" @change="updateCronInterval" />
+                        <Dropdown id="repeatInterval" class="kn-material-input" :style="kpiCronDescriptor.style.intervalInput" optionLabel="name" optionValue="value" v-model="repeatInterval" :options="kpiCronDescriptor.intervals" @change="updateCronInterval" />
                     </span>
                 </div>
 
@@ -110,7 +113,7 @@
                         </div>
                         <div v-else class="p-mt-2">
                             <label for="parameterDay" class="kn-material-input-label p-m-2"> {{ $t('cron.theWeek') }}</label>
-                            <Dropdown class="kn-material-input" :style="kpiCronDescriptor.advancedDayDropdown.style" optionLabel="name" optionValue="value" v-model="parameterDay" :options="kpiCronDescriptor.dayOptions" @change="updateCronAdvancedDayRepetition(true)" />
+                            <Dropdown class="kn-material-input" :style="kpiCronDescriptor.style.advancedDayDropdown" optionLabel="name" optionValue="value" v-model="parameterDay" :options="kpiCronDescriptor.dayOptions" @change="updateCronAdvancedDayRepetition(true)" />
                             <label for="parameterDay" class="kn-material-input-label p-m-2"> {{ $t('cron.inDay') }}</label>
                             <MultiSelect class="kn-material-input" optionLabel="name" optionValue="value" v-model="selectedDays" :options="kpiCronDescriptor.weeklyOptions" @change="updateCronAdvancedDayRepetition" />
                         </div>
@@ -396,3 +399,8 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="css">
+.custom-timepicker .p-datepicker {
+    border-color: transparent;
+}
+</style>
