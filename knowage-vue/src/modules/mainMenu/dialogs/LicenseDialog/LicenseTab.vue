@@ -183,7 +183,8 @@ export default defineComponent({
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license/upload` + `/${this.selectedHost.hostName}` + `?isForUpdate=${this.isForUpdate}`, formData, {
                     headers: {
-                        'Content-Type': 'multipart/form-data'
+                        'Content-Type': 'multipart/form-data',
+                        'X-Disable-Errors': true
                     }
                 })
                 .then(() => {
