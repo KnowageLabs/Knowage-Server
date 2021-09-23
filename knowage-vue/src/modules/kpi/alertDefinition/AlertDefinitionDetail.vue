@@ -118,9 +118,9 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/' + this.id + '/load')
                 .then((response) => {
                     this.selectedAlert = { ...response.data }
-                    this.selectedAlert.jsonOptions = JSON.parse(this.selectedAlert.jsonOptions ? this.selectedAlert.jsonOptions : '')
+                    this.selectedAlert.jsonOptions = JSON.parse(this.selectedAlert.jsonOptions ? this.selectedAlert.jsonOptions : '{}')
                     if (this.selectedAlert.frequency) {
-                        this.selectedAlert.frequency.cron = JSON.parse(this.selectedAlert.frequency.cron ? this.selectedAlert.frequency.cron : '')
+                        this.selectedAlert.frequency.cron = JSON.parse(this.selectedAlert.frequency.cron ? this.selectedAlert.frequency.cron : '{}')
                     }
 
                     if (this.selectedAlert.jsonOptions) {
@@ -244,7 +244,7 @@ export default defineComponent({
             }
         },
         onShowActionDialog(payload) {
-            this.selectedAction = payload && payload.action ? { ...payload.action, idAction: +payload.action.idAction } : { jsonActionParameters: {} }
+            this.selectedAction = payload && payload.action ? { ...payload.action, idAction: +payload.action.idAction, className: payload.action.data.className } : { jsonActionParameters: {} }
             this.actionIndexToEdit = payload ? payload.index : -1
             this.isActionDialogVisible = true
         }
