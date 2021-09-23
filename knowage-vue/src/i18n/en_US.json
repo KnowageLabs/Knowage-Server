@@ -153,6 +153,19 @@
         "weekday": "Weekday",
         "weekdays": "Weekdays"
     },
+    "documentExecution": {
+        "registry": {
+            "clearFilters": "Clear",
+            "column": "Column/s",
+            "filter": "Filter",
+            "filters": "Filters",
+            "select": "Select",
+            "title": "Registry Document",
+            "warning": "Warning",
+            "warningCheckbox": "Don't Warn Me Again",
+            "warningDependences": "depend/s from this value. Please check them and set correct values!"
+        }
+    },
     "downloadsDialog": {
         "columns": {
             "creationDate": "Creation Date",

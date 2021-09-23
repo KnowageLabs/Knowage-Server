@@ -76,7 +76,6 @@ const router = createRouter({
 			next({ name: 'homeIFrame', params: { url: store.state.homePage.url } })
 		}
 	}
-
 	next()
 }) */
 
