@@ -1,0 +1,9 @@
+{
+    "filterImagesMap": {
+        "all.png": "@/assets/images/functionCatalog/all.png",
+        "url(../../knowage/themes/commons/img/functions_catalog_images/degree.png)": "@/assets/images/functionCatalog/degree.png",
+        "url(../../knowage/themes/commons/img/functions_catalog_images/eye.png)": "@/assets/images/functionCatalog/eye.png",
+        "url(../../knowage/themes/commons/img/functions_catalog_images/memory.png)": "@/assets/images/functionCatalog/memory.png",
+        "url(../../knowage/themes/commons/img/functions_catalog_images/text.png)": "@/assets/images/functionCatalog/text.png"
+    }
+}

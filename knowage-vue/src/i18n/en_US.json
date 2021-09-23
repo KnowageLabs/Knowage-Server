@@ -239,6 +239,7 @@
             "cardinalityTtitle": "Cardinality",
             "clone": "Clone",
             "color": "Color",
+            "confirmClone": "Confirm item clone?",
             "confirmOverride": "Are you sure to override it?",
             "copyOf": "Copy of ",
             "enableVersioning": "Enable Versioning ",
@@ -265,8 +266,7 @@
             "thresholdsListTitle": "Thresholds List",
             "title": "KPI Definition",
             "tresholdTitle": "Threshold",
-            "useIt": "Use It",
-            "confirmClone": "Confirm item clone?"
+            "useIt": "Use It"
         },
         "kpiScheduler": {
             "addKpiAssociation": "Add KPI associations",
@@ -618,6 +618,14 @@
                 "testHeader": "Test"
             },
             "title": "Functionalities management"
+        },
+        "functionsCatalog": {
+            "label": "Function Label",
+            "language": "Language",
+            "name": "Function Name",
+            "noFunctionsFound": "No functions available for the selected type",
+            "owner": "Owner",
+            "title": "Functions"
         },
         "glossary": {
             "common": {

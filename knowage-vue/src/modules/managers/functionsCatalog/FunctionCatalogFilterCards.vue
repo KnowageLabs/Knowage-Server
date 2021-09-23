@@ -1,0 +1,44 @@
+<template>
+    <div class="p-d-flex p-flex-row">
+        <FunctionCatalogFilterCard class="kn-flex p-m-2" v-for="filter in filters" :key="filter.valueId" :propFilter="filter" @selected="onSelected"></FunctionCatalogFilterCard>
+    </div>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { iFilter } from './FunctionsCatalog'
+import FunctionCatalogFilterCard from './FunctionCatalogFilterCard.vue'
+
+export default defineComponent({
+    name: 'functions-catalog-filter-cards',
+    components: { FunctionCatalogFilterCard },
+    props: { propFilters: { type: Array } },
+    data() {
+        return {
+            filters: [] as iFilter[],
+            selectedFilter: null as iFilter | null
+        }
+    },
+    watch: {
+        propFilters() {
+            this.loadFilters()
+        }
+    },
+    created() {
+        this.loadFilters()
+    },
+    methods: {
+        loadFilters() {
+            this.filters = [...(this.propFilters as iFilter[])]
+        },
+        onSelected(filter: iFilter) {
+            if (this.selectedFilter) {
+                this.selectedFilter.active = false
+            }
+            this.selectedFilter = filter
+            this.selectedFilter.active = true
+            this.$emit('selected', this.selectedFilter)
+        }
+    }
+})
+</script>

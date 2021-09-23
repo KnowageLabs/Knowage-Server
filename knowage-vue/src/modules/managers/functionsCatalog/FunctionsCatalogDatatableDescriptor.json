@@ -1,0 +1,37 @@
+{
+    "columns": [
+        {
+            "field": "label",
+            "header": "managers.functionsCatalog.label",
+            "style": {}
+        },
+        {
+            "field": "name",
+            "header": "managers.functionsCatalog.name",
+            "style": {}
+        },
+        {
+            "field": "type",
+            "header": "common.type",
+            "style": {}
+        },
+        {
+            "field": "language",
+            "header": "managers.functionsCatalog.language",
+            "style": {}
+        },
+        {
+            "field": "owner",
+            "header": "managers.functionsCatalog.owner",
+            "style": {}
+        }
+    ],
+    "globalFilterFields": ["label", "name", "type", "language", "owner"],
+    "table": {
+        "iconColumn": {
+            "style": {
+                "text-align": "end"
+            }
+        }
+    }
+}
