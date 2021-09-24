@@ -147,6 +147,7 @@ export default defineComponent({
                         menu.visible = this.news.count.total > 0
                     }
 
+<<<<<<< HEAD
                     menu.badge = this.getBadgeValue(menu)
                 }
             }
@@ -163,6 +164,31 @@ export default defineComponent({
             let toRet = undefined
             for (var idx in dynMenu) {
                 let menu = dynMenu[idx]
+=======
+						menu.badge = this.getBadgeValue(menu)
+					}
+				}
+			},
+			getBadgeValue(item) {
+				if (item.conditionedView === 'downloads') {
+					if (Object.keys(this.downloads).length !== 0) return this.downloads.count.total - this.downloads.count.alreadyDownloaded
+				} else if (item.conditionedView === 'news') {
+					if (Object.keys(this.news).length !== 0) return this.news.count.unread
+				}
+				return 0
+			},
+			findHomePage(dynMenu) {
+				let toRet = undefined
+
+				let ordered = dynMenu
+					.filter((x) => x.parentId == null)
+					.sort((el1, el2) => {
+						el1.prog - el2.prog
+					})
+
+				for (var idx in ordered) {
+					let menu = dynMenu[idx]
+>>>>>>> c19a288964... [KNOWAGE-6031] - Changed logic for findHomePage method
 
                 if (menu.to || menu.url) return menu
             }
