@@ -17,15 +17,17 @@
         <TabView>
             <TabPanel>
                 <template #header>
-                    <span>{{ $t('common.kpi') }}</span>
+                    <span>{{ $t('managers.functionsCatalog.general') }}</span>
                 </template>
 
                 <FunctionCatalogGeneralTab :propFunction="selectedFunction" :readonly="readonly" :functionTypes="filteredFunctionTypes" :propKeywords="keywords"></FunctionCatalogGeneralTab>
             </TabPanel>
             <TabPanel>
                 <template #header>
-                    <span>TODO INPUT</span>
+                    <span>{{ $t('managers.functionsCatalog.input') }}</span>
                 </template>
+
+                <FunctionCatalogInputTab :propFunction="selectedFunction" :readonly="readonly"></FunctionCatalogInputTab>
             </TabPanel>
             <TabPanel>
                 <template #header>
@@ -47,12 +49,13 @@ import { iFunction, iFunctionType } from './FunctionsCatalog'
 import Dialog from 'primevue/dialog'
 import functionsCatalogDetailDescriptor from './FunctionsCatalogDetailDescriptor.json'
 import FunctionCatalogGeneralTab from './tabs/FunctionCatalogGeneralTab/FunctionCatalogGeneralTab.vue'
+import FunctionCatalogInputTab from './tabs/FunctionCatalogInputTab/FunctionCatalogInputTab.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'functions-catalog-detail',
-    components: { Dialog, FunctionCatalogGeneralTab, TabView, TabPanel },
+    components: { Dialog, FunctionCatalogGeneralTab, FunctionCatalogInputTab, TabView, TabPanel },
     props: {
         visible: { type: Boolean },
         propFunction: { type: Object },

@@ -620,6 +620,10 @@
             "title": "Functionalities management"
         },
         "functionsCatalog": {
+            "input": "Input",
+            "addColumn": "Add column",
+            "inputColumns": "Input Columns",
+            "general": "General",
             "benchmarks": "Benchmarks",
             "functionLabelHint": "Name of the function that will be displayed",
             "functionName": "Function Name",

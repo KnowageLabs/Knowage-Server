@@ -103,7 +103,7 @@ export default defineComponent({
     },
     methods: {
         loadFunction() {
-            this.selectedFunction = this.propFunction ? (this.propFunction as iFunction) : ({} as iFunction)
+            this.selectedFunction = this.propFunction as iFunction
         },
         loadKeywords() {
             this.keywords = this.propKeywords as String[]
