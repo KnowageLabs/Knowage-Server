@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iFilter } from './FunctionsCatalog'
+import { iFunctionType } from './FunctionsCatalog'
 import Card from 'primevue/card'
 import functionsCatalogFilterCardDescriptor from './FunctionsCatalogFilterCardDescriptor.json'
 
@@ -24,7 +24,7 @@ export default defineComponent({
     data() {
         return {
             functionsCatalogFilterCardDescriptor,
-            filter: {} as iFilter
+            filter: {} as iFunctionType
         }
     },
     watch: {
@@ -40,9 +40,9 @@ export default defineComponent({
     },
     methods: {
         loadFilter() {
-            this.filter = { ...this.propFilter } as iFilter
+            this.filter = { ...this.propFilter } as iFunctionType
             this.filter.valueDescription = this.functionsCatalogFilterCardDescriptor.filterImagesMap[this.filter.valueDescription]
-            console.log('LOADED FILTER: ', this.filter)
+            // console.log('LOADED FILTER: ', this.filter)
         }
     }
 })

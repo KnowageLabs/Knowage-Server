@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iFilter } from './FunctionsCatalog'
+import { iFunctionType } from './FunctionsCatalog'
 import FunctionCatalogFilterCard from './FunctionCatalogFilterCard.vue'
 
 export default defineComponent({
@@ -15,8 +15,8 @@ export default defineComponent({
     props: { propFilters: { type: Array } },
     data() {
         return {
-            filters: [] as iFilter[],
-            selectedFilter: null as iFilter | null
+            filters: [] as iFunctionType[],
+            selectedFilter: null as iFunctionType | null
         }
     },
     watch: {
@@ -29,9 +29,9 @@ export default defineComponent({
     },
     methods: {
         loadFilters() {
-            this.filters = [...(this.propFilters as iFilter[])]
+            this.filters = [...(this.propFilters as iFunctionType[])]
         },
-        onSelected(filter: iFilter) {
+        onSelected(filter: iFunctionType) {
             if (this.selectedFilter) {
                 this.selectedFilter.active = false
             }

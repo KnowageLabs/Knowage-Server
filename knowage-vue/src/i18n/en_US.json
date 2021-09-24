@@ -620,6 +620,11 @@
             "title": "Functionalities management"
         },
         "functionsCatalog": {
+            "benchmarks": "Benchmarks",
+            "functionLabelHint": "Name of the function that will be displayed",
+            "functionName": "Function Name",
+            "functionNameHint": "Name of the function",
+            "keywords": "Keywords",
             "label": "Function Label",
             "language": "Language",
             "name": "Function Name",

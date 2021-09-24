@@ -32,7 +32,7 @@
         <Column :style="functionsCatalogDatatableDescriptor.table.iconColumn.style">
             <template #body="slotProps">
                 <Button icon="fa fa-play-circle" class="p-button-link" @click="previewFunction(slotProps.data)" />
-                <Button icon="pi pi-trash" class="p-button-link" @click="deleteFunctionConfirm(slotProps.data.id)" />
+                <Button v-if="!readonly" icon="pi pi-trash" class="p-button-link" @click="deleteFunctionConfirm(slotProps.data.id)" />
             </template>
         </Column>
     </DataTable>
@@ -51,7 +51,8 @@ export default defineComponent({
     components: { Column, DataTable },
     props: {
         propLoading: { type: Boolean },
-        items: { type: Array }
+        items: { type: Array },
+        readonly: { type: Boolean }
     },
     emits: ['selected', 'deleted'],
     data() {
@@ -80,7 +81,7 @@ export default defineComponent({
         },
         loadFunctions() {
             this.functions = [...(this.items as iFunction[])]
-            console.log('DATATABLE - loadFunctions() - LOADED FUNCTIOSN: ', this.functions)
+            // console.log('DATATABLE - loadFunctions() - LOADED FUNCTIOSN: ', this.functions)
         },
         previewFunction(event) {
             console.log('previewFunction() event: ', event)

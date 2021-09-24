@@ -34,7 +34,7 @@ export interface iOutputColumn {
     type: string
 }
 
-export interface iFilter {
+export interface iFunctionType {
     valueId: number,
     valueCd: string,
     valueName: string,

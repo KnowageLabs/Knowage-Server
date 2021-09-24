@@ -12,38 +12,54 @@
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
                 <FunctionCatalogFilterCards class="p-m-3" :propFilters="filters" @selected="onSelectedFilter"></FunctionCatalogFilterCards>
-                <FunctionsCatalogDatatable class="p-m-3" :propLoading="loading" :items="functions" @selected="showForm" @deleted="deleteFunction"></FunctionsCatalogDatatable>
+                <div class="p-d-flex p-flex-row p-jc-center">
+                    <Chip class="keyword-chip p-m-2" :class="{ 'keyword-chip-active': selectedKeyword === keyword }" v-for="(keyword, index) in keywords" :key="index" :label="keyword" @click="filterByKeyword(keyword)"></Chip>
+                </div>
+                <FunctionsCatalogDatatable class="p-m-3" :propLoading="loading" :items="selectedKeyword ? filteredFunctions : functions" :readonly="readonly" @selected="showForm" @deleted="deleteFunction"></FunctionsCatalogDatatable>
             </div>
         </div>
+
+        <FunctionsCatalogDetail v-show="detailDialogVisible" :visible="detailDialogVisible" :propFunction="selectedFunction" :functionTypes="filters" :keywords="keywords" :readonly="readonly" @close="detailDialogVisible = false"></FunctionsCatalogDetail>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iFunction, iFilter } from './FunctionsCatalog'
+import { iFunction, iFunctionType } from './FunctionsCatalog'
 import axios from 'axios'
+import Chip from 'primevue/chip'
 import FunctionsCatalogDatatable from './FunctionsCatalogDatatable.vue'
+import FunctionsCatalogDetail from './FunctionsCatalogDetail.vue'
 import FunctionCatalogFilterCards from './FunctionCatalogFilterCards.vue'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 
 export default defineComponent({
     name: 'functions-catalog',
-    components: { FunctionsCatalogDatatable, FunctionCatalogFilterCards, KnFabButton },
+    components: {
+        Chip,
+        FunctionsCatalogDatatable,
+        FunctionsCatalogDetail,
+        FunctionCatalogFilterCards,
+        KnFabButton
+    },
     data() {
         return {
             user: null as any,
             functions: [] as iFunction[],
-            filters: [] as iFilter[],
+            filteredFunctions: [] as iFunction[],
+            selectedFunction: null as iFunction | null,
+            filters: [] as iFunctionType[],
+            selectedFilter: null as iFunctionType | null,
+            keywords: [] as String[],
+            selectedKeyword: '',
+            detailDialogVisible: false,
             loading: false
         }
     },
     computed: {
-        // TODO dodati provere kao (isAdmin || (isDev && shownFunction.owner==ownerUserName))
-        isAdmin() {
-            return true
-        },
-        isDev() {
-            return true
+        // TODO proveriti uslov
+        readonly(): boolean {
+            return !this.user.isSuperadmin || this.selectedFunction?.owner !== this.user.userId
         }
     },
     async created() {
@@ -53,7 +69,7 @@ export default defineComponent({
     methods: {
         async loadUser() {
             this.user = (this.$store.state as any).user
-            console.log('loadUser() LOADED USER: ', this.user)
+            // console.log('loadUser() LOADED USER: ', this.user)
         },
         async loadPage() {
             this.loading = true
@@ -62,15 +78,21 @@ export default defineComponent({
             this.loading = false
         },
         async loadFunctions(filterValue: string) {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functions-catalog/` + filterValue).then((response) => (this.functions = response.data.functions))
-            console.log('loadFunctions() LOADED FUNCTIONS: ', this.functions)
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functions-catalog/` + filterValue).then((response) => {
+                this.functions = response.data.functions
+                this.keywords = response.data.keywords
+            })
+            // console.log('loadFunctions() LOADED FUNCTIONS: ', this.functions)
+            // console.log('loadFunctions() LOADED KEYWORDS: ', this.keywords)
         },
         async loadFilters() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/FUNCTION_TYPE`).then((response) => (this.filters = response.data))
-            console.log('loadFilters() LOADED FILTERS: ', this.filters)
+            // console.log('loadFilters() LOADED FILTERS: ', this.filters)
         },
         showForm(selectedFunction: iFunction | null) {
             console.log('showForm() clicked: ', selectedFunction)
+            this.selectedFunction = selectedFunction
+            this.detailDialogVisible = true
         },
         async deleteFunction(functionId: number) {
             this.loading = true
@@ -88,13 +110,46 @@ export default defineComponent({
                 await this.loadPage()
             }
         },
-        async onSelectedFilter(filter: iFilter) {
-            console.log('SELECTED FILTER: ', filter)
-            const filterValue = filter.valueCd !== 'All' ? filter.valueCd : ''
+        async onSelectedFilter(filter: iFunctionType) {
+            // console.log('SELECTED FILTER: ', filter)
+            this.selectedKeyword = ''
+            if (this.selectedFilter?.valueCd === filter.valueCd) {
+                return
+            }
+            this.selectedFilter = filter
+            const filterValue = this.selectedFilter.valueCd !== 'All' ? this.selectedFilter.valueCd : ''
             this.loading = true
             await this.loadFunctions(filterValue)
             this.loading = false
+        },
+        filterByKeyword(keyword: string) {
+            // console.log('KEYWORD: ', keyword)
+            if (this.selectedKeyword === keyword) {
+                return
+            }
+            this.selectedKeyword = keyword
+            this.filteredFunctions = this.functions.filter((el: iFunction) => {
+                let found = false
+                el.keywords.forEach((el: string) => {
+                    if (el === this.selectedKeyword) {
+                        found = true
+                    }
+                })
+                return found
+            })
+            // console.log('FILTERED FUNCTIONS: ', this.filteredFunctions)
         }
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.keyword-chip {
+    cursor: pointer;
+}
+
+.keyword-chip-active {
+    background-color: rgb(59, 103, 140);
+    color: #fff;
+}
+</style>
