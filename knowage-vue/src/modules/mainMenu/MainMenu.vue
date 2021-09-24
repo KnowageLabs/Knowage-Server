@@ -161,7 +161,14 @@
 			},
 			findHomePage(dynMenu) {
 				let toRet = undefined
-				for (var idx in dynMenu) {
+
+				let ordered = dynMenu
+					.filter((x) => x.parentId == null)
+					.sort((el1, el2) => {
+						el1.prog - el2.prog
+					})
+
+				for (var idx in ordered) {
 					let menu = dynMenu[idx]
 
 					if (menu.to || menu.url) return menu
