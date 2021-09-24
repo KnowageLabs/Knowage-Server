@@ -170,7 +170,7 @@ export default defineComponent({
                 } else {
                     this.$store.commit('setInfo', {
                         title: this.$t(this.tabViewDescriptor.operation[this.operation].toastTitle),
-                        msg: this.$t(this.tabViewDescriptor.operation.success) + this.tenant.MULTITENANT_NAME + '_admin',
+                        msg: this.$t('managers.tenantManagement.newTenantSaved') + this.tenant.MULTITENANT_NAME + '_admin',
                         duration: 0
                     })
                 }

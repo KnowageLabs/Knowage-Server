@@ -1,9 +1,4 @@
 {
-    "advancedDayDropdown": {
-        "style": {
-            "width": "100px"
-        }
-    },
     "dayOptions": [
         {
             "name": "First",
@@ -26,11 +21,6 @@
             "value": "5"
         }
     ],
-    "intervalInput": {
-        "style": {
-            "min-width": "200px"
-        }
-    },
     "intervals": [
         {
             "name": "Per minute Execution",
@@ -103,6 +93,24 @@
             "value": "12"
         }
     ],
+    "style": {
+        "advancedDayDropdown": {
+            "width": "100px"
+        },
+        "calendarInput": {
+            "width": "75%"
+        },
+        "cardContainer": {
+            "width": "100%"
+        },
+        "intervalInput": {
+            "min-width": "200px"
+        },
+        "timePicker": {
+            "border-color": "transparent",
+            "height": "40px"
+        }
+    },
     "weeklyOptions": [
         {
             "name": "SUN",

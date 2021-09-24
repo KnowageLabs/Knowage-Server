@@ -36,9 +36,9 @@
         </div>
         <Card style="height:37rem">
             <template #content>
-                <ExectuteEtlCard v-if="action && action.idAction == 63" :loading="loading" :files="etlDocumentList" :data="action" />
-                <ContextBrokerCard v-if="action && action.idAction == 86" :data="action" />
-                <SendMailCard v-else-if="action && action.idAction == 62" :action="action" :users="formatedUsers" />
+                <ExectuteEtlCard v-if="action && action.className == 'it.eng.knowage.enterprise.tools.alert.action.ExecuteETLDocument'" :loading="loading" :files="etlDocumentList" :data="action" />
+                <ContextBrokerCard v-if="action && action.className == 'it.eng.spagobi.tools.alert.action.NotifyContextBroker'" :data="action" />
+                <SendMailCard v-else-if="action && action.className == 'it.eng.knowage.enterprise.tools.alert.action.SendMail'" :action="action" :users="formatedUsers" />
             </template>
         </Card>
     </Dialog>
@@ -68,7 +68,7 @@ export default defineComponent({
             v$: useValidate() as any,
             addActionDialogDescriptor,
             type: {} as any,
-            action: {} as iAction,
+            action: {} as any,
             selectedThresholds: [],
             data: [] as any[],
             etlDocumentList: [] as any[],
@@ -79,14 +79,14 @@ export default defineComponent({
     },
     computed: {
         componentToShow(): string {
-            switch (this.action.idAction) {
-                case 63: {
+            switch (this.action.className) {
+                case 'it.eng.knowage.enterprise.tools.alert.action.ExecuteETLDocument': {
                     return 'ExectuteEtlCard'
                 }
-                case 86: {
+                case 'it.eng.spagobi.tools.alert.action.NotifyContextBroker': {
                     return 'ContextBrokerCard'
                 }
-                case 62: {
+                case 'it.eng.knowage.enterprise.tools.alert.action.SendMail': {
                     return 'SendMailCard'
                 }
                 default:
@@ -94,9 +94,9 @@ export default defineComponent({
             }
         },
         actionSaveButtonDisabled(): any {
-            if (!this.action.idAction || this.selectedThresholds.length == 0) {
+            if (!this.action.className || this.selectedThresholds.length == 0) {
                 return true
-            } else if (this.action.idAction != 62 && this.isObjectEmpty(this.action.jsonActionParameters)) {
+            } else if (this.action.className != 'it.eng.knowage.enterprise.tools.alert.action.SendMail' && this.isObjectEmpty(this.action.jsonActionParameters)) {
                 return true
             }
             return false
@@ -128,14 +128,15 @@ export default defineComponent({
             this.type = this.action.idAction
             this.selectedThresholds = this.selectedAction.thresholdData ? this.selectedAction.thresholdData : []
         },
-        async setType() {
+        async setType(event) {
             this.action.jsonActionParameters = {}
-            if (this.action.idAction == 62) {
-                this.action.idAction = 62
+            var actionInList = this.actionList.find((actionInList) => actionInList.id === event.value)
+            this.action.className = actionInList.className
+            if (this.action.className == 'it.eng.knowage.enterprise.tools.alert.action.SendMail') {
+                this.action.className = 'it.eng.knowage.enterprise.tools.alert.action.SendMail'
                 this.formatUsers()
             }
         },
-        // PROMENITI MOKOVANE USERE U OVE IZ APIJA KADA SE PUSHUJE
         formatUsers() {
             for (let i = 0; i < this.usersList.length; i++) {
                 const attributes = this.usersList[i].sbiUserAttributeses

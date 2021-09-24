@@ -1,6 +1,7 @@
 {
     "common": {
         "active": "Active",
+        "add": "Add",
         "apply": "Apply",
         "author": "Author",
         "back": "back",
@@ -60,6 +61,7 @@
         "run": "Run",
         "save": "save",
         "search": "search",
+        "select": "select",
         "sort": "sort",
         "table": {
             "footer": {
@@ -151,6 +153,19 @@
         "weekday": "Weekday",
         "weekdays": "Weekdays"
     },
+    "documentExecution": {
+        "registry": {
+            "clearFilters": "Clear",
+            "column": "Column/s",
+            "filter": "Filter",
+            "filters": "Filters",
+            "select": "Select",
+            "title": "Registry Document",
+            "warning": "Warning",
+            "warningCheckbox": "Don't Warn Me Again",
+            "warningDependences": "depend/s from this value. Please check them and set correct values!"
+        }
+    },
     "downloadsDialog": {
         "columns": {
             "creationDate": "Creation Date",
@@ -221,6 +236,8 @@
             "execution": "Single Execution",
             "expiredWarning": "WARNING: The alert is expired",
             "hint": "The Alert definition allows you to define a serie of action to start when one or more KPI reach a specific threshold. You can set email alert, execute ETL or call a context broker .Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "kpiEditing": "Kpi editing in progres",
+            "kpiEditingMessage": "Current kpi have associated action and will be removed. Are you sure?",
             "kpiListener": "Listener",
             "label": "Label",
             "mailSubject": "Mail Subject",
@@ -239,6 +256,7 @@
             "cardinalityTtitle": "Cardinality",
             "clone": "Clone",
             "color": "Color",
+            "confirmClone": "Confirm item clone?",
             "confirmOverride": "Are you sure to override it?",
             "copyOf": "Copy of ",
             "enableVersioning": "Enable Versioning ",
@@ -265,8 +283,7 @@
             "thresholdsListTitle": "Thresholds List",
             "title": "KPI Definition",
             "tresholdTitle": "Threshold",
-            "useIt": "Use It",
-            "confirmClone": "Confirm item clone?"
+            "useIt": "Use It"
         },
         "kpiScheduler": {
             "addKpiAssociation": "Add KPI associations",
@@ -518,6 +535,34 @@
             "saveError": "Error, not saved",
             "title": "Constraints",
             "type": "Check type"
+        },
+        "crossNavigationManagement": {
+            "availableIO": "Available Input/Output parameters",
+            "availableInput": "Available Input parameters",
+            "breadCrumbs": "Text to show on Bread Crumbs",
+            "fixed": "Fixed value",
+            "fixedValue": "Fixed value parameter",
+            "height": "Window height",
+            "heightHelp": "Height in px of the popup window.",
+            "hindBread": "Hint about Breadcrumb",
+            "hindBreadMessage": "This field set the breadcrumb text visualizable within a cross navigation.It's possible to use parameters (output or input types) of the original document through the syntax $P(source_parameter_name).",
+            "hindDesc": "Hint about Description",
+            "hindDescMessage": "This field set the description of the navigation visualizable within the selection popup. The popup will be shown if there are multiple cross navigations startable by the same document.It's possible to use parameters (output or input types) of the original document through the syntax $P(source_parameter_name).",
+            "hint": "Cross-navigation management functionality allows you to create the link between document navigations. You can select the type of navigation and connect che parameters value from output to input. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "incompatibleTypes": "Incompatible types",
+            "incompatibleTypesMessage": "{originParam} parameter's type not compatible with type of parameter {targetParam}",
+            "input": "Input",
+            "modality": "Modality",
+            "normal": "Normal",
+            "originDoc": "Origin doc",
+            "output": "Output",
+            "popUp": "Pop-up",
+            "popUpWindow": "Pop-up window",
+            "selectDocument": "Select document",
+            "targetDoc": "Target doc",
+            "title": "Cross Navigation",
+            "width": "Window width",
+            "widthHelp": "Width in px of the popup window."
         },
         "dataSourceManagement": {
             "form": {
@@ -1007,10 +1052,11 @@
             },
             "hint": "Tenants management allows you to define different tenants and set name and settings for each one. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "hintTitle": "Tenant Management",
+            "newTenantSaved": "Tenant correctly saved. The administrator of the tenant has been created too and his username and password are ",
             "productTypes": {
                 "title": "Product Types"
             },
-            "tenantSaved": "Tenant correctly saved. The administrator of the tenant has been created too and his username and password are ",
+            "tenantSaved": "Tenant updated correctly",
             "title": "Tenant Management"
         },
         "usersManagement": {

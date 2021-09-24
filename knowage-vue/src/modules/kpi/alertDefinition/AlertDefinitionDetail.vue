@@ -6,12 +6,12 @@
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
     </Toolbar>
-    <div class="p-grid p-m-0 p-fluid p-jc-center" style="overflow:auto">
+    <div class="p-grid p-m-0 p-jc-center" style="overflow:auto">
         <Message class="p-m-2" v-if="expiredCard" severity="warn" :closable="true" :style="alertDescriptor.styles.message">
             {{ $t('kpi.alert.expiredWarning') }}
         </Message>
         <NameCard :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.selectedAlert" />
-        <KpiCron class="p-m-2" :style="alertDescriptor.styles.cron" v-if="selectedAlert?.frequency" :frequency="selectedAlert.frequency" @touched="touched = true" />
+        <KpiCron class="p-m-2" v-if="selectedAlert?.frequency" :frequency="selectedAlert.frequency" @touched="touched = true" />
         <EventsCard :selectedAlert="selectedAlert" @valueChanged="updateAlert" />
         <KpiCard v-if="isListenerSelected && actionList?.length > 0" :selectedAlert="selectedAlert" :kpiList="kpiList" :actionList="actionList" @showDialog="onShowActionDialog($event)" @kpiLoaded="updateKpi" @touched="touched = true" />
     </div>
@@ -118,9 +118,9 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/' + this.id + '/load')
                 .then((response) => {
                     this.selectedAlert = { ...response.data }
-                    this.selectedAlert.jsonOptions = JSON.parse(this.selectedAlert.jsonOptions ? this.selectedAlert.jsonOptions : '')
+                    this.selectedAlert.jsonOptions = JSON.parse(this.selectedAlert.jsonOptions ? this.selectedAlert.jsonOptions : '{}')
                     if (this.selectedAlert.frequency) {
-                        this.selectedAlert.frequency.cron = JSON.parse(this.selectedAlert.frequency.cron ? this.selectedAlert.frequency.cron : '')
+                        this.selectedAlert.frequency.cron = JSON.parse(this.selectedAlert.frequency.cron ? this.selectedAlert.frequency.cron : '{}')
                     }
 
                     if (this.selectedAlert.jsonOptions) {
@@ -244,7 +244,7 @@ export default defineComponent({
             }
         },
         onShowActionDialog(payload) {
-            this.selectedAction = payload && payload.action ? { ...payload.action, idAction: +payload.action.idAction } : { jsonActionParameters: {} }
+            this.selectedAction = payload && payload.action ? { ...payload.action, idAction: +payload.action.idAction, className: payload.action.data.className } : { jsonActionParameters: {} }
             this.actionIndexToEdit = payload ? payload.index : -1
             this.isActionDialogVisible = true
         }
