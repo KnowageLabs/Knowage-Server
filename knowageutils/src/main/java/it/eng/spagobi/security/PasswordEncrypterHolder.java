@@ -49,7 +49,7 @@ public enum PasswordEncrypterHolder {
 		Logger logger = Logger.getLogger(PasswordEncrypterHolder.class);
 		byte[] fileContent = null;
 		try {
-			String fileLocation = (String) new InitialContext().lookup("java:/comp/env/password_encryption_secret");
+			String fileLocation = (String) new InitialContext().lookup("java:comp/env/password_encryption_secret");
 
 			fileContent = getKeyBytes(fileLocation);
 

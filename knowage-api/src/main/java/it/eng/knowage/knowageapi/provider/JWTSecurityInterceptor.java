@@ -92,7 +92,7 @@ public class JWTSecurityInterceptor implements ContainerRequestFilter, Container
 	public String getTechnicalToken() {
 		String technicalToken = null;
 		try {
-			String key = (String) ctx.lookup("java:/comp/env/hmacKey");
+			String key = (String) ctx.lookup("java:comp/env/hmacKey");
 			Algorithm algorithm = Algorithm.HMAC256(key);
 			technicalToken = JWT.create().withIssuer("knowage")
 					.sign(algorithm);
