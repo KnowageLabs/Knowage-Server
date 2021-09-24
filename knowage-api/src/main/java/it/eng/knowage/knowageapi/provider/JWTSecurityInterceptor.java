@@ -69,7 +69,13 @@ public class JWTSecurityInterceptor implements ContainerRequestFilter, Container
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
 		LOGGER.info("FILTER IN");
-		String userToken = requestContext.getHeaderString(ConfigSingleton.getInstance().getAuthorizationHeaderName());
+		String userToken = "";
+		try {
+			userToken = requestContext.getHeaderString(ConfigSingleton.getInstance().getAuthorizationHeaderName());
+		} catch (Exception e) {
+			LOGGER.error("Impossible to get Header Authentication X-Kn-Authorization");
+			throw new KnowageRuntimeException("Impossible to get Header Authentication X-Kn-Authorization", e);
+		}
 		LOGGER.info("header: " + userToken);
 		SpagoBIUserProfile profile = null;
 		String noBearerUserToken = userToken.replace("Bearer ", "");
@@ -94,8 +100,7 @@ public class JWTSecurityInterceptor implements ContainerRequestFilter, Container
 		try {
 			String key = (String) ctx.lookup("java:comp/env/hmacKey");
 			Algorithm algorithm = Algorithm.HMAC256(key);
-			technicalToken = JWT.create().withIssuer("knowage")
-					.sign(algorithm);
+			technicalToken = JWT.create().withIssuer("knowage").sign(algorithm);
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e.getMessage(), e);
 		}
