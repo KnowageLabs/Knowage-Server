@@ -17,6 +17,7 @@ import menuConfigurationRoutes from '@/modules/managers/menuManagement/MenuManag
 import businessModelCatalogueRoutes from '@/modules/managers/businessModelCatalogue/BusinessModelCatalogue.routes.js'
 import driversManagementRoutes from '@/modules/managers/driversManagement/DriversManagement.routes.js'
 import resourceManagementRoutes from '@/modules/managers/resourceManagement/ResourceManagement.routes.js'
+import crossNavigationManagement from '@/modules/managers/crossNavigationManagement/CrossNavigationManagement.routes.js'
 import constraintsManagementRoutes from '@/modules/managers/constraintsManagement/ConstraintsManagement.routes.js'
 import lovsManagementRoutes from '@/modules/managers/lovsManagement/LovsManagement.routes.js'
 import glossaryDefinitionRoutes from '@/modules/managers/glossaryDefinition/GlossaryDefinition.routes.js'
@@ -44,6 +45,7 @@ const routes = baseRoutes
     .concat(businessModelCatalogueRoutes)
     .concat(driversManagementRoutes)
     .concat(resourceManagementRoutes)
+    .concat(crossNavigationManagement)
     .concat(constraintsManagementRoutes)
     .concat(lovsManagementRoutes)
     .concat(glossaryDefinitionRoutes)

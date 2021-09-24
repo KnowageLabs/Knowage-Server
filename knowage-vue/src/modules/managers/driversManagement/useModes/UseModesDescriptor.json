@@ -46,6 +46,7 @@
             "width": "70vw"
         }
     },
+    "globalFilterFields": ["label", "name", "description"],
     "maxValues": [
         {
             "label": "none",
