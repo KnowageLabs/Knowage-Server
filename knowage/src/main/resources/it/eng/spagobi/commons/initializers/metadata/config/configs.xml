@@ -53,15 +53,15 @@
 
 	<CONFIG label="SPAGOBI.RESOURCE_PATH_JNDI_NAME" name="RESOURCE PATH JNDI NAME"
 		description="The name of the JNDI variable that contains the RESOURCE PATH"
-		isActive="true" valueCheck="java://comp/env/resource_path"
+		isActive="true" valueCheck="java:comp/env/resource_path"
 		valueType="STRING" category="GENERIC_CONFIGURATION" />
    
 	
 	<CONFIG label="SPAGOBI.SPAGOBI_HOST_JNDI" name="SPAGOBI HOST JNDI"
-		description="HOST JNDI" isActive="true" valueCheck="java://comp/env/host_url"
+		description="HOST JNDI" isActive="true" valueCheck="java:comp/env/host_url"
 		valueType="STRING" category="GENERIC_CONFIGURATION" />
 	<CONFIG label="SPAGOBI.SPAGOBI_SERVICE_JNDI" name="SPAGOBI SERVICE JNDI"
-		description="HOST JNDI" isActive="true" valueCheck="java://comp/env/service_url"
+		description="HOST JNDI" isActive="true" valueCheck="java:comp/env/service_url"
 		valueType="STRING" category="GENERIC_CONFIGURATION" />
 	<CONFIG label="SPAGOBI.SPAGO_ADAPTERHTTP_URL" name="ADAPTERHTTP URL"
 		description="ADAPTERHTTP URL" isActive="true" valueCheck="/servlet/AdapterHTTP"
@@ -240,12 +240,12 @@
 		valueType="STRING" category="SECURITY" />
 	<CONFIG label="SPAGOBI_SSO.INTEGRATION_CLASS_JNDI" name="SSO INTEGRATION CLASS JNDI"
 		description="SSO INTEGRATION CLASS JNDI" isActive="true"
-		valueCheck="java://comp/env/sso_class" valueType="STRING"
+		valueCheck="java:comp/env/sso_class" valueType="STRING"
 		category="SECURITY" />
 	
 	<CONFIG label="SPAGOBI_HMAC.HMAC_JNDI_LOOKUP" name="HMAC JNDI LOOKUP"
 		description="HMAC JNDI LOOKUP" isActive="true"
-		valueCheck="java:/comp/env/hmacKey" valueType="STRING"
+		valueCheck="java:comp/env/hmacKey" valueType="STRING"
 		category="SECURITY" />
 
 	<!-- TimeStamp Format of SpagoBI DB -->
@@ -404,7 +404,7 @@
 		valueCheck="true" valueType="STRING" category="SECURITY" />
 	<CONFIG label="JNDI_THREAD_MANAGER" name="JNDI_THREAD_MANAGER"
 		description="Jndi to build work manager" isActive="true"
-		valueCheck="java:/comp/env/wm/SpagoWorkManager" valueType="STRING"
+		valueCheck="java:comp/env/wm/SpagoWorkManager" valueType="STRING"
 		category="GENERIC_CONFIGURATION" />
 
 	<CONFIG label="SPAGOBI.SECURITY.CHECK_ROLE_LOGIN" name="SPAGOBI.SECURITY.CHECK_ROLE_LOGIN"
