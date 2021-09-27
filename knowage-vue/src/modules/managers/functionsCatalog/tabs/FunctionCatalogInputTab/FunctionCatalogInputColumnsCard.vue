@@ -6,12 +6,17 @@
                     {{ $t('managers.functionsCatalog.inputColumns') }}
                 </template>
                 <template #right>
-                    <Button class="kn-button p-button-text" :label="$t('managers.functionsCatalog.addColumn')"></Button>
+                    <Button v-if="!readonly" class="kn-button p-button-text" :label="$t('managers.functionsCatalog.addColumn')" @click="addInputColumn"></Button>
                 </template>
             </Toolbar>
         </template>
         <template #content>
-            <FunctionCatalogInputColumn v-for="(inputColumn, index) in inputColumns" :key="index" :column="inputColumn"></FunctionCatalogInputColumn>
+            <div v-if="inputColumns.length === 0" class="p-d-flex p-flex-row p-jc-center">
+                {{ $t('managers.functionsCatalog.noInputColumnsRequired') }}
+            </div>
+            <template v-else>
+                <FunctionCatalogInputColumn v-for="(inputColumn, index) in inputColumns" :key="index" :column="inputColumn" :readonly="readonly" @deleted="deleteInputColumn(index)"></FunctionCatalogInputColumn>
+            </template>
         </template>
     </Card>
 </template>
@@ -37,6 +42,14 @@ export default defineComponent({
     methods: {
         loadInputColumns() {
             this.inputColumns = this.columns as iInputColumn[]
+            // console.log('INPUT COLUMNS: ', this.inputColumns)
+        },
+        addInputColumn() {
+            this.inputColumns.push({ name: '', type: '' })
+        },
+        deleteInputColumn(index: number) {
+            console.log('COLUMN FOR DELETE: ', index)
+            this.inputColumns.splice(index)
         }
     }
 })

@@ -620,21 +620,30 @@
             "title": "Functionalities management"
         },
         "functionsCatalog": {
-            "input": "Input",
             "addColumn": "Add column",
-            "inputColumns": "Input Columns",
-            "general": "General",
+            "addInputVariable": "Add input variable",
+            "variableDefaultValue": "Variable default value",
             "benchmarks": "Benchmarks",
+            "columnName": "Column Name",
+            "columnType": "Column Type",
             "functionLabelHint": "Name of the function that will be displayed",
             "functionName": "Function Name",
             "functionNameHint": "Name of the function",
+            "general": "General",
+            "input": "Input",
+            "inputColumns": "Input Columns",
+            "inputVariables": "Input Variables",
             "keywords": "Keywords",
             "label": "Function Label",
             "language": "Language",
             "name": "Function Name",
             "noFunctionsFound": "No functions available for the selected type",
+            "noInputColumnsRequired": "No input Columns required",
+            "noInputVariablesRequired": "No input Variables required",
             "owner": "Owner",
-            "title": "Functions"
+            "title": "Functions",
+            "variableName": "Variable name",
+            "variableType": "Variable type"
         },
         "glossary": {
             "common": {

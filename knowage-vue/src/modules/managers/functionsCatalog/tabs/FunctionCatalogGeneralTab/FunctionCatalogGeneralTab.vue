@@ -23,7 +23,7 @@
         <div class="p-field p-col-6 p-mb-6">
             <span>
                 <label for="type" class="kn-material-input-label">{{ $t('common.type') }}</label>
-                <Dropdown id="type" class="kn-material-input" v-model="selectedFunction.type" :options="functionTypes" optionLabel="valueCd" optionValue="valueCd" :placeholder="$t('managers.lovsManagement.lovTypePlaceholder')" :disabled="readonly" />
+                <Dropdown id="type" class="kn-material-input" v-model="selectedFunction.type" :options="functionTypes" optionLabel="valueCd" optionValue="valueCd" :disabled="readonly" />
             </span>
         </div>
         <div class="p-field p-col-12 p-mb-12">
@@ -44,7 +44,7 @@
         </div>
         <div class="p-field p-col-12 p-mb-12">
             <Accordion>
-                <AccordionTab :header="$t('common.description') + '*'">
+                <AccordionTab :header="$t('common.description') + ' *'">
                     <label for="description" class="kn-material-input-label"> {{ $t('common.description') }} *</label>
                     <Editor
                         id="description"

@@ -19,7 +19,7 @@
             </div>
         </div>
 
-        <FunctionsCatalogDetail v-show="detailDialogVisible" :visible="detailDialogVisible" :propFunction="selectedFunction" :functionTypes="filters" :keywords="keywords" :readonly="readonly" @close="detailDialogVisible = false"></FunctionsCatalogDetail>
+        <FunctionsCatalogDetail v-show="detailDialogVisible" :visible="detailDialogVisible" :propFunction="selectedFunction" :functionTypes="filters" :keywords="keywords" @close="detailDialogVisible = false"></FunctionsCatalogDetail>
     </div>
 </template>
 
@@ -59,6 +59,7 @@ export default defineComponent({
     computed: {
         // TODO proveriti uslov
         readonly(): boolean {
+            console.log(this.selectedFunction?.owner + ' !== ' + this.user.userId)
             return !this.user.isSuperadmin || this.selectedFunction?.owner !== this.user.userId
         }
     },

@@ -45,7 +45,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iFunction, iFunctionType } from './FunctionsCatalog'
+import { iFunction, iFunctionType, iInputColumn } from './FunctionsCatalog'
 import Dialog from 'primevue/dialog'
 import functionsCatalogDetailDescriptor from './FunctionsCatalogDetailDescriptor.json'
 import FunctionCatalogGeneralTab from './tabs/FunctionCatalogGeneralTab/FunctionCatalogGeneralTab.vue'
@@ -59,7 +59,6 @@ export default defineComponent({
     props: {
         visible: { type: Boolean },
         propFunction: { type: Object },
-        readonly: { type: Boolean },
         functionTypes: { type: Array },
         keywords: { type: Array }
     },
@@ -78,6 +77,12 @@ export default defineComponent({
             this.loadFunctionTypes()
         }
     },
+    computed: {
+        // TODO proveriti uslov
+        readonly(): boolean {
+            return !(this.$store.state as any).user.isSuperadmin || this.selectedFunction?.owner !== (this.$store.state as any).user.userId
+        }
+    },
     created() {
         this.loadFunction()
         this.loadFunctionTypes()
@@ -88,8 +93,10 @@ export default defineComponent({
                 ? ({ ...this.propFunction } as iFunction)
                 : ({
                       description: '',
-                      owner: (this.$store.state as any).user.userId
+                      owner: (this.$store.state as any).user.userId,
+                      inputColumns: [] as iInputColumn[]
                   } as iFunction)
+            console.log('READONLY: ', this.readonly)
         },
         loadFunctionTypes() {
             this.filteredFunctionTypes = this.functionTypes?.filter((el: any) => el.valueCd !== 'All') as iFunctionType[]
