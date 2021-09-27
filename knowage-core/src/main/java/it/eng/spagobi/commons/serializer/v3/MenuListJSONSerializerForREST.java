@@ -734,6 +734,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			} else if (childElem.isAdminsMenu() && childElem.getUrl() != null) {
 				setPropertiesForAdminWithUrlMenu(childElem, locale, temp2, path);
 			}
+			temp2.put("prog", childElem.getProg());
 
 		}
 
