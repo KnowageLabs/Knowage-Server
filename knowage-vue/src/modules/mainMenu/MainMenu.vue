@@ -162,13 +162,7 @@
 			findHomePage(dynMenu) {
 				let toRet = undefined
 
-				let ordered = dynMenu
-					.filter((x) => x.parentId == null)
-					.sort((el1, el2) => {
-						el1.prog - el2.prog
-					})
-
-				for (var idx in ordered) {
+				for (var idx in dynMenu) {
 					let menu = dynMenu[idx]
 
 					if (menu.to || menu.url) return menu
@@ -177,7 +171,7 @@
 				return toRet
 			}
 		},
-		mounted() {
+		async mounted() {
 			this.$store.commit('setLoading', true)
 			let localObject = { locale: this.$i18n.fallbackLocale.toString() }
 			if (Object.keys(this.locale).length !== 0) localObject = { locale: this.locale }
@@ -193,7 +187,7 @@
 				localObject.locale = splittedLocale[0] + '-' + splittedLocale[2].replaceAll('#', '') + '-' + splittedLocale[1]
 			}
 
-			axios
+			await axios
 				.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale))
 				.then((response) => {
 					this.technicalUserFunctionalities = response.data.technicalUserFunctionalities
@@ -214,7 +208,15 @@
 						this.allowedUserFunctionalities.push(item)
 					}
 
-					this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities
+					this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities.sort((el1, el2) => {
+						if (el1.parentId == null) {
+							return el2.parentId == null ? 0 : -1
+						}
+
+						if (el2.parentId == null) return 1
+
+						return el1.prog - el2.prog
+					})
 
 					if (this.dynamicUserFunctionalities.length > 0) {
 						let homePage = this.findHomePage(this.dynamicUserFunctionalities) || {}
