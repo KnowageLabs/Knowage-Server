@@ -248,15 +248,96 @@ export default defineComponent({
                 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
                 this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities
 =======
 					this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities.sort((el1, el2) => {
 						if (el1.parentId == null) {
 							return el2.parentId == null ? 0 : -1
+=======
+					response.data.dynamicUserFunctionalities = [
+						{
+							label: 'Home Page',
+							descr: 'Home Page',
+							prog: 2
+						},
+						{
+							iconCls: 'fas fa-ambulance',
+							label: 'First Node',
+							descr: 'First Node With ICON',
+							prog: 3,
+							items: [
+								{
+									label: 'Sales',
+									descr: 'Sales',
+									to: '/knowage/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID=34',
+									prog: 1
+								}
+							]
+						},
+						{
+							label: 'Second Node',
+							descr: 'Second Node',
+							prog: 4,
+							items: [
+								{
+									label: 'Sales',
+									descr: 'Sales',
+									to: '/knowage/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID=44',
+									prog: 1
+								}
+							]
+						},
+						{
+							label: 'message',
+							descr: 'message',
+							to: '/knowage/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID=278',
+							prog: 6
+						},
+						{
+							label: 'Document Parameter',
+							descr: 'Document Parameter',
+							to: '/knowage/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID=425',
+							prog: 7
+						},
+						{
+							iconCls: 'fas fa-chart-line',
+							label: 'COCKPIT_WIDGET_DASHBOARD',
+							descr: 'COCKPIT_WIDGET_DASHBOARD',
+							to: '/knowage/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID=440',
+							prog: 8
+						},
+						{
+							iconCls: 'fas fa-apple-alt',
+							label: 'Workspace',
+							descr: 'Workspace',
+							url: '\\/knowage\\/servlet\\/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_WORKSPACE&currentOptionMainMenu=recent',
+							prog: 9
+						},
+						{
+							label: 'Analytical engines folder',
+							descr: 'Analytical engines folder',
+							url: '\\/knowage\\/servlet\\/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION&MODALITY=FILTER_TREE&PATH_SUBTREE=\\/Functionalities\\/Analytical Engines&defaultFoldersId=[2,3]',
+							prog: 1,
+							items: [
+								{
+									label: 'Tools folder',
+									descr: 'Tools folder',
+									url: '\\/knowage\\/servlet\\/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION&MODALITY=FILTER_TREE&PATH_SUBTREE=\\/Functionalities\\/Tools&defaultFoldersId=[2,47]',
+									prog: 1
+								}
+							]
+						},
+						{
+							label: 'A document',
+							descr: null,
+							to: '/knowage/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID=39',
+							prog: 5
+>>>>>>> ef122b510d... [KNOWAGE-6031] - Removed null values in the sort method
 						}
+					]
 
-						if (el2.parentId == null) return 1
-
+					this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities.sort((el1, el2) => {
 						return el1.prog - el2.prog
 					})
 >>>>>>> 3936001d1c... [KNOWAGE-6031] - Added sorting for dynamicUserFunctionalities
