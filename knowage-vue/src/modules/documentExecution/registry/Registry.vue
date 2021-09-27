@@ -1,21 +1,21 @@
 <template>
-    <div class="kn-page">
+    <div class="kn-page--full">
+        <Toolbar class="kn-toolbar kn-toolbar--primary">
+            <template #left>
+                {{ $t('documentExecution.registry.title') }}
+            </template>
+            <template #right>
+                <div class="p-d-flex p-flex-row">
+                    <Button class="kn-button p-button-text" @click="saveRegistry">{{ $t('common.save') }}</Button>
+                </div>
+            </template>
+        </Toolbar>
         <div class="kn-page-content p-m-0">
-            <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
-                    {{ $t('documentExecution.registry.title') }}
-                </template>
-                <template #right>
-                    <div class="p-d-flex p-flex-row">
-                        <Button class="kn-button p-button-text" @click="saveRegistry">{{ $t('common.save') }}</Button>
-                    </div>
-                </template>
-            </Toolbar>
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-            <div class="p-col-12">
-                <RegistryFiltersCard v-if="filters.length > 0" :id="id" :propFilters="filters" :entity="entity" @filter="filterRegistry"></RegistryFiltersCard>
+            <div class="p-col-12 p-p-0">
+                <RegistryFiltersCard v-if="filters.length > 0" :id="id" :propFilters="filters" :entity="entity" @filter="filterRegistry" class=""></RegistryFiltersCard>
             </div>
-            <div class="p-col-12" v-if="!loading">
+            <div class="p-col-12 p-p-0" v-if="!loading">
                 <RegistryPivotDatatable
                     v-if="isPivot"
                     :columns="columns"
