@@ -209,12 +209,6 @@
 					}
 
 					this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities.sort((el1, el2) => {
-						if (el1.parentId == null) {
-							return el2.parentId == null ? 0 : -1
-						}
-
-						if (el2.parentId == null) return 1
-
 						return el1.prog - el2.prog
 					})
 
