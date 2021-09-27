@@ -1,0 +1,157 @@
+<template>
+    <div class="kn-page">
+        <div class="kn-page-content p-grid p-m-0">
+            <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
+                <Toolbar class="kn-toolbar kn-toolbar--primary">
+                    <template #left>
+                        {{ $t('managers.datasetManagement.title') }}
+                    </template>
+                    <template #right>
+                        <FabButton icon="fas fa-plus" @click="showDetail" data-test="open-form-button" />
+                    </template>
+                </Toolbar>
+                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <KnListBox :options="listOfDatasets" :settings="mainDescriptor.knListSettings" @click="showDetail" @clone.stop="cloneDataset" @delete.stop="deleteDataset" />
+            </div>
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
+                <router-view
+                    :datasetInList="datasetInList"
+                    :scopeTypes="scopeTypes"
+                    :categoryTypes="categoryTypes"
+                    :datasetTypes="datasetTypes"
+                    :tansformerTypes="tansformerTypes"
+                    :scriptTypes="scriptTypes"
+                    :dataSources="dataSources"
+                    :businessModels="businessModels"
+                    :pythonEnvironments="pythonEnvironments"
+                    :rEnvironments="rEnvironments"
+                />
+            </div>
+        </div>
+    </div>
+</template>
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { iDomainType } from './DatasetManagement'
+import axios from 'axios'
+import mainDescriptor from './DatasetManagementDescriptor.json'
+import FabButton from '@/components/UI/KnFabButton.vue'
+import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
+
+export default defineComponent({
+    name: 'dataset-management',
+    components: { FabButton, KnListBox },
+    data() {
+        return {
+            mainDescriptor,
+            loading: false,
+            listOfDatasets: [] as any,
+            reverseOrdering: false,
+            columnOrdering: '',
+            touched: false,
+            datasetInList: {} as any,
+            scopeTypes: [] as iDomainType[],
+            categoryTypes: [] as iDomainType[],
+            datasetTypes: [] as iDomainType[],
+            tansformerTypes: [] as iDomainType[],
+            scriptTypes: [] as iDomainType[],
+            dataSources: [] as any,
+            businessModels: [] as any,
+            pythonEnvironments: [] as any,
+            rEnvironments: [] as any
+        }
+    },
+    created() {
+        this.getAllPersistentData()
+    },
+    methods: {
+        //#region ===================== Get All Data and Format ====================================================
+        getEnvironmentByConfiguration(configuration: string) {
+            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/category/${configuration}`)
+        },
+        buildEnvironments(environmentsArray) {
+            return environmentsArray.map((environment) => ({ label: environment.label, value: environment.valueCheck }))
+        },
+        async getEnvironmentData() {
+            this.getEnvironmentByConfiguration('PYTHON_CONFIGURATION').then((response) => (this.pythonEnvironments = this.buildEnvironments(response.data)))
+            this.getEnvironmentByConfiguration('R_CONFIGURATION').then((response) => (this.rEnvironments = this.buildEnvironments(response.data)))
+        },
+        getDomainByType(type: string) {
+            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`)
+        },
+        async getDomainData() {
+            this.getDomainByType('DS_SCOPE').then((response) => (this.scopeTypes = response.data))
+            this.getDomainByType('CATEGORY_TYPE').then((response) => (this.categoryTypes = response.data))
+            this.getDomainByType('DATA_SET_TYPE').then((response) => (this.datasetTypes = response.data))
+            this.getDomainByType('TRANSFORMER_TYPE').then((response) => (this.tansformerTypes = response.data))
+            this.getDomainByType('SCRIPT_TYPE').then((response) => (this.scriptTypes = response.data))
+        },
+        async getDatasources() {
+            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources`).then((response) => (this.dataSources = response.data))
+        },
+        async getBusinessModels() {
+            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels`).then((response) => (this.businessModels = response.data))
+        },
+        async getDatasets() {
+            axios
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/pagopt?offset=0&fetchSize=0&ordering=%7B%22reverseOrdering%22%3Afalse%2C%22columnOrdering%22%3A%22%22%7D`)
+                .then((response) => (this.listOfDatasets = [...response.data.root]))
+                .finally(() => (this.loading = false))
+        },
+        async getAllPersistentData() {
+            this.loading = true
+            await this.getEnvironmentData()
+            await this.getDomainData()
+            await this.getDatasources()
+            await this.getBusinessModels()
+            await this.getDatasets()
+        },
+        //#endregion ================================================================================================
+
+        showDetail(event) {
+            this.datasetInList = { ...event.item }
+            const path = event.item ? `/dataset-management/${event.item.id}` : '/dataset-management/new-dataset'
+
+            if (!this.touched) {
+                this.$router.push(path)
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.$router.push(path)
+                    }
+                })
+            }
+        },
+        deleteDataset(event) {
+            console.log(event)
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    this.axios
+                        .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${event.item.label}/`)
+                        .then(() => {
+                            this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                            this.getDatasets()
+                            if (event.item.id == this.$route.params.id) this.$router.push('/dataset-management')
+                        })
+                        .catch((error) =>
+                            this.$store.commit('setError', {
+                                title: this.$t('common.error.generic'),
+                                msg: error.message
+                            })
+                        )
+                }
+            })
+        },
+        cloneDataset(event) {
+            console.log('CLONING DATSET: ' + event.item.label)
+        }
+    }
+})
+</script>

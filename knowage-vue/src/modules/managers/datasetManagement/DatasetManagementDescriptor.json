@@ -1,0 +1,28 @@
+{
+    "knListSettings": {
+        "badgeField": "usedByNDocs",
+        "badgeSeverity": "info",
+        "buttons": [
+            {
+                "emits": "clone",
+                "icon": "far fa-copy",
+                "label": "common.clone"
+            },
+            {
+                "emits": "delete",
+                "icon": "far fa-trash-alt",
+                "label": "common.delete"
+            }
+        ],
+        "defaultSortField": "label",
+        "filterFields": ["label", "name"],
+        "interaction": {
+            "parameterLabel": "id",
+            "parameterValue": "id",
+            "type": "event"
+        },
+        "sortFields": ["label", "name"],
+        "textField": "name",
+        "titleField": "label"
+    }
+}

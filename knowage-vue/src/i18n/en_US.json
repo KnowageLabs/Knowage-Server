@@ -614,6 +614,13 @@
             "hint": "The datasources allows you to define an 'access point' for your document data. It's possible to change the type, the dialect and to set the url or settings. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "title": "Data Source Management"
         },
+        "datasetManagement": {
+            "creationUser": "Creation User",
+            "hint": "Please change the hint to your desire in the i18n files.",
+            "oldVersions": "Older Dataset Versions",
+            "scope": "Scope",
+            "title": "Dataset Management"
+        },
         "domainsManagement": {
             "domainCode": "Domain code",
             "domainName": "Domain name",
