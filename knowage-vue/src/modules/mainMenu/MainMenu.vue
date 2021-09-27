@@ -249,6 +249,7 @@ export default defineComponent({
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                 this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities
 =======
 					this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities.sort((el1, el2) => {
@@ -334,10 +335,15 @@ export default defineComponent({
 							to: '/knowage/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID=39',
 							prog: 5
 >>>>>>> ef122b510d... [KNOWAGE-6031] - Removed null values in the sort method
-						}
-					]
-
+=======
 					this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities.sort((el1, el2) => {
+						if (el1.parentId == null) {
+							return el2.parentId == null ? 0 : -1
+>>>>>>> 601ba84eff... Revert "[KNOWAGE-6031] - Removed null values in the sort method"
+						}
+
+						if (el2.parentId == null) return 1
+
 						return el1.prog - el2.prog
 					})
 >>>>>>> 3936001d1c... [KNOWAGE-6031] - Added sorting for dynamicUserFunctionalities
