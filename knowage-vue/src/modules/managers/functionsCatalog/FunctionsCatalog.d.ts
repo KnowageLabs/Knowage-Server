@@ -14,7 +14,9 @@ export interface iFunction {
     keywords: string[],
     inputVariables: iInputVariable[],
     inputColumns: iInputColumn[],
-    outputColumns: iOutputColumn[]
+    outputColumns: iOutputColumn[],
+    trainModelCode?: string,
+    useModelCode?: string,
 }
 
 export interface iInputVariable {
@@ -43,5 +45,6 @@ export interface iFunctionType {
     domainName: string,
     translatedValueDescription: string,
     translatedValueName: string,
+
     active?: boolean
 }

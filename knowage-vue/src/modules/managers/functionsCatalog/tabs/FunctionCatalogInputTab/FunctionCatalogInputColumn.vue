@@ -3,7 +3,7 @@
         <div class="column-name-input kn-flex ">
             <span class="p-float-label">
                 <InputText class="kn-material-input" v-model.trim="inputColumn.name" :disabled="readonly" />
-                <label for="columnName" class="kn-material-input-label"> {{ $t('managers.functionsCatalog.functionName') }} </label>
+                <label for="columnName" class="kn-material-input-label"> {{ $t('managers.functionsCatalog.columnName') }} </label>
             </span>
         </div>
         <div class="p-field kn-flex p-m-2">
