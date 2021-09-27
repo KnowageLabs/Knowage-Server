@@ -636,6 +636,7 @@
             "keywords": "Keywords",
             "label": "Function Label",
             "language": "Language",
+            "warningTitle": "Some fields are not filled",
             "missingFields": {
                 "inputColumnName": "Input column {number} name missing",
                 "inputColumnType": "Input column {number} type missing",

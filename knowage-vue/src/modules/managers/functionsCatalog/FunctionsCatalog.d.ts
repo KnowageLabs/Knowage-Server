@@ -1,10 +1,10 @@
 export interface iFunction {
-    id: string,
+    id?: string,
     name: string,
     description: string,
     benchmarks: string,
     language: string,
-    family: string,
+    family?: string,
     onlineScript: string,
     offlineScriptTrainModel: string,
     offlineScriptUseModel: string,
@@ -17,6 +17,7 @@ export interface iFunction {
     outputColumns: iOutputColumn[],
     trainModelCode?: string,
     useModelCode?: string,
+    functionFamily?: string
 }
 
 export interface iInputVariable {

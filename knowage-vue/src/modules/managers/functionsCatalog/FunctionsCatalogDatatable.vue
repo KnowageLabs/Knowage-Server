@@ -32,7 +32,7 @@
         <Column :style="functionsCatalogDatatableDescriptor.table.iconColumn.style">
             <template #body="slotProps">
                 <Button icon="fa fa-play-circle" class="p-button-link" @click="previewFunction(slotProps.data)" />
-                <Button v-if="!readonly" icon="pi pi-trash" class="p-button-link" @click="deleteFunctionConfirm(slotProps.data.id)" />
+                <Button v-if="canDelete(slotProps.data)" icon="pi pi-trash" class="p-button-link" @click="deleteFunctionConfirm(slotProps.data.id)" />
             </template>
         </Column>
     </DataTable>
@@ -50,9 +50,9 @@ export default defineComponent({
     name: 'functions-catalog-datatable',
     components: { Column, DataTable },
     props: {
+        user: { type: Object },
         propLoading: { type: Boolean },
-        items: { type: Array },
-        readonly: { type: Boolean }
+        items: { type: Array }
     },
     emits: ['selected', 'deleted'],
     data() {
@@ -85,6 +85,11 @@ export default defineComponent({
         },
         previewFunction(event) {
             console.log('previewFunction() event: ', event)
+        },
+        canDelete(tempFunction: iFunction) {
+            console.log('FUNCTION: ', tempFunction)
+
+            return this.user?.isSuperadmin || tempFunction?.owner === this.user?.userId
         },
         deleteFunctionConfirm(functionId: string) {
             console.log('deleteFunctionConfirm() event: ', event)

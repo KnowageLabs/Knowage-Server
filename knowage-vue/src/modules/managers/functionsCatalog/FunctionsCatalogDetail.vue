@@ -6,10 +6,11 @@
                     {{ selectedFunction.name }}
                 </template>
                 <template #right>
-                    <Button class="kn-button p-button-text p-m-2" :label="$t('common.close')" @click="$emit('close')"></Button>
+                    <Button class="kn-button p-button-text p-m-2" :label="$t('common.close')" @click="closeFunctionDetail"></Button>
                     <Button class="kn-button p-button-text" :label="$t('common.save')" :disabled="readonly" @click="onSave"></Button>
                 </template>
             </Toolbar>
+            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         </template>
 
         <h4>{{ selectedFunction }}</h4>
@@ -44,36 +45,44 @@
                 <FunctionCatalogOutputTab :propFunction="selectedFunction" :readonly="readonly"></FunctionCatalogOutputTab>
             </TabPanel>
         </TabView>
+
+        <FunctionCatalogWarningDialog :visible="warningVisible" :missingFields="missingFields" @close="warningVisible = false"></FunctionCatalogWarningDialog>
     </Dialog>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iFunction, iFunctionType, iInputColumn, iInputVariable, iOutputColumn } from './FunctionsCatalog'
+import axios from 'axios'
 import Dialog from 'primevue/dialog'
 import functionsCatalogDetailDescriptor from './FunctionsCatalogDetailDescriptor.json'
 import FunctionCatalogGeneralTab from './tabs/FunctionCatalogGeneralTab/FunctionCatalogGeneralTab.vue'
 import FunctionCatalogInputTab from './tabs/FunctionCatalogInputTab/FunctionCatalogInputTab.vue'
 import FunctionCatalogScriptTab from './tabs/FunctionCatalogScriptTab/FunctionCatalogScriptTab.vue'
 import FunctionCatalogOutputTab from './tabs/FunctionCatalogOutputTab/FunctionCatalogOutputTab.vue'
+import FunctionCatalogWarningDialog from './FunctionCatalogWarningDialog.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'functions-catalog-detail',
-    components: { Dialog, FunctionCatalogGeneralTab, FunctionCatalogInputTab, FunctionCatalogScriptTab, FunctionCatalogOutputTab, TabView, TabPanel },
+    components: { Dialog, FunctionCatalogGeneralTab, FunctionCatalogInputTab, FunctionCatalogScriptTab, FunctionCatalogOutputTab, FunctionCatalogWarningDialog, TabView, TabPanel },
     props: {
         visible: { type: Boolean },
         propFunction: { type: Object },
         functionTypes: { type: Array },
         keywords: { type: Array }
     },
+    emits: ['created', 'close'],
     data() {
         return {
             functionsCatalogDetailDescriptor,
             selectedFunction: {} as iFunction,
             filteredFunctionTypes: [] as iFunctionType[],
-            missingFields: [] as String[]
+            missingFields: [] as String[],
+            operation: 'create',
+            warningVisible: false,
+            loading: false
         }
     },
     watch: {
@@ -96,25 +105,39 @@ export default defineComponent({
     },
     methods: {
         loadFunction() {
-            this.selectedFunction = this.propFunction
-                ? ({ ...this.propFunction } as iFunction)
-                : ({
-                      description: '',
-                      owner: (this.$store.state as any).user.userId,
-                      language: '',
-                      inputColumns: [] as iInputColumn[],
-                      inputVariables: [] as iInputVariable[],
-                      outputColumns: [] as iOutputColumn[],
-                      family: 'online'
-                  } as iFunction)
+            this.selectedFunction = this.propFunction ? ({ ...this.propFunction } as iFunction) : this.getFunctionDefaultValues()
             console.log('READONLY: ', this.readonly)
         },
         loadFunctionTypes() {
             this.filteredFunctionTypes = this.functionTypes?.filter((el: any) => el.valueCd !== 'All') as iFunctionType[]
             console.log('FILTERED FUNCTION TYPES: ', this.filteredFunctionTypes)
         },
+        closeFunctionDetail() {
+            this.selectedFunction = this.getFunctionDefaultValues()
+            this.$emit('close')
+        },
+        getFunctionDefaultValues() {
+            return {
+                name: '',
+                description: '',
+                benchmarks: '',
+                keywords: [],
+                type: '',
+                label: '',
+                owner: (this.$store.state as any).user.userId,
+                language: 'Python',
+                inputColumns: [] as iInputColumn[],
+                inputVariables: [] as iInputVariable[],
+                outputColumns: [] as iOutputColumn[],
+                onlineScript: '',
+                offlineScriptTrainModel: '',
+                offlineScriptUseModel: '',
+                family: 'online'
+            } as iFunction
+        },
         validateArguments() {
             let valid = true
+            this.missingFields = []
 
             if (!this.validateInputColumns()) {
                 valid = false
@@ -225,9 +248,52 @@ export default defineComponent({
 
             return valid
         },
-        onSave() {
+        async onSave() {
+            this.loading = true
             console.log('onSave() selectedFunction: ', this.selectedFunction)
-            this.validateArguments()
+
+            if (!this.validateArguments()) {
+                this.warningVisible = true
+                return
+            }
+
+            this.selectedFunction.functionFamily = this.selectedFunction.family
+            delete this.selectedFunction.family
+
+            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functions-catalog/insert'
+
+            if (this.selectedFunction.id) {
+                this.operation = 'update'
+                url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functions-catalog/update/${this.selectedFunction.id}`
+            } else {
+                this.operation = 'create'
+            }
+
+            console.log('OPERATION: ', this.operation)
+
+            await this.sendRequest(url)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.' + this.operation + 'Title'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.$emit('created')
+                })
+                .catch((response) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.toast.' + this.operation + 'Title'),
+                        msg: response.message
+                    })
+                })
+
+            this.loading = false
+        },
+        sendRequest(url: string) {
+            if (this.operation === 'create') {
+                return axios.post(url, this.selectedFunction)
+            } else {
+                return axios.put(url, this.selectedFunction)
+            }
         }
     }
 })

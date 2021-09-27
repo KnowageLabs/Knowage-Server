@@ -15,11 +15,11 @@
                 <div class="p-d-flex p-flex-row p-jc-center">
                     <Chip class="keyword-chip p-m-2" :class="{ 'keyword-chip-active': selectedKeyword === keyword }" v-for="(keyword, index) in keywords" :key="index" :label="keyword" @click="filterByKeyword(keyword)"></Chip>
                 </div>
-                <FunctionsCatalogDatatable class="p-m-3" :propLoading="loading" :items="selectedKeyword ? filteredFunctions : functions" :readonly="readonly" @selected="showForm" @deleted="deleteFunction"></FunctionsCatalogDatatable>
+                <FunctionsCatalogDatatable class="p-m-3" :user="user" :propLoading="loading" :items="selectedKeyword ? filteredFunctions : functions" :readonly="readonly" @selected="showForm" @deleted="deleteFunction"></FunctionsCatalogDatatable>
             </div>
         </div>
 
-        <FunctionsCatalogDetail v-show="detailDialogVisible" :visible="detailDialogVisible" :propFunction="selectedFunction" :functionTypes="filters" :keywords="keywords" @close="detailDialogVisible = false"></FunctionsCatalogDetail>
+        <FunctionsCatalogDetail v-show="detailDialogVisible" :visible="detailDialogVisible" :propFunction="selectedFunction" :functionTypes="filters" :keywords="keywords" @close="onClose" @created="onCreated"></FunctionsCatalogDetail>
     </div>
 </template>
 
@@ -60,7 +60,7 @@ export default defineComponent({
         // TODO proveriti uslov
         readonly(): boolean {
             console.log(this.selectedFunction?.owner + ' !== ' + this.user.userId)
-            return !this.user.isSuperadmin || this.selectedFunction?.owner !== this.user.userId
+            return !this.user.isSuperadmin && this.selectedFunction?.owner !== this.user.userId
         }
     },
     async created() {
@@ -139,6 +139,14 @@ export default defineComponent({
                 return found
             })
             // console.log('FILTERED FUNCTIONS: ', this.filteredFunctions)
+        },
+        onClose() {
+            this.detailDialogVisible = false
+            this.selectedFunction = null
+        },
+        async onCreated() {
+            this.detailDialogVisible = false
+            await this.loadPage()
         }
     }
 })
