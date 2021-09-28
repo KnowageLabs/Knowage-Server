@@ -117,13 +117,16 @@ export default defineComponent({
             })
         },
         async deleteMeasure(measure: iMeasure) {
-            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${measure.ruleId}/${measure.ruleVersion}/deleteRule`).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.deleteTitle'),
-                    msg: this.$t('common.toast.deleteSuccess')
+            await axios
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${measure.ruleId}/${measure.ruleVersion}/deleteRule`)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                    this.loadPage()
                 })
-                this.loadPage()
-            })
+                .catch(() => {})
         }
     }
 })

@@ -8,7 +8,7 @@
                 <template #right>
                     <Button class="kn-button-sm p-button-text" :label="$t('managers.lovsManagement.preview')" :disabled="previewDisabled" @click="checkForDependencies(true)" />
                     <Button class="kn-button-sm p-button-text" :label="$t('managers.lovsManagement.test')" :disabled="previewDisabled" @click="onTestButtonClick" />
-                    <Button icon="fa fa-info-circle" class="p-button-text p-button-rounded p-button-plain" aria-label="Info" @click="infoDialogVisible = true" />
+                    <Button v-if="lovType !== 'DATASET'" icon="fa fa-info-circle" class="p-button-text p-button-rounded p-button-plain" aria-label="Info" @click="infoDialogVisible = true" />
                     <Button icon="fa fa-users" class="p-button-text p-button-rounded p-button-plain" aria-label="Profiles" @click="profileAttributesDialogVisible = true" />
                 </template>
             </Toolbar>
@@ -24,7 +24,7 @@
     <LovsManagementInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :infoTitle="infoTitle" :lovType="lov.itypeCd" @close="infoDialogVisible = false"></LovsManagementInfoDialog>
     <LovsManagementProfileAttributesList v-show="profileAttributesDialogVisible" :visible="profileAttributesDialogVisible" :profileAttributes="profileAttributes" @selected="setCodeInput($event)" @close="profileAttributesDialogVisible = false"></LovsManagementProfileAttributesList>
     <LovsManagementParamsDialog v-show="paramsDialogVisible" :visible="paramsDialogVisible" :dependenciesList="dependenciesList" @preview="onPreview" @close="paramsDialogVisible = false"></LovsManagementParamsDialog>
-    <LovsManagementPreviewDialog v-show="previewDialogVisible" :visible="previewDialogVisible" :dataForPreview="dataForPreview" :pagination="pagination" @close="previewDialogVisible = false" @pageChanged="previewLov($event, false, true)"></LovsManagementPreviewDialog>
+    <LovsManagementPreviewDialog v-show="previewDialogVisible" :visible="previewDialogVisible" :dataForPreview="dataForPreview" :pagination="pagination" @close="onPreviewClose" @pageChanged="previewLov($event, false, true)"></LovsManagementPreviewDialog>
     <LovsManagementTestDialog v-show="testDialogVisible" :visible="testDialogVisible" :selectedLov="lov" :testModel="treeListTypeModel" :testLovModel="testLovModel" :testLovTreeModel="testLovTreeModel" @close="testDialogVisible = false" @save="onTestSave($event)"></LovsManagementTestDialog>
 </template>
 
@@ -595,6 +595,9 @@ export default defineComponent({
         onTouched() {
             this.touchedForTest = true
             this.$emit('touched')
+        },
+        onPreviewClose() {
+            this.previewDialogVisible = false
         }
     }
 })
