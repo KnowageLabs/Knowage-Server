@@ -4,7 +4,7 @@
     height: 100vh;
     &--full {
         @extend .kn-page;
-        width: calc(100vw - $mainmenu-width);
+        width: calc(100vw - #{$mainmenu-width});
     }
     .kn-page-content {
         flex: 1;
