@@ -206,6 +206,7 @@ export default defineComponent({
                 key: el.CONTENT_ID ?? el.WORD_ID,
                 id: el.CONTENT_ID ?? el.WORD_ID,
                 label: el.CONTENT_NM ?? el.WORD,
+                icon: !(el.HAVE_WORD_CHILD || el.HAVE_CONTENTS_CHILD) ? 'pi pi-circle-on' : '',
                 children: [] as iNode[],
                 data: el,
                 style: this.glossaryDefinitionDescriptor.node.style,
