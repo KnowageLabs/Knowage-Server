@@ -1,0 +1,17 @@
+{
+    "breakpoint": "960px",
+    "columns": [
+        {
+            "field": "label",
+            "header": "common.label",
+            "style": {}
+        },
+        {
+            "field": "dsType",
+            "header": "common.type",
+            "style": {}
+        }
+    ],
+    "globalFilterFields": ["label", "dsType"],
+    "responsiveLayout": "stack"
+}

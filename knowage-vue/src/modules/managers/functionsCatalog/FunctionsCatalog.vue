@@ -15,22 +15,24 @@
                 <div class="p-d-flex p-flex-row p-jc-center">
                     <Chip class="keyword-chip p-m-2" :class="{ 'keyword-chip-active': selectedKeyword === keyword }" v-for="(keyword, index) in keywords" :key="index" :label="keyword" @click="filterByKeyword(keyword)"></Chip>
                 </div>
-                <FunctionsCatalogDatatable class="p-m-3" :user="user" :propLoading="loading" :items="selectedKeyword ? filteredFunctions : functions" :readonly="readonly" @selected="showForm" @deleted="deleteFunction"></FunctionsCatalogDatatable>
+                <FunctionsCatalogDatatable class="p-m-3" :user="user" :propLoading="loading" :items="selectedKeyword ? filteredFunctions : functions" :readonly="readonly" @selected="showForm" @preview="onPreview" @deleted="deleteFunction"></FunctionsCatalogDatatable>
             </div>
         </div>
 
-        <FunctionsCatalogDetail v-show="detailDialogVisible" :visible="detailDialogVisible" :propFunction="selectedFunction" :functionTypes="filters" :keywords="keywords" @close="onClose" @created="onCreated"></FunctionsCatalogDetail>
+        <FunctionsCatalogDetail v-show="detailDialogVisible" :visible="detailDialogVisible" :propFunction="selectedFunction" :functionTypes="filters" :keywords="keywords" @close="onDetailClose" @created="onCreated"></FunctionsCatalogDetail>
+        <FunctionCatalogPreviewDialog :visible="previewDialogVisible" :propFunction="selectedFunction" :datasets="datasets" :pythonConfigurations="pythonConfigurations" @close="onPreviewClose"></FunctionCatalogPreviewDialog>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iFunction, iFunctionType } from './FunctionsCatalog'
+import { iFunction, iFunctionType, iDataset, iPythonConfiguration } from './FunctionsCatalog'
 import axios from 'axios'
 import Chip from 'primevue/chip'
 import FunctionsCatalogDatatable from './FunctionsCatalogDatatable.vue'
 import FunctionsCatalogDetail from './FunctionsCatalogDetail.vue'
 import FunctionCatalogFilterCards from './FunctionCatalogFilterCards.vue'
+import FunctionCatalogPreviewDialog from './FunctionCatalogPreviewDialog/FunctionCatalogPreviewDialog.vue'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 
 export default defineComponent({
@@ -40,6 +42,7 @@ export default defineComponent({
         FunctionsCatalogDatatable,
         FunctionsCatalogDetail,
         FunctionCatalogFilterCards,
+        FunctionCatalogPreviewDialog,
         KnFabButton
     },
     data() {
@@ -52,7 +55,10 @@ export default defineComponent({
             selectedFilter: null as iFunctionType | null,
             keywords: [] as String[],
             selectedKeyword: '',
+            datasets: [] as iDataset[],
+            pythonConfigurations: [] as iPythonConfiguration[],
             detailDialogVisible: false,
+            previewDialogVisible: false,
             loading: false
         }
     },
@@ -140,13 +146,36 @@ export default defineComponent({
             })
             // console.log('FILTERED FUNCTIONS: ', this.filteredFunctions)
         },
-        onClose() {
+        onDetailClose() {
             this.detailDialogVisible = false
             this.selectedFunction = null
         },
         async onCreated() {
             this.detailDialogVisible = false
             await this.loadPage()
+        },
+        async onPreview(tempFunction: iFunction) {
+            this.selectedFunction = tempFunction
+            await this.loadPreviewData()
+            this.previewDialogVisible = true
+        },
+        onPreviewClose() {
+            this.previewDialogVisible = false
+            this.selectedFunction = null
+        },
+        async loadPreviewData() {
+            this.loading = true
+            await this.loadDatasets()
+            await this.loadPythonConfigurations()
+            this.loading = false
+        },
+        async loadDatasets() {
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/`).then((response) => (this.datasets = response.data.root))
+            console.log('LOADED DATASETS: ', this.datasets)
+        },
+        async loadPythonConfigurations() {
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/category/PYTHON_CONFIGURATION`).then((response) => (this.pythonConfigurations = response.data))
+            console.log('LOADED PYTHON CONFIGURATIONS: ', this.pythonConfigurations)
         }
     }
 })

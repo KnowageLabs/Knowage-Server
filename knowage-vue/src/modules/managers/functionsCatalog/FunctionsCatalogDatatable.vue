@@ -54,7 +54,7 @@ export default defineComponent({
         propLoading: { type: Boolean },
         items: { type: Array }
     },
-    emits: ['selected', 'deleted'],
+    emits: ['selected', 'preview', 'deleted'],
     data() {
         return {
             functionsCatalogDatatableDescriptor,
@@ -83,12 +83,11 @@ export default defineComponent({
             this.functions = [...(this.items as iFunction[])]
             // console.log('DATATABLE - loadFunctions() - LOADED FUNCTIOSN: ', this.functions)
         },
-        previewFunction(event) {
-            console.log('previewFunction() event: ', event)
+        previewFunction(tempFunction: iFunction) {
+            console.log('previewFunction() event: ', tempFunction)
+            this.$emit('preview', tempFunction)
         },
         canDelete(tempFunction: iFunction) {
-            console.log('FUNCTION: ', tempFunction)
-
             return this.user?.isSuperadmin || tempFunction?.owner === this.user?.userId
         },
         deleteFunctionConfirm(functionId: string) {

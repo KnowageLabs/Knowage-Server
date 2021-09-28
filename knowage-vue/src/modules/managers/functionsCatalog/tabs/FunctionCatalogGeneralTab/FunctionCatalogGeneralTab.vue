@@ -46,7 +46,19 @@
             <Accordion>
                 <AccordionTab :header="$t('common.description') + ' *'">
                     <label for="description" class="kn-material-input-label"> {{ $t('common.description') }} *</label>
+                    <Textarea
+                        v-if="showDescriptionSource"
+                        v-model="selectedFunction.description"
+                        :style="functionCatalogGeneralTabDescriptor.editor.style"
+                        :class="{
+                            'p-invalid': selectedFunction.description.length === 0 && descriptionDirty
+                        }"
+                        :readonly="readonly"
+                        @click="descriptionDirty = true"
+                        @input="descriptionDirty = true"
+                    ></Textarea>
                     <Editor
+                        v-else
                         id="description"
                         :editorStyle="functionCatalogGeneralTabDescriptor.editor.style"
                         v-model="selectedFunction.description"
@@ -57,6 +69,7 @@
                         @click="descriptionDirty = true"
                         @input="descriptionDirty = true"
                     />
+                    <Button class="editor-switch-button" icon="pi pi-bars" :label="showDescriptionSource ? 'wysiwyg' : $t('managers.functionsCatalog.source')" @click="showDescriptionSource = !showDescriptionSource" />
                 </AccordionTab>
             </Accordion>
             <div v-if="selectedFunction.description.length === 0 && descriptionDirty" class="p-error p-grid p-m-2">
@@ -67,7 +80,9 @@
             <Accordion>
                 <AccordionTab :header="$t('managers.functionsCatalog.benchmarks')">
                     <label for="benchmarks" class="kn-material-input-label"> {{ $t('managers.functionsCatalog.benchmarks') }}</label>
-                    <Editor id="benchmarks" :editorStyle="functionCatalogGeneralTabDescriptor.editor.style" v-model="selectedFunction.benchmarks" :readonly="readonly" />
+                    <Textarea v-if="showBenchmarksSource" v-model="selectedFunction.benchmarks" :style="functionCatalogGeneralTabDescriptor.editor.style" :readonly="readonly"></Textarea>
+                    <Editor v-else id="benchmarks" :editorStyle="functionCatalogGeneralTabDescriptor.editor.style" v-model="selectedFunction.benchmarks" :readonly="readonly" />
+                    <Button class="editor-switch-button" icon="pi pi-bars" @click="showBenchmarksSource = !showBenchmarksSource"> {{ showBenchmarksSource ? 'wysiwyg' : $t('managers.functionsCatalog.source') }}</Button>
                 </AccordionTab>
             </Accordion>
         </div>
@@ -83,10 +98,11 @@ import AutoComplete from 'primevue/autocomplete'
 import Dropdown from 'primevue/dropdown'
 import Editor from 'primevue/editor'
 import functionCatalogGeneralTabDescriptor from './FunctionCatalogGeneralTabDescriptor.json'
+import Textarea from 'primevue/textarea'
 
 export default defineComponent({
     name: 'function-catalog-general-tab',
-    components: { Accordion, AccordionTab, AutoComplete, Dropdown, Editor },
+    components: { Accordion, AccordionTab, AutoComplete, Dropdown, Editor, Textarea },
     props: { propFunction: { type: Object }, readonly: { type: Boolean }, functionTypes: { type: Array }, propKeywords: { type: Array } },
     data() {
         return {
@@ -94,7 +110,9 @@ export default defineComponent({
             selectedFunction: {} as iFunction,
             keywords: [] as String[],
             filteredKeywords: [] as String[],
-            descriptionDirty: false
+            descriptionDirty: false,
+            showDescriptionSource: false,
+            showBenchmarksSource: false
         }
     },
     created() {
@@ -134,5 +152,10 @@ export default defineComponent({
 .hint {
     color: gray;
     font-size: 0.8rem;
+}
+
+.editor-switch-button {
+    max-width: 100px;
+    background-color: grey;
 }
 </style>

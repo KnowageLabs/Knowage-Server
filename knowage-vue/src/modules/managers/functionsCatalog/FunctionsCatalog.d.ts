@@ -49,3 +49,21 @@ export interface iFunctionType {
 
     active?: boolean
 }
+
+export interface iDataset {
+    id: number,
+    name: string,
+    label: string,
+    dsType: string
+}
+
+export interface iPythonConfiguration {
+    id: number,
+    label: string,
+    name: strign,
+    description: string,
+    valueCheck: string,
+    valueTypeId: number,
+    category: string,
+    active: boolean
+}
