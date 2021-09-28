@@ -67,14 +67,16 @@ export default defineComponent({
         id: { type: String },
         pagination: { type: Object },
         comboColumnOptions: { type: Array },
-        numberOfRows: { type: Number }
+        numberOfRows: { type: Number },
+        stopWarningsState: { type: Array }
     },
-    emits: ['rowChanged', 'pageChanged', 'dropdownOpened'],
+    emits: ['rowChanged', 'pageChanged', 'dropdownOpened', 'warningChanged'],
     created() {
         this.mapRows()
         this.checkForRowSpan(0, this.mappedRows.length - 1, this.mappedRows, this.columns, 1)
         this.loadPagination()
         this.loadColumnOptions()
+        this.loadWarningState()
     },
     watch: {
         rows: {
@@ -159,6 +161,9 @@ export default defineComponent({
             }
             this.$emit('pageChanged', this.lazyParams)
         },
+        loadWarningState() {
+            this.stopWarnings = this.stopWarningsState as any[]
+        },
         getFormatedDate(date: any, format: any) {
             return formatDateWithLocale(date, format)
         },
@@ -209,6 +214,7 @@ export default defineComponent({
         onWarningDialogClose(payload: any) {
             if (payload.stopWarnings) {
                 this.stopWarnings[payload.columnField] = true
+                this.$emit('warningChanged', this.stopWarnings)
             }
 
             this.clearDependentColumnsValues()

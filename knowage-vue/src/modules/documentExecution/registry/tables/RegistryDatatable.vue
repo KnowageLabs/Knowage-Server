@@ -142,9 +142,10 @@ export default defineComponent({
         propConfiguration: { type: Object },
         pagination: { type: Object },
         entity: { type: String },
-        id: { type: String }
+        id: { type: String },
+        stopWarningsState: { type: Array }
     },
-    emits: ['rowChanged', 'rowDeleted', 'pageChanged'],
+    emits: ['rowChanged', 'rowDeleted', 'pageChanged', 'warningChanged'],
     data() {
         return {
             registryDescriptor,
@@ -194,6 +195,7 @@ export default defineComponent({
         this.loadRows()
         this.loadConfiguration()
         this.loadPagination()
+        this.loadWarningState()
     },
     methods: {
         loadColumns() {
@@ -244,6 +246,9 @@ export default defineComponent({
         },
         loadPagination() {
             this.lazyParams = { ...this.pagination } as any
+        },
+        loadWarningState() {
+            this.stopWarnings = this.stopWarningsState as any[]
         },
         onPage(event: any) {
             this.lazyParams = {
@@ -364,6 +369,7 @@ export default defineComponent({
         onWarningDialogClose(payload: any) {
             if (payload.stopWarnings) {
                 this.stopWarnings[payload.columnField] = true
+                this.$emit('warningChanged', this.stopWarnings)
             }
 
             this.clearDependentColumnsValues()
