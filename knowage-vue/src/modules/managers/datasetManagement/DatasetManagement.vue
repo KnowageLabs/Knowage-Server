@@ -19,7 +19,7 @@
                     :scopeTypes="scopeTypes"
                     :categoryTypes="categoryTypes"
                     :datasetTypes="datasetTypes"
-                    :tansformerTypes="tansformerTypes"
+                    :transformationDataset="transformationDataset"
                     :scriptTypes="scriptTypes"
                     :dataSources="dataSources"
                     :businessModels="businessModels"
@@ -53,7 +53,7 @@ export default defineComponent({
             scopeTypes: [] as iDomainType[],
             categoryTypes: [] as iDomainType[],
             datasetTypes: [] as iDomainType[],
-            tansformerTypes: [] as iDomainType[],
+            transformationDataset: {} as iDomainType,
             scriptTypes: [] as iDomainType[],
             dataSources: [] as any,
             businessModels: [] as any,
@@ -83,7 +83,10 @@ export default defineComponent({
             this.getDomainByType('DS_SCOPE').then((response) => (this.scopeTypes = response.data))
             this.getDomainByType('CATEGORY_TYPE').then((response) => (this.categoryTypes = response.data))
             this.getDomainByType('DATA_SET_TYPE').then((response) => (this.datasetTypes = response.data))
-            this.getDomainByType('TRANSFORMER_TYPE').then((response) => (this.tansformerTypes = response.data))
+
+            // ===================== NAPOMENUTI DAVIDU OVO JE NIS, AL SE CUVA VRENOST NA [0] KAO I DATASET ===============================
+            this.getDomainByType('TRANSFORMER_TYPE').then((response) => (this.transformationDataset = response.data[0]))
+            // ============================================================================================================================
             this.getDomainByType('SCRIPT_TYPE').then((response) => (this.scriptTypes = response.data))
         },
         async getDatasources() {
@@ -93,8 +96,9 @@ export default defineComponent({
             axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels`).then((response) => (this.businessModels = response.data))
         },
         async getDatasets() {
+            let url = '{"reverseOrdering":false,"columnOrdering":""}'
             axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/pagopt?offset=0&fetchSize=0&ordering=%7B%22reverseOrdering%22%3Afalse%2C%22columnOrdering%22%3A%22%22%7D`)
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/pagopt?offset=0&fetchSize=0&ordering=` + encodeURI(url))
                 .then((response) => (this.listOfDatasets = [...response.data.root]))
                 .finally(() => (this.loading = false))
         },
@@ -127,13 +131,12 @@ export default defineComponent({
             }
         },
         deleteDataset(event) {
-            console.log(event)
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
-                header: this.$t('common.toast.deleteTitle'),
+                header: this.$t('common.uppercaseDelete'),
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {
-                    this.axios
+                    axios
                         .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${event.item.label}/`)
                         .then(() => {
                             this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })

@@ -1,5 +1,5 @@
 <template>
-    <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
+    <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left>{{ datasetInList.label }}</template>
         <template #right>
             <Button label="PREVIEW" class="p-button-text p-button-rounded p-button-plain" />
@@ -15,7 +15,7 @@
                     <template #header>
                         <span>{{ $t('managers.mondrianSchemasManagement.detail.title') }}</span>
                     </template>
-                    <DetailCard :scopeTypes="scopeTypes" :categoryTypes="categoryTypes" :selectedDataset="selectedDataset" :selectedDatasetVersions="selectedDatasetVersions" :loading="loading" />
+                    <DetailCard :scopeTypes="scopeTypes" :categoryTypes="categoryTypes" :selectedDataset="selectedDataset" :selectedDatasetVersions="selectedDatasetVersions" :loading="loading" @reloadVersions="getSelectedDatasetVersions" />
                 </TabPanel>
 
                 <TabPanel>
@@ -40,6 +40,7 @@
                     <template #header>
                         <span>{{ $t('cron.advanced') }}</span>
                     </template>
+                    <AdvancedCard :selectedDataset="selectedDataset" :transformationDataset="transformationDataset" />
                 </TabPanel>
             </TabView>
         </div>
@@ -51,18 +52,19 @@ import { defineComponent } from 'vue'
 import axios from 'axios'
 import detailViewDescriptor from './DatasetManagementDetailViewDescriptor.json'
 import DetailCard from './detailCard/DatasetManagementDetailCard.vue'
+import AdvancedCard from './advancedCard/DatasetManagementAdvancedCard.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
-    components: { TabView, TabPanel, DetailCard },
+    components: { TabView, TabPanel, DetailCard, AdvancedCard },
     props: {
         id: { type: String, required: false },
         datasetInList: {} as any,
         scopeTypes: { type: Array as any, required: true },
         categoryTypes: { type: Array as any, required: true },
         datasetTypes: { type: Array as any, required: true },
-        tansformerTypes: { type: Array as any, required: true },
+        transformationDataset: { type: Object as any, required: true },
         scriptTypes: { type: Array as any, required: true },
         dataSources: { type: Array as any, required: true },
         businessModels: { type: Array as any, required: true },
@@ -91,9 +93,8 @@ export default defineComponent({
     methods: {
         //#region ===================== Get All Data and Format ====================================================
         async getSelectedDataset() {
-            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.datasetInList.label}`).then((response) => {
-                //pitati voja, dal je ok da ovako ucitava, al trebalo bi da jes
-                this.selectedDataset = { ...response.data[0] }
+            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.id}`).then((response) => {
+                this.selectedDataset = response.data[0] ? { ...response.data[0] } : {}
             })
         },
         async getSelectedDatasetVersions() {
