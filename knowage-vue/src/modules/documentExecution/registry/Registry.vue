@@ -87,6 +87,7 @@ export default defineComponent({
     watch: {
         async id() {
             await this.loadPage()
+            this.stopWarningsState = []
         }
     },
     async created() {
