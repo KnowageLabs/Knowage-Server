@@ -110,7 +110,7 @@
 				to="/cache-management" />
 			<ITEM id="5005" label="menu.cross.definition"
 				requiredFunctionality="ManageCrossNavigation"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=crossDefinition" />
+				to="/cross-navigation-management" />
 			<ITEM id="5006" label="menu.Alert"
 				requiredFunctionality="AlertManagement"
 				to="/alert" />
@@ -278,7 +278,7 @@
 			iconCls="fas fa-building" />
 		<ITEM id="11009" label="menu.cross.definition"
 			requiredFunctionality="ManageCrossNavigation"
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=crossDefinition" />
+			to="/cross-navigation-management" />
 		<ITEM id="11010" label="menu.calendar" requiredFunctionality="ManageCalendar"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=calendarTemplate"
 			iconCls="fas fa-calendar" />

@@ -7,7 +7,15 @@
                 </template>
             </Toolbar>
         </template>
-        <DataTable v-if="!detailVisiable" v-model:selection="selectedLov" :value="lovs" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" selectionMode="single">
+        <DataTable v-if="!detailVisiable" v-model:filters="filters" filterDisplay="menu" :globalFilterFields="useModeDescriptor.globalFilterFields" v-model:selection="selectedLov" :value="lovs" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" selectionMode="single">
+            <template #header>
+                <div class="table-header">
+                    <span class="p-input-icon-left">
+                        <i class="pi pi-search" />
+                        <InputText class="kn-material-input" type="text" v-model="filters.global.value" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
+                    </span>
+                </div>
+            </template>
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -15,7 +23,7 @@
                 {{ $t('common.info.dataLoading') }}
             </template>
 
-            <Column v-for="col of useModeDescriptor.columnsLov" :field="col.field" :header="$t(col.header)" :key="col.field" class="kn-truncated">
+            <Column v-for="col of useModeDescriptor.columnsLov" :field="col.field" :header="$t(col.header)" :key="col.field" class="kn-truncated" :sortable="true">
                 <template #body="slotProps">
                     <span>{{ slotProps.data[slotProps.column.props.field] }}</span>
                 </template>
@@ -38,6 +46,8 @@ import { defineComponent } from 'vue'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
+import { FilterOperator } from 'primevue/api'
+import { filterDefault } from '@/helpers/commons/filterHelper'
 import useModeDescriptor from './UseModesDescriptor.json'
 import LovsDetail from './DriversManagementLovsDetail.vue'
 export default defineComponent({
@@ -68,7 +78,22 @@ export default defineComponent({
             selectedLov: {} as any,
             detailVisiable: false,
             lovDetails: {} as any,
-            useModeDescriptor
+            useModeDescriptor,
+            filters: {
+                global: [filterDefault],
+                label: {
+                    operator: FilterOperator.AND,
+                    constraints: [filterDefault]
+                },
+                name: {
+                    operator: FilterOperator.AND,
+                    constraints: [filterDefault]
+                },
+                description: {
+                    operator: FilterOperator.AND,
+                    constraints: [filterDefault]
+                }
+            } as Object
         }
     },
     mounted() {

@@ -11,7 +11,7 @@
 				<i v-if="item.items" class="pi pi-fw pi-angle-right"></i>
 			</a>
 		</router-link>
-		<a v-else :href="item.url" @click="onClick" :target="item.target" role="menuitem" :tabindex="item.disabled ? null : '0'">
+		<a v-else :href="getHref(item)" @click="onClick" :target="item.target" role="menuitem" :tabindex="item.disabled ? null : '0'">
 			<Badge v-if="badge > 0" :value="badge" severity="danger"></Badge>
 			<span v-if="item.iconCls && item.command != 'languageSelection'" :class="['p-menuitem-icon', item.iconCls]"></span>
 			<img v-if="item.custIcon" :src="item.custIcon" />
@@ -57,6 +57,19 @@
 			},
 			toggleSubMenu() {
 				this.openedLi = !this.openedLi
+			},
+			getHref(item) {
+				let url = item.url
+				if (url) {
+					if (url.startsWith('http')) {
+						return url
+					} else {
+						url = url.replace(/\\\//g, '/')
+
+						if (url.startsWith('/')) url = url.substring(1)
+						return process.env.VUE_APP_PUBLIC_PATH + url
+					}
+				}
 			},
 			getVisibilityClass(item) {
 				if (!item.conditionedView) return true
