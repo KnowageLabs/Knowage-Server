@@ -739,6 +739,12 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					 break;
 				 }
 			 }
+				 
+				window.addEventListener("message", (event) => {	
+					if (event.data && event.data.action == 'closeDialog') {
+						$mdDialog.cancel();
+					}	
+				}, false);
 
 				$mdDialog.show({
 					preserveScope: true,
