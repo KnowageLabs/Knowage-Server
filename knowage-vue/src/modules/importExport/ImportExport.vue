@@ -52,14 +52,29 @@
 			}
 		},
 		mounted() {
-			this.functionalities = this.getFunctionalities()
+			this.setFunctionalities()
 		},
 		emits: ['onItemSelected'],
 		methods: {
-			getFunctionalities() {
-				return importExportDescriptor.functionalities.filter((x) => {
-					return x.requiredFunctionality ? this.user.functionalities.includes(x.requiredFunctionality) : true
-				})
+			async setFunctionalities() {
+				this.loading = true
+				this.functionalities = []
+				await axios
+					.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license')
+					.then((response) => {
+						let licenses = response.data.licenses
+
+						let currentHostName = response.data.hosts[0].hostName
+
+						this.functionalities = importExportDescriptor.functionalities
+							.filter((x) => {
+								return x.requiredFunctionality ? this.user.functionalities.includes(x.requiredFunctionality) : true
+							})
+							.filter((x) => {
+								return x.requiredLicense ? licenses[currentHostName].filter((lic) => lic.product === x.requiredLicense).length == 1 : true
+							})
+					})
+					.finally(() => (this.loading = false))
 			},
 			getSelectedItems(e) {
 				if (e.items) this.selectedItems[e.functionality] = e.items
