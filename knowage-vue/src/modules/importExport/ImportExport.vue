@@ -13,8 +13,8 @@
 		</Toolbar>
 		<ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 		<div class="kn-page-content p-grid p-m-0">
-			<div v-if="importExportDescriptor.functionalities.length > 1" class="functionalities-container p-col-3 p-sm-3 p-md-2">
-				<KnTabCard :element="functionality" :selected="functionality.route === $route.path" v-for="(functionality, index) in importExportDescriptor.functionalities" v-bind:key="index" @click="selectType(functionality)" :badge="selectedItems[functionality.type].length"> </KnTabCard>
+			<div class="functionalities-container p-col-3 p-sm-3 p-md-2">
+				<KnTabCard :element="functionality" :selected="functionality.route === $route.path" v-for="(functionality, index) in functionalities" v-bind:key="index" @click="selectType(functionality)" :badge="selectedItems[functionality.type].length"> </KnTabCard>
 			</div>
 			<div class="p-col p-pt-0">
 				<router-view v-model:loading="loading" @onItemSelected="getSelectedItems($event)" :selectedItems="selectedItems" />
@@ -32,6 +32,7 @@
 	import ProgressBar from 'primevue/progressbar'
 	import KnTabCard from '@/components/UI/KnTabCard.vue'
 	import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
+	import { mapState } from 'vuex'
 
 	export default defineComponent({
 		name: 'import-export',
@@ -46,11 +47,20 @@
 				selectedItems: {
 					gallery: [],
 					catalogFunction: []
-				}
+				},
+				functionalities: Array<any>()
 			}
+		},
+		mounted() {
+			this.functionalities = this.getFunctionalities()
 		},
 		emits: ['onItemSelected'],
 		methods: {
+			getFunctionalities() {
+				return importExportDescriptor.functionalities.filter((x) => {
+					return x.requiredFunctionality ? this.user.functionalities.includes(x.requiredFunctionality) : true
+				})
+			},
 			getSelectedItems(e) {
 				if (e.items) this.selectedItems[e.functionality] = e.items
 			},
@@ -114,6 +124,11 @@
 				selectedItemsToBE['filename'] = fileName
 				return selectedItemsToBE
 			}
+		},
+		computed: {
+			...mapState({
+				user: 'user'
+			})
 		}
 	})
 </script>
