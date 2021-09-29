@@ -26,6 +26,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iInputVariable } from '../../FunctionsCatalog'
+import { formatDate } from '@/helpers/commons/localeHelper'
 import Calendar from 'primevue/calendar'
 import Dropdown from 'primevue/dropdown'
 import functionCatalogInputTabDescriptor from './FunctionCatalogInputTabDescriptor.json'
@@ -42,11 +43,14 @@ export default defineComponent({
         }
     },
     created() {
-        this.loadColumn()
+        this.loadVariable()
     },
     methods: {
-        loadColumn() {
+        loadVariable() {
             this.inputVariable = this.variable as iInputVariable
+            if (this.inputVariable.type === 'DATE') {
+                this.inputVariable.value = this.getFormatedDate(this.inputVariable.value)
+            }
         },
         onTypeChange() {
             // console.log('CAAAAAAAAAAAALED')
@@ -60,6 +64,9 @@ export default defineComponent({
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => this.$emit('deleted')
             })
+        },
+        getFormatedDate(date: any) {
+            return formatDate(date, 'MM/DD/YYYY')
         }
     }
 })

@@ -20,13 +20,13 @@
         </div>
 
         <FunctionsCatalogDetail v-show="detailDialogVisible" :visible="detailDialogVisible" :propFunction="selectedFunction" :functionTypes="filters" :keywords="keywords" @close="onDetailClose" @created="onCreated"></FunctionsCatalogDetail>
-        <FunctionCatalogPreviewDialog :visible="previewDialogVisible" :propFunction="selectedFunction" :datasets="datasets" :pythonConfigurations="pythonConfigurations" @close="onPreviewClose"></FunctionCatalogPreviewDialog>
+        <FunctionCatalogPreviewDialog :visible="previewDialogVisible" :propFunction="selectedFunction" :datasets="datasets" @close="onPreviewClose"></FunctionCatalogPreviewDialog>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iFunction, iFunctionType, iDataset, iPythonConfiguration } from './FunctionsCatalog'
+import { iFunction, iFunctionType, iDataset } from './FunctionsCatalog'
 import axios from 'axios'
 import Chip from 'primevue/chip'
 import FunctionsCatalogDatatable from './FunctionsCatalogDatatable.vue'
@@ -56,7 +56,6 @@ export default defineComponent({
             keywords: [] as String[],
             selectedKeyword: '',
             datasets: [] as iDataset[],
-            pythonConfigurations: [] as iPythonConfiguration[],
             detailDialogVisible: false,
             previewDialogVisible: false,
             loading: false
@@ -166,16 +165,11 @@ export default defineComponent({
         async loadPreviewData() {
             this.loading = true
             await this.loadDatasets()
-            await this.loadPythonConfigurations()
             this.loading = false
         },
         async loadDatasets() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/`).then((response) => (this.datasets = response.data.root))
             console.log('LOADED DATASETS: ', this.datasets)
-        },
-        async loadPythonConfigurations() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/category/PYTHON_CONFIGURATION`).then((response) => (this.pythonConfigurations = response.data))
-            console.log('LOADED PYTHON CONFIGURATIONS: ', this.pythonConfigurations)
         }
     }
 })

@@ -15,7 +15,7 @@
                     <span>{{ $t('managers.functionsCatalog.configurator') }}</span>
                 </template>
 
-                <FunctionCatalogConfiguratorTab :datasets="datasets"></FunctionCatalogConfiguratorTab>
+                <FunctionCatalogConfiguratorTab :datasets="datasets" :propFunction="propFunction"></FunctionCatalogConfiguratorTab>
             </TabPanel>
             <TabPanel>
                 <template #header>

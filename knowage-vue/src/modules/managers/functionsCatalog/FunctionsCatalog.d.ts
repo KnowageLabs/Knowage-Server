@@ -28,7 +28,8 @@ export interface iInputVariable {
 
 export interface iInputColumn {
     name: string,
-    type: string
+    type: string,
+    datasetColumn?: string
 }
 
 export interface iOutputColumn {
@@ -46,7 +47,6 @@ export interface iFunctionType {
     domainName: string,
     translatedValueDescription: string,
     translatedValueName: string,
-
     active?: boolean
 }
 
@@ -54,7 +54,8 @@ export interface iDataset {
     id: number,
     name: string,
     label: string,
-    dsType: string
+    dsType: string,
+    meta?: any
 }
 
 export interface iPythonConfiguration {
