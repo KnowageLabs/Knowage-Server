@@ -1138,7 +1138,7 @@
             "ImportExport": "Import/Export",
             "ServerManager": "Server manager"
         },
-        "importExport": "Import/Export",
+        "importExport": "Artifacts",
         "modelCatalogResourceManagement": "Models manager",
         "resourceManagement": "Resource manager"
     },
