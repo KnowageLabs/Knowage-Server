@@ -95,6 +95,10 @@ export default defineComponent({
                     json.downloads.count.alreadyDownloaded = alreadyDownloaded
 
                     store.commit('setDownloads', json.downloads)
+                    
+                   	this.newsDownloadHandler()
+		            this.loadInternationalization()
+
                 })
                 .catch(function(error) {
                     if (error.response) {
@@ -103,14 +107,15 @@ export default defineComponent({
                         console.log(error.response.headers)
                     }
                 })
-            this.newsDownloadHandler()
-            this.loadInternationalization()
+
         },
-        async loadInternationalization() {
-            let currentLocale = localStorage.getItem('locale') ? localStorage.getItem('locale') : store.state.locale
-            if (currentLocale) currentLocale = currentLocale.replaceAll('_', '-')
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization?currLanguage=' + currentLocale).then((response) => store.commit('setInternationalization', response.data))
-        },
+		async loadInternationalization() {
+			let currentLocale = localStorage.getItem('locale') ? localStorage.getItem('locale') : store.state.locale
+			console.log(currentLocale)
+			if (currentLocale) currentLocale = currentLocale.replaceAll('_', '-')
+			else currentLocale = 'en-US'
+			await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization?currLanguage=' + currentLocale).then((response) => store.commit('setInternationalization', response.data))
+		},
         newsDownloadHandler() {
             console.log('Starting connection to WebSocket Server')
 
