@@ -30,10 +30,11 @@
                     </template>
                 </TabPanel>
 
-                <TabPanel>
+                <TabPanel v-if="selectedDataset.dsTypeCd == 'Query'">
                     <template #header>
                         <span>{{ $t('managers.glossary.glossaryUsage.link') }}</span>
                     </template>
+                    <LinkCard :selectedDataset="selectedDataset" />
                 </TabPanel>
 
                 <TabPanel>
@@ -53,11 +54,12 @@ import axios from 'axios'
 import detailViewDescriptor from './DatasetManagementDetailViewDescriptor.json'
 import DetailCard from './detailCard/DatasetManagementDetailCard.vue'
 import AdvancedCard from './advancedCard/DatasetManagementAdvancedCard.vue'
+import LinkCard from './linkCard/DatasetManagementLinkCard.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
-    components: { TabView, TabPanel, DetailCard, AdvancedCard },
+    components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard },
     props: {
         id: { type: String, required: false },
         datasetInList: {} as any,

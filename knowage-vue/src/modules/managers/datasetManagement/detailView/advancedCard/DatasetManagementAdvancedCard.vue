@@ -98,16 +98,15 @@
                     <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.persistTableName" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.persistTableName') }" />
                 </div>
             </form>
+            <Toolbar class="kn-toolbar kn-toolbar--default p-mt-3" v-if="dataset.isPersisted">
+                <template #left>
+                    <InputSwitch v-model="dataset.isScheduled" class="p-mr-2" />
+                    <span>{{ $t('managers.datasetManagement.isScheduled') }}</span>
+                </template>
+            </Toolbar>
+            <KpiCron v-if="dataset.isScheduled" :frequency="frequencyMock" />
         </template>
     </Card>
-
-    <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3" v-if="dataset.isPersistedHDFS || dataset.isPersisted">
-        <template #left>
-            <InputSwitch v-model="dataset.isScheduled" class="p-mr-2" />
-            <span>{{ $t('managers.datasetManagement.isScheduled') }}</span>
-        </template>
-    </Toolbar>
-    <KpiCron v-if="dataset.isScheduled" :frequency="frequencyMock" />
 </template>
 
 <script lang="ts">
