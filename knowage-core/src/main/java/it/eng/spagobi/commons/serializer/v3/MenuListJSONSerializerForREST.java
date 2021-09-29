@@ -53,6 +53,7 @@ import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.security.InternalSecurityServiceSupplierImpl;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.wapp.bo.Menu;
 import it.eng.spagobi.wapp.services.DetailMenuModule;
 import it.eng.spagobi.wapp.util.MenuUtilities;
@@ -440,6 +441,16 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				Integer technicalMenuId = allowedMenuToNotDuplicate.get(menuLabel);
 				if (technicalMenuId != null && technicalUserMenuIds.contains(technicalMenuId)) {
 					return false;
+				}
+
+				try {
+					if ("menu.news".equals(menuLabel) && !UserUtilities.hasUserRole(this.getUserProfile())) {
+						return false;
+					}
+				} catch (Exception e) {
+					String message = "Error while retrieving user profile";
+					logger.debug(message);
+					throw new SpagoBIRuntimeException(message, e);
 				}
 			}
 

@@ -104,7 +104,7 @@
 
 					if (item.conditionedView === 'news' && this.news && this.news.count.total > 0) return true
 
-					if (item.conditionedView === 'roleSelection' && this.user.roles.length > 1) return true
+					if (item.conditionedView === 'roleSelection' && this.user && this.user.roles.length > 1) return true
 
 					return false
 				} else {
@@ -235,12 +235,16 @@
 			})
 		},
 		watch: {
-			download(newDownload, oldDownload) {
-				if (oldDownload != this.downloads) this.downloads = newDownload
+			downloads(newDownload, oldDownload) {
+				if (oldDownload != this.downloads) {
+					this.downloads = newDownload
+				}
 				this.updateNewsAndDownload()
 			},
 			news(newNews, oldNews) {
-				if (oldNews != this.news) this.news = newNews
+				if (oldNews != this.news) {
+					this.news = newNews
+				}
 				this.updateNewsAndDownload()
 			}
 		}
