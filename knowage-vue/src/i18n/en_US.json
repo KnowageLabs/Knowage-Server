@@ -16,7 +16,6 @@
             "javascript": "javascript",
             "python": "python"
         },
-        "uppercaseDelete": "Delete",
         "collapse": "collapse",
         "copyOf": "Copy of",
         "delete": "delete",
@@ -90,6 +89,7 @@
         "type": "type",
         "upload": "upload",
         "uploading": "Uploading",
+        "uppercaseDelete": "Delete",
         "validation": {
             "maxLength": "This field must have less then {max} characters",
             "maximumCharacters": "The maximum length allowed is {max}",
@@ -622,7 +622,16 @@
             "deleteAllVersionsTitle": "Delete all dataset versions",
             "deleteOneVersionMsg": "Do you want to delete selected version?",
             "hint": "Please change the hint to your desire in the i18n files.",
+            "isPersisted": "Persist",
+            "isPersistedHDFS": "Exportable on HDFS",
+            "isScheduled": "Schedule",
             "oldVersions": "Older Dataset Versions",
+            "persistTableName": "Persist Table Name",
+            "pivotColName": "Name of Category Column to be Pivoted",
+            "pivotColValue": "Name of Value Column to be Pivoted",
+            "pivotIsNumRows": "Automatic Columns numeration?",
+            "pivotRowName": "Name of Category Column to be Pivoted",
+            "pivotTransformer": "Pivot Transformer",
             "scope": "Scope",
             "title": "Dataset Management"
         },

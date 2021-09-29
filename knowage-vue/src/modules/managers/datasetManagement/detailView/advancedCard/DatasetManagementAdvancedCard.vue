@@ -1,28 +1,65 @@
 <template>
-    <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
+    <Toolbar class="kn-toolbar kn-toolbar--secondary">
         <template #left>
             <InputSwitch v-model="isTransformable" @change="setTransformationType" class="p-mr-2" />
-            <span>Pivot Transformer</span>
+            <span>{{ $t('managers.datasetManagement.pivotTransformer') }}</span>
         </template>
     </Toolbar>
     <Card v-if="isTransformable">
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
-                <span class="p-float-label p-col-3">
-                    <InputText id="label" v-model="dataset.pivotColName" class="kn-material-input" type="text" />
-                    <label for="label" class="kn-material-input-label"> Name of category column to be pivoted * </label>
-                </span>
-                <span class="p-float-label p-col-3">
-                    <InputText id="label" v-model="dataset.pivotColValue" class="kn-material-input" type="text" />
-                    <label for="label" class="kn-material-input-label"> Name of value column to be pivoted * </label>
-                </span>
-                <span class="p-float-label p-col-3">
-                    <InputText id="label" v-model="dataset.pivotRowName" class="kn-material-input" type="text" />
-                    <label for="label" class="kn-material-input-label"> Name of the column NOT to be pivoted *</label>
-                </span>
+                <div class="p-field p-col-3">
+                    <span class="p-float-label">
+                        <InputText
+                            id="pivotColName"
+                            class="kn-material-input"
+                            type="text"
+                            v-model.trim="v$.dataset.pivotColName.$model"
+                            :class="{
+                                'p-invalid': v$.dataset.pivotColName.$invalid && v$.dataset.pivotColName.$dirty
+                            }"
+                            @blur="v$.dataset.pivotColName.$touch()"
+                        />
+                        <label for="pivotColName" class="kn-material-input-label"> {{ $t('managers.datasetManagement.pivotColName') }} * </label>
+                    </span>
+                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.pivotColName" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.pivotColName') }" />
+                </div>
+                <div class="p-field p-col-3">
+                    <span class="p-float-label">
+                        <InputText
+                            id="pivotColValue"
+                            class="kn-material-input"
+                            type="text"
+                            v-model="dataset.pivotColValue"
+                            :class="{
+                                'p-invalid': v$.dataset.pivotColValue.$invalid && v$.dataset.pivotColValue.$dirty
+                            }"
+                            @blur="v$.dataset.pivotColValue.$touch()"
+                        />
+                        <label for="pivotColValue" class="kn-material-input-label"> {{ $t('managers.datasetManagement.pivotColValue') }} * </label>
+                    </span>
+                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.pivotColValue" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.pivotColValue') }" />
+                </div>
+                <div class="p-field p-col-3">
+                    <span class="p-float-label">
+                        <InputText
+                            id="pivotRowName"
+                            class="kn-material-input"
+                            type="text"
+                            v-model="dataset.pivotRowName"
+                            :class="{
+                                'p-invalid': v$.dataset.pivotRowName.$invalid && v$.dataset.pivotRowName.$dirty
+                            }"
+                            @blur="v$.dataset.pivotRowName.$touch()"
+                        />
+                        <label for="pivotRowName" class="kn-material-input-label"> {{ $t('managers.datasetManagement.pivotRowName') }} *</label>
+                    </span>
+                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.pivotRowName" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.pivotRowName') }" />
+                </div>
+
                 <span class="p-field-checkbox p-col-3">
-                    <label for="binary">Automatic Columns numeration</label>
-                    <Checkbox id="binary" class="p-ml-2" v-model="dataset.pivotIsNumRows" :binary="true" />
+                    <label for="pivotIsNumRows">{{ $t('managers.datasetManagement.pivotIsNumRows') }}</label>
+                    <Checkbox id="pivotIsNumRows" class="p-ml-2" v-model="dataset.pivotIsNumRows" :binary="true" />
                 </span>
             </form>
         </template>
@@ -31,23 +68,35 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
         <template #left>
             <InputSwitch v-model="dataset.isPersistedHDFS" class="p-mr-2" />
-            <span>Exportable in HDFS</span>
+            <span>{{ $t('managers.datasetManagement.isPersistedHDFS') }}</span>
         </template>
     </Toolbar>
 
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
         <template #left>
             <InputSwitch v-model="dataset.isPersisted" class="p-mr-2" />
-            <span>Persist</span>
+            <span>{{ $t('managers.datasetManagement.isPersisted') }}</span>
         </template>
     </Toolbar>
     <Card v-if="dataset.isPersisted">
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
-                <span class="p-float-label p-col-3">
-                    <InputText id="label" v-model="dataset.pivotColName" class="kn-material-input" type="text" />
-                    <label for="label" class="kn-material-input-label"> Table name * </label>
-                </span>
+                <div class="p-field p-col-3">
+                    <span class="p-float-label">
+                        <InputText
+                            id="persistTableName"
+                            class="kn-material-input"
+                            type="text"
+                            v-model="dataset.persistTableName"
+                            :class="{
+                                'p-invalid': v$.dataset.persistTableName.$invalid && v$.dataset.persistTableName.$dirty
+                            }"
+                            @blur="v$.dataset.persistTableName.$touch()"
+                        />
+                        <label for="persistTableName" class="kn-material-input-label"> {{ $t('managers.datasetManagement.persistTableName') }} *</label>
+                    </span>
+                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.persistTableName" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.persistTableName') }" />
+                </div>
             </form>
         </template>
     </Card>
@@ -55,22 +104,25 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3" v-if="dataset.isPersistedHDFS || dataset.isPersisted">
         <template #left>
             <InputSwitch v-model="dataset.isScheduled" class="p-mr-2" />
-            <span>Schedule</span>
+            <span>{{ $t('managers.datasetManagement.isScheduled') }}</span>
         </template>
     </Toolbar>
-    <KpiCron v-if="dataset.isScheduled" :frequency="frequency" />
+    <KpiCron v-if="dataset.isScheduled" :frequency="frequencyMock" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
+import useValidate from '@vuelidate/core'
 import advancedCardDescriptor from './DatasetManagementAdvancedCardDescriptor.json'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import KpiCron from '@/modules/kpi/kpiCron/KpiCron.vue'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
 import InputSwitch from 'primevue/inputswitch'
 
 export default defineComponent({
-    components: { Card, InputSwitch, Checkbox, KpiCron },
+    components: { Card, InputSwitch, Checkbox, KpiCron, KnValidationMessages },
     props: {
         selectedDataset: { type: Object as any },
         transformationDataset: { type: Object as any }
@@ -79,12 +131,13 @@ export default defineComponent({
     emits: ['touched'],
     data() {
         return {
+            v$: useValidate() as any,
             advancedCardDescriptor,
             dataset: {} as any,
-            frequency: {} as any,
             testInput: 'testinput',
             testCheckbox: true,
-            isTransformable: false
+            isTransformable: false,
+            frequencyMock: advancedCardDescriptor.frequencyMock
         }
     },
     created() {
@@ -97,7 +150,22 @@ export default defineComponent({
             this.isDatasetTransformable()
         }
     },
-    validations() {},
+    validations() {
+        const transformationFieldsRequired = (value) => {
+            return !this.isTransformable || value
+        }
+        const persistFieldsRequired = (value) => {
+            return !this.dataset.isPersisted || value
+        }
+        const customValidators: ICustomValidatorMap = {
+            'transformable-field-required': transformationFieldsRequired,
+            'persist-field-required': persistFieldsRequired
+        }
+        const validationObject = {
+            dataset: createValidations('dataset', advancedCardDescriptor.validations.advancedTab, customValidators)
+        }
+        return validationObject
+    },
     methods: {
         isDatasetTransformable() {
             if (this.dataset.trasfTypeCd && this.dataset.trasfTypeCd == this.transformationDataset.VALUE_CD) {
@@ -112,8 +180,3 @@ export default defineComponent({
     }
 })
 </script>
-<style>
-.custom-accordion-tab .p-accordion-header-link {
-    background-color: #bbd6ed;
-}
-</style>

@@ -1,1 +1,57 @@
-{}
+{
+    "frequencyMock": {
+        "cron": "{\"type\":\"minute\",\"parameter\":{\"numRepetition\":\"1\"}}",
+        "endDate": 1632952800000,
+        "endTime": "0:0",
+        "startDate": 1632496874000,
+        "startTime": "17:21"
+    },
+    "validations": {
+        "advancedTab": [
+            {
+                "fieldName": "pivotColName",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "transformable-field-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "pivotColValue",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "transformable-field-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "pivotRowName",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "transformable-field-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "persistTableName",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "persist-field-required"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
