@@ -16,11 +16,11 @@
         </Column>
         <Column :header="$t('managers.functionsCatalog.datasetColumn')">
             <template #editor="slotProps">
-                <Dropdown :style="functionCatalogDatasetFormColumnsTableDescriptor.dropdownStyle" class="p-mr-2" v-model="slotProps.data['datasetColumn']" :options="datasetColumns" />
+                <Dropdown :style="functionCatalogDatasetFormColumnsTableDescriptor.dropdownStyle" class="p-mr-2" v-model="slotProps.data['dsColumn']" :options="datasetColumns" />
                 <i class="pi pi-pencil edit-icon" />
             </template>
             <template #body="slotProps">
-                <span class="p-mr-2">{{ slotProps.data['datasetColumn'] }}</span>
+                <span class="p-mr-2">{{ slotProps.data['dsColumn'] }}</span>
                 <i class="pi pi-pencil edit-icon" />
             </template>
         </Column>

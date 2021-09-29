@@ -29,7 +29,7 @@ export interface iInputVariable {
 export interface iInputColumn {
     name: string,
     type: string,
-    datasetColumn?: string
+    dsColumn?: string
 }
 
 export interface iOutputColumn {
@@ -55,6 +55,8 @@ export interface iDataset {
     name: string,
     label: string,
     dsType: string,
+    meta?: any,
+    pars?: any,
     meta?: any
 }
 

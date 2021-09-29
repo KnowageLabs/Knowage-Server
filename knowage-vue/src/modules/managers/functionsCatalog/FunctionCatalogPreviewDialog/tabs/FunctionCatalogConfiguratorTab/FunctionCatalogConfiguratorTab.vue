@@ -24,7 +24,7 @@ export default defineComponent({
     name: 'function-catalog-configurator-tab',
     components: { FunctionCatalogDatasetTable, FunctionCatalogDatasetForm },
     props: { datasets: { type: Array }, propFunction: { type: Object } },
-    emits: ['selected', 'loading'],
+    emits: ['selected', 'loading', 'selectedEnvironment', 'selectedDataset'],
     data() {
         return {
             selectedDataset: null as iDataset | null,
@@ -43,6 +43,7 @@ export default defineComponent({
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${dataset.label}`).then((response) => {
                 if (response.data) {
                     this.selectedDataset = response.data[0]
+                    this.$emit('selectedDataset', this.selectedDataset)
                 }
             })
             this.$emit('loading', false)
@@ -57,6 +58,7 @@ export default defineComponent({
             return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/category/${type}`)
         },
         async onEnvironmentSelected(environment: string) {
+            this.$emit('selectedEnvironment', environment)
             this.$emit('loading', true)
             // console.log('SELECTED ENV: ', environment)
             // console.log('SELECTED split: ', environment.split('.')[0])
