@@ -104,7 +104,11 @@ export default defineComponent({
 
                 if (item.conditionedView === 'news' && this.news && this.news.count.total > 0) return true
 
+<<<<<<< HEAD
                 if (item.conditionedView === 'roleSelection' && this.user.roles.length > 1) return true
+=======
+					if (item.conditionedView === 'roleSelection' && this.user && this.user.roles.length > 1) return true
+>>>>>>> 6af9265013... [KNOWAGE-6283][KNOWAGE-6282] - Web socket modified
 
                 return false
             } else {
@@ -351,6 +355,7 @@ export default defineComponent({
 					})
 >>>>>>> 3936001d1c... [KNOWAGE-6031] - Added sorting for dynamicUserFunctionalities
 
+<<<<<<< HEAD
                 if (this.dynamicUserFunctionalities.length > 0) {
                     let homePage = this.findHomePage(this.dynamicUserFunctionalities) || {}
                     if (homePage && Object.keys(homePage).length !== 0) {
@@ -384,6 +389,45 @@ export default defineComponent({
         }
     }
 })
+=======
+					if (this.dynamicUserFunctionalities.length > 0) {
+						let homePage = this.findHomePage(this.dynamicUserFunctionalities) || {}
+						if (homePage && Object.keys(homePage).length !== 0) {
+							if (!this.stateHomePage.label) {
+								this.$store.commit('setHomePage', homePage)
+							}
+						}
+					}
+					this.updateNewsAndDownload()
+				})
+				.catch((error) => console.error(error))
+				.finally(() => this.$store.commit('setLoading', false))
+		},
+		computed: {
+			...mapState({
+				user: 'user',
+				downloads: 'downloads',
+				locale: 'locale',
+				news: 'news',
+				stateHomePage: 'homePage'
+			})
+		},
+		watch: {
+			downloads(newDownload, oldDownload) {
+				if (oldDownload != this.downloads) {
+					this.downloads = newDownload
+				}
+				this.updateNewsAndDownload()
+			},
+			news(newNews, oldNews) {
+				if (oldNews != this.news) {
+					this.news = newNews
+				}
+				this.updateNewsAndDownload()
+			}
+		}
+	})
+>>>>>>> 6af9265013... [KNOWAGE-6283][KNOWAGE-6282] - Web socket modified
 </script>
 
 <style lang="scss" scoped>
