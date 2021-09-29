@@ -131,26 +131,30 @@ export default defineComponent({
             }
         },
         deleteDataset(event) {
-            this.$confirm.require({
-                message: this.$t('common.toast.deleteMessage'),
-                header: this.$t('common.uppercaseDelete'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => {
-                    axios
-                        .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${event.item.label}/`)
-                        .then(() => {
-                            this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
-                            this.getDatasets()
-                            if (event.item.id == this.$route.params.id) this.$router.push('/dataset-management')
-                        })
-                        .catch((error) =>
-                            this.$store.commit('setError', {
-                                title: this.$t('common.error.generic'),
-                                msg: error.message
+            if (event.item.usedByNDocs != 0) {
+                this.$store.commit('setInfo', { title: 'Cannot Delete Dataset', msg: 'This dataset cannot be erased because it is referenced by documents or federations or lovs.' })
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.deleteMessage'),
+                    header: this.$t('common.uppercaseDelete'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        axios
+                            .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${event.item.label}/`)
+                            .then(() => {
+                                this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                                this.getDatasets()
+                                if (event.item.id == this.$route.params.id) this.$router.push('/dataset-management')
                             })
-                        )
-                }
-            })
+                            .catch((error) =>
+                                this.$store.commit('setError', {
+                                    title: this.$t('common.error.generic'),
+                                    msg: error.message
+                                })
+                            )
+                    }
+                })
+            }
         },
         cloneDataset(event) {
             console.log('CLONING DATSET: ' + event.item.label)
