@@ -95,6 +95,9 @@
 						json.downloads.count.alreadyDownloaded = alreadyDownloaded
 
 						store.commit('setDownloads', json.downloads)
+
+						this.newsDownloadHandler()
+						this.loadInternationalization()
 					})
 					.catch(function(error) {
 						if (error.response) {
@@ -103,12 +106,12 @@
 							console.log(error.response.headers)
 						}
 					})
-				this.newsDownloadHandler()
-				this.loadInternationalization()
 			},
 			async loadInternationalization() {
 				let currentLocale = localStorage.getItem('locale') ? localStorage.getItem('locale') : store.state.locale
-				currentLocale = currentLocale.replaceAll('_', '-')
+				console.log(currentLocale)
+				if (currentLocale) currentLocale = currentLocale.replaceAll('_', '-')
+				else currentLocale = 'en-US'
 				await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization?currLanguage=' + currentLocale).then((response) => store.commit('setInternationalization', response.data))
 			},
 			newsDownloadHandler() {
@@ -126,10 +129,26 @@
 					}
 				}
 				WEB_SOCKET.onopen = function(event) {
-					this.update(event)
+					if (event.data) {
+						let json = JSON.parse(event.data)
+						if (json.news) {
+							store.commit('setNews', json.news)
+						}
+						if (json.downloads) {
+							store.commit('setDownloads', json.downloads)
+						}
+					}
 				}
 				WEB_SOCKET.onmessage = function(event) {
-					this.update(event)
+					if (event.data) {
+						let json = JSON.parse(event.data)
+						if (json.news) {
+							store.commit('setNews', json.news)
+						}
+						if (json.downloads) {
+							store.commit('setDownloads', json.downloads)
+						}
+					}
 				}
 			}
 		},
