@@ -207,7 +207,7 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportUsers" />
 			<ITEM id="10005" label="menu.ImpExpKpis"
 				requiredFunctionality="ImpExpKpis"
-				toBeLicensed="KnowagePA"
+				toBeLicensed="KnowagePM"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportKpis" />
 			<ITEM id="10006" label="menu.ImpExpCatalog"
 				requiredFunctionality="ImpExpCatalog"
@@ -220,7 +220,7 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportGlossaryTemplate" />
 			<ITEM id="10009" label="menu.ImpExpAlerts"
 				requiredFunctionality="ImpExpAlerts"
-				toBeLicensed="KnowagePA"
+				toBeLicensed="KnowagePM"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportAlerts" />
 		</GROUP_ITEM>
 		
