@@ -68,3 +68,8 @@ export interface iPythonConfiguration {
     category: string,
     active: boolean
 }
+
+export interface iLibrary {
+    name: string,
+    version: string
+}

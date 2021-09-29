@@ -1,11 +1,11 @@
 <template>
     <DataTable
         id="environment-datatable"
-        :value="datasets"
+        :value="environmentLibraries"
         :paginator="true"
-        :rows="15"
+        :rows="functionCatalogDatasetEnvironmentTableDescriptor.rows"
         class="p-datatable-sm kn-table"
-        dataKey="id"
+        dataKey="name"
         v-model:filters="filters"
         :globalFilterFields="functionCatalogDatasetEnvironmentTableDescriptor.globalFilterFields"
         :responsiveLayout="functionCatalogDatasetEnvironmentTableDescriptor.responsiveLayout"
@@ -31,6 +31,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { iLibrary } from '../../../../FunctionsCatalog'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -39,14 +40,27 @@ import functionCatalogDatasetEnvironmentTableDescriptor from './FunctionCatalogD
 export default defineComponent({
     name: 'function-catalog-dataset-environment-table',
     components: { Column, DataTable },
+    props: { libraries: { type: Array } },
     data() {
         return {
             functionCatalogDatasetEnvironmentTableDescriptor,
-            filters: { global: [filterDefault] } as Object
+            filters: { global: [filterDefault] } as Object,
+            environmentLibraries: [] as iLibrary[]
         }
     },
-    async created() {},
-    methods: {}
+    watch: {
+        libraries() {
+            this.loadLibraries()
+        }
+    },
+    created() {
+        this.loadLibraries()
+    },
+    methods: {
+        loadLibraries() {
+            this.environmentLibraries = this.libraries as iLibrary[]
+        }
+    }
 })
 </script>
 

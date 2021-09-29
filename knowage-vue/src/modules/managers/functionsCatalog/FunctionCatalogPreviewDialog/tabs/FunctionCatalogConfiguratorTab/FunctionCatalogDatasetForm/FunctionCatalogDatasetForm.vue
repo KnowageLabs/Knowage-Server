@@ -1,7 +1,6 @@
 <template>
     <Card>
         <template #content>
-            {{ pythonEnvironments }}
             <div class="p-m-2">
                 <label class="kn-material-input-label"> {{ $t('common.description') }}</label>
                 <p v-html="selectedFunction.description"></p>
@@ -14,16 +13,16 @@
                 <label class="kn-material-input-label"> {{ $t('managers.functionsCatalog.columnsSettings') }}</label>
                 <FunctionCatalogDatasetFormColumnsTable :columns="selectedFunction.inputColumns" :datasetColumns="datasetColumns"></FunctionCatalogDatasetFormColumnsTable>
             </div>
-            <div v-if="selectedFunction.inputVariables.length > 0" class="p-m-2">
+            <div v-if="selectedFunction.inputVariables.length > 0" class="p-mx-2 p-mt-3">
                 <label class="kn-material-input-label"> {{ $t('managers.functionsCatalog.variablesSettings') }}</label>
                 <FunctionCatalogDatasetFormVariablesTable :variables="selectedFunction.inputVariables"></FunctionCatalogDatasetFormVariablesTable>
             </div>
-            <div class="p-m-2">
-                <label class="kn-material-input-label">{{ $t('managers.functionsCatalog.variableType') }}</label>
+            <div class="p-mx-2 p-mt-3">
+                <label class="kn-material-input-label">{{ $t('managers.functionsCatalog.environment') }}</label>
                 <Dropdown class="kn-material-input" v-model="selectedEnvironment" :options="selectedFunction.language == 'Python' ? pythonEnvironments : rEnvironments" optionLabel="label" optionValue="label" @change="$emit('environmentSelected', selectedEnvironment)" />
             </div>
-            <div v-if="selectedEnvironment" class="p-m-2">
-                <FunctionCatalogDatasetEnvironmentTable></FunctionCatalogDatasetEnvironmentTable>
+            <div v-if="selectedEnvironment" class="p-mx-2 p-mt-3">
+                <FunctionCatalogDatasetEnvironmentTable :libraries="libraries"></FunctionCatalogDatasetEnvironmentTable>
             </div>
         </template>
     </Card>
@@ -42,7 +41,7 @@ import FunctionCatalogDatasetEnvironmentTable from './FunctionCatalogDatasetEnvi
 export default defineComponent({
     name: 'function-catalog-dateset-form',
     components: { Card, Dropdown, FunctionCatalogDatasetFormColumnsTable, FunctionCatalogDatasetFormVariablesTable, FunctionCatalogDatasetEnvironmentTable },
-    props: { selectedDataset: { type: Object }, propFunction: { type: Object }, pythonEnvironments: { type: Array }, rEnvironments: { type: Array } },
+    props: { selectedDataset: { type: Object }, propFunction: { type: Object }, pythonEnvironments: { type: Array }, rEnvironments: { type: Array }, libraries: { type: Array } },
     emits: ['environmentSelected'],
     data() {
         return {

@@ -15,7 +15,7 @@
                     <span>{{ $t('managers.functionsCatalog.configurator') }}</span>
                 </template>
 
-                <FunctionCatalogConfiguratorTab :datasets="datasets" :propFunction="propFunction"></FunctionCatalogConfiguratorTab>
+                <FunctionCatalogConfiguratorTab :datasets="datasets" :propFunction="propFunction" @loading="setLoading"></FunctionCatalogConfiguratorTab>
             </TabPanel>
             <TabPanel>
                 <template #header>
@@ -47,6 +47,11 @@ export default defineComponent({
         return { functionCatalogPreviewDialogDescriptor, loading: false }
     },
     created() {},
-    methods: {}
+    methods: {
+        setLoading(value: boolean) {
+            this.loading = value
+            // console.log('LOADING: ', this.loading)
+        }
+    }
 })
 </script>

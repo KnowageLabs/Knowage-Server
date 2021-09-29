@@ -2,16 +2,17 @@
     "breakpoint": "960px",
     "columns": [
         {
-            "field": "label",
-            "header": "common.label",
+            "field": "name",
+            "header": "managers.functionsCatalog.library",
             "style": {}
         },
         {
-            "field": "dsType",
-            "header": "common.type",
+            "field": "version",
+            "header": "managers.functionsCatalog.version",
             "style": {}
         }
     ],
-    "globalFilterFields": ["label", "dsType"],
-    "responsiveLayout": "stack"
+    "globalFilterFields": ["name"],
+    "responsiveLayout": "stack",
+    "rows": 15
 }
