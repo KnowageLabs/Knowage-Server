@@ -59,8 +59,11 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="PythonWidget" description="CreatePythonWidget" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="PythonDataset" description="CreatePythonDataset" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="HierarchiesManagement" description="HierarchiesManagement" />
+<<<<<<< HEAD
 	<USER_FUNCTIONALITY productType="KnowageBD" name="WidgetGalleryManagement" description="WidgetGalleryManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ProfileAttributeListManagement" description="ProfileAttributeListManagement" />
+=======
+>>>>>>> e48e4f36c9... [KNOWAGE-6311] - Widget gallery profilation
 	<USER_FUNCTIONALITY productType="KnowageBD" name="LicenseReadOnly" description="LicenseReadOnly" />
 	
 	<!-- Authorizations for KnowageSI -->

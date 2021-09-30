@@ -59,22 +59,20 @@
 			async setFunctionalities() {
 				this.loading = true
 				this.functionalities = []
-				await axios
-					.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license')
-					.then((response) => {
-						let licenses = response.data.licenses
 
-						let currentHostName = response.data.hosts[0].hostName
+				let licenses = this.licenses
 
-						this.functionalities = importExportDescriptor.functionalities
-							.filter((x) => {
-								return x.requiredFunctionality ? this.user.functionalities.includes(x.requiredFunctionality) : true
-							})
-							.filter((x) => {
-								return x.requiredLicense ? licenses[currentHostName].filter((lic) => lic.product === x.requiredLicense).length == 1 : true
-							})
+				let currentHostName = this.licenses.hosts[0].hostName
+
+				this.functionalities = importExportDescriptor.functionalities
+					.filter((x) => {
+						return x.requiredFunctionality ? this.user.functionalities.includes(x.requiredFunctionality) : true
 					})
-					.finally(() => (this.loading = false))
+					.filter((x) => {
+						return x.requiredLicense ? licenses[currentHostName].filter((lic) => lic.product === x.requiredLicense).length == 1 : true
+					})
+
+				this.loading = false
 			},
 			getSelectedItems(e) {
 				if (e.items) this.selectedItems[e.functionality] = e.items
@@ -143,7 +141,8 @@
 		computed: {
 			...mapState({
 				user: 'user',
-				isEnterprise: 'isEnterprise'
+				isEnterprise: 'isEnterprise',
+				licenses: 'licenses'
 			})
 		}
 	})

@@ -36,6 +36,12 @@ export default defineComponent({
 
                 store.commit('setUser', currentUser)
 
+				if (this.isEnterprise) {
+					axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license').then((response) => {
+						store.commit('setLicenses', response.data)
+					})
+				}
+
                 let responseLocale = response.data.locale
                 let storedLocale = responseLocale
                 if (localStorage.getItem('locale')) {
