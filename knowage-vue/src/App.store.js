@@ -15,7 +15,11 @@ const store = createStore({
 			homePage: {},
 			internationalization: [],
 			isEnterprise: false,
-			licenses: []
+			licenses: {
+				hosts: [],
+				licenses: {},
+				cpuNumber: -1
+			}
 		}
 	},
 	mutations: {
