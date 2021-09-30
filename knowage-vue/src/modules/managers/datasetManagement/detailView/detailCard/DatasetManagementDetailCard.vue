@@ -4,7 +4,7 @@
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-mt-1 p-col-6">
                     <span class="p-float-label">
-                        <InputText id="label" class="kn-material-input" type="text" maxLength="20" v-model="v$.dataset.label.$model" :class="{ 'p-invalid': v$.dataset.label.$invalid && v$.dataset.label.$dirty }" @blur="v$.dataset.label.$touch()" @change="$emit('touched')" data-test="label-input" />
+                        <InputText id="label" class="kn-material-input" type="text" maxLength="50" v-model="v$.dataset.label.$model" :class="{ 'p-invalid': v$.dataset.label.$invalid && v$.dataset.label.$dirty }" @blur="v$.dataset.label.$touch()" @change="$emit('touched')" data-test="label-input" />
                         <label for="label" class="kn-material-input-label"> {{ $t('common.label') }} * </label>
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.label" :additionalTranslateParams="{ fieldName: $t('common.label') }" />
@@ -46,7 +46,7 @@
                                 'p-invalid': v$.dataset.scopeCd.$invalid && v$.dataset.scopeCd.$dirty
                             }"
                             @before-show="v$.dataset.scopeCd.$touch()"
-                            @change="updateIdFromCd(this.scopeTypes, 'scopeId', $event.value)"
+                            @change="updateIdFromCd(this.scopeTypes, 'scopeId', $event.value), $emit('touched')"
                         />
                         <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.scope') }} * </label>
                     </span>
@@ -59,7 +59,7 @@
                 </div>
                 <div class="p-field p-mt-1 p-col-6">
                     <span class="p-float-label">
-                        <Dropdown id="category" class="kn-material-input" :options="categoryTypes" optionLabel="VALUE_CD" optionValue="VALUE_CD" v-model="dataset.catTypeVn" @change="updateIdFromCd(this.categoryTypes, 'catTypeId', $event.value)" />
+                        <Dropdown id="category" class="kn-material-input" :options="categoryTypes" optionLabel="VALUE_CD" optionValue="VALUE_CD" v-model="dataset.catTypeVn" @change="updateIdFromCd(this.categoryTypes, 'catTypeId', $event.value), $emit('touched')" />
                         <label for="category" class="kn-material-input-label"> {{ $t('common.category') }} </label>
                     </span>
                 </div>

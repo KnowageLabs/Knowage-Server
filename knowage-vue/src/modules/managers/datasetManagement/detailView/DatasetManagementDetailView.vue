@@ -7,7 +7,6 @@
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeDetailConfirm" />
         </template>
     </Toolbar>
-
     <div class="p-d-flex p-flex-row">
         <div class="card kn-flex">
             <TabView class="tabview-custom" data-test="tab-view">
@@ -15,7 +14,7 @@
                     <template #header>
                         <span>{{ $t('managers.mondrianSchemasManagement.detail.title') }}</span>
                     </template>
-                    <DetailCard :scopeTypes="scopeTypes" :categoryTypes="categoryTypes" :selectedDataset="selectedDataset" :selectedDatasetVersions="selectedDatasetVersions" :loading="loading" @reloadVersions="getSelectedDatasetVersions" />
+                    <DetailCard :scopeTypes="scopeTypes" :categoryTypes="categoryTypes" :selectedDataset="selectedDataset" :selectedDatasetVersions="selectedDatasetVersions" :loading="loading" @reloadVersions="getSelectedDatasetVersions" @touched="this.touched = true" />
                 </TabPanel>
 
                 <TabPanel>
@@ -41,7 +40,7 @@
                     <template #header>
                         <span>{{ $t('cron.advanced') }}</span>
                     </template>
-                    <AdvancedCard :selectedDataset="selectedDataset" :transformationDataset="transformationDataset" />
+                    <AdvancedCard :selectedDataset="selectedDataset" :transformationDataset="transformationDataset" @touched="this.touched = true" />
                 </TabPanel>
             </TabView>
         </div>
@@ -120,7 +119,7 @@ export default defineComponent({
 
         closeDetailConfirm() {
             if (!this.touched) {
-                this.$emit('close')
+                this.$router.push('/dataset-management')
             } else {
                 this.$confirm.require({
                     message: this.$t('common.toast.unsavedChangesMessage'),
@@ -129,7 +128,6 @@ export default defineComponent({
                     accept: () => {
                         this.touched = false
                         this.$router.push('/dataset-management')
-                        this.$emit('close')
                     }
                 })
             }

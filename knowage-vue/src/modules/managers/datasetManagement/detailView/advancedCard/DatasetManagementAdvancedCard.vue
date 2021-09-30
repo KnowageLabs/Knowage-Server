@@ -19,6 +19,7 @@
                                 'p-invalid': v$.dataset.pivotColName.$invalid && v$.dataset.pivotColName.$dirty
                             }"
                             @blur="v$.dataset.pivotColName.$touch()"
+                            @change="$emit('touched')"
                         />
                         <label for="pivotColName" class="kn-material-input-label"> {{ $t('managers.datasetManagement.pivotColName') }} * </label>
                     </span>
@@ -35,6 +36,7 @@
                                 'p-invalid': v$.dataset.pivotColValue.$invalid && v$.dataset.pivotColValue.$dirty
                             }"
                             @blur="v$.dataset.pivotColValue.$touch()"
+                            @change="$emit('touched')"
                         />
                         <label for="pivotColValue" class="kn-material-input-label"> {{ $t('managers.datasetManagement.pivotColValue') }} * </label>
                     </span>
@@ -51,6 +53,7 @@
                                 'p-invalid': v$.dataset.pivotRowName.$invalid && v$.dataset.pivotRowName.$dirty
                             }"
                             @blur="v$.dataset.pivotRowName.$touch()"
+                            @change="$emit('touched')"
                         />
                         <label for="pivotRowName" class="kn-material-input-label"> {{ $t('managers.datasetManagement.pivotRowName') }} *</label>
                     </span>
@@ -59,7 +62,7 @@
 
                 <span class="p-field-checkbox p-col-3">
                     <label for="pivotIsNumRows">{{ $t('managers.datasetManagement.pivotIsNumRows') }}</label>
-                    <Checkbox id="pivotIsNumRows" class="p-ml-2" v-model="dataset.pivotIsNumRows" :binary="true" />
+                    <Checkbox id="pivotIsNumRows" class="p-ml-2" v-model="dataset.pivotIsNumRows" :binary="true" @change="$emit('touched')" />
                 </span>
             </form>
         </template>
@@ -67,14 +70,14 @@
 
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
         <template #left>
-            <InputSwitch v-model="dataset.isPersistedHDFS" class="p-mr-2" />
+            <InputSwitch v-model="dataset.isPersistedHDFS" class="p-mr-2" @change="$emit('touched')" />
             <span>{{ $t('managers.datasetManagement.isPersistedHDFS') }}</span>
         </template>
     </Toolbar>
 
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
         <template #left>
-            <InputSwitch v-model="dataset.isPersisted" class="p-mr-2" />
+            <InputSwitch v-model="dataset.isPersisted" class="p-mr-2" @change="$emit('touched')" />
             <span>{{ $t('managers.datasetManagement.isPersisted') }}</span>
         </template>
     </Toolbar>
@@ -92,6 +95,7 @@
                                 'p-invalid': v$.dataset.persistTableName.$invalid && v$.dataset.persistTableName.$dirty
                             }"
                             @blur="v$.dataset.persistTableName.$touch()"
+                            @change="$emit('touched')"
                         />
                         <label for="persistTableName" class="kn-material-input-label"> {{ $t('managers.datasetManagement.persistTableName') }} *</label>
                     </span>
@@ -100,7 +104,7 @@
             </form>
             <Toolbar class="kn-toolbar kn-toolbar--default p-mt-3" v-if="dataset.isPersisted">
                 <template #left>
-                    <InputSwitch v-model="dataset.isScheduled" class="p-mr-2" />
+                    <InputSwitch v-model="dataset.isScheduled" class="p-mr-2" @change="$emit('touched')" />
                     <span>{{ $t('managers.datasetManagement.isScheduled') }}</span>
                 </template>
             </Toolbar>
