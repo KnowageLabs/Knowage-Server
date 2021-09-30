@@ -1033,6 +1033,14 @@
             },
             "title": "Roles Management"
         },
+        "scheduler": {
+            "hint": "No job selected",
+            "packageDescription": "Package Description",
+            "documents": "Documents",
+            "parameters": "Parameters",
+            "packageName": "Package Name",
+            "title": "Scheduler"
+        },
         "templatePruning": {
             "documentSelection": "Document Selection",
             "documentSelectionMessage": "Select the documents you want to delete whose template is older than the date entered above",

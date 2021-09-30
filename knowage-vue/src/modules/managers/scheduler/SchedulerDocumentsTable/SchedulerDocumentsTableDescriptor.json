@@ -1,0 +1,12 @@
+{
+    "breakpoint": "960px",
+    "iconColumnStyle": {
+        "text-align": "end",
+        "width": "10%"
+    },
+    "nameColumnStyle": {
+        "width": "20%"
+    },
+    "responsiveLayout": "stack",
+    "rows": 15
+}
