@@ -145,8 +145,8 @@ export default defineComponent({
         error(newError) {
             this.$toast.add({
                 severity: 'error',
-                summary: this.$t(newError.title),
-                detail: this.$t(newError.msg),
+                summary: newError.title ? this.$t(newError.title) : '',
+                detail: newError.msg ? this.$t(newError.msg) : '',
                 baseZIndex: typeof newError.baseZIndex == 'undefined' ? 0 : newError.baseZIndex,
                 life: typeof newError.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newError.duration
             })
@@ -154,8 +154,8 @@ export default defineComponent({
         info(newInfo) {
             this.$toast.add({
                 severity: 'info',
-                summary: this.$t(newInfo.title),
-                detail: this.$t(newInfo.msg),
+                summary: newInfo.title ? this.$t(newInfo.title) : '',
+                detail: newInfo.msg ? this.$t(newInfo.msg) : '',
                 baseZIndex: typeof newInfo.baseZIndex == 'undefined' ? 0 : newInfo.baseZIndex,
                 life: typeof newInfo.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newInfo.duration
             })

@@ -12,10 +12,9 @@ filters.service('expression_service',function(){
 		}
 		if(filters.length==0){
 			expressionObject = {};
-		}
-		else if(filters.length==1){
+		} else if(filters.length==1) {
 			expressionObject.type = "NODE_CONST";
-    		expressionObject.value = expression;
+			expressionObject.value = expression;
 		} else if (filters.length>1){
 			expressionObject.type = "NODE_OP";
 			expressionObject.value = filters[0].booleanConnector;
@@ -69,8 +68,8 @@ filters.service('expression_service',function(){
 			advancedFilters.push(advancedFilter);
 		}
 
-	 // if filters are empty set expression to empty object
-		if(advancedFilters.length==0){
+		// if filters are empty set expression to empty object
+		if(advancedFilters.length==0) {
 			angular.copy({},expression);
 		} else {
 			var nodeConstArray = [];
@@ -86,30 +85,20 @@ filters.service('expression_service',function(){
 				nodeConstObj.details.rightOperandValue = advancedFilters[i].rightValue;
 				nodeConstArray.push(nodeConstObj);
 			}
-			if (advancedFilters.length==1){
+			if (advancedFilters.length == 1){
 				angular.copy(nodeConstArray[0],expression);
-			} else if (advancedFilters.length>1) {
-				var nop = {};
-				nop.value = "";
-				nop.type = "NODE_OP";
-				nop.childNodes = [];
-				var nopForInsert = {};
-				for (var i = advancedFilters.length-1; i >= 0 ; i--) {
-					if (i-1==-1 || advancedFilters[i].connector!=advancedFilters[i-1].connector) {
-						nop.value = advancedFilters[i].connector;
-						nop.childNodes.push(nodeConstArray[i]);
-						if(nopForInsert.value){
-							nop.childNodes.push(nopForInsert);
-						}
-						nopForInsert = angular.copy(nop);
-						nop.value = "";
-						nop.type = "NODE_OP";
-						nop.childNodes.length = 0;
-					} else {
-						nop.childNodes.push(nodeConstArray[i]);
-					}
-				}
-				angular.copy(nopForInsert,expression);
+			} else if (advancedFilters.length > 1) {
+			
+				var newExpression = nodeConstArray.reverse()
+					.reduce(function(prev, curr) {
+						return {
+							type:"NODE_OP",
+							childNodes:[curr, prev],
+							value:"AND"
+						};
+					});
+			
+				angular.copy(newExpression, expression);
 			}
 		}
 
