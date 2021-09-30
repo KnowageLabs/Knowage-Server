@@ -616,6 +616,7 @@
             "title": "Data Source Management"
         },
         "datasetManagement": {
+            "availableTables": "Available Tables",
             "creationUser": "Creation User",
             "deleteAllVersionsMsg": "Do you want to delete all dataset versions?",
             "deleteAllVersionsSuccess": "All dataset versions are deleted",
@@ -633,7 +634,9 @@
             "pivotRowName": "Name of Category Column to be Pivoted",
             "pivotTransformer": "Pivot Transformer",
             "scope": "Scope",
-            "title": "Dataset Management"
+            "selectedTables": "Selected Tables",
+            "title": "Dataset Management",
+            "noSourceSelectedWarning": "Please select a Source"
         },
         "domainsManagement": {
             "domainCode": "Domain code",

@@ -1,28 +1,159 @@
 <template>
     <Card>
         <template #content>
-            test
+            <Dropdown id="category" class="kn-material-input" style="width:100%" :options="availableResources" v-model="selectedResource" optionLabel="name" placeholder="Select Source" @change="getAvailableTables" />
         </template>
     </Card>
+    <div class="p-grid p-mt-3 table-list-container">
+        <div class="p-col-6">
+            <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                <template #left>
+                    {{ $t('managers.datasetManagement.availableTables') }}
+                </template>
+            </Toolbar>
+            <Listbox class="kn-list link-list" listStyle="height:65vh" :options="availableTables" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="name" filterMatchMode="contains" :filterFields="linkTabDescriptor.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')">
+                <template #empty>
+                    <span v-if="!selectedResource"> {{ $t('managers.datasetManagement.noSourceSelectedWarning') }}</span>
+                    <span v-else>{{ $t('common.info.noDataFound') }}</span>
+                </template>
+                <template #option="slotProps">
+                    <div class="kn-list-item" @click="addTableToSelectedList(slotProps.option)">
+                        <div class="kn-list-item-text">
+                            <span>{{ slotProps.option }}</span>
+                        </div>
+                    </div>
+                </template>
+            </Listbox>
+        </div>
+        <div class="p-col-6">
+            <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                <template #left>
+                    {{ $t('managers.datasetManagement.selectedTables') }}
+                </template>
+            </Toolbar>
+            <Listbox class="kn-list link-list" listStyle="height:65vh" :options="selectedTables" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="name" filterMatchMode="contains" :filterFields="linkTabDescriptor.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')">
+                <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                <template #option="slotProps">
+                    <div class="kn-list-item" @click="removeTableFromSelectedList(slotProps.option)">
+                        <div class="kn-list-item-text">
+                            <span>{{ slotProps.option }}</span>
+                        </div>
+                    </div>
+                </template>
+            </Listbox>
+        </div>
+    </div>
 </template>
 
 <script lang="ts">
+// import axios from 'axios'
 import { defineComponent } from 'vue'
+import linkTabDescriptor from './DatasetManagementLinkCardDescriptor.json'
+import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
+import Listbox from 'primevue/listbox'
 
 export default defineComponent({
-    components: { Card },
+    components: { Card, Dropdown, Listbox },
     props: {
-        selectedDataset: { type: Object as any }
+        selectedDataset: { type: Object as any },
+        metaSourceResource: { type: Array as any }
     },
     computed: {},
-    emits: [],
+    emits: ['removeTables', 'addTables'],
     data() {
-        return {}
+        return {
+            linkTabDescriptor,
+            availableResources: linkTabDescriptor.metaSourcesMock as any,
+            selectedResource: null,
+            dataset: {} as any,
+            availableTables: [] as any,
+            selectedTables: [] as any,
+            tablesToRemove: [] as any,
+            tablesToAdd: [] as any
+        }
     },
-    created() {},
-    watch: {},
+    created() {
+        this.dataset = this.selectedDataset
+        this.getSelectedTables()
+    },
+    watch: {
+        selectedDataset() {
+            this.dataset = this.selectedDataset
+            this.getSelectedTables()
+        }
+    },
 
-    methods: {}
+    methods: {
+        async getAvailableTables(event) {
+            console.log(event)
+            // axios
+            //     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/${event.value.sourceId}/metatables/`)
+            //     .then((response) => (this.availableTables = response.data))
+            //     .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error }))
+            this.availableTables = this.removeSelectedTablesFromAvailable(linkTabDescriptor.availableTablesMock, this.selectedTables)
+        },
+        async getSelectedTables() {
+            // axios
+            //     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDsRelationResource/dataset/${this.dataset.id}/`)
+            //     .then((response) => (this.selectedTables = response.data))
+            //     .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error }))
+            this.selectedTables = linkTabDescriptor.selectedTablesMock
+        },
+        //#region ===================== Lists Functionality ======================
+        removeSelectedTablesFromAvailable(availableTablesArray, selectedTablesArray) {
+            let filteredSelected = selectedTablesArray.map((selectedTable) => {
+                return selectedTable.tableId
+            })
+            let filteredArray = availableTablesArray.filter((availableTable) => !filteredSelected.includes(availableTable.tableId))
+            return filteredArray
+        },
+        moveTableToList(movedTableId, sourceList, targetList) {
+            const index = sourceList.findIndex((table) => table.tableId === movedTableId)
+            if (index >= 0) {
+                const tableToMove = sourceList[index]
+                sourceList.splice(index, 1)
+                targetList.unshift(tableToMove)
+            }
+        },
+        addTableToSelectedList(table) {
+            if (table.deleted && !table.added) {
+                table.deleted = false
+                this.tablesToRemove = this.tablesToRemove.filter((removedTable) => table.tableId !== removedTable.tableId)
+            } else {
+                table.deleted = false
+                table.added = true
+                this.tablesToAdd.push(table)
+            }
+            this.moveTableToList(table.tableId, this.availableTables, this.selectedTables)
+            this.$emit('addTables', this.tablesToAdd)
+        },
+        removeTableFromSelectedList(table) {
+            if (table.added && !table.deleted) {
+                delete table.added
+                this.tablesToAdd = this.tablesToAdd.filter((removedTable) => table.tableId !== removedTable.tableId)
+            } else {
+                table.deleted = true
+                this.tablesToRemove.push(table)
+            }
+            this.moveTableToList(table.tableId, this.selectedTables, this.availableTables)
+            this.$emit('removeTables', this.tablesToRemove)
+        }
+        //#endregion ====================================================================
+    }
 })
 </script>
+<style lang="scss" scoped>
+.table-list-container {
+    :deep(.p-card-body) {
+        padding: 0;
+        .p-card-content {
+            padding: 0;
+        }
+    }
+    .link-list {
+        border: 1px solid $color-borders;
+        border-top: none;
+    }
+}
+</style>

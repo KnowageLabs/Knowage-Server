@@ -25,6 +25,7 @@
                     :businessModels="businessModels"
                     :pythonEnvironments="pythonEnvironments"
                     :rEnvironments="rEnvironments"
+                    :metaSourceResource="metaSourceResource"
                 />
             </div>
         </div>
@@ -58,7 +59,8 @@ export default defineComponent({
             dataSources: [] as any,
             businessModels: [] as any,
             pythonEnvironments: [] as any,
-            rEnvironments: [] as any
+            rEnvironments: [] as any,
+            metaSourceResource: [] as any
         }
     },
     created() {
@@ -92,6 +94,9 @@ export default defineComponent({
         async getBusinessModels() {
             axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels`).then((response) => (this.businessModels = response.data))
         },
+        async getMetaSourceResource() {
+            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`).then((response) => (this.metaSourceResource = response.data))
+        },
         async getDatasets() {
             let url = '{"reverseOrdering":false,"columnOrdering":""}'
             axios
@@ -103,6 +108,7 @@ export default defineComponent({
             this.loading = true
             await this.getEnvironmentData()
             await this.getDomainData()
+            await this.getMetaSourceResource()
             await this.getDatasources()
             await this.getBusinessModels()
             await this.getDatasets()

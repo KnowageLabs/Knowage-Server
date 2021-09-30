@@ -4,7 +4,7 @@
         <template #right>
             <Button label="PREVIEW" class="p-button-text p-button-rounded p-button-plain" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" />
-            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeDetail" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeDetailConfirm" />
         </template>
     </Toolbar>
 
@@ -34,7 +34,7 @@
                     <template #header>
                         <span>{{ $t('managers.glossary.glossaryUsage.link') }}</span>
                     </template>
-                    <LinkCard :selectedDataset="selectedDataset" />
+                    <LinkCard :selectedDataset="selectedDataset" :metaSourceResource="metaSourceResource" @addTables="onAddLinkedTables" @removeTables="onRemoveLinkedTables" />
                 </TabPanel>
 
                 <TabPanel>
@@ -71,7 +71,8 @@ export default defineComponent({
         dataSources: { type: Array as any, required: true },
         businessModels: { type: Array as any, required: true },
         pythonEnvironments: { type: Array as any, required: true },
-        rEnvironments: { type: Array as any, required: true }
+        rEnvironments: { type: Array as any, required: true },
+        metaSourceResource: { type: Array as any, required: true }
     },
     computed: {},
     emits: ['close'],
@@ -79,7 +80,10 @@ export default defineComponent({
         return {
             detailViewDescriptor,
             loading: false,
+            touched: false,
             selectedDatasetVersions: [] as any,
+            tablesToAdd: [] as any,
+            tablesToRemove: [] as any,
             selectedDataset: {} as any
         }
     },
@@ -114,9 +118,29 @@ export default defineComponent({
         },
         //#endregion ================================================================================================
 
-        closeDetail() {
-            this.$router.push('/dataset-management')
-            this.$emit('close')
+        closeDetailConfirm() {
+            if (!this.touched) {
+                this.$emit('close')
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.$router.push('/dataset-management')
+                        this.$emit('close')
+                    }
+                })
+            }
+        },
+        onAddLinkedTables(event) {
+            this.tablesToAdd = event
+            this.touched = true
+        },
+        onRemoveLinkedTables(event) {
+            this.tablesToRemove = event
+            this.touched = true
         }
     }
 })
