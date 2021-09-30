@@ -1,7 +1,7 @@
 <template>
     <Card>
         <template #content>
-            <div v-if="(dataset.dsTypeCd = 'Federated')">
+            <div v-if="dataset.dsTypeCd == 'Federated'">
                 <label>{{ $t('managers.datasetManagement.selectDatasetType') }}: </label> <b>Federated</b>
             </div>
             <div id="dropdownContainer" v-else>

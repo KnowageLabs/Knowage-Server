@@ -4,7 +4,7 @@
         <template #right>
             <Button label="PREVIEW" class="p-button-text p-button-rounded p-button-plain" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" />
-            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeDetailConfirm" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('close')" />
         </template>
     </Toolbar>
     <div class="p-d-flex p-flex-row">
@@ -14,14 +14,14 @@
                     <template #header>
                         <span>{{ $t('managers.mondrianSchemasManagement.detail.title') }}</span>
                     </template>
-                    <DetailCard :scopeTypes="scopeTypes" :categoryTypes="categoryTypes" :selectedDataset="selectedDataset" :selectedDatasetVersions="selectedDatasetVersions" :loading="loading" @reloadVersions="getSelectedDatasetVersions" @touched="this.touched = true" />
+                    <DetailCard :scopeTypes="scopeTypes" :categoryTypes="categoryTypes" :selectedDataset="selectedDataset" :selectedDatasetVersions="selectedDatasetVersions" :loading="loading" @reloadVersions="getSelectedDatasetVersions" @touched="$emit('touched')" />
                 </TabPanel>
 
                 <TabPanel>
                     <template #header>
                         <span>{{ $t('kpi.alert.type') }}</span>
                     </template>
-                    <TypeCard :selectedDataset="selectedDataset" :datasetTypes="datasetTypes" @touched="this.touched = true" />
+                    <TypeCard :selectedDataset="selectedDataset" :datasetTypes="datasetTypes" @touched="$emit('touched')" />
                 </TabPanel>
 
                 <TabPanel>
@@ -41,7 +41,7 @@
                     <template #header>
                         <span>{{ $t('cron.advanced') }}</span>
                     </template>
-                    <AdvancedCard :selectedDataset="selectedDataset" :transformationDataset="transformationDataset" @touched="this.touched = true" />
+                    <AdvancedCard :selectedDataset="selectedDataset" :transformationDataset="transformationDataset" @touched="$emit('touched')" />
                 </TabPanel>
             </TabView>
         </div>
@@ -76,7 +76,7 @@ export default defineComponent({
         metaSourceResource: { type: Array as any, required: true }
     },
     computed: {},
-    emits: ['close'],
+    emits: ['close', 'touched'],
     data() {
         return {
             detailViewDescriptor,
@@ -119,28 +119,13 @@ export default defineComponent({
         },
         //#endregion ================================================================================================
 
-        closeDetailConfirm() {
-            if (!this.touched) {
-                this.$router.push('/dataset-management')
-            } else {
-                this.$confirm.require({
-                    message: this.$t('common.toast.unsavedChangesMessage'),
-                    header: this.$t('common.toast.unsavedChangesHeader'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => {
-                        this.touched = false
-                        this.$router.push('/dataset-management')
-                    }
-                })
-            }
-        },
         onAddLinkedTables(event) {
             this.tablesToAdd = event
-            this.touched = true
+            this.$emit('touched')
         },
         onRemoveLinkedTables(event) {
             this.tablesToRemove = event
-            this.touched = true
+            this.$emit('touched')
         }
     }
 })

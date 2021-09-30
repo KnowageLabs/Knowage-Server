@@ -26,6 +26,8 @@
                     :pythonEnvironments="pythonEnvironments"
                     :rEnvironments="rEnvironments"
                     :metaSourceResource="metaSourceResource"
+                    @touched="this.touched = true"
+                    @close="closeDetailConfirm"
                 />
             </div>
         </div>
@@ -114,6 +116,21 @@ export default defineComponent({
             await this.getDatasets()
         },
         //#endregion ================================================================================================
+        closeDetailConfirm() {
+            if (!this.touched) {
+                this.$router.push('/dataset-management')
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.$router.push('/dataset-management')
+                    }
+                })
+            }
+        },
 
         showDetail(event) {
             this.datasetInList = { ...event.item }
