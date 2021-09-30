@@ -26,7 +26,7 @@
 		components: { ConfirmDialog, KnOverlaySpinnerPanel, MainMenu, Toast },
 
 		async beforeMount() {
-			axios
+			await axios
 				.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/currentuser')
 				.then((response) => {
 					let currentUser = response.data
@@ -35,12 +35,6 @@
 					} else if (currentUser.defaultRole) currentUser.sessionRole = currentUser.defaultRole
 
 					store.commit('setUser', currentUser)
-
-					if (this.isEnterprise) {
-						axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license').then((response) => {
-							store.commit('setLicenses', response.data)
-						})
-					}
 
 					let responseLocale = response.data.locale
 					let storedLocale = responseLocale
@@ -80,6 +74,12 @@
 						console.log(error.response.headers)
 					}
 				})
+
+			if (this.isEnterprise) {
+				await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license').then((response) => {
+					store.commit('setLicenses', response.data)
+				})
+			}
 		},
 		mounted() {
 			this.onLoad()
