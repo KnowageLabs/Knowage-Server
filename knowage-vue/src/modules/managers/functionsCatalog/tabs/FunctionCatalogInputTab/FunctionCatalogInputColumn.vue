@@ -35,6 +35,11 @@ export default defineComponent({
             inputColumn: {} as iInputColumn
         }
     },
+    watch: {
+        column() {
+            this.loadColumn()
+        }
+    },
     created() {
         this.loadColumn()
     },

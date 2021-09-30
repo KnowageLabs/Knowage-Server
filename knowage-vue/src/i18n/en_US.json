@@ -668,6 +668,8 @@
             "addColumn": "Add column",
             "genericError": "Error during dataset execution",
             "environment": "Environment",
+            "dataset": "Dataset",
+            "executePreview": "Execute Preview",
             "addInputVariable": "Add input variable",
             "benchmarks": "Benchmarks",
             "columnFieldType": "Column Field Type",

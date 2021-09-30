@@ -82,7 +82,7 @@
                     <label for="benchmarks" class="kn-material-input-label"> {{ $t('managers.functionsCatalog.benchmarks') }}</label>
                     <Textarea v-if="showBenchmarksSource" v-model="selectedFunction.benchmarks" :style="functionCatalogGeneralTabDescriptor.editor.style" :readonly="readonly"></Textarea>
                     <Editor v-else id="benchmarks" :editorStyle="functionCatalogGeneralTabDescriptor.editor.style" v-model="selectedFunction.benchmarks" :readonly="readonly" />
-                    <Button class="editor-switch-button" icon="pi pi-bars" @click="showBenchmarksSource = !showBenchmarksSource"> {{ showBenchmarksSource ? 'wysiwyg' : $t('managers.functionsCatalog.source') }}</Button>
+                    <Button class="editor-switch-button" icon="pi pi-bars" :label="showBenchmarksSource ? 'wysiwyg' : $t('managers.functionsCatalog.source')" @click="showBenchmarksSource = !showBenchmarksSource"></Button>
                 </AccordionTab>
             </Accordion>
         </div>

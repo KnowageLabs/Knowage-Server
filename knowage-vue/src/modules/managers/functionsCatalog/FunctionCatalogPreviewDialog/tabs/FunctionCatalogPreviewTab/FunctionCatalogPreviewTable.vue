@@ -1,6 +1,4 @@
 <template>
-    {{ columns }}
-    {{ rows }}
     <DataTable
         id="preview-datatable"
         :value="rows"

@@ -29,9 +29,19 @@ export default defineComponent({
     },
     methods: {
         loadFilters() {
-            this.filters = [...(this.propFilters as iFunctionType[])]
+            this.filters = []
+            this.propFilters?.forEach((el: any) => {
+                if (el.valueCd === 'All') {
+                    el.active = true
+                    this.selectedFilter = el
+                    this.$emit('selected', this.selectedFilter)
+                }
+                this.filters.push(el)
+            })
+            console.log('FILTERS: ', this.filters)
         },
         onSelected(filter: iFunctionType) {
+            console.log('SELECTED BEFORE', this.selectedFilter)
             if (this.selectedFilter) {
                 this.selectedFilter.active = false
             }

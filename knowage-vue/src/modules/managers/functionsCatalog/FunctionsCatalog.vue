@@ -11,6 +11,7 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+                {{ selectedFunction }}
                 <FunctionCatalogFilterCards class="p-m-3" :propFilters="filters" @selected="onSelectedFilter"></FunctionCatalogFilterCards>
                 <div class="p-d-flex p-flex-row p-jc-center">
                     <Chip class="keyword-chip p-m-2" :class="{ 'keyword-chip-active': selectedKeyword === keyword }" v-for="(keyword, index) in keywords" :key="index" :label="keyword" @click="filterByKeyword(keyword)"></Chip>

@@ -42,6 +42,11 @@ export default defineComponent({
             inputVariable: {} as iInputVariable
         }
     },
+    watch: {
+        variable() {
+            this.loadVariable()
+        }
+    },
     created() {
         this.loadVariable()
     },

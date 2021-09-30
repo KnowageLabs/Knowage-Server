@@ -26,6 +26,8 @@
             </TabPanel>
         </TabView>
 
+        <FunctionCatalogPreviewWarningDialog :visible="warningVisible" :warningMessage="warningMessage" @close="warningVisible = false"></FunctionCatalogPreviewWarningDialog>
+
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="$emit('close')"> {{ $t('common.cancel') }}</Button>
             <Button class="kn-button kn-button--primary" :icon="active === 0 ? 'pi pi-chevron-right' : 'pi pi-chevron-left'" :iconPos="active === 0 ? 'right' : 'left'" :label="active === 0 ? $t('managers.functionsCatalog.next') : $t('managers.functionsCatalog.back')" @click="changeTab" />
@@ -41,12 +43,13 @@ import Dialog from 'primevue/dialog'
 import functionCatalogPreviewDialogDescriptor from './FunctionCatalogPreviewDialogDescriptor.json'
 import FunctionCatalogConfiguratorTab from './tabs/FunctionCatalogConfiguratorTab/FunctionCatalogConfiguratorTab.vue'
 import FunctionCatalogPreviewTable from './tabs/FunctionCatalogPreviewTab/FunctionCatalogPreviewTable.vue'
+import FunctionCatalogPreviewWarningDialog from './FunctionCatalogPreviewWarningDialog.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'function-catalog-preview-dialog',
-    components: { Dialog, FunctionCatalogConfiguratorTab, FunctionCatalogPreviewTable, TabView, TabPanel },
+    components: { Dialog, FunctionCatalogConfiguratorTab, FunctionCatalogPreviewTable, FunctionCatalogPreviewWarningDialog, TabView, TabPanel },
     props: { propFunction: { type: Object, required: true }, datasets: { type: Array }, pythonConfigurations: { type: Array } },
     data() {
         return {
@@ -56,6 +59,8 @@ export default defineComponent({
             previewColumns: [] as any[],
             previewRows: [] as any[],
             active: 0,
+            warningVisible: false,
+            warningMessage: null as string | null,
             loading: false
         }
     },
@@ -86,28 +91,25 @@ export default defineComponent({
             console.log('VARIABLES GOOD? : ', this.checkVariablesConfiguration())
             console.log('ENVIRONMENT GOOD? : ', this.environment ? true : false)
             let valid = true
-            let message = null as string | null
+            this.warningMessage = null
 
             if (!this.checkColumnsConfiguration()) {
                 valid = false
-                message = this.$t('managers.functionsCatalog.datasetColumnsError')
+                this.warningMessage = this.$t('managers.functionsCatalog.datasetColumnsError')
             } else if (!this.checkColumnsConfiguration()) {
                 valid = false
-                message = this.$t('managers.functionsCatalog.inputVariablesError')
+                this.warningMessage = this.$t('managers.functionsCatalog.inputVariablesError')
             } else if (!this.environment) {
                 valid = false
-                message = this.$t('managers.functionsCatalog.environmentError')
+                this.warningMessage = this.$t('managers.functionsCatalog.environmentError')
             }
 
             if (valid) {
                 await this.createPreview()
                 this.active = 1
             } else {
-                this.$store.commit('setError', {
-                    title: this.$t('managers.functionsCatalog.previewErrorTitle'),
-                    msg: message
-                    // baseZIndex: 999999
-                })
+                this.warningVisible = true
+                console.log('MEESSAGE', this.warningMessage)
             }
         },
         checkColumnsConfiguration() {
@@ -132,7 +134,7 @@ export default defineComponent({
             const postBody = { aggregations: this.buildPreviewAggregations(), parameters: this.buildPreviewParameters(), selections: {}, indexes: [] }
 
             await axios
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${this.selectedDataset?.label}/data`, postBody)
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${this.selectedDataset?.label}/data`, postBody, { headers: { 'X-Disable-Errors': true } })
                 .then((response) => {
                     this.setPreviewColumns(response.data)
                     this.previewRows = response.data.rows
@@ -140,12 +142,8 @@ export default defineComponent({
                     console.log('LOADED PREVIEW ROWS: ', this.previewRows)
                 })
                 .catch((error) => {
-                    console.log('EROR MESSAGE: ', error)
-                    this.$store.commit('setError', {
-                        title: this.$t('managers.functionsCatalog.previewErrorTitle'),
-                        msg: error.message === 'generic.error' ? this.$t('managers.functionsCatalog.genericError') : error.message
-                        // baseZIndex: 999999
-                    })
+                    this.warningVisible = true
+                    this.warningMessage = error.message === 'generic.error' ? this.$t('managers.functionsCatalog.genericError') : error.message
                 })
         },
         setPreviewColumns(data: any) {

@@ -49,7 +49,7 @@ export default defineComponent({
         },
         deleteInputColumn(index: number) {
             console.log('COLUMN FOR DELETE: ', index)
-            this.inputColumns.splice(index)
+            this.inputColumns.splice(index, 1)
         }
     }
 })

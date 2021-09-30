@@ -1,6 +1,6 @@
 <template>
-    <FunctionCatalogInputColumnsCard :columns="selectedFunction.inputColumns" :readonly="readonly"></FunctionCatalogInputColumnsCard>
-    <FunctionCatalogInputVariablesCard :variables="selectedFunction.inputVariables" :readonly="readonly"></FunctionCatalogInputVariablesCard>
+    <FunctionCatalogInputColumnsCard class="p-mt-4" :columns="selectedFunction.inputColumns" :readonly="readonly"></FunctionCatalogInputColumnsCard>
+    <FunctionCatalogInputVariablesCard class="p-mt-4" :variables="selectedFunction.inputVariables" :readonly="readonly"></FunctionCatalogInputVariablesCard>
 </template>
 
 <script lang="ts">

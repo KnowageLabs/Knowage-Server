@@ -41,6 +41,11 @@ export default defineComponent({
             outputColumn: {} as iOutputColumn
         }
     },
+    watch: {
+        column() {
+            this.loadColumn()
+        }
+    },
     created() {
         this.loadColumn()
     },

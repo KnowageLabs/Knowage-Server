@@ -1,8 +1,7 @@
 <template>
     <Card class="filter-card">
         <template #content>
-            <!-- <div class="p-d-flex p-flex-column p-ai-center filter-container p-p-0" :style="{ 'background-image': 'url(' + require(filter.valueDescription) + ')' }"> -->
-            <div class="p-d-flex p-flex-column p-ai-center filter-container p-p-0" :class="{ active: filter.active }" :style="{ 'background-image': 'url(' + require('@/assets/images/functionCatalog/text.png') + ')' }" @click="$emit('selected', filter)">
+            <div class="p-d-flex p-flex-column p-ai-center filter-container p-p-0" :class="{ active: filter.active }" :style="{ 'background-image': 'url(' + require('@/assets/images/functionCatalog/' + filter.valueDescription + '.png') + ')' }" @click="$emit('selected', filter)">
                 <span class="filter-value">{{ filter.valueCd }}</span>
                 <span class="filter-domain-name">{{ filter.domainName }}</span>
             </div>

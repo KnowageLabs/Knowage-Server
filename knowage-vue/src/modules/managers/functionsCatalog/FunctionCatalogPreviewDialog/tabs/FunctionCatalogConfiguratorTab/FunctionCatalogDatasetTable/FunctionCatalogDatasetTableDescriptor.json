@@ -3,7 +3,7 @@
     "columns": [
         {
             "field": "label",
-            "header": "common.label",
+            "header": "managers.functionsCatalog.dataset",
             "style": {}
         },
         {

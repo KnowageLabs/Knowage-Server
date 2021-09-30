@@ -87,6 +87,7 @@ export default defineComponent({
     },
     watch: {
         propFunction() {
+            console.log('CAAAAAAAALED')
             this.loadFunction()
         },
         functionTypes() {
@@ -105,7 +106,7 @@ export default defineComponent({
     },
     methods: {
         loadFunction() {
-            this.selectedFunction = this.propFunction ? ({ ...this.propFunction } as iFunction) : this.getFunctionDefaultValues()
+            this.selectedFunction = this.propFunction ? ({ ...this.propFunction, inputColumns: [...this.propFunction.inputColumns], inputVariables: [...this.propFunction.inputVariables], outputColumns: [...this.propFunction.outputColumns] } as iFunction) : this.getFunctionDefaultValues()
             console.log('READONLY: ', this.readonly)
         },
         loadFunctionTypes() {

@@ -47,8 +47,10 @@ export default defineComponent({
             this.inputVariables.push({ name: '', type: '', value: '' })
         },
         deleteInputVariable(index: number) {
+            console.log('INPUT VARIABLES BEFORE: ', this.inputVariables)
             console.log('VARIBALE FOR DELETE: ', index)
-            this.inputVariables.splice(index)
+            this.inputVariables.splice(index, 1)
+            console.log('INPUT VARIABLES AFTER: ', this.inputVariables)
         }
     }
 })

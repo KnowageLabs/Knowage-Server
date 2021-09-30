@@ -28,11 +28,15 @@
                 </span>
             </div>
         </template>
-        <Column class="kn-truncated" :style="col.style" v-for="col of functionsCatalogDatatableDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"> </Column>
+        <Column class="kn-truncated" :style="col.style" v-for="col of functionsCatalogDatatableDescriptor.columns" :header="$t(col.header)" :key="col.field" :sortable="true">
+            <template #body="slotProps">
+                <span v-tooltip.top="slotProps.data[col.field]"> {{ slotProps.data[col.field] }}</span>
+            </template>
+        </Column>
         <Column :style="functionsCatalogDatatableDescriptor.table.iconColumn.style">
             <template #body="slotProps">
-                <Button icon="fa fa-play-circle" class="p-button-link" @click="previewFunction(slotProps.data)" />
-                <Button v-if="canDelete(slotProps.data)" icon="pi pi-trash" class="p-button-link" @click="deleteFunctionConfirm(slotProps.data.id)" />
+                <Button icon="fa fa-play-circle" class="p-button-link" v-tooltip.top="$t('managers.functionsCatalog.executePreview')" @click="previewFunction(slotProps.data)" />
+                <Button v-if="canDelete(slotProps.data)" icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click="deleteFunctionConfirm(slotProps.data.id)" />
             </template>
         </Column>
     </DataTable>
