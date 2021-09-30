@@ -48,6 +48,7 @@ import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByName;
+import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByNameAndID;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByParent;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchGlossaryByName;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchGlossaryStructureWithWordLike;
@@ -1531,6 +1532,11 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 	public List<SbiGlGlossary> listGlossaryByNm(Integer page, Integer itemsPerPage, String glossary) {
 
 		return list(new SearchGlossaryByName(page, itemsPerPage, glossary));
+	}
+
+	@Override
+	public List<SbiGlContents> loadContentsByNameGlossaryId(String contentNM, Integer glossaryId) {
+		return list(new SearchContentsByNameAndID(contentNM, glossaryId));
 	}
 
 }
