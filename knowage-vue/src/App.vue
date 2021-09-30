@@ -169,23 +169,23 @@
 		},
 		watch: {
 			error(newError) {
-    	        this.$toast.add({
-        	        severity: 'error',
-            	    summary: newError.title ? this.$t(newError.title) : '',
+				this.$toast.add({
+					severity: 'error',
+					summary: newError.title ? this.$t(newError.title) : '',
 					detail: newError.msg ? this.$t(newError.msg) : '',
 					baseZIndex: typeof newError.baseZIndex == 'undefined' ? 0 : newError.baseZIndex,
-    	            life: typeof newError.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newError.duration
-            	})
-        	},
+					life: typeof newError.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newError.duration
+				})
+			},
 			info(newInfo) {
 				this.$toast.add({
-                	severity: 'info',
-                	summary: newInfo.title ? this.$t(newInfo.title) : '',
-                	detail: newInfo.msg ? this.$t(newInfo.msg) : '',
-                	baseZIndex: typeof newInfo.baseZIndex == 'undefined' ? 0 : newInfo.baseZIndex,
-                	life: typeof newInfo.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newInfo.duration
-            	})
-        	},
+					severity: 'info',
+					summary: newInfo.title ? this.$t(newInfo.title) : '',
+					detail: newInfo.msg ? this.$t(newInfo.msg) : '',
+					baseZIndex: typeof newInfo.baseZIndex == 'undefined' ? 0 : newInfo.baseZIndex,
+					life: typeof newInfo.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newInfo.duration
+				})
+			},
 			loading(newLoading) {
 				this.loading = newLoading
 			},
