@@ -190,12 +190,6 @@
 			await axios
 				.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale))
 				.then((response) => {
-					if (this.isEnterprise && !this.licenses) {
-						axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license').then((response) => {
-							this.$store.commit('setLicenses', response.data)
-						})
-					}
-
 					this.technicalUserFunctionalities = response.data.technicalUserFunctionalities.filter((groupItem: any) => {
 						let childItems = groupItem.items.filter((x) => {
 							let currentHostName = this.licenses.hosts[0] ? this.licenses.hosts[0].hostName : undefined

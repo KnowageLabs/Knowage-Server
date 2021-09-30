@@ -22,10 +22,14 @@ const store = createStore({
 			}
 		}
 	},
+	actions: {
+		initializeUser(context, user) {
+			context.commit('setUser', user)
+			context.commit('setEnterprise', user.enterprise)
+		}
+	},
 	mutations: {
 		setUser(state, user) {
-			state.isEnterprise = user.enterprise
-			delete user.enterprise
 			state.user = user
 		},
 		setError(state, error) {
@@ -60,6 +64,9 @@ const store = createStore({
 		},
 		setLicenses(state, licenses) {
 			state.licenses = licenses
+		},
+		setEnterprise(state, enterprise) {
+			state.isEnterprise = enterprise
 		}
 	}
 })
