@@ -61,15 +61,14 @@
 				this.functionalities = []
 
 				let licenses = this.licenses.licenses
-
-				let currentHostName = this.licenses.hosts[0].hostName
+				let currentHostName = this.licenses.hosts[0] ? this.licenses.hosts[0].hostName : undefined
 
 				this.functionalities = importExportDescriptor.functionalities
 					.filter((x) => {
 						return x.requiredFunctionality ? this.user.functionalities.includes(x.requiredFunctionality) : true
 					})
 					.filter((x) => {
-						return x.requiredLicense ? licenses[currentHostName].filter((lic) => lic.product === x.requiredLicense).length == 1 : true
+						return x.requiredLicense && currentHostName && licenses[currentHostName] ? licenses[currentHostName].filter((lic) => lic.product === x.requiredLicense).length == 1 : true
 					})
 
 				this.loading = false
