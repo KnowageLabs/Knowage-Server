@@ -14,7 +14,8 @@ const store = createStore({
 			loading: false,
 			homePage: {},
 			internationalization: [],
-			isEnterprise: false
+			isEnterprise: false,
+			licenses: []
 		}
 	},
 	mutations: {
@@ -52,6 +53,9 @@ const store = createStore({
 		},
 		setInternationalization(state, internationalization) {
 			state.internationalization = internationalization
+		},
+		setLicenses(state, licenses) {
+			state.licenses = licenses
 		}
 	}
 })

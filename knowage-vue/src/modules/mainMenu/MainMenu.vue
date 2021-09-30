@@ -231,7 +231,9 @@
 				downloads: 'downloads',
 				locale: 'locale',
 				news: 'news',
-				stateHomePage: 'homePage'
+				stateHomePage: 'homePage',
+				isEnterprise: 'isEnterprise',
+				licenses: 'licenses'
 			})
 		},
 		watch: {

@@ -644,8 +644,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private boolean isAttributeToIgnore(SourceBeanAttribute attribute) {
-		return attribute.getKey().equals(REQUIRED_FUNCTIONALITY) || attribute.getKey().equals(CONDITION) || attribute.getKey().equals(TO_BE_LICENSED)
-				|| attribute.getKey().equals(ID);
+		return attribute.getKey().equals(REQUIRED_FUNCTIONALITY) || attribute.getKey().equals(CONDITION) || attribute.getKey().equals(ID);
 	}
 
 	private Object getChildren(List filteredMenuList, List children, int level, Locale locale) throws JSONException {
@@ -786,7 +785,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private void setPropertiesForFunctionalityMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {
-		temp2.put(URL, StringEscapeUtils.escapeJavaScript(DetailMenuModule.findFunctionalityUrl(childElem, contextName)));
+		temp2.put(TO, StringEscapeUtils.escapeJavaScript(DetailMenuModule.findFunctionalityUrl(childElem, contextName)));
 	}
 
 	private void setPropertiesForStaticMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {

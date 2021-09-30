@@ -25,7 +25,7 @@
 	export default defineComponent({
 		components: { ConfirmDialog, KnOverlaySpinnerPanel, MainMenu, Toast },
 
-		beforeMount() {
+		async beforeMount() {
 			axios
 				.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/currentuser')
 				.then((response) => {
@@ -35,6 +35,12 @@
 					} else if (currentUser.defaultRole) currentUser.sessionRole = currentUser.defaultRole
 
 					store.commit('setUser', currentUser)
+
+					if (this.isEnterprise) {
+						axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license').then((response) => {
+							store.commit('setLicenses', response.data)
+						})
+					}
 
 					let responseLocale = response.data.locale
 					let storedLocale = responseLocale
@@ -65,7 +71,6 @@
 						},
 						(error) => console.error(error)
 					)
-
 					this.$emit('update:loading', false)
 				})
 				.catch(function(error) {
@@ -157,7 +162,8 @@
 				error: 'error',
 				info: 'info',
 				user: 'user',
-				loading: 'loading'
+				loading: 'loading',
+				isEnterprise: 'isEnterprise'
 			})
 		},
 		watch: {
