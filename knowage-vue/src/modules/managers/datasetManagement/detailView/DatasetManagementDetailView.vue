@@ -21,6 +21,7 @@
                     <template #header>
                         <span>{{ $t('kpi.alert.type') }}</span>
                     </template>
+                    <TypeCard :selectedDataset="selectedDataset" :datasetTypes="datasetTypes" @touched="this.touched = true" />
                 </TabPanel>
 
                 <TabPanel>
@@ -52,13 +53,14 @@ import { defineComponent } from 'vue'
 import axios from 'axios'
 import detailViewDescriptor from './DatasetManagementDetailViewDescriptor.json'
 import DetailCard from './detailCard/DatasetManagementDetailCard.vue'
+import TypeCard from './typeCard/DatasetManagementTypeCard.vue'
 import AdvancedCard from './advancedCard/DatasetManagementAdvancedCard.vue'
 import LinkCard from './linkCard/DatasetManagementLinkCard.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
-    components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard },
+    components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard, TypeCard },
     props: {
         id: { type: String, required: false },
         datasetInList: {} as any,

@@ -1,0 +1,14 @@
+{
+    "validations": {
+        "dataset": [
+            {
+                "fieldName": "dsTypeCd",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            }
+        ]
+    }
+}

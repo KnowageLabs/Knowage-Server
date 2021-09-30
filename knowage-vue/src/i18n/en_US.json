@@ -626,6 +626,7 @@
             "isPersisted": "Persist",
             "isPersistedHDFS": "Exportable on HDFS",
             "isScheduled": "Schedule",
+            "noSourceSelectedWarning": "Please select a Source",
             "oldVersions": "Older Dataset Versions",
             "persistTableName": "Persist Table Name",
             "pivotColName": "Name of Category Column to be Pivoted",
@@ -634,9 +635,9 @@
             "pivotRowName": "Name of Category Column to be Pivoted",
             "pivotTransformer": "Pivot Transformer",
             "scope": "Scope",
+            "selectDatasetType": "DataSet Type",
             "selectedTables": "Selected Tables",
-            "title": "Dataset Management",
-            "noSourceSelectedWarning": "Please select a Source"
+            "title": "Dataset Management"
         },
         "domainsManagement": {
             "domainCode": "Domain code",
