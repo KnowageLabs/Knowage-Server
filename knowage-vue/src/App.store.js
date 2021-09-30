@@ -13,11 +13,14 @@ const store = createStore({
 			news: { count: { total: 0, unRead: 0 } },
 			loading: false,
 			homePage: {},
-			internationalization: []
+			internationalization: [],
+			isEnterprise: false
 		}
 	},
 	mutations: {
 		setUser(state, user) {
+			state.isEnterprise = user.enterprise
+			delete user.enterprise
 			state.user = user
 		},
 		setError(state, error) {

@@ -606,4 +606,7 @@ public class SpagoBIConstants {
 	public static final String SESSION_PARAMETERS_STORE_NAME = "sessionParameterService";
 	public static final String SESSION_PARAMETER_STATE_OBJECT_KEY = "parameterStateKey";
 
+	// License Read Only
+	public static final String LICENSE_READ_ONLY = "LicenseReadOnly";
+
 }
