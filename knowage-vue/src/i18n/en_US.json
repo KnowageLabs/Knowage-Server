@@ -637,7 +637,10 @@
             "scope": "Scope",
             "selectDatasetType": "DataSet Type",
             "selectedTables": "Selected Tables",
-            "title": "Dataset Management"
+            "title": "Dataset Management",
+            "params": "Parameters",
+            "deleteAllParams": "Clear all dataset parameters",
+            "deleteAllParamsMsg": "Are you sure you want to delete all dataset parameters?"
         },
         "domainsManagement": {
             "domainCode": "Domain code",
