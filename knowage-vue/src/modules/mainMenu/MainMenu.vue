@@ -190,7 +190,13 @@
 			await axios
 				.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale))
 				.then((response) => {
-					this.technicalUserFunctionalities = response.data.technicalUserFunctionalities
+					this.technicalUserFunctionalities = response.data.technicalUserFunctionalities.filter((groupItem: any) => {
+						let childItems = groupItem.items.filter((x) => {
+							let currentHostName = this.licenses.hosts[0].hostName
+							return x.toBeLicensed ? this.licenses.licenses[currentHostName].filter((lic) => lic.product === x.toBeLicensed).length == 1 : true
+						})
+						return childItems.length > 0
+					})
 
 					let responseCommonUserFunctionalities = response.data.commonUserFunctionalities
 					for (var index in responseCommonUserFunctionalities) {

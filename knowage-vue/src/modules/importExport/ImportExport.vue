@@ -60,7 +60,7 @@
 				this.loading = true
 				this.functionalities = []
 
-				let licenses = this.licenses
+				let licenses = this.licenses.licenses
 
 				let currentHostName = this.licenses.hosts[0].hostName
 
