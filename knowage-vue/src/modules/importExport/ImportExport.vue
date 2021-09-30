@@ -52,7 +52,7 @@
 			}
 		},
 		mounted() {
-			this.setFunctionalities()
+			if (this.isEnterprise) this.setFunctionalities()
 		},
 		emits: ['onItemSelected'],
 		methods: {
@@ -142,7 +142,8 @@
 		},
 		computed: {
 			...mapState({
-				user: 'user'
+				user: 'user',
+				isEnterprise: 'isEnterprise'
 			})
 		}
 	})
