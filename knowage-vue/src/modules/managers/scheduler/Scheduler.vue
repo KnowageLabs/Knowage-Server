@@ -9,16 +9,15 @@
                         {{ $t('managers.scheduler.title') }}
                     </template>
                     <template #right>
-                        <FabButton icon="fas fa-plus" @click="showJobDetail" />
+                        <FabButton icon="fas fa-plus" @click="showJobDetail(null, false)" />
                     </template>
                 </Toolbar>
                 <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
-                <KnListBox :options="jobs" :settings="schedulerDescriptor.knListSettings" @click="showJobDetail" @delete.stop="deleteJobConfirm" />
+                <KnListBox :options="jobs" :settings="schedulerDescriptor.knListSettings" @click="showJobDetail($event, false)" @clone.stop="showJobDetail($event, true)" @delete.stop="deleteJobConfirm" />
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
-                <SchedulerDetail v-if="selectedJob" :selectedJob="selectedJob" @close="selectedJob = null"></SchedulerDetail>
-                <SchedulerHint v-else></SchedulerHint>
+                <router-view :selectedJob="selectedJob" @closed="touched = false" />
             </div>
         </div>
     </div>
@@ -30,13 +29,11 @@ import { iPackage } from './Scheduler'
 import axios from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
-import SchedulerDetail from './SchedulerDetail.vue'
-import SchedulerHint from './SchedulerHint.vue'
 import schedulerDescriptor from './SchedulerDescriptor.json'
 
 export default defineComponent({
     name: 'scheduler',
-    components: { FabButton, KnListBox, SchedulerDetail, SchedulerHint },
+    components: { FabButton, KnListBox },
     data() {
         return {
             schedulerDescriptor,
@@ -46,7 +43,14 @@ export default defineComponent({
         }
     },
     async created() {
-        await this.loadJobs()
+        if (this.$route.query.id) {
+            await this.loadSelectJob(this.$route.query.id as string)
+        } else {
+            this.selectedJob = { jobName: '', jobDescription: '', documents: [] } as any
+            await this.loadJobs()
+        }
+
+        // console.log(this.$route.query.id)
     },
     methods: {
         async loadJobs() {
@@ -62,9 +66,17 @@ export default defineComponent({
             this.loading = false
             // console.log('LOADED JOBS: ', this.jobs)
         },
-        showJobDetail(event: any) {
-            // console.log('EVENT: ', event.item)
-            this.selectedJob = event.item ? { ...event.item, edit: true } : { jobName: '', jobDescription: '' }
+        showJobDetail(event: any, clone: boolean) {
+            // console.log('EVENT: ', event)
+            // console.log('CLONE: ', clone)
+            this.selectedJob = event && event.item ? { ...event.item, edit: true } : { jobName: '', jobDescription: '', documents: [] }
+
+            if (clone && this.selectedJob) {
+                this.selectedJob.jobName = this.$t('common.copyOf') + ' ' + this.selectedJob.jobName
+            }
+
+            const path = event && event.item ? `/scheduler/edit-job-schedule?id=${event.item.jobName}&clone=${clone}` : '/scheduler/new-job-schedule'
+            this.$router.push(path)
         },
         async deleteJobConfirm(event: any) {
             // console.log('DELETE EVENT: ', event.item)
@@ -100,6 +112,17 @@ export default defineComponent({
                 await this.loadJobs()
             }
             this.loading = false
+        },
+        async loadSelectJob(name: string) {
+            // console.log('SELECTED JOB NAME: ', name)
+            await this.loadJobs()
+            // console.log('JOBS: ', this.jobs)
+
+            this.selectedJob = this.jobs.find((el: iPackage) => {
+                // console.log(el.jobName + ' === ' + name)
+                return el.jobName === name
+            }) as iPackage
+            // console.log('TEMP JOB: ', this.selectedJob)
         }
     }
 })

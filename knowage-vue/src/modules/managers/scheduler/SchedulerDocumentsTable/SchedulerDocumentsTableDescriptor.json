@@ -8,5 +8,13 @@
         "width": "20%"
     },
     "responsiveLayout": "stack",
-    "rows": 15
+    "rows": 15,
+    "styles": {
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        }
+    }
 }

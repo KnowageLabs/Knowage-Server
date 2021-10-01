@@ -1034,11 +1034,14 @@
             "title": "Roles Management"
         },
         "scheduler": {
-            "hint": "No job selected",
-            "packageDescription": "Package Description",
             "documents": "Documents",
-            "parameters": "Parameters",
+            "hint": "No job selected",
+            "documentsSelected": "documents selected",
+            "selectDocument": "Select document",
+            "noDocumentsInfo": "No scheduled documents. Press add to add one.",
+            "packageDescription": "Package Description",
             "packageName": "Package Name",
+            "parameters": "Parameters",
             "title": "Scheduler"
         },
         "templatePruning": {

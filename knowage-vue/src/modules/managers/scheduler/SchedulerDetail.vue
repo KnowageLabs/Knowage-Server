@@ -1,6 +1,6 @@
 <template>
     <p>{{ selectedJob }}</p>
-    <Card id="scheduler-detail-card" class="p-m-2">
+    <Card v-if="selectedJob" id="scheduler-detail-card" class="p-m-2">
         <template #content>
             <form v-if="job" class="p-fluid p-formgrid p-grid p-m-2">
                 <div class="p-field p-col-6 p-mb-6">
@@ -29,7 +29,7 @@
                     </span>
                 </div>
             </form>
-            <SchedulerDocumentsTable :jobDocuments="job.documents"></SchedulerDocumentsTable>
+            <SchedulerDocumentsTable :jobDocuments="job.documents" @loading="setLoading"></SchedulerDocumentsTable>
         </template>
     </Card>
 </template>
@@ -43,7 +43,7 @@ import SchedulerDocumentsTable from './SchedulerDocumentsTable/SchedulerDocument
 export default defineComponent({
     name: 'scheduler-detail',
     components: { Card, SchedulerDocumentsTable },
-    props: { selectedJob: { type: Object } },
+    props: { id: { type: String }, clone: { type: String }, selectedJob: { type: Object } },
     data() {
         return {
             job: null as iPackage | null,
@@ -58,10 +58,15 @@ export default defineComponent({
     },
     created() {
         this.loadJob()
+        // console.log('CLONE: ', this.clone)
     },
     methods: {
         loadJob() {
             this.job = { ...this.selectedJob } as iPackage
+        },
+        setLoading(loading: boolean) {
+            // console.log('SET LOADING: ', loading)
+            this.loading = loading
         }
     }
 })
