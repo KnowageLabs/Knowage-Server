@@ -17,7 +17,7 @@
                         <div class="kn-list-item" data-test="list-item">
                             <div class="kn-list-item-text">
                                 <span>{{ slotProps.option.name }}</span>
-                                <span class="kn-list-item-text-secondary">{{ formatDate(slotProps.option.dateCreation) }}</span>
+                                <span class="kn-list-item-text-secondary" v-if="slotProps.option.category">{{ slotProps.option.category.valueDescription }}</span>
                             </div>
                             <Button icon="far fa-copy" class="p-button-text p-button-rounded p-button-plain" @click.stop="emitCopyKpi(slotProps.option.id, slotProps.option.version)" data-test="copy-button" />
                             <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteKpiConfirm(slotProps.option.id, slotProps.option.version)" data-test="delete-button" />
