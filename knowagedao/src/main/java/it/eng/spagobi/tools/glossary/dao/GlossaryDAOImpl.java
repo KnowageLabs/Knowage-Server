@@ -1261,7 +1261,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 						tmpPage = elem.getJSONObject("bness_cls").getInt("page");
 						tmp_item_count = elem.getJSONObject("bness_cls").getInt("item_number");
 						if (sizeW > 0) {
-							hql = "" + " SELECT " + "		smbc.bcId as bcId, " + "		smbc.sbiMetaModel as sbiMetaModel" + " FROM "
+							hql = "" + " SELECT " + "		smbc.bcId as bcId, smbc.name as name ," + "		smbc.sbiMetaModel as sbiMetaModel" + " FROM "
 									+ "		SbiMetaBc smbc " + " WHERE " + "		smbc.bcId in ( " + "			SELECT  "
 									+ "				distinct dw.bness_cls.bcId " + "			FROM " + " 			SbiGlBnessClsWlist dw " + "			WHERE "
 									+ "				dw.id.wordId IN (" + listid + ") "
