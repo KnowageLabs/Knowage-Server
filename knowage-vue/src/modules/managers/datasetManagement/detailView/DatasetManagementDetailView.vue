@@ -21,7 +21,7 @@
                     <template #header>
                         <span>{{ $t('kpi.alert.type') }}</span>
                     </template>
-                    <TypeCard :selectedDataset="selectedDataset" :datasetTypes="datasetTypes" @touched="$emit('touched')" />
+                    <TypeCard :selectedDataset="selectedDataset" :datasetTypes="datasetTypes" :dataSources="dataSources" @touched="$emit('touched')" />
                 </TabPanel>
 
                 <TabPanel>
@@ -49,6 +49,7 @@
 </template>
 
 <script lang="ts">
+import useValidate from '@vuelidate/core'
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import detailViewDescriptor from './DatasetManagementDetailViewDescriptor.json'
@@ -79,6 +80,7 @@ export default defineComponent({
     emits: ['close', 'touched'],
     data() {
         return {
+            v$: useValidate() as any,
             detailViewDescriptor,
             loading: false,
             touched: false,

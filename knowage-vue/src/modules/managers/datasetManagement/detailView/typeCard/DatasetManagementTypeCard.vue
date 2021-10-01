@@ -1,101 +1,136 @@
 <template>
-    <Card>
-        <template #content>
-            <div v-if="dataset.dsTypeCd == 'Federated'">
-                <label>{{ $t('managers.datasetManagement.selectDatasetType') }}: </label> <b>Federated</b>
-            </div>
-            <div id="dropdownContainer" v-else>
-                <span class="p-float-label">
-                    <Dropdown
-                        id="scope"
-                        class="kn-material-input"
-                        style="width:100%"
-                        :options="datasetTypes"
-                        optionLabel="VALUE_CD"
-                        optionValue="VALUE_CD"
-                        v-model="v$.dataset.dsTypeCd.$model"
-                        :class="{
-                            'p-invalid': v$.dataset.dsTypeCd.$invalid && v$.dataset.dsTypeCd.$dirty
+    Is invalid: {{ v$.$invalid }}
+    <p></p>
+    DsType: {{ dataset.dsTypeCd }}
+    <div v-if="dataset.dsTypeCd == 'Federated'">
+        <label>{{ $t('managers.datasetManagement.selectDatasetType') }}: </label> <b>Federated</b>
+    </div>
+    <div id="is-not-federated" v-else>
+        <Card>
+            <template #content>
+                <div id="dropdownContainer">
+                    <span class="p-float-label">
+                        <Dropdown
+                            id="scope"
+                            class="kn-material-input"
+                            style="width:100%"
+                            :options="datasetTypes"
+                            optionLabel="VALUE_CD"
+                            optionValue="VALUE_CD"
+                            v-model="v$.dataset.dsTypeCd.$model"
+                            :class="{
+                                'p-invalid': v$.dataset.dsTypeCd.$invalid && v$.dataset.dsTypeCd.$dirty
+                            }"
+                            @before-show="v$.dataset.dsTypeCd.$touch()"
+                            @click="changeTypeWarning"
+                            @change=";(this.dataset.pars = []), $emit('touched')"
+                        />
+                        <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.selectDatasetType') }} * </label>
+                    </span>
+                    <KnValidationMessages
+                        :vComp="v$.dataset.dsTypeCd"
+                        :additionalTranslateParams="{
+                            fieldName: $t('managers.datasetManagement.selectDatasetType')
                         }"
-                        @before-show="v$.dataset.dsTypeCd.$touch()"
-                        @change="$emit('touched')"
                     />
-                    <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.selectDatasetType') }} * </label>
-                </span>
-                <KnValidationMessages
-                    :vComp="v$.dataset.dsTypeCd"
-                    :additionalTranslateParams="{
-                        fieldName: $t('managers.datasetManagement.selectDatasetType')
-                    }"
-                />
-            </div>
-        </template>
-    </Card>
+                </div>
+            </template>
+        </Card>
+        <!-- #region Java Class Type ---------------------------------------------------------------------------------------------------------->
+        <Card v-if="dataset.dsTypeCd == 'Java Class'" class="p-mt-3">
+            <template #content>
+                <div class="p-field">
+                    <span class="p-float-label">
+                        <InputText
+                            id="jClassName"
+                            class="kn-material-input"
+                            type="text"
+                            :style="typeTabDescriptor.style.maxWidth"
+                            v-model.trim="v$.dataset.jClassName.$model"
+                            :class="{
+                                'p-invalid': v$.dataset.jClassName.$invalid && v$.dataset.jClassName.$dirty
+                            }"
+                            @blur="v$.dataset.jClassName.$touch()"
+                            @change="$emit('touched')"
+                        />
+                        <label for="jClassName" class="kn-material-input-label"> {{ $t('managers.lovsManagement.javaClassName') }} * </label>
+                    </span>
+                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.jClassName" :additionalTranslateParams="{ fieldName: $t('managers.lovsManagement.javaClassName') }" />
+                </div>
+            </template>
+        </Card>
+        <!-- #endregion -->
 
-    <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
-        <template #left>
-            <Button v-if="!expandParamsCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandParamsCard = true" />
-            <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandParamsCard = false" />
-            {{ $t('managers.datasetManagement.params') }}
-        </template>
-        <template #right>
-            <Button icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain" @click="addNewParam" />
-            <Button icon="fas fa-eraser" class="p-button-text p-button-rounded p-button-plain" :disabled="!dataset.pars" @click="removeAllParams" />
-        </template>
-    </Toolbar>
-    <Card v-show="expandParamsCard">
-        <template #content>
-            <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.pars" :scrollable="true" scrollHeight="300px" :loading="loading" dataKey="versNum" responsiveLayout="stack" breakpoint="960px">
-                <Column field="name" :header="$t('kpi.alert.name')" :sortable="true">
-                    <template #editor="{data}">
-                        <InputText class="kn-material-input" :style="typeTabDescriptor.style.columnStyle" v-model="data.name" />
-                    </template>
-                </Column>
-                <Column field="type" :header="$t('kpi.alert.type')" :sortable="true">
-                    <template #editor="{data}">
-                        <Dropdown id="scope" class="kn-material-input" :style="typeTabDescriptor.style.columnStyle" :options="datasetParamTypes" optionLabel="value" optionValue="value" v-model="data.type" />
-                    </template>
-                </Column>
-                <Column field="defaultValue" :header="$t('managers.driversManagement.useModes.defaultValue')" :sortable="true">
-                    <template #editor="{data}">
-                        <InputText class="kn-material-input" :style="typeTabDescriptor.style.columnStyle" v-model="data.defaultValue" />
-                    </template>
-                </Column>
-                <Column field="multiValue" :header="$t('managers.profileAttributesManagement.form.multiValue')" :sortable="true">
-                    <template #body="{data}">
-                        <Checkbox v-model="data.multiValue" :binary="true" />
-                    </template>
-                    <template #editor="{data}">
-                        <Checkbox v-model="data.multiValue" :binary="true" />
-                    </template>
-                </Column>
-                <Column @rowClick="false">
-                    <template #body="slotProps">
-                        <Button icon="pi pi-trash" class="p-button-link" @click="deleteParam(slotProps)" />
-                    </template>
-                </Column>
-            </DataTable>
-        </template>
-    </Card>
+        <!-- #region Flat Type ---------------------------------------------------------------------------------------------------------->
+        <Card v-if="dataset.dsTypeCd == 'Flat'" class="p-mt-3">
+            <template #content>
+                <form class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-6">
+                        <span class="p-float-label">
+                            <InputText
+                                id="flatTableName"
+                                class="kn-material-input"
+                                v-model.trim="v$.dataset.flatTableName.$model"
+                                :class="{
+                                    'p-invalid': v$.dataset.flatTableName.$invalid && v$.dataset.flatTableName.$dirty
+                                }"
+                                @blur="v$.dataset.flatTableName.$touch()"
+                                @change="$emit('touched')"
+                            />
+                            <label for="flatTableName" class="kn-material-input-label"> {{ $t('managers.datasetManagement.flatTableName') }} * </label>
+                        </span>
+                        <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.flatTableName" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.flatTableName') }" />
+                    </div>
+                    <div class="p-field p-col-6">
+                        <span class="p-float-label">
+                            <Dropdown
+                                id="dataSourceFlat"
+                                class="kn-material-input"
+                                :options="dataSources"
+                                optionLabel="label"
+                                optionValue="label"
+                                v-model="v$.dataset.dataSourceFlat.$model"
+                                :class="{
+                                    'p-invalid': v$.dataset.dataSourceFlat.$invalid && v$.dataset.dataSourceFlat.$dirty
+                                }"
+                                @before-show="v$.dataset.dataSourceFlat.$touch()"
+                            />
+                            <label for="scope" class="kn-material-input-label"> {{ $t('managers.managers.dataSource') }} * </label>
+                        </span>
+                        <KnValidationMessages
+                            :vComp="v$.dataset.dataSourceFlat"
+                            :additionalTranslateParams="{
+                                fieldName: $t('managers.managers.dataSource')
+                            }"
+                        />
+                    </div>
+                </form>
+            </template>
+        </Card>
+        <!-- #endregion -->
+
+        <CkanDataset v-if="dataset.dsTypeCd == 'Ckan'" :selectedDataset="selectedDataset" />
+        <PropTable :selectedDataset="selectedDataset" />
+    </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { createValidations } from '@/helpers/commons/validationHelper'
+import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
+import PropTable from './DatasetManagementTypeCardPropTable.vue'
+import CkanDataset from './ckanDataset/DatasetManagementCkanDataset.vue'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import typeTabDescriptor from './DatasetManagementTypeCardDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import Checkbox from 'primevue/checkbox'
 
 export default defineComponent({
-    components: { Card, Dropdown, KnValidationMessages, DataTable, Column, Checkbox },
+    components: { Card, Dropdown, KnValidationMessages, PropTable, CkanDataset },
     props: {
         selectedDataset: { type: Object as any },
-        datasetTypes: { type: Array as any }
+        datasetTypes: { type: Array as any },
+        dataSources: { type: Array as any }
     },
     computed: {},
     emits: ['touched'],
@@ -117,31 +152,24 @@ export default defineComponent({
         }
     },
     validations() {
-        return {
-            dataset: createValidations('dataset', typeTabDescriptor.validations.dataset)
+        const javaClassFieldRequired = (value) => {
+            return this.dataset.dsTypeCd != 'Java Class' || value
         }
+        const flatFieldsRequired = (value) => {
+            return this.dataset.dsTypeCd != 'Flat' || value
+        }
+        const customValidators: ICustomValidatorMap = {
+            'java-class-field-required': javaClassFieldRequired,
+            'flat-fields-required': flatFieldsRequired
+        }
+        const validationObject = {
+            dataset: createValidations('dataset', typeTabDescriptor.validations.dataset, customValidators)
+        }
+        return validationObject
     },
     methods: {
-        addNewParam() {
-            this.dataset.pars ? '' : (this.dataset.pars = [])
-            const newParam = { ...typeTabDescriptor.newParam }
-            this.dataset.pars.push(newParam)
-        },
-        deleteParam(removedParam) {
-            this.$confirm.require({
-                message: this.$t('common.toast.deleteMessage'),
-                header: this.$t('common.uppercaseDelete'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => (this.dataset.pars = this.dataset.pars.filter((paramToRemove) => removedParam.data.name !== paramToRemove.name))
-            })
-        },
-        removeAllParams() {
-            this.$confirm.require({
-                message: this.$t('managers.datasetManagement.deleteAllParamsMsg'),
-                header: this.$t('managers.datasetManagement.deleteAllParams'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => (this.dataset.pars = [])
-            })
+        changeTypeWarning() {
+            this.$store.commit('setInfo', { title: this.$t('documentExecution.registry.warning'), msg: this.$t('managers.datasetManagement.changeTypeMsg') })
         }
     }
 })

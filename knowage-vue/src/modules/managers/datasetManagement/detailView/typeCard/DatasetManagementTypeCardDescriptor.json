@@ -26,6 +26,9 @@
     "style": {
         "columnStyle": {
             "height": "25px"
+        },
+        "maxWidth": {
+            "width": "100%"
         }
     },
     "validations": {
@@ -35,6 +38,39 @@
                 "validators": [
                     {
                         "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "jClassName",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "java-class-field-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "flatTableName",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "flat-fields-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "dataSourceFlat",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "flat-fields-required"
+                        }
                     }
                 ]
             }
