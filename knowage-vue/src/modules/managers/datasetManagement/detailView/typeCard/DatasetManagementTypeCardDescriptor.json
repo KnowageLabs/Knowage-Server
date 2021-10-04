@@ -1,28 +1,4 @@
 {
-    "datasetParamTypes": [
-        {
-            "name": "String",
-            "value": "String"
-        },
-        {
-            "name": "Number",
-            "value": "Number"
-        },
-        {
-            "name": "Raw",
-            "value": "Raw"
-        },
-        {
-            "name": "Generic",
-            "value": "Generic"
-        }
-    ],
-    "newParam": {
-        "defaultValue": "",
-        "multiValue": false,
-        "name": "",
-        "type": ""
-    },
     "style": {
         "columnStyle": {
             "height": "25px"

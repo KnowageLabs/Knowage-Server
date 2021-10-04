@@ -1,4 +1,5 @@
 <template>
+    <!-- MAIN COMPONENT invalid: {{ v$.$invalid }} -->
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left>{{ datasetInList.label }}</template>
         <template #right>
@@ -7,44 +8,42 @@
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('close')" />
         </template>
     </Toolbar>
-    <div class="p-d-flex p-flex-row">
-        <div class="card kn-flex">
-            <TabView class="tabview-custom" data-test="tab-view">
-                <TabPanel>
-                    <template #header>
-                        <span>{{ $t('managers.mondrianSchemasManagement.detail.title') }}</span>
-                    </template>
-                    <DetailCard :scopeTypes="scopeTypes" :categoryTypes="categoryTypes" :selectedDataset="selectedDataset" :selectedDatasetVersions="selectedDatasetVersions" :loading="loading" @reloadVersions="getSelectedDatasetVersions" @touched="$emit('touched')" />
-                </TabPanel>
+    <div class="datasetDetail">
+        <TabView class="tabview-custom" data-test="tab-view">
+            <TabPanel>
+                <template #header>
+                    <span>{{ $t('managers.mondrianSchemasManagement.detail.title') }}</span>
+                </template>
+                <DetailCard :scopeTypes="scopeTypes" :categoryTypes="categoryTypes" :selectedDataset="selectedDataset" :selectedDatasetVersions="selectedDatasetVersions" :loading="loading" @reloadVersions="getSelectedDatasetVersions" @touched="$emit('touched')" />
+            </TabPanel>
 
-                <TabPanel>
-                    <template #header>
-                        <span>{{ $t('kpi.alert.type') }}</span>
-                    </template>
-                    <TypeCard :selectedDataset="selectedDataset" :datasetTypes="datasetTypes" :dataSources="dataSources" @touched="$emit('touched')" />
-                </TabPanel>
+            <TabPanel>
+                <template #header>
+                    <span>{{ $t('kpi.alert.type') }}</span>
+                </template>
+                <TypeCard :selectedDataset="selectedDataset" :datasetTypes="datasetTypes" :dataSources="dataSources" :businessModels="businessModels" :parentValid="v$.$invalid" @touched="$emit('touched')" />
+            </TabPanel>
 
-                <TabPanel>
-                    <template #header>
-                        <span>{{ $t('kpi.measureDefinition.metadata') }}</span>
-                    </template>
-                </TabPanel>
+            <TabPanel>
+                <template #header>
+                    <span>{{ $t('kpi.measureDefinition.metadata') }}</span>
+                </template>
+            </TabPanel>
 
-                <TabPanel v-if="selectedDataset.dsTypeCd == 'Query'">
-                    <template #header>
-                        <span>{{ $t('managers.glossary.glossaryUsage.link') }}</span>
-                    </template>
-                    <LinkCard :selectedDataset="selectedDataset" :metaSourceResource="metaSourceResource" @addTables="onAddLinkedTables" @removeTables="onRemoveLinkedTables" />
-                </TabPanel>
+            <TabPanel v-if="selectedDataset.dsTypeCd == 'Query'">
+                <template #header>
+                    <span>{{ $t('managers.glossary.glossaryUsage.link') }}</span>
+                </template>
+                <LinkCard :selectedDataset="selectedDataset" :metaSourceResource="metaSourceResource" @addTables="onAddLinkedTables" @removeTables="onRemoveLinkedTables" />
+            </TabPanel>
 
-                <TabPanel>
-                    <template #header>
-                        <span>{{ $t('cron.advanced') }}</span>
-                    </template>
-                    <AdvancedCard :selectedDataset="selectedDataset" :transformationDataset="transformationDataset" @touched="$emit('touched')" />
-                </TabPanel>
-            </TabView>
-        </div>
+            <TabPanel>
+                <template #header>
+                    <span>{{ $t('cron.advanced') }}</span>
+                </template>
+                <AdvancedCard :selectedDataset="selectedDataset" :transformationDataset="transformationDataset" @touched="$emit('touched')" />
+            </TabPanel>
+        </TabView>
     </div>
 </template>
 
@@ -100,7 +99,6 @@ export default defineComponent({
     },
     validations() {},
     methods: {
-        //#region ===================== Get All Data and Format ====================================================
         async getSelectedDataset() {
             axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.id}`).then((response) => {
                 this.selectedDataset = response.data[0] ? { ...response.data[0] } : {}
@@ -119,7 +117,6 @@ export default defineComponent({
             await this.getSelectedDataset()
             await this.getSelectedDatasetVersions()
         },
-        //#endregion ================================================================================================
 
         onAddLinkedTables(event) {
             this.tablesToAdd = event
@@ -132,3 +129,11 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss" scoped>
+.datasetDetail {
+    overflow: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+</style>

@@ -92,7 +92,7 @@
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
             <DataTable v-if="!loading" class="p-datatable-sm kn-table" :value="selectedDatasetVersions" :scrollable="true" scrollHeight="400px" :loading="loading" dataKey="versNum" responsiveLayout="stack" breakpoint="960px">
                 <Column field="userIn" :header="$t('managers.datasetManagement.creationUser')" :sortable="true" />
-                <Column field="type" :header="$t('common.type')" :sortable="true" />
+                <Column field="type" :header="$t('importExport.gallery.type')" :sortable="true" />
                 <Column field="dateIn" :header="$t('managers.mondrianSchemasManagement.headers.creationDate')" dataType="date" :sortable="true">
                     <template #body="{data}">
                         {{ moment(data.dateIn).format('YYYY[/]MM[/]DD,  hh:mm:ss') }}

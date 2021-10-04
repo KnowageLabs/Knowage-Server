@@ -23,7 +23,7 @@
                             }"
                             @before-show="v$.dataset.dsTypeCd.$touch()"
                             @click="changeTypeWarning"
-                            @change=";(this.dataset.pars = []), $emit('touched')"
+                            @change=";((this.dataset.pars = []), (this.dataset.restJsonPathAttributes = []), (this.dataset.restRequestHeaders = [])), $emit('touched')"
                         />
                         <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.selectDatasetType') }} * </label>
                     </span>
@@ -110,15 +110,19 @@
         <!-- #endregion -->
 
         <CkanDataset v-if="dataset.dsTypeCd == 'Ckan'" :selectedDataset="selectedDataset" />
-        <PropTable :selectedDataset="selectedDataset" />
+        <QbeDataset v-if="dataset.dsTypeCd == 'Qbe'" :selectedDataset="selectedDataset" :businessModels="businessModels" :dataSources="dataSources" :parentValid="parentValid" />
+        <RestDataset v-if="dataset.dsTypeCd == 'REST'" :selectedDataset="selectedDataset" />
+        <ParamTable v-if="dataset.dsTypeCd && dataset.dsTypeCd != 'File' && dataset.dsTypeCd != 'Flat'" :selectedDataset="selectedDataset" />
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import PropTable from './DatasetManagementTypeCardPropTable.vue'
+import ParamTable from './tables/DatasetManagementParamTable.vue'
 import CkanDataset from './ckanDataset/DatasetManagementCkanDataset.vue'
+import QbeDataset from './qbeDataset/DatasetManagementQbeDataset.vue'
+import RestDataset from './restDataset/DatasetManagementRestDataset.vue'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import typeTabDescriptor from './DatasetManagementTypeCardDescriptor.json'
@@ -126,11 +130,13 @@ import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
 
 export default defineComponent({
-    components: { Card, Dropdown, KnValidationMessages, PropTable, CkanDataset },
+    components: { Card, Dropdown, KnValidationMessages, ParamTable, CkanDataset, QbeDataset, RestDataset },
     props: {
+        parentValid: { type: Boolean },
         selectedDataset: { type: Object as any },
         datasetTypes: { type: Array as any },
-        dataSources: { type: Array as any }
+        dataSources: { type: Array as any },
+        businessModels: { type: Array as any }
     },
     computed: {},
     emits: ['touched'],
@@ -139,8 +145,7 @@ export default defineComponent({
             v$: useValidate() as any,
             typeTabDescriptor,
             dataset: {} as any,
-            expandParamsCard: true,
-            datasetParamTypes: typeTabDescriptor.datasetParamTypes
+            expandParamsCard: true
         }
     },
     created() {
@@ -170,7 +175,8 @@ export default defineComponent({
     methods: {
         changeTypeWarning() {
             this.$store.commit('setInfo', { title: this.$t('documentExecution.registry.warning'), msg: this.$t('managers.datasetManagement.changeTypeMsg') })
-        }
+        },
+        clearAllTables() {}
     }
 })
 </script>

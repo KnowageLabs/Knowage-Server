@@ -12,20 +12,20 @@
     </Toolbar>
     <Card v-show="expandParamsCard">
         <template #content>
-            <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.pars" :scrollable="true" scrollHeight="300px" dataKey="versNum" responsiveLayout="stack" breakpoint="960px">
+            <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.pars" :scrollable="true" scrollHeight="250px" dataKey="versNum" responsiveLayout="stack" breakpoint="960px">
                 <Column field="name" :header="$t('kpi.alert.name')" :sortable="true">
                     <template #editor="{data}">
-                        <InputText class="kn-material-input" :style="typeTabDescriptor.style.columnStyle" v-model="data.name" />
+                        <InputText class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.name" />
                     </template>
                 </Column>
                 <Column field="type" :header="$t('kpi.alert.type')" :sortable="true">
                     <template #editor="{data}">
-                        <Dropdown id="scope" class="kn-material-input" :style="typeTabDescriptor.style.columnStyle" :options="datasetParamTypes" optionLabel="value" optionValue="value" v-model="data.type" />
+                        <Dropdown id="scope" class="kn-material-input" :style="tableDescriptor.style.columnStyle" :options="datasetParamTypes" optionLabel="value" optionValue="value" v-model="data.type" />
                     </template>
                 </Column>
                 <Column field="defaultValue" :header="$t('managers.driversManagement.useModes.defaultValue')" :sortable="true">
                     <template #editor="{data}">
-                        <InputText class="kn-material-input" :style="typeTabDescriptor.style.columnStyle" v-model="data.defaultValue" />
+                        <InputText class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.defaultValue" />
                     </template>
                 </Column>
                 <Column field="multiValue" :header="$t('managers.profileAttributesManagement.form.multiValue')" :sortable="true">
@@ -48,7 +48,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import typeTabDescriptor from './DatasetManagementTypeCardDescriptor.json'
+import tableDescriptor from './DatasetManagementTablesDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
@@ -62,7 +62,7 @@ export default defineComponent({
     },
     computed: {
         disableDeleteAll() {
-            if (this.dataset.pars) {
+            if (!this.dataset.pars || this.dataset['pars'].length == 0) {
                 return true
             } else {
                 return false
@@ -72,10 +72,10 @@ export default defineComponent({
     emits: ['touched'],
     data() {
         return {
-            typeTabDescriptor,
+            tableDescriptor,
             dataset: {} as any,
             expandParamsCard: true,
-            datasetParamTypes: typeTabDescriptor.datasetParamTypes
+            datasetParamTypes: tableDescriptor.datasetParamTypes
         }
     },
     created() {
@@ -89,7 +89,7 @@ export default defineComponent({
     methods: {
         addNewParam() {
             this.dataset.pars ? '' : (this.dataset.pars = [])
-            const newParam = { ...typeTabDescriptor.newParam }
+            const newParam = { ...tableDescriptor.newParam }
             this.dataset.pars.push(newParam)
         },
         deleteParam(removedParam) {

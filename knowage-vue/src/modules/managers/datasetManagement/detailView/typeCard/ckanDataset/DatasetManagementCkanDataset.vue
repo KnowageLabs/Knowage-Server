@@ -193,9 +193,7 @@ import Card from 'primevue/card'
 export default defineComponent({
     components: { Card, Dropdown, KnValidationMessages },
     props: {
-        selectedDataset: { type: Object as any },
-        datasetTypes: { type: Array as any },
-        dataSources: { type: Array as any }
+        selectedDataset: { type: Object as any }
     },
     computed: {},
     emits: ['touched'],
