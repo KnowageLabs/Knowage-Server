@@ -25,7 +25,7 @@
 	export default defineComponent({
 		components: { ConfirmDialog, KnOverlaySpinnerPanel, MainMenu, Toast },
 
-		beforeMount() {
+		beforeCreate() {
 			axios
 				.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/currentuser')
 				.then((response) => {
@@ -34,7 +34,7 @@
 						currentUser.sessionRole = localStorage.getItem('sessionRole')
 					} else if (currentUser.defaultRole) currentUser.sessionRole = currentUser.defaultRole
 
-					store.commit('setUser', currentUser)
+					store.dispatch('initializeUser', currentUser)
 
 					let responseLocale = response.data.locale
 					let storedLocale = responseLocale
@@ -65,7 +65,6 @@
 						},
 						(error) => console.error(error)
 					)
-
 					this.$emit('update:loading', false)
 				})
 				.catch(function(error) {
@@ -73,6 +72,13 @@
 						console.log(error.response.data)
 						console.log(error.response.status)
 						console.log(error.response.headers)
+					}
+				})
+				.finally(() => {
+					if (this.isEnterprise) {
+						axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license').then((response) => {
+							store.commit('setLicenses', response.data)
+						})
 					}
 				})
 		},
@@ -95,6 +101,9 @@
 						json.downloads.count.alreadyDownloaded = alreadyDownloaded
 
 						store.commit('setDownloads', json.downloads)
+
+						this.newsDownloadHandler()
+						this.loadInternationalization()
 					})
 					.catch(function(error) {
 						if (error.response) {
@@ -103,12 +112,12 @@
 							console.log(error.response.headers)
 						}
 					})
-				this.newsDownloadHandler()
-				this.loadInternationalization()
 			},
 			async loadInternationalization() {
 				let currentLocale = localStorage.getItem('locale') ? localStorage.getItem('locale') : store.state.locale
-				currentLocale = currentLocale.replaceAll('_', '-')
+				console.log(currentLocale)
+				if (currentLocale) currentLocale = currentLocale.replaceAll('_', '-')
+				else currentLocale = 'en-US'
 				await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization?currLanguage=' + currentLocale).then((response) => store.commit('setInternationalization', response.data))
 			},
 			newsDownloadHandler() {
@@ -126,10 +135,26 @@
 					}
 				}
 				WEB_SOCKET.onopen = function(event) {
-					this.update(event)
+					if (event.data) {
+						let json = JSON.parse(event.data)
+						if (json.news) {
+							store.commit('setNews', json.news)
+						}
+						if (json.downloads) {
+							store.commit('setDownloads', json.downloads)
+						}
+					}
 				}
 				WEB_SOCKET.onmessage = function(event) {
-					this.update(event)
+					if (event.data) {
+						let json = JSON.parse(event.data)
+						if (json.news) {
+							store.commit('setNews', json.news)
+						}
+						if (json.downloads) {
+							store.commit('setDownloads', json.downloads)
+						}
+					}
 				}
 			}
 		},
@@ -138,7 +163,8 @@
 				error: 'error',
 				info: 'info',
 				user: 'user',
-				loading: 'loading'
+				loading: 'loading',
+				isEnterprise: 'isEnterprise'
 			})
 		},
 		watch: {

@@ -104,7 +104,7 @@
 
 					if (item.conditionedView === 'news' && this.news && this.news.count.total > 0) return true
 
-					if (item.conditionedView === 'roleSelection' && this.user.roles.length > 1) return true
+					if (item.conditionedView === 'roleSelection' && this.user && this.user.roles.length > 1) return true
 
 					return false
 				} else {
@@ -190,7 +190,13 @@
 			await axios
 				.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale))
 				.then((response) => {
-					this.technicalUserFunctionalities = response.data.technicalUserFunctionalities
+					this.technicalUserFunctionalities = response.data.technicalUserFunctionalities.filter((groupItem: any) => {
+						let childItems = groupItem.items.filter((x) => {
+							let currentHostName = this.licenses.hosts[0] ? this.licenses.hosts[0].hostName : undefined
+							return x.toBeLicensed && currentHostName && this.licenses[currentHostName] ? this.licenses.licenses[currentHostName].filter((lic) => lic.product === x.toBeLicensed).length == 1 : true
+						})
+						return childItems.length > 0
+					})
 
 					let responseCommonUserFunctionalities = response.data.commonUserFunctionalities
 					for (var index in responseCommonUserFunctionalities) {
@@ -231,16 +237,22 @@
 				downloads: 'downloads',
 				locale: 'locale',
 				news: 'news',
-				stateHomePage: 'homePage'
+				stateHomePage: 'homePage',
+				isEnterprise: 'isEnterprise',
+				licenses: 'licenses'
 			})
 		},
 		watch: {
-			download(newDownload, oldDownload) {
-				if (oldDownload != this.downloads) this.downloads = newDownload
+			downloads(newDownload, oldDownload) {
+				if (oldDownload != this.downloads) {
+					this.downloads = newDownload
+				}
 				this.updateNewsAndDownload()
 			},
 			news(newNews, oldNews) {
-				if (oldNews != this.news) this.news = newNews
+				if (oldNews != this.news) {
+					this.news = newNews
+				}
 				this.updateNewsAndDownload()
 			}
 		}
