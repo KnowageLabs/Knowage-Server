@@ -10,6 +10,7 @@
                 class="p-datatable-sm kn-table"
                 dataKey="id"
                 v-model:filters="filters"
+                filterDisplay="menu"
                 :globalFilterFields="functionsCatalogDatasetTableDescriptor.globalFilterFields"
                 :responsiveLayout="functionsCatalogDatasetTableDescriptor.responsiveLayout"
                 :breakpoint="functionsCatalogDatasetTableDescriptor.breakpoint"
@@ -28,7 +29,11 @@
                         </span>
                     </div>
                 </template>
-                <Column class="kn-truncated" :style="col.style" v-for="col of functionsCatalogDatasetTableDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"> </Column>
+                <Column class="kn-truncated" :style="col.style" v-for="col of functionsCatalogDatasetTableDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true">
+                    <template #filter="{filterModel}">
+                        <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                    </template>
+                </Column>
             </DataTable>
         </template>
     </Card>
@@ -36,6 +41,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { FilterOperator } from 'primevue/api'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
@@ -48,7 +54,20 @@ export default defineComponent({
     props: { datasets: { type: Array } },
     emits: ['selected'],
     data() {
-        return { functionsCatalogDatasetTableDescriptor, filters: { global: [filterDefault] } as Object }
+        return {
+            functionsCatalogDatasetTableDescriptor,
+            filters: {
+                global: [filterDefault],
+                label: {
+                    operator: FilterOperator.AND,
+                    constraints: [filterDefault]
+                },
+                dsType: {
+                    operator: FilterOperator.AND,
+                    constraints: [filterDefault]
+                }
+            } as Object
+        }
     },
     async created() {},
     methods: {}
