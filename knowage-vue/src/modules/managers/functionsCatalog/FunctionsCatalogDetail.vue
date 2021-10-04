@@ -19,6 +19,7 @@
             <TabPanel>
                 <template #header>
                     <span>{{ $t('managers.functionsCatalog.general') }}</span>
+                    <Badge class="p-ml-2" severity="danger" v-if="invalidGeneral"></Badge>
                 </template>
 
                 <FunctionCatalogGeneralTab :propFunction="selectedFunction" :readonly="readonly" :functionTypes="filteredFunctionTypes" :propKeywords="keywords"></FunctionCatalogGeneralTab>
@@ -26,6 +27,7 @@
             <TabPanel>
                 <template #header>
                     <span>{{ $t('managers.functionsCatalog.input') }}</span>
+                    <Badge class="p-ml-2" severity="danger" v-if="invalidInput"></Badge>
                 </template>
 
                 <FunctionCatalogInputTab :propFunction="selectedFunction" :readonly="readonly"></FunctionCatalogInputTab>
@@ -33,13 +35,14 @@
             <TabPanel>
                 <template #header>
                     <span>{{ $t('managers.functionsCatalog.script') }}</span>
+                    <Badge class="p-ml-2" severity="danger" v-if="invalidCode"></Badge>
                 </template>
-
                 <FunctionCatalogScriptTab :propFunction="selectedFunction" :readonly="readonly"></FunctionCatalogScriptTab>
             </TabPanel>
             <TabPanel>
                 <template #header>
                     <span>{{ $t('managers.functionsCatalog.output') }}</span>
+                    <Badge class="p-ml-2" severity="danger" v-if="invalidOutput"></Badge>
                 </template>
 
                 <FunctionCatalogOutputTab :propFunction="selectedFunction" :readonly="readonly"></FunctionCatalogOutputTab>
@@ -54,6 +57,7 @@
 import { defineComponent } from 'vue'
 import { iFunction, iFunctionType, iInputColumn, iInputVariable, iOutputColumn } from './FunctionsCatalog'
 import axios from 'axios'
+import Badge from 'primevue/badge'
 import Dialog from 'primevue/dialog'
 import functionsCatalogDetailDescriptor from './FunctionsCatalogDetailDescriptor.json'
 import FunctionCatalogGeneralTab from './tabs/FunctionCatalogGeneralTab/FunctionCatalogGeneralTab.vue'
@@ -66,7 +70,7 @@ import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'functions-catalog-detail',
-    components: { Dialog, FunctionCatalogGeneralTab, FunctionCatalogInputTab, FunctionCatalogScriptTab, FunctionCatalogOutputTab, FunctionCatalogWarningDialog, TabView, TabPanel },
+    components: { Badge, Dialog, FunctionCatalogGeneralTab, FunctionCatalogInputTab, FunctionCatalogScriptTab, FunctionCatalogOutputTab, FunctionCatalogWarningDialog, TabView, TabPanel },
     props: {
         visible: { type: Boolean },
         propFunction: { type: Object },
@@ -98,6 +102,18 @@ export default defineComponent({
         // TODO proveriti uslov
         readonly(): boolean {
             return !(this.$store.state as any).user.isSuperadmin || this.selectedFunction?.owner !== (this.$store.state as any).user.userId
+        },
+        invalidGeneral(): boolean {
+            return !this.validateFunctionInfo()
+        },
+        invalidInput(): boolean {
+            return !this.validateInputColumns() || !this.validateInputVariables()
+        },
+        invalidCode(): boolean {
+            return !this.validateCode()
+        },
+        invalidOutput(): boolean {
+            return !this.validateOutputColumns()
         }
     },
     created() {

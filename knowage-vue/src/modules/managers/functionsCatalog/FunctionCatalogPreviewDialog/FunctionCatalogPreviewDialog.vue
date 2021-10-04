@@ -90,6 +90,7 @@ export default defineComponent({
             console.log('COLUMNS GOOD? : ', this.checkColumnsConfiguration())
             console.log('VARIABLES GOOD? : ', this.checkVariablesConfiguration())
             console.log('ENVIRONMENT GOOD? : ', this.environment ? true : false)
+            console.log('ENVIRONMENT: ', this.environment)
             let valid = true
             this.warningMessage = null
 

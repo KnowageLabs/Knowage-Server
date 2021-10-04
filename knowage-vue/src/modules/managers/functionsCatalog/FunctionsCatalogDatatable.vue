@@ -35,8 +35,8 @@
         </Column>
         <Column :style="functionsCatalogDatatableDescriptor.table.iconColumn.style">
             <template #body="slotProps">
-                <Button icon="fa fa-play-circle" class="p-button-link" v-tooltip.top="$t('managers.functionsCatalog.executePreview')" @click="previewFunction(slotProps.data)" />
-                <Button v-if="canDelete(slotProps.data)" icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click="deleteFunctionConfirm(slotProps.data.id)" />
+                <Button icon="fa fa-play-circle" class="p-button-link" v-tooltip.top="$t('managers.functionsCatalog.executePreview')" @click.stop="previewFunction(slotProps.data)" />
+                <Button v-if="canDelete(slotProps.data)" icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click.stop="deleteFunctionConfirm(slotProps.data.id)" />
             </template>
         </Column>
     </DataTable>

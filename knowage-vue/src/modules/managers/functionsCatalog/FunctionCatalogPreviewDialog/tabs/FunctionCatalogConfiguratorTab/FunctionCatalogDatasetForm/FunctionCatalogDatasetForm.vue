@@ -2,14 +2,22 @@
     <div class="p-d-flex p-flex-row">
         <Card id="form-container" class="p-m-2">
             <template #content>
-                <div class="p-m-2">
-                    <label class="kn-material-input-label"> {{ $t('common.description') }}</label>
-                    <p v-html="selectedFunction.description"></p>
-                </div>
-                <div v-if="selectedFunction.benchmarks" class="p-m-2">
-                    <label class="kn-material-input-label"> {{ $t('managers.functionsCatalog.benchmarks') }}</label>
-                    <p v-html="selectedFunction.benchmarks"></p>
-                </div>
+                <Accordion class="p-m-2" :activeIndex="0">
+                    <AccordionTab :header="$t('common.description')">
+                        <div>
+                            <label class="kn-material-input-label"> {{ $t('common.description') }}</label>
+                            <p v-html="selectedFunction.description"></p>
+                        </div>
+                    </AccordionTab>
+                </Accordion>
+                <Accordion v-if="selectedFunction.benchmarks" class="p-m-2">
+                    <AccordionTab :header="$t('managers.functionsCatalog.benchmarks')">
+                        <div>
+                            <label class="kn-material-input-label"> {{ $t('managers.functionsCatalog.benchmarks') }}</label>
+                            <p v-html="selectedFunction.benchmarks"></p>
+                        </div>
+                    </AccordionTab>
+                </Accordion>
                 <div v-if="selectedFunction.inputColumns.length > 0" class="p-m-2">
                     <label class="kn-material-input-label"> {{ $t('managers.functionsCatalog.columnsSettings') }}</label>
                     <FunctionCatalogDatasetFormColumnsTable :columns="selectedFunction.inputColumns" :datasetColumns="datasetColumns"></FunctionCatalogDatasetFormColumnsTable>
@@ -34,6 +42,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iDataset, iFunction, iInputColumn } from '../../../../FunctionsCatalog'
+import Accordion from 'primevue/accordion'
+import AccordionTab from 'primevue/accordiontab'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 import functionCatalogDatasetFormDescriptor from './FunctionCatalogDatasetFormDescriptor.json'
@@ -44,7 +54,7 @@ import FunctionCatalogParametersForm from './FunctionCatalogParametersForm.vue'
 
 export default defineComponent({
     name: 'function-catalog-dateset-form',
-    components: { Card, Dropdown, FunctionCatalogDatasetFormColumnsTable, FunctionCatalogDatasetFormVariablesTable, FunctionCatalogDatasetEnvironmentTable, FunctionCatalogParametersForm },
+    components: { Accordion, AccordionTab, Card, Dropdown, FunctionCatalogDatasetFormColumnsTable, FunctionCatalogDatasetFormVariablesTable, FunctionCatalogDatasetEnvironmentTable, FunctionCatalogParametersForm },
     props: { selectedDataset: { type: Object }, propFunction: { type: Object }, pythonEnvironments: { type: Array }, rEnvironments: { type: Array }, libraries: { type: Array } },
     emits: ['environmentSelected'],
     data() {
