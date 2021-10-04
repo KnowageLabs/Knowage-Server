@@ -2,14 +2,14 @@
     <DataTable
         :value="functions"
         :paginator="true"
-        :rows="15"
+        :rows="functionsCatalogDatatableDescriptor.rows"
         :loading="loading"
         class="p-datatable-sm kn-table"
         dataKey="id"
         v-model:filters="filters"
         :globalFilterFields="functionsCatalogDatatableDescriptor.globalFilterFields"
-        responsiveLayout="stack"
-        breakpoint="960px"
+        :responsiveLayout="functionsCatalogDatatableDescriptor.responsiveLayout"
+        :breakpoint="functionsCatalogDatatableDescriptor.breakpoint"
         @rowClick="$emit('selected', $event.data)"
     >
         <template #loading>
@@ -24,7 +24,7 @@
             <div class="table-header p-d-flex">
                 <span class="p-input-icon-left p-mr-3 p-col-12">
                     <i class="pi pi-search" />
-                    <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
+                    <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" />
                 </span>
             </div>
         </template>
@@ -36,7 +36,7 @@
         <Column :style="functionsCatalogDatatableDescriptor.table.iconColumn.style">
             <template #body="slotProps">
                 <Button icon="fa fa-play-circle" class="p-button-link" v-tooltip.top="$t('managers.functionsCatalog.executePreview')" @click.stop="previewFunction(slotProps.data)" />
-                <Button v-if="canDelete(slotProps.data)" icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click.stop="deleteFunctionConfirm(slotProps.data.id)" />
+                <Button v-if="canDelete(slotProps.data)" icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click.stop="deleteFunctionConfirm(slotProps.data.id)" :data-test="'delete-button-' + slotProps.data.id" />
             </template>
         </Column>
     </DataTable>
@@ -75,6 +75,12 @@ export default defineComponent({
             this.loadFunctions()
         }
     },
+    computed: {
+        canManageFunctionalities(): boolean {
+            const index = this.user?.functionalities?.findIndex((el: string) => el === 'FunctionsCatalogManagement')
+            return index !== -1
+        }
+    },
     async created() {
         this.setLoading()
         this.loadFunctions()
@@ -85,17 +91,14 @@ export default defineComponent({
         },
         loadFunctions() {
             this.functions = [...(this.items as iFunction[])]
-            // console.log('DATATABLE - loadFunctions() - LOADED FUNCTIOSN: ', this.functions)
         },
         previewFunction(tempFunction: iFunction) {
-            console.log('previewFunction() event: ', tempFunction)
             this.$emit('preview', tempFunction)
         },
         canDelete(tempFunction: iFunction) {
-            return this.user?.isSuperadmin || tempFunction?.owner === this.user?.userId
+            return this.canManageFunctionalities || tempFunction?.owner === this.user?.userId
         },
         deleteFunctionConfirm(functionId: string) {
-            console.log('deleteFunctionConfirm() event: ', event)
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
                 header: this.$t('common.toast.deleteTitle'),

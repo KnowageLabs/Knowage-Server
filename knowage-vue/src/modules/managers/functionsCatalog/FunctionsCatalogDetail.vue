@@ -13,8 +13,6 @@
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         </template>
 
-        <h4>{{ selectedFunction }}</h4>
-
         <TabView>
             <TabPanel>
                 <template #header>
@@ -22,7 +20,7 @@
                     <Badge class="p-ml-2" severity="danger" v-if="invalidGeneral"></Badge>
                 </template>
 
-                <FunctionCatalogGeneralTab :propFunction="selectedFunction" :readonly="readonly" :functionTypes="filteredFunctionTypes" :propKeywords="keywords"></FunctionCatalogGeneralTab>
+                <FunctionsCatalogGeneralTab :propFunction="selectedFunction" :readonly="readonly" :functionTypes="filteredFunctionTypes" :propKeywords="keywords"></FunctionsCatalogGeneralTab>
             </TabPanel>
             <TabPanel>
                 <template #header>
@@ -30,14 +28,14 @@
                     <Badge class="p-ml-2" severity="danger" v-if="invalidInput"></Badge>
                 </template>
 
-                <FunctionCatalogInputTab :propFunction="selectedFunction" :readonly="readonly"></FunctionCatalogInputTab>
+                <FunctionsCatalogInputTab :propFunction="selectedFunction" :readonly="readonly"></FunctionsCatalogInputTab>
             </TabPanel>
             <TabPanel>
                 <template #header>
                     <span>{{ $t('managers.functionsCatalog.script') }}</span>
                     <Badge class="p-ml-2" severity="danger" v-if="invalidCode"></Badge>
                 </template>
-                <FunctionCatalogScriptTab :propFunction="selectedFunction" :readonly="readonly"></FunctionCatalogScriptTab>
+                <FunctionsCatalogScriptTab :propFunction="selectedFunction" :readonly="readonly"></FunctionsCatalogScriptTab>
             </TabPanel>
             <TabPanel>
                 <template #header>
@@ -45,11 +43,11 @@
                     <Badge class="p-ml-2" severity="danger" v-if="invalidOutput"></Badge>
                 </template>
 
-                <FunctionCatalogOutputTab :propFunction="selectedFunction" :readonly="readonly"></FunctionCatalogOutputTab>
+                <FunctionsCatalogOutputTab :propFunction="selectedFunction" :readonly="readonly"></FunctionsCatalogOutputTab>
             </TabPanel>
         </TabView>
 
-        <FunctionCatalogWarningDialog :visible="warningVisible" :missingFields="missingFields" @close="warningVisible = false"></FunctionCatalogWarningDialog>
+        <FunctionsCatalogWarningDialog :visible="warningVisible" :missingFields="missingFields" @close="warningVisible = false"></FunctionsCatalogWarningDialog>
     </Dialog>
 </template>
 
@@ -60,17 +58,17 @@ import axios from 'axios'
 import Badge from 'primevue/badge'
 import Dialog from 'primevue/dialog'
 import functionsCatalogDetailDescriptor from './FunctionsCatalogDetailDescriptor.json'
-import FunctionCatalogGeneralTab from './tabs/FunctionCatalogGeneralTab/FunctionCatalogGeneralTab.vue'
-import FunctionCatalogInputTab from './tabs/FunctionCatalogInputTab/FunctionCatalogInputTab.vue'
-import FunctionCatalogScriptTab from './tabs/FunctionCatalogScriptTab/FunctionCatalogScriptTab.vue'
-import FunctionCatalogOutputTab from './tabs/FunctionCatalogOutputTab/FunctionCatalogOutputTab.vue'
-import FunctionCatalogWarningDialog from './FunctionCatalogWarningDialog.vue'
+import FunctionsCatalogGeneralTab from './tabs/FunctionsCatalogGeneralTab/FunctionsCatalogGeneralTab.vue'
+import FunctionsCatalogInputTab from './tabs/FunctionsCatalogInputTab/FunctionsCatalogInputTab.vue'
+import FunctionsCatalogScriptTab from './tabs/FunctionsCatalogScriptTab/FunctionsCatalogScriptTab.vue'
+import FunctionsCatalogOutputTab from './tabs/FunctionsCatalogOutputTab/FunctionsCatalogOutputTab.vue'
+import FunctionsCatalogWarningDialog from './FunctionsCatalogWarningDialog.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'functions-catalog-detail',
-    components: { Badge, Dialog, FunctionCatalogGeneralTab, FunctionCatalogInputTab, FunctionCatalogScriptTab, FunctionCatalogOutputTab, FunctionCatalogWarningDialog, TabView, TabPanel },
+    components: { Badge, Dialog, FunctionsCatalogGeneralTab, FunctionsCatalogInputTab, FunctionsCatalogScriptTab, FunctionsCatalogOutputTab, FunctionsCatalogWarningDialog, TabView, TabPanel },
     props: {
         visible: { type: Boolean },
         propFunction: { type: Object },
@@ -91,7 +89,6 @@ export default defineComponent({
     },
     watch: {
         propFunction() {
-            console.log('CAAAAAAAALED')
             this.loadFunction()
         },
         functionTypes() {
@@ -99,9 +96,12 @@ export default defineComponent({
         }
     },
     computed: {
-        // TODO proveriti uslov
+        canManageFunctionalities(): boolean {
+            const index = (this.$store.state as any).user?.functionalities?.findIndex((el: string) => el === 'FunctionsCatalogManagement')
+            return index !== -1
+        },
         readonly(): boolean {
-            return !(this.$store.state as any).user.isSuperadmin || this.selectedFunction?.owner !== (this.$store.state as any).user.userId
+            return !this.canManageFunctionalities || this.selectedFunction?.owner !== (this.$store.state as any).user.userId
         },
         invalidGeneral(): boolean {
             return !this.validateFunctionInfo()
@@ -123,11 +123,9 @@ export default defineComponent({
     methods: {
         loadFunction() {
             this.selectedFunction = this.propFunction ? ({ ...this.propFunction, inputColumns: [...this.propFunction.inputColumns], inputVariables: [...this.propFunction.inputVariables], outputColumns: [...this.propFunction.outputColumns] } as iFunction) : this.getFunctionDefaultValues()
-            console.log('READONLY: ', this.readonly)
         },
         loadFunctionTypes() {
             this.filteredFunctionTypes = this.functionTypes?.filter((el: any) => el.valueCd !== 'All') as iFunctionType[]
-            console.log('FILTERED FUNCTION TYPES: ', this.filteredFunctionTypes)
         },
         closeFunctionDetail() {
             this.selectedFunction = this.getFunctionDefaultValues()
@@ -176,7 +174,6 @@ export default defineComponent({
                 valid = false
             }
 
-            console.log('MISSING FIELDS: ', this.missingFields)
             return valid
         },
         validateInputColumns() {
@@ -267,7 +264,6 @@ export default defineComponent({
         },
         async onSave() {
             this.loading = true
-            console.log('onSave() selectedFunction: ', this.selectedFunction)
 
             if (!this.validateArguments()) {
                 this.warningVisible = true
@@ -285,8 +281,6 @@ export default defineComponent({
             } else {
                 this.operation = 'create'
             }
-
-            console.log('OPERATION: ', this.operation)
 
             await this.sendRequest(url)
                 .then(() => {
