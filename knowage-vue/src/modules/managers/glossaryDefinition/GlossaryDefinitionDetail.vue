@@ -83,7 +83,7 @@
                                 @dragleave.prevent="setDropzoneClass(false, slotProps.node)"
                             >
                                 <span>{{ slotProps.node.label }}</span>
-                                <div v-show="buttonVisible[slotProps.node.id]" class="p-ml-2">
+                                <div v-show="buttonVisible[slotProps.node.id]">
                                     <Button
                                         v-if="!slotProps.node.data.HAVE_WORD_CHILD && slotProps.node.data.CONTENT_NM"
                                         icon="pi pi-bars"
