@@ -104,16 +104,16 @@ export default defineComponent({
             return !this.canManageFunctionalities || this.selectedFunction?.owner !== (this.$store.state as any).user.userId
         },
         invalidGeneral(): boolean {
-            return !this.validateFunctionInfo()
+            return !this.validateFunctionInfo(false)
         },
         invalidInput(): boolean {
-            return !this.validateInputColumns() || !this.validateInputVariables()
+            return !this.validateInputColumns(false) || !this.validateInputVariables(false)
         },
         invalidCode(): boolean {
-            return !this.validateCode()
+            return !this.validateCode(false)
         },
         invalidOutput(): boolean {
-            return !this.validateOutputColumns()
+            return !this.validateOutputColumns(false)
         }
     },
     created() {
@@ -154,109 +154,109 @@ export default defineComponent({
             let valid = true
             this.missingFields = []
 
-            if (!this.validateInputColumns()) {
+            if (!this.validateFunctionInfo(true)) {
                 valid = false
             }
 
-            if (!this.validateInputVariables()) {
+            if (!this.validateInputColumns(true)) {
                 valid = false
             }
 
-            if (!this.validateOutputColumns()) {
+            if (!this.validateInputVariables(true)) {
                 valid = false
             }
 
-            if (!this.validateFunctionInfo()) {
+            if (!this.validateCode(true)) {
                 valid = false
             }
 
-            if (!this.validateCode()) {
+            if (!this.validateOutputColumns(true)) {
                 valid = false
             }
 
             return valid
         },
-        validateInputColumns() {
+        validateInputColumns(setMessages: boolean) {
             let valid = true
 
             for (let i = 0; i < this.selectedFunction.inputColumns.length; i++) {
                 if (!this.selectedFunction.inputColumns[i].name) {
                     valid = false
-                    this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.inputColumnName', { number: i + 1 }))
+                    if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.inputColumnName', { number: i + 1 }))
                 }
                 if (!this.selectedFunction.inputColumns[i].type) {
                     valid = false
-                    this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.inputColumnType', { number: i + 1 }))
+                    if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.inputColumnType', { number: i + 1 }))
                 }
             }
 
             return valid
         },
-        validateInputVariables() {
+        validateInputVariables(setMessages: boolean) {
             let valid = true
 
             for (let i = 0; i < this.selectedFunction.inputVariables.length; i++) {
                 if (!this.selectedFunction.inputVariables[i].name) {
                     valid = false
-                    this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.inputVariableName', { number: i + 1 }))
+                    if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.inputVariableName', { number: i + 1 }))
                 }
                 if (!this.selectedFunction.inputVariables[i].type) {
                     valid = false
-                    this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.inputVariableType', { number: i + 1 }))
+                    if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.inputVariableType', { number: i + 1 }))
                 }
             }
 
             return valid
         },
-        validateOutputColumns() {
+        validateOutputColumns(setMessages: boolean) {
             let valid = true
 
             if (this.selectedFunction.outputColumns.length === 0) {
                 valid = false
-                this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.outputColumnMissing'))
+                if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.outputColumnMissing'))
             }
 
             for (let i = 0; i < this.selectedFunction.outputColumns.length; i++) {
                 if (!this.selectedFunction.outputColumns[i].name) {
                     valid = false
-                    this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.outputColumnName', { number: i + 1 }))
+                    if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.outputColumnName', { number: i + 1 }))
                 }
                 if (!this.selectedFunction.outputColumns[i].fieldType) {
                     valid = false
-                    this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.outputColumnFieldType', { number: i + 1 }))
+                    if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.outputColumnFieldType', { number: i + 1 }))
                 }
                 if (!this.selectedFunction.outputColumns[i].type) {
                     valid = false
-                    this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.outputColumnType', { number: i + 1 }))
+                    if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.outputColumnType', { number: i + 1 }))
                 }
             }
 
             return valid
         },
-        validateFunctionInfo() {
+        validateFunctionInfo(setMessages: boolean) {
             let valid = true
 
             if (!this.selectedFunction.description) {
                 valid = false
-                this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.functionDescription'))
+                if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.functionDescription'))
             }
 
             return valid
         },
-        validateCode() {
+        validateCode(setMessages: boolean) {
             let valid = true
 
             if (this.selectedFunction.family === 'online' && this.selectedFunction.onlineScript === '') {
                 valid = false
-                this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.onlineScript'))
+                if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.onlineScript'))
             } else if (this.selectedFunction.family === 'offline') {
                 if (!this.selectedFunction.offlineScriptTrainModel) {
                     valid = false
-                    this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.offlineTrainingScript'))
+                    if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.offlineTrainingScript'))
                 }
                 if (!this.selectedFunction.offlineScriptUseModel) {
                     valid = false
-                    this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.offlineUseScript'))
+                    if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.offlineUseScript'))
                 }
             }
 

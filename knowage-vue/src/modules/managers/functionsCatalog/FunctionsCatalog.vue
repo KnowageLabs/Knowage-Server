@@ -163,6 +163,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .keyword-chip {
     cursor: pointer;
+    text-transform: uppercase;
 }
 
 .keyword-chip-active {

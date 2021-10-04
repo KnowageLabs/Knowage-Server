@@ -48,11 +48,12 @@ export default defineComponent({
 
 <style lang="scss">
 .filter-value {
+    margin-top: 1rem;
     text-transform: uppercase;
 }
 
 .filter-domain-name {
-    margin-top: 1rem;
+    margin: 1rem 0;
     color: #999;
     font-size: 0.8rem;
 }
