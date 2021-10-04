@@ -64,7 +64,7 @@
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-col-12 p-field" :style="restDescriptor.style.infoColumnsContainer">
-                    <span class="p-float-label">
+                    <span class="p-float-label" :style="restDescriptor.style.maxWidth">
                         <InputText id="restJsonPathItems" class="kn-material-input" :style="restDescriptor.style.maxWidth" v-model.trim="dataset.restJsonPathItems" @change="$emit('touched')" />
                         <label for="restJsonPathItems" class="kn-material-input-label"> {{ $t('managers.datasetManagement.restJsonPathItems') }} </label>
                     </span>

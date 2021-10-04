@@ -10,10 +10,13 @@
     "validations": {
         "dataset": [
             {
-                "fieldName": "dsTypeCd",
+                "fieldName": "jClassName",
                 "validators": [
                     {
-                        "key": "required"
+                        "key": "required",
+                        "validator": {
+                            "type": "java-class-field-required"
+                        }
                     }
                 ]
             }
