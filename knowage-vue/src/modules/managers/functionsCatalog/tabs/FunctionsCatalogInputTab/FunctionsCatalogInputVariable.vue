@@ -15,7 +15,7 @@
         <div class="p-field kn-flex">
             <label class="kn-material-input-label">{{ $t('managers.functionsCatalog.variableDefaultValue') }}</label>
             <InputText v-if="inputVariable.type !== 'DATE'" :type="inputVariable.type === 'NUMBER' ? 'number' : 'text'" class="kn-material-input" v-model.trim="inputVariable.value" :disabled="readonly" data-test="variable-defult-value-input" />
-            <Calendar v-else v-model="inputVariable.value" :disabled="readonly"></Calendar>
+            <Calendar v-else v-model="inputVariable.value" :showButtonBar="true" :disabled="readonly"></Calendar>
         </div>
         <div class="p-field p-mt-5">
             <Button v-if="!readonly" icon="pi pi-trash" class="p-button-link" @click="deleteVariableConfirm" />
