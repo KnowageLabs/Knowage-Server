@@ -139,9 +139,14 @@ export default defineComponent({
         },
         createKeywordChip(event: any) {
             if (event.target.value) {
-                this.selectedFunction.keywords.push(event.target.value)
-                this.keywords.push(event.target.value)
-                event.target.value = ''
+                const tempWord = this.selectedFunction.keywords.find((el: any) => el === event.target.value)
+
+                if (!tempWord) {
+                    this.selectedFunction.keywords.push(event.target.value)
+                    const index = this.keywords.findIndex((el: any) => el === event.target.value)
+                    if (index === -1) this.keywords.push(event.target.value)
+                    event.target.value = ''
+                }
             }
         }
     }
