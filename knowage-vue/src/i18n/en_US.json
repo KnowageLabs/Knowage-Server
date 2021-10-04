@@ -923,7 +923,7 @@
 			"ImportExport": "Import/Export",
 			"ServerManager": "Server manager"
 		},
-		"importExport": "Artifacts",
+		"importExport": "Import/Export",
 		"modelCatalogResourceManagement": "Models manager",
 		"resourceManagement": "Resource manager"
 	},

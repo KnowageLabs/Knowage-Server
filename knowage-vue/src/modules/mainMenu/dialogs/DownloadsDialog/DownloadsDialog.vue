@@ -30,6 +30,7 @@
 	import Dialog from 'primevue/dialog'
 	import descriptor from './DownloadsDialogDescriptor.json'
 	import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
+	import WEB_SOCKET from '@/services/webSocket.js'
 
 	interface Download {
 		filename: string
@@ -77,9 +78,17 @@
 					(error) => console.error(error)
 				)
 			},
-			async downloadContent(data) {
+			downloadContent(data) {
+				if (!data.alreadyDownloaded) {
+					this.$store.commit('updateAlreadyDownloadedFiles')
+					let message = {
+						download: true
+					}
+
+					WEB_SOCKET.send(JSON.stringify(message))
+				}
 				var encodedUri = encodeURI(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export/dataset/' + data.id)
-				await axios
+				axios
 					.get(encodedUri, {
 						responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
 
@@ -90,9 +99,6 @@
 					})
 					.then(
 						(response) => {
-							if (!data.alreadyDownloaded) {
-								this.$store.commit('updateAlreadyDownloadedFiles')
-							}
 							downloadDirectFromResponse(response)
 						},
 						(error) => console.error(error)
@@ -103,8 +109,6 @@
 				axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export').then(
 					() => {
 						this.downloadsList = []
-						this.$store.commit('setDownloads', { count: { total: 0, unRead: 0 } })
-						this.closeDialog()
 					},
 					(error) => console.error(error)
 				)

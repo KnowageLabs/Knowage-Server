@@ -100,9 +100,14 @@
 						msg: this.$t(this.newsManagementDetailDescriptor.operation.success)
 					})
 					this.$emit('inserted')
-					WEB_SOCKET.send(JSON.stringify(this.selectedNews))
 					this.$router.replace('/news-management')
 				})
+
+				let message = {
+					news: true
+				}
+
+				WEB_SOCKET.send(JSON.stringify(message))
 			},
 			setDirty() {
 				this.touched = true

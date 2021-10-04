@@ -22,15 +22,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.axis.utils.StringUtils;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
@@ -648,7 +647,7 @@ public class DetailMenuModule extends AbstractHttpModule {
 
 							String idsPath = convertPathInIds(initialPath);
 							url += "&" + BIObjectsModule.MODALITY + "=" + BIObjectsModule.FILTER_TREE + "&" + TreeObjectsModule.PATH_SUBTREE + "=" + initialPath
-									+ idsPath;
+									+ "&defaultFoldersId=" + idsPath;
 
 						}
 					} else if (functionality.equals(SpagoBIConstants.WORKSPACE_MANAGEMENT)) {
@@ -672,7 +671,7 @@ public class DetailMenuModule extends AbstractHttpModule {
 
 	public static String convertPathInIds(String subTree) throws EMFUserError {
 		// If this is a "custom" Document Browser we have a subtree path as parameter
-		List<Integer> functIds = new LinkedList<>();
+		JSONArray functIds = new JSONArray();
 		logger.debug("IN");
 		if (subTree != null) {
 
@@ -693,7 +692,7 @@ public class DetailMenuModule extends AbstractHttpModule {
 					// toMerge contains all Id to be read in reverse order
 					for (int i = toMerge.size() - 1; i >= 0; i--) {
 						LowFunctionality lf = toMerge.get(i);
-						functIds.add(lf.getId());
+						functIds.put(lf.getId());
 					}
 
 				}
@@ -702,9 +701,7 @@ public class DetailMenuModule extends AbstractHttpModule {
 		}
 		logger.debug("OUT");
 
-		String value = functIds.stream().map(x -> x.toString()).collect(Collectors.joining("&defaultFoldersId="));
-
-		return value;
+		return functIds.toString();
 	}
 
 }
