@@ -90,9 +90,12 @@
 				requiredFunctionality="Calendar"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=calendarTemplate" />
 			<ITEM id="4011" label="menu.FunctionsCatalog"
+				toBeLicensed="KnowagePA"
 				requiredFunctionality="FunctionsCatalogManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=functionsCatalog" />
 			<ITEM id="4012" label="menu.WidgetGalleryManagement"
+				toBeLicensed="KnowageSI"
+				requiredFunctionality="WidgetGalleryManagement"
 				to="/gallery-management" />
 		</GROUP_ITEM>
 
@@ -195,6 +198,7 @@
 			toBeLicensed="" iconCls="fas fa-exchange-alt">
 			<ITEM id="10001" label="menu.importExport"
 				requiredFunctionality="ImportExport"
+				toBeLicensed="KnowageSI"
 				to="/import-export" />
 			<ITEM id="10002" label="menu.ImpExpDocument"
 				requiredFunctionality="ImpExpDocument"
@@ -207,7 +211,7 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportUsers" />
 			<ITEM id="10005" label="menu.ImpExpKpis"
 				requiredFunctionality="ImpExpKpis"
-				toBeLicensed="KnowagePA"
+				toBeLicensed="KnowagePM"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportKpis" />
 			<ITEM id="10006" label="menu.ImpExpCatalog"
 				requiredFunctionality="ImpExpCatalog"
@@ -220,7 +224,7 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportGlossaryTemplate" />
 			<ITEM id="10009" label="menu.ImpExpAlerts"
 				requiredFunctionality="ImpExpAlerts"
-				toBeLicensed="KnowagePA"
+				toBeLicensed="KnowagePM"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportAlerts" />
 		</GROUP_ITEM>
 		

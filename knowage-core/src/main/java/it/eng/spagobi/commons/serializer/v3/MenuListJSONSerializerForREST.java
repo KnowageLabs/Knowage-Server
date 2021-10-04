@@ -53,6 +53,7 @@ import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.security.InternalSecurityServiceSupplierImpl;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.wapp.bo.Menu;
 import it.eng.spagobi.wapp.services.DetailMenuModule;
 import it.eng.spagobi.wapp.util.MenuUtilities;
@@ -441,6 +442,16 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				if (technicalMenuId != null && technicalUserMenuIds.contains(technicalMenuId)) {
 					return false;
 				}
+
+				try {
+					if ("menu.news".equals(menuLabel) && !UserUtilities.hasUserRole(this.getUserProfile())) {
+						return false;
+					}
+				} catch (Exception e) {
+					String message = "Error while retrieving user profile";
+					logger.debug(message);
+					throw new SpagoBIRuntimeException(message, e);
+				}
 			}
 
 		}
@@ -633,8 +644,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private boolean isAttributeToIgnore(SourceBeanAttribute attribute) {
-		return attribute.getKey().equals(REQUIRED_FUNCTIONALITY) || attribute.getKey().equals(CONDITION) || attribute.getKey().equals(TO_BE_LICENSED)
-				|| attribute.getKey().equals(ID);
+		return attribute.getKey().equals(REQUIRED_FUNCTIONALITY) || attribute.getKey().equals(CONDITION) || attribute.getKey().equals(ID);
 	}
 
 	private Object getChildren(List filteredMenuList, List children, int level, Locale locale) throws JSONException {
@@ -775,7 +785,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private void setPropertiesForFunctionalityMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {
-		temp2.put(URL, StringEscapeUtils.escapeJavaScript(DetailMenuModule.findFunctionalityUrl(childElem, contextName)));
+		temp2.put(TO, StringEscapeUtils.escapeJavaScript(DetailMenuModule.findFunctionalityUrl(childElem, contextName)));
 	}
 
 	private void setPropertiesForStaticMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {
