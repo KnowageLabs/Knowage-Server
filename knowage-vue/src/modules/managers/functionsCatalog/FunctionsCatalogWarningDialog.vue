@@ -1,5 +1,5 @@
 <template>
-    <Dialog :header="$t('managers.functionsCatalog.warningTitle')" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
+    <Dialog :header="title" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
         <div class="p-m-2">
             <p class="p-m-0" v-for="(field, index) in missingFields" :key="index">{{ field }}</p>
         </div>
@@ -19,6 +19,7 @@ export default defineComponent({
     emits: ['close'],
     props: {
         visible: { type: Boolean },
+        title: { type: String },
         missingFields: { type: Array }
     }
 })

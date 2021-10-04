@@ -47,7 +47,7 @@
             </TabPanel>
         </TabView>
 
-        <FunctionsCatalogWarningDialog :visible="warningVisible" :missingFields="missingFields" @close="warningVisible = false"></FunctionsCatalogWarningDialog>
+        <FunctionsCatalogWarningDialog :visible="warningVisible" :title="warningTitle" :missingFields="missingFields" @close="warningVisible = false"></FunctionsCatalogWarningDialog>
     </Dialog>
 </template>
 
@@ -82,6 +82,7 @@ export default defineComponent({
             selectedFunction: {} as iFunction,
             filteredFunctionTypes: [] as iFunctionType[],
             missingFields: [] as String[],
+            warningTitle: '',
             operation: 'create',
             warningVisible: false,
             loading: false
@@ -266,6 +267,7 @@ export default defineComponent({
             this.loading = true
 
             if (!this.validateArguments()) {
+                this.warningTitle = this.$t('managers.functionsCatalog.warningTitle')
                 this.warningVisible = true
                 return
             }
@@ -283,18 +285,22 @@ export default defineComponent({
             }
 
             await this.sendRequest(url)
-                .then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.' + this.operation + 'Title'),
-                        msg: this.$t('common.toast.success')
-                    })
-                    this.$emit('created')
+                .then((response) => {
+                    if (response.data.errors) {
+                        this.warningVisible = true
+                        this.missingFields.push(response.data.errrors[0].message)
+                    } else {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.' + this.operation + 'Title'),
+                            msg: this.$t('common.toast.success')
+                        })
+                        this.$emit('created')
+                    }
                 })
                 .catch((response) => {
-                    this.$store.commit('setError', {
-                        title: this.$t('common.toast.' + this.operation + 'Title'),
-                        msg: response.message
-                    })
+                    this.warningTitle = this.$t('common.toast.' + this.operation + 'Title')
+                    this.warningVisible = true
+                    this.missingFields.push(response.message)
                 })
 
             this.loading = false
