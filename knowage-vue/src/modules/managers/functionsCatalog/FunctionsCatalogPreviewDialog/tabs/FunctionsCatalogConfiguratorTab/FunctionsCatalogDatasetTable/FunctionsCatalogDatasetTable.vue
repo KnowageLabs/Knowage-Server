@@ -18,7 +18,7 @@
             >
                 <template #empty>
                     <div id="noFunctionsFound">
-                        {{ $t('managers.functionsCatalog.noFunctionsFound') }}
+                        {{ $t('common.info.noDataFound') }}
                     </div>
                 </template>
                 <template #header>
