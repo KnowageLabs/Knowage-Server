@@ -19,7 +19,6 @@
         v-model="row[column.field]"
         :showTime="column.columnInfo.subtype === 'timestamp'"
         :showSeconds="column.columnInfo.subtype === 'timestamp'"
-        :dateFormat="column.columnInfo.dateFormat"
         :showButtonBar="true"
         @date-select="$emit('rowChanged', row)"
     />
@@ -28,6 +27,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { setInputDataType, getInputStep } from '@/helpers/commons/tableHelpers'
+import { formatDate } from '@/helpers/commons/localeHelper'
 import Calendar from 'primevue/calendar'
 import Dropdown from 'primevue/dropdown'
 import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
@@ -63,6 +63,9 @@ export default defineComponent({
     methods: {
         loadRow() {
             this.row = this.propRow
+            if (this.column?.columnInfo.type === 'date' && this.row[this.column.field]) {
+                this.row[this.column.field] = this.getFormatedDate(this.row[this.column.field], 'MM/DD/YYYY HH:mm:ss')
+            }
         },
         setDataType(columnType: string) {
             return setInputDataType(columnType)
@@ -72,6 +75,9 @@ export default defineComponent({
         },
         loadColumnOptions() {
             this.columnOptions = this.comboColumnOptions as any[]
+        },
+        getFormatedDate(date: any, format: any) {
+            return formatDate(date, format)
         }
     }
 })

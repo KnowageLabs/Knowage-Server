@@ -21,7 +21,7 @@
                         @dropdownOpened="$emit('dropdownOpened', $event)"
                     ></KnPivotTableEditableField>
                     <Checkbox v-else-if="column.editorType === 'TEXT' && column.columnInfo.type === 'boolean'" v-model="row[column.field].data" :binary="true" :disabled="!column.isEditable || column.type === 'merge'" @change="setRowEdited(row)"></Checkbox>
-                    <span v-else-if="!column.isEditable && column.columnInfo.type === 'date'">{{ getFormatedDate(row[column.field].data, column.columnInfo.dateFormat) }} </span>
+                    <span v-else-if="!column.isEditable && column.columnInfo.type === 'date'">{{ getFormatedDate(row[column.field].data, 'MM/DD/YYYY HH:mm:ss') }} </span>
                     <span v-else-if="!column.isEditable && row[column.field].data && (column.columnInfo.type === 'int' || column.columnInfo.type === 'float')">{{ getFormatedNumber(row[column.field].data) }}</span>
                     <span v-else>{{ row[column.field].data }}</span>
                 </td>
@@ -49,12 +49,14 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { formatDateWithLocale, formatNumberWithLocale } from '@/helpers/commons/localeHelper'
+import { formatNumberWithLocale } from '@/helpers/commons/localeHelper'
 import Checkbox from 'primevue/checkbox'
 import KnPivotTableEditableField from './KnPivotTableEditableField.vue'
 import Paginator from 'primevue/paginator'
 import RegistryDatatableWarningDialog from '@/modules/documentExecution/registry/tables/RegistryDatatableWarningDialog.vue'
 import descriptor from '@/modules/documentExecution/registry/tables/RegistryDatatableDescriptor.json'
+
+// // Date format is fixed to MM/DD/YYYY hh:mm:ss for compatibility with Primevue Calendar with Davide Vernassa approval
 
 export default defineComponent({
     name: 'kn-pivot-table',
@@ -163,9 +165,6 @@ export default defineComponent({
         },
         loadWarningState() {
             this.stopWarnings = this.stopWarningsState as any[]
-        },
-        getFormatedDate(date: any, format: any) {
-            return formatDateWithLocale(date, format)
         },
         getFormatedNumber(number: number, precision?: number, format?: any) {
             return formatNumberWithLocale(number, precision, format)

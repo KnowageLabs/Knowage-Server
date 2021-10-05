@@ -73,22 +73,20 @@
                             <template #body="slotProps">
                                 <div class="p-d-flex p-flex-row" :data-test="col.field + '-body'">
                                     <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
-                                    <Calendar
-                                        :style="registryDatatableDescriptor.pivotStyles.inputFields"
-                                        class="pivot-calendar"
+                                    <RegistryDatatableEditableField
                                         v-else-if="col.isEditable && col.columnInfo.type === 'date'"
-                                        v-model="slotProps.data[col.field]"
-                                        :showTime="col.columnInfo.subtype === 'timestamp'"
-                                        :showSeconds="col.columnInfo.subtype === 'timestamp'"
-                                        :dateFormat="col.columnInfo.dateFormat"
-                                        :showButtonBar="true"
-                                        @date-select="setRowEdited(slotProps.data)"
-                                    />
+                                        :column="col"
+                                        :propRow="slotProps.data"
+                                        :comboColumnOptions="comboColumnOptions"
+                                        @rowChanged="setRowEdited(slotProps.data)"
+                                        @dropdownChanged="onDropdownChange"
+                                        @dropdownOpened="addColumnOptions"
+                                    ></RegistryDatatableEditableField>
                                     <div v-else-if="col.isEditable">
                                         <span v-if="(col.columnInfo.type === 'int' || col.columnInfo.type === 'float') && slotProps.data[col.field]">{{ getFormatedNumber(slotProps.data[col.field]) }}</span>
                                         <span v-else> {{ slotProps.data[col.field] }}</span>
                                     </div>
-                                    <span v-else-if="col.columnInfo.type === 'date'"> {{ getFormatedDate(slotProps.data[col.field], col.columnInfo.dateFormat) }}</span>
+                                    <span v-else-if="col.columnInfo.type === 'date'"> {{ getFormatedDate(slotProps.data[col.field], 'MM/DD/YYYY hh:mm:ss') }}</span>
                                     <span v-else> {{ slotProps.data[col.field] }}</span>
                                 </div>
                             </template>
@@ -112,9 +110,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { formatDateWithLocale, formatNumberWithLocale } from '@/helpers/commons/localeHelper'
+import { formatDate, formatNumberWithLocale } from '@/helpers/commons/localeHelper'
 import axios from 'axios'
-import Calendar from 'primevue/calendar'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
@@ -124,11 +121,12 @@ import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
 import RegistryDatatableEditableField from './RegistryDatatableEditableField.vue'
 import RegistryDatatableWarningDialog from './RegistryDatatableWarningDialog.vue'
 
+// Date format is fixed to MM/DD/YYYY hh:mm:ss for compatibility with Primevue Calendar with Davide Vernassa approval
+
 export default defineComponent({
     name: 'registry-datatable',
     components: {
         Card,
-        Calendar,
         Checkbox,
         Column,
         DataTable,
@@ -293,7 +291,7 @@ export default defineComponent({
             }
         },
         getFormatedDate(date: any, format: any) {
-            return formatDateWithLocale(date, format)
+            return formatDate(date, format)
         },
         getFormatedNumber(number: number, precision?: number, format?: any) {
             return formatNumberWithLocale(number, precision, format)
