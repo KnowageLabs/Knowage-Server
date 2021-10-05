@@ -38,6 +38,7 @@
         </Card>
     </div>
     <QueryDataset v-if="dataset.dsTypeCd == 'Query'" :selectedDataset="selectedDataset" :dataSources="dataSources" :scriptTypes="scriptTypes" />
+    <ScriptDataset v-if="dataset.dsTypeCd == 'Script'" :selectedDataset="selectedDataset" :scriptTypes="scriptTypes" />
     <JavaDataset v-if="dataset.dsTypeCd == 'Java Class'" :selectedDataset="selectedDataset" />
     <QbeDataset v-if="dataset.dsTypeCd == 'Qbe' || dataset.dsTypeCd == 'Federated'" :selectedDataset="selectedDataset" :businessModels="businessModels" :dataSources="dataSources" :parentValid="parentValid" />
     <FlatDataset v-if="dataset.dsTypeCd == 'Flat'" :selectedDataset="selectedDataset" :dataSources="dataSources" />
@@ -52,6 +53,7 @@ import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import ParamTable from './tables/DatasetManagementParamTable.vue'
 import QueryDataset from './queryDataset/DatasetManagementQueryDataset.vue'
+import ScriptDataset from './scriptDataset/DatasetManagementScriptDataset.vue'
 import FlatDataset from './flatDataset/DatasetManagementFlatDataset.vue'
 import JavaDataset from './javaDataset/DatasetManagementJavaDataset.vue'
 import CkanDataset from './ckanDataset/DatasetManagementCkanDataset.vue'
@@ -65,7 +67,7 @@ import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
 
 export default defineComponent({
-    components: { Card, Dropdown, KnValidationMessages, ParamTable, CkanDataset, QbeDataset, RestDataset, JavaDataset, FlatDataset, SolrDataset, QueryDataset },
+    components: { Card, Dropdown, KnValidationMessages, ParamTable, CkanDataset, QbeDataset, RestDataset, JavaDataset, FlatDataset, SolrDataset, QueryDataset, ScriptDataset },
     props: {
         parentValid: { type: Boolean },
         selectedDataset: { type: Object as any },

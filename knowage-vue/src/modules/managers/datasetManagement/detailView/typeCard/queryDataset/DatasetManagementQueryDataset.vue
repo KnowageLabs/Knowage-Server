@@ -108,13 +108,13 @@ export default defineComponent({
         }
     },
     created() {
-        this.dataset = this.selectedDataset
+        this.loadDataset()
         this.setupCodeMirror()
         this.loadScriptMode()
     },
     watch: {
         selectedDataset() {
-            this.dataset = this.selectedDataset
+            this.loadDataset()
             this.loadScriptMode()
         }
     },
@@ -131,14 +131,21 @@ export default defineComponent({
         return validationObject
     },
     methods: {
+        loadDataset() {
+            this.dataset = this.selectedDataset
+            this.dataset.query ? '' : (this.dataset.query = '')
+            this.dataset.queryScript ? '' : (this.dataset.queryScript = '')
+        },
         setupCodeMirror() {
-            if (this.$refs.codeMirror) {
+            const interval = setInterval(() => {
+                if (!this.$refs.codeMirror || !this.$refs.codeMirrorScript) return
                 this.codeMirror = (this.$refs.codeMirror as any).editor as any
                 this.codeMirrorScript = (this.$refs.codeMirrorScript as any).editor as any
-            }
+                clearInterval(interval)
+            }, 200)
         },
         loadScriptMode() {
-            if (this.dataset.queryScriptLanguage != '') {
+            if (this.dataset.queryScriptLanguage) {
                 this.scriptOptions.mode = this.dataset.queryScriptLanguage === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
             }
         },
@@ -149,7 +156,6 @@ export default defineComponent({
                 this.codeMirrorScript.setOption('mode', mode)
             }, 250)
             this.$emit('touched')
-            console.log(this.codeMirrorScript)
         }
     }
 })
