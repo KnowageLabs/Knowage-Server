@@ -1,19 +1,28 @@
 <template>
 	<div class="kn-page">
-		<Toolbar class="kn-toolbar kn-toolbar--primary p-m-0"> <template #left> Data preparation detail</template></Toolbar>
-		<Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
+		<DataPreparationDialog v-model:visibility="selectedTransformation" @sendTrasformation="handleTransformation" />
+		<DataPreparationSaveDialog v-model:visibility="showSaveDialog" :dataset="dataset" />
+		<Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
+			<template #left> {{ $t('managers.workspaceManagement.dataPreparation.detail') }} </template>
+			<template #right>
+				<Button icon="pi pi-save" class="kn-button p-button-text" v-tooltip.bottom="$t('common.save')" @click="saveDataset" />
+				<Button icon="pi pi-times" class="kn-button p-button-text" v-tooltip.bottom="$t('common.close')" @click="closeTemplate($event)" /> </template
+		></Toolbar>
+		<Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0 toolbarCustomConfig">
 			<template #left>
 				<span v-for="(menu, index) in getMenuForToolbar()" v-bind:key="index">
-					<Button v-if="menu !== 'divider'" :icon="menu.icon" class="p-button-text p-button-rounded p-button-plain headerButton" @click="toggleSort" v-tooltip.bottom="$t(menu.label)" />
+					<Button v-if="menu !== 'divider'" :icon="menu.icon" :class="buttonDefaultClass + ' headerButton'" v-tooltip.bottom="$t(menu.label)" @click="callFunction(menu)" />
 					<Divider v-else layout="vertical" />
 				</span>
 			</template>
-			<template #right><Button icon="pi pi-arrow-left" class="p-button-text p-button-rounded p-button-plain headerButton" @click="visibleRight = true"/></template>
+			<template #right><Button icon="pi pi-arrow-left" :class="buttonDefaultClass + ' headerButton'" @click="visibleRight = true"/></template>
 		</Toolbar>
+		<Divider class="p-m-0 p-p-0 dividerCustomConfig" />
 		<ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 		<div class="kn-page-content p-grid p-m-0 managerDetail">
 			<Sidebar v-model:visible="visibleRight" position="right">
-				Content
+				{{ $t('modules.workspace.dataPreparation.transformations') }}
+				<span v-for="(mutation, index) in descriptor.mutations" v-bind:key="index"> <Chip :label="mutation.type" :icon="descriptor.transformations.filter((x) => x.type === mutation.type)[0].icon"> </Chip></span>
 			</Sidebar>
 			<DataTable
 				ref="dt"
@@ -26,9 +35,6 @@
 				breakpoint="960px"
 				:currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
 				:loading="loading"
-				contextMenu
-				v-model:contextMenuSelection="selectedProduct"
-				@rowContextmenu="onRowContextMenu"
 				:resizableColumns="true"
 				columnResizeMode="expand"
 				showGridlines
@@ -41,71 +47,127 @@
 					{{ $t('common.info.dataLoading') }}
 				</template>
 
-				<Column v-for="col in descriptor.column" :field="col.field" :key="col.field" :style="col.style" :exportable="col.field == 'selectionMode' ? false : ''">
+				<Column v-for="(col, colIndex) in columns" :field="col.name" :key="colIndex" :style="col.style">
 					<template #header>
 						<div class="p-grid p-m-0 p-d-flex kn-flex ">
-							<div class="p-col-8 p-m-0 p-p-0 p-d-flex p-jc-start p-ai-center">
-								<Button icon="fas fa-hashtag" class="p-button-text p-button-rounded p-button-plain headerButton" />
-								<span class="p-ai-center p-jc-center">{{ $t(col.header) }}</span>
+							<div class="p-col-3 p-m-0 p-p-0 p-jc-start p-ai-center">
+								<Button :icon="descriptor.compatibilityMap[col.type].icon" :class="buttonDefaultClass + ' headerButton'" @click="toggle($event, 'opType-' + colIndex)" />
 							</div>
-							<div class="p-col-4 p-m-0 p-p-0 p-d-flex p-jc-end p-ai-center">
-								<Button icon="pi pi-ellipsis-v" class="p-button-text p-button-rounded p-button-plain headerButton" @click="toggle" />
+							<div class="p-col-6 p-m-0 p-p-0 p-ai-center p-jc-center kn-truncated">
+								{{ $t(col.header) }}
+
+								<OverlayPanel :ref="'opType-' + colIndex" class="op">
+									<div class="p-col-12 p-m-0 p-p-0" v-for="(type, index) in getCompatibilityType(col)" v-bind:key="index"><Button :icon="descriptor.compatibilityMap[type].icon" :class="buttonDefaultClass + ' headerButton'" @click="callFunction(menu)" />{{ $t(type) }}</div>
+								</OverlayPanel>
 							</div>
-						</div> </template
-				></Column>
+							<div class="p-col-3 p-m-0 p-p-0 p-d-flex p-jc-end p-ai-center">
+								<Button icon="pi pi-ellipsis-v" :class="buttonDefaultClass + ' headerButton'" @click="toggle($event, 'trOpType-' + colIndex)" />
+								<OverlayPanel :ref="'trOpType-' + colIndex" class="transformationsOverlayPanel">
+									<div class="p-col-12 p-m-0 p-p-0" v-for="(menu, index) in getTransformationsMenu(col)" v-bind:key="index"><Button :icon="menu.icon" :class="buttonDefaultClass + ' headerButton'" @click="callFunction(menu)" />{{ $t(menu.label) }}</div>
+								</OverlayPanel>
+							</div>
+						</div>
+					</template></Column
+				>
 			</DataTable>
-			<OverlayPanel ref="op" class="contextMenu">
-				<div class="p-col-12" v-for="(menu, index) in descriptor.menu.filter((x) => x.editColumn)" v-bind:key="index"><Button :icon="menu.icon" class="p-button-text p-button-rounded p-button-plain headerButton" @click="callFunction(menu.purpose, item)" />{{ $t(menu.label) }}</div>
-			</OverlayPanel>
 		</div>
 	</div>
 </template>
 
 <script lang="ts">
 	import { defineComponent } from 'vue'
-	/* 	import axios from 'axios' */
+
+	import axios from 'axios'
 	import Column from 'primevue/column'
 	import DataTable from 'primevue/datatable'
 	import DataPreparationDescriptor from './DataPreparationDescriptor.json'
 	import Divider from 'primevue/divider'
 	import Sidebar from 'primevue/sidebar'
 	import OverlayPanel from 'primevue/overlaypanel'
+	import Chip from 'primevue/chip'
+	/* import ITransformation from '@/modules/workspace/dataPreparation/DataPreparation' */
+
+	import DataPreparationDialog from '@/modules/workspace/dataPreparation/DataPreparationDialog.vue'
+	import DataPreparationSaveDialog from '@/modules/workspace/dataPreparation/DataPreparationSaveDialog.vue'
 
 	export default defineComponent({
 		name: 'data-preparation-detail',
 		props: {
-			id: String,
-			visibility: Boolean
+			id: String
 		},
-		components: { Column, DataTable, Divider, Sidebar, OverlayPanel },
+		components: { Chip, Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Sidebar, OverlayPanel },
 
 		data() {
 			return {
 				descriptor: DataPreparationDescriptor,
 				loading: false,
+				dataset: {},
 				datasetData: Array<any>(),
-				menuModel: Array<any>(),
+				displayDataPreparationDialog: false,
+				transformationsModel: Array<any>(),
 				selectedProduct: null,
-				visibleRight: false
+				visibleRight: false,
+				visibility: false,
+				selectedTransformation: null,
+				showSaveDialog: false,
+				columns: [],
+
+				// CSS
+				buttonDefaultClass: 'p-button-text p-button-rounded p-button-plain'
 			}
 		},
 
-		emits: ['update:visibility'],
+		emits: ['sendTransformation'],
 		created() {
 			this.datasetData = this.descriptor.columnData
-			this.menuModel = this.descriptor.menu.filter((x) => x.editColumn)
+
+			axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasets/' + this.id + '/preview', { start: 0, limit: 15 }).then((response) => {
+				this.datasetData = response.data.rows
+				this.dataset = { name: 'knowage', description: 'FERFAEFAWFAEF', label: 'LABEL', visibility: 'TOUT LE MONDE', refreshRateId: '1' }
+				this.columns = response.data.metaData.fields.filter((x) => x.dataIndex)
+			})
+
+			this.transformationsModel = this.descriptor.transformations.filter((x) => x.editColumn)
 		},
 		methods: {
+			getTransformationsMenu(col) {
+				return this.descriptor.transformations
+					.filter((x) => x.editColumn)
+					.filter((x) => {
+						if (x.incompatibleDataTypes) return !x.incompatibleDataTypes?.includes(col.type)
+						return true
+					})
+			},
+			callFunction(transformation) {
+				if (transformation.config.parameters && transformation.config.parameters.filter((x) => !x.value).length > 0) {
+					this.selectedTransformation = transformation
+				} else {
+					let t = transformation
+					this.handleTransformation(t)
+				}
+			},
+			handleTransformation(t) {
+				console.log(t)
+
+				this.selectedTransformation = null
+
+				/* 									await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/dataPreparation', t).then((response) => {
+						console.log(response)
+					}) */
+			},
+			getCompatibilityType(col) {
+				return this.descriptor.compatibilityMap[col.type].values
+			},
 			addColumn(item) {
 				console.log(item)
 			},
-			toggle(event) {
+			toggle(event, trOp) {
 				// eslint-disable-next-line
 				// @ts-ignore
-				this.$refs.op.toggle(event)
+				this.$refs[trOp].toggle(event)
 			},
 			getMenuForToolbar() {
-				let tmp = this.descriptor.menu
+				let tmp = this.descriptor.transformations
 					.filter((x) => x.toolbar)
 					.sort(function(a, b) {
 						if (a.position > b.position) return 1
@@ -128,11 +190,6 @@
 				}
 				return menu
 			},
-			onRowContextMenu(event) {
-				// eslint-disable-next-line
-				// @ts-ignore
-				this.$refs.cm.show(event.originalEvent)
-			},
 			getData(o) {
 				console.log(o)
 				this.descriptor.column
@@ -143,13 +200,8 @@
 			filter(e) {
 				console.log(e)
 			},
-			viewProduct(product) {
-				this.$toast.add({ severity: 'info', summary: 'Product Selected', detail: product.name })
-			},
-			deleteProduct(product) {
-				console.log(product)
-				this.$toast.add({ severity: 'error', summary: 'Product Deleted', detail: 'BANANA' })
-				this.selectedProduct = null
+			saveDataset() {
+				this.showSaveDialog = true
 			}
 		}
 	})
@@ -164,5 +216,15 @@
 		top: 10px;
 		left: 0;
 		width: 100%;
+	}
+	.toolbarCustomConfig {
+		background-color: white !important;
+	}
+	.dividerCustomConfig {
+		border: 1px solid;
+		border-color: $color-borders;
+	}
+	.p-overlaypanel-content {
+		padding: 0px !important;
 	}
 </style>

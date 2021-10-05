@@ -2,19 +2,23 @@
 	"column": [
 		{
 			"field": "vin",
-			"header": "Vin"
+			"header": "Vin",
+			"type": "double"
 		},
 		{
 			"field": "year",
-			"header": "Year"
+			"header": "Year",
+			"type": "int"
 		},
 		{
 			"field": "brand",
-			"header": "Brand"
+			"header": "Brand",
+			"type": "date"
 		},
 		{
 			"field": "color",
-			"header": "Color"
+			"header": "Color",
+			"type": "string"
 		}
 	],
 	"columnData": [
@@ -79,7 +83,34 @@
 			"year": 2013
 		}
 	],
+	"compatibilityMap": {
+		"date": {
+			"icon": "far fa-calendar-alt",
+			"values": ["string"]
+		},
+		"double": {
+			"icon": "pi pi-plus-circle",
+			"values": ["string"]
+		},
+		"int": {
+			"icon": "pi pi-plus-circle",
+			"values": ["string", "double"]
+		},
+		"string": {
+			"icon": "fas fa-quote-left",
+			"values": ["string"]
+		}
+	},
 	"dataPreparation": {
+		"refreshRate": {
+			"options": [
+				{
+					"code": "NONE",
+					"id": 1,
+					"name": "None"
+				}
+			]
+		},
 		"root": [
 			{
 				"actions": [
@@ -14803,98 +14834,6 @@
 			}
 		]
 	},
-	"menu": [
-		{
-			"category": "column",
-			"editColumn": true,
-			"icon": "pi pi-plus-circle",
-			"label": "modules.workspace.dataPreparation.addColumn",
-			"position": 0,
-			"purpose": "addColumn",
-			"toolbar": true
-		},
-		{
-			"category": "column",
-			"editColumn": true,
-			"icon": "pi pi-minus-circle",
-			"label": "modules.workspace.dataPreparation.deleteColumn",
-			"position": 1,
-			"purpose": "deleteColumn",
-			"toolbar": true
-		},
-		{
-			"category": "column2",
-			"editColumn": false,
-			"icon": "pi pi-filter",
-			"label": "modules.workspace.dataPreparation.filter",
-			"position": 2,
-			"purpose": "filter",
-			"toolbar": true
-		},
-		{
-			"category": "column2",
-			"editColumn": true,
-			"icon": "fas fa-hashtag",
-			"label": "modules.workspace.dataPreparation.format",
-			"position": 3,
-			"purpose": "format",
-			"toolbar": true
-		},
-		{
-			"category": "column",
-			"editColumn": true,
-			"icon": "fas fa-columns",
-			"label": "modules.workspace.dataPreparation.padding",
-			"position": 4,
-			"purpose": "padding",
-			"toolbar": true
-		},
-		{
-			"category": "column",
-			"editColumn": true,
-			"icon": "pi pi-search",
-			"label": "modules.workspace.dataPreparation.removeDuplicate",
-			"position": 5,
-			"purpose": "removeDuplicate",
-			"toolbar": true
-		},
-		{
-			"category": "column",
-			"editColumn": true,
-			"icon": "fas fa-columns",
-			"label": "modules.workspace.dataPreparation.removeNull",
-			"position": 6,
-			"purpose": "removeNull",
-			"toolbar": true
-		},
-		{
-			"category": "column",
-			"editColumn": true,
-			"icon": "pi pi-search",
-			"label": "modules.workspace.dataPreparation.replace",
-			"position": 7,
-			"purpose": "replace",
-			"toolbar": true
-		},
-		{
-			"category": "column",
-			"editColumn": true,
-			"icon": "pi pi-chart-bar",
-			"label": "modules.workspace.dataPreparation.statistics",
-			"position": 8,
-			"purpose": "statistics",
-			"toolbar": true
-		},
-		{
-			"category": "column",
-			"editColumn": true,
-			"icon": "fas fa-cut",
-			"label": "modules.workspace.dataPreparation.trim",
-			"position": 9,
-			"purpose": "trim",
-			"toolbar": false
-		}
-	],
 	"mutations": [
 		{
 			"parameters": [
@@ -14934,7 +14873,7 @@
 					"column": "column2"
 				}
 			],
-			"type": "removeduplications"
+			"type": "removeDuplicate"
 		},
 		{
 			"parameters": [
@@ -14942,7 +14881,7 @@
 					"column": "column1"
 				}
 			],
-			"type": "removenull"
+			"type": "removeNull"
 		},
 		{
 			"parameters": [
@@ -14981,5 +14920,159 @@
 		"name": "exampleName",
 		"refresh": "none/hour/day/week/month/refresh",
 		"visibility": "public/private"
-	}
+	},
+	"transformations": [
+		{
+			"category": "column",
+			"config": {
+				"parameters": [
+					{
+						"name": "columnName",
+						"type": "string"
+					}
+				]
+			},
+			"editColumn": false,
+			"icon": "pi pi-plus-circle",
+			"label": "managers.workspaceManagement.dataPreparation.transformations.addColumn",
+			"position": 0,
+			"toolbar": true,
+			"type": "addColumn"
+		},
+		{
+			"category": "column",
+			"config": {},
+			"editColumn": true,
+			"icon": "pi pi-minus-circle",
+			"label": "managers.workspaceManagement.dataPreparation.transformations.deleteColumn",
+			"parameters": ["columnName"],
+			"position": 1,
+			"toolbar": false,
+			"type": "deleteColumn"
+		},
+		{
+			"category": "column2",
+			"config": {
+				"parameters": [
+					{
+						"name": "text",
+						"type": "string"
+					}
+				]
+			},
+			"editColumn": false,
+			"icon": "pi pi-filter",
+			"label": "managers.workspaceManagement.dataPreparation.transformations.filter",
+			"position": 2,
+			"toolbar": true,
+			"type": "filter"
+		},
+		{
+			"category": "column2",
+			"config": {
+				"parameters": [
+					{
+						"name": "format",
+						"type": "string"
+					}
+				]
+			},
+			"editColumn": true,
+			"icon": "fas fa-hashtag",
+			"label": "managers.workspaceManagement.dataPreparation.transformations.format",
+			"position": 3,
+			"toolbar": true,
+			"type": "format"
+		},
+		{
+			"category": "column6",
+			"config": {
+				"parameters": [
+					{
+						"name": "char",
+						"type": "string"
+					},
+					{
+						"name": "left",
+						"type": "boolean"
+					}
+				]
+			},
+			"editColumn": true,
+			"icon": "fas fa-columns",
+			"label": "managers.workspaceManagement.dataPreparation.transformations.padding",
+			"position": 4,
+			"toolbar": false,
+			"type": "padding"
+		},
+		{
+			"category": "column",
+			"config": {},
+			"editColumn": true,
+			"icon": "pi pi-search",
+			"label": "managers.workspaceManagement.dataPreparation.transformations.removeDuplicates",
+			"position": 5,
+			"toolbar": true,
+			"type": "removeDuplicate"
+		},
+		{
+			"category": "column",
+			"config": {},
+			"editColumn": true,
+			"icon": "fas fa-columns",
+			"label": "managers.workspaceManagement.dataPreparation.transformations.removeNull",
+			"position": 6,
+			"toolbar": true,
+			"type": "removeNull"
+		},
+		{
+			"category": "column",
+			"config": {
+				"parameters": [
+					{
+						"name": "oldChar",
+						"type": "string"
+					},
+					{
+						"name": "newChar",
+						"type": "string"
+					}
+				]
+			},
+			"editColumn": true,
+			"icon": "pi pi-search",
+			"incompatibleDataTypes": ["date"],
+			"label": "managers.workspaceManagement.dataPreparation.transformations.replace",
+			"position": 7,
+			"toolbar": true,
+			"type": "replace"
+		},
+		{
+			"category": "column",
+			"config": {
+				"parameters": [
+					{
+						"name": "columnName",
+						"type": "string"
+					}
+				]
+			},
+			"editColumn": true,
+			"icon": "pi pi-chart-bar",
+			"label": "managers.workspaceManagement.dataPreparation.transformations.statistics",
+			"position": 8,
+			"toolbar": true,
+			"type": "statistics"
+		},
+		{
+			"category": "column",
+			"config": {},
+			"editColumn": true,
+			"icon": "fas fa-cut",
+			"label": "managers.workspaceManagement.dataPreparation.transformations.trim",
+			"position": 9,
+			"toolbar": false,
+			"type": "trim"
+		}
+	]
 }
