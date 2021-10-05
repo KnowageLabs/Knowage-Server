@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	angular.module("cockpitModule")
 		.service("cockpitModule_catalogFunctionService", cockpitModule_catalogFunctionService)
 
-	function cockpitModule_catalogFunctionService(sbiModule_translate, sbiModule_restServices){
+	function cockpitModule_catalogFunctionService(sbiModule_translate, sbiModule_restServices, $http, sbiModule_user){
 		var self = this;
 		this.allCatalogFunctions = {};
 		this.rEnvironments = [];
