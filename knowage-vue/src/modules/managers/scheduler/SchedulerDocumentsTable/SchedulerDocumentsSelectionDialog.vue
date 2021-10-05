@@ -11,26 +11,21 @@
         <Tree
             id="document-tree"
             :value="nodes"
-            selectionMode="multiple"
+            selectionMode="single"
             v-model:selectionKeys="selectedDocumentsKeys"
             :metaKeySelection="false"
             :filter="true"
             filterMode="lenient"
-            @node-select="addSelectedDocument($event)"
-            @node-unselect="removeSelectedDocument($event)"
+            @node-select="setSelectedDocument($event)"
+            @node-unselect="removeSelectedDocument"
             @node-expand="setOpenFolderIcon($event)"
             @node-collapse="setClosedFolderIcon($event)"
         ></Tree>
 
         <template #footer>
-            <div class="p-d-flex p-flex-row">
-                <div id="selected-documents-info" class="p-d-flex p-jc-center p-ai-center">
-                    <div>{{ selectedDocuments.length + '  ' + $t('managers.scheduler.documentsSelected') }}</div>
-                </div>
-                <div id="button-container" class="p-d-flex p-flex-row">
-                    <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
-                    <Button class="kn-button kn-button--primary" @click="$emit('documentsSelected', selectedDocuments)">{{ $t('common.add') }}</Button>
-                </div>
+            <div class="p-d-flex p-flex-row p-jc-end">
+                <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
+                <Button class="kn-button kn-button--primary" @click="addDocument">{{ $t('common.add') }}</Button>
             </div>
         </template>
     </Dialog>
@@ -47,6 +42,7 @@ export default defineComponent({
     name: 'scheduler-documents-selection-dialog',
     components: { Dialog, Tree },
     props: { propFiles: { type: Array } },
+    emits: ['documentSelected', 'close'],
     data() {
         return {
             schedulerDocumentsSelectionDialogDescriptor,
@@ -54,7 +50,7 @@ export default defineComponent({
             documents: [] as iFile[],
             nodes: [] as iNode[],
             selectedDocumentsKeys: {},
-            selectedDocuments: [] as any[]
+            selectedDocument: null as any
         }
     },
     watch: {
@@ -72,7 +68,7 @@ export default defineComponent({
     methods: {
         loadFiles() {
             this.files = this.propFiles as iFile[]
-            console.log('LOADED FILES: ', this.files)
+            // console.log('LOADED FILES: ', this.files)
         },
         createNodeTree() {
             this.nodes = []
@@ -96,7 +92,7 @@ export default defineComponent({
                 this.attachFolderToTree(node, foldersWithMissingParent)
             })
 
-            console.log('NODES: ', this.nodes)
+            // console.log('NODES: ', this.nodes)
         },
         formatFolderChildren(folderChildren: any[]) {
             const formatedChildren = [] as iNode[]
@@ -177,33 +173,23 @@ export default defineComponent({
         setClosedFolderIcon(node: iNode) {
             node.icon = 'pi pi-folder'
         },
-        addSelectedDocument(node: iNode) {
-            console.log('DOCUMENT SELECTED: ', node.data)
-            this.selectedDocuments.push(node.data)
+        setSelectedDocument(node: iNode) {
+            // console.log('DOCUMENT SELECTED: ', node.data)
+            this.selectedDocument = node.data
         },
-        removeSelectedDocument(node: iNode) {
-            const index = this.selectedDocuments.findIndex((el: any) => el.id === node.data.id)
-            if (index !== -1) {
-                this.selectedDocuments.splice(index, 1)
-            }
+        removeSelectedDocument() {
+            this.selectedDocument = null
         },
         closeDialog() {
             this.selectedDocumentsKeys = {}
-            this.selectedDocuments = []
+            this.selectedDocument = null
             this.$emit('close')
+        },
+        addDocument() {
+            this.$emit('documentSelected', this.selectedDocument)
+            this.selectedDocumentsKeys = {}
+            this.selectedDocument = null
         }
     }
 })
 </script>
-
-<style lang="scss" scoped>
-#selected-documents-info {
-    border: 1px solid black;
-    flex: 0.3;
-    color: $color-primary;
-}
-
-#button-container {
-    margin-left: auto;
-}
-</style>

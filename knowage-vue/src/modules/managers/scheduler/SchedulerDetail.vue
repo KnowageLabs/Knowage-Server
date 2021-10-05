@@ -30,6 +30,7 @@
                 </div>
             </form>
             <SchedulerDocumentsTable :jobDocuments="job.documents" @loading="setLoading"></SchedulerDocumentsTable>
+            <SchedulerTimingOutputTable :jobTriggers="job.triggers"></SchedulerTimingOutputTable>
         </template>
     </Card>
 </template>
@@ -39,10 +40,11 @@ import { defineComponent } from 'vue'
 import { iPackage } from './Scheduler'
 import Card from 'primevue/card'
 import SchedulerDocumentsTable from './SchedulerDocumentsTable/SchedulerDocumentsTable.vue'
+import SchedulerTimingOutputTable from './SchedulerTimingOutputTable/SchedulerTimingOutputTable.vue'
 
 export default defineComponent({
     name: 'scheduler-detail',
-    components: { Card, SchedulerDocumentsTable },
+    components: { Card, SchedulerDocumentsTable, SchedulerTimingOutputTable },
     props: { id: { type: String }, clone: { type: String }, selectedJob: { type: Object } },
     data() {
         return {
@@ -63,6 +65,7 @@ export default defineComponent({
     methods: {
         loadJob() {
             this.job = { ...this.selectedJob } as iPackage
+            console.log('LOADED JOB: ', this.job)
         },
         setLoading(loading: boolean) {
             // console.log('SET LOADING: ', loading)

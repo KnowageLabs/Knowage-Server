@@ -57,6 +57,7 @@
         "name": "name",
         "new": "new",
         "next": "next",
+        "no": "No",
         "reused": "Reused",
         "run": "Run",
         "save": "save",
@@ -98,7 +99,8 @@
         },
         "value": "Value",
         "version": "version",
-        "warning": {}
+        "warning": {},
+        "yes": "Yes"
     },
     "cron": {
         "advanced": "Advanced",
@@ -1034,15 +1036,32 @@
             "title": "Roles Management"
         },
         "scheduler": {
+            "doNotIterateOnParameterValues": "Don't iterate for each value",
+            "documentParameter": "Document Parameter",
             "documents": "Documents",
-            "hint": "No job selected",
             "documentsSelected": "documents selected",
-            "selectDocument": "Select document",
+            "endDate": "End Date",
+            "fixedValuesStrategy": "Assign fixed values now",
+            "hint": "No job selected",
+            "iterateOnParameterValues": "Iterate for each value",
+            "iterations": "Iterations",
+            "loadAtRuntimeStrategy": "Load values from a parameter modality just before execution",
             "noDocumentsInfo": "No scheduled documents. Press add to add one.",
+            "noTriggersInfo": "No timing & output defined. Add at least one document and then press add to add one.",
             "packageDescription": "Package Description",
             "packageName": "Package Name",
+            "parameterValueType": "Parameter Value Type",
             "parameters": "Parameters",
-            "title": "Scheduler"
+            "paused": "Paused",
+            "role": "Role",
+            "selectDocument": "Select document",
+            "selectFormula": "Select formula to be evaluated",
+            "set": "Set",
+            "startDate": "Start Date",
+            "timingAndOutput": "Timing & Output",
+            "title": "Scheduler",
+            "useFormulaStrategy": "Use a formula just before execution",
+            "values": "Values"
         },
         "templatePruning": {
             "documentSelection": "Document Selection",

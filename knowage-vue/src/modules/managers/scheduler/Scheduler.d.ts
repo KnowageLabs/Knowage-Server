@@ -9,24 +9,11 @@ export interface iPackage {
     jobCollateSnapshots: boolean,
     useVolatility: boolean,
     jobParameters: { name: string, value: string }[],
-    documents: iDocument[],
+    documents: any[],
     triggers: iTrigger[],
     numberOfDocuments: number
 }
 
-export interface iDocument {
-    name: string,
-    nameTitle: string,
-    condensedParameters: string,
-    parameters: iParameter[]
-}
-
-export interface iParameter {
-    name: string,
-    value: string,
-    type: string,
-    iterative: boolean
-}
 
 export interface iFile {
     id: number,

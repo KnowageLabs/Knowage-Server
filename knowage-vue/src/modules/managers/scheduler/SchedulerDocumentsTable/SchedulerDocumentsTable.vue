@@ -19,7 +19,6 @@
             :rows="schedulerDocumentsTableDescriptor.rows"
             class="p-datatable-sm kn-table"
             dataKey="name"
-            :globalFilterFields="schedulerDocumentsTableDescriptor.globalFilterFields"
             :responsiveLayout="schedulerDocumentsTableDescriptor.responsiveLayout"
             :breakpoint="schedulerDocumentsTableDescriptor.breakpoint"
         >
@@ -28,11 +27,11 @@
                     {{ slotProps.data.name }}
                 </template></Column
             >
-            <Column class="kn-truncated" :header="$t('managers.scheduler.parameters')">
+            <Column :header="$t('managers.scheduler.parameters')">
                 <template #body="slotProps">
-                    <span v-if="checkIfParameterValuesSet(slotProps.data.parameters)">{{ getParametersString(slotProps.data.parameters) }}</span>
+                    <span v-if="checkIfParameterValuesSet(slotProps.data.parameters)">{{ slotProps.data.condensedParameters }}</span>
                     <span v-else class="warning-icon"> <i class="pi pi-exclamation-triangle"></i></span>
-                    <Button v-if="slotProps.data.parameters.length > 0" icon="pi pi-pencil" class="p-button-link" />
+                    <Button v-if="slotProps.data.parameters.length > 0" icon="pi pi-pencil" class="p-button-link" @click="openDocumentParameterDialog(slotProps.data)" />
                 </template>
                 ></Column
             >
@@ -43,31 +42,35 @@
             </Column>
         </DataTable>
 
-        <SchedulerDocumentsSelectionDialog :visible="documentsSelectionDialogVisible" :propFiles="files" @close="documentsSelectionDialogVisible = false" @documentsSelected="onDocumentsSelected"></SchedulerDocumentsSelectionDialog>
+        <SchedulerDocumentsSelectionDialog :visible="documentsSelectionDialogVisible" :propFiles="files" @close="documentsSelectionDialogVisible = false" @documentSelected="onDocumentSelected"></SchedulerDocumentsSelectionDialog>
+        <SchedulerDocumentParameterDialog :visible="documentParameterDialogVisible" :propParameters="selectedDocument?.parameters" :roles="roles" @close="closeDocumentParameterDialog" @setParameters="onParametersSet"></SchedulerDocumentParameterDialog>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iDocument, iParameter } from '../Scheduler'
 import axios from 'axios'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
 import schedulerDocumentsTableDescriptor from './SchedulerDocumentsTableDescriptor.json'
 import SchedulerDocumentsSelectionDialog from './SchedulerDocumentsSelectionDialog.vue'
+import SchedulerDocumentParameterDialog from './SchedulerDocumentParameterDialog.vue'
 
 export default defineComponent({
     name: 'scheduler-documents-table',
-    components: { Column, DataTable, Message, SchedulerDocumentsSelectionDialog },
+    components: { Column, DataTable, Message, SchedulerDocumentsSelectionDialog, SchedulerDocumentParameterDialog },
     props: { jobDocuments: { type: Array } },
     emits: ['loading'],
     data() {
         return {
             schedulerDocumentsTableDescriptor,
-            documents: [] as iDocument[],
+            documents: [] as any[],
             files: [] as any[],
-            documentsSelectionDialogVisible: false
+            documentsSelectionDialogVisible: false,
+            selectedDocument: null as any,
+            documentParameterDialogVisible: false,
+            roles: [] as any[]
         }
     },
     watch: {
@@ -80,18 +83,10 @@ export default defineComponent({
     },
     methods: {
         loadDocuments() {
-            this.documents = this.jobDocuments as iDocument[]
+            this.documents = this.jobDocuments as any[]
             console.log('DOCUMENTS: ', this.documents)
         },
-        getParametersString(parameters: iParameter[]) {
-            let parameterString = ''
-            for (let i = 0; i < parameters.length; i++) {
-                parameterString += parameters[i].name + ' = ' + parameters[i].value
-                parameterString += i === parameters.length - 1 ? '' : ' | '
-            }
-            return parameterString
-        },
-        checkIfParameterValuesSet(parameters: iParameter[]) {
+        checkIfParameterValuesSet(parameters: any[]) {
             let valuesSet = true
 
             if (parameters) {
@@ -127,31 +122,92 @@ export default defineComponent({
             this.documentsSelectionDialogVisible = true
             this.$emit('loading', false)
         },
-        onDocumentsSelected(selectedDocuments: any[]) {
-            console.log('SELECTED DOCUMENTS: ', selectedDocuments)
-            selectedDocuments.forEach((document: any) => this.loadDocumentData(document))
-            // this.documents = selectedDocuments
+        onDocumentSelected(selectedDocument: any) {
+            // console.log('SELECTED DOCUMENT: ', selectedDocument)
             this.documentsSelectionDialogVisible = false
+            this.loadDocumentData(selectedDocument, true)
         },
-        async loadDocumentData(document: any) {
+        async loadDocumentData(document: any, pushToTable: boolean) {
             this.$emit('loading', true)
             console.log('DOCUMENT FOR LOAD: ', document)
-            await this.loadDocumentInfo(document.label)
-            await this.loadSelectedDocumentRoles(document.id)
-
+            if (document.parametersTouched) {
+                return
+            }
+            const label = document.label ?? document.name
+            const tempDocument = await this.loadDocumentInfo(label)
+            // console.log('TEMP DOCUMENT: ', tempDocument)
+            this.roles = await this.loadSelectedDocumentRoles(tempDocument)
+            tempDocument.parameters = await this.loadSelectedDocumentParameters(label)
+            tempDocument.condensedParameters = this.updateCondensedParameters(tempDocument.parameters)
+            console.log('TEMP DOCUMENT: ', tempDocument)
+            console.log('ROLES: ', this.roles)
+            this.selectedDocument = { name: label, nameTitle: tempDocument.label, condensedParameters: tempDocument.condensedParameters, parameters: tempDocument.parameters }
+            this.selectedDocument.parameters?.forEach((el: any) => (el.role = this.roles[0].role))
+            if (pushToTable) this.documents.push(this.selectedDocument)
             this.$emit('loading', false)
         },
         async loadDocumentInfo(documentLabel: string) {
             let tempDocument = null as any
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${documentLabel}`).then((response) => (tempDocument = response.data))
-            console.log('TEMP DOCUMENT: ', tempDocument)
+            // console.log('TEMP DOCUMENT: ', tempDocument)
             return tempDocument
         },
-        async loadSelectedDocumentRoles(documentId: number) {
+        async loadSelectedDocumentRoles(tempDocument: any) {
             let tempRoles = []
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${documentId}/userroles`).then((response) => (tempRoles = response.data))
-            console.log('TEMP ROLES: ', tempRoles)
-            return tempRoles
+            let formatedRoles = [] as { userAndRole: string; user: string; role: string }[]
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${tempDocument.id}/userroles`).then((response) => (tempRoles = response.data))
+            tempRoles.forEach((el: string) => {
+                const userAndRole = el.split('|')
+                formatedRoles.push({ userAndRole: el, user: userAndRole[0], role: userAndRole[1] })
+            })
+
+            //console.log('TEMP ROLES: ', tempRoles)
+            //console.log('FORMATED ROLES: ', formatedRoles)
+            return formatedRoles
+        },
+        async loadSelectedDocumentParameters(documentLabel: string) {
+            let tempParameters = [] as any[]
+            // let deletedParameters = []
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${documentLabel}/parameters`).then((response) => (tempParameters = response.data))
+            // console.log('TEMP PARAMETERES: ', tempParameters)
+            tempParameters = tempParameters.map((el: any) => {
+                return { id: el.parID, name: el.parameterUrlName, value: '', type: 'fixed', iterative: false, temporal: el.parameter.temporal, documentLabel: documentLabel } as any
+            })
+            // console.log('TEMP PARAMETERES FORMATED: ', tempParameters)
+            return tempParameters
+        },
+        updateCondensedParameters(parameters: any[]) {
+            let condensedParameters = ''
+            for (let i = 0; i < parameters.length; i++) {
+                //console.log('parameters[i]', parameters[i])
+                if (parameters[i].type === 'fixed') {
+                    condensedParameters += ' ' + parameters[i].name + ' = ' + parameters[i].values
+                    condensedParameters += i === parameters.length - 1 ? ' ' : ' | '
+                }
+            }
+            // console.log('CONDENSED PARAMETERS: ', condensedParameters)
+            return condensedParameters
+        },
+        async openDocumentParameterDialog(document: any) {
+            console.log('DOCUMENT: ', document)
+            this.selectedDocument = document
+            await this.loadDocumentData(document, false)
+            this.documentParameterDialogVisible = true
+        },
+        closeDocumentParameterDialog() {
+            this.selectedDocument = null
+            this.documentParameterDialogVisible = false
+        },
+        onParametersSet(parameters: any[]) {
+            this.selectedDocument.parameters = parameters
+            this.selectedDocument.condensedParameters = this.updateCondensedParameters(parameters)
+            this.selectedDocument.parametersTouched = true
+
+            const index = this.documents.findIndex((el: any) => el.name === this.selectedDocument.name)
+            if (index !== -1) this.documents[index] = this.selectedDocument
+            console.log('DOCUMENT AFTER PARAMETERS SET: ', this.selectedDocument)
+            console.log('DOCUMENTS AFTER :', this.documents)
+            this.documentParameterDialogVisible = false
         }
     }
 })
