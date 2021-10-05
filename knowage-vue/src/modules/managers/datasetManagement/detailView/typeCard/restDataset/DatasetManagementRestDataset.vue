@@ -27,7 +27,7 @@
                 </div>
                 <div class="p-field p-col-12">
                     <span class="p-float-label">
-                        <InputText id="restRequestBody" class="kn-material-input" v-model.trim="dataset.restRequestBody" @change="$emit('touched')" />
+                        <InputText id="restRequestBody" class="kn-material-input" maxLength="2000" v-model.trim="dataset.restRequestBody" @change="$emit('touched')" />
                         <label for="restRequestBody" class="kn-material-input-label"> {{ $t('managers.datasetManagement.restRequestBody') }} </label>
                     </span>
                 </div>

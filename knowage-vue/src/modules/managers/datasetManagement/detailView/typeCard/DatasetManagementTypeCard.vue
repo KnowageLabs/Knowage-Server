@@ -36,14 +36,14 @@
                 </div>
             </template>
         </Card>
-
-        <JavaDataset v-if="dataset.dsTypeCd == 'Java Class'" :selectedDataset="selectedDataset" />
-        <QbeDataset v-if="dataset.dsTypeCd == 'Qbe'" :selectedDataset="selectedDataset" :businessModels="businessModels" :dataSources="dataSources" :parentValid="parentValid" />
-        <FlatDataset v-if="dataset.dsTypeCd == 'Flat'" :selectedDataset="selectedDataset" :dataSources="dataSources" />
-        <CkanDataset v-if="dataset.dsTypeCd == 'Ckan'" :selectedDataset="selectedDataset" />
-        <RestDataset v-if="dataset.dsTypeCd == 'REST'" :selectedDataset="selectedDataset" />
-        <ParamTable v-if="dataset.dsTypeCd && dataset.dsTypeCd != 'File' && dataset.dsTypeCd != 'Flat'" :selectedDataset="selectedDataset" />
     </div>
+    <JavaDataset v-if="dataset.dsTypeCd == 'Java Class'" :selectedDataset="selectedDataset" />
+    <QbeDataset v-if="dataset.dsTypeCd == 'Qbe' || dataset.dsTypeCd == 'Federated'" :selectedDataset="selectedDataset" :businessModels="businessModels" :dataSources="dataSources" :parentValid="parentValid" />
+    <FlatDataset v-if="dataset.dsTypeCd == 'Flat'" :selectedDataset="selectedDataset" :dataSources="dataSources" />
+    <CkanDataset v-if="dataset.dsTypeCd == 'Ckan'" :selectedDataset="selectedDataset" />
+    <RestDataset v-if="dataset.dsTypeCd == 'REST'" :selectedDataset="selectedDataset" />
+    <SolrDataset v-if="dataset.dsTypeCd == 'Solr'" :selectedDataset="selectedDataset" />
+    <ParamTable v-if="dataset.dsTypeCd && dataset.dsTypeCd != 'File' && dataset.dsTypeCd != 'Flat'" :selectedDataset="selectedDataset" />
 </template>
 
 <script lang="ts">
@@ -54,6 +54,7 @@ import FlatDataset from './flatDataset/DatasetManagementFlatDataset.vue'
 import JavaDataset from './javaDataset/DatasetManagementJavaDataset.vue'
 import CkanDataset from './ckanDataset/DatasetManagementCkanDataset.vue'
 import QbeDataset from './qbeDataset/DatasetManagementQbeDataset.vue'
+import SolrDataset from './solrDataset/DatasetManagementSolrDataset.vue'
 import RestDataset from './restDataset/DatasetManagementRestDataset.vue'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
@@ -62,7 +63,7 @@ import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
 
 export default defineComponent({
-    components: { Card, Dropdown, KnValidationMessages, ParamTable, CkanDataset, QbeDataset, RestDataset, JavaDataset, FlatDataset },
+    components: { Card, Dropdown, KnValidationMessages, ParamTable, CkanDataset, QbeDataset, RestDataset, JavaDataset, FlatDataset, SolrDataset },
     props: {
         parentValid: { type: Boolean },
         selectedDataset: { type: Object as any },

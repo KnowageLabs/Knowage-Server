@@ -12,7 +12,7 @@
     </Toolbar>
     <Card v-show="expandTableCard">
         <template #content>
-            <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.restRequestHeaders" :scrollable="true" scrollHeight="250px" dataKey="versNum" responsiveLayout="stack" breakpoint="960px">
+            <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.restRequestAdditionalParameters" :scrollable="true" scrollHeight="250px" dataKey="versNum" responsiveLayout="stack" breakpoint="960px">
                 <Column field="name" :header="$t('kpi.alert.name')" :sortable="true">
                     <template #editor="{data}">
                         <InputText class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.name" />
@@ -47,7 +47,7 @@ export default defineComponent({
     },
     computed: {
         disableDeleteAll() {
-            if (!this.dataset.restRequestHeaders || this.dataset['restRequestHeaders'].length == 0) {
+            if (!this.dataset.restRequestAdditionalParameters || this.dataset['restRequestAdditionalParameters'].length == 0) {
                 return true
             } else {
                 return false
@@ -72,16 +72,16 @@ export default defineComponent({
     },
     methods: {
         addNewParam() {
-            this.dataset.restRequestHeaders ? '' : (this.dataset.restRequestHeaders = [])
+            this.dataset.restRequestAdditionalParameters ? '' : (this.dataset.restRequestAdditionalParameters = [])
             const newParam = { ...tableDescriptor.newRequestHeader }
-            this.dataset.restRequestHeaders.push(newParam)
+            this.dataset.restRequestAdditionalParameters.push(newParam)
         },
         deleteParam(removedParam) {
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
                 header: this.$t('common.uppercaseDelete'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => (this.dataset.restRequestHeaders = this.dataset.restRequestHeaders.filter((paramToRemove) => removedParam.data.name !== paramToRemove.name))
+                accept: () => (this.dataset.restRequestAdditionalParameters = this.dataset.restRequestAdditionalParameters.filter((paramToRemove) => removedParam.data.name !== paramToRemove.name))
             })
         },
         removeAllParams() {
@@ -89,7 +89,7 @@ export default defineComponent({
                 message: this.$t('managers.datasetManagement.deleteAllRequestHeaderMsg'),
                 header: this.$t('managers.datasetManagement.deleteAllRequestHeaderTitle'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => (this.dataset.restRequestHeaders = [])
+                accept: () => (this.dataset.restRequestAdditionalParameters = [])
             })
         }
     }

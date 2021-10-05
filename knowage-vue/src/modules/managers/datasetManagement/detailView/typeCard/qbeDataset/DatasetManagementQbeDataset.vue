@@ -1,7 +1,7 @@
 <template>
     <Card class="p-mt-3">
         <template #content>
-            <form class="p-fluid p-formgrid p-grid">
+            <form v-if="dataset.dsTypeCd == 'Qbe'" class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-6">
                     <span class="p-float-label">
                         <Dropdown
@@ -49,8 +49,10 @@
                     />
                 </div>
             </form>
-            <Button :label="$t('managers.datasetManagement.viewQbeButton')" class="p-col-2 p-mr-2 p-button kn-button--primary" style="max-height:38px" @click="viewQbe" />
-            <Button :label="$t('managers.datasetManagement.openQbeButton')" class="p-col-2 p-button kn-button--primary" :disabled="parentValid" @click="showQbeDataset" />
+            <div v-if="dataset.dsTypeCd == 'Qbe' || dataset.dsTypeCd == 'Federated'">
+                <Button :label="$t('managers.datasetManagement.viewQbeButton')" class="p-col-2 p-mr-2 p-button kn-button--primary" style="max-height:38px" @click="viewQbe" />
+                <Button :label="$t('managers.datasetManagement.openQbeButton')" class="p-col-2 p-button kn-button--primary" :disabled="parentValid" @click="showQbeDataset" />
+            </div>
         </template>
     </Card>
 </template>
