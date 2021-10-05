@@ -637,6 +637,8 @@
             "deleteAllVersionsTitle": "Delete all dataset versions",
             "deleteOneVersionMsg": "Do you want to delete selected version?",
             "documents": "Documents",
+            "editQuery": "Edit Query",
+            "editScript": "Edit Script",
             "facets": "Facets",
             "fileType": "File type",
             "flatTableName": "Table name",
