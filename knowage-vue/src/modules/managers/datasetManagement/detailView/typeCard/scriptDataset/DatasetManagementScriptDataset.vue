@@ -16,6 +16,7 @@
                                 'p-invalid': v$.dataset.scriptLanguage.$invalid && v$.dataset.scriptLanguage.$dirty
                             }"
                             @before-show="v$.dataset.scriptLanguage.$touch()"
+                            @change="onLanguageChanged($event.value)"
                         />
                         <label for="scope" class="kn-material-input-label"> {{ $t('managers.lovsManagement.language') }} * </label>
                     </span>
@@ -27,7 +28,7 @@
                     />
                 </div>
             </span>
-            <VCodeMirror class="p-mt-2" ref="codeMirrorScript" v-model:value="dataset.script" :autoHeight="true" :options="scriptOptions" @keyup="$emit('touched')" />
+            <VCodeMirror class="p-mt-2" ref="codeMirrorScriptType" v-model:value="dataset.script" :autoHeight="true" :options="scriptOptions" @keyup="$emit('touched')" />
         </template>
     </Card>
 </template>
@@ -53,10 +54,7 @@ export default defineComponent({
             v$: useValidate() as any,
             queryDescriptor,
             dataset: {} as any,
-            codeMirrorScript: {} as any,
-            query: '',
-            expandQueryCard: true,
-            expandScriptCard: false,
+            codeMirrorScriptType: {} as any,
             scriptOptions: {
                 mode: '',
                 indentWithTabs: true,
@@ -98,10 +96,14 @@ export default defineComponent({
             this.dataset.script ? '' : (this.dataset.script = '')
         },
         setupCodeMirror() {
-            this.$refs.codeMirrorScript ? (this.codeMirrorScript = (this.$refs.codeMirrorScript as any).editor as any) : ''
+            const interval = setInterval(() => {
+                if (!this.$refs.codeMirrorScriptType) return
+                this.codeMirrorScriptType = (this.$refs.codeMirrorScriptType as any).editor as any
+                clearInterval(interval)
+            }, 200)
         },
         loadScriptMode() {
-            if (this.dataset.scriptLanguage && this.dataset.scriptLanguage != '') {
+            if (this.dataset.scriptLanguage) {
                 this.scriptOptions.mode = this.dataset.scriptLanguage === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
             }
         },
@@ -109,7 +111,7 @@ export default defineComponent({
             const mode = value === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
             setTimeout(() => {
                 this.setupCodeMirror()
-                this.codeMirrorScript.setOption('mode', mode)
+                this.codeMirrorScriptType.setOption('mode', mode)
             }, 250)
             this.$emit('touched')
         }
