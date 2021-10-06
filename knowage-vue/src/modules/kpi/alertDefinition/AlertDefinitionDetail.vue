@@ -11,7 +11,7 @@
             {{ $t('kpi.alert.expiredWarning') }}
         </Message>
         <NameCard :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.selectedAlert" />
-        <KpiCron class="p-m-2" v-if="selectedAlert?.frequency" :frequency="selectedAlert.frequency" @touched="touched = true" />
+        <KnCron class="p-m-2" v-if="selectedAlert?.frequency" :frequency="selectedAlert.frequency" @touched="touched = true" />
         <EventsCard :selectedAlert="selectedAlert" @valueChanged="updateAlert" />
         <KpiCard v-if="isListenerSelected && actionList?.length > 0" :selectedAlert="selectedAlert" :kpiList="kpiList" :actionList="actionList" @showDialog="onShowActionDialog($event)" @kpiLoaded="updateKpi" @touched="touched = true" />
     </div>
@@ -29,12 +29,12 @@ import Message from 'primevue/message'
 import NameCard from './cards/AlertDefinitionNameCard.vue'
 import KpiCard from './cards/AlertDefinitionKpiCard.vue'
 import EventsCard from './cards/AlertDefinitionEventsCard.vue'
-import KpiCron from '../kpiCron/KpiCron.vue'
+import KnCron from '@/components/UI/KnCron/KnCron.vue'
 import AddActionDialog from './actions/AlertDefinitionActionDialog.vue'
 
 export default defineComponent({
     name: 'alert-details',
-    components: { NameCard, EventsCard, AddActionDialog, KpiCard, Message, KpiCron },
+    components: { NameCard, EventsCard, AddActionDialog, KpiCard, Message, KnCron },
     props: { id: { type: String, required: false } },
     watch: {
         async id() {
