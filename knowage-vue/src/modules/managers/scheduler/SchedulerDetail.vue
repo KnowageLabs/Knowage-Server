@@ -1,5 +1,12 @@
 <template>
-    <p>{{ selectedJob }}</p>
+    <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
+        <template #left>{{ job.jobName }}</template>
+        <template #right>
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" />
+        </template>
+    </Toolbar>
+    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
     <Card v-if="selectedJob" id="scheduler-detail-card" class="p-m-2">
         <template #content>
             <form v-if="job" class="p-fluid p-formgrid p-grid p-m-2">

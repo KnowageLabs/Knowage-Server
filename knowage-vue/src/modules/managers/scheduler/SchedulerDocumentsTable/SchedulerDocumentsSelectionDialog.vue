@@ -41,7 +41,7 @@ import Tree from 'primevue/tree'
 export default defineComponent({
     name: 'scheduler-documents-selection-dialog',
     components: { Dialog, Tree },
-    props: { propFiles: { type: Array } },
+    props: { propFiles: { type: Array }, visible: {type: Boolean} },
     emits: ['documentSelected', 'close'],
     data() {
         return {

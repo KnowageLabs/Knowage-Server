@@ -1,0 +1,16 @@
+{
+    "types": [
+        {
+            "label": "managers.scheduler.singleExecution",
+            "value": "single"
+        },
+        {
+            "label": "managers.scheduler.schedulerExecution",
+            "value": "scheduler"
+        },
+        {
+            "label": "managers.scheduler.eventExecution",
+            "value": "event"
+        }
+    ]
+}

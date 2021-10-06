@@ -5,7 +5,7 @@
                 {{ $t('managers.scheduler.timingAndOutput') }}
             </template>
             <template #right>
-                <Button class="kn-button p-button-text p-button-rounded">{{ $t('common.add') }}</Button>
+                <Button class="kn-button p-button-text p-button-rounded" @click="showTriggerDetail(null)">{{ $t('common.add') }}</Button>
             </template>
         </Toolbar>
         <Message class="p-m-2" v-if="triggers.length === 0" severity="info" :closable="false" :style="schedulerTimingOutputTableDescriptor.styles.message">
@@ -21,60 +21,77 @@
             dataKey="triggerName"
             :responsiveLayout="schedulerTimingOutputTableDescriptor.responsiveLayout"
             :breakpoint="schedulerTimingOutputTableDescriptor.breakpoint"
+            :rowClass="rowClass"
         >
-            <Column class="kn-truncated" :header="$t('common.name')" :style="schedulerTimingOutputTableDescriptor.nameColumnStyle">
+            <Column class="kn-truncated" :header="$t('common.name')">
                 <template #body="slotProps">
-                    {{ slotProps.data.triggerName }}
+                    <span>{{ slotProps.data.triggerName }}</span>
                 </template></Column
             >
-            <Column class="kn-truncated" :header="$t('common.type')" :style="schedulerTimingOutputTableDescriptor.nameColumnStyle">
+            <Column class="kn-truncated" :header="$t('common.type')">
                 <template #body="slotProps">
                     {{ slotProps.data.triggerChronType }}
                 </template></Column
             >
-            <Column class="kn-truncated" :header="$t('managers.scheduler.startDate')" :style="schedulerTimingOutputTableDescriptor.nameColumnStyle">
+            <Column class="kn-truncated" :header="$t('managers.scheduler.startDate')">
                 <template #body="slotProps">
-                    {{ slotProps.data.triggerStartDate }}
+                    {{ getFormatedDate(slotProps.data.triggerZonedStartTime, 'DD/MM/YYYY HH:mm') }}
                 </template></Column
             >
-            <Column class="kn-truncated" :header="$t('managers.scheduler.endDate')" :style="schedulerTimingOutputTableDescriptor.nameColumnStyle">
+            <Column class="kn-truncated" :header="$t('managers.scheduler.endDate')">
                 <template #body="slotProps">
-                    {{ slotProps.data.triggerEndDate }}
+                    {{ slotProps.data.triggerZonedEndTime ? getFormatedDate(slotProps.data.triggerZonedEndTime, 'DD/MM/YYYY HH:mm') : '' }}
                 </template></Column
             >
-            <Column class="kn-truncated" :header="$t('managers.scheduler.paused')" :style="schedulerTimingOutputTableDescriptor.nameColumnStyle">
+            <Column class="kn-truncated" :header="$t('managers.scheduler.paused')">
                 <template #body="slotProps">
                     {{ slotProps.data.triggerIsPaused ? $t('common.yes') : $t('common.no') }}
                 </template></Column
             >
 
             <Column :style="schedulerTimingOutputTableDescriptor.iconColumnStyle">
-                <template #body>
-                    <Button icon="pi pi-trash" class="p-button-link" />
+                <template #body="slotProps">
+                    <Button class="p-button-link p-button-sm" icon="fa fa-ellipsis-v" @click="toggle($event, slotProps.data)" aria-haspopup="true" aria-controls="overlay_menu" />
+                    <Menu ref="menu" :model="items" :popup="true" data-test="menu"></Menu>
+                    <Button icon="pi pi-trash" class="p-button-link" @click="deleteTriggerConfirm({ trigger: slotProps.data, index: slotProps.index })" />
                 </template>
             </Column>
         </DataTable>
+
+        <SchedulerTimingOutputInfoDialog :visible="triggerInfoDialogVisible" :triggerInfo="triggerInfo" @close="triggerInfoDialogVisible = false"></SchedulerTimingOutputInfoDialog>
+        <SchedulerTimingOutputDetailDialog :visible="triggerDetailDialogVisible" :propTrigger="triggerInfo" @close="triggerDetailDialogVisible = false"></SchedulerTimingOutputDetailDialog>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { formatDate } from '@/helpers/commons/localeHelper'
+import axios from 'axios'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
+import Message from 'primevue/message'
+import Menu from 'primevue/menu'
 import schedulerTimingOutputTableDescriptor from './SchedulerTimingOutputTableDescriptor.json'
+import SchedulerTimingOutputDetailDialog from './SchedulerTimingOutputDetailDialog/SchedulerTimingOutputDetailDialog.vue'
+import SchedulerTimingOutputInfoDialog from './SchedulerTimingOutputInfoDialog.vue'
 
 export default defineComponent({
     name: 'scheduler-timing-output-table',
-    components: { Column, DataTable },
+    components: { Column, DataTable, Message, Menu, SchedulerTimingOutputDetailDialog, SchedulerTimingOutputInfoDialog },
     props: { jobTriggers: { type: Array } },
+    emits: ['loading'],
     data() {
         return {
             schedulerTimingOutputTableDescriptor,
-            triggers: [] as any[]
+            triggers: [] as any[],
+            items: [] as { label: String; icon: string; command: Function }[],
+            triggerInfo: null as any,
+            triggerInfoDialogVisible: false,
+            triggerDetailDialogVisible: false
         }
     },
     watch: {
-        propTriggers() {
+        jobTriggers() {
             this.loadTriggers()
         }
     },
@@ -85,6 +102,141 @@ export default defineComponent({
         loadTriggers() {
             this.triggers = this.jobTriggers as any[]
             console.log('TRIGGERS: ', this.triggers)
+        },
+        getFormatedDate(date: any, format: any) {
+            return formatDate(date, format)
+        },
+        rowClass(trigger: any) {
+            return this.isTriggerActive(trigger) ? 'active' : 'inactive'
+        },
+        isTriggerActive(trigger: any) {
+            let active = true
+            const now = new Date().getTime()
+            const startDate = new Date(trigger.triggerZonedStartTime).getTime()
+            const endDate = trigger.triggerZonedEndTime ? new Date(trigger.triggerZonedEndTime).getTime() : null
+
+            if (trigger.triggerIsPaused) active = false
+
+            if (trigger.triggerChronType === 'Single' && startDate < now) {
+                console.log('USAO 2 !')
+                active = false
+            } else if (endDate && (endDate < now || startDate > now)) {
+                console.log('USAO 1 !')
+                active = false
+            }
+
+            // console.log('Trigger: ', trigger)
+            // console.log('Trigger start: ', startDate)
+            // console.log('Trigger end: ', endDate)
+            return active
+        },
+        toggle(event: any, trigger: any) {
+            this.createMenuItems(trigger)
+            const menu = this.$refs.menu as any
+            menu.toggle(event)
+        },
+        createMenuItems(trigger: any) {
+            console.log('TRIGGER IN MENU: ', trigger)
+            this.items = []
+            this.items.push({ label: this.$t('managers.scheduler.info'), icon: 'fa fa-info', command: () => this.getTriggerInfo(trigger, true) })
+            this.items.push({ label: this.$t('managers.scheduler.detail'), icon: 'pi pi-pencil', command: () => this.showTriggerDetail(trigger) })
+            this.items.push({ label: this.$t('managers.scheduler.execute'), icon: 'fa fa-play', command: () => this.triggerExecuteConfirm(trigger) })
+            trigger.triggerIsPaused
+                ? this.items.push({ label: this.$t('managers.scheduler.resumeSchedulation'), icon: 'fa fa-unlock', command: () => this.triggerPauseConfirm(trigger) })
+                : this.items.push({ label: this.$t('managers.scheduler.pauseSchedulation'), icon: 'fa fa-lock', command: () => this.triggerPauseConfirm(trigger) })
+        },
+        async getTriggerInfo(trigger: any, openDialog: boolean) {
+            console.log('TRIGGER FOR INFO: ', trigger)
+            this.$emit('loading', true)
+            await axios
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/getTriggerInfo?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
+                .then((response) => {
+                    this.triggerInfo = response.data
+                    this.triggerInfoDialogVisible = openDialog
+                })
+                .catch(() => {})
+            this.$emit('loading', false)
+        },
+        async showTriggerDetail(trigger: any) {
+            console.log('TRIGGER FOR DETAIL: ', trigger)
+            await this.getTriggerInfo(trigger, false)
+            this.triggerDetailDialogVisible = true
+        },
+        triggerExecuteConfirm(trigger: any) {
+            this.$confirm.require({
+                message: this.$t('managers.scheduler.executeNow'),
+                header: this.$t('managers.scheduler.confirmHeader'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: async () => await this.executeTrigger(trigger)
+            })
+        },
+        async executeTrigger(trigger: any) {
+            this.$emit('loading', true)
+
+            await axios
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/executeTrigger?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
+                .then((response) => {
+                    if (response.data.resp === 'ok') {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('managers.scheduler.information'),
+                            msg: this.$t('managers.scheduler.schedulationExecuted')
+                        })
+                    }
+                })
+                .catch(() => {})
+            this.$emit('loading', false)
+        },
+        triggerPauseConfirm(trigger: any) {
+            this.$confirm.require({
+                message: trigger.triggerIsPaused ? this.$t('managers.scheduler.resumeSchedulation') : this.$t('managers.scheduler.pauseSchedulation'),
+                header: this.$t('managers.scheduler.confirmHeader'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: async () => await this.pauseTrigger(trigger)
+            })
+        },
+        async pauseTrigger(trigger: any) {
+            this.$emit('loading', true)
+            const action = trigger.triggerIsPaused ? 'resumeTrigger' : 'pauseTrigger'
+            await axios
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/${action}?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
+                .then((response) => {
+                    if (response.data.resp === 'ok') {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('managers.scheduler.information'),
+                            msg: trigger.triggerIsPaused ? this.$t('managers.scheduler.schedulationResumed') : this.$t('managers.scheduler.schedulationPaused')
+                        })
+                        trigger.triggerIsPaused = action === 'pauseTrigger'
+                        // console.log('IS PAUSED: ', trigger.triggerIsPaused)
+                    }
+                })
+                .catch(() => {})
+            this.$emit('loading', false)
+        },
+        deleteTriggerConfirm(event: any) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: async () => await this.deleteTrigger(event.trigger, event.index)
+            })
+        },
+        async deleteTrigger(trigger: any, index: number) {
+            console.log('TRIGER FOR DELETE: ', trigger)
+            console.log('TRIGER FOR DELETE INDEX: ', index)
+            this.$emit('loading', true)
+            await axios
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/deleteTrigger?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
+                .then((response) => {
+                    if (response.data.resp === 'ok') {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.deleteTitle'),
+                            msg: this.$t('common.toast.deleteSuccess')
+                        })
+                        this.triggers.splice(index, 1)
+                    }
+                })
+                .catch(() => {})
+            this.$emit('loading', false)
         }
     }
 })
@@ -97,5 +249,13 @@ export default defineComponent({
 
 .warning-icon {
     color: rgb(209, 209, 26);
+}
+
+.active {
+    border-left: 2px solid green;
+}
+
+.inactive {
+    border-left: 2px solid red;
 }
 </style>
