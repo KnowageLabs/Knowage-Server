@@ -36,14 +36,14 @@
                     </div>
                     <div class="p-field p-col-2 p-mb-3" v-if="simpleNavigation.type === 2">
                         <span class="p-float-label">
-                            <InputText id="width" class="kn-material-input" type="number" v-model.trim="simpleNavigation.popupOptions.width" min="0" @input="setDirty" />
+                            <InputNumber id="width" inputClass="kn-material-input" v-model="simpleNavigation.popupOptions.width" :min="0" :useGrouping="false" @input="setDirty" />
                             <label for="width" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.width') }} </label>
                         </span>
                         <small id="width-help">{{ $t('managers.crossNavigationManagement.widthHelp') }}</small>
                     </div>
                     <div class="p-field p-col-2 p-mb-3" v-if="simpleNavigation.type === 2">
                         <span class="p-float-label">
-                            <InputText id="height" class="kn-material-input" type="number" v-model.trim="simpleNavigation.popupOptions.height" min="0" @input="setDirty" />
+                            <InputNumber id="height" inputClass="kn-material-input" v-model="simpleNavigation.popupOptions.height" :min="0" :useGrouping="false" @input="setDirty" />
                             <label for="height" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.height') }} </label>
                         </span>
                         <small id="height-help">{{ $t('managers.crossNavigationManagement.heightHelp') }}</small>
@@ -97,6 +97,7 @@ import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import axios from 'axios'
 import Dropdown from 'primevue/dropdown'
+import InputNumber from 'primevue/inputnumber'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import DocDialog from './dialogs/CrossNavigationManagementDocDialog.vue'
@@ -106,7 +107,7 @@ import crossNavigationManagementValidator from './CrossNavigationManagementValid
 import crossNavigationDescriptor from './CrossNavigationManagementDescriptor.json'
 export default defineComponent({
     name: 'cross-navigation-detail',
-    components: { Dropdown, DocDialog, DocParameters, HintDialog, KnValidationMessages },
+    components: { Dropdown, DocDialog, DocParameters, HintDialog, KnValidationMessages, InputNumber },
     props: {
         id: {
             type: String
@@ -124,6 +125,7 @@ export default defineComponent({
             docType: 'origin',
             docId: null,
             operation: 'insert',
+            originParams: [] as any[],
             crossNavigationDescriptor,
             crossModes: [
                 { name: this.$t('managers.crossNavigationManagement.normal'), value: 3 },
@@ -147,6 +149,10 @@ export default defineComponent({
         async id() {
             if (this.id) {
                 await this.loadNavigation()
+                if (this.originParams.length > 0) {
+                    this.navigation.fromPars = this.originParams
+                    this.originParams = []
+                }
             } else this.initNew()
         }
     },
@@ -186,7 +192,11 @@ export default defineComponent({
             if (this.navigation.simpleNavigation.id === undefined) {
                 this.operation = 'insert'
                 this.navigation.newRecord = true
-            } else this.operation = 'update'
+                this.originParams = this.navigation.fromPars
+            } else {
+                this.operation = 'update'
+                this.originParams = []
+            }
             if (this.navigation.simpleNavigation.type === 2) {
                 this.navigation.simpleNavigation.popupOptions = JSON.stringify(this.navigation.simpleNavigation.popupOptions)
             } else delete this.navigation.simpleNavigation.popupOptions
@@ -219,7 +229,7 @@ export default defineComponent({
                 })
         },
         handleDropdown() {
-            if (!this.simpleNavigation.popupOptions) this.simpleNavigation.popupOptions = { width: '', height: '' }
+            if (!this.simpleNavigation.popupOptions) this.simpleNavigation.popupOptions = {}
         },
         selectDoc(type) {
             this.docType = type
