@@ -21,7 +21,17 @@
                 <template #header>
                     <span>{{ $t('kpi.alert.type') }}</span>
                 </template>
-                <TypeCard :selectedDataset="selectedDataset" :datasetTypes="datasetTypes" :dataSources="dataSources" :businessModels="businessModels" :scriptTypes="scriptTypes" :parentValid="v$.$invalid" @touched="$emit('touched')" />
+                <TypeCard
+                    :selectedDataset="selectedDataset"
+                    :datasetTypes="datasetTypes"
+                    :dataSources="dataSources"
+                    :businessModels="businessModels"
+                    :scriptTypes="scriptTypes"
+                    :parentValid="v$.$invalid"
+                    :pythonEnvironments="pythonEnvironments"
+                    :rEnvironments="rEnvironments"
+                    @touched="$emit('touched')"
+                />
             </TabPanel>
 
             <TabPanel>

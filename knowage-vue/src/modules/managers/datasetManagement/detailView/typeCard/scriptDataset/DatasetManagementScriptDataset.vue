@@ -41,9 +41,10 @@ import useValidate from '@vuelidate/core'
 import queryDescriptor from './DatasetManagementScriptDataset.json'
 import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 
 export default defineComponent({
-    components: { Card, Dropdown, VCodeMirror },
+    components: { Card, Dropdown, VCodeMirror, KnValidationMessages },
     props: {
         selectedDataset: { type: Object as any },
         scriptTypes: { type: Array as any }

@@ -685,7 +685,11 @@
             "typeOrJsonPathValue": "Type or JSON Path Type",
             "viewQbeButton": "View Qbe Query",
             "viewQbeMsg": "The dataset should be saved before viewing the QBE query",
-            "viewQbeWarning": "Cannot open QBE query"
+            "viewQbeWarning": "Cannot open QBE query",
+            "environment": "Environment",
+            "checkEnvironment": "Check Environment",
+            "dataframeName": "Dataframe variable name",
+            "availableLibraries": "Available Libraries"
         },
         "domainsManagement": {
             "domainCode": "Domain code",

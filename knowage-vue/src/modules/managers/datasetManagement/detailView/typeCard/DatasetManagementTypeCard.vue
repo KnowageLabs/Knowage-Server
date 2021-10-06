@@ -46,6 +46,7 @@
     <RestDataset v-if="dataset.dsTypeCd == 'REST'" :selectedDataset="selectedDataset" />
     <SolrDataset v-if="dataset.dsTypeCd == 'Solr'" :selectedDataset="selectedDataset" />
     <SparqlDataset v-if="dataset.dsTypeCd == 'SPARQL'" :selectedDataset="selectedDataset" />
+    <PythonDataset v-if="dataset.dsTypeCd == 'Python/R'" :selectedDataset="selectedDataset" :pythonEnvironments="pythonEnvironments" :rEnvironments="rEnvironments" />
     <ParamTable v-if="dataset.dsTypeCd && dataset.dsTypeCd != 'File' && dataset.dsTypeCd != 'Flat'" :selectedDataset="selectedDataset" />
 </template>
 
@@ -61,6 +62,7 @@ import CkanDataset from './ckanDataset/DatasetManagementCkanDataset.vue'
 import QbeDataset from './qbeDataset/DatasetManagementQbeDataset.vue'
 import SolrDataset from './solrDataset/DatasetManagementSolrDataset.vue'
 import SparqlDataset from './sparqlDataset/DatasetManagementSparqlDataset.vue'
+import PythonDataset from './pythonDataset/DatasetManagementPythonDataset.vue'
 import RestDataset from './restDataset/DatasetManagementRestDataset.vue'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
@@ -69,14 +71,16 @@ import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
 
 export default defineComponent({
-    components: { Card, Dropdown, KnValidationMessages, ParamTable, CkanDataset, QbeDataset, RestDataset, JavaDataset, FlatDataset, SolrDataset, QueryDataset, ScriptDataset, SparqlDataset },
+    components: { Card, Dropdown, KnValidationMessages, ParamTable, CkanDataset, QbeDataset, RestDataset, JavaDataset, FlatDataset, SolrDataset, QueryDataset, ScriptDataset, SparqlDataset, PythonDataset },
     props: {
         parentValid: { type: Boolean },
         selectedDataset: { type: Object as any },
         datasetTypes: { type: Array as any },
         dataSources: { type: Array as any },
         businessModels: { type: Array as any },
-        scriptTypes: { type: Array as any }
+        scriptTypes: { type: Array as any },
+        pythonEnvironments: { type: Array as any },
+        rEnvironments: { type: Array as any }
     },
     computed: {},
     emits: ['touched'],
