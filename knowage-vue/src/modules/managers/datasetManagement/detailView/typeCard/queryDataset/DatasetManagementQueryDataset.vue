@@ -83,7 +83,6 @@ export default defineComponent({
             dataset: {} as any,
             codeMirror: {} as any,
             codeMirrorScript: {} as any,
-            query: '',
             expandQueryCard: true,
             expandScriptCard: false,
             codemirrorOptions: {

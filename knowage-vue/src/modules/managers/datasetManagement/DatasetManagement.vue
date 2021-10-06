@@ -35,7 +35,6 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iDomainType } from './DatasetManagement'
 import axios from 'axios'
 import mainDescriptor from './DatasetManagementDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
@@ -53,11 +52,11 @@ export default defineComponent({
             columnOrdering: '',
             touched: false,
             datasetInList: {} as any,
-            scopeTypes: [] as iDomainType[],
-            categoryTypes: [] as iDomainType[],
-            datasetTypes: [] as iDomainType[],
-            transformationDataset: {} as iDomainType,
-            scriptTypes: [] as iDomainType[],
+            scopeTypes: [] as any,
+            categoryTypes: [] as any,
+            datasetTypes: [] as any,
+            transformationDataset: {} as any,
+            scriptTypes: [] as any,
             dataSources: [] as any,
             businessModels: [] as any,
             pythonEnvironments: [] as any,
@@ -86,7 +85,12 @@ export default defineComponent({
         async getDomainData() {
             this.getDomainByType('DS_SCOPE').then((response) => (this.scopeTypes = response.data))
             this.getDomainByType('CATEGORY_TYPE').then((response) => (this.categoryTypes = response.data))
-            this.getDomainByType('DATA_SET_TYPE').then((response) => (this.datasetTypes = response.data))
+            this.getDomainByType('DATA_SET_TYPE').then(
+                (response) =>
+                    (this.datasetTypes = response.data.filter((cd) => {
+                        return cd.VALUE_CD != 'Custom' && cd.VALUE_CD != 'Federated'
+                    }))
+            )
             this.getDomainByType('TRANSFORMER_TYPE').then((response) => (this.transformationDataset = response.data[0]))
             this.getDomainByType('SCRIPT_TYPE').then((response) => (this.scriptTypes = response.data))
         },
@@ -160,11 +164,11 @@ export default defineComponent({
                         .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${event.item.label}/`)
                         .then(() => {
                             this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                            this.loading = true
                             this.getDatasets()
                             if (event.item.id == this.$route.params.id) this.$router.push('/dataset-management')
                         })
-                        .catch((error) => console.log(error))
-                    //interceptor is already catching the error...this is here just to pervent error showing in browser debugger
+                        .catch()
                 }
             })
         },

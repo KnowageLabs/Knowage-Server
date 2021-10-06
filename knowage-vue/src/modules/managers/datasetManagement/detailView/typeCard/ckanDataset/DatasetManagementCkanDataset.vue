@@ -30,19 +30,19 @@
                     <div class="p-field p-col-4">
                         <span class="p-float-label">
                             <InputText id="ckanSkipRows" class="kn-material-input" type="number" v-model.trim="dataset.ckanSkipRows" @change="$emit('touched')" />
-                            <label for="ckanSkipRows" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanSkipRows') }} * </label>
+                            <label for="ckanSkipRows" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanSkipRows') }} </label>
                         </span>
                     </div>
                     <div class="p-field p-col-4">
                         <span class="p-float-label">
                             <InputText id="ckanLimitRows" class="kn-material-input" type="number" v-model.trim="dataset.ckanLimitRows" @change="$emit('touched')" />
-                            <label for="ckanLimitRows" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanLimitRows') }} * </label>
+                            <label for="ckanLimitRows" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanLimitRows') }} </label>
                         </span>
                     </div>
                     <div class="p-field p-col-4">
                         <span class="p-float-label">
                             <InputText id="ckanXslSheetNumber" class="kn-material-input" type="number" v-model.trim="dataset.ckanXslSheetNumber" @change="$emit('touched')" />
-                            <label for="ckanXslSheetNumber" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanXslSheetNumber') }} * </label>
+                            <label for="ckanXslSheetNumber" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanXslSheetNumber') }} </label>
                         </span>
                     </div>
                 </div>

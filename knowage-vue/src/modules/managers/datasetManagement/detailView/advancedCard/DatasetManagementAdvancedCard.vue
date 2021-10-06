@@ -119,7 +119,7 @@ import { createValidations, ICustomValidatorMap } from '@/helpers/commons/valida
 import useValidate from '@vuelidate/core'
 import advancedCardDescriptor from './DatasetManagementAdvancedCardDescriptor.json'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import KpiCron from '@/modules/kpi/kpiCron/KpiCron.vue'
+import KpiCron from '@/components/UI/KnCron/KnCron.vue'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
 import InputSwitch from 'primevue/inputswitch'

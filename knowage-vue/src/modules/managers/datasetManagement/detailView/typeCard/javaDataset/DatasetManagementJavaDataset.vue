@@ -36,7 +36,6 @@ export default defineComponent({
     props: {
         selectedDataset: { type: Object as any }
     },
-    computed: {},
     emits: ['touched'],
     data() {
         return {
@@ -68,8 +67,7 @@ export default defineComponent({
     methods: {
         changeTypeWarning() {
             this.$store.commit('setInfo', { title: this.$t('documentExecution.registry.warning'), msg: this.$t('managers.datasetManagement.changeTypeMsg') })
-        },
-        clearAllTables() {}
+        }
     }
 })
 </script>

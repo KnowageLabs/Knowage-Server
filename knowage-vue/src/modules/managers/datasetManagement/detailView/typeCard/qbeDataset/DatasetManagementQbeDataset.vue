@@ -74,7 +74,6 @@ export default defineComponent({
         dataSources: { type: Array as any },
         businessModels: { type: Array as any }
     },
-    computed: {},
     emits: ['touched'],
     data() {
         return {

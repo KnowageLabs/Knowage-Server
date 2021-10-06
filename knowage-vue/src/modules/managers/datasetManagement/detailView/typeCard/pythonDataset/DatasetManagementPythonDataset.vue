@@ -2,9 +2,9 @@
     <Card class="p-mt-3">
         <template #content>
             <div class="p-field-radiobutton">
-                <RadioButton name="Python" value="python" v-model="dataset.pythonDatasetType" />
+                <RadioButton name="Python" value="python" v-model="dataset.pythonDatasetType" @click="dataset.pythonEnvironment = null" />
                 <label for="Python">Python</label>
-                <RadioButton name="R" class="p-ml-3" value="r" v-model="dataset.pythonDatasetType" />
+                <RadioButton name="R" class="p-ml-3" value="r" v-model="dataset.pythonDatasetType" @click="dataset.pythonEnvironment = null" />
                 <label for="R">R</label>
             </div>
             <form class="p-fluid p-formgrid p-grid p-mt-2">
@@ -22,12 +22,12 @@
                             }"
                             @before-show="v$.dataset.pythonEnvironment.$touch()"
                         />
-                        <label for="scope" class="kn-material-input-label"> {{ $t('managers.lovsManagement.environment') }} * </label>
+                        <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.environment') }} * </label>
                     </span>
                     <KnValidationMessages
                         :vComp="v$.dataset.pythonEnvironment"
                         :additionalTranslateParams="{
-                            fieldName: $t('managers.lovsManagement.environment')
+                            fieldName: $t('managers.datasetManagement.environment')
                         }"
                     />
                 </div>
@@ -73,7 +73,7 @@
 </template>
 
 <script lang="ts">
-// import axios from 'axios'
+import axios from 'axios'
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import { VCodeMirror } from 'vue3-code-mirror'
@@ -112,6 +112,7 @@ export default defineComponent({
             codeMirrorPython: {} as any,
             pythonEnvLibs: null as any,
             libListVisible: false,
+            error: '',
             scriptOptions: {
                 theme: 'eclipse',
                 lineWrapping: true,
@@ -154,14 +155,23 @@ export default defineComponent({
                 clearInterval(interval)
             }, 200)
         },
+        getEnvLibraries() {
+            if (this.dataset.pythonDatasetType == 'python') {
+                return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/backendservices/widgets/RWidget/libraries/${this.dataset.pythonEnvironment}`)
+            } else {
+                return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/backendservices/widgets/python/libraries/${this.dataset.pythonEnvironment}`)
+            }
+        },
+        // THIS IS MOCKED ----------------------- CHANGE BEFORE RELEASE
         async checkEnvironment() {
-            // await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/backendservices/widgets/python/libraries/${this.dataset.pythonEnvironment}`).then((response) => {
-            //     console.log(response)
-
-            // })
-            this.dataset.pythonDatasetType == 'python' ? (this.pythonEnvLibs = JSON.parse(pythonDescriptor.pythonResponse)) : (this.pythonEnvLibs = JSON.parse(pythonDescriptor.rResponse))
-            this.libListVisible = true
-            // .catch((error) => this.$store.commit('setError', { title: this.$t('common.error'), msg: error }))
+            await axios
+            this.getEnvLibraries()
+                .then((response) => {
+                    console.log(response)
+                    this.dataset.pythonDatasetType == 'python' ? (this.pythonEnvLibs = JSON.parse(pythonDescriptor.pythonResponse)) : (this.pythonEnvLibs = JSON.parse(pythonDescriptor.rResponse))
+                    this.libListVisible = true
+                })
+                .catch()
         }
     }
 })

@@ -3,7 +3,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left>{{ datasetInList.label }}</template>
         <template #right>
-            <Button label="PREVIEW" class="p-button-text p-button-rounded p-button-plain" />
+            <Button :label="$t('managers.lovsManagement.preview')" class="p-button-text p-button-rounded p-button-plain" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('close')" />
         </template>
@@ -110,9 +110,12 @@ export default defineComponent({
     validations() {},
     methods: {
         async getSelectedDataset() {
-            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.id}`).then((response) => {
-                this.selectedDataset = response.data[0] ? { ...response.data[0] } : {}
-            })
+            axios
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.id}`)
+                .then((response) => {
+                    this.selectedDataset = response.data[0] ? { ...response.data[0] } : {}
+                })
+                .catch()
         },
         async getSelectedDatasetVersions() {
             axios
@@ -120,6 +123,7 @@ export default defineComponent({
                 .then((response) => {
                     response.data.root ? (this.selectedDatasetVersions = response.data.root) : (this.selectedDatasetVersions = [])
                 })
+                .catch()
                 .finally(() => (this.loading = false))
         },
         async getAllDatasetData() {

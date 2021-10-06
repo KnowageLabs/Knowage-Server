@@ -140,7 +140,6 @@ export default defineComponent({
     props: {
         selectedDataset: { type: Object as any }
     },
-    computed: {},
     emits: ['touched'],
     data() {
         return {

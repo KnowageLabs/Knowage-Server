@@ -13,7 +13,7 @@
                         <Dropdown
                             id="scope"
                             class="kn-material-input"
-                            style="width:100%"
+                            :style="typeTabDescriptor.style.maxWidth"
                             :options="datasetTypes"
                             optionLabel="VALUE_CD"
                             optionValue="VALUE_CD"
@@ -38,14 +38,14 @@
         </Card>
     </div>
     <QueryDataset v-if="dataset.dsTypeCd == 'Query'" :selectedDataset="selectedDataset" :dataSources="dataSources" :scriptTypes="scriptTypes" />
-    <ScriptDataset v-if="dataset.dsTypeCd == 'Script'" :selectedDataset="selectedDataset" :scriptTypes="scriptTypes" />
     <JavaDataset v-if="dataset.dsTypeCd == 'Java Class'" :selectedDataset="selectedDataset" />
+    <ScriptDataset v-if="dataset.dsTypeCd == 'Script'" :selectedDataset="selectedDataset" :scriptTypes="scriptTypes" />
     <QbeDataset v-if="dataset.dsTypeCd == 'Qbe' || dataset.dsTypeCd == 'Federated'" :selectedDataset="selectedDataset" :businessModels="businessModels" :dataSources="dataSources" :parentValid="parentValid" />
     <FlatDataset v-if="dataset.dsTypeCd == 'Flat'" :selectedDataset="selectedDataset" :dataSources="dataSources" />
     <CkanDataset v-if="dataset.dsTypeCd == 'Ckan'" :selectedDataset="selectedDataset" />
     <RestDataset v-if="dataset.dsTypeCd == 'REST'" :selectedDataset="selectedDataset" />
-    <SolrDataset v-if="dataset.dsTypeCd == 'Solr'" :selectedDataset="selectedDataset" />
     <SparqlDataset v-if="dataset.dsTypeCd == 'SPARQL'" :selectedDataset="selectedDataset" />
+    <SolrDataset v-if="dataset.dsTypeCd == 'Solr'" :selectedDataset="selectedDataset" />
     <PythonDataset v-if="dataset.dsTypeCd == 'Python/R'" :selectedDataset="selectedDataset" :pythonEnvironments="pythonEnvironments" :rEnvironments="rEnvironments" />
     <ParamTable v-if="dataset.dsTypeCd && dataset.dsTypeCd != 'File' && dataset.dsTypeCd != 'Flat'" :selectedDataset="selectedDataset" />
 </template>
@@ -53,22 +53,22 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
-import ParamTable from './tables/DatasetManagementParamTable.vue'
-import QueryDataset from './queryDataset/DatasetManagementQueryDataset.vue'
-import ScriptDataset from './scriptDataset/DatasetManagementScriptDataset.vue'
-import FlatDataset from './flatDataset/DatasetManagementFlatDataset.vue'
-import JavaDataset from './javaDataset/DatasetManagementJavaDataset.vue'
-import CkanDataset from './ckanDataset/DatasetManagementCkanDataset.vue'
-import QbeDataset from './qbeDataset/DatasetManagementQbeDataset.vue'
-import SolrDataset from './solrDataset/DatasetManagementSolrDataset.vue'
-import SparqlDataset from './sparqlDataset/DatasetManagementSparqlDataset.vue'
-import PythonDataset from './pythonDataset/DatasetManagementPythonDataset.vue'
-import RestDataset from './restDataset/DatasetManagementRestDataset.vue'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import typeTabDescriptor from './DatasetManagementTypeCardDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
+import typeTabDescriptor from './DatasetManagementTypeCardDescriptor.json'
+import ParamTable from './tables/DatasetManagementParamTable.vue'
+import QueryDataset from './queryDataset/DatasetManagementQueryDataset.vue'
+import JavaDataset from './javaDataset/DatasetManagementJavaDataset.vue'
+import ScriptDataset from './scriptDataset/DatasetManagementScriptDataset.vue'
+import QbeDataset from './qbeDataset/DatasetManagementQbeDataset.vue'
+import FlatDataset from './flatDataset/DatasetManagementFlatDataset.vue'
+import CkanDataset from './ckanDataset/DatasetManagementCkanDataset.vue'
+import RestDataset from './restDataset/DatasetManagementRestDataset.vue'
+import SparqlDataset from './sparqlDataset/DatasetManagementSparqlDataset.vue'
+import SolrDataset from './solrDataset/DatasetManagementSolrDataset.vue'
+import PythonDataset from './pythonDataset/DatasetManagementPythonDataset.vue'
 
 export default defineComponent({
     components: { Card, Dropdown, KnValidationMessages, ParamTable, CkanDataset, QbeDataset, RestDataset, JavaDataset, FlatDataset, SolrDataset, QueryDataset, ScriptDataset, SparqlDataset, PythonDataset },
@@ -110,7 +110,9 @@ export default defineComponent({
         changeTypeWarning() {
             this.$store.commit('setInfo', { title: this.$t('documentExecution.registry.warning'), msg: this.$t('managers.datasetManagement.changeTypeMsg') })
         },
-        clearAllTables() {}
+        filterDatasetTypes(item) {
+            return item.VALUE_CD != 'Custom' && item.VALUE_CD != 'Federated'
+        }
     }
 })
 </script>
