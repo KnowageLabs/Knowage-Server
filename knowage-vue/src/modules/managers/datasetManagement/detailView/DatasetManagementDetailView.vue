@@ -38,6 +38,7 @@
                 <template #header>
                     <span>{{ $t('kpi.measureDefinition.metadata') }}</span>
                 </template>
+                <MetadataCard :selectedDataset="selectedDataset" @touched="$emit('touched')" />
             </TabPanel>
 
             <TabPanel v-if="selectedDataset.dsTypeCd == 'Query'">
@@ -66,11 +67,12 @@ import DetailCard from './detailCard/DatasetManagementDetailCard.vue'
 import TypeCard from './typeCard/DatasetManagementTypeCard.vue'
 import AdvancedCard from './advancedCard/DatasetManagementAdvancedCard.vue'
 import LinkCard from './linkCard/DatasetManagementLinkCard.vue'
+import MetadataCard from './metadataCard/DatasetManagementMetadataCard.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
-    components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard, TypeCard },
+    components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard, TypeCard, MetadataCard },
     props: {
         id: { type: String, required: false },
         datasetInList: {} as any,

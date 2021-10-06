@@ -1,0 +1,22 @@
+{
+    "fieldsMetadataTypes": [
+        {
+            "name": "ATTRIBUTE",
+            "value": "ATTRIBUTE"
+        },
+        {
+            "name": "SPATIAL ATTRIBUTE",
+            "value": "SPATIAL_ATTRIBUTE"
+        },
+        {
+            "name": "MEASURE",
+            "value": "MEASURE"
+        }
+    ],
+    "style": {
+        "maxwidth": {
+            "border-bottom": "none",
+            "width": "100%"
+        }
+    }
+}

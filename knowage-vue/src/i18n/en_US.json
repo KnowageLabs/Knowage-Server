@@ -634,8 +634,10 @@
             "title": "Data Source Management"
         },
         "datasetManagement": {
+            "availableLibraries": "Available Libraries",
             "availableTables": "Available Tables",
             "changeTypeMsg": "Changing dataset type will delete all parameters, are you sure?",
+            "checkEnvironment": "Check Environment",
             "ckanCsvDelimiter": "Delimiter Character",
             "ckanCsvEncoding": "Encoding",
             "ckanCsvQuote": "Quote Character",
@@ -646,6 +648,7 @@
             "ckanUrl": "CKAN Url",
             "ckanXslSheetNumber": "Sheet Number",
             "creationUser": "Creation User",
+            "dataframeName": "Dataframe variable name",
             "deleteAllParams": "Clear all dataset parameters",
             "deleteAllParamsMsg": "Are you sure you want to delete all dataset parameters?",
             "deleteAllRequestHeaderMsg": "Are you sure you want to delete all REST request headers",
@@ -657,7 +660,10 @@
             "documents": "Documents",
             "editQuery": "Edit Query",
             "editScript": "Edit Script",
+            "environment": "Environment",
             "facets": "Facets",
+            "fieldAlias": "Field Alias",
+            "fieldType": "Field Type",
             "fileType": "File type",
             "flatTableName": "Table name",
             "helpTitle": "Help",
@@ -667,6 +673,7 @@
             "isScheduled": "Schedule",
             "jsonPathAttributes": "JSON Path Attributes",
             "jsonPathValue": "JSON Path Value",
+            "metadataInfo": "You cannot open fields metadata for the dataset that is not saved, please save it first.",
             "noSourceSelectedWarning": "Please select a Source",
             "oldVersions": "Older Dataset Versions",
             "openQbeButton": "Open Qbe",
@@ -704,10 +711,8 @@
             "viewQbeButton": "View Qbe Query",
             "viewQbeMsg": "The dataset should be saved before viewing the QBE query",
             "viewQbeWarning": "Cannot open QBE query",
-            "environment": "Environment",
-            "checkEnvironment": "Check Environment",
-            "dataframeName": "Dataframe variable name",
-            "availableLibraries": "Available Libraries"
+            "fieldsMetadata": "Fields Metadata",
+            "duplicateSpatialAttribute": "You can have only one spatial attribute per dataset"
         },
         "domainsManagement": {
             "domainCode": "Domain code",
