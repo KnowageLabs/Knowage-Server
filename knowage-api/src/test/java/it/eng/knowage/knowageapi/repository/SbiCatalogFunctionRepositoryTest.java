@@ -48,13 +48,21 @@ class SbiCatalogFunctionRepositoryTest {
 	@Test
 	void createAndDelete() throws KnowageBusinessException {
 
+		// Create
 		SbiCatalogFunction function = createRandomName();
 
 		function = repository.create(function);
 
+		// Update
+		function.setDescription(RandomStringUtils.randomAlphanumeric(12));
+
+		repository.update(function);
+
+		// Delete
 		String functionId = function.getId().getFunctionId();
 		repository.delete(functionId);
 
+		// Check
 		function = repository.find(functionId);
 
 		assertNull(function);
