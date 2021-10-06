@@ -1,4 +1,22 @@
 {
+    "style": {
+        "advancedDayDropdown": {
+            "width": "100px"
+        },
+        "calendarInput": {
+            "width": "75%"
+        },
+        "cardContainer": {
+            "width": "100%"
+        },
+        "intervalInput": {
+            "min-width": "200px"
+        },
+        "timePicker": {
+            "border-color": "transparent",
+            "height": "40px"
+        }
+    },
     "types": [
         {
             "label": "managers.scheduler.singleExecution",

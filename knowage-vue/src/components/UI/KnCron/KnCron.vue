@@ -254,6 +254,7 @@ export default defineComponent({
     },
     methods: {
         loadFrequency() {
+            console.log("FREQUENCY: ", this.frequency)
             this.currentFrequency = this.frequency as any
 
             this.startDate = new Date(this.currentFrequency.startDate)
