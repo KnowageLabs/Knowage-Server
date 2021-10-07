@@ -1,7 +1,7 @@
 <template>
-    Is invalid: {{ v$.$invalid }}
+    <!-- Is invalid: {{ v$.$invalid }}
     <p></p>
-    DsType: {{ dataset.dsTypeCd }}
+    DsType: {{ dataset.dsTypeCd }} -->
     <div v-if="dataset.dsTypeCd == 'Federated'">
         <label>{{ $t('managers.datasetManagement.selectDatasetType') }}: </label> <b>Federated</b>
     </div>
@@ -37,6 +37,7 @@
             </template>
         </Card>
     </div>
+    <FileDataset v-if="dataset.dsTypeCd == 'File'" :selectedDataset="selectedDataset" />
     <QueryDataset v-if="dataset.dsTypeCd == 'Query'" :selectedDataset="selectedDataset" :dataSources="dataSources" :scriptTypes="scriptTypes" />
     <JavaDataset v-if="dataset.dsTypeCd == 'Java Class'" :selectedDataset="selectedDataset" />
     <ScriptDataset v-if="dataset.dsTypeCd == 'Script'" :selectedDataset="selectedDataset" :scriptTypes="scriptTypes" />
@@ -59,6 +60,7 @@ import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
 import typeTabDescriptor from './DatasetManagementTypeCardDescriptor.json'
 import ParamTable from './tables/DatasetManagementParamTable.vue'
+import FileDataset from './fileDataset/DatasetManagementFileDataset.vue'
 import QueryDataset from './queryDataset/DatasetManagementQueryDataset.vue'
 import JavaDataset from './javaDataset/DatasetManagementJavaDataset.vue'
 import ScriptDataset from './scriptDataset/DatasetManagementScriptDataset.vue'
@@ -71,7 +73,7 @@ import SolrDataset from './solrDataset/DatasetManagementSolrDataset.vue'
 import PythonDataset from './pythonDataset/DatasetManagementPythonDataset.vue'
 
 export default defineComponent({
-    components: { Card, Dropdown, KnValidationMessages, ParamTable, CkanDataset, QbeDataset, RestDataset, JavaDataset, FlatDataset, SolrDataset, QueryDataset, ScriptDataset, SparqlDataset, PythonDataset },
+    components: { Card, Dropdown, KnValidationMessages, ParamTable, CkanDataset, QbeDataset, RestDataset, JavaDataset, FlatDataset, SolrDataset, QueryDataset, ScriptDataset, SparqlDataset, PythonDataset, FileDataset },
     props: {
         parentValid: { type: Boolean },
         selectedDataset: { type: Object as any },
