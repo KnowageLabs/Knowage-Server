@@ -9,13 +9,13 @@ const routes = [
                 component: () => import('@/modules/managers/scheduler/SchedulerHint.vue')
             },
             {
-                path: 'new-job-schedule',
-                name: 'new-job-schedule',
+                path: 'new-package-schedule',
+                name: 'new-package-schedule',
                 component: () => import('@/modules/managers/scheduler/SchedulerDetail.vue')
             },
             {
-                path: 'edit-job-schedule',
-                name: 'edit-job-schedule',
+                path: 'edit-package-schedule',
+                name: 'edit-package-schedule',
                 props: (route) => ({ id: route.query.id, clone: route.query.clone }),
                 component: () => import('@/modules/managers/scheduler/SchedulerDetail.vue')
             }

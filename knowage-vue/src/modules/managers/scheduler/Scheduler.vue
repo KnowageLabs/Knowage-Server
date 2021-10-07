@@ -46,7 +46,7 @@ export default defineComponent({
         if (this.$route.query.id) {
             await this.loadSelectJob(this.$route.query.id as string)
         } else {
-            this.selectedJob = { jobName: '', jobDescription: '', documents: [] } as any
+            this.selectedJob = { jobName: '', jobDescription: '', documents: [], triggers: [] } as any
             await this.loadJobs()
         }
 
@@ -69,13 +69,13 @@ export default defineComponent({
         showJobDetail(event: any, clone: boolean) {
             // console.log('EVENT: ', event)
             // console.log('CLONE: ', clone)
-            this.selectedJob = event && event.item ? { ...event.item, edit: true } : { jobName: '', jobDescription: '', documents: [] }
+            this.selectedJob = event && event.item ? { ...event.item, edit: true } : { jobName: '', jobDescription: '', documents: [], triggers: [] }
 
             if (clone && this.selectedJob) {
                 this.selectedJob.jobName = this.$t('common.copyOf') + ' ' + this.selectedJob.jobName
             }
 
-            const path = event && event.item ? `/scheduler/edit-job-schedule?id=${event.item.jobName}&clone=${clone}` : '/scheduler/new-job-schedule'
+            const path = event && event.item ? `/scheduler/edit-package-schedule?id=${event.item.jobName}&clone=${clone}` : '/scheduler/new-package-schedule'
             this.$router.push(path)
         },
         async deleteJobConfirm(event: any) {

@@ -148,13 +148,17 @@ export default defineComponent({
         async getTriggerInfo(trigger: any, openDialog: boolean) {
             console.log('TRIGGER FOR INFO: ', trigger)
             this.$emit('loading', true)
-            await axios
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/getTriggerInfo?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
-                .then((response) => {
-                    this.triggerInfo = response.data
-                    this.triggerInfoDialogVisible = openDialog
-                })
-                .catch(() => {})
+            if (trigger) {
+                await axios
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/getTriggerInfo?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
+                    .then((response) => {
+                        this.triggerInfo = response.data
+                    })
+                    .catch(() => {})
+            } else {
+                this.triggerInfo = { chrono: { type: 'single', parameter: {} } }
+            }
+            this.triggerInfoDialogVisible = openDialog
             this.$emit('loading', false)
         },
         async showTriggerDetail(trigger: any) {

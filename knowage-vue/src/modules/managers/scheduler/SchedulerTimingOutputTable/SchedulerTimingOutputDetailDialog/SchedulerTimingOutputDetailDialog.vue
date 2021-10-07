@@ -13,7 +13,7 @@
                 <template #header>
                     <span>{{ $t('managers.scheduler.timing') }}</span>
                 </template>
-                <SchedulerTimingOutputTimingTab :propTrigger="trigger"></SchedulerTimingOutputTimingTab>
+                <SchedulerTimingOutputTimingTab :propTrigger="trigger" :datasets="datasets" @cronValid="setCronValid($event)"></SchedulerTimingOutputTimingTab>
             </TabPanel>
             <TabPanel>
                 <template #header>
@@ -32,6 +32,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import axios from 'axios'
 import Dialog from 'primevue/dialog'
 import schedulerTimingOutputDetailDialogDescriptor from './SchedulerTimingOutputDetailDialogDescriptor.json'
 import SchedulerTimingOutputTimingTab from './tabs/SchedulerTimingOutputTimingTab/SchedulerTimingOutputTimingTab.vue'
@@ -47,7 +48,9 @@ export default defineComponent({
         return {
             schedulerTimingOutputDetailDialogDescriptor,
             trigger: null as any,
-            info: null as any
+            info: null as any,
+            validCron: false,
+            datasets: [] as any[]
         }
     },
     watch: {
@@ -55,13 +58,21 @@ export default defineComponent({
             this.loadTrigger()
         }
     },
-    created() {
+    async created() {
         this.loadTrigger()
+        await this.loadDatasets()
     },
     methods: {
         loadTrigger() {
             this.trigger = this.propTrigger ? { ...this.propTrigger } : {}
             console.log('LOADED TRIGGER IN MAIN DIALOG: ', this.trigger)
+        },
+        async loadDatasets() {
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/?asPagedList=true`).then((response) => (this.datasets = response.data.item))
+            console.log('LOADED DATASETS: ', this.datasets)
+        },
+        setCronValid(value: boolean) {
+            this.validCron = value
         },
         closeDialog() {
             this.$emit('close')
