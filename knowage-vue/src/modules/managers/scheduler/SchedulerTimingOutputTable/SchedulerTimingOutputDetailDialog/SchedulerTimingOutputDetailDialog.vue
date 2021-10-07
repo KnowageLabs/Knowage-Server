@@ -20,7 +20,7 @@
                     <span>{{ $t('managers.scheduler.output') }}</span>
                 </template>
 
-                <SchedulerTimingOutputOutputTab :propDocuments="documents"></SchedulerTimingOutputOutputTab>
+                <SchedulerTimingOutputOutputTab :propDocuments="trigger.documents"></SchedulerTimingOutputOutputTab>
             </TabPanel>
         </TabView>
 
@@ -45,7 +45,7 @@ import TabPanel from 'primevue/tabpanel'
 export default defineComponent({
     name: 'scheduler-timing-output-detail-dialog',
     components: { Dialog, SchedulerTimingOutputTimingTab, SchedulerTimingOutputOutputTab, TabView, TabPanel },
-    props: { visible: { type: Boolean }, propTrigger: { type: Object }, propDocuments: { type: Array } },
+    props: { visible: { type: Boolean }, propTrigger: { type: Object } },
     emits: ['close'],
     data() {
         return {
@@ -54,34 +54,38 @@ export default defineComponent({
             info: null as any,
             validCron: false,
             datasets: [] as any[],
-            documents: [] as any[]
+            jobInfo: null as any
         }
     },
     watch: {
-        propTrigger() {
+        async propTrigger() {
             this.loadTrigger()
-        },
-        propDocuments() {
-            this.loadDocuments()
+            await this.loadJobInfo()
         }
     },
     async created() {
         this.loadTrigger()
-        this.loadDocuments()
         await this.loadDatasets()
+        await this.loadJobInfo()
     },
     methods: {
         loadTrigger() {
             this.trigger = this.propTrigger ? { ...this.propTrigger } : {}
+
             console.log('LOADED TRIGGER IN MAIN DIALOG: ', this.trigger)
-        },
-        loadDocuments() {
-            this.documents = this.propDocuments ? [...this.propDocuments] : []
-            console.log('LOADED DOCUMENTS IN MAIN DIALOG: ', this.documents)
         },
         async loadDatasets() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/?asPagedList=true`).then((response) => (this.datasets = response.data.item))
             console.log('LOADED DATASETS: ', this.datasets)
+        },
+        async loadJobInfo() {
+            if (this.trigger.jobName) {
+                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/getJob?jobName=${this.trigger.jobName}&jobGroup=${this.trigger.jobGroup}&triggerName=${this.trigger.triggerName}&triggerGroup=${this.trigger.triggerGroup}`).then((response) => (this.jobInfo = response.data))
+            }
+            if (!this.trigger.documents) {
+                this.trigger = { ...this.trigger, documents: this.jobInfo.job.documents }
+            }
+            console.log('LOADED JOB INFO: ', this.jobInfo)
         },
         setCronValid(value: boolean) {
             this.validCron = value

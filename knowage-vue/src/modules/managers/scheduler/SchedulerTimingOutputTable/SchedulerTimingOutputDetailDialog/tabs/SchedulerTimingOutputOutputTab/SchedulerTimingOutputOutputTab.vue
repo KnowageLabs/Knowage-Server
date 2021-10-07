@@ -6,7 +6,7 @@
                 <template #option="slotProps">
                     <div class="kn-list-item">
                         <div class="kn-list-item-text">
-                            <span>{{ slotProps.option.name }}</span>
+                            <span>{{ slotProps.option.label }}</span>
                         </div>
                     </div>
                 </template>
@@ -37,6 +37,11 @@ export default defineComponent({
             schedulerTimingOutputOutputTabDescriptor,
             documents: [] as any[],
             selectedDocument: null
+        }
+    },
+    watch: {
+        propDocuments() {
+            this.loadDocuments()
         }
     },
     async created() {

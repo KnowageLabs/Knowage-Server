@@ -49,7 +49,7 @@ export default defineComponent({
         loadParameters() {
             this.parameters = this.propParameters ? [...(this.propParameters as any[])] : []
             this.parameters.sort((a: any, b: any) => (a.name > b.name ? 1 : -1))
-            console.log('LOADED PARAMETERS: ', this.parameters)
+            // console.log('LOADED PARAMETERS: ', this.parameters)
         },
         closeDialog() {
             this.$emit('close')
@@ -59,7 +59,7 @@ export default defineComponent({
             // console.log('LOADED FORMULAS: ', this.formulas)
         },
         setParameters() {
-            console.log('SET PARAMETERS: ', this.parameters)
+            // console.log('SET PARAMETERS: ', this.parameters)
 
             this.$emit('setParameters', this.parameters)
         }

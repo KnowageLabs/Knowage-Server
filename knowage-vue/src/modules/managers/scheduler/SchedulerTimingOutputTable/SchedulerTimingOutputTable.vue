@@ -59,7 +59,7 @@
         </DataTable>
 
         <SchedulerTimingOutputInfoDialog :visible="triggerInfoDialogVisible" :triggerInfo="triggerInfo" @close="triggerInfoDialogVisible = false"></SchedulerTimingOutputInfoDialog>
-        <SchedulerTimingOutputDetailDialog :visible="triggerDetailDialogVisible" :propTrigger="triggerInfo" :propDocuments="jobDocuments" @close="triggerDetailDialogVisible = false"></SchedulerTimingOutputDetailDialog>
+        <SchedulerTimingOutputDetailDialog :visible="triggerDetailDialogVisible" :propTrigger="triggerInfo" @close="triggerDetailDialogVisible = false"></SchedulerTimingOutputDetailDialog>
     </div>
 </template>
 
@@ -78,7 +78,7 @@ import SchedulerTimingOutputInfoDialog from './SchedulerTimingOutputInfoDialog.v
 export default defineComponent({
     name: 'scheduler-timing-output-table',
     components: { Column, DataTable, Message, Menu, SchedulerTimingOutputDetailDialog, SchedulerTimingOutputInfoDialog },
-    props: { jobTriggers: { type: Array }, jobDocuments: { type: Array } },
+    props: { job: { type: Object, required: true } },
     emits: ['loading'],
     data() {
         return {
@@ -100,8 +100,8 @@ export default defineComponent({
     },
     methods: {
         loadTriggers() {
-            this.triggers = this.jobTriggers as any[]
-            console.log('TRIGGERS: ', this.triggers)
+            this.triggers = this.job?.triggers as any[]
+            // console.log('TRIGGERS: ', this.triggers)
         },
         getFormatedDate(date: any, format: any) {
             return formatDate(date, format)
@@ -118,10 +118,10 @@ export default defineComponent({
             if (trigger.triggerIsPaused) active = false
 
             if (trigger.triggerChronType === 'Single' && startDate < now) {
-                console.log('USAO 2 !')
+                // console.log('USAO 2 !')
                 active = false
             } else if (endDate && (endDate < now || startDate > now)) {
-                console.log('USAO 1 !')
+                // console.log('USAO 1 !')
                 active = false
             }
 
@@ -136,7 +136,7 @@ export default defineComponent({
             menu.toggle(event)
         },
         createMenuItems(trigger: any) {
-            console.log('TRIGGER IN MENU: ', trigger)
+            // console.log('TRIGGER IN MENU: ', trigger)
             this.items = []
             this.items.push({ label: this.$t('managers.scheduler.info'), icon: 'fa fa-info', command: () => this.getTriggerInfo(trigger, true) })
             this.items.push({ label: this.$t('managers.scheduler.detail'), icon: 'pi pi-pencil', command: () => this.showTriggerDetail(trigger) })
@@ -146,7 +146,7 @@ export default defineComponent({
                 : this.items.push({ label: this.$t('managers.scheduler.pauseSchedulation'), icon: 'fa fa-lock', command: () => this.triggerPauseConfirm(trigger) })
         },
         async getTriggerInfo(trigger: any, openDialog: boolean) {
-            console.log('TRIGGER FOR INFO: ', trigger)
+            // console.log('TRIGGER FOR INFO: ', trigger)
             this.$emit('loading', true)
             if (trigger) {
                 await axios
@@ -156,13 +156,13 @@ export default defineComponent({
                     })
                     .catch(() => {})
             } else {
-                this.triggerInfo = { chrono: { type: 'single', parameter: {} } }
+                this.triggerInfo = { jobName: this.job.jobName, jobGroup: this.job.jobGroup, chrono: { type: 'single', parameter: {} }, documents: null }
             }
             this.triggerInfoDialogVisible = openDialog
             this.$emit('loading', false)
         },
         async showTriggerDetail(trigger: any) {
-            console.log('TRIGGER FOR DETAIL: ', trigger)
+            // console.log('TRIGGER FOR DETAIL: ', trigger)
             await this.getTriggerInfo(trigger, false)
             this.triggerDetailDialogVisible = true
         },

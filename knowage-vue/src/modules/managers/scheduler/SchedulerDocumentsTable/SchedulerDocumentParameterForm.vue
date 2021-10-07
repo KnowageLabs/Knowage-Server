@@ -107,7 +107,7 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.parameter?.documentLabel}/parameters/${this.parameter?.id}/values?role=${this.parameter?.role}`)
                 .then((response) => (this.parameterValues = response.data))
                 .catch(() => {})
-            console.log('LOADED PARAMETER VALUES: ', this.parameterValues)
+            // console.log('LOADED PARAMETER VALUES: ', this.parameterValues)
         },
         loadRoles() {
             this.rolesOptions = this.roles as any

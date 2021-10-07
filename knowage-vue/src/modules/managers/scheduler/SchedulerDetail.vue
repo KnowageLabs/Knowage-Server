@@ -37,7 +37,7 @@
                 </div>
             </form>
             <SchedulerDocumentsTable :jobDocuments="job.documents" @loading="setLoading"></SchedulerDocumentsTable>
-            <SchedulerTimingOutputTable :jobTriggers="job.triggers" :jobDocuments="job.documents"></SchedulerTimingOutputTable>
+            <SchedulerTimingOutputTable :job="job"></SchedulerTimingOutputTable>
         </template>
     </Card>
 </template>
@@ -72,7 +72,7 @@ export default defineComponent({
     methods: {
         loadJob() {
             this.job = { ...this.selectedJob } as iPackage
-            console.log('LOADED JOB: ', this.job)
+            // console.log('LOADED JOB: ', this.job)
         },
         setLoading(loading: boolean) {
             // console.log('SET LOADING: ', loading)

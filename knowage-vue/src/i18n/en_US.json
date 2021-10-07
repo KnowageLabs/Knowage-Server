@@ -1056,6 +1056,11 @@
         "scheduler": {
             "attachedZip": "Attached zip name",
             "confirmHeader": "Please confirm",
+            "saveAsSnapshot": "Save as snapshot",
+            "saveAsFile": "Save as file",
+            "saveAsDocument": "Save as document",
+            "sendToJavaClass": "Send to Java class",
+            "sendMail": "Send mail",
             "detail": "Schedulation Detail",
             "doNotIterateOnParameterValues": "Don't iterate for each value",
             "documentParameter": "Document Parameter",

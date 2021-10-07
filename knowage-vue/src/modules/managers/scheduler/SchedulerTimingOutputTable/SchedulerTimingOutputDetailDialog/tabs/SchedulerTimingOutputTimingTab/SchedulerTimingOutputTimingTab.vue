@@ -179,10 +179,10 @@ export default defineComponent({
             this.trigger.endDateTiming = this.trigger.zonedEndTime ? new Date(this.trigger.zonedEndTime) : null
             this.trigger.endTimeTiming = this.trigger.endDateTiming ? this.trigger.endDateTiming : null
 
-            console.log('START DATE: ', this.trigger.startDateTiming)
-            console.log('START TIME: ', this.trigger.startTimeTiming)
-            console.log('END DATE: ', this.trigger.endDateTiming)
-            console.log('END TIME: ', this.trigger.endTimeTiming)
+            // console.log('START DATE: ', this.trigger.startDateTiming)
+            // console.log('START TIME: ', this.trigger.startTimeTiming)
+            // console.log('END DATE: ', this.trigger.endDateTiming)
+            // console.log('END TIME: ', this.trigger.endTimeTiming)
         },
         setCronFrequency() {
             const startDate = this.trigger.zonedStartTime ? new Date(this.trigger.zonedStartTime) : new Date()
