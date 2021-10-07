@@ -13,7 +13,7 @@
             </Listbox>
         </div>
         <div class="p-col-8 p-sm-8 p-md-9  p-p-0">
-            <SchedulerTimingOutputDocumentDetail v-if="selectedDocument" :propDocument="selectedDocument"></SchedulerTimingOutputDocumentDetail>
+            <SchedulerTimingOutputDocumentDetail v-if="selectedDocument" :propDocument="selectedDocument" :functionalities="functionalities"></SchedulerTimingOutputDocumentDetail>
             <Message v-else severity="info" :closable="false" :style="schedulerTimingOutputOutputTabDescriptor.styles.message">
                 {{ $t('managers.scheduler.noDocumentSelected') }}
             </Message>
@@ -31,7 +31,7 @@ import schedulerTimingOutputOutputTabDescriptor from './SchedulerTimingOutputOut
 export default defineComponent({
     name: 'scheduler-timing-output-output-tab',
     components: { Listbox, Message, SchedulerTimingOutputDocumentDetail },
-    props: { propDocuments: { type: Array } },
+    props: { propDocuments: { type: Array }, functionalities: { type: Array } },
     data() {
         return {
             schedulerTimingOutputOutputTabDescriptor,

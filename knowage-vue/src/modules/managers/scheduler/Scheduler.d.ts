@@ -32,6 +32,7 @@ export interface iNode {
     children?: iNode[],
     selectable?: Boolean,
     data: string | any
+    customIcon?: string
 }
 
 

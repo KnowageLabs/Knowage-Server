@@ -20,7 +20,7 @@
                     <span>{{ $t('managers.scheduler.output') }}</span>
                 </template>
 
-                <SchedulerTimingOutputOutputTab :propDocuments="trigger.documents"></SchedulerTimingOutputOutputTab>
+                <SchedulerTimingOutputOutputTab :propDocuments="trigger.documents" :functionalities="functionalities"></SchedulerTimingOutputOutputTab>
             </TabPanel>
         </TabView>
 
@@ -54,7 +54,8 @@ export default defineComponent({
             info: null as any,
             validCron: false,
             datasets: [] as any[],
-            jobInfo: null as any
+            jobInfo: null as any,
+            functionalities: []
         }
     },
     watch: {
@@ -80,10 +81,13 @@ export default defineComponent({
         },
         async loadJobInfo() {
             if (this.trigger.jobName) {
-                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/getJob?jobName=${this.trigger.jobName}&jobGroup=${this.trigger.jobGroup}&triggerName=${this.trigger.triggerName}&triggerGroup=${this.trigger.triggerGroup}`).then((response) => (this.jobInfo = response.data))
+                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/getJob?jobName=${this.trigger.jobName}&jobGroup=${this.trigger.jobGroup}&triggerName=${this.trigger.triggerName}&triggerGroup=${this.trigger.triggerGroup}`).then((response) => {
+                    this.jobInfo = response.data.job
+                    this.functionalities = response.data.functionality
+                })
             }
             if (!this.trigger.documents) {
-                this.trigger = { ...this.trigger, documents: this.jobInfo.job.documents }
+                this.trigger = { ...this.trigger, documents: this.jobInfo?.documents }
             }
             console.log('LOADED JOB INFO: ', this.jobInfo)
         },

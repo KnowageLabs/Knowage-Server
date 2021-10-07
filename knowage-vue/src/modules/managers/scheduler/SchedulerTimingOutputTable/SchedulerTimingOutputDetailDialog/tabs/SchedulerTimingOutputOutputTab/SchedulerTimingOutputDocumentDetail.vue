@@ -24,7 +24,7 @@
             </div>
         </div>
         <div>
-            <SchedulerDocumentAccordion v-if="document.saveasdocument" class="p-m-3" :propDocument="document"></SchedulerDocumentAccordion>
+            <SchedulerDocumentAccordion v-if="document.saveasdocument" class="p-m-3" :propDocument="document" :functionalities="functionalities"></SchedulerDocumentAccordion>
         </div>
     </div>
 </template>
@@ -37,7 +37,7 @@ import SchedulerDocumentAccordion from './accordions/SchedulerDocumentAccordion.
 export default defineComponent({
     name: 'scheduler-tming-output-document-detail',
     components: { Checkbox, SchedulerDocumentAccordion },
-    props: { propDocument: { type: Object } },
+    props: { propDocument: { type: Object }, functionalities: { type: Array } },
     data() {
         return {
             document: null as any
