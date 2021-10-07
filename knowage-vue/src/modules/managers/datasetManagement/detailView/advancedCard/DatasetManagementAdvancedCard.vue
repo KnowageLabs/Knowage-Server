@@ -185,7 +185,15 @@ export default defineComponent({
             }
         },
         setTransformationType() {
-            this.dataset.trasfTypeCd = this.isTransformable ? this.transformationDataset.VALUE_CD : ''
+            if (this.isTransformable) {
+                this.dataset.trasfTypeCd = this.transformationDataset.VALUE_CD
+            } else {
+                this.dataset.trasfTypeCd ? (this.dataset.trasfTypeCd = '') : null
+                this.dataset.pivotColName ? (this.dataset.pivotColName = '') : null
+                this.dataset.pivotColValue ? (this.dataset.pivotColValue = '') : null
+                this.dataset.pivotIsNumRows ? (this.dataset.pivotIsNumRows = '') : null
+                this.dataset.pivotRowName ? (this.dataset.pivotRowName = '') : null
+            }
         }
     }
 })

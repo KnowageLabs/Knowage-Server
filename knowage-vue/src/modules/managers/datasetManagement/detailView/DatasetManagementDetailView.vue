@@ -4,7 +4,7 @@
         <template #left>{{ selectedDataset.label }}</template>
         <template #right>
             <Button :label="$t('managers.lovsManagement.preview')" class="p-button-text p-button-rounded p-button-plain" />
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="saveDataset" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('close')" />
         </template>
     </Toolbar>
@@ -102,7 +102,7 @@ export default defineComponent({
             return this.v$.$invalid
         }
     },
-    emits: ['close', 'touched', 'loadingOlderVersion', 'olderVersionLoaded'],
+    emits: ['close', 'touched', 'loadingOlderVersion', 'olderVersionLoaded', 'saved'],
     data() {
         return {
             v$: useValidate() as any,
@@ -181,6 +181,45 @@ export default defineComponent({
         onOlderVersionLoaded(event) {
             this.$emit('olderVersionLoaded')
             this.selectedDataset = { ...event }
+        },
+        async saveDataset() {
+            console.log(this.selectedDataset)
+            let dsToSave = { ...this.selectedDataset }
+            if (dsToSave.dsTypeCd.toLowerCase() == 'rest' || dsToSave.dsTypeCd.toLowerCase() == 'python/r' || dsToSave.dsTypeCd.toLowerCase() == 'solr') {
+                var restRequestHeadersTemp = {}
+                for (let i = 0; i < dsToSave.restRequestHeaders.length; i++) {
+                    restRequestHeadersTemp[dsToSave.restRequestHeaders[i]['name']] = dsToSave.restRequestHeaders[i]['value']
+                }
+                dsToSave.restRequestHeaders = JSON.stringify(restRequestHeadersTemp)
+                dsToSave.restJsonPathAttributes = JSON.stringify(dsToSave.restJsonPathAttributes)
+            }
+            await axios
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/`, dsToSave, {
+                    headers: {
+                        Accept: 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    }
+                })
+                .then(() => {
+                    this.saveTags(dsToSave)
+                    this.touched = false
+                    this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
+                    this.$emit('saved')
+                })
+                .catch()
+        },
+        async saveTags(dsToSave) {
+            let tags = {} as any
+            tags.versNum = dsToSave.versNum
+            tags.tagsToAdd = dsToSave.tags
+            await axios
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${dsToSave.id}/dstags/`, tags, {
+                    headers: {
+                        Accept: 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    }
+                })
+                .catch()
         }
     }
 })

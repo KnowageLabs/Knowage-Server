@@ -30,7 +30,8 @@
                     :datasetToCloneId="datasetToCloneId"
                     @loadingOlderVersion="loadingVersion = true"
                     @olderVersionLoaded="loadingVersion = false"
-                    @touched="this.touched = true"
+                    @touched="touched = true"
+                    @saved="getDatasets, (touched = false)"
                     @close="closeDetailConfirm"
                 />
             </div>
