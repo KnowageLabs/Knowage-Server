@@ -1,7 +1,7 @@
 <template>
     <!-- MAIN COMPONENT invalid: {{ v$.$invalid }} -->
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-        <template #left>{{ datasetInList.label }}</template>
+        <template #left>{{ selectedDataset.label }}</template>
         <template #right>
             <Button :label="$t('managers.lovsManagement.preview')" class="p-button-text p-button-rounded p-button-plain" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" />
@@ -75,7 +75,6 @@ export default defineComponent({
     components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard, TypeCard, MetadataCard },
     props: {
         id: { type: String, required: false },
-        datasetInList: {} as any,
         scopeTypes: { type: Array as any, required: true },
         categoryTypes: { type: Array as any, required: true },
         datasetTypes: { type: Array as any, required: true },
@@ -85,7 +84,8 @@ export default defineComponent({
         businessModels: { type: Array as any, required: true },
         pythonEnvironments: { type: Array as any, required: true },
         rEnvironments: { type: Array as any, required: true },
-        metaSourceResource: { type: Array as any, required: true }
+        metaSourceResource: { type: Array as any, required: true },
+        datasetToCloneId: { type: Number as any }
     },
     computed: {},
     emits: ['close', 'touched'],
@@ -107,6 +107,9 @@ export default defineComponent({
     watch: {
         id() {
             this.getAllDatasetData()
+        },
+        datasetToCloneId() {
+            this.cloneDatasetConfirm(this.datasetToCloneId)
         }
     },
     validations() {},
@@ -133,7 +136,25 @@ export default defineComponent({
             await this.getSelectedDataset()
             await this.getSelectedDatasetVersions()
         },
+        cloneDatasetConfirm(datasetId) {
+            this.$confirm.require({
+                icon: 'pi pi-exclamation-triangle',
+                message: this.$t('kpi.kpiDefinition.confirmClone'),
+                header: this.$t(' '),
+                datasetId,
+                accept: () => this.cloneDataset(datasetId)
+            })
+        },
+        async cloneDataset(datasetId) {
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`).then((response) => {
+                delete response.data[0].id
+                response.data[0].label = '...'
+                response.data[0].dsVersions = []
+                response.data[0].usedByNDocs = 0
 
+                this.selectedDataset = { ...response.data[0] }
+            })
+        },
         onAddLinkedTables(event) {
             this.tablesToAdd = event
             this.$emit('touched')

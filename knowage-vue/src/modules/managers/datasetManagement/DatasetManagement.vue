@@ -11,11 +11,10 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <KnListBox :options="listOfDatasets" :settings="mainDescriptor.knListSettings" @click="showDetail" @clone.stop="cloneDataset" @delete.stop="deleteDataset" />
+                <KnListBox :options="listOfDatasets" :settings="mainDescriptor.knListSettings" @click="showDetail" @clone.stop="emitCloneDataset" @delete.stop="deleteDataset" />
             </div>
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
                 <router-view
-                    :datasetInList="datasetInList"
                     :scopeTypes="scopeTypes"
                     :categoryTypes="categoryTypes"
                     :datasetTypes="datasetTypes"
@@ -26,6 +25,7 @@
                     :pythonEnvironments="pythonEnvironments"
                     :rEnvironments="rEnvironments"
                     :metaSourceResource="metaSourceResource"
+                    :datasetToCloneId="datasetToCloneId"
                     @touched="this.touched = true"
                     @close="closeDetailConfirm"
                 />
@@ -51,7 +51,6 @@ export default defineComponent({
             reverseOrdering: false,
             columnOrdering: '',
             touched: false,
-            datasetInList: {} as any,
             scopeTypes: [] as any,
             categoryTypes: [] as any,
             datasetTypes: [] as any,
@@ -61,7 +60,8 @@ export default defineComponent({
             businessModels: [] as any,
             pythonEnvironments: [] as any,
             rEnvironments: [] as any,
-            metaSourceResource: [] as any
+            metaSourceResource: [] as any,
+            datasetToCloneId: null
         }
     },
     created() {
@@ -137,7 +137,6 @@ export default defineComponent({
         },
 
         showDetail(event) {
-            this.datasetInList = { ...event.item }
             const path = event.item ? `/dataset-management/${event.item.id}` : '/dataset-management/new-dataset'
 
             if (!this.touched) {
@@ -172,8 +171,12 @@ export default defineComponent({
                 }
             })
         },
-        cloneDataset(event) {
-            console.log('CLONING DATSET: ' + event.item.label)
+        emitCloneDataset(event) {
+            this.$router.push('/dataset-management/new-dataset')
+            setTimeout(() => {
+                this.datasetToCloneId = event.item.id
+                console.log(this.datasetToCloneId)
+            }, 200)
         }
     }
 })
