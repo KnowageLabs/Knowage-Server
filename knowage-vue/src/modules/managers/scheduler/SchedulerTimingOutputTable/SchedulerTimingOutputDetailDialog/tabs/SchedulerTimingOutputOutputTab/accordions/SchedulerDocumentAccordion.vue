@@ -26,6 +26,17 @@
                 <div v-if="document.useFixedFolder">
                     <SchedulerDocumentAccordionTree :propFunctionalities="functionalities" :propSelectedFolders="document.funct" @selected="setSelectedFolders"></SchedulerDocumentAccordionTree>
                 </div>
+                <Message class="p-m-2" severity="info" :closable="true" :style="schedulerDocumentAccordionDescriptor.styles.message">
+                    {{ $t('managers.scheduler.useFolderDatasetHint.partOne') }}
+                    <ul id="dataset-hint-list">
+                        <li>{{ $t('managers.scheduler.useFolderDatasetHint.partTwo') }}</li>
+                        <li>{{ $t('managers.scheduler.useFolderDatasetHint.partThree') }}</li>
+                    </ul>
+                </Message>
+                <div class="p-m-2">
+                    <Checkbox v-model="document.useFolderDataset" :binary="true" />
+                    <span class="p-ml-2">{{ $t('managers.scheduler.folderFromDataset') }}</span>
+                </div>
             </div>
         </AccordionTab>
     </Accordion>
@@ -36,14 +47,17 @@ import { defineComponent } from 'vue'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import Checkbox from 'primevue/checkbox'
+import Message from 'primevue/message'
 import SchedulerDocumentAccordionTree from './SchedulerDocumentAccordionTree.vue'
+import schedulerDocumentAccordionDescriptor from './SchedulerDocumentAccordionDescriptor.json'
 
 export default defineComponent({
     name: 'scheduler-document-accordion',
-    components: { Accordion, AccordionTab, Checkbox, SchedulerDocumentAccordionTree },
+    components: { Accordion, AccordionTab, Checkbox, Message, SchedulerDocumentAccordionTree },
     props: { propDocument: { type: Object }, functionalities: { type: Array } },
     data() {
         return {
+            schedulerDocumentAccordionDescriptor,
             document: null as any
         }
     },
@@ -65,3 +79,10 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+#dataset-hint-list {
+    list-style: none;
+    margin: 0;
+}
+</style>
