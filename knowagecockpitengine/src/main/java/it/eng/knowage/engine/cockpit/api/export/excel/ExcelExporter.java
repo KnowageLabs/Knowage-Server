@@ -623,6 +623,9 @@ public class ExcelExporter {
 			CellStyle tsCellStyle = wb.createCellStyle();
 			tsCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(TIMESTAMP_FORMAT));
 
+			// cell styles for table widget
+			CellStyle[] columnStyles = getColumnsStyles(wb, createHelper, columnsOrdered, widgetContent);
+
 			// FILL RECORDS
 			int isGroup = mapGroupsAndColumns.isEmpty() ? 0 : 1;
 			for (int r = 0; r < rows.length(); r++) {
@@ -651,13 +654,13 @@ public class ExcelExporter {
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
 							}
-							cell.setCellStyle(intCellStyle);
+							cell.setCellStyle(columnStyles[c] != null ? columnStyles[c] : intCellStyle);
 							break;
 						case "float":
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
 							}
-							cell.setCellStyle(floatCellStyle);
+							cell.setCellStyle(columnStyles[c] != null ? columnStyles[c] : floatCellStyle);
 							break;
 						case "date":
 							try {
@@ -690,8 +693,36 @@ public class ExcelExporter {
 					}
 				}
 			}
+
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
+		}
+	}
+
+	private CellStyle[] getColumnsStyles(Workbook wb, CreationHelper helper, JSONArray columnsOrdered, JSONObject widgetContent) {
+		try {
+			CellStyle[] toReturn = new CellStyle[columnsOrdered.length() + 10];
+			JSONArray columns = widgetContent.getJSONArray("columnSelectedOfDataset");
+			for (int i = 0; i < columns.length(); i++) {
+				JSONObject col = columns.getJSONObject(i);
+				if (col.has("style") && col.getJSONObject("style").has("precision")) {
+					int precision = col.getJSONObject("style").getInt("precision");
+					String format = "#,##0";
+					if (precision > 0) {
+						format += ".";
+						for (int j = 0; j < precision; j++) {
+							format += "0";
+						}
+					}
+					CellStyle cellStyle = wb.createCellStyle();
+					cellStyle.setDataFormat(helper.createDataFormat().getFormat(format));
+					toReturn[i] = cellStyle;
+				}
+			}
+			return toReturn;
+		} catch (Exception e) {
+			logger.error("Error while retrieving table columns formatting.", e);
+			return new CellStyle[columnsOrdered.length() + 10];
 		}
 	}
 
