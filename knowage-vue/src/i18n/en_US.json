@@ -714,7 +714,9 @@
             "fieldsMetadata": "Fields Metadata",
             "duplicateSpatialAttribute": "You can have only one spatial attribute per dataset",
             "restoreTitle": "Restore dataset version",
-            "restoreMsg": "Do you want to restore the dataset version?"
+            "restoreMsg": "Do you want to restore the dataset version?",
+            "disablePersistence": "Disabling Persistence",
+            "disablePersistenceMsg": "Persistence of Dataset is enabled. By adding the parameters, persistence will be automatically disabled. Do You want to proceed?"
         },
         "domainsManagement": {
             "domainCode": "Domain code",

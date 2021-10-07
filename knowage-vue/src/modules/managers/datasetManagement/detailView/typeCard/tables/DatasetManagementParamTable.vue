@@ -88,6 +88,22 @@ export default defineComponent({
     },
     methods: {
         addNewParam() {
+            if (this.dataset.isPersisted) {
+                this.$confirm.require({
+                    message: this.$t('managers.datasetManagement.disablePersistenceMsg'),
+                    header: this.$t('managers.datasetManagement.disablePersistence'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.dataset.isPersisted = false
+                        this.dataset.persistTableName = null
+                        this.insertParameter()
+                    }
+                })
+            } else {
+                this.insertParameter()
+            }
+        },
+        insertParameter() {
             this.dataset.pars ? '' : (this.dataset.pars = [])
             const newParam = { ...tableDescriptor.newParam }
             this.dataset.pars.push(newParam)

@@ -77,7 +77,7 @@
 
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
         <template #left>
-            <InputSwitch v-model="dataset.isPersisted" class="p-mr-2" @change="$emit('touched')" />
+            <InputSwitch v-model="dataset.isPersisted" :disabled="disablePersist" class="p-mr-2" @change="$emit('touched')" />
             <span>{{ $t('managers.datasetManagement.isPersisted') }}</span>
         </template>
     </Toolbar>
@@ -130,7 +130,14 @@ export default defineComponent({
         selectedDataset: { type: Object as any },
         transformationDataset: { type: Object as any }
     },
-    computed: {},
+    computed: {
+        disablePersist() {
+            if (this.dataset['pars'] && this.dataset['pars'].length == 0) {
+                return false
+            }
+            return true
+        }
+    },
     emits: ['touched'],
     data() {
         return {
