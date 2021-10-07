@@ -100,7 +100,7 @@
                 </Column>
                 <Column @rowClick="false">
                     <template #body="slotProps">
-                        <Button icon="fas fa-retweet" class="p-button-link" @click="restoreVersion(slotProps.data)" />
+                        <Button icon="fas fa-retweet" class="p-button-link" @click="restoreVersionConfirm(slotProps.data)" />
                         <Button icon="pi pi-trash" class="p-button-link" @click="deleteConfirm('deleteOne', slotProps.data)" />
                     </template>
                 </Column>
@@ -140,14 +140,15 @@ export default defineComponent({
             return true
         }
     },
-    emits: ['touched', 'scopeTypeChanged', 'reloadVersions', 'restoreDatasetVersion'],
+    emits: ['touched', 'scopeTypeChanged', 'reloadVersions', 'loadingOlderVersion', 'olderVersionLoaded'],
     data() {
         return {
             moment,
             detailTabDescriptor,
             v$: useValidate() as any,
             dataset: {} as any,
-            datasetVersions: [] as any
+            datasetVersions: [] as any,
+            loadingVersion: false
         }
     },
     created() {
@@ -164,9 +165,6 @@ export default defineComponent({
         }
     },
     methods: {
-        restoreVersion(event) {
-            this.$emit('restoreDatasetVersion', event)
-        },
         formatDate(date) {
             let fDate = new Date(date)
             return fDate.toLocaleString()
@@ -215,6 +213,66 @@ export default defineComponent({
                     this.$emit('reloadVersions')
                 })
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.error.generic'), msg: error.message }))
+        },
+        //#endregion ================================================================================================
+
+        //#region ===================== Restore Versions Functionality ====================================================
+        restoreVersionConfirm(event) {
+            this.$confirm.require({
+                icon: 'pi pi-exclamation-triangle',
+                message: this.$t('managers.datasetManagement.restoreMsg'),
+                header: this.$t('managers.datasetManagement.restoreTitle'),
+                accept: () => this.restoreVersion(event)
+            })
+        },
+        async restoreVersion(dsToRestore) {
+            this.$emit('loadingOlderVersion')
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.dataset.id}/restore?versionId=${dsToRestore.versNum}`).then((response) => {
+                this.dataset.dsTypeCd.toLowerCase() == 'file' ? this.refactorFileDatasetConfig(response.data[0]) : ''
+                this.$emit('olderVersionLoaded', response.data[0])
+            })
+            this.loadingVersion = false
+        },
+        refactorFileDatasetConfig(item) {
+            this.dataset.fileType = item != undefined ? item.fileType : ''
+            this.dataset.fileName = item != undefined ? item.fileName : ''
+            this.dataset.csvEncoding = item != undefined ? item.csvEncoding : 'UTF-8'
+            this.dataset.csvDelimiter = item != undefined ? item.csvDelimiter : ','
+            this.dataset.csvQuote = item != undefined ? item.csvQuote : '"'
+            this.dataset.dateFormat = item != undefined && item.dateFormat != undefined ? item.dateFormat : 'dd/MM/yyyy'
+            this.dataset.timestampFormat = item != undefined && item.timestampFormat != undefined ? item.timestampFormat : 'dd/MM/yyyy HH:mm:ss'
+
+            if (item != undefined) {
+                if (item.limitRows != null && item.limitRows != '') {
+                    this.dataset.limitRows = Number(item.limitRows)
+                } else {
+                    this.dataset.limitRows = item.limitRows
+                }
+            } else {
+                this.dataset.limitRows = null
+            }
+
+            this.dataset.catTypeVn = item != undefined ? item.catTypeVn : ''
+
+            if (item != undefined) {
+                this.dataset.catTypeId = Number(item.catTypeId)
+                this.dataset.xslSheetNumber = Number(1)
+                this.dataset.skipRows = Number(item.skipRows)
+                this.dataset.limitRows = Number(null)
+            } else {
+                this.dataset.catTypeId = null
+                this.dataset.xslSheetNumber = null
+                this.dataset.skipRows = null
+                this.dataset.limitRows = null
+            }
+
+            this.dataset.id = item != undefined ? item.id : ''
+            this.dataset.label = item != undefined ? item.label : ''
+            this.dataset.name = item != undefined ? item.name : ''
+            this.dataset.description = item != undefined ? item.description : ''
+            this.dataset.meta = item != undefined ? item.meta : []
+
+            this.dataset.fileUploaded = false
         }
         //#endregion ================================================================================================
     }

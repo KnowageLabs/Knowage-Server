@@ -712,7 +712,9 @@
             "viewQbeMsg": "The dataset should be saved before viewing the QBE query",
             "viewQbeWarning": "Cannot open QBE query",
             "fieldsMetadata": "Fields Metadata",
-            "duplicateSpatialAttribute": "You can have only one spatial attribute per dataset"
+            "duplicateSpatialAttribute": "You can have only one spatial attribute per dataset",
+            "restoreTitle": "Restore dataset version",
+            "restoreMsg": "Do you want to restore the dataset version?"
         },
         "domainsManagement": {
             "domainCode": "Domain code",

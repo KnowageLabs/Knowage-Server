@@ -14,7 +14,17 @@
                 <template #header>
                     <span>{{ $t('managers.mondrianSchemasManagement.detail.title') }}</span>
                 </template>
-                <DetailCard :scopeTypes="scopeTypes" :categoryTypes="categoryTypes" :selectedDataset="selectedDataset" :selectedDatasetVersions="selectedDatasetVersions" :loading="loading" @reloadVersions="getSelectedDatasetVersions" @touched="$emit('touched')" />
+                <DetailCard
+                    :scopeTypes="scopeTypes"
+                    :categoryTypes="categoryTypes"
+                    :selectedDataset="selectedDataset"
+                    :selectedDatasetVersions="selectedDatasetVersions"
+                    :loading="loading"
+                    @reloadVersions="getSelectedDatasetVersions"
+                    @loadingOlderVersion="$emit('loadingOlderVersion')"
+                    @olderVersionLoaded="onOlderVersionLoaded"
+                    @touched="$emit('touched')"
+                />
             </TabPanel>
 
             <TabPanel>
@@ -88,7 +98,7 @@ export default defineComponent({
         datasetToCloneId: { type: Number as any }
     },
     computed: {},
-    emits: ['close', 'touched'],
+    emits: ['close', 'touched', 'loadingOlderVersion', 'olderVersionLoaded'],
     data() {
         return {
             v$: useValidate() as any,
@@ -98,7 +108,8 @@ export default defineComponent({
             selectedDatasetVersions: [] as any,
             tablesToAdd: [] as any,
             tablesToRemove: [] as any,
-            selectedDataset: {} as any
+            selectedDataset: {} as any,
+            loadingVersion: false
         }
     },
     created() {
@@ -162,6 +173,10 @@ export default defineComponent({
         onRemoveLinkedTables(event) {
             this.tablesToRemove = event
             this.$emit('touched')
+        },
+        onOlderVersionLoaded(event) {
+            this.$emit('olderVersionLoaded')
+            this.selectedDataset = { ...event }
         }
     }
 })

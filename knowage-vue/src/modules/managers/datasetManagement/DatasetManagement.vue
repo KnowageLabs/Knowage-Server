@@ -1,5 +1,7 @@
 <template>
     <div class="kn-page">
+        <KnOverlaySpinnerPanel :visibility="loadingVersion" />
+
         <div class="kn-page-content p-grid p-m-0">
             <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
@@ -26,6 +28,8 @@
                     :rEnvironments="rEnvironments"
                     :metaSourceResource="metaSourceResource"
                     :datasetToCloneId="datasetToCloneId"
+                    @loadingOlderVersion="loadingVersion = true"
+                    @olderVersionLoaded="loadingVersion = false"
                     @touched="this.touched = true"
                     @close="closeDetailConfirm"
                 />
@@ -39,16 +43,18 @@ import axios from 'axios'
 import mainDescriptor from './DatasetManagementDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
+import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 
 export default defineComponent({
     name: 'dataset-management',
-    components: { FabButton, KnListBox },
+    components: { FabButton, KnListBox, KnOverlaySpinnerPanel },
     data() {
         return {
             mainDescriptor,
             loading: false,
             listOfDatasets: [] as any,
             reverseOrdering: false,
+            loadingVersion: false,
             columnOrdering: '',
             touched: false,
             scopeTypes: [] as any,
