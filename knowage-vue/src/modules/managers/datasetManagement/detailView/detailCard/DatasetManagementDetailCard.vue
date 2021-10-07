@@ -58,10 +58,33 @@
                     />
                 </div>
                 <div class="p-field p-mt-1 p-col-6">
-                    <span class="p-float-label">
+                    <!-- <span class="p-float-label">
                         <Dropdown id="category" class="kn-material-input" :options="categoryTypes" optionLabel="VALUE_CD" optionValue="VALUE_CD" v-model="dataset.catTypeVn" @change="updateIdFromCd(this.categoryTypes, 'catTypeId', $event.value), $emit('touched')" />
                         <label for="category" class="kn-material-input-label"> {{ $t('common.category') }} </label>
+                    </span> -->
+                    <span class="p-float-label">
+                        <Dropdown
+                            id="category"
+                            class="kn-material-input"
+                            :options="scopeTypes"
+                            optionLabel="VALUE_CD"
+                            optionValue="VALUE_CD"
+                            v-model="v$.dataset.catTypeVn.$model"
+                            :class="{
+                                'p-invalid': v$.dataset.catTypeVn.$invalid && v$.dataset.catTypeVn.$dirty
+                            }"
+                            @before-show="v$.dataset.catTypeVn.$touch()"
+                            @change="updateIdFromCd(this.categoryTypes, 'catTypeId', $event.value), $emit('touched')"
+                        />
+                        <label v-if="this.dataset.scopeCd == 'USER'" for="category" class="kn-material-input-label"> {{ $t('common.category') }} </label>
+                        <label v-else for="category" class="kn-material-input-label"> {{ $t('common.category') }} * </label>
                     </span>
+                    <KnValidationMessages
+                        :vComp="v$.dataset.catTypeVn"
+                        :additionalTranslateParams="{
+                            fieldName: $t('managers.datasetManagement.scope')
+                        }"
+                    />
                 </div>
                 <div class="p-field p-mt-1 p-col-12">
                     <span class="p-float-label kn-material-input">
@@ -111,7 +134,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { createValidations } from '@/helpers/commons/validationHelper'
+import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import axios from 'axios'
 import moment from 'moment'
 import useValidate from '@vuelidate/core'
@@ -160,9 +183,16 @@ export default defineComponent({
         }
     },
     validations() {
-        return {
-            dataset: createValidations('dataset', detailTabDescriptor.validations.dataset)
+        const catTypeRequired = (value) => {
+            return this.dataset.scopeCd == 'USER' || value
         }
+        const customValidators: ICustomValidatorMap = {
+            'cat-type-required': catTypeRequired
+        }
+        const validationObject = {
+            dataset: createValidations('dataset', detailTabDescriptor.validations.dataset, customValidators)
+        }
+        return validationObject
     },
     methods: {
         formatDate(date) {

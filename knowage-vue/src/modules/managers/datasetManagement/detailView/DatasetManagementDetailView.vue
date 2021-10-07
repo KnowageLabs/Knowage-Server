@@ -1,10 +1,10 @@
 <template>
-    <!-- MAIN COMPONENT invalid: {{ v$.$invalid }} -->
+    MAIN COMPONENT invalid: {{ v$.$invalid }}
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left>{{ selectedDataset.label }}</template>
         <template #right>
             <Button :label="$t('managers.lovsManagement.preview')" class="p-button-text p-button-rounded p-button-plain" />
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('close')" />
         </template>
     </Toolbar>
@@ -97,7 +97,11 @@ export default defineComponent({
         metaSourceResource: { type: Array as any, required: true },
         datasetToCloneId: { type: Number as any }
     },
-    computed: {},
+    computed: {
+        buttonDisabled(): any {
+            return this.v$.$invalid
+        }
+    },
     emits: ['close', 'touched', 'loadingOlderVersion', 'olderVersionLoaded'],
     data() {
         return {

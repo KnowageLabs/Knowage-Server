@@ -52,7 +52,10 @@
                 "fieldName": "catTypeVn",
                 "validators": [
                     {
-                        "key": "required"
+                        "key": "required",
+                        "validator": {
+                            "type": "cat-type-required"
+                        }
                     }
                 ]
             }
