@@ -84,7 +84,7 @@ public class SchedulerResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/resumeTrigger")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.SCHEDULER_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.SCHEDULER_MANAGEMENT, SpagoBIConstants.KPI_SCHEDULATION })
 	public String resumeTrigger(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		HashMap<String, String> logParam = new HashMap<String, String>();
