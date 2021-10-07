@@ -59,7 +59,7 @@
         </DataTable>
 
         <SchedulerTimingOutputInfoDialog :visible="triggerInfoDialogVisible" :triggerInfo="triggerInfo" @close="triggerInfoDialogVisible = false"></SchedulerTimingOutputInfoDialog>
-        <SchedulerTimingOutputDetailDialog :visible="triggerDetailDialogVisible" :propTrigger="triggerInfo" @close="triggerDetailDialogVisible = false"></SchedulerTimingOutputDetailDialog>
+        <SchedulerTimingOutputDetailDialog :visible="triggerDetailDialogVisible" :propTrigger="triggerInfo" :propDocuments="jobDocuments" @close="triggerDetailDialogVisible = false"></SchedulerTimingOutputDetailDialog>
     </div>
 </template>
 
@@ -78,7 +78,7 @@ import SchedulerTimingOutputInfoDialog from './SchedulerTimingOutputInfoDialog.v
 export default defineComponent({
     name: 'scheduler-timing-output-table',
     components: { Column, DataTable, Message, Menu, SchedulerTimingOutputDetailDialog, SchedulerTimingOutputInfoDialog },
-    props: { jobTriggers: { type: Array } },
+    props: { jobTriggers: { type: Array }, jobDocuments: { type: Array } },
     emits: ['loading'],
     data() {
         return {

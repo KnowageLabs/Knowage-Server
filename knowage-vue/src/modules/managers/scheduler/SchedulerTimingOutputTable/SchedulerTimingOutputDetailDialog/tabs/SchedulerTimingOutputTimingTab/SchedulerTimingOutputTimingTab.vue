@@ -44,7 +44,7 @@
                 <div class="p-col-5">
                     <span>
                         <label for="endDateTiming" class="kn-material-input-label">{{ $t('cron.endDate') + ':' }}</label>
-                        <Calendar id="endDateTiming" class="kn-material-input custom-timepicker" :style="schedulerTimingOutputTimingTabDescriptor.style.calendarInput" v-model="trigger.endDateTiming" :showIcon="true" :manualInput="false" @change="timeChanged" />
+                        <Calendar id="endDateTiming" class="kn-material-input custom-timepicker" :style="schedulerTimingOutputTimingTabDescriptor.style.calendarInput" v-model="trigger.endDateTiming" :showIcon="true" :manualInput="false" />
                     </span>
                     <div v-if="!validDates" class="p-error p-grid">
                         <small class="p-col-12">
@@ -55,7 +55,7 @@
                 <div class="p-col-7 p-d-flex p-ai-center">
                     <label for="endTime" class="kn-material-input-label p-m-2"> {{ $t('cron.endTime') + ':' }}</label>
                     <span>
-                        <Calendar id="endTime" class="kn-material-input custom-timepicker" :style="schedulerTimingOutputTimingTabDescriptor.style.timePicker" v-model="trigger.endTimeTiming" :showTime="true" :manualInput="false" :timeOnly="true" hourFormat="24" :inline="true" @change="timeChanged" />
+                        <Calendar id="endTime" class="kn-material-input custom-timepicker" :style="schedulerTimingOutputTimingTabDescriptor.style.timePicker" v-model="trigger.endTimeTiming" :showTime="true" :manualInput="false" :timeOnly="true" hourFormat="24" :inline="true" />
                     </span>
                 </div>
             </div>
@@ -173,8 +173,8 @@ export default defineComponent({
             }
         },
         setTriggerDates() {
-            this.trigger.startDateTiming = this.trigger.zonedStartTime ? new Date(this.trigger.zonedStartTime) : null
-            this.trigger.startTimeTiming = this.trigger.startDateTiming ? this.trigger.startDateTiming : null
+            this.trigger.startDateTiming = this.trigger.zonedStartTime ? new Date(this.trigger.zonedStartTime) : new Date()
+            this.trigger.startTimeTiming = this.trigger.startDateTiming
 
             this.trigger.endDateTiming = this.trigger.zonedEndTime ? new Date(this.trigger.zonedEndTime) : null
             this.trigger.endTimeTiming = this.trigger.endDateTiming ? this.trigger.endDateTiming : null
@@ -185,14 +185,14 @@ export default defineComponent({
             console.log('END TIME: ', this.trigger.endTimeTiming)
         },
         setCronFrequency() {
-            const startDate = this.trigger.zonedStartTime ? new Date(this.trigger.zonedStartTime) : null
+            const startDate = this.trigger.zonedStartTime ? new Date(this.trigger.zonedStartTime) : new Date()
             const endDate = this.trigger.zonedEndTime ? new Date(this.trigger.zonedEndTime) : null
 
             this.trigger.frequency = {
                 cron: this.trigger.chrono,
-                startDate: startDate ? startDate.valueOf() : 0,
-                startTime: startDate ? startDate.getHours() + ':' + startDate.getMinutes() : '',
-                endDate: endDate ? endDate.valueOf() : 0,
+                startDate: startDate.valueOf(),
+                startTime: startDate.getHours() + ':' + startDate.getMinutes(),
+                endDate: endDate ? endDate.valueOf() : null,
                 endTime: endDate ? endDate.getHours() + ':' + endDate.getMinutes() : ''
             }
             console.log('TEEEEEEEEEEST FREQUENCY: ', this.trigger.frequency)
