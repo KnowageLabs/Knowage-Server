@@ -520,8 +520,9 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			query.setBoolean("active", true);
 			query.setString("owner", userProfile.getUserId().toString());
 
-			if (categoryIds != null && !categoryIds.isEmpty())
+			if (categoryIds != null && !categoryIds.isEmpty()) {
 				query.setParameterList("categories", categoryIds);
+			}
 
 			results = query.list();
 
