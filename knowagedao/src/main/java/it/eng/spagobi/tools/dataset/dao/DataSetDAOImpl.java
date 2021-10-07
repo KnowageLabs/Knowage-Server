@@ -1851,22 +1851,21 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		try {
 			session = getSession();
 			categoryList = UserUtilities.getDataSetCategoriesByUser(userProfile);
-			if (categoryList.isEmpty()) {
-				statement.append("ds.category.valueId is null ");
-			} else {
+			if (!categoryList.isEmpty()) {
 				categoryIds = extractCategoryIds(categoryList);
-				statement.append("(ds.category.valueId is null or ds.category.valueId in (:categories)) ");
+				statement.append("ds.category.valueId in (:categories) and ");
 			}
 
 			statement.append(
-					"and ds.scope.valueId in (select dom.valueId from SbiDomains dom where dom.valueCd in ('USER', 'ENTERPRISE') and dom.domainCd = 'DS_SCOPE')))");
+					"ds.scope.valueId in (select dom.valueId from SbiDomains dom where dom.valueCd in ('USER', 'ENTERPRISE') and dom.domainCd = 'DS_SCOPE')))");
 
 			Query query = session.createQuery(statement.toString());
 			query.setBoolean("active", true);
 			query.setString("owner", userProfile.getUserId().toString());
 
-			if (categoryIds != null && !categoryIds.isEmpty())
+			if (categoryIds != null && !categoryIds.isEmpty()) {
 				query.setParameterList("categories", categoryIds);
+			}
 
 			results = executeQuery(query, session);
 		} catch (Exception e) {
