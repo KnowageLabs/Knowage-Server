@@ -37,7 +37,9 @@ export default defineComponent({
             this.loadDocument()
         }
     },
-    async created() {},
+    created() {
+        this.loadDocument()
+    },
     methods: {
         loadDocument() {
             this.document = this.propDocument
