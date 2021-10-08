@@ -202,6 +202,8 @@ export default defineComponent({
             dsToSave.pars ? '' : (dsToSave.pars = [])
             dsToSave.meta ? '' : (dsToSave.meta = [])
             dsToSave.recalculateMetadata = true
+            dsToSave.meta = await this.manageDatasetFieldMetadata(dsToSave.meta)
+
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/`, dsToSave, {
                     headers: {
@@ -229,6 +231,61 @@ export default defineComponent({
                     }
                 })
                 .catch()
+        },
+        async manageDatasetFieldMetadata(fieldsColumns) {
+            //Temporary workaround because fieldsColumns is now an object with a new structure after changing DataSetJSONSerializer
+            if (fieldsColumns.columns != undefined && fieldsColumns.columns != null) {
+                var columnsArray = new Array()
+
+                var columnsNames = new Array()
+                //create columns list
+                for (var i = 0; i < fieldsColumns.columns.length; i++) {
+                    var element = fieldsColumns.columns[i]
+                    columnsNames.push(element.column)
+                }
+
+                columnsNames = this.removeDuplicates(columnsNames)
+
+                for (i = 0; i < columnsNames.length; i++) {
+                    console.log('for (i = 0; i < columnsNames.length; i++) {')
+                    var columnObject = { displayedName: '', name: '', fieldType: '', type: '' }
+                    var currentColumnName = columnsNames[i]
+                    //this will remove the part before the double dot if the column is in the format ex: it.eng.spagobi.Customer:customerId
+                    if (currentColumnName.indexOf(':') != -1) {
+                        var arr = currentColumnName.split(':')
+                        columnObject.displayedName = arr[1]
+                    } else {
+                        columnObject.displayedName = currentColumnName
+                    }
+
+                    columnObject.name = currentColumnName
+                    for (var j = 0; j < fieldsColumns.columns.length; j++) {
+                        element = fieldsColumns.columns[j]
+                        if (element.column == currentColumnName) {
+                            if (element.pname.toUpperCase() == 'type'.toUpperCase()) {
+                                columnObject.type = element.pvalue
+                            } else if (element.pname.toUpperCase() == 'fieldType'.toUpperCase()) {
+                                columnObject.fieldType = element.pvalue
+                            }
+                        }
+                    }
+                    columnsArray.push(columnObject)
+                }
+
+                return columnsArray
+                // end workaround ---------------------------------------------------
+            }
+        },
+        removeDuplicates(array) {
+            var index = {}
+            for (var i = array.length - 1; i >= 0; i--) {
+                if (array[i] in index) {
+                    array.splice(i, 1)
+                } else {
+                    index[array[i]] = true
+                }
+            }
+            return array
         }
     }
 })

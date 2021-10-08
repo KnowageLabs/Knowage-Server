@@ -83,12 +83,7 @@ export default defineComponent({
 
             this.fieldsMetadata = fieldsMetadata
         },
-        //ovu metodu izbaciti u tabview komponentu kada se cuva dataset !!!!!!!!!!!!!!!!!!!!!!!!!!!!
         saveFieldsMetadata() {
-            console.log(this.fieldsMetadata)
-            var datasetFieldsMetadata = this.dataset.meta.columns
-            console.log(datasetFieldsMetadata)
-
             var numberOfSpatialAttribute = 0
             for (let i = 0; i < this.fieldsMetadata.length; i++) {
                 if (this.fieldsMetadata[i].fieldType == 'SPATIAL_ATTRIBUTE') {
@@ -106,7 +101,6 @@ export default defineComponent({
                     }
                 }
             }
-            console.log('posle: ', this.dataset.meta.columns)
         }
     }
 })
