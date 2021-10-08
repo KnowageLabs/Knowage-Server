@@ -1090,6 +1090,9 @@ public class BirtReportServlet extends HttpServlet {
 			// close the task
 			CSVtask.close();
 
+			// close the report document
+			rptdoc.close();
+
 			logger.debug("Finished");
 			logger.debug("OUT");
 		}
