@@ -25,8 +25,10 @@
         </div>
         <div>
             <SchedulerSnapshotAccordion v-if="document.saveassnapshot" class="p-m-3" :propDocument="document"></SchedulerSnapshotAccordion>
-            <SchedulerDocumentAccordion v-if="document.saveasdocument" class="p-m-3" :propDocument="document" :functionalities="functionalities" :datasets="datasets" :jobInfo="jobInfo" @documentValidated="setDocumentValidation"></SchedulerDocumentAccordion>
+            <SchedulerFileAccordion v-if="document.saveasfile" class="p-m-3" :propDocument="document"></SchedulerFileAccordion>
+            <SchedulerDocumentAccordion v-if="document.saveasdocument" class="p-m-3" :propDocument="document" :functionalities="functionalities" :datasets="datasets" :jobInfo="jobInfo"></SchedulerDocumentAccordion>
             <SchedulerJavaClassAccordion v-if="document.sendtojavaclass" class="p-m-3" :propDocument="document"></SchedulerJavaClassAccordion>
+            <SchedulerMailAccordion v-if="document.sendmail" class="p-m-3" :propDocument="document" :datasets="datasets" :jobInfo="jobInfo"></SchedulerMailAccordion>
         </div>
     </div>
 </template>
@@ -35,12 +37,14 @@
 import { defineComponent } from 'vue'
 import Checkbox from 'primevue/checkbox'
 import SchedulerSnapshotAccordion from './accordions/SchedulerSnapshotAccordion.vue'
+import SchedulerFileAccordion from './accordions/SchedulerFileAccordion.vue'
 import SchedulerDocumentAccordion from './accordions/SchedulerDocumentAccordion.vue'
 import SchedulerJavaClassAccordion from './accordions/SchedulerJavaClassAccordion.vue'
+import SchedulerMailAccordion from './accordions/SchedulerMailAccordion.vue'
 
 export default defineComponent({
     name: 'scheduler-tming-output-document-detail',
-    components: { Checkbox, SchedulerSnapshotAccordion, SchedulerJavaClassAccordion, SchedulerDocumentAccordion },
+    components: { Checkbox, SchedulerSnapshotAccordion, SchedulerFileAccordion, SchedulerJavaClassAccordion, SchedulerDocumentAccordion, SchedulerMailAccordion },
     props: { propDocument: { type: Object }, functionalities: { type: Array }, datasets: { type: Array }, jobInfo: { type: Object } },
     data() {
         return {

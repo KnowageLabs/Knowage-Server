@@ -59,7 +59,7 @@
         </DataTable>
 
         <SchedulerTimingOutputInfoDialog :visible="triggerInfoDialogVisible" :triggerInfo="triggerInfo" @close="triggerInfoDialogVisible = false"></SchedulerTimingOutputInfoDialog>
-        <SchedulerTimingOutputDetailDialog :visible="triggerDetailDialogVisible" :propTrigger="triggerInfo" @close="triggerDetailDialogVisible = false"></SchedulerTimingOutputDetailDialog>
+        <SchedulerTimingOutputDetailDialog :visible="triggerDetailDialogVisible" :propTrigger="triggerInfo" @close="triggerDetailDialogVisible = false" @saved="onSave"></SchedulerTimingOutputDetailDialog>
     </div>
 </template>
 
@@ -79,7 +79,7 @@ export default defineComponent({
     name: 'scheduler-timing-output-table',
     components: { Column, DataTable, Message, Menu, SchedulerTimingOutputDetailDialog, SchedulerTimingOutputInfoDialog },
     props: { job: { type: Object, required: true } },
-    emits: ['loading'],
+    emits: ['loading', 'triggerSaved'],
     data() {
         return {
             schedulerTimingOutputTableDescriptor,
@@ -241,6 +241,10 @@ export default defineComponent({
                 })
                 .catch(() => {})
             this.$emit('loading', false)
+        },
+        onSave() {
+            this.triggerDetailDialogVisible = false
+            this.$emit('triggerSaved')
         }
     }
 })

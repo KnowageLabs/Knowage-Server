@@ -17,7 +17,7 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
-                <router-view :selectedJob="selectedJob" @closed="touched = false" />
+                <router-view :selectedJob="selectedJob" @closed="touched = false" @triggerSaved="loadPage" />
             </div>
         </div>
     </div>
@@ -43,16 +43,19 @@ export default defineComponent({
         }
     },
     async created() {
-        if (this.$route.query.id) {
-            await this.loadSelectJob(this.$route.query.id as string)
-        } else {
-            this.selectedJob = { jobName: '', jobDescription: '', documents: [], triggers: [] } as any
-            await this.loadJobs()
-        }
+        await this.loadPage()
 
         // console.log(this.$route.query.id)
     },
     methods: {
+        async loadPage() {
+            if (this.$route.query.id) {
+                await this.loadSelectJob(this.$route.query.id as string)
+            } else {
+                this.selectedJob = { jobName: '', jobDescription: '', documents: [], triggers: [] } as any
+                await this.loadJobs()
+            }
+        },
         async loadJobs() {
             this.loading = true
             this.jobs = []

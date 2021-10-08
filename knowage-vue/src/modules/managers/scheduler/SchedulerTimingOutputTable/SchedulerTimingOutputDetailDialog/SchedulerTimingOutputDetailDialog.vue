@@ -51,7 +51,7 @@ export default defineComponent({
     name: 'scheduler-timing-output-detail-dialog',
     components: { Dialog, SchedulerTimingOutputTimingTab, SchedulerTimingOutputOutputTab, SchedulerTimingOutputWarningDialog, TabView, TabPanel },
     props: { visible: { type: Boolean }, propTrigger: { type: Object } },
-    emits: ['close'],
+    emits: ['close', 'saved'],
     data() {
         return {
             schedulerTimingOutputDetailDialogDescriptor,
@@ -113,17 +113,21 @@ export default defineComponent({
         async saveTrigger() {
             console.log('SAVE TRIGGER: ', this.trigger)
             this.loading = true
+            this.formatTrigger()
 
             await this.axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/saveTrigger`, this.trigger, {})
                 .then((response) => {
-                    if (response.data.errors) {
+                    if (response.data.Errors) {
                         console.log('RESPONSE IN IF ERROR:', response)
+                        this.warningVisible = true
+                        this.warningMessage = this.$t('managers.scheduler.genericError')
                     } else {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.' + this.operation + 'Title'),
                             msg: this.$t('common.toast.success')
                         })
+                        this.$emit('saved')
                     }
                 })
                 .catch((response) => {
@@ -133,6 +137,29 @@ export default defineComponent({
                     this.warningMessage = response
                 })
             this.loading = false
+        },
+        formatTrigger() {
+            if (!this.trigger.triggerGroup) this.trigger.triggerGroup = ''
+            if (this.trigger.chrono.type === 'single') delete this.trigger.chrono.parameter
+            this.trigger._endTime = new Date().getHours() + ':' + new Date().getMinutes()
+
+            this.trigger.zonedStartTime = this.trigger.startDateTiming
+            this.trigger.zonedStartTime.setHours(this.trigger.startTimeTiming.getHours())
+            this.trigger.zonedStartTime.setMinutes(this.trigger.startTimeTiming.getMinutes())
+
+            if (this.trigger.endDateTiming) {
+                this.trigger.zonedEndTime = this.trigger.endDateTiming
+                this.trigger.zonedEndTime.setHours(this.trigger.endTimeTiming.getHours())
+                this.trigger.zonedEndTime.setMinutes(this.trigger.endTimeTiming.getMinutes())
+            } else {
+                delete this.trigger.zonedEndTime
+            }
+
+            delete this.trigger.startDateTiming
+            delete this.trigger.startTimeTiming
+            delete this.trigger.endDateTiming
+            delete this.trigger.endTimeTiming
+            delete this.trigger.startDateRFC3339
         }
     }
 })

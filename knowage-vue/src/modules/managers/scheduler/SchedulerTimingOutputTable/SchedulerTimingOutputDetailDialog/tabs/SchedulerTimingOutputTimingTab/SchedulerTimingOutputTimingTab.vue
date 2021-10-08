@@ -4,7 +4,7 @@
         <div class="kn-flex">
             <span>
                 <label class="kn-material-input-label">{{ $t('managers.scheduler.timingDescription') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="trigger.triggerDescription" :maxLength="500" />
+                <InputText class="kn-material-input p-inputtext-sm" v-model="trigger.triggerDescription" :maxLength="500" @input="setTriggerName" />
             </span>
         </div>
         <div class="p-d-flex p-flex-row kn-flex p-jc-around p-ai-center">
@@ -174,13 +174,19 @@ export default defineComponent({
         },
         setTriggerDates() {
             this.trigger.startDateTiming = this.trigger.zonedStartTime ? new Date(this.trigger.zonedStartTime) : new Date()
-            this.trigger.startTimeTiming = this.trigger.startDateTiming
+            this.trigger.startTimeTiming = this.trigger.zonedStartTime ? new Date(this.trigger.zonedStartTime) : new Date()
+            this.trigger.startDateTiming.setHours(0)
+            this.trigger.startDateTiming.setMinutes(0)
 
             this.trigger.endDateTiming = this.trigger.zonedEndTime ? new Date(this.trigger.zonedEndTime) : null
-            this.trigger.endTimeTiming = this.trigger.endDateTiming ? this.trigger.endDateTiming : null
+            this.trigger.endTimeTiming = this.trigger.zonedEndTime ? new Date(this.trigger.zonedEndTime) : null
+            if (this.trigger.endTimeTiming) {
+                this.trigger.endDateTiming.setHours(0)
+                this.trigger.endDateTiming.setMinutes(0)
+            }
 
-            // console.log('START DATE: ', this.trigger.startDateTiming)
-            // console.log('START TIME: ', this.trigger.startTimeTiming)
+            console.log('START DATE: ', this.trigger.startDateTiming)
+            console.log('START TIME: ', this.trigger.startTimeTiming)
             // console.log('END DATE: ', this.trigger.endDateTiming)
             // console.log('END TIME: ', this.trigger.endTimeTiming)
         },
@@ -199,10 +205,14 @@ export default defineComponent({
         },
         formatFrequency() {
             console.log('CAAAAAAAAAAAALED', this.triggerType)
+            this.trigger.chrono.type = this.triggerType
             if (this.triggerType === 'scheduler') this.setCronFrequency()
         },
         setCronValid(value: boolean) {
             this.validCron = value
+        },
+        setTriggerName() {
+            this.trigger.triggerName = this.trigger.triggerDescription.substring(0, 100)
         },
         test() {
             console.log('FREQUENCY: ', this.trigger.frequency)

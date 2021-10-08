@@ -41,7 +41,7 @@ import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 
 export default defineComponent({
-    name: 'scheduler-snapshot-accordion',
+    name: 'scheduler-java-class-accordion',
     components: { Accordion, AccordionTab },
     props: { propDocument: { type: Object }, functionalities: { type: Array }, datasets: { type: Array }, jobInfo: { type: Object } },
     data() {

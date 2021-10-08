@@ -47,7 +47,7 @@
                     <SchedulerDocumentAccordionTree :propFunctionalities="functionalities" :propSelectedFolders="document.funct" @selected="setSelectedFolders"></SchedulerDocumentAccordionTree>
                 </div>
                 <div v-if="drivers.length > 0">
-                    <Message class="p-m-2" severity="info" :closable="true" :style="schedulerDocumentAccordionDescriptor.styles.message">
+                    <Message class="p-m-2" severity="info" :closable="true" :style="schedulerTimingOutputOutputTab.styles.message">
                         {{ $t('managers.scheduler.useFolderDatasetHint.partOne') }}
                         <ul class="dataset-hint-list">
                             <li>{{ $t('managers.scheduler.useFolderDatasetHint.partTwo') }}</li>
@@ -106,7 +106,7 @@ import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import Message from 'primevue/message'
 import SchedulerDocumentAccordionTree from './SchedulerDocumentAccordionTree.vue'
-import schedulerDocumentAccordionDescriptor from './SchedulerDocumentAccordionDescriptor.json'
+import schedulerTimingOutputOutputTab from '../SchedulerTimingOutputOutputTabDescriptor.json'
 
 export default defineComponent({
     name: 'scheduler-document-accordion',
@@ -114,7 +114,7 @@ export default defineComponent({
     props: { propDocument: { type: Object }, functionalities: { type: Array }, datasets: { type: Array }, jobInfo: { type: Object } },
     data() {
         return {
-            schedulerDocumentAccordionDescriptor,
+            schedulerTimingOutputOutputTab,
             document: null as any,
             drivers: [],
             documentNameDirty: false,
