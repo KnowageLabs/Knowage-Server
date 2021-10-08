@@ -221,7 +221,7 @@ export default defineComponent({
         },
         async saveTags(dsToSave) {
             let tags = {} as any
-            tags.versNum = dsToSave.versNum
+            tags.versNum = dsToSave.versNum + 1
             tags.tagsToAdd = dsToSave.tags
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${dsToSave.id}/dstags/`, tags, {
