@@ -8,12 +8,13 @@
                         <div class="kn-list-item-text">
                             <span>{{ slotProps.option.label }}</span>
                         </div>
+                        <i v-if="slotProps.option.invalid" class="pi pi-exclamation-triangle warning-icon"></i>
                     </div>
                 </template>
             </Listbox>
         </div>
         <div class="p-col-8 p-sm-8 p-md-9  p-p-0">
-            <SchedulerTimingOutputDocumentDetail v-if="selectedDocument" :propDocument="selectedDocument" :functionalities="functionalities"></SchedulerTimingOutputDocumentDetail>
+            <SchedulerTimingOutputDocumentDetail v-if="selectedDocument" :propDocument="selectedDocument" :functionalities="functionalities" :datasets="datasets" :jobInfo="jobInfo"></SchedulerTimingOutputDocumentDetail>
             <Message v-else severity="info" :closable="false" :style="schedulerTimingOutputOutputTabDescriptor.styles.message">
                 {{ $t('managers.scheduler.noDocumentSelected') }}
             </Message>
@@ -31,7 +32,7 @@ import schedulerTimingOutputOutputTabDescriptor from './SchedulerTimingOutputOut
 export default defineComponent({
     name: 'scheduler-timing-output-output-tab',
     components: { Listbox, Message, SchedulerTimingOutputDocumentDetail },
-    props: { propDocuments: { type: Array }, functionalities: { type: Array } },
+    props: { propDocuments: { type: Array }, functionalities: { type: Array }, datasets: { type: Array }, jobInfo: { type: Object } },
     data() {
         return {
             schedulerTimingOutputOutputTabDescriptor,
@@ -58,3 +59,9 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.warning-icon {
+    color: orange;
+}
+</style>

@@ -20,7 +20,7 @@
                     <span>{{ $t('managers.scheduler.output') }}</span>
                 </template>
 
-                <SchedulerTimingOutputOutputTab :propDocuments="trigger.documents" :functionalities="functionalities"></SchedulerTimingOutputOutputTab>
+                <SchedulerTimingOutputOutputTab :propDocuments="trigger.documents" :functionalities="functionalities" :datasets="datasets" :jobInfo="jobInfo"></SchedulerTimingOutputOutputTab>
             </TabPanel>
         </TabView>
 

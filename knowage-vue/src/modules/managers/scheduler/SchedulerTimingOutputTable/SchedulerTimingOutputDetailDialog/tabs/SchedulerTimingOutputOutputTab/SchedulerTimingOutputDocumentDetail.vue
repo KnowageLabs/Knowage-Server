@@ -24,7 +24,7 @@
             </div>
         </div>
         <div>
-            <SchedulerDocumentAccordion v-if="document.saveasdocument" class="p-m-3" :propDocument="document" :functionalities="functionalities"></SchedulerDocumentAccordion>
+            <SchedulerDocumentAccordion v-if="document.saveasdocument" class="p-m-3" :propDocument="document" :functionalities="functionalities" :datasets="datasets" :jobInfo="jobInfo" @documentValidated="setDocumentValidation"></SchedulerDocumentAccordion>
         </div>
     </div>
 </template>
@@ -37,7 +37,7 @@ import SchedulerDocumentAccordion from './accordions/SchedulerDocumentAccordion.
 export default defineComponent({
     name: 'scheduler-tming-output-document-detail',
     components: { Checkbox, SchedulerDocumentAccordion },
-    props: { propDocument: { type: Object }, functionalities: { type: Array } },
+    props: { propDocument: { type: Object }, functionalities: { type: Array }, datasets: { type: Array }, jobInfo: { type: Object } },
     data() {
         return {
             document: null as any
@@ -54,6 +54,10 @@ export default defineComponent({
     methods: {
         loadDocument() {
             this.document = this.propDocument
+            // console.log('LOADED DOCUMENT', this.document)
+        },
+        setDocumentValidation(invalid: boolean) {
+            console.log('DOCUMENT INVALID: ', invalid)
         }
     }
 })
