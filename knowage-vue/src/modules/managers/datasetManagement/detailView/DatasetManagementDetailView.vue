@@ -1,9 +1,8 @@
 <template>
-    MAIN COMPONENT invalid: {{ v$.$invalid }}
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left>{{ selectedDataset.label }}</template>
         <template #right>
-            <Button :label="$t('managers.lovsManagement.preview')" class="p-button-text p-button-rounded p-button-plain" />
+            <Button :label="$t('managers.lovsManagement.preview')" class="p-button-text p-button-rounded p-button-plain" @click="logDataset" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="saveDataset" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('close')" />
         </template>
@@ -102,7 +101,7 @@ export default defineComponent({
             return this.v$.$invalid
         }
     },
-    emits: ['close', 'touched', 'loadingOlderVersion', 'olderVersionLoaded', 'saved'],
+    emits: ['close', 'touched', 'loadingOlderVersion', 'olderVersionLoaded', 'updated', 'created'],
     data() {
         return {
             v$: useValidate() as any,
@@ -117,7 +116,7 @@ export default defineComponent({
         }
     },
     created() {
-        this.id ? this.getAllDatasetData() : ''
+        this.getAllDatasetData()
     },
     watch: {
         id() {
@@ -129,6 +128,9 @@ export default defineComponent({
     },
     validations() {},
     methods: {
+        logDataset() {
+            console.log(this.selectedDataset)
+        },
         async getSelectedDataset() {
             axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.id}`)
@@ -147,9 +149,13 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         async getAllDatasetData() {
-            this.loading = true
-            await this.getSelectedDataset()
-            await this.getSelectedDatasetVersions()
+            if (this.id) {
+                this.loading = true
+                await this.getSelectedDataset()
+                await this.getSelectedDatasetVersions()
+            } else {
+                this.selectedDataset = { ...detailViewDescriptor.newDataset }
+            }
         },
         cloneDatasetConfirm(datasetId) {
             this.$confirm.require({
@@ -184,15 +190,18 @@ export default defineComponent({
         },
         async saveDataset() {
             console.log(this.selectedDataset)
-            let dsToSave = { ...this.selectedDataset }
+            let dsToSave = { ...this.selectedDataset } as any
+            let restRequestHeadersTemp = {}
             if (dsToSave.dsTypeCd.toLowerCase() == 'rest' || dsToSave.dsTypeCd.toLowerCase() == 'python/r' || dsToSave.dsTypeCd.toLowerCase() == 'solr') {
-                var restRequestHeadersTemp = {}
                 for (let i = 0; i < dsToSave.restRequestHeaders.length; i++) {
                     restRequestHeadersTemp[dsToSave.restRequestHeaders[i]['name']] = dsToSave.restRequestHeaders[i]['value']
                 }
-                dsToSave.restRequestHeaders = JSON.stringify(restRequestHeadersTemp)
-                dsToSave.restJsonPathAttributes = JSON.stringify(dsToSave.restJsonPathAttributes)
             }
+            dsToSave['restRequestHeaders'] && dsToSave['restRequestHeaders'].length > 0 ? (dsToSave.restRequestHeaders = JSON.stringify(restRequestHeadersTemp)) : (dsToSave.restRequestHeaders = '')
+            dsToSave['restJsonPathAttributes'] && dsToSave['restJsonPathAttributes'].length > 0 ? (dsToSave.restJsonPathAttributes = JSON.stringify(dsToSave.restJsonPathAttributes)) : (dsToSave.restJsonPathAttributes = '')
+            dsToSave.pars ? '' : (dsToSave.pars = [])
+            dsToSave.meta ? '' : (dsToSave.meta = [])
+            dsToSave.recalculateMetadata = true
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/`, dsToSave, {
                     headers: {
@@ -200,11 +209,11 @@ export default defineComponent({
                         'Content-Type': 'application/json;charset=UTF-8'
                     }
                 })
-                .then(() => {
+                .then((response) => {
                     this.saveTags(dsToSave)
                     this.touched = false
                     this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
-                    this.$emit('saved')
+                    this.selectedDataset.id ? this.$emit('updated') : this.$emit('created', response)
                 })
                 .catch()
         },

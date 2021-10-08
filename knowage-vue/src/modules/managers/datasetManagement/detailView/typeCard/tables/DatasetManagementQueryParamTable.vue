@@ -3,7 +3,7 @@
         <template #left>
             <Button v-if="!expandTableCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = true" />
             <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = false" />
-            {{ $t('managers.datasetManagement.requestHeaders') }}
+            {{ $t('managers.datasetManagement.queryParamTable') }}
         </template>
         <template #right>
             <Button icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain" @click="addNewParam" />

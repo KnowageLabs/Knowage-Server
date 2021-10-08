@@ -634,6 +634,7 @@
             "title": "Data Source Management"
         },
         "datasetManagement": {
+            "queryParamTable": "Filter Query parameter",
             "availableLibraries": "Available Libraries",
             "availableTables": "Available Tables",
             "changeTypeMsg": "Changing dataset type will delete all parameters, are you sure?",

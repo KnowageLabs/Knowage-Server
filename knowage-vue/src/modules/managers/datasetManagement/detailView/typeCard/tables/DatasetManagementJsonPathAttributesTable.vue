@@ -26,7 +26,7 @@
                 </Column>
                 <Column field="typeOrJsonPathValue" :header="$t('managers.datasetManagement.typeOrJsonPathValue')" :sortable="true">
                     <template #editor="{data}">
-                        <Dropdown id="scope" class="kn-material-input" :style="tableDescriptor.style.columnStyle" :options="jsonPathTypes" v-model="data.typeOrJsonPathValue" />
+                        <Dropdown id="scope" class="kn-material-input" :style="tableDescriptor.style.columnStyle" :options="jsonPathTypes" v-model="data.jsonPathType" />
                     </template>
                 </Column>
                 <Column @rowClick="false">

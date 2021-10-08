@@ -75,42 +75,44 @@
         </template>
     </Toolbar>
 
-    <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
-        <template #left>
-            <InputSwitch v-model="dataset.isPersisted" :disabled="disablePersist" class="p-mr-2" @change="$emit('touched')" />
-            <span>{{ $t('managers.datasetManagement.isPersisted') }}</span>
-        </template>
-    </Toolbar>
-    <Card v-if="dataset.isPersisted">
-        <template #content>
-            <form class="p-fluid p-formgrid p-grid">
-                <div class="p-field p-col-3">
-                    <span class="p-float-label">
-                        <InputText
-                            id="persistTableName"
-                            class="kn-material-input"
-                            type="text"
-                            v-model="dataset.persistTableName"
-                            :class="{
-                                'p-invalid': v$.dataset.persistTableName.$invalid && v$.dataset.persistTableName.$dirty
-                            }"
-                            @blur="v$.dataset.persistTableName.$touch()"
-                            @change="$emit('touched')"
-                        />
-                        <label for="persistTableName" class="kn-material-input-label"> {{ $t('managers.datasetManagement.persistTableName') }} *</label>
-                    </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.persistTableName" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.persistTableName') }" />
-                </div>
-            </form>
-            <Toolbar class="kn-toolbar kn-toolbar--default p-mt-3" v-if="dataset.isPersisted">
-                <template #left>
-                    <InputSwitch v-model="dataset.isScheduled" class="p-mr-2" @change="$emit('touched')" />
-                    <span>{{ $t('managers.datasetManagement.isScheduled') }}</span>
-                </template>
-            </Toolbar>
-            <KpiCron v-if="dataset.isScheduled" :frequency="frequencyMock" />
-        </template>
-    </Card>
+    <div v-if="dataset.dsTypeCd != 'Flat'">
+        <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
+            <template #left>
+                <InputSwitch v-model="dataset.isPersisted" :disabled="disablePersist" class="p-mr-2" @change="$emit('touched')" />
+                <span>{{ $t('managers.datasetManagement.isPersisted') }}</span>
+            </template>
+        </Toolbar>
+        <Card v-if="dataset.isPersisted">
+            <template #content>
+                <form class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-3">
+                        <span class="p-float-label">
+                            <InputText
+                                id="persistTableName"
+                                class="kn-material-input"
+                                type="text"
+                                v-model="dataset.persistTableName"
+                                :class="{
+                                    'p-invalid': v$.dataset.persistTableName.$invalid && v$.dataset.persistTableName.$dirty
+                                }"
+                                @blur="v$.dataset.persistTableName.$touch()"
+                                @change="$emit('touched')"
+                            />
+                            <label for="persistTableName" class="kn-material-input-label"> {{ $t('managers.datasetManagement.persistTableName') }} *</label>
+                        </span>
+                        <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.persistTableName" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.persistTableName') }" />
+                    </div>
+                </form>
+                <Toolbar class="kn-toolbar kn-toolbar--default p-mt-3" v-if="dataset.isPersisted">
+                    <template #left>
+                        <InputSwitch v-model="dataset.isScheduled" class="p-mr-2" @change="$emit('touched')" />
+                        <span>{{ $t('managers.datasetManagement.isScheduled') }}</span>
+                    </template>
+                </Toolbar>
+                <KpiCron v-if="dataset.isScheduled" :frequency="frequencyMock" />
+            </template>
+        </Card>
+    </div>
 </template>
 
 <script lang="ts">
@@ -132,10 +134,10 @@ export default defineComponent({
     },
     computed: {
         disablePersist() {
-            if (this.dataset['pars'] && this.dataset['pars'].length == 0) {
-                return false
+            if (this.dataset['pars'] && this.dataset['pars'].length > 0) {
+                return true
             }
-            return true
+            return false
         }
     },
     emits: ['touched'],

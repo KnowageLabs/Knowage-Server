@@ -168,7 +168,8 @@ export default defineComponent({
             this.getEnvLibraries()
                 .then((response) => {
                     console.log(response)
-                    this.dataset.pythonDatasetType == 'python' ? (this.pythonEnvLibs = JSON.parse(pythonDescriptor.pythonResponse)) : (this.pythonEnvLibs = JSON.parse(pythonDescriptor.rResponse))
+                    // this.dataset.pythonDatasetType == 'python' ? (this.pythonEnvLibs = JSON.parse(pythonDescriptor.pythonResponse)) : (this.pythonEnvLibs = JSON.parse(pythonDescriptor.rResponse))
+                    this.dataset.pythonDatasetType == 'python' ? (this.pythonEnvLibs = JSON.parse(response.data.result)) : (this.pythonEnvLibs = JSON.parse(response.data.result))
                     this.libListVisible = true
                 })
                 .catch()

@@ -31,7 +31,8 @@
                     @loadingOlderVersion="loadingVersion = true"
                     @olderVersionLoaded="loadingVersion = false"
                     @touched="touched = true"
-                    @saved="getDatasets, (touched = false)"
+                    @created="onCreate"
+                    @updated="onUpdate"
                     @close="closeDetailConfirm"
                 />
             </div>
@@ -182,8 +183,16 @@ export default defineComponent({
             this.$router.push('/dataset-management/new-dataset')
             setTimeout(() => {
                 this.datasetToCloneId = event.item.id
-                console.log(this.datasetToCloneId)
             }, 200)
+        },
+        onCreate(event) {
+            this.touched = false
+            this.getDatasets()
+            this.$router.push(`/dataset-management/${event.data.id}`)
+        },
+        onUpdate() {
+            this.touched = false
+            this.getDatasets()
         }
     }
 })

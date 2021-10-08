@@ -22,7 +22,6 @@
                                 'p-invalid': v$.dataset.dsTypeCd.$invalid && v$.dataset.dsTypeCd.$dirty
                             }"
                             @before-show="v$.dataset.dsTypeCd.$touch()"
-                            @click="changeTypeWarning"
                             @change=";((this.dataset.pars = []), (this.dataset.restJsonPathAttributes = []), (this.dataset.restRequestHeaders = [])), $emit('touched')"
                         />
                         <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.selectDatasetType') }} * </label>
