@@ -420,8 +420,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	private String getJRTempDirName(ServletContext servletContext, String executionId) {
 		logger.debug("IN");
-		String jrTempDir = servletContext.getRealPath("tmpdir") + System.getProperty("file.separator") + "reports" + System.getProperty("file.separator")
-				+ "JS_dir_" + executionId + System.getProperty("file.separator");
+		String jrTempDir = OUTPUT_FOLDER + "reports" + File.separator + executionId + File.separator;
 		logger.debug("OUT");
 		return jrTempDir;
 	}
