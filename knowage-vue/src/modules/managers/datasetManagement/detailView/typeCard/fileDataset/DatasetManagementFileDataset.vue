@@ -89,7 +89,7 @@ export default defineComponent({
         selectedDataset: { type: Object as any },
         dataSources: { type: Array as any }
     },
-    emits: ['touched'],
+    emits: ['touched', 'fileUploaded'],
     data() {
         return {
             v$: useValidate() as any,
@@ -173,6 +173,7 @@ export default defineComponent({
                     })
                     this.dataset.fileType = response.data.fileType
                     this.dataset.fileName = response.data.fileName
+                    this.$emit('fileUploaded')
                     this.resetFields()
                 })
                 .catch()

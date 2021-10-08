@@ -36,7 +36,7 @@
             </template>
         </Card>
     </div>
-    <FileDataset v-if="dataset.dsTypeCd == 'File'" :selectedDataset="selectedDataset" />
+    <FileDataset v-if="dataset.dsTypeCd == 'File'" :selectedDataset="selectedDataset" @fileUploaded="$emit('fileUploaded')" />
     <QueryDataset v-if="dataset.dsTypeCd == 'Query'" :selectedDataset="selectedDataset" :dataSources="dataSources" :scriptTypes="scriptTypes" />
     <JavaDataset v-if="dataset.dsTypeCd == 'Java Class'" :selectedDataset="selectedDataset" />
     <ScriptDataset v-if="dataset.dsTypeCd == 'Script'" :selectedDataset="selectedDataset" :scriptTypes="scriptTypes" />
@@ -84,7 +84,7 @@ export default defineComponent({
         rEnvironments: { type: Array as any }
     },
     computed: {},
-    emits: ['touched'],
+    emits: ['touched', 'fileUploaded'],
     data() {
         return {
             v$: useValidate() as any,

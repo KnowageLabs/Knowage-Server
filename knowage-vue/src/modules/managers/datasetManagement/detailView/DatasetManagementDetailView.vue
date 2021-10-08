@@ -39,6 +39,7 @@
                     :parentValid="v$.$invalid"
                     :pythonEnvironments="pythonEnvironments"
                     :rEnvironments="rEnvironments"
+                    @fileUploaded="selectedDataset.fileUploaded = true"
                     @touched="$emit('touched')"
                 />
             </TabPanel>
