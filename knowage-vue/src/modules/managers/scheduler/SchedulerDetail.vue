@@ -37,7 +37,7 @@
                 </div>
             </form>
             <SchedulerDocumentsTable :jobDocuments="job.documents" @loading="setLoading"></SchedulerDocumentsTable>
-            <SchedulerTimingOutputTable :job="job"></SchedulerTimingOutputTable>
+            <SchedulerTimingOutputTable :job="job" @loading="setLoading"></SchedulerTimingOutputTable>
         </template>
     </Card>
 </template>

@@ -6,6 +6,7 @@
                     {{ $t('managers.scheduler.timingAndOutput') }}
                 </template>
             </Toolbar>
+            <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
         </template>
 
         <TabView id="timing-tabs">
@@ -24,9 +25,12 @@
             </TabPanel>
         </TabView>
 
+        <SchedulerTimingOutputWarningDialog :visible="warningVisible" :warningTitle="warningTitle" :warningMessage="warningMessage" @close="warningVisible = false"></SchedulerTimingOutputWarningDialog>
+
         <template #footer>
             <div class="p-d-flex p-flex-row p-jc-end">
                 <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
+                <Button class="kn-button kn-button--primary" @click="saveTrigger">{{ $t('common.save') }}</Button>
             </div>
         </template>
     </Dialog>
@@ -39,12 +43,13 @@ import Dialog from 'primevue/dialog'
 import schedulerTimingOutputDetailDialogDescriptor from './SchedulerTimingOutputDetailDialogDescriptor.json'
 import SchedulerTimingOutputTimingTab from './tabs/SchedulerTimingOutputTimingTab/SchedulerTimingOutputTimingTab.vue'
 import SchedulerTimingOutputOutputTab from './tabs/SchedulerTimingOutputOutputTab/SchedulerTimingOutputOutputTab.vue'
+import SchedulerTimingOutputWarningDialog from './SchedulerTimingOutputWarningDialog.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'scheduler-timing-output-detail-dialog',
-    components: { Dialog, SchedulerTimingOutputTimingTab, SchedulerTimingOutputOutputTab, TabView, TabPanel },
+    components: { Dialog, SchedulerTimingOutputTimingTab, SchedulerTimingOutputOutputTab, SchedulerTimingOutputWarningDialog, TabView, TabPanel },
     props: { visible: { type: Boolean }, propTrigger: { type: Object } },
     emits: ['close'],
     data() {
@@ -55,7 +60,12 @@ export default defineComponent({
             validCron: false,
             datasets: [] as any[],
             jobInfo: null as any,
-            functionalities: []
+            functionalities: [],
+            warningVisible: false,
+            warningTitle: null as string | null,
+            warningMessage: null as string | null,
+            operation: 'create',
+            loading: false
         }
     },
     watch: {
@@ -95,7 +105,34 @@ export default defineComponent({
             this.validCron = value
         },
         closeDialog() {
+            this.trigger = null
+            this.jobInfo = null
+            this.functionalities = []
             this.$emit('close')
+        },
+        async saveTrigger() {
+            console.log('SAVE TRIGGER: ', this.trigger)
+            this.loading = true
+
+            await this.axios
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/saveTrigger`, this.trigger, {})
+                .then((response) => {
+                    if (response.data.errors) {
+                        console.log('RESPONSE IN IF ERROR:', response)
+                    } else {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.' + this.operation + 'Title'),
+                            msg: this.$t('common.toast.success')
+                        })
+                    }
+                })
+                .catch((response) => {
+                    //  console.log('RESPONSE IN CATCH: ', response)
+                    this.warningTitle = this.$t('common.toast.' + this.operation + 'Title')
+                    this.warningVisible = true
+                    this.warningMessage = response
+                })
+            this.loading = false
         }
     }
 })

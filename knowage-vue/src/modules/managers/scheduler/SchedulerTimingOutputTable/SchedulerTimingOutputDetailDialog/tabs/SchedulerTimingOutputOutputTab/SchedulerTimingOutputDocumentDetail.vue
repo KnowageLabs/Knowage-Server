@@ -24,7 +24,9 @@
             </div>
         </div>
         <div>
+            <SchedulerSnapshotAccordion v-if="document.saveassnapshot" class="p-m-3" :propDocument="document"></SchedulerSnapshotAccordion>
             <SchedulerDocumentAccordion v-if="document.saveasdocument" class="p-m-3" :propDocument="document" :functionalities="functionalities" :datasets="datasets" :jobInfo="jobInfo" @documentValidated="setDocumentValidation"></SchedulerDocumentAccordion>
+            <SchedulerJavaClassAccordion v-if="document.sendtojavaclass" class="p-m-3" :propDocument="document"></SchedulerJavaClassAccordion>
         </div>
     </div>
 </template>
@@ -32,11 +34,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Checkbox from 'primevue/checkbox'
+import SchedulerSnapshotAccordion from './accordions/SchedulerSnapshotAccordion.vue'
 import SchedulerDocumentAccordion from './accordions/SchedulerDocumentAccordion.vue'
+import SchedulerJavaClassAccordion from './accordions/SchedulerJavaClassAccordion.vue'
 
 export default defineComponent({
     name: 'scheduler-tming-output-document-detail',
-    components: { Checkbox, SchedulerDocumentAccordion },
+    components: { Checkbox, SchedulerSnapshotAccordion, SchedulerJavaClassAccordion, SchedulerDocumentAccordion },
     props: { propDocument: { type: Object }, functionalities: { type: Array }, datasets: { type: Array }, jobInfo: { type: Object } },
     data() {
         return {

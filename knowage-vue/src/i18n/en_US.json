@@ -1056,8 +1056,10 @@
         "scheduler": {
             "attachedZip": "Attached zip name",
             "confirmHeader": "Please confirm",
+            "historyLength": "History Length",
             "saveAsSnapshot": "Save as snapshot",
             "saveAsFile": "Save as file",
+            "classPath": "Class path",
             "saveAsDocument": "Save as document",
             "sendToJavaClass": "Send to Java class",
             "sendMail": "Send mail",

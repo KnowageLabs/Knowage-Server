@@ -112,7 +112,6 @@ export default defineComponent({
     name: 'scheduler-document-accordion',
     components: { Accordion, AccordionTab, Checkbox, Dropdown, Message, SchedulerDocumentAccordionTree },
     props: { propDocument: { type: Object }, functionalities: { type: Array }, datasets: { type: Array }, jobInfo: { type: Object } },
-    emits: ['documentValidated'],
     data() {
         return {
             schedulerDocumentAccordionDescriptor,
@@ -155,6 +154,7 @@ export default defineComponent({
         },
         setSelectedFolders(folders: any[]) {
             console.log('SELECTED FOlDERS: ', folders)
+            this.document.funct = folders
         },
         setNameValidation() {
             this.documentNameDirty = true

@@ -91,7 +91,7 @@ export default defineComponent({
         }
     },
     watch: {
-        jobTriggers() {
+        job() {
             this.loadTriggers()
         }
     },
