@@ -22,7 +22,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iHost, iLicense } from './License'
-import axios from 'axios'
 import Dialog from 'primevue/dialog'
 import licenseDialogDescriptor from './LicenseDialogDescriptor.json'
 import LicenceTab from './LicenseTab.vue'
@@ -53,21 +52,16 @@ export default defineComponent({
         closeDialog() {
             this.$emit('update:visibility', false)
         },
-        async loadLicenses() {
-            this.loading = true
-            await axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license')
-                .then((response) => {
-                    this.hosts = response.data.hosts
-                    this.licenses = response.data.licenses
-                    this.cpuNumber = response.data.cpuNumber
-                })
-                .finally(() => (this.loading = false))
+        loadLicenses() {
+            this.hosts = this.licenses.hosts
+            this.licenses = this.licenses.licenses
+            this.cpuNumber = this.licenses.cpuNumber
         }
     },
     computed: {
         ...mapState({
-            user: 'user'
+            user: 'user',
+            licenses: 'licenses'
         })
     }
 })
