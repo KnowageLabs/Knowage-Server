@@ -11,7 +11,7 @@ export interface iPackage {
     jobParameters: { name: string, value: string }[],
     documents: any[],
     triggers: iTrigger[],
-    edit?: string
+    edit?: boolean
     numberOfDocuments?: number
 }
 

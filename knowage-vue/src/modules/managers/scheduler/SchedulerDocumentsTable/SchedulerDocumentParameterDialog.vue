@@ -27,7 +27,7 @@ import SchedulerDocumentParameterForm from './SchedulerDocumentParameterForm.vue
 export default defineComponent({
     name: 'scheduler-document-parameter-dialog',
     components: { Dialog, SchedulerDocumentParameterForm },
-    props: { propParameters: { type: Array }, roles: { type: Array } },
+    props: { propParameters: { type: Array }, roles: { type: Array }, parameterWithValues: { type: Array } },
     emits: ['documentSelected', 'close', 'setParameters'],
     data() {
         return {
@@ -49,7 +49,20 @@ export default defineComponent({
         loadParameters() {
             this.parameters = this.propParameters ? [...(this.propParameters as any[])] : []
             this.parameters.sort((a: any, b: any) => (a.name > b.name ? 1 : -1))
-            // console.log('LOADED PARAMETERS: ', this.parameters)
+            console.log('LOADED PARAMETERS: ', this.parameters)
+            console.log('LOADED PARAMETERS WITH VALUES: ', this.parameterWithValues)
+            this.setParameterValues()
+        },
+        setParameterValues() {
+            if (this.parameterWithValues) {
+                this.parameters.forEach((el: any) => {
+                    const index = (this.parameterWithValues as any).findIndex((parameterWithValue: any) => el.name === parameterWithValue.name)
+                    if (index !== -1 && this.parameterWithValues) {
+                        el.value = (this.parameterWithValues as any)[index].value
+                    }
+                })
+            }
+            console.log('LOADED PARAMETERS FINAL: ', this.parameters)
         },
         closeDialog() {
             this.$emit('close')

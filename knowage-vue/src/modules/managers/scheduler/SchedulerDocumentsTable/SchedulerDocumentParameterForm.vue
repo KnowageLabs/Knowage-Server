@@ -1,6 +1,7 @@
 <template>
     <Card>
         <template #content>
+            {{ parameter }}
             <div v-if="parameter">
                 <h2>{{ parameter.name }}</h2>
                 <div class="p-d-flex p-flex-row p-ai-center">
@@ -78,7 +79,7 @@ export default defineComponent({
             if (this.parameter.type === 'fixed') {
                 await this.loadParameterValues()
                 if (!this.parameterValues?.manualInput) {
-                    this.parameter.selectedValeus = this.parameter.value.split(';')
+                    this.parameter.selectedValues = this.parameter.value.split(';')
                 }
             }
         },

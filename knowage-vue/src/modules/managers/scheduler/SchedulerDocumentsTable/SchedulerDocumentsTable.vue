@@ -43,7 +43,7 @@
         </DataTable>
 
         <SchedulerDocumentsSelectionDialog :visible="documentsSelectionDialogVisible" :propFiles="files" @close="documentsSelectionDialogVisible = false" @documentSelected="onDocumentSelected"></SchedulerDocumentsSelectionDialog>
-        <SchedulerDocumentParameterDialog :visible="documentParameterDialogVisible" :propParameters="selectedDocument?.parameters" :roles="roles" @close="closeDocumentParameterDialog" @setParameters="onParametersSet"></SchedulerDocumentParameterDialog>
+        <SchedulerDocumentParameterDialog :visible="documentParameterDialogVisible" :propParameters="selectedDocument?.parameters" :parameterWithValues="parameterWithValues" :roles="roles" @close="closeDocumentParameterDialog" @setParameters="onParametersSet"></SchedulerDocumentParameterDialog>
     </div>
 </template>
 
@@ -70,7 +70,8 @@ export default defineComponent({
             documentsSelectionDialogVisible: false,
             selectedDocument: null as any,
             documentParameterDialogVisible: false,
-            roles: [] as any[]
+            roles: [] as any[],
+            parameterWithValues: [] as any[]
         }
     },
     watch: {
@@ -84,7 +85,7 @@ export default defineComponent({
     methods: {
         loadDocuments() {
             this.documents = this.jobDocuments as any[]
-            console.log('DOCUMENTS: ', this.documents)
+            // console.log('DOCUMENTS: ', this.documents)
         },
         checkIfParameterValuesSet(parameters: any[]) {
             let valuesSet = true
@@ -110,7 +111,7 @@ export default defineComponent({
             })
         },
         removeDocument(documentIndex: number) {
-            console.log('DOCUMENT TO REMOVE: ', documentIndex)
+            // console.log('DOCUMENT TO REMOVE: ', documentIndex)
             this.documents.splice(documentIndex, 1)
         },
         async openDocumentsSelectionDialog() {
@@ -124,12 +125,13 @@ export default defineComponent({
         },
         onDocumentSelected(selectedDocument: any) {
             // console.log('SELECTED DOCUMENT: ', selectedDocument)
+
             this.documentsSelectionDialogVisible = false
             this.loadDocumentData(selectedDocument, true)
         },
         async loadDocumentData(document: any, pushToTable: boolean) {
             this.$emit('loading', true)
-            console.log('DOCUMENT FOR LOAD: ', document)
+            // console.log('DOCUMENT FOR LOAD: ', document)
             if (document.parametersTouched) {
                 return
             }
@@ -139,8 +141,8 @@ export default defineComponent({
             this.roles = await this.loadSelectedDocumentRoles(tempDocument)
             tempDocument.parameters = await this.loadSelectedDocumentParameters(label)
             tempDocument.condensedParameters = this.updateCondensedParameters(tempDocument.parameters)
-            console.log('TEMP DOCUMENT: ', tempDocument)
-            console.log('ROLES: ', this.roles)
+            // console.log('TEMP DOCUMENT: ', tempDocument)
+            // console.log('ROLES: ', this.roles)
             this.selectedDocument = { name: label, nameTitle: tempDocument.label, condensedParameters: tempDocument.condensedParameters, parameters: tempDocument.parameters }
             this.selectedDocument.parameters?.forEach((el: any) => (el.role = this.roles[0].role))
             if (pushToTable) this.documents.push(this.selectedDocument)
@@ -149,7 +151,7 @@ export default defineComponent({
         async loadDocumentInfo(documentLabel: string) {
             let tempDocument = null as any
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${documentLabel}`).then((response) => (tempDocument = response.data))
-            // console.log('TEMP DOCUMENT: ', tempDocument)
+            console.log('TEMP DOCUMENT: ', tempDocument)
             return tempDocument
         },
         async loadSelectedDocumentRoles(tempDocument: any) {
@@ -189,8 +191,9 @@ export default defineComponent({
             return condensedParameters
         },
         async openDocumentParameterDialog(document: any) {
-            console.log('DOCUMENT: ', document)
+            // console.log('DOCUMENT: ', document)
             this.selectedDocument = document
+            this.parameterWithValues = document.parameters
             await this.loadDocumentData(document, false)
             this.documentParameterDialogVisible = true
         },
@@ -205,8 +208,8 @@ export default defineComponent({
 
             const index = this.documents.findIndex((el: any) => el.name === this.selectedDocument.name)
             if (index !== -1) this.documents[index] = this.selectedDocument
-            console.log('DOCUMENT AFTER PARAMETERS SET: ', this.selectedDocument)
-            console.log('DOCUMENTS AFTER :', this.documents)
+            // console.log('DOCUMENT AFTER PARAMETERS SET: ', this.selectedDocument)
+            // console.log('DOCUMENTS AFTER :', this.documents)
             this.documentParameterDialogVisible = false
         }
     }

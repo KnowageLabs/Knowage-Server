@@ -1,5 +1,3 @@
-4 contributors @Redjaw@BojanSovticEngIT@vstanojevic@dbulatovicx32 245 lines (235 sloc) 10.3 KB
-
 <template>
     <div class="kn-page">
         <div class="kn-page-content p-grid p-m-0">
@@ -17,7 +15,7 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
-                <router-view :selectedJob="selectedJob" @closed="touched = false" @triggerSaved="loadPage" />
+                <router-view :selectedJob="selectedJob" @closed="touched = false" @triggerSaved="loadPage" @documentSaved="loadSelectJob" @close="closeDetail" />
             </div>
         </div>
     </div>
@@ -52,7 +50,7 @@ export default defineComponent({
             if (this.$route.query.id) {
                 await this.loadSelectJob(this.$route.query.id as string)
             } else {
-                this.selectedJob = { jobName: '', jobDescription: '', documents: [], triggers: [] } as any
+                this.selectedJob = { jobName: '', jobDescription: '', documents: [], triggers: [], edit: false } as any
                 await this.loadJobs()
             }
         },
@@ -76,6 +74,7 @@ export default defineComponent({
 
             if (clone && this.selectedJob) {
                 this.selectedJob.jobName = this.$t('common.copyOf') + ' ' + this.selectedJob.jobName
+                this.selectedJob.edit = false
             }
 
             const path = event && event.item ? `/scheduler/edit-package-schedule?id=${event.item.jobName}&clone=${clone}` : '/scheduler/new-package-schedule'
@@ -113,6 +112,8 @@ export default defineComponent({
 
             if (tempResponse?.resp === 'ok') {
                 await this.loadJobs()
+                this.selectedJob = null
+                this.$router.push('/scheduler')
             }
             this.loading = false
         },
@@ -125,7 +126,11 @@ export default defineComponent({
                 // console.log(el.jobName + ' === ' + name)
                 return el.jobName === name
             }) as iPackage
+            this.selectedJob.edit = true
             // console.log('TEMP JOB: ', this.selectedJob)
+        },
+        closeDetail() {
+            this.selectedJob = null
         }
     }
 })

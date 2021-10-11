@@ -3,7 +3,7 @@
         <template #left>{{ job.jobName }}</template>
         <template #right>
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="saveJob" />
-            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeJobDetail" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
@@ -37,7 +37,7 @@
                 </div>
             </form>
             <SchedulerDocumentsTable :jobDocuments="job.documents" @loading="setLoading"></SchedulerDocumentsTable>
-            <SchedulerTimingOutputTable :job="job" @loading="setLoading" @triggerSaved="$emit('triggerSaved')"></SchedulerTimingOutputTable>
+            <SchedulerTimingOutputTable v-if="job.edit" :job="job" @loading="setLoading" @triggerSaved="$emit('triggerSaved')"></SchedulerTimingOutputTable>
         </template>
     </Card>
 </template>
@@ -53,6 +53,7 @@ export default defineComponent({
     name: 'scheduler-detail',
     components: { Card, SchedulerDocumentsTable, SchedulerTimingOutputTable },
     props: { id: { type: String }, clone: { type: String }, selectedJob: { type: Object } },
+    emits: ['documentSaved', 'close'],
     data() {
         return {
             job: null as iPackage | null,
@@ -87,11 +88,15 @@ export default defineComponent({
 
             await this.axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/saveJob`, this.job)
-                .then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.' + this.operation + 'Title'),
-                        msg: this.$t('common.toast.success')
-                    })
+                .then((response) => {
+                    if (response.data.resp === 'ok') {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.' + this.operation + 'Title'),
+                            msg: this.$t('common.toast.success')
+                        })
+                        this.$router.push(`/scheduler/edit-package-schedule?id=${this.job?.jobName}&clone=false`)
+                        this.$emit('documentSaved', this.job?.jobName)
+                    }
                 })
                 .catch((response) => {
                     console.log('RESPONSE IN CATCH: ', response)
@@ -102,6 +107,12 @@ export default defineComponent({
         formatJob() {
             delete this.job?.edit
             delete this.job?.numberOfDocuments
+        },
+        closeJobDetail() {
+            this.job = null
+            this.jobNameDirty = false
+            this.$emit('close')
+            this.$router.push('/scheduler')
         }
     }
 })
