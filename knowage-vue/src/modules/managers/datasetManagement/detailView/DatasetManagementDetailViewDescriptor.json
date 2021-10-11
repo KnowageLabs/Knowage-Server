@@ -52,6 +52,9 @@
     "style": {
         "infoDialog": {
             "width": "60vw"
+        },
+        "previewDialog": {
+            "width": "80vw"
         }
     }
 }

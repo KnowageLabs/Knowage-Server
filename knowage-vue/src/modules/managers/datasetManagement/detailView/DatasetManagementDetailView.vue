@@ -2,7 +2,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left>{{ selectedDataset.label }}</template>
         <template #right>
-            <Button :label="$t('managers.lovsManagement.preview')" class="p-button-text p-button-rounded p-button-plain" @click="logDataset" />
+            <Button :label="$t('managers.lovsManagement.preview')" class="p-button-text p-button-rounded p-button-plain" @click="openPreviewDialog" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="saveDataset" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('close')" />
         </template>
@@ -65,6 +65,16 @@
                 <AdvancedCard :selectedDataset="selectedDataset" :transformationDataset="transformationDataset" @touched="$emit('touched')" />
             </TabPanel>
         </TabView>
+
+        <Dialog v-model:visible="showPreviewDialog" class="kn-dialog--toolbar--primary" :style="detailViewDescriptor.style.previewDialog" :maximizable="true" :draggable="false">
+            <template #header>
+                <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
+                    <template #left><i class="fas fa-database" /> dataset: {{ selectedDataset.label }}</template>
+                </Toolbar>
+            </template>
+
+            <PreviewTable :selectedDataset="selectedDataset" @close="showPreviewDialog = false" />
+        </Dialog>
     </div>
 </template>
 
@@ -78,11 +88,13 @@ import TypeCard from './typeCard/DatasetManagementTypeCard.vue'
 import AdvancedCard from './advancedCard/DatasetManagementAdvancedCard.vue'
 import LinkCard from './linkCard/DatasetManagementLinkCard.vue'
 import MetadataCard from './metadataCard/DatasetManagementMetadataCard.vue'
+import PreviewTable from './previewTable/DatasetManagementPreviewTable.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
+import Dialog from 'primevue/dialog'
 
 export default defineComponent({
-    components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard, TypeCard, MetadataCard },
+    components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard, TypeCard, MetadataCard, Dialog, PreviewTable },
     props: {
         id: { type: String, required: false },
         scopeTypes: { type: Array as any, required: true },
@@ -113,7 +125,8 @@ export default defineComponent({
             tablesToAdd: [] as any,
             tablesToRemove: [] as any,
             selectedDataset: {} as any,
-            loadingVersion: false
+            loadingVersion: false,
+            showPreviewDialog: false
         }
     },
     created() {
@@ -129,8 +142,8 @@ export default defineComponent({
     },
     validations() {},
     methods: {
-        logDataset() {
-            console.log(this.selectedDataset)
+        openPreviewDialog() {
+            this.showPreviewDialog = true
         },
         async getSelectedDataset() {
             axios
