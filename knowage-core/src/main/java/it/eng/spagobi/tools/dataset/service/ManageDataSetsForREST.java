@@ -147,7 +147,20 @@ public class ManageDataSetsForREST {
 
 		}
 
-		return datasetTest(json, userProfile);
+		return datasetTest(json, userProfile, false);
+	}
+
+	public String previewDatasetForDataPreparation(String jsonString, UserProfile userProfile) {
+		JSONObject json = null;
+		try {
+			json = new JSONObject(jsonString);
+		} catch (JSONException e) {
+			logger.error("Cannot get values from JSON object while previewing dataset", e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to preview Data Set due to bad formated json of data set.");
+
+		}
+
+		return datasetTest(json, userProfile, true);
 	}
 
 	/**
@@ -1744,9 +1757,9 @@ public class ManageDataSetsForREST {
 		logger.debug("OUT");
 	}
 
-	private String datasetTest(JSONObject json, UserProfile userProfile) {
+	private String datasetTest(JSONObject json, UserProfile userProfile, boolean dataprep) {
 		try {
-			JSONObject dataSetJSON = getDataSetResultsAsJSON(json, userProfile);
+			JSONObject dataSetJSON = getDataSetResultsAsJSON(json, userProfile, dataprep);
 			if (dataSetJSON != null) {
 				// writeBackToClient(new JSONSuccess(dataSetJSON));
 				return dataSetJSON.toString();
@@ -1761,7 +1774,8 @@ public class ManageDataSetsForREST {
 		}
 	}
 
-	private JSONObject getDataSetResultsAsJSON(JSONObject json, UserProfile userProfile) throws EMFUserError, JSONException, SpagoBIException {
+	private JSONObject getDataSetResultsAsJSON(JSONObject json, UserProfile userProfile, boolean dataprep)
+			throws EMFUserError, JSONException, SpagoBIException {
 
 		JSONObject dataSetJSON = null;
 		JSONArray parsJSON = json.optJSONArray(DataSetConstants.PARS);
@@ -1787,12 +1801,13 @@ public class ManageDataSetsForREST {
 		}
 		IEngUserProfile profile = userProfile;
 
-		dataSetJSON = getDatasetTestResultList(dataSet, parametersMap, profile, json);
+		dataSetJSON = getDatasetTestResultList(dataSet, parametersMap, profile, json, dataprep);
 
 		return dataSetJSON;
 	}
 
-	public JSONObject getDatasetTestResultList(IDataSet dataSet, HashMap<String, String> parametersFilled, IEngUserProfile profile, JSONObject json) {
+	public JSONObject getDatasetTestResultList(IDataSet dataSet, HashMap<String, String> parametersFilled, IEngUserProfile profile, JSONObject json,
+			boolean dataprep) {
 
 		JSONObject dataSetJSON;
 
@@ -1844,7 +1859,7 @@ public class ManageDataSetsForREST {
 
 			try {
 				JSONDataWriter dataSetWriter = new JSONDataWriter();
-				dataSetJSON = (JSONObject) dataSetWriter.write(dataStore);
+				dataSetJSON = (JSONObject) dataSetWriter.write(dataStore, dataprep);
 				if (dataSetJSON == null) {
 					throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to read serialized resultset");
 				}
