@@ -113,15 +113,18 @@ export default defineComponent({
         async saveTrigger() {
             console.log('SAVE TRIGGER: ', this.trigger)
             this.loading = true
+            const originalTrigger = { ...this.trigger }
+            console.log('ORIGINAL TRIGGER: ', originalTrigger)
             this.formatTrigger()
 
             await this.axios
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/saveTrigger`, this.trigger, {})
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/saveTrigger`, this.trigger, { headers: { 'X-Disable-Errors': true } })
                 .then((response) => {
                     if (response.data.Errors) {
                         console.log('RESPONSE IN IF ERROR:', response)
                         this.warningVisible = true
                         this.warningMessage = this.$t('managers.scheduler.genericError')
+                        this.trigger = originalTrigger
                     } else {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.' + this.operation + 'Title'),
@@ -134,32 +137,60 @@ export default defineComponent({
                     //  console.log('RESPONSE IN CATCH: ', response)
                     this.warningTitle = this.$t('common.toast.' + this.operation + 'Title')
                     this.warningVisible = true
-                    this.warningMessage = response
+                    this.warningMessage = this.getErrorMessage(response)
+                    this.trigger = originalTrigger
                 })
             this.loading = false
         },
+        getErrorMessage(message: string) {
+            switch (message) {
+                case 'errors.trigger.missingDataSet':
+                    return this.$t('managers.scheduler.missingDataSet')
+                case 'errors.trigger.missingDataSetParameter':
+                    return this.$t('managers.scheduler.missingDataSetParameter')
+                default:
+                    return this.$t('managers.scheduler.savingTriggerGenericError')
+            }
+        },
         formatTrigger() {
             if (!this.trigger.triggerGroup) this.trigger.triggerGroup = ''
-            if (this.trigger.chrono.type === 'single') delete this.trigger.chrono.parameter
             this.trigger._endTime = new Date().getHours() + ':' + new Date().getMinutes()
 
-            this.trigger.zonedStartTime = this.trigger.startDateTiming
-            this.trigger.zonedStartTime.setHours(this.trigger.startTimeTiming.getHours())
-            this.trigger.zonedStartTime.setMinutes(this.trigger.startTimeTiming.getMinutes())
-
-            if (this.trigger.endDateTiming) {
-                this.trigger.zonedEndTime = this.trigger.endDateTiming
-                this.trigger.zonedEndTime.setHours(this.trigger.endTimeTiming.getHours())
-                this.trigger.zonedEndTime.setMinutes(this.trigger.endTimeTiming.getMinutes())
-            } else {
-                delete this.trigger.zonedEndTime
+            if (this.trigger.chrono.type === 'single') {
+                delete this.trigger.chrono.parameter
+            } else if (this.trigger.chrono.type !== 'event') {
+                this.formatCron()
             }
+            if (!this.trigger.endDateTiming || !this.trigger.zonedEndTime) delete this.trigger.zonedEndTime
 
             delete this.trigger.startDateTiming
             delete this.trigger.startTimeTiming
             delete this.trigger.endDateTiming
             delete this.trigger.endTimeTiming
+            delete this.trigger.startDate
+            delete this.trigger.startTime
             delete this.trigger.startDateRFC3339
+            delete this.trigger.endDate
+            delete this.trigger.endTime
+
+            this.formatTriggerDocuments()
+        },
+        formatCron() {
+            this.trigger.chrono = this.trigger.frequency.cron
+
+            this.trigger.zonedStartTime = new Date(this.trigger.frequency.startDate)
+            if (this.trigger.frequency.endDate) {
+                this.trigger.zonedEndTime = new Date(this.trigger.frequency.endDate)
+                this.trigger.endDateTiming = this.trigger.zonedEndTime
+            }
+        },
+        formatTriggerDocuments() {
+            this.trigger.documents.forEach((el: any, index: number) => {
+                el.label = el.name
+                el.labelId = el.id + '__' + (index + 1)
+                // delete el.name
+                // delete el.description
+            })
         }
     }
 })

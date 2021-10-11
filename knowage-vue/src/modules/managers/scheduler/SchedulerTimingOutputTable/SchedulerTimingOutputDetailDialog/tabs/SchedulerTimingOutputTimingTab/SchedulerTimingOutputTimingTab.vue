@@ -1,7 +1,7 @@
 <template>
     {{ trigger }}
     <div v-if="trigger" class="p-d-flex p-flex-row">
-        <div class="kn-flex">
+        <div class="kn-flex p-m-4">
             <span>
                 <label class="kn-material-input-label">{{ $t('managers.scheduler.timingDescription') }}</label>
                 <InputText class="kn-material-input p-inputtext-sm" v-model="trigger.triggerDescription" :maxLength="500" @input="setTriggerName" />
@@ -20,12 +20,12 @@
                 {{ $t('managers.scheduler.timeWindow') }}
             </template>
         </Toolbar>
-        <div v-if="triggerType !== 'scheduler'" class="p-d-flex p-flex-row">
+        <div v-if="triggerType !== 'scheduler'" class="p-d-flex p-flex-row p-m-4">
             <div class="p-d-flex p-ai-center p-m-2">
                 <div class="p-col-5">
                     <span>
                         <label for="startDateTiming" class="kn-material-input-label">{{ $t('cron.startDate') + ':' }}</label>
-                        <Calendar id="startDateTiming" class="kn-material-input custom-timepicker" :style="schedulerTimingOutputTimingTabDescriptor.style.calendarInput" v-model="trigger.startDateTiming" :showIcon="true" :manualInput="false" />
+                        <Calendar id="startDateTiming" class="kn-material-input custom-timepicker" :style="schedulerTimingOutputTimingTabDescriptor.style.calendarInput" v-model="trigger.startDateTiming" :showIcon="true" :manualInput="false" @date-select="setStartDate" />
                     </span>
                     <div v-if="!validDates" class="p-error p-grid">
                         <small class="p-col-12">
@@ -36,7 +36,18 @@
                 <div class="p-col-7 p-d-flex p-ai-center">
                     <label for="startTime" class="kn-material-input-label p-m-2"> {{ $t('cron.startTime') + ':' }}</label>
                     <span>
-                        <Calendar id="startTime" class="kn-material-input custom-timepicker" :style="schedulerTimingOutputTimingTabDescriptor.style.timePicker" v-model="trigger.startTimeTiming" :showTime="true" :manualInput="false" :timeOnly="true" hourFormat="24" :inline="true" />
+                        <Calendar
+                            id="startTime"
+                            class="kn-material-input custom-timepicker"
+                            :style="schedulerTimingOutputTimingTabDescriptor.style.timePicker"
+                            v-model="trigger.startTimeTiming"
+                            :showTime="true"
+                            :manualInput="false"
+                            :timeOnly="true"
+                            hourFormat="24"
+                            :inline="true"
+                            @date-select="setStartDate"
+                        />
                     </span>
                 </div>
             </div>
@@ -44,7 +55,7 @@
                 <div class="p-col-5">
                     <span>
                         <label for="endDateTiming" class="kn-material-input-label">{{ $t('cron.endDate') + ':' }}</label>
-                        <Calendar id="endDateTiming" class="kn-material-input custom-timepicker" :style="schedulerTimingOutputTimingTabDescriptor.style.calendarInput" v-model="trigger.endDateTiming" :showIcon="true" :manualInput="false" />
+                        <Calendar id="endDateTiming" class="kn-material-input custom-timepicker" :style="schedulerTimingOutputTimingTabDescriptor.style.calendarInput" v-model="trigger.endDateTiming" :showIcon="true" :manualInput="false" @date-select="setEndDate" />
                     </span>
                     <div v-if="!validDates" class="p-error p-grid">
                         <small class="p-col-12">
@@ -55,7 +66,18 @@
                 <div class="p-col-7 p-d-flex p-ai-center">
                     <label for="endTime" class="kn-material-input-label p-m-2"> {{ $t('cron.endTime') + ':' }}</label>
                     <span>
-                        <Calendar id="endTime" class="kn-material-input custom-timepicker" :style="schedulerTimingOutputTimingTabDescriptor.style.timePicker" v-model="trigger.endTimeTiming" :showTime="true" :manualInput="false" :timeOnly="true" hourFormat="24" :inline="true" />
+                        <Calendar
+                            id="endTime"
+                            class="kn-material-input custom-timepicker"
+                            :style="schedulerTimingOutputTimingTabDescriptor.style.timePicker"
+                            v-model="trigger.endTimeTiming"
+                            :showTime="true"
+                            :manualInput="false"
+                            :timeOnly="true"
+                            hourFormat="24"
+                            :inline="true"
+                            @date-select="setEndDate"
+                        />
                     </span>
                 </div>
             </div>
@@ -92,7 +114,6 @@
         </div>
         <div v-if="triggerType === 'scheduler'">
             <KnCron v-if="trigger && trigger.frequency" :frequency="trigger.frequency" @cronValid="setCronValid($event)"></KnCron>
-            <Button @click="test" :style="{ width: '50px' }" class="p-mt-5">CHECK CRON FREQ</Button>
         </div>
     </div>
 </template>
@@ -155,8 +176,10 @@ export default defineComponent({
     methods: {
         loadTrigger() {
             this.trigger = this.propTrigger as any
+            this.trigger.triggerDescription = this.trigger.triggerName
             this.setTriggerType()
-            this.triggerType === 'scheduler' ? this.setCronFrequency() : this.setTriggerDates()
+            this.setTriggerDates()
+            if (this.triggerType === 'scheduler') this.setCronFrequency()
             if (this.trigger.chrono.parameter?.dataset) this.trigger.chrono.parameter.dataset = +this.trigger.chrono.parameter.dataset
             console.log('TRIGGER IN TIMING: ', this.trigger)
         },
@@ -205,8 +228,16 @@ export default defineComponent({
         },
         formatFrequency() {
             console.log('CAAAAAAAAAAAALED', this.triggerType)
-            this.trigger.chrono.type = this.triggerType
-            if (this.triggerType === 'scheduler') this.setCronFrequency()
+            this.trigger.chrono = { type: this.triggerType, parameter: { type: '' } }
+
+            switch (this.trigger.chrono.type) {
+                case 'single':
+                    delete this.trigger.endDateTiming
+                    delete this.trigger.endTimeTiming
+                    break
+                case 'scheduler':
+                    this.setCronFrequency()
+            }
         },
         setCronValid(value: boolean) {
             this.validCron = value
@@ -214,9 +245,15 @@ export default defineComponent({
         setTriggerName() {
             this.trigger.triggerName = this.trigger.triggerDescription.substring(0, 100)
         },
-        test() {
-            console.log('FREQUENCY: ', this.trigger.frequency)
-            //  console.log('TEEST', this.selectedDataset)
+        setStartDate() {
+            this.trigger.zonedStartTime = this.trigger.startDateTiming
+            this.trigger.zonedStartTime.setHours(this.trigger.startTimeTiming.getHours())
+            this.trigger.zonedStartTime.setMinutes(this.trigger.startTimeTiming.getMinutes())
+        },
+        setEndDate() {
+            this.trigger.zonedEndTime = this.trigger.endDateTiming
+            this.trigger.zonedEndTime.setHours(this.trigger.endTimeTiming.getHours())
+            this.trigger.zonedEndTime.setMinutes(this.trigger.endTimeTiming.getMinutes())
         }
     }
 })

@@ -1055,10 +1055,12 @@
         },
         "scheduler": {
             "attachedZip": "Attached zip name",
+            "missingDataSet": "No DataSet was selected for document",
+            "missingDataSetParameter": "No parameter for DataSet filtering was selected for document",
             "destinationFolder": "Destination folder",
             "expression": "Expression",
             "zipFileName": "Zip file name",
-            "genericError": "Generic error",
+            "savingTriggerGenericError": "Error saving trigger",
             "reportNameInSubject": "Include report name (and timestamp) in mail subject.",
             "fixedRecipientsListHelp": "Fill the <b>Mail to</b> field with the list of recipients separated by <b>,</b>",
             "fixedRecipientsList": "Fixed list of recipients",

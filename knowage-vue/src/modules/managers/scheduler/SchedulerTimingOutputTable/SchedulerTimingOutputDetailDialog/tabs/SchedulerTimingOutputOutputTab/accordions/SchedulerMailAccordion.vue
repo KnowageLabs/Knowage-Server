@@ -40,7 +40,7 @@
                         </span>
                         <span class="p-mt-2">
                             <label class="kn-material-input-label">{{ $t('managers.scheduler.parameter') }}</label>
-                            <Dropdown class="kn-material-input" v-model="document.parameters" :options="drivers" />
+                            <Dropdown class="kn-material-input" v-model="document.datasetParameter" :options="drivers" />
                         </span>
                     </div>
                 </div>
@@ -171,7 +171,7 @@ export default defineComponent({
     methods: {
         loadDocument() {
             this.document = this.propDocument
-            if (!this.document.useFixedRecipients && !this.document.useExpression) {
+            if (!this.document.useFixedRecipients && !this.document.useExpression && !this.document.useDataset) {
                 this.document.useFixedRecipients = true
             }
         },

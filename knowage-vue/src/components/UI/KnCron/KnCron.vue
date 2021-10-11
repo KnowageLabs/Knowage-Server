@@ -2,6 +2,7 @@
     <Card :style="knCronDescriptor.style.cardContainer">
         <template #content>
             <div class="p-d-flex p-ai-center p-mt-2">
+                {{ new Date(this.currentFrequency.endDate) }}
                 <div class="p-col-5">
                     <label for="startDate" class="kn-material-input-label p-m-2"> {{ $t('cron.startDate') + ':' }}</label>
                     <span>
@@ -49,6 +50,7 @@
                             :manualInput="false"
                             :showButtonBar="true"
                             @date-select="setDate('endDate')"
+                            @clear-click="clearEndDate"
                         />
                         <div v-if="!validDates" class="p-error p-grid">
                             <small class="p-col-12">
@@ -254,7 +256,7 @@ export default defineComponent({
     },
     methods: {
         loadFrequency() {
-            console.log("FREQUENCY: ", this.frequency)
+            console.log('FREQUENCY: ', this.frequency)
             this.currentFrequency = this.frequency as any
 
             this.startDate = new Date(this.currentFrequency.startDate)
@@ -396,6 +398,9 @@ export default defineComponent({
             }
 
             this.$emit('touched')
+        },
+        clearEndDate() {
+            this.currentFrequency.endDate = null
         }
     }
 })

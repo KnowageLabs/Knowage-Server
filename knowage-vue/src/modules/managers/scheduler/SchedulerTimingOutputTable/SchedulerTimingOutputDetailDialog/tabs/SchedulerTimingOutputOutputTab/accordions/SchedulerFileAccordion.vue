@@ -43,7 +43,7 @@
                     <Checkbox v-model="document.zipFileDocument" :binary="true" />
                     <span class="p-ml-2">{{ $t('managers.scheduler.zipFileDocument') }}</span>
                 </div>
-                <div class="kn-flex">
+                <div class="kn-flex" v-if="document.zipFileDocument">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.zipFileName') }}</label>
                         <InputText class="kn-material-input p-inputtext-sm" v-model="document.zipFileName" :maxLength="100" />

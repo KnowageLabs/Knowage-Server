@@ -11,7 +11,8 @@ export interface iPackage {
     jobParameters: { name: string, value: string }[],
     documents: any[],
     triggers: iTrigger[],
-    numberOfDocuments: number
+    edit?: string
+    numberOfDocuments?: number
 }
 
 
@@ -33,9 +34,4 @@ export interface iNode {
     selectable?: Boolean,
     data: string | any
     customIcon?: string
-}
-
-
-export interface iTrigger {
-
 }

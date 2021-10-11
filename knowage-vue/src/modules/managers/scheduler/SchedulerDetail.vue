@@ -2,7 +2,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left>{{ job.jobName }}</template>
         <template #right>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="saveJob" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" />
         </template>
     </Toolbar>
@@ -57,6 +57,7 @@ export default defineComponent({
         return {
             job: null as iPackage | null,
             jobNameDirty: false,
+            operation: 'create',
             loading: false
         }
     },
@@ -77,6 +78,30 @@ export default defineComponent({
         setLoading(loading: boolean) {
             // console.log('SET LOADING: ', loading)
             this.loading = loading
+        },
+        async saveJob() {
+            this.loading = true
+            const originalJob = { ...this.job }
+
+            this.formatJob()
+
+            await this.axios
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/saveJob`, this.job)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.' + this.operation + 'Title'),
+                        msg: this.$t('common.toast.success')
+                    })
+                })
+                .catch((response) => {
+                    console.log('RESPONSE IN CATCH: ', response)
+                    this.job = originalJob as iPackage
+                })
+            this.loading = false
+        },
+        formatJob() {
+            delete this.job?.edit
+            delete this.job?.numberOfDocuments
         }
     }
 })
