@@ -47,6 +47,7 @@
                             }"
                             @before-show="v$.dataset.scopeCd.$touch()"
                             @change="updateIdFromCd(this.scopeTypes, 'scopeId', $event.value), $emit('touched')"
+                            data-test="scope-input"
                         />
                         <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.scope') }} * </label>
                     </span>
@@ -71,6 +72,7 @@
                             }"
                             @before-show="v$.dataset.catTypeVn.$touch()"
                             @change="updateIdFromCd(this.categoryTypes, 'catTypeId', $event.value), $emit('touched')"
+                            data-test="category-input"
                         />
                         <label v-if="this.dataset.scopeCd == 'USER'" for="category" class="kn-material-input-label"> {{ $t('common.category') }} </label>
                         <label v-else for="category" class="kn-material-input-label"> {{ $t('common.category') }} * </label>
@@ -108,7 +110,7 @@
             </Toolbar>
         </template>
         <template #content>
-            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="versions-loading" />
             <DataTable v-if="!loading" class="p-datatable-sm kn-table" :value="selectedDatasetVersions" :scrollable="true" scrollHeight="400px" :loading="loading" dataKey="versNum" responsiveLayout="stack" breakpoint="960px">
                 <Column field="userIn" :header="$t('managers.datasetManagement.creationUser')" :sortable="true" />
                 <Column field="type" :header="$t('importExport.gallery.column.type')" :sortable="true" />

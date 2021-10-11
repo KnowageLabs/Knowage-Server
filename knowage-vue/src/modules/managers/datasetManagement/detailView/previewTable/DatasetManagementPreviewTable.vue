@@ -38,7 +38,7 @@ export default defineComponent({
     methods: {
         async getPreviewData() {
             this.loading = true
-            this.dataset.limit = 1000
+            this.dataset.limit = 10000000
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, this.dataset, {
                     headers: {

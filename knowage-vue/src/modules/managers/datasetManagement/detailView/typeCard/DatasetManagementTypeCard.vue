@@ -1,7 +1,4 @@
 <template>
-    <!-- Is invalid: {{ v$.$invalid }}
-    <p></p>
-    DsType: {{ dataset.dsTypeCd }} -->
     <div v-if="dataset.dsTypeCd == 'Federated'">
         <label>{{ $t('managers.datasetManagement.selectDatasetType') }}: </label> <b>Federated</b>
     </div>
@@ -70,7 +67,6 @@ import RestDataset from './restDataset/DatasetManagementRestDataset.vue'
 import SparqlDataset from './sparqlDataset/DatasetManagementSparqlDataset.vue'
 import SolrDataset from './solrDataset/DatasetManagementSolrDataset.vue'
 import PythonDataset from './pythonDataset/DatasetManagementPythonDataset.vue'
-
 export default defineComponent({
     components: { Card, Dropdown, KnValidationMessages, ParamTable, CkanDataset, QbeDataset, RestDataset, JavaDataset, FlatDataset, SolrDataset, QueryDataset, ScriptDataset, SparqlDataset, PythonDataset, FileDataset },
     props: {
