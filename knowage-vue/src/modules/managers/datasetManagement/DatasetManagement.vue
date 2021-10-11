@@ -28,6 +28,7 @@
                     :rEnvironments="rEnvironments"
                     :metaSourceResource="metaSourceResource"
                     :datasetToCloneId="datasetToCloneId"
+                    :availableTags="tags"
                     @loadingOlderVersion="loadingVersion = true"
                     @olderVersionLoaded="loadingVersion = false"
                     @touched="touched = true"
@@ -69,6 +70,7 @@ export default defineComponent({
             pythonEnvironments: [] as any,
             rEnvironments: [] as any,
             metaSourceResource: [] as any,
+            tags: [] as any,
             datasetToCloneId: null
         }
     },
@@ -111,6 +113,9 @@ export default defineComponent({
         async getMetaSourceResource() {
             axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`).then((response) => (this.metaSourceResource = response.data))
         },
+        async getTags() {
+            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/tags/`).then((response) => (this.tags = response.data))
+        },
         async getDatasets() {
             let url = '{"reverseOrdering":false,"columnOrdering":""}'
             axios
@@ -125,6 +130,7 @@ export default defineComponent({
             await this.getMetaSourceResource()
             await this.getDatasources()
             await this.getBusinessModels()
+            await this.getTags()
             await this.getDatasets()
         },
         //#endregion ================================================================================================

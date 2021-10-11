@@ -86,11 +86,14 @@
                 </div>
                 <div class="p-field p-mt-1 p-col-12">
                     <span class="p-float-label kn-material-input">
-                        <Chips id="tags" v-model="dataset.tags" @add="buildTagObject" @remove="$emit('touched')" :allowDuplicate="false">
+                        <AutoComplete v-model="dataset.tags" :suggestions="filteredTagsNames" :multiple="true" @complete="searchTag" @keydown.enter="createTagChip">
                             <template #chip="slotProps">
                                 {{ slotProps.value.name }}
                             </template>
-                        </Chips>
+                            <template #item="slotProps">
+                                {{ slotProps.item.name }}
+                            </template>
+                        </AutoComplete>
                         <label for="tags" class="kn-material-input-label">{{ $t('common.tags') }}</label>
                     </span>
                     <small id="username1-help">{{ $t('managers.widgetGallery.tags.availableCharacters') }}</small>
@@ -140,17 +143,18 @@ import detailTabDescriptor from './DatasetManagementDetailCardDescriptor.json'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
-import Chips from 'primevue/chips'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import AutoComplete from 'primevue/autocomplete'
 
 export default defineComponent({
-    components: { Card, Dropdown, KnValidationMessages, Chips, DataTable, Column },
+    components: { Card, Dropdown, KnValidationMessages, DataTable, Column, AutoComplete },
     props: {
         scopeTypes: { type: Array as any, required: true },
         categoryTypes: { type: Array as any, required: true },
         selectedDataset: { type: Object as any },
         selectedDatasetVersions: { type: Array as any },
+        availableTags: { type: Array as any },
         loading: { type: Boolean }
     },
     computed: {
@@ -169,7 +173,10 @@ export default defineComponent({
             v$: useValidate() as any,
             dataset: {} as any,
             datasetVersions: [] as any,
-            loadingVersion: false
+            loadingVersion: false,
+            availableTagsNames: [] as any,
+            selectedTagsNames: [] as any,
+            filteredTagsNames: null as any
         }
     },
     created() {
@@ -200,15 +207,6 @@ export default defineComponent({
         updateIdFromCd(optionsArray, fieldToUpdate, updatedField) {
             const selectedField = optionsArray.find((option) => option.VALUE_CD === updatedField)
             selectedField ? (this.dataset[fieldToUpdate] = selectedField.VALUE_ID) : ''
-        },
-        buildTagObject() {
-            this.dataset.tags = this.dataset.tags.map((tag) => {
-                if (typeof tag !== 'string') {
-                    return tag
-                } else {
-                    return { name: tag }
-                }
-            })
         },
 
         //#region ===================== Delete Versions Functionality ====================================================
@@ -301,6 +299,39 @@ export default defineComponent({
             this.dataset.meta = item != undefined ? item.meta : []
 
             this.dataset.fileUploaded = false
+        },
+        //#endregion ================================================================================================
+
+        //#region ===================== Tags Functionality ====================================================
+        searchTag(event) {
+            setTimeout(() => {
+                if (!event.query.trim().length) {
+                    this.filteredTagsNames = [...this.availableTags]
+                } else {
+                    this.filteredTagsNames = this.availableTags.filter((tag) => {
+                        return tag.name.toLowerCase().startsWith(event.query.toLowerCase())
+                    })
+                }
+            }, 250)
+        },
+        createTagChip(event: any) {
+            if (event.target.value) {
+                const tempWord = this.availableTags.find((el) => el.name == event.target.value)
+                if (!tempWord) {
+                    this.dataset.tags.push(event.target.value)
+                    this.buildTagObject()
+                    event.target.value = ''
+                }
+            }
+        },
+        buildTagObject() {
+            this.dataset.tags = this.dataset.tags.map((tag) => {
+                if (typeof tag !== 'string') {
+                    return tag
+                } else {
+                    return { name: tag }
+                }
+            })
         }
         //#endregion ================================================================================================
     }

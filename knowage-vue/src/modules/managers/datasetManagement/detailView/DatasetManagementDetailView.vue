@@ -18,6 +18,7 @@
                     :categoryTypes="categoryTypes"
                     :selectedDataset="selectedDataset"
                     :selectedDatasetVersions="selectedDatasetVersions"
+                    :availableTags="availableTags"
                     :loading="loading"
                     @reloadVersions="getSelectedDatasetVersions"
                     @loadingOlderVersion="$emit('loadingOlderVersion')"
@@ -107,6 +108,7 @@ export default defineComponent({
         pythonEnvironments: { type: Array as any, required: true },
         rEnvironments: { type: Array as any, required: true },
         metaSourceResource: { type: Array as any, required: true },
+        availableTags: { type: Array as any, required: true },
         datasetToCloneId: { type: Number as any }
     },
     computed: {
