@@ -22,8 +22,11 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpSession;
 import javax.websocket.EncodeException;
@@ -33,7 +36,6 @@ import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
-import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
 import org.apache.log4j.LogMF;
@@ -46,6 +48,7 @@ import it.eng.knowage.websocket.bo.WSDownloadCountBO;
 import it.eng.knowage.websocket.bo.WSNewsBO;
 import it.eng.knowage.websocket.bo.WSNewsCountBO;
 import it.eng.knowage.websocket.bo.WebSocketBO;
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.v2.export.Entry;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -60,71 +63,100 @@ import it.eng.spagobi.tools.news.dao.ISbiNewsReadDAO;
 import it.eng.spagobi.tools.news.manager.INewsManager;
 import it.eng.spagobi.tools.news.manager.NewsManagerImpl;
 import it.eng.spagobi.user.UserProfileManager;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-@ServerEndpoint(value = "/webSocket/{login}", encoders = KnowageWebSocketMessageEncoder.class, decoders = KnowageWebSocketMessageDecoder.class, configurator = HttpSessionConfigurator.class)
+@ServerEndpoint(value = "/webSocket", encoders = KnowageWebSocketMessageEncoder.class, decoders = KnowageWebSocketMessageDecoder.class, configurator = HttpSessionConfigurator.class)
 public class KnowageWebSocket {
 
 	private static final Logger LOGGER = Logger.getLogger(KnowageWebSocket.class);
 
-	private Session session;
-	private static Map<Object, Session> userSession = new HashMap<>();
-	private HttpSession httpSession;
-
-	private static Map<Object, KnowageWebSocket> userWebSockets = new HashMap<>();
-	private static CopyOnWriteArraySet<KnowageWebSocket> webSocketSet = new CopyOnWriteArraySet<>();
+	private static CopyOnWriteArraySet<Session> webSocketSet = new CopyOnWriteArraySet<>();
+	private static final HashMap<Session, HashMap<String, Object>> sessionToHttpMap = new HashMap<Session, HashMap<String, Object>>();
+	final ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
 
 	@OnOpen
-	public void onOpen(@PathParam("login") boolean login, Session session, EndpointConfig config) throws IOException, EncodeException {
+	public void onOpen(Session session, EndpointConfig config) throws IOException, EncodeException {
 
-		try {
-			webSocketSet.add(this);
-			this.session = session;
+		webSocketSet.add(session);
 
-			this.httpSession = (HttpSession) config.getUserProperties().get("HTTP_SESSION");
+		HttpSession httpSession = (HttpSession) config.getUserProperties().get("HTTP_SESSION");
 
-			if (login) {
-				WebSocketBO masterWebSocketBO = getMasterMessageObject();
-				broadcast(masterWebSocketBO);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("httpSession", httpSession);
+
+		Runnable downloadPollingTask = () -> {
+			WebSocketBO masterWebSocketBO = getMasterMessageObject(session, false, true);
+			try {
+				broadcastDownload(session, masterWebSocketBO);
+			} catch (IOException | EncodeException e) {
+				UserProfile userProfile = (UserProfile) getProfileFromSession(session);
+				LOGGER.debug(
+						"Task for download handling: user_id:[" + userProfile.getUserUniqueIdentifier() + "], tenant:[" + userProfile.getOrganization() + "]");
 			}
-		} catch (Exception e) {
-			LOGGER.error("Error opening the web socket for notifications", e);
+		};
+		ScheduledFuture<?> scheduledFuture = ses.scheduleAtFixedRate(downloadPollingTask, 0, 1, TimeUnit.MINUTES);
+		map.put("downloadPollingThread", scheduledFuture);
+
+		sessionToHttpMap.put(session, map);
+
+		WebSocketBO masterWebSocketBO = getMasterMessageObject(session, true, true);
+		broadcastNews(session, masterWebSocketBO);
+		broadcastDownload(session, masterWebSocketBO);
+
+	}
+
+	@OnMessage
+	public void onMessage(Session session, String message) throws IOException, EncodeException, JSONException, EMFInternalError {
+		JSONObject obj = new JSONObject(message);
+
+		broadcastNews(session, obj);
+
+	}
+
+	@OnClose
+	public void onClose(Session session) {
+		handleCloseOrError(session);
+	}
+
+	@OnError
+	public void onError(Session session, Throwable throwable) {
+		handleCloseOrError(session);
+		LOGGER.error("Web socket handler get following error", throwable);
+	}
+
+	private void handleCloseOrError(Session session) {
+		if (!session.isOpen()) {
+			webSocketSet.remove(session);
+			((ScheduledFuture<?>) sessionToHttpMap.get(session).get("downloadPollingThread")).cancel(true);
+			sessionToHttpMap.remove(session);
 		}
 	}
 
-	private WebSocketBO getMasterMessageObject() {
-		return getMasterMessageObject(true, true);
-	}
-
-	private WebSocketBO getMasterMessageObject(boolean news, boolean downloads) {
+	private WebSocketBO getMasterMessageObject(Session session, boolean news, boolean downloads) {
 		WebSocketBO masterWebSocketBO = new WebSocketBO();
 
-		initializeUserProfileAndTenant();
+		initializeUserProfileAndTenant(session);
+
 		if (news)
-			handleNews(masterWebSocketBO);
+			handleNews(session, masterWebSocketBO);
 
 		if (downloads)
 			handleDownloads(masterWebSocketBO);
+
 		return masterWebSocketBO;
 	}
 
-	private void initializeUserProfileAndTenant() {
-		IEngUserProfile userProfile = UserProfileManager.getProfile();
+	private void initializeUserProfileAndTenant(Session session) {
 
-		if (userProfile == null) {
-			userProfile = (IEngUserProfile) this.httpSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		IEngUserProfile userProfile = getProfileFromSession(session);
 
-			UserProfileManager.setProfile((UserProfile) userProfile);
+		UserProfileManager.setProfile((UserProfile) userProfile);
 
-			String tenantId = ((UserProfile) userProfile).getOrganization();
-			LogMF.debug(LOGGER, "Tenant identifier is [{0}]", tenantId);
-			// putting tenant id on thread local
-			Tenant tenant = new Tenant(tenantId);
-			TenantManager.setTenant(tenant);
+		String tenantId = ((UserProfile) userProfile).getOrganization();
+		LogMF.debug(LOGGER, "Tenant identifier is [{0}]", tenantId);
+		Tenant tenant = new Tenant(tenantId);
+		TenantManager.setTenant(tenant);
 
-			Object userUniqueIdentifier = userProfile.getUserUniqueIdentifier();
-			userSession.computeIfAbsent(userUniqueIdentifier, k -> session);
-			userWebSockets.computeIfAbsent(userUniqueIdentifier, k -> this);
-		}
 	}
 
 	private WebSocketBO handleDownloads(WebSocketBO masterWebSocketBO) {
@@ -155,8 +187,8 @@ public class KnowageWebSocket {
 		return masterWebSocketBO;
 	}
 
-	private WebSocketBO handleNews(WebSocketBO masterWebSocketBO) {
-		UserProfile userProfile = UserProfileManager.getProfile();
+	private WebSocketBO handleNews(Session session, WebSocketBO masterWebSocketBO) {
+		UserProfile userProfile = (UserProfile) getProfileFromSession(session);
 
 		INewsManager newsManager = new NewsManagerImpl();
 		ISbiNewsDAO sbiNewsDAO = DAOFactory.getSbiNewsDAO();
@@ -189,37 +221,52 @@ public class KnowageWebSocket {
 		return masterWebSocketBO;
 	}
 
-	@OnMessage
-	public void onMessage(Session session, String message) throws IOException, EncodeException, JSONException {
-
-		JSONObject messageJSON = new JSONObject(message);
-
-		broadcast(getMasterMessageObject(messageJSON.has("news"), messageJSON.has("downloads")));
+	private IEngUserProfile getProfileFromSession(Session session) {
+		HttpSession httpSession = (HttpSession) sessionToHttpMap.get(session).get("httpSession");
+		IEngUserProfile userProfile = (IEngUserProfile) httpSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		return userProfile;
 	}
 
-	private void broadcast(WebSocketBO message) throws IOException, EncodeException {
+	private void broadcastDownload(Session session, WebSocketBO webSocketBO) throws IOException, EncodeException {
+		session.getBasicRemote().sendObject(webSocketBO);
+	}
+
+	private void broadcastNews(Session session, WebSocketBO webSocketBO) throws IOException, EncodeException {
+		session.getBasicRemote().sendObject(webSocketBO);
+	}
+
+	private void broadcastNews(Session session, JSONObject obj) {
 
 		webSocketSet.forEach(x -> {
-
 			try {
-				x.session.getBasicRemote().sendObject(message);
+//				IEngUserProfile userProfile = getProfileFromSession(x);
+//				Collection userRoles = userProfile.getRoles();
+//
+//				JSONArray roles = obj.getJSONArray("roles");
+//				Set<String> rolesSet = new HashSet<String>();
+//				for (int i = 0; i < roles.length(); i++) {
+//					JSONObject role = (JSONObject) roles.get(i);
+//					rolesSet.add((String) role.get("name"));
+//				}
+//
+//				for (Object object : userRoles) {
+//					String role = (String) object;
+//
+//					if (rolesSet.contains(role)) {
+				WebSocketBO webSocketBO = getMasterMessageObject(x, true, false);
+				x.getBasicRemote().sendObject(webSocketBO);
+//						break;
+//					}
+//				}
+//
+//			} catch (EMFInternalError | JSONException | IOException | EncodeException e) {
+//				throw new SpagoBIRuntimeException(e);
+//			}
 			} catch (IOException | EncodeException e) {
-				LOGGER.error("Error during broadcasting", e);
+				throw new SpagoBIRuntimeException(e);
 			}
 		});
 
-	}
-
-	@OnClose
-	public void onClose(Session session) {
-
-		webSocketSet.remove(this);
-
-	}
-
-	@OnError
-	public void onError(Session session, Throwable throwable) {
-		LOGGER.error("Web socket handler get following error", throwable);
 	}
 
 }

@@ -1,7 +1,7 @@
 <template>
 	<li role="menu" :style="[item.style, getVisibilityClass(item)]" :title="item.descr ? $internationalization($t(item.descr)) : $internationalization($t(item.label))" @mouseenter="toggleSubMenu" @mouseleave="toggleSubMenu">
-		<router-link v-if="item.to && !item.disabled" :to="item.to" custom v-slot="{ navigate, href, isActive }" exact>
-			<a :href="href" @click="onClick($event, navigate)" role="menuitem" :class="isActive && 'router-link-active'">
+		<router-link v-if="item.to && !item.disabled" :to="item.to" custom v-slot="{ navigate, isActive }" exact>
+			<a :href="getHref(item)" @click="onClick($event, navigate)" role="menuitem" :class="isActive && 'router-link-active'">
 				<Badge v-if="badge > 0" :value="badge" severity="danger"></Badge>
 				<span v-if="item.iconCls" :class="['p-menuitem-icon', item.iconCls]"></span>
 				<img v-if="item.custIcon" :src="item.custIcon" />
@@ -11,7 +11,7 @@
 				<i v-if="item.items" class="pi pi-fw pi-angle-right"></i>
 			</a>
 		</router-link>
-		<a v-else :href="getHref(item)" @click="onClick" :target="item.target" role="menuitem" :tabindex="item.disabled ? null : '0'">
+		<a v-else :href="item.url" @click="onClick" :target="item.target" role="menuitem" :tabindex="item.disabled ? null : '0'">
 			<Badge v-if="badge > 0" :value="badge" severity="danger"></Badge>
 			<span v-if="item.iconCls && item.command != 'languageSelection'" :class="['p-menuitem-icon', item.iconCls]"></span>
 			<img v-if="item.custIcon" :src="item.custIcon" />
@@ -59,16 +59,12 @@
 				this.openedLi = !this.openedLi
 			},
 			getHref(item) {
-				let url = item.url
-				if (url) {
-					if (url.startsWith('http')) {
-						return url
-					} else {
-						url = url.replace(/\\\//g, '/')
+				let to = item.to
+				if (to) {
+					to = to.replace(/\\\//g, '/')
 
-						if (url.startsWith('/')) url = url.substring(1)
-						return process.env.VUE_APP_PUBLIC_PATH + url
-					}
+					if (to.startsWith('/')) to = to.substring(1)
+					return process.env.VUE_APP_PUBLIC_PATH + to
 				}
 			},
 			getVisibilityClass(item) {

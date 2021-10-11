@@ -15,33 +15,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.knowage.knowageapi.service;
-
-import java.util.List;
-import java.util.UUID;
-
-import it.eng.knowage.knowageapi.error.KnowageBusinessException;
-import it.eng.knowage.knowageapi.resource.dto.FunctionCompleteDTO;
-import it.eng.knowage.knowageapi.resource.dto.FunctionDTO;
 
 /**
- * @author Marco Libanori
+ *
  */
-public interface FunctionCatalogAPI {
+package it.eng.spagobi.behaviouralmodel.lov.bo.example;
 
-	default List<FunctionDTO> find() {
-		return find(null);
+import java.util.List;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.behaviouralmodel.lov.bo.IJavaClassLov;
+
+/**
+ * @author albnale
+ *
+ */
+public class JavaClassLovExample implements IJavaClassLov {
+
+	@Override
+	public String getValues(IEngUserProfile profile) {
+		return "<ROWS> <ROW column1=\"1\" column2=\"a\" />\r\n<ROW column1=\"2\" column2=\"b\" />\r\n</ROWS>";
 	}
 
-	List<FunctionDTO> find(String search);
+	@Override
+	public List getNamesOfProfileAttributeRequired() {
+		return null;
+	}
 
-	List<FunctionCompleteDTO> findComplete(String search);
-
-	FunctionCompleteDTO get(UUID id);
-
-	FunctionCompleteDTO create(FunctionCompleteDTO functionCatalog);
-
-	FunctionCompleteDTO update(FunctionCompleteDTO functionCatalog);
-
-	void delete(UUID id) throws KnowageBusinessException;
 }

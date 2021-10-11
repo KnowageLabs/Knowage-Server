@@ -617,7 +617,7 @@
                 "driver": "Driver",
                 "errorTitle": "Connection KO",
                 "jndi": "JNDI Name",
-                "jndiInfo": "For the data source configuration you should specify the connection pool configured inside the application server. For example: Tomcat: java:comp/env/jdbc/foodmart; JBoss: jdbc/foodmart.",
+                "jndiInfo": "For the data source configuration you should specify the connection pool configured inside the application server. For example: java:comp/env/jdbc/foodmart",
                 "multischema": "Multischema",
                 "notOwner": "You are not the owner of this data source.",
                 "pwd": "Password (Only If Changed)",
@@ -1138,7 +1138,7 @@
             "ImportExport": "Import/Export",
             "ServerManager": "Server manager"
         },
-        "importExport": "Import/Export",
+        "importExport": "Artifacts",
         "modelCatalogResourceManagement": "Models manager",
         "resourceManagement": "Resource manager"
     },
