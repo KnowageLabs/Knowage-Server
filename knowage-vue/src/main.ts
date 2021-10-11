@@ -4,10 +4,8 @@ import PrimeVue from 'primevue/config'
 import router from './App.routes.js'
 import store from './App.store.js'
 
-import axios from 'axios'
 import VueAxios from 'vue-axios'
 import interceptor from './axios.js'
-interceptor()
 
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/monokai.css'
@@ -48,7 +46,7 @@ import internationalizationPlugin from './plugins/internationalization.js'
 import i18n from '@/App.i18n'
 
 createApp(App)
-    .use(VueAxios, axios)
+    .use(VueAxios, interceptor)
     .use(store)
     .use(router)
     .use(i18n)
