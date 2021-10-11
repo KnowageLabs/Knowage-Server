@@ -685,6 +685,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		}
 
 		function refreshRowForVariables(cell){
+			$scope.selectedFunction.inputVariables[cell.rowIndex]["value"] = cell.value;
 			$scope.variablesGrid.api.redrawRows({rowNodes: [$scope.variablesGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
 		}
 
