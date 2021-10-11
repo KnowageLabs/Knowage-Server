@@ -215,7 +215,21 @@
 			<artifactId>postgresql</artifactId>
 			<scope>test</scope>
 		</dependency>
-
+		
+		<dependency>
+		    <groupId>mysql</groupId>
+		    <artifactId>mysql-connector-java</artifactId>
+		    <scope>test</scope>
+		    <version>8.0.25</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.github.h-thurow</groupId>
+			<artifactId>simple-jndi</artifactId>
+			<version>0.23.0</version>
+			<scope>test</scope>
+		</dependency>
+		
 		<dependency>
 			<groupId>com.oracle.database.jdbc</groupId>
 			<artifactId>ojdbc8</artifactId>

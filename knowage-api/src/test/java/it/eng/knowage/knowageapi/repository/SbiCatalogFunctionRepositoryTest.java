@@ -57,6 +57,8 @@ class SbiCatalogFunctionRepositoryTest {
 		function.setDescription(RandomStringUtils.randomAlphanumeric(12));
 		SbiFunctionInputColumn inCol = createInputColumn(function);
 		function.getInputColumns().add(inCol);
+		SbiFunctionOutputColumn outCol = createOutputColumn(function);
+		function.getOutputColumns().add(outCol);
 
 		repository.update(function);
 
@@ -137,6 +139,16 @@ class SbiCatalogFunctionRepositoryTest {
 		inCol.getId().setColName(RandomStringUtils.randomAlphanumeric(10));
 		inCol.getId().setFunction(n);
 		return inCol;
+	}
+
+	private SbiFunctionOutputColumn createOutputColumn(SbiCatalogFunction n) {
+		SbiFunctionOutputColumn outCol;
+		outCol = new SbiFunctionOutputColumn();
+		outCol.setColType("type");
+		outCol.setColFieldType("colFieldType");
+		outCol.getId().setColName(RandomStringUtils.randomAlphanumeric(10));
+		outCol.getId().setFunction(n);
+		return outCol;
 	}
 
 }
