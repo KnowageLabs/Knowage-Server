@@ -57,17 +57,13 @@ import Card from 'primevue/card'
 
 export default defineComponent({
     components: { Card, Dropdown, KnValidationMessages },
-    props: {
-        selectedDataset: { type: Object as any },
-        dataSources: { type: Array as any }
-    },
+    props: { selectedDataset: { type: Object as any }, dataSources: { type: Array as any } },
     emits: ['touched'],
     data() {
         return {
-            v$: useValidate() as any,
             flatTypeDescriptor,
             dataset: {} as any,
-            expandParamsCard: true
+            v$: useValidate() as any
         }
     },
     created() {
@@ -82,12 +78,8 @@ export default defineComponent({
         const flatFieldsRequired = (value) => {
             return this.dataset.dsTypeCd != 'Flat' || value
         }
-        const customValidators: ICustomValidatorMap = {
-            'flat-fields-required': flatFieldsRequired
-        }
-        const validationObject = {
-            dataset: createValidations('dataset', flatTypeDescriptor.validations.dataset, customValidators)
-        }
+        const customValidators: ICustomValidatorMap = { 'flat-fields-required': flatFieldsRequired }
+        const validationObject = { dataset: createValidations('dataset', flatTypeDescriptor.validations.dataset, customValidators) }
         return validationObject
     },
     methods: {

@@ -48,15 +48,13 @@ import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 
 export default defineComponent({
     components: { Card, VCodeMirror, KnValidationMessages },
-    props: {
-        selectedDataset: { type: Object as any }
-    },
+    props: { selectedDataset: { type: Object as any } },
     emits: ['touched'],
     data() {
         return {
-            v$: useValidate() as any,
             sparqlDescriptor,
             dataset: {} as any,
+            v$: useValidate() as any,
             codeMirrorSparql: {} as any,
             sparqlOptions: {
                 mode: 'application/sparql-query',
@@ -82,12 +80,8 @@ export default defineComponent({
         const sparqlFieldsRequired = (value) => {
             return this.dataset.dsTypeCd != 'SPARQL' || value
         }
-        const customValidators: ICustomValidatorMap = {
-            'sparql-fields-required': sparqlFieldsRequired
-        }
-        const validationObject = {
-            dataset: createValidations('dataset', sparqlDescriptor.validations.dataset, customValidators)
-        }
+        const customValidators: ICustomValidatorMap = { 'sparql-fields-required': sparqlFieldsRequired }
+        const validationObject = { dataset: createValidations('dataset', sparqlDescriptor.validations.dataset, customValidators) }
         return validationObject
     },
     methods: {
@@ -97,10 +91,6 @@ export default defineComponent({
         },
         setupCodeMirror() {
             this.$refs.codeMirrorSparql ? (this.codeMirrorSparql = (this.$refs.codeMirrorSparql as any).editor as any) : ''
-        },
-        logMirror() {
-            console.log(this.$refs.codeMirrorSparql)
-            console.log(this.codeMirrorSparql)
         }
     }
 })

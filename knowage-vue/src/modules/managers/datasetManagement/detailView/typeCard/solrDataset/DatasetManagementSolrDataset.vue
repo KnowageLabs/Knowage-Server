@@ -111,10 +111,10 @@ export default defineComponent({
     emits: ['touched'],
     data() {
         return {
-            v$: useValidate() as any,
-            solrDescriptor,
             restDescriptor,
+            solrDescriptor,
             dataset: {} as any,
+            v$: useValidate() as any,
             facetQueryHelpVisible: false
         }
     },
@@ -133,13 +133,8 @@ export default defineComponent({
         const documentFieldsRequired = (value) => {
             return this.dataset.solrType != 'DOCUMENTS' || value
         }
-        const customValidators: ICustomValidatorMap = {
-            'solr-fields-required': solrFieldsRequired,
-            'document-fields-required': documentFieldsRequired
-        }
-        const validationObject = {
-            dataset: createValidations('dataset', solrDescriptor.validations.dataset, customValidators)
-        }
+        const customValidators: ICustomValidatorMap = { 'solr-fields-required': solrFieldsRequired, 'document-fields-required': documentFieldsRequired }
+        const validationObject = { dataset: createValidations('dataset', solrDescriptor.validations.dataset, customValidators) }
         return validationObject
     },
     methods: {}

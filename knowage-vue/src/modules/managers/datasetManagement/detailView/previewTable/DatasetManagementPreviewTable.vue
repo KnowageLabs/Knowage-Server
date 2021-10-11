@@ -12,9 +12,7 @@ import Column from 'primevue/column'
 
 export default defineComponent({
     components: { DataTable, Column },
-    props: {
-        selectedDataset: { type: Object as any }
-    },
+    props: { selectedDataset: { type: Object as any } },
     computed: {},
     emits: ['close'],
     data() {

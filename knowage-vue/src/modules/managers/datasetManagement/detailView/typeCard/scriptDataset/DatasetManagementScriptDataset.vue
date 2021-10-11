@@ -45,16 +45,13 @@ import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 
 export default defineComponent({
     components: { Card, Dropdown, VCodeMirror, KnValidationMessages },
-    props: {
-        selectedDataset: { type: Object as any },
-        scriptTypes: { type: Array as any }
-    },
+    props: { selectedDataset: { type: Object as any }, scriptTypes: { type: Array as any } },
     emits: ['touched'],
     data() {
         return {
-            v$: useValidate() as any,
             queryDescriptor,
             dataset: {} as any,
+            v$: useValidate() as any,
             codeMirrorScriptType: {} as any,
             scriptOptions: {
                 mode: '',
@@ -83,12 +80,8 @@ export default defineComponent({
         const scriptFieldsRequired = (value) => {
             return this.dataset.dsTypeCd != 'Script' || value
         }
-        const customValidators: ICustomValidatorMap = {
-            'script-fields-required': scriptFieldsRequired
-        }
-        const validationObject = {
-            dataset: createValidations('dataset', queryDescriptor.validations.dataset, customValidators)
-        }
+        const customValidators: ICustomValidatorMap = { 'script-fields-required': scriptFieldsRequired }
+        const validationObject = { dataset: createValidations('dataset', queryDescriptor.validations.dataset, customValidators) }
         return validationObject
     },
     methods: {

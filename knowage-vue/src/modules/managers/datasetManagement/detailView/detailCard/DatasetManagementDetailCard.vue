@@ -165,15 +165,15 @@ export default defineComponent({
             return true
         }
     },
-    emits: ['touched', 'scopeTypeChanged', 'reloadVersions', 'loadingOlderVersion', 'olderVersionLoaded'],
+    emits: ['touched', 'reloadVersions', 'loadingOlderVersion', 'olderVersionLoaded'],
     data() {
         return {
             moment,
             detailTabDescriptor,
+            loadingVersion: false,
             v$: useValidate() as any,
             dataset: {} as any,
             datasetVersions: [] as any,
-            loadingVersion: false,
             availableTagsNames: [] as any,
             selectedTagsNames: [] as any,
             filteredTagsNames: null as any
@@ -191,24 +191,11 @@ export default defineComponent({
         const catTypeRequired = (value) => {
             return this.dataset.scopeCd == 'USER' || value
         }
-        const customValidators: ICustomValidatorMap = {
-            'cat-type-required': catTypeRequired
-        }
-        const validationObject = {
-            dataset: createValidations('dataset', detailTabDescriptor.validations.dataset, customValidators)
-        }
+        const customValidators: ICustomValidatorMap = { 'cat-type-required': catTypeRequired }
+        const validationObject = { dataset: createValidations('dataset', detailTabDescriptor.validations.dataset, customValidators) }
         return validationObject
     },
     methods: {
-        formatDate(date) {
-            let fDate = new Date(date)
-            return fDate.toLocaleString()
-        },
-        updateIdFromCd(optionsArray, fieldToUpdate, updatedField) {
-            const selectedField = optionsArray.find((option) => option.VALUE_CD === updatedField)
-            selectedField ? (this.dataset[fieldToUpdate] = selectedField.VALUE_ID) : ''
-        },
-
         //#region ===================== Delete Versions Functionality ====================================================
         deleteConfirm(deletetype, event) {
             let msgDesc = ''
@@ -332,8 +319,17 @@ export default defineComponent({
                     return { name: tag }
                 }
             })
-        }
+        },
         //#endregion ================================================================================================
+
+        formatDate(date) {
+            let fDate = new Date(date)
+            return fDate.toLocaleString()
+        },
+        updateIdFromCd(optionsArray, fieldToUpdate, updatedField) {
+            const selectedField = optionsArray.find((option) => option.VALUE_CD === updatedField)
+            selectedField ? (this.dataset[fieldToUpdate] = selectedField.VALUE_ID) : ''
+        }
     }
 })
 </script>

@@ -192,22 +192,18 @@ import Card from 'primevue/card'
 
 export default defineComponent({
     components: { Card, Dropdown, KnValidationMessages },
-    props: {
-        selectedDataset: { type: Object as any }
-    },
-    computed: {},
+    props: { selectedDataset: { type: Object as any } },
     emits: ['touched'],
     data() {
         return {
             v$: useValidate() as any,
             ckanDescriptor,
             dataset: {} as any,
-            expandParamsCard: true,
+            ckanDateFormat: ckanDescriptor.ckanDateFormat,
             availableFileTypes: ckanDescriptor.ckanFileTypes,
-            csvDelimiterCharacterTypes: ckanDescriptor.csvDelimiterCharacterTypes,
-            csvQuoteCharacterTypes: ckanDescriptor.csvQuoteCharacterTypes,
             csvEncodingTypes: ckanDescriptor.csvEncodingTypes,
-            ckanDateFormat: ckanDescriptor.ckanDateFormat
+            csvQuoteCharacterTypes: ckanDescriptor.csvQuoteCharacterTypes,
+            csvDelimiterCharacterTypes: ckanDescriptor.csvDelimiterCharacterTypes
         }
     },
     created() {
@@ -225,13 +221,8 @@ export default defineComponent({
         const csvFieldsRequired = (value) => {
             return this.dataset.ckanFileType != 'CSV' || value
         }
-        const customValidators: ICustomValidatorMap = {
-            'ckan-fields-required': ckanFieldsRequired,
-            'csv-fields-required': csvFieldsRequired
-        }
-        const validationObject = {
-            dataset: createValidations('dataset', ckanDescriptor.validations.dataset, customValidators)
-        }
+        const customValidators: ICustomValidatorMap = { 'ckan-fields-required': ckanFieldsRequired, 'csv-fields-required': csvFieldsRequired }
+        const validationObject = { dataset: createValidations('dataset', ckanDescriptor.validations.dataset, customValidators) }
         return validationObject
     },
     methods: {}

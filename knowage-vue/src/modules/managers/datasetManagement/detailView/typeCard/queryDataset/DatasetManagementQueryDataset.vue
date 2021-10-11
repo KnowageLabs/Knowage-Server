@@ -70,19 +70,15 @@ import Card from 'primevue/card'
 
 export default defineComponent({
     components: { Card, Dropdown, KnValidationMessages, VCodeMirror },
-    props: {
-        selectedDataset: { type: Object as any },
-        dataSources: { type: Array as any },
-        scriptTypes: { type: Array as any }
-    },
+    props: { selectedDataset: { type: Object as any }, dataSources: { type: Array as any }, scriptTypes: { type: Array as any } },
     emits: ['touched'],
     data() {
         return {
-            v$: useValidate() as any,
             queryDescriptor,
             dataset: {} as any,
             codeMirror: {} as any,
             codeMirrorScript: {} as any,
+            v$: useValidate() as any,
             expandQueryCard: true,
             expandScriptCard: false,
             codemirrorOptions: {
@@ -121,20 +117,11 @@ export default defineComponent({
         const queryFieldsRequired = (value) => {
             return this.dataset.dsTypeCd != 'Query' || value
         }
-        const customValidators: ICustomValidatorMap = {
-            'query-fields-required': queryFieldsRequired
-        }
-        const validationObject = {
-            dataset: createValidations('dataset', queryDescriptor.validations.dataset, customValidators)
-        }
+        const customValidators: ICustomValidatorMap = { 'query-fields-required': queryFieldsRequired }
+        const validationObject = { dataset: createValidations('dataset', queryDescriptor.validations.dataset, customValidators) }
         return validationObject
     },
     methods: {
-        loadDataset() {
-            this.dataset = this.selectedDataset
-            this.dataset.query ? '' : (this.dataset.query = '')
-            this.dataset.queryScript ? '' : (this.dataset.queryScript = '')
-        },
         setupCodeMirror() {
             const interval = setInterval(() => {
                 if (!this.$refs.codeMirror || !this.$refs.codeMirrorScript) return
@@ -142,6 +129,11 @@ export default defineComponent({
                 this.codeMirrorScript = (this.$refs.codeMirrorScript as any).editor as any
                 clearInterval(interval)
             }, 200)
+        },
+        loadDataset() {
+            this.dataset = this.selectedDataset
+            this.dataset.query ? '' : (this.dataset.query = '')
+            this.dataset.queryScript ? '' : (this.dataset.queryScript = '')
         },
         loadScriptMode() {
             if (this.dataset.queryScriptLanguage) {

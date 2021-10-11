@@ -137,19 +137,17 @@ import Checkbox from 'primevue/checkbox'
 
 export default defineComponent({
     components: { Card, Dropdown, KnValidationMessages, RequestHeadersTable, JsonPathTable, Checkbox, JsonItemsHelpDialog, DirectAttributesHelpDialog, NgsiHelpDialog },
-    props: {
-        selectedDataset: { type: Object as any }
-    },
+    props: { selectedDataset: { type: Object as any } },
     emits: ['touched'],
     data() {
         return {
-            v$: useValidate() as any,
             restDescriptor,
             dataset: {} as any,
-            httpMethods: restDescriptor.httpMethods,
+            v$: useValidate() as any,
+            ngsiHelpVisible: false,
             jsonItemsHelpVisible: false,
             directAttributesHelpVisible: false,
-            ngsiHelpVisible: false
+            httpMethods: restDescriptor.httpMethods
         }
     },
     created() {
@@ -164,12 +162,8 @@ export default defineComponent({
         const restFieldsRequired = (value) => {
             return this.dataset.dsTypeCd != 'REST' || value
         }
-        const customValidators: ICustomValidatorMap = {
-            'rest-fields-required': restFieldsRequired
-        }
-        const validationObject = {
-            dataset: createValidations('dataset', restDescriptor.validations.dataset, customValidators)
-        }
+        const customValidators: ICustomValidatorMap = { 'rest-fields-required': restFieldsRequired }
+        const validationObject = { dataset: createValidations('dataset', restDescriptor.validations.dataset, customValidators) }
         return validationObject
     },
     methods: {}

@@ -134,25 +134,17 @@ export default defineComponent({
             await this.getDatasets()
         },
         //#endregion ================================================================================================
-        closeDetailConfirm() {
-            if (!this.touched) {
-                this.$router.push('/dataset-management')
-            } else {
-                this.$confirm.require({
-                    message: this.$t('common.toast.unsavedChangesMessage'),
-                    header: this.$t('common.toast.unsavedChangesHeader'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => {
-                        this.touched = false
-                        this.$router.push('/dataset-management')
-                    }
-                })
-            }
-        },
 
+        //#region ===================== List Functionalities ====================================================
         showDetail(event) {
             const path = event.item ? `/dataset-management/${event.item.id}` : '/dataset-management/new-dataset'
-
+            this.dirtyCheck(path)
+        },
+        closeDetailConfirm() {
+            const path = '/dataset-management'
+            this.dirtyCheck(path)
+        },
+        dirtyCheck(path) {
             if (!this.touched) {
                 this.$router.push(path)
             } else {
@@ -167,6 +159,7 @@ export default defineComponent({
                 })
             }
         },
+
         deleteDataset(event) {
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
@@ -191,6 +184,8 @@ export default defineComponent({
                 this.datasetToCloneId = event.item.id
             }, 200)
         },
+        //#endregion ================================================================================================
+
         onCreate(event) {
             this.touched = false
             this.getDatasets()

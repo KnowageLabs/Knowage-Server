@@ -85,17 +85,13 @@ import KnInputFile from '@/components/UI/KnInputFile.vue'
 
 export default defineComponent({
     components: { Card, KnValidationMessages, KnInputFile, Dropdown },
-    props: {
-        selectedDataset: { type: Object as any },
-        dataSources: { type: Array as any }
-    },
+    props: { selectedDataset: { type: Object as any }, dataSources: { type: Array as any } },
     emits: ['touched', 'fileUploaded'],
     data() {
         return {
             v$: useValidate() as any,
             fileDescriptor,
             dataset: {} as any,
-            expandParamsCard: true,
             triggerUpload: false,
             uploading: false
         }
@@ -112,34 +108,11 @@ export default defineComponent({
         const fileFieldsRequired = (value) => {
             return this.dataset.dsTypeCd != 'File' || value
         }
-        const customValidators: ICustomValidatorMap = {
-            'file-fields-required': fileFieldsRequired
-        }
-        const validationObject = {
-            dataset: createValidations('dataset', fileDescriptor.validations.dataset, customValidators)
-        }
+        const customValidators: ICustomValidatorMap = { 'file-fields-required': fileFieldsRequired }
+        const validationObject = { dataset: createValidations('dataset', fileDescriptor.validations.dataset, customValidators) }
         return validationObject
     },
     methods: {
-        resetFields() {
-            this.dataset.csvEncoding = 'UTF-8'
-            this.dataset.csvDelimiter = ','
-            this.dataset.dateFormat = 'dd/MM/yyyy'
-            this.dataset.timestampFormat = 'dd/MM/yyyy HH:mm:ss'
-            this.dataset.csvQuote = '"'
-            this.dataset.skipRows = 0
-            this.dataset.limitRows = null
-            this.dataset.xslSheetNumber = 1
-
-            if (this.dataset.fileType == 'XLS' || this.dataset.fileType == 'XLSX') {
-                this.dataset.limitRows = ''
-                this.dataset.csvDelimiter = ''
-                this.dataset.dateFormat = ''
-                this.dataset.timestampFormat = ''
-                this.dataset.csvQuote = ''
-            }
-        },
-
         setUploadType() {
             this.triggerUpload = false
             setTimeout(() => (this.triggerUpload = true), 200)
@@ -178,6 +151,24 @@ export default defineComponent({
                 })
                 .catch()
                 .finally(() => (this.triggerUpload = false))
+        },
+        resetFields() {
+            this.dataset.csvEncoding = 'UTF-8'
+            this.dataset.csvDelimiter = ','
+            this.dataset.dateFormat = 'dd/MM/yyyy'
+            this.dataset.timestampFormat = 'dd/MM/yyyy HH:mm:ss'
+            this.dataset.csvQuote = '"'
+            this.dataset.skipRows = 0
+            this.dataset.limitRows = null
+            this.dataset.xslSheetNumber = 1
+
+            if (this.dataset.fileType == 'XLS' || this.dataset.fileType == 'XLSX') {
+                this.dataset.limitRows = ''
+                this.dataset.csvDelimiter = ''
+                this.dataset.dateFormat = ''
+                this.dataset.timestampFormat = ''
+                this.dataset.csvQuote = ''
+            }
         },
 
         async downloadDatasetFile() {

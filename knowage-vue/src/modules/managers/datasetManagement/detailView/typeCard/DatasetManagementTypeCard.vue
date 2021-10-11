@@ -83,9 +83,9 @@ export default defineComponent({
     emits: ['touched', 'fileUploaded'],
     data() {
         return {
-            v$: useValidate() as any,
             typeTabDescriptor,
             dataset: {} as any,
+            v$: useValidate() as any,
             expandParamsCard: true
         }
     },
@@ -103,13 +103,6 @@ export default defineComponent({
         }
         return validationObject
     },
-    methods: {
-        changeTypeWarning() {
-            this.$store.commit('setInfo', { title: this.$t('documentExecution.registry.warning'), msg: this.$t('managers.datasetManagement.changeTypeMsg') })
-        },
-        filterDatasetTypes(item) {
-            return item.VALUE_CD != 'Custom' && item.VALUE_CD != 'Federated'
-        }
-    }
+    methods: {}
 })
 </script>

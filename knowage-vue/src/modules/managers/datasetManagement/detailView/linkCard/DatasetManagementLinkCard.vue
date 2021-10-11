@@ -100,7 +100,6 @@ export default defineComponent({
             //     .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error }))
             this.selectedTables = linkTabDescriptor.selectedTablesMock
         },
-        //#region ===================== Lists Functionality ======================
         removeSelectedTablesFromAvailable(availableTablesArray, selectedTablesArray) {
             let filteredSelected = selectedTablesArray.map((selectedTable) => {
                 return selectedTable.tableId
@@ -139,7 +138,6 @@ export default defineComponent({
             this.moveTableToList(table.tableId, this.selectedTables, this.availableTables)
             this.$emit('removeTables', this.tablesToRemove)
         }
-        //#endregion ====================================================================
     }
 })
 </script>

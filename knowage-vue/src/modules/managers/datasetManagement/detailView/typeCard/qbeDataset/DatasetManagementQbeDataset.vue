@@ -68,19 +68,13 @@ import Card from 'primevue/card'
 
 export default defineComponent({
     components: { Card, Dropdown, KnValidationMessages },
-    props: {
-        parentValid: { type: Boolean },
-        selectedDataset: { type: Object as any },
-        dataSources: { type: Array as any },
-        businessModels: { type: Array as any }
-    },
+    props: { parentValid: { type: Boolean }, selectedDataset: { type: Object as any }, dataSources: { type: Array as any }, businessModels: { type: Array as any } },
     emits: ['touched'],
     data() {
         return {
-            v$: useValidate() as any,
             qbeDescriptor,
             dataset: {} as any,
-            expandParamsCard: true
+            v$: useValidate() as any
         }
     },
     created() {
@@ -95,12 +89,8 @@ export default defineComponent({
         const qbeFieldsRequired = (value) => {
             return this.dataset.dsTypeCd != 'Qbe' || value
         }
-        const customValidators: ICustomValidatorMap = {
-            'qbe-fields-required': qbeFieldsRequired
-        }
-        const validationObject = {
-            dataset: createValidations('dataset', qbeDescriptor.validations.dataset, customValidators)
-        }
+        const customValidators: ICustomValidatorMap = { 'qbe-fields-required': qbeFieldsRequired }
+        const validationObject = { dataset: createValidations('dataset', qbeDescriptor.validations.dataset, customValidators) }
         return validationObject
     },
     methods: {

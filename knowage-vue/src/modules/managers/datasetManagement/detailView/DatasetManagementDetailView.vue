@@ -2,7 +2,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left>{{ selectedDataset.label }}</template>
         <template #right>
-            <Button :label="$t('managers.lovsManagement.preview')" class="p-button-text p-button-rounded p-button-plain" @click="openPreviewDialog" />
+            <Button :label="$t('managers.lovsManagement.preview')" class="p-button-text p-button-rounded p-button-plain" @click="showPreviewDialog = true" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="saveDataset" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('close')" />
         </template>
@@ -119,14 +119,14 @@ export default defineComponent({
     emits: ['close', 'touched', 'loadingOlderVersion', 'olderVersionLoaded', 'updated', 'created'],
     data() {
         return {
-            v$: useValidate() as any,
             detailViewDescriptor,
-            loading: false,
-            touched: false,
-            selectedDatasetVersions: [] as any,
+            v$: useValidate() as any,
             tablesToAdd: [] as any,
             tablesToRemove: [] as any,
             selectedDataset: {} as any,
+            selectedDatasetVersions: [] as any,
+            touched: false,
+            loading: false,
             loadingVersion: false,
             showPreviewDialog: false
         }
@@ -144,9 +144,7 @@ export default defineComponent({
     },
     validations() {},
     methods: {
-        openPreviewDialog() {
-            this.showPreviewDialog = true
-        },
+        //#region ===================== Get All Data ====================================================
         async getSelectedDataset() {
             axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.id}`)
@@ -173,6 +171,9 @@ export default defineComponent({
                 this.selectedDataset = { ...detailViewDescriptor.newDataset }
             }
         },
+        //#endregion ===============================================================================================
+
+        //#region ===================== Clone Functionality ====================================================
         cloneDatasetConfirm(datasetId) {
             this.$confirm.require({
                 icon: 'pi pi-exclamation-triangle',
@@ -192,18 +193,9 @@ export default defineComponent({
                 this.selectedDataset = { ...response.data[0] }
             })
         },
-        onAddLinkedTables(event) {
-            this.tablesToAdd = event
-            this.$emit('touched')
-        },
-        onRemoveLinkedTables(event) {
-            this.tablesToRemove = event
-            this.$emit('touched')
-        },
-        onOlderVersionLoaded(event) {
-            this.$emit('olderVersionLoaded')
-            this.selectedDataset = { ...event }
-        },
+        //#endregion ===============================================================================================
+
+        //#region ===================== Save/Update Dataset & Tags =================================================
         async saveDataset() {
             console.log(this.selectedDataset)
             let dsToSave = { ...this.selectedDataset } as any
@@ -302,6 +294,20 @@ export default defineComponent({
                 }
             }
             return array
+        },
+        //#endregion ===============================================================================================
+
+        onAddLinkedTables(event) {
+            this.tablesToAdd = event
+            this.$emit('touched')
+        },
+        onRemoveLinkedTables(event) {
+            this.tablesToRemove = event
+            this.$emit('touched')
+        },
+        onOlderVersionLoaded(event) {
+            this.$emit('olderVersionLoaded')
+            this.selectedDataset = { ...event }
         }
     }
 })

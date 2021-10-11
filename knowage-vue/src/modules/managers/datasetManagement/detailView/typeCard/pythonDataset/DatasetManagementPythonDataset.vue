@@ -89,11 +89,7 @@ import Column from 'primevue/column'
 
 export default defineComponent({
     components: { Card, Dropdown, VCodeMirror, RadioButton, KnValidationMessages, Dialog, DataTable, Column },
-    props: {
-        selectedDataset: { type: Object as any },
-        pythonEnvironments: { type: Array as any },
-        rEnvironments: { type: Array as any }
-    },
+    props: { selectedDataset: { type: Object as any }, pythonEnvironments: { type: Array as any }, rEnvironments: { type: Array as any } },
     emits: ['touched'],
     computed: {
         datasetTypes(): any {
@@ -106,13 +102,12 @@ export default defineComponent({
     },
     data() {
         return {
-            v$: useValidate() as any,
             pythonDescriptor,
+            v$: useValidate() as any,
             dataset: {} as any,
             codeMirrorPython: {} as any,
             pythonEnvLibs: null as any,
             libListVisible: false,
-            error: '',
             scriptOptions: {
                 theme: 'eclipse',
                 lineWrapping: true,
@@ -134,12 +129,8 @@ export default defineComponent({
         const pythonFieldsRequired = (value) => {
             return this.dataset.dsTypeCd != 'Python/R' || value
         }
-        const customValidators: ICustomValidatorMap = {
-            'python-fields-required': pythonFieldsRequired
-        }
-        const validationObject = {
-            dataset: createValidations('dataset', pythonDescriptor.validations.dataset, customValidators)
-        }
+        const customValidators: ICustomValidatorMap = { 'python-fields-required': pythonFieldsRequired }
+        const validationObject = { dataset: createValidations('dataset', pythonDescriptor.validations.dataset, customValidators) }
         return validationObject
     },
     methods: {
@@ -162,17 +153,19 @@ export default defineComponent({
                 return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/backendservices/widgets/python/libraries/${this.dataset.pythonEnvironment}`)
             }
         },
-        // THIS IS MOCKED ----------------------- CHANGE BEFORE RELEASE
         async checkEnvironment() {
             await axios
             this.getEnvLibraries()
                 .then((response) => {
                     console.log(response)
-                    // this.dataset.pythonDatasetType == 'python' ? (this.pythonEnvLibs = JSON.parse(pythonDescriptor.pythonResponse)) : (this.pythonEnvLibs = JSON.parse(pythonDescriptor.rResponse))
                     this.dataset.pythonDatasetType == 'python' ? (this.pythonEnvLibs = JSON.parse(response.data.result)) : (this.pythonEnvLibs = JSON.parse(response.data.result))
                     this.libListVisible = true
                 })
-                .catch()
+                .catch(() => {
+                    //CATCH SHOULD BE EMPTY REMOVE THIS ITS JUST A MOCK !!!!!!!
+                    this.dataset.pythonDatasetType == 'python' ? (this.pythonEnvLibs = JSON.parse(pythonDescriptor.pythonResponse)) : (this.pythonEnvLibs = JSON.parse(pythonDescriptor.rResponse))
+                    this.libListVisible = true
+                })
         }
     }
 })

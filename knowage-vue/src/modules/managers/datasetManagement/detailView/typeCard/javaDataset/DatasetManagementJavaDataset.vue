@@ -33,15 +33,13 @@ import Card from 'primevue/card'
 
 export default defineComponent({
     components: { Card, KnValidationMessages },
-    props: {
-        selectedDataset: { type: Object as any }
-    },
+    props: { selectedDataset: { type: Object as any } },
     emits: ['touched'],
     data() {
         return {
-            v$: useValidate() as any,
+            dataset: {} as any,
             javaDatasetDescriptor,
-            dataset: {} as any
+            v$: useValidate() as any
         }
     },
     created() {
@@ -56,12 +54,8 @@ export default defineComponent({
         const javaClassFieldRequired = (value) => {
             return this.dataset.dsTypeCd != 'Java Class' || value
         }
-        const customValidators: ICustomValidatorMap = {
-            'java-class-field-required': javaClassFieldRequired
-        }
-        const validationObject = {
-            dataset: createValidations('dataset', javaDatasetDescriptor.validations.dataset, customValidators)
-        }
+        const customValidators: ICustomValidatorMap = { 'java-class-field-required': javaClassFieldRequired }
+        const validationObject = { dataset: createValidations('dataset', javaDatasetDescriptor.validations.dataset, customValidators) }
         return validationObject
     },
     methods: {
