@@ -1,50 +1,58 @@
 <template>
     <div>
-        <Dialog :header="$t('managers.glossary.glossaryDefinition.details')" :breakpoints="glossaryDefinitionDialogDescriptor.dialog.breakpoints" :style="glossaryDefinitionDialogDescriptor.dialog.style" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
+        <Dialog
+            :header="$t('managers.glossary.glossaryDefinition.details')"
+            :breakpoints="glossaryDefinitionDialogDescriptor.dialog.breakpoints"
+            :style="glossaryDefinitionDialogDescriptor.dialog.style"
+            :visible="visible"
+            :modal="true"
+            class="glossaryDefinitionDetail p-fluid kn-dialog--toolbar--primary"
+            :closable="false"
+        >
             <div v-if="contentInfo && contentInfo.CONTENT_ID">
                 <ul>
                     <li>
                         <span>{{ $t('common.name') }}:</span>
-                        <p>{{ contentInfo.CONTENT_NM }}</p>
+                        <span>{{ contentInfo.CONTENT_NM }}</span>
                     </li>
                     <li>
                         <span>{{ $t('managers.glossary.common.code') }}:</span>
-                        <p>{{ contentInfo.CONTENT_CD }}</p>
+                        <span>{{ contentInfo.CONTENT_CD }}</span>
                     </li>
                     <li>
                         <span>{{ $t('common.description') }}:</span>
-                        <p>{{ contentInfo.CONTENT_DS }}</p>
+                        <span>{{ contentInfo.CONTENT_DS }}</span>
                     </li>
                 </ul>
             </div>
             <div v-else-if="contentInfo.WORD_ID">
                 <ul>
                     <li>
-                        <span>{{ $t('managers.glossary.common.word') }}:</span>
-                        <p>{{ contentInfo.WORD }}</p>
+                        <span>{{ $tc('managers.glossary.common.word', 1) }}:</span>
+                        <span>{{ contentInfo.WORD }}</span>
                     </li>
                     <li>
                         <span>{{ $t('managers.glossary.common.status') }}:</span>
-                        <p v-if="contentInfo.STATE_NM">{{ $t(glossaryDefinitionDescriptor.translation[contentInfo.STATE_NM]) }}</p>
+                        <span v-if="contentInfo.STATE_NM">{{ $t(glossaryDefinitionDescriptor.translation[contentInfo.STATE_NM]) }}</span>
                     </li>
                     <li>
                         <span>{{ $t('managers.glossary.common.category') }}:</span>
-                        <p v-if="contentInfo.CATEGORY_NM">{{ $t(glossaryDefinitionDescriptor.translation[contentInfo.CATEGORY_NM]) }}</p>
+                        <span v-if="contentInfo.CATEGORY_NM">{{ $t(glossaryDefinitionDescriptor.translation[contentInfo.CATEGORY_NM]) }}</span>
                     </li>
                     <li>
                         <span>{{ $t('common.description') }}:</span>
-                        <p>{{ contentInfo.DESCR }}</p>
+                        <span>{{ contentInfo.DESCR }}</span>
                     </li>
                     <li>
                         <span>{{ $t('managers.glossary.common.formula') }}:</span>
-                        <p>{{ contentInfo.FORMULA }}</p>
+                        <span>{{ contentInfo.FORMULA }}</span>
                     </li>
                     <li>
                         <span>{{ $t('managers.glossary.common.link') }}:</span>
                         <ul>
                             <li v-for="(link, index) in contentInfo.LINK" :key="index">
                                 <span>
-                                    <p>{{ link.WORD }}</p>
+                                    <span>{{ link.WORD }}</span>
                                     <a v-if="index != contentInfo.LINK.length - 1">-</a>
                                 </span>
                             </li>
@@ -54,8 +62,8 @@
                         <span>{{ $t('managers.glossary.common.attributes') }}:</span>
                         <ul>
                             <li v-for="(attribute, index) in contentInfo.SBI_GL_WORD_ATTR" :key="index">
-                                <p>{{ attribute.ATTRIBUTE_NM }}:</p>
-                                <p></p>
+                                <span>{{ attribute.ATTRIBUTE_NM }}:</span>
+                                <span></span>
                                 <ul>
                                     <li>{{ attribute.VALUE }}</li>
                                 </ul>
@@ -94,17 +102,39 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
-ul {
-    list-style: none;
-}
+<style lang="scss">
+.glossaryDefinitionDetail {
+    ul {
+        list-style: none;
+        padding: 0;
+        li {
+            height: 40px;
+            &:nth-child(even) {
+                background-color: $list-item-alternated-background-color;
+            }
+            span {
+                height: 40px;
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                &:first-child {
+                    font-weight: 600;
+                    padding-left: 10px;
+                    text-transform: capitalize;
+                    width: 150px;
+                    display: inline-flex;
+                    justify-content: flex-start;
+                    align-items: center;
+                }
+                &:nth-child(2) {
+                    flex: 1;
+                }
+            }
+        }
+    }
 
-span {
-    font-weight: 600;
-    text-transform: capitalize;
-}
-
-p {
-    margin: 1rem 0 1rem 1.5rem;
+    p {
+        margin: 1rem 0 1rem 1.5rem;
+    }
 }
 </style>

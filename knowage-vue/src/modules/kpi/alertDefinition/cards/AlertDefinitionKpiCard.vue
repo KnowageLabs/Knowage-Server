@@ -131,8 +131,8 @@ export default defineComponent({
         confirmLoadSelectedKpi(kpi) {
             if (this.alert.jsonOptions.actions.length > 0) {
                 this.$confirm.require({
-                    message: this.$t('Kpi editing in progres'),
-                    header: this.$t('Current kpi have associated action and will be removed. Are you sure?'),
+                    message: this.$t('kpi.alert.kpiEditingMessage'),
+                    header: this.$t('kpi.alert.kpiEditing'),
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
                         this.loadKpi(kpi.id, kpi.version)

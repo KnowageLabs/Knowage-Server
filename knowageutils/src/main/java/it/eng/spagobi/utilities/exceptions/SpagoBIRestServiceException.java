@@ -24,7 +24,7 @@ import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 public class SpagoBIRestServiceException extends SpagoBIRuntimeException {
 
 	private String serviceName;
-	private String localizationCode = "generic.error";
+	private String localizationCode = "100";
 	private String messageBundle;
 
 	public String getServiceName() {
@@ -48,6 +48,19 @@ public class SpagoBIRestServiceException extends SpagoBIRuntimeException {
 	public SpagoBIRestServiceException(Locale locale, Throwable ex) {
 		super(ex);
 		this.locale = locale;
+	}
+
+	/**
+	 * Builds a <code>SpagoBIRestServiceException</code>.
+	 *
+	 * @param locale        the locale
+	 * @param messageBundle the messageBundle
+	 * @param ex            the parent exception
+	 */
+	public SpagoBIRestServiceException(Locale locale, Throwable ex, String messageBundle) {
+		super(ex);
+		this.locale = locale;
+		this.messageBundle = messageBundle;
 	}
 
 	/**

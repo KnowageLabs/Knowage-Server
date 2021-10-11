@@ -1,5 +1,5 @@
 <template>
-    <div v-if="vComp.$invalid && vComp.$dirty" class="p-error p-grid">
+    <div v-if="vComp.$invalid && vComp.$dirty" class="p-error">
         <small class="p-col-12" v-for="(error, index) of vComp.$errors" :key="index">
             {{ $t(this.specificTranslateKeys && this.specificTranslateKeys[error.$validator] ? this.specificTranslateKeys[error.$validator] : `${this.defaultMessageTranslateBasePath}.${error.$validator}`, { ...error.$params, ...additionalTranslateParams }) }}
         </small>

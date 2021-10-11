@@ -1,29 +1,29 @@
 {
     "firstValue": {
-        "43": {
+        "DATE": {
             "class": "p-field p-col-8",
             "label": "managers.constraintManagement.dateValue"
         },
-        "44": {
+        "DECIMALS": {
             "class": "p-field p-col-8",
-            "label": "managers.constraintManagement.regexpValue"
+            "label": "managers.constraintManagement.decimalPlaces"
         },
-        "45": {
+        "MAXLENGTH": {
             "class": "p-field p-col-8",
             "label": "managers.constraintManagement.maxLenghtValue"
         },
-        "46": {
+        "MINLENGTH": {
+            "class": "p-field p-col-8",
+            "label": "managers.constraintManagement.minLenghtValue"
+        },
+        "RANGE": {
             "class": "p-field p-col-4",
             "label": "managers.constraintManagement.lowerRangeValue",
             "labelTwo": "managers.constraintManagement.higherRangeValue"
         },
-        "47": {
+        "REGEXP": {
             "class": "p-field p-col-8",
-            "label": "managers.constraintManagement.decimalPlaces"
-        },
-        "48": {
-            "class": "p-field p-col-8",
-            "label": "managers.constraintManagement.minLenghtValue"
+            "label": "managers.constraintManagement.regexpValue"
         }
     },
     "operation": {

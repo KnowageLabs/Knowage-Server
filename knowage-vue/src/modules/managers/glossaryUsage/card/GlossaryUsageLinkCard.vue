@@ -27,6 +27,7 @@
                     :rows="20"
                     responsiveLayout="stack"
                     breakpoint="960px"
+                    @rowSelect="onRowExpand"
                     @rowExpand="onRowExpand"
                 >
                     <template #header>

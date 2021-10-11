@@ -17,7 +17,7 @@
                         <div class="kn-list-item" data-test="list-item">
                             <div class="kn-list-item-text">
                                 <span>{{ slotProps.option.name }}</span>
-                                <span class="kn-list-item-text-secondary">{{ formatDate(slotProps.option.dateCreation) }}</span>
+                                <span class="kn-list-item-text-secondary" v-if="slotProps.option.category">{{ slotProps.option.category.valueDescription }}</span>
                             </div>
                             <Button icon="far fa-copy" class="p-button-text p-button-rounded p-button-plain" @click.stop="emitCopyKpi(slotProps.option.id, slotProps.option.version)" data-test="copy-button" />
                             <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteKpiConfirm(slotProps.option.id, slotProps.option.version)" data-test="delete-button" />
@@ -27,7 +27,7 @@
             </div>
 
             <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <router-view :cloneKpiId="cloneKpiId" :cloneKpiVersion="cloneKpiVersion" @touched="touched = true" @closed="onFormClose" @kpiUpdated="touched = false" @kpiCreated="onKpiCreated" @showDialog="displayInfoDialog" />
+                <router-view :cloneKpiId="cloneKpiId" :cloneKpiVersion="cloneKpiVersion" :showGuide="showGuide" @touched="touched = true" @closed="onFormClose" @kpiUpdated="reloadAndReroute" @kpiCreated="reloadAndReroute" @showDialog="displayInfoDialog" @onGuideClose="showGuide = false" />
             </div>
         </div>
     </div>
@@ -51,6 +51,7 @@ export default defineComponent({
             displayModal: false,
             hintVisible: true,
             cloneKpi: false,
+            showGuide: true,
             kpiList: [] as any,
             kpiToClone: {} as any,
             cloneKpiId: Number,
@@ -118,7 +119,7 @@ export default defineComponent({
             let fDate = new Date(date)
             return fDate.toLocaleString()
         },
-        async onKpiCreated(event) {
+        async reloadAndReroute(event) {
             await this.getKpiList()
 
             let kpiToLoad = this.kpiList.find((kpi) => {

@@ -104,7 +104,7 @@
 
 					if (item.conditionedView === 'news' && this.news && this.news.count.total > 0) return true
 
-					if (item.conditionedView === 'roleSelection' && this.user.roles.length > 1) return true
+					if (item.conditionedView === 'roleSelection' && this.user && this.user.roles.length > 1) return true
 
 					return false
 				} else {
@@ -161,6 +161,7 @@
 			},
 			findHomePage(dynMenu) {
 				let toRet = undefined
+
 				for (var idx in dynMenu) {
 					let menu = dynMenu[idx]
 
@@ -170,7 +171,7 @@
 				return toRet
 			}
 		},
-		mounted() {
+		async mounted() {
 			this.$store.commit('setLoading', true)
 			let localObject = { locale: this.$i18n.fallbackLocale.toString() }
 			if (Object.keys(this.locale).length !== 0) localObject = { locale: this.locale }
@@ -186,10 +187,16 @@
 				localObject.locale = splittedLocale[0] + '-' + splittedLocale[2].replaceAll('#', '') + '-' + splittedLocale[1]
 			}
 
-			axios
+			await axios
 				.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale))
 				.then((response) => {
-					this.technicalUserFunctionalities = response.data.technicalUserFunctionalities
+					this.technicalUserFunctionalities = response.data.technicalUserFunctionalities.filter((groupItem: any) => {
+						let childItems = groupItem.items.filter((x) => {
+							let currentHostName = this.licenses.hosts[0] ? this.licenses.hosts[0].hostName : undefined
+							return x.toBeLicensed && currentHostName && this.licenses[currentHostName] ? this.licenses.licenses[currentHostName].filter((lic) => lic.product === x.toBeLicensed).length == 1 : true
+						})
+						return childItems.length > 0
+					})
 
 					let responseCommonUserFunctionalities = response.data.commonUserFunctionalities
 					for (var index in responseCommonUserFunctionalities) {
@@ -207,7 +214,9 @@
 						this.allowedUserFunctionalities.push(item)
 					}
 
-					this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities
+					this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities.sort((el1, el2) => {
+						return el1.prog - el2.prog
+					})
 
 					if (this.dynamicUserFunctionalities.length > 0) {
 						let homePage = this.findHomePage(this.dynamicUserFunctionalities) || {}
@@ -228,16 +237,22 @@
 				downloads: 'downloads',
 				locale: 'locale',
 				news: 'news',
-				stateHomePage: 'homePage'
+				stateHomePage: 'homePage',
+				isEnterprise: 'isEnterprise',
+				licenses: 'licenses'
 			})
 		},
 		watch: {
-			download(newDownload, oldDownload) {
-				if (oldDownload != this.downloads) this.downloads = newDownload
+			downloads(newDownload, oldDownload) {
+				if (oldDownload != this.downloads) {
+					this.downloads = newDownload
+				}
 				this.updateNewsAndDownload()
 			},
 			news(newNews, oldNews) {
-				if (oldNews != this.news) this.news = newNews
+				if (oldNews != this.news) {
+					this.news = newNews
+				}
 				this.updateNewsAndDownload()
 			}
 		}

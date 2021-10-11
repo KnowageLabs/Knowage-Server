@@ -38,7 +38,7 @@ public class SecurityServiceFactory extends AbstractFactoryBean<SecurityServiceS
 	@Override
 	protected SecurityServiceService createInstance() throws Exception {
 		Context ctx = new InitialContext();
-		String serviceUrl = (String) ctx.lookup("java:/comp/env/service_url");
+		String serviceUrl = (String) ctx.lookup("java:comp/env/service_url");
 		QName SERVICE_QNAME = new QName("http://security.services.spagobi.eng.it/", "SecurityService");
 		URL serviceWsdlUrl = new URL(serviceUrl + "/services/SecurityService?wsdl");
 		SecurityService service = new SecurityService(serviceWsdlUrl, SERVICE_QNAME);

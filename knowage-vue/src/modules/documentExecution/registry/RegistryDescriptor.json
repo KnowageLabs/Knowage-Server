@@ -1,0 +1,19 @@
+{
+    "paginationLimit": 1000,
+    "paginationNumberOfItems": 15,
+    "styles": {
+        "buttonsContainer": {
+            "flex-grow": 0
+        },
+        "fieldsContainer": {
+            "flex-grow": 1
+        },
+        "filterContainer": {
+            "display": "flex"
+        },
+        "filtersButton": {
+            "height": "40px",
+            "width": "100px"
+        }
+    }
+}
