@@ -1153,23 +1153,23 @@
     "role": {
         "defaultRolePlaceholder": "No default role selected",
         "roleSelection": "Role Selection"
-    }
-		"workspaceManagement": {
-			"dataPreparation": {
-				"detail": "Detail",
-				"parametersConfiguration": "Parameters configuration",
-				"transformations": {
-					"addColumn": "Add column",
-					"deleteColumn": "Delete column",
-					"filter": "Filter",
-					"format": "Format",
-					"padding": "Padding",
-					"removeDuplicates": "Remove duplicates",
-					"removeNull": "Remove NULL",
-					"replace": "Replace",
-					"statistics": "Statistics",
-					"trim": "Trim"
-				}
+    },
+	"workspaceManagement": {
+		"dataPreparation": {
+			"detail": "Detail",
+			"parametersConfiguration": "Parameters configuration",
+			"transformations": {
+				"addColumn": "Add column",
+				"deleteColumn": "Delete column",
+				"filter": "Filter",
+				"format": "Format",
+				"padding": "Padding",
+				"removeDuplicates": "Remove duplicates",
+				"removeNull": "Remove NULL",
+				"replace": "Replace",
+				"statistics": "Statistics",
+				"trim": "Trim"
 			}
 		}
+	}
 }
