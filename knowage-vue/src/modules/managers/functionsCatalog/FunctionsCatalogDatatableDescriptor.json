@@ -1,4 +1,5 @@
 {
+    "breakpoint": "960px",
     "columns": [
         {
             "field": "label",
@@ -26,15 +27,13 @@
             "style": {}
         }
     ],
-    "globalFilterFields": ["label", "name", "type", "language", "owner"],
+    "responsiveLayout": "stack",
+    "rows": 15,
     "table": {
         "iconColumn": {
             "style": {
                 "text-align": "end"
             }
         }
-    },
-    "breakpoint": "960px",
-    "rows": 15,
-    "responsiveLayout": "stack"
+    }
 }

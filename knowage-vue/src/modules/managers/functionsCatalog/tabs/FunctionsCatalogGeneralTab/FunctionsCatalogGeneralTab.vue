@@ -1,5 +1,5 @@
 <template>
-    <form class="p-fluid p-ai-end p-formgrid p-grid p-m-2">
+    <form class="p-fluid p-ai-end p-formgrid p-grid p-m-2" v-if="selectedFunction">
         <div class="p-field p-col-6 p-mb-6">
             <span class="p-float-label">
                 <InputText id="name" class="kn-material-input" v-model.trim="selectedFunction.name" :disabled="readonly" />
@@ -29,17 +29,7 @@
         <div class="p-field p-col-12 p-mb-12">
             <span>
                 <label for="keywords" class="kn-material-input-label"> {{ $t('managers.functionsCatalog.keywords') }}</label>
-                <AutoComplete
-                    id="keywords"
-                    class="p-inputtext-sm"
-                    :multiple="true"
-                    v-model="selectedFunction.keywords"
-                    :suggestions="filteredKeywords"
-                    :disabled="readonly"
-                    :placeholder="$t('managers.functionsCatalog.keywords')"
-                    @keydown.enter="createKeywordChip"
-                    @complete="searchKeywords($event)"
-                />
+                <Chips id="keywords" class="p-inputtext-sm" :multiple="true" v-model="selectedFunction.tags" :disabled="readonly" :placeholder="$t('managers.functionsCatalog.keywords')" />
             </span>
         </div>
         <div class="p-field p-col-12 p-mb-12">
@@ -80,8 +70,8 @@
             <Accordion>
                 <AccordionTab :header="$t('managers.functionsCatalog.benchmarks')">
                     <label for="benchmarks" class="kn-material-input-label"> {{ $t('managers.functionsCatalog.benchmarks') }}</label>
-                    <Textarea v-if="showBenchmarksSource" v-model="selectedFunction.benchmarks" :style="functionsCatalogGeneralTabDescriptor.editor.style" :readonly="readonly"></Textarea>
-                    <Editor v-else id="benchmarks" :editorStyle="functionsCatalogGeneralTabDescriptor.editor.style" v-model="selectedFunction.benchmarks" :readonly="readonly" />
+                    <Textarea v-if="showBenchmarksSource" v-model="selectedFunction.benchmark" :style="functionsCatalogGeneralTabDescriptor.editor.style" :readonly="readonly"></Textarea>
+                    <Editor v-else id="benchmarks" :editorStyle="functionsCatalogGeneralTabDescriptor.editor.style" v-model="selectedFunction.benchmark" :readonly="readonly" />
                     <Button class="editor-switch-button" icon="pi pi-bars" :label="showBenchmarksSource ? 'wysiwyg' : $t('managers.functionsCatalog.source')" @click="showBenchmarksSource = !showBenchmarksSource"></Button>
                 </AccordionTab>
             </Accordion>
@@ -94,7 +84,7 @@ import { defineComponent } from 'vue'
 import { iFunction } from '../../FunctionsCatalog'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
-import AutoComplete from 'primevue/autocomplete'
+import Chips from 'primevue/chips'
 import Dropdown from 'primevue/dropdown'
 import Editor from 'primevue/editor'
 import functionsCatalogGeneralTabDescriptor from './FunctionsCatalogGeneralTabDescriptor.json'
@@ -102,14 +92,12 @@ import Textarea from 'primevue/textarea'
 
 export default defineComponent({
     name: 'function-catalog-general-tab',
-    components: { Accordion, AccordionTab, AutoComplete, Dropdown, Editor, Textarea },
+    components: { Accordion, AccordionTab, Chips, Dropdown, Editor, Textarea },
     props: { propFunction: { type: Object }, readonly: { type: Boolean }, functionTypes: { type: Array }, propKeywords: { type: Array } },
     data() {
         return {
             functionsCatalogGeneralTabDescriptor,
             selectedFunction: {} as iFunction,
-            keywords: [] as String[],
-            filteredKeywords: [] as String[],
             descriptionDirty: false,
             showDescriptionSource: false,
             showBenchmarksSource: false
@@ -117,37 +105,10 @@ export default defineComponent({
     },
     created() {
         this.loadFunction()
-        this.loadKeywords()
     },
     methods: {
         loadFunction() {
             this.selectedFunction = this.propFunction as iFunction
-        },
-        loadKeywords() {
-            this.keywords = this.propKeywords as String[]
-        },
-        searchKeywords(event) {
-            setTimeout(() => {
-                if (!event.query.trim().length) {
-                    this.filteredKeywords = [...this.keywords] as any[]
-                } else {
-                    this.filteredKeywords = this.keywords.filter((keyword: any) => {
-                        return keyword.toLowerCase().startsWith(event.query.toLowerCase())
-                    })
-                }
-            }, 250)
-        },
-        createKeywordChip(event: any) {
-            if (event.target.value) {
-                const tempWord = this.selectedFunction.keywords.find((el: any) => el === event.target.value)
-
-                if (!tempWord) {
-                    this.selectedFunction.keywords.push(event.target.value)
-                    const index = this.keywords.findIndex((el: any) => el === event.target.value)
-                    if (index === -1) this.keywords.push(event.target.value)
-                    event.target.value = ''
-                }
-            }
         }
     }
 })

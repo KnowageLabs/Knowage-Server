@@ -20,7 +20,7 @@
                     <Badge class="p-ml-2" severity="danger" v-if="invalidGeneral"></Badge>
                 </template>
 
-                <FunctionsCatalogGeneralTab :propFunction="selectedFunction" :readonly="readonly" :functionTypes="filteredFunctionTypes" :propKeywords="keywords"></FunctionsCatalogGeneralTab>
+                <FunctionsCatalogGeneralTab :propFunction="selectedFunction" :readonly="readonly" :functionTypes="filteredFunctionTypes"></FunctionsCatalogGeneralTab>
             </TabPanel>
             <TabPanel>
                 <template #header>
@@ -72,8 +72,7 @@ export default defineComponent({
     props: {
         visible: { type: Boolean },
         propFunction: { type: Object },
-        functionTypes: { type: Array },
-        keywords: { type: Array }
+        functionTypes: { type: Array }
     },
     emits: ['created', 'close'],
     data() {
@@ -136,8 +135,7 @@ export default defineComponent({
             return {
                 name: '',
                 description: '',
-                benchmarks: '',
-                keywords: [],
+                benchmark: '',
                 type: '',
                 label: '',
                 owner: (this.$store.state as any).user.userId,
@@ -146,8 +144,8 @@ export default defineComponent({
                 inputVariables: [] as iInputVariable[],
                 outputColumns: [] as iOutputColumn[],
                 onlineScript: '',
-                offlineScriptTrainModel: '',
-                offlineScriptUseModel: '',
+                offlineScriptTrain: '',
+                offlineScriptUse: '',
                 family: 'online'
             } as iFunction
         },
@@ -251,11 +249,11 @@ export default defineComponent({
                 valid = false
                 if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.onlineScript'))
             } else if (this.selectedFunction.family === 'offline') {
-                if (!this.selectedFunction.offlineScriptTrainModel) {
+                if (!this.selectedFunction.offlineScriptTrain) {
                     valid = false
                     if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.offlineTrainingScript'))
                 }
-                if (!this.selectedFunction.offlineScriptUseModel) {
+                if (!this.selectedFunction.offlineScriptUse) {
                     valid = false
                     if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.offlineUseScript'))
                 }
@@ -272,14 +270,11 @@ export default defineComponent({
                 return
             }
 
-            this.selectedFunction.functionFamily = this.selectedFunction.family
-            delete this.selectedFunction.family
-
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functions-catalog/insert'
+            let url = process.env.VUE_APP_API_PATH + '1.0/functioncatalog/new'
 
             if (this.selectedFunction.id) {
                 this.operation = 'update'
-                url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functions-catalog/update/${this.selectedFunction.id}`
+                url = process.env.VUE_APP_API_PATH + `1.0/functioncatalog`
             } else {
                 this.operation = 'create'
             }
@@ -309,7 +304,7 @@ export default defineComponent({
             if (this.operation === 'create') {
                 return axios.post(url, this.selectedFunction)
             } else {
-                return axios.put(url, this.selectedFunction)
+                return axios.patch(url, this.selectedFunction)
             }
         }
     }

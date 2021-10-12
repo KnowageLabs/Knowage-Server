@@ -1,13 +1,11 @@
 <template>
     <DataTable
-        :value="functions"
+        :value="filteredFunctions"
         :paginator="true"
         :rows="functionsCatalogDatatableDescriptor.rows"
         :loading="loading"
         class="p-datatable-sm kn-table"
         dataKey="id"
-        v-model:filters="filters"
-        :globalFilterFields="functionsCatalogDatatableDescriptor.globalFilterFields"
         :responsiveLayout="functionsCatalogDatatableDescriptor.responsiveLayout"
         :breakpoint="functionsCatalogDatatableDescriptor.breakpoint"
         @rowClick="$emit('selected', $event.data)"
@@ -24,7 +22,7 @@
             <div class="table-header p-d-flex">
                 <span class="p-input-icon-left p-mr-3 p-col-12">
                     <i class="pi pi-search" />
-                    <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" />
+                    <InputText class="kn-material-input" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchFunctions" />
                 </span>
             </div>
         </template>
@@ -45,7 +43,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iFunction } from './FunctionsCatalog'
-import { filterDefault } from '@/helpers/commons/filterHelper'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import functionsCatalogDatatableDescriptor from './FunctionsCatalogDatatableDescriptor.json'
@@ -63,7 +60,8 @@ export default defineComponent({
         return {
             functionsCatalogDatatableDescriptor,
             functions: [] as iFunction[],
-            filters: { global: [filterDefault] } as Object,
+            filteredFunctions: [] as iFunction[],
+            searchWord: '',
             loading: false
         }
     },
@@ -91,6 +89,8 @@ export default defineComponent({
         },
         loadFunctions() {
             this.functions = [...(this.items as iFunction[])]
+            this.filteredFunctions = [...this.functions]
+            this.searchWord = ''
         },
         previewFunction(tempFunction: iFunction) {
             this.$emit('preview', tempFunction)
@@ -105,6 +105,24 @@ export default defineComponent({
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => this.$emit('deleted', functionId)
             })
+        },
+        searchFunctions() {
+            setTimeout(() => {
+                if (!this.searchWord.trim().length) {
+                    this.filteredFunctions = [...this.functions] as any[]
+                } else {
+                    this.filteredFunctions = this.functions.filter((tempFunction: any) => {
+                        return (
+                            tempFunction.label.toLowerCase().includes(this.searchWord.toLowerCase()) ||
+                            tempFunction.name.toLowerCase().includes(this.searchWord.toLowerCase()) ||
+                            tempFunction.type.toLowerCase().includes(this.searchWord.toLowerCase()) ||
+                            tempFunction.language.toLowerCase().includes(this.searchWord.toLowerCase()) ||
+                            tempFunction.owner.toLowerCase().includes(this.searchWord.toLowerCase()) ||
+                            (tempFunction.tags && tempFunction.tags.includes(this.searchWord.toLowerCase()))
+                        )
+                    })
+                }
+            }, 250)
         }
     }
 })
