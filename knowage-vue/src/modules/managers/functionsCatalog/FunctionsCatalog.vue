@@ -77,9 +77,11 @@ export default defineComponent({
             this.loading = false
         },
         async loadFunctions(filterValue: string) {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functions-catalog/` + filterValue).then((response) => {
-                this.functions = response.data.functions
-                this.keywords = response.data.keywords
+            console.log("FILTER", filterValue)
+           // await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functions-catalog/` + filterValue)
+            await axios.get(process.env.VUE_APP_API_PATH + `1.0/functioncatalog/completelist`)
+            .then((response) => {
+                this.functions = response.data
             })
         },
         async loadFilters() {
