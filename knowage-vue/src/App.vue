@@ -121,75 +121,77 @@ export default defineComponent({
         newsDownloadHandler() {
             console.log('Starting connection to WebSocket Server')
 
-				WEB_SOCKET.update = function(event) {
-					if (event.data) {
-						let json = JSON.parse(event.data)
-						if (json.news) {
-							store.commit('setNews', json.news)
-						}
-						if (json.downloads) {
-							store.commit('setDownloads', json.downloads)
-						}
-					}
-				}
-				WEB_SOCKET.onopen = function(event) {
-					if (event.data) {
-						let json = JSON.parse(event.data)
-						if (json.news) {
-							store.commit('setNews', json.news)
-						}
-						if (json.downloads) {
-							store.commit('setDownloads', json.downloads)
-						}
-					}
-				}
-				WEB_SOCKET.onmessage = function(event) {
-					if (event.data) {
-						let json = JSON.parse(event.data)
-						if (json.news) {
-							store.commit('setNews', json.news)
-						}
-						if (json.downloads) {
-							store.commit('setDownloads', json.downloads)
-						}
-					}
-				}
-			}
-		},
-		computed: {
-			...mapState({
-				error: 'error',
-				info: 'info',
-				user: 'user',
-				loading: 'loading',
-				isEnterprise: 'isEnterprise'
-			})
-		},
-		watch: {
-			error(newError) {
-				this.$toast.add({
-					severity: 'error',
-					summary: this.$t(newError.title),
-					detail: this.$t(newError.msg),
-					life: typeof newError.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newError.duration
-				})
-			},
-			info(newInfo) {
-				this.$toast.add({
-					severity: 'info',
-					summary: this.$t(newInfo.title),
-					detail: this.$t(newInfo.msg),
-					life: typeof newInfo.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newInfo.duration
-				})
-			},
-			loading(newLoading) {
-				this.loading = newLoading
-			},
-			user() {
-				/* if (!oldUser.userId && oldUser != newUser)  */
-			}
-		}
-	})
+            WEB_SOCKET.update = function(event) {
+                if (event.data) {
+                    let json = JSON.parse(event.data)
+                    if (json.news) {
+                        store.commit('setNews', json.news)
+                    }
+                    if (json.downloads) {
+                        store.commit('setDownloads', json.downloads)
+                    }
+                }
+            }
+            WEB_SOCKET.onopen = function(event) {
+                if (event.data) {
+                    let json = JSON.parse(event.data)
+                    if (json.news) {
+                        store.commit('setNews', json.news)
+                    }
+                    if (json.downloads) {
+                        store.commit('setDownloads', json.downloads)
+                    }
+                }
+            }
+            WEB_SOCKET.onmessage = function(event) {
+                if (event.data) {
+                    let json = JSON.parse(event.data)
+                    if (json.news) {
+                        store.commit('setNews', json.news)
+                    }
+                    if (json.downloads) {
+                        store.commit('setDownloads', json.downloads)
+                    }
+                }
+            }
+        }
+    },
+    computed: {
+        ...mapState({
+            error: 'error',
+            info: 'info',
+            user: 'user',
+            loading: 'loading',
+            isEnterprise: 'isEnterprise'
+        })
+    },
+    watch: {
+        error(newError) {
+            this.$toast.add({
+                severity: 'error',
+                summary: newError.title ? this.$t(newError.title) : '',
+                detail: newError.msg ? this.$t(newError.msg) : '',
+                baseZIndex: typeof newError.baseZIndex == 'undefined' ? 0 : newError.baseZIndex,
+                life: typeof newError.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newError.duration
+            })
+        },
+        info(newInfo) {
+            this.$toast.add({
+                severity: 'info',
+                summary: newInfo.title ? this.$t(newInfo.title) : '',
+                detail: newInfo.msg ? this.$t(newInfo.msg) : '',
+                baseZIndex: typeof newInfo.baseZIndex == 'undefined' ? 0 : newInfo.baseZIndex,
+                life: typeof newInfo.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newInfo.duration
+            })
+        },
+        loading(newLoading) {
+            this.loading = newLoading
+        },
+        user() {
+            /* if (!oldUser.userId && oldUser != newUser)  */
+        }
+    }
+})
 </script>
 
 <style lang="scss">
