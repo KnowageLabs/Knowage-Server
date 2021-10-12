@@ -268,7 +268,7 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 			if(Array.isArray($scope.ngModel.dataset.dsId)){
 				return $scope.ngModel.dataset.dsId;
 			}else return new Array($scope.ngModel.dataset.dsId);
-		}else return false;
+		}else return [];
 	}
 
 };
