@@ -7,6 +7,9 @@
                 </template>
             </Toolbar>
         </template>
+         <Message class="p-m-2" v-if="deletedParams.length > 0"  severity="warn" :closable="false" :style="schedulerDocumentParameterDialogDescriptor.styles.message">
+            {{ deletedParamsMessage }}
+        </Message>
         <SchedulerDocumentParameterForm v-for="(parameter, index) in parameters" :key="index" class="p-m-3" :propParameter="parameter" :roles="roles" :formulas="formulas"></SchedulerDocumentParameterForm>
         <template #footer>
             <div class="p-d-flex p-flex-row p-jc-end">
@@ -21,19 +24,27 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import Dialog from 'primevue/dialog'
+import Message from 'primevue/message'
 import schedulerDocumentParameterDialogDescriptor from './SchedulerDocumentParameterDialogDescriptor.json'
 import SchedulerDocumentParameterForm from './SchedulerDocumentParameterForm.vue'
 
 export default defineComponent({
     name: 'scheduler-document-parameter-dialog',
-    components: { Dialog, SchedulerDocumentParameterForm },
-    props: { propParameters: { type: Array }, roles: { type: Array }, parameterWithValues: { type: Array } },
+    components: { Dialog, Message, SchedulerDocumentParameterForm },
+    props: { propParameters: { type: Array }, roles: { type: Array }, deletedParams: {type: Array}},
     emits: ['documentSelected', 'close', 'setParameters'],
     data() {
         return {
             schedulerDocumentParameterDialogDescriptor,
             parameters: [] as any[],
             formulas: [] as any[]
+        }
+    },
+    computed: {
+        deletedParamsMessage() {
+            let message = "";
+            this.deletedParams?.forEach((el: any) => message += el.name + ' ');
+            return message;
         }
     },
     watch: {
@@ -50,19 +61,6 @@ export default defineComponent({
             this.parameters = this.propParameters ? [...(this.propParameters as any[])] : []
             this.parameters.sort((a: any, b: any) => (a.name > b.name ? 1 : -1))
             console.log('LOADED PARAMETERS: ', this.parameters)
-            console.log('LOADED PARAMETERS WITH VALUES: ', this.parameterWithValues)
-            this.setParameterValues()
-        },
-        setParameterValues() {
-            if (this.parameterWithValues) {
-                this.parameters.forEach((el: any) => {
-                    const index = (this.parameterWithValues as any).findIndex((parameterWithValue: any) => el.name === parameterWithValue.name)
-                    if (index !== -1 && this.parameterWithValues) {
-                        el.value = (this.parameterWithValues as any)[index].value
-                    }
-                })
-            }
-            console.log('LOADED PARAMETERS FINAL: ', this.parameters)
         },
         closeDialog() {
             this.$emit('close')

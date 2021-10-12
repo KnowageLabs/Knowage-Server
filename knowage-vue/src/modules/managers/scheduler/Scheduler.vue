@@ -7,7 +7,7 @@
                         {{ $t('managers.scheduler.title') }}
                     </template>
                     <template #right>
-                        <FabButton icon="fas fa-plus" @click="showJobDetail(null, false)" />
+                        <FabButton icon="fas fa-plus" @click="showJobDetail(null, false)" data-test="progress-bar" />
                     </template>
                 </Toolbar>
                 <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
@@ -41,7 +41,7 @@ export default defineComponent({
         }
     },
     async created() {
-        await this.loadPage()
+      await this.loadPage()
 
         // console.log(this.$route.query.id)
     },
@@ -126,7 +126,9 @@ export default defineComponent({
                 // console.log(el.jobName + ' === ' + name)
                 return el.jobName === name
             }) as iPackage
-            this.selectedJob.edit = true
+            if (this.selectedJob) {
+                this.selectedJob.edit = true
+            }
             // console.log('TEMP JOB: ', this.selectedJob)
         },
         closeDetail() {

@@ -43,7 +43,7 @@
         </DataTable>
 
         <SchedulerDocumentsSelectionDialog :visible="documentsSelectionDialogVisible" :propFiles="files" @close="documentsSelectionDialogVisible = false" @documentSelected="onDocumentSelected"></SchedulerDocumentsSelectionDialog>
-        <SchedulerDocumentParameterDialog :visible="documentParameterDialogVisible" :propParameters="selectedDocument?.parameters" :parameterWithValues="parameterWithValues" :roles="roles" @close="closeDocumentParameterDialog" @setParameters="onParametersSet"></SchedulerDocumentParameterDialog>
+        <SchedulerDocumentParameterDialog :visible="documentParameterDialogVisible" :propParameters="selectedDocument?.parameters" :roles="roles" :deletedParams="deletedParams" @close="closeDocumentParameterDialog" @setParameters="onParametersSet"></SchedulerDocumentParameterDialog>
     </div>
 </template>
 
@@ -71,7 +71,8 @@ export default defineComponent({
             selectedDocument: null as any,
             documentParameterDialogVisible: false,
             roles: [] as any[],
-            parameterWithValues: [] as any[]
+            parameterWithValues: [] as any[],
+            deletedParams: [] as any[]
         }
     },
     watch: {
@@ -139,14 +140,33 @@ export default defineComponent({
             const tempDocument = await this.loadDocumentInfo(label)
             // console.log('TEMP DOCUMENT: ', tempDocument)
             this.roles = await this.loadSelectedDocumentRoles(tempDocument)
-            tempDocument.parameters = await this.loadSelectedDocumentParameters(label)
-            tempDocument.condensedParameters = this.updateCondensedParameters(tempDocument.parameters)
-            // console.log('TEMP DOCUMENT: ', tempDocument)
-            // console.log('ROLES: ', this.roles)
-            this.selectedDocument = { name: label, nameTitle: tempDocument.label, condensedParameters: tempDocument.condensedParameters, parameters: tempDocument.parameters }
+
+            // tempDocument.parameters = await this.loadSelectedDocumentParameters(label)
+            const tempParams = await this.loadSelectedDocumentParameters(label)
+            console.log(' >>> ORIGINAL PARAMETERS: ', document.parameters)
+            console.log(' >>> PARAMTERS FROM GET: ', tempParams)
+            this.updateDocumentParameters(document.parameters, tempParams)
+            tempDocument.condensedParameters = this.updateCondensedParameters(tempParams)
+             console.log('TEMP DOCUMENT: ', tempDocument)
+             console.log('ROLES: ', this.roles)
+            this.selectedDocument = { name: label, nameTitle: tempDocument.label, condensedParameters: tempDocument.condensedParameters, parameters: document.parameters }
             this.selectedDocument.parameters?.forEach((el: any) => (el.role = this.roles[0].role))
             if (pushToTable) this.documents.push(this.selectedDocument)
             this.$emit('loading', false)
+        },
+        updateDocumentParameters(documentParameters: any[], apiParameters: any[]) {
+            this.deletedParams = []
+            for (let i = 0; i < apiParameters.length; i++) {
+                const index = documentParameters.findIndex((el: any) => el.name === apiParameters[i].name)
+                if (index === -1) {
+                    this.deletedParams.push(documentParameters[i])
+                } else {
+                    console.log("API PARAMETER: ", apiParameters[i])
+                    console.log("DOCUMENT PARAMETER: ", documentParameters[index])
+                    documentParameters[index].id = apiParameters[i].id
+                    documentParameters[index].temporal = apiParameters[i].temporal
+                }
+            }
         },
         async loadDocumentInfo(documentLabel: string) {
             let tempDocument = null as any
@@ -198,6 +218,7 @@ export default defineComponent({
             this.documentParameterDialogVisible = true
         },
         closeDocumentParameterDialog() {
+            this.$emit('loading', false)
             this.selectedDocument = null
             this.documentParameterDialogVisible = false
         },

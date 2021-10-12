@@ -78,8 +78,10 @@ export default defineComponent({
             this.loadParameter()
             if (this.parameter.type === 'fixed') {
                 await this.loadParameterValues()
-                if (!this.parameterValues?.manualInput) {
-                    this.parameter.selectedValues = this.parameter.value.split(';')
+                if (!this.parameterValues?.manualInput && this.parameter.value) {
+                    this.parameter.manualInput = false
+                    this.parameter.selectedValues = this.parameter.value.split(';').map((el: any) => el.trim())
+                    console.log('SELECTED VALUES: ', this.parameter.selectedValues)
                 }
             }
         },
@@ -94,6 +96,10 @@ export default defineComponent({
         this.loadParameter()
         if (this.parameter.type === 'fixed') {
             await this.loadParameterValues()
+            if (!this.parameterValues?.manualInput && this.parameter.value) {
+                this.parameter.selectedValues = this.parameter.value.split(';').map((el: any) => el.trim())
+                console.log('SELECTED VALUES: ', this.parameter.selectedValues)
+            }
         }
         this.loadRoles()
         this.loadFormulas()
@@ -101,14 +107,14 @@ export default defineComponent({
     methods: {
         loadParameter() {
             this.parameter = this.propParameter as any
-            // console.log('PARAMETER', this.parameter)
+            console.log('PARAMETER', this.parameter)
         },
         async loadParameterValues() {
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.parameter?.documentLabel}/parameters/${this.parameter?.id}/values?role=${this.parameter?.role}`)
                 .then((response) => (this.parameterValues = response.data))
                 .catch(() => {})
-            // console.log('LOADED PARAMETER VALUES: ', this.parameterValues)
+            console.log('LOADED PARAMETER VALUES: ', this.parameterValues, ' FOR PARAMTER: ', this.parameter)
         },
         loadRoles() {
             this.rolesOptions = this.roles as any
