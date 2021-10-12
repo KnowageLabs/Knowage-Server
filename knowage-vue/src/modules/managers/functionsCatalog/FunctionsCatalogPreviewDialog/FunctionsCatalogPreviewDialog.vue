@@ -6,9 +6,8 @@
                     {{ $t('managers.functionsCatalog.previewTitle') }}
                 </template>
             </Toolbar>
-            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         </template>
-
+        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         <TabView v-model:activeIndex="active">
             <TabPanel>
                 <template #header>
@@ -124,6 +123,7 @@ export default defineComponent({
             return true
         },
         async createPreview() {
+            this.loading = true
             const postBody = { aggregations: this.buildPreviewAggregations(), parameters: this.buildPreviewParameters(), selections: {}, indexes: [] }
 
             await axios
@@ -137,6 +137,7 @@ export default defineComponent({
                     this.warningTitle = this.$t('managers.functionsCatalog.dataServiceErrorTitle')
                     this.warningMessage = this.$t('managers.functionsCatalog.dataServiceErrorMessage')
                 })
+            this.loading = false
         },
         setPreviewColumns(data: any) {
             this.previewColumns = []
