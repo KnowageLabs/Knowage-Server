@@ -13,6 +13,11 @@
                 <Column field="Type" :header="$t('importExport.catalogFunction.column.type')" :sortable="true">
                     <template #body="{data}"> {{ data.Type }} </template>
                 </Column>
+                <Column field="Type" :header="$t('importExport.catalogFunction.column.type')" :sortable="true">
+                    <template #body="{data}">
+                        <Dropdown class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" v-model="data.Type" :options="valueTypes" optionLabel="value" optionValue="name" @change="saveFieldsMetadata" />
+                    </template>
+                </Column>
                 <Column field="fieldType" :header="$t('managers.datasetManagement.fieldType')" :sortable="true">
                     <template #body="{data}">
                         <Dropdown class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" v-model="data.fieldType" :options="fieldMetadataTypes" optionLabel="value" optionValue="value" @change="saveFieldsMetadata" />
@@ -46,6 +51,7 @@ export default defineComponent({
         return {
             linkTabDescriptor,
             fieldMetadataTypes: linkTabDescriptor.fieldsMetadataTypes,
+            valueTypes: linkTabDescriptor.valueTypes,
             dataset: {} as any,
             fieldsMetadata: [] as any
         }
@@ -98,6 +104,13 @@ export default defineComponent({
                 for (let j = 0; j < this.dataset.meta.columns.length; j++) {
                     if (this.fieldsMetadata[i].column == this.dataset.meta.columns[j].column && this.dataset.meta.columns[j].pname == 'fieldType') {
                         this.dataset.meta.columns[j].pvalue = this.fieldsMetadata[i].fieldType
+                    }
+                }
+            }
+            for (let i = 0; i < this.fieldsMetadata.length; i++) {
+                for (let j = 0; j < this.dataset.meta.columns.length; j++) {
+                    if (this.fieldsMetadata[i].column == this.dataset.meta.columns[j].column && this.dataset.meta.columns[j].pname == 'Type') {
+                        this.dataset.meta.columns[j].pvalue = this.fieldsMetadata[i].Type
                     }
                 }
             }
