@@ -2,7 +2,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left>{{ selectedDataset.label }}</template>
         <template #right>
-            <Button :label="$t('managers.lovsManagement.preview')" class="p-button-text p-button-rounded p-button-plain" @click="showPreviewDialog = true" />
+            <Button :label="$t('managers.lovsManagement.preview')" class="p-button-text p-button-rounded p-button-plain" @click="showPreviewDialog = true" :disabled="buttonDisabled" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="saveDataset" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('close')" />
         </template>
@@ -208,9 +208,8 @@ export default defineComponent({
             dsToSave['restRequestHeaders'] && dsToSave['restRequestHeaders'].length > 0 ? (dsToSave.restRequestHeaders = JSON.stringify(restRequestHeadersTemp)) : (dsToSave.restRequestHeaders = '')
             dsToSave['restJsonPathAttributes'] && dsToSave['restJsonPathAttributes'].length > 0 ? (dsToSave.restJsonPathAttributes = JSON.stringify(dsToSave.restJsonPathAttributes)) : (dsToSave.restJsonPathAttributes = '')
             dsToSave.pars ? '' : (dsToSave.pars = [])
-            dsToSave.meta ? '' : (dsToSave.meta = [])
+            dsToSave.meta ? (dsToSave.meta = await this.manageDatasetFieldMetadata(dsToSave.meta)) : (dsToSave.meta = [])
             dsToSave.recalculateMetadata = true
-            dsToSave.meta = await this.manageDatasetFieldMetadata(dsToSave.meta)
 
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/`, dsToSave, {

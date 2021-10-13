@@ -11,9 +11,6 @@
                     <template #body="{data}"> {{ data.fieldAlias }} </template>
                 </Column>
                 <Column field="Type" :header="$t('importExport.catalogFunction.column.type')" :sortable="true">
-                    <template #body="{data}"> {{ data.Type }} </template>
-                </Column>
-                <Column field="Type" :header="$t('importExport.catalogFunction.column.type')" :sortable="true">
                     <template #body="{data}">
                         <Dropdown class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" v-model="data.Type" :options="valueTypes" optionLabel="value" optionValue="name" @change="saveFieldsMetadata" />
                     </template>
