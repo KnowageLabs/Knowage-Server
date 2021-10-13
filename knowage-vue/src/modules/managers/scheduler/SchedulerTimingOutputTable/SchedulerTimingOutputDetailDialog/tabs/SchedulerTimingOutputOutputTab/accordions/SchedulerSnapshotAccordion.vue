@@ -4,7 +4,7 @@
             <template #header>
                 <i class="fa fa-camera"></i>
                 <span class="p-m-2">{{ $t('managers.scheduler.saveAsSnapshot') }}</span>
-                <i v-if="document.invalid" class="pi pi-exclamation-triangle warning-icon" data-test="warning-icon"></i>
+                <i v-if="document.invalid?.invalidSnapshot" class="pi pi-exclamation-triangle warning-icon" data-test="warning-icon"></i>
             </template>
 
             <div v-if="document">
@@ -88,11 +88,15 @@ export default defineComponent({
     methods: {
         loadDocument() {
             this.document = this.propDocument
-            this.document.invalid = true
+            this.document.invalid = {}
+            this.validateDocument()
         },
         setNameValidation() {
             this.snapshotNameDirty = true
-            this.document.invalid = !this.document.snapshotname || this.document.snapshotname.length === 0
+            this.validateDocument()
+        },
+        validateDocument() {
+            this.document.invalid.invalidSnapshot = !this.document.snapshotname || this.document.snapshotname.length === 0
         }
     }
 })

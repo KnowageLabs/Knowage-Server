@@ -4,7 +4,7 @@
             <template #header>
                 <i class="fa fa-envelope"></i>
                 <span class="p-m-2">{{ $t('managers.scheduler.sendMail') }}</span>
-                <i v-if="document.invalid" class="pi pi-exclamation-triangle warning-icon" data-test="warning-icon"></i>
+                <i v-if="document.invalid?.invalidMail" class="pi pi-exclamation-triangle warning-icon" data-test="warning-icon"></i>
             </template>
 
             <div v-if="document">
@@ -262,7 +262,8 @@ export default defineComponent({
             if (!this.document.useFixedRecipients && !this.document.useExpression && !this.document.useDataset) {
                 this.document.useFixedRecipients = true
             }
-            this.document.invalid = true
+            this.document.invalid = {}
+            this.validateDocument(null)
         },
         loadDrivers() {
             const index = this.jobInfo?.documents.findIndex((el: any) => el.label === this.document.label)
@@ -328,7 +329,7 @@ export default defineComponent({
             console.log('EXPRESSION INVALID: ', expressionInvalid)
             console.log('DATASET INVALID: ', datasetInvalid)
 
-            this.document.invalid = subjectInvalid || mailTextInvalid || fixedRecipientsListInvalid || expressionInvalid || datasetInvalid
+            this.document.invalid.invalidMail = subjectInvalid || mailTextInvalid || fixedRecipientsListInvalid || expressionInvalid || datasetInvalid
         }
     }
 })

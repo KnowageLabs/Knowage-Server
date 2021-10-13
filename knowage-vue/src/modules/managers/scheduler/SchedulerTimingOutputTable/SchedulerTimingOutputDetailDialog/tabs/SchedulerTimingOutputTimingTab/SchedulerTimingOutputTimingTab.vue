@@ -3,8 +3,22 @@
     <div v-if="trigger" class="p-d-flex p-flex-row">
         <div class="kn-flex p-m-4">
             <span>
-                <label class="kn-material-input-label">{{ $t('managers.scheduler.timingDescription') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="trigger.triggerDescription" :maxLength="500" @input="setTriggerName" />
+                <label class="kn-material-input-label">{{ $t('managers.scheduler.timingDescription') }} *</label>
+                <InputText
+                    class="kn-material-input p-inputtext-sm"
+                    v-model="trigger.triggerDescription"
+                    :class="{
+                        'p-invalid': descriptionDirty && (!trigger.triggerDescription || trigger.triggerDescription.length === 0)
+                    }"
+                    :maxLength="500"
+                    @input="setTriggerName"
+                    @blur="descriptionDirty = true"
+                />
+                <div>
+                    <div v-show="descriptionDirty && (!trigger.triggerDescription || trigger.triggerDescription.length === 0)" class="p-error p-grid p-m-2">
+                        {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.timingDescription') }) }}
+                    </div>
+                </div>
             </span>
         </div>
         <div class="p-d-flex p-flex-row kn-flex p-jc-around p-ai-center">
@@ -145,7 +159,8 @@ export default defineComponent({
                 { value: 'dataset', label: this.$t('managers.scheduler.dataset') }
             ],
             selectedDataset: null,
-            validCron: true
+            validCron: true,
+            descriptionDirty: false
         }
     },
     watch: {
@@ -243,6 +258,7 @@ export default defineComponent({
             this.validCron = value
         },
         setTriggerName() {
+            this.descriptionDirty = true
             this.trigger.triggerName = this.trigger.triggerDescription.substring(0, 100)
         },
         setStartDate() {

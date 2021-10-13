@@ -4,7 +4,7 @@
             <template #header>
                 <i class="fa fa-file"></i>
                 <span class="p-m-2">{{ $t('managers.scheduler.saveAsDocument') }}</span>
-                <i v-if="document.invalid" class="pi pi-exclamation-triangle warning-icon" data-test="warning-icon"></i>
+                <i v-if="document.invalid?.invalidDocument" class="pi pi-exclamation-triangle warning-icon" data-test="warning-icon"></i>
             </template>
 
             <div v-if="document">
@@ -44,7 +44,7 @@
                     <Checkbox v-model="document.useFixedFolder" :binary="true" @change="validateDocument" />
                     <span class="p-ml-2">{{ $t('managers.scheduler.fixedFolder') }}</span>
                 </div>
-                <div v-if="document.useFixedFolder">
+                <div v-if="document.useFixedFolder" class="p-mt-4">
                     <SchedulerDocumentAccordionTree :propFunctionalities="functionalities" :propSelectedFolders="document.funct" @selected="setSelectedFolders"></SchedulerDocumentAccordionTree>
                 </div>
                 <div v-if="drivers.length > 0">
@@ -60,7 +60,7 @@
                         <span class="p-ml-2">{{ $t('managers.scheduler.folderFromDataset') }}</span>
                     </div>
                 </div>
-                <div v-if="document.useFolderDataset">
+                <div v-if="document.useFolderDataset" class="p-mt-2">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.datasetVerification') }} *</label>
                         <Dropdown
@@ -146,7 +146,8 @@ export default defineComponent({
     methods: {
         loadDocument() {
             this.document = this.propDocument
-            this.document.invalid = true
+             this.document.invalid = {}
+            this.validateDocument()
         },
         loadDrivers() {
             const index = this.jobInfo?.documents.findIndex((el: any) => el.label === this.document.label)
@@ -178,7 +179,7 @@ export default defineComponent({
             const datasetInvalid = this.document.useFolderDataset && (!this.document.datasetFolderLabel || this.document.datasetFolderLabel?.length === 0 || !this.document.datasetFolderParameter || this.document.datasetFolderParameter?.length === 0)
             const foldersInvalid = this.document.useFixedFolder && (!this.document.funct || this.document.funct?.length === 0)
 
-            this.document.invalid = nameInvalid || datasetInvalid || foldersInvalid
+            this.document.invalid.invalidDocument = nameInvalid || datasetInvalid || foldersInvalid
         }
     }
 })

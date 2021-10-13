@@ -8,7 +8,7 @@
                 <Button class="kn-button p-button-text p-button-rounded" @click="openDocumentsSelectionDialog">{{ $t('common.add') }}</Button>
             </template>
         </Toolbar>
-        <Message class="p-m-2" v-if="documents.length === 0" severity="info" :closable="false" :style="schedulerDocumentsTableDescriptor.styles.message">
+        <Message class="p-m-4" v-if="documents?.length === 0" severity="info" :closable="false" :style="schedulerDocumentsTableDescriptor.styles.message">
             {{ $t('managers.scheduler.noDocumentsInfo') }}
         </Message>
         <DataTable
@@ -17,7 +17,7 @@
             :value="documents"
             :paginator="true"
             :rows="schedulerDocumentsTableDescriptor.rows"
-            class="p-datatable-sm kn-table"
+            class="p-datatable-sm kn-table p-m-2"
             dataKey="name"
             :responsiveLayout="schedulerDocumentsTableDescriptor.responsiveLayout"
             :breakpoint="schedulerDocumentsTableDescriptor.breakpoint"
@@ -31,7 +31,7 @@
             <Column :header="$t('managers.scheduler.parameters')">
                 <template #body="slotProps">
                     <span v-if="checkIfParameterValuesSet(slotProps.data.parameters)">{{ slotProps.data.condensedParameters }}</span>
-                    <span v-else class="warning-icon"> <i class="pi pi-exclamation-triangle" :data-test="'warning-icon-' + slotProps.data.name"></i></span>
+                    <span v-else class="warning-icon" v-tooltip.top="$t('managers.scheduler.parametersWarningTooltip')"> <i class="pi pi-exclamation-triangle" :data-test="'warning-icon-' + slotProps.data.name"></i></span>
                     <Button v-if="slotProps.data.parameters?.length > 0" icon="pi pi-pencil" class="p-button-link" @click="openDocumentParameterDialog(slotProps.data)" />
                 </template>
                 ></Column
@@ -129,12 +129,14 @@ export default defineComponent({
             // console.log('SELECTED DOCUMENT: ', selectedDocument)
 
             this.documentsSelectionDialogVisible = false
-            this.loadDocumentData(selectedDocument, true)
+            if (selectedDocument) {
+                this.loadDocumentData(selectedDocument, true)
+            }
         },
         async loadDocumentData(document: any, pushToTable: boolean) {
             this.$emit('loading', true)
             // console.log('DOCUMENT FOR LOAD: ', document)
-            if (document.parametersTouched) {
+            if (document?.parametersTouched) {
                 return
             }
             const label = document.label ?? document.name
@@ -206,15 +208,16 @@ export default defineComponent({
             return tempParameters
         },
         updateCondensedParameters(parameters: any[]) {
+            console.log(' >>> PARAMTERS: ', parameters)
             let condensedParameters = ''
             for (let i = 0; i < parameters.length; i++) {
                 //console.log('parameters[i]', parameters[i])
                 if (parameters[i].type === 'fixed') {
-                    condensedParameters += ' ' + parameters[i].name + ' = ' + parameters[i].values
+                    condensedParameters += ' ' + parameters[i].name + ' = ' + parameters[i].value
                     condensedParameters += i === parameters.length - 1 ? ' ' : ' | '
                 }
             }
-            // console.log('CONDENSED PARAMETERS: ', condensedParameters)
+            console.log('CONDENSED PARAMETERS: ', condensedParameters)
             return condensedParameters
         },
         async openDocumentParameterDialog(document: any) {
@@ -230,6 +233,7 @@ export default defineComponent({
             this.documentParameterDialogVisible = false
         },
         onParametersSet(parameters: any[]) {
+            console.log('CAAAAAAAAAAAAAAALED')
             this.selectedDocument.parameters = parameters
             this.selectedDocument.condensedParameters = this.updateCondensedParameters(parameters)
             this.selectedDocument.parametersTouched = true

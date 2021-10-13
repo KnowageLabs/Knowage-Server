@@ -76,14 +76,7 @@ export default defineComponent({
     watch: {
         async propParameter() {
             this.loadParameter()
-            if (this.parameter.type === 'fixed') {
-                await this.loadParameterValues()
-                if (!this.parameterValues?.manualInput && this.parameter.value) {
-                    this.parameter.manualInput = false
-                    this.parameter.selectedValues = this.parameter.value.split(';').map((el: any) => el.trim())
-                    console.log('SELECTED VALUES: ', this.parameter.selectedValues)
-                }
-            }
+            await this.formatParameter()
         },
         roles() {
             this.loadRoles()
@@ -94,20 +87,31 @@ export default defineComponent({
     },
     async created() {
         this.loadParameter()
-        if (this.parameter.type === 'fixed') {
-            await this.loadParameterValues()
-            if (!this.parameterValues?.manualInput && this.parameter.value) {
-                this.parameter.selectedValues = this.parameter.value.split(';').map((el: any) => el.trim())
-                console.log('SELECTED VALUES: ', this.parameter.selectedValues)
-            }
-        }
+        await this.formatParameter()
+
         this.loadRoles()
         this.loadFormulas()
     },
     methods: {
         loadParameter() {
             this.parameter = this.propParameter as any
-            console.log('PARAMETER', this.parameter)
+            console.log(' >>>>>> PARAMETER', this.parameter)
+            console.log(' >>>>>>>> ROLES', this.roles)
+        },
+        async formatParameter() {
+            if (this.parameter.type === 'fixed') {
+                await this.loadParameterValues()
+                if (!this.parameterValues?.manualInput && this.parameter.value) {
+                    this.parameter.manualInput = false
+                    this.parameter.selectedValues = this.parameter.value.split(';').map((el: any) => el.trim())
+                    console.log('SELECTED VALUES: ', this.parameter.selectedValues)
+                }
+            } else if (this.parameter.type === 'loadAtRuntime' && this.parameter.value) {
+                const tempParameters = this.parameter.value.split('|')
+                console.log(' >>>>>>>>> TEMP PARMATERS: ', tempParameters)
+                //this.parameter.value = tempParameters[1]
+                console.log(' >>>>>>>>> SELECTED VALUE: ', this.parameter.value)
+            }
         },
         async loadParameterValues() {
             await axios

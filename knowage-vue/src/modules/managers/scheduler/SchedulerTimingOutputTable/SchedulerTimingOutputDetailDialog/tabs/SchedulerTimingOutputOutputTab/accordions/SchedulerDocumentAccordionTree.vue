@@ -1,7 +1,7 @@
 <template>
     <div>
         <label class="kn-material-input-label">{{ $t('managers.scheduler.documentsTree') }}</label>
-        <Tree :value="nodes" :expandedKeys="expandedKeys" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)">
+        <Tree class="p-mt-2" :value="nodes" :expandedKeys="expandedKeys" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)">
             <template #default="slotProps">
                 <i :class="slotProps.node.customIcon"></i>
                 <Checkbox class="p-ml-2" name="folders" v-model="selectedFolders" :value="slotProps.node.id" @change="emitSelectedFolders" />

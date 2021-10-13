@@ -8,7 +8,7 @@
                 <Button class="kn-button p-button-text p-button-rounded" @click="showTriggerDetail(null)">{{ $t('common.add') }}</Button>
             </template>
         </Toolbar>
-        <Message class="p-m-2" v-if="triggers.length === 0" severity="info" :closable="false" :style="schedulerTimingOutputTableDescriptor.styles.message">
+        <Message class="p-m-4" v-if="triggers.length === 0" severity="info" :closable="false" :style="schedulerTimingOutputTableDescriptor.styles.message">
             {{ $t('managers.scheduler.noTriggersInfo') }}
         </Message>
         <DataTable
@@ -17,7 +17,7 @@
             :value="triggers"
             :paginator="true"
             :rows="schedulerTimingOutputTableDescriptor.rows"
-            class="p-datatable-sm kn-table"
+            class="p-datatable-sm kn-table p-m-2"
             dataKey="triggerName"
             :responsiveLayout="schedulerTimingOutputTableDescriptor.responsiveLayout"
             :breakpoint="schedulerTimingOutputTableDescriptor.breakpoint"
@@ -242,9 +242,9 @@ export default defineComponent({
                 .catch(() => {})
             this.$emit('loading', false)
         },
-        onSave() {
+        onSave(trigger: any) {
             this.triggerDetailDialogVisible = false
-            this.$emit('triggerSaved')
+            this.triggers.push(trigger)
         }
     }
 })

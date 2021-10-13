@@ -7,7 +7,7 @@
                 </template>
             </Toolbar>
         </template>
-         <Message class="p-m-2" v-if="deletedParams.length > 0"  severity="warn" :closable="false" :style="schedulerDocumentParameterDialogDescriptor.styles.message">
+        <Message class="p-m-2" v-if="deletedParams.length > 0" severity="warn" :closable="false" :style="schedulerDocumentParameterDialogDescriptor.styles.message">
             {{ deletedParamsMessage }}
         </Message>
         <SchedulerDocumentParameterForm v-for="(parameter, index) in parameters" :key="index" class="p-m-3" :propParameter="parameter" :roles="roles" :formulas="formulas"></SchedulerDocumentParameterForm>
@@ -31,7 +31,7 @@ import SchedulerDocumentParameterForm from './SchedulerDocumentParameterForm.vue
 export default defineComponent({
     name: 'scheduler-document-parameter-dialog',
     components: { Dialog, Message, SchedulerDocumentParameterForm },
-    props: { propParameters: { type: Array }, roles: { type: Array }, deletedParams: {type: Array}},
+    props: { propParameters: { type: Array }, roles: { type: Array }, deletedParams: { type: Array } },
     emits: ['documentSelected', 'close', 'setParameters'],
     data() {
         return {
@@ -42,14 +42,17 @@ export default defineComponent({
     },
     computed: {
         deletedParamsMessage() {
-            let message = "";
-            this.deletedParams?.forEach((el: any) => message += el.name + ' ');
-            return message;
+            let message = ''
+            this.deletedParams?.forEach((el: any) => (message += el.name + ' '))
+            return message
         }
     },
     watch: {
-        propParameters() {
-            this.loadParameters()
+        propParameters: {
+            handler() {
+                this.loadParameters()
+            },
+            deep: true
         }
     },
     async created() {
@@ -58,11 +61,13 @@ export default defineComponent({
     },
     methods: {
         loadParameters() {
-            this.parameters = this.propParameters ? [...(this.propParameters as any[])] : []
+            this.parameters = []
+            this.propParameters?.forEach((el: any) => this.parameters.push({ ...el }))
             this.parameters.sort((a: any, b: any) => (a.name > b.name ? 1 : -1))
             console.log('LOADED PARAMETERS: ', this.parameters)
         },
         closeDialog() {
+            this.parameters = []
             this.$emit('close')
         },
         async loadFormulas() {

@@ -15,7 +15,7 @@
         </div>
         <div class="p-col-8 p-sm-8 p-md-9  p-p-0">
             <SchedulerTimingOutputDocumentDetail v-if="selectedDocument" :propDocument="selectedDocument" :functionalities="functionalities" :datasets="datasets" :jobInfo="jobInfo"></SchedulerTimingOutputDocumentDetail>
-            <Message v-else severity="info" :closable="false" :style="schedulerTimingOutputOutputTabDescriptor.styles.message">
+            <Message v-else class="p-m-4" severity="info" :closable="false" :style="schedulerTimingOutputOutputTabDescriptor.styles.message">
                 {{ $t('managers.scheduler.noDocumentSelected') }}
             </Message>
         </div>
@@ -57,7 +57,10 @@ export default defineComponent({
             this.selectedDocument = document
         },
         documentInvalid(document: any) {
-            return document.invalid || (!document.saveassnapshot && !document.saveasfile && !document.saveasdocument && !document.sendtojavaclass && !document.sendmail)
+            return (
+                (document.invalid && (document.invalid.invalidSnapshot || document.invalid.invalidFile || document.invalid.invalidJavaClass || document.invalid.invalidMail || document.invalid.invalidDocument)) ||
+                (!document.saveassnapshot && !document.saveasfile && !document.saveasdocument && !document.sendtojavaclass && !document.sendmail)
+            )
         }
     }
 })

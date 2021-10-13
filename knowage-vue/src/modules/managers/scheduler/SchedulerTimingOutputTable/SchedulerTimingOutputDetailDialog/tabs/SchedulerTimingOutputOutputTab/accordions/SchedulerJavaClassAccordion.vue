@@ -4,7 +4,7 @@
             <template #header>
                 <i class="fab fa-java"></i>
                 <span class="p-m-2">{{ $t('managers.scheduler.sendToJavaClass') }}</span>
-                <i v-if="document.invalid" class="pi pi-exclamation-triangle warning-icon" data-test="warning-icon"></i>
+                <i v-if="document.invalid.invalidJavaClass" class="pi pi-exclamation-triangle warning-icon" data-test="warning-icon"></i>
             </template>
 
             <div v-if="document">
@@ -67,11 +67,15 @@ export default defineComponent({
     methods: {
         loadDocument() {
             this.document = this.propDocument
-            this.document.invalid = true
+             this.document.invalid = {}
+            this.validateDocument()
         },
         setJavaClassPathValidation() {
             this.javaClassPathDirty = true
-            this.document.invalid = !this.document.javaclasspath || this.document.javaclasspath.length === 0
+            this.validateDocument()
+        },
+        validateDocument() {
+            this.document.invalid.invalidJavaClass = !this.document.javaclasspath || this.document.javaclasspath.length === 0
         }
     }
 })

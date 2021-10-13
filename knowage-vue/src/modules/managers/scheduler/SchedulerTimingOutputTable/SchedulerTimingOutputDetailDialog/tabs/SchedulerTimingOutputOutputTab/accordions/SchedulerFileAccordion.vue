@@ -4,7 +4,7 @@
             <template #header>
                 <i class="pi pi-file"></i>
                 <span class="p-m-2">{{ $t('managers.scheduler.saveAsFile') }}</span>
-                <i v-if="document.invalid" class="pi pi-exclamation-triangle warning-icon" data-test="warning-icon"></i>
+                <i v-if="document.invalid?.invalidFile" class="pi pi-exclamation-triangle warning-icon" data-test="warning-icon"></i>
             </template>
 
             <div v-if="document">
@@ -44,7 +44,7 @@
                     <Checkbox v-model="document.zipFileDocument" :binary="true" />
                     <span class="p-ml-2">{{ $t('managers.scheduler.zipFileDocument') }}</span>
                 </div>
-                <div class="kn-flex" v-if="document.zipFileDocument">
+                <div class="kn-flex p-mx-2 p-my-4" v-if="document.zipFileDocument">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.zipFileName') }}</label>
                         <InputText class="kn-material-input p-inputtext-sm" v-model="document.zipFileName" :maxLength="100" />
@@ -96,11 +96,15 @@ export default defineComponent({
     methods: {
         loadDocument() {
             this.document = this.propDocument
-            this.document.invalid = true
+             this.document.invalid = {}
+            this.validateDocument()
         },
         setFileNameValidation() {
             this.fileNameDirty = true
-            this.document.invalid = !this.document.fileName || this.document.fileName.length === 0
+            this.validateDocument()
+        },
+        validateDocument() {
+            this.document.invalid.invalidFile = !this.document.fileName || this.document.fileName.length === 0
         }
     }
 })

@@ -71,8 +71,17 @@ export default defineComponent({
     computed: {
         saveDisabled(): any {
             let disabled = false
+
+            if (!this.trigger.triggerDescription) {
+                return true
+            }
+
             for (let i = 0; i < this.trigger.documents?.length; i++) {
-                if (this.trigger.documents[i].invalid || (!this.trigger.documents[i].saveassnapshot && !this.trigger.documents[i].saveasfile && !this.trigger.documents[i].saveasdocument && !this.trigger.documents[i].sendtojavaclass && !this.trigger.documents[i].sendmail)) {
+                if (
+                    (this.trigger.documents[i].invalid &&
+                        (this.trigger.documents[i].invalid.invalidSnapshot || this.trigger.documents[i].invalid.invalidFile || this.trigger.documents[i].invalid.invalidJavaClass || this.trigger.documents[i].invalid.invalidMail || this.trigger.documents[i].invalid.invalidDocument)) ||
+                    (!this.trigger.documents[i].saveassnapshot && !this.trigger.documents[i].saveasfile && !this.trigger.documents[i].saveasdocument && !this.trigger.documents[i].sendtojavaclass && !this.trigger.documents[i].sendmail)
+                ) {
                     disabled = true
                     break
                 }
@@ -142,11 +151,11 @@ export default defineComponent({
                             title: this.$t('common.toast.' + this.operation + 'Title'),
                             msg: this.$t('common.toast.success')
                         })
-                        this.$emit('saved')
+                        this.$emit('saved', this.trigger)
                     }
                 })
                 .catch((response) => {
-                    //  console.log('RESPONSE IN CATCH: ', response)
+                    console.log('RESPONSE IN CATCH: ', response)
                     this.warningTitle = this.$t('common.toast.' + this.operation + 'Title')
                     this.warningVisible = true
                     this.warningMessage = this.getErrorMessage(response)
@@ -160,6 +169,12 @@ export default defineComponent({
                     return this.$t('managers.scheduler.missingDataSet')
                 case 'errors.trigger.missingDataSetParameter':
                     return this.$t('managers.scheduler.missingDataSetParameter')
+                case 'Empty name':
+                    return this.$t('managers.scheduler.emptyName')
+                case 'sbi.scheduler.schedulation.error.alreadyPresent':
+                    return this.$t('managers.scheduler.triggerAlreadyPresent')
+                case 'Error in setting java class ':
+                    return this.$t('managers.scheduler.javaClassError')
                 default:
                     return this.$t('managers.scheduler.savingTriggerGenericError')
             }
