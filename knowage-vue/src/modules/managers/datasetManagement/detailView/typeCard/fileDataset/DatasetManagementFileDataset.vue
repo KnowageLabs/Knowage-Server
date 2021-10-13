@@ -69,6 +69,21 @@
             </div>
         </template>
     </Card>
+
+    <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
+        <template #left>
+            <Button v-if="!expandTableCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = true" />
+            <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = false" />
+            {{ $t('managers.lovsManagement.preview') }}
+        </template>
+    </Toolbar>
+    <Card v-show="expandTableCard">
+        <template #content>
+            <DataTable :value="rows" class="p-datatable-sm kn-table" :loading="loading" responsiveLayout="scroll" :scrollable="true" scrollDirection="both" scrollHeight="800px" stripedRows rowHover style="width:70vw">
+                <Column v-for="col of columns" :field="col.name" :header="col.header" :key="col.dataIndex" class="kn-truncated" style="width:250px" />
+            </DataTable>
+        </template>
+    </Card>
 </template>
 
 <script lang="ts">
@@ -82,9 +97,11 @@ import fileDescriptor from './DatasetManagementFileDataset.json'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
 
 export default defineComponent({
-    components: { Card, KnValidationMessages, KnInputFile, Dropdown },
+    components: { Card, KnValidationMessages, KnInputFile, Dropdown, DataTable, Column },
     props: { selectedDataset: { type: Object as any }, dataSources: { type: Array as any } },
     emits: ['touched', 'fileUploaded'],
     data() {
@@ -93,15 +110,21 @@ export default defineComponent({
             fileDescriptor,
             dataset: {} as any,
             triggerUpload: false,
-            uploading: false
+            uploading: false,
+            loading: false,
+            expandTableCard: true,
+            columns: [] as any,
+            rows: [] as any
         }
     },
     created() {
         this.dataset = this.selectedDataset
+        this.dataset.id ? this.getPreviewData() : ''
     },
     watch: {
         selectedDataset() {
             this.dataset = this.selectedDataset
+            this.dataset.id ? this.getPreviewData() : ''
         }
     },
     validations() {
@@ -148,9 +171,12 @@ export default defineComponent({
                     this.dataset.fileName = response.data.fileName
                     this.$emit('fileUploaded')
                     this.resetFields()
+                    this.getPreviewData()
                 })
                 .catch()
-                .finally(() => (this.triggerUpload = false))
+                .finally(() => {
+                    this.triggerUpload = false
+                })
         },
         resetFields() {
             this.dataset.csvEncoding = 'UTF-8'
@@ -182,10 +208,7 @@ export default defineComponent({
                 .then(
                     (response) => {
                         if (response.data.errors) {
-                            this.$store.commit('setError', {
-                                title: this.$t('common.error.downloading'),
-                                msg: this.$t('common.error.errorCreatingPackage')
-                            })
+                            this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
                         } else {
                             this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
                             if (response.headers) {
@@ -202,6 +225,29 @@ export default defineComponent({
                             msg: this.$t(error)
                         })
                 )
+        },
+        async getPreviewData() {
+            this.loading = true
+            this.dataset.limit = 10
+            await axios
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, this.dataset, {
+                    headers: {
+                        Accept: 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json;charset=UTF-8',
+                        'X-Disable-Errors': true
+                    }
+                })
+                .then((response) => {
+                    let previewColumns = response.data.metaData.fields
+                    previewColumns.forEach((el: any) => {
+                        typeof el != 'object' ? '' : this.columns.push(el)
+                    })
+
+                    this.rows = response.data.rows
+                    console.log(this.rows)
+                })
+                .catch()
+                .finally(() => (this.loading = false))
         }
     }
 })
