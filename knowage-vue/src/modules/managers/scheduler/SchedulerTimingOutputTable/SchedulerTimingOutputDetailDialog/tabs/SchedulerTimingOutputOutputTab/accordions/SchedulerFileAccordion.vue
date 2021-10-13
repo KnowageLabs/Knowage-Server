@@ -4,7 +4,7 @@
             <template #header>
                 <i class="pi pi-file"></i>
                 <span class="p-m-2">{{ $t('managers.scheduler.saveAsFile') }}</span>
-                <i v-if="document.invalid" class="pi pi-exclamation-triangle warning-icon"></i>
+                <i v-if="document.invalid" class="pi pi-exclamation-triangle warning-icon" data-test="warning-icon"></i>
             </template>
 
             <div v-if="document">
@@ -15,15 +15,16 @@
                             class="kn-material-input  p-inputtext-sm"
                             v-model="document.fileName"
                             :class="{
-                                'p-invalid': snapshotNameDirty && (!document.fileName || document.fileName.length === 0)
+                                'p-invalid': fileNameDirty && (!document.fileName || document.fileName.length === 0)
                             }"
                             :maxLength="100"
+                            @input="setFileNameValidation"
                             @blur="setFileNameValidation"
                         />
                     </span>
                     <div class="p-d-flex p-flex-row p-jc-between">
                         <div>
-                            <div v-show="snapshotNameDirty && (!document.fileName || document.fileName.length === 0)" class="p-error p-grid p-m-2">
+                            <div v-show="fileNameDirty && (!document.fileName || document.fileName.length === 0)" class="p-error p-grid p-m-2">
                                 {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.fileName') }) }}
                             </div>
                         </div>
@@ -95,6 +96,7 @@ export default defineComponent({
     methods: {
         loadDocument() {
             this.document = this.propDocument
+            this.document.invalid = true
         },
         setFileNameValidation() {
             this.fileNameDirty = true

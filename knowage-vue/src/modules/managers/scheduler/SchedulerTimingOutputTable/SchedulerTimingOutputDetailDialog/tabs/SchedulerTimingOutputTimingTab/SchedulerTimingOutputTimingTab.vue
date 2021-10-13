@@ -9,7 +9,7 @@
         </div>
         <div class="p-d-flex p-flex-row kn-flex p-jc-around p-ai-center">
             <div v-for="type in schedulerTimingOutputTimingTabDescriptor.types" :key="type.value">
-                <RadioButton :id="type.value" name="type" :value="type.value" class="p-mr-2" v-model="triggerType" @change="formatFrequency"></RadioButton>
+                <RadioButton :id="type.value" name="type" :value="type.value" class="p-mr-2" v-model="triggerType" @change="formatFrequency" :data-test="'trigger-type-button-' + type.value"></RadioButton>
                 <label :for="type.value" class="kn-material-input-label">{{ $t(type.label) }}</label>
             </div>
         </div>
@@ -21,7 +21,7 @@
             </template>
         </Toolbar>
         <div v-if="triggerType !== 'scheduler'" class="p-d-flex p-flex-row p-m-4">
-            <div class="p-d-flex p-ai-center p-m-2">
+            <div class="p-d-flex p-ai-center p-m-2" data-test="single-execution-trigger">
                 <div class="p-col-5">
                     <span>
                         <label for="startDateTiming" class="kn-material-input-label">{{ $t('cron.startDate') + ':' }}</label>
@@ -51,7 +51,7 @@
                     </span>
                 </div>
             </div>
-            <div class="p-d-flex p-ai-center p-m-2" v-if="triggerType === 'event'">
+            <div class="p-d-flex p-ai-center p-m-2" v-if="triggerType === 'event'" data-test="event-trigger-endDate">
                 <div class="p-col-5">
                     <span>
                         <label for="endDateTiming" class="kn-material-input-label">{{ $t('cron.endDate') + ':' }}</label>
@@ -82,7 +82,7 @@
                 </div>
             </div>
         </div>
-        <div v-if="triggerType === 'event'" class="p-m-4">
+        <div v-if="triggerType === 'event'" class="p-m-4" data-test="event-trigger">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
                     {{ $t('managers.scheduler.details') }}
@@ -112,7 +112,7 @@
                 </div>
             </div>
         </div>
-        <div v-if="triggerType === 'scheduler'">
+        <div v-if="triggerType === 'scheduler'" data-test="scheduler-trigger">
             <KnCron v-if="trigger && trigger.frequency" :frequency="trigger.frequency" @cronValid="setCronValid($event)"></KnCron>
         </div>
     </div>

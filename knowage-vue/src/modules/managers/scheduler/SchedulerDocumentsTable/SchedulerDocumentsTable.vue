@@ -21,6 +21,7 @@
             dataKey="name"
             :responsiveLayout="schedulerDocumentsTableDescriptor.responsiveLayout"
             :breakpoint="schedulerDocumentsTableDescriptor.breakpoint"
+            data-test="documents-table"
         >
             <Column class="kn-truncated" :header="$t('common.name')" :style="schedulerDocumentsTableDescriptor.nameColumnStyle">
                 <template #body="slotProps">
@@ -30,8 +31,8 @@
             <Column :header="$t('managers.scheduler.parameters')">
                 <template #body="slotProps">
                     <span v-if="checkIfParameterValuesSet(slotProps.data.parameters)">{{ slotProps.data.condensedParameters }}</span>
-                    <span v-else class="warning-icon"> <i class="pi pi-exclamation-triangle"></i></span>
-                    <Button v-if="slotProps.data.parameters.length > 0" icon="pi pi-pencil" class="p-button-link" @click="openDocumentParameterDialog(slotProps.data)" />
+                    <span v-else class="warning-icon"> <i class="pi pi-exclamation-triangle" :data-test="'warning-icon-' + slotProps.data.name"></i></span>
+                    <Button v-if="slotProps.data.parameters?.length > 0" icon="pi pi-pencil" class="p-button-link" @click="openDocumentParameterDialog(slotProps.data)" />
                 </template>
                 ></Column
             >
@@ -145,26 +146,32 @@ export default defineComponent({
             const tempParams = await this.loadSelectedDocumentParameters(label)
             console.log(' >>> ORIGINAL PARAMETERS: ', document.parameters)
             console.log(' >>> PARAMTERS FROM GET: ', tempParams)
-            this.updateDocumentParameters(document.parameters, tempParams)
+
+            this.updateDocumentParameters(document, tempParams)
+
             tempDocument.condensedParameters = this.updateCondensedParameters(tempParams)
-             console.log('TEMP DOCUMENT: ', tempDocument)
-             console.log('ROLES: ', this.roles)
+            console.log('TEMP DOCUMENT: ', tempDocument)
+            console.log('ROLES: ', this.roles)
             this.selectedDocument = { name: label, nameTitle: tempDocument.label, condensedParameters: tempDocument.condensedParameters, parameters: document.parameters }
             this.selectedDocument.parameters?.forEach((el: any) => (el.role = this.roles[0].role))
             if (pushToTable) this.documents.push(this.selectedDocument)
             this.$emit('loading', false)
         },
-        updateDocumentParameters(documentParameters: any[], apiParameters: any[]) {
-            this.deletedParams = []
-            for (let i = 0; i < apiParameters.length; i++) {
-                const index = documentParameters.findIndex((el: any) => el.name === apiParameters[i].name)
-                if (index === -1) {
-                    this.deletedParams.push(documentParameters[i])
-                } else {
-                    console.log("API PARAMETER: ", apiParameters[i])
-                    console.log("DOCUMENT PARAMETER: ", documentParameters[index])
-                    documentParameters[index].id = apiParameters[i].id
-                    documentParameters[index].temporal = apiParameters[i].temporal
+        updateDocumentParameters(document: any, apiParameters: any[]) {
+            if (!document.parameters) {
+                document.parameters = apiParameters
+            } else {
+                this.deletedParams = []
+                for (let i = 0; i < apiParameters.length; i++) {
+                    const index = document.parameters?.findIndex((el: any) => el.name === apiParameters[i].name)
+                    if (index === -1) {
+                        this.deletedParams.push(document.parameters[i])
+                    } else {
+                        console.log('API PARAMETER: ', apiParameters[i])
+                        console.log('DOCUMENT PARAMETER: ', document.parameters[index])
+                        document.parameters[index].id = apiParameters[i].id
+                        document.parameters[index].temporal = apiParameters[i].temporal
+                    }
                 }
             }
         },

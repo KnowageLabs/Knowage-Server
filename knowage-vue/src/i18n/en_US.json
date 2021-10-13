@@ -1055,6 +1055,7 @@
         },
         "scheduler": {
             "attachedZip": "Attached zip name",
+            "mailMessage": "Mail message",
             "missingDataSet": "No DataSet was selected for document",
             "missingDataSetParameter": "No parameter for DataSet filtering was selected for document",
             "destinationFolder": "Destination folder",

@@ -2,11 +2,11 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left>{{ job.jobName }}</template>
         <template #right>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="saveJob" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveDisabled" @click="saveJob"  data-test="save-button" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeJobDetail" />
         </template>
     </Toolbar>
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
     <Card v-if="selectedJob" id="scheduler-detail-card" class="p-m-2">
         <template #content>
             <form v-if="job" class="p-fluid p-formgrid p-grid p-m-2">
@@ -22,6 +22,7 @@
                             maxLength="80"
                             :disabled="job.edit"
                             @blur="jobNameDirty = true"
+                            data-test="name-input"
                         />
                         <label for="jobName" class="kn-material-input-label"> {{ $t('managers.scheduler.packageName') }} *</label>
                     </span>
@@ -65,6 +66,11 @@ export default defineComponent({
     watch: {
         selectedJob() {
             this.loadJob()
+        }
+    },
+    computed: {
+        saveDisabled(): any {
+            return this.job && (this.job.documents?.length === 0 || (this.job.edit && this.job.triggers?.length === 0))
         }
     },
     created() {

@@ -4,7 +4,7 @@
             <template #header>
                 <i class="fa fa-file"></i>
                 <span class="p-m-2">{{ $t('managers.scheduler.saveAsDocument') }}</span>
-                <i v-if="document.invalid" class="pi pi-exclamation-triangle warning-icon"></i>
+                <i v-if="document.invalid" class="pi pi-exclamation-triangle warning-icon" data-test="warning-icon"></i>
             </template>
 
             <div v-if="document">
@@ -18,6 +18,7 @@
                                 'p-invalid': documentNameDirty && (!document.documentname || document.documentname.length === 0)
                             }"
                             :maxLength="100"
+                            @input="setNameValidation"
                             @blur="setNameValidation"
                         />
                     </span>
@@ -40,14 +41,14 @@
                     </div>
                 </div>
                 <div class="p-m-2">
-                    <Checkbox v-model="document.useFixedFolder" :binary="true" />
+                    <Checkbox v-model="document.useFixedFolder" :binary="true" @change="validateDocument" />
                     <span class="p-ml-2">{{ $t('managers.scheduler.fixedFolder') }}</span>
                 </div>
                 <div v-if="document.useFixedFolder">
                     <SchedulerDocumentAccordionTree :propFunctionalities="functionalities" :propSelectedFolders="document.funct" @selected="setSelectedFolders"></SchedulerDocumentAccordionTree>
                 </div>
                 <div v-if="drivers.length > 0">
-                    <Message class="p-m-2" severity="info" :closable="true" :style="schedulerTimingOutputOutputTab.styles.message">
+                    <Message class="p-m-2" severity="info" :closable="true" :style="schedulerTimingOutputOutputTabDescriptor.styles.message">
                         {{ $t('managers.scheduler.useFolderDatasetHint.partOne') }}
                         <ul class="dataset-hint-list">
                             <li>{{ $t('managers.scheduler.useFolderDatasetHint.partTwo') }}</li>
@@ -72,6 +73,7 @@
                                 'p-invalid': datasetFolderLabelDrity && (!document.datasetFolderLabel || document.datasetFolderLabel?.length === 0)
                             }"
                             @blur="setDataFolderLabelValidation"
+                            @change="setDataFolderLabelValidation"
                         />
                         <div v-if="datasetFolderLabelDrity && (!document.datasetFolderLabel || document.datasetFolderLabel?.length === 0)" class="p-error p-grid p-m-2">
                             {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.datasetVerification') }) }}
@@ -87,6 +89,7 @@
                                 'p-invalid': datasetFolderParameterDirty && (!document.datasetFolderParameter || document.datasetFolderParameter?.length === 0)
                             }"
                             @blur="setDataFolderParameterValidation"
+                            @change="setDataFolderParameterValidation"
                         />
                         <div v-if="datasetFolderParameterDirty && (!document.datasetFolderParameter || document.datasetFolderParameter?.length === 0)" class="p-error p-grid p-m-2">
                             {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.driver') }) }}
@@ -106,7 +109,7 @@ import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import Message from 'primevue/message'
 import SchedulerDocumentAccordionTree from './SchedulerDocumentAccordionTree.vue'
-import schedulerTimingOutputOutputTab from '../SchedulerTimingOutputOutputTabDescriptor.json'
+import schedulerTimingOutputOutputTabDescriptor from '../SchedulerTimingOutputOutputTabDescriptor.json'
 
 export default defineComponent({
     name: 'scheduler-document-accordion',
@@ -114,7 +117,7 @@ export default defineComponent({
     props: { propDocument: { type: Object }, functionalities: { type: Array }, datasets: { type: Array }, jobInfo: { type: Object } },
     data() {
         return {
-            schedulerTimingOutputOutputTab,
+            schedulerTimingOutputOutputTabDescriptor,
             document: null as any,
             drivers: [],
             documentNameDirty: false,
@@ -143,6 +146,7 @@ export default defineComponent({
     methods: {
         loadDocument() {
             this.document = this.propDocument
+            this.document.invalid = true
         },
         loadDrivers() {
             const index = this.jobInfo?.documents.findIndex((el: any) => el.label === this.document.label)
@@ -155,18 +159,26 @@ export default defineComponent({
         setSelectedFolders(folders: any[]) {
             console.log('SELECTED FOlDERS: ', folders)
             this.document.funct = folders
+            this.validateDocument()
         },
         setNameValidation() {
             this.documentNameDirty = true
-            this.document.invalid = !this.document.documentname || this.document.documentname.length === 0
+            this.validateDocument()
         },
         setDataFolderLabelValidation() {
             this.datasetFolderLabelDrity = true
-            this.document.invalid = !this.document.datasetFolderLabel || this.document.datasetFolderLabel?.length === 0
+            this.validateDocument()
         },
         setDataFolderParameterValidation() {
             this.datasetFolderParameterDirty = true
-            this.document.invalid = !this.document.datasetFolderParameter || this.document.datasetFolderParameter?.length === 0
+            this.validateDocument()
+        },
+        validateDocument() {
+            const nameInvalid = !this.document.documentname || this.document.documentname.length === 0
+            const datasetInvalid = this.document.useFolderDataset && (!this.document.datasetFolderLabel || this.document.datasetFolderLabel?.length === 0 || !this.document.datasetFolderParameter || this.document.datasetFolderParameter?.length === 0)
+            const foldersInvalid = this.document.useFixedFolder && (!this.document.funct || this.document.funct?.length === 0)
+
+            this.document.invalid = nameInvalid || datasetInvalid || foldersInvalid
         }
     }
 })

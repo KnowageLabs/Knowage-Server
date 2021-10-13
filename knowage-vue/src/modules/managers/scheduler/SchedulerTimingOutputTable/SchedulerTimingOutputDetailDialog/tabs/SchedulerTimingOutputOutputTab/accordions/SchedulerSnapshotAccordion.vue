@@ -4,7 +4,7 @@
             <template #header>
                 <i class="fa fa-camera"></i>
                 <span class="p-m-2">{{ $t('managers.scheduler.saveAsSnapshot') }}</span>
-                <i v-if="document.invalid" class="pi pi-exclamation-triangle warning-icon"></i>
+                <i v-if="document.invalid" class="pi pi-exclamation-triangle warning-icon" data-test="warning-icon"></i>
             </template>
 
             <div v-if="document">
@@ -19,6 +19,7 @@
                                     'p-invalid': snapshotNameDirty && (!document.snapshotname || document.snapshotname.length === 0)
                                 }"
                                 :maxLength="100"
+                                @input="setNameValidation"
                                 @blur="setNameValidation"
                             />
                         </span>
@@ -61,7 +62,7 @@ import AccordionTab from 'primevue/accordiontab'
 export default defineComponent({
     name: 'scheduler-snapshot-accordion',
     components: { Accordion, AccordionTab },
-    props: { propDocument: { type: Object }, functionalities: { type: Array }, datasets: { type: Array }, jobInfo: { type: Object } },
+    props: { propDocument: { type: Object } },
     data() {
         return {
             document: null as any,
@@ -87,6 +88,7 @@ export default defineComponent({
     methods: {
         loadDocument() {
             this.document = this.propDocument
+            this.document.invalid = true
         },
         setNameValidation() {
             this.snapshotNameDirty = true

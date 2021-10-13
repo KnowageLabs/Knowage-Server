@@ -3,32 +3,32 @@
     <div>
         <div class="p-d-flex p-flex-row p-m-2">
             <div class="p-m-2">
-                <Checkbox v-model="document.saveassnapshot" :binary="true" />
+                <Checkbox v-model="document.saveassnapshot" :binary="true" data-test="snapshot-checkbox" />
                 <span class="p-ml-2">{{ $t('managers.scheduler.saveAsSnapshot') }}</span>
             </div>
             <div class="p-m-2">
-                <Checkbox v-model="document.saveasfile" :binary="true" />
+                <Checkbox v-model="document.saveasfile" :binary="true" data-test="file-checkbox"  />
                 <span class="p-ml-2">{{ $t('managers.scheduler.saveAsFile') }}</span>
             </div>
             <div class="p-m-2">
-                <Checkbox v-model="document.saveasdocument" :binary="true" />
+                <Checkbox v-model="document.saveasdocument" :binary="true" data-test="document-checkbox" />
                 <span class="p-ml-2">{{ $t('managers.scheduler.saveAsDocument') }}</span>
             </div>
             <div class="p-m-2">
-                <Checkbox v-model="document.sendtojavaclass" :binary="true" />
+                <Checkbox v-model="document.sendtojavaclass" :binary="true" data-test="java-checkbox"  />
                 <span class="p-ml-2">{{ $t('managers.scheduler.sendToJavaClass') }}</span>
             </div>
             <div class="p-m-2">
-                <Checkbox v-model="document.sendmail" :binary="true" />
+                <Checkbox v-model="document.sendmail" :binary="true" data-test="mail-checkbox"  />
                 <span class="p-ml-2">{{ $t('managers.scheduler.sendMail') }}</span>
             </div>
         </div>
-        <div>
-            <SchedulerSnapshotAccordion v-if="document.saveassnapshot" class="p-m-3" :propDocument="document"></SchedulerSnapshotAccordion>
-            <SchedulerFileAccordion v-if="document.saveasfile" class="p-m-3" :propDocument="document"></SchedulerFileAccordion>
-            <SchedulerDocumentAccordion v-if="document.saveasdocument" class="p-m-3" :propDocument="document" :functionalities="functionalities" :datasets="datasets" :jobInfo="jobInfo"></SchedulerDocumentAccordion>
-            <SchedulerJavaClassAccordion v-if="document.sendtojavaclass" class="p-m-3" :propDocument="document"></SchedulerJavaClassAccordion>
-            <SchedulerMailAccordion v-if="document.sendmail" class="p-m-3" :propDocument="document" :datasets="datasets" :jobInfo="jobInfo"></SchedulerMailAccordion>
+        <div v-if="document">
+            <SchedulerSnapshotAccordion v-if="document.saveassnapshot" class="p-m-3" :propDocument="document" data-test="snapshot-accordion"></SchedulerSnapshotAccordion>
+            <SchedulerFileAccordion v-if="document.saveasfile" class="p-m-3" :propDocument="document" data-test="file-accordion"></SchedulerFileAccordion>
+            <SchedulerDocumentAccordion v-if="document.saveasdocument" class="p-m-3" :propDocument="document" :functionalities="functionalities" :datasets="datasets" :jobInfo="jobInfo" data-test="document-accordion"></SchedulerDocumentAccordion>
+            <SchedulerJavaClassAccordion v-if="document.sendtojavaclass" class="p-m-3" :propDocument="document" data-test="java-accordion"></SchedulerJavaClassAccordion>
+            <SchedulerMailAccordion v-if="document.sendmail" class="p-m-3" :propDocument="document" :datasets="datasets" :jobInfo="jobInfo" data-test="mail-accordion"></SchedulerMailAccordion>
         </div>
     </div>
 </template>
@@ -62,10 +62,7 @@ export default defineComponent({
     methods: {
         loadDocument() {
             this.document = this.propDocument
-            // console.log('LOADED DOCUMENT', this.document)
-        },
-        setDocumentValidation(invalid: boolean) {
-            console.log('DOCUMENT INVALID: ', invalid)
+            console.log('LOADED DOCUMENT', this.document)
         }
     }
 })

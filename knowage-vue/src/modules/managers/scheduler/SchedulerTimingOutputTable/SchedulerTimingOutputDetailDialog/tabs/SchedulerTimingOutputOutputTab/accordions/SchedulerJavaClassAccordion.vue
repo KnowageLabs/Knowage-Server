@@ -4,7 +4,7 @@
             <template #header>
                 <i class="fab fa-java"></i>
                 <span class="p-m-2">{{ $t('managers.scheduler.sendToJavaClass') }}</span>
-                <i v-if="document.invalid" class="pi pi-exclamation-triangle warning-icon"></i>
+                <i v-if="document.invalid" class="pi pi-exclamation-triangle warning-icon" data-test="warning-icon"></i>
             </template>
 
             <div v-if="document">
@@ -15,15 +15,16 @@
                             class="kn-material-input"
                             v-model="document.javaclasspath"
                             :class="{
-                                'p-invalid': snapshotNameDirty && (!document.javaclasspath || document.javaclasspath.length === 0)
+                                'p-invalid': javaClassPathDirty && (!document.javaclasspath || document.javaclasspath.length === 0)
                             }"
                             :maxLength="100"
+                            @input="setJavaClassPathValidation"
                             @blur="setJavaClassPathValidation"
                         />
                     </span>
                     <div class="p-d-flex p-flex-row p-jc-between">
                         <div>
-                            <div v-show="snapshotNameDirty && (!document.javaclasspath || document.javaclasspath.length === 0)" class="p-error p-grid p-m-2">
+                            <div v-show="javaClassPathDirty && (!document.javaclasspath || document.javaclasspath.length === 0)" class="p-error p-grid p-m-2">
                                 {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.classPath') }) }}
                             </div>
                         </div>
@@ -66,6 +67,7 @@ export default defineComponent({
     methods: {
         loadDocument() {
             this.document = this.propDocument
+            this.document.invalid = true
         },
         setJavaClassPathValidation() {
             this.javaClassPathDirty = true

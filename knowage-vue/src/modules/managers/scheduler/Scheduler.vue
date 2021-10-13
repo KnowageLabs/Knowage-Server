@@ -41,9 +41,7 @@ export default defineComponent({
         }
     },
     async created() {
-      await this.loadPage()
-
-        // console.log(this.$route.query.id)
+        await this.loadPage()
     },
     methods: {
         async loadPage() {
@@ -65,11 +63,8 @@ export default defineComponent({
                 }
             })
             this.loading = false
-            // console.log('LOADED JOBS: ', this.jobs)
         },
         showJobDetail(event: any, clone: boolean) {
-            // console.log('EVENT: ', event)
-            // console.log('CLONE: ', clone)
             this.selectedJob = event && event.item ? { ...event.item, edit: true } : { jobName: '', jobDescription: '', documents: [], triggers: [] }
 
             if (clone && this.selectedJob) {
@@ -81,7 +76,6 @@ export default defineComponent({
             this.$router.push(path)
         },
         async deleteJobConfirm(event: any) {
-            // console.log('DELETE EVENT: ', event.item)
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
                 header: this.$t('common.toast.deleteTitle'),
@@ -118,18 +112,15 @@ export default defineComponent({
             this.loading = false
         },
         async loadSelectJob(name: string) {
-            // console.log('SELECTED JOB NAME: ', name)
             await this.loadJobs()
-            // console.log('JOBS: ', this.jobs)
 
             this.selectedJob = this.jobs.find((el: iPackage) => {
-                // console.log(el.jobName + ' === ' + name)
                 return el.jobName === name
             }) as iPackage
+
             if (this.selectedJob) {
                 this.selectedJob.edit = true
             }
-            // console.log('TEMP JOB: ', this.selectedJob)
         },
         closeDetail() {
             this.selectedJob = null

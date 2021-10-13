@@ -8,7 +8,7 @@
                         <div class="kn-list-item-text">
                             <span>{{ slotProps.option.label }}</span>
                         </div>
-                        <i v-if="slotProps.option.invalid" class="pi pi-exclamation-triangle warning-icon"></i>
+                        <i v-if="documentInvalid(slotProps.option)" class="pi pi-exclamation-triangle warning-icon"></i>
                     </div>
                 </template>
             </Listbox>
@@ -55,6 +55,9 @@ export default defineComponent({
         showDocumentDetail(document: any) {
             console.log('DOCUMENT FOR DETAIL: ', document)
             this.selectedDocument = document
+        },
+        documentInvalid(document: any) {
+            return document.invalid || (!document.saveassnapshot && !document.saveasfile && !document.saveasdocument && !document.sendtojavaclass && !document.sendmail)
         }
     }
 })
