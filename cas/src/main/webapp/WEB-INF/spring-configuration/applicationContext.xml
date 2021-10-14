@@ -50,7 +50,7 @@
 	<bean id="validationAnnotationBeanPostProcessor" class="org.inspektr.common.ioc.validation.ValidationAnnotationBeanPostProcessor" />
 	
 	<jee:jndi-lookup id="hmacKeyJndi"
-   jndi-name="java:/comp/env/hmacKey"
+   jndi-name="java:comp/env/hmacKey"
    expected-type="java.lang.String" />
 	
 </beans>

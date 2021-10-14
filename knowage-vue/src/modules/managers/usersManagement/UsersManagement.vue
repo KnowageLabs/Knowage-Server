@@ -171,10 +171,12 @@ export default defineComponent({
             this.populateForms(this.userDetailsForm)
         },
         formatUserObject() {
-            delete this.userDetailsForm.passwordConfirm
-            this.userDetailsForm['defaultRoleId'] = this.defaultRole
-            this.userDetailsForm['sbiUserAttributeses'] = { ...this.attributesForm }
-            this.userDetailsForm['sbiExtUserRoleses'] = this.selectedRoles ? [...this.selectedRoles.map((selRole) => selRole.id)] : []
+            const userToSave = { ...this.userDetailsForm }
+            delete userToSave.passwordConfirm
+            userToSave['defaultRoleId'] = this.defaultRole
+            userToSave['sbiUserAttributeses'] = { ...this.attributesForm }
+            userToSave['sbiExtUserRoleses'] = this.selectedRoles ? [...this.selectedRoles.map((selRole) => selRole.id)] : []
+            return userToSave
         },
         onFormDirty() {
             this.dirty = true
@@ -198,8 +200,8 @@ export default defineComponent({
                 })
                 this.loading = false
             } else {
-                this.formatUserObject()
-                this.saveOrUpdateUser(this.userDetailsForm)
+                const userToSave = this.formatUserObject()
+                this.saveOrUpdateUser(userToSave)
                     .then((response) => {
                         this.afterSaveOrUpdate(response)
                     })

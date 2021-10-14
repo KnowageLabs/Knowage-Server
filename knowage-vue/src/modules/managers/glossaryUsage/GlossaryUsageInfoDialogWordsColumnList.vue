@@ -8,7 +8,7 @@
                 </li>
             </ul>
         </li>
-        <li>
+        <li v-if="columnField">
             <span>{{ $t('managers.glossary.glossaryUsage.column') }}:</span>
             <ul class="p-my-3">
                 <li v-for="(column, index) in columnList" :key="index">

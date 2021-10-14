@@ -35,6 +35,8 @@ public interface FunctionCatalogAPI {
 
 	List<FunctionDTO> find(String search);
 
+	List<FunctionCompleteDTO> findComplete(String search);
+
 	FunctionCompleteDTO get(UUID id);
 
 	FunctionCompleteDTO create(FunctionCompleteDTO functionCatalog);
