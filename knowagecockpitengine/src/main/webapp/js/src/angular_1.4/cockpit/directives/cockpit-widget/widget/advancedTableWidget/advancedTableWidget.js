@@ -925,7 +925,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var interactionType = $scope.interaction && ($scope.interaction.crossType || $scope.interaction.previewType || $scope.interaction.interactionType);
 			if($scope.cliccable==false) return;
 			if(node.colDef.measure=='MEASURE' && !$scope.ngModel.settings.modalSelectionColumn && !crossHasType('allRow')) return;
-			if(!crossHasType('icon') && (node.value == "" || node.value == undefined)) return;
+			if(!crossHasType('icon') && (node.value === "" || node.value == undefined)) return;
 			if(node.rowPinned) return;
 			if(crossHasType('icon') && node.colDef.crossIcon) {
 				$scope.doSelection(node.colDef.field || null, null, null, null, mapRow(node.data));

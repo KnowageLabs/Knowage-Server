@@ -79,4 +79,10 @@ public class FunctionCatalogAPIImplTest implements FunctionCatalogAPI {
 		// TODO Auto-generated method stub
 	}
 
+	@Override
+	public List<FunctionCompleteDTO> findComplete(String search) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

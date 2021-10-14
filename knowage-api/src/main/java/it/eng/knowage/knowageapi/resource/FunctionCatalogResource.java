@@ -69,6 +69,18 @@ public class FunctionCatalogResource {
 	}
 
 	@GET
+	@Path("/completelist")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public List<FunctionCompleteDTO> getAllComplete(@QueryParam("s") @DefaultValue("") String searchString) {
+		try {
+			return api.findComplete(searchString);
+		} catch (Exception e) {
+			LOGGER.error("Error looking for function matching \"" + searchString + "\"", e);
+			throw e;
+		}
+	}
+
+	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public FunctionCompleteDTO get(@PathParam("id") UUID id) {
@@ -86,6 +98,21 @@ public class FunctionCatalogResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response create(FunctionCompleteDTO function) {
 		try {
+			FunctionCompleteDTO create = api.create(function);
+			return Response.ok(create).build();
+		} catch (Exception e) {
+			LOGGER.error("Error getting function with id " + Optional.ofNullable(function).map(FunctionCompleteDTO::getName).orElse("null"), e);
+			return Response.serverError().build();
+		}
+	}
+
+	@POST
+	@Path("/new")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response createWithNewUuid(FunctionCompleteDTO function) {
+		try {
+			function.setId(UUID.randomUUID());
 			FunctionCompleteDTO create = api.create(function);
 			return Response.ok(create).build();
 		} catch (Exception e) {

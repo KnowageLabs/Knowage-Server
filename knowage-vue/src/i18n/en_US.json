@@ -154,6 +154,24 @@
         "weekdays": "Weekdays"
     },
     "documentExecution": {
+        "dossier": {
+            "deleteConfirm": "Are you sure you want to delete the selected activity?",
+            "deleteSuccess": "Successfully deleted selected activity.",
+            "deleteTitle": "Delete dossier activity",
+            "downloadMissingError": "Download ERROR - Document is missing",
+            "headers": {
+                "activity": "Activity Name",
+                "partial": "Partial",
+                "status": "State",
+                "total": "Total"
+            },
+            "hint": "No dossier activity has been launched yet. Set a name and click 'Launch activity' to create the first one.",
+            "launchActivity": "Launch Activity",
+            "launchedActivities": "Launched activities for this document",
+            "progressNotFinished": "Please wait until document will be generated.",
+            "saveSuccess": "Activity successfully saved!",
+            "title": "Dossier"
+        },
         "registry": {
             "clearFilters": "Clear",
             "column": "Column/s",
@@ -599,7 +617,7 @@
                 "driver": "Driver",
                 "errorTitle": "Connection KO",
                 "jndi": "JNDI Name",
-                "jndiInfo": "For the data source configuration you should specify the connection pool configured inside the application server. For example: Tomcat: java:comp/env/jdbc/foodmart; JBoss: jdbc/foodmart.",
+                "jndiInfo": "For the data source configuration you should specify the connection pool configured inside the application server. For example: java:comp/env/jdbc/foodmart",
                 "multischema": "Multischema",
                 "notOwner": "You are not the owner of this data source.",
                 "pwd": "Password (Only If Changed)",
@@ -1120,7 +1138,7 @@
             "ImportExport": "Import/Export",
             "ServerManager": "Server manager"
         },
-        "importExport": "Import/Export",
+        "importExport": "Artifacts",
         "modelCatalogResourceManagement": "Models manager",
         "resourceManagement": "Resource manager"
     },

@@ -23,6 +23,8 @@ public interface ICatalogFunctionDAO extends ISpagoBIDao {
 
 	public SbiCatalogFunction getCatalogFunctionByUuid(String uuid);
 
+	public String getCatalogFunctionScriptByUuidAndOrganization(String uuid, String organization);
+
 	public SbiCatalogFunction getCatalogFunctionByLabel(String label);
 
 	/**

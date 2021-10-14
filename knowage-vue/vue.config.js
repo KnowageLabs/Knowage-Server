@@ -5,6 +5,10 @@ module.exports = {
     outputDir: './src/main/webapp',
     devServer: {
         proxy: {
+            '^/knowagedossierengine/api': {
+                target: process.env.VUE_APP_HOST_URL,
+                changeOrigin: true
+            },
             '^/knowageqbeengine/': {
                 target: process.env.VUE_APP_HOST_URL,
                 changeOrigin: true

@@ -1,5 +1,5 @@
 <template>
-    <Card>
+    <Card class="p-m-2 kn-card no-padding">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #right>
