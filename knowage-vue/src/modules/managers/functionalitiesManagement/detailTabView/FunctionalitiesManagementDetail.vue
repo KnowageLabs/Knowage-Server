@@ -215,7 +215,9 @@ export default defineComponent({
             })
         },
         async loadParentFolder() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/getParent/${this.parentId}`).then((response) => (this.parentFolder = response.data))
+            if (this.parentId) {
+                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/getParent/${this.parentId}`).then((response) => (this.parentFolder = response.data))
+            }
         },
         roleIsChecked(role: any, roles: [], roleField: string) {
             if (roles) {
