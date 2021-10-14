@@ -85,6 +85,8 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 
 	public List<SbiGlContents> loadContentsByName(String contentNM);
 
+	public List<SbiGlContents> loadContentsByNameGlossaryId(String contentNM, Integer glossaryId);
+
 	public List<SbiGlContents> loadContentsByGlossaryId(Integer glossaryId);
 
 	public List<SbiGlContents> listContents();

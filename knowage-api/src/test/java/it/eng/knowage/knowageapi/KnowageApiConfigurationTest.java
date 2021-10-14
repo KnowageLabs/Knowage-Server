@@ -69,6 +69,15 @@ public class KnowageApiConfigurationTest {
 		return factoryBean;
 	}
 
+	@Bean("knowage-config")
+	public LocalEntityManagerFactoryBean entityManagerFactoryForWidgetConfig() {
+		Map<String, Object> properties = getEntityManagerFactoriesProperties();
+		LocalEntityManagerFactoryBean factoryBean = new LocalEntityManagerFactoryBean();
+		factoryBean.setPersistenceUnitName("knowage-config");
+		factoryBean.setJpaPropertyMap(properties);
+		return factoryBean;
+	}
+
 	@Primary
 	@Bean
 	public PlatformTransactionManager mainTransactionManager() {
