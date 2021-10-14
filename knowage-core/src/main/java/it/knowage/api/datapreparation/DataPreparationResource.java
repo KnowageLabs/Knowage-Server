@@ -114,7 +114,7 @@ public class DataPreparationResource extends AbstractDataSetResource {
 			parameters.put(change2);
 
 			transformationsConfig.put("parameters", parameters);
-			transformationsMock.put("config", parameters);
+			transformationsMock.put("config", transformationsConfig);
 
 			configs.put(transformationsMock);
 
