@@ -55,6 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			sbiModule_restServices,
 			sbiModule_dateServices,
 			sbiModule_config,
+			sbiModule_messaging,
 			cockpitModule_analyticalDrivers,
 			cockpitModule_datasetServices,
 			cockpitModule_widgetConfigurator,
@@ -136,6 +137,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if(!$scope.selectedDate.startDate || !$scope.selectedDate.endDate) return;
 				var from = $scope.selectedDate.startDate.getTime();
 				var to = $scope.selectedDate.endDate.getTime();
+				if(from > to){
+ 					   sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.cockpit.widget.selector.daterange"));		 
+				return;
+				}
+				
 				var values = $scope.ngModel.activeValues || $scope.datasetRecords.rows;
 				for(var k in values){
 					var value = values[k].column_1 || values[k];

@@ -36,6 +36,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import it.eng.knowage.knowageapi.context.BusinessRequestContext;
+import it.eng.knowage.knowageapi.error.ImpossibleToCreateFolderException;
 import it.eng.knowage.knowageapi.error.ImpossibleToReadFolderListException;
 import it.eng.knowage.knowageapi.error.KnowageBusinessException;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
@@ -90,23 +91,24 @@ public class FoldersResource {
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createFolder(CreateFolderDTO dto) throws KnowageBusinessException {
-		Response response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		try {
 			String path = resourceManagerAPIservice.getFolderByKey(dto.getKey(), profile);
 			if (path != null) {
 				java.nio.file.Path completePath = Paths.get(path).resolve(dto.getFolderName());
 				boolean create = resourceManagerAPIservice.createFolder(completePath.toString(), profile);
-				if (create) {
-					response = Response.status(Response.Status.OK).build();
+				if (!create) {
+					throw new ImpossibleToCreateFolderException("");
 				}
+				return Response.status(Response.Status.OK).build();
+			} else {
+				throw new ImpossibleToReadFolderListException("");
 			}
 		} catch (KnowageBusinessException e) {
 			throw new KnowageBusinessException(e, businessContext.getLocale());
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e);
 		}
-		return response;
 	}
 
 	@POST
@@ -137,22 +139,24 @@ public class FoldersResource {
 	@Path("/update")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateName(CreateFolderDTO dto) throws KnowageBusinessException {
-		Response response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		try {
 			String path = resourceManagerAPIservice.getFolderByKey(dto.getKey(), profile);
 			if (path != null) {
 				java.nio.file.Path completePath = Paths.get(path);
-				boolean create = resourceManagerAPIservice.updateFolder(completePath, dto.getFolderName(), profile);
-				if (create)
-					response = Response.status(Response.Status.OK).build();
+				boolean update = resourceManagerAPIservice.updateFolder(completePath, dto.getFolderName(), profile);
+				if (!update) {
+					throw new ImpossibleToCreateFolderException("");
+				}
+				return Response.status(Response.Status.OK).build();
+			} else {
+				throw new ImpossibleToReadFolderListException("");
 			}
 		} catch (KnowageBusinessException e) {
 			throw new KnowageBusinessException(e, businessContext.getLocale());
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e);
 		}
-		return response;
 	}
 
 	// Common methods
@@ -161,21 +165,26 @@ public class FoldersResource {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response delete(DownloadFolderDTO dto) throws KnowageBusinessException {
-		Response response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		try {
 			SpagoBIUserProfile profile = businessContext.getUserProfile();
 			String key = dto.getKey();
 			String path = resourceManagerAPIservice.getFolderByKey(key, profile);
-			boolean create = resourceManagerAPIservice.delete(path, profile);
-			if (create)
-				response = Response.status(Response.Status.OK).build();
+			boolean delete = resourceManagerAPIservice.delete(path, profile);
+			if (!delete) {
+				throw new ImpossibleToReadFolderListException("");
+			}
+			
+			
+			
+			
+			
+			return Response.status(Response.Status.OK).build();
 
 		} catch (KnowageBusinessException e) {
 			throw new KnowageBusinessException(e, businessContext.getLocale());
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e);
 		}
-		return response;
 
 	}
 

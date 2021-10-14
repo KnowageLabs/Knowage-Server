@@ -1,5 +1,5 @@
 <template>
-    <Listbox class="kn-list knListBox" :options="options" listStyle="max-height:calc(100% - 62px)" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="settings.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')">
+    <Listbox class="kn-list knListBox" :options="options" listStyle="max-height:calc(100% - 62px)" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="settings.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')" data-test="list">
         <template #header>
             <Button icon="fas fa-sort-amount-down-alt" class="p-button-text p-button-rounded p-button-plain headerButton" @click="toggleSort" v-tooltip.bottom="$t('common.sort')" />
             <Menu id="sortMenu" ref="sortMenu" :model="settings.sortFields" :popup="true">
@@ -14,11 +14,11 @@
         </template>
         <template #option="slotProps">
             <router-link class="kn-decoration-none" :to="{ name: settings.interaction.path, params: { id: slotProps.option.id } }" exact v-if="settings.interaction.type === 'router'">
-                <div class="kn-list-item" v-tooltip="slotProps.option[settings.tooltipField || 'description']" :class="getBorderClass(slotProps.option)">
+                <div class="kn-list-item" v-tooltip="slotProps.option[settings.tooltipField || 'description']" :class="getBorderClass(slotProps.option)" data-test="list-item">
                     <Avatar v-if="settings.avatar" :icon="settings.avatar.values[slotProps.option[settings.avatar.property]].icon" shape="circle" size="medium" :style="settings.avatar.values[slotProps.option[settings.avatar.property]].style" />
                     <div class="kn-list-item-text">
-                        <span>{{ slotProps.option[settings.titleField || 'label'] }}</span>
-                        <span class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option[settings.textField || 'name'] }}</span>
+                        <span v-if="settings.titleField !== false">{{ slotProps.option[settings.titleField || 'label'] }}</span>
+                        <span class="kn-list-item-text-secondary kn-truncated" v-if="settings.textField !== false">{{ slotProps.option[settings.textField || 'name'] }}</span>
                     </div>
                     <Badge v-if="settings.badgeField" :value="slotProps.option[settings.badgeField]" :severity="settings.badgeSeverity || 'info'"></Badge>
                     <KnListButtonRenderer :buttons="settings.buttons" @click="clickedButton($event, slotProps.option)" />
@@ -30,11 +30,12 @@
                 v-if="!settings.interaction || settings.interaction.type === 'event'"
                 @click="clickedButton($event, slotProps.option)"
                 :class="[{ 'router-link-active': selected && selected == slotProps.option }, getBorderClass(slotProps.option)]"
+                data-test="list-item"
             >
                 <Avatar v-if="settings.avatar" :icon="settings.avatar.values[slotProps.option[settings.avatar.property]].icon" shape="circle" size="medium" :style="settings.avatar.values[slotProps.option[settings.avatar.property]].style" />
                 <div class="kn-list-item-text">
-                    <span>{{ slotProps.option[settings.titleField || 'label'] }}</span>
-                    <span class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option[settings.textField || 'name'] }}</span>
+                    <span v-if="settings.titleField !== false">{{ slotProps.option[settings.titleField || 'label'] }}</span>
+                    <span v-if="settings.textField !== false" class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option[settings.textField || 'name'] }}</span>
                 </div>
                 <Badge v-if="settings.badgeField" :value="slotProps.option[settings.badgeField]" :severity="settings.badgeSeverity || 'info'"></Badge>
                 <KnListButtonRenderer :buttons="settings.buttons" @click="clickedButton($event, slotProps.option)" />

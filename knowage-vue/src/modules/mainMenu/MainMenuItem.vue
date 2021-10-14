@@ -1,13 +1,13 @@
 <template>
-	<li role="menu" :style="[item.style, getVisibilityClass(item)]" :title="item.descr || item.label" @mouseenter="toggleSubMenu" @mouseleave="toggleSubMenu">
-		<router-link v-if="item.to && !item.disabled" :to="item.to" custom v-slot="{ navigate, href, isActive }" exact>
-			<a :href="href" @click="onClick($event, navigate)" role="menuitem" :class="isActive && 'router-link-active'">
+	<li role="menu" :style="[item.style, getVisibilityClass(item)]" :title="item.descr ? $internationalization($t(item.descr)) : $internationalization($t(item.label))" @mouseenter="toggleSubMenu" @mouseleave="toggleSubMenu">
+		<router-link v-if="item.to && !item.disabled" :to="item.to" custom v-slot="{ navigate, isActive }" exact>
+			<a :href="getHref(item)" @click="onClick($event, navigate)" role="menuitem" :class="isActive && 'router-link-active'">
 				<Badge v-if="badge > 0" :value="badge" severity="danger"></Badge>
 				<span v-if="item.iconCls" :class="['p-menuitem-icon', item.iconCls]"></span>
 				<img v-if="item.custIcon" :src="item.custIcon" />
 				<span v-if="!item.iconCls && !item.custIcon" class="p-menuitem-icon fas fa-file"></span>
-				<span v-if="item.descr" class="p-menuitem-text">{{ $t(item.descr) }}</span>
-				<span v-else class="p-menuitem-text">{{ $t(item.label) }}</span>
+				<span v-if="item.descr" class="p-menuitem-text">{{ $internationalization($t(item.descr)) }}</span>
+				<span v-else class="p-menuitem-text">{{ $internationalization($t(item.label)) }}</span>
 				<i v-if="item.items" class="pi pi-fw pi-angle-right"></i>
 			</a>
 		</router-link>
@@ -17,8 +17,8 @@
 			<img v-if="item.custIcon" :src="item.custIcon" />
 			<img v-if="item.iconCls && item.command === 'languageSelection'" :src="require('@/assets/images/flags/' + locale.toLowerCase().substring(3, 5) + '.svg')" />
 			<span v-if="!item.iconCls && !item.custIcon" class="p-menuitem-icon fas fa-file"></span>
-			<span v-if="item.descr" class="p-menuitem-text">{{ $t(item.descr) }}</span>
-			<span v-else class="p-menuitem-text">{{ $t(item.label) }}</span>
+			<span v-if="item.descr" class="p-menuitem-text">{{ $internationalization($t(item.descr)) }}</span>
+			<span v-else class="p-menuitem-text">{{ $internationalization($t(item.label)) }}</span>
 			<i v-if="item.items" class="pi pi-fw pi-angle-right"></i>
 		</a>
 		<ul v-if="item.items" v-show="openedLi">
@@ -57,6 +57,15 @@
 			},
 			toggleSubMenu() {
 				this.openedLi = !this.openedLi
+			},
+			getHref(item) {
+				let to = item.to
+				if (to) {
+					to = to.replace(/\\\//g, '/')
+
+					if (to.startsWith('/')) to = to.substring(1)
+					return process.env.VUE_APP_PUBLIC_PATH + to
+				}
 			},
 			getVisibilityClass(item) {
 				if (!item.conditionedView) return true

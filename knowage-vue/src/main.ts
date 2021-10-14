@@ -22,6 +22,7 @@ import 'codemirror/mode/javascript/javascript.js'
 import 'codemirror/mode/python/python.js'
 import 'codemirror/mode/xml/xml.js'
 import 'codemirror/mode/sql/sql.js'
+import 'codemirror/mode/groovy/groovy.js'
 import 'codemirror/mode/clike/clike.js'
 import 'codemirror/mode/mathematica/mathematica.js'
 
@@ -42,6 +43,7 @@ import Tooltip from 'primevue/tooltip'
 import BadgeDirective from 'primevue/badgedirective'
 
 import ConfirmationService from 'primevue/confirmationservice'
+import internationalizationPlugin from './plugins/internationalization.js'
 
 import i18n from '@/App.i18n'
 
@@ -53,6 +55,7 @@ createApp(App)
     .use(PrimeVue)
     .use(ToastService)
     .use(ConfirmationService)
+    .use(internationalizationPlugin, store.state.internationalization)
 
     .directive('badge', BadgeDirective)
     .directive('tooltip', Tooltip)

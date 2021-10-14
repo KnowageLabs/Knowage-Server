@@ -1,5 +1,12 @@
 <template>
+    <Message severity="info" v-if="showGuide" @close="$emit('onGuideClose')">{{ $t('kpi.kpiDefinition.formulaTabInstructions') }}</Message>
     <VCodeMirror v-if="!loading" ref="codeMirror" class="CodeMirrorMathematica" v-model:value="kpi.definition.formula" :autoHeight="true" :options="codeMirrorOptions" @keyup="onKeyUp" @mousedown="onMouseDown" />
+    <div v-if="kpi.author">
+        <span class="p-m-1"
+            ><b>{{ $t('common.author') }}</b></span
+        >
+        :<span class="p-m-1">{{ kpi.author }}</span>
+    </div>
 
     <Dialog class="kn-dialog--toolbar--primary importExportDialog" footer="footer" v-bind:visible="functionDialogVisible" :closable="false" modal>
         <template #header>
@@ -40,11 +47,12 @@ import tabViewDescriptor from '../KpiDefinitionDetailDescriptor.json'
 import CodeMirror from 'codemirror'
 import Dialog from 'primevue/dialog'
 import RadioButton from 'primevue/radiobutton'
+import Message from 'primevue/message'
 
 export default defineComponent({
-    components: { VCodeMirror, Dialog, RadioButton },
-    props: { selectedKpi: Object as any, measures: { type: Array as any }, aliasToInput: { type: String }, checkFormula: { type: Boolean }, activeTab: { type: Number }, loading: Boolean, reloadKpi: Boolean },
-    emits: ['touched', 'errorInFormula', 'updateFormulaToSave'],
+    components: { VCodeMirror, Dialog, RadioButton, Message },
+    props: { selectedKpi: Object as any, measures: { type: Array as any }, aliasToInput: { type: String }, checkFormula: { type: Boolean }, activeTab: { type: Number }, loading: Boolean, reloadKpi: Boolean, showGuide: Boolean },
+    emits: ['touched', 'errorInFormula', 'updateFormulaToSave', 'onGuideClose'],
 
     data() {
         return {
@@ -315,7 +323,7 @@ export default defineComponent({
                                 var token_before = array[j - 1]
                                 if (token_before.type == 'keyword' || token_before.type == 'variable-2') {
                                     if (token.type == 'keyword' || token.type == 'number' || token.type == 'variable-2' || token.string == '(') {
-                                        this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.missingoperator') + line })
+                                        this.$store.commit('setError', { msg: this.$t('kpi.kpiDefinition.errorformula.missingoperator') + line })
                                         this.$emit('errorInFormula', true)
                                         this.reset()
                                         flag = false
@@ -324,7 +332,7 @@ export default defineComponent({
                                 }
                                 if (token_before.type == 'operator') {
                                     if (token.type == 'operator' || token.string == ')') {
-                                        this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed') + line })
+                                        this.$store.commit('setError', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed') + line })
                                         this.$emit('errorInFormula', true)
                                         this.reset()
                                         flag = false
@@ -333,7 +341,7 @@ export default defineComponent({
                                 }
                                 if (token_before.type == 'number') {
                                     if (token.type == 'number' || token.string == '(' || token.type == 'keyword' || token.type == 'variable-2') {
-                                        this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed') + line })
+                                        this.$store.commit('setError', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed') + line })
                                         this.$emit('errorInFormula', true)
                                         this.reset()
                                         flag = false
@@ -342,14 +350,14 @@ export default defineComponent({
                                 }
                                 if (token_before.type == 'bracket') {
                                     if ((token.string == ')' && token_before.string == '(') || (token.string == '(' && token_before.string == ')')) {
-                                        this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed') + line })
+                                        this.$store.commit('setError', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed') + line })
                                         this.$emit('errorInFormula', true)
                                         flag = false
                                         break FORFirst
                                     }
                                     if (token_before.string == ')') {
                                         if (token.type == 'keyword' || token.type == 'number' || token.type == 'variable-2') {
-                                            this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.missingoperator') })
+                                            this.$store.commit('setError', { msg: this.$t('kpi.kpiDefinition.errorformula.missingoperator') })
                                             this.$emit('errorInFormula', true)
                                             this.reset()
                                             flag = false
@@ -359,7 +367,7 @@ export default defineComponent({
                                 }
                                 if (token_before.string == '(') {
                                     if (token.type == 'operator') {
-                                        this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed') + line })
+                                        this.$store.commit('setError', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed') + line })
                                         this.$emit('errorInFormula', true)
                                         this.reset()
                                         flag = false
@@ -369,7 +377,7 @@ export default defineComponent({
                             }
                             if (j == array.length - 1) {
                                 if (token.type == 'operator') {
-                                    this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed') + line })
+                                    this.$store.commit('setError', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed') + line })
                                     this.$emit('errorInFormula', true)
                                     this.reset()
                                     flag = false
@@ -379,7 +387,7 @@ export default defineComponent({
                             if (token.type == 'operator') {
                                 //operator
                                 if (j == 0) {
-                                    this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed') + line })
+                                    this.$store.commit('setError', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed') + line })
                                     this.$emit('errorInFormula', true)
                                     this.reset()
                                     flag = false
@@ -405,7 +413,7 @@ export default defineComponent({
                                 this.formulaSimple = this.formulaSimple + token.string
                             } else {
                                 //error no function associated
-                                this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.missingfunctions') })
+                                this.$store.commit('setError', { msg: this.$t('kpi.kpiDefinition.errorformula.missingfunctions') })
                                 this.$emit('errorInFormula', true)
                                 this.reset()
                                 flag = false
@@ -415,7 +423,7 @@ export default defineComponent({
                             if (j - 1 >= 0) {
                                 token_before = array[j - 1]
                                 if (token_before.type == 'number' || token_before.type == 'keyword' || token_before.type == 'variable-2') {
-                                    this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.missingoperator') })
+                                    this.$store.commit('setError', { msg: this.$t('kpi.kpiDefinition.errorformula.missingoperator') })
                                     this.$emit('errorInFormula', true)
                                     this.reset()
                                     flag = false
@@ -426,7 +434,7 @@ export default defineComponent({
                             for (var k = 0; k < arr.length; k++) {
                                 var className = arr[k]['className']
                                 if (this.measureInList(token.string, this.measures) == -1) {
-                                    this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.generic') })
+                                    this.$store.commit('setError', { msg: this.$t('kpi.kpiDefinition.errorformula.generic') })
                                     this.$emit('errorInFormula', true)
                                     this.reset()
                                     flag = false
@@ -468,7 +476,7 @@ export default defineComponent({
                                     this.formulaDecoded = this.formulaDecoded + 'SUM(' + token.string + ')'
                                     this.formulaSimple = this.formulaSimple + token.string
                                 } else if (className == 'error_word') {
-                                    this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.generic') })
+                                    this.$store.commit('setError', { msg: this.$t('kpi.kpiDefinition.errorformula.generic') })
                                     this.$emit('errorInFormula', true)
                                     this.reset()
                                     flag = false
@@ -481,12 +489,12 @@ export default defineComponent({
             }
             if (flag) this.$emit('errorInFormula', false)
             if (countOpenBracket != countCloseBracket && flag) {
-                this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.missingbracket') })
+                this.$store.commit('setError', { msg: this.$t('kpi.kpiDefinition.errorformula.missingbracket') })
                 this.$emit('errorInFormula', true)
                 this.reset()
             } else {
                 if (numMeasures == 0 && flag) {
-                    this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.missingmeasure') })
+                    this.$store.commit('setError', { msg: this.$t('kpi.kpiDefinition.errorformula.missingmeasure') })
                     this.$emit('errorInFormula', true)
                     this.reset()
                 }

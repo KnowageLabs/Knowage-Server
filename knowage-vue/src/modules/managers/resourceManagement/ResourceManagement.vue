@@ -26,7 +26,7 @@
 							<div>
 								<Button v-if="slotProps.node.modelFolder" icon="fas fa-table" v-tooltip.top="$t('managers.resourceManagement.openMetadata')" :class="getButtonClass(slotProps.node)" @click="openMetadataDialog(slotProps.node)" :data-test="'move-up-button-' + slotProps.node.key" />
 								<Button icon="fa fa-download " v-tooltip.top="$t('common.download')" :class="getButtonClass(slotProps.node)" @click="downloadDirect(slotProps.node)" :data-test="'move-down-button-' + slotProps.node.key" />
-								<Button icon="far fa-trash-alt" v-tooltip.top="$t('common.delete')" :class="getButtonClass(slotProps.node)" @click="showDeleteDialog(slotProps.node)" :data-test="'delete-button-' + slotProps.node.key" />
+								<Button icon="far fa-trash-alt" v-tooltip.top="$t('common.delete')" :class="getButtonClass(slotProps.node)" @click="showDeleteDialog(slotProps.node)" :data-test="'delete-button-' + slotProps.node.key" v-if="slotProps.node.level > 0" />
 							</div>
 						</div>
 					</template>
@@ -46,7 +46,7 @@
 	import descriptor from './ResourceManagementDescriptor.json'
 	import Tree from 'primevue/tree'
 	import { IFolderTemplate } from '@/modules/managers/resourceManagement/ResourceManagement'
-	import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
+	import { downloadDirectFromResponseWithCustomName } from '@/helpers/commons/fileHelper'
 	import ResourceManagementMetadataDialog from '@/modules/managers/resourceManagement/ResourceManagementMetadataDialog.vue'
 	import ResourceManagementDetail from './ResourceManagementDetail.vue'
 	import KnHint from '@/components/UI/KnHint.vue'
@@ -120,44 +120,46 @@
 			openCreateFolderDialog() {
 				this.folderCreation = !this.folderCreation
 			},
-			async toggleInput(node) {
-				if (node.edit && node.label !== node.edit) {
-					if (this.selectedFolder) {
-						let obj = {} as JSON
-						obj['key'] = this.selectedFolder.key
-						obj['folderName'] = node.label
-						this.loading = true
-						await axios
-							.post(process.env.VUE_APP_API_PATH + `2.0/resources/folders/update`, obj, {
-								responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
+			toggleInput(node) {
+				if (node.level > 0) {
+					if (node.edit && node.label !== node.edit) {
+						if (this.selectedFolder) {
+							let obj = {} as JSON
+							obj['key'] = this.selectedFolder.key
+							obj['folderName'] = node.label
+							this.loading = true
+							axios
+								.post(process.env.VUE_APP_API_PATH + `2.0/resources/folders/update`, obj, {
+									responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
 
-								headers: {
-									'Content-Type': 'application/json'
-								}
-							})
-							.then(() => {
-								delete node.edit
-								this.$store.commit('setInfo', {
-									title: this.$t('managers.resoruceManagement.renameFolder'),
-									msg: this.$t('managers.resoruceManagement.folderRenamedSuccessfully')
+									headers: {
+										'Content-Type': 'application/json'
+									}
 								})
-							})
-							.catch((error) => {
-								this.$store.commit('setError', {
-									title: this.$t('managers.resoruceManagement.renameFolder'),
-									msg: this.$t(error)
+								.then(() => {
+									delete node.edit
+									this.$store.commit('setInfo', {
+										title: this.$t('managers.resoruceManagement.renameFolder'),
+										msg: this.$t('managers.resoruceManagement.folderRenamedSuccessfully')
+									})
 								})
-							})
-							.finally(() => {
-								this.loading = false
-							})
-					}
-				} else node.edit = node.label
+								.catch((error) => {
+									this.$store.commit('setError', {
+										title: this.$t('managers.resoruceManagement.renameFolder'),
+										msg: this.$t(error)
+									})
+								})
+								.finally(() => {
+									this.loading = false
+								})
+						}
+					} else node.edit = node.label
+				}
 			},
 			addIcon(nodes) {
 				for (var idx in nodes) {
 					let node = nodes[idx]
-					node.icon = this.expandedKeys[node.key] == true ? 'far fa-folder-open' : 'far fa-folder'
+					node.icon = 'far fa-folder'
 					if (node.children && node.children.length > 0) {
 						this.addIcon(node.children)
 					}
@@ -170,9 +172,12 @@
 				axios
 					.get(process.env.VUE_APP_API_PATH + `2.0/resources/folders`)
 					.then((response) => {
-						let data = response.data
-						this.addIcon(data.root)
-						this.nodes = data.root
+						let root = response.data.root[0]
+						root.label = 'HOME'
+						root.icon = 'pi pi-home'
+						root.disabled = true
+						this.addIcon(root.children)
+						this.nodes = response.data.root
 						this.loading = false
 					})
 					.finally(() => (this.loading = false))
@@ -221,7 +226,7 @@
 						}
 					})
 					.then((response) => {
-						downloadDirectFromResponse(response)
+						downloadDirectFromResponseWithCustomName(response, this.selectedFolder.label)
 					})
 					.finally(() => (this.loading = false))
 			},
@@ -297,11 +302,16 @@
 	.rightFolderIcon {
 		margin-right: 0.5rem;
 	}
+	.p-tree .p-tree-container .p-treenode {
+		padding: 0;
+		margin: 0;
+	}
 	.p-treenode-content {
 		border-radius: 0 !important;
 	}
 	.p-treenode-label {
 		width: 100%;
+		height: 100%;
 	}
 	.p-tree-toggler p-link {
 		margin: 0px;

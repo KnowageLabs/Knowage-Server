@@ -12,6 +12,7 @@
         @nodeUnselect="onNodeUnselect"
         data-test="menu-nodes-tree"
         class="kn-tree kn-flex"
+        scrollHeight="flex"
     >
         <template #empty>{{ $t('common.info.noDataFound') }}</template>
         <template #default="slotProps">

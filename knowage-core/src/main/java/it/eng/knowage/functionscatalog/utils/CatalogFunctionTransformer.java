@@ -34,8 +34,8 @@ import it.eng.knowage.backendservices.rest.widgets.PythonUtils;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
-import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
 import it.eng.spagobi.services.common.JWTSsoService;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader.JSONPathAttribute;
@@ -57,7 +57,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 
 	private final String functionUuid;
-	private SbiCatalogFunction function;
+	private String script;
 	private final JSONObject functionConfiguration;
 	private Map<String, String> inputColumns;
 	private Map<String, InputVariable> inputVariables;
@@ -136,10 +136,9 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 	private void initFunction() {
 		ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
 		fcDAO.setUserProfile(profile);
-		function = fcDAO.getCatalogFunctionByUuid(functionUuid);
-		if (function == null) {
-			logger.error("Couldn't retrieve function: " + functionUuid);
-			throw new SpagoBIRuntimeException("Couldn't retrieve function: " + functionUuid);
+		script = fcDAO.getCatalogFunctionScriptByUuidAndOrganization(functionUuid, TenantManager.getTenant().toString());
+		if (script == null) {
+			throw new SpagoBIRuntimeException("Couldn't retrieve function script from id: " + functionUuid);
 		}
 	}
 
@@ -204,7 +203,6 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 	}
 
 	private String getScriptJwtToken() {
-		String script = function.getOnlineScript();
 		// replace keywords
 		for (String colName : inputColumns.keySet()) {
 			String dsColumn = inputColumns.get(colName);
