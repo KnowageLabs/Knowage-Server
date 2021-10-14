@@ -1,13 +1,14 @@
 <template>
     <Card>
         <template #content>
+            {{ parameter }}
             <div v-if="parameter">
                 <h2>{{ parameter.name }}</h2>
                 <div class="p-d-flex p-flex-row p-ai-center">
                     <div class="p-mx-2 kn-flex">
                         <span>
                             <label class="kn-material-input-label">{{ $t('managers.scheduler.parameterValueType') }}</label>
-                            <Dropdown class="kn-material-input" v-model="parameter.type" :options="parameter.temporal ? triggerStrategies : triggerStrategies.slice(0, 2)" optionLabel="label" optionValue="value" @change="parameter.value = ''" />
+                            <Dropdown class="kn-material-input" v-model="parameter.type" :options="parameter.temporal ? triggerStrategies : triggerStrategies.slice(0, 2)" optionLabel="label" optionValue="value" @change="onParameterTypeChange" />
                         </span>
                     </div>
                     <div v-if="parameter.type === 'fixed'" class="p-mx-2 kn-flex">
@@ -54,7 +55,7 @@ import MultiSelect from 'primevue/multiselect'
 export default defineComponent({
     name: 'scheduler-document-parameter-form',
     components: { Card, Dropdown, MultiSelect },
-    props: { propParameter: { type: Object }, roles: { type: Array }, formulas: { type: Array } },
+    props: { propParameter: { type: Object }, roles: { type: Array }, formulas: { type: Array }, documentLabel: { type: String } },
     data() {
         return {
             parameter: null as any,
@@ -109,12 +110,13 @@ export default defineComponent({
         },
         async loadParameterValues() {
             await axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.parameter?.documentLabel}/parameters/${this.parameter?.id}/values?role=${this.parameter?.role}`)
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.documentLabel}/parameters/${this.parameter?.id}/values?role=${this.parameter?.role}`)
                 .then((response) => (this.parameterValues = response.data))
                 .catch(() => {})
         },
         loadRoles() {
             this.rolesOptions = this.roles as any
+            console.log('ROLES: ', this.roles)
         },
         loadFormulas() {
             this.formulaOptions = this.formulas as any
@@ -124,6 +126,12 @@ export default defineComponent({
             for (let i = 0; i < this.parameter.selectedValues.length; i++) {
                 this.parameter.value += this.parameter.selectedValues[i]
                 this.parameter.value += i === this.parameter.selectedValues.length - 1 ? ' ' : '; '
+            }
+        },
+        async onParameterTypeChange() {
+            this.parameter.value = ''
+            if (this.parameter.type === 'fixed') {
+                await this.loadParameterValues()
             }
         }
     }

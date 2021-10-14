@@ -44,7 +44,15 @@
         </DataTable>
 
         <SchedulerDocumentsSelectionDialog :visible="documentsSelectionDialogVisible" :propFiles="files" @close="documentsSelectionDialogVisible = false" @documentSelected="onDocumentSelected"></SchedulerDocumentsSelectionDialog>
-        <SchedulerDocumentParameterDialog :visible="documentParameterDialogVisible" :propParameters="selectedDocument?.parameters" :roles="roles" :deletedParams="deletedParams" @close="closeDocumentParameterDialog" @setParameters="onParametersSet"></SchedulerDocumentParameterDialog>
+        <SchedulerDocumentParameterDialog
+            :visible="documentParameterDialogVisible"
+            :propParameters="selectedDocument?.parameters"
+            :roles="roles"
+            :deletedParams="deletedParams"
+            @close="closeDocumentParameterDialog"
+            @setParameters="onParametersSet"
+            :documentLabel="documentLabel"
+        ></SchedulerDocumentParameterDialog>
     </div>
 </template>
 
@@ -73,7 +81,8 @@ export default defineComponent({
             documentParameterDialogVisible: false,
             roles: [] as any[],
             parameterWithValues: [] as any[],
-            deletedParams: [] as any[]
+            deletedParams: [] as any[],
+            documentLabel: ''
         }
     },
     watch: {
@@ -206,6 +215,7 @@ export default defineComponent({
             this.selectedDocument = document
             this.parameterWithValues = document.parameters
             await this.loadDocumentData(document, false)
+            this.documentLabel = this.selectedDocument.name
             this.documentParameterDialogVisible = true
         },
         closeDocumentParameterDialog() {

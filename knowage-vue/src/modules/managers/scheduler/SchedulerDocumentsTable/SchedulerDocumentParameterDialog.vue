@@ -10,7 +10,7 @@
         <Message class="p-m-2" v-if="deletedParams.length > 0" severity="warn" :closable="false" :style="schedulerDocumentParameterDialogDescriptor.styles.message">
             {{ deletedParamsMessage }}
         </Message>
-        <SchedulerDocumentParameterForm v-for="(parameter, index) in parameters" :key="index" class="p-m-3" :propParameter="parameter" :roles="roles" :formulas="formulas"></SchedulerDocumentParameterForm>
+        <SchedulerDocumentParameterForm v-for="(parameter, index) in parameters" :key="index" class="p-m-3" :propParameter="parameter" :roles="roles" :formulas="formulas" :documentLabel="documentLabel"></SchedulerDocumentParameterForm>
         <template #footer>
             <div class="p-d-flex p-flex-row p-jc-end">
                 <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
@@ -31,7 +31,7 @@ import SchedulerDocumentParameterForm from './SchedulerDocumentParameterForm.vue
 export default defineComponent({
     name: 'scheduler-document-parameter-dialog',
     components: { Dialog, Message, SchedulerDocumentParameterForm },
-    props: { propParameters: { type: Array }, roles: { type: Array }, deletedParams: { type: Array } },
+    props: { propParameters: { type: Array }, roles: { type: Array }, deletedParams: { type: Array }, documentLabel: { type: String } },
     emits: ['documentSelected', 'close', 'setParameters'],
     data() {
         return {
