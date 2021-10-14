@@ -18,6 +18,19 @@
 
 package it.eng.spagobi.behaviouralmodel.lov.service;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
@@ -56,19 +69,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.service.JSONFailure;
 import it.eng.spagobi.utilities.service.JSONSuccess;
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -359,15 +359,16 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 			 */
 			// gets connection
 			DataSourceUtilities dsUtil = new DataSourceUtilities();
-			Connection conn = dsUtil.getConnection(requestContainer, datasource);
-			dataConnection = dsUtil.getDataConnection(conn);
+			try (Connection conn = dsUtil.getConnection(requestContainer, datasource)) {
+				dataConnection = dsUtil.getDataConnection(conn);
 
-			sqlCommand = dataConnection.createSelectCommand(statement, false);
-			dataResult = sqlCommand.execute();
-			ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
-			List temp = Arrays.asList(scrollableDataResult.getColumnNames());
-			columnsNames.addAll(temp);
-			result = scrollableDataResult.getSourceBean();
+				sqlCommand = dataConnection.createSelectCommand(statement, false);
+				dataResult = sqlCommand.execute();
+				ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
+				List temp = Arrays.asList(scrollableDataResult.getColumnNames());
+				columnsNames.addAll(temp);
+				result = scrollableDataResult.getSourceBean();
+			}
 		} catch (Exception e) {
 			logger.error("Error in executing LOV query: " + statement);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Error inn executing LOV query");

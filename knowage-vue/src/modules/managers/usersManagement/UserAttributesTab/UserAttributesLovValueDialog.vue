@@ -52,7 +52,6 @@ export default defineComponent({
             this.loadAttributeValue()
             this.selectionMode = this.attribute.multivalue ? 'multiple' : 'single'
             this.selectedLovValues = this.attribute.multivalue ? [] : {}
-            console.log('this.selectionMode', this.selectionMode)
         }
     },
     created() {
@@ -80,7 +79,6 @@ export default defineComponent({
         async loadAttributeValue() {
             if (this.attribute?.lovId) {
                 await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/lovs/${this.attribute.lovId}/preview`).then((response) => {
-                    console.log('LOVS VALUES', response.data)
                     this.lovValues = response.data.map((lovValue, index) => {
                         return { value: lovValue, id: index }
                     })
@@ -89,7 +87,6 @@ export default defineComponent({
             }
         },
         loadSelectedValues() {
-            console.log('valuesArray - selection', this.selection)
             if (this.attribute.multivalue) {
                 this.selectedLovValues = []
                 if (Array.isArray(this.selection)) {

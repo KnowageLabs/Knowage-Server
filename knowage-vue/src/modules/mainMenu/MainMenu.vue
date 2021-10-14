@@ -104,6 +104,8 @@
 
 					if (item.conditionedView === 'news' && this.news && this.news.count.total > 0) return true
 
+					if (item.conditionedView === 'roleSelection' && this.user && this.user.roles.length > 1) return true
+
 					return false
 				} else {
 					return true
@@ -156,9 +158,21 @@
 					if (Object.keys(this.news).length !== 0) return this.news.count.unread
 				}
 				return 0
+			},
+			findHomePage(dynMenu) {
+				let toRet = undefined
+
+				for (var idx in dynMenu) {
+					let menu = dynMenu[idx]
+
+					if (menu.to || menu.url) return menu
+				}
+
+				return toRet
 			}
 		},
-		mounted() {
+		async mounted() {
+			this.$store.commit('setLoading', true)
 			let localObject = { locale: this.$i18n.fallbackLocale.toString() }
 			if (Object.keys(this.locale).length !== 0) localObject = { locale: this.locale }
 			if (localStorage.getItem('locale')) {
@@ -173,11 +187,25 @@
 				localObject.locale = splittedLocale[0] + '-' + splittedLocale[2].replaceAll('#', '') + '-' + splittedLocale[1]
 			}
 
-			axios
+			await axios
 				.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale))
 				.then((response) => {
-					this.technicalUserFunctionalities = response.data.technicalUserFunctionalities
-					this.commonUserFunctionalities = response.data.commonUserFunctionalities
+					this.technicalUserFunctionalities = response.data.technicalUserFunctionalities.filter((groupItem: any) => {
+						let childItems = groupItem.items.filter((x) => {
+							let currentHostName = this.licenses.hosts[0] ? this.licenses.hosts[0].hostName : undefined
+							return x.toBeLicensed && currentHostName && this.licenses[currentHostName] ? this.licenses.licenses[currentHostName].filter((lic) => lic.product === x.toBeLicensed).length == 1 : true
+						})
+						return childItems.length > 0
+					})
+
+					let responseCommonUserFunctionalities = response.data.commonUserFunctionalities
+					for (var index in responseCommonUserFunctionalities) {
+						let item = responseCommonUserFunctionalities[index]
+						item.visible = this.isItemToDisplay(item)
+
+						this.commonUserFunctionalities.push(item)
+					}
+
 					let responseAllowedUserFunctionalities = response.data.allowedUserFunctionalities
 					for (var idx in responseAllowedUserFunctionalities) {
 						let item = responseAllowedUserFunctionalities[idx]
@@ -185,26 +213,46 @@
 
 						this.allowedUserFunctionalities.push(item)
 					}
-					this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities
+
+					this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities.sort((el1, el2) => {
+						return el1.prog - el2.prog
+					})
+
+					if (this.dynamicUserFunctionalities.length > 0) {
+						let homePage = this.findHomePage(this.dynamicUserFunctionalities) || {}
+						if (homePage && Object.keys(homePage).length !== 0) {
+							if (!this.stateHomePage.label) {
+								this.$store.commit('setHomePage', homePage)
+							}
+						}
+					}
 					this.updateNewsAndDownload()
 				})
 				.catch((error) => console.error(error))
+				.finally(() => this.$store.commit('setLoading', false))
 		},
 		computed: {
 			...mapState({
 				user: 'user',
 				downloads: 'downloads',
 				locale: 'locale',
-				news: 'news'
+				news: 'news',
+				stateHomePage: 'homePage',
+				isEnterprise: 'isEnterprise',
+				licenses: 'licenses'
 			})
 		},
 		watch: {
-			download(newDownload, oldDownload) {
-				if (oldDownload != this.downloads) this.downloads = newDownload
+			downloads(newDownload, oldDownload) {
+				if (oldDownload != this.downloads) {
+					this.downloads = newDownload
+				}
 				this.updateNewsAndDownload()
 			},
 			news(newNews, oldNews) {
-				if (oldNews != this.news) this.news = newNews
+				if (oldNews != this.news) {
+					this.news = newNews
+				}
 				this.updateNewsAndDownload()
 			}
 		}

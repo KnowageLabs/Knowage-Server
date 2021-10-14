@@ -18,6 +18,7 @@
 
 package it.eng.spagobi.profiling.bo;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class UserInformationDTO {
 	private String userId;
 	private String fullName;
 	private Boolean isSuperadmin;
-	private Integer sessionRole;
+	private String defaultRole = null;
 	private Map<String, Object> attributes;
 	private String organization;
 	private String uniqueIdentifier;
@@ -48,6 +49,7 @@ public class UserInformationDTO {
 	private Object userUniqueIdentifier = null;
 	private Collection roles = null;
 	private Collection functionalities;
+	private boolean enterprise;
 
 	public UserInformationDTO(UserProfile user) throws EMFInternalError {
 		this.userId = String.valueOf(user.getUserId());
@@ -59,11 +61,15 @@ public class UserInformationDTO {
 		this.userUniqueIdentifier = user.getUserUniqueIdentifier();
 
 		this.locale = GeneralUtilities.getDefaultLocale();
-		this.roles = user.getRolesForUse();
+		this.roles = user.getRoles();
 
-		// aggiungere il tipo
-		//
+		Collection rolesOrDefaultRole = user.getRolesForUse();
+		ArrayList<String> newList = new ArrayList<>(rolesOrDefaultRole);
+		this.defaultRole = newList.size() == 1 ? newList.get(0) : null;
+
 		this.functionalities = user.getFunctionalities();
+
+		this.enterprise = isEnterpriseEdition();
 
 	}
 
@@ -91,12 +97,12 @@ public class UserInformationDTO {
 		this.isSuperadmin = isSuperadmin;
 	}
 
-	public Integer getSessionRole() {
-		return sessionRole;
+	public String getDefaultRole() {
+		return defaultRole;
 	}
 
-	public void setSessionRole(Integer sessionRole) {
-		this.sessionRole = sessionRole;
+	public void setDefaultRole(String defaultRole) {
+		this.defaultRole = defaultRole;
 	}
 
 	public Map<String, Object> getAttributes() {
@@ -161,6 +167,23 @@ public class UserInformationDTO {
 
 	public void setFunctionalities(Collection functionalities) {
 		this.functionalities = functionalities;
+	}
+
+	public boolean isEnterprise() {
+		return enterprise;
+	}
+
+	public void setEnterprise(boolean enterprise) {
+		this.enterprise = enterprise;
+	}
+
+	private boolean isEnterpriseEdition() {
+		try {
+			Class.forName("it.eng.knowage.tools.servermanager.utils.LicenseManager");
+			return true;
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
 	}
 
 }

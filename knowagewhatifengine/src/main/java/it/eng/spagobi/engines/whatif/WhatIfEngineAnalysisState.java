@@ -144,10 +144,12 @@ public class WhatIfEngineAnalysisState extends EngineAnalysisState {
 		try {
 			JSONObject analysisStateJSON = (JSONObject) getProperty(WhatIfConstants.WHAT_IF_ANALYSIS_STATE);
 			JSONObject driversAsJSON = analysisStateJSON.optJSONObject(WhatIfConstants.DRIVERS);
-			Iterator<String> keys = driversAsJSON.keys();
-			while (keys.hasNext()) {
-				String key = keys.next();
-				toReturn.put(key, driversAsJSON.get(key));
+			if (driversAsJSON != null) {
+				Iterator<String> keys = driversAsJSON.keys();
+				while (keys.hasNext()) {
+					String key = keys.next();
+					toReturn.put(key, driversAsJSON.get(key));
+				}
 			}
 			LogMF.debug(logger, "Retrieved drivers from analisys state: [{0}]", toReturn);
 		} catch (Exception e) {

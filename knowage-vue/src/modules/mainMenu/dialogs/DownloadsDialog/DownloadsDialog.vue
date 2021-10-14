@@ -30,7 +30,6 @@
 	import Dialog from 'primevue/dialog'
 	import descriptor from './DownloadsDialogDescriptor.json'
 	import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
-	import WEB_SOCKET from '@/services/webSocket.js'
 
 	interface Download {
 		filename: string
@@ -78,28 +77,34 @@
 					(error) => console.error(error)
 				)
 			},
-			downloadContent(data) {
+			async downloadContent(data) {
 				var encodedUri = encodeURI(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export/dataset/' + data.id)
-				if (!data.alreadyDownloaded) {
-					this.$store.commit('updateAlreadyDownloadedFiles')
-					let message = {
-						download: true
-					}
+				await axios
+					.get(encodedUri, {
+						responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
 
-					WEB_SOCKET.send(JSON.stringify(message))
-				}
-				axios.get(encodedUri).then(
-					(response) => {
-						downloadDirectFromResponse(response)
-					},
-					(error) => console.error(error)
-				)
+						headers: {
+							'Content-Type': 'application/json',
+							Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+						}
+					})
+					.then(
+						(response) => {
+							if (!data.alreadyDownloaded) {
+								this.$store.commit('updateAlreadyDownloadedFiles')
+							}
+							downloadDirectFromResponse(response)
+						},
+						(error) => console.error(error)
+					)
 				this.getDownloads()
 			},
 			deleteAllDownloads() {
 				axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export').then(
 					() => {
 						this.downloadsList = []
+						this.$store.commit('setDownloads', { count: { total: 0, unRead: 0 } })
+						this.closeDialog()
 					},
 					(error) => console.error(error)
 				)

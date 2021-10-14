@@ -1,13 +1,6 @@
 package it.eng.spagobi.tools.metaBusinessClass;
 
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.metadata.dao.ISbiMetaBCDAO;
-import it.eng.spagobi.metadata.metadata.SbiMetaBc;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.List;
 
@@ -21,6 +14,14 @@ import javax.ws.rs.core.Response;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.metadata.dao.ISbiMetaBCDAO;
+import it.eng.spagobi.metadata.metadata.SbiMetaBc;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 @Path("/1.0/metaBC")
 @ManageAuthorization
@@ -64,6 +65,7 @@ public class MetaBusinessClassService {
 			JSONObject jo = new JSONObject();
 			jo.put("id", smBC.getBcId());
 			jo.put("name", smBC.getName());
+			jo.put("model", smBC.getSbiMetaModel().getName());
 			tr.put(jo);
 		}
 		return tr;

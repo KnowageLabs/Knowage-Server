@@ -187,7 +187,7 @@ public class EngineResource extends AbstractCockpitEngineResource {
 			String userId = (String) UserProfileManager.getProfile().getUserUniqueIdentifier();
 			toReturn = profiler.isAllowedToCreateWidget(userId, type);
 		} catch (Exception e) {
-			logger.warn("Error while profiling Python Widget permissions");
+			logger.warn("Error while profiling " + type + " Widget permissions");
 		}
 		return toReturn;
 	}

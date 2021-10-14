@@ -11,7 +11,21 @@ const store = createStore({
 			downloads: { count: { total: 0, unRead: 0 } },
 			locale: {},
 			news: { count: { total: 0, unRead: 0 } },
-			loading: false
+			loading: false,
+			homePage: {},
+			internationalization: [],
+			isEnterprise: false,
+			licenses: {
+				hosts: [],
+				licenses: {},
+				cpuNumber: -1
+			}
+		}
+	},
+	actions: {
+		initializeUser(context, user) {
+			context.commit('setUser', user)
+			context.commit('setEnterprise', user.enterprise)
 		}
 	},
 	mutations: {
@@ -41,6 +55,18 @@ const store = createStore({
 		},
 		setNews(state, hasNews) {
 			state.news = hasNews
+		},
+		setHomePage(state, homePage) {
+			state.homePage = homePage
+		},
+		setInternationalization(state, internationalization) {
+			state.internationalization = internationalization
+		},
+		setLicenses(state, licenses) {
+			state.licenses = licenses
+		},
+		setEnterprise(state, enterprise) {
+			state.isEnterprise = enterprise
 		}
 	}
 })

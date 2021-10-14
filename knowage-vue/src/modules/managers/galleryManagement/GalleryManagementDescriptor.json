@@ -131,10 +131,6 @@
         {
             "name": "image",
             "value": "img"
-        },
-        {
-            "name": "Bokeh",
-            "value": "bokeh"
         }
     ],
     "types": [

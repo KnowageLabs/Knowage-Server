@@ -24,6 +24,10 @@ export function downloadDirectFromResponse(response) {
 	downloadDirect(response.data, completeFileName, response.headers['content-type'])
 }
 
+export function downloadDirectFromResponseWithCustomName(response, customFilename) {
+	downloadDirect(response.data, customFilename, response.headers['content-type'])
+}
+
 export function downloadDirect(jsonData, filename, contentType) {
 	let blob = new Blob([jsonData], { type: contentType })
 	if (navigator.msSaveBlob) {

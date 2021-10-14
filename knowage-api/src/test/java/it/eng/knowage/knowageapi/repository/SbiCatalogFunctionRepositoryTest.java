@@ -48,13 +48,23 @@ class SbiCatalogFunctionRepositoryTest {
 	@Test
 	void createAndDelete() throws KnowageBusinessException {
 
+		// Create
 		SbiCatalogFunction function = createRandomName();
 
 		function = repository.create(function);
 
+		// Update
+		function.setDescription(RandomStringUtils.randomAlphanumeric(12));
+		SbiFunctionInputColumn inCol = createInputColumn(function);
+		function.getInputColumns().add(inCol);
+
+		repository.update(function);
+
+		// Delete
 		String functionId = function.getId().getFunctionId();
 		repository.delete(functionId);
 
+		// Check
 		function = repository.find(functionId);
 
 		assertNull(function);
@@ -76,10 +86,11 @@ class SbiCatalogFunctionRepositoryTest {
 		Set<SbiObjFunction> objFunctions = new HashSet<>();
 		Set<SbiFunctionOutputColumn> outputColumns = new HashSet<>();
 
-		SbiFunctionInputColumn inCol = new SbiFunctionInputColumn();
-		inCol.setColType("type");
-		inCol.getId().setColName("name");
-		inCol.getId().setFunction(n);
+		SbiFunctionInputColumn inCol = createInputColumn(n);
+
+		inputColumns.add(inCol);
+
+		inCol = createInputColumn(n);
 
 		inputColumns.add(inCol);
 
@@ -117,6 +128,15 @@ class SbiCatalogFunctionRepositoryTest {
 		n.setType("type");
 
 		return n;
+	}
+
+	private SbiFunctionInputColumn createInputColumn(SbiCatalogFunction n) {
+		SbiFunctionInputColumn inCol;
+		inCol = new SbiFunctionInputColumn();
+		inCol.setColType("type");
+		inCol.getId().setColName(RandomStringUtils.randomAlphanumeric(10));
+		inCol.getId().setFunction(n);
+		return inCol;
 	}
 
 }

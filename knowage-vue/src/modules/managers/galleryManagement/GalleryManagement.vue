@@ -117,21 +117,29 @@
 				reader.onload = this.onReaderLoad
 				reader.readAsText(event.target.files[0])
 				this.triggerInputFile(false)
+				event.target.value = ''
 			},
 			onReaderLoad(event) {
-				try {
-					let json = JSON.parse(event.target.result)
-					axios.post(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/import', json).then(
-						() => {
-							this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.uploadTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullyUploaded') })
+				let json = JSON.parse(event.target.result)
 
-							this.loadAllTemplates()
-						},
-						(error) => this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: error.message })
-					)
-				} catch (e) {
-					console.log(e)
+				if (!json.id || json.id === '') {
+					this.$confirm.require({
+						message: this.$t('importExport.import.itemWithoutIdConfirm'),
+						header: this.$t('common.import'),
+						icon: 'pi pi-exclamation-triangle',
+						accept: () => {
+							json.id = ''
+							this.importWidget(json)
+						}
+					})
 				}
+			},
+			importWidget(json: JSON) {
+				axios.post(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/import', json).then(() => {
+					this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.uploadTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullyUploaded') })
+
+					this.loadAllTemplates()
+				})
 			}
 		}
 	})

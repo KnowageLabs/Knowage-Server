@@ -15,28 +15,40 @@ import dataSourceRoutes from '@/modules/managers/dataSourceManagement/DataSource
 import functionalitiesManagementRoutes from '@/modules/managers/functionalitiesManagement/FunctionalitiesManagement.routes.js'
 import menuConfigurationRoutes from '@/modules/managers/menuManagement/MenuManagement.routes.js'
 import businessModelCatalogueRoutes from '@/modules/managers/businessModelCatalogue/BusinessModelCatalogue.routes.js'
+import driversManagementRoutes from '@/modules/managers/driversManagement/DriversManagement.routes.js'
 import resourceManagementRoutes from '@/modules/managers/resourceManagement/ResourceManagement.routes.js'
+import crossNavigationManagement from '@/modules/managers/crossNavigationManagement/CrossNavigationManagement.routes.js'
+import constraintsManagementRoutes from '@/modules/managers/constraintsManagement/ConstraintsManagement.routes.js'
+import lovsManagementRoutes from '@/modules/managers/lovsManagement/LovsManagement.routes.js'
+import glossaryDefinitionRoutes from '@/modules/managers/glossaryDefinition/GlossaryDefinition.routes.js'
+import glossaryUsageRoutes from '@/modules/managers/glossaryUsage/GlossaryUsage.routes.js'
 
 const baseRoutes = []
 
 const routes = baseRoutes
-	.concat(galleryManagementRoutes)
-	.concat(configurationManagementRoutes)
-	.concat(domainsManagementRoutes)
-	.concat(metadataManagementRoutes)
-	.concat(usersManagementRoutes)
-	.concat(profileAttributesRoutes)
-	.concat(rolesManagementRoutes)
-	.concat(cacheManagementRoutes)
-	.concat(newsManagementRoutes)
-	.concat(tenantManagementRoutes)
-	.concat(templatePruningRoutes)
-	.concat(internationalizationManagementRoutes)
-	.concat(mondrianSchemasManagementRoutes)
+    .concat(galleryManagementRoutes)
+    .concat(configurationManagementRoutes)
+    .concat(domainsManagementRoutes)
+    .concat(metadataManagementRoutes)
+    .concat(usersManagementRoutes)
+    .concat(profileAttributesRoutes)
+    .concat(rolesManagementRoutes)
+    .concat(cacheManagementRoutes)
+    .concat(newsManagementRoutes)
+    .concat(tenantManagementRoutes)
+    .concat(templatePruningRoutes)
+    .concat(internationalizationManagementRoutes)
+    .concat(mondrianSchemasManagementRoutes)
     .concat(dataSourceRoutes)
     .concat(functionalitiesManagementRoutes)
     .concat(menuConfigurationRoutes)
     .concat(businessModelCatalogueRoutes)
-	.concat(resourceManagementRoutes)
+    .concat(driversManagementRoutes)
+    .concat(resourceManagementRoutes)
+    .concat(crossNavigationManagement)
+    .concat(constraintsManagementRoutes)
+    .concat(lovsManagementRoutes)
+    .concat(glossaryDefinitionRoutes)
+    .concat(glossaryUsageRoutes)
 
 export default routes

@@ -18,6 +18,7 @@
 package it.eng.spagobi.analiticalmodel.execution.service;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -103,7 +104,7 @@ public class SelectParametersLookupModule extends AbstractBasicListModule {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.dispatching.service.list.basic.IFaceBasicListService#getList(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)
 	 */
 	@Override
@@ -169,7 +170,7 @@ public class SelectParametersLookupModule extends AbstractBasicListModule {
 
 	/**
 	 * Filters the list according to the parameters correlation
-	 * 
+	 *
 	 * @param paruse
 	 *            The modality in use
 	 * @param request
@@ -882,7 +883,7 @@ public class SelectParametersLookupModule extends AbstractBasicListModule {
 
 	/**
 	 * Executes a select statement.
-	 * 
+	 *
 	 * @param requestContainer
 	 *            The request container object
 	 * @param responseContainer
@@ -891,9 +892,9 @@ public class SelectParametersLookupModule extends AbstractBasicListModule {
 	 *            The statement definition string
 	 * @param datasource
 	 *            the datasource
-	 * 
+	 *
 	 * @return A generic object containing the Execution results
-	 * 
+	 *
 	 * @throws EMFInternalError
 	 *             the EMF internal error
 	 */
@@ -906,12 +907,15 @@ public class SelectParametersLookupModule extends AbstractBasicListModule {
 		DataResult dataResult = null;
 		try {
 			DataSourceUtilities dsUtil = new DataSourceUtilities();
-			Connection conn = dsUtil.getConnection(requestContainer, datasource);
-			dataConnection = dsUtil.getDataConnection(conn);
-			sqlCommand = dataConnection.createSelectCommand(statement);
-			dataResult = sqlCommand.execute();
-			ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
-			result = scrollableDataResult.getSourceBean();
+			try (Connection conn = dsUtil.getConnection(requestContainer, datasource)) {
+				dataConnection = dsUtil.getDataConnection(conn);
+				sqlCommand = dataConnection.createSelectCommand(statement);
+				dataResult = sqlCommand.execute();
+				ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
+				result = scrollableDataResult.getSourceBean();
+			} catch (SQLException e) {
+				logger.error("Error closing connection", e);
+			}
 		} finally {
 			Utils.releaseResources(dataConnection, sqlCommand, dataResult);
 			logger.debug("OUT");
