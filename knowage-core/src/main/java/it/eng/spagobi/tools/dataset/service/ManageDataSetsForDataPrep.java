@@ -123,7 +123,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 
-public class ManageDataSetsForREST {
+public class ManageDataSetsForDataPrep {
 
 	private static final String PARAM_VALUE_NAME = "value";
 	public static final String DEFAULT_VALUE_PARAM = "defaultValue";
@@ -131,12 +131,12 @@ public class ManageDataSetsForREST {
 	public static final String SERVICE_NAME = "ManageDatasets";
 	public static final String DRIVERS = "DRIVERS";
 	// logger component
-	public static Logger logger = Logger.getLogger(ManageDataSetsForREST.class);
+	public static Logger logger = Logger.getLogger(ManageDataSetsForDataPrep.class);
 	public static Logger auditlogger = Logger.getLogger("dataset.audit");
 
 	protected IEngUserProfile profile;
 
-	public String previewDataset(String jsonString, UserProfile userProfile) {
+	public JSONObject previewDatasetForDataPreparation(String jsonString, UserProfile userProfile) {
 		JSONObject json = null;
 		try {
 			json = new JSONObject(jsonString);
@@ -146,7 +146,7 @@ public class ManageDataSetsForREST {
 
 		}
 
-		return datasetTest(json, userProfile);
+		return datasetTestForDataPrep(json, userProfile);
 	}
 
 	/**
@@ -1736,12 +1736,12 @@ public class ManageDataSetsForREST {
 		logger.debug("OUT");
 	}
 
-	private String datasetTest(JSONObject json, UserProfile userProfile) {
+	private JSONObject datasetTestForDataPrep(JSONObject json, UserProfile userProfile) {
 		try {
-			JSONObject dataSetJSON = getDataSetResultsAsJSON(json, userProfile);
+			JSONObject dataSetJSON = getDataSetResultsAsJSONDataPrep(json, userProfile);
 			if (dataSetJSON != null) {
 				// writeBackToClient(new JSONSuccess(dataSetJSON));
-				return dataSetJSON.toString();
+				return dataSetJSON;
 			} else {
 				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.testError");
 			}
@@ -1753,7 +1753,7 @@ public class ManageDataSetsForREST {
 		}
 	}
 
-	private JSONObject getDataSetResultsAsJSON(JSONObject json, UserProfile userProfile) throws EMFUserError, JSONException, SpagoBIException {
+	private JSONObject getDataSetResultsAsJSONDataPrep(JSONObject json, UserProfile userProfile) throws EMFUserError, JSONException, SpagoBIException {
 
 		JSONObject dataSetJSON = null;
 		JSONArray parsJSON = json.optJSONArray(DataSetConstants.PARS);
@@ -1779,12 +1779,13 @@ public class ManageDataSetsForREST {
 		}
 		IEngUserProfile profile = userProfile;
 
-		dataSetJSON = getDatasetTestResultList(dataSet, parametersMap, profile, json);
+		dataSetJSON = getDatasetTestResultList(dataSet, parametersMap, profile, json, true);
 
 		return dataSetJSON;
 	}
 
-	public JSONObject getDatasetTestResultList(IDataSet dataSet, HashMap<String, String> parametersFilled, IEngUserProfile profile, JSONObject json) {
+	public JSONObject getDatasetTestResultList(IDataSet dataSet, HashMap<String, String> parametersFilled, IEngUserProfile profile, JSONObject json,
+			boolean dataprep) {
 
 		JSONObject dataSetJSON;
 
@@ -1836,7 +1837,7 @@ public class ManageDataSetsForREST {
 
 			try {
 				JSONDataWriter dataSetWriter = new JSONDataWriter();
-				dataSetJSON = (JSONObject) dataSetWriter.write(dataStore, false);
+				dataSetJSON = (JSONObject) dataSetWriter.write(dataStore, dataprep);
 				if (dataSetJSON == null) {
 					throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to read serialized resultset");
 				}

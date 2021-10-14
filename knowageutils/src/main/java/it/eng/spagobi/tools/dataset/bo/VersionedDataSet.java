@@ -67,8 +67,7 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param wrappedDataset
-	 *            the wrappedDataset to set
+	 * @param wrappedDataset the wrappedDataset to set
 	 */
 	public void setWrappedDataset(IDataSet wrappedDataset) {
 		this.wrappedDataset = wrappedDataset;
@@ -83,8 +82,7 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param organization
-	 *            the organization to set
+	 * @param organization the organization to set
 	 */
 	@Override
 	public void setOrganization(String organization) {
@@ -99,8 +97,7 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param version
-	 *            the version to set
+	 * @param version the version to set
 	 */
 	public void setVersionNum(Integer version) {
 		this.version = version;
@@ -114,8 +111,7 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param isActive
-	 *            the isActive to set
+	 * @param isActive the isActive to set
 	 */
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
@@ -759,4 +755,20 @@ public class VersionedDataSet implements IDataSet {
 	public void setTags(Set tags) {
 		wrappedDataset.setTags(tags);
 	}
+
+	/*
+	 * TODO: check if this value should return a derived id
+	 */
+	@Override
+	public Integer getDsDerivedId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setDsDerivedId(Integer id) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

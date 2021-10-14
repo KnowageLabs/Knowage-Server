@@ -26,6 +26,10 @@
             </key-property>
         </composite-id>
 
+     	<property name="dsDerivedId" type="integer">
+            <column name="DS_DERIVED_ID" />
+        </property>
+        
         <many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains">
             <column name="CATEGORY_ID" not-null="false"/>
         </many-to-one>

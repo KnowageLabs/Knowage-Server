@@ -43,6 +43,9 @@ public class SelfServiceDataSetDTO {
 	@FormParam("id")
 	private String id;
 
+	@FormParam("dsDerivedId")
+	private String dsDerivedId;
+
 	@FormParam("type")
 	private String type;
 

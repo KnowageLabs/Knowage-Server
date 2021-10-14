@@ -50,7 +50,7 @@ import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
-import it.eng.spagobi.tools.dataset.service.ManageDataSetsForREST;
+import it.eng.spagobi.tools.dataset.service.ManageDataSetsForDataPrep;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -60,6 +60,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 public class DataPreparationResource extends AbstractDataSetResource {
 
 	static protected Logger logger = Logger.getLogger(DataPreparationResource.class);
+	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
 
 	@Context
 	protected HttpServletRequest request;
@@ -90,7 +91,7 @@ public class DataPreparationResource extends AbstractDataSetResource {
 		String toReturnString = null;
 		try {
 			JSONObject json = new JSONObject(body);
-			ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
+			ManageDataSetsForDataPrep mdsfr = new ManageDataSetsForDataPrep();
 			JSONObject jsonResponse = mdsfr.previewDatasetForDataPreparation(json.toString(), getUserProfile());
 			JSONObject transformationsConfig = new JSONObject();
 			JSONArray configs = new JSONArray();
@@ -131,27 +132,6 @@ public class DataPreparationResource extends AbstractDataSetResource {
 		return toReturnString;
 	}
 
-	@POST
-	@Path("/{label}/saveDataset")
-	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String saveDataset(@PathParam("label") String label, String body) {
-		String toReturnString = null;
-		try {
-			JSONObject json = new JSONObject(body);
-			ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
-
-//			toReturnString = mdsfr.previewDatasetForDataPreparation(json.toString(), getUserProfile());
-
-		} catch (JSONException e) {
-			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
-		} catch (Exception e) {
-			logger.error("Error while previewing dataset " + label, e);
-			throw new SpagoBIRuntimeException("Error while previewing dataset " + label + ". " + e.getMessage(), e);
-		}
-		return toReturnString;
-	}
-
 	/*
 	 * TODO: to develop depending from BE
 	 */
@@ -163,9 +143,7 @@ public class DataPreparationResource extends AbstractDataSetResource {
 		String toReturnString = null;
 		try {
 			JSONObject json = new JSONObject(body);
-			ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
-
-//			toReturnString = mdsfr.previewDatasetForDataPreparation(json.toString(), getUserProfile());
+			ManageDataSetsForDataPrep mdsfr = new ManageDataSetsForDataPrep();
 
 		} catch (JSONException e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);

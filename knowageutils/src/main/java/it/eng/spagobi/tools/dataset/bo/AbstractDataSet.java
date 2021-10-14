@@ -64,6 +64,8 @@ import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators.IConditiona
 public abstract class AbstractDataSet implements IDataSet {
 
 	private int id;
+	private int dsDerivedId;
+
 	private String name;
 	private String description;
 	private String label;
@@ -1208,4 +1210,13 @@ public abstract class AbstractDataSet implements IDataSet {
 		this.tags = tags;
 	}
 
+	@Override
+	public Integer getDsDerivedId() {
+		return dsDerivedId;
+	}
+
+	@Override
+	public void setDsDerivedId(Integer dsDerivedId) {
+		this.dsDerivedId = dsDerivedId;
+	}
 }

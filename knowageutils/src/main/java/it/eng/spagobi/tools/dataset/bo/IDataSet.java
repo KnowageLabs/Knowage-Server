@@ -59,6 +59,10 @@ public interface IDataSet extends Iterable<IRecord> {
 
 	void setId(int id);
 
+	Integer getDsDerivedId();
+
+	void setDsDerivedId(Integer id);
+
 	String getName();
 
 	void setName(String name);
@@ -239,14 +243,10 @@ public interface IDataSet extends Iterable<IRecord> {
 	/**
 	 * Get the values for a certain dataset's field, considering a optional filter.
 	 *
-	 * @param fieldName
-	 *            The dataset's field
-	 * @param start
-	 *            The offset on results
-	 * @param limit
-	 *            The limit on result
-	 * @param filter
-	 *            The optional filter
+	 * @param fieldName The dataset's field
+	 * @param start     The offset on results
+	 * @param limit     The limit on result
+	 * @param filter    The optional filter
 	 * @return The datastore containing the values for the dataset's field
 	 */
 	public IDataStore getDomainValues(String fieldName, Integer start, Integer limit, IDataStoreFilter filter);
