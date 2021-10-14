@@ -1,5 +1,4 @@
 <template>
-    {{ readonly }}
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left>{{ job.jobName }}</template>
         <template #right>
@@ -66,11 +65,8 @@ export default defineComponent({
         }
     },
     watch: {
-        selectedJob: {
-            handler() {
-                this.loadJob()
-            },
-            deep: true
+        selectedJob() {
+            this.loadJob()
         }
     },
     computed: {
