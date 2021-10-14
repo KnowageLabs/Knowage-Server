@@ -8,11 +8,10 @@
 [![Documentation badge](https://img.shields.io/readthedocs/knowage.svg)](https://knowage.rtfd.io/)
 [![Build Status](https://travis-ci.com/KnowageLabs/Knowage-Server.svg?branch=master)](https://travis-ci.com/KnowageLabs/Knowage-Server)
 
-Knowage is the full capabilities open source suite for modern business analytics
-over traditional sources and big data systems. Its features, such as data
+KNOWAGE is the open source analytics and business intelligence suite that allows you to combine traditional data and big/cloud data sources into valuable and meaningful information. Its features, such as data
 federation, mash-up, data/text mining and advanced data visualization, give
 comprehensive support to rich and multi-source data analysis. The suite is
-composed of several modules, each one conceived for a specific analytical
+composed of two main modules and four aditional plugins, each one conceived for a specific analytical
 domain. They can be used individually as complete solution for a certain task,
 or combined with one another to ensure full coverage of user’ requirements.
 
@@ -27,7 +26,7 @@ for [Knowage](https://marketplace.fiware.org/pages/solutions/59611fb5573b7cb51c4
 
 ## Contents
 
--   [Modules available](#modules-available)
+-   [Modules and plugins available](#modules-and-plugins-available)
 -   [Editions](#editions)
 -   [Install](#install)
 -   [Usage](#usage)
@@ -38,16 +37,17 @@ for [Knowage](https://marketplace.fiware.org/pages/solutions/59611fb5573b7cb51c4
 -   [License](#license)
 
 
-## Modules available
+## Modules and plugins available
 
 |                                                   | Name                   | Description                                                                                                              |
 | ------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| ![BD](/images/modules/BD-40x40.jpg?raw=true "BD") | Big Data               | To analyse data stored on big data clusters or NoSQL databases                                                           |
+                                                       |
 | ![SI](/images/modules/SI-40x40.jpg?raw=true "SI") | Smart Intelligence     | The usual business intelligence on structured data, but more oriented to self-service capabilities and agile prototyping |
 | ![ER](/images/modules/ER-40x40.jpg?raw=true "ER") | Enterprise Reporting   | To produce and distribute static reports                                                                                 |
 | ![LI](/images/modules/LI-40x40.jpg?raw=true "LI") | Location Intelligence  | To relate business data with spatial or geographical information                                                         |
 | ![PM](/images/modules/PM-40x40.jpg?raw=true "PM") | Performance Management | To manage KPIs and organize scorecards, to monitor your business in real-time                                            |
-| ![PA](/images/modules/PA-40x40.jpg?raw=true "PA") | Predictive Analysis    | To perform advanced analyses for forecasting and prescriptive purposes                                                   |
+| ![PA](/images/modules/PA-40x40.jpg?raw=true "PA") | Custom Analytics    | To add what-if capabilities e take full advantage of R/python embedding possibilities                                                   |
+| ![BD](/images/modules/BD-40x40.jpg?raw=true "BD") | Smart Data               | To combine Solr index with other data sources and provide faceted views and full text search   
 
 Knowage supports a modern vision of the data analytics, providing new
 self-service capabilities that give autonomy to the end-user, now able to build
