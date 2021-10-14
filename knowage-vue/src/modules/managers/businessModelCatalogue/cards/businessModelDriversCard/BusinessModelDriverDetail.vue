@@ -49,6 +49,8 @@
                             :options="analyticalDrivers"
                             :placeholder="$t('managers.businessModelManager.analyticalDriverPlaceholder')"
                             :filter="true"
+                            filterMatchMode="contains"
+                            :filterFields="['label']"
                             :disabled="readonly"
                             @before-show="v$.driver.parameter.$touch()"
                             @change="showAnalyticalDropdownConfirm"
