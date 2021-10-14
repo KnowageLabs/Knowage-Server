@@ -2,7 +2,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left>{{ selectedKpi.name }}</template>
         <template #right>
-            <Button icon="pi pi-bars" class="p-button-text p-button-rounded p-button-plain" @click="toggleAlias" />
+            <Button :label="$t('kpi.kpiDefinition.aliasToolbarTitle')" :style="tabViewDescriptor.style.aliasButton" class="p-button-text p-button-rounded p-button-plain" @click="toggleAlias" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="showSaveDialog = true" :disabled="buttonDisabled" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
@@ -26,9 +26,11 @@
                         :checkFormula="checkFormula"
                         :activeTab="activeTab"
                         :reloadKpi="reloadKpi"
+                        :showGuide="showGuide"
                         @updateFormulaToSave="onUpdateFormulaToSave"
                         @errorInFormula="ifErrorInFormula"
                         @touched="setTouched"
+                        @onGuideClose="$emit('onGuideClose')"
                     />
                 </TabPanel>
 
@@ -51,7 +53,7 @@
         </div>
 
         <div v-if="isAliasVisible">
-            <Toolbar class="kn-toolbar kn-toolbar--secondary" style="height:39px">
+            <Toolbar class="kn-toolbar kn-toolbar--secondary" :style="tabViewDescriptor.style.aliasList">
                 <template #left>{{ $t('kpi.kpiDefinition.aliasToolbarTitle') }}</template>
             </Toolbar>
             <Listbox
@@ -83,17 +85,48 @@
             </template>
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-12  p-mt-5">
-                    <span class="p-float-label">
-                        <InputText id="name" class="kn-material-input" type="text" maxLength="25" v-model.trim="selectedKpi.name" />
-                        <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} *</label>
+                    <span class="p-float-label p-mb-2">
+                        <InputText
+                            id="name"
+                            class="kn-material-input"
+                            type="text"
+                            maxLength="25"
+                            v-model.trim="v$.selectedKpi.name.$model"
+                            :class="{
+                                'p-invalid': v$.selectedKpi.name.$invalid && v$.selectedKpi.name.$dirty
+                            }"
+                            @blur="v$.selectedKpi.name.$touch()"
+                        />
+                        <label for="label" class="kn-material-input-label">{{ $t('common.name') }} * </label>
                     </span>
+                    <KnValidationMessages
+                        :vComp="v$.selectedKpi.name"
+                        :additionalTranslateParams="{
+                            fieldName: $t('common.name')
+                        }"
+                    >
+                    </KnValidationMessages>
                 </div>
                 <div class="p-field p-col-12">
-                    <span class="p-float-label">
-                        <!-- AutoComplete needs its own style class, it looks weird. -->
-                        <AutoComplete v-model="selectedKpi.category" :suggestions="filteredCategories" field="valueName" @complete="setAutocompleteCategory($event)" />
-                        <label for="name" class="kn-material-input-label"> {{ $t('managers.configurationManagement.headers.category') }}</label>
+                    <span class="p-float-label p-mb-2">
+                        <AutoComplete
+                            v-model="v$.selectedKpi.category.$model"
+                            :class="{
+                                'p-invalid': v$.selectedKpi.category.$invalid && v$.selectedKpi.category.$dirty
+                            }"
+                            :suggestions="filteredCategories"
+                            field="valueName"
+                            @complete="setAutocompleteCategory($event)"
+                        />
+                        <label for="name" class="kn-material-input-label"> {{ $t('managers.configurationManagement.headers.category') }} *</label>
                     </span>
+                    <KnValidationMessages
+                        :vComp="v$.selectedKpi.category"
+                        :additionalTranslateParams="{
+                            fieldName: $t('managers.configurationManagement.headers.category')
+                        }"
+                    >
+                    </KnValidationMessages>
                 </div>
                 <div class="p-field-checkbox p-ml-2">
                     <Checkbox id="versioning" v-model="selectedKpi.enableVersioning" :binary="true" />
@@ -113,10 +146,12 @@
 <script lang="ts">
 import axios from 'axios'
 import { defineComponent } from 'vue'
+import { createValidations } from '@/helpers/commons/validationHelper'
 import useValidate from '@vuelidate/core'
 import tabViewDescriptor from './KpiDefinitionDetailDescriptor.json'
 import KpiDefinitionFormulaTab from './KpiDefinitionFormulaTab/KpiDefinitionFormulaTab.vue'
 import KpiDefinitionCardinalityTab from './KpiDefinitionCardinalityTab/KpiDefinitionCardinalityTab.vue'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import KpiDefinitionThresholdTab from './KpiDefinitionThresholdTab/KpiDefinitionThresholdTab.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
@@ -126,8 +161,8 @@ import AutoComplete from 'primevue/autocomplete'
 import Checkbox from 'primevue/checkbox'
 
 export default defineComponent({
-    components: { TabView, TabPanel, Listbox, KpiDefinitionThresholdTab, KpiDefinitionFormulaTab, Dialog, AutoComplete, Checkbox, KpiDefinitionCardinalityTab },
-    props: { id: { type: String, required: false }, version: { type: String, required: false }, cloneKpiVersion: { type: Number }, cloneKpiId: { type: Number } },
+    components: { TabView, TabPanel, KnValidationMessages, Listbox, KpiDefinitionThresholdTab, KpiDefinitionFormulaTab, Dialog, AutoComplete, Checkbox, KpiDefinitionCardinalityTab },
+    props: { id: { type: String, required: false }, version: { type: String, required: false }, cloneKpiVersion: { type: Number }, cloneKpiId: { type: Number }, showGuide: Boolean },
     computed: {
         buttonDisabled(): any {
             if (this.formulaHasErrors === true || this.v$.$invalid) {
@@ -160,6 +195,11 @@ export default defineComponent({
             filteredCategories: [] as any,
             formulaToSave: '',
             formulaHasErrors: false
+        }
+    },
+    validations() {
+        return {
+            selectedKpi: createValidations('selectedKpi', tabViewDescriptor.validations.selectedKpi)
         }
     },
     async created() {
@@ -259,11 +299,11 @@ export default defineComponent({
 
         cloneKpiConfirm(kpiId, kpiVersion) {
             this.$confirm.require({
-                message: this.$t('Clone'),
-                header: this.$t('Confirm item clone?'),
+                icon: 'pi pi-exclamation-triangle',
+                message: this.$t('kpi.kpiDefinition.confirmClone'),
+                header: this.$t(' '),
                 kpiId,
                 kpiVersion,
-                icon: 'pi pi-exclamation-triangle',
                 accept: () => this.cloneKpi(kpiId, kpiVersion)
             })
         },
@@ -298,18 +338,22 @@ export default defineComponent({
             if (typeof this.kpiToSave.cardinality === 'object') {
                 this.kpiToSave.cardinality = JSON.stringify(this.kpiToSave.cardinality)
             }
-            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveKpi', this.kpiToSave).then((response) => {
-                if (response.data.errors) {
-                    this.$store.commit('setError', { msg: response.data.errors })
-                } else {
-                    this.$store.commit('setInfo', { msg: 'Saved Succesfuly!' })
+            await axios
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveKpi', this.kpiToSave)
+                .then(() => {
+                    this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
                     this.kpiToSave.id === undefined ? this.$emit('kpiCreated', this.kpiToSave.name) : this.$emit('kpiUpdated')
                     this.reloadKpi = true
                     setTimeout(() => {
                         this.reloadKpi = false
                     }, 250)
-                }
-            })
+                })
+                .catch((response) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: response
+                    })
+                })
         }
     }
 })

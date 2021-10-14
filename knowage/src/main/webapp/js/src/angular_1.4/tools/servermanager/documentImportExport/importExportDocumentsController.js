@@ -317,7 +317,6 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 	var goingThroughTree = function(folders) {
 		var checkedDocs = [];
 		var objArray = [];
-		selectedFiles = [];
 
 		for(var i=0; i<folders.length; i++) {
 			checkedDocs = $filter('filter')(folders[i].biObjects, {checked: true}, true);
@@ -377,6 +376,8 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 		}
 
 		if (proceedToExport) {
+			config.DOCUMENT_ID_LIST = []
+			
 			if(!$scope.checkboxs.exportSelFunc){
 				for (var i =0 ; i < $scope.selected.length;i++){
 					if ($scope.selected[i].type == "biObject")
@@ -385,7 +386,6 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 			}
 	
 			if($scope.checkboxs.exportSelFunc) {
-				config.DOCUMENT_ID_LIST = [];
 				for(var i=0; i<selectedFiles.length; i++) {
 					//if($scope.selected[i].type == "biObject") {
 						config.DOCUMENT_ID_LIST.push(selectedFiles[i]);

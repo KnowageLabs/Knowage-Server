@@ -134,6 +134,8 @@ At the end of the build you will find all the WAR files at the following paths:
  - ``knowagetalendengine/target/knowagetalendengine.war``
  - ``knowagewhatifengine/target/knowagewhatifengine.war``
 
+There is no need to do anything in order to build Knowage-Python module: you can just take the source code and run it as a standalone program (refer to the official docs: https://knowage-suite.readthedocs.io/en/7.4/installation-guide/python-installation.html).
+
 ## Testing
 
 To run tests, type

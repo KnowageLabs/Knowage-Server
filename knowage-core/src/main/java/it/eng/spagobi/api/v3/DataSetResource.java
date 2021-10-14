@@ -116,20 +116,21 @@ public class DataSetResource {
 	}
 
 	@GET
-	@Path("/pagopt/")
+	@Path("/catalog/")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public DataSetResourceResponseRoot<DataSetMainDTO> getDataSetsPaginationOption(@QueryParam("typeDoc") String typeDoc,
 			@QueryParam("callback") String callback, @DefaultValue("-1") @QueryParam("offset") int offset,
-			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("filters") String _filters,
-			@QueryParam("ordering") JSONObject ordering, @QueryParam("tags") List<Integer> tags) {
+			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("filters") String _filters, @QueryParam("ordering") JSONObject ordering,
+			@QueryParam("tags") List<Integer> tags) {
 
 		try (KnowageMonitor m = KnowageMonitorFactory.start("knowage.dataset.paginatedList")) {
 
 			List<DataSetResourceFilter> filters = Collections.emptyList();
 
 			if (_filters != null) {
-				filters = new ObjectMapper().readValue(_filters, new TypeReference<List<DataSetResourceFilter>>(){});
+				filters = new ObjectMapper().readValue(_filters, new TypeReference<List<DataSetResourceFilter>>() {
+				});
 			}
 
 			UserProfile userProfile = getUserProfile();
@@ -152,8 +153,6 @@ public class DataSetResource {
 
 			List<DataSetMainDTO> dataSets = getListOfGenericDatasets(offset, fetchSize, filters, ordering, tags).stream().map(DataSetMainDTO::new)
 					.collect(toList());
-
-			dataSets = (List<DataSetMainDTO>) putActions(dataSets, typeDoc);
 
 			return new DataSetResourceResponseRoot<>(dataSets);
 
