@@ -88,15 +88,12 @@ export default defineComponent({
     async created() {
         this.loadParameter()
         await this.formatParameter()
-
         this.loadRoles()
         this.loadFormulas()
     },
     methods: {
         loadParameter() {
             this.parameter = this.propParameter as any
-            console.log(' >>>>>> PARAMETER', this.parameter)
-            console.log(' >>>>>>>> ROLES', this.roles)
         },
         async formatParameter() {
             if (this.parameter.type === 'fixed') {
@@ -104,12 +101,10 @@ export default defineComponent({
                 if (!this.parameterValues?.manualInput && this.parameter.value) {
                     this.parameter.manualInput = false
                     this.parameter.selectedValues = this.parameter.value.split(';').map((el: any) => el.trim())
-                    console.log('SELECTED VALUES: ', this.parameter.selectedValues)
                 }
             } else if (this.parameter.type === 'loadAtRuntime' && this.parameter.value) {
                 const tempParameters = this.parameter.value.split('|')
                 console.log(' >>>>>>>>> TEMP PARMATERS: ', tempParameters)
-                //this.parameter.value = tempParameters[1]
                 console.log(' >>>>>>>>> SELECTED VALUE: ', this.parameter.value)
             }
         },
@@ -118,15 +113,12 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.parameter?.documentLabel}/parameters/${this.parameter?.id}/values?role=${this.parameter?.role}`)
                 .then((response) => (this.parameterValues = response.data))
                 .catch(() => {})
-            console.log('LOADED PARAMETER VALUES: ', this.parameterValues, ' FOR PARAMTER: ', this.parameter)
         },
         loadRoles() {
             this.rolesOptions = this.roles as any
-            // console.log('LOADED ROLES', this.rolesOptions)
         },
         loadFormulas() {
             this.formulaOptions = this.formulas as any
-            // console.log('LOADED FORMULA OPTIONS', this.formulaOptions)
         },
         formatSelectedValues() {
             this.parameter.value = ''
@@ -134,7 +126,6 @@ export default defineComponent({
                 this.parameter.value += this.parameter.selectedValues[i]
                 this.parameter.value += i === this.parameter.selectedValues.length - 1 ? ' ' : '; '
             }
-            // console.log('FORMATED PARAMTER:', this.parameter)
         }
     }
 })

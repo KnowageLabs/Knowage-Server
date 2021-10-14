@@ -75,15 +75,12 @@ export default defineComponent({
     },
     created() {
         this.loadJob()
-        // console.log('CLONE: ', this.clone)
     },
     methods: {
         loadJob() {
             this.job = { ...this.selectedJob } as iPackage
-            // console.log('LOADED JOB: ', this.job)
         },
         setLoading(loading: boolean) {
-            console.log('SET LOADING: ', loading)
             this.loading = loading
         },
         async saveJob() {
@@ -104,8 +101,7 @@ export default defineComponent({
                         this.$emit('documentSaved', this.job?.jobName)
                     }
                 })
-                .catch((response) => {
-                    console.log('RESPONSE IN CATCH: ', response)
+                .catch(() => {
                     this.job = originalJob as iPackage
                 })
             this.loading = false

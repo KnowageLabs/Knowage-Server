@@ -53,7 +53,6 @@ export default defineComponent({
             this.documents = this.propDocuments as any[]
         },
         showDocumentDetail(document: any) {
-            console.log('DOCUMENT FOR DETAIL: ', document)
             this.selectedDocument = document
         },
         documentInvalid(document: any) {

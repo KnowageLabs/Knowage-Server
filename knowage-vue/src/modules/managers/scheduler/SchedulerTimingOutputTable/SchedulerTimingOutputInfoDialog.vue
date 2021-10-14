@@ -74,7 +74,6 @@ export default defineComponent({
     methods: {
         loadTriggerInfo() {
             this.info = this.triggerInfo
-            console.log('LOADED INFO: ', this.info)
         },
         closeDialog() {
             this.$emit('close')

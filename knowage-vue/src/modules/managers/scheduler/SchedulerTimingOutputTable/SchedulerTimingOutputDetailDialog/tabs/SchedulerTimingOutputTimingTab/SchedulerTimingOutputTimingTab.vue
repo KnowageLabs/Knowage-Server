@@ -1,5 +1,4 @@
 <template>
-    {{ trigger }}
     <div v-if="trigger" class="p-d-flex p-flex-row">
         <div class="kn-flex p-m-4">
             <span>
@@ -21,6 +20,7 @@
                 </div>
             </span>
         </div>
+
         <div class="p-d-flex p-flex-row kn-flex p-jc-around p-ai-center">
             <div v-for="type in schedulerTimingOutputTimingTabDescriptor.types" :key="type.value">
                 <RadioButton :id="type.value" name="type" :value="type.value" class="p-mr-2" v-model="triggerType" @change="formatFrequency" :data-test="'trigger-type-button-' + type.value"></RadioButton>
@@ -28,12 +28,14 @@
             </div>
         </div>
     </div>
+
     <div class="p-mt-4">
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
             <template #left>
                 {{ $t('managers.scheduler.timeWindow') }}
             </template>
         </Toolbar>
+
         <div v-if="triggerType !== 'scheduler'" class="p-d-flex p-flex-row p-m-4">
             <div class="p-d-flex p-ai-center p-m-2" data-test="single-execution-trigger">
                 <div class="p-col-5">
@@ -43,10 +45,11 @@
                     </span>
                     <div v-if="!validDates" class="p-error p-grid">
                         <small class="p-col-12">
-                            {{ $t('kpi.kpiScheduler.dateError') }}
+                            {{ $t('managers.scheduler.dateError') }}
                         </small>
                     </div>
                 </div>
+
                 <div class="p-col-7 p-d-flex p-ai-center">
                     <label for="startTime" class="kn-material-input-label p-m-2"> {{ $t('cron.startTime') + ':' }}</label>
                     <span>
@@ -65,7 +68,8 @@
                     </span>
                 </div>
             </div>
-            <div class="p-d-flex p-ai-center p-m-2" v-if="triggerType === 'event'" data-test="event-trigger-endDate">
+
+            <div v-if="triggerType === 'event'" class="p-d-flex p-ai-center p-m-2" data-test="event-trigger-endDate">
                 <div class="p-col-5">
                     <span>
                         <label for="endDateTiming" class="kn-material-input-label">{{ $t('cron.endDate') + ':' }}</label>
@@ -73,10 +77,11 @@
                     </span>
                     <div v-if="!validDates" class="p-error p-grid">
                         <small class="p-col-12">
-                            {{ $t('kpi.kpiScheduler.dateError') }}
+                            {{ $t('managers.scheduler.dateError') }}
                         </small>
                     </div>
                 </div>
+
                 <div class="p-col-7 p-d-flex p-ai-center">
                     <label for="endTime" class="kn-material-input-label p-m-2"> {{ $t('cron.endTime') + ':' }}</label>
                     <span>
@@ -96,29 +101,35 @@
                 </div>
             </div>
         </div>
-        <div v-if="triggerType === 'event'" class="p-m-4" data-test="event-trigger">
+
+        <div v-if="triggerType === 'event'" class="p-my-4" data-test="event-trigger">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
                     {{ $t('managers.scheduler.details') }}
                 </template>
             </Toolbar>
-            <div>
+
+            <div class="p-m-4">
                 <span>
                     <label class="kn-material-input-label">{{ $t('managers.scheduler.eventType') }}</label>
                     <Dropdown class="kn-material-input" v-model="trigger.chrono.parameter.type" :options="eventTypes" optionLabel="label" optionValue="value" />
                 </span>
             </div>
+
             <div v-if="trigger.chrono.parameter && trigger.chrono.parameter.type === 'dataset'">
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
                     <template #left>
                         {{ $t('managers.scheduler.dataset') }}
                     </template>
                 </Toolbar>
-                <span>
-                    <label class="kn-material-input-label">{{ $t('managers.scheduler.datasetVerification') }}</label>
-                    <Dropdown class="kn-material-input" v-model="trigger.chrono.parameter.dataset" :options="datasets" optionLabel="label" optionValue="id.dsId" />
-                </span>
-                <div class="kn-flex">
+
+                <div class="p-m-4">
+                    <span>
+                        <label class="kn-material-input-label">{{ $t('managers.scheduler.datasetVerification') }}</label>
+                        <Dropdown class="kn-material-input" v-model="trigger.chrono.parameter.dataset" :options="datasets" optionLabel="label" optionValue="id.dsId" />
+                    </span>
+                </div>
+                <div class="kn-flex p-m-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.frequencyMinutes') }}</label>
                         <InputText class="kn-material-input p-inputtext-sm" type="number" v-model="trigger.chrono.parameter.frequency" />
@@ -126,6 +137,7 @@
                 </div>
             </div>
         </div>
+
         <div v-if="triggerType === 'scheduler'" data-test="scheduler-trigger">
             <KnCron v-if="trigger && trigger.frequency" :frequency="trigger.frequency" @cronValid="setCronValid($event)"></KnCron>
         </div>
@@ -196,7 +208,6 @@ export default defineComponent({
             this.setTriggerDates()
             if (this.triggerType === 'scheduler') this.setCronFrequency()
             if (this.trigger.chrono.parameter?.dataset) this.trigger.chrono.parameter.dataset = +this.trigger.chrono.parameter.dataset
-            console.log('TRIGGER IN TIMING: ', this.trigger)
         },
         setTriggerType() {
             switch (this.trigger.chrono.type) {
@@ -222,11 +233,6 @@ export default defineComponent({
                 this.trigger.endDateTiming.setHours(0)
                 this.trigger.endDateTiming.setMinutes(0)
             }
-
-            console.log('START DATE: ', this.trigger.startDateTiming)
-            console.log('START TIME: ', this.trigger.startTimeTiming)
-            // console.log('END DATE: ', this.trigger.endDateTiming)
-            // console.log('END TIME: ', this.trigger.endTimeTiming)
         },
         setCronFrequency() {
             const startDate = this.trigger.zonedStartTime ? new Date(this.trigger.zonedStartTime) : new Date()
@@ -239,10 +245,8 @@ export default defineComponent({
                 endDate: endDate ? endDate.valueOf() : null,
                 endTime: endDate ? endDate.getHours() + ':' + endDate.getMinutes() : ''
             }
-            console.log('TEEEEEEEEEEST FREQUENCY: ', this.trigger.frequency)
         },
         formatFrequency() {
-            console.log('CAAAAAAAAAAAALED', this.triggerType)
             this.trigger.chrono = { type: this.triggerType, parameter: { type: '' } }
 
             switch (this.trigger.chrono.type) {

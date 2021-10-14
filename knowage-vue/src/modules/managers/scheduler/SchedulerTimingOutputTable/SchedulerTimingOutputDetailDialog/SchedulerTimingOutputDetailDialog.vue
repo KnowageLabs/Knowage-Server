@@ -72,7 +72,7 @@ export default defineComponent({
         saveDisabled(): any {
             let disabled = false
 
-            if (!this.trigger.triggerDescription) {
+            if (!this.trigger.triggerDescription && !this.validCron) {
                 return true
             }
 
@@ -103,12 +103,9 @@ export default defineComponent({
     methods: {
         loadTrigger() {
             this.trigger = this.propTrigger ? { ...this.propTrigger } : {}
-
-            console.log('LOADED TRIGGER IN MAIN DIALOG: ', this.trigger)
         },
         async loadDatasets() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/?asPagedList=true`).then((response) => (this.datasets = response.data.item))
-            console.log('LOADED DATASETS: ', this.datasets)
         },
         async loadJobInfo() {
             if (this.trigger.jobName) {
@@ -120,7 +117,6 @@ export default defineComponent({
             if (!this.trigger.documents) {
                 this.trigger = { ...this.trigger, documents: this.jobInfo?.documents }
             }
-            console.log('LOADED JOB INFO: ', this.jobInfo)
         },
         setCronValid(value: boolean) {
             this.validCron = value
@@ -132,20 +128,15 @@ export default defineComponent({
             this.$emit('close')
         },
         async saveTrigger() {
-            console.log('SAVE TRIGGER: ', this.trigger)
             this.loading = true
             const originalTrigger = { ...this.trigger }
-            console.log('ORIGINAL TRIGGER: ', originalTrigger)
             this.formatTrigger()
 
             await this.axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/saveTrigger`, this.trigger, { headers: { 'X-Disable-Errors': true } })
                 .then((response) => {
                     if (response.data.Errors) {
-                        console.log('RESPONSE IN IF ERROR:', response)
-                        this.warningVisible = true
-                        this.warningMessage = this.$t('managers.scheduler.genericError')
-                        this.trigger = originalTrigger
+                        this.setWarningMessage(originalTrigger, 'default error')
                     } else {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.' + this.operation + 'Title'),
@@ -155,13 +146,15 @@ export default defineComponent({
                     }
                 })
                 .catch((response) => {
-                    console.log('RESPONSE IN CATCH: ', response)
-                    this.warningTitle = this.$t('common.toast.' + this.operation + 'Title')
-                    this.warningVisible = true
-                    this.warningMessage = this.getErrorMessage(response)
-                    this.trigger = originalTrigger
+                    this.setWarningMessage(originalTrigger, response)
                 })
             this.loading = false
+        },
+        setWarningMessage(originalTrigger: any, response: string) {
+            this.warningTitle = this.$t('common.toast.' + this.operation + 'Title')
+            this.warningVisible = true
+            this.warningMessage = this.getErrorMessage(response)
+            this.trigger = originalTrigger
         },
         getErrorMessage(message: string) {
             switch (message) {
@@ -190,17 +183,12 @@ export default defineComponent({
             }
             if (!this.trigger.endDateTiming || !this.trigger.zonedEndTime) delete this.trigger.zonedEndTime
 
-            delete this.trigger.startDateTiming
-            delete this.trigger.startTimeTiming
-            delete this.trigger.endDateTiming
-            delete this.trigger.endTimeTiming
-            delete this.trigger.startDate
-            delete this.trigger.startTime
-            delete this.trigger.startDateRFC3339
-            delete this.trigger.endDate
-            delete this.trigger.endTime
-
+            this.deleteTriggerProps()
             this.formatTriggerDocuments()
+        },
+        deleteTriggerProps() {
+            const props = ['startDateTiming', 'startTimeTiming', 'endDateTiming', 'endTimeTiming', 'startDate', 'startTime', 'startDateRFC3339', 'endDate', 'endTime']
+            props.forEach((property: string) => delete this.trigger[property])
         },
         formatCron() {
             this.trigger.chrono = this.trigger.frequency.cron
@@ -215,8 +203,6 @@ export default defineComponent({
             this.trigger.documents.forEach((el: any, index: number) => {
                 el.label = el.name
                 el.labelId = el.id + '__' + (index + 1)
-                // delete el.name
-                // delete el.description
             })
         }
     }

@@ -8,7 +8,7 @@
             </template>
 
             <div v-if="document">
-                <div>
+                <div class="p-m-2">
                     <span>
                         <label class="kn-material-input-label">{{ $t('common.name') }} *</label>
                         <InputText
@@ -18,8 +18,8 @@
                                 'p-invalid': documentNameDirty && (!document.documentname || document.documentname.length === 0)
                             }"
                             :maxLength="100"
-                            @input="setNameValidation"
-                            @blur="setNameValidation"
+                            @input="validateDocument('documentNameDirty')"
+                            @blur="validateDocument('documentNameDirty')"
                         />
                     </span>
                     <div class="p-d-flex p-flex-row p-jc-between">
@@ -31,7 +31,8 @@
                         <p class="name-help p-m-0">{{ nameHelp }}</p>
                     </div>
                 </div>
-                <div>
+
+                <div class="p-m-2">
                     <span>
                         <label class="kn-material-input-label">{{ $t('common.description') }}</label>
                         <InputText class="kn-material-input" v-model="document.documentdescription" :maxLength="100" />
@@ -40,61 +41,71 @@
                         <small>{{ descriptionHelp }}</small>
                     </div>
                 </div>
+
                 <div class="p-m-2">
                     <Checkbox v-model="document.useFixedFolder" :binary="true" @change="validateDocument" />
                     <span class="p-ml-2">{{ $t('managers.scheduler.fixedFolder') }}</span>
                 </div>
+
                 <div v-if="document.useFixedFolder" class="p-mt-4">
                     <SchedulerDocumentAccordionTree :propFunctionalities="functionalities" :propSelectedFolders="document.funct" @selected="setSelectedFolders"></SchedulerDocumentAccordionTree>
                 </div>
-                <div v-if="drivers.length > 0">
-                    <Message class="p-m-2" severity="info" :closable="true" :style="schedulerTimingOutputOutputTabDescriptor.styles.message">
+
+                <div v-if="drivers.length > 0" class="p-m-2">
+                    <Message class="p-m-4" severity="info" :closable="true" :style="schedulerTimingOutputOutputTabDescriptor.styles.message">
                         {{ $t('managers.scheduler.useFolderDatasetHint.partOne') }}
                         <ul class="dataset-hint-list">
                             <li>{{ $t('managers.scheduler.useFolderDatasetHint.partTwo') }}</li>
                             <li>{{ $t('managers.scheduler.useFolderDatasetHint.partThree') }}</li>
                         </ul>
                     </Message>
-                    <div class="p-m-2">
+
+                    <div class="p-my-4">
                         <Checkbox v-model="document.useFolderDataset" :binary="true" />
                         <span class="p-ml-2">{{ $t('managers.scheduler.folderFromDataset') }}</span>
                     </div>
                 </div>
-                <div v-if="document.useFolderDataset" class="p-mt-2">
-                    <span>
-                        <label class="kn-material-input-label">{{ $t('managers.scheduler.datasetVerification') }} *</label>
-                        <Dropdown
-                            class="kn-material-input"
-                            v-model="document.datasetFolderLabel"
-                            :options="datasets"
-                            optionLabel="label"
-                            optionValue="label"
-                            :class="{
-                                'p-invalid': datasetFolderLabelDrity && (!document.datasetFolderLabel || document.datasetFolderLabel?.length === 0)
-                            }"
-                            @blur="setDataFolderLabelValidation"
-                            @change="setDataFolderLabelValidation"
-                        />
-                        <div v-if="datasetFolderLabelDrity && (!document.datasetFolderLabel || document.datasetFolderLabel?.length === 0)" class="p-error p-grid p-m-2">
-                            {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.datasetVerification') }) }}
-                        </div>
-                    </span>
-                    <span>
-                        <label class="kn-material-input-label">{{ $t('managers.scheduler.driver') }} *</label>
-                        <Dropdown
-                            class="kn-material-input"
-                            v-model="document.datasetFolderParameter"
-                            :options="drivers"
-                            :class="{
-                                'p-invalid': datasetFolderParameterDirty && (!document.datasetFolderParameter || document.datasetFolderParameter?.length === 0)
-                            }"
-                            @blur="setDataFolderParameterValidation"
-                            @change="setDataFolderParameterValidation"
-                        />
-                        <div v-if="datasetFolderParameterDirty && (!document.datasetFolderParameter || document.datasetFolderParameter?.length === 0)" class="p-error p-grid p-m-2">
-                            {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.driver') }) }}
-                        </div>
-                    </span>
+
+                <div v-if="document.useFolderDataset" class="p-mt-4">
+                    <div class="p-m-2">
+                        <span>
+                            <label class="kn-material-input-label">{{ $t('managers.scheduler.datasetVerification') }} *</label>
+                            <Dropdown
+                                class="kn-material-input"
+                                v-model="document.datasetFolderLabel"
+                                :options="datasets"
+                                optionLabel="label"
+                                optionValue="label"
+                                :class="{
+                                    'p-invalid': datasetFolderLabelDrity && (!document.datasetFolderLabel || document.datasetFolderLabel?.length === 0)
+                                }"
+                                @blur="validateDocument('datasetFolderLabelDrity')"
+                                @change="validateDocument('datasetFolderLabelDrity')"
+                            />
+                            <div v-if="datasetFolderLabelDrity && (!document.datasetFolderLabel || document.datasetFolderLabel?.length === 0)" class="p-error p-grid p-m-2">
+                                {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.datasetVerification') }) }}
+                            </div>
+                        </span>
+                    </div>
+
+                    <div class="p-m-2">
+                        <span>
+                            <label class="kn-material-input-label">{{ $t('managers.scheduler.driver') }} *</label>
+                            <Dropdown
+                                class="kn-material-input"
+                                v-model="document.datasetFolderParameter"
+                                :options="drivers"
+                                :class="{
+                                    'p-invalid': datasetFolderParameterDirty && (!document.datasetFolderParameter || document.datasetFolderParameter?.length === 0)
+                                }"
+                                @blur="validateDocument('datasetFolderParameterDirty')"
+                                @change="validateDocument('datasetFolderParameterDirty')"
+                            />
+                            <div v-if="datasetFolderParameterDirty && (!document.datasetFolderParameter || document.datasetFolderParameter?.length === 0)" class="p-error p-grid p-m-2">
+                                {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.driver') }) }}
+                            </div>
+                        </span>
+                    </div>
                 </div>
             </div>
         </AccordionTab>
@@ -146,35 +157,23 @@ export default defineComponent({
     methods: {
         loadDocument() {
             this.document = this.propDocument
-             this.document.invalid = {}
-            this.validateDocument()
+            this.document.invalid = {}
+            this.validateDocument(null)
         },
         loadDrivers() {
             const index = this.jobInfo?.documents.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) {
                 this.drivers = this.jobInfo?.documents[index].parameters
             }
-
-            console.log('LOADED DRIVERS: ', this.drivers)
         },
         setSelectedFolders(folders: any[]) {
-            console.log('SELECTED FOlDERS: ', folders)
             this.document.funct = folders
-            this.validateDocument()
+            this.validateDocument(null)
         },
-        setNameValidation() {
-            this.documentNameDirty = true
-            this.validateDocument()
-        },
-        setDataFolderLabelValidation() {
-            this.datasetFolderLabelDrity = true
-            this.validateDocument()
-        },
-        setDataFolderParameterValidation() {
-            this.datasetFolderParameterDirty = true
-            this.validateDocument()
-        },
-        validateDocument() {
+        validateDocument(dirty: string | null) {
+            if (dirty) {
+                this[dirty] = true
+            }
             const nameInvalid = !this.document.documentname || this.document.documentname.length === 0
             const datasetInvalid = this.document.useFolderDataset && (!this.document.datasetFolderLabel || this.document.datasetFolderLabel?.length === 0 || !this.document.datasetFolderParameter || this.document.datasetFolderParameter?.length === 0)
             const foldersInvalid = this.document.useFixedFolder && (!this.document.funct || this.document.funct?.length === 0)

@@ -32,6 +32,7 @@
                             <p class="name-help p-m-0">{{ nameHelp }}</p>
                         </div>
                     </div>
+
                     <div class="p-m-2">
                         <span>
                             <label class="kn-material-input-label">{{ $t('managers.scheduler.historyLength') }}</label>

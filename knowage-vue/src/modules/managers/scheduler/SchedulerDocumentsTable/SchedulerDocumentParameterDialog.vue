@@ -64,7 +64,6 @@ export default defineComponent({
             this.parameters = []
             this.propParameters?.forEach((el: any) => this.parameters.push({ ...el }))
             this.parameters.sort((a: any, b: any) => (a.name > b.name ? 1 : -1))
-            console.log('LOADED PARAMETERS: ', this.parameters)
         },
         closeDialog() {
             this.parameters = []
@@ -72,11 +71,8 @@ export default defineComponent({
         },
         async loadFormulas() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/formulas/`).then((response) => (this.formulas = response.data))
-            // console.log('LOADED FORMULAS: ', this.formulas)
         },
         setParameters() {
-            // console.log('SET PARAMETERS: ', this.parameters)
-
             this.$emit('setParameters', this.parameters)
         }
     }

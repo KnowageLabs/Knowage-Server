@@ -1061,6 +1061,7 @@
             "contextBroker": "Context Broker message",
             "dataset": "Dataset",
             "datasetVerification": "Data set verification",
+            "dateError": "Start date must be before end date. End date must be in future.",
             "destinationFolder": "Destination folder",
             "detail": "Schedulation Detail",
             "details": "Details",

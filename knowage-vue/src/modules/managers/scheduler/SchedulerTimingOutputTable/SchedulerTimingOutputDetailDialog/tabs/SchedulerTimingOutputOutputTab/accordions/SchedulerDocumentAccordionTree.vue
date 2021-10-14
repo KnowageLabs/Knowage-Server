@@ -1,7 +1,7 @@
 <template>
     <div>
         <label class="kn-material-input-label">{{ $t('managers.scheduler.documentsTree') }}</label>
-        <Tree class="p-mt-2" :value="nodes" :expandedKeys="expandedKeys" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)">
+        <Tree class="documents-tree p-mt-2" :value="nodes" :expandedKeys="expandedKeys" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)">
             <template #default="slotProps">
                 <i :class="slotProps.node.customIcon"></i>
                 <Checkbox class="p-ml-2" name="folders" v-model="selectedFolders" :value="slotProps.node.id" @change="emitSelectedFolders" />
@@ -50,14 +50,12 @@ export default defineComponent({
     methods: {
         loadFunctionalities() {
             this.functionalities = this.propFunctionalities as any[]
-            // console.log('LOADED FUNCTIONALITIES: ', this.functionalities)
         },
         loadSelectedFolders() {
             this.selectedFolders = this.propSelectedFolders ? [...this.propSelectedFolders] : []
         },
         createNodeTree() {
             this.nodes = this.formatFunctionality(this.functionalities)
-            // console.log('NODES: ', this.nodes)
         },
         formatFunctionality(functionalities: any[]) {
             return functionalities.map((functionality: any) => {
@@ -103,3 +101,9 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.documents-tree {
+    border: none;
+}
+</style>

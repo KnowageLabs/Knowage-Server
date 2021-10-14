@@ -8,7 +8,7 @@
             </template>
 
             <div v-if="document">
-                <div>
+                <div class="p-m-2">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.classPath') }} *</label>
                         <InputText
@@ -67,7 +67,7 @@ export default defineComponent({
     methods: {
         loadDocument() {
             this.document = this.propDocument
-             this.document.invalid = {}
+            this.document.invalid = {}
             this.validateDocument()
         },
         setJavaClassPathValidation() {

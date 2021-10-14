@@ -87,7 +87,6 @@ export default defineComponent({
     methods: {
         loadDocuments() {
             this.documents = this.jobDocuments as any[]
-            // console.log('DOCUMENTS: ', this.documents)
         },
         checkIfParameterValuesSet(parameters: any[]) {
             let valuesSet = true
@@ -101,7 +100,6 @@ export default defineComponent({
                 }
             }
 
-            // console.log('PARAMTERS VALUES SET: ', valuesSet)
             return valuesSet
         },
         removeDocumentConfirm(documentIndex: number) {
@@ -113,7 +111,6 @@ export default defineComponent({
             })
         },
         removeDocument(documentIndex: number) {
-            // console.log('DOCUMENT TO REMOVE: ', documentIndex)
             this.documents.splice(documentIndex, 1)
         },
         async openDocumentsSelectionDialog() {
@@ -121,13 +118,10 @@ export default defineComponent({
             if (this.files.length === 0) {
                 await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/folders/?includeDocs=true`).then((response) => (this.files = response.data))
             }
-            // console.log('LOADED FILES: ', this.files)
             this.documentsSelectionDialogVisible = true
             this.$emit('loading', false)
         },
         onDocumentSelected(selectedDocument: any) {
-            // console.log('SELECTED DOCUMENT: ', selectedDocument)
-
             this.documentsSelectionDialogVisible = false
             if (selectedDocument) {
                 this.loadDocumentData(selectedDocument, true)
@@ -135,25 +129,20 @@ export default defineComponent({
         },
         async loadDocumentData(document: any, pushToTable: boolean) {
             this.$emit('loading', true)
-            // console.log('DOCUMENT FOR LOAD: ', document)
+
             if (document?.parametersTouched) {
                 return
             }
             const label = document.label ?? document.name
             const tempDocument = await this.loadDocumentInfo(label)
-            // console.log('TEMP DOCUMENT: ', tempDocument)
+
             this.roles = await this.loadSelectedDocumentRoles(tempDocument)
 
-            // tempDocument.parameters = await this.loadSelectedDocumentParameters(label)
             const tempParams = await this.loadSelectedDocumentParameters(label)
-            console.log(' >>> ORIGINAL PARAMETERS: ', document.parameters)
-            console.log(' >>> PARAMTERS FROM GET: ', tempParams)
-
             this.updateDocumentParameters(document, tempParams)
 
             tempDocument.condensedParameters = this.updateCondensedParameters(tempParams)
-            console.log('TEMP DOCUMENT: ', tempDocument)
-            console.log('ROLES: ', this.roles)
+
             this.selectedDocument = { name: label, nameTitle: tempDocument.label, condensedParameters: tempDocument.condensedParameters, parameters: document.parameters }
             this.selectedDocument.parameters?.forEach((el: any) => (el.role = this.roles[0].role))
             if (pushToTable) this.documents.push(this.selectedDocument)
@@ -169,8 +158,6 @@ export default defineComponent({
                     if (index === -1) {
                         this.deletedParams.push(document.parameters[i])
                     } else {
-                        console.log('API PARAMETER: ', apiParameters[i])
-                        console.log('DOCUMENT PARAMETER: ', document.parameters[index])
                         document.parameters[index].id = apiParameters[i].id
                         document.parameters[index].temporal = apiParameters[i].temporal
                     }
@@ -180,7 +167,6 @@ export default defineComponent({
         async loadDocumentInfo(documentLabel: string) {
             let tempDocument = null as any
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${documentLabel}`).then((response) => (tempDocument = response.data))
-            console.log('TEMP DOCUMENT: ', tempDocument)
             return tempDocument
         },
         async loadSelectedDocumentRoles(tempDocument: any) {
@@ -192,36 +178,30 @@ export default defineComponent({
                 formatedRoles.push({ userAndRole: el, user: userAndRole[0], role: userAndRole[1] })
             })
 
-            //console.log('TEMP ROLES: ', tempRoles)
-            //console.log('FORMATED ROLES: ', formatedRoles)
             return formatedRoles
         },
         async loadSelectedDocumentParameters(documentLabel: string) {
             let tempParameters = [] as any[]
-            // let deletedParameters = []
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${documentLabel}/parameters`).then((response) => (tempParameters = response.data))
-            // console.log('TEMP PARAMETERES: ', tempParameters)
+
             tempParameters = tempParameters.map((el: any) => {
                 return { id: el.parID, name: el.parameterUrlName, value: '', type: 'fixed', iterative: false, temporal: el.parameter.temporal, documentLabel: documentLabel } as any
             })
-            // console.log('TEMP PARAMETERES FORMATED: ', tempParameters)
+
             return tempParameters
         },
         updateCondensedParameters(parameters: any[]) {
-            console.log(' >>> PARAMTERS: ', parameters)
             let condensedParameters = ''
             for (let i = 0; i < parameters.length; i++) {
-                //console.log('parameters[i]', parameters[i])
                 if (parameters[i].type === 'fixed') {
                     condensedParameters += ' ' + parameters[i].name + ' = ' + parameters[i].value
                     condensedParameters += i === parameters.length - 1 ? ' ' : ' | '
                 }
             }
-            console.log('CONDENSED PARAMETERS: ', condensedParameters)
+
             return condensedParameters
         },
         async openDocumentParameterDialog(document: any) {
-            // console.log('DOCUMENT: ', document)
             this.selectedDocument = document
             this.parameterWithValues = document.parameters
             await this.loadDocumentData(document, false)
@@ -233,15 +213,12 @@ export default defineComponent({
             this.documentParameterDialogVisible = false
         },
         onParametersSet(parameters: any[]) {
-            console.log('CAAAAAAAAAAAAAAALED')
             this.selectedDocument.parameters = parameters
             this.selectedDocument.condensedParameters = this.updateCondensedParameters(parameters)
             this.selectedDocument.parametersTouched = true
 
             const index = this.documents.findIndex((el: any) => el.name === this.selectedDocument.name)
             if (index !== -1) this.documents[index] = this.selectedDocument
-            // console.log('DOCUMENT AFTER PARAMETERS SET: ', this.selectedDocument)
-            // console.log('DOCUMENTS AFTER :', this.documents)
             this.documentParameterDialogVisible = false
         }
     }

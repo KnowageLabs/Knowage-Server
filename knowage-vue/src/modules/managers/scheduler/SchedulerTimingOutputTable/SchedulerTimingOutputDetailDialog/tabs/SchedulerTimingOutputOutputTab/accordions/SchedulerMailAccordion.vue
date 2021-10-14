@@ -3,19 +3,21 @@
         <AccordionTab>
             <template #header>
                 <i class="fa fa-envelope"></i>
-                <span class="p-m-2">{{ $t('managers.scheduler.sendMail') }}</span>
+                <span class="p-m-4">{{ $t('managers.scheduler.sendMail') }}</span>
                 <i v-if="document.invalid?.invalidMail" class="pi pi-exclamation-triangle warning-icon" data-test="warning-icon"></i>
             </template>
 
             <div v-if="document">
-                <Message class="p-m-0" severity="info" :closable="true" :style="schedulerTimingOutputOutputTabDescriptor.styles.message">
+                <Message class="p-m-4" severity="info" :closable="true" :style="schedulerTimingOutputOutputTabDescriptor.styles.message">
                     <span v-html="$t('managers.scheduler.fixedRecipientsListHelp')"></span>
                 </Message>
-                <div class="p-my-4">
+
+                <div class="p-m-4">
                     <Checkbox v-model="document.useFixedRecipients" :binary="true" @change="removeDocumentExpressionAndDatasets" />
                     <span class="p-ml-2">{{ $t('managers.scheduler.fixedRecipientsList') }}</span>
                 </div>
-                <div v-if="document.useFixedRecipients" class="p-my-4">
+
+                <div v-if="document.useFixedRecipients" class="p-m-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.mailTo') }} *</label>
                         <InputText
@@ -31,7 +33,7 @@
                     </span>
                     <div class="p-d-flex p-flex-row p-jc-between">
                         <div>
-                            <div v-show="fixedRecipientsListDirty && (!document.mailtos || document.mailtos.length === 0)" class="p-error p-grid p-m-2">
+                            <div v-show="fixedRecipientsListDirty && (!document.mailtos || document.mailtos.length === 0)" class="p-error p-grid p-m-4">
                                 {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.fixedRecipientsList') }) }}
                             </div>
                         </div>
@@ -39,60 +41,69 @@
                     </div>
                 </div>
 
-                <div v-if="drivers.length > 0" class="p-my-4">
-                    <Message class="p-my-4" severity="info" :closable="true" :style="schedulerTimingOutputOutputTabDescriptor.styles.message">
+                <div v-if="drivers.length > 0" class="p-m-4">
+                    <Message severity="info" :closable="true" :style="schedulerTimingOutputOutputTabDescriptor.styles.message">
                         <span>{{ $t('managers.scheduler.useDatasetListHelp') }}</span>
                     </Message>
+
                     <div class="p-my-4">
                         <Checkbox v-model="document.useDataset" :binary="true" @change="removeDocumentFixedRecipientsAndExpression" />
                         <span class="p-ml-2" v-html="$t('managers.scheduler.useDatasetList')"></span>
                     </div>
-                    <div v-if="document.useDataset" class="p-my-4">
-                        <span>
-                            <label class="kn-material-input-label">{{ $t('managers.scheduler.datasetVerification') }}</label>
-                            <Dropdown
-                                class="kn-material-input"
-                                v-model="document.datasetLabel"
-                                :class="{
-                                    'p-invalid': datasetLabelDirty && (!document.datasetLabel || document.datasetLabel?.length === 0)
-                                }"
-                                :options="datasets"
-                                optionLabel="label"
-                                optionValue="label"
-                                @blur="validateDocument('datasetLabelDirty')"
-                                @change="validateDocument('datasetLabelDirty')"
-                            />
-                            <div v-show="datasetLabelDirty && (!document.datasetLabel || document.datasetLabel?.length === 0)" class="p-error p-grid p-m-2">
-                                {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.datasetVerification') }) }}
-                            </div>
-                        </span>
-                        <span class="p-mt-2">
-                            <label class="kn-material-input-label">{{ $t('managers.scheduler.parameter') }}</label>
-                            <Dropdown
-                                class="kn-material-input"
-                                v-model="document.datasetParameter"
-                                :class="{
-                                    'p-invalid': datasetParameterDirty && (!document.datasetParameter || document.datasetParameter?.length === 0)
-                                }"
-                                :options="drivers"
-                                @blur="validateDocument('datasetParameterDirty')"
-                                @change="validateDocument('datasetParameterDirty')"
-                            />
-                            <div v-show="datasetParameterDirty && (!document.datasetParameter || document.datasetParameter?.length === 0)" class="p-error p-grid p-m-2">
-                                {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.parameter') }) }}
-                            </div>
-                        </span>
+
+                    <div v-if="document.useDataset">
+                        <div>
+                            <span>
+                                <label class="kn-material-input-label">{{ $t('managers.scheduler.datasetVerification') }} *</label>
+                                <Dropdown
+                                    class="kn-material-input"
+                                    v-model="document.datasetLabel"
+                                    :class="{
+                                        'p-invalid': datasetLabelDirty && (!document.datasetLabel || document.datasetLabel?.length === 0)
+                                    }"
+                                    :options="datasets"
+                                    optionLabel="label"
+                                    optionValue="label"
+                                    @blur="validateDocument('datasetLabelDirty')"
+                                    @change="validateDocument('datasetLabelDirty')"
+                                />
+                                <div v-show="datasetLabelDirty && (!document.datasetLabel || document.datasetLabel?.length === 0)" class="p-error p-grid p-m-4">
+                                    {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.datasetVerification') }) }}
+                                </div>
+                            </span>
+                        </div>
+
+                        <div class="p-my-2">
+                            <span>
+                                <label class="kn-material-input-label">{{ $t('managers.scheduler.parameter') }} *</label>
+                                <Dropdown
+                                    class="kn-material-input"
+                                    v-model="document.datasetParameter"
+                                    :class="{
+                                        'p-invalid': datasetParameterDirty && (!document.datasetParameter || document.datasetParameter?.length === 0)
+                                    }"
+                                    :options="drivers"
+                                    @blur="validateDocument('datasetParameterDirty')"
+                                    @change="validateDocument('datasetParameterDirty')"
+                                />
+                                <div v-show="datasetParameterDirty && (!document.datasetParameter || document.datasetParameter?.length === 0)" class="p-error p-grid p-m-4">
+                                    {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.parameter') }) }}
+                                </div>
+                            </span>
+                        </div>
                     </div>
                 </div>
 
-                <Message class="p-my-4" severity="info" :closable="true" :style="schedulerTimingOutputOutputTabDescriptor.styles.message">
+                <Message class="p-m-4" severity="info" :closable="true" :style="schedulerTimingOutputOutputTabDescriptor.styles.message">
                     <span v-html="$t('managers.scheduler.useExpressionHelp')"></span>
                 </Message>
-                <div class="p-my-4">
+
+                <div class="p-m-4">
                     <Checkbox v-model="document.useExpression" :binary="true" @change="removeDocumentFixedRecipientsAndDatasets" />
                     <span class="p-ml-2" v-html="$t('managers.scheduler.useExpression')"></span>
                 </div>
-                <div v-if="document.useExpression" class="p-my-4">
+
+                <div v-if="document.useExpression" class="p-m-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.expression') }} *</label>
                         <InputText
@@ -108,7 +119,7 @@
                     </span>
                     <div class="p-d-flex p-flex-row p-jc-between">
                         <div>
-                            <div v-show="expressionDirty && (!document.expression || document.expression.length === 0)" class="p-error p-grid p-m-2">
+                            <div v-show="expressionDirty && (!document.expression || document.expression.length === 0)" class="p-error p-grid p-m-4">
                                 {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.expression') }) }}
                             </div>
                         </div>
@@ -116,16 +127,17 @@
                     </div>
                 </div>
 
-                <div class="p-my-4">
+                <div class="p-m-4">
                     <Checkbox v-model="document.uniqueMail" :binary="true" />
                     <span class="p-ml-2" v-html="$t('managers.scheduler.uniqueMail')"></span>
                 </div>
 
-                <div class="p-my-4">
+                <div class="p-m-4">
                     <Checkbox v-model="document.zipMailDocument" :binary="true" />
                     <span class="p-ml-2" v-html="$t('managers.scheduler.zipMailDocument')"></span>
                 </div>
-                <div v-if="document.zipMailDocument" class="p-my-4">
+
+                <div v-if="document.zipMailDocument" class="p-m-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.zipFileName') }}</label>
                         <InputText class="kn-material-input p-inputtext-sm" v-model="document.zipMailName" :maxLength="100" />
@@ -135,12 +147,12 @@
                     </div>
                 </div>
 
-                <div class="p-my-4">
+                <div class="p-m-4">
                     <Checkbox v-model="document.reportNameInSubject" :binary="true" />
                     <span class="p-ml-2" v-html="$t('managers.scheduler.reportNameInSubject')"></span>
                 </div>
 
-                <div class="p-my-5">
+                <div class="p-m-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.mailSubject') }} *</label>
                         <InputText
@@ -156,14 +168,15 @@
                     </span>
                     <div class="p-d-flex p-flex-row p-jc-between">
                         <div>
-                            <div v-show="subjectDirty && (!document.mailsubj || document.mailsubj.length === 0)" class="p-error p-grid p-m-2">
+                            <div v-show="subjectDirty && (!document.mailsubj || document.mailsubj.length === 0)" class="p-error p-grid p-m-4">
                                 {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.mailSubject') }) }}
                             </div>
                         </div>
                         <p class="max-length-help p-m-0">{{ mailSubjectHelp }}</p>
                     </div>
                 </div>
-                <div class="p-my-4">
+
+                <div class="p-m-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.fileName') }}</label>
                         <InputText class="kn-material-input p-inputtext-sm" v-model="document.containedFileName" :maxLength="100" />
@@ -172,7 +185,8 @@
                         <small>{{ fileNameHelp }}</small>
                     </div>
                 </div>
-                <div class="p-my-4">
+
+                <div class="p-m-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.mailTextMessage') }} *</label>
                         <InputText
@@ -188,7 +202,7 @@
                     </span>
                     <div class="p-d-flex p-flex-row p-jc-between">
                         <div>
-                            <div v-show="mailTextDirty && (!document.mailtxt || document.mailtxt.length === 0)" class="p-error p-grid p-m-2">
+                            <div v-show="mailTextDirty && (!document.mailtxt || document.mailtxt.length === 0)" class="p-error p-grid p-m-4">
                                 {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.mailMessage') }) }}
                             </div>
                         </div>
@@ -248,15 +262,17 @@ export default defineComponent({
     },
     watch: {
         propDocument() {
-            this.loadDocument()
-            this.loadDrivers()
+            this.loadData()
         }
     },
     created() {
-        this.loadDocument()
-        this.loadDrivers()
+        this.loadData()
     },
     methods: {
+        loadData() {
+            this.loadDocument()
+            this.loadDrivers()
+        },
         loadDocument() {
             this.document = this.propDocument
             if (!this.document.useFixedRecipients && !this.document.useExpression && !this.document.useDataset) {
@@ -270,8 +286,6 @@ export default defineComponent({
             if (index !== -1) {
                 this.drivers = this.jobInfo?.documents[index].parameters
             }
-
-            console.log('LOADED DRIVERS: ', this.drivers)
         },
         removeDocumentExpressionAndDatasets() {
             this.validateDocument(null)
@@ -322,12 +336,6 @@ export default defineComponent({
             const fixedRecipientsListInvalid = this.document.useFixedRecipients && (!this.document.mailtos || this.document.mailtos.length === 0)
             const expressionInvalid = this.document.useExpression && (!this.document.expression || this.document.expression.length === 0)
             const datasetInvalid = this.document.useDataset && (!this.document.datasetLabel || this.document.datasetLabel?.length === 0 || !this.document.datasetParameter || this.document.datasetParameter?.length === 0)
-
-            console.log('SUBJECT INVALID: ', subjectInvalid)
-            console.log('MAIL TEXT INVALID: ', mailTextInvalid)
-            console.log('FIXED LIST INVALID: ', fixedRecipientsListInvalid)
-            console.log('EXPRESSION INVALID: ', expressionInvalid)
-            console.log('DATASET INVALID: ', datasetInvalid)
 
             this.document.invalid.invalidMail = subjectInvalid || mailTextInvalid || fixedRecipientsListInvalid || expressionInvalid || datasetInvalid
         }

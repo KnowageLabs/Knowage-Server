@@ -101,7 +101,6 @@ export default defineComponent({
     methods: {
         loadTriggers() {
             this.triggers = this.job?.triggers as any[]
-            // console.log('TRIGGERS: ', this.triggers)
         },
         getFormatedDate(date: any, format: any) {
             return formatDate(date, format)
@@ -118,16 +117,11 @@ export default defineComponent({
             if (trigger.triggerIsPaused) active = false
 
             if (trigger.triggerChronType === 'Single' && startDate < now) {
-                // console.log('USAO 2 !')
                 active = false
             } else if (endDate && (endDate < now || startDate > now)) {
-                // console.log('USAO 1 !')
                 active = false
             }
 
-            // console.log('Trigger: ', trigger)
-            // console.log('Trigger start: ', startDate)
-            // console.log('Trigger end: ', endDate)
             return active
         },
         toggle(event: any, trigger: any) {
@@ -136,7 +130,6 @@ export default defineComponent({
             menu.toggle(event)
         },
         createMenuItems(trigger: any) {
-            // console.log('TRIGGER IN MENU: ', trigger)
             this.items = []
             this.items.push({ label: this.$t('managers.scheduler.info'), icon: 'fa fa-info', command: () => this.getTriggerInfo(trigger, true) })
             this.items.push({ label: this.$t('managers.scheduler.detail'), icon: 'pi pi-pencil', command: () => this.showTriggerDetail(trigger) })
@@ -146,7 +139,6 @@ export default defineComponent({
                 : this.items.push({ label: this.$t('managers.scheduler.pauseSchedulation'), icon: 'fa fa-lock', command: () => this.triggerPauseConfirm(trigger) })
         },
         async getTriggerInfo(trigger: any, openDialog: boolean) {
-            // console.log('TRIGGER FOR INFO: ', trigger)
             this.$emit('loading', true)
             if (trigger) {
                 await axios
@@ -162,7 +154,6 @@ export default defineComponent({
             this.$emit('loading', false)
         },
         async showTriggerDetail(trigger: any) {
-            // console.log('TRIGGER FOR DETAIL: ', trigger)
             await this.getTriggerInfo(trigger, false)
             this.triggerDetailDialogVisible = true
         },
@@ -210,7 +201,6 @@ export default defineComponent({
                             msg: trigger.triggerIsPaused ? this.$t('managers.scheduler.schedulationResumed') : this.$t('managers.scheduler.schedulationPaused')
                         })
                         trigger.triggerIsPaused = action === 'pauseTrigger'
-                        // console.log('IS PAUSED: ', trigger.triggerIsPaused)
                     }
                 })
                 .catch(() => {})
@@ -225,8 +215,6 @@ export default defineComponent({
             })
         },
         async deleteTrigger(trigger: any, index: number) {
-            console.log('TRIGER FOR DELETE: ', trigger)
-            console.log('TRIGER FOR DELETE INDEX: ', index)
             this.$emit('loading', true)
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/deleteTrigger?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)

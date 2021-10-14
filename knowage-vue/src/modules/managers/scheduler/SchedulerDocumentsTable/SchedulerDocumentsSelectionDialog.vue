@@ -41,7 +41,7 @@ import Tree from 'primevue/tree'
 export default defineComponent({
     name: 'scheduler-documents-selection-dialog',
     components: { Dialog, Tree },
-    props: { propFiles: { type: Array }, visible: {type: Boolean} },
+    props: { propFiles: { type: Array }, visible: { type: Boolean } },
     emits: ['documentSelected', 'close'],
     data() {
         return {
@@ -55,20 +55,20 @@ export default defineComponent({
     },
     watch: {
         propFiles() {
-            this.loadFiles()
-            this.createNodeTree()
-            this.removeEmptyFolders()
+            this.loadTree()
         }
     },
     created() {
-        this.loadFiles()
-        this.createNodeTree()
-        this.removeEmptyFolders()
+        this.loadTree()
     },
     methods: {
+        loadTree() {
+            this.loadFiles()
+            this.createNodeTree()
+            this.removeEmptyFolders()
+        },
         loadFiles() {
             this.files = this.propFiles as iFile[]
-            // console.log('LOADED FILES: ', this.files)
         },
         createNodeTree() {
             this.nodes = []
@@ -91,8 +91,6 @@ export default defineComponent({
 
                 this.attachFolderToTree(node, foldersWithMissingParent)
             })
-
-            // console.log('NODES: ', this.nodes)
         },
         formatFolderChildren(folderChildren: any[]) {
             const formatedChildren = [] as iNode[]
@@ -174,7 +172,6 @@ export default defineComponent({
             node.icon = 'pi pi-folder'
         },
         setSelectedDocument(node: iNode) {
-            // console.log('DOCUMENT SELECTED: ', node.data)
             this.selectedDocument = node.data
         },
         removeSelectedDocument() {

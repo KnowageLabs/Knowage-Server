@@ -8,7 +8,7 @@
             </template>
 
             <div v-if="document">
-                <div>
+                <div class="p-m-2">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.fileName') }} *</label>
                         <InputText
@@ -31,6 +31,7 @@
                         <p class="name-help p-m-0">{{ fileNameHelp }}</p>
                     </div>
                 </div>
+
                 <div class="p-m-2">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.destinationFolder') }}</label>
@@ -40,6 +41,7 @@
                         <small>{{ destinationFolderHelp }}</small>
                     </div>
                 </div>
+
                 <div class="p-m-2">
                     <Checkbox v-model="document.zipFileDocument" :binary="true" />
                     <span class="p-ml-2">{{ $t('managers.scheduler.zipFileDocument') }}</span>
@@ -96,7 +98,7 @@ export default defineComponent({
     methods: {
         loadDocument() {
             this.document = this.propDocument
-             this.document.invalid = {}
+            this.document.invalid = {}
             this.validateDocument()
         },
         setFileNameValidation() {
