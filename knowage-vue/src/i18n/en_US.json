@@ -698,6 +698,7 @@
                 "addNode": "Add node",
                 "addWord": "Add word",
                 "cloneTitle": "Clone a Glossary",
+                "contentLoadError": "Generic error. System was unable to load the node.",
                 "deleteNodeConfirmMessage": "Deleting a node all the underlying node (if present) will be deleted. Continue?",
                 "details": "Details",
                 "duplicateContent": "Adding two or more nodes with the same name under a single node is not allowed.",
