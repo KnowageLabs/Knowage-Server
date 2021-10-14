@@ -38,7 +38,7 @@
                 </div>
             </form>
             <SchedulerDocumentsTable class="p-mt-4" :jobDocuments="job.documents" @loading="setLoading"></SchedulerDocumentsTable>
-            <SchedulerTimingOutputTable v-if="job.edit" class="p-mt-4" :job="job" @loading="setLoading"></SchedulerTimingOutputTable>
+            <SchedulerTimingOutputTable v-if="job.edit" class="p-mt-4" :job="job" @loading="setLoading" @triggerSaved="$emit('triggerSaved')"></SchedulerTimingOutputTable>
         </template>
     </Card>
 </template>

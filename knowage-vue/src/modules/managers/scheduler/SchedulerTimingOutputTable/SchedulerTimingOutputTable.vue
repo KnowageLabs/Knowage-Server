@@ -230,9 +230,9 @@ export default defineComponent({
                 .catch(() => {})
             this.$emit('loading', false)
         },
-        onSave(trigger: any) {
+        onSave() {
             this.triggerDetailDialogVisible = false
-            this.triggers.push(trigger)
+            this.$emit('triggerSaved')
         }
     }
 })

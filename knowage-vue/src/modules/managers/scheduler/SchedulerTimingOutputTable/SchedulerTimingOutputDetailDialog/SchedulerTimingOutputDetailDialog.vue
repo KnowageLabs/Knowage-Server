@@ -129,32 +129,38 @@ export default defineComponent({
         },
         async saveTrigger() {
             this.loading = true
-            const originalTrigger = { ...this.trigger }
+            const originalTrigger = {
+                ...this.trigger,
+                documents: this.trigger.documents.map((el: any) => {
+                    return { ...el }
+                })
+            }
             this.formatTrigger()
 
             await this.axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/saveTrigger`, this.trigger, { headers: { 'X-Disable-Errors': true } })
                 .then((response) => {
                     if (response.data.Errors) {
-                        this.setWarningMessage(originalTrigger, 'default error')
+                        this.setWarningMessage('default error')
+                        this.trigger = originalTrigger
                     } else {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.' + this.operation + 'Title'),
                             msg: this.$t('common.toast.success')
                         })
-                        this.$emit('saved', this.trigger)
+                        this.$emit('saved')
                     }
                 })
                 .catch((response) => {
-                    this.setWarningMessage(originalTrigger, response)
+                    this.setWarningMessage(response)
+                    this.trigger = originalTrigger
                 })
             this.loading = false
         },
-        setWarningMessage(originalTrigger: any, response: string) {
+        setWarningMessage(response: string) {
             this.warningTitle = this.$t('common.toast.' + this.operation + 'Title')
             this.warningVisible = true
             this.warningMessage = this.getErrorMessage(response)
-            this.trigger = originalTrigger
         },
         getErrorMessage(message: string) {
             switch (message) {

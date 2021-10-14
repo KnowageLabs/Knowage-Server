@@ -15,7 +15,7 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
-                <router-view :selectedJob="selectedJob" @closed="touched = false" @documentSaved="loadSelectJob" @close="closeDetail" />
+                <router-view :selectedJob="selectedJob" @closed="touched = false" @documentSaved="loadSelectJob" @close="closeDetail" @triggerSaved="loadPage" />
             </div>
         </div>
     </div>
