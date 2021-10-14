@@ -149,7 +149,10 @@ public class JSONDataWriter implements IDataWriter {
 			if (dataStore instanceof SolrDataStore) {
 				return write((SolrDataStore) dataStore);
 			} else {
-				return writeDataAndMetaDataPrep(dataStore);
+				if (dataprep)
+					return writeDataAndMetaDataPrep(dataStore);
+				else
+					return writeDataAndMeta(dataStore);
 			}
 		}
 	}

@@ -146,10 +146,10 @@ public class ManageDataSetsForREST {
 
 		}
 
-		return datasetTest(json, userProfile, false);
+		return datasetTest(json, userProfile);
 	}
 
-	public String previewDatasetForDataPreparation(String jsonString, UserProfile userProfile) {
+	public JSONObject previewDatasetForDataPreparation(String jsonString, UserProfile userProfile) {
 		JSONObject json = null;
 		try {
 			json = new JSONObject(jsonString);
@@ -159,7 +159,7 @@ public class ManageDataSetsForREST {
 
 		}
 
-		return datasetTest(json, userProfile, true);
+		return datasetTestForDataPrep(json, userProfile);
 	}
 
 	/**
@@ -1749,9 +1749,9 @@ public class ManageDataSetsForREST {
 		logger.debug("OUT");
 	}
 
-	private String datasetTest(JSONObject json, UserProfile userProfile, boolean dataprep) {
+	private String datasetTest(JSONObject json, UserProfile userProfile) {
 		try {
-			JSONObject dataSetJSON = getDataSetResultsAsJSON(json, userProfile, dataprep);
+			JSONObject dataSetJSON = getDataSetResultsAsJSON(json, userProfile);
 			if (dataSetJSON != null) {
 				// writeBackToClient(new JSONSuccess(dataSetJSON));
 				return dataSetJSON.toString();
@@ -1766,8 +1766,24 @@ public class ManageDataSetsForREST {
 		}
 	}
 
-	private JSONObject getDataSetResultsAsJSON(JSONObject json, UserProfile userProfile, boolean dataprep)
-			throws EMFUserError, JSONException, SpagoBIException {
+	private JSONObject datasetTestForDataPrep(JSONObject json, UserProfile userProfile) {
+		try {
+			JSONObject dataSetJSON = getDataSetResultsAsJSONDataPrep(json, userProfile);
+			if (dataSetJSON != null) {
+				// writeBackToClient(new JSONSuccess(dataSetJSON));
+				return dataSetJSON;
+			} else {
+				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.testError");
+			}
+		} catch (Throwable t) {
+			if (t instanceof SpagoBIServiceException) {
+				throw (SpagoBIServiceException) t;
+			}
+			throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.testError", t);
+		}
+	}
+
+	private JSONObject getDataSetResultsAsJSONDataPrep(JSONObject json, UserProfile userProfile) throws EMFUserError, JSONException, SpagoBIException {
 
 		JSONObject dataSetJSON = null;
 		JSONArray parsJSON = json.optJSONArray(DataSetConstants.PARS);
@@ -1793,7 +1809,38 @@ public class ManageDataSetsForREST {
 		}
 		IEngUserProfile profile = userProfile;
 
-		dataSetJSON = getDatasetTestResultList(dataSet, parametersMap, profile, json, dataprep);
+		dataSetJSON = getDatasetTestResultList(dataSet, parametersMap, profile, json, true);
+
+		return dataSetJSON;
+	}
+
+	private JSONObject getDataSetResultsAsJSON(JSONObject json, UserProfile userProfile) throws EMFUserError, JSONException, SpagoBIException {
+
+		JSONObject dataSetJSON = null;
+		JSONArray parsJSON = json.optJSONArray(DataSetConstants.PARS);
+		String transformerTypeCode = json.optString(DataSetConstants.TRASFORMER_TYPE_CD);
+
+		IDataSet dataSet = getDataSet(json, userProfile);
+		if (dataSet == null) {
+			throw new SpagoBIRuntimeException("Impossible to retrieve dataset from request");
+		}
+
+		if (StringUtilities.isNotEmpty(transformerTypeCode)) {
+			dataSet = setTransformer(dataSet, transformerTypeCode, json);
+		}
+		HashMap<String, String> parametersMap = new HashMap<>();
+		String datasetTypeCode = json.optString(DataSetConstants.DS_TYPE_CD);
+
+		String datasetTypeName = getDatasetTypeName(datasetTypeCode, userProfile);
+		if (parsJSON != null) {
+			if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_SOLR_TYPE)) {
+				parametersMap = getSolrDataSetParametersAsMap(json, userProfile);
+			} else
+				parametersMap = getDataSetParametersAsMap(json);
+		}
+		IEngUserProfile profile = userProfile;
+
+		dataSetJSON = getDatasetTestResultList(dataSet, parametersMap, profile, json, false);
 
 		return dataSetJSON;
 	}

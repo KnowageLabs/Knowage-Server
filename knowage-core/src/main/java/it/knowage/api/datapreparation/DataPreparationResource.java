@@ -1,3 +1,20 @@
+/*
+* Knowage, Open Source Business Intelligence suite
+* Copyright (C) 2020 Engineering Ingegneria Informatica S.p.A.
+
+* Knowage is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Affero General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+
+* Knowage is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU Affero General Public License for more details.
+
+* You should have received a copy of the GNU Affero General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 package it.knowage.api.datapreparation;
 
 import java.util.HashSet;
@@ -8,11 +25,13 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
@@ -22,21 +41,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-
 import it.eng.spagobi.api.common.AbstractDataSetResource;
+import it.eng.spagobi.api.v3.DataSetForWorkspaceDTO;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.service.ManageDataSetsForREST;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 @Path("/1.0/datapreparation")
 public class DataPreparationResource extends AbstractDataSetResource {
@@ -52,48 +70,16 @@ public class DataPreparationResource extends AbstractDataSetResource {
 	@Path("/{label}/datasetinfo")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String getDataSetInfo(@PathParam("label") String label) {
-		JSONObject jsonResponse = new JSONObject();
+	public DataSetForWorkspaceDTO getDataSetInfo(@PathParam("label") String label, @DefaultValue("-1") @QueryParam("offset") int offset,
+			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize) {
 		try {
-			Monitor timing = MonitorFactory.start("Knowage.datapreparation.getDataSetInfo");
-			JSONObject jsonData = new JSONObject();
-			JSONArray jsonMetadataColumns = new JSONArray();
-			JSONObject jsonMetadataColumn = new JSONObject();
-			IDataSet dataSet = getDatasetManagementAPI().getDataSet(label);
-			Set<String> qbeHiddenColumns = getQbeDataSetHiddenColumns(dataSet);
+			SbiDataSet dataSet = DAOFactory.getSbiDataSetDAO().loadMyDataSetByLabel(offset, fetchSize, getUserProfile(), label);
 
-			IMetaData metadata = dataSet.getMetadata();
-			for (int i = 0; i < metadata.getFieldCount(); i++) {
-				IFieldMetaData fieldMetaData = metadata.getFieldMeta(i);
-				String alias = fieldMetaData.getAlias();
-				if (qbeHiddenColumns.contains(alias))
-					continue;
-				JSONObject json = new JSONObject();
-				json.put("name", fieldMetaData.getName());
-				json.put("alias", alias);
-				json.put("type", fieldMetaData.getType().toString());
-				jsonMetadataColumns.put(json);
-
-			}
-			jsonMetadataColumn.put("columns", jsonMetadataColumns);
-
-			jsonData.put("id", dataSet.getId());
-			jsonData.put("label", dataSet.getLabel());
-			jsonData.put("name", dataSet.getName());
-			jsonData.put("description", dataSet.getDescription());
-			jsonData.put("catTypeCd", dataSet.getCategoryCd());
-			jsonData.put("catTypeId", dataSet.getCategoryId());
-			jsonData.put("pars", dataSet.getParameters());
-			jsonData.put("meta", jsonMetadataColumn);
-			jsonResponse.put("dataset", jsonData);
-			timing.stop();
-		} catch (JSONException e) {
-			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
-		} catch (Exception e) {
-			logger.error("Error while previewing dataset " + label, e);
-			throw new SpagoBIRuntimeException("Error while previewing dataset " + label + ". " + e.getMessage(), e);
+			return transform(dataSet);
+		} catch (Exception t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		}
-		return jsonResponse.toString();
+
 	}
 
 	@POST
@@ -105,8 +91,36 @@ public class DataPreparationResource extends AbstractDataSetResource {
 		try {
 			JSONObject json = new JSONObject(body);
 			ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
+			JSONObject jsonResponse = mdsfr.previewDatasetForDataPreparation(json.toString(), getUserProfile());
+			JSONObject transformationsConfig = new JSONObject();
+			JSONArray configs = new JSONArray();
+			JSONObject transformationsMock = new JSONObject();
 
-			toReturnString = mdsfr.previewDatasetForDataPreparation(json.toString(), getUserProfile());
+			JSONArray parameters = new JSONArray();
+			JSONObject change1 = new JSONObject();
+
+			change1.put("column", "QUARTER");
+			change1.put("operator", "=");
+			change1.put("value", "Q1");
+
+			JSONObject change2 = new JSONObject();
+
+			change2.put("column", "STORE_ID");
+			change2.put("operator", ">");
+			change2.put("value", "4");
+
+			parameters.put(change1);
+
+			parameters.put(change2);
+
+			transformationsConfig.put("parameters", parameters);
+			transformationsMock.put("config", parameters);
+
+			configs.put(transformationsMock);
+
+			jsonResponse.put("transformations", configs);
+
+			toReturnString = jsonResponse.toString();
 
 		} catch (JSONException e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
@@ -115,6 +129,59 @@ public class DataPreparationResource extends AbstractDataSetResource {
 			throw new SpagoBIRuntimeException("Error while previewing dataset " + label + ". " + e.getMessage(), e);
 		}
 		return toReturnString;
+	}
+
+	@POST
+	@Path("/{label}/saveDataset")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public String saveDataset(@PathParam("label") String label, String body) {
+		String toReturnString = null;
+		try {
+			JSONObject json = new JSONObject(body);
+			ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
+
+//			toReturnString = mdsfr.previewDatasetForDataPreparation(json.toString(), getUserProfile());
+
+		} catch (JSONException e) {
+			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
+		} catch (Exception e) {
+			logger.error("Error while previewing dataset " + label, e);
+			throw new SpagoBIRuntimeException("Error while previewing dataset " + label + ". " + e.getMessage(), e);
+		}
+		return toReturnString;
+	}
+
+	/*
+	 * TODO: to develop depending from BE
+	 */
+	@GET
+	@Path("/{label}/statistics")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public String getStatistics(@PathParam("label") String label, String body) {
+		String toReturnString = null;
+		try {
+			JSONObject json = new JSONObject(body);
+			ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
+
+//			toReturnString = mdsfr.previewDatasetForDataPreparation(json.toString(), getUserProfile());
+
+		} catch (JSONException e) {
+			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
+		} catch (Exception e) {
+			logger.error("Error while previewing dataset " + label, e);
+			throw new SpagoBIRuntimeException("Error while previewing dataset " + label + ". " + e.getMessage(), e);
+		}
+		return toReturnString;
+	}
+
+	/*
+	 * Utility methods
+	 */
+	private DataSetForWorkspaceDTO transform(SbiDataSet dataSet) {
+		DataSetForWorkspaceDTO dsToReturn = new DataSetForWorkspaceDTO(dataSet);
+		return dsToReturn;
 	}
 
 	@Override

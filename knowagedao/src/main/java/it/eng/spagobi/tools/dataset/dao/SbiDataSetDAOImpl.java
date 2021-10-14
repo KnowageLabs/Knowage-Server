@@ -674,4 +674,50 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 		return Restrictions.eq("owner", owner);
 	}
 
+	@Override
+	public SbiDataSet loadMyDataSetByLabel(int offset, int fetchSize, UserProfile userProfile, String label) {
+		logger.debug("IN");
+		SbiDataSet result = null;
+		Session session = null;
+
+		try {
+			StringBuilder statement = new StringBuilder();
+			Set<Domain> categoryList = null;
+			List<Integer> categoryIds = null;
+
+			statement.append("from SbiDataSet ds where ds.name = :name and ds.active = :active and (ds.owner = :owner or (");
+			session = getSession();
+			categoryList = UserUtilities.getDataSetCategoriesByUser(userProfile);
+			if (categoryList.isEmpty()) {
+				statement.append("ds.category.valueId is null");
+			} else {
+				categoryIds = extractCategoryIds(categoryList);
+				statement.append("(ds.category.valueId is null or ds.category.valueId in (:categories))");
+			}
+
+			statement.append(
+					" and ds.scope.valueId in (select dom.valueId from SbiDomains dom where dom.valueCd in ('USER', 'ENTERPRISE') and dom.domainCd = 'DS_SCOPE')))");
+
+			Query query = session.createQuery(statement.toString());
+			query.setBoolean("active", true);
+			query.setString("name", label);
+			query.setString("owner", userProfile.getUserId().toString());
+
+			if (categoryIds != null && !categoryIds.isEmpty())
+				query.setParameterList("categories", categoryIds);
+
+			result = (SbiDataSet) query.uniqueResult();
+
+		} catch (Exception e) {
+			throw new SpagoBIDAOException("An unexpected error occured while loading all datasets for final user", e);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+
+		return result;
+	}
+
 }
