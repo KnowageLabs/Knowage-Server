@@ -190,3 +190,9 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss">
+#document-tree {
+    border: none;
+}
+</style>

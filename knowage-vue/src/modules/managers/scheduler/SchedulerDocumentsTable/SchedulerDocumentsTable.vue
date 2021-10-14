@@ -131,6 +131,7 @@ export default defineComponent({
             this.$emit('loading', true)
 
             if (document?.parametersTouched) {
+                this.$emit('loading', false)
                 return
             }
             const label = document.label ?? document.name
