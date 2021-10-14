@@ -40,7 +40,7 @@ public class PdfExporter {
 		try (PDDocument document = new PDDocument()) {
 			PDPage blankPage = new PDPage();
 			document.addPage(blankPage);
-			document.save("D:/Temp/BlankPage.pdf");
+			document.save("BlankPage.pdf");
 			document.close();
 			return null;
 		} catch (Exception e) {
