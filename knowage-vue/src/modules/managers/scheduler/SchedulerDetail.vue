@@ -1,4 +1,5 @@
 <template>
+    {{ readonly }}
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left>{{ job.jobName }}</template>
         <template #right>
@@ -83,9 +84,8 @@ export default defineComponent({
     methods: {
         loadJob() {
             this.job = { ...this.selectedJob } as iPackage
-            if (this.job.edit) {
-                this.readonly = true
-            }
+
+            this.readonly = this.job.edit as any
         },
         setLoading(loading: boolean) {
             this.loading = loading
