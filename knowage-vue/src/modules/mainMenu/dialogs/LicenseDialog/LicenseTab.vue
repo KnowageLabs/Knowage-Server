@@ -183,24 +183,32 @@
 				await axios
 					.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license/upload` + `/${this.selectedHost.hostName}` + `?isForUpdate=${this.isForUpdate}`, formData, {
 						headers: {
-							'Content-Type': 'multipart/form-data'
+							'Content-Type': 'multipart/form-data',
+							'X-Disable-Errors': true
 						}
 					})
 					.then((response) => {
-						if (response.data.errors) {
-							if (response.data.errors[0].message == 'error.message.license.exists') {
-								this.errorMessage = this.$t('licenseDialog.errorExists')
-							} else {
-								this.errorMessage = response.data.errors[0].message
-							}
-							this.displayWarning = true
-						} else {
-							this.$store.commit('setInfo', {
+						this.$store.commit('setInfo', {
+							title: this.$t('common.uploading'),
+							msg: this.$t('importExport.import.successfullyCompleted')
+						})
+
+						this.$store.dispatch('updateLicense', { hostName: this.selectedHost.hostName, license: response.data })
+
+						this.$emit('reloadList')
+					})
+					.catch((response) => {
+						if (response.message == 'error.message.license.exists') {
+							this.$store.commit('setError', {
 								title: this.$t('common.uploading'),
-								msg: this.$t('importExport.import.successfullyCompleted')
+								msg: this.$t('licenseDialog.errorExists')
+							})
+						} else {
+							this.$store.commit('setError', {
+								title: this.$t('common.uploading'),
+								msg: response.message
 							})
 						}
-						this.$emit('reloadList')
 					})
 					.finally(() => (this.triggerUpload = false))
 			},

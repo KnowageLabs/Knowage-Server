@@ -25,7 +25,7 @@
                 <Column field="value" :header="$t('kpi.targetDefinition.kpiValue')" key="value" :sortable="true" class="kn-truncated" :headerStyle="targetDefinitionDetailDecriptor.table.column.style">
                     <template #body="slotProps"> {{ slotProps.data[slotProps.column.props.field] }} <i class="pi pi-pencil"></i> </template>
                     <template #editor="slotProps">
-                        <InputNumber v-model="slotProps.data[slotProps.column.props.field]" showButtons @input="valueEdited" />
+                        <InputNumber v-model="slotProps.data[slotProps.column.props.field]" showButtons mode="decimal" :minFractionDigits="2" />
                     </template>
                 </Column>
                 <Column headerStyle="targetDefinitionDetailDecriptor.table.iconColumn.style" :style="targetDefinitionDetailDecriptor.table.iconColumn.style">
@@ -58,7 +58,7 @@ export default defineComponent({
         },
         kpi: {
             type: Array as PropType<iValues[]>,
-            required: false
+            required: true
         }
     },
     data() {
@@ -69,7 +69,7 @@ export default defineComponent({
     },
     watch: {
         kpi() {
-            this.selectedKpi = this.kpi?.map((o) => ({ ...o })) as iValues[]
+            this.selectedKpi = this.kpi
         }
     },
     methods: {
@@ -84,9 +84,6 @@ export default defineComponent({
                 this.selectedKpi.splice(index, 1)
                 this.$emit('kpiChanged', this.selectedKpi)
             }
-        },
-        valueEdited() {
-            this.$emit('kpiChanged', this.selectedKpi)
         }
     }
 })

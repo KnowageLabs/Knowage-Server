@@ -364,18 +364,20 @@ export default defineComponent({
         },
         async loadDataDependencies() {
             this.conditions = []
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies?driverId=${this.driver?.id}`).then((response) =>
-                response.data.forEach((condition: any) => {
-                    const index = this.conditions.findIndex((cond) => cond.parFatherId === condition.parFatherId && cond.filterOperation == condition.filterOperation && cond.logicOperator == condition.logicOperator)
-                    condition.modalities = []
-                    condition.modalities.push({ conditionId: condition.id, useModeId: condition.useModeId, filterColumn: condition.filterColumn })
-                    if (index > -1) {
-                        this.conditions[index].modalities.push({ conditionId: condition.id, useModeId: condition.useModeId, filterColumn: condition.filterColumn })
-                    } else {
-                        this.conditions.push(condition)
-                    }
-                })
-            )
+            if (this.driver && this.driver.id) {
+                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies?driverId=${this.driver.id}`).then((response) =>
+                    response.data.forEach((condition: any) => {
+                        const index = this.conditions.findIndex((cond) => cond.parFatherId === condition.parFatherId && cond.filterOperation == condition.filterOperation && cond.logicOperator == condition.logicOperator)
+                        condition.modalities = []
+                        condition.modalities.push({ conditionId: condition.id, useModeId: condition.useModeId, filterColumn: condition.filterColumn })
+                        if (index > -1) {
+                            this.conditions[index].modalities.push({ conditionId: condition.id, useModeId: condition.useModeId, filterColumn: condition.filterColumn })
+                        } else {
+                            this.conditions.push(condition)
+                        }
+                    })
+                )
+            }
         },
         async loadModes() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.driver?.parameter?.id}/modes`).then((response) => (this.modes = response.data))
