@@ -69,12 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								.then(
 									function(response){
 										popupMessage(response)
-										let message = {
-											downloads: true
-										};
-										
-										$scope.socket = new WebSocket('ws://'+sbiModule_config.contextName+'/webSocket/false');
-										$scope.socket.send(JSON.stringify(message))
+
 									},function(error){
 										popupMessage(error)
 									});

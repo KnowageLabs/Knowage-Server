@@ -30,7 +30,7 @@
                     <span>{{ $t('kpi.kpiScheduler.frequency') }}</span>
                 </template>
 
-                <KpiCron :frequency="selectedSchedule.frequency" @touched="setTouched" @cronValid="setCronValid($event)"></KpiCron>
+                <KnCron :frequency="selectedSchedule.frequency" @touched="setTouched" @cronValid="setCronValid($event)"></KnCron>
             </TabPanel>
 
             <TabPanel>
@@ -60,7 +60,7 @@ import axios from 'axios'
 import Dialog from 'primevue/dialog'
 import KpiSchedulerExecuteCard from './card/KpiSchedulerExecuteCard/KpiSchedulerExecuteCard.vue'
 import KpiSchedulerFiltersCard from './card/KpiSchedulerFiltersCard/KpiSchedulerFiltersCard.vue'
-import KpiCron from '../kpiCron/KpiCron.vue'
+import KnCron from '@/components/UI/KnCron/KnCron.vue'
 import KpiSchedulerKpiCard from './card/KpiSchedulerKpiCard/KpiSchedulerKpiCard.vue'
 import KpiSchedulerSaveDialog from './KpiSchedulerSaveDialog.vue'
 import kpiSchedulerTabViewDescriptor from './KpiSchedulerTabViewDescriptor.json'
@@ -69,7 +69,7 @@ import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'kpi-scheduler-tab-view',
-    components: { Dialog, KpiSchedulerExecuteCard, KpiSchedulerFiltersCard, KpiCron, KpiSchedulerKpiCard, KpiSchedulerSaveDialog, TabView, TabPanel },
+    components: { Dialog, KpiSchedulerExecuteCard, KpiSchedulerFiltersCard, KnCron, KpiSchedulerKpiCard, KpiSchedulerSaveDialog, TabView, TabPanel },
     props: {
         id: { type: String },
         clone: { type: String }
@@ -332,15 +332,17 @@ export default defineComponent({
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveSchedulerKPI', this.selectedSchedule)
                 .then((response) => {
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.' + this.operation + 'Title'),
-                            msg: this.$t('common.toast.success')
-                        })
-                        this.$emit('inserted')
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.' + this.operation + 'Title'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.$emit('inserted')
 
-                        this.$router.push(`/kpi-scheduler/edit-kpi-schedule?id=${response.data.id}&clone=false`)
+                    this.$router.push(`/kpi-scheduler/edit-kpi-schedule?id=${response.data.id}&clone=false`)
                 })
-                .catch(response => {this.errorMessage = response})
+                .catch((response) => {
+                    this.errorMessage = response
+                })
                 .finally(() => (this.selectedSchedule.frequency.cron = JSON.parse(this.selectedSchedule.frequency.cron)))
 
             this.loading = false
