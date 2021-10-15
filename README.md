@@ -41,11 +41,10 @@ for [KNOWAGE](https://marketplace.fiware.org/pages/solutions/59611fb5573b7cb51c4
 | ------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | ![SI](/images/modules/SI-40x40.jpg?raw=true "SI") | Smart Intelligence     | The usual business intelligence on structured data, but more oriented to self-service capabilities and agile prototyping |
 | ![ER](/images/modules/ER-40x40.jpg?raw=true "ER") | Enterprise Reporting   | To produce and distribute static reports                                                                                 |
-| ![LI](/images/modules/LI-40x40.jpg?raw=true "LI") | Location Intelligence  | To relate business data with spatial or geographical information                                                         |
-| ![PM](/images/modules/PM-40x40.jpg?raw=true "PM") | Performance Management | To manage KPIs and organize scorecards, to monitor your business in real-time                                            |
-| ![PA](/images/modules/PA-40x40.jpg?raw=true "PA") | Custom Analytics    | To add what-if capabilities e take full advantage of R/python embedding possibilities                                                   |
-| ![BD](/images/modules/BD-40x40.jpg?raw=true "BD") | Smart Data               | To combine Solr index with other data sources and provide faceted views and full text search 
-                                                       |
+| ![LI](/images/plugins/LI-40x40.png?raw=true "LI") | Location Intelligence  | To relate business data with spatial or geographical information                                                         |
+| ![PM](/images/plugins/PM-40x40.png?raw=true "PM") | Performance Management | To manage KPIs and organize scorecards, to monitor your business in real-time                                            |
+| ![CA](/images/plugins/CA-40x40.png?raw=true "CA") | Custom Analytics       | To add what-if capabilities e take full advantage of R/python embedding possibilities                                    |
+| ![SD](/images/plugins/SD-40x40.png?raw=true "SD") | Smart Data             | To combine Solr index with other data sources and provide faceted views and full text search                             |
 
 KNOWAGE supports a modern vision of the data analytics, providing new
 self-service capabilities that give autonomy to the end-user, now able to build
