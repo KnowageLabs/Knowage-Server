@@ -148,7 +148,13 @@ public class WhatIfEngineAnalysisState extends EngineAnalysisState {
 				Iterator<String> keys = driversAsJSON.keys();
 				while (keys.hasNext()) {
 					String key = keys.next();
-					toReturn.put(key, driversAsJSON.get(key));
+					Object value = driversAsJSON.get(key);
+					if (value instanceof JSONArray) {
+						Object[] array = fromJSONArray2ObjectsArray((JSONArray) value);
+						toReturn.put(key, array);
+					} else {
+						toReturn.put(key, value);
+					}
 				}
 			}
 			LogMF.debug(logger, "Retrieved drivers from analisys state: [{0}]", toReturn);
@@ -156,6 +162,14 @@ public class WhatIfEngineAnalysisState extends EngineAnalysisState {
 			throw new SpagoBIEngineRuntimeException("Impossible to get drivers from analisys state", e);
 		}
 		return toReturn;
+	}
+
+	protected Object[] fromJSONArray2ObjectsArray(JSONArray jsonArray) throws JSONException {
+		Object[] array = new Object[] { jsonArray.length() };
+		for (int i = 0; i < jsonArray.length(); i++) {
+			array[i] = jsonArray.get(i);
+		}
+		return array;
 	}
 
 	/**

@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -49,8 +48,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.report.IBirtConstants;
 import org.eclipse.birt.report.engine.api.EXCELRenderOption;
+import org.eclipse.birt.report.engine.api.EngineException;
 import org.eclipse.birt.report.engine.api.HTMLActionHandler;
 import org.eclipse.birt.report.engine.api.HTMLRenderOption;
 import org.eclipse.birt.report.engine.api.HTMLServerImageHandler;
@@ -97,6 +98,8 @@ import it.eng.spagobi.utilities.DynamicClassLoader;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.SpagoBIAccessUtils;
 import it.eng.spagobi.utilities.callbacks.audit.AuditAccessUtils;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 
 /**
  * @author Zerbetto (davide.zerbetto@eng.it)
@@ -113,6 +116,8 @@ public class BirtReportServlet extends HttpServlet {
 	public static final String RTF_FORMAT = "RTF";
 	public static final String predefinedGroovyScriptFileName = "predefinedGroovyScript.groovy";
 	public static final String predefinedJsScriptFileName = "predefinedJavascriptScript.js";
+
+	private static final String FLAGGED_CSV_EXPORT_RESULT_SET_NAME = "exportdata";
 
 	public static final String OUTPUT_FOLDER = System.getProperty("java.io.tmpdir") != null && System.getProperty("java.io.tmpdir").endsWith(File.separator)
 			? System.getProperty("java.io.tmpdir") + "birt" + File.separator
@@ -283,7 +288,7 @@ public class BirtReportServlet extends HttpServlet {
 		return renderOption;
 	}
 
-	private InputStream getTemplateContent(HttpServletRequest servletRequest, ServletContext servletContext) throws IOException {
+	private InputStream getTemplateContent(HttpServletRequest servletRequest) throws IOException {
 		logger.debug("IN");
 		HttpSession session = servletRequest.getSession();
 		IEngUserProfile profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -324,25 +329,25 @@ public class BirtReportServlet extends HttpServlet {
 		boolean propertiesLoaded = false;
 		if (flgTemplateStandard.equalsIgnoreCase("false")) {
 			logger.debug("The template is a .ZIP file");
-			File fileZip = new File(getJRTempDir(servletContext, executionId), JS_FILE_ZIP + JS_EXT_ZIP);
+			File fileZip = new File(getBirtExecutionTempDir(executionId), JS_FILE_ZIP + JS_EXT_ZIP);
 			FileOutputStream foZip = new FileOutputStream(fileZip);
 			foZip.write(templateContent);
 			foZip.close();
-			util.unzip(fileZip, getJRTempDir(servletContext, executionId));
+			util.unzip(fileZip, getBirtExecutionTempDir(executionId));
 			JarFile zipFile = new JarFile(fileZip);
 			Enumeration totalZipEntries = zipFile.entries();
 			File jarFile = null;
 			while (totalZipEntries.hasMoreElements()) {
 				ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
 				if (entry.getName().endsWith(".jar")) {
-					jarFile = new File(getJRTempDirName(servletContext, executionId) + entry.getName());
+					jarFile = new File(getBirtExecutionTempDirName(executionId) + entry.getName());
 					// set classloader with jar
 					ClassLoader previous = Thread.currentThread().getContextClassLoader();
 					DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
 					Thread.currentThread().setContextClassLoader(dcl);
 				} else if (entry.getName().endsWith(".rptdesign")) {
 					// set InputStream with report
-					File birtFile = new File(getJRTempDirName(servletContext, executionId) + entry.getName());
+					File birtFile = new File(getBirtExecutionTempDirName(executionId) + entry.getName());
 					InputStream isBirt = new FileInputStream(birtFile);
 					byte[] templateRptDesign = new byte[0];
 					templateRptDesign = util.getByteArrayFromInputStream(isBirt);
@@ -352,7 +357,7 @@ public class BirtReportServlet extends HttpServlet {
 					propertiesLoaded = true;
 				}
 			}
-			String resourcePath = getJRTempDirName(servletContext, executionId);
+			String resourcePath = getBirtExecutionTempDirName(executionId);
 			if (resourcePath != null) {
 				this.birtReportEngine.getConfig().setResourcePath(resourcePath);
 			}
@@ -417,19 +422,17 @@ public class BirtReportServlet extends HttpServlet {
 		return toReturn;
 	}
 
-	private String getJRTempDirName(ServletContext servletContext, String executionId) {
+	private String getBirtExecutionTempDirName(String executionId) {
 		logger.debug("IN");
-		String jrTempDir = servletContext.getRealPath("tmpdir") + System.getProperty("file.separator") + "reports" + System.getProperty("file.separator")
-				+ "JS_dir_" + executionId + System.getProperty("file.separator");
+		String jrTempDir = OUTPUT_FOLDER + "reports" + File.separator + executionId + File.separator;
 		logger.debug("OUT");
 		return jrTempDir;
 	}
 
-	private File getJRTempDir(ServletContext servletContext, String executionId) {
+	private File getBirtExecutionTempDir(String executionId) {
 		logger.debug("IN");
 		File jrTempDir = null;
-
-		String jrTempDirStr = getJRTempDirName(servletContext, executionId);
+		String jrTempDirStr = getBirtExecutionTempDirName(executionId);
 		jrTempDir = new File(jrTempDirStr.substring(0, jrTempDirStr.length() - 1));
 		jrTempDir.mkdirs();
 		logger.debug("OUT");
@@ -504,7 +507,7 @@ public class BirtReportServlet extends HttpServlet {
 		IReportRunnable design = null;
 
 		// retrieve once in order to convert into string and check if contains javascript for progressive view
-		InputStream isToString = getTemplateContent(request, servletContext);
+		InputStream isToString = getTemplateContent(request);
 		int n = isToString.available();
 		byte[] bytes = new byte[n];
 		isToString.read(bytes, 0, n);
@@ -513,7 +516,7 @@ public class BirtReportServlet extends HttpServlet {
 
 		// reds again in order to make template
 
-		InputStream is = getTemplateContent(request, servletContext);
+		InputStream is = getTemplateContent(request);
 		logger.debug("runReport(): template document retrieved.");
 		// Open the report design
 		design = birtReportEngine.openReportDesign(is);
@@ -908,191 +911,226 @@ public class BirtReportServlet extends HttpServlet {
 
 	private void prepareCSVRender(Map reportParams, HttpServletRequest request, IReportRunnable design, String userId, String documentId,
 			IEngUserProfile profile, String kpiUrl, HttpServletResponse response, Map context) throws Exception {
+
 		logger.debug("IN");
 
-		// Create task to run the report
-		logger.debug("design: " + design.getReportName());
-		IRunTask CSVtask = birtReportEngine.createRunTask(design);
+		IReportDocument reportDocument = null;
 
-		// **** Set parameters for the report ****
+		try {
 
-		CSVtask.setParameterValues(reportParams);
-		CSVtask.validateParameters();
+			reportDocument = getReportDocument(design, reportParams, context);
 
-		// ************************************
+			logger.debug("Report document obtained for report " + design.getReportName() + "; pages count = " + reportDocument.getPageCount());
 
-		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-		UUID uuid_local = uuidGen.generateTimeBasedUUID();
-		String executionId = uuid_local.toString();
-		executionId = executionId.replaceAll("-", "");
+			IDataExtractionTask dataExtractionTask = null;
 
-		String nameFile = getJRTempDirName(getServletContext(), executionId) + "csvreport.rptdocument";
+			try {
+				// *** Create the data extraction task ****
+				dataExtractionTask = birtReportEngine.createDataExtractionTask(reportDocument);
+				List resultSetList = dataExtractionTask.getResultSetList();
+				if (resultSetList.size() == 0) {
+					throw new SpagoBIRuntimeException("No result sets found!!");
+				}
 
-		CSVtask.setAppContext(context);
+				ICSVDataExtractionOption extractionOptions = new CSVDataExtractionOption();
 
-		// Run the report and create the rptdocument
-		CSVtask.run(nameFile);
+				String encoding = getCSVEncoding();
+				extractionOptions.setEncoding(encoding);
 
-		// Open the rptdocument
-		IReportDocument rptdoc = birtReportEngine.openReportDocument(nameFile);
+				OutputStream responseOut = response.getOutputStream();
 
-		logger.debug(rptdoc.getPageCount());
+				extractionOptions.setOutputFormat("csv");
+				extractionOptions.setSeparator(";");
 
-		// *** Create the data extraction task ****
-		IDataExtractionTask iDataExtract = birtReportEngine.createDataExtractionTask(rptdoc);
-		ArrayList resultSetList = (ArrayList) iDataExtract.getResultSetList();
+				// find if there is a resultset named FLAGGED_CSV_EXPORT_RESULT_SET_NAME
+				// @formatter:off
+				IResultSetItem flaggedExportResultSet = (IResultSetItem) resultSetList.stream()
+						.filter(item -> FLAGGED_CSV_EXPORT_RESULT_SET_NAME.equalsIgnoreCase(((IResultSetItem) item).getResultSetName()))
+						.findAny()
+						.orElse(null);
+				// @formatter:on
 
-		ICSVDataExtractionOption extractionOptions = new CSVDataExtractionOption();
+				if (flaggedExportResultSet != null) {
+					logger.debug("Found ExportData Element in report; extracting it...");
+					extractSingleResultSet(response, dataExtractionTask, extractionOptions, responseOut, flaggedExportResultSet);
+					logger.debug("Result set " + flaggedExportResultSet.getResultSetName() + " extracted succesfully");
+				} else {
+					// ExtractData element not found, search all element to export
+					// check if there is only a result set and generate one CSV file
+					if (resultSetList.size() == 1) {
+						logger.debug("Found only one result set; extracting it...");
+						IResultSetItem resultSet = (IResultSetItem) resultSetList.get(0);
+						extractSingleResultSet(response, dataExtractionTask, extractionOptions, responseOut, resultSet);
+						logger.debug("Result set " + resultSet.getResultSetName() + " extracted succesfully");
+					} else {
+						// with more resultSets generate a zip file containing more CSV files
+						logger.debug("Found more than one result sets; extracting all of them...");
+						extractAllResultSets(response, dataExtractionTask, resultSetList, extractionOptions, responseOut);
+						logger.debug("All result sets extracted succesfully");
+					}
+				}
+			} catch (Exception e) {
+				throw new SpagoBIRuntimeException("Error while extracting data from report " + design.getReportName(), e);
+			} finally {
+				if (dataExtractionTask != null) {
+					// close the extraction task
+					dataExtractionTask.close();
+				}
+			}
 
-		// change csv encoding according to engine config.xml
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while getting report document for report " + design.getReportName(), e);
+		} finally {
+			if (reportDocument != null) {
+				// close the report document
+				reportDocument.close();
+			}
+		}
+
+		logger.debug("OUT");
+	}
+
+	protected void extractAllResultSets(HttpServletResponse response, IDataExtractionTask dataExtractionTask, List resultSetList,
+			ICSVDataExtractionOption extractionOptions, OutputStream responseOut) throws BirtException {
+		try {
+			// Set the HTTP response
+			response.setContentType("application/zip");
+			response.setHeader("Content-disposition", "attachment; filename=reportcsv.zip");
+
+			// ZipOutputStream directly on the response OutputStream
+			ZipOutputStream outZip = new ZipOutputStream(responseOut);
+
+			// temporary output buffer that contain a single csv
+			OutputStream tempOut = new ByteArrayOutputStream();
+
+			// temporary input buffer
+			InputStream tempIn;
+
+			// Create a buffer for reading the files
+			byte[] buf = new byte[1024];
+
+			// extracted csv is writed on the temp buffer
+			extractionOptions.setOutputStream(tempOut);
+
+			// iterate the resultSetList
+			for (int i = 0; i < resultSetList.size(); i++) {
+
+				// get an item
+				IResultSetItem resultItem = (IResultSetItem) resultSetList.get(i);
+
+				// Set the name of the element you want to retrieve.
+				String dispName = resultItem.getResultSetName();
+				dataExtractionTask.selectResultSet(dispName);
+				dataExtractionTask.extract(extractionOptions);
+				logger.debug("Extraction successfull " + dispName);
+
+				// Add ZIP entry to ZIP output stream
+				outZip.putNextEntry(new ZipEntry("reportcsv" + i + ".csv"));
+
+				// convert temp outputStream to InputStream
+				tempIn = new ByteArrayInputStream(((ByteArrayOutputStream) tempOut).toByteArray());
+
+				// Transfer bytes from the temp buffer to the ZIP file
+				int len;
+				while ((len = tempIn.read(buf)) > 0) {
+					outZip.write(buf, 0, len);
+				}
+
+				// Complete the entry
+				outZip.closeEntry();
+				tempIn.close();
+
+				// reset the temp output buffer
+				((ByteArrayOutputStream) tempOut).reset();
+			}
+			// **************************
+
+			// Complete the ZIP file
+			outZip.close();
+
+		} catch (IOException e) {
+			logger.error("Error while generating csv zip file", e);
+		}
+	}
+
+	protected void extractSingleResultSet(HttpServletResponse response, IDataExtractionTask dataExtractionTask, ICSVDataExtractionOption extractionOptions,
+			OutputStream responseOut, IResultSetItem resultSet) throws BirtException {
+		// output directly on the response OutputStream
+		extractionOptions.setOutputStream(responseOut);
+
+		// Set the HTTP response
+		response.setContentType("text/csv");
+		response.setHeader("Content-disposition", "inline; filename=reportcsv.csv");
+		dataExtractionTask.selectResultSet(resultSet.getResultSetName());
+		dataExtractionTask.extract(extractionOptions);
+		logger.debug("Extraction successfull " + resultSet.getResultSetName());
+	}
+
+	protected String getCSVEncoding() {
+		String encoding = null;
+		// get CSV encoding according to engine-config.xml
 		SourceBean engineConfig = EnginConf.getInstance().getConfig();
 		if (engineConfig != null) {
 			SourceBean sourceBeanConf = (SourceBean) engineConfig.getAttribute("CSV_EMITTER_ENCODING");
 			if (sourceBeanConf != null && !sourceBeanConf.getCharacters().trim().equalsIgnoreCase("")) {
-				String encoding = sourceBeanConf.getCharacters();
-				extractionOptions.setEncoding(encoding);
+				encoding = sourceBeanConf.getCharacters();
 			}
 		}
+		if (encoding == null) {
+			logger.debug("No configuration found for CSV encoding. Considering UTF-8 as default...");
+			encoding = StandardCharsets.UTF_8.name();
+		} else {
+			logger.debug("CSV encoding found from configuration: [" + encoding + "]");
+		}
+		return encoding;
+	}
 
-		OutputStream responseOut = response.getOutputStream();
+	protected IReportDocument getReportDocument(IReportRunnable design, Map reportParams, Map context) throws EngineException {
+		logger.debug("IN");
+		IReportDocument toReturn = null;
+		IRunTask runTask = null;
 
-		extractionOptions.setOutputFormat("csv");
-		extractionOptions.setSeparator(";");
+		try {
+			// Create task to run the report
+			runTask = birtReportEngine.createRunTask(design);
 
-		// flag for exportdata found
-		boolean ed_found = false;
+			// **** Set parameters for the report ****
+			runTask.setParameterValues(reportParams);
+			runTask.validateParameters();
+			// ************************************
 
-		// check if there is the ExportData element
-		for (int j = 0; j < resultSetList.size(); j++) {
+			String executionId = generateExecutionId();
 
-			// get an item
-			IResultSetItem resultItem = (IResultSetItem) resultSetList.get(j);
+			String nameFile = getBirtExecutionTempDirName(executionId) + "csvreport.rptdocument";
 
-			// get the name of the resultSet
-			String dispName = resultItem.getResultSetName();
+			runTask.setAppContext(context);
 
-			if (dispName.equalsIgnoreCase("exportdata")) {
-				logger.debug("Found ExportData Element in report ");
-				ed_found = true;
+			// Run the report and create the rptdocument
+			runTask.run(nameFile);
 
-				// output directly on the response OutputStream
-				extractionOptions.setOutputStream(responseOut);
+			// Open the rptdocument
+			toReturn = birtReportEngine.openReportDocument(nameFile);
 
-				// Set the HTTP response
-				response.setContentType("text/csv");
-				response.setHeader("Content-disposition", "inline; filename=reportcsv.csv");
-				iDataExtract.selectResultSet(dispName);
-				iDataExtract.extract(extractionOptions);
-				logger.debug("Extraction successfull " + dispName);
-				break;
+			logger.debug("Report document successfully retrieved for report " + design.getReportName());
+
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while getting report document for report " + design.getReportName(), e);
+		} finally {
+			if (runTask != null) {
+				// close the task
+				runTask.close();
 			}
 		}
+		logger.debug("OUT");
+		return toReturn;
+	}
 
-		if (ed_found) {
-
-			// close the extract
-			iDataExtract.close();
-
-			// close the task
-			CSVtask.close();
-
-			logger.debug("Finished");
-			logger.debug("OUT");
-		}
-
-		// ExtractData element not found, search all element to export
-		if (!ed_found) {
-			// check if there is only a result set and generate one CSV file
-			if (resultSetList.size() <= 1) {
-
-				// output directly on the response OutputStream
-				extractionOptions.setOutputStream(responseOut);
-
-				// Set the HTTP response
-				response.setContentType("text/csv");
-				response.setHeader("Content-disposition", "inline; filename=reportcsv.csv");
-
-				IResultSetItem resultItem = (IResultSetItem) resultSetList.get(0);
-
-				// Set the name of the element you want to retrieve.
-				String dispName = resultItem.getResultSetName();
-				iDataExtract.selectResultSet(dispName);
-				iDataExtract.extract(extractionOptions);
-				logger.debug("Extraction successfull " + dispName);
-			} else {
-				// with more resultSet generate a zip file containing more CSV
-				// file
-				try {
-					// Set the HTTP response
-					response.setContentType("application/zip");
-					response.setHeader("Content-disposition", "attachment; filename=reportcsv.zip");
-
-					// ZipOutputStream directly on the response OutputStream
-					ZipOutputStream outZip = new ZipOutputStream(responseOut);
-
-					// temporary output buffer that contain a single csv
-					OutputStream tempOut = new ByteArrayOutputStream();
-
-					// temporary input buffer
-					InputStream tempIn;
-
-					// Create a buffer for reading the files
-					byte[] buf = new byte[1024];
-
-					// extracted csv is writed on the temp buffer
-					extractionOptions.setOutputStream(tempOut);
-
-					// iterate the resultSetList
-					for (int i = 0; i < resultSetList.size(); i++) {
-
-						// get an item
-						IResultSetItem resultItem = (IResultSetItem) resultSetList.get(i);
-
-						// Set the name of the element you want to retrieve.
-						String dispName = resultItem.getResultSetName();
-						iDataExtract.selectResultSet(dispName);
-						iDataExtract.extract(extractionOptions);
-						logger.debug("Extraction successfull " + dispName);
-
-						// Add ZIP entry to ZIP output stream
-						outZip.putNextEntry(new ZipEntry("reportcsv" + i + ".csv"));
-
-						// convert temp outputStream to InputStream
-						tempIn = new ByteArrayInputStream(((ByteArrayOutputStream) tempOut).toByteArray());
-
-						// Transfer bytes from the temp buffer to the ZIP file
-						int len;
-						while ((len = tempIn.read(buf)) > 0) {
-							outZip.write(buf, 0, len);
-						}
-
-						// Complete the entry
-						outZip.closeEntry();
-						tempIn.close();
-
-						// reset the temp output buffer
-						((ByteArrayOutputStream) tempOut).reset();
-					}
-					// **************************
-
-					// Complete the ZIP file
-					outZip.close();
-
-				} catch (IOException e) {
-					logger.error("Error while generating csv zip file: " + e);
-				}
-
-			}
-
-			// close the extract
-			iDataExtract.close();
-
-			// close the task
-			CSVtask.close();
-
-			logger.debug("Finished");
-			logger.debug("OUT");
-		}
+	protected String generateExecutionId() {
+		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
+		UUID uuid_local = uuidGen.generateTimeBasedUUID();
+		String executionId = uuid_local.toString();
+		executionId = executionId.replaceAll("-", "");
+		return executionId;
 	}
 
 	private String getOutputType(String outputFormat) {
