@@ -17,7 +17,7 @@
                             :class="{
                                 'p-invalid': javaClassPathDirty && (!document.javaclasspath || document.javaclasspath.length === 0)
                             }"
-                            :maxLength="100"
+                            :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.javaClass.classPathMaxLength"
                             @input="setJavaClassPathValidation"
                             @blur="setJavaClassPathValidation"
                         />
@@ -40,6 +40,7 @@
 import { defineComponent } from 'vue'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
+import schedulerTimingOutputOutputTabDescriptor from '../SchedulerTimingOutputOutputTabDescriptor.json'
 
 export default defineComponent({
     name: 'scheduler-java-class-accordion',
@@ -47,13 +48,14 @@ export default defineComponent({
     props: { propDocument: { type: Object }, functionalities: { type: Array }, datasets: { type: Array }, jobInfo: { type: Object } },
     data() {
         return {
+            schedulerTimingOutputOutputTabDescriptor,
             document: null as any,
             javaClassPathDirty: false
         }
     },
     computed: {
         javaClassPathHelp(): string {
-            return (this.document.javaclasspath?.length ?? '0') + ' / 100'
+            return (this.document.javaclasspath?.length ?? '0') + ' / ' + schedulerTimingOutputOutputTabDescriptor.accordion.javaClass.classPathMaxLength
         }
     },
     watch: {

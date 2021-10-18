@@ -18,7 +18,7 @@
                                 :class="{
                                     'p-invalid': snapshotNameDirty && (!document.snapshotname || document.snapshotname.length === 0)
                                 }"
-                                :maxLength="100"
+                                :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.snapshot.nameMaxLength"
                                 @input="setNameValidation"
                                 @blur="setNameValidation"
                             />
@@ -44,7 +44,7 @@
                 <div class="p-m-2">
                     <span>
                         <label class="kn-material-input-label">{{ $t('common.description') }}</label>
-                        <InputText class="kn-material-input" v-model="document.snapshotdescription" :maxLength="100" />
+                        <InputText class="kn-material-input" v-model="document.snapshotdescription" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.snapshot.descriptionMaxLength" />
                     </span>
                     <div class="p-d-flex p-jc-end">
                         <small>{{ descriptionHelp }}</small>
@@ -59,6 +59,7 @@
 import { defineComponent } from 'vue'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
+import schedulerTimingOutputOutputTabDescriptor from '../SchedulerTimingOutputOutputTabDescriptor.json'
 
 export default defineComponent({
     name: 'scheduler-snapshot-accordion',
@@ -66,16 +67,17 @@ export default defineComponent({
     props: { propDocument: { type: Object } },
     data() {
         return {
+            schedulerTimingOutputOutputTabDescriptor,
             document: null as any,
             snapshotNameDirty: false
         }
     },
     computed: {
         nameHelp(): string {
-            return (this.document.snapshotname?.length ?? '0') + ' / 100'
+            return (this.document.snapshotname?.length ?? '0') + ' / ' + schedulerTimingOutputOutputTabDescriptor.accordion.snapshot.nameMaxLength
         },
         descriptionHelp(): string {
-            return (this.document.snapshotdescription?.length ?? '0') + ' / 100'
+            return (this.document.snapshotdescription?.length ?? '0') + ' / ' + schedulerTimingOutputOutputTabDescriptor.accordion.snapshot.descriptionMaxLength
         }
     },
     watch: {

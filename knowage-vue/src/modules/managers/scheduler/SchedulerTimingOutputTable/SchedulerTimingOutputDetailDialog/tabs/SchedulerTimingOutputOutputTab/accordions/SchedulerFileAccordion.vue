@@ -17,7 +17,7 @@
                             :class="{
                                 'p-invalid': fileNameDirty && (!document.fileName || document.fileName.length === 0)
                             }"
-                            :maxLength="100"
+                            :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.file.nameMaxLength"
                             @input="setFileNameValidation"
                             @blur="setFileNameValidation"
                         />
@@ -35,7 +35,7 @@
                 <div class="p-m-2">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.destinationFolder') }}</label>
-                        <InputText class="kn-material-input  p-inputtext-sm" v-model="document.destinationfolder" :maxLength="100" />
+                        <InputText class="kn-material-input  p-inputtext-sm" v-model="document.destinationfolder" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.file.destinationFolderMaxLength" />
                     </span>
                     <div class="p-d-flex p-jc-end">
                         <small>{{ destinationFolderHelp }}</small>
@@ -49,7 +49,7 @@
                 <div class="kn-flex p-mx-2 p-my-4" v-if="document.zipFileDocument">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.zipFileName') }}</label>
-                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.zipFileName" :maxLength="100" />
+                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.zipFileName" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.file.zipFileNameMaxLength" />
                     </span>
                     <div class="p-d-flex p-jc-end">
                         <small>{{ zipFileNameHelp }}</small>
@@ -65,6 +65,7 @@ import { defineComponent } from 'vue'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import Checkbox from 'primevue/checkbox'
+import schedulerTimingOutputOutputTabDescriptor from '../SchedulerTimingOutputOutputTabDescriptor.json'
 
 export default defineComponent({
     name: 'scheduler-file-accordion',
@@ -72,19 +73,20 @@ export default defineComponent({
     props: { propDocument: { type: Object }, functionalities: { type: Array }, datasets: { type: Array }, jobInfo: { type: Object } },
     data() {
         return {
+            schedulerTimingOutputOutputTabDescriptor,
             document: null as any,
             fileNameDirty: false
         }
     },
     computed: {
         fileNameHelp(): string {
-            return (this.document.fileName?.length ?? '0') + ' / 100'
+            return (this.document.fileName?.length ?? '0') + ' / ' + schedulerTimingOutputOutputTabDescriptor.accordion.file.nameMaxLength
         },
         destinationFolderHelp(): string {
-            return (this.document.destinationfolder?.length ?? '0') + ' / 100'
+            return (this.document.destinationfolder?.length ?? '0') + ' / ' + schedulerTimingOutputOutputTabDescriptor.accordion.file.destinationFolderMaxLength
         },
         zipFileNameHelp(): string {
-            return (this.document.zipFileName?.length ?? '0') + ' / 100'
+            return (this.document.zipFileName?.length ?? '0') + ' / ' + schedulerTimingOutputOutputTabDescriptor.accordion.file.zipFileNameMaxLength
         }
     },
     watch: {

@@ -26,7 +26,7 @@
                             :class="{
                                 'p-invalid': fixedRecipientsListDirty && (!document.mailtos || document.mailtos.length === 0)
                             }"
-                            :maxLength="1000"
+                            :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailToMaxLength"
                             @input="validateDocument('fixedRecipientsListDirty')"
                             @blur="validateDocument('fixedRecipientsListDirty')"
                         />
@@ -112,7 +112,7 @@
                             :class="{
                                 'p-invalid': expressionDirty && (!document.expression || document.expression.length === 0)
                             }"
-                            :maxLength="100"
+                            :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.expressionMaxLength"
                             @input="validateDocument('expressionDirty')"
                             @blur="validateDocument('expressionDirty')"
                         />
@@ -140,7 +140,7 @@
                 <div v-if="document.zipMailDocument" class="p-m-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.zipFileName') }}</label>
-                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.zipMailName" :maxLength="100" />
+                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.zipMailName" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.zipMailNameMaxLength" />
                     </span>
                     <div class="p-d-flex p-jc-end">
                         <small>{{ zipMailNameHelp }}</small>
@@ -161,7 +161,7 @@
                             :class="{
                                 'p-invalid': subjectDirty && (!document.mailsubj || document.mailsubj.length === 0)
                             }"
-                            :maxLength="100"
+                            :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailSubjectMaxLength"
                             @input="validateDocument('subjectDirty')"
                             @blur="validateDocument('subjectDirty')"
                         />
@@ -179,7 +179,7 @@
                 <div class="p-m-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.fileName') }}</label>
-                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.containedFileName" :maxLength="100" />
+                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.containedFileName" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.fileNameMaxLength" />
                     </span>
                     <div class="p-d-flex p-jc-end">
                         <small>{{ fileNameHelp }}</small>
@@ -195,7 +195,7 @@
                             :class="{
                                 'p-invalid': mailTextDirty && (!document.mailtxt || document.mailtxt.length === 0)
                             }"
-                            :maxLength="2000"
+                            :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailTextMaxLength"
                             @input="validateDocument('mailTextDirty')"
                             @blur="validateDocument('mailTextDirty')"
                         />
@@ -242,22 +242,22 @@ export default defineComponent({
     },
     computed: {
         mailToHelp(): string {
-            return (this.document.mailtos?.length ?? '0') + ' / 1000'
+            return (this.document.mailtos?.length ?? '0') + ' / ' + schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailToMaxLength
         },
         expresionHelp(): string {
-            return (this.document.expression?.length ?? '0') + ' / 100'
+            return (this.document.expression?.length ?? '0') + ' / ' + schedulerTimingOutputOutputTabDescriptor.accordion.mail.expressionMaxLength
         },
         zipMailNameHelp(): string {
-            return (this.document.zipMailName?.length ?? '0') + ' / 100'
+            return (this.document.zipMailName?.length ?? '0') + ' / ' + schedulerTimingOutputOutputTabDescriptor.accordion.mail.zipMailNameMaxLength
         },
         mailSubjectHelp(): string {
-            return (this.document.mailsubj?.length ?? '0') + ' / 100'
+            return (this.document.mailsubj?.length ?? '0') + ' / ' + schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailSubjectMaxLength
         },
         fileNameHelp(): string {
-            return (this.document.containedFileName?.length ?? '0') + ' / 100'
+            return (this.document.containedFileName?.length ?? '0') + ' / ' + schedulerTimingOutputOutputTabDescriptor.accordion.mail.fileNameMaxLength
         },
         mailTextHelp(): string {
-            return (this.document.mailtxt?.length ?? '0') + ' / 2000'
+            return (this.document.mailtxt?.length ?? '0') + ' / ' + schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailTextMaxLength
         }
     },
     watch: {

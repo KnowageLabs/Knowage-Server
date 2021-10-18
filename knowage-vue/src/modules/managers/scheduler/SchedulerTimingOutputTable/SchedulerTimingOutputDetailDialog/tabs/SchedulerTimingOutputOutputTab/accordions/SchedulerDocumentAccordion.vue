@@ -17,7 +17,7 @@
                             :class="{
                                 'p-invalid': documentNameDirty && (!document.documentname || document.documentname.length === 0)
                             }"
-                            :maxLength="100"
+                            :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.document.nameMaxLength"
                             @input="validateDocument('documentNameDirty')"
                             @blur="validateDocument('documentNameDirty')"
                         />
@@ -35,7 +35,7 @@
                 <div class="p-m-2">
                     <span>
                         <label class="kn-material-input-label">{{ $t('common.description') }}</label>
-                        <InputText class="kn-material-input" v-model="document.documentdescription" :maxLength="100" />
+                        <InputText class="kn-material-input" v-model="document.documentdescription" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.document.descriptionMaxLength" />
                     </span>
                     <div class="p-d-flex p-jc-end">
                         <small>{{ descriptionHelp }}</small>
@@ -138,10 +138,10 @@ export default defineComponent({
     },
     computed: {
         nameHelp(): string {
-            return (this.document.documentname?.length ?? '0') + ' / 100'
+            return (this.document.documentname?.length ?? '0') + ' / ' + schedulerTimingOutputOutputTabDescriptor.accordion.document.nameMaxLength
         },
         descriptionHelp(): string {
-            return (this.document.documentdescription?.length ?? '0') + ' / 100'
+            return (this.document.documentdescription?.length ?? '0') + ' / ' + schedulerTimingOutputOutputTabDescriptor.accordion.document.descriptionMaxLength
         }
     },
     watch: {
