@@ -79,7 +79,7 @@ export default defineComponent({
         loadRow() {
             this.row = this.propRow
             if (this.column?.columnInfo.type === 'date' && this.row[this.column.field].data) {
-                this.row[this.column.field].data = this.getFormatedDate(this.row[this.column.field].data, 'MM/DD/YYYY HH:mm:ss')
+                this.row[this.column.field].data = this.getFormattedDate(this.row[this.column.field].data, 'MM/DD/YYYY HH:mm:ss')
             }
         },
         setDataType(columnType: string) {
@@ -91,7 +91,7 @@ export default defineComponent({
         loadColumnOptions() {
             this.columnOptions = this.comboColumnOptions as any[]
         },
-        getFormatedDate(date: any, format: any) {
+        getFormattedDate(date: any, format: any) {
             return formatDate(date, format)
         }
     }

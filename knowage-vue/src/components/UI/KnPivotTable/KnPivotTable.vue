@@ -21,8 +21,8 @@
                         @dropdownOpened="$emit('dropdownOpened', $event)"
                     ></KnPivotTableEditableField>
                     <Checkbox v-else-if="column.editorType === 'TEXT' && column.columnInfo.type === 'boolean'" v-model="row[column.field].data" :binary="true" :disabled="!column.isEditable || column.type === 'merge'" @change="setRowEdited(row)"></Checkbox>
-                    <span v-else-if="!column.isEditable && column.columnInfo.type === 'date'">{{ getFormatedDate(row[column.field].data, 'MM/DD/YYYY HH:mm:ss') }} </span>
-                    <span v-else-if="!column.isEditable && row[column.field].data && (column.columnInfo.type === 'int' || column.columnInfo.type === 'float')">{{ getFormatedNumber(row[column.field].data) }}</span>
+                    <span v-else-if="!column.isEditable && column.columnInfo.type === 'date'">{{ getFormattedDate(row[column.field].data, 'MM/DD/YYYY HH:mm:ss') }} </span>
+                    <span v-else-if="!column.isEditable && row[column.field].data && (column.columnInfo.type === 'int' || column.columnInfo.type === 'float')">{{ getFormattedNumber(row[column.field].data) }}</span>
                     <span v-else>{{ row[column.field].data }}</span>
                 </td>
             </template>
@@ -166,7 +166,7 @@ export default defineComponent({
         loadWarningState() {
             this.stopWarnings = this.stopWarningsState as any[]
         },
-        getFormatedNumber(number: number, precision?: number, format?: any) {
+        getFormattedNumber(number: number, precision?: number, format?: any) {
             return formatNumberWithLocale(number, precision, format)
         },
         setRowEdited(row: any) {

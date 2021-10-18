@@ -86,7 +86,7 @@
                                         <span v-if="(col.columnInfo.type === 'int' || col.columnInfo.type === 'float') && slotProps.data[col.field]">{{ getFormatedNumber(slotProps.data[col.field]) }}</span>
                                         <span v-else> {{ slotProps.data[col.field] }}</span>
                                     </div>
-                                    <span v-else-if="col.columnInfo.type === 'date'"> {{ getFormatedDate(slotProps.data[col.field], 'MM/DD/YYYY hh:mm:ss') }}</span>
+                                    <span v-else-if="col.columnInfo.type === 'date'"> {{ getFormattedDate(slotProps.data[col.field], 'MM/DD/YYYY hh:mm:ss') }}</span>
                                     <span v-else> {{ slotProps.data[col.field] }}</span>
                                 </div>
                             </template>
@@ -290,7 +290,7 @@ export default defineComponent({
                 return 'any'
             }
         },
-        getFormatedDate(date: any, format: any) {
+        getFormattedDate(date: any, format: any) {
             return formatDate(date, format)
         },
         getFormatedNumber(number: number, precision?: number, format?: any) {
