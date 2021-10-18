@@ -17,19 +17,19 @@ app.filter("htmlSafe", [ '$sce', function($sce) {
 
 app.controller('functionsCatalogController', [ "sbiModule_config",
 		"sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog",
-		"$mdToast", "$log", "sbiModule_download", "sbiModule_messaging",
+		"$mdToast", "$log", "$http", "sbiModule_download", "sbiModule_messaging", "sbiModule_user",
 		"$sce", "$compile", "$angularListDetail", functionsCatalogFunction ]);
 
 function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
-		sbiModule_restServices, $scope, $mdDialog, $mdToast, $log,
-		sbiModule_download, sbiModule_messaging, $sce, $compile,
+		sbiModule_restServices, $scope, $mdDialog, $mdToast, $log, $http,
+		sbiModule_download, sbiModule_messaging, sbiModule_user, $sce, $compile,
 		$angularListDetail) {
 
 	$scope.showDetail = false;
 	$scope.shownFunction = {
 		"language" : "Python",
 		"owner" : $scope.ownerUserName,
-		"keywords" : [],
+		"tags" : [],
 		"remote" : false,
 		"url" : ""
 	};
@@ -45,7 +45,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	$scope.varIndex = 0;
 	$scope.functionsList = [];
 	$scope.emptyStr = " ";
-	$scope.searchKeywords = [];
+	$scope.searchTags = [];
 	$scope.selectedType = "All";
 	$scope.missingFields = [];
 	$scope.languageHidden = true;
@@ -62,15 +62,15 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		"outputColumns" : [],
 		"language" : "Python",
 		"onlineScript" : "",
-		"offlineScriptTrainModel" : "",
-		"offlineScriptUseModel" : "",
+		"offlineScriptTrain" : "",
+		"offlineScriptUse" : "",
 		"description" : "",
-		"benchmarks" : "",
+		"benchmark" : "",
 		"owner" : $scope.ownerUserName,
-		"keywords" : [],
+		"tags" : [],
 		"label" : "",
 		"type" : "",
-		"functionFamily": "online"
+		"family": "online"
 	};
 	$scope.cleanNewFunction = function() {
 		$scope.newFunction = {
@@ -81,15 +81,15 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			"outputColumns" : [],
 			"language" : "Python",
 			"onlineScript" : "",
-			"offlineScriptTrainModel" : "",
-			"offlineScriptUseModel" : "",
+			"offlineScriptTrain" : "",
+			"offlineScriptUse" : "",
 			"description" : "",
-			"benchmarks" : "",
+			"benchmark" : "",
 			"owner" : $scope.ownerUserName,
-			"keywords" : [],
+			"tags" : [],
 			"label" : "",
 			"type" : "",
-			"functionFamily": "online"
+			"family": "online"
 		};
 	}
 	$scope.saveOrUpdateFlag = "";
@@ -131,16 +131,25 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	}
 
 	$scope.radioButtonOnlineOfflinePush = function(onlineOrOfflineStr) {
-		$scope.shownFunction.functionFamily = onlineOrOfflineStr;
+		$scope.shownFunction.family = onlineOrOfflineStr;
 	}
 
 	$scope.obtainCatalogFunctionsRESTcall = function() {
-		sbiModule_restServices.get("2.0/functions-catalog", "").then(
+		$http.get('/knowage-api/api/1.0/functioncatalog/completelist',
+				{headers:{
+					"x-Kn-Authorization":"Bearer "+ sbiModule_user.userUniqueIdentifier
+				}}
+		).then(function(result){
+			$scope.functionsList = result.data;
+			$scope.functionsList_bck = angular.copy(result.data);
+		},
+		function(error){
+		})
+
+		sbiModule_restServices.get("2.0/functions-catalog/keywords", "").then(
 			function(result) {
-				$scope.functionsList = result.data.functions;
-				$scope.functionsList_bck = angular.copy(result.data.functions);
-				$scope.keywordsList_bck = angular.copy(result.data.keywords);
-				$scope.searchKeywords = result.data.keywords;
+				$scope.tagsList_bck = angular.copy(result.data);
+				$scope.searchTags = result.data;
 			}
 		)
 	}
@@ -174,92 +183,58 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			if ($scope.saveOrUpdateFlag == "save") {
 				body = $scope.shownFunction;
 
-				sbiModule_restServices.post("2.0/functions-catalog", "insert", body).then(
-					function(result) {
-						if (result.data.errors != undefined) {
-							var errorToDisplay = "";
-							for (var i = 0; i < result.data.errors.length; i++) {
-								errorToDisplay = errorToDisplay
-									+ " , "
-									+ result.data.errors[i].message;
-							}
-							if (errorToDisplay.length >= 3) {
-								errorToDisplay = errorToDisplay.substring(3);
-							}
-							$mdToast.show($mdToast.simple()
-								.textContent(errorToDisplay)
-								.position("top left")
-								.hideDelay(5000));
-						} else {
-							$scope.obtainCatalogFunctionsRESTcall();
-							$scope.cleanNewFunction = function() {
-								$scope.newFunction = {
-									"id" : "",
-									"name" : "",
-									"inputColumns" : [],
-									"inputVariables" : [],
-									"outputColumns" : [],
-									"language" : "Python",
-									"onlineScript" : "",
-									"offlineScriptTrainModel" : "",
-									"offlineScriptUseModel" : "",
-									"description" : "",
-									"benchmarks" : "",
-									"owner" : $scope.ownerUserName,
-									"keywords" : [],
-									"label" : "",
-									"type" : "",
-									"functionFamily": "online"
-								};
-							}
-							$scope.shownFunction = $scope.newFunction;
-							$mdToast.show($mdToast.simple()
-								.textContent(sbiModule_translate.load("sbi.functionscatalog.save.success"))
-								.position("top left")
-								.hideDelay(5000));
-						}
-					},function(error) {
-						$mdToast.show($mdToast.simple()
+				$http.post('/knowage-api/api/1.0/functioncatalog/new',body,
+						{headers:{
+							"x-Kn-Authorization":"Bearer "+ sbiModule_user.userUniqueIdentifier
+						}}
+				).then(function(result){
+					$scope.obtainCatalogFunctionsRESTcall();
+					$scope.cleanNewFunction = function() {
+						$scope.newFunction = {
+							"id" : "",
+							"name" : "",
+							"inputColumns" : [],
+							"inputVariables" : [],
+							"outputColumns" : [],
+							"language" : "Python",
+							"onlineScript" : "",
+							"offlineScriptTrain" : "",
+							"offlineScriptUse" : "",
+							"description" : "",
+							"benchmark" : "",
+							"owner" : $scope.ownerUserName,
+							"tags" : [],
+							"label" : "",
+							"type" : "",
+							"family": "online"
+						};
+					}
+					$scope.shownFunction = $scope.newFunction;
+					$mdToast.show($mdToast.simple()
+						.textContent(sbiModule_translate.load("sbi.functionscatalog.save.success"))
+						.position("top left")
+						.hideDelay(5000));
+				},
+				function(error){
+					$mdToast.show($mdToast.simple()
 							.textContent(sbiModule_translate.load("sbi.functionscatalog.save.error"))
 							.position("top left")
 							.hideDelay(5000));
-					}
-				)
+				})
 			} else if ($scope.saveOrUpdateFlag == "update") {
 				body = $scope.shownFunction;
-				// Yes, I'm doing something bad and I know it
-				// I don't know why I have "family" and not "functionFamily" field, so I am overwriting it on the fly
-				if (body.family) {
-					body.functionFamily = body.family;
-					delete body.family;
-				}
-				functionId = $scope.shownFunction.id;
 
-				sbiModule_restServices.put("2.0/functions-catalog", "update/" + functionId,body).then(
+				$http.patch('/knowage-api/api/1.0/functioncatalog',body,
+						{headers:{
+							"x-Kn-Authorization":"Bearer "+ sbiModule_user.userUniqueIdentifier
+						}}
+				).then(
 					function(result) {
 						$scope.obtainCatalogFunctionsRESTcall();
-						if (result.data.errors != undefined) {
-							var errorToDisplay = "";
-							for (var i = 0; i < result.data.errors.length; i++) {
-								errorToDisplay = errorToDisplay
-									+ " , "
-									+ result.data.errors[i].message;
-							}
-							if (errorToDisplay.length >= 3) {
-								errorToDisplay = errorToDisplay.substring(3);
-							}
-							$mdDialog.show($mdDialog
-								.alert()
-								.parent(angular.element(document.querySelector('#popupContainer')))
-								.clickOutsideToClose(true)
-								.title(errorToDisplay)
-								.ok('OK'));
-						} else {
-							$mdToast.show($mdToast.simple()
-								.textContent(sbiModule_translate.load("sbi.functionscatalog.save.success"))
-								.position("top left")
-								.hideDelay(5000));
-						}
+						$mdToast.show($mdToast.simple()
+							.textContent(sbiModule_translate.load("sbi.functionscatalog.save.success"))
+							.position("top left")
+							.hideDelay(5000));
 					},function(error) {
 						$mdToast.show($mdToast.simple()
 							.textContent(sbiModule_translate.load("sbi.functionscatalog.save.error"))
@@ -343,15 +318,15 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			$scope.missingFields.push("Function description missing");
 
 		}
-		if ($scope.shownFunction.functionFamily == "online" && (!$scope.shownFunction.onlineScript || $scope.shownFunction.onlineScript == "")) {
+		if ($scope.shownFunction.family == "online" && (!$scope.shownFunction.onlineScript || $scope.shownFunction.onlineScript == "")) {
 			correctArguments = false;
 			$scope.missingFields.push("Online script missing");
-		} else if ($scope.shownFunction.functionFamily == "offline") {
-			if (!$scope.shownFunction.offlineScriptTrainModel || $scope.shownFunction.offlineScriptTrainModel == "") {
+		} else if ($scope.shownFunction.family == "offline") {
+			if (!$scope.shownFunction.offlineScriptTrain || $scope.shownFunction.offlineScriptTrain == "") {
 				correctArguments = false;
 				$scope.missingFields.push("Offline train script missing");
 			}
-			if (!$scope.shownFunction.offlineScriptUseModel || $scope.shownFunction.offlineScriptUseModel == "") {
+			if (!$scope.shownFunction.offlineScriptUse || $scope.shownFunction.offlineScriptUse == "") {
 				correctArguments = false;
 				$scope.missingFields.push("Offline use script missing");
 			}
@@ -404,15 +379,19 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		$scope.shownFunction = angular.copy(item);
 		var functionId = $scope.shownFunction.id;
 
-		sbiModule_restServices.get("2.0/functions-catalog","delete/" + functionId).then(function(result) {
-			if (result && result.data && result.data.FunctionInUseException) {
-				sbiModule_messaging.showErrorMessage(result.data.FunctionInUseException,"Delete Error");
-			}
+		$http.delete('/knowage-api/api/1.0/functioncatalog/'+functionId,
+				{headers:{
+					"x-Kn-Authorization":"Bearer "+ sbiModule_user.userUniqueIdentifier
+				}}
+		).then(function(resolve){
 			$scope.obtainCatalogFunctionsRESTcall();
 			$scope.cleanNewFunction();
 			$scope.shownFunction = $scope.newFunction;
 			$scope.saveOrUpdateFlag = "save";
-		});
+		},
+		function(error){
+			sbiModule_messaging.showErrorMessage("Check that the function is not used in any dashboard","Delete Error");
+		})
 
 	};
 
@@ -501,12 +480,12 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			sbiModule_restServices.get("2.0/functions-catalog", type).then(
 					function(result) {
 						$scope.functionsList = result.data.functions;
-						$scope.searchKeywords = result.data.keywords;
+						$scope.searchTags = result.data.keywords;
 						return $scope.functionsToDisplay;
 					});
 		} else {
 			$scope.functionsList = $scope.functionsList_bck;
-			$scope.searchKeywords = $scope.keywordsList_bck;
+			$scope.searchTags = $scope.tagsList_bck;
 			return $scope.functionsList_bck;
 		}
 	}
@@ -516,12 +495,12 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		$scope.functionsToDisplay = [];
 		for (var i = 0; i < $scope.functionsList_bck.length; i++) {
 			if ($scope.selectedType == 'All') {
-				if ($scope.functionsList_bck[i].keywords.indexOf(keyword) >= 0) { // if index >= 0, keyword is present
+				if ($scope.functionsList_bck[i].tags.indexOf(keyword) >= 0) { // if index >= 0, keyword is present
 					$scope.functionsToDisplay.push($scope.functionsList_bck[i]);
 				}
 			} else {
 				if ($scope.selectedType == $scope.functionsList_bck[i].type) {
-					if ($scope.functionsList_bck[i].keywords.indexOf(keyword) >= 0) { // if index >= 0, keyword is present
+					if ($scope.functionsList_bck[i].tags.indexOf(keyword) >= 0) { // if index >= 0, keyword is present
 						$scope.functionsToDisplay.push($scope.functionsList_bck[i]);
 					}
 				}
@@ -706,6 +685,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		}
 
 		function refreshRowForVariables(cell){
+			$scope.selectedFunction.inputVariables[cell.rowIndex]["value"] = cell.value;
 			$scope.variablesGrid.api.redrawRows({rowNodes: [$scope.variablesGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
 		}
 
