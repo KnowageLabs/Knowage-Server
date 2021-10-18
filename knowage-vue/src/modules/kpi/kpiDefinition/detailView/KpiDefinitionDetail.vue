@@ -136,7 +136,7 @@
             <template #footer>
                 <div>
                     <Button class="kn-button kn-button--secondary" :label="$t('common.cancel')" @click="showSaveDialog = false" />
-                    <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="saveKpi" />
+                    <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="saveKpi" :disabled="v$.$invalid" />
                 </div>
             </template>
         </Dialog>
@@ -165,8 +165,10 @@ export default defineComponent({
     props: { id: { type: String, required: false }, version: { type: String, required: false }, cloneKpiVersion: { type: Number }, cloneKpiId: { type: Number }, showGuide: Boolean },
     computed: {
         buttonDisabled(): any {
-            if (this.formulaHasErrors === true || this.v$.$invalid) {
-                return true
+            if (this.selectedKpi.threshold) {
+                if (this.formulaHasErrors === true || !this.selectedKpi.threshold.name) {
+                    return true
+                }
             }
             return false
         }
