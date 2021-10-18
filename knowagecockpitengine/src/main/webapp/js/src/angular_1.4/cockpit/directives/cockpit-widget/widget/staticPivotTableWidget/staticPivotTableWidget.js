@@ -1352,6 +1352,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		    	    		var alias = $scope.localModel.content.crosstabDefinition.measures[i].alias;
 		    	    		if (!isAliasUnique(alias)) return false;
 		    	    	}
+		    	    	return true;
 		    	    }
 
 		    	    isAliasUnique=function(alias){
