@@ -18,6 +18,7 @@
 package it.eng.knowage.knowageapi.dao;
 
 import java.time.Instant;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,10 +33,20 @@ abstract class AbstractDaoImpl {
 	@Autowired
 	private BusinessRequestContext businessRequestContext;
 
+	/**
+	 * Update *_IN columns keeping old values if present
+	 */
 	protected final void preInsert(AbstractEntity entity) {
-		entity.setSbiVersionIn(businessRequestContext.getVersion());
-		entity.setTimeIn(Instant.now());
-		entity.setUserIn(businessRequestContext.getUsername());
+		String version = Optional.ofNullable(entity.getSbiVersionIn())
+				.orElse(businessRequestContext.getVersion());
+		Instant now = Optional.ofNullable(entity.getTimeIn())
+				.orElse(Instant.now());
+		String username = Optional.ofNullable(entity.getUserIn())
+				.orElse(businessRequestContext.getUsername());
+
+		entity.setSbiVersionIn(version);
+		entity.setTimeIn(now);
+		entity.setUserIn(username);
 	}
 
 	protected final void preUpdate(AbstractEntity entity) {

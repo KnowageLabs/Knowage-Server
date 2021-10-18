@@ -17,7 +17,7 @@ angular.module('templateBuild')
 	service.configuration = new Configuration();
 	service.save = function(template){
 		console.log("saving ...")
-		service.configuration.customData.templateContent = angular.toJson(template);
+		service.configuration.customData.templateContent = template;
 		if(sbiModule_config.docLabel){
 			service.configuration.action = "MODIFY_KPI";
 			service.configuration.document.name = sbiModule_config.docName;
@@ -99,11 +99,11 @@ function Document(type){
 	this.label = "";
 	this.description = "";
 	this.type = type;
-	this.folders = [];
+
 }
 
 function CustomData(){
-	this.templateContent = ""
+	this.templateContent = {}
 }
 
 function Configuration(){

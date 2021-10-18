@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	angular.module("cockpitModule")
 		.service("cockpitModule_catalogFunctionService", cockpitModule_catalogFunctionService)
 
-	function cockpitModule_catalogFunctionService(sbiModule_translate, sbiModule_restServices){
+	function cockpitModule_catalogFunctionService(sbiModule_translate, sbiModule_restServices, $http, sbiModule_user){
 		var self = this;
 		this.allCatalogFunctions = {};
 		this.rEnvironments = [];
@@ -50,11 +50,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		});
 
 		// GET ALL CATALOG FUNCTIONS
-		sbiModule_restServices.restToRootProject();
-		sbiModule_restServices.get("2.0/functions-catalog", "")
-		.then(function(result) {
-			self.allCatalogFunctions = result.data.functions;
-		});
+		$http.get('/knowage-api/api/1.0/functioncatalog/completelist',
+				{headers:{
+					"x-Kn-Authorization":"Bearer "+ sbiModule_user.userUniqueIdentifier
+				}}
+		).then(function(result){
+			self.allCatalogFunctions = result.data;
+		},
+		function(error){
+		})
 
 	}
 })();

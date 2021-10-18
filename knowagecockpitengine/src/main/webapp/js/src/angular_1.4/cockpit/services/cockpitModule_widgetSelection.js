@@ -18,7 +18,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			toRet[datasetLabel]={};
 			for(col in cockpitModule_template.configuration.filters[datasetLabel]){
 				var values = cockpitModule_template.configuration.filters[datasetLabel][col];
-				if(values){
+				if(typeof values != 'undefined'){
 					if(values.constructor === Array) {
 						toRet[datasetLabel][col]=["('"+values.join("','")+"')"];
 					} else {

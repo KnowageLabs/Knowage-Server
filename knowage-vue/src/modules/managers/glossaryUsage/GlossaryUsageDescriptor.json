@@ -1,0 +1,16 @@
+{
+    "dialog": {
+        "style": {
+            "width": "60vw"
+        }
+    },
+    "node": {
+        "style": {
+            "padding": "0"
+        }
+    },
+    "translation": {
+        "sbi.generic.active": "common.active",
+        "sbi.glossary.word": "managers.glossary.common.word"
+    }
+}

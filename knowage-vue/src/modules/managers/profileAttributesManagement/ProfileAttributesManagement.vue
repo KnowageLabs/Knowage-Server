@@ -76,7 +76,7 @@ export default defineComponent({
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
                         this.dirty = false
-                        if ( attribute) this.prepareFormData(attribute)
+                        if (attribute) this.prepareFormData(attribute)
                         else this.hideForm = true
                     }
                 })
@@ -85,11 +85,11 @@ export default defineComponent({
                 else this.hideForm = true
             }
         },
-        prepareFormData(attribute: iAttribute) {            
+        prepareFormData(attribute: iAttribute) {
             if (this.hideForm) {
                 this.hideForm = false
             }
-             this.attribute = { ...attribute }
+            this.attribute = { ...attribute }
         },
         onAttributeDelete(id: number) {
             this.deleteAttribute(id)
@@ -126,6 +126,12 @@ export default defineComponent({
                                 msg: this.$t('managers.profileAttributesManagement.info.deleteMessage')
                             })
                             this.loadAllAttributes()
+                        })
+                        .catch((error) => {
+                            this.$store.commit('setError', {
+                                title: this.$t('managers.profileAttributesManagement.info.deleteTitle'),
+                                msg: error.message
+                            })
                         })
                         .finally(() => {
                             this.loading = false

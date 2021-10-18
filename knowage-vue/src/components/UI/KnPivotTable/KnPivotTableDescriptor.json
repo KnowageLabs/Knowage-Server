@@ -1,0 +1,67 @@
+{
+    "dateColumn": {
+        "style": {
+            "width": "200px"
+        }
+    },
+    "headerIconColumn": {
+        "style": {
+            "color": "white",
+            "margin-bottom": "2rem"
+        }
+    },
+    "iconColumn": {
+        "style": {
+            "text-align": "center",
+            "width": "3rem"
+        }
+    },
+    "numerationColumn": {
+        "style": {
+            "text-align": "center",
+            "width": "3rem"
+        }
+    },
+    "pivotStyles": {
+        "header": {
+            "color": "#3b678c",
+            "height": "25px"
+        },
+        "iconColumn": {
+            "text-align": "center",
+            "width": "30px"
+        },
+        "inputFields": {
+            "border": "none",
+            "height": "20px",
+            "width": "100%"
+        },
+        "row": {
+            "padding-left": "15px"
+        },
+        "table": {
+            "border-collapse": "collapse",
+            "table-layout": "fixed",
+            "width": "100%"
+        }
+    },
+    "primevueTableStyles": {
+        "dropdown": {
+            "width": "90%"
+        },
+        "inputField": {
+            "height": "20px",
+            "width": "80%"
+        },
+        "trashEdited": {
+            "color": "#fbc53d"
+        },
+        "trashNormal": {
+            "color": "#a7a7a7"
+        }
+    },
+    "tableOptions": {
+        "paginationLimit": 1000,
+        "rowsPerPage": 15
+    }
+}

@@ -11,6 +11,8 @@
 									<div class="kn-list-item-text">
 										<span>{{ slotProps.option.title }}</span>
 									</div>
+									<span v-if="slotProps.option.read"> <Avatar :icon="typeDescriptor.icons.read.icon" shape="circle" size="medium" :style="typeDescriptor.icons.read.style"/></span
+									><span v-else><Avatar :icon="typeDescriptor.icons.unread.icon" shape="circle" size="medium" :style="typeDescriptor.icons.unread.style"/></span>
 								</div>
 							</template>
 						</Listbox>
@@ -70,7 +72,8 @@
 				typeDescriptor: newsDialogDescriptor,
 				selectedNews: {} as SingleNews,
 				news: {},
-				loading: true
+				loading: true,
+				newsReadArray: Array<number>()
 			}
 		},
 		created() {},
@@ -106,6 +109,23 @@
 										},
 										(error) => console.error(error)
 									)
+
+									this.selectedNews.read = true
+									var stop = false
+									for (var idx in this.news) {
+										let currNewsArray = this.news[idx]
+
+										for (var index in currNewsArray) {
+											let currNews = currNewsArray[index]
+											if (currNews.id == id) {
+												currNews.read = true
+												stop = true
+												break
+											}
+										}
+
+										if (stop) break
+									}
 								}
 							}
 						},
@@ -123,11 +143,11 @@
 		},
 		watch: {
 			visibility(newVisibility) {
-				if (newVisibility && Object.keys(this.news).length === 0) {
-					let newsReadArray = Array<number>()
+				if (newVisibility) {
 					axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/newsRead').then(
 						(response) => {
-							newsReadArray = response.data
+							this.newsReadArray = []
+							this.newsReadArray = response.data
 						},
 						(error) => console.error(error)
 					)
@@ -135,10 +155,11 @@
 					axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news').then(
 						(response) => {
 							var jsonData = {}
+							let localNewsReadArray = this.newsReadArray
 							response.data.forEach(function(column: SingleNews) {
 								let type = column.type.toString()
 								if (!jsonData[type]) jsonData[type] = []
-								if (newsReadArray.indexOf(column.id) != -1) column.read = true
+								if (localNewsReadArray.indexOf(column.id) != -1) column.read = true
 								jsonData[type].push(column)
 							})
 							this.news = jsonData

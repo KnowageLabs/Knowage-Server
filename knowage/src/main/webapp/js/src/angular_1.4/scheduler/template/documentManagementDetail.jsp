@@ -293,7 +293,7 @@
 			<md-input-container>
 				<label>{{translate.load("scheduler.mailtext", "component_scheduler_messages")}}:</label>
 				<textarea ng-model="activityEventCtrl.selectedDocument.mailtxt" columns="1"
-						maxlength="500" ng-maxlength="500" md-maxlength="500"></textarea> 
+						maxlength="2000" ng-maxlength="2000" md-maxlength="2000"></textarea> 
 			</md-input-container> 
 		</md-content>
 	</div>

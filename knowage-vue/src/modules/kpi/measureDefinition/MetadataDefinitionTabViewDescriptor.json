@@ -1,0 +1,20 @@
+{
+    "aliasFilterFields": ["name"],
+    "dialog": {
+        "style": {
+            "width": "60vw"
+        }
+    },
+    "errorDialog": {
+        "style": {
+            "width": "60vw",
+            "z-index": "9999"
+        }
+    },
+    "listBox": {
+        "style": {
+            "max-height": "450px"
+        }
+    },
+    "placeholderFilterFields": ["name"]
+}

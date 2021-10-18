@@ -32,7 +32,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -72,43 +71,12 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 public class SaveDocumentResource extends AbstractSpagoBIResource {
 	// logger component
 	private static Logger logger = Logger.getLogger(SaveDocumentResource.class);
-
-	private static final String MESSAGE_DET = "MESSAGE_DET";
 	// type of service
 	private static final String DOC_SAVE = "DOC_SAVE";
 	private static final String DOC_UPDATE = "DOC_UPDATE";
 	private static final String MODIFY_GEOREPORT = "MODIFY_GEOREPORT";
 	private static final String MODIFY_COCKPIT = "MODIFY_COCKPIT";
 	private static final String MODIFY_KPI = "MODIFY_KPI";
-
-	// RES detail
-	private static final String ID = "id";
-	private static final String OBJ_ID = "obj_id";
-	private static final String NAME = "name";
-	private static final String LABEL = "label";
-	private static final String DESCRIPTION = "description";
-	private static final String ENGINE = "engineid";
-	private static final String TYPE = "typeid";
-	private static final String TEMPLATE = "template";
-	private static final String FUNCTS = "functs";
-	private static final String PREVIEW_FILE = "previewFile";
-	private static final String BUSINESS_METADATA = "business_metadata";
-	private static final String OBJECT_QUERY = "query";
-	private static final String FORMVALUES = "formValues";
-	private static final String VISIBILITY = "visibility";
-	private static final String COMMUNITY = "communityId";
-
-	public static final String OBJ_DATASET_ID = "dataSetId";
-	public static final String OBJ_DATASET_LABEL = "dataset_label";
-
-	// default type
-	public static final String BIOBJ_TYPE_DOMAIN_CD = "BIOBJ_TYPE";
-
-	// default for parameters
-	public static final Integer REQUIRED = 0;
-	public static final Integer MODIFIABLE = 1;
-	public static final Integer MULTIVALUE = 0;
-	public static final Integer VISIBLE = 1;
 
 	@POST
 	@Path("/")
@@ -132,7 +100,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 				} else if (DOC_UPDATE.equalsIgnoreCase(action)) {
 					logger.error("DOC_UPDATE action is no more supported");
 					throw new SpagoBIServiceException(saveDocumentDTO.getPathInfo(), "sbi.document.unsupported.udpateaction");
-				} else if (MODIFY_GEOREPORT.equalsIgnoreCase(action) || MODIFY_COCKPIT.equalsIgnoreCase(action) || MODIFY_KPI.equalsIgnoreCase(action)) {
+				} else if (MODIFY_COCKPIT.equalsIgnoreCase(action) || MODIFY_KPI.equalsIgnoreCase(action)) {
 					id = doModifyDocument(saveDocumentDTO, action, error);
 				} else {
 					throw new SpagoBIServiceException(saveDocumentDTO.getPathInfo(), "sbi.document.unsupported.action");
@@ -607,171 +575,6 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		}
 
 		return template;
-	}
-
-	/**
-	 * @return a JSON object representing the input request to the service with the following structure: <code>
-	 * 		{
-	 * 			action: STRING
-	 * 			, sourceDataset: {
-	 * 				label: STRING
-	 * 			}
-	 * 			, sourceDocument: {
-	 * 				id: NUMBER
-	 * 			}
-	 * 			, document: {
-	 * 				id: NUMBER
-	 * 				label: STRING
-	 * 				name: STRING
-	 * 				description: STRING
-	 * 				type: STRING
-	 * 				engineId: NUMBER
-	 * 				metadata: [JSON, ..., JSON]
-	 * 			}
-	 * 			, customData: {
-	 * 				query: [STRING]
-	 * 				workseheet: [JSON]
-	 * 				smartfilter:  [JSON]
-	 * 			}
-	 * 			, folders: [STRING, ... , STRING]
-	 * 		}
-	 * 	</code>
-	 * @throws JSONException
-	 * @throws EMFUserError
-	 **/
-
-	public JSONObject parseRequest() throws JSONException, EMFUserError {
-
-		JSONObject request = new JSONObject();
-
-		String action = this.getAttributeAsString(MESSAGE_DET);
-		request.put("action", action);
-
-		// sourceDatasetLabel
-		String sourceDatasetLabel = getAttributeAsString(OBJ_DATASET_LABEL);
-
-		if (StringUtilities.isNotEmpty(sourceDatasetLabel)) {
-			JSONObject sourceDataset = new JSONObject();
-			sourceDataset.put("label", sourceDatasetLabel);
-			request.put("sourceDataset", sourceDataset);
-		}
-
-		// sourceDocumentId
-		String sourceDocumentId = getAttributeAsString(OBJ_ID);
-
-		if (StringUtilities.isNotEmpty(sourceDocumentId)) {
-			JSONObject sourceDocument = new JSONObject();
-			sourceDocument.put("id", sourceDocumentId);
-			request.put("sourceDocument", sourceDocument);
-		}
-
-		// document
-		JSONObject document = new JSONObject();
-
-		String documentId = getAttributeAsString(ID);
-		if (documentId != null)
-			document.put("id", documentId);
-
-		String label = getAttributeAsString(LABEL);
-		if (label != null)
-			document.put("label", label);
-
-		String name = getAttributeAsString(NAME);
-		if (name != null)
-			document.put("name", name);
-
-		String description = getAttributeAsString(DESCRIPTION);
-		if (description != null)
-			document.put("description", description);
-
-		String visibility = getAttributeAsString(VISIBILITY);
-		if (visibility != null)
-			document.put("visibility", visibility);
-
-		String type = getAttributeAsString(TYPE);
-		if (type != null)
-			document.put("type", type);
-
-		String engineId = getAttributeAsString(ENGINE);
-		if (engineId != null)
-			document.put("engineId", engineId);
-
-		// preview file
-		String previewFile = getAttributeAsString(PREVIEW_FILE);
-		if (previewFile != null)
-			document.put("previewFile", previewFile);
-
-		String businessMetadata = getAttributeAsString(BUSINESS_METADATA);
-		if (StringUtilities.isNotEmpty(businessMetadata)) {
-			JSONObject businessMetadataJSON = new JSONObject(businessMetadata);
-			JSONArray metaProperties = new JSONArray();
-			JSONArray names = businessMetadataJSON.names();
-			for (int i = 0; i < names.length(); i++) {
-				String key = names.getString(i);
-				String value = businessMetadataJSON.getString(key);
-				JSONObject metaProperty = new JSONObject();
-				metaProperty.put("meta_name", key);
-				metaProperty.put("meta_content", value);
-				metaProperties.put(metaProperty);
-			}
-			document.put("metadata", metaProperties);
-		}
-
-		request.put("document", document);
-
-		// customData
-		JSONObject customData = new JSONObject();
-
-		if (requestContainsAttribute(FORMVALUES) && StringUtilities.isNotEmpty(getAttributeAsString(FORMVALUES))) {
-			JSONObject smartFilterData = getAttributeAsJSONObject(FORMVALUES);
-			if (smartFilterData != null)
-				customData.put("smartFilter", smartFilterData);
-		}
-
-		String query = getAttributeAsString(OBJECT_QUERY);
-		if (query != null)
-			customData.put("query", query);
-
-		// String templateContent = getAttributeAsString(TEMPLATE);
-		JSONObject templateContent = getAttributeAsJSONObject(TEMPLATE);
-		if (templateContent != null)
-			customData.put("templateContent", templateContent);
-
-		request.put("customData", customData);
-
-		// folders
-		JSONArray foldersJSON = new JSONArray();
-		if (requestContainsAttribute(FUNCTS) && StringUtilities.isNotEmpty(getAttributeAsString(FUNCTS))) {
-			foldersJSON = getAttributeAsJSONArray(FUNCTS);
-			if (foldersJSON != null)
-				request.put("folders", foldersJSON);
-		}
-		// COMMUNITY
-		String communityFCode = getAttributeAsString(COMMUNITY);
-		if (communityFCode != null && !"".equalsIgnoreCase(communityFCode)) {
-			if (communityFCode.startsWith("-1")) {
-				// clean the community
-				String realCode = communityFCode.substring(communityFCode.indexOf("__") + 2);
-				if (!realCode.equals("")) {
-					for (int i = 0; i < foldersJSON.length(); i++) {
-						if (foldersJSON.get(i).equals(Integer.valueOf(realCode))) {
-							foldersJSON.remove(i);
-							break;
-						}
-					}
-				}
-			} else {
-				// add community folder to functionalities community folder
-				LowFunctionality commF = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(communityFCode, false);
-				Integer commFId = commF.getId();
-				foldersJSON.put(commFId);
-			}
-		}
-
-		logger.debug("Request succesfully parsed: " + request.toString(3));
-
-		return request;
-
 	}
 
 	// ==============================================================

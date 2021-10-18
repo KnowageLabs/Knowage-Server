@@ -52,10 +52,11 @@
 						<rect ng-style="{ 'fill': 'url(#default_gradient-' + layer.dsId + ')' }" style="opacity:1;fill-opacity:1.0;" width="12" height="12" x="0" y="0" />
 					</svg>
 				</div>
-				<md-icon md-font-icon="fa fa-chevron-down" ng-if="!layer.expandedNav"></md-icon>
-				<md-icon md-font-icon="fa fa-chevron-up" ng-if="layer.expandedNav"></md-icon>
+				<md-icon md-font-icon="fa fa-chevron-down" ng-if="hasMeasures(layer) && !layer.expandedNav"></md-icon>
+				<md-icon md-font-icon="fa fa-chevron-up"   ng-if="hasMeasures(layer) && layer.expandedNav"></md-icon>
+				<md-icon md-font-icon="fa"                 ng-if="!hasMeasures(layer)"></md-icon>
 			</div>
-			<md-radio-group style="padding:8px;" ng-model="layer.defaultIndicator" ng-if="layer.expandedNav">
+			<md-radio-group style="padding:8px;" ng-model="layer.defaultIndicator" ng-if="hasMeasures(layer) && layer.expandedNav">
 				<md-radio-button ng-repeat="ind in layer.content.columnSelectedOfDataset" ng-if="ind.properties.showMap" ng-click="thematizeMeasure(layer.name, ind.aliasToShow)"  class="md-primary" ng-value="ind.name" style="font-size:.7rem;" >
 					{{ ind.aliasToShow | i18n }}
 				</md-radio-button>
