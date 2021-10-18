@@ -16,6 +16,7 @@
                     </div>
                 </template>
             </div>
+            {{ role }}
         </template>
     </Card>
 </template>
