@@ -119,7 +119,7 @@ export default defineComponent({
                 accept: async () => {
                     this.loading = true
                     this.axios
-                        .delete(this.apiUrl + 'attributes/' + id)
+                        .delete(this.apiUrl + 'attributes/' + id, { headers: { 'X-Disable-Errors': true } })
                         .then((response) => {
                             if (response.data.errors) {
                                 this.$store.commit('setError', {
