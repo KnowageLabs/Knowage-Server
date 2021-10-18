@@ -20,13 +20,13 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
     (res) => {
         if (res.data && res.data.errors) {
-            store.commit('setError', { title: 'Server error', msg: res.data.errors[0].message })
+            if (!res.config.headers['X-Disable-Errors']) store.commit('setError', { title: 'Server error', msg: res.data.errors[0].message })
             return Promise.reject(res.data.errors[0])
         }
         return res
     },
     function(error) {
-        if (error.response.status) {
+        if (error.response && error.response.status) {
             if (error.response.status === 401) {
                 authHelper.logout()
             }

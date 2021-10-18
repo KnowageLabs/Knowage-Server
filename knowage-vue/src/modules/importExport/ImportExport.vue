@@ -13,8 +13,8 @@
 		</Toolbar>
 		<ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 		<div class="kn-page-content p-grid p-m-0">
-			<div v-if="importExportDescriptor.functionalities.length > 1" class="functionalities-container p-col-3 p-sm-3 p-md-2">
-				<KnTabCard :element="functionality" :selected="functionality.route === $route.path" v-for="(functionality, index) in importExportDescriptor.functionalities" v-bind:key="index" @click="selectType(functionality)" :badge="selectedItems[functionality.type].length"> </KnTabCard>
+			<div class="functionalities-container p-col-3 p-sm-3 p-md-2">
+				<KnTabCard :element="functionality" :selected="functionality.route === $route.path" v-for="(functionality, index) in functionalities" v-bind:key="index" @click="selectType(functionality)" :badge="selectedItems[functionality.type].length"> </KnTabCard>
 			</div>
 			<div class="p-col p-pt-0">
 				<router-view v-model:loading="loading" @onItemSelected="getSelectedItems($event)" :selectedItems="selectedItems" />
@@ -32,6 +32,7 @@
 	import ProgressBar from 'primevue/progressbar'
 	import KnTabCard from '@/components/UI/KnTabCard.vue'
 	import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
+	import { mapState } from 'vuex'
 
 	export default defineComponent({
 		name: 'import-export',
@@ -46,11 +47,32 @@
 				selectedItems: {
 					gallery: [],
 					catalogFunction: []
-				}
+				},
+				functionalities: Array<any>()
 			}
+		},
+		mounted() {
+			if (this.isEnterprise) this.setFunctionalities()
 		},
 		emits: ['onItemSelected'],
 		methods: {
+			async setFunctionalities() {
+				this.loading = true
+				this.functionalities = []
+
+				let licenses = this.licenses.licenses
+				let currentHostName = this.licenses.hosts[0] ? this.licenses.hosts[0].hostName : undefined
+
+				this.functionalities = importExportDescriptor.functionalities
+					.filter((x) => {
+						return x.requiredFunctionality ? this.user.functionalities.includes(x.requiredFunctionality) : true
+					})
+					.filter((x) => {
+						return x.requiredLicense && currentHostName && licenses[currentHostName] ? licenses[currentHostName].filter((lic) => lic.product === x.requiredLicense).length == 1 : true
+					})
+
+				this.loading = false
+			},
 			getSelectedItems(e) {
 				if (e.items) this.selectedItems[e.functionality] = e.items
 			},
@@ -114,6 +136,13 @@
 				selectedItemsToBE['filename'] = fileName
 				return selectedItemsToBE
 			}
+		},
+		computed: {
+			...mapState({
+				user: 'user',
+				isEnterprise: 'isEnterprise',
+				licenses: 'licenses'
+			})
 		}
 	})
 </script>

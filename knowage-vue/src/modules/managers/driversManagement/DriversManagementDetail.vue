@@ -85,7 +85,7 @@ export default defineComponent({
 
     methods: {
         async getTypes() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '/domains/listValueDescriptionByType?DOMAIN_TYPE=PAR_TYPE').then((response) => (this.types = response.data))
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'domains/listValueDescriptionByType?DOMAIN_TYPE=PAR_TYPE').then((response) => (this.types = response.data))
         },
         async getModes() {
             if (this.driver.id) {
@@ -99,10 +99,10 @@ export default defineComponent({
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/checks').then((response) => (this.constraints = response.data))
         },
         async getselectionTypes() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '/domains/listValueDescriptionByType?DOMAIN_TYPE=SELECTION_TYPE').then((response) => (this.selectionTypes = response.data))
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'domains/listValueDescriptionByType?DOMAIN_TYPE=SELECTION_TYPE').then((response) => (this.selectionTypes = response.data))
         },
         async getLayers() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '/2.0/analyticalDriversee/layers').then((response) => (this.layers = response.data))
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDriversee/layers').then((response) => (this.layers = response.data))
         },
         async getLovs() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all').then((response) => (this.lovs = response.data))

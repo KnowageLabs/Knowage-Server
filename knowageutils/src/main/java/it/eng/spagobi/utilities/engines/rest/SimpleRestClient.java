@@ -273,12 +273,17 @@ public class SimpleRestClient {
 		return response;
 	}
 
+	/*
+	 * TODO: verify if it is possible to configure headers externally
+	 */
 	private void addAuthorizations(Builder request, String userId, MultivaluedMap<String, Object> myHeaders) throws Exception {
 		logger.debug("Adding auth for user " + userId);
 
 		String encodedBytes = Base64.getEncoder().encodeToString(userId.getBytes("UTF-8"));
 		request.header("Authorization", "Direct " + encodedBytes);
+		request.header("X-Kn-Authorization", "Bearer " + userId);
 		myHeaders.add("Authorization", "Direct " + encodedBytes);
+		myHeaders.add("X-Kn-Authorization", "Bearer " + userId);
 	}
 
 	public boolean isAddServerUrl() {
