@@ -1,8 +1,8 @@
 <template>
-    <Card :style="tabViewDescriptor.card.style">
+    <Card class="p-mb-3">
         <template #content>
             <form class="p-fluid p-m-3">
-                <div class="p-field" :style="tabViewDescriptor.pField.style">
+                <div class="p-field p-mb-3">
                     <span class="p-float-label">
                         <InputText
                             id="name"
@@ -21,7 +21,7 @@
                     </span>
                     <KnValidationMessages :vComp="v$.schema.name" :additionalTranslateParams="{ fieldName: $t('common.name') }" />
                 </div>
-                <div class="p-field" :style="tabViewDescriptor.pField.style">
+                <div class="p-field p-mb-3">
                     <span class="p-float-label">
                         <InputText
                             id="description"
@@ -50,7 +50,7 @@
             </form>
         </template>
     </Card>
-    <Card :style="tabViewDescriptor.tableCard.style">
+    <Card>
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>

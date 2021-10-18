@@ -1,0 +1,37 @@
+{
+    "columnsDoc": [
+        {
+            "field": "DOCUMENT_LABEL",
+            "header": "common.label"
+        },
+        {
+            "field": "DOCUMENT_NAME",
+            "header": "common.name"
+        },
+        {
+            "field": "DOCUMENT_DESCR",
+            "header": "common.description"
+        }
+    ],
+    "dialog": {
+        "breakpoints": {
+            "640px": "100vw",
+            "960px": "85vw"
+        },
+        "style": {
+            "width": "70vw"
+        }
+    },
+    "globalFilterFields": ["DOCUMENT_LABEL", "DOCUMENT_NAME"],
+    "parType": {
+        "0": {
+            "label": "managers.crossNavigationManagement.output"
+        },
+        "1": {
+            "label": "managers.crossNavigationManagement.input"
+        },
+        "2": {
+            "label": "managers.crossNavigationManagement.fixed"
+        }
+    }
+}

@@ -7,8 +7,8 @@
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <div class="card">
-        <TabView class="tabview-custom" data-test="tab-view">
+    <div class="kn-page-content">
+        <TabView class="kn-tab kn-tab-overflow-visible" data-test="tab-view">
             <TabPanel>
                 <template #header>
                     <span>{{ $t('managers.mondrianSchemasManagement.detail.title') }}</span>

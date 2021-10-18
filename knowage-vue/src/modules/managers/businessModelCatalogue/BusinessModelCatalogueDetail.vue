@@ -19,6 +19,7 @@
                 :datasourcesMeta="datasources"
                 :user="user"
                 :toGenerate="toGenerate"
+                :readonly="readonly"
                 @fieldChanged="onFieldChange"
                 @fileUploaded="uploadedFile = $event"
                 @datamartGenerated="loadPage"
@@ -30,7 +31,7 @@
                 <span>{{ $t('managers.businessModelManager.metadata') }}</span>
             </template>
 
-            <MetadataCard v-if="businessModelVersions.length > 0" :id="selectedBusinessModel.id"></MetadataCard>
+            <MetadataCard v-if="businessModelVersions.length > 0 && !readonly" :id="selectedBusinessModel.id"></MetadataCard>
         </TabPanel>
 
         <TabPanel>
@@ -38,7 +39,7 @@
                 <span>{{ $t('managers.businessModelManager.savedVersions') }}</span>
             </template>
 
-            <BusinessModelVersionsCard :id="selectedBusinessModel.id" :versions="businessModelVersions" @touched="setDirty" @deleted="loadVersions"></BusinessModelVersionsCard>
+            <BusinessModelVersionsCard :id="selectedBusinessModel.id" :versions="businessModelVersions" :readonly="readonly" @touched="setDirty" @deleted="loadVersions"></BusinessModelVersionsCard>
         </TabPanel>
 
         <TabPanel>
@@ -47,7 +48,7 @@
                 <Badge :value="invalidDrivers" class="p-ml-2" severity="danger" v-if="invalidDrivers > 0"></Badge>
             </template>
 
-            <BusinessModelDriversCard v-if="id" :id="selectedBusinessModel.id" :drivers="drivers" :driversOptions="analyticalDrivers" @delete="setDriversForDelete"></BusinessModelDriversCard>
+            <BusinessModelDriversCard v-if="id" :id="selectedBusinessModel.id" :drivers="drivers" :driversOptions="analyticalDrivers" :readonly="readonly" @delete="setDriversForDelete"></BusinessModelDriversCard>
         </TabPanel>
     </TabView>
 </template>
@@ -97,17 +98,19 @@ export default defineComponent({
             uploadedFile: null as any,
             loading: false,
             touched: false,
-            operation: 'insert',
             uploadingError: false,
             v$: useValidate() as any
         }
     },
     computed: {
         buttonDisabled(): any {
-            return this.invalidDrivers > 0 || !this.selectedBusinessModel.name || !this.selectedBusinessModel.category || !this.selectedBusinessModel.dataSourceLabel
+            return this.invalidDrivers > 0 || !this.selectedBusinessModel.name || !this.selectedBusinessModel.category || !this.selectedBusinessModel.dataSourceLabel || this.readonly
         },
         invalidDrivers(): number {
             return this.drivers.filter((driver: any) => driver.numberOfErrors > 0).length
+        },
+        readonly(): any {
+            return this.selectedBusinessModel.id && this.selectedBusinessModel.modelLocked && this.user && this.selectedBusinessModel.modelLocked && this.selectedBusinessModel.modelLocker && this.selectedBusinessModel.modelLocker !== this.user.userId
         }
     },
     watch: {
@@ -125,7 +128,7 @@ export default defineComponent({
         },
         async loadSelectedBusinessModelData() {
             if (this.id) {
-                await this.loadselectedBusinessModel()
+                await this.loadSelectedBusinessModel()
                 await this.loadVersions()
                 await this.loadDrivers()
 
@@ -137,7 +140,7 @@ export default defineComponent({
                 this.analyticalDrivers = []
             }
         },
-        async loadselectedBusinessModel() {
+        async loadSelectedBusinessModel() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}`).then((response) => (this.selectedBusinessModel = response.data))
         },
         async loadVersions() {
@@ -172,6 +175,7 @@ export default defineComponent({
             this.driversForDelete = drivers
         },
         async handleSubmit() {
+            this.loading = true
             if (this.selectedBusinessModel.id) {
                 await this.updateBusinessModel()
             } else {
@@ -179,7 +183,6 @@ export default defineComponent({
             }
 
             if (this.selectedBusinessModel.id && this.uploadedFile && !this.uploadingError) {
-                console.log('UPLODADED FILE', this.uploadedFile)
                 await this.uploadFile()
             }
 
@@ -211,18 +214,20 @@ export default defineComponent({
                     title: this.$t('common.toast.updateTitle'),
                     msg: this.$t('common.toast.success')
                 })
+                this.$router.replace(`/business-model-catalogue/${this.selectedBusinessModel.id}`)
             }
             this.loadPage()
             this.touched = false
             this.$emit('inserted')
             this.uploadingError = false
+            this.loading = false
         },
         setUploadingError(title: string, message: string) {
             this.uploadingError = true
             this.$store.commit('setError', { title: this.$t('common.toast.' + title), msg: message })
         },
         async saveBusinessModel() {
-            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/', { ...this.selectedBusinessModel, modelLocker: this.user.fullName }).then((response) => {
+            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/', { ...this.selectedBusinessModel, modelLocker: this.user.userId }).then((response) => {
                 if (response.data.errors) {
                     this.setUploadingError('createTitle', response.data.errors[0].message)
                 } else {
@@ -235,7 +240,7 @@ export default defineComponent({
                 this.selectedBusinessModel.category = this.selectedBusinessModel.category.VALUE_ID
             }
             await axios
-                .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.selectedBusinessModel.id}`, this.selectedBusinessModel)
+                .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.selectedBusinessModel.id}`, { ...this.selectedBusinessModel, modelLocker: this.user.userId })
                 .then((response) => {
                     if (response.data.errors) {
                         this.setUploadingError('updateTitle', response.data.errors[0].message)
@@ -295,6 +300,9 @@ export default defineComponent({
         },
         onFieldChange(event: any) {
             this.selectedBusinessModel[event.fieldName] = event.value
+            if (event.fieldName === 'modelLocked') {
+                this.selectedBusinessModel.modelLocker = this.user.userId
+            }
             this.touched = true
             this.$emit('touched')
         },

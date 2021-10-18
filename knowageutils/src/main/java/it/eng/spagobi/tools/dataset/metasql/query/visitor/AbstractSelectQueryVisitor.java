@@ -474,35 +474,25 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 			List<AbstractSelectionField> projectionsAbs = query.getProjections();
 			List<Projection> projections = new ArrayList<Projection>();
 			List<DataStoreCalculatedField> projectionsCalcFields = new ArrayList<DataStoreCalculatedField>();
-			List<DataStoreCatalogFunctionField> projectionsCataolgFunctionsFields = new ArrayList<DataStoreCatalogFunctionField>();
+			int appendedProjectionsCounter = 0;
 			for (AbstractSelectionField abstractSelectionField : projectionsAbs) {
-				if (!abstractSelectionField.getClass().equals(DataStoreCalculatedField.class)
-						&& !abstractSelectionField.getClass().equals(DataStoreCatalogFunctionField.class)) {
-					Projection proj = (Projection) abstractSelectionField;
-					projections.add(proj);
-				} else if (abstractSelectionField.getClass().equals(DataStoreCatalogFunctionField.class)) {
-					DataStoreCatalogFunctionField projCatalogFunc = (DataStoreCatalogFunctionField) abstractSelectionField;
-					projectionsCataolgFunctionsFields.add(projCatalogFunc);
-				} else {
+				if (abstractSelectionField.getClass().equals(DataStoreCatalogFunctionField.class)) {
+					// skip catalog function columns, they are appended by python engine AFTER the query has been executed
+					continue;
+				}
+				if (appendedProjectionsCounter > 0) {
+					queryBuilder.append(", ");
+				}
+				if (abstractSelectionField.getClass().equals(DataStoreCalculatedField.class)) {
 					DataStoreCalculatedField projCalc = (DataStoreCalculatedField) abstractSelectionField;
 					projectionsCalcFields.add(projCalc);
+					append(projCalc, true);
+				} else { // it's a normal projection
+					Projection proj = (Projection) abstractSelectionField;
+					projections.add(proj);
+					append(proj, true);
 				}
-			}
-			if (projections == null || projections.isEmpty()) {
-				return;
-			}
-
-			append(projections.get(0), true);
-			for (int i = 1; i < projections.size(); i++) {
-				queryBuilder.append(", ");
-				append(projections.get(i), true);
-			}
-
-			// added another management for calculated fields
-
-			for (int i = 0; i < projectionsCalcFields.size(); i++) {
-				queryBuilder.append(", ");
-				append(projectionsCalcFields.get(i), true);
+				appendedProjectionsCounter++;
 			}
 
 			List<AbstractSelectionField> groups = query.getGroups();

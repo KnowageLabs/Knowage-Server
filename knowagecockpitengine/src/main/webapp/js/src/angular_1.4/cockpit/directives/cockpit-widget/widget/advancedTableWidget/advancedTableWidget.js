@@ -581,7 +581,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             else {
             	var title = $filter('i18n')(params.summaryRows[params.rowIndex].label);
             	if(title && params.style && params.style['pinnedOnly'] && params.column.pinned) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+title+'</b>';
-            	if(params.valueFormatted || params.value){
+            	if(params.valueFormatted || (typeof params.value != "string" && typeof params.value != 'undefined')){
             		if (params.rowIndex == 0 || !params.colDef.isCalculated) {
 	            		if(params.summaryRows[params.rowIndex].aggregation == 'COUNT' || params.summaryRows[params.rowIndex].aggregation == 'COUNT_DISTINCT') {
 	            			var tempValue = $filter('number')(params.value,0);
@@ -751,10 +751,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						break;
 					case '>':
 						fullfilledCondition = data[threshold.column] > valueToCompare;
+						break;
 					case '<':
 						fullfilledCondition = data[threshold.column] < valueToCompare;
+						break;
 					case '!=':
 						fullfilledCondition = data[threshold.column] != valueToCompare;
+						break;
 					}
 					
 					if(fullfilledCondition){
@@ -922,7 +925,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var interactionType = $scope.interaction && ($scope.interaction.crossType || $scope.interaction.previewType || $scope.interaction.interactionType);
 			if($scope.cliccable==false) return;
 			if(node.colDef.measure=='MEASURE' && !$scope.ngModel.settings.modalSelectionColumn && !crossHasType('allRow')) return;
-			if(!crossHasType('icon') && (node.value == "" || node.value == undefined)) return;
+			if(!crossHasType('icon') && (node.value === "" || node.value == undefined)) return;
 			if(node.rowPinned) return;
 			if(crossHasType('icon') && node.colDef.crossIcon) {
 				$scope.doSelection(node.colDef.field || null, null, null, null, mapRow(node.data));
@@ -992,10 +995,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if ($scope.ngModel.settings.modalSelectionColumn!= undefined) {
 
 					var rows = [];
+					var tempAlias = '';
+					
+					for(var i in $scope.ngModel.content.columnSelectedOfDataset){
+						if($scope.ngModel.content.columnSelectedOfDataset[i].name == $scope.ngModel.settings.modalSelectionColumn){
+							tempAlias = $scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow;
+						}
+					}
+					
 					rows.push(mapRow(node.data));
 
 					for(var k in rows){
-						newValue.push(rows[k][$scope.ngModel.settings.modalSelectionColumn]);
+						newValue.push(rows[k][tempAlias]);
 					}
 				}
 				else {

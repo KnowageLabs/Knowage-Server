@@ -1,5 +1,7 @@
 {
     "common": {
+        "active": "Active",
+        "add": "Add",
         "apply": "Apply",
         "author": "Author",
         "back": "back",
@@ -22,11 +24,15 @@
         "download": "download",
         "downloading": "Downloading",
         "dragAndDropFileHere": "Drag and drop file here.",
+        "edit": "edit",
         "error": {
             "allowedFileTypes": "File type allowed are {types}",
+            "deleting": "Error while deleting item. Check items associations or parameters and then try to delete it again",
             "downloading": "Error downloading ",
             "exceededSize": "Uploaded file exceedes max size {size}",
+            "generic": "Generic Error",
             "incompatibleType": "Incompatible file type",
+            "saving": "Error saving",
             "tags": {
                 "tagIsNotValid": "Tag ({tag}) is not valid'"
             },
@@ -36,14 +42,17 @@
         "export": "export",
         "image": "image",
         "import": "import",
+        "inactive": "Inactive",
         "info": {
             "dataLoading": "Loading data. Please wait.",
+            "emptySearch": "The search returns no data",
             "noDataFound": "No data found",
             "noElementSelected": "No element selected"
         },
         "information": "information",
         "kpi": "KPI",
         "label": "label",
+        "load": "Load",
         "loggedUser": "logged user",
         "name": "name",
         "new": "new",
@@ -52,6 +61,7 @@
         "run": "Run",
         "save": "save",
         "search": "search",
+        "select": "select",
         "sort": "sort",
         "table": {
             "footer": {
@@ -68,13 +78,16 @@
             "deleteMessage": "This item will be deleted. Are you sure you want to continue with this operation?",
             "deleteSuccess": "Item was deleted successfully",
             "deleteTitle": "Deleted",
+            "errorTitle": "Error",
             "success": "Operation succeeded",
             "unsavedChangesHeader": "Unsaved changes",
             "unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
             "updateSuccess": "Item was updated successfully",
-            "updateTitle": "Updated"
+            "updateTitle": "Updated",
+            "uploadSuccess": "Item was uploaded successfully"
         },
         "type": "type",
+        "upload": "upload",
         "uploading": "Uploading",
         "validation": {
             "maxLength": "This field must have less then {max} characters",
@@ -83,16 +96,19 @@
             "regex": "Invalid format",
             "required": "{fieldName} is required"
         },
+        "value": "Value",
         "version": "version",
         "warning": {}
     },
     "cron": {
+        "advanced": "Advanced",
         "april": "April",
         "august": "August",
         "day": "Day",
         "days": "Days",
         "december": "December",
-        "endDate": "End date",
+        "endDate": "End Date",
+        "endTime": "End Time",
         "everyHour": "Every Hour",
         "everyMinute": "Every Minute",
         "everyMonth": "Every Month",
@@ -102,6 +118,8 @@
         "friday": "Friday",
         "hour": "Hour",
         "hours": "Hours",
+        "inDay": "In day",
+        "inMonth": "In month",
         "january": "January",
         "july": "July",
         "june": "June",
@@ -115,6 +133,7 @@
         "nextExecution": "Next execution",
         "november": "November",
         "october": "October",
+        "repeatInterval": "Repeat Interval",
         "saturday": "Saturday",
         "selectDays": "Select day(s)",
         "selectHours": "Select hour(s)",
@@ -122,13 +141,48 @@
         "selectMonths": "Select month(s)",
         "selectWeekdays": "Select weekday(s)",
         "september": "September",
-        "startDate": "Start date",
+        "simple": "Simple",
+        "startDate": "Start Date",
+        "startTime": "Start Time",
         "sunday": "Sunday",
+        "theDay": "The day",
+        "theWeek": "The week",
         "thursday": "Thursday",
         "tuesday": "Tuesday",
         "wednesday": "Wednesday",
         "weekday": "Weekday",
         "weekdays": "Weekdays"
+    },
+    "documentExecution": {
+        "dossier": {
+            "deleteConfirm": "Are you sure you want to delete the selected activity?",
+            "deleteSuccess": "Successfully deleted selected activity.",
+            "deleteTitle": "Delete dossier activity",
+            "downloadMissingError": "Download ERROR - Document is missing",
+            "headers": {
+                "activity": "Activity Name",
+                "partial": "Partial",
+                "status": "State",
+                "total": "Total"
+            },
+            "hint": "No dossier activity has been launched yet. Set a name and click 'Launch activity' to create the first one.",
+            "launchActivity": "Launch Activity",
+            "launchedActivities": "Launched activities for this document",
+            "progressNotFinished": "Please wait until document will be generated.",
+            "saveSuccess": "Activity successfully saved!",
+            "title": "Dossier"
+        },
+        "registry": {
+            "clearFilters": "Clear",
+            "column": "Column/s",
+            "filter": "Filter",
+            "filters": "Filters",
+            "select": "Select",
+            "title": "Registry Document",
+            "warning": "Warning",
+            "warningCheckbox": "Don't Warn Me Again",
+            "warningDependences": "depend/s from this value. Please check them and set correct values!"
+        }
     },
     "downloadsDialog": {
         "columns": {
@@ -169,6 +223,7 @@
         "gallery": {
             "column": {
                 "image": "Image",
+                "info": "Info",
                 "name": "Name",
                 "tags": "Tags",
                 "type": "Type"
@@ -178,6 +233,9 @@
         },
         "import": {
             "completedWithErrors": "Import completed with errors. Please read logs for further information.",
+            "itemWithEmptyId": "This item has an empty ID. If checked, it will be imported as new.",
+            "itemWithoutIdConfirm": "This item has an empty ID. It will be imported as new. Do you want to procede?",
+            "itemsWithEmptyIdWarning": "Items with empty IDs were found. They will be imported as new.",
             "successfullyCompleted": "Import successfully completed"
         },
         "title": "Import/Export"
@@ -188,6 +246,91 @@
         "sourceCode": "Source code available on "
     },
     "kpi": {
+        "alert": {
+            "actionList": "Action List",
+            "addAction": "Add new action",
+            "brokerType": "Context Broker Type",
+            "brokerUrl": "Context Broker URL",
+            "execution": "Single Execution",
+            "expiredWarning": "WARNING: The alert is expired",
+            "hint": "The Alert definition allows you to define a serie of action to start when one or more KPI reach a specific threshold. You can set email alert, execute ETL or call a context broker .Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "kpiEditing": "Kpi editing in progres",
+            "kpiEditingMessage": "Current kpi have associated action and will be removed. Are you sure?",
+            "kpiListener": "Listener",
+            "label": "Label",
+            "mailSubject": "Mail Subject",
+            "mailTo": "Mail to",
+            "name": "Name",
+            "noOfEvents": "Number of events before triggering actions",
+            "savingError": "Error while saving alert",
+            "threshold": "Threshold",
+            "title": "Alert Definition",
+            "type": "Type"
+        },
+        "kpiDefinition": {
+            "addKpiAssociations": "Add KPI associations",
+            "addNewThreshold": "Add new threshold item",
+            "aliasToolbarTitle": "Alias",
+            "cardinalityTtitle": "Cardinality",
+            "clone": "Clone",
+            "color": "Color",
+            "confirmClone": "Confirm item clone?",
+            "confirmOverride": "Are you sure to override it?",
+            "copyOf": "Copy of ",
+            "enableVersioning": "Enable Versioning ",
+            "errorformula": {
+                "generic": "Error Formula. Measures Missing..",
+                "malformed": "Error Formula. Malformed Formula at line: ",
+                "missingbracket": "Error Formula. Missing Bracket",
+                "missingfunctions": "All the aggregation function must be setted on each measures",
+                "missingmeasure": "Insert at least one measure",
+                "missingoperator": "Error Formula. Operator missing at line: "
+            },
+            "formulaDialogHeader": "Select type Function for",
+            "formulaTabInstructions": "Please change the message to your liking in the translation files!",
+            "formulaTitle": "Formula",
+            "hint": "The KPI definition allows you to define an indicator to monitor or to add in your visualizations. It's possible to set the formula and the data thresholds to monitor. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "max": "Max",
+            "maxInclude": "Include Max",
+            "min": "Min",
+            "minInclude": "Include Min",
+            "reusedTitle": "Threshold used by other kpi",
+            "severity": "Severity",
+            "thresholdAlreadyPresent": "Threshold is already defined",
+            "thresholdReused": "Warning: this threshold is used elsewhere. Any change will affect other KPIs. Please consider creating a clone",
+            "thresholdsListTitle": "Thresholds List",
+            "title": "KPI Definition",
+            "tresholdTitle": "Threshold",
+            "useIt": "Use It"
+        },
+        "kpiScheduler": {
+            "addKpiAssociation": "Add KPI associations",
+            "dateError": "Start date must be before end date. End date must be in future.",
+            "deleteAndInsert": "Delete and Insert",
+            "errorCount": "Error Count",
+            "every": "Every",
+            "execute": "Execute",
+            "executionType": "Execution Type",
+            "expiredInterval": "The schedulation has expired",
+            "filters": "Filters",
+            "frequency": "Frequency",
+            "hint": "The KPI scheduler allows you to define a time schedulation to monitor one or more KPI behaviour. It's possible to set the frequency and the table persistance of the KPI result. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "insertAndUpdate": "Insert and Update",
+            "kpiName": "KPI Name",
+            "logExecution": "Log Execution",
+            "missingExecuteValue": "Error:you must set \"EXECUTION TYPE\" in Execute tab",
+            "missingKpiList": "Error:you must set the Kpi list in KPI tab",
+            "missingRepeatInterval": "Error:you must set 'Repeat Interval' in Frequency tab",
+            "newScheduler": "New Scheduler",
+            "numberOfExecutions": "Number of Executions",
+            "saveKpiAssociation": "Save new KPI",
+            "saveScheduler": "Save Scheduler",
+            "successCount": "Success Count",
+            "timeRun": "TimeRun",
+            "title": "KPI Scheduler",
+            "totalCount": "Total Count",
+            "wrongCronInterval": "Error: the schedulation set will never be executed"
+        },
         "measureDefinition": {
             "alias": "Alias",
             "aliasMissing": "The alias doesn't exist and will be added",
@@ -218,6 +361,28 @@
             "tipology": "Tipology",
             "title": "Measure Management",
             "wrongQuery": "Wrong query"
+        },
+        "targetDefinition": {
+            "addKpiBtn": "Add KPI association",
+            "applyTargetonKPI": "Apply Target on Kpi",
+            "endDate": "End validity date",
+            "endDateBeforeStart": "End validity date must be after Start validity date",
+            "hint": "Click on one existing item from the list on the side, or press the \"+\" button to add one",
+            "kpiAddedMessage": "Click the value to change it",
+            "kpiAddedTitile": "KPI Added",
+            "kpiAuthor": "Author",
+            "kpiCategory": "Category",
+            "kpiDate": "Date",
+            "kpiName": "KPI name",
+            "kpiValue": "Value",
+            "name": "Name",
+            "noKpi": "No KPI selected",
+            "noKpiMessage": "At least one KPI must be associated",
+            "saveTarget": "Save target",
+            "savingError": "Errors occurred while saving Target",
+            "startDate": "Start validity date",
+            "title": "Target definition",
+            "titleAddAssociations": "Add KPI associations"
         }
     },
     "language": {
@@ -281,7 +446,7 @@
             "generate": "Generate",
             "generateDatamart": "Generate Datamart",
             "generateDatamartHint": "Click on Create to generate the datamart.jar with the default values (recommended), otherwise change the options values for different datamart (for example on another schema/catalog).",
-            "hint": "No buisness model selected",
+            "hint": "No business model selected",
             "importConfirm": "Confirm import of metadata informations?",
             "importMetadata": "Import Metadata",
             "importProgress": "Importing Metadata in progress...",
@@ -374,6 +539,49 @@
             },
             "title": "Configuration Management"
         },
+        "constraintManagement": {
+            "dateValue": "Date value format",
+            "decimalPlaces": "Decimal places",
+            "deleteError": "Delete error",
+            "higherRangeValue": "Higher range value",
+            "hint": "The constraints management functionality allows you to create some constraint to use inside lovs or drivers to check the data consistancy. Some constaints are available as default from Knowage, and cannot be changed, but you can click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "lowerRangeValue": "Lower range value",
+            "maxLenghtValue": "Max lenght value",
+            "minLenghtValue": "Min lenght value",
+            "rangeCheck": "Must be higher than lower value",
+            "regexpValue": "Regular expression",
+            "saveError": "Error, not saved",
+            "title": "Constraints",
+            "type": "Check type"
+        },
+        "crossNavigationManagement": {
+            "availableIO": "Available Input/Output parameters",
+            "availableInput": "Available Input parameters",
+            "breadCrumbs": "Text to show on Bread Crumbs",
+            "fixed": "Fixed value",
+            "fixedValue": "Fixed value parameter",
+            "height": "Window height",
+            "heightHelp": "Height in px of the popup window.",
+            "hindBread": "Hint about Breadcrumb",
+            "hindBreadMessage": "This field set the breadcrumb text visualizable within a cross navigation.It's possible to use parameters (output or input types) of the original document through the syntax $P(source_parameter_name).",
+            "hindDesc": "Hint about Description",
+            "hindDescMessage": "This field set the description of the navigation visualizable within the selection popup. The popup will be shown if there are multiple cross navigations startable by the same document.It's possible to use parameters (output or input types) of the original document through the syntax $P(source_parameter_name).",
+            "hint": "Cross-navigation management functionality allows you to create the link between document navigations. You can select the type of navigation and connect che parameters value from output to input. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "incompatibleTypes": "Incompatible types",
+            "incompatibleTypesMessage": "{originParam} parameter's type not compatible with type of parameter {targetParam}",
+            "input": "Input",
+            "modality": "Modality",
+            "normal": "Normal",
+            "originDoc": "Origin doc",
+            "output": "Output",
+            "popUp": "Pop-up",
+            "popUpWindow": "Pop-up window",
+            "selectDocument": "Select document",
+            "targetDoc": "Target doc",
+            "title": "Cross Navigation",
+            "width": "Window width",
+            "widthHelp": "Width in px of the popup window."
+        },
         "dataSourceManagement": {
             "form": {
                 "advancedOptions": {
@@ -409,7 +617,7 @@
                 "driver": "Driver",
                 "errorTitle": "Connection KO",
                 "jndi": "JNDI Name",
-                "jndiInfo": "For the data source configuration you should specify the connection pool configured inside the application server. For example: Tomcat: java:comp/env/jdbc/foodmart; JBoss: jdbc/foodmart.",
+                "jndiInfo": "For the data source configuration you should specify the connection pool configured inside the application server. For example: java:comp/env/jdbc/foodmart",
                 "multischema": "Multischema",
                 "notOwner": "You are not the owner of this data source.",
                 "pwd": "Password (Only If Changed)",
@@ -432,6 +640,31 @@
             "valueDescription": "Value description",
             "valueName": "Value name"
         },
+        "driversManagement": {
+            "add": "Add",
+            "deleteError": "Error",
+            "functional": "Functional",
+            "hint": "Driver models a concept or a piece of data frequently used as a distinguishing criterion on the global data context.Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "options": "Options",
+            "temporal": "Temporal",
+            "title": "Drivers management",
+            "useModes": {
+                "backToList": "Back to list",
+                "constraints": "Constraints",
+                "defaultValue": "Default value",
+                "details": "Details",
+                "hint": "No use mode selected",
+                "layer": "Layer",
+                "layerProp": "Layer property",
+                "lov": "LOV",
+                "maxValue": "Max value",
+                "modality": "Select modality",
+                "roles": "Roles",
+                "selectDefaultFormula": "Select",
+                "selectLov": "Select LOV",
+                "title": "Use modes"
+            }
+        },
         "functionalitiesManagement": {
             "creation": "Creation",
             "development": "Development",
@@ -448,6 +681,70 @@
                 "testHeader": "Test"
             },
             "title": "Functionalities management"
+        },
+        "glossary": {
+            "common": {
+                "add": "Add",
+                "attributes": "Attributes",
+                "category": "Category",
+                "code": "Code",
+                "details": "Details",
+                "formula": "Formula",
+                "link": "Link",
+                "status": "Status",
+                "word": "Word | Words"
+            },
+            "glossaryDefinition": {
+                "addNode": "Add node",
+                "addWord": "Add word",
+                "cloneTitle": "Clone a Glossary",
+                "deleteNodeConfirmMessage": "Deleting a node all the underlying node (if present) will be deleted. Continue?",
+                "details": "Details",
+                "duplicateContent": "Adding two or more nodes with the same name under a single node is not allowed.",
+                "duplicateGlossaryName": "The selected glossary name is not available.",
+                "duplicateNode": "Adding the same word more than once under a single glossary is not allowed.",
+                "editNode": "Edit node",
+                "formula": "Formula",
+                "glossary": "Glossary",
+                "glossaryHint": "Edit the input to change the glossary name",
+                "help": "Select a Glossary from the combo box to show its word hierarchy structure or type a name to create a new one. You can edit it by adding nodes or by dropping words from the right side list",
+                "hint": "The Glossary definition page allows you to create glossary to identify a set of words to apply in different documents and datasets. It's also possible to create a word hierarchy for each glossary. Select one existing item from the dropdown, or press the \"+\" button to add one.",
+                "newNode": "New node",
+                "saveTitle": "New glossary",
+                "saveWordConfirmMessage": "Data will be immediately saved.",
+                "saveWordConfirmTitle": "Word will be saved. Continue?",
+                "showInfo": "Show info",
+                "status": "Status",
+                "title": "Glossary Definition",
+                "updateTitle": "Edit glossary",
+                "wordsList": "Words List"
+            },
+            "glossaryUsage": {
+                "associatedWord": "Associated Word",
+                "attributes": "Attributes",
+                "businessClass": "Business Class",
+                "category": "Category",
+                "code": "Code",
+                "column": "Column",
+                "dataSource": "Data Source",
+                "dataset": "Dataset",
+                "details": "Details",
+                "documents": "Documents",
+                "formula": "Formula",
+                "glossaryHint": "Select a glossary to read the available words",
+                "hierarchyScope": "Hierarchy Scope",
+                "hint": "The Glossary usage page allows you to read and manage links between documents/datasets and glossary words. <br/>Click on an word in the list to highlight the documents/datasets using it or an item in the boxes to highlight the connected words.",
+                "link": "Link",
+                "metaModel": "Meta Model",
+                "metaSource": "Meta Source",
+                "noWordsPresent": "No {type} link to words present",
+                "profiledVisibility": "visibility conditions",
+                "selectGlossary": "Select Glossary",
+                "status": "Status",
+                "tables": "Tables",
+                "title": "Glossary",
+                "word": "Word"
+            }
         },
         "internationalizationManagement": {
             "defaultLanguage": "(Default)",
@@ -466,6 +763,47 @@
                 "defaultMessage": "Default Message Code",
                 "messageCode": "Message Code"
             }
+        },
+        "lovsManagement": {
+            "add": "Add",
+            "dataSource": "Data Source",
+            "datasetWizard": "WIZARD DATASET",
+            "definition": "Tree LOV Definition",
+            "dependenciesTitle": "Profile attributes and/or parameters to fill",
+            "description": "Description",
+            "emptyField": "Value or description field is empty",
+            "fields": "Fields",
+            "filterNullValues": "If a record contains some null values it will be filtered out",
+            "fixedListWizard": "WIZARD FIX LOV",
+            "hint": "The LOVs management page allows you to create List Of Values to use inside your drivers or parameters. </br>There are many different type of LOVs that can be generated, using queries, JAVA classes, scripts or entering the data manually. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "infoRules": "Rules",
+            "infoSyntax": "Show Syntax...",
+            "javaClassName": "Java Class Name",
+            "javaClassWizard": "PREDEFINED LIST OF VALUES DETAILS - JAVA CLASS WIZARD",
+            "language": "Language",
+            "level": "Level",
+            "lovLabelNotUnique": "The label is already in use by another LOV",
+            "lovNameNotUnique": "The name is already in use by another LOV",
+            "lovType": "LOV Type",
+            "lovTypePlaceholder": "Check Type",
+            "parameterDependencyText": "The lov needs some values for parameters.",
+            "placeholderDatasource": "Select Datasource",
+            "placeholderScript": "Script Language",
+            "preview": "Preview",
+            "profileAttributes": "Profile Attributes",
+            "profileDependencyText": "The lov needs some profile attributes.Your personal profile doesn't contain all the necessary attributes.To proceed with the test assign a value to the missing profile attributes.",
+            "queryDefinition": "Query definition",
+            "queryWizard": "WIZARD QUERY",
+            "sameLabelError": "LOV with same label already exists",
+            "script": "Script",
+            "scriptWizard": "WIZARD SCRIPT",
+            "syntaxError": "Check your syntax",
+            "test": "Test",
+            "testTreeType": "Tree Type",
+            "title": "LOVs Management",
+            "treeNotDefined": "Tree is not defined",
+            "value": "Value",
+            "visible": "Visible"
         },
         "menuManagement": {
             "chooseIcon": "Choose Icon",
@@ -600,6 +938,45 @@
             "title": "Profile Attributes Management",
             "valueDescription": "Value description"
         },
+        "resourceManagement": {
+            "column": {
+                "lastModified": "Last modified date",
+                "name": "Name",
+                "size": "Size"
+            },
+            "createFolder": "Create folder",
+            "detailTitle": "Deta",
+            "extract": "Extract files",
+            "folderRenamedSuccessfully": "Folder successfully renamed",
+            "foldernamePlaceholder": "Enter foldername here",
+            "hint": "Click on a folder to navigate its content.<br>Click on <i class=\"fas fa-table\"></i> if you want to edit metadata.<br>Click on <i class=\"fa fa-download\"></i> to download folder and its content.<br>Click on <i class=\"fas fa-folder-plus\"></i> to create a new folder inside your current path.<br>Click on <i class=\"fas fa-upload\"></i> to upload file inside your current path.<br>Click on <i class=\"fas fa-sync-alt\"></i> to refresh view items",
+            "metadata": {
+                "accuracyAndPerformance": "Accuracy and performance",
+                "dialog": {
+                    "title": "Metadata"
+                },
+                "formatOfData": "Format of data input and related output",
+                "openSource": "Is open source",
+                "typeOfAnalytics": {
+                    "label": "Type of analytic to be executed ",
+                    "options": {
+                        "descriptive": "Descriptive",
+                        "predictive": "Predictive",
+                        "prescriptive": "Prescriptive"
+                    }
+                },
+                "usageOfTheModel": "Usage of the model",
+                "version": "Version"
+            },
+            "openMetadata": "Open metadata",
+            "renameFolder": "Rename folder",
+            "selectedFiles": "One file selected | {num} files selected",
+            "title": "Resource management",
+            "uploadFile": {
+                "fileAndFoldersContentWillBeOverwritten": "You chose to unzip the archive. Existing files and folders will be overwritten",
+                "fileWillBeOverwritten": "A file with the same name was found. It will be overwritten"
+            }
+        },
         "rolesManagement": {
             "authorizations": {
                 "name": {
@@ -696,10 +1073,11 @@
             },
             "hint": "Tenants management allows you to define different tenants and set name and settings for each one. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "hintTitle": "Tenant Management",
+            "newTenantSaved": "Tenant correctly saved. The administrator of the tenant has been created too and his username and password are ",
             "productTypes": {
                 "title": "Product Types"
             },
-            "tenantSaved": "Tenant correctly saved. The administrator of the tenant has been created with username {username} and password {password}",
+            "tenantSaved": "Tenant updated correctly",
             "title": "Tenant Management"
         },
         "usersManagement": {
@@ -707,6 +1085,11 @@
             "blockedUserInfo": "This user reached the maximum number of failed login attempts and therefore he was locked. Do you want to unlock him?",
             "defaultRoleInfo": "Select a role if you want to set it as the default. If no role is selected, it will be possible switch between roles from the Knowage Administration menu",
             "detail": "Detail",
+            "emptyRolesOption": "<no default role>",
+            "error": {
+                "missingDefaultRole": "Default role is not selected",
+                "noRolesSelected": "No roles selected for the user. At least one role must be selected for the user to be valid"
+            },
             "form": {
                 "defaultRole": "Default role",
                 "password": "Password",
@@ -726,7 +1109,7 @@
             "unlockUser": "Unlock user",
             "userId": "User ID",
             "validation": {
-                "sameAsPassword": "Username must not be found inside the password"
+                "sameAsPassword": "Different password values"
             },
             "valueDescription": "Value description"
         },
@@ -754,9 +1137,13 @@
         }
     },
     "menu": {
-        "admin": {
-            "importExport": "Import/Export"
-        }
+        "group": {
+            "ImportExport": "Import/Export",
+            "ServerManager": "Server manager"
+        },
+        "importExport": "Artifacts",
+        "modelCatalogResourceManagement": "Models manager",
+        "resourceManagement": "Resource manager"
     },
     "newsDialog": {
         "description": "Description",

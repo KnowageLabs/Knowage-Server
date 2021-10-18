@@ -48,6 +48,7 @@ import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByName;
+import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByNameAndID;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByParent;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchGlossaryByName;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchGlossaryStructureWithWordLike;
@@ -89,6 +90,12 @@ import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDAO {
+
+	/**
+	 *
+	 */
+	private static final String VALUE = "value";
+	private static final String ORDER = "order";
 
 	static private Logger logger = Logger.getLogger(GlossaryDAOImpl.class);
 
@@ -591,7 +598,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 
 	@Override
 	public Integer insertWord(final SbiGlWord word, final List<SbiGlWord> objLink, final List<SbiUdp> objAttr, final Map<Integer, JSONObject> MapAttr,
-			final Map<Integer, JSONObject> MapLink, final boolean modify) {
+			final Map<Integer, JSONObject> mapLink, final boolean modify) {
 		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
 			@Override
 			public Integer execute(Session session) {
@@ -624,9 +631,9 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 								if (at.getId().getRefWordId() == w.getWordId()) {
 									pres = true;
 									try {
-										if (at.getSequence() != MapLink.get(w.getWordId()).getInt("ORDER")) {
+										if (at.getSequence() != Integer.valueOf(mapLink.get(w.getWordId()).getString(ORDER))) {
 											// alter index
-											at.setSequence(MapLink.get(w.getWordId()).getInt("ORDER"));
+											at.setSequence(Integer.valueOf(mapLink.get(w.getWordId()).getString(ORDER)));
 											updateSbiCommonInfo4Update(at);
 										}
 									} catch (JSONException e) {
@@ -653,7 +660,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 						tmp.setRefWord(w);
 
 						try {
-							tmp.setSequence(MapLink.get(w.getWordId()).getInt("ORDER"));
+							tmp.setSequence(Integer.valueOf(mapLink.get(w.getWordId()).getString(ORDER)));
 
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
@@ -697,9 +704,9 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 									pres = true;
 									try {
 										boolean alterAttr = false;
-										if (at.getValue().compareTo(MapAttr.get(w.getUdpId()).getString("VALUE")) != 0) {
+										if (at.getValue().compareTo(MapAttr.get(w.getUdpId()).getString(VALUE)) != 0) {
 											// alter value
-											at.setValue(MapAttr.get(w.getUdpId()).getString("VALUE"));
+											at.setValue(MapAttr.get(w.getUdpId()).getString(VALUE));
 											alterAttr = true;
 										}
 										// if (at.getOrder() != MapAttr.get(
@@ -741,7 +748,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 						// tmp.setAttribute(w);
 
 						try {
-							tmp.setValue(MapAttr.get(w.getUdpId()).getString("VALUE"));
+							tmp.setValue(MapAttr.get(w.getUdpId()).getString(VALUE));
 
 							// tmp.setOrder(MapAttr.get(w.getAttributeId())
 							// .getInt("ORDER"));
@@ -1254,7 +1261,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 						tmpPage = elem.getJSONObject("bness_cls").getInt("page");
 						tmp_item_count = elem.getJSONObject("bness_cls").getInt("item_number");
 						if (sizeW > 0) {
-							hql = "" + " SELECT " + "		smbc.bcId as bcId, " + "		smbc.sbiMetaModel as sbiMetaModel" + " FROM "
+							hql = "" + " SELECT " + "		smbc.bcId as bcId, smbc.name as name ," + "		smbc.sbiMetaModel as sbiMetaModel" + " FROM "
 									+ "		SbiMetaBc smbc " + " WHERE " + "		smbc.bcId in ( " + "			SELECT  "
 									+ "				distinct dw.bness_cls.bcId " + "			FROM " + " 			SbiGlBnessClsWlist dw " + "			WHERE "
 									+ "				dw.id.wordId IN (" + listid + ") "
@@ -1525,6 +1532,11 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 	public List<SbiGlGlossary> listGlossaryByNm(Integer page, Integer itemsPerPage, String glossary) {
 
 		return list(new SearchGlossaryByName(page, itemsPerPage, glossary));
+	}
+
+	@Override
+	public List<SbiGlContents> loadContentsByNameGlossaryId(String contentNM, Integer glossaryId) {
+		return list(new SearchContentsByNameAndID(contentNM, glossaryId));
 	}
 
 }

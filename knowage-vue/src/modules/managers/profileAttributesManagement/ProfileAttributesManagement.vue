@@ -140,6 +140,12 @@ export default defineComponent({
                                 msg: this.$t('managers.profileAttributesManagement.error.profileAttributeDeletion')
                             })
                         })
+                        .catch((error) => {
+                            this.$store.commit('setError', {
+                                title: this.$t('managers.profileAttributesManagement.info.deleteTitle'),
+                                msg: error.message
+                            })
+                        })
                         .finally(() => {
                             this.loading = false
                         })

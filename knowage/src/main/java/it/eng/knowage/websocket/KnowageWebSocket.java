@@ -19,10 +19,14 @@
 package it.eng.knowage.websocket;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpSession;
 import javax.websocket.EncodeException;
@@ -32,7 +36,6 @@ import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
-import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
 import org.apache.log4j.LogMF;
@@ -40,6 +43,12 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.knowage.websocket.bo.WSDownloadBO;
+import it.eng.knowage.websocket.bo.WSDownloadCountBO;
+import it.eng.knowage.websocket.bo.WSNewsBO;
+import it.eng.knowage.websocket.bo.WSNewsCountBO;
+import it.eng.knowage.websocket.bo.WebSocketBO;
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.v2.export.Entry;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -47,170 +56,217 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.resource.export.Utilities;
+import it.eng.spagobi.tools.news.bo.AdvancedNews;
+import it.eng.spagobi.tools.news.bo.BasicNews;
+import it.eng.spagobi.tools.news.dao.ISbiNewsDAO;
 import it.eng.spagobi.tools.news.dao.ISbiNewsReadDAO;
 import it.eng.spagobi.tools.news.manager.INewsManager;
 import it.eng.spagobi.tools.news.manager.NewsManagerImpl;
 import it.eng.spagobi.user.UserProfileManager;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-@ServerEndpoint(value = "/webSocket/{login}", encoders = KnowageWebSocketMessageEncoder.class, decoders = KnowageWebSocketMessageDecoder.class, configurator = HttpSessionConfigurator.class)
+@ServerEndpoint(value = "/webSocket", encoders = KnowageWebSocketMessageEncoder.class, decoders = KnowageWebSocketMessageDecoder.class, configurator = HttpSessionConfigurator.class)
 public class KnowageWebSocket {
 
 	private static final Logger LOGGER = Logger.getLogger(KnowageWebSocket.class);
 
-	private Session session;
-	private static Map<Object, Session> userSession = new HashMap<>();
-	private HttpSession httpSession;
-
-	private static Map<Object, KnowageWebSocket> userWebSockets = new HashMap<>();
-	private static CopyOnWriteArraySet<KnowageWebSocket> webSocketSet = new CopyOnWriteArraySet<>();
+	private static CopyOnWriteArraySet<Session> webSocketSet = new CopyOnWriteArraySet<>();
+	private static final HashMap<Session, HashMap<String, Object>> sessionToHttpMap = new HashMap<Session, HashMap<String, Object>>();
+	final ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
 
 	@OnOpen
-	public void onOpen(@PathParam("login") boolean login, Session session, EndpointConfig config) throws IOException, EncodeException {
+	public void onOpen(Session session, EndpointConfig config) throws IOException, EncodeException {
 
-		try {
-			webSocketSet.add(this);
-			this.session = session;
+		webSocketSet.add(session);
 
-			this.httpSession = (HttpSession) config.getUserProperties().get("HTTP_SESSION");
+		HttpSession httpSession = (HttpSession) config.getUserProperties().get("HTTP_SESSION");
 
-			if (login) {
-				JSONObject masterJsonObject = getMasterMessageObject();
-				broadcast(masterJsonObject);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("httpSession", httpSession);
+
+		Runnable downloadPollingTask = () -> {
+			WebSocketBO masterWebSocketBO = getMasterMessageObject(session, false, true);
+			try {
+				broadcastDownload(session, masterWebSocketBO);
+			} catch (IOException | EncodeException e) {
+				UserProfile userProfile = (UserProfile) getProfileFromSession(session);
+				LOGGER.debug(
+						"Task for download handling: user_id:[" + userProfile.getUserUniqueIdentifier() + "], tenant:[" + userProfile.getOrganization() + "]");
 			}
-		} catch (Exception e) {
-			LOGGER.error("Error opening the web socket for notifications", e);
-		}
-	}
+		};
+		ScheduledFuture<?> scheduledFuture = ses.scheduleAtFixedRate(downloadPollingTask, 0, 1, TimeUnit.MINUTES);
+		map.put("downloadPollingThread", scheduledFuture);
 
-	private JSONObject getMasterMessageObject() {
-		return getMasterMessageObject(true, true);
-	}
+		sessionToHttpMap.put(session, map);
 
-	private JSONObject getMasterMessageObject(boolean news, boolean downloads) {
-		JSONObject masterJsonObject = new JSONObject();
+		WebSocketBO masterWebSocketBO = getMasterMessageObject(session, true, true);
+		broadcastNews(session, masterWebSocketBO);
+		broadcastDownload(session, masterWebSocketBO);
 
-		initializeUserProfileAndTenant();
-		try {
-			if (news)
-				masterJsonObject.put("news", handleNews());
-
-			if (downloads)
-				masterJsonObject.put("downloads", handleDownloads());
-		} catch (JSONException e) {
-			String message = "Error while creating JSON message";
-			LOGGER.error(message);
-		}
-		return masterJsonObject;
-	}
-
-	private void initializeUserProfileAndTenant() {
-		IEngUserProfile userProfile = UserProfileManager.getProfile();
-
-		if (userProfile == null) {
-			userProfile = (IEngUserProfile) this.httpSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-
-			UserProfileManager.setProfile((UserProfile) userProfile);
-
-			String tenantId = ((UserProfile) userProfile).getOrganization();
-			LogMF.debug(LOGGER, "Tenant identifier is [{0}]", tenantId);
-			// putting tenant id on thread local
-			Tenant tenant = new Tenant(tenantId);
-			TenantManager.setTenant(tenant);
-
-			Object userUniqueIdentifier = userProfile.getUserUniqueIdentifier();
-			userSession.computeIfAbsent(userUniqueIdentifier, k -> session);
-			userWebSockets.computeIfAbsent(userUniqueIdentifier, k -> this);
-		}
-	}
-
-	private JSONObject handleDownloads() {
-		Utilities exportResourceUtilities = new Utilities();
-
-		int total = 0;
-		long alreadyDownloaded = 0;
-		JSONObject downloads = null;
-		try {
-			List<Entry> exportedFilesList = exportResourceUtilities.getAllExportedFiles(true);
-			total = exportedFilesList.size();
-			alreadyDownloaded = exportedFilesList.stream().filter(Entry::isAlreadyDownloaded).count();
-			downloads = new JSONObject();
-
-			JSONObject countJSONObject = new JSONObject();
-
-			countJSONObject.put("total", total);
-			countJSONObject.put("alreadyDownloaded", alreadyDownloaded);
-
-			downloads.put("count", countJSONObject);
-
-		} catch (JSONException e) {
-			String message = "Error while creating download JSON message";
-			LOGGER.error(message);
-		} catch (IOException e1) {
-			String message = "Error while searching exported datasets";
-			LOGGER.error(message);
-		}
-
-		return downloads;
-	}
-
-	private JSONObject handleNews() {
-		UserProfile userProfile = UserProfileManager.getProfile();
-
-		INewsManager newsManager = new NewsManagerImpl();
-		int total = newsManager.getAllNews(userProfile).size();
-
-		ISbiNewsReadDAO newsReadDao = DAOFactory.getSbiNewsReadDAO();
-		newsReadDao.setUserProfile(userProfile);
-		List<Integer> listOfReads = newsReadDao.getReadNews(userProfile);
-		int unread = total - listOfReads.size();
-
-		JSONObject news = new JSONObject();
-		try {
-			JSONObject countJSONObject = new JSONObject();
-
-			countJSONObject.put("total", total);
-			countJSONObject.put("unread", unread);
-
-			news.put("count", countJSONObject);
-		} catch (JSONException e) {
-			String message = "Error while creating news JSON message";
-			LOGGER.error(message);
-		}
-
-		return news;
 	}
 
 	@OnMessage
-	public void onMessage(Session session, String message) throws IOException, EncodeException, JSONException {
+	public void onMessage(Session session, String message) throws IOException, EncodeException, JSONException, EMFInternalError {
+		JSONObject obj = new JSONObject(message);
 
-		JSONObject messageJSON = new JSONObject(message);
-
-		broadcast(getMasterMessageObject(messageJSON.has("news"), messageJSON.has("downloads")));
-	}
-
-	private void broadcast(JSONObject message) throws IOException, EncodeException {
-
-		webSocketSet.forEach(x -> {
-
-			try {
-				x.session.getBasicRemote().sendObject(message);
-			} catch (IOException | EncodeException e) {
-				LOGGER.error("Error during broadcasting", e);
-			}
-		});
+		broadcastNews(session, obj);
 
 	}
 
 	@OnClose
 	public void onClose(Session session) {
-
-		webSocketSet.remove(this);
-
+		handleCloseOrError(session);
 	}
 
 	@OnError
 	public void onError(Session session, Throwable throwable) {
+		handleCloseOrError(session);
 		LOGGER.error("Web socket handler get following error", throwable);
+	}
+
+	private void handleCloseOrError(Session session) {
+		if (!session.isOpen()) {
+			webSocketSet.remove(session);
+			((ScheduledFuture<?>) sessionToHttpMap.get(session).get("downloadPollingThread")).cancel(true);
+			sessionToHttpMap.remove(session);
+		}
+	}
+
+	private WebSocketBO getMasterMessageObject(Session session, boolean news, boolean downloads) {
+		WebSocketBO masterWebSocketBO = new WebSocketBO();
+
+		initializeUserProfileAndTenant(session);
+
+		if (news)
+			handleNews(session, masterWebSocketBO);
+
+		if (downloads)
+			handleDownloads(masterWebSocketBO);
+
+		return masterWebSocketBO;
+	}
+
+	private void initializeUserProfileAndTenant(Session session) {
+
+		IEngUserProfile userProfile = getProfileFromSession(session);
+
+		UserProfileManager.setProfile((UserProfile) userProfile);
+
+		String tenantId = ((UserProfile) userProfile).getOrganization();
+		LogMF.debug(LOGGER, "Tenant identifier is [{0}]", tenantId);
+		Tenant tenant = new Tenant(tenantId);
+		TenantManager.setTenant(tenant);
+
+	}
+
+	private WebSocketBO handleDownloads(WebSocketBO masterWebSocketBO) {
+		Utilities exportResourceUtilities = new Utilities();
+
+		int total = 0;
+		long alreadyDownloaded = 0;
+		try {
+			List<Entry> exportedFilesList = exportResourceUtilities.getAllExportedFiles(true);
+			total = exportedFilesList.size();
+			alreadyDownloaded = exportedFilesList.stream().filter(Entry::isAlreadyDownloaded).count();
+
+			WSDownloadBO downloads = masterWebSocketBO.getDownloads();
+			if (downloads == null)
+				downloads = new WSDownloadBO(new WSDownloadCountBO(0, 0));
+
+			WSDownloadCountBO wsDownloadCountBO = new WSDownloadCountBO(total, alreadyDownloaded);
+
+			downloads.setCount(wsDownloadCountBO);
+
+			masterWebSocketBO.setDownloads(downloads);
+
+		} catch (IOException e1) {
+			String message = "Error while searching exported datasets";
+			LOGGER.error(message);
+		}
+
+		return masterWebSocketBO;
+	}
+
+	private WebSocketBO handleNews(Session session, WebSocketBO masterWebSocketBO) {
+		UserProfile userProfile = (UserProfile) getProfileFromSession(session);
+
+		INewsManager newsManager = new NewsManagerImpl();
+		ISbiNewsDAO sbiNewsDAO = DAOFactory.getSbiNewsDAO();
+		List<BasicNews> allNewsList = newsManager.getAllNews(userProfile);
+		int total = 0;
+		for (BasicNews basicNews : allNewsList) {
+			AdvancedNews news = sbiNewsDAO.getNewsById(basicNews.getId(), userProfile);
+
+			if (news.getActive() && news.getExpirationDate().after(new Date()))
+				total++;
+		}
+
+		WSNewsBO news = masterWebSocketBO.getNews();
+		if (news == null)
+			news = new WSNewsBO(new WSNewsCountBO(0, 0));
+
+		if (total > 0) {
+			ISbiNewsReadDAO newsReadDao = DAOFactory.getSbiNewsReadDAO();
+			newsReadDao.setUserProfile(userProfile);
+			List<Integer> listOfReads = newsReadDao.getReadNews(userProfile);
+			int unread = total - listOfReads.size();
+
+			WSNewsCountBO wsNewsCountBO = new WSNewsCountBO(total, unread);
+
+			news.setCount(wsNewsCountBO);
+
+		}
+		masterWebSocketBO.setNews(news);
+
+		return masterWebSocketBO;
+	}
+
+	private IEngUserProfile getProfileFromSession(Session session) {
+		HttpSession httpSession = (HttpSession) sessionToHttpMap.get(session).get("httpSession");
+		IEngUserProfile userProfile = (IEngUserProfile) httpSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		return userProfile;
+	}
+
+	private void broadcastDownload(Session session, WebSocketBO webSocketBO) throws IOException, EncodeException {
+		session.getBasicRemote().sendObject(webSocketBO);
+	}
+
+	private void broadcastNews(Session session, WebSocketBO webSocketBO) throws IOException, EncodeException {
+		session.getBasicRemote().sendObject(webSocketBO);
+	}
+
+	private void broadcastNews(Session session, JSONObject obj) {
+
+		webSocketSet.forEach(x -> {
+			try {
+//				IEngUserProfile userProfile = getProfileFromSession(x);
+//				Collection userRoles = userProfile.getRoles();
+//
+//				JSONArray roles = obj.getJSONArray("roles");
+//				Set<String> rolesSet = new HashSet<String>();
+//				for (int i = 0; i < roles.length(); i++) {
+//					JSONObject role = (JSONObject) roles.get(i);
+//					rolesSet.add((String) role.get("name"));
+//				}
+//
+//				for (Object object : userRoles) {
+//					String role = (String) object;
+//
+//					if (rolesSet.contains(role)) {
+				WebSocketBO webSocketBO = getMasterMessageObject(x, true, false);
+				x.getBasicRemote().sendObject(webSocketBO);
+//						break;
+//					}
+//				}
+//
+//			} catch (EMFInternalError | JSONException | IOException | EncodeException e) {
+//				throw new SpagoBIRuntimeException(e);
+//			}
+			} catch (IOException | EncodeException e) {
+				throw new SpagoBIRuntimeException(e);
+			}
+		});
+
 	}
 
 }

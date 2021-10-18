@@ -17,7 +17,7 @@
             </div>
 
             <KnHint :title="'managers.usersManagement.title'" :hint="'managers.usersManagement.hint'" v-if="hiddenForm"></KnHint>
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0" :hidden="hiddenForm">
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page" v-show="!hiddenForm">
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
                     <template #left>
                         {{ userDetailsForm.userId }}
@@ -28,7 +28,7 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <div class="card">
+                <div class="kn-page-content">
                     <TabView class="tabview-custom kn-tab" ref="usersFormTab">
                         <TabPanel>
                             <template #header>
@@ -118,7 +118,7 @@ export default defineComponent({
     methods: {
         async loadAllUsers() {
             this.loading = true
-            axios
+            await axios
                 .get(this.apiUrl + 'users')
                 .then((response) => {
                     this.users = response.data
@@ -145,10 +145,11 @@ export default defineComponent({
         },
         setDefaultRoleValue(defaultRole: any) {
             this.defaultRole = defaultRole
+            this.dirty = true
         },
         setSelectedRoles(roles: iRole[]) {
             this.selectedRoles = roles
-            this.v$.$reset()
+            this.dirty = true
         },
         async showForm() {
             this.tempAttributes = {}
@@ -156,7 +157,6 @@ export default defineComponent({
             this.disableUsername = false
             this.hiddenForm = false
             this.selectedRoles = []
-            // TODO: Izmestiti ove pocetne vrednosti u descriptor ???
             this.userDetailsForm.id = null
             this.userDetailsForm.userId = ''
             this.userDetailsForm.fullName = ''
@@ -170,46 +170,67 @@ export default defineComponent({
 
             this.populateForms(this.userDetailsForm)
         },
-        getRoleId() {
-            let defaultRoleId: any
-            this.selectedRoles.length == 1 ? (defaultRoleId = this.selectedRoles[0]) : (defaultRoleId = this.defaultRole)
-
-            if (typeof defaultRoleId === 'object') {
-                defaultRoleId = defaultRoleId.id
-            }
-            return defaultRoleId
-        },
         formatUserObject() {
-            delete this.userDetailsForm.passwordConfirm
-            this.userDetailsForm['defaultRoleId'] = this.getRoleId()
-            this.userDetailsForm['sbiUserAttributeses'] = { ...this.attributesForm }
-            this.userDetailsForm['sbiExtUserRoleses'] = this.selectedRoles ? [...this.selectedRoles.map((selRole) => selRole.id)] : []
+            const userToSave = { ...this.userDetailsForm }
+            delete userToSave.passwordConfirm
+            userToSave['defaultRoleId'] = this.defaultRole
+            userToSave['sbiUserAttributeses'] = { ...this.attributesForm }
+            userToSave['sbiExtUserRoleses'] = this.selectedRoles ? [...this.selectedRoles.map((selRole) => selRole.id)] : []
+            return userToSave
         },
         onFormDirty() {
             this.dirty = true
         },
         saveOrUpdateUser(user: iUser) {
             const endpointPath = `${process.env.VUE_APP_RESTFUL_SERVICES_PATH}/2.0/users`
-            return this.userDetailsForm.id ? axios.put<iUser>(`${endpointPath}/${user.id}`, user) : axios.post<iUser>(endpointPath, user)
+            return this.userDetailsForm.id ? axios.put<any>(`${endpointPath}/${user.id}`, user) : axios.post<any>(endpointPath, user)
         },
         async saveUser() {
             this.loading = true
-            this.formatUserObject()
-            this.saveOrUpdateUser(this.userDetailsForm)
-                .then(() => {
-                    this.dirty = false
-                    this.loadAllUsers()
-                    this.$store.commit('setInfo', {
-                        title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
-                        msg: this.userDetailsForm.id ? this.$t('common.toast.updateSuccess') : this.$t('managers.usersManagement.info.createMessage')
+            if (!this.selectedRoles || this.selectedRoles.length == 0) {
+                this.$store.commit('setError', {
+                    title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
+                    msg: this.$t('managers.usersManagement.error.noRolesSelected')
+                })
+                this.loading = false
+            } else if (this.selectedRoles?.length > 1 && !this.defaultRole) {
+                this.$store.commit('setError', {
+                    title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
+                    msg: this.$t('managers.usersManagement.error.missingDefaultRole')
+                })
+                this.loading = false
+            } else {
+                const userToSave = this.formatUserObject()
+                this.saveOrUpdateUser(userToSave)
+                    .then((response) => {
+                        this.afterSaveOrUpdate(response)
                     })
-                })
-                .catch((error) => {
-                    console.log(error.response)
-                })
-                .finally(() => {
-                    this.loading = false
-                })
+                    .catch((error) => {
+                        this.$store.commit('setError', {
+                            title: error.title,
+                            msg: error.msg
+                        })
+                    })
+                    .finally(() => {
+                        this.loading = false
+                    })
+            }
+        },
+        async afterSaveOrUpdate(response) {
+            this.dirty = false
+            await this.loadAllUsers()
+            this.formInsert = false
+            const id: number | null = response.data
+            const selectedUser = this.users.find((user) => {
+                return user.id === id
+            })
+            if (selectedUser) {
+                this.onUserSelect(selectedUser)
+            }
+            this.$store.commit('setInfo', {
+                title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
+                msg: this.userDetailsForm.id ? this.$t('common.toast.updateSuccess') : this.$t('managers.usersManagement.info.createMessage')
+            })
         },
         onUserDelete(id: number) {
             this.loading = true
@@ -223,7 +244,10 @@ export default defineComponent({
                     })
                 })
                 .catch((error) => {
-                    console.log(error.response)
+                    this.$store.commit('setError', {
+                        title: error.title,
+                        msg: error.msg
+                    })
                 })
                 .finally(() => {
                     this.hiddenForm = true
@@ -261,7 +285,6 @@ export default defineComponent({
             this.userDetailsForm = { ...userObj }
             this.populateAttributesForm(userObj.sbiUserAttributeses)
         },
-        // TODO: na new se ne sklanjaju stare vrednosti
         populateAttributesForm(userAttributeValues: any) {
             const tmp = {}
             this.attributes.forEach((attribute: iAttribute) => {

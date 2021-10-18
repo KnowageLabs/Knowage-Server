@@ -17,19 +17,19 @@
  */
 package it.eng.spagobi.commons.initializers.metadata;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.engines.config.metadata.SbiEngines;
-import it.eng.spagobi.engines.config.metadata.SbiExporters;
-import it.eng.spagobi.engines.config.metadata.SbiExportersId;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.engines.config.metadata.SbiEngines;
+import it.eng.spagobi.engines.config.metadata.SbiExporters;
+import it.eng.spagobi.engines.config.metadata.SbiExportersId;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -62,7 +62,7 @@ public class ExportersInitializer extends SpagoBIInitializer {
 				logger.debug("Exporters table is already populated");
 			}
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("Ab unexpected error occured while initializeng LOVs", t);
+			throw new SpagoBIRuntimeException("An unexpected error occured while initializing Exporters", t);
 		} finally {
 			logger.debug("OUT");
 		}

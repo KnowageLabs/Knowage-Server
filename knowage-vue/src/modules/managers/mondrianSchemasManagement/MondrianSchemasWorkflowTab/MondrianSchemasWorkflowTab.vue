@@ -1,82 +1,76 @@
 <template>
-    <Card class="workflow">
-        <template #content>
-            <div class="p-d-flex">
-                <div class="kn-list--column" :style="workflowDescriptor.style.workflowList">
-                    <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                        <template #left>
-                            {{ $t('managers.mondrianSchemasManagement.workFlow.availableUsers') }}
-                        </template>
-                    </Toolbar>
-                    <div>
-                        <Listbox
-                            class="kn-list--column"
-                            :options="availableUsersList[0]"
-                            :filter="true"
-                            :filterPlaceholder="$t('common.search')"
-                            optionLabel="name"
-                            filterMatchMode="contains"
-                            :filterFields="workflowDescriptor.filterFields"
-                            :emptyFilterMessage="$t('common.info.noDataFound')"
-                            data-test="userList1"
-                        >
-                            <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                            <template #option="slotProps">
-                                <div class="kn-list-item" :class="{ disableCursor: isStartedWf }" @click="addUserToWfList(slotProps.option.id)" data-test="userList1-item">
-                                    <div class="kn-list-item-text">
-                                        <span>{{ slotProps.option.userId }}</span>
-                                        <span class="kn-list-item-text-secondary">{{ slotProps.option.fullName }}</span>
-                                    </div>
-                                </div>
-                            </template>
-                        </Listbox>
-                    </div>
-                </div>
-                <div class="kn-list--column" :style="workflowDescriptor.style.workflowList">
-                    <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                        <template #left>
-                            {{ $t('managers.mondrianSchemasManagement.workFlow.userWf') }}
-                        </template>
-                        <template #right>
-                            <span v-tooltip.top="$t(tooltipValue)">
-                                <Button :disabled="disableButton" icon="pi pi-play" class="p-button-rounded" @click="startWorkflow" />
-                            </span>
-                        </template>
-                    </Toolbar>
-                    <div>
-                        <Listbox
-                            class="kn-list--column"
-                            :options="availableUsersList[1]"
-                            :filter="true"
-                            :filterPlaceholder="$t('common.search')"
-                            optionLabel="name"
-                            filterMatchMode="contains"
-                            :filterFields="workflowDescriptor.filterFields"
-                            :emptyFilterMessage="$t('common.info.noDataFound')"
-                            data-test="userList2"
-                        >
-                            <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                            <template #option="slotProps">
-                                <div class="kn-list-item" :class="{ disableCursor: isStartedWf }" @click="removeUserFromWfList(slotProps.option.id)" data-test="userList2-item">
-                                    <div class="kn-list-item-text">
-                                        <span>{{ slotProps.option.userId }}</span>
-                                        <span class="kn-list-item-text-secondary">{{ slotProps.option.fullName }}</span>
-                                    </div>
-                                    <div v-if="!isStartedWf">
-                                        <Button icon="pi pi-arrow-circle-up" class="p-button-link" @click.stop="moveUpList(slotProps.option.id)" />
-                                        <Button icon="pi pi-arrow-circle-down" class="p-button-link" @click.stop="moveDownList(slotProps.option.id)" />
-                                    </div>
-                                    <div v-if="isStartedWf">
-                                        <i v-if="slotProps.option.id === userInProg" class="pi pi-check-circle" :style="workflowDescriptor.style.icon" />
-                                    </div>
-                                </div>
-                            </template>
-                        </Listbox>
-                    </div>
-                </div>
+    <div class="workflow">
+        <div class="p-grid">
+            <div class="p-col">
+                <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                    <template #left>
+                        {{ $t('managers.mondrianSchemasManagement.workFlow.availableUsers') }}
+                    </template>
+                </Toolbar>
+                <Listbox
+                    class="kn-list workflowContainer"
+                    :options="availableUsersList[0]"
+                    :filter="true"
+                    :filterPlaceholder="$t('common.search')"
+                    optionLabel="name"
+                    filterMatchMode="contains"
+                    :filterFields="workflowDescriptor.filterFields"
+                    :emptyFilterMessage="$t('common.info.noDataFound')"
+                    data-test="userList1"
+                >
+                    <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                    <template #option="slotProps">
+                        <div class="kn-list-item" :class="{ disableCursor: isStartedWf }" @click="addUserToWfList(slotProps.option.id)" data-test="userList1-item">
+                            <div class="kn-list-item-text">
+                                <span>{{ slotProps.option.userId }}</span>
+                                <span class="kn-list-item-text-secondary">{{ slotProps.option.fullName }}</span>
+                            </div>
+                        </div>
+                    </template>
+                </Listbox>
             </div>
-        </template>
-    </Card>
+            <div class="p-col">
+                <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                    <template #left>
+                        {{ $t('managers.mondrianSchemasManagement.workFlow.userWf') }}
+                    </template>
+                    <template #right>
+                        <span v-tooltip.top="$t(tooltipValue)">
+                            <Button :disabled="disableButton" icon="pi pi-play" class="p-button-rounded" @click="startWorkflow" />
+                        </span>
+                    </template>
+                </Toolbar>
+                <Listbox
+                    class="kn-list workflowContainer"
+                    :options="availableUsersList[1]"
+                    :filter="true"
+                    :filterPlaceholder="$t('common.search')"
+                    optionLabel="name"
+                    filterMatchMode="contains"
+                    :filterFields="workflowDescriptor.filterFields"
+                    :emptyFilterMessage="$t('common.info.noDataFound')"
+                    data-test="userList2"
+                >
+                    <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                    <template #option="slotProps">
+                        <div class="kn-list-item" :class="{ disableCursor: isStartedWf }" @click="removeUserFromWfList(slotProps.option.id)" data-test="userList2-item">
+                            <div class="kn-list-item-text">
+                                <span>{{ slotProps.option.userId }}</span>
+                                <span class="kn-list-item-text-secondary">{{ slotProps.option.fullName }}</span>
+                            </div>
+                            <div v-if="!isStartedWf">
+                                <Button icon="pi pi-arrow-circle-up" class="p-button-link" @click.stop="moveUpList(slotProps.option.id)" />
+                                <Button icon="pi pi-arrow-circle-down" class="p-button-link" @click.stop="moveDownList(slotProps.option.id)" />
+                            </div>
+                            <div v-if="isStartedWf">
+                                <i v-if="slotProps.option.id === userInProg" class="pi pi-check-circle" :style="workflowDescriptor.style.icon" />
+                            </div>
+                        </div>
+                    </template>
+                </Listbox>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -86,7 +80,6 @@ import workflowDescriptor from './MondrianSchemasWorkflowDescriptor.json'
 import Listbox from 'primevue/listbox'
 import axios from 'axios'
 import Tooltip from 'primevue/tooltip'
-import Card from 'primevue/card'
 
 export default defineComponent({
     name: 'workflow-tab',
@@ -94,8 +87,7 @@ export default defineComponent({
         tooltip: Tooltip
     },
     components: {
-        Listbox,
-        Card
+        Listbox
     },
     props: {
         usersList: Array,
@@ -224,6 +216,10 @@ export default defineComponent({
         .p-card-content {
             padding: 0;
         }
+    }
+    .workflowContainer {
+        border: 1px solid $color-borders;
+        border-top: none;
     }
 }
 .disableCursor {

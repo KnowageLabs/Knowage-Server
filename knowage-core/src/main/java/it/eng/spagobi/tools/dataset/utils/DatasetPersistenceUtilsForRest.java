@@ -22,6 +22,8 @@
 
 package it.eng.spagobi.tools.dataset.utils;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -172,40 +174,17 @@ public class DatasetPersistenceUtilsForRest {
 		triggerInfo.setTriggerName("persist_" + triggerInfo.getJobInfo().getJobName());
 		triggerInfo.setTriggerDescription("It is used to schedule data update for " + triggerInfo.getJobInfo().getJobName() + " dataset");
 
-		String tempdate = null;
-		// if (requestContainer != null) {
-		tempdate = json.getString("startDate");
-		// } else {
-		// case coming from QBE
-		// tempdate = dataSet.getStartDateField();
-		// }
-		String startdate = "";
-		// change date format
-		if (!tempdate.isEmpty()) {
-			startdate = tempdate.substring(8, 10) + "-" + tempdate.substring(5, 7) + "-" + tempdate.substring(0, 4);
-		}
-		triggerInfo.setStartDate(startdate);
-		// triggerInfo.setStartTime("");
-		String chronstr = null;
+		String startTimeStr = json.getString("startDate");
+		ZonedDateTime startTime = ZonedDateTime.parse(startTimeStr);
+		triggerInfo.setZonedStartTime(startTime);
 
-		// if (requestContainer != null) {
-		chronstr = json.getString("schedulingCronLine");
-		// } else {
-		// case coming from QBE
-		// chronstr = dataSet.getSchedulingCronLine();
-		// }
+		String endTimeStr = json.getString("endDate");
+		ZonedDateTime endTime = ZonedDateTime.parse(endTimeStr);
+		triggerInfo.setZonedEndTime(endTime);
 
+		String chronstr = json.getString("schedulingCronLine");
 		triggerInfo.setChronString(chronstr);
 
-		String enddate = null;
-		// if (requestContainer != null) {
-		enddate = json.getString("endDate");
-		// } else {
-		// case coming from QBE
-		// enddate = dataSet.getEndDateField();
-		// }
-
-		triggerInfo.setEndDate(enddate);
 	}
 
 	private StringBuffer createMessageSaveSchedulation(TriggerInfo triggerInfo, boolean runImmediately, IEngUserProfile profile) {
@@ -225,18 +204,32 @@ public class DatasetPersistenceUtilsForRest {
 
 			message.append(" triggerDescription=\"" + triggerInfo.getTriggerDescription() + "\" ");
 
-			String startdate = triggerInfo.getStartDate();
-			String enddate = triggerInfo.getEndDate();
+			ZonedDateTime zonedStartTime = triggerInfo.getZonedStartTime();
+			ZonedDateTime zonedEndTime = triggerInfo.getZonedEndTime();
 
-			if (!startdate.trim().equals("")) {
-				message.append(" startDate=\"" + triggerInfo.getStartDate() + "\" ");
-			}
-			if (!enddate.trim().equals("")) {
-				message.append(" endDate=\"" + enddate + "\" ");
+			DateTimeFormatter iso8601WithMillis = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+
+			if (zonedStartTime != null) {
+				String format = iso8601WithMillis.format(zonedStartTime);
+				message.append(" zonedStartTime=\"" + format + "\"");
+			} else {
+				String startdate = triggerInfo.getStartDate();
+
+				if (!startdate.trim().equals("")) {
+					message.append(" startDate=\"" + triggerInfo.getStartDate() + "\" ");
+				}
 			}
 
-			// message.append(" startTime=\"" + triggerInfo.getStartTime() +
-			// "\" ");
+			if (zonedEndTime != null) {
+				String format = iso8601WithMillis.format(zonedEndTime);
+				message.append(" zonedEndTime=\"" + format + "\"");
+			} else {
+				String enddate = triggerInfo.getEndDate();
+
+				if (!enddate.trim().equals("")) {
+					message.append(" endDate=\"" + enddate + "\" ");
+				}
+			}
 
 			message.append(" chronString=\"" + triggerInfo.getChronString() + "\" ");
 		}

@@ -386,7 +386,7 @@
 							if (tmpConf.to == null) tmpConf.to = "max";
 							ranges.push({"color": tmpConf.color, "from": tmpConf.from, "to":tmpConf.to});
 						}
-						toReturn.push({"layer": tmpLayerName[1], "alias": mts.activeLegend[l].alias, "method": mts.activeLegend[l].method, "ranges": ranges});
+						toReturn.push({"layer": tmpLayerName[1], "alias": mts.activeLegend[l].alias, "method": mts.activeLegend[l].method, "dataNotAvailable": mts.activeLegend[l].dataNotAvailable, "ranges": ranges});
 					} else {
 						for (c in mts.activeLegend[l].choroplet){
 							var tmpConf = mts.activeLegend[l].choroplet[c];
@@ -434,6 +434,10 @@
 						mts.activeLegend[layerName].choroplet[i].from=formatLegendValue((minValue+(split*i)), legendStyle);
 						mts.activeLegend[layerName].choroplet[i].to=formatLegendValue((minValue+(split*(i+1))), legendStyle);
 					}
+
+					if (legendStyle.visualizationType == 'Range') {
+						updateLegendForRangeMode(layerName);
+					}
 //					console.log("Regular intervals legends: ", mts.activeLegend[layerName]);
 				}else if (config.analysisConf.method == "CLASSIFY_BY_QUANTILS"){
 					//classify by quantils
@@ -476,17 +480,46 @@
 			}
 		}
 
+		var updateLegendForRangeMode = function (layerName){
+			var from = mts.activeLegend[layerName].choroplet[0].from;
+			var to = mts.activeLegend[layerName].choroplet[0].to;
+			var onlyOneRange = true;
+			for (var i=0; i<mts.activeLegend[layerName].choroplet.length; i++) {
+				if (mts.activeLegend[layerName].choroplet[i].from != from || mts.activeLegend[layerName].choroplet[i].to != to) {
+					onlyOneRange = false;
+					break;
+				}
+			}
+			if (onlyOneRange) {
+				var choropletToKeep = mts.activeLegend[layerName].choroplet[0];
+				mts.activeLegend[layerName].choroplet = []; // reset choroplets
+				mts.activeLegend[layerName].choroplet[0] = choropletToKeep;
+			}
+
+			var dataNotAvailable = true;
+			for (var i=0; i<mts.activeLegend[layerName].choroplet.length; i++) {
+				if (!isNaN(mts.activeLegend[layerName].choroplet[i].from) || !isNaN(mts.activeLegend[layerName].choroplet[i].to)) {
+					dataNotAvailable = false;
+					break;
+				}
+			}
+			if (dataNotAvailable) mts.activeLegend[layerName].dataNotAvailable = true;
+			else mts.activeLegend[layerName].dataNotAvailable = false;
+		}
+
 		var formatLegendValue = function (val, style){
+			if (val == null) return null;
+
 			var prefix = "";
 			var suffix = "";
 			var precision = 1;
 
-			if (style && style.format && (style.format.precision || style.format.precision==0)) precision = style.format.precision;
+			if (style && style.format && style.format.precision) precision = style.format.precision;
 			if (style && style.format && style.format.prefix) prefix = style.format.prefix;
 			if (style && style.format && style.format.suffix) suffix = style.format.suffix;
 
 			var decimalFormatted = val.toFixed(precision);
-			var localeFormatted = new Number(decimalFormatted).toLocaleString(sbiModule_config.curr_language);
+			var localeFormatted = decimalFormatted.toLocaleString(sbiModule_config.curr_language);
 			return prefix + localeFormatted + suffix;
 		}
 

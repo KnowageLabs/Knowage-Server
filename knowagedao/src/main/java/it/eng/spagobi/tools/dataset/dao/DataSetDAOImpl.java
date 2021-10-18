@@ -19,6 +19,7 @@ package it.eng.spagobi.tools.dataset.dao;
 
 import static java.util.stream.Collectors.toList;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,6 +58,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.federateddataset.dao.SbiFederationDefinitionDAOHibImpl;
@@ -247,99 +249,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	/**
-	 * Counts number of filtered DataSets that are a result of a search
-	 *
-	 * @return Integer, number of DataSets searched for
-	 * @throws SpagoBIDAOException
-	 */
-	@Override
-	public Integer countDatasetsSearch(String search, List<Integer> tagIds) {
-		logger.debug("IN");
-		Session session = null;
-		Transaction transaction = null;
-		Long resultNumber;
-		StringBuffer sb;
-		try {
-			session = getSession();
-			transaction = session.beginTransaction();
-			List<Domain> devCategories = new LinkedList<Domain>();
-			boolean isDev = fillDevCategories(devCategories);
-			List idsCat = createIdsCatogriesList(devCategories);
-			String owner = ((UserProfile) getUserProfile()).getUserId().toString();
-
-			// If Tags not selected, make common query, no need for joining
-			if (tagIds.isEmpty()) {
-				sb = new StringBuffer("select count(*) from SbiDataSet ds where ds.active = ? ");
-			} else {
-				sb = new StringBuffer("select count(distinct dst.dataSet.label) from SbiDatasetTag dst where dst.dataSet.active = ? ");
-			}
-
-			// Search Datasets only by Search Box value
-			if (search != null && tagIds.isEmpty()) {
-				if (isDev) {
-					sb.append("and (ds.category.valueId in (:idsCat) or ds.owner = :owner) ").append("and upper(ds.label) like :search");
-					Query query = session.createQuery(sb.toString());
-					query.setBoolean(0, true);
-					query.setParameterList("idsCat", idsCat);
-					query.setString("owner", owner);
-					query.setString("search", "%" + search.toUpperCase() + "%");
-					resultNumber = (Long) query.uniqueResult();
-				} else {
-					sb.append("and upper(ds.label) like :search");
-					Query hqlQuery = session.createQuery(sb.toString());
-					hqlQuery.setBoolean(0, true);
-					hqlQuery.setString("search", "%" + search.toUpperCase() + "%");
-					resultNumber = (Long) hqlQuery.uniqueResult();
-				}
-			} else if (search == null && !tagIds.isEmpty()) { // Search by selected Tags
-				if (isDev) {
-					sb.append("and (dst.dataSet.category.valueId in (:idsCat) or dst.dataSet.owner = :owner) ").append("and dst.dsTagId.tagId in (:tagIds)");
-					Query query = session.createQuery(sb.toString());
-					query.setBoolean(0, true);
-					query.setParameterList("idsCat", idsCat);
-					query.setString("owner", owner);
-					query.setParameterList("tagIds", tagIds);
-					resultNumber = (Long) query.uniqueResult();
-				} else {
-					sb.append("and dst.dsTagId.tagId in (:tagIds)");
-					Query query = session.createQuery(sb.toString());
-					query.setBoolean(0, true);
-					query.setParameterList("tagIds", tagIds);
-					resultNumber = (Long) query.uniqueResult();
-				}
-			} else { // Search by Search Box value AND selected Tags
-				if (isDev) {
-					sb.append("and (ds.category.valueId in (:idsCat) or dst.dataSet.owner = :owner) ").append("and upper(dst.dataSet.label) like '%")
-							.append(search.toUpperCase()).append("%' ").append("and dst.dsTagId.tagId in (:tagIds)");
-					Query query = session.createQuery(sb.toString());
-					query.setBoolean(0, true);
-					query.setParameterList("idsCat", idsCat);
-					query.setString("owner", owner);
-					query.setParameterList("tagIds", tagIds);
-					resultNumber = (Long) query.uniqueResult();
-				} else {
-					sb.append("and upper(dst.dataSet.label) like :search ").append("and dst.dsTagId.tagId in (:tagIds)");
-					Query query = session.createQuery(sb.toString());
-					query.setBoolean(0, true);
-					query.setString("search", "%" + search.toUpperCase() + "%");
-					query.setParameterList("tagIds", tagIds);
-					resultNumber = (Long) query.uniqueResult();
-				}
-			}
-		} catch (Exception e) {
-			if (transaction != null && transaction.isActive())
-				transaction.rollback();
-			throw new SpagoBIDAOException("Error while loading the list of SbiDataSet", e);
-		} finally {
-			if (session != null && session.isOpen())
-				session.close();
-		}
-
-		logger.debug("OUT");
-		return new Integer(resultNumber.intValue());
-	}
-
-	/**
 	 * Delete all inactive versions of dataset whose id is equal to <code>datasetId</code>
 	 *
 	 * @param datasetId the id of the of the dataset whose incative version must be deleted
@@ -519,6 +428,18 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					}
 
 					DataSetEventManager.getInstance().notifyDelete(toReturn);
+				}
+				// if dataset is of type FILE, delete associated file as well
+				if (sbiDataSet.getType().equals(DataSetConstants.DS_FILE)) {
+					try {
+						JSONObject config = new JSONObject(sbiDataSet.getConfiguration());
+						String fileName = config.getString("fileName");
+						String fileDir = SpagoBIUtilities.getFileDatasetResourcePath();
+						File toDelete = new File(fileDir + File.separatorChar + fileName);
+						toDelete.delete();
+					} catch (Exception e) {
+						logger.error("Cannot delete file associated to dataset: " + sbiDataSet.getLabel(), e);
+					}
 				}
 			}
 

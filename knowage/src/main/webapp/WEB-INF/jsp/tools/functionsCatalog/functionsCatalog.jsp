@@ -163,7 +163,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		      		</md-card>
 				</div>	
 					<div class="functionsChipsContainer" layout="row" layout-align="center" layout-wrap>
-						<div class="functionsChips" ng-repeat="chip in searchKeywords" ng-click="chipFilter(chip)" ng-class="{'chipSelected':selectedChip==chip}">
+						<div class="functionsChips" ng-repeat="chip in searchTags" ng-click="chipFilter(chip)" ng-class="{'chipSelected':selectedChip==chip}">
 							{{chip}}
 						</div>
 					</div>
@@ -177,8 +177,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			    				id="functionsTable" 
 								ng-show="functionsList && functionsList.length >0"
 								ng-model="functionsList"
-								columns='[{"label":"Function Name","name":"name","size":300},{"label":"Description","name":"description"},{"label":"Owner","name":"owner","size":100}]'  
-								columns-search='["name","description","owner"]'
+								columns='[{"label":"Function Label","name":"label","size":200},{"label":"Function Name","name":"name","size":200},{"label":"Type","name":"type","size":200},{"label":"Language","name":"language","size":200},{"label":"Owner","name":"owner","size":200}]'  
+								columns-search='["label","name","description","owner"]'
 								show-search-bar=true
 								highlights-selected-item=true
 								speed-menu-option="acSpeedMenu"
@@ -227,14 +227,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		      					</md-input-container>
 	      					</div>
 	      					
-							<md-chips ng-model="shownFunction.keywords" readonly="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))" placeholder="{{translate.load('sbi.functionscatalog.keywords');}}" class="noPadding" style="margin-bottom:10px;"></md-chips>
+							<md-chips ng-model="shownFunction.tags" readonly="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))" placeholder="{{translate.load('sbi.functionscatalog.keywords');}}" class="noPadding" style="margin-bottom:10px;"></md-chips>
 	      					
 	          				<label class="customLabel">{{translate.load("sbi.functionscatalog.description");}}</label>
 		          			<wysiwyg-edit ng-if="(isAdmin || (isDev && shownFunction.owner==ownerUserName))" content="shownFunction.description"  layout-fill config="editorConfig"></wysiwyg-edit>
 		          			<div ng-if="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))" ng-bind-html=shownFunction.description></div> 
 		          			<br>
 		          			<label class="customLabel">{{translate.load("sbi.functionscatalog.benchmarks");}}</label>
-		          			<wysiwyg-edit ng-if="(isAdmin || (isDev && shownFunction.owner==ownerUserName))" content="shownFunction.benchmarks"  layout-fill config="editorConfig"></wysiwyg-edit>
+		          			<wysiwyg-edit ng-if="(isAdmin || (isDev && shownFunction.owner==ownerUserName))" content="shownFunction.benchmark"  layout-fill config="editorConfig"></wysiwyg-edit>
 		          			<div ng-if="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))" ng-bind-html=shownFunction.description></div>
 						</md-card-content>
 					</md-card>
@@ -328,14 +328,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	          					<textarea flex ui-refresh="true" ng-model="shownFunction.onlineScript" ui-codemirror ui-codemirror-opts="editorOptions"></textarea>
 	        				</md-input-container>
 	        				
-	        				<md-input-container class="md-block md-input-has-value" ng-if="shownFunction.functionFamily=='offline'">
+	        				<md-input-container class="md-block md-input-has-value" ng-if="shownFunction.family=='offline'">
 	          					<label class="customCodeMirrorLabel">{{translate.load("sbi.functionscatalog.trainmodel");}}</label>
-	          					<textarea flex ui-refresh="true" ng-model="shownFunction.offlineScriptTrainModel" ui-codemirror ui-codemirror-opts="editorOptions"></textarea>
+	          					<textarea flex ui-refresh="true" ng-model="shownFunction.offlineScriptTrain" ui-codemirror ui-codemirror-opts="editorOptions"></textarea>
 	        				</md-input-container>
 	        				
-	        				<md-input-container class="md-block md-input-has-value" ng-if="shownFunction.functionFamily=='offline'">
+	        				<md-input-container class="md-block md-input-has-value" ng-if="shownFunction.family=='offline'">
 	          					<label class="customCodeMirrorLabel">{{translate.load("sbi.functionscatalog.usemodel");}}</label>
-	          					<textarea flex ui-refresh="true" ng-model="shownFunction.offlineScriptUseModel" ui-codemirror ui-codemirror-opts="editorOptions"></textarea>
+	          					<textarea flex ui-refresh="true" ng-model="shownFunction.offlineScriptUse" ui-codemirror ui-codemirror-opts="editorOptions"></textarea>
 	        				</md-input-container>
 						
 	        			</md-card-content>
