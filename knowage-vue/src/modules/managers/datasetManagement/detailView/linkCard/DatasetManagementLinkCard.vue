@@ -85,6 +85,7 @@ export default defineComponent({
     },
 
     methods: {
+        //#region TODO: Kada prorade servisi, maknuti mock, treba i neke UI changes da se urade kaze davide
         async getAvailableTables(event) {
             console.log(event)
             // axios
@@ -100,6 +101,7 @@ export default defineComponent({
             //     .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error }))
             this.selectedTables = linkTabDescriptor.selectedTablesMock
         },
+        //#endregion =========================================================================================
         removeSelectedTablesFromAvailable(availableTablesArray, selectedTablesArray) {
             let filteredSelected = selectedTablesArray.map((selectedTable) => {
                 return selectedTable.tableId

@@ -212,10 +212,7 @@ export default defineComponent({
                         } else {
                             this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
                             if (response.headers) {
-                                var contentDisposition = response.headers['content-disposition']
-                                var fileAndExtension = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)[1]
-                                var completeFileName = fileAndExtension.replaceAll('"', '')
-                                downloadDirect(response.data, completeFileName, 'application/json; text/plain, */*')
+                                downloadDirect(response.data, this.createCompleteFileName(response), 'application/json; text/plain, */*')
                             }
                         }
                     },
@@ -225,6 +222,12 @@ export default defineComponent({
                             msg: this.$t(error)
                         })
                 )
+        },
+        createCompleteFileName(response) {
+            var contentDisposition = response.headers['content-disposition']
+            var fileAndExtension = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)[1]
+            var completeFileName = fileAndExtension.replaceAll('"', '')
+            return completeFileName
         },
         async getPreviewData() {
             this.loading = true

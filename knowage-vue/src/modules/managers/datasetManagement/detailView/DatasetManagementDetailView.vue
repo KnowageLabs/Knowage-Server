@@ -254,7 +254,6 @@ export default defineComponent({
                 columnsNames = this.removeDuplicates(columnsNames)
 
                 for (i = 0; i < columnsNames.length; i++) {
-                    console.log('for (i = 0; i < columnsNames.length; i++) {')
                     var columnObject = { displayedName: '', name: '', fieldType: '', type: '' }
                     var currentColumnName = columnsNames[i]
                     //this will remove the part before the double dot if the column is in the format ex: it.eng.spagobi.Customer:customerId

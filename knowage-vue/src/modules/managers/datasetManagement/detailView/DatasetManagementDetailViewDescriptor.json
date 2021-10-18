@@ -44,6 +44,7 @@
         "sparqlEndpoint": "",
         "sparqlExecutionTimeout": 30,
         "sparqlQuery": "",
+        "tags": [],
         "trasfTypeCd": "",
         "usedByNDocs": "",
         "userIn": "",

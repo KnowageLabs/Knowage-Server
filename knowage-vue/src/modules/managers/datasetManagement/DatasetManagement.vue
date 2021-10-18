@@ -119,7 +119,7 @@ export default defineComponent({
         async getDatasets() {
             let url = '{"reverseOrdering":false,"columnOrdering":""}'
             axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/pagopt?offset=0&fetchSize=0&ordering=` + encodeURI(url))
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/catalog?offset=0&fetchSize=0&ordering=` + encodeURI(url))
                 .then((response) => (this.listOfDatasets = [...response.data.root]))
                 .finally(() => (this.loading = false))
         },
