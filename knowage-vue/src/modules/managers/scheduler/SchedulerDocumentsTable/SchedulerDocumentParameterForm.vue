@@ -24,7 +24,7 @@
                     <div class="p-mx-2 kn-flex" v-else-if="parameter.type === 'loadAtRuntime'">
                         <span>
                             <label class="kn-material-input-label">{{ $t('managers.scheduler.role') }}</label>
-                            <Dropdown class="kn-material-input" v-model="parameter.value" :options="rolesOptions" optionLabel="role" optionValue="userAndRole" />
+                            <Dropdown class="kn-material-input" v-model="parameter.value" :options="rolesOptions" optionLabel="role" optionValue="role" />
                         </span>
                     </div>
                     <div class="p-mx-2 kn-flex" v-else-if="parameter.type === 'formula'">
@@ -102,10 +102,6 @@ export default defineComponent({
                     this.parameter.manualInput = false
                     this.parameter.selectedValues = this.parameter.value.split(';').map((el: any) => el.trim())
                 }
-            } else if (this.parameter.type === 'loadAtRuntime' && this.parameter.value) {
-                const tempParameters = this.parameter.value.split('|')
-                console.log(' >>>>>>>>> TEMP PARMATERS: ', tempParameters)
-                console.log(' >>>>>>>>> SELECTED VALUE: ', this.parameter.value)
             }
         },
         async loadParameterValues() {
