@@ -180,12 +180,10 @@ export default defineComponent({
 
             for (let i = 0; i < this.selectedFunction.inputColumns.length; i++) {
                 if (!this.selectedFunction.inputColumns[i].name) {
-                    valid = false
-                    if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.inputColumnName', { number: i + 1 }))
+                    valid = this.addMissingFields(setMessages, this.$t('managers.functionsCatalog.missingFields.inputColumnName', { number: i + 1 }))
                 }
                 if (!this.selectedFunction.inputColumns[i].type) {
-                    valid = false
-                    if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.inputColumnType', { number: i + 1 }))
+                    valid = this.addMissingFields(setMessages, this.$t('managers.functionsCatalog.missingFields.inputColumnType', { number: i + 1 }))
                 }
             }
 
@@ -196,12 +194,10 @@ export default defineComponent({
 
             for (let i = 0; i < this.selectedFunction.inputVariables.length; i++) {
                 if (!this.selectedFunction.inputVariables[i].name) {
-                    valid = false
-                    if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.inputVariableName', { number: i + 1 }))
+                    valid = this.addMissingFields(setMessages, this.$t('managers.functionsCatalog.missingFields.inputVariableName', { number: i + 1 }))
                 }
                 if (!this.selectedFunction.inputVariables[i].type) {
-                    valid = false
-                    if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.inputVariableType', { number: i + 1 }))
+                    valid = this.addMissingFields(setMessages, this.$t('managers.functionsCatalog.missingFields.inputVariableType', { number: i + 1 }))
                 }
             }
 
@@ -211,33 +207,31 @@ export default defineComponent({
             let valid = true
 
             if (this.selectedFunction.outputColumns.length === 0) {
-                valid = false
-                if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.outputColumnMissing'))
+                valid = this.addMissingFields(setMessages, this.$t('managers.functionsCatalog.missingFields.outputColumnMissing'))
             }
 
             for (let i = 0; i < this.selectedFunction.outputColumns.length; i++) {
                 if (!this.selectedFunction.outputColumns[i].name) {
-                    valid = false
-                    if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.outputColumnName', { number: i + 1 }))
+                    valid = this.addMissingFields(setMessages, this.$t('managers.functionsCatalog.missingFields.outputColumnName', { number: i + 1 }))
                 }
+
                 if (!this.selectedFunction.outputColumns[i].fieldType) {
-                    valid = false
-                    if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.outputColumnFieldType', { number: i + 1 }))
+                    valid = this.addMissingFields(setMessages, this.$t('managers.functionsCatalog.missingFields.outputColumnFieldType', { number: i + 1 }))
                 }
+
                 if (!this.selectedFunction.outputColumns[i].type) {
-                    valid = false
-                    if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.outputColumnType', { number: i + 1 }))
+                    valid = this.addMissingFields(setMessages, this.$t('managers.functionsCatalog.missingFields.outputColumnType', { number: i + 1 }))
                 }
             }
 
             return valid
         },
+
         validateFunctionInfo(setMessages: boolean) {
             let valid = true
 
             if (!this.selectedFunction.description) {
-                valid = false
-                if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.functionDescription'))
+                valid = this.addMissingFields(setMessages, this.$t('managers.functionsCatalog.missingFields.functionDescription'))
             }
 
             return valid
@@ -246,20 +240,22 @@ export default defineComponent({
             let valid = true
 
             if (this.selectedFunction.family === 'online' && this.selectedFunction.onlineScript === '') {
-                valid = false
-                if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.onlineScript'))
+                valid = this.addMissingFields(setMessages, this.$t('managers.functionsCatalog.missingFields.onlineScript'))
             } else if (this.selectedFunction.family === 'offline') {
                 if (!this.selectedFunction.offlineScriptTrain) {
-                    valid = false
-                    if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.offlineTrainingScript'))
+                    valid = this.addMissingFields(setMessages, this.$t('managers.functionsCatalog.missingFields.offlineTrainingScript'))
                 }
                 if (!this.selectedFunction.offlineScriptUse) {
-                    valid = false
-                    if (setMessages) this.missingFields.push(this.$t('managers.functionsCatalog.missingFields.offlineUseScript'))
+                    valid = this.addMissingFields(setMessages, this.$t('managers.functionsCatalog.missingFields.offlineUseScript'))
                 }
             }
 
             return valid
+        },
+        addMissingFields(setMessages: boolean, message: any) {
+            if (setMessages) this.missingFields.push(message)
+
+            return false
         },
         async onSave() {
             this.loading = true

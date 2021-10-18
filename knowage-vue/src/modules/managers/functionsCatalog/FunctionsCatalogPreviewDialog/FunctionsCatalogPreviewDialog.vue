@@ -88,16 +88,16 @@ export default defineComponent({
             this.warningMessage = null
 
             if (!this.checkColumnsConfiguration()) {
-                valid = false
-                this.warningMessage = this.$t('managers.functionsCatalog.datasetColumnsError')
+                valid = this.setWarningMessage(this.$t('managers.functionsCatalog.datasetColumnsError'))
             } else if (!this.checkVariablesConfiguration()) {
-                valid = false
-                this.warningMessage = this.$t('managers.functionsCatalog.inputVariablesError')
+                valid = this.setWarningMessage(this.$t('managers.functionsCatalog.inputVariablesError'))
             } else if (!this.environment) {
-                valid = false
-                this.warningMessage = this.$t('managers.functionsCatalog.environmentError')
+                valid = this.setWarningMessage(this.$t('managers.functionsCatalog.environmentError'))
             }
 
+            await this.openPreview(valid)
+        },
+        async openPreview(valid: boolean) {
             if (valid) {
                 await this.createPreview()
                 this.active = 1
@@ -105,6 +105,10 @@ export default defineComponent({
                 this.warningTitle = this.$t('managers.functionsCatalog.warningTitle')
                 this.warningVisible = true
             }
+        },
+        setWarningMessage(message: string) {
+            this.warningMessage = message
+            return false
         },
         checkColumnsConfiguration() {
             for (let i = 0; i < this.propFunction.inputColumns.length; i++) {
