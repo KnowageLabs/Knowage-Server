@@ -28,8 +28,23 @@
                     @rowDeleted="onRowDeleted"
                     @pageChanged="updatePagination"
                     @resetRows="updatedRows = []"
+                    @warningChanged="setWarningState"
                 ></RegistryPivotDatatable>
-                <RegistryDatatable v-else :propColumns="columns" :id="id" :propRows="rows" :propConfiguration="configuration" :columnMap="columnMap" :pagination="pagination" :entity="entity" @rowChanged="onRowChanged" @rowDeleted="onRowDeleted" @pageChanged="updatePagination"></RegistryDatatable>
+                <RegistryDatatable
+                    v-else
+                    :propColumns="columns"
+                    :id="id"
+                    :propRows="rows"
+                    :propConfiguration="configuration"
+                    :columnMap="columnMap"
+                    :pagination="pagination"
+                    :entity="entity"
+                    :stopWarningsState="stopWarningsState"
+                    @rowChanged="onRowChanged"
+                    @rowDeleted="onRowDeleted"
+                    @pageChanged="updatePagination"
+                    @warningChanged="setWarningState"
+                ></RegistryDatatable>
             </div>
         </div>
     </div>
@@ -64,6 +79,7 @@ export default defineComponent({
             filters: [] as any[],
             selectedFilters: [] as any[],
             entity: null as string | null,
+            stopWarningsState: [] as any[],
             isPivot: false,
             loading: false
         }
@@ -71,6 +87,7 @@ export default defineComponent({
     watch: {
         async id() {
             await this.loadPage()
+            this.stopWarningsState = []
         }
     },
     async created() {
@@ -264,6 +281,9 @@ export default defineComponent({
                     row[key] = row[key].data
                 }
             })
+        },
+        setWarningState(warnings: any[]) {
+            this.stopWarningsState = warnings
         }
     }
 })

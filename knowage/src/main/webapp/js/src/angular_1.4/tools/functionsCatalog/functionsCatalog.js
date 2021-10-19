@@ -390,7 +390,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			$scope.saveOrUpdateFlag = "save";
 		},
 		function(error){
-			sbiModule_messaging.showErrorMessage(result.data.FunctionInUseException,"Delete Error");
+			sbiModule_messaging.showErrorMessage("Check that the function is not used in any dashboard","Delete Error");
 		})
 
 	};
@@ -685,6 +685,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		}
 
 		function refreshRowForVariables(cell){
+			$scope.selectedFunction.inputVariables[cell.rowIndex]["value"] = cell.value;
 			$scope.variablesGrid.api.redrawRows({rowNodes: [$scope.variablesGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
 		}
 

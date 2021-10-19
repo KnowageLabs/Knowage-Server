@@ -26,6 +26,13 @@ const store = createStore({
 		initializeUser(context, user) {
 			context.commit('setUser', user)
 			context.commit('setEnterprise', user.enterprise)
+		},
+
+		updateLicense(context, el) {
+			let licenses = context.state.licenses
+			licenses.licenses[el.hostName].push(el.license)
+
+			context.commit('setLicenses', licenses)
 		}
 	},
 	mutations: {

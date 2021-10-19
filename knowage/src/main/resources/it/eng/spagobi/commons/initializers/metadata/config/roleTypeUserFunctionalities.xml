@@ -401,5 +401,9 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ProfileAttributeListManagement" roleType="USER"/>
 		
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="LicenseReadOnly" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="LicenseReadOnly" roleType="DEV_ROLE"/>
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="LicenseReadOnly" roleType="MODEL_ADMIN"/>
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="LicenseReadOnly" roleType="TEST_ROLE"/>
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="LicenseReadOnly" roleType="USER"/>
 	
 </ROLE_TYPE_USER_FUNCTIONALITIES>
