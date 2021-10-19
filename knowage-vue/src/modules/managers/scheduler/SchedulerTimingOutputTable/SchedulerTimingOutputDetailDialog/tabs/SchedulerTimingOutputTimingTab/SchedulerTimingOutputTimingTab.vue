@@ -267,13 +267,13 @@ export default defineComponent({
         },
         setStartDate() {
             this.trigger.zonedStartTime = this.trigger.startDateTiming
-            this.trigger.zonedStartTime.setHours(this.trigger.startTimeTiming.getHours())
-            this.trigger.zonedStartTime.setMinutes(this.trigger.startTimeTiming.getMinutes())
+            this.trigger.zonedStartTime.setHours(this.trigger.startTimeTiming?.getHours())
+            this.trigger.zonedStartTime.setMinutes(this.trigger.startTimeTiming?.getMinutes())
         },
         setEndDate() {
             this.trigger.zonedEndTime = this.trigger.endDateTiming
-            this.trigger.zonedEndTime.setHours(this.trigger.endTimeTiming.getHours())
-            this.trigger.zonedEndTime.setMinutes(this.trigger.endTimeTiming.getMinutes())
+            this.trigger.zonedEndTime.setHours(this.trigger.endTimeTiming?.getHours())
+            this.trigger.zonedEndTime.setMinutes(this.trigger.endTimeTiming?.getMinutes())
         }
     }
 })
