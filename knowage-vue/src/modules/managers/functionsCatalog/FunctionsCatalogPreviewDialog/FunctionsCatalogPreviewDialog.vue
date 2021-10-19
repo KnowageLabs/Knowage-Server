@@ -28,7 +28,7 @@
         <FunctionsCatalogPreviewWarningDialog :visible="warningVisible" :warningTitle="warningTitle" :warningMessage="warningMessage" @close="warningVisible = false"></FunctionsCatalogPreviewWarningDialog>
 
         <template #footer>
-            <Button class="kn-button kn-button--primary" @click="$emit('close')"> {{ $t('common.cancel') }}</Button>
+            <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
             <Button class="kn-button kn-button--primary" :icon="active === 0 ? 'pi pi-chevron-right' : 'pi pi-chevron-left'" :iconPos="active === 0 ? 'right' : 'left'" :label="active === 0 ? $t('managers.functionsCatalog.next') : $t('managers.functionsCatalog.back')" @click="changeTab" />
         </template>
     </Dialog>
@@ -192,6 +192,14 @@ export default defineComponent({
                 }
             }
             return parameters
+        },
+        closeDialog() {
+            this.active = 0
+            this.selectedDataset = null
+            this.previewColumns = []
+            this.previewRows = []
+            this.environment = null
+            this.$emit('close')
         }
     }
 })
