@@ -30,7 +30,16 @@ const store = createStore({
 
 		updateLicense(context, el) {
 			let licenses = context.state.licenses
-			licenses.licenses[el.hostName].push(el.license)
+
+			let hostNameLicenses = licenses.licenses[el.hostName]
+
+			let existingLicense = hostNameLicenses.filter((x) => x.product === el.license.product)
+
+			if (existingLicense.length == 1) {
+				hostNameLicenses.splice(existingLicense, 1)
+			}
+
+			hostNameLicenses.push(el.license)
 
 			context.commit('setLicenses', licenses)
 		}
