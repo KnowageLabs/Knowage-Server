@@ -1,7 +1,6 @@
 <template>
     <Card>
         <template #content>
-            {{ parameter }}
             <div v-if="parameter">
                 <h2>{{ parameter.name }}</h2>
                 <div class="p-d-flex p-flex-row p-ai-center">
