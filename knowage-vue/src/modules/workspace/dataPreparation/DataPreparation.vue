@@ -22,7 +22,7 @@
 						<p>{{ item.description }}</p>
 					</div>
 					<div class="p-col-12 p-m-0 p-p-0 p-d-flex p-jc-end">
-						<Button icon="pi pi-search" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.search')" @click="search($event)" />
+						<Button icon="pi pi-search" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.search')" @click="search($event, item)" />
 
 						<Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="filter($event)" />
 					</div>
@@ -34,7 +34,7 @@
 
 <script lang="ts">
 	import { defineComponent } from 'vue'
-	/* 	import axios from 'axios' */
+	import axios from 'axios'
 	import KnFabButton from '@/components/UI/KnFabButton.vue'
 	import DataPreparationDescriptor from './DataPreparationDescriptor.json'
 
@@ -50,12 +50,12 @@
 
 		emits: ['update:visibility'],
 		created() {
-			this.dataPreparation = this.descriptor.dataPreparation.root
+			axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/datasets/mydata/').then((response) => (this.dataPreparation = response.data.root))
 		},
 		methods: {
-			search(e) {
+			search(e, item) {
 				console.log(e)
-				this.$router.push({ name: 'data-preparation-detail', params: { id: 1 } })
+				this.$router.push({ name: 'data-preparation-detail', params: { id: item.label } })
 			},
 			filter(e) {
 				console.log(e)

@@ -6,8 +6,8 @@
 				<span v-if="item.iconCls" :class="['p-menuitem-icon', item.iconCls]"></span>
 				<img v-if="item.custIcon" :src="item.custIcon" />
 				<span v-if="!item.iconCls && !item.custIcon" class="p-menuitem-icon fas fa-file"></span>
-				<span v-if="item.descr" class="p-menuitem-text">{{ $internationalization($t(item.descr)) }}</span>
-				<span v-else class="p-menuitem-text">{{ $internationalization($t(item.label)) }}</span>
+				<span v-if="item.descr" class="p-menuitem-text kn-truncated">{{ $internationalization($t(item.descr)) }}</span>
+				<span v-else class="p-menuitem-text kn-truncated">{{ $internationalization($t(item.label)) }}</span>
 				<i v-if="item.items" class="pi pi-fw pi-angle-right"></i>
 			</a>
 		</router-link>
@@ -17,8 +17,8 @@
 			<img v-if="item.custIcon" :src="item.custIcon" />
 			<img v-if="item.iconCls && item.command === 'languageSelection'" :src="require('@/assets/images/flags/' + locale.toLowerCase().substring(3, 5) + '.svg')" />
 			<span v-if="!item.iconCls && !item.custIcon" class="p-menuitem-icon fas fa-file"></span>
-			<span v-if="item.descr" class="p-menuitem-text">{{ $internationalization($t(item.descr)) }}</span>
-			<span v-else class="p-menuitem-text">{{ $internationalization($t(item.label)) }}</span>
+			<span v-if="item.descr" class="p-menuitem-text kn-truncated">{{ $internationalization($t(item.descr)) }}</span>
+			<span v-else class="p-menuitem-text kn-truncated">{{ $internationalization($t(item.label)) }}</span>
 			<i v-if="item.items" class="pi pi-fw pi-angle-right"></i>
 		</a>
 		<ul v-if="item.items" v-show="openedLi">
@@ -70,7 +70,7 @@
 			getVisibilityClass(item) {
 				if (!item.conditionedView) return true
 
-				return !item.visible ? 'display:none' : ''
+				return !item.visible ? 'display:none' : ' kn-truncated'
 			}
 		},
 		computed: {
@@ -124,6 +124,7 @@
 			}
 		}
 		& > ul {
+			flex: 2;
 			margin: 0;
 			padding: 0;
 			list-style: none;

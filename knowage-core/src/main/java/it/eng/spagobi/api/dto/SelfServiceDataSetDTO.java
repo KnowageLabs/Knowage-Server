@@ -115,6 +115,9 @@ public class SelfServiceDataSetDTO {
 	@FormParam("datasetMetadata")
 	private String datasetMetadata;
 
+	@FormParam("config")
+	private String config;
+
 	@ExtendedAlphanumeric
 	@Size(max = 50)
 	public String getLabel() {
@@ -353,6 +356,22 @@ public class SelfServiceDataSetDTO {
 
 	public void setDatasetMetadata(String datasetMetadata) {
 		this.datasetMetadata = datasetMetadata;
+	}
+
+	public String getDsDerivedId() {
+		return dsDerivedId;
+	}
+
+	public void setDsDerivedId(String dsDerivedId) {
+		this.dsDerivedId = dsDerivedId;
+	}
+
+	public String getConfig() {
+		return config;
+	}
+
+	public void setConfig(String config) {
+		this.config = config;
 	}
 
 }

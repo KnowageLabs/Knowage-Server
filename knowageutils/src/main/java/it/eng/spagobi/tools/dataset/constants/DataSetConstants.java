@@ -116,6 +116,7 @@ public class DataSetConstants {
 	public static final String DS_PYTHON_TYPE = PythonDataSet.DATASET_TYPE;
 	public static final String DS_SOLR_TYPE = SolrDataSet.DATASET_TYPE;
 	public static final String DS_SPARQL = "SbiSPARQLDataSet";
+	public static final String PREPARED_DATASET = "PreparedDataset";
 
 	public static final String QBE_DATA_SOURCE = "qbeDataSource";
 	public static final String QBE_DATAMARTS = "qbeDatamarts";

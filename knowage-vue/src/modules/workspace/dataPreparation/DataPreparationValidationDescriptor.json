@@ -1,0 +1,88 @@
+{
+	"validations": {
+		"configuration": [
+			{
+				"fieldName": "label",
+				"validators": [
+					{
+						"key": "required"
+					},
+					{
+						"key": "maximumCharacters",
+						"validator": {
+							"params": {
+								"max": 100
+							},
+							"type": "maxLength"
+						}
+					},
+					{
+						"key": "regex",
+						"validator": {
+							"type": "extendedAlphanumericRegex"
+						}
+					}
+				]
+			},
+			{
+				"fieldName": "name",
+				"validators": [
+					{
+						"key": "required"
+					},
+					{
+						"key": "maximumCharacters",
+						"validator": {
+							"params": {
+								"max": 100
+							},
+							"type": "maxLength"
+						}
+					},
+					{
+						"key": "regex",
+						"validator": {
+							"type": "extendedAlphanumericRegex"
+						}
+					}
+				]
+			},
+			{
+				"fieldName": "description",
+				"validators": [
+					{
+						"key": "maximumCharacters",
+						"validator": {
+							"params": {
+								"max": 500
+							},
+							"type": "maxLength"
+						}
+					},
+					{
+						"key": "regex",
+						"validator": {
+							"type": "extendedAlphanumericRegex"
+						}
+					}
+				]
+			},
+			{
+				"fieldName": "visibility",
+				"validators": [
+					{
+						"key": "required"
+					}
+				]
+			},
+			{
+				"fieldName": "refreshRate",
+				"validators": [
+					{
+						"key": "required"
+					}
+				]
+			}
+		]
+	}
+}

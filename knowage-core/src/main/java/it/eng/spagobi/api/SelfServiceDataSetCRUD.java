@@ -88,6 +88,7 @@ import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.PreparedDataset;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.dataproxy.CkanDataProxy;
@@ -1358,6 +1359,8 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 			} else {
 				toReturn = this.getCkanDataSet(selfServiceDataSetDTO, savingDataset);
 			}
+		} else if (type.equals(DataSetConstants.PREPARED_DATASET)) {
+			toReturn = new PreparedDataset();
 		} else {
 			if (checkMaxResults) {
 				toReturn = this.getFileDataSet(selfServiceDataSetDTO, savingDataset, maxResults);
@@ -1417,6 +1420,15 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 		}
 		logger.debug("Category code is :  " + categoryCode);
 		toReturn.setCategoryId(categoryCode);
+
+		if (type.equals(DataSetConstants.PREPARED_DATASET)) {
+
+			if (selfServiceDataSetDTO.getConfig() != null)
+				toReturn.setConfiguration(selfServiceDataSetDTO.getConfig());
+
+			if (selfServiceDataSetDTO.getDsDerivedId() != null)
+				toReturn.setDsDerivedId(Integer.parseInt(selfServiceDataSetDTO.getDsDerivedId()));
+		}
 
 		return toReturn;
 	}
