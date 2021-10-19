@@ -23,7 +23,7 @@
                     <div class="p-mx-2 kn-flex" v-else-if="parameter.type === 'loadAtRuntime'">
                         <span>
                             <label class="kn-material-input-label">{{ $t('managers.scheduler.role') }}</label>
-                            <Dropdown class="kn-material-input" v-model="parameter.value" :options="rolesOptions" optionLabel="role" optionValue="role" />
+                            <Dropdown class="kn-material-input" v-model="parameter.value" :options="rolesOptions" optionLabel="role" optionValue="userAndRole" />
                         </span>
                     </div>
                     <div class="p-mx-2 kn-flex" v-else-if="parameter.type === 'formula'">
@@ -68,7 +68,7 @@ export default defineComponent({
                 { value: false, label: this.$t('managers.scheduler.doNotIterateOnParameterValues') }
             ],
             parameterValues: {} as any,
-            rolesOptions: [],
+            rolesOptions: [] as any[],
             formulaOptions: []
         }
     },
@@ -85,9 +85,9 @@ export default defineComponent({
         }
     },
     async created() {
+        this.loadRoles()
         this.loadParameter()
         await this.formatParameter()
-        this.loadRoles()
         this.loadFormulas()
     },
     methods: {
@@ -101,6 +101,13 @@ export default defineComponent({
                     this.parameter.manualInput = false
                     this.parameter.selectedValues = this.parameter.value.split(';').map((el: any) => el.trim())
                 }
+            } else if (this.parameter.type === 'loadAtRuntime' && this.parameter.value) {
+                for (let i = 0; i < this.rolesOptions.length; i++) {
+                    if (this.parameter.value.endsWith(this.rolesOptions[i].role)) {
+                        this.parameter.value = this.rolesOptions[i].userAndRole
+                        break
+                    }
+                }
             }
         },
         async loadParameterValues() {
@@ -111,7 +118,6 @@ export default defineComponent({
         },
         loadRoles() {
             this.rolesOptions = this.roles as any
-            console.log('ROLES: ', this.roles)
         },
         loadFormulas() {
             this.formulaOptions = this.formulas as any
