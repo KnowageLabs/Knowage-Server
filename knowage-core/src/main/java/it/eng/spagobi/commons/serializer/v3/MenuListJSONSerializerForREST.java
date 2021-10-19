@@ -508,7 +508,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		Boolean isLicensed = true;
 
 		String requiredLicensesString = (String) itemSB.getAttribute(TO_BE_LICENSED);
-		if (requiredLicensesString != null) {
+		if (isEnterpriseEdition() && requiredLicensesString != null) {
 			if (requiredLicensesString.isEmpty()) {
 				try {
 					Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());

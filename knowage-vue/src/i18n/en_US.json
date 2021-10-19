@@ -907,6 +907,9 @@
         },
         "profileAttributesManagement": {
             "description": "Description",
+            "error": {
+                "profileAttributeDeletion": "Attribute is not deleted."
+            },
             "form": {
                 "allowUser": "Allow user to see field",
                 "dataType": "Data type",
@@ -1075,7 +1078,7 @@
             "productTypes": {
                 "title": "Product Types"
             },
-            "tenantSaved": "Tenant updated correctly",
+            "tenantSaved": "Tenant correctly saved. The administrator of the tenant has been created too and his username and password are ",
             "title": "Tenant Management"
         },
         "usersManagement": {

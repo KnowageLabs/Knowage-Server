@@ -125,7 +125,10 @@ export default defineComponent({
             let kpiToLoad = this.kpiList.find((kpi) => {
                 if (kpi.name === event) return true
             })
-            const path = `/kpi-definition/${kpiToLoad.id}/${kpiToLoad.version}`
+            let path = ''
+            if (kpiToLoad) {
+                path = `/kpi-definition/${kpiToLoad.id}/${kpiToLoad.version}`
+            }
             this.$router.push(path)
 
             this.touched = false

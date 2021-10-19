@@ -23,7 +23,7 @@
     </Card>
     <LovsManagementInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :infoTitle="infoTitle" :lovType="lov.itypeCd" @close="infoDialogVisible = false"></LovsManagementInfoDialog>
     <LovsManagementProfileAttributesList v-show="profileAttributesDialogVisible" :visible="profileAttributesDialogVisible" :profileAttributes="profileAttributes" @selected="setCodeInput($event)" @close="profileAttributesDialogVisible = false"></LovsManagementProfileAttributesList>
-    <LovsManagementParamsDialog v-show="paramsDialogVisible" :visible="paramsDialogVisible" :dependenciesList="dependenciesList" @preview="onPreview" @close="paramsDialogVisible = false"></LovsManagementParamsDialog>
+    <LovsManagementParamsDialog v-show="paramsDialogVisible" :visible="paramsDialogVisible" :dependenciesList="dependenciesList" @preview="onPreview" @close="onParamsDialogClose"></LovsManagementParamsDialog>
     <LovsManagementPreviewDialog v-show="previewDialogVisible" :visible="previewDialogVisible" :dataForPreview="dataForPreview" :pagination="pagination" @close="onPreviewClose" @pageChanged="previewLov($event, false, true)"></LovsManagementPreviewDialog>
     <LovsManagementTestDialog v-show="testDialogVisible" :visible="testDialogVisible" :selectedLov="lov" :testModel="treeListTypeModel" :testLovModel="testLovModel" :testLovTreeModel="testLovTreeModel" @close="testDialogVisible = false" @save="onTestSave($event)"></LovsManagementTestDialog>
 </template>
@@ -255,6 +255,7 @@ export default defineComponent({
                 .finally(() => (this.touchedForTest = false))
 
             if (listOfEmptyDependencies.length > 0 && !this.dependenciesReady) {
+                console.log('LIST OF EMPTY FIRST IF: ', listOfEmptyDependencies)
                 this.dependenciesList = []
                 for (let i = 0; i < listOfEmptyDependencies.length; i++) {
                     this.dependenciesList.push({
@@ -264,9 +265,11 @@ export default defineComponent({
                 }
                 this.paramsDialogVisible = true
             } else {
+                console.log('LIST OF EMPTY SECOND IF: ', listOfEmptyDependencies)
                 await this.previewLov(this.pagination, false, showPreview)
                 this.buildTestTable()
             }
+            console.log('LIST OF DEPENDENCIES: ', this.dependenciesList)
         },
         async previewLov(value: any, hasDependencies: boolean, showPreview: boolean) {
             this.pagination = value
@@ -598,6 +601,11 @@ export default defineComponent({
         },
         onPreviewClose() {
             this.previewDialogVisible = false
+        },
+        onParamsDialogClose() {
+            this.paramsDialogVisible = false
+            this.dependenciesList = []
+            this.dependenciesReady = false
         }
     }
 })
