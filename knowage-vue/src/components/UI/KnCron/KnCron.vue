@@ -124,11 +124,11 @@
                     <label v-else-if="repeatInterval === 'hour'" for="parameter" class="kn-material-input-label p-m-2"> {{ $t('cron.hours') }}</label>
                     <label v-else-if="repeatInterval === 'day'" for="parameter" class="kn-material-input-label p-m-2"> {{ $t('cron.days') }}</label>
                 </div>
-                <div id="next-schedulation">
+                <!-- <div id="next-schedulation">
                     <Message class="p-m-4" severity="info" :closable="false" :style="knCronDescriptor.styles.message">
                         {{ 'NEXT SCHEDULATION PLACEHOLDER' }}
                     </Message>
-                </div>
+                </div> -->
             </div>
         </template>
     </Card>
@@ -142,7 +142,7 @@ import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import knCronDescriptor from './KnCronDescriptor.json'
-import Message from 'primevue/message'
+// import Message from 'primevue/message'
 import MultiSelect from 'primevue/multiselect'
 
 export default defineComponent({
@@ -153,7 +153,7 @@ export default defineComponent({
         Checkbox,
         Dropdown,
         InputSwitch,
-        Message,
+        // Message,
         MultiSelect
     },
     props: {
