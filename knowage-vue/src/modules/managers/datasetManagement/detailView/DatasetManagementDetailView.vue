@@ -200,7 +200,6 @@ export default defineComponent({
 
         //#region ===================== Save/Update Dataset & Tags =================================================
         async saveDataset() {
-            console.log(this.selectedDataset)
             let dsToSave = { ...this.selectedDataset } as any
             let restRequestHeadersTemp = {}
             if (dsToSave.dsTypeCd.toLowerCase() == 'rest' || dsToSave.dsTypeCd.toLowerCase() == 'python/r' || dsToSave.dsTypeCd.toLowerCase() == 'solr') {
@@ -306,7 +305,6 @@ export default defineComponent({
                 var repeatInterval = this.scheduling.repeatInterval
                 var finalCronString = ''
                 var secondsForCron = 0
-
                 var minutesForCron = this.stringifySchedulingValues(this.scheduling.minutesSelected && this.scheduling.minutesSelected.length != 0, 'minutesSelected')
                 var hoursForCron = this.stringifySchedulingValues(repeatInterval != 'minute' && this.scheduling.hoursSelected && this.scheduling.hoursSelected.length != 0, 'hoursSelected')
                 var daysForCron = this.stringifySchedulingValues((repeatInterval === 'day' || repeatInterval === 'month') && this.scheduling.daysSelected.length != 0, 'daysSelected')
@@ -318,13 +316,8 @@ export default defineComponent({
                 } else {
                     weekdaysForCron = '?'
                 }
-
                 finalCronString = minutesForCron + ' ' + hoursForCron + ' ' + daysForCron + ' ' + monthsForCron + ' ' + weekdaysForCron
 
-                // this.scheduling.cronDescriptionDate = prettyCron.toString(finalCronString)
-                // this.scheduling.cronDescriptionTime = prettyCron.getNext(finalCronString)
-
-                console.log(secondsForCron + ' ' + finalCronString)
                 return secondsForCron + ' ' + finalCronString
             }
         },

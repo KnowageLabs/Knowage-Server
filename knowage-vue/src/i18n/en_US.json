@@ -638,6 +638,7 @@
             "title": "Data Source Management"
         },
         "datasetManagement": {
+            "scheduling": "Scheduling",
             "availableLibraries": "Available Libraries",
             "availableTables": "Available Tables",
             "changeTypeMsg": "Changing dataset type will delete all parameters, are you sure?",

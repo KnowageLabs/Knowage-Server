@@ -157,7 +157,6 @@ export default defineComponent({
             await axios
             this.getEnvLibraries()
                 .then((response) => {
-                    console.log(response)
                     this.dataset.pythonDatasetType == 'python' ? (this.pythonEnvLibs = JSON.parse(response.data.result)) : (this.pythonEnvLibs = JSON.parse(response.data.result))
                     this.libListVisible = true
                 })

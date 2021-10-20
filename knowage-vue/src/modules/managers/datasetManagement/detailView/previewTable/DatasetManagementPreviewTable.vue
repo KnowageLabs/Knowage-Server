@@ -51,7 +51,6 @@ export default defineComponent({
                     })
 
                     this.rows = response.data.rows
-                    console.log(this.rows)
                 })
                 .catch(() => this.$emit('close'))
                 .finally(() => (this.loading = false))

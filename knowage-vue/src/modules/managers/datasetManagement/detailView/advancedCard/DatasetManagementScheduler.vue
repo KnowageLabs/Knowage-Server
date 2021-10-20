@@ -56,24 +56,31 @@
 
                 <div class="p-field" v-if="scheduling.repeatInterval === 'week'">
                     <label for="weekdays" class="kn-material-input-label "> {{ $t('cron.inWeekday') }}</label>
-                    <MultiSelect id="weekdays" class="kn-material-input p-mx-2" style="max-width:8rem" v-model="scheduling.weekdaysSelected" :options="weekdays" optionLabel="label" optionValue="value" :placeholder="$t('common.default')" />
+                    <MultiSelect id="weekdays" class="kn-material-input p-mx-2" style="max-width:8rem" v-model="scheduling.weekdaysSelected" :options="weekdays" optionLabel="label" optionValue="value" :placeholder="$t('common.default')" @change="formatCronForSave" />
                 </div>
                 <div class="p-field" v-if="scheduling.repeatInterval === 'month'">
                     <label for="months" class="kn-material-input-label"> {{ $t('cron.inMonth') }} </label>
-                    <MultiSelect id="months" class="kn-material-input p-mx-2" style="max-width:8rem" v-model="scheduling.monthsSelected" :options="months" optionLabel="label" optionValue="value" :placeholder="$t('common.default')" />
+                    <MultiSelect id="months" class="kn-material-input p-mx-2" style="max-width:8rem" v-model="scheduling.monthsSelected" :options="months" optionLabel="label" optionValue="value" :placeholder="$t('common.default')" @change="formatCronForSave" />
                 </div>
                 <div class="p-field" v-if="scheduling.repeatInterval === 'day' || scheduling.repeatInterval === 'month'">
                     <label for="days" class="kn-material-input-label  "> {{ $t('cron.inDay') }} </label>
-                    <MultiSelect id="days" class="kn-material-input p-mx-2" style="max-width:8rem" v-model="scheduling.daysSelected" :options="days" :placeholder="$t('common.default')" />
+                    <MultiSelect id="days" class="kn-material-input p-mx-2" style="max-width:8rem" v-model="scheduling.daysSelected" :options="days" :placeholder="$t('common.default')" @change="formatCronForSave" />
                 </div>
                 <div class="p-field" v-if="scheduling.repeatInterval && scheduling.repeatInterval != 'minute'">
                     <label for="hours" class="kn-material-input-label"> {{ $t('cron.inHour') }}</label>
-                    <MultiSelect id="hours" class="kn-material-input p-mx-2" style="max-width:8rem" v-model="scheduling.hoursSelected" :options="hours" :placeholder="$t('common.default')" />
+                    <MultiSelect id="hours" class="kn-material-input p-mx-2" style="max-width:8rem" v-model="scheduling.hoursSelected" :options="hours" :placeholder="$t('common.default')" @change="formatCronForSave" />
                 </div>
                 <div class="p-field p-ml-2" v-if="scheduling.repeatInterval">
                     <label for="minutes" class="kn-material-input-label"> {{ $t('cron.inMinute') }} </label>
-                    <MultiSelect id="minutes" class="kn-material-input p-mx-2" style="max-width:8rem" v-model="scheduling.minutesSelected" :options="minutes" :placeholder="$t('common.default')" />
+                    <MultiSelect id="minutes" class="kn-material-input p-mx-2" style="max-width:8rem" v-model="scheduling.minutesSelected" :options="minutes" :placeholder="$t('common.default')" @change="formatCronForSave" />
                 </div>
+            </div>
+            <div id="next-schedulation-container" v-if="nextSchedulation" class="p-mt-5">
+                <Message severity="info" :closable="false">
+                    {{ $t('managers.datasetManagement.scheduling') }}: {{ prettyCron.toString(nextSchedulation) }}
+                    <p></p>
+                    {{ $t('cron.nextExecution') }}: {{ prettyCron.getNext(nextSchedulation) }}
+                </Message>
             </div>
         </template>
     </Card>
@@ -87,9 +94,10 @@ import Calendar from 'primevue/calendar'
 import MultiSelect from 'primevue/multiselect'
 import knCronDescriptor from '@/components/UI/KnCron/KnCronDescriptor.json'
 import Dropdown from 'primevue/dropdown'
+import Message from 'primevue/message'
 
 export default defineComponent({
-    components: { Card, Calendar, MultiSelect, Dropdown },
+    components: { Card, Calendar, MultiSelect, Dropdown, Message },
     props: {
         selectedDataset: { type: Object as any },
         schedulingData: { type: Object as any }
@@ -121,6 +129,7 @@ export default defineComponent({
             prettyCron: require('prettycron'),
             dataset: {} as any,
             scheduling: {} as any,
+            nextSchedulation: null as any,
             minutes: Array.from(Array(60).keys()).map(String),
             hours: Array.from(Array(24).keys()).map(String),
             days: Array.from({ length: 31 }, (_, i) => i + 1).map(String),
@@ -150,21 +159,22 @@ export default defineComponent({
         }
     },
     created() {
-        this.dataset = this.selectedDataset
-        this.scheduling = this.schedulingData
+        this.loadData()
         this.deparseScheduling()
-        console.log(this.prettyCron.toString('37 10 * * * *'))
     },
     watch: {
         selectedDataset() {
-            this.dataset = this.selectedDataset
-            this.scheduling = this.schedulingData
+            this.loadData()
             this.deparseScheduling()
-            console.log(this.prettyCron.toString('37 10 * * * *'))
         }
     },
 
     methods: {
+        loadData() {
+            this.dataset = this.selectedDataset
+            this.scheduling = this.schedulingData
+            this.nextSchedulation = this.selectedDataset.schedulingCronLine
+        },
         deparseScheduling() {
             var cronNoSeconds = ''
 
@@ -204,6 +214,44 @@ export default defineComponent({
                 this.scheduling.repeatInterval = customCheck
             } else {
                 this.scheduling[valueToSet] = []
+            }
+        },
+        formatCronForSave() {
+            if (this.dataset.isScheduled) {
+                if (this.dataset.startDate == null) {
+                    this.dataset.startDate = new Date()
+                }
+                var repeatInterval = this.scheduling.repeatInterval
+
+                var minutesForCron = this.stringifySchedulingValues(this.scheduling.minutesSelected && this.scheduling.minutesSelected.length != 0, 'minutesSelected')
+                var hoursForCron = this.stringifySchedulingValues(repeatInterval != 'minute' && this.scheduling.hoursSelected && this.scheduling.hoursSelected.length != 0, 'hoursSelected')
+                var daysForCron = this.stringifySchedulingValues((repeatInterval === 'day' || repeatInterval === 'month') && this.scheduling.daysSelected.length != 0, 'daysSelected')
+                var monthsForCron = this.stringifySchedulingValues(repeatInterval === 'month' && this.scheduling.monthsSelected.length != 0, 'monthsSelected')
+                var weekdaysForCron = this.stringifySchedulingValues(repeatInterval === 'week' && this.scheduling.weekdaysSelected.length != 0, 'weekdaysSelected')
+
+                if (daysForCron == '*' && weekdaysForCron != '*') {
+                    daysForCron = '?'
+                } else {
+                    weekdaysForCron = '?'
+                }
+
+                this.nextSchedulation = minutesForCron + ' ' + hoursForCron + ' ' + daysForCron + ' ' + monthsForCron + ' ' + weekdaysForCron
+            }
+        },
+        stringifySchedulingValues(condition, selectedValue) {
+            var stringValue = ''
+            if (condition) {
+                for (var i = 0; i < this.scheduling[selectedValue].length; i++) {
+                    stringValue += '' + this.scheduling[selectedValue][i]
+
+                    if (i < this.scheduling[selectedValue].length - 1) {
+                        stringValue += ','
+                    }
+                }
+                return stringValue
+            } else {
+                stringValue = '*'
+                return stringValue
             }
         }
     }

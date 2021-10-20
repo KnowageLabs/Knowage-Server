@@ -145,7 +145,6 @@ export default defineComponent({
         uploadDatasetFile(event) {
             this.uploading = true
             let uploadedFile = event.target.files[0]
-            console.log(uploadedFile)
             if (uploadedFile.name.includes(this.dataset.fileName)) {
                 this.$store.commit('setError', { title: 'Same File', msg: 'Cannot upload same file, is this warning ok?' })
                 this.triggerUpload = false
@@ -214,7 +213,7 @@ export default defineComponent({
                         } else {
                             this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
                             if (response.headers) {
-                                downloadDirect(response.data, this.createCompleteFileName(response), 'application/json; text/plain, */*')
+                                downloadDirect(response.data, this.createCompleteFileName(response), response.headers['content-type'])
                             }
                         }
                     },
@@ -249,7 +248,6 @@ export default defineComponent({
                     })
 
                     this.rows = response.data.rows
-                    console.log(this.rows)
                 })
                 .catch()
                 .finally(() => (this.loading = false))

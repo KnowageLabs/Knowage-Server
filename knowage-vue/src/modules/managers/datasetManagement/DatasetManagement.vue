@@ -171,8 +171,12 @@ export default defineComponent({
                         .then(() => {
                             this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                             this.loading = true
+
                             this.getDatasets()
-                            if (event.item.id == this.$route.params.id) this.$router.push('/dataset-management')
+                            if (event.item.id == this.$route.params.id) {
+                                this.$router.push('/dataset-management')
+                                this.touched = false
+                            }
                         })
                         .catch()
                 }
