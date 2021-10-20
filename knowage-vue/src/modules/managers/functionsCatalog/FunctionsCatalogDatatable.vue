@@ -1,5 +1,6 @@
 <template>
     <DataTable
+        id="functions-datatable"
         :value="filteredFunctions"
         :paginator="true"
         :rows="functionsCatalogDatatableDescriptor.rows"
@@ -26,7 +27,7 @@
                 </span>
             </div>
         </template>
-        <Column class="kn-truncated" :style="col.style" v-for="col of functionsCatalogDatatableDescriptor.columns" :header="$t(col.header)" :key="col.field" :sortable="true">
+        <Column class="kn-truncated" :style="col.style" v-for="col of functionsCatalogDatatableDescriptor.columns" :header="$t(col.header)" :key="col.field" :sortField="col.field" :sortable="true">
             <template #body="slotProps">
                 <span v-tooltip.top="slotProps.data[col.field]"> {{ slotProps.data[col.field] }}</span>
             </template>
@@ -128,7 +129,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 #noFunctionsFound {
     margin: 0 auto;
     border: 1px solid rgba(204, 204, 204, 0.6);
@@ -138,5 +139,9 @@ export default defineComponent({
     text-transform: uppercase;
     font-size: 0.8rem;
     width: 80%;
+}
+
+#functions-datatable .p-datatable-wrapper {
+    height: auto;
 }
 </style>

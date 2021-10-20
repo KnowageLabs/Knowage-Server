@@ -1,6 +1,6 @@
 <template>
     <div class="kn-page">
-        <div class="kn-page-content p-grid p-m-0">
+        <div class="">
             <div class="p-col p-p-0">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
                     <template #left>
@@ -17,8 +17,10 @@
             </div>
         </div>
 
-        <FunctionsCatalogDetail v-show="detailDialogVisible" :visible="detailDialogVisible" :propFunction="selectedFunction" :functionTypes="filters" @close="onDetailClose" @created="onCreated"></FunctionsCatalogDetail>
-        <FunctionsCatalogPreviewDialog :visible="previewDialogVisible" :propFunction="selectedFunction" :datasets="datasets" @close="onPreviewClose"></FunctionsCatalogPreviewDialog>
+        <div class="kn-page-content">
+            <FunctionsCatalogDetail v-show="detailDialogVisible" :visible="detailDialogVisible" :propFunction="selectedFunction" :functionTypes="filters" @close="onDetailClose" @created="onCreated"></FunctionsCatalogDetail>
+            <FunctionsCatalogPreviewDialog :visible="previewDialogVisible" :propFunction="selectedFunction" :datasets="datasets" @close="onPreviewClose"></FunctionsCatalogPreviewDialog>
+        </div>
     </div>
 </template>
 
