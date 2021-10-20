@@ -4,7 +4,7 @@ import AccordionTab from 'primevue/accordiontab'
 import InputText from 'primevue/inputtext'
 import SchedulerSnapshotAccordion from './SchedulerSnapshotAccordion.vue'
 
-const mockedDocument = { id: 3211, label: 'DM_PromotionMap_file', name: 'USA MAP ', description: 'USA MAP (file dataset)', engine: 'knowagegisengine', parameters: [], saveasfile: true, invalid: true, saveassnapshot: true, snapshotname: '' }
+const mockedDocument = { id: 3211, label: 'DM_PromotionMap_file', name: 'USA MAP ', description: 'USA MAP (file dataset)', engine: 'knowagegisengine', parameters: [], saveasfile: true, invalid: {}, saveassnapshot: true, snapshotname: '' }
 
 const factory = () => {
     return mount(SchedulerSnapshotAccordion, {

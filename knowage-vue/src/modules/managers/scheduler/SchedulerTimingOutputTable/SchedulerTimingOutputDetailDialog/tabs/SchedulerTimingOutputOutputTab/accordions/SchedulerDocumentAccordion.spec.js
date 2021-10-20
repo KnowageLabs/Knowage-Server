@@ -16,7 +16,7 @@ const mockedDocument = {
     engine: 'knowagebirtreporteng',
     parameters: ['Brand Name', 'Product Category', 'Age Range', 'Product hierarchy'],
     saveasdocument: true,
-    invalid: false,
+    invalid: {},
     documentname: '',
     useFixedFolder: false,
     funct: []

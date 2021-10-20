@@ -4,7 +4,7 @@ import AccordionTab from 'primevue/accordiontab'
 import InputText from 'primevue/inputtext'
 import SchedulerJavaClassAccordion from './SchedulerJavaClassAccordion.vue'
 
-const mockedDocument = { id: 3211, label: 'DM_PromotionMap_file', name: 'USA MAP ', description: 'USA MAP (file dataset)', engine: 'knowagegisengine', parameters: [], sendtojavaclass: true, javaclasspath: '', invalid: true }
+const mockedDocument = { id: 3211, label: 'DM_PromotionMap_file', name: 'USA MAP ', description: 'USA MAP (file dataset)', engine: 'knowagegisengine', parameters: [], sendtojavaclass: true, javaclasspath: '', invalid: {} }
 
 const factory = () => {
     return mount(SchedulerJavaClassAccordion, {

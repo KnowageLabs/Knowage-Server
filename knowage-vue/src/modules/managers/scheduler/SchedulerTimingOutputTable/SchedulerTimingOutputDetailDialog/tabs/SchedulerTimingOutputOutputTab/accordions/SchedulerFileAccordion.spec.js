@@ -13,7 +13,7 @@ const mockedDocument = {
     engine: 'knowagegisengine',
     parameters: [],
     saveasfile: true,
-    invalid: true,
+    invalid: {},
     fileName: '',
     zipFileDocument: false,
     zipFileName: ''

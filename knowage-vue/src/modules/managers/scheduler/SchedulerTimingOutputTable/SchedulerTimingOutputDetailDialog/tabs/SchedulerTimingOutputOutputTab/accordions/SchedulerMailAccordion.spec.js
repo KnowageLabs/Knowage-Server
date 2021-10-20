@@ -17,7 +17,7 @@ const mockedDocument = {
     parameters: ['Brand Name', 'Product Category', 'Age Range', 'Product hierarchy'],
     sendmail: true,
     useFixedRecipients: true,
-    invalid: true,
+    invalid: {},
     mailtos: '',
     useDataset: false,
     datasetLabel: '',
