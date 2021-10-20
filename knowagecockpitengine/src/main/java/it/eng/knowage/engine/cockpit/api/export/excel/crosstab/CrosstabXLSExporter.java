@@ -33,6 +33,9 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.CellType;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.MeasureInfo;
@@ -137,13 +140,24 @@ public class CrosstabXLSExporter {
 		CellStyle dimensionCellStyle = this.buildDimensionCellStyle(sheet);
 
 		// build headers for column first ...
+		Monitor buildColumnsHeaderMonitor = MonitorFactory.start("CockpitEngine.CrossTabXLSExporter.buildColumnsHeaderMonitor");
 		buildColumnsHeader(sheet, cs, cs.getColumnsRoot().getChildren(), startRow, rowsDepth - 1, createHelper, locale, memberCellStyle, dimensionCellStyle, 0);
-		// ... then build headers for rows ....
-		buildRowsHeaders(sheet, cs, cs.getRowsRoot().getChildren(), columnsDepth - 1 + startRow, 0, createHelper, locale, memberCellStyle);
-		// then put the matrix data
-		buildDataMatrix(sheet, cs, columnsDepth + startRow - 1, rowsDepth - 1, createHelper, measureFormatter);
+		buildColumnsHeaderMonitor.stop();
 
+		// ... then build headers for rows ....
+		Monitor buildRowsHeaderMonitor = MonitorFactory.start("CockpitEngine.CrossTabXLSExporter.buildRowsHeaderMonitor");
+		buildRowsHeaders(sheet, cs, cs.getRowsRoot().getChildren(), columnsDepth - 1 + startRow, 0, createHelper, locale, memberCellStyle);
+		buildRowsHeaderMonitor.stop();
+
+		// then put the matrix data
+		Monitor buildDataMatrixMonitor = MonitorFactory.start("CockpitEngine.CrossTabXLSExporter.buildDataMatrixMonitor");
+		buildDataMatrix(sheet, cs, columnsDepth + startRow - 1, rowsDepth - 1, createHelper, measureFormatter);
+		buildDataMatrixMonitor.stop();
+
+		// finally add row titles
+		Monitor buildRowHeaderTitleMonitor = MonitorFactory.start("CockpitEngine.CrossTabXLSExporter.buildRowHeaderTitleMonitor");
 		buildRowHeaderTitle(sheet, cs, columnsDepth - 2, 0, startRow, createHelper, locale, dimensionCellStyle);
+		buildRowHeaderTitleMonitor.stop();
 
 		return startRow + totalRowsNumber;
 	}
