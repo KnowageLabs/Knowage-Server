@@ -50,6 +50,7 @@
                     </template>
                     <Column :expander="true" :headerStyle="glossaryUsageLinkCardDescriptor.expanderHeaderStyle" />
                     <Column class="kn-truncated" v-for="col of glossaryUsageLinkCardDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"></Column>
+                    <Column v-if="showModelColumn" class="kn-truncated" field="model" :header="'model'" :sortable="true"></Column>
                 </DataTable>
                 <div class="kn-flex" v-if="selectedItem && selectedItem.id && selectedItem.itemType !== 'document'">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary">
@@ -82,6 +83,7 @@ export default defineComponent({
     props: {
         title: { type: String },
         items: { type: Array },
+        showModelColumn: { type: Boolean },
         words: { type: Object },
         treeWords: { type: Object }
     },

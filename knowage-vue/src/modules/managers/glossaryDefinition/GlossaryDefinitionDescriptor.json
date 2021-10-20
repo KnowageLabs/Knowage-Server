@@ -12,6 +12,7 @@
         "sbi.glossary.content.duplicate.content": "managers.glossary.glossaryDefinition.duplicateContent",
         "sbi.glossary.content.duplicate.node": "managers.glossary.glossaryDefinition.duplicateNode",
         "sbi.glossary.new.name.duplicate": "managers.glossary.glossaryDefinition.duplicateGlossaryName",
-        "sbi.glossary.word": "managers.glossary.common.word"
+        "sbi.glossary.word": "managers.glossary.common.word",
+        "sbi.glossary.content.load.error": "managers.glossary.glossaryDefinition.contentLoadError"
     }
 }

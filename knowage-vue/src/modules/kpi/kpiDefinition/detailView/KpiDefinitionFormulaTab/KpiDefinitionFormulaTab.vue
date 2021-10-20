@@ -1,6 +1,12 @@
 <template>
     <Message severity="info" v-if="showGuide" @close="$emit('onGuideClose')">{{ $t('kpi.kpiDefinition.formulaTabInstructions') }}</Message>
     <VCodeMirror v-if="!loading" ref="codeMirror" class="CodeMirrorMathematica" v-model:value="kpi.definition.formula" :autoHeight="true" :options="codeMirrorOptions" @keyup="onKeyUp" @mousedown="onMouseDown" />
+    <div v-if="kpi.author">
+        <span class="p-m-1"
+            ><b>{{ $t('common.author') }}</b></span
+        >
+        :<span class="p-m-1">{{ kpi.author }}</span>
+    </div>
 
     <Dialog class="kn-dialog--toolbar--primary importExportDialog" footer="footer" v-bind:visible="functionDialogVisible" :closable="false" modal>
         <template #header>

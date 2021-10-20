@@ -619,7 +619,7 @@
                 "driver": "Driver",
                 "errorTitle": "Connection KO",
                 "jndi": "JNDI Name",
-                "jndiInfo": "For the data source configuration you should specify the connection pool configured inside the application server. For example: Tomcat: java:comp/env/jdbc/foodmart; JBoss: jdbc/foodmart.",
+                "jndiInfo": "For the data source configuration you should specify the connection pool configured inside the application server. For example: java:comp/env/jdbc/foodmart",
                 "multischema": "Multischema",
                 "notOwner": "You are not the owner of this data source.",
                 "pwd": "Password (Only If Changed)",
@@ -700,6 +700,7 @@
                 "addNode": "Add node",
                 "addWord": "Add word",
                 "cloneTitle": "Clone a Glossary",
+                "contentLoadError": "Generic error. System was unable to load the node.",
                 "deleteNodeConfirmMessage": "Deleting a node all the underlying node (if present) will be deleted. Continue?",
                 "details": "Details",
                 "duplicateContent": "Adding two or more nodes with the same name under a single node is not allowed.",
@@ -1177,7 +1178,7 @@
             "productTypes": {
                 "title": "Product Types"
             },
-            "tenantSaved": "Tenant updated correctly",
+            "tenantSaved": "Tenant correctly saved. The administrator of the tenant has been created too and his username and password are ",
             "title": "Tenant Management"
         },
         "usersManagement": {
@@ -1241,7 +1242,7 @@
             "ImportExport": "Import/Export",
             "ServerManager": "Server manager"
         },
-        "importExport": "Import/Export",
+        "importExport": "Artifacts",
         "modelCatalogResourceManagement": "Models manager",
         "resourceManagement": "Resource manager"
     },

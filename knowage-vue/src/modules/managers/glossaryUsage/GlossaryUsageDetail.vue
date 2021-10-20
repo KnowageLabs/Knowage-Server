@@ -15,7 +15,7 @@
                 <GlossaryUsageNavigationCard class="p-m-2" :type="'table'" :items="tables" @infoClicked="showTableInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onTablesSelected"></GlossaryUsageNavigationCard>
             </div>
         </div>
-        <GlossaryUsageLinkCard v-else :title="linkTableTitle" class="p-m-2" :items="linkTableItems" :words="selectedLinkItemWords" :treeWords="selectedLinkItemTree" @close="onLinkTableClose" @selected="onLinkItemSelect"></GlossaryUsageLinkCard>
+        <GlossaryUsageLinkCard v-else :title="linkTableTitle" class="p-m-2" :items="linkTableItems" :words="selectedLinkItemWords" :treeWords="selectedLinkItemTree" :showModelColumn="showModelColumn" @close="onLinkTableClose" @selected="onLinkItemSelect"></GlossaryUsageLinkCard>
     </div>
 </template>
 
@@ -48,6 +48,7 @@ export default defineComponent({
             linkTableItems: [] as iLinkTableItem[],
             selectedLinkItemWords: {} as any,
             selectedLinkItemTree: {} as any,
+            showModelColumn: false,
             loading: false
         }
     },
@@ -183,6 +184,7 @@ export default defineComponent({
         },
         async loadDocuments() {
             this.linkTableItems = []
+            this.showModelColumn = false
             this.loading = true
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/listDocument?Page=1&ItemPerPage=&label=&scope=GLOSSARY')
@@ -203,6 +205,7 @@ export default defineComponent({
         },
         async loadDatasets() {
             this.linkTableItems = []
+            this.showModelColumn = false
             this.loading = true
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasets/?asPagedList=true&Page=1&ItemPerPage=&label=')
@@ -224,6 +227,7 @@ export default defineComponent({
         },
         async loadBusinessClasses() {
             this.linkTableItems = []
+            this.showModelColumn = true
             this.loading = true
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/metaBC/listMetaBC?Page=1&ItemPerPage=&label=')
@@ -235,7 +239,8 @@ export default defineComponent({
                             description: '',
                             type: '',
                             author: '',
-                            itemType: 'businessClass'
+                            itemType: 'businessClass',
+                            model: el.model
                         })
                     )
                     this.showLinkTable(this.$t('managers.glossary.glossaryUsage.businessClass'))
@@ -244,6 +249,7 @@ export default defineComponent({
         },
         async loadTables() {
             this.linkTableItems = []
+            this.showModelColumn = false
             this.loading = true
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/metaTable/listMetaTable?Page=1&ItemPerPage=&label=')

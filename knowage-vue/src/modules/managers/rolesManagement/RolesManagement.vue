@@ -108,7 +108,7 @@ export default defineComponent({
         },
         async deleteRole(roleId: number) {
             await axios
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/' + roleId)
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/' + roleId, { headers: { 'X-Disable-Errors': true } })
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
