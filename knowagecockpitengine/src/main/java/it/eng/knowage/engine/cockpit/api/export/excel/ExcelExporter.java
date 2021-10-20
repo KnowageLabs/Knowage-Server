@@ -624,7 +624,7 @@ public class ExcelExporter {
 			tsCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(TIMESTAMP_FORMAT));
 
 			// cell styles for table widget
-			CellStyle[] columnStyles = getColumnsStyles(wb, createHelper, columnsOrdered, widgetContent);
+			JSONObject[] columnStyles = getColumnsStyles(wb, createHelper, columnsOrdered.length(), widgetContent);
 
 			// FILL RECORDS
 			int isGroup = mapGroupsAndColumns.isEmpty() ? 0 : 1;
@@ -638,7 +638,7 @@ public class ExcelExporter {
 
 				for (int c = 0; c < columnsOrdered.length(); c++) {
 					JSONObject column = columnsOrdered.getJSONObject(c);
-					String type = column.getString("type");
+					String type = getCellType(column, column.getString("name"), columnStyles[c]);
 					String colIndex = column.getString("name"); // column_1, column_2, column_3...
 
 					Cell cell = row.createCell(c);
@@ -654,13 +654,13 @@ public class ExcelExporter {
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
 							}
-							cell.setCellStyle(columnStyles[c] != null ? columnStyles[c] : intCellStyle);
+							cell.setCellStyle(getCellStyle(wb, createHelper, column.getString("name"), columnStyles[c], intCellStyle));
 							break;
 						case "float":
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
 							}
-							cell.setCellStyle(columnStyles[c] != null ? columnStyles[c] : floatCellStyle);
+							cell.setCellStyle(getCellStyle(wb, createHelper, column.getString("name"), columnStyles[c], floatCellStyle));
 							break;
 						case "date":
 							try {
@@ -699,30 +699,58 @@ public class ExcelExporter {
 		}
 	}
 
-	private CellStyle[] getColumnsStyles(Workbook wb, CreationHelper helper, JSONArray columnsOrdered, JSONObject widgetContent) {
+	private String getCellType(JSONObject column, String colName, JSONObject colStyle) {
 		try {
-			CellStyle[] toReturn = new CellStyle[columnsOrdered.length() + 10];
-			JSONArray columns = widgetContent.getJSONArray("columnSelectedOfDataset");
-			for (int i = 0; i < columns.length(); i++) {
-				JSONObject col = columns.getJSONObject(i);
-				if (col.has("style") && col.getJSONObject("style").has("precision")) {
-					int precision = col.getJSONObject("style").getInt("precision");
-					String format = "#,##0";
-					if (precision > 0) {
-						format += ".";
-						for (int j = 0; j < precision; j++) {
-							format += "0";
-						}
-					}
-					CellStyle cellStyle = wb.createCellStyle();
-					cellStyle.setDataFormat(helper.createDataFormat().getFormat(format));
-					toReturn[i] = cellStyle;
+			String toReturn = column.getString("type");
+			if (colStyle != null && colStyle.has("asString")) {
+				if (colStyle.getBoolean("asString")) {
+					toReturn = "string";
 				}
 			}
 			return toReturn;
 		} catch (Exception e) {
-			logger.error("Error while retrieving table columns formatting.", e);
-			return new CellStyle[columnsOrdered.length() + 10];
+			logger.error("Error while retrieving column {" + colName + "} type. It will be treated as string.", e);
+			return "string";
+		}
+	}
+	
+	private CellStyle getCellStyle(Workbook wb, CreationHelper helper, String colName, JSONObject colStyle, CellStyle defaultStyle) {
+		try {
+			CellStyle toReturn = defaultStyle;
+			if (colStyle != null && colStyle.has("precision")) {
+				int precision = colStyle.getInt("precision");
+				String format = "#,##0";
+				if (precision > 0) {
+					format += ".";
+					for (int j = 0; j < precision; j++) {
+						format += "0";
+					}
+				}
+				CellStyle cellStyle = wb.createCellStyle();
+				cellStyle.setDataFormat(helper.createDataFormat().getFormat(format));
+				toReturn = cellStyle;
+			}
+			return toReturn;
+		} catch (Exception e) {
+			logger.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
+			return defaultStyle;
+		}
+	}
+
+	private JSONObject[] getColumnsStyles(Workbook wb, CreationHelper helper, int numCols, JSONObject widgetContent) {
+		try {
+			JSONObject[] toReturn = new JSONObject[numCols + 10];
+			JSONArray columns = widgetContent.getJSONArray("columnSelectedOfDataset");
+			for (int i = 0; i < columns.length(); i++) {
+				JSONObject col = columns.getJSONObject(i);
+				if (col.has("style")) {
+					toReturn[i] = col.getJSONObject("style");
+				}
+			}
+			return toReturn;
+		} catch (Exception e) {
+			logger.error("Error while retrieving table columns styles.", e);
+			return new JSONObject[numCols + 10];
 		}
 	}
 
