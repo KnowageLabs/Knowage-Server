@@ -109,6 +109,9 @@ export default defineComponent({
     methods: {
         loadFunction() {
             this.selectedFunction = this.propFunction as iFunction
+            if (this.selectedFunction.tags && this.selectedFunction.tags[0] === '') {
+                this.selectedFunction.tags = []
+            }
         }
     }
 })
