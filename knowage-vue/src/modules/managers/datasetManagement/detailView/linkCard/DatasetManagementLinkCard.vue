@@ -19,7 +19,7 @@
                 <template #option="slotProps">
                     <div class="kn-list-item" @click="addTableToSelectedList(slotProps.option)">
                         <div class="kn-list-item-text">
-                            <span>{{ slotProps.option }}</span>
+                            <span>{{ slotProps.option.name }}</span>
                         </div>
                     </div>
                 </template>
@@ -36,7 +36,7 @@
                 <template #option="slotProps">
                     <div class="kn-list-item" @click="removeTableFromSelectedList(slotProps.option)">
                         <div class="kn-list-item-text">
-                            <span>{{ slotProps.option }}</span>
+                            <span>{{ slotProps.option.name }}</span>
                         </div>
                     </div>
                 </template>

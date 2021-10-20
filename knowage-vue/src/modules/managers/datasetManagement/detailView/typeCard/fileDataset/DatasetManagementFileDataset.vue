@@ -70,20 +70,22 @@
         </template>
     </Card>
 
-    <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
-        <template #left>
-            <Button v-if="!expandTableCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = true" />
-            <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = false" />
-            {{ $t('managers.lovsManagement.preview') }}
-        </template>
-    </Toolbar>
-    <Card v-show="expandTableCard">
-        <template #content>
-            <DataTable :value="rows" class="p-datatable-sm kn-table" :loading="loading" responsiveLayout="scroll" :scrollable="true" scrollDirection="both" scrollHeight="800px" stripedRows rowHover style="width:70vw">
-                <Column v-for="col of columns" :field="col.name" :header="col.header" :key="col.dataIndex" class="kn-truncated" style="width:250px" />
-            </DataTable>
-        </template>
-    </Card>
+    <div id="preview-container" v-if="rows.length > 0">
+        <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
+            <template #left>
+                <Button v-if="!expandTableCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = true" />
+                <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = false" />
+                {{ $t('managers.lovsManagement.preview') }}
+            </template>
+        </Toolbar>
+        <Card v-show="expandTableCard">
+            <template #content>
+                <DataTable :value="rows" class="p-datatable-sm kn-table" :loading="loading" responsiveLayout="scroll" :scrollable="true" scrollDirection="both" scrollHeight="800px" stripedRows rowHover style="width:70vw">
+                    <Column v-for="col of columns" :field="col.name" :header="col.header" :key="col.dataIndex" class="kn-truncated" style="width:250px" />
+                </DataTable>
+            </template>
+        </Card>
+    </div>
 </template>
 
 <script lang="ts">

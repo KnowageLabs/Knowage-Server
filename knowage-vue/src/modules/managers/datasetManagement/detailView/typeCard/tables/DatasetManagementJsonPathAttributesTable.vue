@@ -14,6 +14,9 @@
     <Card v-show="expandTableCard">
         <template #content>
             <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.restJsonPathAttributes" :scrollable="true" scrollHeight="250px" dataKey="versNum" responsiveLayout="stack" breakpoint="960px">
+                <template #empty>
+                    {{ $t('managers.datasetManagement.tableEmpty') }}
+                </template>
                 <Column field="name" :header="$t('kpi.alert.name')" :sortable="true">
                     <template #editor="{data}">
                         <InputText class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.name" />
@@ -25,10 +28,18 @@
                     </template>
                 </Column>
                 <Column field="typeOrJsonPathValue" :header="$t('managers.datasetManagement.typeOrJsonPathValue')" :sortable="true">
+                    <template #body="slotProps">
+                        {{ slotProps.data.jsonPathType }}
+                    </template>
                     <template #editor="{data}">
                         <Dropdown id="scope" class="kn-material-input" :style="tableDescriptor.style.columnStyle" :options="jsonPathTypes" v-model="data.jsonPathType" />
                     </template>
                 </Column>
+                <!-- <Column field="typeOrJsonPathValue" :header="$t('managers.datasetManagement.typeOrJsonPathValue')" :sortable="true">
+                    <template #editor="{data}">
+                        <Dropdown id="scope" class="kn-material-input" :style="tableDescriptor.style.columnStyle" :options="jsonPathTypes" v-model="data.jsonPathType" />
+                    </template>
+                </Column> -->
                 <Column @rowClick="false">
                     <template #body="slotProps">
                         <Button icon="pi pi-trash" class="p-button-link" @click="deleteParam(slotProps)" />
@@ -69,7 +80,7 @@ export default defineComponent({
         return {
             tableDescriptor,
             dataset: {} as any,
-            expandTableCard: true,
+            expandTableCard: false,
             datasetParamTypes: tableDescriptor.datasetParamTypes,
             jsonPathTypes: tableDescriptor.jsonPathTypes,
             helpDialogVisible: false

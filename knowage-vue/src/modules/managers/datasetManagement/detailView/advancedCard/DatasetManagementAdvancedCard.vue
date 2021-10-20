@@ -109,7 +109,7 @@
                         <span>{{ $t('managers.datasetManagement.isScheduled') }}</span>
                     </template>
                 </Toolbar>
-                <KpiCron v-if="dataset.isScheduled" :frequency="frequencyMock" />
+                <DatasetScheduler v-if="dataset.isPersisted && dataset.isScheduled" :selectedDataset="dataset" :schedulingData="schedulingData" />
             </template>
         </Card>
     </div>
@@ -120,17 +120,18 @@ import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import useValidate from '@vuelidate/core'
 import advancedCardDescriptor from './DatasetManagementAdvancedCardDescriptor.json'
+import DatasetScheduler from './DatasetManagementScheduler.vue'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import KpiCron from '@/components/UI/KnCron/KnCron.vue'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
 import InputSwitch from 'primevue/inputswitch'
 
 export default defineComponent({
-    components: { Card, InputSwitch, Checkbox, KpiCron, KnValidationMessages },
+    components: { Card, InputSwitch, Checkbox, KnValidationMessages, DatasetScheduler },
     props: {
         selectedDataset: { type: Object as any },
-        transformationDataset: { type: Object as any }
+        transformationDataset: { type: Object as any },
+        schedulingData: { type: Object as any }
     },
     computed: {
         disablePersist() {
@@ -148,8 +149,7 @@ export default defineComponent({
             dataset: {} as any,
             testInput: 'testinput',
             testCheckbox: true,
-            isTransformable: false,
-            frequencyMock: advancedCardDescriptor.frequencyMock
+            isTransformable: false
         }
     },
     created() {

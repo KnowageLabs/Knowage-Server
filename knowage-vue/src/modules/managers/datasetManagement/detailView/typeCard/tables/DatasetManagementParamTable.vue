@@ -13,6 +13,9 @@
     <Card v-show="expandParamsCard">
         <template #content>
             <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.pars" :scrollable="true" scrollHeight="250px" dataKey="versNum" responsiveLayout="stack" breakpoint="960px">
+                <template #empty>
+                    {{ $t('managers.datasetManagement.tableEmpty') }}
+                </template>
                 <Column field="name" :header="$t('kpi.alert.name')" :sortable="true">
                     <template #editor="{data}">
                         <InputText class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.name" />

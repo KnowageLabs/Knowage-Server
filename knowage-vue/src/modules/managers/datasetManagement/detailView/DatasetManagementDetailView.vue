@@ -63,7 +63,7 @@
                 <template #header>
                     <span>{{ $t('cron.advanced') }}</span>
                 </template>
-                <AdvancedCard :selectedDataset="selectedDataset" :transformationDataset="transformationDataset" @touched="$emit('touched')" />
+                <AdvancedCard :selectedDataset="selectedDataset" :transformationDataset="transformationDataset" :schedulingData="scheduling" @touched="$emit('touched')" />
             </TabPanel>
         </TabView>
 
@@ -125,6 +125,9 @@ export default defineComponent({
             tablesToRemove: [] as any,
             selectedDataset: {} as any,
             selectedDatasetVersions: [] as any,
+            scheduling: {
+                repeatInterval: null as String | null
+            } as any,
             touched: false,
             loading: false,
             loadingVersion: false,
@@ -211,6 +214,8 @@ export default defineComponent({
             dsToSave.meta ? (dsToSave.meta = await this.manageDatasetFieldMetadata(dsToSave.meta)) : (dsToSave.meta = [])
             dsToSave.recalculateMetadata = true
 
+            dsToSave.isScheduled ? (dsToSave.schedulingCronLine = await this.formatCronForSave()) : ''
+
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/`, dsToSave, {
                     headers: {
@@ -292,6 +297,52 @@ export default defineComponent({
                 }
             }
             return array
+        },
+        async formatCronForSave() {
+            if (this.selectedDataset.isScheduled) {
+                if (this.selectedDataset.startDate == null) {
+                    this.selectedDataset.startDate = new Date()
+                }
+                var repeatInterval = this.scheduling.repeatInterval
+                var finalCronString = ''
+                var secondsForCron = 0
+
+                var minutesForCron = this.stringifySchedulingValues(this.scheduling.minutesSelected && this.scheduling.minutesSelected.length != 0, 'minutesSelected')
+                var hoursForCron = this.stringifySchedulingValues(repeatInterval != 'minute' && this.scheduling.hoursSelected && this.scheduling.hoursSelected.length != 0, 'hoursSelected')
+                var daysForCron = this.stringifySchedulingValues((repeatInterval === 'day' || repeatInterval === 'month') && this.scheduling.daysSelected.length != 0, 'daysSelected')
+                var monthsForCron = this.stringifySchedulingValues(repeatInterval === 'month' && this.scheduling.monthsSelected.length != 0, 'monthsSelected')
+                var weekdaysForCron = this.stringifySchedulingValues(repeatInterval === 'week' && this.scheduling.weekdaysSelected.length != 0, 'weekdaysSelected')
+
+                if (daysForCron == '*' && weekdaysForCron != '*') {
+                    daysForCron = '?'
+                } else {
+                    weekdaysForCron = '?'
+                }
+
+                finalCronString = minutesForCron + ' ' + hoursForCron + ' ' + daysForCron + ' ' + monthsForCron + ' ' + weekdaysForCron
+
+                // this.scheduling.cronDescriptionDate = prettyCron.toString(finalCronString)
+                // this.scheduling.cronDescriptionTime = prettyCron.getNext(finalCronString)
+
+                console.log(secondsForCron + ' ' + finalCronString)
+                return secondsForCron + ' ' + finalCronString
+            }
+        },
+        stringifySchedulingValues(condition, selectedValue) {
+            var stringValue = ''
+            if (condition) {
+                for (var i = 0; i < this.scheduling[selectedValue].length; i++) {
+                    stringValue += '' + this.scheduling[selectedValue][i]
+
+                    if (i < this.scheduling[selectedValue].length - 1) {
+                        stringValue += ','
+                    }
+                }
+                return stringValue
+            } else {
+                stringValue = '*'
+                return stringValue
+            }
         },
         //#endregion ===============================================================================================
 
