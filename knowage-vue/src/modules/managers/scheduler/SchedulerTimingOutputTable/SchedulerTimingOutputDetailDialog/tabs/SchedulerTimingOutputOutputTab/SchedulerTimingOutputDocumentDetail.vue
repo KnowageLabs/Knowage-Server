@@ -1,6 +1,5 @@
 <template>
     <div>
-        {{ document }}
         <div class="p-d-flex p-flex-row p-m-2">
             <div class="p-m-2">
                 <Checkbox v-model="document.saveassnapshot" :binary="true" @change="removeProperty('saveassnapshot')" data-test="snapshot-checkbox" />
