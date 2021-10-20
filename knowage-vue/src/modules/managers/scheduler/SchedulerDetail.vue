@@ -20,7 +20,7 @@
                                 'p-invalid': job.jobName?.length === 0 && jobNameDirty
                             }"
                             maxLength="80"
-                            :disabled="readonly"
+                            :disabled="testReadonly"
                             @blur="jobNameDirty = true"
                             data-test="name-input"
                         />
@@ -60,7 +60,6 @@ export default defineComponent({
             job: null as iPackage | null,
             jobNameDirty: false,
             operation: 'create',
-            readonly: false,
             loading: false
         }
     },
@@ -72,6 +71,9 @@ export default defineComponent({
     computed: {
         saveDisabled(): any {
             return this.job && (!this.job.jobName || this.job.documents?.length === 0 || (this.job.edit && this.job.triggers?.length === 0))
+        },
+        testReadonly(): any {
+            return this.job && this.job.edit ? true : false
         }
     },
     created() {
@@ -80,8 +82,6 @@ export default defineComponent({
     methods: {
         loadJob() {
             this.job = { ...this.selectedJob } as iPackage
-
-            this.readonly = this.job.edit as any
         },
         setLoading(loading: boolean) {
             this.loading = loading

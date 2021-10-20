@@ -157,7 +157,9 @@ export default defineComponent({
     methods: {
         loadDocument() {
             this.document = this.propDocument
-            this.document.invalid = {}
+
+            this.document.invalid.invalidDocument = false
+
             this.validateDocument(null)
         },
         loadDrivers() {

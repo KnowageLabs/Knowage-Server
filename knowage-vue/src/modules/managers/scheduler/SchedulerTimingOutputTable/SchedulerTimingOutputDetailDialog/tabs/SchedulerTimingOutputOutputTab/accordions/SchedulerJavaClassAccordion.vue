@@ -69,7 +69,7 @@ export default defineComponent({
     methods: {
         loadDocument() {
             this.document = this.propDocument
-            this.document.invalid = {}
+            this.document.invalid.invalidJavaClass = false
             this.validateDocument()
         },
         setJavaClassPathValidation() {
@@ -90,5 +90,9 @@ export default defineComponent({
 
 .name-help {
     font-size: smaller;
+}
+
+.warning-icon {
+    color: orange;
 }
 </style>

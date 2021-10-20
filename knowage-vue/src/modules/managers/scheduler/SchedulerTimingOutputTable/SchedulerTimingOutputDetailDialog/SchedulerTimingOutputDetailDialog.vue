@@ -136,7 +136,7 @@ export default defineComponent({
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/saveTrigger`, formatedTrigger, { headers: { 'X-Disable-Errors': true } })
                 .then((response) => {
                     if (response.data.Errors) {
-                        this.setWarningMessage('default error')
+                        this.setWarningMessage(response.data.Errors[0] ?? 'default error')
                     } else {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.' + this.operation + 'Title'),
@@ -191,7 +191,10 @@ export default defineComponent({
             } else if (formatedTrigger.chrono.type !== 'event') {
                 this.formatCron(formatedTrigger)
             }
-            if (!formatedTrigger.endDateTiming || !formatedTrigger.zonedEndTime) delete formatedTrigger.zonedEndTime
+
+            if (!formatedTrigger.endDateTiming || !formatedTrigger.zonedEndTime) {
+                delete formatedTrigger.zonedEndTime
+            }
 
             this.deleteTriggerProps(formatedTrigger)
             this.formatTriggerDocuments(formatedTrigger)
@@ -209,7 +212,7 @@ export default defineComponent({
 
             if (formatedTrigger.frequency.endDate) {
                 formatedTrigger.zonedEndTime = new Date(this.trigger.frequency.endDate)
-                formatedTrigger.endDateTiming = this.trigger.zonedEndTime
+                formatedTrigger.endDateTiming = formatedTrigger.zonedEndTime
             } else {
                 formatedTrigger.zonedEndtime = null
                 formatedTrigger.endDateTiming = null
@@ -218,7 +221,7 @@ export default defineComponent({
         formatTriggerDocuments(formatedTrigger: any) {
             formatedTrigger.documents.forEach((el: any, index: number) => {
                 el.label = el.name
-                el.labelId = el.id + '__' + (index + 1)
+                el.labelId = el.labelId ?? el.id + '__' + (index + 1)
             })
         }
     }

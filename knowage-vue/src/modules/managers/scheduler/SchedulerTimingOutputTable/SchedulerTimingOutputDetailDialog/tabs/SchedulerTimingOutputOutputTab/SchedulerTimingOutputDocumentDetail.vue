@@ -1,24 +1,25 @@
 <template>
     <div>
+        {{ document }}
         <div class="p-d-flex p-flex-row p-m-2">
             <div class="p-m-2">
-                <Checkbox v-model="document.saveassnapshot" :binary="true" data-test="snapshot-checkbox" />
+                <Checkbox v-model="document.saveassnapshot" :binary="true" @change="removeProperty('saveassnapshot')" data-test="snapshot-checkbox" />
                 <span class="p-ml-2">{{ $t('managers.scheduler.saveAsSnapshot') }}</span>
             </div>
             <div class="p-m-2">
-                <Checkbox v-model="document.saveasfile" :binary="true" data-test="file-checkbox" />
+                <Checkbox v-model="document.saveasfile" :binary="true" @change="removeProperty('saveasfile')" data-test="file-checkbox" />
                 <span class="p-ml-2">{{ $t('managers.scheduler.saveAsFile') }}</span>
             </div>
             <div class="p-m-2">
-                <Checkbox v-model="document.saveasdocument" :binary="true" data-test="document-checkbox" />
+                <Checkbox v-model="document.saveasdocument" :binary="true" @change="removeProperty('saveasdocument')" data-test="document-checkbox" />
                 <span class="p-ml-2">{{ $t('managers.scheduler.saveAsDocument') }}</span>
             </div>
             <div class="p-m-2">
-                <Checkbox v-model="document.sendtojavaclass" :binary="true" data-test="java-checkbox" />
+                <Checkbox v-model="document.sendtojavaclass" :binary="true" @change="removeProperty('sendtojavaclass')" data-test="java-checkbox" />
                 <span class="p-ml-2">{{ $t('managers.scheduler.sendToJavaClass') }}</span>
             </div>
             <div class="p-m-2">
-                <Checkbox v-model="document.sendmail" :binary="true" data-test="mail-checkbox" />
+                <Checkbox v-model="document.sendmail" :binary="true" @change="removeProperty('sendmail')" data-test="mail-checkbox" />
                 <span class="p-ml-2">{{ $t('managers.scheduler.sendMail') }}</span>
             </div>
         </div>
@@ -61,6 +62,34 @@ export default defineComponent({
     methods: {
         loadDocument() {
             this.document = this.propDocument
+            this.document.invalid = {}
+        },
+        removeProperty(propName: string) {
+            if (!this.document[propName]) {
+                delete this.document[propName]
+            }
+
+            if (this.document.invalid) {
+                this.resetInvalid(propName)
+            }
+        },
+        resetInvalid(propName: string) {
+            switch (propName) {
+                case 'saveassnapshot':
+                    this.document.invalid.invalidSnapshot = false
+                    break
+                case 'saveasfile':
+                    this.document.invalid.invalidFile = false
+                    break
+                case 'saveasdocument':
+                    this.document.invalid.invalidDocument = false
+                    break
+                case 'sendtojavaclass':
+                    this.document.invalid.invalidJavaClass = false
+                    break
+                case 'sendmail':
+                    this.document.invalid.invalidMail = false
+            }
         }
     }
 })

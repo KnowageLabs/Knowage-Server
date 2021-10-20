@@ -91,7 +91,7 @@ export default defineComponent({
     methods: {
         loadDocument() {
             this.document = this.propDocument
-            this.document.invalid = {}
+            this.document.invalid.invalidSnapshot = false
             this.validateDocument()
         },
         setNameValidation() {
@@ -108,6 +108,10 @@ export default defineComponent({
 <style lang="scss" scoped>
 #snapshot-name-container {
     flex: 2;
+}
+
+.warning-icon {
+    color: orange;
 }
 
 .name-help {

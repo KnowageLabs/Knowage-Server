@@ -278,7 +278,7 @@ export default defineComponent({
             if (!this.document.useFixedRecipients && !this.document.useExpression && !this.document.useDataset) {
                 this.document.useFixedRecipients = true
             }
-            this.document.invalid = {}
+            this.document.invalid.invalidMail = false
             this.validateDocument(null)
         },
         loadDrivers() {
@@ -346,6 +346,10 @@ export default defineComponent({
 <style lang="scss" scoped>
 #snapshot-name-container {
     flex: 2;
+}
+
+.warning-icon {
+    color: orange;
 }
 
 .max-length-help {

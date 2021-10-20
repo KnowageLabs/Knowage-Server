@@ -35,7 +35,7 @@
                     <div class="p-mx-2 kn-flex">
                         <span>
                             <label class="kn-material-input-label">{{ $t('managers.scheduler.iterations') }}</label>
-                            <Dropdown class="kn-material-input" v-model="parameter.iterative" :options="triggerIterations" optionLabel="label" optionValue="value" @change="parameter.value = ''" />
+                            <Dropdown class="kn-material-input" v-model="parameter.iterative" :options="triggerIterations" optionLabel="label" optionValue="value" />
                         </span>
                     </div>
                 </div>
