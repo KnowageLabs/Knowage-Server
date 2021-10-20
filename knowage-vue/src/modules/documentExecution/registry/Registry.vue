@@ -1,21 +1,21 @@
 <template>
-    <div class="kn-page">
+    <div class="kn-page--full">
+        <Toolbar class="kn-toolbar kn-toolbar--primary">
+            <template #left>
+                {{ $t('documentExecution.registry.title') }}
+            </template>
+            <template #right>
+                <div class="p-d-flex p-flex-row">
+                    <Button class="kn-button p-button-text" @click="saveRegistry">{{ $t('common.save') }}</Button>
+                </div>
+            </template>
+        </Toolbar>
         <div class="kn-page-content p-m-0">
-            <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
-                    {{ $t('documentExecution.registry.title') }}
-                </template>
-                <template #right>
-                    <div class="p-d-flex p-flex-row">
-                        <Button class="kn-button p-button-text" @click="saveRegistry">{{ $t('common.save') }}</Button>
-                    </div>
-                </template>
-            </Toolbar>
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-            <div class="p-col-12">
-                <RegistryFiltersCard v-if="filters.length > 0" :id="id" :propFilters="filters" :entity="entity" @filter="filterRegistry"></RegistryFiltersCard>
+            <div class="p-col-12 p-p-0">
+                <RegistryFiltersCard v-if="filters.length > 0" :id="id" :propFilters="filters" :entity="entity" @filter="filterRegistry" class=""></RegistryFiltersCard>
             </div>
-            <div class="p-col-12" v-if="!loading">
+            <div class="p-col-12 p-p-0" v-if="!loading">
                 <RegistryPivotDatatable
                     v-if="isPivot"
                     :columns="columns"
@@ -28,8 +28,23 @@
                     @rowDeleted="onRowDeleted"
                     @pageChanged="updatePagination"
                     @resetRows="updatedRows = []"
+                    @warningChanged="setWarningState"
                 ></RegistryPivotDatatable>
-                <RegistryDatatable v-else :propColumns="columns" :id="id" :propRows="rows" :propConfiguration="configuration" :columnMap="columnMap" :pagination="pagination" :entity="entity" @rowChanged="onRowChanged" @rowDeleted="onRowDeleted" @pageChanged="updatePagination"></RegistryDatatable>
+                <RegistryDatatable
+                    v-else
+                    :propColumns="columns"
+                    :id="id"
+                    :propRows="rows"
+                    :propConfiguration="configuration"
+                    :columnMap="columnMap"
+                    :pagination="pagination"
+                    :entity="entity"
+                    :stopWarningsState="stopWarningsState"
+                    @rowChanged="onRowChanged"
+                    @rowDeleted="onRowDeleted"
+                    @pageChanged="updatePagination"
+                    @warningChanged="setWarningState"
+                ></RegistryDatatable>
             </div>
         </div>
     </div>
@@ -64,6 +79,7 @@ export default defineComponent({
             filters: [] as any[],
             selectedFilters: [] as any[],
             entity: null as string | null,
+            stopWarningsState: [] as any[],
             isPivot: false,
             loading: false
         }
@@ -71,6 +87,7 @@ export default defineComponent({
     watch: {
         async id() {
             await this.loadPage()
+            this.stopWarningsState = []
         }
     },
     async created() {
@@ -264,6 +281,9 @@ export default defineComponent({
                     row[key] = row[key].data
                 }
             })
+        },
+        setWarningState(warnings: any[]) {
+            this.stopWarningsState = warnings
         }
     }
 })

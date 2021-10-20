@@ -474,6 +474,41 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 	}
 
 	@Override
+	public String getCatalogFunctionScriptByUuidAndOrganization(String uuid, String organization) {
+		String scriptToReturn;
+		Session session;
+		Transaction transaction = null;
+		SbiCatalogFunction sbiCatalogFunction = null;
+
+		logger.debug("IN");
+
+		session = null;
+		try {
+			session = getSession();
+			Assert.assertNotNull(session, "session cannot be null");
+			transaction = session.beginTransaction();
+			Query q = session.createQuery("select s.onlineScript from SbiCatalogFunction s where s.functionUuid = ? and organization = ?");
+			q.setString(0, uuid);
+			q.setString(1, organization);
+			scriptToReturn = (String) q.uniqueResult();
+			transaction.commit();
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDAOException("An error occured while reading Catalog Functions from DB", t);
+
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return scriptToReturn;
+
+	}
+
+	@Override
 	public SbiCatalogFunction getCatalogFunctionByLabel(String label) {
 
 		Session session;

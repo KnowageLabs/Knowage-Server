@@ -51,8 +51,8 @@
                         <template #body="slotProps">
                             <div class="p-d-flex p-jc-center p-ai-center">
                                 <Button icon="pi pi-save" class="p-button-link" @click="saveLabel(language, slotProps.data)" v-tooltip.top="$t('common.save')" />
-                                <Button v-if="language.defaultLanguage" icon="pi pi-trash" class="p-button-link" @click="deleteLabelConfirm(language, slotProps.data)" v-tooltip.top="$t('common.delete')" />
-                                <Button v-if="!language.defaultLanguage" icon="pi pi-times" class="p-button-link" @click="deleteLabelConfirm(language, slotProps.data)" v-tooltip.top="$t('common.cancel')" />
+                                <Button v-if="language.defaultLanguage" icon="pi pi-trash" class="p-button-link" @click="deleteLabelConfirm(language, slotProps, true)" v-tooltip.top="$t('common.delete')" />
+                                <Button v-if="!language.defaultLanguage" icon="pi pi-times" class="p-button-link" @click="deleteLabelConfirm(language, slotProps, false)" v-tooltip.top="$t('common.cancel')" />
                             </div>
                         </template>
                     </Column>
@@ -107,6 +107,7 @@ export default defineComponent({
             allMessages: [] as iMessage[],
             defaultLangMessages: [] as iMessage[],
             showOnlyEmptyFields: false,
+            initialShowEmptyFields: false,
             dirty: false,
             activeTab: 0,
             previousActiveTab: -1,
@@ -158,22 +159,18 @@ export default defineComponent({
             this.getMessages(selectedTab)
         },
 
-        switchTabConfirm(index) {
+        async switchTabConfirm(index) {
             if (!this.dirty) {
-                this.showOnlyEmptyFields = false
-                this.activeTab = index
+                this.switchTab(index)
                 this.previousActiveTab = this.activeTab
-                this.selectLanguage(index)
             } else {
                 this.$confirm.require({
                     message: this.$t('common.toast.unsavedChangesMessage'),
                     header: this.$t('common.toast.unsavedChangesHeader'),
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
-                        this.showOnlyEmptyFields = false
+                        this.switchTab(index)
                         this.dirty = false
-                        this.activeTab = index
-                        this.selectLanguage(index)
                     },
                     reject: () => {
                         this.activeTab = this.previousActiveTab
@@ -181,17 +178,33 @@ export default defineComponent({
                 })
             }
         },
+        switchTab(index) {
+            this.initialShowEmptyFields = this.showOnlyEmptyFields.valueOf()
+            this.showOnlyEmptyFields = false
+            this.activeTab = index
+            this.selectLanguage(index)
+        },
 
-        setDataForDefaultLanguage(response) {
+        initCheck() {
+            if (this.initialShowEmptyFields) {
+                this.showOnlyEmptyFields = true
+                this.filterEmptyMessages()
+            }
+        },
+        async setDataForDefaultLanguage(response) {
             if (response.data.length == 0) {
                 this.addEmptyLabel()
             } else {
-                this.defaultLangMessages = response.data
-                this.messages = response.data
+                await this.setDefaultLanguageValues(response)
+                this.initCheck()
             }
         },
+        async setDefaultLanguageValues(response) {
+            this.defaultLangMessages = response.data
+            this.messages = response.data
+        },
 
-        setEmptyDatatableData(selectedTab) {
+        async setEmptyDatatableData(selectedTab) {
             this.defaultLangMessages.forEach((defMess) => {
                 var newMess = {} as any
                 newMess.language = selectedTab.languageTag
@@ -202,7 +215,16 @@ export default defineComponent({
             })
         },
 
-        setFilledDatatableData(response, selectedTab) {
+        async checkForMessages(response, selectedTab) {
+            if (response.data.length != 0) {
+                await this.setFilledDatatableData(response, selectedTab)
+            } else {
+                await this.setEmptyDatatableData(selectedTab)
+            }
+            this.initCheck()
+        },
+
+        async setFilledDatatableData(response, selectedTab) {
             this.defaultLangMessages.forEach((defMess) => {
                 var translatedMessage = response.data.find((item) => {
                     return item.label == defMess.label
@@ -220,14 +242,6 @@ export default defineComponent({
                     this.messages.push(message)
                 }
             })
-        },
-
-        checkForMessages(response, selectedTab) {
-            if (response.data.length != 0) {
-                this.setFilledDatatableData(response, selectedTab)
-            } else {
-                this.setEmptyDatatableData(selectedTab)
-            }
         },
 
         getMessages(selectedTab) {
@@ -282,19 +296,25 @@ export default defineComponent({
                 }
                 this.getMessages(langObj)
             })
+            this.initialShowEmptyFields = false
+            this.showOnlyEmptyFields = false
             this.dirty = false
         },
 
-        deleteLabelConfirm(langObj, message) {
-            if (message.id) {
+        deleteLabelConfirm(langObj, message, isDefault) {
+            let msgToDelete = message.data
+            let index = message.index
+            console.log('langOBJECT', langObj)
+            console.log('message', message)
+            if (msgToDelete.id) {
                 let url = ''
-                if (message.defaultMessageCode) {
+                if (msgToDelete.defaultMessageCode) {
                     url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/'
                     this.$confirm.require({
                         message: this.$t('managers.internationalizationManagement.delete.deleteMessage'),
                         header: this.$t('managers.internationalizationManagement.delete.deleteMessageTitle'),
                         icon: 'pi pi-exclamation-triangle',
-                        accept: () => this.deleteLabel(url, message.id, langObj)
+                        accept: () => this.deleteLabel(url, msgToDelete.id, langObj)
                     })
                 } else {
                     url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/deletedefault/'
@@ -303,11 +323,11 @@ export default defineComponent({
                         header: this.$t('managers.internationalizationManagement.delete.deleteDefaultTitle'),
 
                         icon: 'pi pi-exclamation-triangle',
-                        accept: () => this.deleteLabel(url, message.id, langObj)
+                        accept: () => this.deleteLabel(url, msgToDelete.id, langObj)
                     })
                 }
             } else {
-                this.$store.commit('setError', { title: this.$t('managers.internationalizationManagement.delete.deleteDefaultTitle'), msg: this.$t('managers.internationalizationManagement.delete.cantDelete') })
+                isDefault ? this.messages.splice(index, 1) : this.$store.commit('setError', { title: this.$t('managers.internationalizationManagement.delete.deleteDefaultTitle'), msg: this.$t('managers.internationalizationManagement.delete.cantDelete') })
             }
         },
 
@@ -320,6 +340,8 @@ export default defineComponent({
                     this.getMessages(langObj)
                 }
             })
+            this.initialShowEmptyFields = false
+            this.showOnlyEmptyFields = false
         }
     }
 })

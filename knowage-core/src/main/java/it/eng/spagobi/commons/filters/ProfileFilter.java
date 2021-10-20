@@ -211,7 +211,7 @@ public class ProfileFilter implements Filter {
 	}
 
 	private static String getSessionFileName() throws NamingException {
-		return (String) (new InitialContext().lookup("java:/comp/env/fileSessionTest"));
+		return (String) (new InitialContext().lookup("java:comp/env/fileSessionTest"));
 	}
 
 	private String getUserIdInWebModeWithoutSSO(HttpServletRequest httpRequest) {

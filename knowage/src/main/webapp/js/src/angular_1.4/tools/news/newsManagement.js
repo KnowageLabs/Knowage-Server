@@ -235,9 +235,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 				sbiModule_restServices.promisePost("2.0", "news", $scope.selectedNews).then(function (response) {
 					$scope.getNews();
-					let message = {
-						news: true
-					};
 
 					if (!$scope.selectedNews.id) {
 						selectNews({
@@ -245,8 +242,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						});
 					}
 					
-					$scope.socket = new WebSocket('ws://'+sbiModule_config.contextName+'/webSocket/false');
-					$scope.socket.send(JSON.stringify(message))
+					$scope.socket = new WebSocket('ws://'+sbiModule_config.contextName+'/webSocket');
+					$scope.socket.send(JSON.stringify(message));
 
 					sbiModule_messaging.showSuccessMessage($scope.translate.load('sbi.news.success.text'), $scope.translate.load('sbi.general.success'), 5000);
 				}, function (response) {

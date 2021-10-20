@@ -1301,8 +1301,8 @@ public class CrossTab {
 			} else {
 				String decimalPrecision = (String) fieldMeta.getProperty(IFieldMetaData.DECIMALPRECISION);
 				if (decimalPrecision != null) {
-					return new MeasureInfo(fieldName, measure.getEntityId(), "float", "{decimalPrecision:" + decimalPrecision + "}", aggregationFunction,
-							excludeFromTotalAndSubtotal);
+					return new MeasureInfo(fieldName, measure.getEntityId(), "float", "{" + IFieldMetaData.DECIMALPRECISION + ":" + decimalPrecision + "}",
+							aggregationFunction, excludeFromTotalAndSubtotal);
 				} else {
 					return new MeasureInfo(fieldName, measure.getEntityId(), "float", null, aggregationFunction, excludeFromTotalAndSubtotal);
 				}
@@ -1313,7 +1313,25 @@ public class CrossTab {
 		} else if (Date.class.isAssignableFrom(clazz)) {
 			return new MeasureInfo(fieldName, measure.getEntityId(), "date", "d/m/Y", aggregationFunction, excludeFromTotalAndSubtotal);
 		} else {
-			return new MeasureInfo(fieldName, measure.getEntityId(), "string", null, aggregationFunction, excludeFromTotalAndSubtotal);
+			return new MeasureInfo(fieldName, measure.getEntityId(), "string", getFormat(measure), aggregationFunction, excludeFromTotalAndSubtotal);
+		}
+	}
+
+	private String getFormat(Measure measure) {
+		try {
+			String format = null;
+			JSONObject style = measure.getConfig().optJSONObject("style");
+			String decimalPrecision = null;
+			if (style != null) {
+				decimalPrecision = style.optString("precision");
+			}
+			if (decimalPrecision != null) {
+				format = "{" + IFieldMetaData.DECIMALPRECISION + ":" + decimalPrecision + "}";
+			}
+			return format;
+		} catch (Exception e) {
+			logger.debug("Cannot get decimal precision.", e);
+			return null;
 		}
 	}
 

@@ -25,8 +25,8 @@ import WEB_SOCKET from '@/services/webSocket.js'
 export default defineComponent({
     components: { ConfirmDialog, KnOverlaySpinnerPanel, MainMenu, Toast },
 
-    beforeMount() {
-        axios
+    async beforeCreate() {
+        await axios
             .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/currentuser')
             .then((response) => {
                 let currentUser = response.data
@@ -34,7 +34,7 @@ export default defineComponent({
                     currentUser.sessionRole = localStorage.getItem('sessionRole')
                 } else if (currentUser.defaultRole) currentUser.sessionRole = currentUser.defaultRole
 
-                store.commit('setUser', currentUser)
+                store.dispatch('initializeUser', currentUser)
 
                 let responseLocale = response.data.locale
                 let storedLocale = responseLocale
@@ -65,7 +65,6 @@ export default defineComponent({
                     },
                     (error) => console.error(error)
                 )
-
                 this.$emit('update:loading', false)
             })
             .catch(function(error) {
@@ -75,6 +74,11 @@ export default defineComponent({
                     console.log(error.response.headers)
                 }
             })
+        if (this.isEnterprise) {
+            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license').then((response) => {
+                store.commit('setLicenses', response.data)
+            })
+        }
     },
     mounted() {
         this.onLoad()
@@ -83,8 +87,8 @@ export default defineComponent({
         closeDialog() {
             this.$emit('update:visibility', false)
         },
-        onLoad() {
-            axios
+        async onLoad() {
+            await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export/dataset')
                 .then((response) => {
                     let totalDownloads = response.data.length
@@ -95,6 +99,9 @@ export default defineComponent({
                     json.downloads.count.alreadyDownloaded = alreadyDownloaded
 
                     store.commit('setDownloads', json.downloads)
+
+                    this.newsDownloadHandler()
+                    this.loadInternationalization()
                 })
                 .catch(function(error) {
                     if (error.response) {
@@ -103,12 +110,11 @@ export default defineComponent({
                         console.log(error.response.headers)
                     }
                 })
-            this.newsDownloadHandler()
-            this.loadInternationalization()
         },
         async loadInternationalization() {
             let currentLocale = localStorage.getItem('locale') ? localStorage.getItem('locale') : store.state.locale
-            if (currentLocale) currentLocale = currentLocale.replaceAll('_', '-')
+            if (currentLocale && Object.keys(currentLocale).length > 0) currentLocale = currentLocale.replaceAll('_', '-')
+            else currentLocale = 'en-US'
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization?currLanguage=' + currentLocale).then((response) => store.commit('setInternationalization', response.data))
         },
         newsDownloadHandler() {
@@ -126,10 +132,26 @@ export default defineComponent({
                 }
             }
             WEB_SOCKET.onopen = function(event) {
-                this.update(event)
+                if (event.data) {
+                    let json = JSON.parse(event.data)
+                    if (json.news) {
+                        store.commit('setNews', json.news)
+                    }
+                    if (json.downloads) {
+                        store.commit('setDownloads', json.downloads)
+                    }
+                }
             }
             WEB_SOCKET.onmessage = function(event) {
-                this.update(event)
+                if (event.data) {
+                    let json = JSON.parse(event.data)
+                    if (json.news) {
+                        store.commit('setNews', json.news)
+                    }
+                    if (json.downloads) {
+                        store.commit('setDownloads', json.downloads)
+                    }
+                }
             }
         }
     },
@@ -138,15 +160,16 @@ export default defineComponent({
             error: 'error',
             info: 'info',
             user: 'user',
-            loading: 'loading'
+            loading: 'loading',
+            isEnterprise: 'isEnterprise'
         })
     },
     watch: {
         error(newError) {
             this.$toast.add({
                 severity: 'error',
-                summary: this.$t(newError.title),
-                detail: this.$t(newError.msg),
+                summary: newError.title ? this.$t(newError.title) : '',
+                detail: newError.msg ? this.$t(newError.msg) : '',
                 baseZIndex: typeof newError.baseZIndex == 'undefined' ? 0 : newError.baseZIndex,
                 life: typeof newError.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newError.duration
             })
@@ -154,8 +177,8 @@ export default defineComponent({
         info(newInfo) {
             this.$toast.add({
                 severity: 'info',
-                summary: this.$t(newInfo.title),
-                detail: this.$t(newInfo.msg),
+                summary: newInfo.title ? this.$t(newInfo.title) : '',
+                detail: newInfo.msg ? this.$t(newInfo.msg) : '',
                 baseZIndex: typeof newInfo.baseZIndex == 'undefined' ? 0 : newInfo.baseZIndex,
                 life: typeof newInfo.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newInfo.duration
             })
