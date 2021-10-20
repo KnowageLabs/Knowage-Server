@@ -9,8 +9,6 @@
             <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
         </template>
 
-        {{ trigger }}
-
         <TabView id="timing-tabs">
             <TabPanel>
                 <template #header>
@@ -59,7 +57,7 @@ export default defineComponent({
             schedulerTimingOutputDetailDialogDescriptor,
             trigger: null as any,
             info: null as any,
-            validCron: false,
+            validCron: true,
             datasets: [] as any[],
             jobInfo: null as any,
             functionalities: [],
@@ -74,7 +72,7 @@ export default defineComponent({
         saveDisabled(): any {
             let disabled = false
 
-            if (!this.trigger.triggerDescription && !this.validCron) {
+            if (!this.trigger.triggerDescription || this.trigger.triggerDescription.length === 0 || !this.validCron) {
                 return true
             }
 
@@ -131,15 +129,7 @@ export default defineComponent({
         },
         async saveTrigger() {
             this.loading = true
-            const originalTrigger = {
-                ...this.trigger,
-                //    frequency: { cron: { parameter: { numRepetition: this.trigger.frequency.cron.parameter.numRepetition }, type: this.trigger.frequency.cron.type } },
-                documents: this.trigger.documents.map((el: any) => {
-                    return { ...el }
-                })
-            }
-            console.log('ORIGINAL TRIGGER: ', originalTrigger)
-            console.log(' TRIGGER: ', this.trigger)
+
             const formatedTrigger = this.formatTrigger()
 
             await this.axios
@@ -190,7 +180,7 @@ export default defineComponent({
             }
 
             if (this.trigger.frequency) {
-                formatedTrigger.frequency = { cron: { ...this.trigger.frequency.cron, parameter: { type: this.trigger.frequency.cron.type, parameter: { ...this.trigger.frequency.cron.parameter } } } }
+                formatedTrigger.frequency = { ...this.trigger.frequency, cron: { ...this.trigger.frequency.cron, parameter: { type: this.trigger.frequency.cron.type, parameter: { ...this.trigger.frequency.cron.parameter } } } }
             }
 
             if (!formatedTrigger.triggerGroup) formatedTrigger.triggerGroup = ''
@@ -205,6 +195,7 @@ export default defineComponent({
 
             this.deleteTriggerProps(formatedTrigger)
             this.formatTriggerDocuments(formatedTrigger)
+
             return formatedTrigger
         },
         deleteTriggerProps(formatedTrigger: any) {
@@ -215,9 +206,13 @@ export default defineComponent({
             formatedTrigger.chrono = this.trigger.frequency.cron
 
             formatedTrigger.zonedStartTime = new Date(this.trigger.frequency.startDate)
+
             if (formatedTrigger.frequency.endDate) {
                 formatedTrigger.zonedEndTime = new Date(this.trigger.frequency.endDate)
                 formatedTrigger.endDateTiming = this.trigger.zonedEndTime
+            } else {
+                formatedTrigger.zonedEndtime = null
+                formatedTrigger.endDateTiming = null
             }
         },
         formatTriggerDocuments(formatedTrigger: any) {

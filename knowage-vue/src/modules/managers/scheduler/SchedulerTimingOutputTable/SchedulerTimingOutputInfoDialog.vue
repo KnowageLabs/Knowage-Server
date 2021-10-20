@@ -14,25 +14,25 @@
                     <span class="document-label">{{ document.label }}</span>
                 </template>
 
-                <div>
-                    <h4>{{ $t('managers.scheduler.mailTo') }}:</h4>
-                    <p>{{ document.mailtos }}</p>
+                <div v-if="document.mailtos" class="p-d-flex p-flex-row p-ai-center">
+                    <h4 class="kn-flex">{{ $t('managers.scheduler.mailTo') }}:</h4>
+                    <p class="info-value">{{ document.mailtos }}</p>
                 </div>
-                <div>
-                    <h4>{{ $t('managers.scheduler.attachedZip') }}:</h4>
-                    <p>{{ document.zipMailName }}</p>
+                <div v-if="document.zipMailName" class="p-d-flex p-flex-row p-ai-center">
+                    <h4 class="kn-flex">{{ $t('managers.scheduler.attachedZip') }}:</h4>
+                    <p class="info-value">{{ document.zipMailName }}</p>
                 </div>
-                <div>
-                    <h4>{{ $t('managers.scheduler.mailSubject') }}:</h4>
-                    <p>{{ document.mailsubj }}</p>
+                <div v-if="document.mailsubj" class="p-d-flex p-flex-row p-ai-center">
+                    <h4 class="kn-flex">{{ $t('managers.scheduler.mailSubject') }}:</h4>
+                    <p class="info-value">{{ document.mailsubj }}</p>
                 </div>
-                <div>
-                    <h4>{{ $t('managers.scheduler.containedFileName') }}:</h4>
-                    <p>{{ document.containedFileName }}</p>
+                <div v-if="document.containedFileName" class="p-d-flex p-flex-row p-ai-center">
+                    <h4 class="kn-flex">{{ $t('managers.scheduler.containedFileName') }}:</h4>
+                    <p class="info-value">{{ document.containedFileName }}</p>
                 </div>
-                <div>
-                    <h4>{{ $t('managers.scheduler.mailText') }}</h4>
-                    <p>{{ document.mailtxt }}</p>
+                <div v-if="document.mailtxt" class="p-d-flex p-flex-row p-ai-center">
+                    <h4 class="kn-flex">{{ $t('managers.scheduler.mailText') }}:</h4>
+                    <p class="info-value">{{ document.mailtxt }}</p>
                 </div>
             </TabPanel>
         </TabView>
@@ -85,5 +85,9 @@ export default defineComponent({
 <style lang="scss" scoped>
 .document-label {
     text-transform: uppercase;
+}
+
+.info-value {
+    flex: 2;
 }
 </style>

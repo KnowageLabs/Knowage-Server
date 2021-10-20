@@ -123,17 +123,19 @@
                     </template>
                 </Toolbar>
 
-                <div class="p-m-4">
-                    <span>
-                        <label class="kn-material-input-label">{{ $t('managers.scheduler.datasetVerification') }}</label>
-                        <Dropdown class="kn-material-input" v-model="trigger.chrono.parameter.dataset" :options="datasets" optionLabel="label" optionValue="id.dsId" />
-                    </span>
-                </div>
-                <div class="kn-flex p-m-4">
-                    <span>
-                        <label class="kn-material-input-label">{{ $t('managers.scheduler.frequencyMinutes') }}</label>
-                        <InputText class="kn-material-input p-inputtext-sm" type="number" v-model="trigger.chrono.parameter.frequency" />
-                    </span>
+                <div class="p-d-flex p-flex-row">
+                    <div class="kn-flex p-m-4">
+                        <span>
+                            <label class="kn-material-input-label">{{ $t('managers.scheduler.datasetVerification') }}</label>
+                            <Dropdown class="kn-material-input" v-model="trigger.chrono.parameter.dataset" :options="datasets" optionLabel="label" optionValue="id.dsId" />
+                        </span>
+                    </div>
+                    <div class="kn-flex p-m-4">
+                        <span>
+                            <label class="kn-material-input-label">{{ $t('managers.scheduler.frequencyMinutes') }}</label>
+                            <InputText class="kn-material-input p-inputtext-sm" type="number" v-model="trigger.chrono.parameter.frequency" />
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>

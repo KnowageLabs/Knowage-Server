@@ -7,10 +7,11 @@
                 </template>
             </Toolbar>
         </template>
+        <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
         <Message class="p-m-2" v-if="deletedParams.length > 0" severity="warn" :closable="false" :style="schedulerDocumentParameterDialogDescriptor.styles.message">
             {{ deletedParamsMessage }}
         </Message>
-        <SchedulerDocumentParameterForm v-for="(parameter, index) in parameters" :key="index" class="p-m-3" :propParameter="parameter" :roles="roles" :formulas="formulas" :documentLabel="documentLabel"></SchedulerDocumentParameterForm>
+        <SchedulerDocumentParameterForm v-for="(parameter, index) in parameters" :key="index" class="p-m-3" :propParameter="parameter" :roles="roles" :formulas="formulas" :documentLabel="documentLabel" @loading="setLoading($event)"></SchedulerDocumentParameterForm>
         <template #footer>
             <div class="p-d-flex p-flex-row p-jc-end">
                 <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
@@ -37,7 +38,8 @@ export default defineComponent({
         return {
             schedulerDocumentParameterDialogDescriptor,
             parameters: [] as any[],
-            formulas: [] as any[]
+            formulas: [] as any[],
+            loading: false
         }
     },
     computed: {
@@ -74,6 +76,9 @@ export default defineComponent({
         },
         setParameters() {
             this.$emit('setParameters', this.parameters)
+        },
+        setLoading(loadingValue: boolean) {
+            this.loading = loadingValue
         }
     }
 })

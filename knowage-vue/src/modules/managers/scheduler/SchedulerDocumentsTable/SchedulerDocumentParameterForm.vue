@@ -1,7 +1,7 @@
 <template>
     <Card>
         <template #content>
-            <div v-if="parameter">
+            <div v-if="parameter && !loading">
                 <h2>{{ parameter.name }}</h2>
                 <div class="p-d-flex p-flex-row p-ai-center">
                     <div class="p-mx-2 kn-flex">
@@ -55,6 +55,7 @@ export default defineComponent({
     name: 'scheduler-document-parameter-form',
     components: { Card, Dropdown, MultiSelect },
     props: { propParameter: { type: Object }, roles: { type: Array }, formulas: { type: Array }, documentLabel: { type: String } },
+    emits: ['loading'],
     data() {
         return {
             parameter: null as any,
@@ -69,7 +70,8 @@ export default defineComponent({
             ],
             parameterValues: {} as any,
             rolesOptions: [] as any[],
-            formulaOptions: []
+            formulaOptions: [],
+            loading: false
         }
     },
     watch: {
@@ -111,10 +113,14 @@ export default defineComponent({
             }
         },
         async loadParameterValues() {
+            this.loading = true
+            this.$emit('loading', true)
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.documentLabel}/parameters/${this.parameter?.id}/values?role=${this.parameter?.role}`)
                 .then((response) => (this.parameterValues = response.data))
                 .catch(() => {})
+            this.$emit('loading', false)
+            this.loading = false
         },
         loadRoles() {
             this.rolesOptions = this.roles as any
