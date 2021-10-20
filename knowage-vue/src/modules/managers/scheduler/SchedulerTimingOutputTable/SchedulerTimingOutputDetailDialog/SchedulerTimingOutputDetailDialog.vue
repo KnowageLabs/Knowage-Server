@@ -9,6 +9,8 @@
             <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
         </template>
 
+        {{ trigger }}
+
         <TabView id="timing-tabs">
             <TabPanel>
                 <template #header>
@@ -131,18 +133,20 @@ export default defineComponent({
             this.loading = true
             const originalTrigger = {
                 ...this.trigger,
+                //    frequency: { cron: { parameter: { numRepetition: this.trigger.frequency.cron.parameter.numRepetition }, type: this.trigger.frequency.cron.type } },
                 documents: this.trigger.documents.map((el: any) => {
                     return { ...el }
                 })
             }
-            this.formatTrigger()
+            console.log('ORIGINAL TRIGGER: ', originalTrigger)
+            console.log(' TRIGGER: ', this.trigger)
+            const formatedTrigger = this.formatTrigger()
 
             await this.axios
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/saveTrigger`, this.trigger, { headers: { 'X-Disable-Errors': true } })
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/saveTrigger`, formatedTrigger, { headers: { 'X-Disable-Errors': true } })
                 .then((response) => {
                     if (response.data.Errors) {
                         this.setWarningMessage('default error')
-                        this.trigger = originalTrigger
                     } else {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.' + this.operation + 'Title'),
@@ -153,7 +157,6 @@ export default defineComponent({
                 })
                 .catch((response) => {
                     this.setWarningMessage(response)
-                    this.trigger = originalTrigger
                 })
             this.loading = false
         },
@@ -179,34 +182,46 @@ export default defineComponent({
             }
         },
         formatTrigger() {
-            if (!this.trigger.triggerGroup) this.trigger.triggerGroup = ''
-            this.trigger._endTime = new Date().getHours() + ':' + new Date().getMinutes()
-
-            if (this.trigger.chrono.type === 'single') {
-                delete this.trigger.chrono.parameter
-            } else if (this.trigger.chrono.type !== 'event') {
-                this.formatCron()
+            const formatedTrigger = {
+                ...this.trigger,
+                documents: this.trigger.documents.map((el: any) => {
+                    return { ...el }
+                })
             }
-            if (!this.trigger.endDateTiming || !this.trigger.zonedEndTime) delete this.trigger.zonedEndTime
 
-            this.deleteTriggerProps()
-            this.formatTriggerDocuments()
+            if (this.trigger.frequency) {
+                formatedTrigger.frequency = { cron: { ...this.trigger.frequency.cron, parameter: { type: this.trigger.frequency.cron.type, parameter: { ...this.trigger.frequency.cron.parameter } } } }
+            }
+
+            if (!formatedTrigger.triggerGroup) formatedTrigger.triggerGroup = ''
+            formatedTrigger._endTime = new Date().getHours() + ':' + new Date().getMinutes()
+
+            if (formatedTrigger.chrono.type === 'single') {
+                delete formatedTrigger.chrono.parameter
+            } else if (formatedTrigger.chrono.type !== 'event') {
+                this.formatCron(formatedTrigger)
+            }
+            if (!formatedTrigger.endDateTiming || !formatedTrigger.zonedEndTime) delete formatedTrigger.zonedEndTime
+
+            this.deleteTriggerProps(formatedTrigger)
+            this.formatTriggerDocuments(formatedTrigger)
+            return formatedTrigger
         },
-        deleteTriggerProps() {
+        deleteTriggerProps(formatedTrigger: any) {
             const props = ['startDateTiming', 'startTimeTiming', 'endDateTiming', 'endTimeTiming', 'startDate', 'startTime', 'startDateRFC3339', 'endDate', 'endTime']
-            props.forEach((property: string) => delete this.trigger[property])
+            props.forEach((property: string) => delete formatedTrigger[property])
         },
-        formatCron() {
-            this.trigger.chrono = this.trigger.frequency.cron
+        formatCron(formatedTrigger: any) {
+            formatedTrigger.chrono = this.trigger.frequency.cron
 
-            this.trigger.zonedStartTime = new Date(this.trigger.frequency.startDate)
-            if (this.trigger.frequency.endDate) {
-                this.trigger.zonedEndTime = new Date(this.trigger.frequency.endDate)
-                this.trigger.endDateTiming = this.trigger.zonedEndTime
+            formatedTrigger.zonedStartTime = new Date(this.trigger.frequency.startDate)
+            if (formatedTrigger.frequency.endDate) {
+                formatedTrigger.zonedEndTime = new Date(this.trigger.frequency.endDate)
+                formatedTrigger.endDateTiming = this.trigger.zonedEndTime
             }
         },
-        formatTriggerDocuments() {
-            this.trigger.documents.forEach((el: any, index: number) => {
+        formatTriggerDocuments(formatedTrigger: any) {
+            formatedTrigger.documents.forEach((el: any, index: number) => {
                 el.label = el.name
                 el.labelId = el.id + '__' + (index + 1)
             })

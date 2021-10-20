@@ -272,8 +272,8 @@ export default defineComponent({
         },
         setEndDate() {
             this.trigger.zonedEndTime = this.trigger.endDateTiming
-            this.trigger.zonedEndTime.setHours(this.trigger.endTimeTiming?.getHours())
-            this.trigger.zonedEndTime.setMinutes(this.trigger.endTimeTiming?.getMinutes())
+            this.trigger.zonedEndTime.setHours(this.trigger.endTimeTiming.getHours())
+            this.trigger.zonedEndTime.setMinutes(this.trigger.endTimeTiming.getMinutes())
         }
     }
 })
