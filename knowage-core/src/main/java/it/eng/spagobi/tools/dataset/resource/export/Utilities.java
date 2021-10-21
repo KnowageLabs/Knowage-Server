@@ -41,15 +41,27 @@ public class Utilities {
 
 	private static final Logger logger = Logger.getLogger(Utilities.class);
 
+	private static final Utilities INSTANCE = new Utilities();
+
+	public static Utilities getInstance() {
+		return INSTANCE;
+	}
+
+	private Utilities() {
+		super();
+	}
+
 	public int countAllExportedFiles(boolean showAll) throws IOException {
 		return getAllExportedFiles(showAll).size();
 
 	}
 
-	public List<Entry> getAllExportedFiles(boolean showAll) throws IOException {
+	public List<Entry> getAllExportedFiles(UserProfile userProfile, boolean showAll) throws IOException {
 		List<Entry> ret = new ArrayList<Entry>();
 
-		UserProfile userProfile = UserProfileManager.getProfile();
+		String resoursePath = SpagoBIUtilities.getResourcePath();
+		java.nio.file.Path perUserExportResourcePath = ExportPathBuilder.getInstance().getPerUserExportResourcePath(resoursePath, userProfile);
+
 		Monitor totalTime = MonitorFactory.start("Knowage.ExportResource.gettingExportedDatasets.user:" + userProfile.getUserId());
 
 		try {
@@ -57,9 +69,6 @@ public class Utilities {
 			DirectoryStream<java.nio.file.Path> userJobDirectory = null;
 
 			logger.info("Getting list of exported files for user " + userProfile.getUserId() + "...");
-
-			String resoursePath = SpagoBIUtilities.getResourcePath();
-			java.nio.file.Path perUserExportResourcePath = ExportPathBuilder.getInstance().getPerUserExportResourcePath(resoursePath, userProfile);
 
 			if (Files.isDirectory(perUserExportResourcePath)) {
 
@@ -82,10 +91,8 @@ public class Utilities {
 
 						boolean downloadPlaceholderExist = Files.isRegularFile(downloadPlaceholderPath);
 
-						if (!showAll) {
-							if (downloadPlaceholderExist) {
-								continue;
-							}
+						if (!showAll && downloadPlaceholderExist) {
+							continue;
 						}
 
 						if (!Files.isRegularFile(metadataPath)) {
@@ -118,5 +125,10 @@ public class Utilities {
 		}
 		logger.info("Got list of exported files for user " + userProfile.getUserId());
 		return ret;
+	}
+
+	public List<Entry> getAllExportedFiles(boolean showAll) throws IOException {
+		UserProfile profile = UserProfileManager.getProfile();
+		return getAllExportedFiles(profile, showAll);
 	}
 }

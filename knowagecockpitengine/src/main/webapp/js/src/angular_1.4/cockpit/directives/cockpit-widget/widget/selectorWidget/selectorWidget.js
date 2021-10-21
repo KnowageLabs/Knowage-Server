@@ -100,7 +100,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return x.column_1;
 		}
 
+
 		$scope.selectElement = function(e,isBulk){
+			if(isBulk && e.pointerId === -1) return;
+			if(isBulk && e.originalTarget && e.originalTarget.tagName.toLowerCase() === "input") return;
+
 			if(e.target.attributes.disabled || e.target.parentNode.attributes.disabled) return;
 
 			if(e.target.attributes.value && e.target.attributes.value.value){
@@ -112,12 +116,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}else if(e.target.parentNode.attributes.value && e.target.parentNode.attributes.value.value){
 				if(!isBulk) $scope.toggleParameter(getValueFromString(e.target.parentNode.attributes.value.value));
 				else $scope.prepareParameter(getValueFromString(e.target.parentNode.attributes.value.value));
-			}
-			else if(e.target.parentNode.querySelectorAll("input")[0].value){
+			}else if(e.target.parentNode.querySelector("input") && e.target.parentNode.querySelector("input").value){
+				if(!isBulk) $scope.toggleParameter(getValueFromString(e.target.parentNode.querySelector("input").value));
+				else $scope.prepareParameter(getValueFromString(e.target.parentNode.querySelector("input").value));
+			}else if(e.target.parentNode.querySelectorAll("input")[0].value){
 				 $scope.toggleParameter(getValueFromString(e.target.parentNode.querySelectorAll("input")[0].value)); 
 			}
 			
 		}
+
 		
 //		$scope.$watch("selectedDate.startDate",function(newValue,oldValue){
 //			if (newValue){

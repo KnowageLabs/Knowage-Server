@@ -111,12 +111,19 @@ export default defineComponent({
                     }
                 })
         },
-        async loadInternationalization() {
-            let currentLocale = localStorage.getItem('locale') ? localStorage.getItem('locale') : store.state.locale
-            if (currentLocale && Object.keys(currentLocale).length > 0) currentLocale = currentLocale.replaceAll('_', '-')
-            else currentLocale = 'en-US'
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization?currLanguage=' + currentLocale).then((response) => store.commit('setInternationalization', response.data))
-        },
+		async loadInternationalization() {
+			let currentLocale = localStorage.getItem('locale') ? localStorage.getItem('locale') : store.state.locale
+			let currLanguage = ''
+			if (currentLocale && Object.keys(currentLocale).length > 0) currentLocale = currentLocale.replaceAll('_', '-')
+			else currentLocale = 'en-US'
+
+			let splittedLanguage = currentLocale.split('-')
+			currLanguage += splittedLanguage[0] + '-'
+			if (splittedLanguage.length > 2) currLanguage += splittedLanguage[2].replaceAll('#', '') + '-'
+			currLanguage += splittedLanguage[1].toUpperCase()
+
+			await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization?currLanguage=' + currLanguage).then((response) => store.commit('setInternationalization', response.data))
+		},
         newsDownloadHandler() {
             console.log('Starting connection to WebSocket Server')
 
