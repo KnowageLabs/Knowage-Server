@@ -638,6 +638,7 @@
             "title": "Data Source Management"
         },
         "datasetManagement": {
+            "noTablesToLink": "There are no tables to link in this source.",
             "noSourceTables": "There are no source tables for selected dataset.",
             "noLinkedTables": "There are no linked tables.",
             "scheduling": "Scheduling",

@@ -6,7 +6,17 @@
                     {{ $t('managers.datasetManagement.availableTables') }}
                 </template>
             </Toolbar>
-            <Listbox class="kn-list link-list" listStyle="height:65vh" :options="availableTables" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="name" filterMatchMode="contains" :filterFields="linkTabDescriptor.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')">
+            <Listbox
+                class="kn-list link-list"
+                :listStyle="linkTabDescriptor.style.listbox"
+                :options="availableTables"
+                :filter="true"
+                :filterPlaceholder="$t('common.search')"
+                optionLabel="name"
+                filterMatchMode="contains"
+                :filterFields="linkTabDescriptor.filterFields"
+                :emptyFilterMessage="$t('common.info.noDataFound')"
+            >
                 <template #option="slotProps">
                     <div class="kn-list-item" @click="addTableToSelectedList(slotProps.option)">
                         <div class="kn-list-item-text">
@@ -24,7 +34,7 @@
             </Toolbar>
             <Listbox
                 class="kn-list link-list"
-                listStyle="height:65vh"
+                :listStyle="linkTabDescriptor.style.listbox"
                 :options="selectedTables"
                 :filter="true"
                 :filterPlaceholder="$t('common.search')"
@@ -99,11 +109,10 @@ export default defineComponent({
             axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`)
                 .then((response) => {
-                    if (response.data.length == 0) {
-                        this.availableResources = linkTabDescriptor.metaSourcesMock
+                    if (response.data.length > 0) {
                         this.availableResources.filter((resource) => (resource.name === this.dataset.dataSource.toLowerCase() ? this.getAvailableSourceTables(resource.sourceId) : ''))
                     } else {
-                        this.$store.commit('setInfo', { title: this.$t('common.toast.info'), msg: this.$t('managers.datasetManagement.noSourceTables') })
+                        this.$store.commit('setInfo', { title: this.$t('importExport.gallery.column.info'), msg: this.$t('managers.datasetManagement.noSourceTables') })
                     }
                 })
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error }))
@@ -113,9 +122,9 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/${sourceId}/metatables/`)
                 .then((response) => {
                     if (response.data.lenth > 0) {
-                        this.availableTables = this.removeSelectedTablesFromAvailable(linkTabDescriptor.availableTablesMock, this.selectedTables)
+                        this.availableTables = this.removeSelectedTablesFromAvailable(response.data, this.selectedTables)
                     } else {
-                        this.$store.commit('setInfo', { title: this.$t('importExport.gallery.column.info'), msg: this.$t('managers.datasetManagement.noSourceTables') })
+                        this.$store.commit('setInfo', { title: this.$t('importExport.gallery.column.info'), msg: this.$t('managers.datasetManagement.noTablesToLink') })
                     }
                 })
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error }))
