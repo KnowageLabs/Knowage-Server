@@ -46,7 +46,6 @@ import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
-import functionsCatalogDatasetFormDescriptor from './FunctionsCatalogDatasetFormDescriptor.json'
 import FunctionsCatalogDatasetFormColumnsTable from './FunctionsCatalogDatasetFormColumnsTable.vue'
 import FunctionsCatalogDatasetFormVariablesTable from './FunctionsCatalogDatasetFormVariablesTable.vue'
 import FunctionsCatalogDatasetEnvironmentTable from './FunctionsCatalogDatasetEnvironmentTable.vue'
@@ -59,7 +58,6 @@ export default defineComponent({
     emits: ['environmentSelected'],
     data() {
         return {
-            functionsCatalogDatasetFormDescriptor,
             selectedFunction: {} as iFunction,
             dataset: {} as iDataset,
             datasetColumns: [] as any[],
