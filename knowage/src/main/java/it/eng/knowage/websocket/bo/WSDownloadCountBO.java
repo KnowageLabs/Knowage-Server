@@ -28,9 +28,7 @@ package it.eng.knowage.websocket.bo;
 public class WSDownloadCountBO extends WSCountBO {
 	private long alreadyDownloaded;
 
-	public WSDownloadCountBO(int total, long alreadyDownloaded2) {
-		super(total);
-		this.alreadyDownloaded = alreadyDownloaded2;
+	public WSDownloadCountBO() {
 	}
 
 	public long getAlreadyDownloaded() {

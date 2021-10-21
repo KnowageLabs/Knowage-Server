@@ -44,7 +44,7 @@
                 </template>
                 <Column :style="executeCardDescriptor.table.columns.style" field="timeRun" :header="$t('kpi.kpiScheduler.timeRun')" :sortable="true">
                     <template #body="slotProps">
-                        {{ getFormatedDate(slotProps.data.timeRun) }}
+                        {{ getFormattedDate(slotProps.data.timeRun) }}
                     </template>
                 </Column>
                 <Column class="kn-truncated" :style="executeCardDescriptor.table.columns.style" v-for="col of executeCardDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"> </Column>
@@ -106,7 +106,7 @@ export default defineComponent({
                     .finally(() => (this.loading = false))
             }
         },
-        getFormatedDate(date: any) {
+        getFormattedDate(date: any) {
             return formatDate(date, 'YYYY-MM-DD HH:mm:ss')
         },
         async downloadFile(id: number) {

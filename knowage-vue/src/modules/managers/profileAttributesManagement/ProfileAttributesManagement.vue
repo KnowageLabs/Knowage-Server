@@ -119,13 +119,26 @@ export default defineComponent({
                 accept: async () => {
                     this.loading = true
                     this.axios
-                        .delete(this.apiUrl + 'attributes/' + id)
-                        .then(() => {
-                            this.$store.commit('setInfo', {
+                        .delete(this.apiUrl + 'attributes/' + id, { headers: { 'X-Disable-Errors': true } })
+                        .then((response) => {
+                            if (response.data.errors) {
+                                this.$store.commit('setError', {
+                                    title: this.$t('managers.profileAttributesManagement.info.deleteTitle'),
+                                    msg: this.$t('managers.profileAttributesManagement.error.profileAttributeDeletion')
+                                })
+                            } else {
+                                this.$store.commit('setInfo', {
+                                    title: this.$t('managers.profileAttributesManagement.info.deleteTitle'),
+                                    msg: this.$t('managers.profileAttributesManagement.info.deleteMessage')
+                                })
+                                this.loadAllAttributes()
+                            }
+                        })
+                        .catch(() => {
+                            this.$store.commit('setError', {
                                 title: this.$t('managers.profileAttributesManagement.info.deleteTitle'),
-                                msg: this.$t('managers.profileAttributesManagement.info.deleteMessage')
+                                msg: this.$t('managers.profileAttributesManagement.error.profileAttributeDeletion')
                             })
-                            this.loadAllAttributes()
                         })
                         .catch((error) => {
                             this.$store.commit('setError', {
