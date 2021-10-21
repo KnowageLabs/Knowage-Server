@@ -8,7 +8,7 @@
         </template>
     </Toolbar>
     <div class="datasetDetail">
-        <TabView class="tabview-custom" data-test="tab-view">
+        <TabView class="tabview-custom" v-model:activeIndex="activeTab" data-test="tab-view">
             <TabPanel>
                 <template #header>
                     <span>{{ $t('managers.mondrianSchemasManagement.detail.title') }}</span>
@@ -56,7 +56,7 @@
                 <template #header>
                     <span>{{ $t('managers.glossary.glossaryUsage.link') }}</span>
                 </template>
-                <LinkCard :selectedDataset="selectedDataset" :metaSourceResource="metaSourceResource" @addTables="onAddLinkedTables" @removeTables="onRemoveLinkedTables" />
+                <LinkCard :selectedDataset="selectedDataset" :metaSourceResource="metaSourceResource" :activeTab="activeTab" @addTables="onAddLinkedTables" @removeTables="onRemoveLinkedTables" />
             </TabPanel>
 
             <TabPanel>
@@ -131,7 +131,8 @@ export default defineComponent({
             touched: false,
             loading: false,
             loadingVersion: false,
-            showPreviewDialog: false
+            showPreviewDialog: false,
+            activeTab: 0
         }
     },
     created() {
@@ -140,6 +141,7 @@ export default defineComponent({
     watch: {
         id() {
             this.getAllDatasetData()
+            this.activeTab = 0
         },
         datasetToCloneId() {
             this.cloneDatasetConfirm(this.datasetToCloneId)

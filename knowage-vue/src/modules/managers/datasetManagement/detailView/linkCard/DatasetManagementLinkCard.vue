@@ -1,9 +1,4 @@
 <template>
-    <Card>
-        <template #content>
-            <Dropdown id="category" class="kn-material-input" style="width:100%" :options="availableResources" v-model="selectedResource" optionLabel="name" placeholder="Select Source" @change="getAvailableTables" />
-        </template>
-    </Card>
     <div class="p-grid p-mt-3 table-list-container">
         <div class="p-col-6">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
@@ -12,10 +7,6 @@
                 </template>
             </Toolbar>
             <Listbox class="kn-list link-list" listStyle="height:65vh" :options="availableTables" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="name" filterMatchMode="contains" :filterFields="linkTabDescriptor.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')">
-                <template #empty>
-                    <span v-if="!selectedResource"> {{ $t('managers.datasetManagement.noSourceSelectedWarning') }}</span>
-                    <span v-else>{{ $t('common.info.noDataFound') }}</span>
-                </template>
                 <template #option="slotProps">
                     <div class="kn-list-item" @click="addTableToSelectedList(slotProps.option)">
                         <div class="kn-list-item-text">
@@ -31,7 +22,17 @@
                     {{ $t('managers.datasetManagement.selectedTables') }}
                 </template>
             </Toolbar>
-            <Listbox class="kn-list link-list" listStyle="height:65vh" :options="selectedTables" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="name" filterMatchMode="contains" :filterFields="linkTabDescriptor.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')">
+            <Listbox
+                class="kn-list link-list"
+                listStyle="height:65vh"
+                :options="selectedTables"
+                :filter="true"
+                :filterPlaceholder="$t('common.search')"
+                optionLabel="name"
+                filterMatchMode="contains"
+                :filterFields="linkTabDescriptor.filterFields"
+                :emptyFilterMessage="$t('managers.datasetManagement.noLinkedTables')"
+            >
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
                     <div class="kn-list-item" @click="removeTableFromSelectedList(slotProps.option)">
@@ -46,25 +47,23 @@
 </template>
 
 <script lang="ts">
-// import axios from 'axios'
+import axios from 'axios'
 import { defineComponent } from 'vue'
 import linkTabDescriptor from './DatasetManagementLinkCardDescriptor.json'
-import Dropdown from 'primevue/dropdown'
-import Card from 'primevue/card'
 import Listbox from 'primevue/listbox'
 
 export default defineComponent({
-    components: { Card, Dropdown, Listbox },
+    components: { Listbox },
     props: {
         selectedDataset: { type: Object as any },
-        metaSourceResource: { type: Array as any }
+        metaSourceResource: { type: Array as any },
+        activeTab: { type: Number }
     },
-    computed: {},
     emits: ['removeTables', 'addTables'],
     data() {
         return {
             linkTabDescriptor,
-            availableResources: linkTabDescriptor.metaSourcesMock as any,
+            availableResources: null as any,
             selectedResource: null,
             dataset: {} as any,
             availableTables: [] as any,
@@ -81,27 +80,46 @@ export default defineComponent({
         selectedDataset() {
             this.dataset = this.selectedDataset
             this.getSelectedTables()
+        },
+        activeTab() {
+            if (this.activeTab === 3) {
+                this.getAvailableSources()
+            }
         }
     },
 
     methods: {
-        //#region TODO: Kada prorade servisi, maknuti mock, treba i neke UI changes da se urade kaze davide
-        async getAvailableTables(event) {
-            console.log(event)
-            // axios
-            //     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/${event.value.sourceId}/metatables/`)
-            //     .then((response) => (this.availableTables = response.data))
-            //     .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error }))
-            this.availableTables = this.removeSelectedTablesFromAvailable(linkTabDescriptor.availableTablesMock, this.selectedTables)
-        },
         async getSelectedTables() {
-            // axios
-            //     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDsRelationResource/dataset/${this.dataset.id}/`)
-            //     .then((response) => (this.selectedTables = response.data))
-            //     .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error }))
-            this.selectedTables = linkTabDescriptor.selectedTablesMock
+            axios
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDsRelationResource/dataset/${this.dataset.id}/`)
+                .then((response) => (this.selectedTables = response.data))
+                .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error }))
         },
-        //#endregion =========================================================================================
+        async getAvailableSources() {
+            axios
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`)
+                .then((response) => {
+                    if (response.data.length == 0) {
+                        this.availableResources = linkTabDescriptor.metaSourcesMock
+                        this.availableResources.filter((resource) => (resource.name === this.dataset.dataSource.toLowerCase() ? this.getAvailableSourceTables(resource.sourceId) : ''))
+                    } else {
+                        this.$store.commit('setInfo', { title: this.$t('common.toast.info'), msg: this.$t('managers.datasetManagement.noSourceTables') })
+                    }
+                })
+                .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error }))
+        },
+        async getAvailableSourceTables(sourceId) {
+            axios
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/${sourceId}/metatables/`)
+                .then((response) => {
+                    if (response.data.lenth > 0) {
+                        this.availableTables = this.removeSelectedTablesFromAvailable(linkTabDescriptor.availableTablesMock, this.selectedTables)
+                    } else {
+                        this.$store.commit('setInfo', { title: this.$t('importExport.gallery.column.info'), msg: this.$t('managers.datasetManagement.noSourceTables') })
+                    }
+                })
+                .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error }))
+        },
         removeSelectedTablesFromAvailable(availableTablesArray, selectedTablesArray) {
             let filteredSelected = selectedTablesArray.map((selectedTable) => {
                 return selectedTable.tableId
