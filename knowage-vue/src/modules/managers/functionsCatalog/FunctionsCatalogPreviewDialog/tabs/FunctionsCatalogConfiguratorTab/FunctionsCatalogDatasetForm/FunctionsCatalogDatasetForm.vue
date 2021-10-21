@@ -27,7 +27,7 @@
                     <FunctionsCatalogDatasetFormVariablesTable :variables="selectedFunction.inputVariables"></FunctionsCatalogDatasetFormVariablesTable>
                 </div>
                 <div class="p-mx-2 p-mt-3">
-                    <label class="kn-material-input-label">{{ $t('managers.functionsCatalog.environment') }}</label>
+                    <label class="kn-material-input-label">{{ $t('common.environment') }}</label>
                     <Dropdown class="kn-material-input" v-model="selectedEnvironment" :options="selectedFunction.language == 'Python' ? pythonEnvironments : rEnvironments" optionLabel="label" optionValue="label" @change="$emit('environmentSelected', selectedEnvironment)" />
                 </div>
                 <div v-if="selectedEnvironment" class="p-mx-2 p-mt-3">

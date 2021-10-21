@@ -14,7 +14,7 @@
                 {{ slotProps.data.type }}
             </template>
         </Column>
-        <Column :header="$t('managers.functionsCatalog.value')">
+        <Column :header="$t('common.value')">
             <template #editor="slotProps">
                 <InputText v-if="slotProps.data.type !== 'DATE'" :style="functionsCatalogDatasetFormVariablesTableDescriptor.inputStyle" class="p-mr-2" v-model="slotProps.data['value']" :type="slotProps.data.type === 'NUMBER' ? 'number' : 'text'" />
                 <Calendar v-else v-model="slotProps.data['value']"></Calendar>

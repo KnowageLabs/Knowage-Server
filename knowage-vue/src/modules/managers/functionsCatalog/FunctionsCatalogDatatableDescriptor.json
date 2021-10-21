@@ -18,12 +18,12 @@
         },
         {
             "field": "language",
-            "header": "managers.functionsCatalog.language",
+            "header": "common.language",
             "style": {}
         },
         {
             "field": "owner",
-            "header": "managers.functionsCatalog.owner",
+            "header": "common.owner",
             "style": {}
         }
     ],

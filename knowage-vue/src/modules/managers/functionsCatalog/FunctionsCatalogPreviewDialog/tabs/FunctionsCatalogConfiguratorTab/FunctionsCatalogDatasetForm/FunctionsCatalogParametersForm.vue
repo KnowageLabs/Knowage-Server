@@ -3,7 +3,7 @@
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0 p-col-12">
                 <template #left>
-                    {{ $t('managers.functionsCatalog.parameters') }}
+                    {{ $t('common.parameters') }}
                 </template>
             </Toolbar>
         </template>

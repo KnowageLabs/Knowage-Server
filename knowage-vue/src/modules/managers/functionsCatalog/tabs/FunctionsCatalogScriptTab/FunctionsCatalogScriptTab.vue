@@ -1,13 +1,13 @@
 <template>
     <div class="p-field kn-flex p-m-2">
         <span>
-            <label class="kn-material-input-label">{{ $t('managers.functionsCatalog.language') }}</label>
+            <label class="kn-material-input-label">{{ $t('common.language') }}</label>
             <Dropdown class="kn-material-input" v-model="selectedFunction.language" :options="functionsCatalogScriptTabDescriptor.languages" optionLabel="value" optionValue="value" :disabled="readonly" />
         </span>
     </div>
     <div v-if="selectedFunction.language" class="p-mt-4">
         <div>
-            <label class="kn-material-input-label">{{ $t('managers.functionsCatalog.script') }}</label>
+            <label class="kn-material-input-label">{{ $t('common.script') }}</label>
             <VCodeMirror ref="codeMirror" class="p-mt-2" v-model:value="code" :autoHeight="true" :options="options" @keyup="onKeyUp" />
         </div>
     </div>

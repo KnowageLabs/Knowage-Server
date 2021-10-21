@@ -16,7 +16,7 @@
         <TabView>
             <TabPanel>
                 <template #header>
-                    <span>{{ $t('managers.functionsCatalog.general') }}</span>
+                    <span>{{ $t('common.general') }}</span>
                     <Badge class="p-ml-2" severity="danger" v-if="invalidGeneral"></Badge>
                 </template>
 
@@ -24,7 +24,7 @@
             </TabPanel>
             <TabPanel>
                 <template #header>
-                    <span>{{ $t('managers.functionsCatalog.input') }}</span>
+                    <span>{{ $t('common.input') }}</span>
                     <Badge class="p-ml-2" severity="danger" v-if="invalidInput"></Badge>
                 </template>
 
@@ -32,14 +32,14 @@
             </TabPanel>
             <TabPanel>
                 <template #header>
-                    <span>{{ $t('managers.functionsCatalog.script') }}</span>
+                    <span>{{ $t('common.script') }}</span>
                     <Badge class="p-ml-2" severity="danger" v-if="invalidCode"></Badge>
                 </template>
                 <FunctionsCatalogScriptTab :propFunction="selectedFunction" :readonly="readonly"></FunctionsCatalogScriptTab>
             </TabPanel>
             <TabPanel>
                 <template #header>
-                    <span>{{ $t('managers.functionsCatalog.output') }}</span>
+                    <span>{{ $t('common.output') }}</span>
                     <Badge class="p-ml-2" severity="danger" v-if="invalidOutput"></Badge>
                 </template>
 

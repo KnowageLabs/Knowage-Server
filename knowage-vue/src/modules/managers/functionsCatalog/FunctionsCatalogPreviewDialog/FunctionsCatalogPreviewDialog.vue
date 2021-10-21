@@ -18,7 +18,7 @@
             </TabPanel>
             <TabPanel :disabled="previewInvalid">
                 <template #header>
-                    <span>{{ $t('managers.functionsCatalog.preview') }}</span>
+                    <span>{{ $t('common.preview') }}</span>
                 </template>
 
                 <FunctionsCatalogPreviewTable :previewColumns="previewColumns" :previewRows="previewRows"></FunctionsCatalogPreviewTable>
@@ -29,7 +29,7 @@
 
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
-            <Button class="kn-button kn-button--primary" :icon="active === 0 ? 'pi pi-chevron-right' : 'pi pi-chevron-left'" :iconPos="active === 0 ? 'right' : 'left'" :label="active === 0 ? $t('managers.functionsCatalog.next') : $t('managers.functionsCatalog.back')" @click="changeTab" />
+            <Button class="kn-button kn-button--primary" :icon="active === 0 ? 'pi pi-chevron-right' : 'pi pi-chevron-left'" :iconPos="active === 0 ? 'right' : 'left'" :label="active === 0 ? $t('common.next') : $t('common.back')" @click="changeTab" />
         </template>
     </Dialog>
 </template>

@@ -17,7 +17,7 @@
         <div class="p-field p-col-6 p-mb-6">
             <span class="p-float-label">
                 <InputText id="owner " class="kn-material-input" v-model.trim="selectedFunction.owner" :disabled="true" />
-                <label for="owner " class="kn-material-input-label"> {{ $t('managers.functionsCatalog.owner') }} </label>
+                <label for="owner " class="kn-material-input-label"> {{ $t('common.owner') }} </label>
             </span>
         </div>
         <div class="p-field p-col-6 p-mb-6">
@@ -59,7 +59,7 @@
                         @click="descriptionDirty = true"
                         @input="descriptionDirty = true"
                     />
-                    <Button class="editor-switch-button" icon="pi pi-bars" :label="showDescriptionSource ? 'wysiwyg' : $t('managers.functionsCatalog.source')" @click="showDescriptionSource = !showDescriptionSource" />
+                    <Button class="editor-switch-button" icon="pi pi-bars" :label="showDescriptionSource ? 'wysiwyg' : $t('common.source')" @click="showDescriptionSource = !showDescriptionSource" />
                 </AccordionTab>
             </Accordion>
             <div v-if="selectedFunction.description.length === 0 && descriptionDirty" class="p-error p-grid p-m-2">
@@ -72,7 +72,7 @@
                     <label for="benchmarks" class="kn-material-input-label"> {{ $t('managers.functionsCatalog.benchmarks') }}</label>
                     <Textarea v-if="showBenchmarksSource" v-model="selectedFunction.benchmark" :style="functionsCatalogGeneralTabDescriptor.editor.style" :readonly="readonly"></Textarea>
                     <Editor v-else id="benchmarks" :editorStyle="functionsCatalogGeneralTabDescriptor.editor.style" v-model="selectedFunction.benchmark" :readonly="readonly" />
-                    <Button class="editor-switch-button" icon="pi pi-bars" :label="showBenchmarksSource ? 'wysiwyg' : $t('managers.functionsCatalog.source')" @click="showBenchmarksSource = !showBenchmarksSource"></Button>
+                    <Button class="editor-switch-button" icon="pi pi-bars" :label="showBenchmarksSource ? 'wysiwyg' : $t('common.source')" @click="showBenchmarksSource = !showBenchmarksSource"></Button>
                 </AccordionTab>
             </Accordion>
         </div>

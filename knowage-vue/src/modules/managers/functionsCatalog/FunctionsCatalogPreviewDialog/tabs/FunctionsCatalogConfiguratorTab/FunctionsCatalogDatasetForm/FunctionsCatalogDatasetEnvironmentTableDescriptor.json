@@ -3,12 +3,12 @@
     "columns": [
         {
             "field": "name",
-            "header": "managers.functionsCatalog.library",
+            "header": "common.library",
             "style": {}
         },
         {
             "field": "version",
-            "header": "managers.functionsCatalog.version",
+            "header": "common.version",
             "style": {}
         }
     ],
