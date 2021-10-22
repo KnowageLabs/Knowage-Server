@@ -2,11 +2,12 @@
     <div class="kn-page-content p-m-0">
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
             <template #left>{{ $t('managers.glossary.glossaryDefinition.title') }}</template>
-            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+
             <template #right>
                 <FabButton icon="fas fa-plus" class="fab-button" @click="addNewGlossary('Save')" />
             </template>
         </Toolbar>
+        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         <Card class="p-m-3">
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
@@ -75,15 +76,15 @@
                             <div
                                 class="p-d-flex p-flex-row p-ai-center"
                                 :class="{ dropzone: dropzoneActive[slotProps.node.key] }"
-                                @mouseover="buttonVisible[slotProps.node.id] = true"
-                                @mouseleave="buttonVisible[slotProps.node.id] = false"
+                                @mouseover="buttonVisible[slotProps.node.key] = true"
+                                @mouseleave="buttonVisible[slotProps.node.key] = false"
                                 @drop="saveWordConfirm($event, slotProps.node)"
                                 @dragover.prevent
                                 @dragenter.prevent="setDropzoneClass(true, slotProps.node)"
                                 @dragleave.prevent="setDropzoneClass(false, slotProps.node)"
                             >
                                 <span class="node-label">{{ slotProps.node.label }}</span>
-                                <div v-show="buttonVisible[slotProps.node.id]">
+                                <div v-show="buttonVisible[slotProps.node.key]">
                                     <Button
                                         v-if="!slotProps.node.data.HAVE_WORD_CHILD && slotProps.node.data.CONTENT_NM"
                                         icon="pi pi-bars"
@@ -110,7 +111,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iContent, iGlossary, iNode, iWord } from './GlossaryDefinition'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 import Message from 'primevue/message'
@@ -169,13 +170,13 @@ export default defineComponent({
             await this.listContents(glossaryId, parent)
         },
         async loadGlossaryList() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listGlossary`).then((response) => (this.glossaries = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listGlossary`).then((response: AxiosResponse<any>) => (this.glossaries = response.data))
         },
         async loadGlossary(glossaryId: number) {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getGlossary?GLOSSARY_ID=${glossaryId}`)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.selectedGlossary = { ...response.data, SaveOrUpdate: 'Update' }
                     this.originalGlossary = { ...response.data, SaveOrUpdate: 'Update' }
                     this.showTree = true
@@ -193,7 +194,7 @@ export default defineComponent({
 
             const parentId = parent ? parent.id : null
             let content = [] as iNode[]
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listContents?GLOSSARY_ID=${glossaryId}&PARENT_ID=${parentId}`).then((response) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listContents?GLOSSARY_ID=${glossaryId}&PARENT_ID=${parentId}`).then((response: AxiosResponse<any>) => {
                 response.data.forEach((el: any) => content.push(this.createNode(el, parent)))
                 content.sort((a: iNode, b: iNode) => (a.label > b.label ? 1 : -1))
             })
@@ -211,7 +212,7 @@ export default defineComponent({
         },
         createNode(el: any, parent: any) {
             return {
-                key: el.CONTENT_ID ?? el.WORD_ID,
+                key: el.CONTENT_ID ? `content-${el.CONTENT_ID}` : `word-${el.WORD_ID}`,
                 id: el.CONTENT_ID ?? el.WORD_ID,
                 label: el.CONTENT_NM ?? el.WORD,
                 icon: el.WORD_ID && !(el.HAVE_WORD_CHILD || el.HAVE_CONTENTS_CHILD) ? 'pi pi-circle-on' : '',
@@ -231,9 +232,9 @@ export default defineComponent({
             let tempData = []
             this.timer = setTimeout(() => {
                 this.loading = true
-                axios
+                this.$http
                     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/glosstreeLike?WORD=${this.searchWord}&GLOSSARY_ID=${this.selectedGlossary?.GLOSSARY_ID}`)
-                    .then((response) => (tempData = response.data))
+                    .then((response: AxiosResponse<any>) => (tempData = response.data))
                     .finally(() => {
                         this.createGlossaryTree(tempData)
                         this.loading = false
@@ -250,21 +251,6 @@ export default defineComponent({
                 })
                 this.nodes.push(tempNode)
             })
-            this.expandAll()
-        },
-        expandAll() {
-            for (let node of this.nodes) {
-                this.expandNode(node)
-            }
-            this.expandedKeys = { ...this.expandedKeys }
-        },
-        expandNode(node: iNode) {
-            if (node.children && node.children.length) {
-                this.expandedKeys[node.key] = true
-                for (let child of node.children) {
-                    this.expandNode(child)
-                }
-            }
         },
         async saveWordConfirm(event: any, item: any) {
             if (item.data.HAVE_CONTENTS_CHILD || item.data.WORD_ID) {
@@ -282,13 +268,13 @@ export default defineComponent({
         async saveWord(word: iWord, item: any) {
             this.loading = true
             this.selectedNode = item
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/business/addContents', {
                     GLOSSARY_ID: this.selectedGlossaryId,
                     PARENT_ID: item.id,
                     WORD_ID: word.WORD_ID
                 })
-                .then(async (response) => {
+                .then(async (response: AxiosResponse<any>) => {
                     if (response.data.Status !== 'NON OK') {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.createTitle'),
@@ -327,9 +313,9 @@ export default defineComponent({
             this.selectedNode = node.parent
             const url = node.data.CONTENT_ID ? `1.0/glossary/business/deleteContents?CONTENTS_ID=${node.data.CONTENT_ID}` : `1.0/glossary/business/deleteContents?PARENT_ID=${node.parent.id}&WORD_ID=${node.data.WORD_ID}`
             let status = ''
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, {})
-                .then((response) => (status = response.data.Status))
+                .then((response: AxiosResponse<any>) => (status = response.data.Status))
                 .catch((response) => {
                     this.$store.commit('setError', {
                         title: this.$t('common.error.generic'),
@@ -372,10 +358,10 @@ export default defineComponent({
         },
         async loadContent(contentId: number) {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getContent?CONTENT_ID=${contentId}`)
                 .then(
-                    (response) =>
+                    (response: AxiosResponse<any>) =>
                         (this.selectedContent = {
                             ...response.data,
                             CONTENT_ID: contentId,
@@ -388,10 +374,10 @@ export default defineComponent({
             this.loading = true
 
             let result = { status: '', message: '' } as any
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/business/addContents', content)
                 .then(
-                    (response) =>
+                    (response: AxiosResponse<any>) =>
                         (result = {
                             status: response.data.Status,
                             message: response.data.Message
@@ -459,7 +445,7 @@ export default defineComponent({
         },
         async deleteGlossary() {
             this.loading = true
-            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/business/deleteGlossary?GLOSSARY_ID=${this.selectedGlossaryId}`).then(() => {
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/business/deleteGlossary?GLOSSARY_ID=${this.selectedGlossaryId}`).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
@@ -519,9 +505,9 @@ export default defineComponent({
 
             const url = this.selectedGlossary?.SaveOrUpdate ? '1.0/glossary/business/addGlossary' : '1.0/glossary/business/cloneGlossary'
             let tempData = {} as any
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, this.selectedGlossary)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     tempData = response.data
                 })
                 .catch((response) => {

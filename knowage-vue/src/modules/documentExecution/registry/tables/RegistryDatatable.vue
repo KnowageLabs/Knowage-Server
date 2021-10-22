@@ -111,7 +111,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { formatDate, formatNumberWithLocale } from '@/helpers/commons/localeHelper'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
@@ -324,9 +324,9 @@ export default defineComponent({
             if (column.dependences && row && row[column.dependences]) {
                 postData.append('DEPENDENCES', this.entity + subEntity + ':' + column.dependences + '=' + row[column.dependences])
             }
-            await axios
+            await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
-                .then((response) => (this.comboColumnOptions[column.field][row[column.dependences]] = response.data.rows))
+                .then((response: AxiosResponse<any>) => (this.comboColumnOptions[column.field][row[column.dependences]] = response.data.rows))
         },
         addNewRow() {
             const newRow = { id: this.rows.length, isNew: true }

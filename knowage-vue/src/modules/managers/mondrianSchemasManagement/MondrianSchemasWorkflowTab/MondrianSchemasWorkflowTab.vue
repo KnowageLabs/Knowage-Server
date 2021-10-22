@@ -78,7 +78,7 @@ import { defineComponent } from 'vue'
 import { iSchema } from '../MondrianSchemas'
 import workflowDescriptor from './MondrianSchemasWorkflowDescriptor.json'
 import Listbox from 'primevue/listbox'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Tooltip from 'primevue/tooltip'
 
 export default defineComponent({
@@ -143,7 +143,7 @@ export default defineComponent({
         },
         async isWorkflowStarted() {
             if (this.schema.id) {
-                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/isStarted/${this.schema.id}`).then((response) => {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/isStarted/${this.schema.id}`).then((response: AxiosResponse<any>) => {
                     if (response.data > 0) {
                         this.isStartedWf = true
                         this.userInProg = response.data
@@ -159,9 +159,9 @@ export default defineComponent({
         },
         async startWorkflow() {
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/startWorkflow/${this.schema.id}`
-            await axios
+            await this.$http
                 .put(url)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     if (response.data.errors) {
                         this.$store.commit('setError', { title: this.$t('managers.mondrianSchemasManagement.toast.workflow.startFailed'), msg: response.data.errors[0].message })
                     } else {
