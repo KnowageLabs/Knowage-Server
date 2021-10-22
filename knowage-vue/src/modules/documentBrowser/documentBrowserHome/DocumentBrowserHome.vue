@@ -4,18 +4,31 @@
             <div id="document-browser-home-toolbar">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
                     <template #left>
-                        {{ $t('documentBrowser.title') }}
+                        <span>{{ searchMode ? $t('documentBrowser.documentsSearch') : $t('documentBrowser.title') }}</span>
+                        <span v-if="searchMode" class="p-mx-4">
+                            <i class="fa fa-arrow-left search-pointer p-mx-4" @click="exitSearchMode" />
+                            <InputText id="document-search" class="kn-material-input p-inputtext-sm p-mx-2" v-model="searchWord" :placeholder="$t('common.search')" />
+                            <i class="fa fa-times search-pointer p-mx-4" @click="searchWord = ''" />
+                            <i class="pi pi-search search-pointer p-mx-4" @click="loadDocuments" />
+                        </span>
+                    </template>
+
+                    <template #right>
+                        <span v-if="!searchMode" class="p-mx-4">
+                            <i class="pi pi-search search-pointer" @click="searchMode = true" />
+                        </span>
                     </template>
                 </Toolbar>
+
                 <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
             </div>
 
-            <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
+            <div v-show="!searchMode" class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
                 <DocumentBrowserTree :propFolders="folders" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder"></DocumentBrowserTree>
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
-                <DocumentBrowserDetail v-if="selectedFolder" :propDocuments="documents" :breadcrumbs="breadcrumbs" @breadcrumbClicked="setSelectedBreadcrumb($event)"></DocumentBrowserDetail>
+                <DocumentBrowserDetail v-if="selectedFolder || searchMode" :propDocuments="searchMode ? searchedDocuments : documents" :breadcrumbs="breadcrumbs" :searchMode="searchMode" @breadcrumbClicked="setSelectedBreadcrumb($event)"></DocumentBrowserDetail>
                 <DocumentBrowserHint v-else></DocumentBrowserHint>
             </div>
         </div>
@@ -37,8 +50,11 @@ export default defineComponent({
             folders: [] as any[],
             selectedFolder: null as any,
             documents: [] as any[],
+            searchedDocuments: [] as any[],
             breadcrumbs: [] as any[],
             selectedBreadcrumb: null as any,
+            searchWord: null as any,
+            searchMode: false,
             loading: false
         }
     },
@@ -54,11 +70,18 @@ export default defineComponent({
         },
         async loadDocuments() {
             this.loading = true
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents?folderId=${this.selectedFolder?.id}`).then((response) => (this.documents = response.data))
+            const url = this.searchMode ? `2.0/documents?searchAttributes=all&searchKey=${this.searchWord}` : `2.0/documents?folderId=${this.selectedFolder?.id}`
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response) => {
+                this.searchMode ? (this.searchedDocuments = response.data) : (this.documents = response.data)
+            })
             this.loading = false
             // console.log('LOADED DOCUMENTS: ', this.documents)
         },
         async setSelectedFolder(folder: any) {
+            if (this.selectedFolder?.id === folder.id) {
+                return
+            }
+
             this.selectedFolder = folder
             if (this.selectedFolder) {
                 await this.loadDocuments()
@@ -77,16 +100,38 @@ export default defineComponent({
             } while (currentFolder)
             // console.log('BREADCRUMBS: ', this.breadcrumbs)
         },
-        setSelectedBreadcrumb(breadcrumb: any) {
+        async setSelectedBreadcrumb(breadcrumb: any) {
             console.log('BREADCRUMB SELECTED IN HOME: ', breadcrumb)
+            console.log('SELECTED FOLDER BEFORE: ', this.selectedFolder)
             this.selectedBreadcrumb = breadcrumb
+
+            if (this.selectedFolder?.id === breadcrumb.node.data.id) {
+                return
+            }
+            this.selectedFolder = breadcrumb.node.data
+            await this.loadDocuments()
+            console.log('SELECTED FOLDER AFTER: ', this.selectedFolder)
+        },
+        exitSearchMode() {
+            this.searchMode = false
         }
     }
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 #document-browser-home-toolbar {
     width: 100%;
+}
+
+.search-pointer:hover {
+    cursor: pointer;
+}
+
+#document-search {
+    min-width: 500px;
+    background-color: $color-primary;
+    color: white;
+    border-bottom-color: white;
 }
 </style>

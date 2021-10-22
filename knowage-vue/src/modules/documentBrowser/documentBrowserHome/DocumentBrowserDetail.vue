@@ -1,7 +1,7 @@
 <template>
     <div class="p-d-flex p-flex-row">
         <div class="kn-flex">
-            <DocumentBrowserBreadcrumb :breadcrumbs="breadcrumbs" @breadcrumbClicked="$emit('breadcrumbClicked', $event)"></DocumentBrowserBreadcrumb>
+            <DocumentBrowserBreadcrumb v-if="!searchMode" :breadcrumbs="breadcrumbs" @breadcrumbClicked="$emit('breadcrumbClicked', $event)"></DocumentBrowserBreadcrumb>
             <DocumentBrowserTable class="p-m-2" :propDocuments="documents" @executeDocumentClick="executeDocument"></DocumentBrowserTable>
         </div>
         <div id="document-browser-sidebar-container">
@@ -20,7 +20,7 @@ import DocumentBrowserSidebar from './sidebar/DocumentBrowserSidebar.vue'
 export default defineComponent({
     name: 'document-browser-detail',
     components: { DocumentBrowserBreadcrumb, DocumentBrowserTable, DocumentBrowserSidebar },
-    props: { propDocuments: { type: Array }, breadcrumbs: { type: Array } },
+    props: { propDocuments: { type: Array }, breadcrumbs: { type: Array }, searchMode: { type: Boolean } },
     emits: ['breadcrumbClicked'],
     data() {
         return {

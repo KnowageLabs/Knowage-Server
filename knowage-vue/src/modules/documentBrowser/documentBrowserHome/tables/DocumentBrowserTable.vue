@@ -17,6 +17,14 @@
                 {{ $t('documentBrowser.noDocumentsHint') }}
             </Message>
         </template>
+        <template #header>
+            <div class="table-header p-d-flex">
+                <span class="p-input-icon-left p-mr-3 p-col-12">
+                    <i class="pi pi-search" />
+                    <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
+                </span>
+            </div>
+        </template>
         <Column class="kn-truncated" :style="col.style" v-for="col of documentBrowserTableDescriptor.columns" :header="$t(col.header)" :field="col.field" :key="col.field" :sortField="col.field" :sortable="true">
             <template #filter="{filterModel}">
                 <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>

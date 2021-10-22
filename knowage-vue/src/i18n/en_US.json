@@ -157,6 +157,7 @@
     },
     "documentBrowser": {
         "development": "Development",
+        "documentsSearch": "Search for documents",
         "hint": "No folder is selected",
         "noDocumentsHint": "No documents to display",
         "released": "Released",
