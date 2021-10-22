@@ -243,10 +243,6 @@ export default defineComponent({
     height: auto;
 }
 
-.warning-icon {
-    color: $color-warning;
-}
-
 .trigger-active {
     border-left: 2px solid green;
 }

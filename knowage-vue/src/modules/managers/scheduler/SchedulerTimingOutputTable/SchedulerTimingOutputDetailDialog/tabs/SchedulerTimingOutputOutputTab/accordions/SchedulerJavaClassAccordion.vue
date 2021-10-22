@@ -4,7 +4,7 @@
             <template #header>
                 <i class="fab fa-java"></i>
                 <span class="p-m-2">{{ $t('managers.scheduler.sendToJavaClass') }}</span>
-                <i v-if="document.invalid.invalidJavaClass" class="pi pi-exclamation-triangle warning-icon" data-test="warning-icon"></i>
+                <i v-if="document.invalid.invalidJavaClass" class="pi pi-exclamation-triangle kn-warning-icon" data-test="warning-icon"></i>
             </template>
 
             <div v-if="document">
@@ -90,9 +90,5 @@ export default defineComponent({
 
 .name-help {
     font-size: smaller;
-}
-
-.warning-icon {
-    color: $color-warning;
 }
 </style>

@@ -4,7 +4,7 @@
             <template #header>
                 <i class="fa fa-camera"></i>
                 <span class="p-m-2">{{ $t('managers.scheduler.saveAsSnapshot') }}</span>
-                <i v-if="document.invalid?.invalidSnapshot" class="pi pi-exclamation-triangle warning-icon" data-test="warning-icon"></i>
+                <i v-if="document.invalid?.invalidSnapshot" class="pi pi-exclamation-triangle kn-warning-icon" data-test="warning-icon"></i>
             </template>
 
             <div v-if="document">
@@ -108,10 +108,6 @@ export default defineComponent({
 <style lang="scss" scoped>
 #snapshot-name-container {
     flex: 2;
-}
-
-.warning-icon {
-    color: $color-warning;
 }
 
 .name-help {

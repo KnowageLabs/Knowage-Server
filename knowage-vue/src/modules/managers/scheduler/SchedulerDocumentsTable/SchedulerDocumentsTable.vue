@@ -31,7 +31,7 @@
             <Column :header="$t('common.parameters')">
                 <template #body="slotProps">
                     <span v-if="checkIfParameterValuesSet(slotProps.data.parameters)">{{ slotProps.data.condensedParameters }}</span>
-                    <span v-else class="warning-icon" v-tooltip.top="$t('managers.scheduler.parametersWarningTooltip')"> <i class="pi pi-exclamation-triangle" :data-test="'warning-icon-' + slotProps.data.name"></i></span>
+                    <span v-else v-tooltip.top="$t('managers.scheduler.parametersWarningTooltip')"> <i class="pi pi-exclamation-triangle kn-warning-icon" :data-test="'warning-icon-' + slotProps.data.name"></i></span>
                     <Button v-if="slotProps.data.parameters?.length > 0" icon="pi pi-pencil" class="p-button-link" @click="openDocumentParameterDialog(slotProps.data)" />
                 </template>
                 ></Column
@@ -239,9 +239,5 @@ export default defineComponent({
 <style lang="scss">
 #documents-datatable .p-datatable-wrapper {
     height: auto;
-}
-
-.warning-icon {
-    color: rgb(209, 209, 26);
 }
 </style>

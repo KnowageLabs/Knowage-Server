@@ -8,7 +8,7 @@
                         <div class="kn-list-item-text">
                             <span>{{ slotProps.option.label }}</span>
                         </div>
-                        <i v-if="documentInvalid(slotProps.option)" class="pi pi-exclamation-triangle warning-icon"></i>
+                        <i v-if="documentInvalid(slotProps.option)" class="pi pi-exclamation-triangle kn-warning-icon"></i>
                     </div>
                 </template>
             </Listbox>
@@ -64,9 +64,3 @@ export default defineComponent({
     }
 })
 </script>
-
-<style lang="scss" scoped>
-.warning-icon {
-    color: orange;
-}
-</style>

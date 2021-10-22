@@ -4,7 +4,7 @@
             <template #header>
                 <i class="fa fa-file"></i>
                 <span class="p-m-2">{{ $t('managers.scheduler.saveAsDocument') }}</span>
-                <i v-if="document.invalid?.invalidDocument" class="pi pi-exclamation-triangle warning-icon" data-test="warning-icon"></i>
+                <i v-if="document.invalid?.invalidDocument" class="pi pi-exclamation-triangle kn-warning-icon" data-test="warning-icon"></i>
             </template>
 
             <div v-if="document">
@@ -190,10 +190,6 @@ export default defineComponent({
 .dataset-hint-list {
     list-style: none;
     margin: 0;
-}
-
-.warning-icon {
-    color: $color-warning;
 }
 
 .name-help {

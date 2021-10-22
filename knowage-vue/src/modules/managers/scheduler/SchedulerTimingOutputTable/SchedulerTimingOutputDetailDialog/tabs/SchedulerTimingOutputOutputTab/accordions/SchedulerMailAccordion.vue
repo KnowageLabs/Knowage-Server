@@ -4,7 +4,7 @@
             <template #header>
                 <i class="fa fa-envelope"></i>
                 <span class="p-m-4">{{ $t('managers.scheduler.sendMail') }}</span>
-                <i v-if="document.invalid?.invalidMail" class="pi pi-exclamation-triangle warning-icon" data-test="warning-icon"></i>
+                <i v-if="document.invalid?.invalidMail" class="pi pi-exclamation-triangle kn-warning-icon" data-test="warning-icon"></i>
             </template>
 
             <div v-if="document">
@@ -346,10 +346,6 @@ export default defineComponent({
 <style lang="scss" scoped>
 #snapshot-name-container {
     flex: 2;
-}
-
-.warning-icon {
-    color: $color-warning;
 }
 
 .max-length-help {
