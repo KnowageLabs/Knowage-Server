@@ -33,17 +33,17 @@
                     {{ slotProps.data.triggerChronType }}
                 </template></Column
             >
-            <Column class="kn-truncated" :header="$t('managers.scheduler.startDate')">
+            <Column class="kn-truncated" :header="$t('cron.startDate')">
                 <template #body="slotProps">
                     {{ getFormatedDate(slotProps.data.triggerZonedStartTime, 'DD/MM/YYYY HH:mm') }}
                 </template></Column
             >
-            <Column class="kn-truncated" :header="$t('managers.scheduler.endDate')">
+            <Column class="kn-truncated" :header="$t('cron.endDate')">
                 <template #body="slotProps">
                     {{ slotProps.data.triggerZonedEndTime ? getFormatedDate(slotProps.data.triggerZonedEndTime, 'DD/MM/YYYY HH:mm') : '' }}
                 </template></Column
             >
-            <Column class="kn-truncated" :header="$t('managers.scheduler.paused')">
+            <Column class="kn-truncated" :header="$t('common.paused')">
                 <template #body="slotProps">
                     {{ slotProps.data.triggerIsPaused ? $t('common.yes') : $t('common.no') }}
                 </template></Column
@@ -106,7 +106,7 @@ export default defineComponent({
             return formatDate(date, format)
         },
         rowClass(trigger: any) {
-            return this.isTriggerActive(trigger) ? 'active' : 'inactive'
+            return this.isTriggerActive(trigger) ? 'trigger-active' : 'trigger-inactive'
         },
         isTriggerActive(trigger: any) {
             let active = true
@@ -173,7 +173,7 @@ export default defineComponent({
                 .then((response) => {
                     if (response.data.resp === 'ok') {
                         this.$store.commit('setInfo', {
-                            title: this.$t('managers.scheduler.information'),
+                            title: this.$t('common.information'),
                             msg: this.$t('managers.scheduler.schedulationExecuted')
                         })
                     }
@@ -197,7 +197,7 @@ export default defineComponent({
                 .then((response) => {
                     if (response.data.resp === 'ok') {
                         this.$store.commit('setInfo', {
-                            title: this.$t('managers.scheduler.information'),
+                            title: this.$t('common.information'),
                             msg: trigger.triggerIsPaused ? this.$t('managers.scheduler.schedulationResumed') : this.$t('managers.scheduler.schedulationPaused')
                         })
                         trigger.triggerIsPaused = action === 'pauseTrigger'
@@ -244,14 +244,14 @@ export default defineComponent({
 }
 
 .warning-icon {
-    color: rgb(209, 209, 26);
+    color: $color-warning;
 }
 
-.active {
+.trigger-active {
     border-left: 2px solid green;
 }
 
-.inactive {
+.trigger-inactive {
     border-left: 2px solid red;
 }
 </style>

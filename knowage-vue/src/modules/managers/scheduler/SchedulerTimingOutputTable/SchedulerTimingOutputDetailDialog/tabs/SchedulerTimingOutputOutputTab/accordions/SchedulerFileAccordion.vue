@@ -10,7 +10,7 @@
             <div v-if="document">
                 <div class="p-m-2">
                     <span>
-                        <label class="kn-material-input-label">{{ $t('managers.scheduler.fileName') }} *</label>
+                        <label class="kn-material-input-label">{{ $t('common.fileName') }} *</label>
                         <InputText
                             class="kn-material-input  p-inputtext-sm"
                             v-model="document.fileName"
@@ -25,7 +25,7 @@
                     <div class="p-d-flex p-flex-row p-jc-between">
                         <div>
                             <div v-show="fileNameDirty && (!document.fileName || document.fileName.length === 0)" class="p-error p-grid p-m-2">
-                                {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.fileName') }) }}
+                                {{ $t('common.validation.required', { fieldName: $t('common.fileName') }) }}
                             </div>
                         </div>
                         <p class="name-help p-m-0">{{ fileNameHelp }}</p>
@@ -120,7 +120,7 @@ export default defineComponent({
 }
 
 .warning-icon {
-    color: orange;
+    color: $color-warning;
 }
 
 .name-help {

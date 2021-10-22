@@ -18,7 +18,7 @@
             </TabPanel>
             <TabPanel>
                 <template #header>
-                    <span>{{ $t('managers.scheduler.output') }}</span>
+                    <span>{{ $t('common.output') }}</span>
                 </template>
 
                 <SchedulerTimingOutputOutputTab :propDocuments="trigger.documents" :functionalities="functionalities" :datasets="datasets" :jobInfo="jobInfo"></SchedulerTimingOutputOutputTab>
@@ -130,10 +130,10 @@ export default defineComponent({
         async saveTrigger() {
             this.loading = true
 
-            const formatedTrigger = this.formatTrigger()
+            const formattedTrigger = this.formatTrigger()
 
             await this.axios
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/saveTrigger`, formatedTrigger, { headers: { 'X-Disable-Errors': true } })
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/saveTrigger`, formattedTrigger, { headers: { 'X-Disable-Errors': true } })
                 .then((response) => {
                     if (response.data.Errors) {
                         this.setWarningMessage(response.data.Errors[0] ?? 'default error')
@@ -172,7 +172,7 @@ export default defineComponent({
             }
         },
         formatTrigger() {
-            const formatedTrigger = {
+            const formattedTrigger = {
                 ...this.trigger,
                 documents: this.trigger.documents.map((el: any) => {
                     return { ...el }
@@ -180,46 +180,46 @@ export default defineComponent({
             }
 
             if (this.trigger.frequency) {
-                formatedTrigger.frequency = { ...this.trigger.frequency, cron: { ...this.trigger.frequency.cron, parameter: { type: this.trigger.frequency.cron.type, parameter: { ...this.trigger.frequency.cron.parameter } } } }
+                formattedTrigger.frequency = { ...this.trigger.frequency, cron: { ...this.trigger.frequency.cron, parameter: { type: this.trigger.frequency.cron.type, parameter: { ...this.trigger.frequency.cron.parameter } } } }
             }
 
-            if (!formatedTrigger.triggerGroup) formatedTrigger.triggerGroup = ''
-            formatedTrigger._endTime = new Date().getHours() + ':' + new Date().getMinutes()
+            if (!formattedTrigger.triggerGroup) formattedTrigger.triggerGroup = ''
+            formattedTrigger._endTime = new Date().getHours() + ':' + new Date().getMinutes()
 
-            if (formatedTrigger.chrono.type === 'single') {
-                delete formatedTrigger.chrono.parameter
-            } else if (formatedTrigger.chrono.type !== 'event') {
-                this.formatCron(formatedTrigger)
+            if (formattedTrigger.chrono.type === 'single') {
+                delete formattedTrigger.chrono.parameter
+            } else if (formattedTrigger.chrono.type !== 'event') {
+                this.formatCron(formattedTrigger)
             }
 
-            if (!formatedTrigger.endDateTiming || !formatedTrigger.zonedEndTime) {
-                delete formatedTrigger.zonedEndTime
+            if (!formattedTrigger.endDateTiming || !formattedTrigger.zonedEndTime) {
+                delete formattedTrigger.zonedEndTime
             }
 
-            this.deleteTriggerProps(formatedTrigger)
-            this.formatTriggerDocuments(formatedTrigger)
+            this.deleteTriggerProps(formattedTrigger)
+            this.formatTriggerDocuments(formattedTrigger)
 
-            return formatedTrigger
+            return formattedTrigger
         },
-        deleteTriggerProps(formatedTrigger: any) {
+        deleteTriggerProps(formattedTrigger: any) {
             const props = ['startDateTiming', 'startTimeTiming', 'endDateTiming', 'endTimeTiming', 'startDate', 'startTime', 'startDateRFC3339', 'endDate', 'endTime']
-            props.forEach((property: string) => delete formatedTrigger[property])
+            props.forEach((property: string) => delete formattedTrigger[property])
         },
-        formatCron(formatedTrigger: any) {
-            formatedTrigger.chrono = this.trigger.frequency.cron
+        formatCron(formattedTrigger: any) {
+            formattedTrigger.chrono = this.trigger.frequency.cron
 
-            formatedTrigger.zonedStartTime = new Date(this.trigger.frequency.startDate)
+            formattedTrigger.zonedStartTime = new Date(this.trigger.frequency.startDate)
 
-            if (formatedTrigger.frequency.endDate) {
-                formatedTrigger.zonedEndTime = new Date(this.trigger.frequency.endDate)
-                formatedTrigger.endDateTiming = formatedTrigger.zonedEndTime
+            if (formattedTrigger.frequency.endDate) {
+                formattedTrigger.zonedEndTime = new Date(this.trigger.frequency.endDate)
+                formattedTrigger.endDateTiming = formattedTrigger.zonedEndTime
             } else {
-                formatedTrigger.zonedEndtime = null
-                formatedTrigger.endDateTiming = null
+                formattedTrigger.zonedEndtime = null
+                formattedTrigger.endDateTiming = null
             }
         },
-        formatTriggerDocuments(formatedTrigger: any) {
-            formatedTrigger.documents.forEach((el: any, index: number) => {
+        formatTriggerDocuments(formattedTrigger: any) {
+            formattedTrigger.documents.forEach((el: any, index: number) => {
                 el.label = el.name
                 el.labelId = el.labelId ?? el.id + '__' + (index + 1)
             })

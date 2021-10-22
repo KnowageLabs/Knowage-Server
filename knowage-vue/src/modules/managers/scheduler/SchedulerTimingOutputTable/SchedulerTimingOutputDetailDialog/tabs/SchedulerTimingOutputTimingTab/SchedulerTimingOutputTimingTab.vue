@@ -105,7 +105,7 @@
         <div v-if="triggerType === 'event'" class="p-my-4" data-test="event-trigger">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
-                    {{ $t('managers.scheduler.details') }}
+                    {{ $t('common.details') }}
                 </template>
             </Toolbar>
 
@@ -119,7 +119,7 @@
             <div v-if="trigger.chrono.parameter && trigger.chrono.parameter.type === 'dataset'">
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
                     <template #left>
-                        {{ $t('managers.scheduler.dataset') }}
+                        {{ $t('common.dataset') }}
                     </template>
                 </Toolbar>
 
@@ -170,7 +170,7 @@ export default defineComponent({
             eventTypes: [
                 { value: 'rest', label: this.$t('managers.scheduler.restService') },
                 { value: 'contextbroker', label: this.$t('managers.scheduler.contextBroker') },
-                { value: 'dataset', label: this.$t('managers.scheduler.dataset') }
+                { value: 'dataset', label: this.$t('common.dataset') }
             ],
             selectedDataset: null,
             validCron: true,

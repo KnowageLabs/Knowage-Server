@@ -2,7 +2,7 @@
     <div>
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
             <template #left>
-                {{ $t('managers.scheduler.documents') }}
+                {{ $t('common.documents') }}
             </template>
             <template #right>
                 <Button class="kn-button p-button-text p-button-rounded" @click="openDocumentsSelectionDialog">{{ $t('common.add') }}</Button>
@@ -28,7 +28,7 @@
                     {{ slotProps.data.name }}
                 </template></Column
             >
-            <Column :header="$t('managers.scheduler.parameters')">
+            <Column :header="$t('common.parameters')">
                 <template #body="slotProps">
                     <span v-if="checkIfParameterValuesSet(slotProps.data.parameters)">{{ slotProps.data.condensedParameters }}</span>
                     <span v-else class="warning-icon" v-tooltip.top="$t('managers.scheduler.parametersWarningTooltip')"> <i class="pi pi-exclamation-triangle" :data-test="'warning-icon-' + slotProps.data.name"></i></span>

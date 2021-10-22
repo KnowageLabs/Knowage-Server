@@ -75,7 +75,7 @@
 
                         <div class="p-my-2">
                             <span>
-                                <label class="kn-material-input-label">{{ $t('managers.scheduler.parameter') }} *</label>
+                                <label class="kn-material-input-label">{{ $t('common.parameter') }} *</label>
                                 <Dropdown
                                     class="kn-material-input"
                                     v-model="document.datasetParameter"
@@ -87,7 +87,7 @@
                                     @change="validateDocument('datasetParameterDirty')"
                                 />
                                 <div v-show="datasetParameterDirty && (!document.datasetParameter || document.datasetParameter?.length === 0)" class="p-error p-grid p-m-4">
-                                    {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.parameter') }) }}
+                                    {{ $t('common.validation.required', { fieldName: $t('common.parameter') }) }}
                                 </div>
                             </span>
                         </div>
@@ -178,7 +178,7 @@
 
                 <div class="p-m-4">
                     <span>
-                        <label class="kn-material-input-label">{{ $t('managers.scheduler.fileName') }}</label>
+                        <label class="kn-material-input-label">{{ $t('common.fileName') }}</label>
                         <InputText class="kn-material-input p-inputtext-sm" v-model="document.containedFileName" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.fileNameMaxLength" />
                     </span>
                     <div class="p-d-flex p-jc-end">
@@ -349,7 +349,7 @@ export default defineComponent({
 }
 
 .warning-icon {
-    color: orange;
+    color: $color-warning;
 }
 
 .max-length-help {

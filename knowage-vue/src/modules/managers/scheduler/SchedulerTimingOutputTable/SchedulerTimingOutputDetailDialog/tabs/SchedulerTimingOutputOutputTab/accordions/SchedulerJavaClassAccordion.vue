@@ -93,6 +93,6 @@ export default defineComponent({
 }
 
 .warning-icon {
-    color: orange;
+    color: $color-warning;
 }
 </style>

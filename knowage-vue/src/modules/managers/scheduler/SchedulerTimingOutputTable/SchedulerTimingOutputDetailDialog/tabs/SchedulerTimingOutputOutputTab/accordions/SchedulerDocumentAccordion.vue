@@ -90,7 +90,7 @@
 
                     <div class="p-m-2">
                         <span>
-                            <label class="kn-material-input-label">{{ $t('managers.scheduler.driver') }} *</label>
+                            <label class="kn-material-input-label">{{ $t('common.driver') }} *</label>
                             <Dropdown
                                 class="kn-material-input"
                                 v-model="document.datasetFolderParameter"
@@ -102,7 +102,7 @@
                                 @change="validateDocument('datasetFolderParameterDirty')"
                             />
                             <div v-if="datasetFolderParameterDirty && (!document.datasetFolderParameter || document.datasetFolderParameter?.length === 0)" class="p-error p-grid p-m-2">
-                                {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.driver') }) }}
+                                {{ $t('common.validation.required', { fieldName: $t('common.driver') }) }}
                             </div>
                         </span>
                     </div>
@@ -193,7 +193,7 @@ export default defineComponent({
 }
 
 .warning-icon {
-    color: orange;
+    color: $color-warning;
 }
 
 .name-help {

@@ -12,17 +12,17 @@
                     </div>
                     <div v-if="parameter.type === 'fixed'" class="p-mx-2 kn-flex">
                         <span v-if="parameterValues.manualInput">
-                            <label class="kn-material-input-label">{{ $t('managers.scheduler.values') }}</label>
+                            <label class="kn-material-input-label">{{ $t('common.values') }}</label>
                             <InputText class="kn-material-input" v-model="parameter.value" />
                         </span>
                         <span v-else>
-                            <label class="kn-material-input-label">{{ $t('managers.scheduler.values') }}</label>
+                            <label class="kn-material-input-label">{{ $t('common.values') }}</label>
                             <MultiSelect class="kn-material-input" v-model="parameter.selectedValues" :options="parameterValues.values" @change="formatSelectedValues" />
                         </span>
                     </div>
                     <div class="p-mx-2 kn-flex" v-else-if="parameter.type === 'loadAtRuntime'">
                         <span>
-                            <label class="kn-material-input-label">{{ $t('managers.scheduler.role') }}</label>
+                            <label class="kn-material-input-label">{{ $t('common.role') }}</label>
                             <Dropdown class="kn-material-input" v-model="parameter.value" :options="rolesOptions" optionLabel="role" optionValue="userAndRole" />
                         </span>
                     </div>

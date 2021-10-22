@@ -15,7 +15,7 @@
         <template #footer>
             <div class="p-d-flex p-flex-row p-jc-end">
                 <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
-                <Button class="kn-button kn-button--primary" @click="setParameters">{{ $t('managers.scheduler.set') }}</Button>
+                <Button class="kn-button kn-button--primary" @click="setParameters">{{ $t('common.set') }}</Button>
             </div>
         </template>
     </Dialog>

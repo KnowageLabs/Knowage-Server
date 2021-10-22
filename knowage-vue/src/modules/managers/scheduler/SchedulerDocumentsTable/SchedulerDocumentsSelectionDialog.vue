@@ -93,14 +93,14 @@ export default defineComponent({
             })
         },
         formatFolderChildren(folderChildren: any[]) {
-            const formatedChildren = [] as iNode[]
+            const formattedChildren = [] as iNode[]
             folderChildren.forEach((document: any) => {
                 if (document.visible) {
-                    formatedChildren.push({ key: document.id, icon: 'pi pi-file', id: document.id, label: document.name, data: document, selectable: true })
+                    formattedChildren.push({ key: document.id, icon: 'pi pi-file', id: document.id, label: document.name, data: document, selectable: true })
                 }
             })
 
-            return formatedChildren
+            return formattedChildren
         },
         attachFolderToTree(folder: iNode, foldersWithMissingParent: iNode[]) {
             if (folder.parentId) {
