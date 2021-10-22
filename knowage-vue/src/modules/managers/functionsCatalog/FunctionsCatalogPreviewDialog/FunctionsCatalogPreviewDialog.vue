@@ -37,7 +37,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iDataset } from '../FunctionsCatalog'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Dialog from 'primevue/dialog'
 import functionsCatalogPreviewDialogDescriptor from './FunctionsCatalogPreviewDialogDescriptor.json'
 import FunctionsCatalogConfiguratorTab from './tabs/FunctionsCatalogConfiguratorTab/FunctionsCatalogConfiguratorTab.vue'
@@ -130,9 +130,9 @@ export default defineComponent({
             this.loading = true
             const postBody = { aggregations: this.buildPreviewAggregations(), parameters: this.buildPreviewParameters(), selections: {}, indexes: [] }
 
-            await axios
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${this.selectedDataset?.label}/data`, postBody, { headers: { 'X-Disable-Errors': true } })
-                .then((response) => {
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${this.selectedDataset?.label}/data`, postBody, { headers: { 'X-Disable-Errors': 'true' } })
+                .then((response: AxiosResponse<any>) => {
                     this.setPreviewColumns(response.data)
                     this.previewRows = response.data.rows
                 })

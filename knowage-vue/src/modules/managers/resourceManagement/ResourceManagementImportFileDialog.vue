@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-	import axios from 'axios'
+	import { AxiosResponse } from 'axios'
 	import { defineComponent } from 'vue'
 	import Dialog from 'primevue/dialog'
 	import FileUpload from 'primevue/fileupload'
@@ -92,14 +92,14 @@
 					formData.append('key', this.path)
 					let checkedAsString = this.checked ? 'true' : 'false'
 					formData.append('extract', checkedAsString)
-					await axios
+					await this.$http
 						.post(process.env.VUE_APP_API_PATH + '2.0/resources/files/uploadFile', formData, {
 							headers: {
 								'Content-Type': 'multipart/form-data'
 							}
 						})
 						.then(
-							(response) => {
+							(response: AxiosResponse<any>) => {
 								if (response.data.errors) {
 									this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('managers.resourceManagement.upload.completedWithErrors') })
 								} else {

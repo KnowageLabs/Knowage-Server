@@ -54,7 +54,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iFunction, iFunctionType, iInputColumn, iInputVariable, iOutputColumn } from './FunctionsCatalog'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Badge from 'primevue/badge'
 import Dialog from 'primevue/dialog'
 import functionsCatalogDetailDescriptor from './FunctionsCatalogDetailDescriptor.json'
@@ -276,7 +276,7 @@ export default defineComponent({
             }
 
             await this.sendRequest(url)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     if (response.data.errors) {
                         this.warningVisible = true
                         this.missingFields.push(response.data.errrors[0].message)
@@ -298,9 +298,9 @@ export default defineComponent({
         },
         sendRequest(url: string) {
             if (this.operation === 'create') {
-                return axios.post(url, this.selectedFunction)
+                return this.$http.post(url, this.selectedFunction)
             } else {
-                return axios.patch(url, this.selectedFunction)
+                return this.$http.patch(url, this.selectedFunction)
             }
         }
     }

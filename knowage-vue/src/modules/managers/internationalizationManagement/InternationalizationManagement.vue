@@ -63,303 +63,303 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { filterDefault } from '@/helpers/commons/filterHelper'
-import { iLanguage, iMessage } from './InternationalizationManagement'
-import intDescriptor from './InternationalizationManagementDescriptor.json'
-import axios from 'axios'
-import TabView from 'primevue/tabview'
-import TabPanel from 'primevue/tabpanel'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
-import Checkbox from 'primevue/checkbox'
-import Button from 'primevue/button'
+    import { defineComponent } from 'vue'
+    import { filterDefault } from '@/helpers/commons/filterHelper'
+    import { iLanguage, iMessage } from './InternationalizationManagement'
+    import intDescriptor from './InternationalizationManagementDescriptor.json'
+    import { AxiosResponse } from 'axios'
+    import TabView from 'primevue/tabview'
+    import TabPanel from 'primevue/tabpanel'
+    import Column from 'primevue/column'
+    import DataTable from 'primevue/datatable'
+    import Checkbox from 'primevue/checkbox'
+    import Button from 'primevue/button'
 
-export default defineComponent({
-    name: 'internationalization-management',
-    components: {
-        TabView,
-        TabPanel,
-        Column,
-        DataTable,
-        Checkbox,
-        Button
-    },
-
-    computed: {
-        columns() {
-            if (this.selectedLanguage.defaultLanguage) {
-                return intDescriptor.defaultLanguageColumns
-            } else {
-                return intDescriptor.notDefaultLanguageColumns
-            }
-        }
-    },
-
-    data() {
-        return {
-            loading: false,
-            intDescriptor,
-            languages: [] as iLanguage[],
-            defaultLanguage: {} as iLanguage,
-            selectedLanguage: {} as iLanguage,
-            messages: [] as iMessage[],
-            allMessages: [] as iMessage[],
-            defaultLangMessages: [] as iMessage[],
-            showOnlyEmptyFields: false,
-            initialShowEmptyFields: false,
-            dirty: false,
-            activeTab: 0,
-            previousActiveTab: -1,
-            filters: {
-                global: [filterDefault]
-            } as Object
-        }
-    },
-    async created() {
-        await this.getLanguages()
-        this.setDefaultLanguage()
-        this.getMessages(this.defaultLanguage)
-    },
-
-    methods: {
-        filterEmptyMessages() {
-            this.messages = this.showOnlyEmptyFields ? [...this.allMessages.filter((message) => !message.message)] : [...this.allMessages]
+    export default defineComponent({
+        name: 'internationalization-management',
+        components: {
+            TabView,
+            TabPanel,
+            Column,
+            DataTable,
+            Checkbox,
+            Button
         },
 
-        atFieldChange(slotProps) {
-            slotProps.data.dirty = true
-            this.dirty = true
-        },
-
-        setDefaultLanguage() {
-            let defaultLanguageIndex
-            for (var language in this.languages) {
-                if (this.languages[language].defaultLanguage) {
-                    defaultLanguageIndex = language
-                    this.defaultLanguage = this.languages[language]
+        computed: {
+            columns() {
+                if (this.selectedLanguage.defaultLanguage) {
+                    return intDescriptor.defaultLanguageColumns
+                } else {
+                    return intDescriptor.notDefaultLanguageColumns
                 }
             }
-            this.languages.unshift(this.languages.splice(defaultLanguageIndex, 1)[0])
-            this.selectLanguage(0)
         },
 
-        addEmptyLabel() {
-            var tempMessage = {
-                language: '',
-                label: '',
-                message: ''
+        data() {
+            return {
+                loading: false,
+                intDescriptor,
+                languages: [] as iLanguage[],
+                defaultLanguage: {} as iLanguage,
+                selectedLanguage: {} as iLanguage,
+                messages: [] as iMessage[],
+                allMessages: [] as iMessage[],
+                defaultLangMessages: [] as iMessage[],
+                showOnlyEmptyFields: false,
+                initialShowEmptyFields: false,
+                dirty: false,
+                activeTab: 0,
+                previousActiveTab: -1,
+                filters: {
+                    global: [filterDefault]
+                } as Object
             }
-            this.messages.unshift(tempMessage)
+        },
+        async created() {
+            await this.getLanguages()
+            this.setDefaultLanguage()
+            this.getMessages(this.defaultLanguage)
         },
 
-        selectLanguage(index) {
-            var selectedTab = this.languages[index]
-            this.selectedLanguage = this.languages[index]
-            this.getMessages(selectedTab)
-        },
+        methods: {
+            filterEmptyMessages() {
+                this.messages = this.showOnlyEmptyFields ? [...this.allMessages.filter((message) => !message.message)] : [...this.allMessages]
+            },
 
-        async switchTabConfirm(index) {
-            if (!this.dirty) {
-                this.switchTab(index)
-                this.previousActiveTab = this.activeTab
-            } else {
-                this.$confirm.require({
-                    message: this.$t('common.toast.unsavedChangesMessage'),
-                    header: this.$t('common.toast.unsavedChangesHeader'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => {
-                        this.switchTab(index)
-                        this.dirty = false
-                    },
-                    reject: () => {
-                        this.activeTab = this.previousActiveTab
+            atFieldChange(slotProps) {
+                slotProps.data.dirty = true
+                this.dirty = true
+            },
+
+            setDefaultLanguage() {
+                let defaultLanguageIndex
+                for (var language in this.languages) {
+                    if (this.languages[language].defaultLanguage) {
+                        defaultLanguageIndex = language
+                        this.defaultLanguage = this.languages[language]
                     }
-                })
-            }
-        },
-        switchTab(index) {
-            this.initialShowEmptyFields = this.showOnlyEmptyFields.valueOf()
-            this.showOnlyEmptyFields = false
-            this.activeTab = index
-            this.selectLanguage(index)
-        },
+                }
+                this.languages.unshift(this.languages.splice(defaultLanguageIndex, 1)[0])
+                this.selectLanguage(0)
+            },
 
-        initCheck() {
-            if (this.initialShowEmptyFields) {
-                this.showOnlyEmptyFields = true
-                this.filterEmptyMessages()
-            }
-        },
-        async setDataForDefaultLanguage(response) {
-            if (response.data.length == 0) {
-                this.addEmptyLabel()
-            } else {
-                await this.setDefaultLanguageValues(response)
+            addEmptyLabel() {
+                var tempMessage = {
+                    language: '',
+                    label: '',
+                    message: ''
+                }
+                this.messages.unshift(tempMessage)
+            },
+
+            selectLanguage(index) {
+                var selectedTab = this.languages[index]
+                this.selectedLanguage = this.languages[index]
+                this.getMessages(selectedTab)
+            },
+
+            async switchTabConfirm(index) {
+                if (!this.dirty) {
+                    this.switchTab(index)
+                    this.previousActiveTab = this.activeTab
+                } else {
+                    this.$confirm.require({
+                        message: this.$t('common.toast.unsavedChangesMessage'),
+                        header: this.$t('common.toast.unsavedChangesHeader'),
+                        icon: 'pi pi-exclamation-triangle',
+                        accept: () => {
+                            this.switchTab(index)
+                            this.dirty = false
+                        },
+                        reject: () => {
+                            this.activeTab = this.previousActiveTab
+                        }
+                    })
+                }
+            },
+            switchTab(index) {
+                this.initialShowEmptyFields = this.showOnlyEmptyFields.valueOf()
+                this.showOnlyEmptyFields = false
+                this.activeTab = index
+                this.selectLanguage(index)
+            },
+
+            initCheck() {
+                if (this.initialShowEmptyFields) {
+                    this.showOnlyEmptyFields = true
+                    this.filterEmptyMessages()
+                }
+            },
+            async setDataForDefaultLanguage(response: AxiosResponse<any>) {
+                if (response.data.length == 0) {
+                    this.addEmptyLabel()
+                } else {
+                    await this.setDefaultLanguageValues(response)
+                    this.initCheck()
+                }
+            },
+            async setDefaultLanguageValues(response: AxiosResponse<any>) {
+                this.defaultLangMessages = response.data
+                this.messages = response.data
+            },
+
+            async setEmptyDatatableData(selectedTab) {
+                this.defaultLangMessages.forEach((defMess) => {
+                    var newMess = {} as any
+                    newMess.language = selectedTab.languageTag
+                    newMess.label = defMess.label
+                    newMess.defaultMessageCode = defMess.message
+                    newMess.message = ''
+                    this.messages.push(newMess)
+                })
+            },
+
+            async checkForMessages(response, selectedTab) {
+                if (response.data.length != 0) {
+                    await this.setFilledDatatableData(response, selectedTab)
+                } else {
+                    await this.setEmptyDatatableData(selectedTab)
+                }
                 this.initCheck()
-            }
-        },
-        async setDefaultLanguageValues(response) {
-            this.defaultLangMessages = response.data
-            this.messages = response.data
-        },
+            },
 
-        async setEmptyDatatableData(selectedTab) {
-            this.defaultLangMessages.forEach((defMess) => {
-                var newMess = {} as any
-                newMess.language = selectedTab.languageTag
-                newMess.label = defMess.label
-                newMess.defaultMessageCode = defMess.message
-                newMess.message = ''
-                this.messages.push(newMess)
-            })
-        },
-
-        async checkForMessages(response, selectedTab) {
-            if (response.data.length != 0) {
-                await this.setFilledDatatableData(response, selectedTab)
-            } else {
-                await this.setEmptyDatatableData(selectedTab)
-            }
-            this.initCheck()
-        },
-
-        async setFilledDatatableData(response, selectedTab) {
-            this.defaultLangMessages.forEach((defMess) => {
-                var translatedMessage = response.data.find((item) => {
-                    return item.label == defMess.label
-                })
-                if (translatedMessage) {
-                    translatedMessage.defaultMessageCode = defMess.message
-                    this.messages.push(translatedMessage)
-                } else {
-                    var message = {
-                        language: selectedTab.languageTag,
-                        label: defMess.label,
-                        defaultMessageCode: defMess.message,
-                        message: ''
-                    }
-                    this.messages.push(message)
-                }
-            })
-        },
-
-        getMessages(selectedTab) {
-            this.messages = []
-            this.loading = true
-            return axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization/?currLanguage=' + selectedTab.languageTag)
-                .then((response) => {
-                    if (selectedTab.defaultLanguage) {
-                        this.setDataForDefaultLanguage(response)
+            async setFilledDatatableData(response, selectedTab) {
+                this.defaultLangMessages.forEach((defMess) => {
+                    var translatedMessage = response.data.find((item) => {
+                        return item.label == defMess.label
+                    })
+                    if (translatedMessage) {
+                        translatedMessage.defaultMessageCode = defMess.message
+                        this.messages.push(translatedMessage)
                     } else {
-                        this.checkForMessages(response, selectedTab)
+                        var message = {
+                            language: selectedTab.languageTag,
+                            label: defMess.label,
+                            defaultMessageCode: defMess.message,
+                            message: ''
+                        }
+                        this.messages.push(message)
                     }
-                    this.allMessages = [...this.messages]
                 })
-                .finally(() => (this.loading = false))
-        },
+            },
 
-        async getLanguages() {
-            this.loading = true
-            return axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/internationalization/languages')
-                .then((response) => {
-                    console.log('REQUEST', response.data.wrappedObject)
-                    console.log('DESCRIPTRO', this.languages)
-                    this.languages = response.data.wrappedObject
-                })
-                .finally(() => (this.loading = false))
-        },
-
-        saveOrUpdateMessage(url, toSave, langObj) {
-            if (toSave.id) {
-                delete toSave.defaultMessageCode
-
-                return axios.put(url, toSave)
-            } else {
-                if (toSave.defaultMessageCode) delete toSave.defaultMessageCode
-                toSave.language = langObj.languageTag
-                return axios.post(url, toSave)
-            }
-        },
-
-        saveLabel(langObj, message) {
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages'
-            var toSave = { ...message } as iMessage
-            delete toSave.dirty
-            this.saveOrUpdateMessage(url, toSave, langObj).then((response) => {
-                if (response.data.errors) {
-                    this.$store.commit('setError', { msg: response.data.errors })
-                } else {
-                    this.$store.commit('setInfo', { msg: this.$t('common.toast.updateSuccess') })
-                }
-                this.getMessages(langObj)
-            })
-            this.initialShowEmptyFields = false
-            this.showOnlyEmptyFields = false
-            this.dirty = false
-        },
-
-        deleteLabelConfirm(langObj, message, isDefault) {
-            let msgToDelete = message.data
-            let index = message.index
-            console.log('langOBJECT', langObj)
-            console.log('message', message)
-            if (msgToDelete.id) {
-                let url = ''
-                if (msgToDelete.defaultMessageCode) {
-                    url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/'
-                    this.$confirm.require({
-                        message: this.$t('managers.internationalizationManagement.delete.deleteMessage'),
-                        header: this.$t('managers.internationalizationManagement.delete.deleteMessageTitle'),
-                        icon: 'pi pi-exclamation-triangle',
-                        accept: () => this.deleteLabel(url, msgToDelete.id, langObj)
+            getMessages(selectedTab) {
+                this.messages = []
+                this.loading = true
+                return this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization/?currLanguage=' + selectedTab.languageTag)
+                    .then((response: AxiosResponse<any>) => {
+                        if (selectedTab.defaultLanguage) {
+                            this.setDataForDefaultLanguage(response)
+                        } else {
+                            this.checkForMessages(response, selectedTab)
+                        }
+                        this.allMessages = [...this.messages]
                     })
-                } else {
-                    url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/deletedefault/'
-                    this.$confirm.require({
-                        message: this.$t('managers.internationalizationManagement.delete.deleteDefault'),
-                        header: this.$t('managers.internationalizationManagement.delete.deleteDefaultTitle'),
+                    .finally(() => (this.loading = false))
+            },
 
-                        icon: 'pi pi-exclamation-triangle',
-                        accept: () => this.deleteLabel(url, msgToDelete.id, langObj)
+            async getLanguages() {
+                this.loading = true
+                return this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/internationalization/languages')
+                    .then((response: AxiosResponse<any>) => {
+                        console.log('REQUEST', response.data.wrappedObject)
+                        console.log('DESCRIPTRO', this.languages)
+                        this.languages = response.data.wrappedObject
                     })
-                }
-            } else {
-                isDefault ? this.messages.splice(index, 1) : this.$store.commit('setError', { title: this.$t('managers.internationalizationManagement.delete.deleteDefaultTitle'), msg: this.$t('managers.internationalizationManagement.delete.cantDelete') })
-            }
-        },
+                    .finally(() => (this.loading = false))
+            },
 
-        async deleteLabel(url, id, langObj) {
-            await axios.delete(url + id).then((response) => {
-                if (response.data.errors) {
-                    this.$store.commit('setError', { title: 'Error', msg: response.data.errors })
+            saveOrUpdateMessage(url, toSave, langObj) {
+                if (toSave.id) {
+                    delete toSave.defaultMessageCode
+
+                    return this.$http.put(url, toSave)
                 } else {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                    if (toSave.defaultMessageCode) delete toSave.defaultMessageCode
+                    toSave.language = langObj.languageTag
+                    return this.$http.post(url, toSave)
+                }
+            },
+
+            saveLabel(langObj, message) {
+                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages'
+                var toSave = { ...message } as iMessage
+                delete toSave.dirty
+                this.saveOrUpdateMessage(url, toSave, langObj).then((response: AxiosResponse<any>) => {
+                    if (response.data.errors) {
+                        this.$store.commit('setError', { msg: response.data.errors })
+                    } else {
+                        this.$store.commit('setInfo', { msg: this.$t('common.toast.updateSuccess') })
+                    }
                     this.getMessages(langObj)
+                })
+                this.initialShowEmptyFields = false
+                this.showOnlyEmptyFields = false
+                this.dirty = false
+            },
+
+            deleteLabelConfirm(langObj, message, isDefault) {
+                let msgToDelete = message.data
+                let index = message.index
+                console.log('langOBJECT', langObj)
+                console.log('message', message)
+                if (msgToDelete.id) {
+                    let url = ''
+                    if (msgToDelete.defaultMessageCode) {
+                        url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/'
+                        this.$confirm.require({
+                            message: this.$t('managers.internationalizationManagement.delete.deleteMessage'),
+                            header: this.$t('managers.internationalizationManagement.delete.deleteMessageTitle'),
+                            icon: 'pi pi-exclamation-triangle',
+                            accept: () => this.deleteLabel(url, msgToDelete.id, langObj)
+                        })
+                    } else {
+                        url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/deletedefault/'
+                        this.$confirm.require({
+                            message: this.$t('managers.internationalizationManagement.delete.deleteDefault'),
+                            header: this.$t('managers.internationalizationManagement.delete.deleteDefaultTitle'),
+
+                            icon: 'pi pi-exclamation-triangle',
+                            accept: () => this.deleteLabel(url, msgToDelete.id, langObj)
+                        })
+                    }
+                } else {
+                    isDefault ? this.messages.splice(index, 1) : this.$store.commit('setError', { title: this.$t('managers.internationalizationManagement.delete.deleteDefaultTitle'), msg: this.$t('managers.internationalizationManagement.delete.cantDelete') })
                 }
-            })
-            this.initialShowEmptyFields = false
-            this.showOnlyEmptyFields = false
+            },
+
+            async deleteLabel(url, id, langObj) {
+                await this.$http.delete(url + id).then((response: AxiosResponse<any>) => {
+                    if (response.data.errors) {
+                        this.$store.commit('setError', { title: 'Error', msg: response.data.errors })
+                    } else {
+                        this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                        this.getMessages(langObj)
+                    }
+                })
+                this.initialShowEmptyFields = false
+                this.showOnlyEmptyFields = false
+            }
         }
-    }
-})
+    })
 </script>
 
 <style lang="scss">
-.internationalization-management {
-    .disabledCell,
-    .disabledColumn,
-    .disabledEditableField {
-        cursor: not-allowed;
+    .internationalization-management {
+        .disabledCell,
+        .disabledColumn,
+        .disabledEditableField {
+            cursor: not-allowed;
+        }
+        .editableCell,
+        .editableColumn {
+            cursor: pointer;
+        }
+        .p-datatable .p-datatable-tbody > tr:hover {
+            background-color: $color-selected;
+        }
     }
-    .editableCell,
-    .editableColumn {
-        cursor: pointer;
-    }
-    .p-datatable .p-datatable-tbody > tr:hover {
-        background-color: $color-selected;
-    }
-}
 </style>

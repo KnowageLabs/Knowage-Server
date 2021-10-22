@@ -15,7 +15,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iDataset, iPythonConfiguration, iLibrary } from '../../../FunctionsCatalog'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import FunctionsCatalogDatasetTable from './FunctionsCatalogDatasetTable/FunctionsCatalogDatasetTable.vue'
 import FunctionsCatalogDatasetForm from './FunctionsCatalogDatasetForm/FunctionsCatalogDatasetForm.vue'
 
@@ -38,7 +38,7 @@ export default defineComponent({
     methods: {
         async loadSelectedDataset(dataset: iDataset) {
             this.$emit('loading', true)
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${dataset.label}`).then((response) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${dataset.label}`).then((response: AxiosResponse<any>) => {
                 if (response.data) {
                     this.selectedDataset = response.data[0]
                     this.$emit('selectedDataset', this.selectedDataset)
@@ -48,23 +48,23 @@ export default defineComponent({
         },
         async loadEnvironments() {
             this.$emit('loading', true)
-            await this.loadEnvironment('PYTHON_CONFIGURATION').then((response) => (this.pythonEnvironments = response.data))
-            await this.loadEnvironment('R_CONFIGURATION').then((response) => (this.rEnvironments = response.data))
+            await this.loadEnvironment('PYTHON_CONFIGURATION').then((response: AxiosResponse<any>) => (this.pythonEnvironments = response.data))
+            await this.loadEnvironment('R_CONFIGURATION').then((response: AxiosResponse<any>) => (this.rEnvironments = response.data))
             this.$emit('loading', false)
         },
         loadEnvironment(type: string) {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/category/${type}`)
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/category/${type}`)
         },
         async onEnvironmentSelected(environment: string) {
             this.$emit('selectedEnvironment', environment)
             this.$emit('loading', true)
             if (environment && environment.split('.')[0] === 'python') {
-                await this.loadEnvironmentLibraries(`2.0/backendservices/widgets/python/libraries/${environment}`).then((response) => (this.libraries = JSON.parse(response.data.result)))
+                await this.loadEnvironmentLibraries(`2.0/backendservices/widgets/python/libraries/${environment}`).then((response: AxiosResponse<any>) => (this.libraries = JSON.parse(response.data.result)))
             }
             this.$emit('loading', false)
         },
         async loadEnvironmentLibraries(url: string) {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `${url}`)
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `${url}`)
         }
     }
 })

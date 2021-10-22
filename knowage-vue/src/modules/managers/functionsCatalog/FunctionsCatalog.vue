@@ -27,7 +27,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iFunction, iFunctionType, iDataset } from './FunctionsCatalog'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import FunctionsCatalogDatatable from './FunctionsCatalogDatatable.vue'
 import FunctionsCatalogDetail from './FunctionsCatalogDetail.vue'
 import FunctionsCatalogFilterCards from './FunctionsCatalogFilterCards.vue'
@@ -72,7 +72,7 @@ export default defineComponent({
         },
         async loadFunctions(filterValue: string) {
             const url = filterValue ? process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functions-catalog/` + filterValue : process.env.VUE_APP_API_PATH + `1.0/functioncatalog/completelist`
-            await axios.get(url).then((response) => {
+            await this.$http.get(url).then((response: AxiosResponse<any>) => {
                 this.functions = filterValue
                     ? response.data.functions.map((el: any) => {
                           el.tags = [...el.keywords]
@@ -87,7 +87,7 @@ export default defineComponent({
             })
         },
         async loadFilters() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/FUNCTION_TYPE`).then((response) => (this.filters = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/FUNCTION_TYPE`).then((response: AxiosResponse<any>) => (this.filters = response.data))
         },
         showForm(selectedFunction: iFunction | null) {
             this.selectedFunction = selectedFunction
@@ -96,7 +96,7 @@ export default defineComponent({
         async deleteFunction(functionId: number) {
             this.loading = true
             let reponseOk = false as any
-            await axios
+            await this.$http
                 .delete(process.env.VUE_APP_API_PATH + `1.0/functioncatalog/${functionId}`)
                 .then(() => {
                     reponseOk = true
@@ -144,7 +144,7 @@ export default defineComponent({
             this.loading = false
         },
         async loadDatasets() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/`).then((response) => (this.datasets = response.data.root))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/`).then((response: AxiosResponse<any>) => (this.datasets = response.data.root))
         }
     }
 })
