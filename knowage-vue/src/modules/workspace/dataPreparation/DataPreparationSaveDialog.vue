@@ -109,7 +109,7 @@
     import { defineComponent, PropType } from 'vue'
     import { createValidations } from '@/helpers/commons/validationHelper'
 
-    import axios from 'axios'
+    import { AxiosResponse } from 'axios'
     import Dialog from 'primevue/dialog'
     import Dropdown from 'primevue/dropdown'
     import DataPreparationDescriptor from './DataPreparationDescriptor.json'
@@ -139,9 +139,9 @@
         methods: {
             handleTransformation() {
                 let data = this.createDataToSend()
-                axios
+                this.$http
                     .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'selfservicedataset/save?SBI_EXECUTION_ID=-1&isTech=false&showDerivedDataset=false&showOnlyOwner=true', data, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded' } })
-                    .then((response) => {
+                    .then((response: AxiosResponse<any>) => {
                         console.log(response)
                     })
             },

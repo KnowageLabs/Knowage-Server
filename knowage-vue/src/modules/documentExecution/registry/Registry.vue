@@ -37,7 +37,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import registryDescriptor from './RegistryDescriptor.json'
 import RegistryDatatable from './tables/RegistryDatatable.vue'
 import RegistryPivotDatatable from './tables/RegistryPivotDatatable.vue'
@@ -97,18 +97,18 @@ export default defineComponent({
             })
 
             postData.append('start', '' + this.pagination.start)
-            await axios
+            await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, {
                     headers: {
                         Accept: 'application/json, text/plain, */*',
                         'Content-Type': 'application/x-www-form-urlencoded'
                     }
                 })
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.pagination.size = response.data.results
                     this.registry = response.data
                 })
-                .catch((response) => {
+                .catch((response: AxiosResponse<any>) => {
                     this.$store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: response
@@ -177,7 +177,7 @@ export default defineComponent({
             })
             const postData = new URLSearchParams()
             postData.append('records', '' + JSON.stringify(this.updatedRows))
-            await axios
+            await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=UPDATE_RECORDS_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
                 .then(() => {
                     this.$store.commit('setInfo', {
@@ -195,9 +195,9 @@ export default defineComponent({
             }
             const postData = new URLSearchParams()
             postData.append('records', '' + JSON.stringify([row]))
-            await axios
+            await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=DELETE_RECORDS_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
@@ -209,7 +209,7 @@ export default defineComponent({
                         this.pagination.size--
                     }
                 })
-                .catch((response) => {
+                .catch((response: AxiosResponse<any>) => {
                     this.$store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: response

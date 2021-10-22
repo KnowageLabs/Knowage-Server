@@ -45,7 +45,7 @@
 import { defineComponent } from 'vue'
 import { iFunctionality, iNode } from './FunctionalitiesManagement'
 import FunctionalitiesManagementDetail from './detailTabView/FunctionalitiesManagementDetail.vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import functionalitiesManagementDescriptor from './FunctionalitiesManagementDescriptor.json'
 import KnHint from '@/components/UI/KnHint.vue'
@@ -80,11 +80,11 @@ export default defineComponent({
     },
     methods: {
         async loadFunctionalities() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/').then((response) => (this.functionalities = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/').then((response: AxiosResponse<any>) => (this.functionalities = response.data))
         },
         async loadRolesShort() {
             this.rolesShort = []
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/short/').then((response) => (this.rolesShort = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/short/').then((response: AxiosResponse<any>) => (this.rolesShort = response.data))
         },
         createNodeTree() {
             this.nodes = []
@@ -193,7 +193,7 @@ export default defineComponent({
             return functionality.prog !== 1
         },
         moveUp(functionalityId: number) {
-            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveUp/${functionalityId}`).then(() => this.loadPage(null))
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveUp/${functionalityId}`).then(() => this.loadPage(null))
         },
         canBeMovedDown(functionality: iFunctionality) {
             let canBeMoved = false
@@ -206,7 +206,7 @@ export default defineComponent({
             return canBeMoved
         },
         moveDown(functionalityId: number) {
-            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveDown/${functionalityId}`).then(() => this.loadPage(null))
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveDown/${functionalityId}`).then(() => this.loadPage(null))
         },
         canBeDeleted(functionality: iFunctionality) {
             return functionality.parentId && functionality.codType !== 'LOW_FUNCT'
@@ -223,7 +223,7 @@ export default defineComponent({
             })
         },
         async deleteFunctionality(functionalityId: number) {
-            await axios
+            await this.$http
                 .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/${functionalityId}`)
                 .then(() => {
                     this.$store.commit('setInfo', {

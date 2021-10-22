@@ -34,7 +34,7 @@
 
 <script lang="ts">
     import { defineComponent } from 'vue'
-    import axios from 'axios'
+    import { AxiosResponse } from 'axios'
     import KnFabButton from '@/components/UI/KnFabButton.vue'
     import DataPreparationDescriptor from './DataPreparationDescriptor.json'
 
@@ -50,7 +50,7 @@
 
         emits: ['update:visibility'],
         created() {
-            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/datasets/mydata/').then((response) => (this.dataPreparation = response.data.root))
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/datasets/mydata/').then((response: AxiosResponse<any>) => (this.dataPreparation = response.data.root))
         },
         methods: {
             search(e, item) {

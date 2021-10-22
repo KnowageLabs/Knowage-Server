@@ -22,7 +22,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iNavigation } from './CrossNavigationManagement'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import crossNavigationDescriptor from './CrossNavigationManagementDescriptor.json'
@@ -44,9 +44,9 @@ export default defineComponent({
     methods: {
         async loadAll() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/listNavigation/')
-                .then((response) => (this.navigations = response.data))
+                .then((response: AxiosResponse<any>) => (this.navigations = response.data))
                 .finally(() => (this.loading = false))
         },
         selected(e, itemId) {

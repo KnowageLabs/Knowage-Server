@@ -68,7 +68,7 @@
 import { defineComponent } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { iLinkTableItem, iWord } from '../GlossaryUsage'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
 import Chip from 'primevue/chip'
 import Column from 'primevue/column'
@@ -152,7 +152,7 @@ export default defineComponent({
         },
         async addAssociatedWord(linkItem: any, word: iWord, type: string, url: string, postData: any, itemType: string) {
             this.loading = true
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)
                 .then(() => {
                     type === 'tree'
@@ -173,7 +173,7 @@ export default defineComponent({
                         msg: this.$t('common.toast.success')
                     })
                 })
-                .catch((response) => {
+                .catch((response: AxiosResponse<any>) => {
                     this.$store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: response
@@ -233,7 +233,7 @@ export default defineComponent({
         },
         async deleteWord(linkItem: any, wordId: number, type: string, url: string, method: string) {
             this.loading = true
-            await axios[method](process.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
+            await this.$http[method](process.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
                 .then(() => {
                     type === 'tree' ? this.removeWordFromTreeWords(wordId, linkItem.parent) : this.removeWordFromAssociatedWords(wordId, linkItem.id)
                     this.$store.commit('setInfo', {
@@ -241,7 +241,7 @@ export default defineComponent({
                         msg: this.$t('common.toast.deleteSuccess')
                     })
                 })
-                .catch((response) => {
+                .catch((response: AxiosResponse<any>) => {
                     this.$store.commit('setError', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: response

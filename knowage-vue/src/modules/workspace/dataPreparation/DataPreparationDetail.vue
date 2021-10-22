@@ -150,7 +150,7 @@
 <script lang="ts">
     import { defineComponent } from 'vue'
 
-    import axios from 'axios'
+    import { AxiosResponse } from 'axios'
     import Column from 'primevue/column'
     import DataTable from 'primevue/datatable'
     import DataPreparationDescriptor from './DataPreparationDescriptor.json'
@@ -192,11 +192,11 @@
             this.loading = true
             this.descriptorTransformations = Object.assign([], this.descriptor.transformations)
 
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/' + this.id).then((response) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/' + this.id).then((response: AxiosResponse<any>) => {
                 this.dataset = response.data[0]
             })
             if (this.dataset) {
-                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datapreparation/' + this.id + '/datasetinfo').then((response) => {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datapreparation/' + this.id + '/datasetinfo').then((response: AxiosResponse<any>) => {
                     this.columns = []
                     response.data.meta.columns
                         .filter((x) => x.pname == 'Type')
@@ -209,7 +209,7 @@
                             this.columns.push(obj)
                         })
 
-                    axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datapreparation/' + this.id + '/preview', this.dataset).then((response) => {
+                    this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datapreparation/' + this.id + '/preview', this.dataset).then((response: AxiosResponse<any>) => {
                         this.datasetData = []
 
                         response.data.rows.forEach((element) => {
@@ -352,7 +352,7 @@
                 this.showSaveDialog = true
             },
             async loadPreviewData() {
-                /* 				await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/dataset/preview', this.selectedTransformation).then((response) => {
+                /* 				await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/dataset/preview', this.selectedTransformation).then((response: AxiosResponse<any>) => {
 					console.log(response)
 					this.selectedTransformation = null
 				}) */

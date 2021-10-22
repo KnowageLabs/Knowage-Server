@@ -156,7 +156,7 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import useValidate from '@vuelidate/core'
@@ -258,7 +258,7 @@ export default defineComponent({
             let url = ''
             this.kpi.id ? (url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${event.value.id}/loadThreshold?kpiId=${this.selectedKpi.id}`) : (url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${event.value.id}/loadThreshold`)
 
-            return axios.get(url).then((response) => {
+            return this.$http.get(url).then((response: AxiosResponse<any>) => {
                 this.thresholdToClone = { ...response.data }
                 this.thresholdToClone.usedByKpi ? (this.overrideDialogVisible = true) : this.cloneSelectedThreshold()
             })

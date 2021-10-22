@@ -45,7 +45,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import { iAction } from '../AlertDefinition'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
@@ -148,12 +148,12 @@ export default defineComponent({
             }
         },
         async loadEtlDocuments() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/listDocument?includeType=ETL').then((response) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/listDocument?includeType=ETL').then((response: AxiosResponse<any>) => {
                 this.etlDocumentList = [...response.data.item]
             })
         },
         async loadUsers() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/users').then((response) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/users').then((response: AxiosResponse<any>) => {
                 this.usersList = [...response.data]
             })
         },

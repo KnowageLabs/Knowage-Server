@@ -22,14 +22,12 @@
     import Listbox from 'primevue/listbox'
     import { mapState } from 'vuex'
     import store from '@/App.store'
-    import axios from 'axios'
+    import { AxiosResponse } from 'axios'
     import { setLocale } from '@vee-validate/i18n'
-
     interface Language {
         locale: string
         disabled: boolean | false
     }
-
     export default defineComponent({
         name: 'language-dialog',
         components: {
@@ -50,23 +48,19 @@
             changeLanguage(language) {
                 this.$store.commit('setLoading', true)
                 let splittedLanguage = language.locale.split('_')
-
                 let url = '/knowage/servlet/AdapterHTTP?'
                 url += 'ACTION_NAME=CHANGE_LANGUAGE'
                 url += '&LANGUAGE_ID=' + splittedLanguage[0]
                 url += '&COUNTRY_ID=' + splittedLanguage[1].toUpperCase()
                 url += '&SCRIPT_ID=' + (splittedLanguage.length > 2 ? splittedLanguage[2].replaceAll('#', '') : '')
                 url += '&THEME_NAME=sbi_default'
-
                 this.$emit('update:loading', true)
-                axios.get(url).then(
+                this.$http.get(url).then(
                     () => {
                         store.commit('setLocale', language.locale)
                         localStorage.setItem('locale', language.locale)
                         this.$i18n.locale = language.locale
-
                         setLocale(language.locale)
-
                         this.$store.commit('setLoading', false)
                         this.closeDialog()
                         this.$router.go(0)
@@ -88,10 +82,9 @@
         watch: {
             visibility(newVisibility) {
                 if (newVisibility && this.languages.length == 0) {
-                    axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/languages').then(
-                        (response) => {
+                    this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/languages').then(
+                        (response: AxiosResponse<any>) => {
                             let languagesArray = response.data.sort()
-
                             for (var idx in languagesArray) {
                                 var disabled = false
                                 if (languagesArray[idx] === this.$i18n.locale) {
@@ -114,14 +107,11 @@
         border-radius: 0;
         min-width: 250px;
         max-height: 100%;
-
         &:deep(li.p-listbox-item) {
             padding: 0rem 0rem;
         }
-
         .countryItem {
             padding: 0.25rem 0.25rem;
-
             .countryLabel {
                 margin: 0 0 0 15px;
             }

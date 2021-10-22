@@ -144,7 +144,7 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import useValidate from '@vuelidate/core'
@@ -217,19 +217,19 @@ export default defineComponent({
     methods: {
         async loadPersistentData() {
             this.loading = true
-            await this.createGetKpiDataUrl('listMeasure').then((response) => {
+            await this.createGetKpiDataUrl('listMeasure').then((response: AxiosResponse<any>) => {
                 this.measureList = [...response.data]
             })
-            await this.createGetKpiDataUrl('listThreshold').then((response) => {
+            await this.createGetKpiDataUrl('listThreshold').then((response: AxiosResponse<any>) => {
                 this.tresholdList = [...response.data]
             })
-            await this.createGetTabViewDataUrl('SEVERITY').then((response) => {
+            await this.createGetTabViewDataUrl('SEVERITY').then((response: AxiosResponse<any>) => {
                 this.severityOptions = [...response.data]
             })
-            await this.createGetTabViewDataUrl('THRESHOLD_TYPE').then((response) => {
+            await this.createGetTabViewDataUrl('THRESHOLD_TYPE').then((response: AxiosResponse<any>) => {
                 this.thresholdTypeList = [...response.data]
             })
-            await this.createGetTabViewDataUrl('KPI_KPI_CATEGORY').then((response) => {
+            await this.createGetTabViewDataUrl('KPI_KPI_CATEGORY').then((response: AxiosResponse<any>) => {
                 this.kpiCategoryList = [...response.data]
             })
             await this.loadSelectedKpi()
@@ -237,14 +237,14 @@ export default defineComponent({
         },
 
         createGetTabViewDataUrl(dataType: string) {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/${dataType}`)
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/${dataType}`)
         },
         createGetKpiDataUrl(dataType: string) {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${dataType}`)
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${dataType}`)
         },
         async loadSelectedKpi() {
             if (this.id) {
-                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/${this.version}/loadKpi`).then((response) => {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/${this.version}/loadKpi`).then((response: AxiosResponse<any>) => {
                     this.selectedKpi = { ...response.data }
                     let definitionFormula = JSON.parse(this.selectedKpi.definition)
                     this.formulaToSave = definitionFormula.formula
@@ -308,7 +308,7 @@ export default defineComponent({
             })
         },
         async cloneKpi(kpiId, kpiVersion) {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${kpiId}/${kpiVersion}/loadKpi`).then((response) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${kpiId}/${kpiVersion}/loadKpi`).then((response: AxiosResponse<any>) => {
                 response.data.id = undefined
                 response.data.name = this.$t('kpi.kpiDefinition.copyOf') + response.data.name
 
@@ -338,7 +338,7 @@ export default defineComponent({
             if (typeof this.kpiToSave.cardinality === 'object') {
                 this.kpiToSave.cardinality = JSON.stringify(this.kpiToSave.cardinality)
             }
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveKpi', this.kpiToSave)
                 .then(() => {
                     this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
@@ -348,7 +348,7 @@ export default defineComponent({
                         this.reloadKpi = false
                     }, 250)
                 })
-                .catch((response) => {
+                .catch((response: AxiosResponse<any>) => {
                     this.$store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: response
