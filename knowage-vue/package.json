@@ -41,7 +41,7 @@
     },
     "devDependencies": {
         "@babel/plugin-transform-runtime": "^7.13.10",
-        "@types/jest": "^24.0.19",
+        "@types/jest": "^27.0.2",
         "@typescript-eslint/eslint-plugin": "^2.33.0",
         "@typescript-eslint/parser": "^2.33.0",
         "@vue/cli-plugin-babel": "~4.5.0",
@@ -59,7 +59,7 @@
         "eslint-plugin-vue": "^7.7.0",
         "flush-promises": "^1.0.2",
         "material-design-icons": "^3.0.1",
-        "node-sass": "^5.0.0",
+        "node-sass": "^6.0.1",
         "pug": "^3.0.2",
         "pug-plain-loader": "^1.1.0",
         "sass": "^1.42.1",
