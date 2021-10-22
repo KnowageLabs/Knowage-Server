@@ -2,10 +2,10 @@
     <div class="p-d-flex p-flex-row">
         <div class="kn-flex">
             <DocumentBrowserBreadcrumb v-if="!searchMode" :breadcrumbs="breadcrumbs" @breadcrumbClicked="$emit('breadcrumbClicked', $event)"></DocumentBrowserBreadcrumb>
-            <DocumentBrowserTable class="p-m-2" :propDocuments="documents" @executeDocumentClick="executeDocument"></DocumentBrowserTable>
+            <DocumentBrowserTable class="p-m-2" :propDocuments="documents" @executeDocumentClick="executeDocument" @selected="setSelectedDocument"></DocumentBrowserTable>
         </div>
-        <div id="document-browser-sidebar-container">
-            <DocumentBrowserSidebar></DocumentBrowserSidebar>
+        <div v-if="selectedDocument" id="document-browser-sidebar-container">
+            <DocumentBrowserSidebar :selectedDocument="selectedDocument" @documentCloneClick="cloneDocument"></DocumentBrowserSidebar>
         </div>
     </div>
 </template>
@@ -21,15 +21,17 @@ export default defineComponent({
     name: 'document-browser-detail',
     components: { DocumentBrowserBreadcrumb, DocumentBrowserTable, DocumentBrowserSidebar },
     props: { propDocuments: { type: Array }, breadcrumbs: { type: Array }, searchMode: { type: Boolean } },
-    emits: ['breadcrumbClicked'],
+    emits: ['breadcrumbClicked', 'loading'],
     data() {
         return {
-            documents: [] as any[]
+            documents: [] as any[],
+            selectedDocument: null as any
         }
     },
     watch: {
         propDocuments() {
             this.loadDocuments()
+            this.selectedDocument = null
         }
     },
     created() {
@@ -41,6 +43,15 @@ export default defineComponent({
         },
         executeDocument(document: any) {
             console.log('DOCUMENT FOR EXECUTION: ', document)
+        },
+        setSelectedDocument(document: any) {
+            this.selectedDocument = document
+            console.log('SELECTED DOCUMENT: ', this.selectedDocument)
+        },
+        cloneDocument(document: any) {
+            console.log('DOCUMENT FOR CLONE: ', document)
+            this.$emit('loading', true)
+            this.$emit('loading', false)
         }
     }
 })

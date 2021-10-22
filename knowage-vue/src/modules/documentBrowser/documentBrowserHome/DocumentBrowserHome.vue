@@ -23,13 +23,15 @@
                 <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
             </div>
 
-            <div v-show="!searchMode" class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
-                <DocumentBrowserTree :propFolders="folders" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder"></DocumentBrowserTree>
-            </div>
+            <div class="p-d-flex p-flex-row full-width">
+                <div v-show="!searchMode" class="kn-list--column kn-flex p-p-0">
+                    <DocumentBrowserTree :propFolders="folders" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder"></DocumentBrowserTree>
+                </div>
 
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
-                <DocumentBrowserDetail v-if="selectedFolder || searchMode" :propDocuments="searchMode ? searchedDocuments : documents" :breadcrumbs="breadcrumbs" :searchMode="searchMode" @breadcrumbClicked="setSelectedBreadcrumb($event)"></DocumentBrowserDetail>
-                <DocumentBrowserHint v-else></DocumentBrowserHint>
+                <div id="detail-container" class="p-p-0 p-m-0 kn-page">
+                    <DocumentBrowserDetail v-if="selectedFolder || searchMode" :propDocuments="searchMode ? searchedDocuments : documents" :breadcrumbs="breadcrumbs" :searchMode="searchMode" @breadcrumbClicked="setSelectedBreadcrumb($event)"></DocumentBrowserDetail>
+                    <DocumentBrowserHint v-else></DocumentBrowserHint>
+                </div>
             </div>
         </div>
     </div>
@@ -133,5 +135,13 @@ export default defineComponent({
     background-color: $color-primary;
     color: white;
     border-bottom-color: white;
+}
+
+.full-width {
+    width: 100%;
+}
+
+#detail-container {
+    flex: 3;
 }
 </style>

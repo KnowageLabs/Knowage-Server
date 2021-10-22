@@ -27,7 +27,8 @@
     "status": {
         "sbidomains.nm.dev": "documentBrowser.development",
         "sbidomains.nm.rel": "documentBrowser.released",
-        "sbidomains.nm.susp": "documentBrowser.suspended"
+        "sbidomains.nm.susp": "documentBrowser.suspended",
+        "sbidomains.nm.test": "common.test"
     },
     "styles": {
         "message": {

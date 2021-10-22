@@ -18,6 +18,7 @@
         },
         "collapse": "collapse",
         "copyOf": "Copy of",
+        "creationDate": "Creation Date",
         "delete": "delete",
         "deleteAll": "delete all",
         "description": "description",
@@ -99,7 +100,7 @@
         },
         "value": "Value",
         "version": "version",
-        "visible": "Visible",
+        "visibility": "Visibility",
         "warning": {}
     },
     "cron": {
@@ -160,9 +161,12 @@
         "documentsSearch": "Search for documents",
         "hint": "No folder is selected",
         "noDocumentsHint": "No documents to display",
+        "notVisible": "Not visible",
         "released": "Released",
+        "state": "State",
         "suspended": "Suspended",
-        "title": "Document browser"
+        "title": "Document browser",
+        "visible": "Visible"
     },
     "documentExecution": {
         "dossier": {
