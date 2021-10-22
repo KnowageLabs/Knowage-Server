@@ -75,13 +75,6 @@
                     <MultiSelect id="minutes" class="kn-material-input p-mx-2" style="max-width:8rem" v-model="scheduling.minutesSelected" :options="minutes" :placeholder="$t('common.default')" @change="formatCronForSave" />
                 </div>
             </div>
-            <div id="next-schedulation-container" v-if="nextSchedulation" class="p-mt-5">
-                <Message severity="info" :closable="false">
-                    {{ $t('managers.datasetManagement.scheduling') }}: {{ prettyCron.toString(nextSchedulation) }}
-                    <p></p>
-                    {{ $t('cron.nextExecution') }}: {{ prettyCron.getNext(nextSchedulation) }}
-                </Message>
-            </div>
         </template>
     </Card>
 </template>
@@ -94,10 +87,9 @@ import Calendar from 'primevue/calendar'
 import MultiSelect from 'primevue/multiselect'
 import knCronDescriptor from '@/components/UI/KnCron/KnCronDescriptor.json'
 import Dropdown from 'primevue/dropdown'
-import Message from 'primevue/message'
 
 export default defineComponent({
-    components: { Card, Calendar, MultiSelect, Dropdown, Message },
+    components: { Card, Calendar, MultiSelect, Dropdown },
     props: {
         selectedDataset: { type: Object as any },
         schedulingData: { type: Object as any }
@@ -126,7 +118,6 @@ export default defineComponent({
         return {
             knCronDescriptor,
             advancedTabDescriptor,
-            prettyCron: require('prettycron'),
             dataset: {} as any,
             scheduling: {} as any,
             nextSchedulation: null as any,
