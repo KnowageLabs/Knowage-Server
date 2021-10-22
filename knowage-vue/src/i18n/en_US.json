@@ -63,6 +63,7 @@
         "search": "search",
         "select": "select",
         "sort": "sort",
+        "status": "Status",
         "table": {
             "footer": {
                 "paginated": "Showing {first} to {last} of {totalRecords}"
@@ -98,6 +99,7 @@
         },
         "value": "Value",
         "version": "version",
+        "visible": "Visible",
         "warning": {}
     },
     "cron": {
@@ -152,6 +154,14 @@
         "wednesday": "Wednesday",
         "weekday": "Weekday",
         "weekdays": "Weekdays"
+    },
+    "documentBrowser": {
+        "development": "Development",
+        "hint": "No folder is selected",
+        "noDocumentsHint": "No documents to display",
+        "released": "Released",
+        "suspended": "Suspended",
+        "title": "Document browser"
     },
     "documentExecution": {
         "dossier": {
