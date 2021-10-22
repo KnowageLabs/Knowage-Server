@@ -1,11 +1,14 @@
 <template>
     <div class="p-d-flex p-flex-row">
         <div class="kn-flex">
-            <DocumentBrowserBreadcrumb v-if="!searchMode" :breadcrumbs="breadcrumbs" @breadcrumbClicked="$emit('breadcrumbClicked', $event)"></DocumentBrowserBreadcrumb>
-            <DocumentBrowserTable class="p-m-2" :propDocuments="documents" @executeDocumentClick="executeDocument" @selected="setSelectedDocument"></DocumentBrowserTable>
+            <div class="document-table-container">
+                <div v-if="selectedDocument" id="document-detail-backdrop" @click="selectedDocument = null"></div>
+                <DocumentBrowserBreadcrumb v-if="!searchMode" :breadcrumbs="breadcrumbs" @breadcrumbClicked="$emit('breadcrumbClicked', $event)"></DocumentBrowserBreadcrumb>
+                <DocumentBrowserTable class="p-m-2" :propDocuments="documents" @executeDocumentClick="executeDocument" @selected="setSelectedDocument"></DocumentBrowserTable>
+            </div>
         </div>
         <div v-if="selectedDocument" id="document-browser-sidebar-container">
-            <DocumentBrowserSidebar :selectedDocument="selectedDocument" @documentCloneClick="cloneDocument"></DocumentBrowserSidebar>
+            <DocumentBrowserSidebar :selectedDocument="selectedDocument" @documentCloneClick="cloneDocument" @documentDeleteClick="deleteDocument"></DocumentBrowserSidebar>
         </div>
     </div>
 </template>
@@ -21,7 +24,7 @@ export default defineComponent({
     name: 'document-browser-detail',
     components: { DocumentBrowserBreadcrumb, DocumentBrowserTable, DocumentBrowserSidebar },
     props: { propDocuments: { type: Array }, breadcrumbs: { type: Array }, searchMode: { type: Boolean } },
-    emits: ['breadcrumbClicked', 'loading'],
+    emits: ['breadcrumbClicked', 'loading', 'documentCloned'],
     data() {
         return {
             documents: [] as any[],
@@ -48,9 +51,37 @@ export default defineComponent({
             this.selectedDocument = document
             console.log('SELECTED DOCUMENT: ', this.selectedDocument)
         },
-        cloneDocument(document: any) {
+        async cloneDocument(document: any) {
             console.log('DOCUMENT FOR CLONE: ', document)
             this.$emit('loading', true)
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/clone?docId=${document.id}`)
+                .then((response) => {
+                    console.log('OK RESPONSE: ', response)
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.createTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.$emit('documentCloned')
+                })
+                .catch(() => {})
+            this.$emit('loading', false)
+        },
+        async deleteDocument(document: any) {
+            console.log('DOCUMENT FOR DELETE: ', document)
+            this.$emit('loading', true)
+            await this.$http
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${document.label}`)
+                .then((response) => {
+                    console.log('OK RESPONSE: ', response)
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.selectedDocument = null
+                    this.documents = this.documents.filter((el: any) => el.id !== document.id)
+                })
+                .catch(() => {})
             this.$emit('loading', false)
         }
     }
@@ -60,5 +91,23 @@ export default defineComponent({
 <style lang="scss" scoped>
 #document-browser-sidebar-container {
     flex: 0.3;
+    z-index: 100;
+}
+
+.document-table-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#document-detail-backdrop {
+    background-color: rgba(33, 33, 33, 1);
+    opacity: 0.48;
+    z-index: 50;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
 }
 </style>

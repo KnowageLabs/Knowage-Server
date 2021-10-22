@@ -29,7 +29,7 @@
                 </div>
 
                 <div id="detail-container" class="p-p-0 p-m-0 kn-page">
-                    <DocumentBrowserDetail v-if="selectedFolder || searchMode" :propDocuments="searchMode ? searchedDocuments : documents" :breadcrumbs="breadcrumbs" :searchMode="searchMode" @breadcrumbClicked="setSelectedBreadcrumb($event)"></DocumentBrowserDetail>
+                    <DocumentBrowserDetail v-if="selectedFolder || searchMode" :propDocuments="searchMode ? searchedDocuments : documents" :breadcrumbs="breadcrumbs" :searchMode="searchMode" @breadcrumbClicked="setSelectedBreadcrumb($event)" @documentCloned="loadDocuments"></DocumentBrowserDetail>
                     <DocumentBrowserHint v-else></DocumentBrowserHint>
                 </div>
             </div>
@@ -39,7 +39,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import axios from 'axios'
 import DocumentBrowserHint from './DocumentBrowserHint.vue'
 import DocumentBrowserTree from './DocumentBrowserTree.vue'
 import DocumentBrowserDetail from './DocumentBrowserDetail.vue'
@@ -66,14 +65,14 @@ export default defineComponent({
     methods: {
         async loadFolders() {
             this.loading = true
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders/`).then((response) => (this.folders = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders/`).then((response) => (this.folders = response.data))
             this.loading = false
             // console.log('LOADED FOLDERS: ', this.folders)
         },
         async loadDocuments() {
             this.loading = true
             const url = this.searchMode ? `2.0/documents?searchAttributes=all&searchKey=${this.searchWord}` : `2.0/documents?folderId=${this.selectedFolder?.id}`
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response) => {
                 this.searchMode ? (this.searchedDocuments = response.data) : (this.documents = response.data)
             })
             this.loading = false
