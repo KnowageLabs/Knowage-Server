@@ -1178,6 +1178,10 @@
 					},
 					"label": "Transformations",
 					"logicOperator": "Logical operator",
+					"mergeColumns": {
+						"description": "",
+						"label": "Merge columns"
+					},
 					"padding": {
 						"description": "",
 						"label": "Padding"
@@ -1193,6 +1197,10 @@
 					"replace": {
 						"description": "replace(searchvalue, newvalue)",
 						"label": "Replace"
+					},
+					"splitColumn": {
+						"description": "",
+						"label": "Split column"
 					},
 					"statistics": {
 						"description": "",

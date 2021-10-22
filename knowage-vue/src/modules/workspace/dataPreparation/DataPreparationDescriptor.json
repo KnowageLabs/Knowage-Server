@@ -1,541 +1,425 @@
 {
-	"column": [
-		{
-			"field": "vin",
-			"header": "Vin",
-			"type": "double"
-		},
-		{
-			"field": "year",
-			"header": "Year",
-			"type": "int"
-		},
-		{
-			"field": "brand",
-			"header": "Brand",
-			"type": "date"
-		},
-		{
-			"field": "color",
-			"header": "Color",
-			"type": "string"
-		}
-	],
-	"columnData": [
-		{
-			"brand": "Volkswagen",
-			"color": "Orange",
-			"vin": "dsad231ff",
-			"year": 2012
-		},
-		{
-			"brand": "Audi",
-			"color": "Black",
-			"vin": "gwregre345",
-			"year": 2011
-		},
-		{
-			"brand": "Renault",
-			"color": "Gray",
-			"vin": "h354htr",
-			"year": 2005
-		},
-		{
-			"brand": "BMW",
-			"color": "Blue",
-			"vin": "j6w54qgh",
-			"year": 2003
-		},
-		{
-			"brand": "Mercedes",
-			"color": "Orange",
-			"vin": "hrtwy34",
-			"year": 1995
-		},
-		{
-			"brand": "Volvo",
-			"color": "Black",
-			"vin": "jejtyj",
-			"year": 2005
-		},
-		{
-			"brand": "Honda",
-			"color": "Yellow",
-			"vin": "g43gr",
-			"year": 2012
-		},
-		{
-			"brand": "Jaguar",
-			"color": "Orange",
-			"vin": "greg34",
-			"year": 2013
-		},
-		{
-			"brand": "Ford",
-			"color": "Black",
-			"vin": "h54hw5",
-			"year": 2000
-		},
-		{
-			"brand": "Fiat",
-			"color": "Red",
-			"vin": "245t2s",
-			"year": 2013
-		}
-	],
-	"compatibilityMap": {
-		"java.lang.Double": {
-			"icon": "pi pi-plus-circle",
-			"values": ["java.lang.String"]
-		},
-		"java.lang.Integer": {
-			"icon": "pi pi-plus-circle",
-			"values": ["java.lang.String", "java.lang.Double"]
-		},
-		"java.lang.String": {
-			"icon": "fas fa-quote-left",
-			"values": ["java.lang.String"]
-		},
-		"java.math.BigDecimal": {
-			"icon": "pi pi-plus-circle",
-			"values": ["java.lang.String", "java.lang.Double"]
-		},
-		"java.util.String": {
-			"icon": "far fa-calendar-alt",
-			"values": ["java.lang.String"]
-		}
-	},
-	"css": {
-		"buttonClassHeader": "p-button-text p-button-rounded p-button-plain p-d-flex headerButton"
-	},
-	"dataPreparation": {
-		"refreshRate": {
-			"options": [
-				{
-					"code": "NEVER",
-					"id": 1,
-					"name": "managers.workspaceManagement.dataPreparation.dataset.refreshRate.frequency.NEVER"
-				},
-				{
-					"code": "DAILY",
-					"id": 2,
-					"name": "managers.workspaceManagement.dataPreparation.dataset.refreshRate.frequency.DAILY"
-				},
-				{
-					"code": "WEEKLY",
-					"id": 3,
-					"name": "managers.workspaceManagement.dataPreparation.dataset.refreshRate.frequency.WEEKLY"
-				},
-				{
-					"code": "MONTHLY",
-					"id": 4,
-					"name": "managers.workspaceManagement.dataPreparation.dataset.refreshRate.frequency.MONTHLY"
-				},
-				{
-					"code": "YEARLY",
-					"id": 5,
-					"name": "managers.workspaceManagement.dataPreparation.dataset.refreshRate.frequency.YEARLY"
-				}
-			]
-		}
-	},
-	"knListSettings": {
-		"avatar": {
-			"property": "type",
-			"values": {
-				"chart": {
-					"icon": "fab fa-js-square",
-					"style": {
-						"background-color": "#ffc107",
-						"color": "white"
-					}
-				},
-				"html": {
-					"icon": "fab fa-html5",
-					"style": {
-						"background-color": "#c2185b",
-						"color": "white"
-					}
-				},
-				"python": {
-					"icon": "fab fa-python",
-					"style": {
-						"background-color": "#4caf50",
-						"color": "white"
-					}
-				}
-			}
-		},
-		"buttons": [
-			{
-				"emits": "delete",
-				"icon": "fas fa-trash-alt",
-				"label": "common.delete"
-			}
-		],
-		"defaultSortField": "label",
-		"filterFields": ["label", "name", "type", "tags"],
-		"interaction": {
-			"parameterLabel": "id",
-			"parameterValue": "id",
-			"path": "gallery-detail",
-			"type": "router"
-		},
-		"sortFields": ["label", "name", "type"]
-	},
-	"mutations": [
-		{
-			"parameters": [
-				{
-					"column": "column1",
-					"operator": "=",
-					"value": "10"
-				}
-			],
-			"type": "filter"
-		},
-		{
-			"parameters": [
-				{
-					"column": "column1"
-				}
-			],
-			"type": "trim"
-		},
-		{
-			"parameters": [
-				{
-					"column": "column1",
-					"operator": "=",
-					"replacer": "15",
-					"value": "10"
-				}
-			],
-			"type": "replace"
-		},
-		{
-			"parameters": [
-				{
-					"column": "column1"
-				},
-				{
-					"column": "column2"
-				}
-			],
-			"type": "removeDuplicates"
-		},
-		{
-			"parameters": [
-				{
-					"column": "column1"
-				}
-			],
-			"type": "removeNull"
-		},
-		{
-			"parameters": [
-				{
-					"column": "column1"
-				}
-			],
-			"type": "padding"
-		}
-	],
-	"template": {
-		"author": "biadmin",
-		"columns": [
-			{
-				"alias": "column1Alias",
-				"formula": "column2-column3",
-				"name": "column1",
-				"type": "string/number/date..."
-			},
-			{
-				"alias": "column2Alias",
-				"name": "column2",
-				"precision": 2,
-				"type": "number"
-			},
-			{
-				"alias": "column3Alias",
-				"format": "dd-mm-yyyy",
-				"name": "column3",
-				"type": "date"
-			}
-		],
-		"dataset": 45,
-		"description": "example model descriptor for an example dataset created with data-preparation",
-		"label": "exampleLabel",
-		"name": "exampleName",
-		"refresh": "none/hour/day/week/month/refresh",
-		"visibility": "public/private"
-	},
-	"transformations": [
-		{
-			"category": "column",
-			"config": {
-				"parameters": [
-					{
-						"name": "columnName",
-						"type": "string"
-					}
-				]
-			},
-			"description": "managers.workspaceManagement.dataPreparation.transformations.addColumn.description",
-			"editColumn": false,
-			"icon": "pi pi-plus-circle",
-			"label": "managers.workspaceManagement.dataPreparation.transformations.addColumn.label",
-			"position": 0,
-			"toolbar": true,
-			"type": "addColumn"
-		},
-		{
-			"category": "column",
-			"config": {
-				"parameters": [
-					{
-						"name": "columnName",
-						"type": "string"
-					}
-				]
-			},
-			"description": "managers.workspaceManagement.dataPreparation.transformations.deleteColumn.description",
-			"editColumn": true,
-			"icon": "pi pi-minus-circle",
-			"label": "managers.workspaceManagement.dataPreparation.transformations.deleteColumn.label",
-			"position": 1,
-			"toolbar": false,
-			"type": "deleteColumn"
-		},
-		{
-			"category": "column2",
-			"config": {
-				"conditions": [
-					{
-						"code": "greater",
-						"label": ">"
-					},
-					{
-						"code": "greaterOrEqual",
-						"label": ">="
-					},
-					{
-						"code": "less",
-						"label": "<"
-					},
-					{
-						"code": "lessOrEqual",
-						"label": "<="
-					}
-				],
-				"logicOperators": [
-					{
-						"code": "AND",
-						"label": "common.and"
-					},
-					{
-						"code": "OR",
-						"label": "common.or"
-					}
-				],
-				"parameters": [
-					[
-						{
-							"name": "columns",
-							"type": "multiSelect"
-						},
-						{
-							"name": "conditions",
-							"type": "dropdown"
-						},
-						{
-							"name": "text",
-							"type": "string"
-						},
-						{
-							"name": "logicOperator",
-							"type": "dropdown"
-						}
-					]
-				]
-			},
-			"description": "managers.workspaceManagement.dataPreparation.transformations.filter.description",
-			"editColumn": false,
-			"icon": "pi pi-filter",
-			"label": "managers.workspaceManagement.dataPreparation.transformations.filter.label",
-			"position": 2,
-			"toolbar": true,
-			"type": "filter"
-		},
-		{
-			"category": "column2",
-			"config": {
-				"parameters": [
-					[
-						{
-							"name": "format",
-							"type": "string"
-						}
-					]
-				]
-			},
-			"description": "managers.workspaceManagement.dataPreparation.transformations.format.description",
-			"editColumn": true,
-			"icon": "fas fa-hashtag",
-			"label": "managers.workspaceManagement.dataPreparation.transformations.format.label",
-			"position": 3,
-			"toolbar": true,
-			"type": "format"
-		},
-		{
-			"category": "column6",
-			"config": {
-				"parameters": [
-					[
-						{
-							"name": "columns",
-							"type": "multiSelect"
-						},
-						{
-							"name": "prefix",
-							"type": "string"
-						},
-						{
-							"name": "suffix",
-							"type": "string"
-						}
-					]
-				]
-			},
-			"description": "managers.workspaceManagement.dataPreparation.transformations.padding.description",
-			"editColumn": true,
-			"icon": "fas fa-columns",
-			"label": "managers.workspaceManagement.dataPreparation.transformations.padding.label",
-			"position": 4,
-			"toolbar": false,
-			"type": "padding"
-		},
-		{
-			"category": "column",
-			"config": {
-				"parameters": [
-					[
-						{
-							"name": "columns",
-							"type": "multiSelect"
-						}
-					]
-				]
-			},
-			"description": "managers.workspaceManagement.dataPreparation.transformations.removeDuplicates.description",
-			"editColumn": true,
-			"icon": "pi pi-search",
-			"label": "managers.workspaceManagement.dataPreparation.transformations.removeDuplicates.label",
-			"position": 5,
-			"toolbar": true,
-			"type": "removeDuplicates"
-		},
-		{
-			"category": "column",
-			"config": {
-				"parameters": [
-					[
-						{
-							"name": "columns",
-							"type": "multiSelect"
-						}
-					]
-				]
-			},
-			"description": "managers.workspaceManagement.dataPreparation.transformations.removeNull.description",
-			"editColumn": true,
-			"icon": "fas fa-columns",
-			"label": "managers.workspaceManagement.dataPreparation.transformations.removeNull.label",
-			"position": 6,
-			"toolbar": true,
-			"type": "removeNull"
-		},
-		{
-			"category": "column",
-			"config": {
-				"parameters": [
-					[
-						{
-							"name": "columns",
-							"type": "multiSelect"
-						},
-						{
-							"name": "oldChar",
-							"type": "string"
-						},
-						{
-							"name": "newChar",
-							"type": "string"
-						}
-					]
-				]
-			},
-			"description": "managers.workspaceManagement.dataPreparation.transformations.replace.description",
-			"editColumn": true,
-			"icon": "pi pi-search",
-			"incompatibleDataTypes": ["date"],
-			"label": "managers.workspaceManagement.dataPreparation.transformations.replace.label",
-			"position": 7,
-			"toolbar": true,
-			"type": "replace"
-		},
-		{
-			"category": "column",
-			"config": {
-				"parameters": []
-			},
-			"description": "managers.workspaceManagement.dataPreparation.transformations.statistics.description",
-			"editColumn": true,
-			"icon": "pi pi-chart-bar",
-			"label": "managers.workspaceManagement.dataPreparation.transformations.statistics.label",
-			"position": 8,
-			"toolbar": true,
-			"type": "statistics"
-		},
-		{
-			"category": "column",
-			"config": {
-				"parameters": [
-					[
-						{
-							"name": "columns",
-							"type": "multiSelect"
-						}
-					]
-				]
-			},
-			"description": "managers.workspaceManagement.dataPreparation.transformations.trim.description",
-			"editColumn": true,
-			"icon": "fas fa-cut",
-			"label": "managers.workspaceManagement.dataPreparation.transformations.trim.label",
-			"position": 9,
-			"toolbar": false,
-			"type": "trim"
-		},
-		{
-			"category": "column2",
-			"config": {
-				"parameters": [
-					[
-						{
-							"name": "column",
-							"type": "string"
-						}
-					]
-				]
-			},
-			"description": "managers.workspaceManagement.dataPreparation.transformations.changeType.description",
-			"editColumn": false,
-			"icon": "fas fa-hashtag",
-			"label": "managers.workspaceManagement.dataPreparation.transformations.changeType.label",
-			"position": 3,
-			"toolbar": false,
-			"type": "changeType"
-		}
-	]
+    "compatibilityMap": {
+        "java.lang.Double": {
+            "icon": {
+                "class": "material-icons",
+                "name": "numbers"
+            },
+            "values": ["java.lang.String"]
+        },
+        "java.lang.Integer": {
+            "icon": {
+                "class": "material-icons",
+                "name": "numbers"
+            },
+            "values": ["java.lang.String", "java.lang.Double"]
+        },
+        "java.lang.String": {
+            "icon": "fas fa-quote-left",
+            "values": ["java.lang.String"]
+        },
+        "java.math.BigDecimal": {
+            "icon": {
+                "class": "material-icons",
+                "name": "numbers"
+            },
+            "values": ["java.lang.String", "java.lang.Double"]
+        },
+        "java.util.String": {
+            "icon": "far fa-calendar-alt",
+            "values": ["java.lang.String"]
+        }
+    },
+    "css": {
+        "buttonClassHeader": "p-button-text p-button-rounded p-button-plain p-d-flex headerButton"
+    },
+    "dataPreparation": {
+        "refreshRate": {
+            "options": [
+                {
+                    "code": "NEVER",
+                    "id": 1,
+                    "name": "managers.workspaceManagement.dataPreparation.dataset.refreshRate.frequency.NEVER"
+                },
+                {
+                    "code": "DAILY",
+                    "id": 2,
+                    "name": "managers.workspaceManagement.dataPreparation.dataset.refreshRate.frequency.DAILY"
+                },
+                {
+                    "code": "WEEKLY",
+                    "id": 3,
+                    "name": "managers.workspaceManagement.dataPreparation.dataset.refreshRate.frequency.WEEKLY"
+                },
+                {
+                    "code": "MONTHLY",
+                    "id": 4,
+                    "name": "managers.workspaceManagement.dataPreparation.dataset.refreshRate.frequency.MONTHLY"
+                },
+                {
+                    "code": "YEARLY",
+                    "id": 5,
+                    "name": "managers.workspaceManagement.dataPreparation.dataset.refreshRate.frequency.YEARLY"
+                }
+            ]
+        }
+    },
+    "transformations": [
+        {
+            "category": "tableStructure",
+            "config": {
+                "parameters": [
+                    [
+                        {
+                            "name": "column",
+                            "type": "string",
+                            "validationRules": "required|alpha"
+                        },
+                        {
+                            "name": "formula",
+                            "type": "textarea"
+                        }
+                    ]
+                ]
+            },
+            "description": "managers.workspaceManagement.dataPreparation.transformations.addColumn.description",
+            "editColumn": false,
+            "icon": "pi pi-plus-circle",
+            "label": "managers.workspaceManagement.dataPreparation.transformations.addColumn.label",
+            "position": 0,
+            "toolbar": true,
+            "type": "addColumn"
+        },
+        {
+            "category": "tableStructure",
+            "config": {
+                "parameters": [
+                    [
+                        {
+                            "name": "column",
+                            "type": "string",
+                            "validationRules": "required|alpha"
+                        }
+                    ]
+                ]
+            },
+            "description": "managers.workspaceManagement.dataPreparation.transformations.deleteColumn.description",
+            "editColumn": true,
+            "icon": "pi pi-minus-circle",
+            "label": "managers.workspaceManagement.dataPreparation.transformations.deleteColumn.label",
+            "position": 1,
+            "toolbar": false,
+            "type": "deleteColumn"
+        },
+        {
+            "category": "tableStructure",
+            "config": {
+                "parameters": [
+                    [
+                        {
+                            "name": "columns",
+                            "type": "multiSelect"
+                        },
+                        {
+                            "name": "separator",
+                            "type": "string",
+                            "validationRules": "required|alpha"
+                        },
+                        {
+                            "name": "columns",
+                            "type": "multiSelect"
+                        }
+                    ]
+                ]
+            },
+            "description": "managers.workspaceManagement.dataPreparation.transformations.mergeColumns.description",
+            "editColumn": false,
+            "icon": {
+                "class": "material-icons",
+                "name": "merge_type"
+            },
+            "label": "managers.workspaceManagement.dataPreparation.transformations.mergeColumns.label",
+            "position": 0,
+            "toolbar": true,
+            "type": "mergeColumns"
+        },
+        {
+            "category": "tableStructure",
+            "config": {
+                "parameters": [
+                    [
+                        {
+                            "name": "columns",
+                            "type": "dropdown"
+                        },
+                        {
+                            "name": "separator",
+                            "type": "string",
+                            "validationRules": "alpha"
+                        },
+                        {
+                            "name": "numberOfCharacters",
+                            "type": "string",
+                            "validationRules": "numeric"
+                        },
+                        {
+                            "name": "columns",
+                            "type": "dropdown"
+                        }
+                    ]
+                ]
+            },
+            "description": "managers.workspaceManagement.dataPreparation.transformations.mergeColumns.description",
+            "editColumn": false,
+            "icon": {
+                "class": "material-icons",
+                "name": "call_split"
+            },
+            "label": "managers.workspaceManagement.dataPreparation.transformations.mergeColumns.label",
+            "position": 0,
+            "toolbar": true,
+            "type": "splitColumns"
+        },
+        {
+            "category": "filtering",
+            "config": {
+                "conditions": [
+                    {
+                        "code": "equals",
+                        "label": "="
+                    },
+                    {
+                        "code": "greater",
+                        "label": ">"
+                    },
+                    {
+                        "code": "greaterOrEqual",
+                        "label": ">="
+                    },
+                    {
+                        "code": "less",
+                        "label": "<"
+                    },
+                    {
+                        "code": "lessOrEqual",
+                        "label": "<="
+                    },
+                    {
+                        "code": "notEquals",
+                        "label": "!="
+                    },
+                    {
+                        "code": "in",
+                        "label": "IN"
+                    },
+                    {
+                        "code": "notIn",
+                        "label": "NOT IN"
+                    },
+                    {
+                        "code": "between",
+                        "label": "Between"
+                    }
+                ],
+                "logicOperators": [
+                    {
+                        "code": "AND",
+                        "label": "common.and"
+                    },
+                    {
+                        "code": "OR",
+                        "label": "common.or"
+                    }
+                ],
+                "parameters": [
+                    [
+                        {
+                            "name": "columns",
+                            "type": "multiSelect"
+                        },
+                        {
+                            "name": "conditions",
+                            "type": "dropdown"
+                        },
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "validationRules": "required|alpha_dash"
+                        },
+                        {
+                            "name": "logicOperator",
+                            "type": "dropdown"
+                        }
+                    ]
+                ]
+            },
+            "description": "managers.workspaceManagement.dataPreparation.transformations.filter.description",
+            "editColumn": false,
+            "icon": "pi pi-filter",
+            "label": "managers.workspaceManagement.dataPreparation.transformations.filter.label",
+            "position": 2,
+            "toolbar": true,
+            "type": "filter"
+        },
+        {
+            "category": "visualization",
+            "config": {
+                "parameters": [
+                    [
+                        {
+                            "name": "columns",
+                            "type": "multiSelect"
+                        },
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "validationRules": "required|alpha_dash"
+                        },
+                        {
+                            "name": "suffix",
+                            "type": "string",
+                            "validationRules": "required|alpha_dash"
+                        }
+                    ]
+                ]
+            },
+            "description": "managers.workspaceManagement.dataPreparation.transformations.padding.description",
+            "editColumn": true,
+            "icon": {
+                "class": "material-icons",
+                "name": "text_format"
+            },
+            "label": "managers.workspaceManagement.dataPreparation.transformations.padding.label",
+            "position": 4,
+            "toolbar": true,
+            "type": "padding"
+        },
+        {
+            "category": "cleaning",
+            "config": {
+                "parameters": [
+                    [
+                        {
+                            "name": "columns",
+                            "type": "multiSelect"
+                        }
+                    ]
+                ]
+            },
+            "description": "managers.workspaceManagement.dataPreparation.transformations.removeDuplicates.description",
+            "editColumn": true,
+            "icon": {
+                "class": "material-icons",
+                "name": "control_point_duplicate"
+            },
+            "label": "managers.workspaceManagement.dataPreparation.transformations.removeDuplicates.label",
+            "position": 5,
+            "toolbar": true,
+            "type": "removeDuplicates"
+        },
+        {
+            "category": "cleaning",
+            "config": {
+                "parameters": [
+                    [
+                        {
+                            "name": "columns",
+                            "type": "multiSelect"
+                        }
+                    ]
+                ]
+            },
+            "description": "managers.workspaceManagement.dataPreparation.transformations.removeNull.description",
+            "editColumn": true,
+            "icon": "fas fa-columns",
+            "label": "managers.workspaceManagement.dataPreparation.transformations.removeNull.label",
+            "position": 6,
+            "toolbar": true,
+            "type": "removeNull"
+        },
+        {
+            "category": "editing",
+            "config": {
+                "parameters": [
+                    [
+                        {
+                            "name": "columns",
+                            "type": "multiSelect"
+                        },
+                        {
+                            "name": "oldChar",
+                            "type": "string",
+                            "validationRules": "required|alpha_dash"
+                        },
+                        {
+                            "name": "newChar",
+                            "type": "string",
+                            "validationRules": "required|alpha_dash"
+                        }
+                    ]
+                ]
+            },
+            "description": "managers.workspaceManagement.dataPreparation.transformations.replace.description",
+            "editColumn": true,
+            "icon": "fas fa-sync-alt",
+            "incompatibleDataTypes": ["date"],
+            "label": "managers.workspaceManagement.dataPreparation.transformations.replace.label",
+            "position": 7,
+            "toolbar": true,
+            "type": "replace"
+        },
+        {
+            "category": "reporting",
+            "config": {
+                "parameters": []
+            },
+            "description": "managers.workspaceManagement.dataPreparation.transformations.statistics.description",
+            "editColumn": true,
+            "icon": "pi pi-chart-bar",
+            "label": "managers.workspaceManagement.dataPreparation.transformations.statistics.label",
+            "position": 8,
+            "toolbar": true,
+            "type": "statistics"
+        },
+        {
+            "category": "cleaning",
+            "config": {
+                "parameters": [
+                    [
+                        {
+                            "name": "columns",
+                            "type": "multiSelect"
+                        }
+                    ]
+                ]
+            },
+            "description": "managers.workspaceManagement.dataPreparation.transformations.trim.description",
+            "editColumn": true,
+            "icon": "fas fa-cut",
+            "label": "managers.workspaceManagement.dataPreparation.transformations.trim.label",
+            "position": 9,
+            "toolbar": false,
+            "type": "trim"
+        },
+        {
+            "category": "tableStructure",
+            "config": {
+                "parameters": [
+                    [
+                        {
+                            "name": "column",
+                            "type": "string"
+                        }
+                    ]
+                ]
+            },
+            "description": "managers.workspaceManagement.dataPreparation.transformations.changeType.description",
+            "editColumn": false,
+            "icon": "fas fa-hashtag",
+            "label": "managers.workspaceManagement.dataPreparation.transformations.changeType.label",
+            "position": 3,
+            "toolbar": false,
+            "type": "changeType"
+        }
+    ]
 }
