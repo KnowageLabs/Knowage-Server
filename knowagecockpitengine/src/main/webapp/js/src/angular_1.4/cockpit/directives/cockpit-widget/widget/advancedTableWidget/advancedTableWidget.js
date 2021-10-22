@@ -478,7 +478,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 				if(params.colDef.ranges && params.colDef.ranges.length > 0){
 					for(var k in params.colDef.ranges){
-						if (typeof params.value != "undefined" && eval(params.value + params.colDef.ranges[k].operator + params.colDef.ranges[k].value)) {
+						if (typeof params.value != "undefined" && typeof params.value != "string" && eval(params.value + params.colDef.ranges[k].operator + params.colDef.ranges[k].value)) {
 							if(params.colDef.ranges[k]['background-color']) {
 								if(params.colDef.visType && (params.colDef.visType.toLowerCase() == 'chart' || params.colDef.visType.toLowerCase() == 'text & chart')) {
 									this.eGui.innerHTML = this.eGui.innerHTML.replace(/background-color:([\#a-z0-9\(\)\,]+);/g,function(match,p1){
