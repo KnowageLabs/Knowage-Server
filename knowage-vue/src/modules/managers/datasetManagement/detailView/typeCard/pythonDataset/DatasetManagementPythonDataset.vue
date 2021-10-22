@@ -160,11 +160,7 @@ export default defineComponent({
                     this.dataset.pythonDatasetType == 'python' ? (this.pythonEnvLibs = JSON.parse(response.data.result)) : (this.pythonEnvLibs = JSON.parse(response.data.result))
                     this.libListVisible = true
                 })
-                .catch(() => {
-                    //CATCH SHOULD BE EMPTY REMOVE THIS ITS JUST A MOCK !!!!!!!
-                    this.dataset.pythonDatasetType == 'python' ? (this.pythonEnvLibs = JSON.parse(pythonDescriptor.pythonResponse)) : (this.pythonEnvLibs = JSON.parse(pythonDescriptor.rResponse))
-                    this.libListVisible = true
-                })
+                .catch(() => {})
         }
     }
 })
