@@ -318,28 +318,6 @@ public class PdfExporter extends AbstractExporter {
 		}
 	}
 
-	private JSONObject[] getColumnsStyles(JSONArray columnsOrdered, JSONObject widgetContent) {
-		try {
-			JSONObject[] toReturn = new JSONObject[columnsOrdered.length() + 10];
-			JSONArray columns = widgetContent.getJSONArray("columnSelectedOfDataset");
-			for (int i = 0; i < columnsOrdered.length(); i++) {
-				JSONObject orderedCol = columnsOrdered.getJSONObject(i);
-				for (int j = 0; j < columns.length(); j++) {
-					JSONObject col = columns.getJSONObject(j);
-					if (orderedCol.getString("header").equals(col.getString("alias"))) {
-						if (col.has("style")) {
-							toReturn[i] = col.getJSONObject("style");
-						}
-					}
-				}
-			}
-			return toReturn;
-		} catch (Exception e) {
-			logger.error("Error while retrieving table columns styles.", e);
-			return new JSONObject[columnsOrdered.length() + 10];
-		}
-	}
-
 	private float getFontSizeFromString(String fontSize) {
 		try {
 			String sizeStr = fontSize.split("px")[0];

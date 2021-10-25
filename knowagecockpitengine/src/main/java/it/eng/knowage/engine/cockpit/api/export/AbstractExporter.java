@@ -41,8 +41,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public abstract class AbstractExporter {
 	static private Logger logger = Logger.getLogger(AbstractExporter.class);
 	protected static final int FETCH_SIZE = 50000;
-	private Locale locale;
-	private final String userUniqueIdentifier;
+	protected Locale locale;
+	protected final String userUniqueIdentifier;
 	protected final JSONObject body;
 	public static final String UNIQUE_ALIAS_PLACEHOLDER = "_$_";
 	public static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
@@ -121,6 +121,28 @@ public abstract class AbstractExporter {
 		} catch (Exception e) {
 			logger.error("Error while getting hidden columns list");
 			return new ArrayList<Integer>();
+		}
+	}
+
+	protected JSONObject[] getColumnsStyles(JSONArray columnsOrdered, JSONObject widgetContent) {
+		try {
+			JSONObject[] toReturn = new JSONObject[columnsOrdered.length() + 10];
+			JSONArray columns = widgetContent.getJSONArray("columnSelectedOfDataset");
+			for (int i = 0; i < columnsOrdered.length(); i++) {
+				JSONObject orderedCol = columnsOrdered.getJSONObject(i);
+				for (int j = 0; j < columns.length(); j++) {
+					JSONObject col = columns.getJSONObject(j);
+					if (orderedCol.getString("header").equals(col.getString("alias"))) {
+						if (col.has("style")) {
+							toReturn[i] = col.getJSONObject("style");
+						}
+					}
+				}
+			}
+			return toReturn;
+		} catch (Exception e) {
+			logger.error("Error while retrieving table columns styles.", e);
+			return new JSONObject[columnsOrdered.length() + 10];
 		}
 	}
 
