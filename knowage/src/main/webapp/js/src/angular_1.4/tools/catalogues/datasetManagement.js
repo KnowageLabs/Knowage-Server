@@ -2014,6 +2014,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					$scope.setFormNotDirty();
 				}
 			}
+			if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr"){
+		 		$scope.restRequestAdditionalParameters = angular.copy($scope.selectedDataSet.restRequestAdditionalParameters);
+			}
 			 if($scope.selectedDataSet.dsTypeCd == "Qbe" && !qbeParameterDeletingMessage.includes("Qbe") ){
 					qbeParameterDeletingMessage =  parameterDeletingMessage + "Parameters for Qbe Dataset should be deleted from qbeDesigner";
 			 }
