@@ -25,6 +25,7 @@ import glossaryUsageRoutes from '@/modules/managers/glossaryUsage/GlossaryUsage.
 import functionsCatalogRoutes from '@/modules/managers/functionsCatalog/FunctionsCatalog.routes.js'
 import schedulerRoutes from '@/modules/managers/scheduler/Scheduler.routes.js'
 import schedulationAgendaRoutes from '@/modules/managers/schedulationAgendaManagement/SchedulationAgenda.routes.js'
+import datasetManagementRoutes from '@/modules/managers/datasetManagement/DatasetManagement.routes.js'
 
 const baseRoutes = []
 
@@ -56,5 +57,6 @@ const routes = baseRoutes
     .concat(functionsCatalogRoutes)
     .concat(schedulerRoutes)
     .concat(schedulationAgendaRoutes)
+    .concat(datasetManagementRoutes)
 
 export default routes
