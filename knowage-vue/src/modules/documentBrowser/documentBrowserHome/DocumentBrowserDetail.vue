@@ -4,18 +4,17 @@
             <div class="document-table-container">
                 <div v-if="selectedDocument" id="document-detail-backdrop" @click="selectedDocument = null"></div>
                 <DocumentBrowserBreadcrumb v-if="!searchMode" :breadcrumbs="breadcrumbs" @breadcrumbClicked="$emit('breadcrumbClicked', $event)"></DocumentBrowserBreadcrumb>
-                <DocumentBrowserTable class="p-m-2" :propDocuments="documents" @executeDocumentClick="executeDocument" @selected="setSelectedDocument"></DocumentBrowserTable>
+                <DocumentBrowserTable class="p-m-2" :propDocuments="documents" @executeDocumentClick="executeDocument" @selected="setSelectedDocument" @itemSelected="$emit('itemSelected', $event)"></DocumentBrowserTable>
             </div>
         </div>
         <div v-if="selectedDocument" id="document-browser-sidebar-container">
-            <DocumentBrowserSidebar :selectedDocument="selectedDocument" @documentCloneClick="cloneDocument" @documentDeleteClick="deleteDocument"></DocumentBrowserSidebar>
+            <DocumentBrowserSidebar :selectedDocument="selectedDocument" @documentCloneClick="cloneDocument" @documentDeleteClick="deleteDocument" @itemSelected="$emit('itemSelected', $event)"></DocumentBrowserSidebar>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-
 import DocumentBrowserBreadcrumb from './breadcrumbs/DocumentBrowserBreadcrumb.vue'
 import DocumentBrowserTable from './tables/DocumentBrowserTable.vue'
 import DocumentBrowserSidebar from './sidebar/DocumentBrowserSidebar.vue'
@@ -24,7 +23,7 @@ export default defineComponent({
     name: 'document-browser-detail',
     components: { DocumentBrowserBreadcrumb, DocumentBrowserTable, DocumentBrowserSidebar },
     props: { propDocuments: { type: Array }, breadcrumbs: { type: Array }, searchMode: { type: Boolean } },
-    emits: ['breadcrumbClicked', 'loading', 'documentCloned'],
+    emits: ['breadcrumbClicked', 'loading', 'documentCloned', 'itemSelected'],
     data() {
         return {
             documents: [] as any[],
@@ -106,7 +105,7 @@ export default defineComponent({
     z-index: 50;
     position: absolute;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     top: 0;
     left: 0;
 }

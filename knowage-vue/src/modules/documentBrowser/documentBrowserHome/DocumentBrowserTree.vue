@@ -1,5 +1,5 @@
 <template>
-    <Tree id="folders-tree" :value="nodes" selectionMode="single" v-model:selectionKeys="selectedFolderKey" @node-select="setSelectedFolder" @node-unselect="removeSelectedFolder" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)"></Tree>
+    <Tree id="folders-tree" :value="nodes" selectionMode="single" v-model:selectionKeys="selectedFolderKey" :filter="true" filterMode="lenient" :expandedKeys="expandedKeys" @node-select="setSelectedFolder" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)"></Tree>
 </template>
 
 <script lang="ts">
@@ -19,6 +19,7 @@ export default defineComponent({
             folders: [] as any[],
             nodes: [] as iNode[],
             selectedFolderKey: {},
+            expandedKeys: {},
             selectedFolder: null as any
         }
     },
@@ -38,6 +39,7 @@ export default defineComponent({
     methods: {
         loadFolders() {
             this.folders = this.propFolders as any[]
+            this.loadSelectedFolderFromLocalStorage()
         },
         createNodeTree() {
             const personalFolder = {
@@ -113,12 +115,9 @@ export default defineComponent({
         },
         setSelectedFolder(node: iNode) {
             this.selectedFolder = node.data
+            localStorage.setItem('documentSelectedFolderId', JSON.stringify(this.selectedFolder.id))
             this.$emit('folderSelected', this.selectedFolder)
             // console.log('SELECTED FOLDER: ', this.selectedFolder)
-        },
-        removeSelectedFolder() {
-            this.selectedFolder = null
-            this.$emit('folderSelected', this.selectedFolder)
         },
         setOpenFolderIcon(node: iNode) {
             node.icon = 'pi pi-folder-open'
@@ -132,6 +131,18 @@ export default defineComponent({
             this.selectedFolderKey = {}
             this.selectedFolderKey[this.selectedFolder.key] = true
             console.log('SELECTED: ', this.selectedFolderKey)
+        },
+        loadSelectedFolderFromLocalStorage() {
+            const folderId = localStorage.getItem('documentSelectedFolderId')
+            if (folderId) {
+                const index = this.folders.findIndex((el: any) => el.id === JSON.parse(folderId))
+                if (index !== -1) {
+                    this.selectedFolder = this.folders[index]
+                    this.selectedFolderKey[this.folders[index].name] = true
+                    this.expandedKeys[this.folders[index].name] = true
+                    this.$emit('folderSelected', this.selectedFolder)
+                }
+            }
         }
     }
 })

@@ -10,6 +10,7 @@
         "choose": "choose",
         "clone": "Clone",
         "close": "close",
+        "cockpit": "Cockpit",
         "codingLanguages": {
             "css": "css",
             "html": "html",
@@ -58,6 +59,7 @@
         "name": "name",
         "new": "new",
         "next": "next",
+        "path": "Path",
         "reused": "Reused",
         "run": "Run",
         "save": "save",
@@ -157,8 +159,15 @@
         "weekdays": "Weekdays"
     },
     "documentBrowser": {
+        "closeAllDocuments": "Close all documents",
+        "closeCurrentDocument": "Close current document",
+        "closeDocumentConfirmMessage": "Are you sure you want to continue?",
+        "closeDocumentConfirmTitle": "You are closing {numberOfDocuments} documents.",
+        "closeDocumentRight": "Close documents on right",
+        "closeOtherDocuments": "Close other documents",
         "development": "Development",
         "documentsSearch": "Search for documents",
+        "genericDocument": "Generic document",
         "hint": "No folder is selected",
         "noDocumentsHint": "No documents to display",
         "notVisible": "Not visible",

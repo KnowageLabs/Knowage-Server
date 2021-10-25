@@ -17,6 +17,8 @@
                         <span v-if="!searchMode" class="p-mx-4">
                             <i class="pi pi-search search-pointer" @click="searchMode = true" />
                         </span>
+                        <KnFabButton v-if="isSuperAdmin && selectedFolder && selectedFolder.parentId" icon="fas fa-plus" @click="toggle($event)" aria-haspopup="true" aria-controls="overlay_menu"></KnFabButton>
+                        <Menu ref="menu" :model="items" :popup="true" />
                     </template>
                 </Toolbar>
 
@@ -29,7 +31,15 @@
                 </div>
 
                 <div id="detail-container" class="p-p-0 p-m-0 kn-page">
-                    <DocumentBrowserDetail v-if="selectedFolder || searchMode" :propDocuments="searchMode ? searchedDocuments : documents" :breadcrumbs="breadcrumbs" :searchMode="searchMode" @breadcrumbClicked="setSelectedBreadcrumb($event)" @documentCloned="loadDocuments"></DocumentBrowserDetail>
+                    <DocumentBrowserDetail
+                        v-if="selectedFolder || searchMode"
+                        :propDocuments="searchMode ? searchedDocuments : documents"
+                        :breadcrumbs="breadcrumbs"
+                        :searchMode="searchMode"
+                        @breadcrumbClicked="setSelectedBreadcrumb($event)"
+                        @documentCloned="loadDocuments"
+                        @itemSelected="$emit('itemSelected', $event)"
+                    ></DocumentBrowserDetail>
                     <DocumentBrowserHint v-else></DocumentBrowserHint>
                 </div>
             </div>
@@ -42,10 +52,13 @@ import { defineComponent } from 'vue'
 import DocumentBrowserHint from './DocumentBrowserHint.vue'
 import DocumentBrowserTree from './DocumentBrowserTree.vue'
 import DocumentBrowserDetail from './DocumentBrowserDetail.vue'
+import KnFabButton from '@/components/UI/KnFabButton.vue'
+import Menu from 'primevue/menu'
 
 export default defineComponent({
     name: 'document-browser-home',
-    components: { DocumentBrowserHint, DocumentBrowserTree, DocumentBrowserDetail },
+    components: { DocumentBrowserHint, DocumentBrowserTree, DocumentBrowserDetail, KnFabButton, Menu },
+    emits: ['itemSelected'],
     data() {
         return {
             folders: [] as any[],
@@ -56,19 +69,44 @@ export default defineComponent({
             selectedBreadcrumb: null as any,
             searchWord: null as any,
             searchMode: false,
+            items: [] as any[],
+            user: null as any,
             loading: false
+        }
+    },
+    computed: {
+        isSuperAdmin(): boolean {
+            return this.user?.isSuperadmin
+        },
+        hasCreateCockpitFunctionality(): boolean {
+            return this.user.functionalities.includes('CreateCockpitFunctionality')
         }
     },
     async created() {
         await this.loadFolders()
+        // this.loadSelectedFolderFromLocalStorage()
+        this.user = (this.$store.state as any).user
+        // console.log('LOADED USER: ', this.user)
     },
+
     methods: {
         async loadFolders() {
             this.loading = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders/`).then((response) => (this.folders = response.data))
             this.loading = false
-            // console.log('LOADED FOLDERS: ', this.folders)
+            console.log('LOADED FOLDERS: ', this.folders)
         },
+        // async loadSelectedFolderFromLocalStorage() {
+        //     const folderId = localStorage.getItem('documentSelectedFolderId')
+        //     if (folderId) {
+        //         console.log('FOLDER ID: ', JSON.parse(folderId))
+        //         const index = this.folders.findIndex((el: any) => el.id === JSON.parse(folderId))
+        //         console.log('INDEX: ', index)
+        //         if (index !== -1) {
+        //             await this.setSelectedFolder(this.folders[index])
+        //         }
+        //     }
+        // },
         async loadDocuments() {
             this.loading = true
             const url = this.searchMode ? `2.0/documents?searchAttributes=all&searchKey=${this.searchWord}` : `2.0/documents?folderId=${this.selectedFolder?.id}`
@@ -88,6 +126,8 @@ export default defineComponent({
                 await this.loadDocuments()
                 this.createBreadcrumbs()
             }
+
+            // console.log('SELECTED FOLDER: ', this.selectedFolder)
         },
         createBreadcrumbs() {
             console.log('SELECTED FOLDER FOR BREADCRUMBS: ', this.selectedFolder)
@@ -115,6 +155,26 @@ export default defineComponent({
         },
         exitSearchMode() {
             this.searchMode = false
+        },
+        toggle(event: any) {
+            this.createMenuItems()
+            const menu = this.$refs.menu as any
+            menu.toggle(event)
+        },
+        createMenuItems() {
+            this.items = []
+            this.items.push({ label: this.$t('documentBrowser.genericDocument'), command: () => this.createNewDocument() })
+            if (this.hasCreateCockpitFunctionality) {
+                this.items.push({ label: this.$t('common.cockpit'), command: () => this.createNewCockpit() })
+            }
+        },
+        createNewDocument() {
+            console.log('CREATE NEW DOCUMENT CLICKED!')
+            this.$router.push('/documentBrowser/newDocument')
+        },
+        createNewCockpit() {
+            console.log('CREATE NEW COCKPIT CLICKED!')
+            this.$emit('itemSelected', { item: null, mode: 'createCockpit' })
         }
     }
 })

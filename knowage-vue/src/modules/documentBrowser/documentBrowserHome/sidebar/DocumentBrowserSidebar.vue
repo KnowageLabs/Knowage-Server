@@ -4,9 +4,11 @@
             <template #left>
                 <div id="document-icons-container" class="p-d-flex p-flex-row p-jc-around ">
                     <i class="fa fa-play-circle document-pointer p-mx-4" @click="executeDocument" />
-                    <i class="pi pi-pencil document-pointer p-mx-4" @click="editDocument" />
-                    <i class="far fa-copy document-pointer p-mx-4" @click="cloneDocumentConfirm" />
-                    <i class="far fa-trash-alt document-pointer p-mx-4" @click="deleteDocumentConfirm" />
+                    <template v-if="isSuperAdmin">
+                        <i class="pi pi-pencil document-pointer p-mx-4" @click="editDocument" />
+                        <i class="far fa-copy document-pointer p-mx-4" @click="cloneDocumentConfirm" />
+                        <i class="far fa-trash-alt document-pointer p-mx-4" @click="deleteDocumentConfirm" />
+                    </template>
                 </div>
             </template>
         </Toolbar>
@@ -15,6 +17,10 @@
                 <img id="image-preview" :src="getImageUrl()" />
             </div>
 
+            <div v-if="document.functionalities && document.functionalities.length > 0" class="p-m-4">
+                <h3 class="p-m-0">{{ $t('common.path') }}</h3>
+                <p v-for="(path, index) in document.functionalities" :key="index" class="p-m-0">{{ path }}</p>
+            </div>
             <div v-if="document.name" class="p-m-4">
                 <h3 class="p-m-0">{{ $t('common.name') }}</h3>
                 <p class="p-m-0">{{ document.name }}</p>
@@ -59,10 +65,11 @@ export default defineComponent({
     name: 'document-browser-sidebar',
     components: {},
     props: { selectedDocument: { type: Object } },
-    emits: ['documentCloneClick', 'documentDeleteClick'],
+    emits: ['documentCloneClick', 'documentDeleteClick', 'itemSelected'],
     data() {
         return {
-            document: null as any
+            document: null as any,
+            user: null as any
         }
     },
     watch: {
@@ -70,8 +77,15 @@ export default defineComponent({
             this.loadDocument()
         }
     },
+    computed: {
+        isSuperAdmin(): boolean {
+            return this.user?.isSuperadmin
+        }
+    },
     created() {
         this.loadDocument()
+        this.user = (this.$store.state as any).user
+        // console.log('LOADED USER: ', this.user)
     },
     methods: {
         loadDocument() {
@@ -100,9 +114,11 @@ export default defineComponent({
         },
         executeDocument() {
             console.log('EXECUTE DOCUMENT: ', this.document)
+            this.$emit('itemSelected', { item: this.document, mode: 'execute' })
         },
         editDocument() {
             console.log('EDIT DOCUMENT', this.document)
+            this.$router.push(`/documentBrowser/editDocument/${this.document.id}`)
         }
     }
 })

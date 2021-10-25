@@ -30,7 +30,7 @@
                 <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
             </template>
         </Column>
-        <Column v-if="isAdmin" class="kn-truncated" :header="$t('common.status')" field="stateCodeStr" sortField="stateCodeStr" :sortable="true">
+        <Column v-if="isSuperAdmin" class="kn-truncated" :header="$t('common.status')" field="stateCodeStr" sortField="stateCodeStr" :sortable="true">
             <template #filter="{filterModel}">
                 <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
             </template>
@@ -38,7 +38,7 @@
                 <span> {{ slotProps.data['stateCodeStr'] }}</span>
             </template></Column
         >
-        <Column v-if="isAdmin" :style="documentBrowserTableDescriptor.table.iconColumn.style" :header="$t('documentBrowser.visible')" field="visible" sortField="visible" :sortable="true">
+        <Column v-if="isSuperAdmin" :style="documentBrowserTableDescriptor.table.iconColumn.style" :header="$t('documentBrowser.visible')" field="visible" sortField="visible" :sortable="true">
             <template #body="slotProps">
                 <span class="fa-stack">
                     <i class="fa fa-eye fa-stack-1x"></i>
@@ -66,7 +66,7 @@ export default defineComponent({
     name: 'document-browser-table',
     components: { Column, DataTable, Message },
     props: { propDocuments: { type: Array } },
-    emits: ['executeDocumentClick'],
+    emits: ['executeDocumentClick', 'itemSelected'],
     data() {
         return {
             documentBrowserTableDescriptor,
@@ -89,7 +89,8 @@ export default defineComponent({
                     operator: FilterOperator.AND,
                     constraints: [filterDefault]
                 }
-            } as any
+            } as any,
+            user: null as any
         }
     },
     watch: {
@@ -98,13 +99,14 @@ export default defineComponent({
         }
     },
     computed: {
-        isAdmin(): boolean {
-            // TODO Add condition
-            return true
+        isSuperAdmin(): boolean {
+            return this.user?.isSuperadmin
         }
     },
     created() {
         this.loadDocuments()
+        this.user = (this.$store.state as any).user
+        // console.log('LOADED USER: ', this.user)
     },
     methods: {
         loadDocuments() {
@@ -116,7 +118,7 @@ export default defineComponent({
             // console.log('DOCUMENTS LOADED IN TABLE: ', this.documents)
         },
         updateFilters() {
-            if (this.isAdmin) {
+            if (this.isSuperAdmin) {
                 this.filters.stateCodeStr = {
                     operator: FilterOperator.AND,
                     constraints: [filterDefault]
@@ -131,6 +133,7 @@ export default defineComponent({
         },
         executeDocument(document: any) {
             this.$emit('executeDocumentClick', document)
+            this.$emit('itemSelected', { item: document, mode: 'execute' })
         }
     }
 })
