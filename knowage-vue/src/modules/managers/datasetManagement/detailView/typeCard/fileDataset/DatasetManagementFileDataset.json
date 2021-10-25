@@ -1,0 +1,90 @@
+{
+    "csvDelimiterCharacterTypes": [
+        {
+            "name": ",",
+            "value": ","
+        },
+        {
+            "name": ";",
+            "value": ";"
+        },
+        {
+            "name": "\\t",
+            "value": "\\t"
+        },
+        {
+            "name": "|",
+            "value": "|"
+        }
+    ],
+    "csvEncodingTypes": [
+        {
+            "name": "windows-1252",
+            "value": "windows-1252"
+        },
+        {
+            "name": "UTF-8",
+            "value": "UTF-8"
+        },
+        {
+            "name": "UTF-16",
+            "value": "UTF-16"
+        },
+        {
+            "name": "US-ASCII",
+            "value": "US-ASCII"
+        },
+        {
+            "name": "ISO-8859-1",
+            "value": "ISO-8859-1"
+        }
+    ],
+    "dateFormatTypes": [
+        { "value": "dd/MM/yyyy", "name": "dd/MM/yyyy" },
+        { "value": "MM/dd/yyyy", "name": "MM/dd/yyyy" },
+        { "value": "dd-MM-yyyy", "name": "dd-MM-yyyy" },
+        { "value": "MM-dd-yyyy", "name": "MM-dd-yyyy" },
+        { "value": "yyyy-MM-dd", "name": "yyyy-MM-dd" },
+        { "value": "yyyy:MM:dd", "name": "yyyy:MM:dd" },
+        { "value": "dd.MM.yyyy", "name": "dd.MM.yyyy" },
+        { "value": "MM.dd.yyyy", "name": "MM.dd.yyyy" }
+    ],
+    "timestampFormatTypes": [
+        { "value": "dd/MM/yyyy HH:mm:ss", "name": "dd/MM/yyyy HH:mm:ss" },
+        { "value": "MM/dd/yyyy hh:mm:ss a", "name": "MM/dd/yyyy hh:mm:ss a" },
+        { "value": "dd-MM-yyyy hh:mm:ss a", "name": "dd-MM-yyyy hh:mm:ss a" },
+        { "value": "MM-dd-yyyy hh:mm:ss a", "name": "MM-dd-yyyy hh:mm:ss a" },
+        { "value": "yyyy-MM-dd hh:mm:ss a", "name": "yyyy-MM-dd hh:mm:ss a" },
+        { "value": "yyyy:MM:dd hh:mm:ss a", "name": "yyyy:MM:dd hh:mm:ss a" },
+        { "value": "dd.MM.yyyy HH:mm:ss", "name": "dd.MM.yyyy HH:mm:ss" },
+        { "value": "MM.dd.yyyy HH:mm:ss", "name": "MM.dd.yyyy HH:mm:ss" }
+    ],
+    "csvQuoteCharacterTypes": [
+        {
+            "name": "\"",
+            "value": "\""
+        },
+        {
+            "name": "'",
+            "value": "'"
+        }
+    ],
+    "style": {
+        "maxwidth": "width:100%"
+    },
+    "validations": {
+        "dataset": [
+            {
+                "fieldName": "fileName",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "file-fields-required"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
