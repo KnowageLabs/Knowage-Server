@@ -104,8 +104,7 @@ public class CockpitExportResource extends AbstractCockpitEngineResource {
 			Integer documentId = body.optInt(DOCUMENT_ID);
 			String template = getIOManager().getTemplateAsString();
 			body.put("template", template);
-			String options = body.optString("options");
-			byte[] data = pdfExporter.getBinaryData(documentId, documentLabel, template, options);
+			byte[] data = pdfExporter.getBinaryData(documentId, documentLabel, template);
 
 			response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			response.setHeader("Content-length", Integer.toString(data.length));
