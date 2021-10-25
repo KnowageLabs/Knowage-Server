@@ -111,7 +111,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iContent, iGlossary, iNode, iWord } from './GlossaryDefinition'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 import Message from 'primevue/message'
@@ -170,13 +170,13 @@ export default defineComponent({
             await this.listContents(glossaryId, parent)
         },
         async loadGlossaryList() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listGlossary`).then((response) => (this.glossaries = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listGlossary`).then((response: AxiosResponse<any>) => (this.glossaries = response.data))
         },
         async loadGlossary(glossaryId: number) {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getGlossary?GLOSSARY_ID=${glossaryId}`)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.selectedGlossary = { ...response.data, SaveOrUpdate: 'Update' }
                     this.originalGlossary = { ...response.data, SaveOrUpdate: 'Update' }
                     this.showTree = true
@@ -194,13 +194,12 @@ export default defineComponent({
 
             const parentId = parent ? parent.id : null
             let content = [] as iNode[]
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listContents?GLOSSARY_ID=${glossaryId}&PARENT_ID=${parentId}`).then((response) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listContents?GLOSSARY_ID=${glossaryId}&PARENT_ID=${parentId}`).then((response: AxiosResponse<any>) => {
                 response.data.forEach((el: any) => content.push(this.createNode(el, parent)))
                 content.sort((a: iNode, b: iNode) => (a.label > b.label ? 1 : -1))
             })
             this.attachContentToTree(parent, content)
             this.loading = false
-            console.log('CAAAAAAAAAAAALED:', this.loading)
         },
         attachContentToTree(parent: iNode, content: iNode[]) {
             if (parent) {
@@ -233,9 +232,9 @@ export default defineComponent({
             let tempData = []
             this.timer = setTimeout(() => {
                 this.loading = true
-                axios
+                this.$http
                     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/glosstreeLike?WORD=${this.searchWord}&GLOSSARY_ID=${this.selectedGlossary?.GLOSSARY_ID}`)
-                    .then((response) => (tempData = response.data))
+                    .then((response: AxiosResponse<any>) => (tempData = response.data))
                     .finally(() => {
                         this.createGlossaryTree(tempData)
                         this.loading = false
@@ -269,13 +268,13 @@ export default defineComponent({
         async saveWord(word: iWord, item: any) {
             this.loading = true
             this.selectedNode = item
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/business/addContents', {
                     GLOSSARY_ID: this.selectedGlossaryId,
                     PARENT_ID: item.id,
                     WORD_ID: word.WORD_ID
                 })
-                .then(async (response) => {
+                .then(async (response: AxiosResponse<any>) => {
                     if (response.data.Status !== 'NON OK') {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.createTitle'),
@@ -314,9 +313,9 @@ export default defineComponent({
             this.selectedNode = node.parent
             const url = node.data.CONTENT_ID ? `1.0/glossary/business/deleteContents?CONTENTS_ID=${node.data.CONTENT_ID}` : `1.0/glossary/business/deleteContents?PARENT_ID=${node.parent.id}&WORD_ID=${node.data.WORD_ID}`
             let status = ''
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, {})
-                .then((response) => (status = response.data.Status))
+                .then((response: AxiosResponse<any>) => (status = response.data.Status))
                 .catch((response) => {
                     this.$store.commit('setError', {
                         title: this.$t('common.error.generic'),
@@ -359,10 +358,10 @@ export default defineComponent({
         },
         async loadContent(contentId: number) {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getContent?CONTENT_ID=${contentId}`)
                 .then(
-                    (response) =>
+                    (response: AxiosResponse<any>) =>
                         (this.selectedContent = {
                             ...response.data,
                             CONTENT_ID: contentId,
@@ -375,10 +374,10 @@ export default defineComponent({
             this.loading = true
 
             let result = { status: '', message: '' } as any
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/business/addContents', content)
                 .then(
-                    (response) =>
+                    (response: AxiosResponse<any>) =>
                         (result = {
                             status: response.data.Status,
                             message: response.data.Message
@@ -446,7 +445,7 @@ export default defineComponent({
         },
         async deleteGlossary() {
             this.loading = true
-            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/business/deleteGlossary?GLOSSARY_ID=${this.selectedGlossaryId}`).then(() => {
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/business/deleteGlossary?GLOSSARY_ID=${this.selectedGlossaryId}`).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
@@ -506,9 +505,9 @@ export default defineComponent({
 
             const url = this.selectedGlossary?.SaveOrUpdate ? '1.0/glossary/business/addGlossary' : '1.0/glossary/business/cloneGlossary'
             let tempData = {} as any
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, this.selectedGlossary)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     tempData = response.data
                 })
                 .catch((response) => {

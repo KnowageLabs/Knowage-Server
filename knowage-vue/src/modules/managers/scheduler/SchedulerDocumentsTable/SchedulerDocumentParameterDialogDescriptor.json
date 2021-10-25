@@ -1,0 +1,15 @@
+{
+    "dialog": {
+        "style": {
+            "width": "60vw"
+        }
+    },
+      "styles": {
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        }
+    }
+}

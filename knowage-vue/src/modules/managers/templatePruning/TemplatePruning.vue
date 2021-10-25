@@ -79,7 +79,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iFile, iNode } from './TemplatePruning'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
 import Calendar from 'primevue/calendar'
 import ProgressSpinner from 'primevue/progressspinner'
@@ -136,10 +136,10 @@ export default defineComponent({
             this.loading = false
         },
         async loadFolderStructure() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/folders?includeDocs=true').then((response) => (this.folderStructure = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/folders?includeDocs=true').then((response: AxiosResponse<any>) => (this.folderStructure = response.data))
         },
         async loadDocuments(date: Date) {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents?date=${this.formatDate(date)}`).then((response) => (this.documents = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents?date=${this.formatDate(date)}`).then((response: AxiosResponse<any>) => (this.documents = response.data))
         },
         createNodeTree() {
             this.nodes = []
@@ -248,7 +248,7 @@ export default defineComponent({
                 })
             }
 
-            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'template/deleteTemplate', documentsToDelete).then(() => {
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'template/deleteTemplate', documentsToDelete).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')

@@ -51,7 +51,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
@@ -107,9 +107,9 @@ export default defineComponent({
         },
         async loadAllDoc() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/listDocument')
-                .then((response) => (this.documents = response.data))
+                .then((response: AxiosResponse<any>) => (this.documents = response.data))
                 .finally(() => (this.loading = false))
         },
         hadleSelect() {

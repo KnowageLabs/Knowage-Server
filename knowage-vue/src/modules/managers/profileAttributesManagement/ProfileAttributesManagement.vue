@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import KnHint from '@/components/UI/KnHint.vue'
 import ProfileAttributesManagementDescriptor from './ProfileAttributesManagementDescriptor.json'
@@ -61,9 +61,9 @@ export default defineComponent({
             this.loading = true
             this.hideForm = true
             this.dirty = false
-            await axios
+            await this.$http
                 .get(this.apiUrl + 'attributes')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.attributes = response.data
                 })
                 .finally(() => (this.loading = false))
@@ -119,8 +119,8 @@ export default defineComponent({
                 accept: async () => {
                     this.loading = true
                     this.axios
-                        .delete(this.apiUrl + 'attributes/' + id, { headers: { 'X-Disable-Errors': true } })
-                        .then((response) => {
+                        .delete(this.apiUrl + 'attributes/' + id, { headers: { 'X-Disable-Errors': 'true' } })
+                        .then((response: AxiosResponse<any>) => {
                             if (response.data.errors) {
                                 this.$store.commit('setError', {
                                     title: this.$t('managers.profileAttributesManagement.info.deleteTitle'),

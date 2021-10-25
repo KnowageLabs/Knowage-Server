@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
 export default defineComponent({
@@ -64,9 +64,9 @@ export default defineComponent({
     methods: {
         async getKpiList() {
             this.loading = true
-            return axios
+            return this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listKpi`)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.kpiList = [...response.data]
                 })
                 .finally(() => (this.loading = false))
@@ -81,7 +81,7 @@ export default defineComponent({
             })
         },
         async deleteKpi(kpiId: number, kpiVersion: number) {
-            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${kpiId}/${kpiVersion}/deleteKpi`).then(() => {
+            await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${kpiId}/${kpiVersion}/deleteKpi`).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')

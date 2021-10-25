@@ -50,7 +50,7 @@ import { formatDate } from '@/helpers/commons/localeHelper'
 import targetDefinitionDecriptor from './TargetDefinitionDescriptor.json'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 
 export default defineComponent({
     name: 'target-definition',
@@ -70,10 +70,10 @@ export default defineComponent({
     methods: {
         async loadAllMetadata() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpiee/listTarget')
                 .then(
-                    (response) =>
+                    (response: AxiosResponse<any>) =>
                         (this.targetList = response.data.map((target: any) => {
                             return {
                                 id: target.id,
@@ -113,7 +113,7 @@ export default defineComponent({
             })
         },
         async deleteTarget(targetId: number) {
-            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpiee/' + targetId + '/deleteTarget').then(() => {
+            await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpiee/' + targetId + '/deleteTarget').then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
