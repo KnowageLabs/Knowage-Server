@@ -11,14 +11,15 @@
         :responsiveLayout="documentBrowserTableDescriptor.responsiveLayout"
         :breakpoint="documentBrowserTableDescriptor.breakpoint"
         @rowClick="$emit('selected', $event.data)"
+        data-test="documents-datatable"
     >
         <template #empty>
-            <Message class="p-m-2" severity="info" :closable="false" :style="documentBrowserTableDescriptor.styles.message">
+            <Message class="p-m-2" severity="info" :closable="false" :style="documentBrowserTableDescriptor.styles.message" data-test="no-documents-hint">
                 {{ $t('documentBrowser.noDocumentsHint') }}
             </Message>
         </template>
         <template #header>
-            <div class="table-header p-d-flex">
+            <div class="table-header p-d-flex" v-if="!searchMode">
                 <span class="p-input-icon-left p-mr-3 p-col-12">
                     <i class="pi pi-search" />
                     <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
@@ -35,7 +36,7 @@
                 <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
             </template>
             <template #body="slotProps">
-                <span> {{ slotProps.data['stateCodeStr'] }}</span>
+                <span data-test="document-status"> {{ slotProps.data['stateCodeStr'] }}</span>
             </template></Column
         >
         <Column v-if="isSuperAdmin" :style="documentBrowserTableDescriptor.table.iconColumn.style" :header="$t('documentBrowser.visible')" field="visible" sortField="visible" :sortable="true">
@@ -65,8 +66,8 @@ import documentBrowserTableDescriptor from './DocumentBrowserTableDescriptor.jso
 export default defineComponent({
     name: 'document-browser-table',
     components: { Column, DataTable, Message },
-    props: { propDocuments: { type: Array } },
-    emits: ['executeDocumentClick', 'itemSelected'],
+    props: { propDocuments: { type: Array }, searchMode: { type: Boolean } },
+    emits: ['executeDocumentClick', 'itemSelected', 'selected'],
     data() {
         return {
             documentBrowserTableDescriptor,
@@ -115,7 +116,7 @@ export default defineComponent({
             }) as any[]
 
             this.updateFilters()
-            // console.log('DOCUMENTS LOADED IN TABLE: ', this.documents)
+            console.log('DOCUMENTS LOADED IN TABLE: ', this.documents)
         },
         updateFilters() {
             if (this.isSuperAdmin) {

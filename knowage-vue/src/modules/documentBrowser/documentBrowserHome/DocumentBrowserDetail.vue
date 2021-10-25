@@ -4,11 +4,11 @@
             <div class="document-table-container">
                 <div v-if="selectedDocument" id="document-detail-backdrop" @click="selectedDocument = null"></div>
                 <DocumentBrowserBreadcrumb v-if="!searchMode" :breadcrumbs="breadcrumbs" @breadcrumbClicked="$emit('breadcrumbClicked', $event)"></DocumentBrowserBreadcrumb>
-                <DocumentBrowserTable class="p-m-2" :propDocuments="documents" @executeDocumentClick="executeDocument" @selected="setSelectedDocument" @itemSelected="$emit('itemSelected', $event)"></DocumentBrowserTable>
+                <DocumentBrowserTable class="p-m-2" :propDocuments="documents" :searchMode="searchMode" @executeDocumentClick="executeDocument" @selected="setSelectedDocument" @itemSelected="$emit('itemSelected', $event)"></DocumentBrowserTable>
             </div>
         </div>
-        <div v-if="selectedDocument" id="document-browser-sidebar-container">
-            <DocumentBrowserSidebar :selectedDocument="selectedDocument" @documentCloneClick="cloneDocument" @documentDeleteClick="deleteDocument" @itemSelected="$emit('itemSelected', $event)"></DocumentBrowserSidebar>
+        <div v-if="selectedDocument" id="document-browser-sidebar-container" data-test="document-browser-sidebar">
+            <DocumentBrowserSidebar :selectedDocument="selectedDocument" @documentCloneClick="cloneDocument" @documentDeleteClick="deleteDocument" @itemSelected="$emit('itemSelected', $event)" @documentChangeStateClicked="changeDocumentState"></DocumentBrowserSidebar>
         </div>
     </div>
 </template>
@@ -23,7 +23,7 @@ export default defineComponent({
     name: 'document-browser-detail',
     components: { DocumentBrowserBreadcrumb, DocumentBrowserTable, DocumentBrowserSidebar },
     props: { propDocuments: { type: Array }, breadcrumbs: { type: Array }, searchMode: { type: Boolean } },
-    emits: ['breadcrumbClicked', 'loading', 'documentCloned', 'itemSelected'],
+    emits: ['breadcrumbClicked', 'loading', 'documentCloned', 'itemSelected', 'documentStateChanged'],
     data() {
         return {
             documents: [] as any[],
@@ -79,6 +79,22 @@ export default defineComponent({
                     })
                     this.selectedDocument = null
                     this.documents = this.documents.filter((el: any) => el.id !== document.id)
+                })
+                .catch(() => {})
+            this.$emit('loading', false)
+        },
+        async changeDocumentState(event: any) {
+            console.log('EVENT FOR CHANGE STATE: ', event)
+            this.$emit('loading', true)
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/changeStateDocument?docId=${event.document.id}&direction=${event.direction}`)
+                .then((response) => {
+                    console.log('OK RESPONSE: ', response)
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.$emit('documentStateChanged')
                 })
                 .catch(() => {})
             this.$emit('loading', false)

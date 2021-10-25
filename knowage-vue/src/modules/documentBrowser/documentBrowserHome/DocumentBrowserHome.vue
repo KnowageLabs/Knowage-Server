@@ -22,7 +22,7 @@
                     </template>
                 </Toolbar>
 
-                <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
+                <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
             </div>
 
             <div class="p-d-flex p-flex-row full-width">
@@ -38,9 +38,10 @@
                         :searchMode="searchMode"
                         @breadcrumbClicked="setSelectedBreadcrumb($event)"
                         @documentCloned="loadDocuments"
+                        @documentStateChanged="loadDocuments"
                         @itemSelected="$emit('itemSelected', $event)"
                     ></DocumentBrowserDetail>
-                    <DocumentBrowserHint v-else></DocumentBrowserHint>
+                    <DocumentBrowserHint v-else data-test="document-browser-hint"></DocumentBrowserHint>
                 </div>
             </div>
         </div>
@@ -94,7 +95,7 @@ export default defineComponent({
             this.loading = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders/`).then((response) => (this.folders = response.data))
             this.loading = false
-            console.log('LOADED FOLDERS: ', this.folders)
+            console.log('LOADED FOLDERS: ', [...this.folders])
         },
         // async loadSelectedFolderFromLocalStorage() {
         //     const folderId = localStorage.getItem('documentSelectedFolderId')

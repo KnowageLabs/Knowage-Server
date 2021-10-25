@@ -3,11 +3,13 @@
         <Toolbar id="document-detail-toolbar" class="kn-toolbar kn-toolbar--secondary">
             <template #left>
                 <div id="document-icons-container" class="p-d-flex p-flex-row p-jc-around ">
-                    <i class="fa fa-play-circle document-pointer p-mx-4" @click="executeDocument" />
+                    <i class="fa fa-play-circle document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.executeDocument')" @click="executeDocument" />
                     <template v-if="isSuperAdmin">
-                        <i class="pi pi-pencil document-pointer p-mx-4" @click="editDocument" />
-                        <i class="far fa-copy document-pointer p-mx-4" @click="cloneDocumentConfirm" />
-                        <i class="far fa-trash-alt document-pointer p-mx-4" @click="deleteDocumentConfirm" />
+                        <i class="pi pi-pencil document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.editDocument')" @click="editDocument" />
+                        <i class="far fa-copy document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.cloneDocument')" @click="cloneDocumentConfirm" />
+                        <i class="far fa-trash-alt document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.deleteDocument')" @click="deleteDocumentConfirm" />
+                        <i v-if="document.stateCode === 'TEST'" class="fa fa-arrow-up document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.moveUpDocumentState')" @click="changeStateDocumentConfirm('UP')" />
+                        <i v-if="document.stateCode === 'TEST' || document.stateCode === 'REL'" class="fa fa-arrow-down document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.moveDownDocumentState')" @click="changeStateDocumentConfirm('DOWN')" />
                     </template>
                 </div>
             </template>
@@ -65,7 +67,7 @@ export default defineComponent({
     name: 'document-browser-sidebar',
     components: {},
     props: { selectedDocument: { type: Object } },
-    emits: ['documentCloneClick', 'documentDeleteClick', 'itemSelected'],
+    emits: ['documentCloneClick', 'documentDeleteClick', 'itemSelected', 'documentChangeStateClicked'],
     data() {
         return {
             document: null as any,
@@ -110,6 +112,14 @@ export default defineComponent({
                 header: this.$t('common.toast.deleteTitle'),
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => this.$emit('documentDeleteClick', this.document)
+            })
+        },
+        changeStateDocumentConfirm(direction: string) {
+            this.$confirm.require({
+                message: this.$t('documentBrowser.changeStateMessage'),
+                header: this.$t('documentBrowser.changeStateTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.$emit('documentChangeStateClicked', { document: this.document, direction: direction })
             })
         },
         executeDocument() {
