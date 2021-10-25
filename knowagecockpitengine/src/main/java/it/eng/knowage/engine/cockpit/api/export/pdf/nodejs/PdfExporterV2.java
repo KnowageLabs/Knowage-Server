@@ -1,4 +1,4 @@
-package it.eng.knowage.engine.cockpit.api.export.pdf;
+package it.eng.knowage.engine.cockpit.api.export.pdf.nodejs;
 
 import java.io.IOException;
 import java.io.InputStream;

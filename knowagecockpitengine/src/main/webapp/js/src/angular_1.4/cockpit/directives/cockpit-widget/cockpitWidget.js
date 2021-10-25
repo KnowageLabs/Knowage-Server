@@ -1646,8 +1646,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		var serie = $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE;
 		var numOfCateg = cockpitModule_widgetServices.checkNumOfCategory($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY);
 		var minMaxCategoriesSeries = cockpitModule_widgetServices.createCompatibleCharts();
-		
-		
+
+
 		if($scope.ngModel.content.chartTemplateOriginal.CHART.type.toLowerCase() != $scope.ngModel.content.chartTemplate.CHART.type.toLowerCase()) {
 			$scope.chartTypes.push($scope.ngModel.content.chartTemplateOriginal.CHART.type.toLowerCase());
 		}
@@ -1658,8 +1658,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 				}
 			}
 		}
-		
-		
+
+
 		if(!tempOriginalChartType){
 			var tempOriginalChartType = $scope.ngModel.content.chartTemplateOriginal.CHART.type.toLowerCase();
 		}
@@ -1742,6 +1742,10 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 	$scope.exportToExcel = function(event, ngModel, options) {
 		cockpitModule_exportWidgetService.exportWidgetToExcel('xlsx', angular.copy(ngModel), options);
+	}
+
+	$scope.exportToPdf = function(event, ngModel, options) {
+		cockpitModule_exportWidgetService.exportWidgetToPdf(angular.copy(ngModel), options);
 	}
 
 	$scope.getPerWidgetDatasetIds = function() {
