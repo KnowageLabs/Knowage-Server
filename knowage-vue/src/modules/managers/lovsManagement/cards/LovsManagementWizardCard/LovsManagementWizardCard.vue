@@ -33,7 +33,7 @@ import { defineComponent } from 'vue'
 import { iLov } from '../../LovsManagement'
 import { lovProviderEnum } from '../../LovsManagementDetail.vue'
 import X2JS from 'x2js'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
 import lovsManagementWizardCardDescriptor from './LovsManagementWizardCardDescriptor.json'
 import LovsManagementQuery from './LovsManagementQuery/LovsManagementQuery.vue'
@@ -241,12 +241,12 @@ export default defineComponent({
             this.formatForTest()
             let listOfEmptyDependencies = [] as any[]
 
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/checkdependecies', { provider: this.x2js.js2xml(this.lov.lovProviderJSON) })
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     listOfEmptyDependencies = response.data
                 })
-                .catch((response) => {
+                .catch((response: AxiosResponse<any>) => {
                     this.$store.commit('setError', {
                         title: this.$t('common.toast.errorTitle'),
                         msg: response
@@ -286,9 +286,9 @@ export default defineComponent({
                 postData.dependencies = this.dependenciesList
             }
 
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/preview', postData)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     if (response.status === 204) {
                         this.$store.commit('setError', {
                             title: this.$t('common.toast.errorTitle'),
@@ -304,7 +304,7 @@ export default defineComponent({
                         this.paramsDialogVisible = hasDependencies
                     }
                 })
-                .catch((response) => {
+                .catch((response: AxiosResponse<any>) => {
                     this.$store.commit('setError', {
                         title: this.$t('common.toast.errorTitle'),
                         msg: response
@@ -540,7 +540,7 @@ export default defineComponent({
             }
 
             await this.sendRequest(url)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     if (response.status == 409) {
                         this.$store.commit('setError', {
                             title: this.$t('common.toast.errorTitle'),
@@ -557,7 +557,7 @@ export default defineComponent({
                         this.$router.push(`${id}`)
                     }
                 })
-                .catch((response) => {
+                .catch((response: AxiosResponse<any>) => {
                     this.$store.commit('setError', {
                         title: this.$t('common.toast.' + this.operation + 'Title'),
                         msg: response
@@ -566,9 +566,9 @@ export default defineComponent({
         },
         sendRequest(url: string) {
             if (this.operation === 'create') {
-                return axios.post(url, this.lov)
+                return this.$http.post(url, this.lov)
             } else {
-                return axios.put(url, this.lov)
+                return this.$http.put(url, this.lov)
             }
         },
         onTestSave(payload: any) {

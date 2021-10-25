@@ -45,7 +45,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
 import constraintManagementDescriptor from './ConstraintsManagementDescriptor.json'
@@ -92,7 +92,7 @@ export default defineComponent({
             this.loadCheks()
         },
         async getAllPredefinedChecks() {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/predefinedChecks`).then((response) => {
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/predefinedChecks`).then((response: AxiosResponse<any>) => {
                 this.predefinedChecks = response.data.map((check: any) => {
                     return {
                         checkId: check.checkId,
@@ -109,7 +109,7 @@ export default defineComponent({
             })
         },
         async getAllCustomChecks() {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/customChecks`).then((response) => {
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/customChecks`).then((response: AxiosResponse<any>) => {
                 this.customChecks = response.data.map((check: any) => {
                     return {
                         checkId: check.checkId,
@@ -145,7 +145,7 @@ export default defineComponent({
             }
         },
         async getDomainTypes() {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=CHECK`).then((response) => {
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=CHECK`).then((response: AxiosResponse<any>) => {
                 this.domains = response.data
             })
         },
@@ -158,7 +158,7 @@ export default defineComponent({
             })
         },
         async deleteConstraint(id: number) {
-            await axios
+            await this.$http
                 .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/customChecks/' + id)
                 .then(() => {
                     this.$store.commit('setInfo', {

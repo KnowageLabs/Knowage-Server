@@ -207,7 +207,7 @@
 /* eslint-disable no-prototype-builtins */
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import useValidate from '@vuelidate/core'
 import dataSourceDescriptor from '../DataSourceDescriptor.json'
 import dataSourceDetailValidationDescriptor from './DataSourceDetailValidationDescriptor.json'
@@ -416,7 +416,7 @@ export default defineComponent({
             dsToTest = { ...this.datasource }
             dsToTest.type = this.jdbcOrJndi.type
 
-            await axios.post(url, dsToTest).then((response) => {
+            await this.$http.post(url, dsToTest).then((response: AxiosResponse<any>) => {
                 if (response.data.error) {
                     this.$store.commit('setError', { title: this.$t('managers.dataSourceManagement.form.errorTitle'), msg: response.data.error })
                 } else {
@@ -426,7 +426,7 @@ export default defineComponent({
         },
 
         async createOrUpdate(url, dsToSave) {
-            return this.operation === 'update' ? axios.put(url, dsToSave) : axios.post(url, dsToSave)
+            return this.operation === 'update' ? this.$http.put(url, dsToSave) : this.$http.post(url, dsToSave)
         },
 
         async handleSubmit() {
@@ -442,7 +442,7 @@ export default defineComponent({
                 this.convertToMili(dsToSave)
             }
 
-            await this.createOrUpdate(url, dsToSave).then((response) => {
+            await this.createOrUpdate(url, dsToSave).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
                     this.$store.commit('setError', { title: 'Error', msg: response.data.error })
                 } else {

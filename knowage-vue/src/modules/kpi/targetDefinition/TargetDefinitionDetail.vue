@@ -32,7 +32,7 @@ import AutoComplete from 'primevue/autocomplete'
 import targetDefinitionDetailDecriptor from './TargetDefinitionDetailDescriptor.json'
 import targetDefinitionValidationDescriptor from './TargetDefinitionValidationDescriptor.json'
 import Dialog from 'primevue/dialog'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import { iCategory, iTargetDefinition, iValues } from './TargetDefinition'
 import useValidate from '@vuelidate/core'
 import AddKpiDialog from './AddKpiDialog.vue'
@@ -114,9 +114,9 @@ export default defineComponent({
         },
         async loadTarget() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpiee/' + this.id + '/loadTarget')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.target = {
                         id: this.clone == 'true' ? null : response.data.id,
                         name: this.clone == 'true' ? 'Copy of ' + response.data.name : response.data.name,
@@ -143,10 +143,10 @@ export default defineComponent({
         async loadKpi() {
             this.loadingAllKpi = true
             this.filteredKpi = []
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi')
                 .then(
-                    (response) =>
+                    (response: AxiosResponse<any>) =>
                         (this.filteredKpi = response.data
                             .filter((item) => !this.kpi || this.kpi.findIndex((kpi) => kpi.kpiId === item.id) < 0)
                             .map((kpi: any) => {
@@ -165,7 +165,7 @@ export default defineComponent({
                 .finally(() => (this.loadingAllKpi = false))
         },
         async loadCategory() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains/listByCode/KPI_TARGET_CATEGORY').then((response) => (this.categories = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains/listByCode/KPI_TARGET_CATEGORY').then((response: AxiosResponse<any>) => (this.categories = response.data))
         },
         searchCategory(event) {
             setTimeout(() => {
@@ -211,7 +211,7 @@ export default defineComponent({
             }
             let operation = this.target.id ? 'update' : 'insert'
 
-            await axios.post(url, this.target).then((response) => {
+            await this.$http.post(url, this.target).then((response: AxiosResponse<any>) => {
                 if (response.data.errors != undefined && response.data.errors.length > 0) {
                     this.categoryDialogVisiable = false
                     this.$store.commit('setError', {

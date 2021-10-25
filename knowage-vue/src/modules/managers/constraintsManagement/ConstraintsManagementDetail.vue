@@ -122,7 +122,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import { iConstraint } from './ConstraintsManagement'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import useValidate from '@vuelidate/core'
@@ -206,7 +206,7 @@ export default defineComponent({
             }
 
             await this.sendRequest(url)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.constraint.checkId = response.data
                     this.$store.commit('setInfo', {
                         title: this.$t(this.constraintsManagementDetailDescriptor.operation[this.operation].toastTitle),
@@ -223,9 +223,9 @@ export default defineComponent({
         },
         sendRequest(url: string) {
             if (this.operation === 'insert') {
-                return axios.post(url, this.constraint)
+                return this.$http.post(url, this.constraint)
             } else {
-                return axios.put(url, this.constraint)
+                return this.$http.put(url, this.constraint)
             }
         },
         clearInput() {
