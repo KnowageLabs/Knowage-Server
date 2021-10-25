@@ -23,6 +23,7 @@ import lovsManagementRoutes from '@/modules/managers/lovsManagement/LovsManageme
 import glossaryDefinitionRoutes from '@/modules/managers/glossaryDefinition/GlossaryDefinition.routes.js'
 import glossaryUsageRoutes from '@/modules/managers/glossaryUsage/GlossaryUsage.routes.js'
 import functionsCatalogRoutes from '@/modules/managers/functionsCatalog/FunctionsCatalog.routes.js'
+import schedulerRoutes from '@/modules/managers/scheduler/Scheduler.routes.js'
 
 const baseRoutes = []
 
@@ -52,5 +53,6 @@ const routes = baseRoutes
     .concat(glossaryDefinitionRoutes)
     .concat(glossaryUsageRoutes)
     .concat(functionsCatalogRoutes)
+    .concat(schedulerRoutes)
 
 export default routes
