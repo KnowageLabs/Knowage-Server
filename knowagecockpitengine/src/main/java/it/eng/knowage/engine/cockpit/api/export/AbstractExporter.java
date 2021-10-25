@@ -516,7 +516,7 @@ public abstract class AbstractExporter {
 		}
 	}
 
-	protected Locale getLocale() {
+	public Locale getLocale() {
 		return locale;
 	}
 
