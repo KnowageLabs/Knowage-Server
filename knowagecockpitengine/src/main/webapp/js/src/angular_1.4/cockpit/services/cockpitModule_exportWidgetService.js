@@ -71,7 +71,7 @@
 								fileName = documentLabel;
 							}
 							$mdToast.hide(exportingToast);
-							sbiModule_download.getBlob(response.data, fileName, "application/pdf", "PDF");
+							sbiModule_download.getBlob(response.data, fileName, mimeType, type);
 						}, function(error){
 							$mdToast.cancel(exportingToast);
 							sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.cockpit.widgets.exporting.error"), 'Error');

@@ -150,8 +150,8 @@ public class PdfExporter extends AbstractExporter {
 			}
 
 			hiddenColumns = getHiddenColumnsList(widgetContent.getJSONArray("columnSelectedOfDataset"));
-			pdfHiddenColumns = getPdfHiddenColumnsList(widgetContent.getJSONArray("columnSelectedOfDataset"));
 			JSONArray columnsOrdered = getTableOrderedColumns(widgetContent.getJSONArray("columnSelectedOfDataset"), columns);
+			pdfHiddenColumns = getPdfHiddenColumnsList(columnsOrdered, widgetContent.getJSONArray("columnSelectedOfDataset"));
 
 			JSONObject[] columnStyles = getColumnsStyles(columnsOrdered, widgetContent);
 			initColumnWidths(columnStyles, columnsOrdered.length());
@@ -255,16 +255,21 @@ public class PdfExporter extends AbstractExporter {
 		}
 	}
 
-	private List<Integer> getPdfHiddenColumnsList(JSONArray columns) {
+	private List<Integer> getPdfHiddenColumnsList(JSONArray columnsOrdered, JSONArray columns) {
 		List<Integer> pdfHiddenColumns = new ArrayList<Integer>();
 		try {
-			for (int i = 0; i < columns.length(); i++) {
-				JSONObject column = columns.getJSONObject(i);
-				if (column.has("style")) {
-					JSONObject style = column.optJSONObject("style");
-					if (style.has("hideFromPdf")) {
-						if (style.getString("hideFromPdf").equals("true")) {
-							pdfHiddenColumns.add(i);
+			for (int i = 0; i < columnsOrdered.length(); i++) {
+				JSONObject orderedCol = columnsOrdered.getJSONObject(i);
+				for (int j = 0; j < columns.length(); j++) {
+					JSONObject col = columns.getJSONObject(j);
+					if (orderedCol.getString("header").equals(col.getString("alias"))) {
+						if (col.has("style")) {
+							JSONObject style = col.optJSONObject("style");
+							if (style.has("hideFromPdf")) {
+								if (style.getString("hideFromPdf").equals("true")) {
+									pdfHiddenColumns.add(i);
+								}
+							}
 						}
 					}
 				}
