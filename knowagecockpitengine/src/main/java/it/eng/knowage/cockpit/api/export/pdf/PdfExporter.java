@@ -116,12 +116,12 @@ public class PdfExporter extends AbstractExporter {
 			JSONObject dataStore = this.getDataStoreForWidget(template, widget, offset, fetchSize);
 			int totalNumberOfRows = dataStore.getInt("results");
 			PDPage page = createPage(settings, widget);
+			document.addPage(page);
 			while (offset < totalNumberOfRows) {
 				this.fillPageWithData(dataStore, document, page, style, settings);
 				offset += fetchSize;
 				dataStore = this.getDataStoreForWidget(template, widget, offset, fetchSize);
 			}
-			document.addPage(page);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Unable to export generic widget: " + widgetId, e);
 		}
