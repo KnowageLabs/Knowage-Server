@@ -44,7 +44,13 @@ export default defineComponent({
             menuItems: [] as any[]
         }
     },
-    created() {},
+    created() {
+        console.log('CREATED HOME!', this.$route)
+        if (this.$route.name === 'document-execution' && this.$route.params.id) {
+            this.tabs.push({ item: null, mode: 'execute' })
+            this.activeIndex = 1
+        }
+    },
     methods: {
         test() {
             console.log('ACTIVE INDEX: ', this.activeIndex)
@@ -59,6 +65,7 @@ export default defineComponent({
         onItemSelect(item: any) {
             this.tabs.push(item)
             this.$router.push('/document-browser/document-execution/' + item.item.id)
+            this.activeIndex = this.tabs.length
         },
         toggle(event: any) {
             this.createMenuItems()
