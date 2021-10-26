@@ -1,7 +1,7 @@
 <template>
     <div class="kn-page">
         <div>
-            <TabView id="document-browser-tab-view" v-model:activeIndex="activeIndex">
+            <TabView id="document-browser-tab-view" v-model:activeIndex="activeIndex" @tab-change="test">
                 <TabPanel>
                     <template #header>
                         <i class="fa fa-folder-open"></i>
@@ -46,8 +46,19 @@ export default defineComponent({
     },
     created() {},
     methods: {
+        test() {
+            console.log('ACTIVE INDEX: ', this.activeIndex)
+            if (this.activeIndex === 0) {
+                return
+            }
+
+            console.log('TEEEEEEEEST: ', this.tabs[this.activeIndex - 1].item.id)
+            console.log('TABS: ', this.tabs)
+            this.$router.push('/document-browser/document-execution/' + this.tabs[this.activeIndex - 1].item.id)
+        },
         onItemSelect(item: any) {
             this.tabs.push(item)
+            this.$router.push('/document-browser/document-execution/' + item.item.id)
         },
         toggle(event: any) {
             this.createMenuItems()
