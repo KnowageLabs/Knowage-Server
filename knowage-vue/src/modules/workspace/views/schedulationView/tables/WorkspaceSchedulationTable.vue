@@ -27,7 +27,14 @@
         </template>
 
         <template #expansion="slotProps">
-            <WorkspaceSchedulationSchedulationsTable class="p-m-4" :triggers="slotProps.data.triggers" @runSchedulationClick="$emit('runSchedulationClick', $event)"></WorkspaceSchedulationSchedulationsTable>
+            <WorkspaceSchedulationSchedulationsTable
+                class="p-m-4"
+                :triggers="slotProps.data.triggers"
+                :index="slotProps.index"
+                :propSelectedSchedulations="selectedSchedulations"
+                @runSchedulationClick="$emit('runSchedulationClick', $event)"
+                @selectedSchedulations="setSelectedSchedulations"
+            ></WorkspaceSchedulationSchedulationsTable>
         </template>
         <Column :expander="true" :headerStyle="workspaceSchedulationTableDescriptor.expanderHeaderStyle" />
         <Column class="kn-truncated" v-for="col of workspaceSchedulationTableDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"></Column>
@@ -53,13 +60,14 @@ export default defineComponent({
     name: 'workspace-schedulation-table',
     components: { Column, DataTable, Message, WorkspaceSchedulationSchedulationsTable },
     props: { propJobs: { type: Array } },
-    emits: ['runSchedulationClick'],
+    emits: ['runSchedulationClick', 'schedulationsSelected'],
     data() {
         return {
             workspaceSchedulationTableDescriptor,
             jobs: [] as IPackage[],
             expandedRows: [] as any[],
-            filters: { global: [filterDefault] } as Object
+            filters: { global: [filterDefault] } as Object,
+            selectedSchedulations: {} as any
         }
     },
     watch: {
@@ -77,6 +85,11 @@ export default defineComponent({
         },
         viewRanSchedulations(job: IPackage) {
             console.log('VIEW RAN SCHEDULATIOSN FOR JOB: ', job)
+        },
+        setSelectedSchedulations(payload: any) {
+            this.selectedSchedulations[payload.index] = payload.schedulations
+            // console.log('MAIN SELECTED SCHEDULATIONS: ', this.selectedSchedulations)
+            this.$emit('schedulationsSelected', this.selectedSchedulations)
         }
     }
 })
