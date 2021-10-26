@@ -110,7 +110,15 @@
         </template>
     </Dialog>
 
-    <DetailSidebar :visible="showDetailSidebar" :viewType="'repository'" :document="selectedDocument" @close="showDetailSidebar = false" />
+    <DetailSidebar
+        :visible="showDetailSidebar"
+        :viewType="'repository'"
+        :document="selectedDocument"
+        @executeDocumentFromOrganizer="executeDocumentFromOrganizer"
+        @moveDocumentToFolder="moveDocumentToFolder"
+        @deleteDocumentFromOrganizer="deleteDocumentFromOrganizer"
+        @close="showDetailSidebar = false"
+    />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -197,6 +205,15 @@ export default defineComponent({
         },
         logEvent(event) {
             console.log(event)
+        },
+        executeDocumentFromOrganizer() {
+            console.log('executeDocumentFromOrganizer() {')
+        },
+        moveDocumentToFolder() {
+            console.log('moveDocumentToFolder() {')
+        },
+        deleteDocumentFromOrganizer() {
+            console.log('deleteDocumentFromOrganizer() {')
         }
     }
 })

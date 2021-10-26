@@ -47,7 +47,7 @@
         </DataTable>
     </div>
 
-    <DetailSidebar :visible="showDetailSidebar" :viewType="'recent'" :document="selectedDocument" @close="showDetailSidebar = false" />
+    <DetailSidebar :visible="showDetailSidebar" :viewType="'recent'" :document="selectedDocument" @close="showDetailSidebar = false" @executeRecent="executeRecent" />
 </template>
 <script lang="ts">
 import { filterDefault } from '@/helpers/commons/filterHelper'
@@ -89,6 +89,9 @@ export default defineComponent({
         formatDate(date) {
             let fDate = new Date(date)
             return fDate.toLocaleString()
+        },
+        executeRecent() {
+            console.log('executeRecent() {')
         }
     }
 })
