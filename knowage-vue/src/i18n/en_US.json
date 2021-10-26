@@ -1233,6 +1233,42 @@
             },
             "title": "Roles Management"
         },
+        "schedulationAgendaManagement": {
+            "common": {
+                "search": "Search"
+            },
+            "detail": {
+                "close": "Close",
+                "document": "Document",
+                "endDate": "End Date",
+                "endTime": "End Time",
+                "package": "Package",
+                "select": "Select",
+                "startDate": "Start Date",
+                "startTime": "Start Time",
+                "time": "Time"
+            },
+            "documentTypes": {
+                "title": "Document selection"
+            },
+            "headers": {
+                "description": "Description",
+                "name": "Name"
+            },
+            "hint": "Schedulation agenda allows you to search and display scheduled agenda.",
+            "hintTitle": "Schedulation Management",
+            "info": {
+                "dataLoading": "Loading data. Please wait.",
+                "emptySearch": "The search returns no data",
+                "noDataFound": "No data found",
+                "noElementSelected": "No element selected"
+            },
+            "packageTypes": {
+                "title": "Package selection"
+            },
+            "tenantSaved": "Tenant correctly saved. The administrator of the tenant has been created too and his username and password are",
+            "title": "Schedulation Agenda"
+        },
         "scheduler": {
             "attachedZip": "Attached zip name",
             "classPath": "Class path",
