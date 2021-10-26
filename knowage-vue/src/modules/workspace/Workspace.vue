@@ -195,12 +195,9 @@ export default defineComponent({
 }
 @media screen and (max-width: 1017px) {
     #sideMenu {
-        -webkit-transform: translate3d(-100%, 0px, 0px);
-        transform: translate3d(-100%, 0px, 0px);
-        visibility: none;
+        -webkit-transition: width 0.3s;
+        transition: width 0.3s;
         width: 0%;
-        transition: all 0.5s ease 0s;
-        -webkit-transition: all 0.5s ease 0s;
     }
     #detailContent {
         width: 100%;
@@ -224,6 +221,11 @@ export default defineComponent({
     height: calc(100% - 2.5rem);
 }
 @media screen and (min-width: 1017px) {
+    #sideMenu {
+        -webkit-transition: width 0.3s;
+        transition: width 0.3s;
+        width: 100%;
+    }
     #showSidenavIcon {
         display: none;
     }

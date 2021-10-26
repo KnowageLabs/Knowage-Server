@@ -1170,7 +1170,14 @@
             "recentDocuments": "Recent Documents",
             "schedulation": "Schedulation"
         },
-        "myAnalysis": {},
+        "myAnalysis": {
+            "menuItems": {
+                "share": "Share Document",
+                "clone": "Clone Document",
+                "delete": "Delete Document",
+                "upload": "Upload preview file"
+            }
+        },
         "myData": {},
         "myModels": {},
         "myRepository": {

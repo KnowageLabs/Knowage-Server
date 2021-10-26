@@ -9,7 +9,20 @@
         </template>
     </Toolbar>
     <div class="p-m-2">
-        <DataTable class="p-datatable-sm kn-table" :value="analysisDocuments" :loading="loading" :scrollable="true" scrollHeight="89vh" dataKey="id" responsiveLayout="stack" breakpoint="600px" v-model:selection="selectedDocument" v-model:filters="filters" @row-select="onActiveVersionChange">
+        <DataTable
+            class="p-datatable-sm kn-table"
+            :value="analysisDocuments"
+            :loading="loading"
+            :scrollable="true"
+            scrollHeight="89vh"
+            dataKey="id"
+            responsiveLayout="stack"
+            breakpoint="600px"
+            v-model:filters="filters"
+            v-model:selection="selectedAnalysis"
+            selectionMode="single"
+            @rowSelect="showDetailSidebar = true"
+        >
             <template #header>
                 <div class="table-header">
                     <span class="p-input-icon-left">
@@ -39,24 +52,76 @@
             </Column>
         </DataTable>
     </div>
+    <Sidebar class="mySidebar" v-model:visible="showDetailSidebar" :showCloseIcon="false" position="right">
+        <div class="kn-toolbar kn-toolbar--default" :style="analysisDescriptor.style.sidenavToolbar">
+            <Button icon="fas fa-play-circle" class="p-button-text p-button-rounded p-button-plain " />
+            <Button icon="fas fa-edit" class="p-button-text p-button-rounded p-button-plain" />
+            <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" @click="showMenu" />
+        </div>
+        <div class="p-m-5">
+            <div class="p-mb-5" v-for="(field, index) of sidenavFields" :key="index">
+                <h3 class="p-m-0">
+                    <b>{{ $t(field.translation) }}</b>
+                </h3>
+                <p class="p-m-0" v-if="field.type === 'date'">{{ formatDate(selectedAnalysis[field.value]) }}</p>
+                <p class="p-m-0" v-else>{{ selectedAnalysis[field.value] }}</p>
+            </div>
+        </div>
+    </Sidebar>
+    <Menu id="optionsMenu" ref="optionsMenu" :model="menuItems" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { filterDefault } from '@/helpers/commons/filterHelper'
+import analysisDescriptor from './WorkspaceAnalysisViewDescriptor.json'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import { filterDefault } from '@/helpers/commons/filterHelper'
+import Sidebar from 'primevue/sidebar'
+import Menu from 'primevue/contextmenu'
 
 export default defineComponent({
-    components: { DataTable, Column },
+    components: { DataTable, Column, Sidebar, Menu },
     emits: ['showMenu'],
     data() {
         return {
+            analysisDescriptor,
             loading: false,
+            showDetailSidebar: false,
             analysisDocuments: [] as any,
-            selectedDocument: {} as any,
+            selectedAnalysis: {} as any,
             filters: {
                 global: [filterDefault]
-            } as Object
+            } as Object,
+            sidenavFields: analysisDescriptor.sidenavFields,
+            menuItems: [
+                {
+                    key: '0',
+                    label: this.$t('workspace.myAnalysis.menuItems.share'),
+                    icon: 'fas fa-share',
+                    command: () => {
+                        // event.originalEvent: Browser event
+                        // event.item: Menuitem instance
+                    }
+                },
+                {
+                    key: '1',
+                    label: this.$t('workspace.myAnalysis.menuItems.clone'),
+                    icon: 'fas fa-clone',
+                    command: () => {}
+                },
+                {
+                    key: '2',
+                    label: this.$t('workspace.myAnalysis.menuItems.delete'),
+                    icon: 'fas fa-trash',
+                    command: () => {}
+                },
+                {
+                    key: '3',
+                    label: this.$t('workspace.myAnalysis.menuItems.upload'),
+                    icon: 'fas fa-share-alt',
+                    command: () => {}
+                }
+            ]
         }
     },
     created() {
@@ -75,6 +140,11 @@ export default defineComponent({
         formatDate(date) {
             let fDate = new Date(date)
             return fDate.toLocaleString()
+        },
+        showMenu(event) {
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs.optionsMenu.toggle(event)
         }
     }
 })
