@@ -1,0 +1,19 @@
+{
+    "checkboxColumn": {
+        "style": {
+            "width": "3rem"
+        }
+    },
+    "columns": [
+        {
+            "field": "triggerName",
+            "header": "common.packages"
+        }
+    ],
+    "iconColumn": {
+        "style": {
+            "text-align": "end",
+            "width": "5%"
+        }
+    }
+}
