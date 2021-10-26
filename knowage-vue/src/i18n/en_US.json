@@ -57,6 +57,7 @@
         "name": "name",
         "new": "new",
         "next": "next",
+        "packages": "Packages",
         "reused": "Reused",
         "run": "Run",
         "save": "save",
@@ -1172,9 +1173,9 @@
         },
         "myAnalysis": {
             "menuItems": {
-                "share": "Share Document",
                 "clone": "Clone Document",
                 "delete": "Delete Document",
+                "share": "Share Document",
                 "upload": "Upload preview file"
             }
         },
@@ -1188,6 +1189,9 @@
                 "executionTime": "Execution Time"
             }
         },
-        "schedulation": {}
+        "schedulation": {
+            "ranSchedulations": "View ran schedulations",
+            "title": "Schedulations"
+        }
     }
 }
