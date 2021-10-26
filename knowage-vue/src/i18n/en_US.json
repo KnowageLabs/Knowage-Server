@@ -1157,5 +1157,30 @@
     "role": {
         "defaultRolePlaceholder": "No default role selected",
         "roleSelection": "Role Selection"
+    },
+    "workspace": {
+        "hint": "Please change the hint to your liking in the i18 files.",
+        "menuLabels": {
+            "menuTitle": "My Workspace",
+            "myAnalysis": "My Analysis",
+            "myData": "My Data",
+            "myModels": "My Models",
+            "myRepository": "My Repository",
+            "recent": "Recent",
+            "recentDocuments": "Recent Documents",
+            "schedulation": "Schedulation"
+        },
+        "myAnalysis": {},
+        "myData": {},
+        "myModels": {},
+        "myRepository": {
+            "newFolderTitle": "Create new folder"
+        },
+        "recent": {
+            "sidenavLabels": {
+                "executionTime": "Execution Time"
+            }
+        },
+        "schedulation": {}
     }
 }
