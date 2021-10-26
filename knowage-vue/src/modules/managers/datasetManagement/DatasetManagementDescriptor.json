@@ -45,7 +45,7 @@
                         "color": "white"
                     }
                 },
-                "Python/r": {
+                "Python/R": {
                     "icon": "fab fa-python",
                     "style": {
                         "background-color": "#4caf50",
