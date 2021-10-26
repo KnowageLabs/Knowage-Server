@@ -53,25 +53,26 @@
             "value": "documentType"
         },
         {
-            "translation": "workspace.recent.sidenavLabels.executionTime",
+            "translation": "workspace.recent.sidebarLabels.executionTime",
             "type": "date",
             "value": "requestTime"
         }
     ],
     "style": {
-        "sidenavContainer": {
+        "sidebarContainer": {
             "display": "flex",
             "flex-direction": "column"
         },
-        "sidenavImage": {
+        "sidebarImage": {
             "align-self": "center"
         },
-        "sidenavItem": {
+        "sidebarItem": {
             "height": "auto",
             "min-height": "72px"
         },
-        "sidenavToolbar": {
-            "text-align": "center"
+        "sidebarToolbar": {
+            "display": "flex",
+            "justify-content": "space-evenly"
         }
     }
 }

@@ -110,7 +110,7 @@
         </template>
     </Dialog>
 
-    <DetailSidebar :visible="showDetailSidebar" :viewType="'recent'" :document="selectedDocument" @close="showDetailSidebar = false" />
+    <DetailSidebar :visible="showDetailSidebar" :viewType="'repository'" :document="selectedDocument" @close="showDetailSidebar = false" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'

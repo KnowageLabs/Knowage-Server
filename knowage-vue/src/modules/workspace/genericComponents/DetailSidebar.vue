@@ -1,12 +1,12 @@
 <template>
-    <Sidebar class="mySidebar" v-model:visible="sidenavVisible" :showCloseIcon="false" position="right" @hide="$emit('close')">
-        <div id="sidebarItemsContainer" :style="descriptor.style.sidenavContainer">
-            <div class="kn-toolbar kn-toolbar--default" :style="descriptor.style.sidenavToolbar">
+    <Sidebar class="mySidebar" v-model:visible="sidebarVisible" :showCloseIcon="false" position="right" @hide="$emit('close')">
+        <div id="sidebarItemsContainer" :style="descriptor.style.sidebarContainer">
+            <div class="kn-toolbar kn-toolbar--default" :style="descriptor.style.sidebarToolbar">
                 <span v-for="(button, index) of documentButtons" :key="index">
                     <Button v-if="button.visible" :icon="button.icon" :class="button.class" />
                 </span>
             </div>
-            <img class="p-mt-5" :style="descriptor.style.sidenavImage" align="center" :src="documentImageSource" style="width:80%" />
+            <img class="p-mt-5" :style="descriptor.style.sidebarImage" align="center" :src="documentImageSource" style="width:80%" />
             <div class="p-m-5">
                 <div class="p-mb-5" v-for="(field, index) of documentFields" :key="index">
                     <h3 class="p-m-0">
@@ -45,6 +45,8 @@ export default defineComponent({
             switch (this.viewType) {
                 case 'recent':
                     return descriptor.defaultViewFields
+                case 'repository':
+                    return descriptor.defaultViewFields
                 case 'analysis':
                     return descriptor.analysisViewFields
                 default:
@@ -55,6 +57,12 @@ export default defineComponent({
             switch (this.viewType) {
                 case 'recent':
                     return [{ icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true }]
+                case 'repository':
+                    return [
+                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true },
+                        { icon: 'fas fa-share', class: 'p-button-text p-button-rounded p-button-plain', visible: true },
+                        { icon: 'fas fa-trash', class: 'p-button-text p-button-rounded p-button-plain', visible: true }
+                    ]
                 case 'analysis':
                     return [
                         { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true },
@@ -70,9 +78,9 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            sidenavVisible: false,
+            sidebarVisible: false,
             selectedDocument: {} as any,
-            sidenavFields: null as any,
+            sidebarFields: null as any,
             menuItems: [
                 { key: '0', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share', command: () => {} },
                 { key: '1', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: () => {} },
@@ -82,12 +90,12 @@ export default defineComponent({
         }
     },
     created() {
-        this.sidenavVisible = this.visible
+        this.sidebarVisible = this.visible
         this.selectedDocument = this.document
     },
     watch: {
         visible() {
-            this.sidenavVisible = this.visible
+            this.sidebarVisible = this.visible
             this.selectedDocument = this.document
             console.log(this.selectedDocument)
         }
