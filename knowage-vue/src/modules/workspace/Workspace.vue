@@ -14,9 +14,7 @@
         </div>
         <div class=" p-d-flex p-flex-column" style="width:100%">
             <Button id="showSidenavIcon" v-if="$router.currentRoute._rawValue.fullPath === '/workspace/'" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="sidebarVisible = true" />
-            <div style="height:100%" class="overflow">
-                <router-view class="overflow kn-router-view" :selectedFolder="selectedFolder" @showMenu="sidebarVisible = true" @reloadRepositoryMenu="getAllFolders" />
-            </div>
+            <router-view class="kn-router-view" :selectedFolder="selectedFolder" @showMenu="sidebarVisible = true" @reloadRepositoryMenu="getAllFolders" />
         </div>
     </div>
 
