@@ -82,7 +82,7 @@
 <script lang="ts">
 import useValidate from '@vuelidate/core'
 import { defineComponent } from 'vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import detailViewDescriptor from './DatasetManagementDetailViewDescriptor.json'
 import DetailCard from './detailCard/DatasetManagementDetailCard.vue'
 import TypeCard from './typeCard/DatasetManagementTypeCard.vue'
@@ -151,17 +151,17 @@ export default defineComponent({
     methods: {
         //#region ===================== Get All Data ====================================================
         async getSelectedDataset() {
-            axios
+            this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.id}`)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.selectedDataset = response.data[0] ? { ...response.data[0] } : {}
                 })
                 .catch()
         },
         async getSelectedDatasetVersions() {
-            axios
+            this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/olderversions/${this.id}`)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     response.data.root ? (this.selectedDatasetVersions = response.data.root) : (this.selectedDatasetVersions = [])
                 })
                 .catch()
@@ -189,7 +189,7 @@ export default defineComponent({
             })
         },
         async cloneDataset(datasetId) {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`).then((response) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`).then((response: AxiosResponse<any>) => {
                 delete response.data[0].id
                 response.data[0].label = '...'
                 response.data[0].dsVersions = []
@@ -217,14 +217,14 @@ export default defineComponent({
 
             dsToSave.isScheduled ? (dsToSave.schedulingCronLine = await this.formatCronForSave()) : ''
 
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/`, dsToSave, {
                     headers: {
                         Accept: 'application/json, text/plain, */*',
                         'Content-Type': 'application/json;charset=UTF-8'
                     }
                 })
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.saveTags(dsToSave)
                     this.touched = false
                     this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
@@ -236,7 +236,7 @@ export default defineComponent({
             let tags = {} as any
             tags.versNum = dsToSave.versNum + 1
             tags.tagsToAdd = dsToSave.tags
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${dsToSave.id}/dstags/`, tags, {
                     headers: {
                         Accept: 'application/json, text/plain, */*',

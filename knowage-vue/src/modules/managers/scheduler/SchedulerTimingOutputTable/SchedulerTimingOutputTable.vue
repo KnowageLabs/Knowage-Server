@@ -66,7 +66,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { formatDate } from '@/helpers/commons/localeHelper'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
@@ -141,7 +141,7 @@ export default defineComponent({
         async getTriggerInfo(trigger: any, openDialog: boolean) {
             this.$emit('loading', true)
             if (trigger) {
-                await axios
+                await this.$http
                     .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/getTriggerInfo?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
                     .then((response) => {
                         this.triggerInfo = response.data
@@ -168,9 +168,9 @@ export default defineComponent({
         async executeTrigger(trigger: any) {
             this.$emit('loading', true)
 
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/executeTrigger?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     if (response.data.resp === 'ok') {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.information'),
@@ -192,9 +192,9 @@ export default defineComponent({
         async pauseTrigger(trigger: any) {
             this.$emit('loading', true)
             const action = trigger.triggerIsPaused ? 'resumeTrigger' : 'pauseTrigger'
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/${action}?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     if (response.data.resp === 'ok') {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.information'),
@@ -216,9 +216,9 @@ export default defineComponent({
         },
         async deleteTrigger(trigger: any, index: number) {
             this.$emit('loading', true)
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/deleteTrigger?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     if (response.data.resp === 'ok') {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.deleteTitle'),

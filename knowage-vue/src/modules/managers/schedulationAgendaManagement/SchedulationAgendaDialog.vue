@@ -31,7 +31,7 @@
                     <div class="table-header p-d-flex">
                         <span class="p-input-icon-left p-mr-3 p-col-12">
                             <i class="pi pi-search" />
-                            <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('managers.schedulationAgendaManagement.common.search')" data-test="filterInput" />
+                            <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
                         </span>
                     </div>
                 </template>

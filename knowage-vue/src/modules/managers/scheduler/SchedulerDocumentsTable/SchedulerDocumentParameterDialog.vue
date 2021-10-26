@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Dialog from 'primevue/dialog'
 import Message from 'primevue/message'
 import schedulerDocumentParameterDialogDescriptor from './SchedulerDocumentParameterDialogDescriptor.json'
@@ -72,7 +72,7 @@ export default defineComponent({
             this.$emit('close')
         },
         async loadFormulas() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/formulas/`).then((response) => (this.formulas = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/formulas/`).then((response: AxiosResponse<any>) => (this.formulas = response.data))
         },
         setParameters() {
             this.$emit('setParameters', this.parameters)

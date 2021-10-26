@@ -58,7 +58,7 @@
 
                             <div class="p-d-flex p-ai-center">
                                 <div>
-                                    <Button class="p-button-text kn-button" :label="$t('managers.schedulationAgendaManagement.common.search')" @click="runSearch" data-test="search-button" />
+                                    <Button class="p-button-text kn-button" :label="$t('common.search')" @click="runSearch" data-test="search-button" />
                                 </div>
                             </div>
                             <h1></h1>
@@ -96,7 +96,6 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
 import { defineComponent } from 'vue'
 import { iDataItem } from './SchedulationAgenda'
 import { formatDate } from '@/helpers/commons/localeHelper'
@@ -106,6 +105,7 @@ import Toolbar from 'primevue/toolbar'
 import ProgressBar from 'primevue/progressbar'
 import schedulationAgendaDescriptor from './SchedulationAgendaDescriptor.json'
 import SchedulationAgendaDialog from './SchedulationAgendaDialog.vue'
+import { AxiosResponse } from 'axios'
 
 export default defineComponent({
     name: 'schedulation-agenda',
@@ -156,9 +156,9 @@ export default defineComponent({
     methods: {
         async loadPackages() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '/scheduleree/listAllJobs')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     let rawList = response.data.root
                     let filteredList = rawList.filter((x) => x.jobGroup == 'BIObjectExecutions')
 
@@ -174,9 +174,9 @@ export default defineComponent({
         },
         async loadDocuments() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.documentList = response.data
                 })
                 .finally(() => (this.loading = false))
@@ -205,9 +205,9 @@ export default defineComponent({
             if (this.selectedDocument) {
                 path += `&document=${this.selectedDocument.label}`
             }
-            axios
+            this.$http
                 .get(path)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.schedulations = response.data.root
                 })
                 .finally(() => (this.loading = false))

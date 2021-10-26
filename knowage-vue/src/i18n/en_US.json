@@ -18,8 +18,8 @@
         },
         "collapse": "collapse",
         "copyOf": "Copy of",
-        "default": "Default",
         "dataset": "Dataset",
+        "default": "Default",
         "delete": "delete",
         "deleteAll": "delete all",
         "description": "description",
@@ -661,10 +661,6 @@
             "title": "Data Source Management"
         },
         "datasetManagement": {
-            "noTablesToLink": "There are no tables to link in this source.",
-            "noSourceTables": "There are no source tables for selected dataset.",
-            "noLinkedTables": "There are no linked tables.",
-            "scheduling": "Scheduling",
             "availableLibraries": "Available Libraries",
             "availableTables": "Available Tables",
             "changeTypeMsg": "Changing dataset type will delete all parameters, are you sure?",
@@ -709,7 +705,10 @@
             "jsonPathAttributes": "JSON Path Attributes",
             "jsonPathValue": "JSON Path Value",
             "metadataInfo": "You cannot open fields metadata for the dataset that is not saved, please save it first.",
+            "noLinkedTables": "There are no linked tables.",
             "noSourceSelectedWarning": "Please select a Source",
+            "noSourceTables": "There are no source tables for selected dataset.",
+            "noTablesToLink": "There are no tables to link in this source.",
             "noVersions": "There are no previous versions of this dataset, save it with changes to create an older version.",
             "oldVersions": "Older Dataset Versions",
             "openQbeButton": "Open Qbe",
@@ -734,6 +733,7 @@
             "restRequestBody": "Request Body",
             "restoreMsg": "Do you want to restore the dataset version?",
             "restoreTitle": "Restore dataset version",
+            "scheduling": "Scheduling",
             "scope": "Scope",
             "selectDatasetType": "DataSet Type",
             "selectedTables": "Selected Tables",
@@ -1234,9 +1234,6 @@
             "title": "Roles Management"
         },
         "schedulationAgendaManagement": {
-            "common": {
-                "search": "Search"
-            },
             "detail": {
                 "close": "Close",
                 "document": "Document",

@@ -57,7 +57,7 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import linkTabDescriptor from './DatasetManagementLinkCardDescriptor.json'
 import Listbox from 'primevue/listbox'
@@ -100,15 +100,15 @@ export default defineComponent({
 
     methods: {
         async getSelectedTables() {
-            axios
+            this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDsRelationResource/dataset/${this.dataset.id}/`)
-                .then((response) => (this.selectedTables = response.data))
+                .then((response: AxiosResponse<any>) => (this.selectedTables = response.data))
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error }))
         },
         async getAvailableSources() {
-            axios
+            this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     if (response.data.length > 0) {
                         this.availableResources.filter((resource) => (resource.name === this.dataset.dataSource.toLowerCase() ? this.getAvailableSourceTables(resource.sourceId) : ''))
                     } else {
@@ -118,9 +118,9 @@ export default defineComponent({
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error }))
         },
         async getAvailableSourceTables(sourceId) {
-            axios
+            this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/${sourceId}/metatables/`)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     if (response.data.lenth > 0) {
                         this.availableTables = this.removeSelectedTablesFromAvailable(response.data, this.selectedTables)
                     } else {

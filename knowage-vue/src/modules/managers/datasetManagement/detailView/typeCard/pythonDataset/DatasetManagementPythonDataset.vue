@@ -73,7 +73,7 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import { VCodeMirror } from 'vue3-code-mirror'
@@ -148,15 +148,15 @@ export default defineComponent({
         },
         getEnvLibraries() {
             if (this.dataset.pythonDatasetType == 'python') {
-                return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/backendservices/widgets/RWidget/libraries/${this.dataset.pythonEnvironment}`)
+                return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/backendservices/widgets/RWidget/libraries/${this.dataset.pythonEnvironment}`)
             } else {
-                return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/backendservices/widgets/python/libraries/${this.dataset.pythonEnvironment}`)
+                return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/backendservices/widgets/python/libraries/${this.dataset.pythonEnvironment}`)
             }
         },
         async checkEnvironment() {
-            await axios
+            await this.$http
             this.getEnvLibraries()
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.dataset.pythonDatasetType == 'python' ? (this.pythonEnvLibs = JSON.parse(response.data.result)) : (this.pythonEnvLibs = JSON.parse(response.data.result))
                     this.libListVisible = true
                 })
