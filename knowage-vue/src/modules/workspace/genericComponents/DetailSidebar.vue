@@ -3,7 +3,7 @@
         <div id="sidebarItemsContainer" :style="descriptor.style.sidebarContainer">
             <div class="kn-toolbar kn-toolbar--default" :style="descriptor.style.sidebarToolbar">
                 <span v-for="(button, index) of documentButtons" :key="index">
-                    <Button v-if="button.visible" :icon="button.icon" :class="button.class" />
+                    <Button v-if="button.visible" :icon="button.icon" :class="button.class" @click="$emit(button.emitEvent)" />
                 </span>
             </div>
             <img class="p-mt-5" :style="descriptor.style.sidebarImage" align="center" :src="documentImageSource" style="width:80%" />
@@ -28,7 +28,7 @@ import Menu from 'primevue/contextmenu'
 
 export default defineComponent({
     components: { Sidebar, Menu },
-    emits: ['close'],
+    emits: ['close', 'executeRecent', 'executeDocumentFromOrganizer', 'moveDocumentToFolder', 'deleteDocumentFromOrganizer', 'executeAnalysisDocument', 'editAnalysisDocument'],
     props: { visible: Boolean, viewType: String, document: Object as any },
     computed: {
         isOwner(): any {
@@ -36,10 +36,10 @@ export default defineComponent({
         },
         documentImageSource(): any {
             if (this.selectedDocument.previewFile) {
-                return `${process.env.VUE_APP_HOST_URL}/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument.previewFile}`
+                return process.env.VUE_APP_HOST_URL + descriptor.imgPath + this.selectedDocument.previewFile
             }
             //DEFAULT IMAGE
-            return `${process.env.VUE_APP_HOST_URL}/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=82300081364511eca64e159ee59cd4dc.jpg`
+            return process.env.VUE_APP_HOST_URL + descriptor.imgPath + `82300081364511eca64e159ee59cd4dc.jpg`
         },
         documentFields(): any {
             switch (this.viewType) {
@@ -56,18 +56,18 @@ export default defineComponent({
         documentButtons(): any {
             switch (this.viewType) {
                 case 'recent':
-                    return [{ icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true }]
+                    return [{ icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, emitEvent: 'executeRecent' }]
                 case 'repository':
                     return [
-                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true },
-                        { icon: 'fas fa-share', class: 'p-button-text p-button-rounded p-button-plain', visible: true },
-                        { icon: 'fas fa-trash', class: 'p-button-text p-button-rounded p-button-plain', visible: true }
+                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, emitEvent: 'executeDocumentFromOrganizer' },
+                        { icon: 'fas fa-share', class: 'p-button-text p-button-rounded p-button-plain', visible: true, emitEvent: 'moveDocumentToFolder' },
+                        { icon: 'fas fa-trash', class: 'p-button-text p-button-rounded p-button-plain', visible: true, emitEvent: 'deleteDocumentFromOrganizer' }
                     ]
                 case 'analysis':
                     return [
-                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true },
-                        { icon: 'fas fa-edit', class: 'p-button-text p-button-rounded p-button-plain', visible: this.isOwner },
-                        { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', visible: true }
+                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, emitEvent: 'executeAnalysisDocument' },
+                        { icon: 'fas fa-edit', class: 'p-button-text p-button-rounded p-button-plain', visible: this.isOwner, emitEvent: 'editAnalysisDocument' },
+                        { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', visible: true, emitEvent: '' }
                     ]
                 default:
                     return console.log('How did this happen, no valid file type.')

@@ -68,7 +68,7 @@
             </div>
         </div>
     </Sidebar> -->
-    <DetailSidebar :visible="showDetailSidebar" :viewType="'analysis'" :document="selectedAnalysis" @close="showDetailSidebar = false" />
+    <DetailSidebar :visible="showDetailSidebar" :viewType="'analysis'" :document="selectedAnalysis" @executeAnalysisDocument="executeAnalysisDocument" @editAnalysisDocument="editAnalysisDocument" @close="showDetailSidebar = false" />
 
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuItems" />
 </template>
@@ -147,6 +147,12 @@ export default defineComponent({
             // eslint-disable-next-line
             // @ts-ignore
             this.$refs.optionsMenu.toggle(event)
+        },
+        executeAnalysisDocument() {
+            console.log('executeAnalysisDocument')
+        },
+        editAnalysisDocument() {
+            console.log('editAnalysisDocument')
         }
     }
 })
