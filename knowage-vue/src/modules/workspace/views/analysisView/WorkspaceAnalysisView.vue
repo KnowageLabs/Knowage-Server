@@ -8,7 +8,7 @@
             <FabButton icon="fas fa-folder" data-test="new-folder-button" />
         </template>
     </Toolbar>
-    <div class="p-m-2">
+    <div class="p-m-2 overflow">
         <DataTable
             class="p-datatable-sm kn-table"
             :value="analysisDocuments"
@@ -46,13 +46,13 @@
             </Column>
             <Column style="width:10%;text-align:end" @rowClick="false">
                 <template #body>
-                    <Button icon="fas fa-edit" class="p-button-text p-button-rounded p-button-plain" />
-                    <Button icon="fas fa-play-circle" class="p-button-text p-button-rounded p-button-plain" />
+                    <Button icon="fas fa-edit" class="p-button-link" />
+                    <Button icon="fas fa-play-circle" class="p-button-link" />
                 </template>
             </Column>
         </DataTable>
     </div>
-    <Sidebar class="mySidebar" v-model:visible="showDetailSidebar" :showCloseIcon="false" position="right">
+    <!-- <Sidebar class="mySidebar" v-model:visible="showDetailSidebar" :showCloseIcon="false" position="right">
         <div class="kn-toolbar kn-toolbar--default" :style="analysisDescriptor.style.sidenavToolbar">
             <Button icon="fas fa-play-circle" class="p-button-text p-button-rounded p-button-plain " />
             <Button icon="fas fa-edit" class="p-button-text p-button-rounded p-button-plain" />
@@ -67,20 +67,22 @@
                 <p class="p-m-0" v-else>{{ selectedAnalysis[field.value] }}</p>
             </div>
         </div>
-    </Sidebar>
+    </Sidebar> -->
+    <DetailSidebar :visible="showDetailSidebar" :viewType="'analysis'" :document="selectedAnalysis" @close="showDetailSidebar = false" />
+
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuItems" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import analysisDescriptor from './WorkspaceAnalysisViewDescriptor.json'
+import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import Sidebar from 'primevue/sidebar'
 import Menu from 'primevue/contextmenu'
 
 export default defineComponent({
-    components: { DataTable, Column, Sidebar, Menu },
+    components: { DataTable, Column, Menu, DetailSidebar },
     emits: ['showMenu'],
     data() {
         return {

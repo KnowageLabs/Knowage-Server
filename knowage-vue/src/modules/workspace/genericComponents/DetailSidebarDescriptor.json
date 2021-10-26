@@ -1,0 +1,78 @@
+{
+    "analysisViewFields": [
+        {
+            "translation": "importExport.gallery.column.name",
+            "type": "text",
+            "value": "name"
+        },
+        {
+            "translation": "managers.configurationManagement.headers.label",
+            "type": "text",
+            "value": "label"
+        },
+        {
+            "translation": "managers.businessModelManager.description",
+            "type": "text",
+            "value": "description"
+        },
+        {
+            "translation": "importExport.gallery.column.type",
+            "type": "text",
+            "value": "typeCode"
+        },
+        {
+            "translation": "common.author",
+            "type": "text",
+            "value": "creationUser"
+        },
+        {
+            "translation": "managers.mondrianSchemasManagement.headers.creationDate",
+            "type": "date",
+            "value": "creationDate"
+        }
+    ],
+    "defaultViewFields": [
+        {
+            "translation": "importExport.gallery.column.name",
+            "type": "text",
+            "value": "documentName"
+        },
+        {
+            "translation": "managers.configurationManagement.headers.label",
+            "type": "text",
+            "value": "documentLabel"
+        },
+        {
+            "translation": "managers.businessModelManager.description",
+            "type": "text",
+            "value": "documentDescription"
+        },
+        {
+            "translation": "importExport.gallery.column.type",
+            "type": "text",
+            "value": "documentType"
+        },
+        {
+            "translation": "workspace.recent.sidebarLabels.executionTime",
+            "type": "date",
+            "value": "requestTime"
+        }
+    ],
+    "style": {
+        "sidebarContainer": {
+            "display": "flex",
+            "flex-direction": "column"
+        },
+        "sidebarImage": {
+            "align-self": "center"
+        },
+        "sidebarItem": {
+            "height": "auto",
+            "min-height": "72px"
+        },
+        "sidebarToolbar": {
+            "display": "flex",
+            "justify-content": "space-evenly"
+        }
+    }
+}

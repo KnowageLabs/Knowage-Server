@@ -8,8 +8,21 @@
             <FabButton icon="fas fa-folder" data-test="new-folder-button" @click="displayCreateFolderDialog = true" />
         </template>
     </Toolbar>
-    <div class="p-m-2">
-        <DataTable class="p-datatable-sm kn-table" :value="documents" :loading="loading" :scrollable="true" scrollHeight="89vh" dataKey="id" responsiveLayout="stack" breakpoint="600px" v-model:selection="selectedDocument" v-model:filters="filters" @row-select="onActiveVersionChange">
+    <div class="p-m-2 overflow">
+        <DataTable
+            class="p-datatable-sm kn-table"
+            :value="documents"
+            :loading="loading"
+            :scrollable="true"
+            scrollHeight="89vh"
+            dataKey="biObjId"
+            responsiveLayout="stack"
+            breakpoint="600px"
+            v-model:filters="filters"
+            v-model:selection="selectedDocument"
+            selectionMode="single"
+            @rowSelect="showDetailSidebar = true"
+        >
             <template #header>
                 <div class="table-header">
                     <span class="p-input-icon-left">
@@ -24,14 +37,11 @@
             <template #filter="{ filterModel }">
                 <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
             </template>
-            <Column field="documentType" :header="$t('importExport.gallery.column.type')" :sortable="true" />
-            <Column field="documentLabel" :header="$t('importExport.catalogFunction.column.label')" :sortable="true" />
-            <Column field="documentName" :header="$t('importExport.gallery.column.name')" :sortable="true" />
-            <Column field="documentDescription" :header="$t('managers.businessModelManager.description')" :sortable="true" />
-            <Column class="icon-cell" style="width:10%;text-align:end" @rowClick="false">
+            <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" />
+            <Column class="icon-cell" @rowClick="false">
                 <template #body="slotProps">
-                    <Button icon="fas fa-edit" class="p-button-text p-button-rounded p-button-plain" @click="logEvent(slotProps.data)" />
-                    <Button icon="fas fa-play-circle" class="p-button-text p-button-rounded p-button-plain" />
+                    <Button icon="fas fa-edit" class="p-button-link" @click="logEvent(slotProps.data)" />
+                    <Button icon="fas fa-play-circle" class="p-button-link" />
                 </template>
             </Column>
         </DataTable>
@@ -99,12 +109,15 @@
             </div>
         </template>
     </Dialog>
+
+    <DetailSidebar :visible="showDetailSidebar" :viewType="'repository'" :document="selectedDocument" @close="showDetailSidebar = false" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import { IDocument, IFolder } from '@/modules/workspace/Workspace'
+import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
 import repositoryDescriptor from './WorkspaceRepositoryViewDescriptor.json'
 import useValidate from '@vuelidate/core'
 import DataTable from 'primevue/datatable'
@@ -114,7 +127,7 @@ import Dialog from 'primevue/dialog'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 
 export default defineComponent({
-    components: { DataTable, Column, FabButton, Dialog, KnValidationMessages },
+    components: { DataTable, Column, FabButton, Dialog, KnValidationMessages, DetailSidebar },
     emits: ['showMenu', 'reloadRepositoryMenu'],
     props: { selectedFolder: { type: Object }, id: { type: String, required: false } },
     computed: {
@@ -126,10 +139,12 @@ export default defineComponent({
         return {
             v$: useValidate() as any,
             loading: false,
+            showDetailSidebar: false,
+            displayCreateFolderDialog: false,
             documents: [] as IDocument[],
             selectedDocument: {} as IDocument,
             newFolder: {} as IFolder,
-            displayCreateFolderDialog: false,
+            columns: repositoryDescriptor.columns,
             filters: {
                 global: [filterDefault]
             } as Object
