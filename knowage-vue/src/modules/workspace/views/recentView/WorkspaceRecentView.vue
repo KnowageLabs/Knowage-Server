@@ -8,7 +8,7 @@
             <FabButton icon="fas fa-folder" data-test="new-folder-button" />
         </template>
     </Toolbar>
-    <div class="p-m-2">
+    <div class="p-m-2 overflow">
         <DataTable
             class="p-datatable-sm kn-table"
             :value="recentDocumentsList"
@@ -46,32 +46,20 @@
             </Column>
         </DataTable>
     </div>
-    <Sidebar class="mySidebar" v-model:visible="showDetailSidebar" :showCloseIcon="false" position="right">
-        <div class="kn-toolbar kn-toolbar--default" :style="workspaceDescriptor.style.sidenavToolbar">
-            <Button icon="fas fa-play-circle" class="p-button-text p-button-rounded p-button-plain " />
-        </div>
-        <div class="p-m-5">
-            <div class="p-mb-5" v-for="(field, index) of sidenavFields" :key="index">
-                <h3 class="p-m-0">
-                    <b>{{ $t(field.translation) }}</b>
-                </h3>
-                <p class="p-m-0" v-if="field.type === 'date'">{{ formatDate(selectedDocument[field.value]) }}</p>
-                <p class="p-m-0" v-else>{{ selectedDocument[field.value] }}</p>
-            </div>
-        </div>
-    </Sidebar>
+
+    <DetailSidebar :visible="showDetailSidebar" :viewType="'recent'" :document="selectedDocument" @close="showDetailSidebar = false" />
 </template>
 <script lang="ts">
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { defineComponent } from 'vue'
 import { IDocument } from '@/modules/workspace/Workspace'
+import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
 import workspaceDescriptor from './WorkspaceRecentViewDescriptor.json'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import Sidebar from 'primevue/sidebar'
 
 export default defineComponent({
-    components: { DataTable, Column, Sidebar },
+    components: { DataTable, Column, DetailSidebar },
     emits: ['showMenu'],
     data() {
         return {
@@ -82,8 +70,7 @@ export default defineComponent({
             selectedDocument: {} as IDocument,
             filters: {
                 global: [filterDefault]
-            } as Object,
-            sidenavFields: workspaceDescriptor.sidenavFields
+            } as Object
         }
     },
     created() {

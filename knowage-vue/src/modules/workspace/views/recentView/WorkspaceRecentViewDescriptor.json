@@ -1,31 +1,4 @@
 {
-    "sidenavFields": [
-        {
-            "translation": "importExport.gallery.column.name",
-            "type": "text",
-            "value": "documentName"
-        },
-        {
-            "translation": "managers.configurationManagement.headers.label",
-            "type": "text",
-            "value": "documentLabel"
-        },
-        {
-            "translation": "managers.businessModelManager.description",
-            "type": "text",
-            "value": "documentDescription"
-        },
-        {
-            "translation": "importExport.gallery.column.type",
-            "type": "text",
-            "value": "documentType"
-        },
-        {
-            "translation": "workspace.recent.sidenavLabels.executionTime",
-            "type": "date",
-            "value": "requestTime"
-        }
-    ],
     "style": {
         "sidenavItem": {
             "height": "auto",
