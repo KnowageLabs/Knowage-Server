@@ -1190,6 +1190,7 @@
             }
         },
         "schedulation": {
+            "executedSchedulations": "Executed schedulations",
             "ranSchedulations": "View ran schedulations",
             "title": "Schedulations"
         }

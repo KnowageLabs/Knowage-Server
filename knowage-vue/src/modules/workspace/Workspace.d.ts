@@ -45,7 +45,7 @@ export interface IPackage {
     numberOfDocuments?: number
 }
 
-export interface ITrigger { 
+export interface ITrigger {
     jobName: string,
     jobGroup: string,
     triggerName: string,
@@ -65,5 +65,6 @@ export interface ISchedulation {
     schedulation: any,
     scheduler: any,
     schedulationStartDate: any,
-    sequence: nullany
+    sequence: any,
+    urlPath?: string
 }

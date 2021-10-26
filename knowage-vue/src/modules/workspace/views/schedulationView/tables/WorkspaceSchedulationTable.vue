@@ -40,7 +40,7 @@
         <Column class="kn-truncated" v-for="col of workspaceSchedulationTableDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"></Column>
         <Column :style="workspaceSchedulationTableDescriptor.iconColumn.style">
             <template #body="slotProps">
-                <Button icon="fa fa-eye" class="p-button-link" v-tooltip.top="$t('workspace.schedulation.ranSchedulations')" @click.stop="viewRanSchedulations(slotProps.data)" />
+                <Button icon="fa fa-eye" class="p-button-link" v-tooltip.left="$t('workspace.schedulation.ranSchedulations')" @click.stop="viewRanSchedulations(slotProps.data)" />
             </template>
         </Column>
     </DataTable>
@@ -60,7 +60,7 @@ export default defineComponent({
     name: 'workspace-schedulation-table',
     components: { Column, DataTable, Message, WorkspaceSchedulationSchedulationsTable },
     props: { propJobs: { type: Array } },
-    emits: ['runSchedulationClick', 'schedulationsSelected'],
+    emits: ['runSchedulationClick', 'schedulationsSelected', 'viewOldSchedulationsClick'],
     data() {
         return {
             workspaceSchedulationTableDescriptor,
@@ -85,6 +85,7 @@ export default defineComponent({
         },
         viewRanSchedulations(job: IPackage) {
             console.log('VIEW RAN SCHEDULATIOSN FOR JOB: ', job)
+            this.$emit('viewOldSchedulationsClick', job)
         },
         setSelectedSchedulations(payload: any) {
             this.selectedSchedulations[payload.index] = payload.schedulations

@@ -8,22 +8,27 @@
             <Button class="kn-button p-button-text p-button-rounded" @click="runAllSchedulations">{{ $t('common.run') }}</Button>
         </template>
     </Toolbar>
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-    <WorkspaceSchedulationTable class="overflow p-m-2" :propJobs="jobs" @runSchedulationClick="runSingleSchedulation" @schedulationsSelected="setSelectedSchedulations"></WorkspaceSchedulationTable>
+    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+    <WorkspaceSchedulationTable class="overflow p-m-2" :propJobs="jobs" @runSchedulationClick="runSingleSchedulation" @schedulationsSelected="setSelectedSchedulations" @viewOldSchedulationsClick="viewOldSchedulations"></WorkspaceSchedulationTable>
+
+    <WorkspaceSchedulationOldSchedulationsDialog :visible="schedulationsDialogVisible" :selectedJob="selectedJob" @close="closeOldSchedulationsDialog"></WorkspaceSchedulationOldSchedulationsDialog>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { IPackage, ITrigger } from '../../Workspace'
+import WorkspaceSchedulationOldSchedulationsDialog from './dialog/WorkspaceSchedulationOldSchedulationsDialog.vue'
 import WorkspaceSchedulationTable from './tables/WorkspaceSchedulationTable.vue'
 
 export default defineComponent({
     name: 'workspace-schedulation-view',
-    components: { WorkspaceSchedulationTable },
+    components: { WorkspaceSchedulationOldSchedulationsDialog, WorkspaceSchedulationTable },
     data() {
         return {
             jobs: [] as IPackage[],
             selectedSchedulations: {} as any,
+            schedulationsDialogVisible: false,
+            selectedJob: null as IPackage | null,
             loading: false
         }
     },
@@ -73,6 +78,15 @@ export default defineComponent({
                 })
                 .catch(() => {})
             this.loading = false
+        },
+        viewOldSchedulations(job: IPackage) {
+            console.log('JOB OLD SCHEDUL: ', job)
+            this.selectedJob = job
+            this.schedulationsDialogVisible = true
+        },
+        closeOldSchedulationsDialog() {
+            this.schedulationsDialogVisible = false
+            this.selectedJob = null
         }
     }
 })
