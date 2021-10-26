@@ -42,7 +42,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import mainDescriptor from './DatasetManagementDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
@@ -80,47 +80,47 @@ export default defineComponent({
     methods: {
         //#region ===================== Get All Data and Format ====================================================
         getEnvironmentByConfiguration(configuration: string) {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/category/${configuration}`)
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/category/${configuration}`)
         },
         buildEnvironments(environmentsArray) {
             return environmentsArray.map((environment) => ({ label: environment.label, value: environment.valueCheck }))
         },
         async getEnvironmentData() {
-            this.getEnvironmentByConfiguration('PYTHON_CONFIGURATION').then((response) => (this.pythonEnvironments = this.buildEnvironments(response.data)))
-            this.getEnvironmentByConfiguration('R_CONFIGURATION').then((response) => (this.rEnvironments = this.buildEnvironments(response.data)))
+            this.getEnvironmentByConfiguration('PYTHON_CONFIGURATION').then((response: AxiosResponse<any>) => (this.pythonEnvironments = this.buildEnvironments(response.data)))
+            this.getEnvironmentByConfiguration('R_CONFIGURATION').then((response: AxiosResponse<any>) => (this.rEnvironments = this.buildEnvironments(response.data)))
         },
         getDomainByType(type: string) {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`)
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`)
         },
         async getDomainData() {
-            this.getDomainByType('DS_SCOPE').then((response) => (this.scopeTypes = response.data))
-            this.getDomainByType('CATEGORY_TYPE').then((response) => (this.categoryTypes = response.data))
+            this.getDomainByType('DS_SCOPE').then((response: AxiosResponse<any>) => (this.scopeTypes = response.data))
+            this.getDomainByType('CATEGORY_TYPE').then((response: AxiosResponse<any>) => (this.categoryTypes = response.data))
             this.getDomainByType('DATA_SET_TYPE').then(
-                (response) =>
+                (response: AxiosResponse<any>) =>
                     (this.datasetTypes = response.data.filter((cd) => {
                         return cd.VALUE_CD != 'Custom' && cd.VALUE_CD != 'Federated'
                     }))
             )
-            this.getDomainByType('TRANSFORMER_TYPE').then((response) => (this.transformationDataset = response.data[0]))
-            this.getDomainByType('SCRIPT_TYPE').then((response) => (this.scriptTypes = response.data))
+            this.getDomainByType('TRANSFORMER_TYPE').then((response: AxiosResponse<any>) => (this.transformationDataset = response.data[0]))
+            this.getDomainByType('SCRIPT_TYPE').then((response: AxiosResponse<any>) => (this.scriptTypes = response.data))
         },
         async getDatasources() {
-            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources`).then((response) => (this.dataSources = response.data))
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources`).then((response: AxiosResponse<any>) => (this.dataSources = response.data))
         },
         async getBusinessModels() {
-            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels`).then((response) => (this.businessModels = response.data))
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels`).then((response: AxiosResponse<any>) => (this.businessModels = response.data))
         },
         async getMetaSourceResource() {
-            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`).then((response) => (this.metaSourceResource = response.data))
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`).then((response: AxiosResponse<any>) => (this.metaSourceResource = response.data))
         },
         async getTags() {
-            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/tags/`).then((response) => (this.tags = response.data))
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/tags/`).then((response: AxiosResponse<any>) => (this.tags = response.data))
         },
         async getDatasets() {
             let url = '{"reverseOrdering":false,"columnOrdering":""}'
-            axios
+            this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/catalog?offset=0&fetchSize=0&ordering=` + encodeURI(url))
-                .then((response) => (this.listOfDatasets = [...response.data.root]))
+                .then((response: AxiosResponse<any>) => (this.listOfDatasets = [...response.data.root]))
                 .finally(() => (this.loading = false))
         },
         async getAllPersistentData() {
@@ -166,7 +166,7 @@ export default defineComponent({
                 header: this.$t('common.uppercaseDelete'),
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {
-                    axios
+                    this.$http
                         .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${event.item.label}/`)
                         .then(() => {
                             this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })

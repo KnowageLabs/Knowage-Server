@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -37,14 +37,14 @@ export default defineComponent({
         async getPreviewData() {
             this.loading = true
             this.dataset.limit = 10000000
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, this.dataset, {
                     headers: {
                         Accept: 'application/json, text/plain, */*',
                         'Content-Type': 'application/json;charset=UTF-8'
                     }
                 })
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     let previewColumns = response.data.metaData.fields
                     previewColumns.forEach((el: any) => {
                         typeof el != 'object' ? '' : this.columns.push(el)

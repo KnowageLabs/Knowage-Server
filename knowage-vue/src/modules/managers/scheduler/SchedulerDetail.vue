@@ -49,6 +49,7 @@ import { iPackage } from './Scheduler'
 import Card from 'primevue/card'
 import SchedulerDocumentsTable from './SchedulerDocumentsTable/SchedulerDocumentsTable.vue'
 import SchedulerTimingOutputTable from './SchedulerTimingOutputTable/SchedulerTimingOutputTable.vue'
+import { AxiosResponse } from 'axios'
 
 export default defineComponent({
     name: 'scheduler-detail',
@@ -92,9 +93,9 @@ export default defineComponent({
 
             this.formatJob()
 
-            await this.axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/saveJob`, this.job)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     if (response.data.resp === 'ok') {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.' + this.operation + 'Title'),

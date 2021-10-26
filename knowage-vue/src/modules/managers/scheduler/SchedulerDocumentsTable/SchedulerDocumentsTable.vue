@@ -58,13 +58,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import axios from 'axios'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
 import schedulerDocumentsTableDescriptor from './SchedulerDocumentsTableDescriptor.json'
 import SchedulerDocumentsSelectionDialog from './SchedulerDocumentsSelectionDialog.vue'
 import SchedulerDocumentParameterDialog from './SchedulerDocumentParameterDialog.vue'
+import { AxiosResponse } from 'axios'
 
 export default defineComponent({
     name: 'scheduler-documents-table',
@@ -125,7 +125,7 @@ export default defineComponent({
         async openDocumentsSelectionDialog() {
             this.$emit('loading', true)
             if (this.files.length === 0) {
-                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/folders/?includeDocs=true`).then((response) => (this.files = response.data))
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/folders/?includeDocs=true`).then((response: AxiosResponse<any>) => (this.files = response.data))
             }
             this.documentsSelectionDialogVisible = true
             this.$emit('loading', false)
@@ -176,13 +176,13 @@ export default defineComponent({
         },
         async loadDocumentInfo(documentLabel: string) {
             let tempDocument = null as any
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${documentLabel}`).then((response) => (tempDocument = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${documentLabel}`).then((response: AxiosResponse<any>) => (tempDocument = response.data))
             return tempDocument
         },
         async loadSelectedDocumentRoles(tempDocument: any) {
             let tempRoles = []
             let formatedRoles = [] as { userAndRole: string; user: string; role: string }[]
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${tempDocument.id}/userroles`).then((response) => (tempRoles = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${tempDocument.id}/userroles`).then((response: AxiosResponse<any>) => (tempRoles = response.data))
             tempRoles.forEach((el: string) => {
                 const userAndRole = el.split('|')
                 formatedRoles.push({ userAndRole: el, user: userAndRole[0], role: userAndRole[1] })
@@ -192,7 +192,7 @@ export default defineComponent({
         },
         async loadSelectedDocumentParameters(documentLabel: string) {
             let tempParameters = [] as any[]
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${documentLabel}/parameters`).then((response) => (tempParameters = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${documentLabel}/parameters`).then((response: AxiosResponse<any>) => (tempParameters = response.data))
 
             tempParameters = tempParameters.map((el: any) => {
                 return { id: el.parID, name: el.parameterUrlName, value: '', type: 'fixed', iterative: false, temporal: el.parameter.temporal, documentLabel: documentLabel } as any

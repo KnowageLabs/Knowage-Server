@@ -89,7 +89,7 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
@@ -157,13 +157,13 @@ export default defineComponent({
         async startUpload(uploadedFile) {
             var formData = new FormData()
             formData.append('file', uploadedFile)
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `/selfservicedatasetupload/fileupload`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryFYwjkDOpT85ZFN3L'
                     }
                 })
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.uploading'),
                         msg: this.$t('importExport.import.successfullyCompleted')
@@ -200,14 +200,14 @@ export default defineComponent({
 
         async downloadDatasetFile() {
             var encodedLabel = encodeURI(this.dataset.label)
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/download/file?dsLabel=${encodedLabel}&type=${this.dataset.fileType}`, {
                     headers: {
                         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
                     }
                 })
                 .then(
-                    (response) => {
+                    (response: AxiosResponse<any>) => {
                         if (response.data.errors) {
                             this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
                         } else {
@@ -233,15 +233,15 @@ export default defineComponent({
         async getPreviewData() {
             this.loading = true
             this.dataset.limit = 10
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, this.dataset, {
                     headers: {
                         Accept: 'application/json, text/plain, */*',
                         'Content-Type': 'application/json;charset=UTF-8',
-                        'X-Disable-Errors': true
+                        'X-Disable-Errors': 'true'
                     }
                 })
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     let previewColumns = response.data.metaData.fields
                     previewColumns.forEach((el: any) => {
                         typeof el != 'object' ? '' : this.columns.push(el)
