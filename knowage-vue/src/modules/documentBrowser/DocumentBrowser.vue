@@ -47,7 +47,6 @@ export default defineComponent({
     created() {},
     methods: {
         onItemSelect(item: any) {
-            console.log('ITEM: ', item)
             this.tabs.push(item)
         },
         toggle(event: any) {
@@ -82,7 +81,6 @@ export default defineComponent({
             }
         },
         closeDocument(mode: string) {
-            console.log('CLOSE CALLED, mode ', mode)
             switch (mode) {
                 case 'current':
                     this.tabs.splice(this.activeIndex - 1, 1)
@@ -93,7 +91,6 @@ export default defineComponent({
                     this.activeIndex = 1
                     break
                 case 'right':
-                    console.log('ACTIVE INDEX: ', this.activeIndex)
                     this.tabs.splice(this.activeIndex)
                     break
                 case 'all':

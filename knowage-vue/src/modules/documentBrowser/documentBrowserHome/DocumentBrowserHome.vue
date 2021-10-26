@@ -85,9 +85,7 @@ export default defineComponent({
     },
     async created() {
         await this.loadFolders()
-        // this.loadSelectedFolderFromLocalStorage()
         this.user = (this.$store.state as any).user
-        // console.log('LOADED USER: ', this.user)
     },
 
     methods: {
@@ -95,19 +93,7 @@ export default defineComponent({
             this.loading = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders/`).then((response) => (this.folders = response.data))
             this.loading = false
-            console.log('LOADED FOLDERS: ', [...this.folders])
         },
-        // async loadSelectedFolderFromLocalStorage() {
-        //     const folderId = localStorage.getItem('documentSelectedFolderId')
-        //     if (folderId) {
-        //         console.log('FOLDER ID: ', JSON.parse(folderId))
-        //         const index = this.folders.findIndex((el: any) => el.id === JSON.parse(folderId))
-        //         console.log('INDEX: ', index)
-        //         if (index !== -1) {
-        //             await this.setSelectedFolder(this.folders[index])
-        //         }
-        //     }
-        // },
         async loadDocuments() {
             this.loading = true
             const url = this.searchMode ? `2.0/documents?searchAttributes=all&searchKey=${this.searchWord}` : `2.0/documents?folderId=${this.selectedFolder?.id}`
@@ -115,7 +101,6 @@ export default defineComponent({
                 this.searchMode ? (this.searchedDocuments = response.data) : (this.documents = response.data)
             })
             this.loading = false
-            // console.log('LOADED DOCUMENTS: ', this.documents)
         },
         async setSelectedFolder(folder: any) {
             if (this.selectedFolder?.id === folder.id) {
@@ -123,28 +108,23 @@ export default defineComponent({
             }
 
             this.selectedFolder = folder
+            await this.loadDocumentsWithBreadcrumbs()
+        },
+        async loadDocumentsWithBreadcrumbs() {
             if (this.selectedFolder) {
                 await this.loadDocuments()
                 this.createBreadcrumbs()
             }
-
-            // console.log('SELECTED FOLDER: ', this.selectedFolder)
         },
         createBreadcrumbs() {
-            console.log('SELECTED FOLDER FOR BREADCRUMBS: ', this.selectedFolder)
             let currentFolder = { key: this.selectedFolder.name, label: this.selectedFolder.name, data: this.selectedFolder } as any
             this.breadcrumbs = [] as any[]
             do {
-                // console.log('TEST: ', currentFolder.data.name)
                 this.breadcrumbs.unshift({ label: currentFolder.data.name, node: currentFolder })
                 currentFolder = currentFolder.data.parentFolder
-                // console.log('CURRENT FOLDER: ', currentFolder)
             } while (currentFolder)
-            // console.log('BREADCRUMBS: ', this.breadcrumbs)
         },
         async setSelectedBreadcrumb(breadcrumb: any) {
-            console.log('BREADCRUMB SELECTED IN HOME: ', breadcrumb)
-            console.log('SELECTED FOLDER BEFORE: ', this.selectedFolder)
             this.selectedBreadcrumb = breadcrumb
 
             if (this.selectedFolder?.id === breadcrumb.node.data.id) {
@@ -152,7 +132,6 @@ export default defineComponent({
             }
             this.selectedFolder = breadcrumb.node.data
             await this.loadDocuments()
-            console.log('SELECTED FOLDER AFTER: ', this.selectedFolder)
         },
         exitSearchMode() {
             this.searchMode = false
@@ -170,11 +149,9 @@ export default defineComponent({
             }
         },
         createNewDocument() {
-            console.log('CREATE NEW DOCUMENT CLICKED!')
             this.$router.push('/documentBrowser/newDocument')
         },
         createNewCockpit() {
-            console.log('CREATE NEW COCKPIT CLICKED!')
             this.$emit('itemSelected', { item: null, mode: 'createCockpit' })
         }
     }

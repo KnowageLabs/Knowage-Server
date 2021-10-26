@@ -31,6 +31,26 @@ const mockedFolder = {
     }
 }
 
+const mockedBreadcrumb = {
+    label: 'Analytical Documents',
+    node: {
+        chidlren: [],
+        data: {
+            id: 601,
+            parentId: 538,
+            name: 'Analytical Documents',
+            description: 'Demo Analytical Documents',
+            codType: 'LOW_FUNCT',
+            path: '/Functionalities/Demo',
+            parentFolder: { key: 'Functionalities', id: 538, parentID: null }
+        },
+        icon: 'pi pi-folder-open',
+        id: 601,
+        key: 'Analytical Documents',
+        label: 'Analytical Documents'
+    }
+}
+
 jest.mock('axios')
 
 const $http = { get: axios.get.mockImplementation(() => Promise.resolve({ data: [] })) }
@@ -93,5 +113,14 @@ describe('Document Browser Home', () => {
         expect(wrapper.vm.breadcrumbs[0].label).toBe('Functionalities')
         expect(wrapper.vm.breadcrumbs[1].label).toBe('Analytical Engines')
         expect(wrapper.vm.breadcrumbs[2].label).toBe('Registry')
+    })
+    it('should move the current folder to the parent if the parent folder is selected the breadcrumbs', async () => {
+        const wrapper = factory()
+
+        expect(wrapper.vm.selectedFolder).toBe(null)
+
+        await wrapper.vm.setSelectedBreadcrumb(mockedBreadcrumb)
+
+        expect(wrapper.vm.selectedFolder).toStrictEqual(mockedBreadcrumb.node.data)
     })
 })

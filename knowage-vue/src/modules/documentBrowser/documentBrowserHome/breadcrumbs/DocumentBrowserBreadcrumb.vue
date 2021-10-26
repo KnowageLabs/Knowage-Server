@@ -32,13 +32,10 @@ export default defineComponent({
     methods: {
         loadBreadcrumbs() {
             this.items = this.breadcrumbs as any[]
-            console.log('LOADED BREADCRUMBS ITEMS: ', this.items)
         },
         selectBreadcrumb(event: any) {
-            console.log('DOCUMENT CLICKED IN BREADCRUMBS: ', event.target.textContent )
-            const index = this.items.findIndex((el: any) => el.label === event.target.textContent )
-            //  console.log('index', index)
-            // console.log('ITEMS: ', this.items)
+            const index = this.items.findIndex((el: any) => el.label === event.target.textContent)
+
             if (index !== -1) {
                 this.$emit('breadcrumbClicked', this.items[index])
                 this.items.splice(index + 1)

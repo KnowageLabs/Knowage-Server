@@ -45,12 +45,12 @@ export default defineComponent({
             const personalFolder = {
                 key: 'Personal_Folders',
                 icon: 'pi pi-folder',
-                id: -1,
+                id: 1,
                 parentId: null,
                 label: 'Personal_Folders',
                 children: [] as iNode[],
                 data: {
-                    id: -1,
+                    id: 1,
                     codType: 'LOW_FUNCT',
                     code: 'Personal_Folders',
                     createRoles: [],
@@ -118,7 +118,6 @@ export default defineComponent({
             this.selectedFolder = node.data
             localStorage.setItem('documentSelectedFolderId', JSON.stringify(this.selectedFolder.id))
             this.$emit('folderSelected', this.selectedFolder)
-            // console.log('SELECTED FOLDER: ', this.selectedFolder)
         },
         setOpenFolderIcon(node: iNode) {
             node.icon = 'pi pi-folder-open'
@@ -127,11 +126,9 @@ export default defineComponent({
             node.icon = 'pi pi-folder'
         },
         onBreadcrumbSelected() {
-            console.log('SELECTED BREADCRUMB ', this.selectedBreadcrumb)
             this.selectedFolder = this.selectedBreadcrumb?.node
             this.selectedFolderKey = {}
             this.selectedFolderKey[this.selectedFolder.key] = true
-            console.log('SELECTED: ', this.selectedFolderKey)
         },
         loadSelectedFolderFromLocalStorage() {
             const folderId = localStorage.getItem('documentSelectedFolderId')

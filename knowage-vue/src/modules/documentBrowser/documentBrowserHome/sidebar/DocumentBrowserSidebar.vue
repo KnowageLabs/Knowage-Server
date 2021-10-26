@@ -8,8 +8,8 @@
                         <i class="pi pi-pencil document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.editDocument')" @click="editDocument" />
                         <i class="far fa-copy document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.cloneDocument')" @click="cloneDocumentConfirm" />
                         <i class="far fa-trash-alt document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.deleteDocument')" @click="deleteDocumentConfirm" />
-                        <i v-if="document.stateCode === 'TEST'" class="fa fa-arrow-up document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.moveUpDocumentState')" @click="changeStateDocumentConfirm('UP')" />
-                        <i v-if="document.stateCode === 'TEST' || document.stateCode === 'REL'" class="fa fa-arrow-down document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.moveDownDocumentState')" @click="changeStateDocumentConfirm('DOWN')" />
+                        <i v-if="document.stateCode === 'TEST'" class="fa fa-arrow-up document-pointer p-mx-4" v-tooltip.left="$t('documentBrowser.moveUpDocumentState')" @click="changeStateDocumentConfirm('UP')" />
+                        <i v-if="document.stateCode === 'TEST' || document.stateCode === 'REL'" class="fa fa-arrow-down document-pointer p-mx-4" v-tooltip.left="$t('documentBrowser.moveDownDocumentState')" @click="changeStateDocumentConfirm('DOWN')" />
                     </template>
                 </div>
             </template>
@@ -87,12 +87,10 @@ export default defineComponent({
     created() {
         this.loadDocument()
         this.user = (this.$store.state as any).user
-        // console.log('LOADED USER: ', this.user)
     },
     methods: {
         loadDocument() {
             this.document = this.selectedDocument
-            console.log('LOADED DOCUMENT: ', this.document)
         },
         getFormatedDate(date: any) {
             return formatDate(date, 'MMM DD, YYYY h:mm:ss A')
@@ -123,11 +121,9 @@ export default defineComponent({
             })
         },
         executeDocument() {
-            console.log('EXECUTE DOCUMENT: ', this.document)
             this.$emit('itemSelected', { item: this.document, mode: 'execute' })
         },
         editDocument() {
-            console.log('EDIT DOCUMENT', this.document)
             this.$router.push(`/documentBrowser/editDocument/${this.document.id}`)
         }
     }

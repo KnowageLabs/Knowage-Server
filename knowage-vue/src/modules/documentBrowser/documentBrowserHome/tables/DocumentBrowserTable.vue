@@ -1,4 +1,9 @@
 <template>
+    <div class="p-d-flex p-flex-row p-jc-center">
+        <Message v-if="searchMode" id="documents-found-hint" class="p-m-2" severity="info" :closable="false" :style="documentBrowserTableDescriptor.styles.message">
+            {{ documents.length + ' ' + $t('documentBrowser.documentsFound') }}
+        </Message>
+    </div>
     <DataTable
         id="documents-datatable"
         :value="documents"
@@ -67,7 +72,7 @@ export default defineComponent({
     name: 'document-browser-table',
     components: { Column, DataTable, Message },
     props: { propDocuments: { type: Array }, searchMode: { type: Boolean } },
-    emits: ['executeDocumentClick', 'itemSelected', 'selected'],
+    emits: ['itemSelected', 'selected'],
     data() {
         return {
             documentBrowserTableDescriptor,
@@ -89,6 +94,10 @@ export default defineComponent({
                 creationUser: {
                     operator: FilterOperator.AND,
                     constraints: [filterDefault]
+                },
+                stateCodeStr: {
+                    operator: FilterOperator.AND,
+                    constraints: [filterDefault]
                 }
             } as any,
             user: null as any
@@ -107,33 +116,17 @@ export default defineComponent({
     created() {
         this.loadDocuments()
         this.user = (this.$store.state as any).user
-        // console.log('LOADED USER: ', this.user)
     },
     methods: {
         loadDocuments() {
             this.documents = this.propDocuments?.map((el: any) => {
                 return { ...el, stateCodeStr: this.getTranslatedStatus(el.stateCodeStr) }
             }) as any[]
-
-            this.updateFilters()
-            console.log('DOCUMENTS LOADED IN TABLE: ', this.documents)
-        },
-        updateFilters() {
-            if (this.isSuperAdmin) {
-                this.filters.stateCodeStr = {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                } as any
-            } else {
-                delete this.filters.stateCodeStr
-            }
-            // console.log('FILTERS: ', this.filters)
         },
         getTranslatedStatus(status: string) {
             return status ? this.$t(documentBrowserTableDescriptor.status[status] ?? '') : ''
         },
         executeDocument(document: any) {
-            this.$emit('executeDocumentClick', document)
             this.$emit('itemSelected', { item: document, mode: 'execute' })
         }
     }
@@ -143,5 +136,9 @@ export default defineComponent({
 <style lang="scss" scoped>
 #documents-datatable .p-datatable-wrapper {
     height: auto;
+}
+
+#documents-found-hint {
+    flex: 0.5;
 }
 </style>

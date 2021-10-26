@@ -96,4 +96,15 @@ describe('Document Browser Tree', () => {
         expect(wrapper.emitted()).toHaveProperty('folderSelected')
         expect(wrapper.emitted()['folderSelected'][0][0]).toStrictEqual({ codType: 'LOW_FUNCT', code: 'Personal_Folders', createRoles: [], description: 'Personal Folders', id: 1, name: 'Personal_Folders', parentId: null, path: '/Personal-Folders', subfolders: [] })
     })
+    it('should show the personal folder folder if the user is an administrator', async () => {
+        const wrapper = factory(mockedFolders)
+
+        expect(wrapper.vm.nodes[0].label).toBe('Personal_Folders')
+        expect(wrapper.vm.nodes[0].children[0].label).toBe('demo_admin')
+
+        await wrapper.find('.p-tree-toggler').trigger('click')
+
+        expect(wrapper.html()).toContain('Personal_Folders')
+        expect(wrapper.html()).toContain('demo_admin')
+    })
 })

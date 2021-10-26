@@ -160,6 +160,7 @@
     },
     "documentBrowser": {
         "changeStateMessage": "Are you sure you want to change the state for this document?",
+        "documentsFound": "Documents found",
         "changeStateTitle": "Change State",
         "cloneDocument": "Clone Document",
         "closeAllDocuments": "Close all documents",

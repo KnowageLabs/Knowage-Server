@@ -4,7 +4,7 @@
             <div class="document-table-container">
                 <div v-if="selectedDocument" id="document-detail-backdrop" @click="selectedDocument = null"></div>
                 <DocumentBrowserBreadcrumb v-if="!searchMode" :breadcrumbs="breadcrumbs" @breadcrumbClicked="$emit('breadcrumbClicked', $event)"></DocumentBrowserBreadcrumb>
-                <DocumentBrowserTable class="p-m-2" :propDocuments="documents" :searchMode="searchMode" @executeDocumentClick="executeDocument" @selected="setSelectedDocument" @itemSelected="$emit('itemSelected', $event)"></DocumentBrowserTable>
+                <DocumentBrowserTable class="p-m-2" :propDocuments="documents" :searchMode="searchMode" @selected="setSelectedDocument" @itemSelected="$emit('itemSelected', $event)"></DocumentBrowserTable>
             </div>
         </div>
         <div v-if="selectedDocument" id="document-browser-sidebar-container" data-test="document-browser-sidebar">
@@ -43,20 +43,14 @@ export default defineComponent({
         loadDocuments() {
             this.documents = this.propDocuments as any[]
         },
-        executeDocument(document: any) {
-            console.log('DOCUMENT FOR EXECUTION: ', document)
-        },
         setSelectedDocument(document: any) {
             this.selectedDocument = document
-            console.log('SELECTED DOCUMENT: ', this.selectedDocument)
         },
         async cloneDocument(document: any) {
-            console.log('DOCUMENT FOR CLONE: ', document)
             this.$emit('loading', true)
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/clone?docId=${document.id}`)
-                .then((response) => {
-                    console.log('OK RESPONSE: ', response)
+                .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
@@ -67,12 +61,10 @@ export default defineComponent({
             this.$emit('loading', false)
         },
         async deleteDocument(document: any) {
-            console.log('DOCUMENT FOR DELETE: ', document)
             this.$emit('loading', true)
             await this.$http
                 .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${document.label}`)
-                .then((response) => {
-                    console.log('OK RESPONSE: ', response)
+                .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.success')
@@ -84,12 +76,10 @@ export default defineComponent({
             this.$emit('loading', false)
         },
         async changeDocumentState(event: any) {
-            console.log('EVENT FOR CHANGE STATE: ', event)
             this.$emit('loading', true)
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/changeStateDocument?docId=${event.document.id}&direction=${event.direction}`)
-                .then((response) => {
-                    console.log('OK RESPONSE: ', response)
+                .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.success')
