@@ -27,9 +27,9 @@ import org.json.JSONObject;
 import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-class GenericExporter implements IWidgetExporter {
+class GenericWidgetExporter implements IWidgetExporter {
 
-	static private Logger logger = Logger.getLogger(GenericExporter.class);
+	static private Logger logger = Logger.getLogger(GenericWidgetExporter.class);
 
 	ExcelExporter excelExporter;
 	String widgetType;
@@ -38,11 +38,11 @@ class GenericExporter implements IWidgetExporter {
 	Workbook wb;
 	JSONObject optionsObj;
 
-	public GenericExporter() {
+	public GenericWidgetExporter() {
 		super();
 	}
 
-	public GenericExporter(ExcelExporter excelExporter, String widgetType, String templateString, long widgetId, Workbook wb, JSONObject options) {
+	public GenericWidgetExporter(ExcelExporter excelExporter, String widgetType, String templateString, long widgetId, Workbook wb, JSONObject options) {
 		super();
 		this.excelExporter = excelExporter;
 		this.widgetType = widgetType;
