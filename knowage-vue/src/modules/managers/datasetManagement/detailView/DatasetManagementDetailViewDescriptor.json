@@ -123,6 +123,10 @@
         "pars": "",
         "persistTableName": "",
         "pivotIsNumRows": "",
+        "pythonEnvironment": {
+            "label": "",
+            "value": ""
+        },
         "pythonScript": "",
         "query": "",
         "queryScript": "",

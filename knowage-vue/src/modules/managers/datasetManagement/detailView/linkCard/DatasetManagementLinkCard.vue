@@ -110,6 +110,7 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`)
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.length > 0) {
+                        this.availableResources = [...response.data]
                         this.availableResources.filter((resource) => (resource.name === this.dataset.dataSource.toLowerCase() ? this.getAvailableSourceTables(resource.sourceId) : ''))
                     } else {
                         this.$store.commit('setInfo', { title: this.$t('importExport.gallery.column.info'), msg: this.$t('managers.datasetManagement.noSourceTables') })

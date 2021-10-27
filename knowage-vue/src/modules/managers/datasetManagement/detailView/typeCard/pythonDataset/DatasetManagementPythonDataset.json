@@ -4,17 +4,6 @@
     "validations": {
         "dataset": [
             {
-                "fieldName": "pythonEnvironment",
-                "validators": [
-                    {
-                        "key": "required",
-                        "validator": {
-                            "type": "python-fields-required"
-                        }
-                    }
-                ]
-            },
-            {
                 "fieldName": "dataframeName",
                 "validators": [
                     {

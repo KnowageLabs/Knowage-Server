@@ -16,20 +16,15 @@
                             :options="datasetTypes"
                             optionLabel="label"
                             optionValue="label"
-                            v-model="v$.dataset.pythonEnvironment.$model"
+                            v-model="dataset.pythonEnvironment.label"
+                            @change="updateValueFromLabel(datasetTypes, 'value', $event.value)"
                             :class="{
-                                'p-invalid': v$.dataset.pythonEnvironment.$invalid && v$.dataset.pythonEnvironment.$dirty
+                                'p-invalid': !dataset.pythonEnvironment.label || dataset.pythonEnvironment.label === ''
                             }"
-                            @before-show="v$.dataset.pythonEnvironment.$touch()"
                         />
-                        <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.environment') }} * </label>
+                        <label for="pythonEnvironment" class="kn-material-input-label"> {{ $t('managers.datasetManagement.environment') }} * </label>
                     </span>
-                    <KnValidationMessages
-                        :vComp="v$.dataset.pythonEnvironment"
-                        :additionalTranslateParams="{
-                            fieldName: $t('managers.datasetManagement.environment')
-                        }"
-                    />
+                    <small v-if="!dataset.pythonEnvironment.label || dataset.pythonEnvironment.label === ''" for="pythonEnvironment" class="p-error p-mt-2"> {{ $t('managers.datasetManagement.envIsRequired') }} </small>
                 </div>
                 <div class="p-field p-col-6">
                     <span class="p-float-label">
@@ -49,7 +44,7 @@
                     <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.dataframeName" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.dataframeName') }" />
                 </div>
             </form>
-            <Button :label="$t('managers.datasetManagement.checkEnvironment')" class="p-button kn-button--primary" :disabled="!dataset.pythonEnvironment" @click="checkEnvironment" />
+            <Button :label="$t('managers.datasetManagement.checkEnvironment')" class="p-button kn-button--primary" :disabled="!dataset.pythonEnvironment.label" @click="checkEnvironment" />
 
             <VCodeMirror class="p-mt-4" ref="codeMirrorPython" v-model:value="dataset.pythonScript" :autoHeight="true" :options="scriptOptions" @keyup="$emit('touched')" />
 
@@ -148,9 +143,9 @@ export default defineComponent({
         },
         getEnvLibraries() {
             if (this.dataset.pythonDatasetType == 'python') {
-                return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/backendservices/widgets/RWidget/libraries/${this.dataset.pythonEnvironment}`)
+                return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/backendservices/widgets/python/libraries/${this.dataset.pythonEnvironment.label}`)
             } else {
-                return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/backendservices/widgets/python/libraries/${this.dataset.pythonEnvironment}`)
+                return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/backendservices/widgets/RWidget/libraries/${this.dataset.pythonEnvironment.label}`)
             }
         },
         async checkEnvironment() {
@@ -161,6 +156,10 @@ export default defineComponent({
                     this.libListVisible = true
                 })
                 .catch(() => {})
+        },
+        updateValueFromLabel(optionsArray, fieldToUpdate, updatedField) {
+            const selectedField = optionsArray.find((option) => option.label === updatedField)
+            selectedField ? (this.dataset.pythonEnvironment[fieldToUpdate] = selectedField.value) : ''
         }
     }
 })
