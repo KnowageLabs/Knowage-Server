@@ -179,6 +179,10 @@
                                 this.handleItem(item, obj, 'selectedCondition' + postfix)
                                 break
                             }
+                            case 'textarea': {
+                                this.handleItem(item, obj, 'textarea' + postfix)
+                                break
+                            }
                         }
                     })
                     toReturn.parameters.push(obj)
@@ -192,7 +196,7 @@
                     if (key.includes(elId)) {
                         if (elId.includes('selectedItems')) {
                             item[key].forEach((e) => obj.columns.push(e.header))
-                        } else if (elId.includes('selectedCondition')) {
+                        } else if (elId.includes('selectedCondition') || elId.includes('textarea')) {
                             obj.operator = item[key]
                         } else if (elId.includes('input')) {
                             obj[item.name] = item[key]

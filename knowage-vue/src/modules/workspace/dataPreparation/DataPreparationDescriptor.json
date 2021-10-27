@@ -465,11 +465,11 @@
                 "parameters": []
             },
             "description": "managers.workspaceManagement.dataPreparation.transformations.statistics.description",
-            "editColumn": true,
+            "editColumn": false,
             "icon": "pi pi-chart-bar",
             "label": "managers.workspaceManagement.dataPreparation.transformations.statistics.label",
             "position": 8,
-            "toolbar": true,
+            "toolbar": false,
             "type": "statistics"
         },
         {
