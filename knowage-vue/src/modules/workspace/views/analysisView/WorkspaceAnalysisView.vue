@@ -8,6 +8,7 @@
             <FabButton icon="fas fa-folder" data-test="new-folder-button" />
         </template>
     </Toolbar>
+    <InputText class="kn-material-input p-m-2" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
     <div class="p-m-2 overflow">
         <DataTable
             class="p-datatable-sm kn-table"
@@ -23,14 +24,6 @@
             selectionMode="single"
             @rowSelect="showDetailSidebar = true"
         >
-            <template #header>
-                <div class="table-header">
-                    <span class="p-input-icon-left">
-                        <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
-                    </span>
-                </div>
-            </template>
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -52,25 +45,18 @@
             </Column>
         </DataTable>
     </div>
-    <!-- <Sidebar class="mySidebar" v-model:visible="showDetailSidebar" :showCloseIcon="false" position="right">
-        <div class="kn-toolbar kn-toolbar--default" :style="analysisDescriptor.style.sidenavToolbar">
-            <Button icon="fas fa-play-circle" class="p-button-text p-button-rounded p-button-plain " />
-            <Button icon="fas fa-edit" class="p-button-text p-button-rounded p-button-plain" />
-            <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" @click="showMenu" />
-        </div>
-        <div class="p-m-5">
-            <div class="p-mb-5" v-for="(field, index) of sidenavFields" :key="index">
-                <h3 class="p-m-0">
-                    <b>{{ $t(field.translation) }}</b>
-                </h3>
-                <p class="p-m-0" v-if="field.type === 'date'">{{ formatDate(selectedAnalysis[field.value]) }}</p>
-                <p class="p-m-0" v-else>{{ selectedAnalysis[field.value] }}</p>
-            </div>
-        </div>
-    </Sidebar> -->
-    <DetailSidebar :visible="showDetailSidebar" :viewType="'analysis'" :document="selectedAnalysis" @executeAnalysisDocument="executeAnalysisDocument" @editAnalysisDocument="editAnalysisDocument" @close="showDetailSidebar = false" />
-
-    <Menu id="optionsMenu" ref="optionsMenu" :model="menuItems" />
+    <DetailSidebar
+        :visible="showDetailSidebar"
+        :viewType="'analysis'"
+        :document="selectedAnalysis"
+        @executeAnalysisDocument="executeAnalysisDocument"
+        @editAnalysisDocument="editAnalysisDocument"
+        @shareAnalysisDocument="shareAnalysisDocument"
+        @cloneAnalysisDocument="cloneAnalysisDocument"
+        @deleteAnalysisDocument="deleteAnalysisDocument"
+        @uploadAnalysisPreviewFile="uploadAnalysisPreviewFile"
+        @close="showDetailSidebar = false"
+    />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -79,10 +65,9 @@ import analysisDescriptor from './WorkspaceAnalysisViewDescriptor.json'
 import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import Menu from 'primevue/contextmenu'
 
 export default defineComponent({
-    components: { DataTable, Column, Menu, DetailSidebar },
+    components: { DataTable, Column, DetailSidebar },
     emits: ['showMenu'],
     data() {
         return {
@@ -93,37 +78,7 @@ export default defineComponent({
             selectedAnalysis: {} as any,
             filters: {
                 global: [filterDefault]
-            } as Object,
-            sidenavFields: analysisDescriptor.sidenavFields,
-            menuItems: [
-                {
-                    key: '0',
-                    label: this.$t('workspace.myAnalysis.menuItems.share'),
-                    icon: 'fas fa-share',
-                    command: () => {
-                        // event.originalEvent: Browser event
-                        // event.item: Menuitem instance
-                    }
-                },
-                {
-                    key: '1',
-                    label: this.$t('workspace.myAnalysis.menuItems.clone'),
-                    icon: 'fas fa-clone',
-                    command: () => {}
-                },
-                {
-                    key: '2',
-                    label: this.$t('workspace.myAnalysis.menuItems.delete'),
-                    icon: 'fas fa-trash',
-                    command: () => {}
-                },
-                {
-                    key: '3',
-                    label: this.$t('workspace.myAnalysis.menuItems.upload'),
-                    icon: 'fas fa-share-alt',
-                    command: () => {}
-                }
-            ]
+            } as Object
         }
     },
     created() {
@@ -143,16 +98,23 @@ export default defineComponent({
             let fDate = new Date(date)
             return fDate.toLocaleString()
         },
-        showMenu(event) {
-            // eslint-disable-next-line
-            // @ts-ignore
-            this.$refs.optionsMenu.toggle(event)
-        },
         executeAnalysisDocument() {
             console.log('executeAnalysisDocument')
         },
         editAnalysisDocument() {
             console.log('editAnalysisDocument')
+        },
+        shareAnalysisDocument() {
+            console.log('shareAnalysisDocument')
+        },
+        cloneAnalysisDocument() {
+            console.log('cloneAnalysisDocument')
+        },
+        deleteAnalysisDocument() {
+            console.log('deleteAnalysisDocument')
+        },
+        uploadAnalysisPreviewFile() {
+            console.log('uploadAnalysisPreviewFile')
         }
     }
 })

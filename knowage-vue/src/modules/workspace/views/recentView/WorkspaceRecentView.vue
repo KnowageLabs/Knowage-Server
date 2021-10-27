@@ -8,6 +8,7 @@
             <FabButton icon="fas fa-folder" data-test="new-folder-button" />
         </template>
     </Toolbar>
+    <InputText class="kn-material-input p-m-2" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
     <div class="p-m-2 overflow">
         <DataTable
             class="p-datatable-sm kn-table"
@@ -23,14 +24,6 @@
             selectionMode="single"
             @rowSelect="showDetailSidebar = true"
         >
-            <template #header>
-                <div class="table-header">
-                    <span class="p-input-icon-left">
-                        <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
-                    </span>
-                </div>
-            </template>
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -47,7 +40,7 @@
         </DataTable>
     </div>
 
-    <DetailSidebar :visible="showDetailSidebar" :viewType="'recent'" :document="selectedDocument" @close="showDetailSidebar = false" @executeRecent="executeRecent" />
+    <DetailSidebar :visible="showDetailSidebar" :viewType="'recent'" :document="selectedDocument" @executeRecent="executeRecent" @close="showDetailSidebar = false" />
 </template>
 <script lang="ts">
 import { filterDefault } from '@/helpers/commons/filterHelper'

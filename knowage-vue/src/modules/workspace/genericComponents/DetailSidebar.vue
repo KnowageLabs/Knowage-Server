@@ -3,7 +3,7 @@
         <div id="sidebarItemsContainer" :style="descriptor.style.sidebarContainer">
             <div class="kn-toolbar kn-toolbar--default" :style="descriptor.style.sidebarToolbar">
                 <span v-for="(button, index) of documentButtons" :key="index">
-                    <Button v-if="button.visible" :icon="button.icon" :class="button.class" @click="$emit(button.emitEvent)" />
+                    <Button v-if="button.visible" :icon="button.icon" :class="button.class" @click="button.command" />
                 </span>
             </div>
             <img class="p-mt-5" :style="descriptor.style.sidebarImage" align="center" :src="documentImageSource" style="width:80%" />
@@ -18,7 +18,7 @@
             </div>
         </div>
     </Sidebar>
-    <Menu id="optionsMenu" ref="optionsMenu" :model="menuItems" />
+    <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -27,8 +27,9 @@ import Sidebar from 'primevue/sidebar'
 import Menu from 'primevue/contextmenu'
 
 export default defineComponent({
+    name: 'workspace-sidebar',
     components: { Sidebar, Menu },
-    emits: ['close', 'executeRecent', 'executeDocumentFromOrganizer', 'moveDocumentToFolder', 'deleteDocumentFromOrganizer', 'executeAnalysisDocument', 'editAnalysisDocument'],
+    emits: ['close', 'executeRecent', 'executeDocumentFromOrganizer', 'moveDocumentToFolder', 'deleteDocumentFromOrganizer', 'executeAnalysisDocument', 'editAnalysisDocument', 'shareAnalysisDocument', 'cloneAnalysisDocument', 'deleteAnalysisDocument', 'uploadAnalysisPreviewFile'],
     props: { visible: Boolean, viewType: String, document: Object as any },
     computed: {
         isOwner(): any {
@@ -56,22 +57,58 @@ export default defineComponent({
         documentButtons(): any {
             switch (this.viewType) {
                 case 'recent':
-                    return [{ icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, emitEvent: 'executeRecent' }]
+                    return [{ icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitExecuteRecent }]
                 case 'repository':
                     return [
-                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, emitEvent: 'executeDocumentFromOrganizer' },
-                        { icon: 'fas fa-share', class: 'p-button-text p-button-rounded p-button-plain', visible: true, emitEvent: 'moveDocumentToFolder' },
-                        { icon: 'fas fa-trash', class: 'p-button-text p-button-rounded p-button-plain', visible: true, emitEvent: 'deleteDocumentFromOrganizer' }
+                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitExecuteDocumentFromOrganizer },
+                        { icon: 'fas fa-share', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitMoveDocumentToFolder },
+                        { icon: 'fas fa-trash', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitDeleteDocumentFromOrganizer }
                     ]
                 case 'analysis':
                     return [
-                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, emitEvent: 'executeAnalysisDocument' },
-                        { icon: 'fas fa-edit', class: 'p-button-text p-button-rounded p-button-plain', visible: this.isOwner, emitEvent: 'editAnalysisDocument' },
-                        { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', visible: true, emitEvent: '' }
+                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitExecuteAnalysisDocument },
+                        { icon: 'fas fa-edit', class: 'p-button-text p-button-rounded p-button-plain', visible: this.isOwner, command: this.emitEditAnalysisDocument },
+                        { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu }
                     ]
                 default:
                     return console.log('How did this happen, no valid file type.')
             }
+        },
+        menuButtons(): any {
+            return [
+                {
+                    key: '0',
+                    label: this.$t('workspace.myAnalysis.menuItems.share'),
+                    icon: 'fas fa-share',
+                    command: () => {
+                        this.$emit('shareAnalysisDocument')
+                    }
+                },
+                {
+                    key: '1',
+                    label: this.$t('workspace.myAnalysis.menuItems.clone'),
+                    icon: 'fas fa-clone',
+                    command: () => {
+                        this.$emit('cloneAnalysisDocument')
+                    }
+                },
+                {
+                    key: '2',
+                    label: this.$t('workspace.myAnalysis.menuItems.delete'),
+                    icon: 'fas fa-trash',
+                    command: () => {
+                        this.$emit('deleteAnalysisDocument')
+                    }
+                },
+                {
+                    key: '3',
+                    label: this.$t('workspace.myAnalysis.menuItems.upload'),
+                    icon: 'fas fa-share-alt',
+                    command: () => {
+                        this.$emit('uploadAnalysisPreviewFile')
+                    }
+                }
+            ]
         }
     },
 
@@ -80,13 +117,7 @@ export default defineComponent({
             descriptor,
             sidebarVisible: false,
             selectedDocument: {} as any,
-            sidebarFields: null as any,
-            menuItems: [
-                { key: '0', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share', command: () => {} },
-                { key: '1', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: () => {} },
-                { key: '2', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: () => {} },
-                { key: '3', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-share-alt', command: () => {} }
-            ]
+            sidebarFields: null as any
         }
     },
     created() {
@@ -109,6 +140,25 @@ export default defineComponent({
         formatDate(date) {
             let fDate = new Date(date)
             return fDate.toLocaleString()
+        },
+        //iz nekog razloga ne mogu samo da stavim this.$emit(), direkno u komandi dugmeta, ako to odradim pozivaju se emiteri samo kada se kreira komponenta, posle toga ne, al ovako radi
+        emitExecuteRecent() {
+            this.$emit('executeRecent')
+        },
+        emitExecuteDocumentFromOrganizer() {
+            this.$emit('executeDocumentFromOrganizer')
+        },
+        emitMoveDocumentToFolder() {
+            this.$emit('moveDocumentToFolder')
+        },
+        emitDeleteDocumentFromOrganizer() {
+            this.$emit('deleteDocumentFromOrganizer')
+        },
+        emitExecuteAnalysisDocument() {
+            this.$emit('executeAnalysisDocument')
+        },
+        emitEditAnalysisDocument() {
+            this.$emit('editAnalysisDocument')
         }
     }
 })
