@@ -29,7 +29,22 @@ import Menu from 'primevue/contextmenu'
 export default defineComponent({
     name: 'workspace-sidebar',
     components: { Sidebar, Menu },
-    emits: ['close', 'executeRecent', 'executeDocumentFromOrganizer', 'moveDocumentToFolder', 'deleteDocumentFromOrganizer', 'executeAnalysisDocument', 'editAnalysisDocument', 'shareAnalysisDocument', 'cloneAnalysisDocument', 'deleteAnalysisDocument', 'uploadAnalysisPreviewFile'],
+    emits: [
+        'close',
+        'executeRecent',
+        'executeDocumentFromOrganizer',
+        'moveDocumentToFolder',
+        'deleteDocumentFromOrganizer',
+        'executeAnalysisDocument',
+        'editAnalysisDocument',
+        'shareAnalysisDocument',
+        'cloneAnalysisDocument',
+        'deleteAnalysisDocument',
+        'uploadAnalysisPreviewFile',
+        'openDatasetInQBE',
+        'editDataset',
+        'deleteDataset'
+    ],
     props: { visible: Boolean, viewType: String, document: Object as any },
     computed: {
         isOwner(): any {
@@ -50,6 +65,10 @@ export default defineComponent({
                     return descriptor.defaultViewFields
                 case 'analysis':
                     return descriptor.analysisViewFields
+                case 'businessModel':
+                    return descriptor.businessModelViewFields
+                case 'federationDataset':
+                    return descriptor.federationDatasetViewFields
                 default:
                     return console.log('How did this happen, no valid file type.')
             }
@@ -69,6 +88,14 @@ export default defineComponent({
                         { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitExecuteAnalysisDocument },
                         { icon: 'fas fa-edit', class: 'p-button-text p-button-rounded p-button-plain', visible: this.isOwner, command: this.emitEditAnalysisDocument },
                         { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu }
+                    ]
+                case 'businessModel':
+                    return [{ icon: 'fa fa-search', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitOpenDatasetInQBE }]
+                case 'federationDataset':
+                    return [
+                        { icon: 'fa fa-search', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitOpenDatasetInQBE },
+                        { icon: 'pi pi-pencil', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEditDataset },
+                        { icon: 'fas fa-trash-alt', class: 'p-button-text p-button-rounded p-button-plain', visible: (this.$store.state as any).user.isSuperadmin || (this.$store.state as any).user.userId === this.selectedDocument.owner, command: this.emitDeleteDataset }
                     ]
                 default:
                     return console.log('How did this happen, no valid file type.')
@@ -158,6 +185,15 @@ export default defineComponent({
         },
         emitEditAnalysisDocument() {
             this.$emit('editAnalysisDocument', this.selectedDocument)
+        },
+        emitOpenDatasetInQBE() {
+            this.$emit('openDatasetInQBE', this.selectedDocument)
+        },
+        emitEditDataset() {
+            this.$emit('editDataset', this.selectedDocument)
+        },
+        emitDeleteDataset() {
+            this.$emit('deleteDataset', this.selectedDocument)
         }
     }
 })

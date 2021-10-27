@@ -15,11 +15,11 @@
 
     <DetailSidebar
         :visible="showDetailSidebar"
-        :viewType="'repository'"
-        :document="selectedDocument"
-        @executeDocumentFromOrganizer="executeDocumentFromOrganizer"
-        @moveDocumentToFolder="moveDocumentToFolder"
-        @deleteDocumentFromOrganizer="deleteDocumentFromOrganizer"
+        :viewType="selectedModel && selectedModel.federation_id ? 'federationDataset' : 'businessModel'"
+        :document="selectedModel"
+        @openDatasetInQBE="openDatasetInQBE"
+        @editDataset="editDataset"
+        @deleteDataset="deleteDatasetConfirm"
         @close="showDetailSidebar = false"
     />
 </template>
@@ -44,6 +44,7 @@ export default defineComponent({
             selectButtonOptions: ['Business'],
             selectedModel: null as IBusinessModel | IFederatedDataset | null,
             searchWord: '' as string,
+            showDetailSidebar: false,
             user: null as any,
             loading: false
         }
@@ -147,6 +148,7 @@ export default defineComponent({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.success')
                     })
+                    this.showDetailSidebar = false
                     this.loadFederatedDatasets()
                 })
                 .catch(() => {})
@@ -154,6 +156,7 @@ export default defineComponent({
         },
         setSelectedModel(model: IBusinessModel | IFederatedDataset) {
             this.selectedModel = model
+            this.showDetailSidebar = true
             console.log('SELECTED MODEL: ', this.selectedModel)
         }
     }

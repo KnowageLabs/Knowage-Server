@@ -31,6 +31,18 @@
             "value": "creationDate"
         }
     ],
+    "businessModelViewFields": [
+        {
+            "translation": "common.name",
+            "type": "text",
+            "value": "name"
+        },
+        {
+            "translation": "common.description",
+            "type": "text",
+            "value": "description"
+        }
+    ],
     "defaultViewFields": [
         {
             "translation": "importExport.gallery.column.name",
@@ -58,6 +70,19 @@
             "value": "requestTime"
         }
     ],
+    "federationDatasetViewFields": [
+        {
+            "translation": "common.label",
+            "type": "text",
+            "value": "label"
+        },
+        {
+            "translation": "common.name",
+            "type": "text",
+            "value": "name"
+        }
+    ],
+    "imgPath": "/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=",
     "style": {
         "sidebarContainer": {
             "display": "flex",
@@ -74,6 +99,5 @@
             "display": "flex",
             "justify-content": "space-evenly"
         }
-    },
-    "imgPath": "/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName="
+    }
 }
