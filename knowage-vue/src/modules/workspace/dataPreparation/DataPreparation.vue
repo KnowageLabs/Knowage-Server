@@ -53,11 +53,11 @@
             this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/datasets/mydata/').then((response: AxiosResponse<any>) => (this.dataPreparation = response.data.root))
         },
         methods: {
-            search(e, item) {
+            search(e, item): void {
                 console.log(e)
                 this.$router.push({ name: 'data-preparation-detail', params: { id: item.label } })
             },
-            filter(e) {
+            filter(e): void {
                 console.log(e)
             }
         }

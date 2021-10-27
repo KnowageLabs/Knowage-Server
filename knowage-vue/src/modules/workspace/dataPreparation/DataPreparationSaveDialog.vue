@@ -137,7 +137,7 @@
         emits: ['update:visibility'],
 
         methods: {
-            handleTransformation() {
+            handleTransformation(): void {
                 let data = this.createDataToSend()
                 this.$http
                     .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'selfservicedataset/save?SBI_EXECUTION_ID=-1&isTech=false&showDerivedDataset=false&showOnlyOwner=true', data, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded' } })
@@ -145,7 +145,7 @@
                         console.log(response)
                     })
             },
-            createDataToSend() {
+            createDataToSend(): URLSearchParams {
                 let ds = this.localDataset
                 if (ds.config) ds.config = JSON.stringify(ds.config)
                 ds.dsDerivedId = this.localDataset.id
@@ -168,7 +168,7 @@
             closeDialog(): void {
                 this.$emit('update:visibility', false)
             },
-            loadTranslations() {
+            loadTranslations(): void {
                 this.descriptor.dataPreparation.refreshRate.options.forEach((element) => {
                     element.name = this.$t(element.name)
                 })

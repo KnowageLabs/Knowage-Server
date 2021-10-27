@@ -76,6 +76,10 @@
                             "validationRules": "required|alpha"
                         },
                         {
+                            "name": "columns",
+                            "type": "multiSelect"
+                        },
+                        {
                             "name": "formula",
                             "type": "textarea"
                         }
@@ -153,6 +157,21 @@
                             "type": "dropdown"
                         },
                         {
+                            "availableValues": [
+                                {
+                                    "code": "equals",
+                                    "label": "="
+                                },
+                                {
+                                    "code": "greater",
+                                    "label": ">"
+                                }
+                            ],
+                            "name": "mergeColumnType",
+                            "placeholder": "managers.workspaceManagement.dataPreparation.transformations.condition",
+                            "type": "dropdown"
+                        },
+                        {
                             "name": "separator",
                             "type": "string",
                             "validationRules": "alpha"
@@ -161,21 +180,17 @@
                             "name": "numberOfCharacters",
                             "type": "string",
                             "validationRules": "numeric"
-                        },
-                        {
-                            "name": "columns",
-                            "type": "dropdown"
                         }
                     ]
                 ]
             },
-            "description": "managers.workspaceManagement.dataPreparation.transformations.mergeColumns.description",
+            "description": "managers.workspaceManagement.dataPreparation.transformations.splitColumns.description",
             "editColumn": false,
             "icon": {
                 "class": "material-icons",
                 "name": "call_split"
             },
-            "label": "managers.workspaceManagement.dataPreparation.transformations.mergeColumns.label",
+            "label": "managers.workspaceManagement.dataPreparation.transformations.splitColumns.label",
             "position": 0,
             "toolbar": true,
             "type": "splitColumns"
@@ -183,54 +198,6 @@
         {
             "category": "filtering",
             "config": {
-                "conditions": [
-                    {
-                        "code": "equals",
-                        "label": "="
-                    },
-                    {
-                        "code": "greater",
-                        "label": ">"
-                    },
-                    {
-                        "code": "greaterOrEqual",
-                        "label": ">="
-                    },
-                    {
-                        "code": "less",
-                        "label": "<"
-                    },
-                    {
-                        "code": "lessOrEqual",
-                        "label": "<="
-                    },
-                    {
-                        "code": "notEquals",
-                        "label": "!="
-                    },
-                    {
-                        "code": "in",
-                        "label": "IN"
-                    },
-                    {
-                        "code": "notIn",
-                        "label": "NOT IN"
-                    },
-                    {
-                        "code": "between",
-                        "label": "Between"
-                    }
-                ],
-                "logicOperators": [
-                    {
-                        "code": "AND",
-                        "label": "common.and"
-                    },
-                    {
-                        "code": "OR",
-                        "label": "common.or"
-                    }
-                ],
                 "parameters": [
                     [
                         {
@@ -238,7 +205,117 @@
                             "type": "multiSelect"
                         },
                         {
+                            "availableValues": [
+                                {
+                                    "code": "equals",
+                                    "label": "="
+                                },
+                                {
+                                    "code": "greater",
+                                    "label": ">"
+                                },
+                                {
+                                    "code": "greaterOrEqual",
+                                    "label": ">="
+                                },
+                                {
+                                    "code": "less",
+                                    "label": "<"
+                                },
+                                {
+                                    "code": "lessOrEqual",
+                                    "label": "<="
+                                },
+                                {
+                                    "code": "notEquals",
+                                    "label": "!="
+                                },
+                                {
+                                    "code": "in",
+                                    "label": "IN"
+                                },
+                                {
+                                    "code": "notIn",
+                                    "label": "NOT IN"
+                                },
+                                {
+                                    "code": "between",
+                                    "label": "Between"
+                                }
+                            ],
                             "name": "conditions",
+                            "placeholder": "managers.workspaceManagement.dataPreparation.transformations.condition",
+                            "type": "dropdown"
+                        },
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "validationRules": "required|alpha_dash"
+                        }
+                    ]
+                ]
+            },
+            "description": "managers.workspaceManagement.dataPreparation.transformations.filter.description",
+            "editColumn": true,
+            "icon": {
+                "class": "material-icons",
+                "name": "auto_fix_normal"
+            },
+            "label": "managers.workspaceManagement.dataPreparation.transformations.filter.label",
+            "position": 2,
+            "toolbar": true,
+            "type": "filter"
+        },
+        {
+            "category": "filtering",
+            "config": {
+                "parameters": [
+                    [
+                        {
+                            "name": "columns",
+                            "type": "multiSelect"
+                        },
+                        {
+                            "availableValues": [
+                                {
+                                    "code": "equals",
+                                    "label": "="
+                                },
+                                {
+                                    "code": "greater",
+                                    "label": ">"
+                                },
+                                {
+                                    "code": "greaterOrEqual",
+                                    "label": ">="
+                                },
+                                {
+                                    "code": "less",
+                                    "label": "<"
+                                },
+                                {
+                                    "code": "lessOrEqual",
+                                    "label": "<="
+                                },
+                                {
+                                    "code": "notEquals",
+                                    "label": "!="
+                                },
+                                {
+                                    "code": "in",
+                                    "label": "IN"
+                                },
+                                {
+                                    "code": "notIn",
+                                    "label": "NOT IN"
+                                },
+                                {
+                                    "code": "between",
+                                    "label": "Between"
+                                }
+                            ],
+                            "name": "conditions",
+                            "placeholder": "managers.workspaceManagement.dataPreparation.transformations.condition",
                             "type": "dropdown"
                         },
                         {
@@ -247,19 +324,33 @@
                             "validationRules": "required|alpha_dash"
                         },
                         {
+                            "availableValues": [
+                                {
+                                    "code": "AND",
+                                    "label": "common.and"
+                                },
+                                {
+                                    "code": "OR",
+                                    "label": "common.or"
+                                }
+                            ],
                             "name": "logicOperator",
+                            "placeholder": "managers.workspaceManagement.dataPreparation.transformations.logicOperator",
                             "type": "dropdown"
                         }
                     ]
                 ]
             },
-            "description": "managers.workspaceManagement.dataPreparation.transformations.filter.description",
+            "description": "managers.workspaceManagement.dataPreparation.transformations.advancedFilter.description",
             "editColumn": false,
-            "icon": "pi pi-filter",
-            "label": "managers.workspaceManagement.dataPreparation.transformations.filter.label",
+            "icon": {
+                "class": "material-icons",
+                "name": "auto_fix_high"
+            },
+            "label": "managers.workspaceManagement.dataPreparation.transformations.advancedFilter.label",
             "position": 2,
             "toolbar": true,
-            "type": "filter"
+            "type": "advancedFilter"
         },
         {
             "category": "visualization",
@@ -267,13 +358,13 @@
                 "parameters": [
                     [
                         {
-                            "name": "columns",
-                            "type": "multiSelect"
-                        },
-                        {
                             "name": "prefix",
                             "type": "string",
                             "validationRules": "required|alpha_dash"
+                        },
+                        {
+                            "name": "columns",
+                            "type": "multiSelect"
                         },
                         {
                             "name": "suffix",
@@ -287,7 +378,7 @@
             "editColumn": true,
             "icon": {
                 "class": "material-icons",
-                "name": "text_format"
+                "name": "padding"
             },
             "label": "managers.workspaceManagement.dataPreparation.transformations.padding.label",
             "position": 4,

@@ -13,9 +13,8 @@
                 <span v-for="(menu, index) in getMenuForToolbar()" v-bind:key="index">
                     <Button v-if="menu !== 'divider'" :class="descriptor.css.buttonClassHeader" v-tooltip.bottom="$t(menu.label)" @click="callFunction(menu)">
                         <span v-if="menu.icon.class" :class="menu.icon.class">{{ menu.icon.name }}</span>
-
-                        <i v-else :class="menu.icon"></i
-                    ></Button>
+                        <i v-else :class="menu.icon"></i>
+                    </Button>
                     <Divider v-else layout="vertical" />
                 </span>
             </template>
@@ -173,14 +172,14 @@
         data() {
             return {
                 descriptor: DataPreparationDescriptor,
-                loading: false,
+                loading: false as boolean,
                 datasetData: Array<any>(),
-                displayDataPreparationDialog: false,
+                displayDataPreparationDialog: false as boolean,
                 selectedProduct: null,
-                visibleRight: false,
-                visibility: false,
+                visibleRight: false as boolean,
+                visibility: false as boolean,
                 selectedTransformation: null,
-                showSaveDialog: false,
+                showSaveDialog: false as boolean,
                 columns: [] as IDataPreparationColumn[],
                 col: null,
                 descriptorTransformations: Array<any>(),
@@ -204,7 +203,7 @@
                             let obj = {} as IDataPreparationColumn
                             obj.header = element.column
                             obj.type = element.pvalue
-                            obj.disabled = false
+                            obj.disabled = false as boolean
 
                             this.columns.push(obj)
                         })
@@ -232,13 +231,13 @@
             }
         },
         methods: {
-            getSidebarElementClass(index) {
+            getSidebarElementClass(index: number): string {
                 let cssClass = 'p-grid p-m-0 p-p-0 p-d-flex kn-flex transformationSidebarElement p-menuitem-link'
                 if (index < this.dataset.config.transformations.length - 1) cssClass += ' kn-disabled-text'
 
                 return cssClass
             },
-            getTextForSidebar(tr) {
+            getTextForSidebar(tr): string {
                 let text = ''
 
                 tr.parameters.forEach((element) => {
@@ -255,7 +254,7 @@
                 return '(' + text + ')'
             },
 
-            getTransformationsMenu(col) {
+            getTransformationsMenu(col: IDataPreparationColumn): Array<any> {
                 return this.descriptorTransformations
                     .filter((x) => x.editColumn)
                     .filter((x) => {
@@ -263,7 +262,7 @@
                         return true
                     })
             },
-            callFunction(transformation, col, type?) {
+            callFunction(transformation: any, col, type?): void {
                 if (transformation.type === 'changeType') {
                     transformation.config.parameters[0][0].value = type
                     let toReturn = { parameters: [] as Array<any>, type: transformation.type }
@@ -299,7 +298,7 @@
                     }
                 }
             },
-            handleTransformation(t) {
+            handleTransformation(t: any): void {
                 if (t.type === 'addColumn') {
                     t.parameters[0].columns = [t.parameters[0].columns]
                 }
@@ -309,22 +308,22 @@
                 this.dataset.config.transformations.push(t)
                 this.loadPreviewData()
             },
-            deleteTransformation(index) {
+            deleteTransformation(index: number): void {
                 this.dataset.config.transformations.splice(index, 1)
                 this.loadPreviewData()
             },
-            getCompatibilityType(col) {
+            getCompatibilityType(col: IDataPreparationColumn): void {
                 return this.descriptor.compatibilityMap[col.type].values
             },
-            addColumn(item) {
+            addColumn(item): void {
                 console.log(item)
             },
-            toggle(event, trOp) {
+            toggle(event: Event, trOp: string): void {
                 // eslint-disable-next-line
                 // @ts-ignore
                 this.$refs[trOp].toggle(event)
             },
-            getMenuForToolbar() {
+            getMenuForToolbar(): Array<any> {
                 let tmp = this.descriptorTransformations
                     .filter((x) => x.toolbar)
                     .sort(function(a, b) {
@@ -348,14 +347,14 @@
                 }
                 return menu
             },
-            saveDataset() {
+            saveDataset(): void {
                 this.showSaveDialog = true
             },
             async loadPreviewData() {
                 /* 				await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/dataset/preview', this.selectedTransformation).then((response: AxiosResponse<any>) => {
-					console.log(response)
-					this.selectedTransformation = null
-				}) */
+    	console.log(response)
+    	this.selectedTransformation = null
+    }) */
 
                 console.log(this.dataset.config.transformations)
 

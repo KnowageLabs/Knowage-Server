@@ -6,13 +6,12 @@ export interface ITransformation {
 export interface ITransformationConfig {
     parameters: Array<Array<ITransformationParameter>>
     conditions?: Array
-    logicOperators?: Array
 }
 
 export interface ITransformationParameter {
     name: String
     value: string
-    selectedItems: Array<IDataPreparationColumn>
+    availableValues?: Array
     type: string
 }
 

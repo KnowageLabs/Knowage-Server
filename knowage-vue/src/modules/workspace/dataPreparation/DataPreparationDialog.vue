@@ -31,15 +31,7 @@
                             class="p-m-2"
                         />
 
-                        <Dropdown
-                            v-if="field.name === 'conditions'"
-                            v-model="field['selectedCondition_fieldIndex_' + fieldIndex + '_index_' + index]"
-                            :options="localCopy.config.conditions"
-                            optionValue="code"
-                            :placeholder="$t('managers.workspaceManagement.dataPreparation.transformations.condition')"
-                            optionLabel="label"
-                            class="p-m-2"
-                        />
+                        <Dropdown v-if="field.availableValues" v-model="field['selectedCondition_fieldIndex_' + fieldIndex + '_index_' + index]" :options="field.availableValues" optionValue="code" :placeholder="$t(field.placeholder)" optionLabel="label" class="p-m-2" />
                     </span>
 
                     <MultiSelect
@@ -58,7 +50,7 @@
 
                     <Textarea v-if="field.type == 'textarea'" v-model="field['textarea_fieldIndex_' + fieldIndex + '_index_' + index]" rows="5" cols="30" />
                 </span>
-                <span class="p-d-flex p-jc-center p-ai-center" v-if="localCopy.config.logicOperators?.length > 0">
+                <span class="p-d-flex p-jc-center p-ai-center" v-if="localCopy.type === 'advancedFilter'">
                     <Button icon="pi pi-plus" class="p-button-text p-button-rounded p-button-plain" @click="addNewRow()"/>
                     <Button icon="pi pi-trash" :class="'p-button-text p-button-rounded p-button-plain ' + (localCopy.config.parameters.length > 1 ? '' : 'kn-hide')" @click="deleteRow(fieldIndex)"
                 /></span>
@@ -115,20 +107,20 @@
         },
 
         methods: {
-            addNewRow() {
+            addNewRow(): void {
                 this.localCopy?.config.parameters.push(this.localCopy?.config.parameters[0])
             },
-            deleteRow(index) {
+            deleteRow(index): void {
                 if (this.localCopy) {
                     if (this.localCopy.config.parameters?.length > 1) this.localCopy?.config.parameters.splice(index, 1)
                 }
             },
-            handleMultiSelectChange(e) {
+            handleMultiSelectChange(e: Event): void {
                 if (e) {
                     this.refreshTransfrormation()
                 }
             },
-            handleTransformation() {
+            handleTransformation(): void {
                 let convertedTransformation = this.convertTransformation()
                 this.$emit('send-transformation', convertedTransformation)
             },
@@ -139,14 +131,13 @@
                 this.$emit('update:col', false)
                 this.$emit('update:transformation', false)
             },
-            refreshTransfrormation() {
+            refreshTransfrormation(): void {
                 if (this.localCopy) {
-                    this.localCopy?.config.logicOperators?.forEach((element) => {
-                        element.label = this.$t(element.label)
-                    })
-
                     this.localCopy.config.parameters?.forEach((element) => {
                         element.forEach((item) => {
+                            item.availableValues?.forEach((element) => {
+                                element.label = this.$t(element.label)
+                            })
                             if (item.type === 'multiSelect' && item.name === 'columns') {
                                 if (this.col) {
                                     let selectedItem: Array<IDataPreparationColumn> | undefined = this.columns?.filter((x) => x.header == this.col)
@@ -195,7 +186,7 @@
 
                 return toReturn
             },
-            handleItem(item, obj, elId) {
+            handleItem(item, obj, elId): void {
                 const keys = Object.keys(item)
                 keys.forEach((key) => {
                     if (key.includes(elId)) {

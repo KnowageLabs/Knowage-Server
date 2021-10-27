@@ -2,7 +2,7 @@
     <div>
         <span class="knValidatedFieldContainer">
             <VeeField :as="as" :name="name" :label="label" :modelValue="modelValue" :class="cssClass" v-bind="$attrs" @input="$emit('modelUpdate', $event)" :validateOnChange="true" />
-            <label class="kn-material-input-label" :for="label">{{ label }}</label>
+            <label :class="cssClass + '-label'" :for="label">{{ label }}</label>
         </span>
         <VeeErrorMessage :name="name" class="kn-text-error" />
     </div>
