@@ -13,7 +13,7 @@
             </PanelMenu>
         </div>
         <div class=" p-d-flex p-flex-column" style="width:100%">
-            <Button id="showSidenavIcon" v-if="$router.currentRoute._rawValue.fullPath === '/workspace/'" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="sidebarVisible = true" />
+            <Button id="showSidenavIcon" v-if="$router.currentRoute._rawValue.fullPath === '/workspace/'" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="sidebarVisible = true" />
             <router-view class="kn-router-view" :selectedFolder="selectedFolder" @showMenu="sidebarVisible = true" @reloadRepositoryMenu="getAllFolders" />
         </div>
     </div>
@@ -215,9 +215,6 @@ export default defineComponent({
 .mySidebar.p-sidebar .p-sidebar-header,
 .mySidebar.p-sidebar .p-sidebar-content {
     padding: 0 !important;
-}
-.mySidebar .p-listbox {
-    height: calc(100% - 2.5rem);
 }
 @media screen and (min-width: 1017px) {
     #sideMenu {
