@@ -1,14 +1,23 @@
 <template>
-    <div>
-        <!-- {{ document }} -->
-        <div class="card-container">
-            <img src="img_avatar.png" alt="Avatar" style="width:100%" />
-            <div class="container">
-                <h4><b>John Doe</b></h4>
-                <p>Architect & Engineer</p>
+    <!-- {{ document }} -->
+    <div class="card-container">
+        <img class="card-image" src="https://i.imgur.com/9YqXpxc.jpeg" />
+        <div class="details-container p-ml-2">
+            <div class="top-container">
+                <p>DASHBOARD</p>
+            </div>
+            <div class="middle-container">
+                <h4><b>My Dashboard</b></h4>
+                <p>norfolk_islang_legerage</p>
+            </div>
+            <div class="bottom-container">
+                <i class="fas fa-ellipsis-v" />
+                <i class="fas fa-info-circle" />
+                <i class="fas fa-play-circle" />
             </div>
         </div>
-        <!-- <Card>
+    </div>
+    <!-- <Card>
             <template #header>
                 <img alt="user header" src="demo/images/usercard.png" />
             </template>
@@ -23,7 +32,6 @@
                 <Button icon="pi pi-times" label="Cancel" class="p-button-secondary" style="margin-left: .5em" />
             </template>
         </Card> -->
-    </div>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -49,8 +57,19 @@ export default defineComponent({
     methods: {}
 })
 </script>
-<style lang="css">
+<style lang="scss" scoped>
 .card-container {
-    border: gray;
+    display: flex;
+    border-style: solid;
+    border-color: gray;
+    border-width: 1px;
+    border-radius: 10px;
+    width: 350px;
+    height: 175px;
+}
+.card-image {
+    width: 70px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
 }
 </style>

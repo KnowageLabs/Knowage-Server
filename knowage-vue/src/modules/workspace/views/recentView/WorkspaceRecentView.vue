@@ -40,7 +40,9 @@
                 </template>
             </Column>
         </DataTable>
-        <WorkspaceCard v-if="toggleCardDisplay" :document="recentDocumentsList" />
+        <div v-if="toggleCardDisplay" class="p-mb-5">
+            <WorkspaceCard v-for="(field, index) of recentDocumentsList" :key="index" :document="recentDocumentsList" />
+        </div>
     </div>
 
     <DetailSidebar :visible="showDetailSidebar" :viewType="'recent'" :document="selectedDocument" @executeRecent="executeRecent" @close="showDetailSidebar = false" />
