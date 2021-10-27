@@ -11,19 +11,30 @@
         <InputText id="model-search" class="kn-material-input p-m-3" v-model="searchWord" :placeholder="$t('common.search')" @input="searchItems" />
         <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" />
     </div>
-    <WorkspaceModelsTable class="p-m-2" :propItems="tableItems" :tableMode="tableMode" @openDatasetInQBEClick="openDatasetInQBE" @editDatasetClick="editDataset" @deleteDatasetClick="deleteDatasetConfirm"></WorkspaceModelsTable>
+    <WorkspaceModelsTable class="p-m-2" :propItems="tableItems" :tableMode="tableMode" @selected="setSelectedModel" @openDatasetInQBEClick="openDatasetInQBE" @editDatasetClick="editDataset" @deleteDatasetClick="deleteDatasetConfirm"></WorkspaceModelsTable>
+
+    <DetailSidebar
+        :visible="showDetailSidebar"
+        :viewType="'repository'"
+        :document="selectedDocument"
+        @executeDocumentFromOrganizer="executeDocumentFromOrganizer"
+        @moveDocumentToFolder="moveDocumentToFolder"
+        @deleteDocumentFromOrganizer="deleteDocumentFromOrganizer"
+        @close="showDetailSidebar = false"
+    />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { IBusinessModel, IFederatedDataset } from '../../Workspace'
+import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import SelectButton from 'primevue/selectbutton'
 import WorkspaceModelsTable from './tables/WorkspaceModelsTable.vue'
 
 export default defineComponent({
     name: 'workspace-models-view',
-    components: { KnFabButton, SelectButton, WorkspaceModelsTable },
+    components: { DetailSidebar, KnFabButton, SelectButton, WorkspaceModelsTable },
     data() {
         return {
             businessModels: [] as IBusinessModel[],
@@ -31,6 +42,7 @@ export default defineComponent({
             filteredItems: [] as IBusinessModel[] | IFederatedDataset[],
             tableMode: 'Business',
             selectButtonOptions: ['Business'],
+            selectedModel: null as IBusinessModel | IFederatedDataset | null,
             searchWord: '' as string,
             user: null as any,
             loading: false
@@ -51,6 +63,7 @@ export default defineComponent({
     watch: {
         tableMode() {
             this.resetSearch()
+            this.selectedModel = null
         }
     },
     async created() {
@@ -138,6 +151,10 @@ export default defineComponent({
                 })
                 .catch(() => {})
             this.loading = false
+        },
+        setSelectedModel(model: IBusinessModel | IFederatedDataset) {
+            this.selectedModel = model
+            console.log('SELECTED MODEL: ', this.selectedModel)
         }
     }
 })
