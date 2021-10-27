@@ -1,0 +1,9 @@
+{
+    "filterImagesMap": {
+        "all.png": "all",
+        "url(../../knowage/themes/commons/img/functions_catalog_images/degree.png)": "degree",
+        "url(../../knowage/themes/commons/img/functions_catalog_images/eye.png)": "eye",
+        "url(../../knowage/themes/commons/img/functions_catalog_images/memory.png)": "memory",
+        "url(../../knowage/themes/commons/img/functions_catalog_images/text.png)": "text"
+    }
+}

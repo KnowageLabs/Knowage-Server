@@ -1,0 +1,21 @@
+{
+    "columnFieldTypes": [
+        {
+            "value": "MEASURE"
+        },
+        {
+            "value": "ATTRIBUTE"
+        }
+    ],
+    "columnTypes": [
+        {
+            "value": "STRING"
+        },
+        {
+            "value": "DATE"
+        },
+        {
+            "value": "NUMBER"
+        }
+    ]
+}

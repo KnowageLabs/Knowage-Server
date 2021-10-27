@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import KnHint from '@/components/UI/KnHint.vue'
 import { iMenuNode } from './MenuManagement'
@@ -58,9 +58,9 @@ export default defineComponent({
         async loadRoles() {
             this.loading = this.hideForm = true
             this.dirty = false
-            await axios
+            await this.$http
                 .get(this.apiUrl + 'roles')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.roles = response.data
                 })
                 .finally(() => (this.loading = false))
@@ -91,9 +91,9 @@ export default defineComponent({
             this.loading = true
             this.hideForm = true
             this.dirty = false
-            await axios
+            await this.$http
                 .get(this.apiUrl + 'menu')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.menuNodes = response.data
                 })
                 .finally(() => (this.loading = false))
