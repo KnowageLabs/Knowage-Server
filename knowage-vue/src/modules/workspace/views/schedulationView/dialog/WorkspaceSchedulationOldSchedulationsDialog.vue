@@ -50,10 +50,12 @@ export default defineComponent({
         async loadJob() {
             this.loading = true
             this.job = { ...this.selectedJob } as IPackage
-            console.log('LOADED JOB: ', this.job)
+            // console.log('LOADED JOB: ', this.job)
 
             await this.loadAllSchedulers()
             this.loading = false
+
+            // console.log('ALL SCHEDULATIONS: ', this.schedulations)
         },
         closeDialog() {
             this.$emit('close')
@@ -68,19 +70,18 @@ export default defineComponent({
                     }
                 }
             }
-            console.log('ALL SCHEDULATIONS: ', this.schedulations)
         },
         async getDocumentId(documentName: string) {
             let documentId = null
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workspace/scheduler/${documentName}`).then((response) => {
-                console.log('RESPONSE DOCUMENT ID: ', response.data)
+                // console.log('RESPONSE DOCUMENT ID: ', response.data)
                 documentId = response.data
             })
             return documentId
         },
         async loadDocumentSchedulers(documentId: number, schedulerName: string) {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/getSnapshotsForSchedulationAndDocument?id=${documentId}&scheduler=${schedulerName}`).then((response) => {
-                console.log('RESPONSE DOCUMENT SCHEDULERS: ', response.data)
+                // console.log('RESPONSE DOCUMENT SCHEDULERS: ', response.data)
                 response.data?.schedulers.forEach((el: ISchedulation) => this.schedulations.push({ ...el, urlPath: response.data.urlPath }))
             })
         }
