@@ -2246,8 +2246,17 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				  }
 				  return JSON.stringify(obj) === JSON.stringify({});
 				}
-
+				
+			function IsJsonString(str) {
+    		try {
+        		JSON.parse(str);
+    			} catch (e) {
+        			return false;
+    			}
+ 			   return true;
+			}
 			if($scope.selectedDataSet.restRequestHeaders != undefined && !isObjectEmpty($scope.selectedDataSet.restRequestHeaders)) {
+				if (IsJsonString($scope.selectedDataSet.restRequestHeaders)){
 				for (var key in JSON.parse($scope.selectedDataSet.restRequestHeaders)) {
 
 					var restRequestHeaderTemp = {};
@@ -2261,6 +2270,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					  $scope.counterRequestHeaders++;
 					  restRequestHeadersTemp.push(restRequestHeaderTemp);
 
+				}
 				}
 			}
 
