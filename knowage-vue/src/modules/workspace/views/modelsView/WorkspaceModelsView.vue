@@ -4,32 +4,33 @@
             {{ $t('workspace.myModels.title') }}
         </template>
 
-        <template #right> </template>
+        <template #right> <KnFabButton v-if="tableMode === 'Federated'" icon="fas fa-plus" @click="createNewFederation"></KnFabButton> </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
     <div class="p-d-flex p-flex-row p-ai-center">
         <InputText id="model-search" class="kn-material-input p-m-3" v-model="searchWord" :placeholder="$t('common.search')" @input="searchItems" />
-        <SelectButton id="model-select-buttons" v-model="tableMode" :options="workspaceModelsViewDescriptor.selectButtonOptions" />
+        <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" />
     </div>
-    <WorkspaceModelsTable class="p-m-2" :propItems="tableItems" :tableMode="tableMode"></WorkspaceModelsTable>
+    <WorkspaceModelsTable class="p-m-2" :propItems="tableItems" :tableMode="tableMode" @openDatasetInQBEClick="openDatasetInQBE" @editDatasetClick="editDataset" @deleteDatasetClick="deleteDatasetConfirm"></WorkspaceModelsTable>
 </template>
+
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { IBusinessModel, IFederatedDataset } from '../../Workspace'
+import KnFabButton from '@/components/UI/KnFabButton.vue'
 import SelectButton from 'primevue/selectbutton'
 import WorkspaceModelsTable from './tables/WorkspaceModelsTable.vue'
-import workspaceModelsViewDescriptor from './WorkspaceModelsViewDescriptor.json'
 
 export default defineComponent({
     name: 'workspace-models-view',
-    components: { SelectButton, WorkspaceModelsTable },
+    components: { KnFabButton, SelectButton, WorkspaceModelsTable },
     data() {
         return {
-            workspaceModelsViewDescriptor,
             businessModels: [] as IBusinessModel[],
             federatedDatasets: [] as IFederatedDataset[],
             filteredItems: [] as IBusinessModel[] | IFederatedDataset[],
             tableMode: 'Business',
+            selectButtonOptions: ['Business'],
             searchWord: '' as string,
             user: null as any,
             loading: false
@@ -57,6 +58,7 @@ export default defineComponent({
         await this.loadBusinessModels()
         if (this.hasEnableFederatedDatasetFunctionality) {
             await this.loadFederatedDatasets()
+            this.selectButtonOptions.push('Federated')
         }
     },
     methods: {
@@ -94,6 +96,48 @@ export default defineComponent({
         },
         resetSearch() {
             this.searchWord = ''
+        },
+        openDatasetInQBE(dataset: IBusinessModel | IFederatedDataset) {
+            console.log('openDatasetInQBE clicked! ', dataset)
+            this.$store.commit('setInfo', {
+                title: 'Todo',
+                msg: 'Functionality not in this sprint'
+            })
+        },
+        createNewFederation() {
+            this.$store.commit('setInfo', {
+                title: 'Todo',
+                msg: 'Functionality not in this sprint'
+            })
+        },
+        editDataset(dataset: IBusinessModel | IFederatedDataset) {
+            console.log('editDataset clicked! ', dataset)
+            this.$store.commit('setInfo', {
+                title: 'Todo',
+                msg: 'Functionality not in this sprint'
+            })
+        },
+        deleteDatasetConfirm(dataset: IFederatedDataset) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteDataset(dataset)
+            })
+        },
+        async deleteDataset(dataset: IFederatedDataset) {
+            this.loading = true
+            await this.$http
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/federateddataset/${dataset.federation_id}`)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.loadFederatedDatasets()
+                })
+                .catch(() => {})
+            this.loading = false
         }
     }
 })

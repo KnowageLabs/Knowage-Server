@@ -11,11 +11,11 @@
         ></Column>
         <Column :style="workspaceModelsTableDescriptor.iconColumn.style">
             <template #body="slotProps">
-                <div class="p-d-flex p-flex-row">
+                <div class="p-d-flex p-flex-row p-jc-end">
                     <Button icon="fa fa-search" class="p-button-link" v-tooltip.left="$t('workspace.myModels.openInQBE')" @click.stop="openDatasetInQBE(slotProps.data)" />
                     <div v-if="tableMode === 'Federated'" class="p-d-flex p-flex-row">
                         <Button icon="pi pi-pencil" class="p-button-link" v-tooltip.left="$t('workspace.myModels.editDataset')" @click.stop="editDataset(slotProps.data)" />
-                        <Button icon="fas fa-trash-alt" class="p-button-link" v-tooltip.left="$t('workspace.myModels.deleteDataset')" @click.stop="deleteDataset(slotProps.data)" />
+                        <Button v-if="canDeleteFederation(slotProps.data)" icon="fas fa-trash-alt" class="p-button-link" v-tooltip.left="$t('workspace.myModels.deleteDataset')" @click.stop="deleteDataset(slotProps.data)" />
                     </div>
                 </div>
             </template>
@@ -36,6 +36,7 @@ export default defineComponent({
     name: 'workspace-models-table',
     components: { Column, DataTable },
     props: { tableMode: { type: String }, propItems: { type: Array } },
+    emits: ['openDatasetInQBEClick', 'editDatasetClick', 'deleteDatasetClick'],
     data() {
         return {
             workspaceModelsTableDescriptor,
@@ -54,7 +55,8 @@ export default defineComponent({
                     operator: FilterOperator.AND,
                     constraints: [filterDefault]
                 }
-            } as any
+            } as any,
+            user: null as any
         }
     },
     watch: {
@@ -63,6 +65,7 @@ export default defineComponent({
         }
     },
     created() {
+        this.user = (this.$store.state as any).user
         this.loadTable()
     },
     methods: {
@@ -77,14 +80,22 @@ export default defineComponent({
         setMode() {
             this.columns = this.tableMode === 'Business' ? this.workspaceModelsTableDescriptor.businessColumns : this.workspaceModelsTableDescriptor.federatedColumns
         },
+        canDeleteFederation(federation: IFederatedDataset) {
+            // console.log('USER: ', this.user)
+            // console.log('FEDERATION: ', federation)
+            return this.user.isSuperadmin || this.user.userId === federation.owner
+        },
         openDatasetInQBE(dataset: IBusinessModel | IFederatedDataset) {
-            console.log('openDatasetInQBE clicked! ', dataset)
+            // console.log('openDatasetInQBE clicked! ', dataset)
+            this.$emit('openDatasetInQBEClick', dataset)
         },
         editDataset(dataset: IBusinessModel | IFederatedDataset) {
-            console.log('editDataset clicked! ', dataset)
+            // console.log('editDataset clicked! ', dataset)
+            this.$emit('editDatasetClick', dataset)
         },
         deleteDataset(dataset: IBusinessModel | IFederatedDataset) {
-            console.log('deleteDataset clicked! ', dataset)
+            // console.log('deleteDataset clicked! ', dataset)
+            this.$emit('deleteDatasetClick', dataset)
         }
     }
 })
