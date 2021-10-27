@@ -1,31 +1,4 @@
 {
-    "sidenavFields": [
-        {
-            "translation": "importExport.gallery.column.name",
-            "type": "text",
-            "value": "name"
-        },
-        {
-            "translation": "managers.configurationManagement.headers.label",
-            "type": "text",
-            "value": "label"
-        },
-        {
-            "translation": "managers.businessModelManager.description",
-            "type": "text",
-            "value": "description"
-        },
-        {
-            "translation": "importExport.gallery.column.type",
-            "type": "text",
-            "value": "typeCode"
-        },
-        {
-            "translation": "managers.mondrianSchemasManagement.headers.creationDate",
-            "type": "date",
-            "value": "creationDate"
-        }
-    ],
     "style": {
         "sidenavItem": {
             "height": "auto",

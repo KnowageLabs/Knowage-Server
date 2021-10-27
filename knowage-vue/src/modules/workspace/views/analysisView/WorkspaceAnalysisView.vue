@@ -45,9 +45,18 @@
             </Column>
         </DataTable>
     </div>
-    <DetailSidebar :visible="showDetailSidebar" :viewType="'analysis'" :document="selectedAnalysis" @executeAnalysisDocument="executeAnalysisDocument" @editAnalysisDocument="editAnalysisDocument" @close="showDetailSidebar = false" />
-
-    <Menu id="optionsMenu" ref="optionsMenu" :model="menuItems" />
+    <DetailSidebar
+        :visible="showDetailSidebar"
+        :viewType="'analysis'"
+        :document="selectedAnalysis"
+        @executeAnalysisDocument="executeAnalysisDocument"
+        @editAnalysisDocument="editAnalysisDocument"
+        @shareAnalysisDocument="shareAnalysisDocument"
+        @cloneAnalysisDocument="cloneAnalysisDocument"
+        @deleteAnalysisDocument="deleteAnalysisDocument"
+        @uploadAnalysisPreviewFile="uploadAnalysisPreviewFile"
+        @close="showDetailSidebar = false"
+    />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -56,10 +65,9 @@ import analysisDescriptor from './WorkspaceAnalysisViewDescriptor.json'
 import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import Menu from 'primevue/contextmenu'
 
 export default defineComponent({
-    components: { DataTable, Column, Menu, DetailSidebar },
+    components: { DataTable, Column, DetailSidebar },
     emits: ['showMenu'],
     data() {
         return {
@@ -70,37 +78,7 @@ export default defineComponent({
             selectedAnalysis: {} as any,
             filters: {
                 global: [filterDefault]
-            } as Object,
-            sidenavFields: analysisDescriptor.sidenavFields,
-            menuItems: [
-                {
-                    key: '0',
-                    label: this.$t('workspace.myAnalysis.menuItems.share'),
-                    icon: 'fas fa-share',
-                    command: () => {
-                        // event.originalEvent: Browser event
-                        // event.item: Menuitem instance
-                    }
-                },
-                {
-                    key: '1',
-                    label: this.$t('workspace.myAnalysis.menuItems.clone'),
-                    icon: 'fas fa-clone',
-                    command: () => {}
-                },
-                {
-                    key: '2',
-                    label: this.$t('workspace.myAnalysis.menuItems.delete'),
-                    icon: 'fas fa-trash',
-                    command: () => {}
-                },
-                {
-                    key: '3',
-                    label: this.$t('workspace.myAnalysis.menuItems.upload'),
-                    icon: 'fas fa-share-alt',
-                    command: () => {}
-                }
-            ]
+            } as Object
         }
     },
     created() {
@@ -120,16 +98,23 @@ export default defineComponent({
             let fDate = new Date(date)
             return fDate.toLocaleString()
         },
-        showMenu(event) {
-            // eslint-disable-next-line
-            // @ts-ignore
-            this.$refs.optionsMenu.toggle(event)
-        },
         executeAnalysisDocument() {
             console.log('executeAnalysisDocument')
         },
         editAnalysisDocument() {
             console.log('editAnalysisDocument')
+        },
+        shareAnalysisDocument() {
+            console.log('shareAnalysisDocument')
+        },
+        cloneAnalysisDocument() {
+            console.log('cloneAnalysisDocument')
+        },
+        deleteAnalysisDocument() {
+            console.log('deleteAnalysisDocument')
+        },
+        uploadAnalysisPreviewFile() {
+            console.log('uploadAnalysisPreviewFile')
         }
     }
 })

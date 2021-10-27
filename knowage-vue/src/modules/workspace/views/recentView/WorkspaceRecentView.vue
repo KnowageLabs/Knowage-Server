@@ -40,7 +40,7 @@
         </DataTable>
     </div>
 
-    <DetailSidebar :visible="showDetailSidebar" :viewType="'recent'" :document="selectedDocument" @close="showDetailSidebar = false" @executeRecent="executeRecent" />
+    <DetailSidebar :visible="showDetailSidebar" :viewType="'recent'" :document="selectedDocument" @executeRecent="executeRecent" @close="showDetailSidebar = false" />
 </template>
 <script lang="ts">
 import { filterDefault } from '@/helpers/commons/filterHelper'
