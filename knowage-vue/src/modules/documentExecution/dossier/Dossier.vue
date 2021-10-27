@@ -89,7 +89,7 @@
 import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import { filterDefault } from '@/helpers/commons/filterHelper'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import useValidate from '@vuelidate/core'
 import dossierDescriptor from './DossierDescriptor.json'
 import Card from 'primevue/card'
@@ -150,9 +150,9 @@ export default defineComponent({
         },
         async getDossierActivities() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activities/${this.id}`)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.dossierActivities = [...response.data]
                 })
                 .finally(() => {
@@ -162,9 +162,9 @@ export default defineComponent({
         async getDossierTemplate() {
             this.loading = true
             let url = `/knowagedossierengine/api/start/dossierTemplate?documentId=${this.id}`
-            await axios
+            await this.$http
                 .get(url, { headers: { Accept: 'application/json, text/plain, */*' } })
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.jsonTemplate = { ...response.data }
                 })
                 .finally(() => {
@@ -184,7 +184,7 @@ export default defineComponent({
             console.log(url)
 
             if (selectedDossier.status == 'DOWNLOAD' || selectedDossier.status == 'ERROR') {
-                await axios
+                await this.$http
                     .delete(url, { headers: { Accept: 'application/json, text/plain, */*' } })
                     .then(() => {
                         this.$store.commit('setInfo', {
@@ -210,7 +210,7 @@ export default defineComponent({
         },
         async createNewActivity() {
             let url = `/knowagedossierengine/api/dossier/run?activityName=${this.activity.activityName}&documentId=${this.id}`
-            await axios.post(url, this.jsonTemplate, { headers: { Accept: 'application/json, text/plain, */*' } }).then((response) => {
+            await this.$http.post(url, this.jsonTemplate, { headers: { Accept: 'application/json, text/plain, */*' } }).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
                     this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: response.data.errors })
                 } else {
@@ -225,7 +225,7 @@ export default defineComponent({
                     var link = process.env.VUE_APP_DOSSIER_PATH + `dossier/activity/${selectedActivity.id}/txt?activityName=${selectedActivity.activity}`
                     window.open(link)
                 } else {
-                    await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`).then((response) => {
+                    await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`).then((response: AxiosResponse<any>) => {
                         var url = `../api/start/errorFile?activityId=${selectedActivity.id}&randomKey=${response.data}&activityName=${selectedActivity.activity}`
                         if (this.jsonTemplate.PPT_TEMPLATE != null) {
                             url += '&type=PPT'
@@ -248,7 +248,7 @@ export default defineComponent({
                     window.open(link)
                 } else {
                     link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`
-                    await axios.get(link, { headers: { Accept: 'application/json, text/plain, */*' } }).then((response) => {
+                    await this.$http.get(link, { headers: { Accept: 'application/json, text/plain, */*' } }).then((response: AxiosResponse<any>) => {
                         if (this.jsonTemplate.PPT_TEMPLATE != null) {
                             this.storePPT(selectedActivity.id, response.data, selectedActivity.activity)
                         } else {

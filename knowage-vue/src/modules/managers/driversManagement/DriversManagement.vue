@@ -51,7 +51,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iDriver } from './DriversManagement'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
 import Avatar from 'primevue/avatar'
@@ -87,9 +87,9 @@ export default defineComponent({
     methods: {
         async loadAllDrivers() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers')
-                .then((response) => (this.drivers = response.data))
+                .then((response: AxiosResponse<any>) => (this.drivers = response.data))
                 .finally(() => (this.loading = false))
         },
         showForm(event: any) {
@@ -142,7 +142,7 @@ export default defineComponent({
             })
         },
         async deleteDriver(id: number) {
-            await axios
+            await this.$http
                 .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/' + id)
                 .then(() => {
                     this.$store.commit('setInfo', {

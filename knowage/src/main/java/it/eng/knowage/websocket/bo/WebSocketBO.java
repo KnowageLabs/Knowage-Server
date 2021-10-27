@@ -27,33 +27,46 @@ package it.eng.knowage.websocket.bo;
  */
 public class WebSocketBO {
 
-	private WSDownloadBO downloads;
-	private WSNewsBO news;
-
-	public WebSocketBO() {
-
-	}
-
-	public WebSocketBO(WSDownloadBO downloads, WSNewsBO news) {
-		super();
-		this.downloads = downloads;
-		this.news = news;
-	}
+	private final WSDownloadBO downloads = new WSDownloadBO();
+	private final WSNewsBO news = new WSNewsBO();
 
 	public WSDownloadBO getDownloads() {
 		return downloads;
-	}
-
-	public void setDownloads(WSDownloadBO downloads) {
-		this.downloads = downloads;
 	}
 
 	public WSNewsBO getNews() {
 		return news;
 	}
 
-	public void setNews(WSNewsBO news) {
-		this.news = news;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((downloads == null) ? 0 : downloads.hashCode());
+		result = prime * result + ((news == null) ? 0 : news.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WebSocketBO other = (WebSocketBO) obj;
+		if (downloads == null) {
+			if (other.downloads != null)
+				return false;
+		} else if (!downloads.equals(other.downloads))
+			return false;
+		if (news == null) {
+			if (other.news != null)
+				return false;
+		} else if (!news.equals(other.news))
+			return false;
+		return true;
 	}
 
 }

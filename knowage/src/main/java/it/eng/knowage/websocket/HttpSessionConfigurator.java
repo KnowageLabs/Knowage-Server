@@ -18,6 +18,8 @@
 
 package it.eng.knowage.websocket;
 
+import java.util.Collections;
+
 import javax.websocket.HandshakeResponse;
 import javax.websocket.server.HandshakeRequest;
 import javax.websocket.server.ServerEndpointConfig;
@@ -32,8 +34,15 @@ public class HttpSessionConfigurator extends ServerEndpointConfig.Configurator {
 	public void modifyHandshake(ServerEndpointConfig sec, HandshakeRequest request, HandshakeResponse response) {
 		logger.debug("modifyHandshake() Current thread " + Thread.currentThread().getName());
 
-		sec.getUserProperties().remove("HTTP_SESSION");
-		sec.getUserProperties().put("HTTP_SESSION", request.getHttpSession());
+		Object httpSession = request.getHttpSession();
+
+		if (httpSession != null) {
+			sec.getUserProperties().remove("HTTP_SESSION");
+			sec.getUserProperties().put("HTTP_SESSION", httpSession);
+		} else {
+			// Reject
+			response.getHeaders().put(HandshakeResponse.SEC_WEBSOCKET_ACCEPT, Collections.emptyList());
+		}
 	}
 
 }

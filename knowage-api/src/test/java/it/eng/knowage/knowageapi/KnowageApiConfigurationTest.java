@@ -160,7 +160,7 @@ public class KnowageApiConfigurationTest {
 		env.put("java.naming.factory.initial", "org.osjava.sj.SimpleJndiContextFactory");
 		InitialContext initialContext = new InitialContext(env);
 
-		initialContext.bind("java:/comp/env/hmacKey", "abc123");
+		initialContext.bind("java:comp/env/hmacKey", "abc123");
 
 		return initialContext;
 	}

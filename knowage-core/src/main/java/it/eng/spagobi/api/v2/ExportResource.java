@@ -109,7 +109,7 @@ public class ExportResource {
 	public List<Entry> dataset(@DefaultValue("false") @QueryParam("showAll") boolean showAll) throws IOException {
 
 		logger.debug("IN");
-		Utilities exportResourceUtilities = new Utilities();
+		Utilities exportResourceUtilities = Utilities.getInstance();
 
 		List<Entry> ret = exportResourceUtilities.getAllExportedFiles(showAll);
 

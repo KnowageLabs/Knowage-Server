@@ -1,0 +1,28 @@
+{
+    "validations": {
+        "dataset": [
+            {
+                "fieldName": "qbeDataSource",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "qbe-fields-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "qbeDatamarts",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "qbe-fields-required"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
