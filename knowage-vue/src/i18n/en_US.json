@@ -691,6 +691,7 @@
             "editQuery": "Edit Query",
             "editScript": "Edit Script",
             "environment": "Environment",
+            "envIsRequired": "Environment is requried!",
             "facets": "Facets",
             "fieldAlias": "Field Alias",
             "fieldType": "Field Type",
