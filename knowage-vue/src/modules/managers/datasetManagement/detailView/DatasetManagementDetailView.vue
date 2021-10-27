@@ -82,7 +82,7 @@
 <script lang="ts">
 import useValidate from '@vuelidate/core'
 import { defineComponent } from 'vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import detailViewDescriptor from './DatasetManagementDetailViewDescriptor.json'
 import DetailCard from './detailCard/DatasetManagementDetailCard.vue'
 import TypeCard from './typeCard/DatasetManagementTypeCard.vue'
@@ -151,17 +151,18 @@ export default defineComponent({
     methods: {
         //#region ===================== Get All Data ====================================================
         async getSelectedDataset() {
-            axios
+            this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.id}`)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.selectedDataset = response.data[0] ? { ...response.data[0] } : {}
+                    this.selectedDataset.pythonEnvironment ? (this.selectedDataset.pythonEnvironment = JSON.parse(this.selectedDataset.pythonEnvironment ? this.selectedDataset.pythonEnvironment : '{}')) : ''
                 })
                 .catch()
         },
         async getSelectedDatasetVersions() {
-            axios
+            this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/olderversions/${this.id}`)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     response.data.root ? (this.selectedDatasetVersions = response.data.root) : (this.selectedDatasetVersions = [])
                 })
                 .catch()
@@ -189,7 +190,7 @@ export default defineComponent({
             })
         },
         async cloneDataset(datasetId) {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`).then((response) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`).then((response: AxiosResponse<any>) => {
                 delete response.data[0].id
                 response.data[0].label = '...'
                 response.data[0].dsVersions = []
@@ -204,7 +205,7 @@ export default defineComponent({
         async saveDataset() {
             let dsToSave = { ...this.selectedDataset } as any
             let restRequestHeadersTemp = {}
-            if (dsToSave.dsTypeCd.toLowerCase() == 'rest' || dsToSave.dsTypeCd.toLowerCase() == 'python/r' || dsToSave.dsTypeCd.toLowerCase() == 'solr') {
+            if (dsToSave.dsTypeCd.toLowerCase() == 'rest' || dsToSave.dsTypeCd.toLowerCase() == 'solr') {
                 for (let i = 0; i < dsToSave.restRequestHeaders.length; i++) {
                     restRequestHeadersTemp[dsToSave.restRequestHeaders[i]['name']] = dsToSave.restRequestHeaders[i]['value']
                 }
@@ -212,19 +213,20 @@ export default defineComponent({
             dsToSave['restRequestHeaders'] && dsToSave['restRequestHeaders'].length > 0 ? (dsToSave.restRequestHeaders = JSON.stringify(restRequestHeadersTemp)) : (dsToSave.restRequestHeaders = '')
             dsToSave['restJsonPathAttributes'] && dsToSave['restJsonPathAttributes'].length > 0 ? (dsToSave.restJsonPathAttributes = JSON.stringify(dsToSave.restJsonPathAttributes)) : (dsToSave.restJsonPathAttributes = '')
             dsToSave.pars ? '' : (dsToSave.pars = [])
+            dsToSave.pythonEnvironment ? (dsToSave.pythonEnvironment = JSON.stringify(dsToSave.pythonEnvironment)) : ''
             dsToSave.meta ? (dsToSave.meta = await this.manageDatasetFieldMetadata(dsToSave.meta)) : (dsToSave.meta = [])
             dsToSave.recalculateMetadata = true
 
             dsToSave.isScheduled ? (dsToSave.schedulingCronLine = await this.formatCronForSave()) : ''
 
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/`, dsToSave, {
                     headers: {
                         Accept: 'application/json, text/plain, */*',
                         'Content-Type': 'application/json;charset=UTF-8'
                     }
                 })
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.saveTags(dsToSave)
                     this.touched = false
                     this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
@@ -236,7 +238,7 @@ export default defineComponent({
             let tags = {} as any
             tags.versNum = dsToSave.versNum + 1
             tags.tagsToAdd = dsToSave.tags
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${dsToSave.id}/dstags/`, tags, {
                     headers: {
                         Accept: 'application/json, text/plain, */*',

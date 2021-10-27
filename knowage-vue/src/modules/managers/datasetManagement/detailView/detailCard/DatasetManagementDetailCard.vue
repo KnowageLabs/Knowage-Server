@@ -139,7 +139,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import moment from 'moment'
 import useValidate from '@vuelidate/core'
 import detailTabDescriptor from './DatasetManagementDetailCardDescriptor.json'
@@ -213,7 +213,7 @@ export default defineComponent({
             })
         },
         async deleteSelectedVersion(event) {
-            return axios
+            return this.$http
                 .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${event.dsId}/version/${event.versNum}`)
                 .then(() => {
                     this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
@@ -222,7 +222,7 @@ export default defineComponent({
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.error.generic'), msg: error.message }))
         },
         async deleteAllVersions() {
-            return axios
+            return this.$http
                 .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.selectedDataset.id}/allversions/`)
                 .then(() => {
                     this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('managers.datasetManagement.deleteAllVersionsSuccess') })
@@ -243,7 +243,7 @@ export default defineComponent({
         },
         async restoreVersion(dsToRestore) {
             this.$emit('loadingOlderVersion')
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.dataset.id}/restore?versionId=${dsToRestore.versNum}`).then((response) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.dataset.id}/restore?versionId=${dsToRestore.versNum}`).then((response: AxiosResponse<any>) => {
                 this.dataset.dsTypeCd.toLowerCase() == 'file' ? this.refactorFileDatasetConfig(response.data[0]) : ''
                 this.$emit('olderVersionLoaded', response.data[0])
             })

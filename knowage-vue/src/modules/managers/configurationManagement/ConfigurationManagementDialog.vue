@@ -180,7 +180,6 @@
                     return
                 }
                 let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs'
-                console.log(this.configuration)
                 if (this.configuration.id) {
                     this.operation = 'update'
                     url += '/' + this.configuration.id

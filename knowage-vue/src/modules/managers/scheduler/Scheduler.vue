@@ -24,7 +24,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iPackage } from './Scheduler'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import schedulerDescriptor from './SchedulerDescriptor.json'
@@ -56,7 +56,7 @@ export default defineComponent({
             this.loading = true
             this.jobs = []
             let tempJobs = [] as iPackage[]
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/listAllJobs/`).then((response) => (tempJobs = response.data.root))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/listAllJobs/`).then((response: AxiosResponse<any>) => (tempJobs = response.data.root))
             tempJobs.forEach((el: iPackage) => {
                 if (el.jobGroup === 'BIObjectExecutions') {
                     this.jobs.push({ ...el, numberOfDocuments: el.documents.length })
@@ -88,9 +88,9 @@ export default defineComponent({
         async deleteJob(jobName: string) {
             this.loading = true
             let tempResponse = null as any
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/deleteJob?jobGroup=BIObjectExecutions&jobName=${jobName}`)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
