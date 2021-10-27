@@ -1181,7 +1181,12 @@
             }
         },
         "myData": {},
-        "myModels": {},
+        "myModels": {
+            "deleteDataset": "Delete dataset",
+            "editDataset": "Edit dataset",
+            "openInQBE": "Open dataset in QBE",
+            "title": "My Models"
+        },
         "myRepository": {
             "newFolderTitle": "Create new folder"
         },

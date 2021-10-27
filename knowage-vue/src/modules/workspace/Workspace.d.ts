@@ -68,3 +68,29 @@ export interface ISchedulation {
     sequence: any,
     urlPath?: string
 }
+
+export interface IBusinessModel {
+    id: number,
+    name: string,
+    description: string,
+    category: number,
+    dataSourceLabel: string,
+    dataSourceId: number,
+    modelLocked: boolean,
+    modelLocker: any,
+    smartView: boolean,
+    tablePrefixLike: any,
+    tablePrefixNotLike: any,
+    drivers: any[],
+    metamodelDrivers: any
+}
+
+export interface IFederatedDataset {
+    federation_id: number,
+    name: string,
+    label: string,
+    description: string,
+    relationships: string,
+    degenerated: boolean,
+    owner: null
+}

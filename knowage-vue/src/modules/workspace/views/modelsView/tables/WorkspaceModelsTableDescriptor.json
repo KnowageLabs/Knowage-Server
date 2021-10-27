@@ -1,0 +1,36 @@
+{
+    "businessColumns": [
+        {
+            "field": "name",
+            "header": "common.name"
+        },
+        {
+            "field": "description",
+            "header": "common.description"
+        }
+    ],
+    "federatedColumns": [
+        {
+            "field": "label",
+            "header": "common.label"
+        },
+        {
+            "field": "name",
+            "header": "common.name"
+        }
+    ],
+    "iconColumn": {
+        "style": {
+            "text-align": "end",
+            "width": "5%"
+        }
+    },
+    "styles": {
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        }
+    }
+}
