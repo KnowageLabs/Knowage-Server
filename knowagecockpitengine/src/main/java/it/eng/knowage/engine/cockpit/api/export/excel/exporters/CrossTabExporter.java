@@ -77,7 +77,7 @@ import it.eng.spagobi.utilities.messages.EngineMessageBundle;
  *
  * @author Alberto Ghedin (alberto.ghedin@eng.it), Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public class CrossTabExporter extends GenericExporter implements IWidgetExporter {
+public class CrossTabExporter extends GenericWidgetExporter implements IWidgetExporter {
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(CrossTabExporter.class);
