@@ -1,16 +1,18 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary" style="width:100%">
         <template #left>
-            <Button id="showSidenavIcon" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
+            <Button id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
             {{ $t('workspace.menuLabels.recentDocuments') }}
         </template>
         <template #right>
-            <FabButton icon="fas fa-folder" data-test="new-folder-button" />
+            <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
+            <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
         </template>
     </Toolbar>
     <InputText class="kn-material-input p-m-2" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
     <div class="p-m-2 overflow">
         <DataTable
+            v-if="!toggleCardDisplay"
             class="p-datatable-sm kn-table"
             :value="recentDocumentsList"
             :loading="loading"
@@ -38,6 +40,7 @@
                 </template>
             </Column>
         </DataTable>
+        <WorkspaceCard v-if="toggleCardDisplay" :document="recentDocumentsList" />
     </div>
 
     <DetailSidebar :visible="showDetailSidebar" :viewType="'recent'" :document="selectedDocument" @executeRecent="executeRecent" @close="showDetailSidebar = false" />
@@ -47,18 +50,20 @@ import { filterDefault } from '@/helpers/commons/filterHelper'
 import { defineComponent } from 'vue'
 import { IDocument } from '@/modules/workspace/Workspace'
 import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
+import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
 import workspaceDescriptor from './WorkspaceRecentViewDescriptor.json'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 
 export default defineComponent({
-    components: { DataTable, Column, DetailSidebar },
+    components: { DataTable, Column, DetailSidebar, WorkspaceCard },
     emits: ['showMenu'],
     data() {
         return {
             workspaceDescriptor,
             loading: false,
             showDetailSidebar: false,
+            toggleCardDisplay: false,
             recentDocumentsList: [] as IDocument[],
             selectedDocument: {} as IDocument,
             filters: {
@@ -85,6 +90,9 @@ export default defineComponent({
         },
         executeRecent() {
             console.log('executeRecent() {')
+        },
+        toggleDisplayView() {
+            this.toggleCardDisplay = this.toggleCardDisplay ? false : true
         }
     }
 })
