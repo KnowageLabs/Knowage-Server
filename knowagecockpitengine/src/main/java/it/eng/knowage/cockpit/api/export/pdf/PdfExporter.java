@@ -93,7 +93,7 @@ public class PdfExporter extends AbstractFormatExporter {
 		} catch (IOException e) {
 			throw new SpagoBIRuntimeException("Unable to generate output file", e);
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Cannot export data to excel", e);
+			throw new SpagoBIRuntimeException("Cannot export data to PDF", e);
 		}
 
 	}
@@ -106,13 +106,7 @@ public class PdfExporter extends AbstractFormatExporter {
 			JSONObject style = widget.optJSONObject("style");
 
 			int offset = 0;
-			int fetchSize = FETCH_SIZE;
-			int maxFetchSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
-			if (fetchSize > maxFetchSize) {
-				logger.warn(
-						"Excel export FETCH_SIZE exceeds SPAGOBI.API.DATASET.MAX_ROWS_NUMBER environment variable. FETCH_SIZE value is being overwritten at runtime");
-				fetchSize = maxFetchSize;
-			}
+			int fetchSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
 			JSONObject dataStore = this.getDataStoreForWidget(template, widget, offset, fetchSize);
 			int totalNumberOfRows = dataStore.getInt("results");
 			PDPage page = createPage(settings, widget);

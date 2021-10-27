@@ -33,10 +33,10 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  * @author Marco Balestri (marco.balestri@eng.it)
  */
 
-public class ExcelExporterClient extends SimpleRestClient {
+public class ExporterClient extends SimpleRestClient {
 	private final String serviceUrl = "/restful-services/2.0/datasets/%s/data";
 
-	static protected Logger logger = Logger.getLogger(ExcelExporterClient.class);
+	static protected Logger logger = Logger.getLogger(ExporterClient.class);
 
 	public JSONObject getDataStore(Map<String, Object> parameters, String datasetLabel, String userId, String body) throws Exception {
 		// if pagination is disabled offset = 0, fetchSize = -1

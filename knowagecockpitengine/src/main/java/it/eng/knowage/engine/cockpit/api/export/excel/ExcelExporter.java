@@ -244,7 +244,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 						options.put("style", widget.getJSONObject("content").getJSONObject("style"));
 						// variables cannot be retrieved from template so we must recover them from request body
 						options.put("variables", getCockpitVariables());
-						ExcelExporterClient client = new ExcelExporterClient();
+						ExporterClient client = new ExporterClient();
 						int datasetId = widget.getJSONObject("dataset").getInt("dsId");
 						String dsLabel = getDatasetLabel(template, datasetId);
 						String selections = getCockpitSelectionsFromBody(widget).toString();

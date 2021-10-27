@@ -31,7 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporterClient;
+import it.eng.knowage.engine.cockpit.api.export.excel.ExporterClient;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
@@ -40,7 +40,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public abstract class AbstractFormatExporter {
 	static private Logger logger = Logger.getLogger(AbstractFormatExporter.class);
-	protected static final int FETCH_SIZE = 50000;
 	protected Locale locale;
 	protected final String userUniqueIdentifier;
 	protected final JSONObject body;
@@ -240,7 +239,7 @@ public abstract class AbstractFormatExporter {
 	}
 
 	protected JSONObject getDatastore(String datasetLabel, Map<String, Object> map, String selections, int offset, int fetchSize) {
-		ExcelExporterClient client = new ExcelExporterClient();
+		ExporterClient client = new ExporterClient();
 		try {
 			JSONObject datastore = client.getDataStore(map, datasetLabel, userUniqueIdentifier, selections, offset, fetchSize);
 			return datastore;
