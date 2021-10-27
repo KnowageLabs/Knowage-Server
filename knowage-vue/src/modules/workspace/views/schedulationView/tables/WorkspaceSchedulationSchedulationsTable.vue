@@ -27,7 +27,7 @@ import workspaceSchedulationSchedulationsTableDescriptor from './WorkspaceSchedu
 export default defineComponent({
     name: 'workspace-schedulation-schedulations-list',
     components: { Checkbox, Column, DataTable },
-    props: { triggers: { type: Array }, index: { type: Number }, propSelectedSchedulations: { type: Array } },
+    props: { triggers: { type: Array }, index: { type: Number }, propSelectedSchedulations: { type: Object } },
     emits: ['runSchedulationClick', 'selectedSchedulations'],
     data() {
         return {

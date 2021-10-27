@@ -72,6 +72,7 @@
         "tags": "tags",
         "tenant": "tenant",
         "test": "test",
+        "time": "Time",
         "toast": {
             "cloneConfirmTitle": "Confirm item clone?",
             "createTitle": "Created",
@@ -1191,6 +1192,7 @@
         },
         "schedulation": {
             "executedSchedulations": "Executed schedulations",
+            "oldSchedulationsMessage": "In the following table you will find all executed schedulations from selected job.",
             "ranSchedulations": "View ran schedulations",
             "title": "Schedulations"
         }
