@@ -202,19 +202,11 @@ public class PdfExporter extends AbstractExporter {
 					Object value = rowObject.get(colIndex);
 					if (value != null) {
 						String valueStr = value.toString();
-						if (type.equalsIgnoreCase("float")) {
-							int precision = 2;
-							try {
-								precision = columnStyles[c].getInt("precision");
-							} catch (Exception e) {
-								// fallback default
-								precision = 2;
-							}
+						if (type.equalsIgnoreCase("float") && columnStyles[c] != null && columnStyles[c].has("precision")) {
+							int precision = columnStyles[c].optInt("precision");
 							int pos = valueStr.indexOf(".");
-							int offset = 1;
-							if (precision == 0)
-								offset = 0;
 							// offset = 0 se devo tagliare fuori anche la virgola ( in caso precision fosse 0 )
+							int offset = (precision == 0 ? 0 : 1);
 							if (pos != -1 && valueStr.length() >= pos + precision + offset) {
 								try {
 									valueStr = valueStr.substring(0, pos + precision + offset);
@@ -222,6 +214,8 @@ public class PdfExporter extends AbstractExporter {
 									// value stays as it is
 									logger.error("Cannot format value according to precision", e);
 								}
+							} else {
+								logger.warn("Cannot format raw value {" + valueStr + "} with precision {" + precision + "}");
 							}
 						}
 						Cell<PDPage> cell = row.createCell(columnPercentWidths[c], valueStr, HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
@@ -307,7 +301,6 @@ public class PdfExporter extends AbstractExporter {
 			Color color = getColorFromString(rgbColor, null);
 			return color;
 		} catch (Exception e) {
-			logger.error("Error while getting custom column background color.", e);
 			return null;
 		}
 	}
@@ -318,7 +311,6 @@ public class PdfExporter extends AbstractExporter {
 			Color color = getColorFromString(rgbColor, null);
 			return color;
 		} catch (Exception e) {
-			logger.error("Error while getting custom column text color.", e);
 			return null;
 		}
 	}
@@ -331,7 +323,7 @@ public class PdfExporter extends AbstractExporter {
 				JSONObject orderedCol = columnsOrdered.getJSONObject(i);
 				for (int j = 0; j < columns.length(); j++) {
 					JSONObject col = columns.getJSONObject(j);
-					if (orderedCol.getString("header").equals(col.getString("alias"))) {
+					if (orderedCol.getString("header").equals(col.getString("aliasToShow"))) {
 						if (col.has("style")) {
 							toReturn[i] = col.getJSONObject("style");
 						}
@@ -357,6 +349,8 @@ public class PdfExporter extends AbstractExporter {
 
 	private Color getColorFromString(String rgbColor, Color defaultColor) {
 		try {
+			if (rgbColor == null || rgbColor.isEmpty())
+				return defaultColor;
 			String[] colors = rgbColor.substring(4, rgbColor.length() - 1).split(",");
 			int r = Integer.parseInt(colors[0].trim());
 			int g = Integer.parseInt(colors[1].trim());

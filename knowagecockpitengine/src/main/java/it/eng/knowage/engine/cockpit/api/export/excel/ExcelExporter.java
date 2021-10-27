@@ -745,7 +745,7 @@ public class ExcelExporter {
 				JSONObject orderedCol = columnsOrdered.getJSONObject(i);
 				for (int j = 0; j < columns.length(); j++) {
 					JSONObject col = columns.getJSONObject(j);
-					if (orderedCol.getString("header").equals(col.getString("alias"))) {
+					if (orderedCol.getString("header").equals(col.getString("aliasToShow"))) {
 						if (col.has("style")) {
 							toReturn[i] = col.getJSONObject("style");
 						}
