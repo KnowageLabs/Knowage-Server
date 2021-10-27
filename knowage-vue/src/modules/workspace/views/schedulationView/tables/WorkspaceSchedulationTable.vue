@@ -1,17 +1,5 @@
 <template>
-    <DataTable
-        :value="jobs"
-        id="jobs-table"
-        class="p-datatable-sm kn-table"
-        v-model:expandedRows="expandedRows"
-        dataKey="jobName"
-        v-model:filters="filters"
-        :globalFilterFields="workspaceSchedulationTableDescriptor.globalFilterFields"
-        :paginator="true"
-        :rows="20"
-        responsiveLayout="stack"
-        breakpoint="960px"
-    >
+    <DataTable :value="jobs" id="jobs-table" class="p-datatable-sm kn-table" dataKey="jobName" v-model:filters="filters" :globalFilterFields="workspaceSchedulationTableDescriptor.globalFilterFields" :paginator="true" :rows="20" responsiveLayout="stack" breakpoint="960px">
         <template #header>
             <div class="table-header p-d-flex p-ai-center">
                 <span id="search-container" class="p-input-icon-left p-mr-3">
@@ -26,17 +14,6 @@
             </Message>
         </template>
 
-        <template #expansion="slotProps">
-            <WorkspaceSchedulationSchedulationsTable
-                class="p-m-4"
-                :triggers="slotProps.data.triggers"
-                :index="slotProps.index"
-                :propSelectedSchedulations="selectedSchedulations"
-                @runSchedulationClick="$emit('runSchedulationClick', $event)"
-                @selectedSchedulations="setSelectedSchedulations"
-            ></WorkspaceSchedulationSchedulationsTable>
-        </template>
-        <Column :expander="true" :headerStyle="workspaceSchedulationTableDescriptor.expanderHeaderStyle" />
         <Column class="kn-truncated" v-for="col of workspaceSchedulationTableDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"></Column>
         <Column :style="workspaceSchedulationTableDescriptor.iconColumn.style">
             <template #body="slotProps">
@@ -53,21 +30,18 @@ import { filterDefault } from '@/helpers/commons/filterHelper'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
-import WorkspaceSchedulationSchedulationsTable from './WorkspaceSchedulationSchedulationsTable.vue'
 import workspaceSchedulationTableDescriptor from './WorkspaceSchedulationTableDescriptor.json'
 
 export default defineComponent({
     name: 'workspace-schedulation-table',
-    components: { Column, DataTable, Message, WorkspaceSchedulationSchedulationsTable },
+    components: { Column, DataTable, Message },
     props: { propJobs: { type: Array } },
-    emits: ['runSchedulationClick', 'schedulationsSelected', 'viewOldSchedulationsClick'],
+    emits: ['viewOldSchedulationsClick'],
     data() {
         return {
             workspaceSchedulationTableDescriptor,
             jobs: [] as IPackage[],
-            expandedRows: [] as any[],
-            filters: { global: [filterDefault] } as Object,
-            selectedSchedulations: {} as any
+            filters: { global: [filterDefault] } as Object
         }
     },
     watch: {
@@ -81,16 +55,11 @@ export default defineComponent({
     methods: {
         loadJobs() {
             this.jobs = this.propJobs as IPackage[]
-            console.log('LOADED JOBS: ', this.jobs)
+            // console.log('LOADED JOBS: ', this.jobs)
         },
         viewRanSchedulations(job: IPackage) {
-            console.log('VIEW RAN SCHEDULATIOSN FOR JOB: ', job)
+            // console.log('VIEW RAN SCHEDULATIOSN FOR JOB: ', job)
             this.$emit('viewOldSchedulationsClick', job)
-        },
-        setSelectedSchedulations(payload: any) {
-            this.selectedSchedulations[payload.index] = payload.schedulations
-            // console.log('MAIN SELECTED SCHEDULATIONS: ', this.selectedSchedulations)
-            this.$emit('schedulationsSelected', this.selectedSchedulations)
         }
     }
 })
