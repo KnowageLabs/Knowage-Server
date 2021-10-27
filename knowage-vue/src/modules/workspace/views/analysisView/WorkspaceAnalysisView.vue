@@ -98,23 +98,23 @@ export default defineComponent({
             let fDate = new Date(date)
             return fDate.toLocaleString()
         },
-        executeAnalysisDocument() {
-            console.log('executeAnalysisDocument')
+        executeAnalysisDocument(event) {
+            console.log('executeAnalysisDocument', event)
         },
-        editAnalysisDocument() {
-            console.log('editAnalysisDocument')
+        editAnalysisDocument(event) {
+            console.log('editAnalysisDocument', event)
         },
-        shareAnalysisDocument() {
-            console.log('shareAnalysisDocument')
+        shareAnalysisDocument(event) {
+            console.log('shareAnalysisDocument', event)
         },
-        cloneAnalysisDocument() {
-            console.log('cloneAnalysisDocument')
+        cloneAnalysisDocument(event) {
+            console.log('cloneAnalysisDocument', event)
         },
-        deleteAnalysisDocument() {
-            console.log('deleteAnalysisDocument')
+        deleteAnalysisDocument(event) {
+            console.log('deleteAnalysisDocument', event)
         },
-        uploadAnalysisPreviewFile() {
-            console.log('uploadAnalysisPreviewFile')
+        uploadAnalysisPreviewFile(event) {
+            console.log('uploadAnalysisPreviewFile', event)
         }
     }
 })

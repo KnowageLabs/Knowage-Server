@@ -88,8 +88,8 @@ export default defineComponent({
             let fDate = new Date(date)
             return fDate.toLocaleString()
         },
-        executeRecent() {
-            console.log('executeRecent() {')
+        executeRecent(event) {
+            console.log('executeRecent() {', event)
         },
         toggleDisplayView() {
             this.toggleCardDisplay = this.toggleCardDisplay ? false : true

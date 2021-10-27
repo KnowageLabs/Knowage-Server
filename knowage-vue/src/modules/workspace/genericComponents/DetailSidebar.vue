@@ -81,7 +81,7 @@ export default defineComponent({
                     label: this.$t('workspace.myAnalysis.menuItems.share'),
                     icon: 'fas fa-share',
                     command: () => {
-                        this.$emit('shareAnalysisDocument')
+                        this.$emit('shareAnalysisDocument', this.selectedDocument)
                     }
                 },
                 {
@@ -89,7 +89,7 @@ export default defineComponent({
                     label: this.$t('workspace.myAnalysis.menuItems.clone'),
                     icon: 'fas fa-clone',
                     command: () => {
-                        this.$emit('cloneAnalysisDocument')
+                        this.$emit('cloneAnalysisDocument', this.selectedDocument)
                     }
                 },
                 {
@@ -97,7 +97,7 @@ export default defineComponent({
                     label: this.$t('workspace.myAnalysis.menuItems.delete'),
                     icon: 'fas fa-trash',
                     command: () => {
-                        this.$emit('deleteAnalysisDocument')
+                        this.$emit('deleteAnalysisDocument', this.selectedDocument)
                     }
                 },
                 {
@@ -105,7 +105,7 @@ export default defineComponent({
                     label: this.$t('workspace.myAnalysis.menuItems.upload'),
                     icon: 'fas fa-share-alt',
                     command: () => {
-                        this.$emit('uploadAnalysisPreviewFile')
+                        this.$emit('uploadAnalysisPreviewFile', this.selectedDocument)
                     }
                 }
             ]
@@ -128,7 +128,6 @@ export default defineComponent({
         visible() {
             this.sidebarVisible = this.visible
             this.selectedDocument = this.document
-            console.log(this.selectedDocument)
         }
     },
     methods: {
@@ -143,22 +142,22 @@ export default defineComponent({
         },
         //iz nekog razloga ne mogu samo da stavim this.$emit(), direkno u komandi dugmeta, ako to odradim pozivaju se emiteri samo kada se kreira komponenta, posle toga ne, al ovako radi
         emitExecuteRecent() {
-            this.$emit('executeRecent')
+            this.$emit('executeRecent', this.selectedDocument)
         },
         emitExecuteDocumentFromOrganizer() {
-            this.$emit('executeDocumentFromOrganizer')
+            this.$emit('executeDocumentFromOrganizer', this.selectedDocument)
         },
         emitMoveDocumentToFolder() {
-            this.$emit('moveDocumentToFolder')
+            this.$emit('moveDocumentToFolder', this.selectedDocument)
         },
         emitDeleteDocumentFromOrganizer() {
-            this.$emit('deleteDocumentFromOrganizer')
+            this.$emit('deleteDocumentFromOrganizer', this.selectedDocument)
         },
         emitExecuteAnalysisDocument() {
-            this.$emit('executeAnalysisDocument')
+            this.$emit('executeAnalysisDocument', this.selectedDocument)
         },
         emitEditAnalysisDocument() {
-            this.$emit('editAnalysisDocument')
+            this.$emit('editAnalysisDocument', this.selectedDocument)
         }
     }
 })

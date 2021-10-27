@@ -199,14 +199,14 @@ export default defineComponent({
         logEvent(event) {
             console.log(event)
         },
-        executeDocumentFromOrganizer() {
-            console.log('executeDocumentFromOrganizer() {')
+        executeDocumentFromOrganizer(event) {
+            console.log('executeDocumentFromOrganizer() {', event)
         },
-        moveDocumentToFolder() {
-            console.log('moveDocumentToFolder() {')
+        moveDocumentToFolder(event) {
+            console.log('moveDocumentToFolder() {', event)
         },
-        deleteDocumentFromOrganizer() {
-            console.log('deleteDocumentFromOrganizer() {')
+        deleteDocumentFromOrganizer(event) {
+            console.log('deleteDocumentFromOrganizer() {', event)
         }
     }
 })
