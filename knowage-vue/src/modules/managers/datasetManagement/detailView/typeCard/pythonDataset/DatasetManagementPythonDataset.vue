@@ -2,11 +2,12 @@
     <Card class="p-mt-3">
         <template #content>
             <div class="p-field-radiobutton">
-                <RadioButton name="Python" value="python" v-model="dataset.pythonDatasetType" @click="dataset.pythonEnvironment = null" />
+                <RadioButton name="Python" value="python" v-model="dataset.pythonDatasetType" @click="resetPythonEnv" />
                 <label for="Python">Python</label>
-                <RadioButton name="R" class="p-ml-3" value="r" v-model="dataset.pythonDatasetType" @click="dataset.pythonEnvironment = null" />
+                <RadioButton name="R" class="p-ml-3" value="r" v-model="dataset.pythonDatasetType" @click="resetPythonEnv" />
                 <label for="R">R</label>
             </div>
+            {{ this.dataset.pythonEnvironment }}
             <form class="p-fluid p-formgrid p-grid p-mt-2">
                 <div class="p-field p-col-6">
                     <span class="p-float-label">
@@ -160,6 +161,12 @@ export default defineComponent({
         updateValueFromLabel(optionsArray, fieldToUpdate, updatedField) {
             const selectedField = optionsArray.find((option) => option.label === updatedField)
             selectedField ? (this.dataset.pythonEnvironment[fieldToUpdate] = selectedField.value) : ''
+        },
+        resetPythonEnv() {
+            this.dataset.pythonEnvironment = {
+                label: '',
+                value: ''
+            }
         }
     }
 })

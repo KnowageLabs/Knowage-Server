@@ -122,7 +122,7 @@ export default defineComponent({
             this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/${sourceId}/metatables/`)
                 .then((response: AxiosResponse<any>) => {
-                    if (response.data.lenth > 0) {
+                    if (response.data.length > 0) {
                         this.availableTables = this.removeSelectedTablesFromAvailable(response.data, this.selectedTables)
                     } else {
                         this.$store.commit('setInfo', { title: this.$t('importExport.gallery.column.info'), msg: this.$t('managers.datasetManagement.noTablesToLink') })
