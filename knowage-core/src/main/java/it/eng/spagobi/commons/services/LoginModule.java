@@ -392,7 +392,7 @@ public class LoginModule extends AbstractHttpModule {
 			getHttpResponse().sendRedirect("/knowage-vue");
 		} else {
 			URL url = new URL(getHttpRequest().getRequestURL().toString());
-			URL newUrl = new URL("http", url.getHost(), 3000, "/knowage-vue");
+			URL newUrl = new URL(url.getProtocol(), url.getHost(), 3000, "/knowage-vue");
 
 			getHttpResponse().sendRedirect(newUrl.toString());
 		}

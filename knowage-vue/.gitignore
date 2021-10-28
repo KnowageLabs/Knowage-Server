@@ -2,6 +2,7 @@
 node_modules
 /dist
 /src/main/webapp
+/src/overlay
 
 
 # local env files
@@ -13,6 +14,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+
+# Overlay.routes.js file
+/src/overlay/Overlay.routes.js
 
 # Editor directories and files
 .idea
