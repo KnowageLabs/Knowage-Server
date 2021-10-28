@@ -1,6 +1,7 @@
 import genericFunctionalityRoutes from '@/overlay/GenericFunctionality/GenericFunctionality.routes.js'
-import dataEntryRoutes from '@/overlay/DataEntry/DataEntry.routes.js'
 
-const baseRoutes = genericFunctionalityRoutes.concat(dataEntryRoutes)
+const baseRoutes = []
+
+baseRoutes.concat(genericFunctionalityRoutes)
 
 export default baseRoutes
