@@ -15,6 +15,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Overlay.routes.js file
+/src/overlay/Overlay.routes.js
+
 # Editor directories and files
 .idea
 .vscode
