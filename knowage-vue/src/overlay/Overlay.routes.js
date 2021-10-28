@@ -1,7 +1,5 @@
 import genericFunctionalityRoutes from '@/overlay/GenericFunctionality/GenericFunctionality.routes.js'
 
-const baseRoutes = []
-
-baseRoutes.concat(genericFunctionalityRoutes)
+const baseRoutes = genericFunctionalityRoutes
 
 export default baseRoutes
