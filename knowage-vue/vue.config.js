@@ -4,7 +4,7 @@ module.exports = {
     publicPath: process.env.VUE_APP_PUBLIC_PATH,
     outputDir: './src/main/webapp',
     devServer: {
-        https: process.env.VUE_APP_HOST_HTTPS,
+        https: Boolean(process.env.VUE_APP_HOST_HTTPS),
         proxy: {
             '^/knowagedossierengine/api': {
                 target: process.env.VUE_APP_HOST_URL,
