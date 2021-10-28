@@ -1,17 +1,27 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-d-flex p-flex-row">
         <template #left>
+            <Button id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
             {{ $t('workspace.myModels.title') }}
         </template>
-
-        <template #right> <KnFabButton v-if="tableMode === 'Federated'" icon="fas fa-plus" @click="createNewFederation"></KnFabButton> </template>
+        <template #right>
+            <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
+            <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
+            <KnFabButton v-if="tableMode === 'Federated'" icon="fas fa-plus" @click="createNewFederation" />
+        </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
     <div class="p-d-flex p-flex-row p-ai-center">
         <InputText id="model-search" class="kn-material-input p-m-3" v-model="searchWord" :placeholder="$t('common.search')" @input="searchItems" />
         <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" />
     </div>
-    <WorkspaceModelsTable class="p-m-2" :propItems="tableItems" :tableMode="tableMode" @selected="setSelectedModel" @openDatasetInQBEClick="openDatasetInQBE" @editDatasetClick="editDataset" @deleteDatasetClick="deleteDatasetConfirm"></WorkspaceModelsTable>
+
+    <div class="p-m-2 overflow">
+        <WorkspaceModelsTable class="p-m-2" v-if="!toggleCardDisplay" :propItems="tableItems" :tableMode="tableMode" @selected="setSelectedModel" @openDatasetInQBEClick="openDatasetInQBE" @editDatasetClick="editDataset" @deleteDatasetClick="deleteDatasetConfirm"></WorkspaceModelsTable>
+        <div v-if="toggleCardDisplay" class="p-grid p-m-2">
+            <WorkspaceCard v-for="(document, index) of tableItems" :key="index" :viewType="selectedModel && selectedModel.federation_id ? 'federationDataset' : 'businessModel'" :document="document" />
+        </div>
+    </div>
 
     <DetailSidebar
         :visible="showDetailSidebar"
@@ -28,13 +38,16 @@
 import { defineComponent } from 'vue'
 import { IBusinessModel, IFederatedDataset } from '../../Workspace'
 import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
+import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import SelectButton from 'primevue/selectbutton'
 import WorkspaceModelsTable from './tables/WorkspaceModelsTable.vue'
 
 export default defineComponent({
     name: 'workspace-models-view',
-    components: { DetailSidebar, KnFabButton, SelectButton, WorkspaceModelsTable },
+    components: { DetailSidebar, KnFabButton, SelectButton, WorkspaceModelsTable, WorkspaceCard },
+    emits: ['showMenu', 'toggleDisplayView'],
+    props: { toggleCardDisplay: { type: Boolean } },
     data() {
         return {
             businessModels: [] as IBusinessModel[],
@@ -152,6 +165,9 @@ export default defineComponent({
             this.selectedModel = model
             this.showDetailSidebar = true
             console.log('SELECTED MODEL: ', this.selectedModel)
+        },
+        toggleDisplayView() {
+            this.$emit('toggleDisplayView')
         }
     }
 })

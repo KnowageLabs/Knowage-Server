@@ -5,12 +5,15 @@
             {{ $t('workspace.menuLabels.myAnalysis') }}
         </template>
         <template #right>
-            <FabButton icon="fas fa-folder" data-test="new-folder-button" />
+            <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="$emit('toggleDisplayView')" />
+            <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="$emit('toggleDisplayView')" />
+            <KnFabButton icon="fas fa-plus" data-test="new-folder-button" />
         </template>
     </Toolbar>
     <InputText class="kn-material-input p-m-2" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
     <div class="p-m-2 overflow">
         <DataTable
+            v-if="!toggleCardDisplay"
             class="p-datatable-sm kn-table"
             :value="analysisDocuments"
             :loading="loading"
@@ -44,6 +47,9 @@
                 </template>
             </Column>
         </DataTable>
+        <div v-if="toggleCardDisplay" class="p-grid p-m-2">
+            <WorkspaceCard v-for="(document, index) of analysisDocuments" :key="index" :viewType="'analysis'" :document="document" />
+        </div>
     </div>
     <DetailSidebar
         :visible="showDetailSidebar"
@@ -63,12 +69,16 @@ import { defineComponent } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import analysisDescriptor from './WorkspaceAnalysisViewDescriptor.json'
 import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
+import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
+import KnFabButton from '@/components/UI/KnFabButton.vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 
 export default defineComponent({
-    components: { DataTable, Column, DetailSidebar },
-    emits: ['showMenu'],
+    name: 'workspace-analysis-view',
+    components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton },
+    emits: ['showMenu', 'toggleDisplayView'],
+    props: { toggleCardDisplay: { type: Boolean } },
     data() {
         return {
             analysisDescriptor,

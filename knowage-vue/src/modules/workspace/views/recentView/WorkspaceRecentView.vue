@@ -40,8 +40,8 @@
                 </template>
             </Column>
         </DataTable>
-        <div v-if="toggleCardDisplay" class="p-mb-5">
-            <WorkspaceCard v-for="(field, index) of recentDocumentsList" :key="index" :document="recentDocumentsList" />
+        <div v-if="toggleCardDisplay" class="p-grid p-m-2">
+            <WorkspaceCard v-for="(document, index) of recentDocumentsList" :key="index" :viewType="'recent'" :document="document" />
         </div>
     </div>
 
@@ -59,13 +59,13 @@ import Column from 'primevue/column'
 
 export default defineComponent({
     components: { DataTable, Column, DetailSidebar, WorkspaceCard },
-    emits: ['showMenu'],
+    emits: ['showMenu', 'toggleDisplayView'],
+    props: { toggleCardDisplay: { type: Boolean } },
     data() {
         return {
             workspaceDescriptor,
             loading: false,
             showDetailSidebar: false,
-            toggleCardDisplay: false,
             recentDocumentsList: [] as IDocument[],
             selectedDocument: {} as IDocument,
             filters: {
@@ -94,7 +94,7 @@ export default defineComponent({
             console.log('executeRecent() {', event)
         },
         toggleDisplayView() {
-            this.toggleCardDisplay = this.toggleCardDisplay ? false : true
+            this.$emit('toggleDisplayView')
         }
     }
 })
