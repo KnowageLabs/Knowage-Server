@@ -910,6 +910,7 @@
                 "dataset": "Dataset",
                 "details": "Details",
                 "documents": "Documents",
+                "duplicateWord": "Word exists, it is impossible to add it twice.",
                 "formula": "Formula",
                 "glossaryHint": "Select a glossary to read the available words",
                 "hierarchyScope": "Hierarchy Scope",

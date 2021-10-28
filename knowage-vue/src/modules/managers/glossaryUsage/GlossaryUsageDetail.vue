@@ -209,10 +209,11 @@ export default defineComponent({
             this.loading = true
             await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasets/?asPagedList=true&Page=1&ItemPerPage=&label=')
-                .then((response: AxiosResponse<any>) => {
-                    response.data.item.forEach((el: any) =>
+                .then((response) => {
+                    response.data.item.forEach((el: any) => {
                         this.linkTableItems.push({
                             id: el.id.dsId,
+                            datasetId: el.id.dsId,
                             name: el.label,
                             description: el.description,
                             type: el.type,
@@ -220,7 +221,7 @@ export default defineComponent({
                             organization: el.id.organization,
                             itemType: 'dataset'
                         })
-                    )
+                    })
                     this.showLinkTable(this.$t('managers.glossary.glossaryUsage.dataset'))
                 })
                 .finally(() => (this.loading = false))

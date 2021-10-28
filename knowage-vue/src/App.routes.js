@@ -4,6 +4,7 @@ import managersRoutes from '@/modules/managers/managers.routes.js'
 import importExportRoutes from '@/modules/importExport/ImportExport.routes.js'
 import kpiRoutes from '@/modules/kpi/kpi.routes.js'
 import documentExecutionRoutes from '@/modules/documentExecution/documentExecution.routes.js'
+import overlayRoutes from '@/overlay/Overlay.routes.js'
 
 const baseRoutes = [
     {
@@ -58,6 +59,7 @@ const routes = baseRoutes
     .concat(importExportRoutes)
     .concat(kpiRoutes)
     .concat(documentExecutionRoutes)
+    .concat(overlayRoutes)
 
 const router = createRouter({
     base: process.env.VUE_APP_PUBLIC_PATH,
