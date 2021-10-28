@@ -1,6 +1,9 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left> {{ $t('workspace.federationDefinition.title') }}</template>
+        <template #right>
+            <Button class="kn-button p-button-text p-button-rounded" @click="closeFederationDefinition"> {{ $t('common.close') }}</Button></template
+        >
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
@@ -16,6 +19,7 @@
         </div>
 
         <WorskpaceFederationDatasetDialog :visible="infoDialogVisible" :dataset="selectedDataset" @close="closeInfoDialog"></WorskpaceFederationDatasetDialog>
+        <WorkspaceFederationWarningDialog :visible="warningDialogVisbile" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceFederationWarningDialog>
     </div>
 </template>
 
@@ -23,11 +27,12 @@
 import { defineComponent } from 'vue'
 import { IFederatedDataset } from '../Workspace'
 import WorskpaceFederationDatasetDialog from './dialogs/WorskpaceFederationDatasetDialog.vue'
+import WorkspaceFederationWarningDialog from './dialogs/WorkspaceFederationWarningDialog.vue'
 import WorkspaceFederationDatasetList from './WorkspaceFederationDatasetList.vue'
 
 export default defineComponent({
     name: 'workspace-federation-definition',
-    components: { WorkspaceFederationDatasetList, WorskpaceFederationDatasetDialog },
+    components: { WorkspaceFederationDatasetList, WorskpaceFederationDatasetDialog, WorkspaceFederationWarningDialog },
     props: { id: { type: String } },
     data() {
         return {
@@ -39,6 +44,8 @@ export default defineComponent({
             multiRelationships: [] as any[],
             selectedDataset: null as any,
             infoDialogVisible: false,
+            warningDialogVisbile: false,
+            warningMessage: '' as string,
             user: null as any,
             step: 0,
             loading: false
@@ -60,10 +67,10 @@ export default defineComponent({
             if (this.id) {
                 await this.loadFederatedDataset()
                 this.formatRelationship()
-                this.setSelectedDatasets()
             } else {
                 this.federatedDataset = { name: '', label: '', description: '', relationships: [], degenerated: false, owner: this.user.userId }
             }
+            this.setSelectedDatasets()
             this.loading = false
         },
         async loadFederatedDataset() {
@@ -72,7 +79,14 @@ export default defineComponent({
             // console.log('LOADED FEDERATED DATASET: ', this.federatedDataset)
         },
         async loadDatasets() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/?includeDerived=no`).then((response) => (this.datasets = response.data))
+            this.datasets = []
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/?includeDerived=no`).then((response) => {
+                response.data.forEach((el: any) => {
+                    if (el.pars.length === 0) {
+                        this.datasets.push(el)
+                    }
+                })
+            })
 
             // console.log('LOADED DATASETS: ', this.datasets)
         },
@@ -97,14 +111,28 @@ export default defineComponent({
                 })
 
                 if (index !== -1) {
-                    this.selectedDatasets.push(this.datasets[index])
+                    this.selectedDatasets.push(this.availableDatasets[index])
                     this.availableDatasets.splice(index, 1)
                 }
             })
+
             console.log('SELECTED DATASETS: ', this.selectedDatasets)
         },
         changeSteps() {
-            this.step = this.step === 0 ? 1 : 0
+            if (this.step === 0 && this.canMoveToNextStep()) {
+                this.step = 1
+            } else {
+                this.step = 0
+            }
+        },
+        canMoveToNextStep() {
+            if (this.selectedDatasets.length === 0 || this.selectedDatasets.length === 1) {
+                this.warningMessage = this.selectedDatasets.length === 0 ? this.$t('workspace.federationDefinition.noDatasetsSelectedError') : this.$t('workspace.federationDefinition.onlyOneSelectedDatasetError')
+                this.warningDialogVisbile = true
+                return false
+            }
+
+            return true
         },
         saveFederation() {
             console.log('SAVE FEDERATION CLICKED!')
@@ -122,14 +150,34 @@ export default defineComponent({
             const fromArray = payload.mode === 'available' ? this.availableDatasets : this.selectedDatasets
             const toArray = payload.mode === 'available' ? this.selectedDatasets : this.availableDatasets
 
-            console.log('FROM ARRAY: ', fromArray)
-            console.log('TO ARRAY: ', toArray)
+            if (payload.mode === 'selected' && !this.datasetCanBeUnselected(payload.dataset)) {
+                this.warningMessage = this.$t('workspace.federationDefinition.removeSelectedDatasetError')
+                this.warningDialogVisbile = true
+                return
+            }
 
             const index = fromArray.findIndex((el: any) => el.name === payload.dataset.name)
             if (index !== -1) {
                 toArray.push(fromArray[index])
                 fromArray.splice(index, 1)
             }
+        },
+        datasetCanBeUnselected(dataset: any) {
+            console.log('DATASET CAN BE UNSELECTED: ', dataset)
+            console.log('SOURCE DATASET USED IN...: ', this.sourceDatasetUsedInRelations)
+            const index = this.sourceDatasetUsedInRelations.findIndex((el: any) => {
+                console.log(el + ' ' + dataset.label)
+                return el === dataset.label
+            })
+            return index === -1
+        },
+        closeWarningDialog() {
+            this.warningMessage = ''
+            this.warningDialogVisbile = false
+        },
+        closeFederationDefinition() {
+            this.federatedDataset = null
+            this.$router.push('/workspace/models')
         }
     }
 })
