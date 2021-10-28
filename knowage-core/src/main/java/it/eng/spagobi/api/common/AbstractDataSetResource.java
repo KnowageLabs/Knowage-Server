@@ -144,6 +144,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	/**
 	 * TODO is isNearRealtime really needed? It comes from frontend, isn't it a specific info of the dataset?
+	 *
 	 * @deprecated
 	 */
 	@Deprecated
@@ -155,8 +156,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections, String likeSelections, int maxRowCount,
 			String aggregations, String summaryRow, int offset, int fetchSize, Set<String> indexes, String widgetName) {
-		return getDataStore(label, parameters, drivers, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, null,
-				null, indexes, widgetName);
+		return getDataStore(label, parameters, drivers, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, null, null,
+				indexes, widgetName);
 	}
 
 	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections, String likeSelections, int maxRowCount,
@@ -737,12 +738,12 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				sorting = new Sorting(projection, isAscending);
 			} else {
 				Projection projection;
+				String alias = jsonObject.optString("alias");
 				if (orderColumn != null && !orderColumn.isEmpty() && !orderType.isEmpty()) {
-					String alias = jsonObject.optString("alias");
 					projection = new Projection(function, dataSet, orderColumn, alias);
 				} else {
 					String columnName = getColumnName(jsonObject, columnAliasToName);
-					projection = new Projection(function, dataSet, columnName, orderColumn);
+					projection = new Projection(function, dataSet, columnName, alias);
 				}
 
 				boolean isAscending = "ASC".equalsIgnoreCase(orderType);

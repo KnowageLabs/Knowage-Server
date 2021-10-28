@@ -585,8 +585,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 
 	$scope.requestAdditionalParameterAddItem = function() {
-
-		$scope.restRequestAdditionalParameters.push({"name":"","value":"","index":$scope.counterRequestAdditionalParameters++});
+	var index; 
+	if($scope.restRequestAdditionalParameters) {
+		index = $scope.restRequestAdditionalParameters.length++;
+		$scope.counterRequestAdditionalParameters = index;
+	}
+		$scope.restRequestAdditionalParameters.push({"name":"","value":"","index":$scope.counterRequestAdditionalParameters});
 
 		$timeout(
 				function() {
