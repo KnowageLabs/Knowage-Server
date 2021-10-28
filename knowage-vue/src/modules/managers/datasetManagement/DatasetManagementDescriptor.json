@@ -13,42 +13,42 @@
                 "Custom": {
                     "icon": "fas fa-database",
                     "style": {
-                        "background-color": "#ffc107",
+                        "background-color": "#607d8b",
                         "color": "white"
                     }
                 },
                 "Federated": {
                     "icon": "fas fa-database",
                     "style": {
-                        "background-color": "#ffc107",
+                        "background-color": "#795548",
                         "color": "white"
                     }
                 },
                 "File": {
                     "icon": "fas fa-file",
                     "style": {
-                        "background-color": "#ffc107",
+                        "background-color": "#2196f3",
                         "color": "white"
                     }
                 },
                 "Flat": {
                     "icon": "fas fa-database",
                     "style": {
-                        "background-color": "#ffc107",
+                        "background-color": "#9e9e9e",
                         "color": "white"
                     }
                 },
                 "Java Class": {
                     "icon": "fab fa-java",
                     "style": {
-                        "background-color": "#ffc107",
+                        "background-color": "#ffcc80",
                         "color": "white"
                     }
                 },
                 "Python/R": {
                     "icon": "fab fa-python",
                     "style": {
-                        "background-color": "#4caf50",
+                        "background-color": "#ffb300",
                         "color": "white"
                     }
                 },
@@ -62,35 +62,35 @@
                 "Query": {
                     "icon": "fas fa-table",
                     "style": {
-                        "background-color": "#ffc107",
+                        "background-color": "#004ba0",
                         "color": "white"
                     }
                 },
                 "REST": {
                     "icon": "fas fa-exchange-alt",
                     "style": {
-                        "background-color": "#ffc107",
+                        "background-color": "#3f51b5",
                         "color": "white"
                     }
                 },
                 "SPARQL": {
                     "icon": "fas fa-database",
                     "style": {
-                        "background-color": "#ffc107",
+                        "background-color": "#009688",
                         "color": "white"
                     }
                 },
                 "Script": {
                     "icon": "fab fa-js-square",
                     "style": {
-                        "background-color": "#c2185b",
+                        "background-color": "#fdd835",
                         "color": "white"
                     }
                 },
                 "Solr": {
                     "icon": "fas fa-database",
                     "style": {
-                        "background-color": "#ffc107",
+                        "background-color": "#673ab7",
                         "color": "white"
                     }
                 }
