@@ -26,6 +26,17 @@ let routes = [
                 component: () => import('@/modules/workspace/views/modelsView/WorkspaceModelsView.vue')
             },
             {
+                path: 'models/federation-definition/new-federation',
+                name: 'new-federation',
+                component: () => import('@/modules/workspace/federationDefinition/WorkspaceFederationDefinition.vue')
+            },
+            {
+                path: 'models/federation-definition/:id',
+                name: 'edit-federation',
+                component: () => import('@/modules/workspace/federationDefinition/WorkspaceFederationDefinition.vue'),
+                props: true
+            },
+            {
                 path: 'analysis',
                 component: () => import('@/modules/workspace/views/analysisView/WorkspaceAnalysisView.vue')
             },

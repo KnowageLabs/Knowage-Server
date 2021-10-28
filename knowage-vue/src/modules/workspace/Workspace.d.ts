@@ -86,11 +86,11 @@ export interface IBusinessModel {
 }
 
 export interface IFederatedDataset {
-    federation_id: number,
+    federation_id?: number,
     name: string,
     label: string,
     description: string,
-    relationships: string,
+    relationships: any,
     degenerated: boolean,
     owner: null
 }

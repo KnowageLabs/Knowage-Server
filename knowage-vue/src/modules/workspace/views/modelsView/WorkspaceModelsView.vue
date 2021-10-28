@@ -119,17 +119,11 @@ export default defineComponent({
             })
         },
         createNewFederation() {
-            this.$store.commit('setInfo', {
-                title: 'Todo',
-                msg: 'Functionality not in this sprint'
-            })
+            this.$router.push('models/federation-definition/new-federation')
         },
-        editDataset(dataset: IBusinessModel | IFederatedDataset) {
+        editDataset(dataset: IFederatedDataset) {
             console.log('editDataset clicked! ', dataset)
-            this.$store.commit('setInfo', {
-                title: 'Todo',
-                msg: 'Functionality not in this sprint'
-            })
+            this.$router.push(`models/federation-definition/${dataset.federation_id}`)
         },
         deleteDatasetConfirm(dataset: IFederatedDataset) {
             this.$confirm.require({

@@ -1161,6 +1161,15 @@
         "roleSelection": "Role Selection"
     },
     "workspace": {
+        "federationDefinition": {
+            "availableDatasets": "Available datasets",
+            "availableDatasetsMessage": "Click to add to federation",
+            "datasetDetail": "Dataset details",
+            "saveFederation": "Save federation",
+            "selectedDatasets": "Selected datasets",
+            "selectedDatasetsMessage": "Click to remove from federation",
+            "title": "Federation definition"
+        },
         "hint": "Please change the hint to your liking in the i18 files.",
         "menuLabels": {
             "menuTitle": "My Workspace",
