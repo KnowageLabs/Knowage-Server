@@ -1,5 +1,5 @@
 <template>
-    <DataTable :value="items" id="models-table" class="p-datatable-sm kn-table" v-model:filters="filters" filterDisplay="menu" dataKey="name" :paginator="true" :rows="20" responsiveLayout="stack" breakpoint="960px" @rowClick="$emit('selected', $event.data)">
+    <DataTable :value="items" id="models-table" class="p-datatable-sm kn-table" v-model:filters="filters" filterDisplay="menu" dataKey="name" :paginator="true" :rows="20" responsiveLayout="stack" breakpoint="960px">
         <template #empty>
             <Message class="p-m-2" severity="info" :closable="false" :style="workspaceModelsTableDescriptor.styles.message">
                 {{ $t('common.info.noDataFound') }}
@@ -12,11 +12,14 @@
         <Column :style="workspaceModelsTableDescriptor.iconColumn.style">
             <template #body="slotProps">
                 <div class="p-d-flex p-flex-row p-jc-end">
-                    <Button icon="fa fa-search" class="p-button-link" v-tooltip.left="$t('workspace.myModels.openInQBE')" @click.stop="openDatasetInQBE(slotProps.data)" />
                     <div v-if="tableMode === 'Federated'" class="p-d-flex p-flex-row">
-                        <Button icon="pi pi-pencil" class="p-button-link" v-tooltip.left="$t('workspace.myModels.editDataset')" @click.stop="editDataset(slotProps.data)" />
-                        <Button v-if="canDeleteFederation(slotProps.data)" icon="fas fa-trash-alt" class="p-button-link" v-tooltip.left="$t('workspace.myModels.deleteDataset')" @click.stop="deleteDataset(slotProps.data)" />
+                        <Button icon="pi pi-ellipsis-v" class="p-button-link" @click="toggle($event, slotProps.data)" />
+                        <Menu ref="menu" :model="menuItems" :popup="true" />
+                        <!-- <Button icon="pi pi-pencil" class="p-button-link" v-tooltip.left="$t('workspace.myModels.editDataset')" @click.stop="editDataset(slotProps.data)" />
+                        <Button v-if="canDeleteFederation(slotProps.data)" icon="fas fa-trash-alt" class="p-button-link" v-tooltip.left="$t('workspace.myModels.deleteDataset')" @click.stop="deleteDataset(slotProps.data)" /> -->
                     </div>
+                    <Button icon="pi pi-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click.stop="$emit('selected', slotProps.data)" />
+                    <Button icon="fa fa-search" class="p-button-link" v-tooltip.left="$t('workspace.myModels.openInQBE')" @click.stop="openDatasetInQBE(slotProps.data)" />
                 </div>
             </template>
         </Column>
@@ -30,11 +33,12 @@ import { FilterOperator } from 'primevue/api'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
+import Menu from 'primevue/menu'
 import workspaceModelsTableDescriptor from './WorkspaceModelsTableDescriptor.json'
 
 export default defineComponent({
     name: 'workspace-models-table',
-    components: { Column, DataTable },
+    components: { Column, DataTable, Menu },
     props: { tableMode: { type: String }, propItems: { type: Array } },
     emits: ['openDatasetInQBEClick', 'editDatasetClick', 'deleteDatasetClick'],
     data() {
@@ -56,6 +60,7 @@ export default defineComponent({
                     constraints: [filterDefault]
                 }
             } as any,
+            menuItems: [] as any[],
             user: null as any
         }
     },
@@ -96,6 +101,19 @@ export default defineComponent({
         deleteDataset(dataset: IBusinessModel | IFederatedDataset) {
             // console.log('deleteDataset clicked! ', dataset)
             this.$emit('deleteDatasetClick', dataset)
+        },
+        toggle(event: any, dataset: IFederatedDataset) {
+            this.createMenuItems(dataset)
+            const menu = this.$refs.menu as any
+            menu.toggle(event)
+        },
+        createMenuItems(dataset: IFederatedDataset) {
+            console.log('DATSET IN MENU: ', dataset)
+            this.menuItems = []
+            this.menuItems.push({ icon: 'pi pi-pencil', label: this.$t('workspace.myModels.editDataset'), command: () => this.editDataset(dataset) })
+            if (this.canDeleteFederation(dataset)) {
+                this.menuItems.push({ icon: 'fas fa-trash-alt', label: this.$t('workspace.myModels.deleteDataset'), command: () => this.deleteDataset(dataset) })
+            }
         }
     }
 })

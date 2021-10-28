@@ -1185,6 +1185,7 @@
             "deleteDataset": "Delete dataset",
             "editDataset": "Edit dataset",
             "openInQBE": "Open dataset in QBE",
+            "showInfo": "Show dataset info",
             "title": "My Models"
         },
         "myRepository": {
