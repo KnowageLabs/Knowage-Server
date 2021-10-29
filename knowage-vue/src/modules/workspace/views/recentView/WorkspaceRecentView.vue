@@ -41,7 +41,7 @@
             </Column>
         </DataTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2">
-            <WorkspaceCard v-for="(document, index) of recentDocumentsList" :key="index" :viewType="'recent'" :document="document" />
+            <WorkspaceCard v-for="(document, index) of recentDocumentsList" :key="index" :viewType="'recent'" :document="document" @executeRecent="executeRecent" />
         </div>
     </div>
 

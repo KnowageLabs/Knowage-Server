@@ -1,7 +1,9 @@
 <template>
-    <div class="card-container p-col-12 p-md-6 p-lg-3" :style="cardDescriptor.style.cardContainer">
+    <div class="card-container p-col-12 p-md-4 p-lg-3" :style="cardDescriptor.style.cardContainer">
         <img v-if="document[documentFields.image]" class="card-image" onerror="this.src='https://i.imgur.com/9YqXpxc.jpeg'" :src="documentImageSource" :style="cardDescriptor.style.cardImage" />
+        <!-- TODO: insert the default image source -->
         <img v-else class="card-image default" src="https://i.imgur.com/9YqXpxc.jpeg" :style="cardDescriptor.style.cardImage" />
+        <!--  -->
         <span class="details-container" :style="cardDescriptor.style.detailsContainer">
             <div class="type-container" :style="cardDescriptor.style.typeContainer">
                 <p class="p-mb-1">{{ document[documentFields.type] }}</p>
@@ -13,21 +15,23 @@
                 <p class="p-m-0">{{ document[documentFields.name] }}</p>
             </div>
             <div class="button-container" :style="cardDescriptor.style.buttonContainer">
-                <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain icon-size" :style="cardDescriptor.style.icon" />
-                <Button icon="fas fa-info-circle" class="p-button-text p-button-rounded p-button-plain icon-size" :style="cardDescriptor.style.icon" />
-                <Button icon="fas fa-play-circle" class="p-button-text p-button-rounded  icon-size" :style="cardDescriptor.style.icon" @click="logDoc" />
+                <span v-for="(button, index) of documentButtons" :key="index">
+                    <Button v-if="button.visible" :icon="button.icon" :class="button.class" :style="cardDescriptor.style.icon" @click="button.command" />
+                </span>
             </div>
         </span>
     </div>
+    <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import descriptor from './DetailSidebarDescriptor.json'
 import cardDescriptor from './WorkspaceCardDescriptor.json'
+import Menu from 'primevue/contextmenu'
 
 export default defineComponent({
     name: 'workspace-sidebar',
-    components: {},
+    components: { Menu },
     emits: [
         'executeRecent',
         'executeDocumentFromOrganizer',
@@ -74,26 +78,26 @@ export default defineComponent({
         documentButtons(): any {
             switch (this.viewType) {
                 case 'recent':
-                    return [{ icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitExecuteRecent }]
+                    return [{ icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitExecuteRecent }]
                 case 'repository':
                     return [
-                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitExecuteDocumentFromOrganizer },
+                        { icon: 'fas fa-trash', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitDeleteDocumentFromOrganizer },
                         { icon: 'fas fa-share', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitMoveDocumentToFolder },
-                        { icon: 'fas fa-trash', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitDeleteDocumentFromOrganizer }
+                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitExecuteDocumentFromOrganizer }
                     ]
                 case 'analysis':
                     return [
-                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitExecuteAnalysisDocument },
+                        { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
                         { icon: 'fas fa-edit', class: 'p-button-text p-button-rounded p-button-plain', visible: this.isOwner, command: this.emitEditAnalysisDocument },
-                        { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu }
+                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitExecuteAnalysisDocument }
                     ]
                 case 'businessModel':
-                    return [{ icon: 'fa fa-search', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitOpenDatasetInQBE }]
+                    return [{ icon: 'fa fa-search', class: 'p-button-text p-button-rounded', visible: true, command: this.emitOpenDatasetInQBE }]
                 case 'federationDataset':
                     return [
-                        { icon: 'fa fa-search', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitOpenDatasetInQBE },
+                        { icon: 'fas fa-trash-alt', class: 'p-button-text p-button-rounded p-button-plain', visible: (this.$store.state as any).user.isSuperadmin || (this.$store.state as any).user.userId === this.selectedDocument.owner, command: this.emitDeleteDataset },
                         { icon: 'pi pi-pencil', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEditDataset },
-                        { icon: 'fas fa-trash-alt', class: 'p-button-text p-button-rounded p-button-plain', visible: (this.$store.state as any).user.isSuperadmin || (this.$store.state as any).user.userId === this.selectedDocument.owner, command: this.emitDeleteDataset }
+                        { icon: 'fa fa-search', class: 'p-button-text p-button-rounded', visible: true, command: this.emitOpenDatasetInQBE }
                     ]
                 default:
                     return console.log('How did this happen, no valid file type.')
@@ -168,7 +172,6 @@ export default defineComponent({
             let fDate = new Date(date)
             return fDate.toLocaleString()
         },
-        //iz nekog razloga ne mogu samo da stavim this.$emit(), direkno u komandi dugmeta, ako to odradim pozivaju se emiteri samo kada se kreira komponenta, posle toga ne, al ovako radi
         emitExecuteRecent() {
             this.$emit('executeRecent', this.selectedDocument)
         },
