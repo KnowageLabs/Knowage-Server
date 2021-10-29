@@ -62,7 +62,7 @@ export default defineComponent({
             }
             return {
                 //default image if none is uploaded for the selected document
-                'background-image': `url(${process.env.VUE_APP_HOST_URL}${descriptor.imgPath}82300081364511eca64e159ee59cd4dc.jpg)`
+                'background-image': `url(https://martialartsplusinc.com/wp-content/uploads/2017/04/default-image.jpg)`
             }
         },
         documentFields(): any {
