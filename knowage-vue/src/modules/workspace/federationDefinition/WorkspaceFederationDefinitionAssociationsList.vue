@@ -54,7 +54,6 @@ export default defineComponent({
     methods: {
         loadAssociations() {
             this.associations = this.propAssociations as any[]
-            console.log('LOADED ASSOC: ', this.associations)
         },
         createAssociation() {
             this.$emit('createAssociationClick')

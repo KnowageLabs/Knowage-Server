@@ -38,7 +38,6 @@ export default defineComponent({
             this.loading = false
         },
         viewOldSchedulations(job: IPackage) {
-            console.log('JOB OLD SCHEDUL: ', job)
             this.selectedJob = job
             this.schedulationsDialogVisible = true
         },

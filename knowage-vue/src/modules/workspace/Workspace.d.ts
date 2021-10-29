@@ -91,6 +91,6 @@ export interface IFederatedDataset {
     label: string,
     description: string,
     relationships: any,
-    degenerated: boolean,
-    owner: null
+    degenerated?: boolean,
+    owner?: any
 }

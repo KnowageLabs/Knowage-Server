@@ -1165,6 +1165,7 @@
             "associationsEditor": "Associations Editor",
             "associationsList": "Associations List",
             "availableDatasets": "Available datasets",
+            "savingFederation": "Saving Federation",
             "availableDatasetsMessage": "Click to add to federation",
             "datasetDetail": "Dataset details",
             "datasetNotInRelationshipError": "All selected datasets must be contained at least in one relationship!",

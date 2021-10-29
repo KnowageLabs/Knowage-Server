@@ -23,6 +23,7 @@
         </div>
 
         <WorskpaceFederationDatasetDialog :visible="infoDialogVisible" :dataset="selectedDataset" @close="closeInfoDialog"></WorskpaceFederationDatasetDialog>
+        <WorkspaceFederationSaveDialog :visible="saveDialogVisible" :federatedDataset="federatedDataset" @close="closeSaveDialog" @save="handleSaveFederation"></WorkspaceFederationSaveDialog>
         <WorkspaceFederationWarningDialog :visible="warningDialogVisbile" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceFederationWarningDialog>
     </div>
 </template>
@@ -32,13 +33,14 @@ import { defineComponent } from 'vue'
 import { IFederatedDataset } from '../Workspace'
 import WorskpaceFederationDatasetDialog from './dialogs/WorskpaceFederationDatasetDialog.vue'
 import WorkspaceFederationWarningDialog from './dialogs/WorkspaceFederationWarningDialog.vue'
+import WorkspaceFederationSaveDialog from './dialogs/WorkspaceFederationSaveDialog.vue'
 import WorkspaceFederationDatasetList from './WorkspaceFederationDatasetList.vue'
 import WorkspaceFederationDefinitionAssociationsEditor from './WorkspaceFederationDefinitionAssociationsEditor.vue'
 import WorkspaceFederationDefinitionAssociationsList from './WorkspaceFederationDefinitionAssociationsList.vue'
 
 export default defineComponent({
     name: 'workspace-federation-definition',
-    components: { WorkspaceFederationDatasetList, WorskpaceFederationDatasetDialog, WorkspaceFederationWarningDialog, WorkspaceFederationDefinitionAssociationsEditor, WorkspaceFederationDefinitionAssociationsList },
+    components: { WorkspaceFederationDatasetList, WorskpaceFederationDatasetDialog, WorkspaceFederationWarningDialog, WorkspaceFederationDefinitionAssociationsEditor, WorkspaceFederationDefinitionAssociationsList, WorkspaceFederationSaveDialog },
     props: { id: { type: String } },
     data() {
         return {
@@ -54,6 +56,8 @@ export default defineComponent({
             infoDialogVisible: false,
             warningDialogVisbile: false,
             warningMessage: '' as string,
+            saveDialogVisible: false,
+            operation: 'create',
             user: null as any,
             step: 0,
             loading: false
@@ -83,8 +87,6 @@ export default defineComponent({
         },
         async loadFederatedDataset() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `federateddataset/${this.id}/`).then((response) => (this.federatedDataset = { ...response.data, relationships: JSON.parse(response.data.relationships) }))
-
-            // console.log('LOADED FEDERATED DATASET: ', this.federatedDataset)
         },
         async loadDatasets() {
             this.datasets = []
@@ -96,8 +98,6 @@ export default defineComponent({
                     }
                 })
             })
-
-            // console.log('LOADED DATASETS: ', this.datasets)
         },
         formatDatasetMetaFields(dataset: any) {
             if (!dataset.metadata) {
@@ -121,17 +121,19 @@ export default defineComponent({
             }
         },
         formatRelationship() {
-            // console.log('DATASET RELATIONSHIP: ', this.federatedDataset?.relationships)
             this.federatedDataset?.relationships.forEach((relationship: any) => {
                 relationship.forEach((el: any) => {
                     this.sourceDatasetUsedInRelations.push(el.sourceTable.name)
                     this.sourceDatasetUsedInRelations.push(el.destinationTable.name)
-                    this.multirelationships.push({ relationship: el.sourceTable.name.toUpperCase() + '.' + el.sourceColumns[0] + ' -> ' + el.destinationTable.name.toUpperCase() + '.' + el.destinationColumns[0], datasets: [el.sourceTable, el.destinationTable] })
+                    this.multirelationships.push({
+                        relationship: el.sourceTable.name.toUpperCase() + '.' + el.sourceColumns[0] + ' -> ' + el.destinationTable.name.toUpperCase() + '.' + el.destinationColumns[0],
+                        datasets: [
+                            { ...el.sourceTable, label: el.sourceTable.name },
+                            { ...el.destinationTable, label: el.destinationTable.name }
+                        ]
+                    })
                 })
             })
-
-            // console.log('SOURCE DATASET USED IN RELATIONS: ', this.sourceDatasetUsedInRelations)
-            console.log('MULTIRELATIONSHIPS: ', this.multirelationships)
         },
         setSelectedDatasets() {
             this.availableDatasets = [...this.datasets]
@@ -145,8 +147,6 @@ export default defineComponent({
                     this.availableDatasets.splice(index, 1)
                 }
             })
-
-            console.log('SELECTED DATASETS: ', this.selectedDatasets)
         },
         changeSteps() {
             if (this.step === 0 && this.canMoveToNextStep()) {
@@ -174,7 +174,6 @@ export default defineComponent({
             this.infoDialogVisible = false
         },
         moveDataset(payload: any) {
-            console.log('MOVE DATASET PAYLOAD: ', payload)
             const fromArray = payload.mode === 'available' ? this.availableDatasets : this.selectedDatasets
             const toArray = payload.mode === 'available' ? this.selectedDatasets : this.availableDatasets
 
@@ -191,8 +190,6 @@ export default defineComponent({
             }
         },
         datasetCanBeUnselected(dataset: any) {
-            // console.log('DATASET CAN BE UNSELECTED: ', dataset)
-            // console.log('SOURCE DATASET USED IN...: ', this.sourceDatasetUsedInRelations)
             const index = this.multirelationships.findIndex((el: any) => {
                 return el.datasets[0].name === dataset.name || el.datasets[1].name === dataset.name
             })
@@ -207,19 +204,19 @@ export default defineComponent({
             this.$router.push('/workspace/models')
         },
         createAssociation() {
-            console.log('CREATE ASSOCATION SLEECTED: ', this.selectedMetafields)
-            const association = {
-                relationship: this.selectedMetafields[0].dataset.label.toUpperCase() + '.' + this.selectedMetafields[0].metafield.name.toUpperCase() + ' -> ' + this.selectedMetafields[1].dataset.label.toUpperCase() + '.' + this.selectedMetafields[1].metafield.name.toUpperCase(),
-                datasets: [this.selectedMetafields[0].dataset, this.selectedMetafields[1].dataset]
-            }
-
-            if (this.selectedMetafields.length === 2 && !this.checkIfAssociationAlreadyPresent(association)) {
-                this.multirelationships.push(association)
-                this.selectedMetafields = []
-                this.resetSelectedMetafield = !this.resetSelectedMetafield
-            } else {
-                this.warningMessage = this.$t('workspace.federationDefinition.relationshipAlreadyPresentError')
-                this.warningDialogVisbile = true
+            if (this.selectedMetafields.length === 2) {
+                const association = {
+                    relationship: this.selectedMetafields[0].dataset.label + '.' + this.selectedMetafields[0].metafield.name + ' -> ' + this.selectedMetafields[1].dataset.label + '.' + this.selectedMetafields[1].metafield.name,
+                    datasets: [this.selectedMetafields[0].dataset, this.selectedMetafields[1].dataset]
+                }
+                if (!this.checkIfAssociationAlreadyPresent(association)) {
+                    this.multirelationships.push(association)
+                    this.selectedMetafields = []
+                    this.resetSelectedMetafield = !this.resetSelectedMetafield
+                } else {
+                    this.warningMessage = this.$t('workspace.federationDefinition.relationshipAlreadyPresentError')
+                    this.warningDialogVisbile = true
+                }
             }
         },
         checkIfAssociationAlreadyPresent(association: any) {
@@ -230,7 +227,10 @@ export default defineComponent({
             let present = true
 
             for (let i = 0; i < this.selectedDatasets.length; i++) {
-                const index = this.selectedMetafields.findIndex((el: any) => el.dataset.id === this.selectedDatasets[i].id)
+                const index = this.multirelationships.findIndex((el: any) => {
+                    return el.datasets[0].label === this.selectedDatasets[i].label || el.datasets[1].label === this.selectedDatasets[i].label
+                })
+
                 if (index === -1) {
                     present = false
                     break
@@ -243,6 +243,76 @@ export default defineComponent({
             if (!this.checkIfAllSelectedDatasetArePresentInRelationships()) {
                 this.warningMessage = this.$t('workspace.federationDefinition.datasetNotInRelationshipError')
                 this.warningDialogVisbile = true
+            } else {
+                this.saveDialogVisible = true
+            }
+        },
+        closeSaveDialog() {
+            this.saveDialogVisible = false
+        },
+        async handleSaveFederation(federationDataset: IFederatedDataset) {
+            federationDataset.relationships = [this.getFormattedRelationshipsForSave()]
+            await this.saveFederationDataset(federationDataset)
+        },
+        getFormattedRelationshipsForSave() {
+            const formattedRelationships = [] as any[]
+            this.multirelationships.forEach((el: any) => {
+                const sourceAndDestination = el.relationship?.split('->')
+                const source = sourceAndDestination ? sourceAndDestination[0]?.trim().split('.') : []
+                const destination = sourceAndDestination ? sourceAndDestination[1]?.trim().split('.') : []
+
+                const tempRelationship = {
+                    bidirectional: true,
+                    cardinality: 'many-to-one',
+                    sourceTable: {
+                        name: source[0],
+                        className: source[0]
+                    },
+                    sourceColumns: [source[1]],
+                    destinationTable: {
+                        name: destination[0],
+                        className: destination[0]
+                    },
+                    destinationColumns: [destination[1]]
+                }
+                formattedRelationships.push(tempRelationship)
+            })
+
+            return formattedRelationships
+        },
+        async saveFederationDataset(federatedDataset: IFederatedDataset) {
+            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'federateddataset/post'
+            const tempId = federatedDataset.federation_id
+
+            if (federatedDataset.federation_id) {
+                this.operation = 'update'
+                url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `federateddataset/${federatedDataset.federation_id}`
+                delete federatedDataset.federation_id
+            }
+
+            delete federatedDataset.owner
+            delete federatedDataset.degenerated
+
+            await this.sendRequest(url, federatedDataset)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.' + this.operation + 'Title'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.saveDialogVisible = false
+                    this.$router.push('/workspace/models')
+                })
+                .catch((response) => {
+                    this.warningMessage = response
+                    this.warningDialogVisbile = true
+                })
+            federatedDataset.federation_id = tempId
+        },
+        sendRequest(url: string, federatedDataset: IFederatedDataset) {
+            if (this.operation === 'create') {
+                return this.$http.post(url, federatedDataset)
+            } else {
+                return this.$http.put(url, federatedDataset)
             }
         }
     }

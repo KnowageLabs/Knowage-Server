@@ -48,7 +48,6 @@ export default defineComponent({
     methods: {
         loadDatasets() {
             this.datasets = this.selectedDatasets as any[]
-            console.log('LOADED DATESETS IN EDITOR: ', this.datasets)
         }
     }
 })

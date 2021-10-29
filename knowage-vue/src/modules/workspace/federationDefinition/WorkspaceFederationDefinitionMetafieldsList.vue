@@ -57,31 +57,22 @@ export default defineComponent({
     methods: {
         loadDataset() {
             this.dataset = this.propDataset as any[]
-            console.log('LOADED metafields IN list: ', this.dataset)
         },
         loadSelectedMetafields() {
             this.selected = this.selectedMetafields as any[]
         },
         metafieldsSelected(metafield: any) {
-            // console.log('SELECTED META', this.selectedMetafield)
             if (!this.selectedMetafield) {
-                // console.log('metafieldsSelected IF 1')
                 this.removeMetafieldFromSelected()
             } else if (this.selected.length < 2 && this.dataset.id !== this.selected[0]?.dataset.id && this.dataset.id !== this.selected[1]?.dataset.id) {
-                // console.log('metafieldsSelected IF 2')
                 this.selected.push({ dataset: this.dataset, metafield: metafield })
             } else if (this.dataset.id === this.selected[0]?.dataset.id || this.dataset.id === this.selected[1]?.dataset.id) {
-                // console.log('metafieldsSelected IF 3')
                 this.removeMetafieldFromSelected()
                 this.selected.push({ dataset: this.dataset, metafield: metafield })
             } else if (this.selected.length === 2) {
-                // console.log('metafieldsSelected IF 4')
                 this.removeMetafieldFromSelected()
                 this.selectedMetafield = null
             }
-
-            // console.log('THIS DATASET: ', this.dataset)
-            console.log('SELECTED: ', this.selected)
         },
         removeMetafieldFromSelected() {
             const index = this.selected.findIndex((el: any) => el.dataset.id === this.dataset.id)

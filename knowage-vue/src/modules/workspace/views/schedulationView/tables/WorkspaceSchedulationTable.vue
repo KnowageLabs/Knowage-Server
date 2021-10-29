@@ -55,10 +55,8 @@ export default defineComponent({
     methods: {
         loadJobs() {
             this.jobs = this.propJobs as IPackage[]
-            // console.log('LOADED JOBS: ', this.jobs)
         },
         viewRanSchedulations(job: IPackage) {
-            // console.log('VIEW RAN SCHEDULATIOSN FOR JOB: ', job)
             this.$emit('viewOldSchedulationsClick', job)
         }
     }
