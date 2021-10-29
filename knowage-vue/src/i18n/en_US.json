@@ -1194,7 +1194,8 @@
                 "clone": "Clone Document",
                 "delete": "Delete Document",
                 "share": "Share Document",
-                "upload": "Upload preview file"
+                "upload": "Upload preview file",
+                "edit": "Edit Document"
             }
         },
         "myData": {},

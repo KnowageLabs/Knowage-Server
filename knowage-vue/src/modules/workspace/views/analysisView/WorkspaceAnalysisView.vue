@@ -78,6 +78,14 @@ export default defineComponent({
             menuButtons: [
                 {
                     key: '0',
+                    label: this.$t('workspace.myAnalysis.menuItems.edit'),
+                    icon: 'fas fa-edit',
+                    command: () => {
+                        this.editAnalysisDocument(this.selectedAnalysis)
+                    }
+                },
+                {
+                    key: '1',
                     label: this.$t('workspace.myAnalysis.menuItems.share'),
                     icon: 'fas fa-share',
                     command: () => {
@@ -85,7 +93,7 @@ export default defineComponent({
                     }
                 },
                 {
-                    key: '1',
+                    key: '2',
                     label: this.$t('workspace.myAnalysis.menuItems.clone'),
                     icon: 'fas fa-clone',
                     command: () => {
@@ -93,7 +101,7 @@ export default defineComponent({
                     }
                 },
                 {
-                    key: '2',
+                    key: '3',
                     label: this.$t('workspace.myAnalysis.menuItems.delete'),
                     icon: 'fas fa-trash',
                     command: () => {
@@ -101,7 +109,7 @@ export default defineComponent({
                     }
                 },
                 {
-                    key: '3',
+                    key: '4',
                     label: this.$t('workspace.myAnalysis.menuItems.upload'),
                     icon: 'fas fa-share-alt',
                     command: () => {
