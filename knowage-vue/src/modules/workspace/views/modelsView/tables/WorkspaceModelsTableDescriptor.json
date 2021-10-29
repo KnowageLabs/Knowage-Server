@@ -1,5 +1,5 @@
 {
-    "businessColumns": [
+    "columns": [
         {
             "field": "name",
             "header": "common.name"
@@ -7,16 +7,6 @@
         {
             "field": "description",
             "header": "common.description"
-        }
-    ],
-    "federatedColumns": [
-        {
-            "field": "label",
-            "header": "common.label"
-        },
-        {
-            "field": "name",
-            "header": "common.name"
         }
     ],
     "iconColumn": {
