@@ -17,7 +17,7 @@
     </div>
 
     <div class="p-m-2 overflow">
-        <WorkspaceModelsTable class="p-m-2" v-if="!toggleCardDisplay" :propItems="tableItems" :tableMode="tableMode" @selected="setSelectedModel" @openDatasetInQBEClick="openDatasetInQBE" @editDatasetClick="editDataset" @deleteDatasetClick="deleteDatasetConfirm"></WorkspaceModelsTable>
+        <WorkspaceModelsTable class="p-m-2" v-if="!toggleCardDisplay" :propItems="tableItems" @selected="setSelectedModel" @openDatasetInQBEClick="openDatasetInQBE" @editDatasetClick="editDataset" @deleteDatasetClick="deleteDatasetConfirm"></WorkspaceModelsTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2">
             <WorkspaceCard v-for="(document, index) of tableItems" :key="index" :viewType="selectedModel && selectedModel.federation_id ? 'federationDataset' : 'businessModel'" :document="document" />
         </div>
@@ -91,15 +91,24 @@ export default defineComponent({
     methods: {
         async loadBusinessModels() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/?fileExtension=jar`).then((response) => (this.businessModels = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/?fileExtension=jar`).then((response) => {
+                this.businessModels = response.data.map((el: any) => {
+                    return { ...el, type: 'businessModel' }
+                })
+            })
             this.loading = false
-            // console.log('LOADED BUSINESS MODELS: ', this.businessModels)
+            console.log('LOADED BUSINESS MODELS: ', this.businessModels)
         },
         async loadFederatedDatasets() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `federateddataset/`).then((response) => (this.federatedDatasets = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `federateddataset/`).then(
+                (response) =>
+                    (this.federatedDatasets = response.data.map((el: any) => {
+                        return { ...el, type: 'federatedDataset' }
+                    }))
+            )
             this.loading = false
-            // console.log('LOADED FEDERATED DATASETS: ', this.federatedDatasets)
+            console.log('LOADED FEDERATED DATASETS: ', this.federatedDatasets)
         },
         searchItems() {
             setTimeout(() => {
