@@ -1165,7 +1165,6 @@
             "associationsEditor": "Associations Editor",
             "associationsList": "Associations List",
             "availableDatasets": "Available datasets",
-            "savingFederation": "Saving Federation",
             "availableDatasetsMessage": "Click to add to federation",
             "datasetDetail": "Dataset details",
             "datasetNotInRelationshipError": "All selected datasets must be contained at least in one relationship!",
@@ -1174,6 +1173,7 @@
             "relationshipAlreadyPresentError": "Relationship already exists",
             "removeSelectedDatasetError": "You can't delete the dataset! It is used in a relationship! To delete this dataset you have to remove the relationship first.",
             "saveFederation": "Save federation",
+            "savingFederation": "Saving Federation",
             "selectedDatasets": "Selected datasets",
             "selectedDatasetsMessage": "Click to remove from federation",
             "title": "Federation definition"

@@ -7,19 +7,19 @@
         <template #right>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
             <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
-            <KnFabButton v-if="tableMode === 'Federated'" icon="fas fa-plus" @click="createNewFederation" />
+            <KnFabButton icon="fas fa-plus" @click="createNewFederation" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
     <div class="p-d-flex p-flex-row p-ai-center">
         <InputText id="model-search" class="kn-material-input p-m-3" v-model="searchWord" :placeholder="$t('common.search')" @input="searchItems" />
-        <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" />
+        <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" @click="onTableModeChange" />
     </div>
 
     <div class="p-m-2 overflow">
-        <WorkspaceModelsTable class="p-m-2" v-if="!toggleCardDisplay" :propItems="tableItems" @selected="setSelectedModel" @openDatasetInQBEClick="openDatasetInQBE" @editDatasetClick="editDataset" @deleteDatasetClick="deleteDatasetConfirm"></WorkspaceModelsTable>
+        <WorkspaceModelsTable class="p-m-2" v-if="!toggleCardDisplay" :propItems="filteredItems" @selected="setSelectedModel" @openDatasetInQBEClick="openDatasetInQBE" @editDatasetClick="editDataset" @deleteDatasetClick="deleteDatasetConfirm"></WorkspaceModelsTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2">
-            <WorkspaceCard v-for="(document, index) of tableItems" :key="index" :viewType="selectedModel && selectedModel.federation_id ? 'federationDataset' : 'businessModel'" :document="document" />
+            <WorkspaceCard v-for="(document, index) of filteredItems" :key="index" :viewType="selectedModel && selectedModel.federation_id ? 'federationDataset' : 'businessModel'" :document="document" />
         </div>
     </div>
 
@@ -52,8 +52,9 @@ export default defineComponent({
         return {
             businessModels: [] as IBusinessModel[],
             federatedDatasets: [] as IFederatedDataset[],
-            filteredItems: [] as IBusinessModel[] | IFederatedDataset[],
-            tableMode: 'Business',
+            allItems: [] as (IBusinessModel | IFederatedDataset)[],
+            filteredItems: [] as (IBusinessModel | IFederatedDataset)[],
+            tableMode: 'All',
             selectButtonOptions: ['Business'],
             selectedModel: null as IBusinessModel | IFederatedDataset | null,
             searchWord: '' as string,
@@ -65,13 +66,6 @@ export default defineComponent({
     computed: {
         hasEnableFederatedDatasetFunctionality(): boolean {
             return this.user.functionalities.includes('EnableFederatedDataset')
-        },
-        tableItems(): IBusinessModel[] | IFederatedDataset[] {
-            if (this.searchWord !== '') {
-                return this.filteredItems
-            } else {
-                return this.tableMode === 'Business' ? this.businessModels : this.federatedDatasets
-            }
         }
     },
     watch: {
@@ -86,9 +80,15 @@ export default defineComponent({
         if (this.hasEnableFederatedDatasetFunctionality) {
             await this.loadFederatedDatasets()
             this.selectButtonOptions.push('Federated')
+            this.selectButtonOptions.push('All')
         }
+        this.loadAllItems()
     },
     methods: {
+        loadAllItems() {
+            this.allItems = [...this.businessModels, ...this.federatedDatasets] as (IBusinessModel | IFederatedDataset)[]
+            this.filteredItems = [...this.allItems] as (IBusinessModel | IFederatedDataset)[]
+        },
         async loadBusinessModels() {
             this.loading = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/?fileExtension=jar`).then((response) => {
@@ -97,7 +97,6 @@ export default defineComponent({
                 })
             })
             this.loading = false
-            console.log('LOADED BUSINESS MODELS: ', this.businessModels)
         },
         async loadFederatedDatasets() {
             this.loading = true
@@ -108,27 +107,17 @@ export default defineComponent({
                     }))
             )
             this.loading = false
-            console.log('LOADED FEDERATED DATASETS: ', this.federatedDatasets)
         },
         searchItems() {
             setTimeout(() => {
                 if (!this.searchWord.trim().length) {
-                    this.filteredItems = this.tableMode === 'Business' ? [...this.businessModels] : ([...this.federatedDatasets] as IBusinessModel[] | IFederatedDataset[])
+                    this.filteredItems = [...this.allItems] as (IBusinessModel | IFederatedDataset)[]
                 } else {
-                    this.filterItems()
+                    this.filteredItems = this.filteredItems.filter((el: any) => {
+                        return el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.description?.toLowerCase().includes(this.searchWord.toLowerCase())
+                    })
                 }
             }, 250)
-        },
-        filterItems() {
-            if (this.tableMode === 'Business') {
-                this.filteredItems = this.businessModels.filter((el: any) => {
-                    return el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.description?.toLowerCase().includes(this.searchWord.toLowerCase())
-                })
-            } else {
-                this.filteredItems = this.federatedDatasets.filter((el: any) => {
-                    return el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.label?.toLowerCase().includes(this.searchWord.toLowerCase())
-                })
-            }
         },
         resetSearch() {
             this.searchWord = ''
@@ -177,6 +166,18 @@ export default defineComponent({
         },
         toggleDisplayView() {
             this.$emit('toggleDisplayView')
+        },
+        onTableModeChange() {
+            switch (this.tableMode) {
+                case 'Business':
+                    this.filteredItems = [...this.businessModels]
+                    break
+                case 'Federated':
+                    this.filteredItems = [...this.federatedDatasets]
+                    break
+                case 'All':
+                    this.filteredItems = [...this.allItems]
+            }
         }
     }
 })
