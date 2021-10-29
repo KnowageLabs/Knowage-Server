@@ -46,8 +46,8 @@
         @executeAnalysisDocument="executeAnalysisDocument"
         @editAnalysisDocument="editAnalysisDocument"
         @shareAnalysisDocument="shareAnalysisDocument"
-        @cloneAnalysisDocument="cloneAnalysisDocument"
-        @deleteAnalysisDocumentConfirm="deleteAnalysisDocumentConfirm"
+        @cloneAnalysisDocument="cloneAnalysisDocumentConfirm"
+        @deleteAnalysisDocument="deleteAnalysisDocumentConfirm"
         @uploadAnalysisPreviewFile="uploadAnalysisPreviewFile"
         @close="showDetailSidebar = false"
     />
@@ -169,8 +169,26 @@ export default defineComponent({
         shareAnalysisDocument(event) {
             console.log('shareAnalysisDocument', event)
         },
-        cloneAnalysisDocument(event) {
-            console.log('cloneAnalysisDocument', event)
+        async cloneAnalysisDocumentConfirm(analysis: any) {
+            this.$confirm.require({
+                header: this.$t('common.toast.cloneConfirmTitle'),
+                accept: async () => await this.cloneAnalysisDocument(analysis)
+            })
+        },
+        async cloneAnalysisDocument(analysis: any) {
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/clone?docId=${analysis.id}`)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.createTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.showDetailSidebar = false
+                    this.getAnalysisDocs()
+                })
+                .catch(() => {})
+            this.loading = true
         },
         deleteAnalysisDocumentConfirm(analysis: any) {
             this.$confirm.require({
@@ -181,10 +199,10 @@ export default defineComponent({
             })
         },
         deleteAnalysis(analysis: any) {
-            console.log('deleteAnalysisDocument', analysis)
+            // console.log('deleteAnalysisDocument', analysis)
             this.loading = true
             this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${analysis.name}`)
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${analysis.label}`)
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),

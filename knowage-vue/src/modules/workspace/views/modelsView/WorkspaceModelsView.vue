@@ -141,7 +141,7 @@ export default defineComponent({
                 message: this.$t('common.toast.deleteMessage'),
                 header: this.$t('common.toast.deleteTitle'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => this.deleteDataset(dataset)
+                accept: async() => await  this.deleteDataset(dataset)
             })
         },
         async deleteDataset(dataset: IFederatedDataset) {
