@@ -10,6 +10,7 @@
             <KnFabButton icon="fas fa-plus" data-test="new-folder-button" />
         </template>
     </Toolbar>
+    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
     <InputText class="kn-material-input p-m-2" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
     <div class="p-m-2 overflow">
         <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="analysisDocuments" :loading="loading" :scrollable="true" scrollHeight="89vh" dataKey="id" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
@@ -46,7 +47,7 @@
         @editAnalysisDocument="editAnalysisDocument"
         @shareAnalysisDocument="shareAnalysisDocument"
         @cloneAnalysisDocument="cloneAnalysisDocument"
-        @deleteAnalysisDocument="deleteAnalysisDocument"
+        @deleteAnalysisDocumentConfirm="deleteAnalysisDocumentConfirm"
         @uploadAnalysisPreviewFile="uploadAnalysisPreviewFile"
         @close="showDetailSidebar = false"
     />
@@ -127,7 +128,10 @@ export default defineComponent({
         },
         executeAnalysisDocument(event) {
             console.log('executeAnalysisDocument', event)
-            this.$store.commit('setInfo', { title: 'Todo', msg: 'Functionality not in this sprint' })
+            this.$store.commit('setInfo', {
+                title: 'Todo',
+                msg: 'Functionality not in this sprint'
+            })
         },
         editAnalysisDocument(event) {
             console.log('editAnalysisDocument', event)
@@ -138,8 +142,29 @@ export default defineComponent({
         cloneAnalysisDocument(event) {
             console.log('cloneAnalysisDocument', event)
         },
-        deleteAnalysisDocument(event) {
-            console.log('deleteAnalysisDocument', event)
+        deleteAnalysisDocumentConfirm(analysis: any) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteAnalysis(analysis)
+            })
+        },
+        deleteAnalysis(analysis: any) {
+            console.log('deleteAnalysisDocument', analysis)
+            this.loading = true
+            this.$http
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${analysis.name}`)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.showDetailSidebar = false
+                    this.getAnalysisDocs()
+                })
+                .catch(() => {})
+            this.loading = false
         },
         uploadAnalysisPreviewFile(event) {
             console.log('uploadAnalysisPreviewFile', event)
