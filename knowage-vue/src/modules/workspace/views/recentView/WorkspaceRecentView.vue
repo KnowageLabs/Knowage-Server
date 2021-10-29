@@ -11,21 +11,7 @@
     </Toolbar>
     <InputText class="kn-material-input p-m-2" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
     <div class="p-m-2 overflow">
-        <DataTable
-            v-if="!toggleCardDisplay"
-            class="p-datatable-sm kn-table"
-            :value="recentDocumentsList"
-            :loading="loading"
-            :scrollable="true"
-            scrollHeight="89vh"
-            dataKey="objId"
-            responsiveLayout="stack"
-            breakpoint="600px"
-            v-model:filters="filters"
-            v-model:selection="selectedDocument"
-            selectionMode="single"
-            @rowSelect="showDetailSidebar = true"
-        >
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="recentDocumentsList" :loading="loading" :scrollable="true" scrollHeight="89vh" dataKey="objId" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -39,9 +25,15 @@
                     {{ formatDate(data.requestTime) }}
                 </template>
             </Column>
+            <Column>
+                <template #body="slotProps">
+                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click.stop="showSidebar(slotProps.data)" />
+                    <Button icon="fas fa-play-circle" class="p-button-link" />
+                </template>
+            </Column>
         </DataTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2">
-            <WorkspaceCard v-for="(document, index) of recentDocumentsList" :key="index" :viewType="'recent'" :document="document" @executeRecent="executeRecent" />
+            <WorkspaceCard v-for="(document, index) of recentDocumentsList" :key="index" :viewType="'recent'" :document="document" @executeRecent="executeRecent" @openSidebar="showSidebar" />
         </div>
     </div>
 
@@ -95,6 +87,10 @@ export default defineComponent({
         },
         toggleDisplayView() {
             this.$emit('toggleDisplayView')
+        },
+        showSidebar(clickedDocument) {
+            this.selectedDocument = clickedDocument
+            this.showDetailSidebar = true
         }
     }
 })

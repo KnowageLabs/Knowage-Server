@@ -1,22 +1,22 @@
 <template>
-    <div class="card-container p-col-12 p-md-4 p-lg-3" :style="cardDescriptor.style.cardContainer">
-        <img v-if="document[documentFields.image]" class="card-image" onerror="this.src='https://i.imgur.com/9YqXpxc.jpeg'" :src="documentImageSource" :style="cardDescriptor.style.cardImage" />
+    <div class="card-container p-col-12 p-md-6 p-lg-4 p-xl-3" :style="cardDescriptor.style.cardContainer">
+        <div v-if="document[documentFields.image]" class="card-image" :style="[documentImageSource, cardDescriptor.style.cardImage]" />
         <!-- TODO: insert the default image source -->
-        <img v-else class="card-image default" src="https://i.imgur.com/9YqXpxc.jpeg" :style="cardDescriptor.style.cardImage" />
+        <div v-else class="card-image default" :style="[documentImageSource, cardDescriptor.style.cardImage]" />
         <!--  -->
         <span class="details-container" :style="cardDescriptor.style.detailsContainer">
             <div class="type-container" :style="cardDescriptor.style.typeContainer">
                 <p class="p-mb-1">{{ document[documentFields.type] }}</p>
             </div>
             <div class="name-container" :style="cardDescriptor.style.nameContainer">
-                <h4 class="p-m-0">
+                <h4 class="p-m-0" v-tooltip="document[documentFields.label]">
                     <b>{{ document[documentFields.label] }}</b>
                 </h4>
                 <p class="p-m-0">{{ document[documentFields.name] }}</p>
             </div>
             <div class="button-container" :style="cardDescriptor.style.buttonContainer">
                 <span v-for="(button, index) of documentButtons" :key="index">
-                    <Button v-if="button.visible" :icon="button.icon" :class="button.class" :style="cardDescriptor.style.icon" @click="button.command" />
+                    <Button class="p-mx-1" v-if="button.visible" :icon="button.icon" :class="button.class" :style="cardDescriptor.style.icon" @click="button.command" />
                 </span>
             </div>
         </span>
@@ -45,19 +45,25 @@ export default defineComponent({
         'uploadAnalysisPreviewFile',
         'openDatasetInQBE',
         'editDataset',
-        'deleteDataset'
+        'deleteDataset',
+        'openSidebar'
     ],
     props: { visible: Boolean, viewType: String, document: Object as any },
     computed: {
         isOwner(): any {
-            return (this.$store.state as any).user.fullName === this.selectedDocument.creationUser
+            return (this.$store.state as any).user.fullName === this.document.creationUser
         },
         documentImageSource(): any {
-            if (this.selectedDocument[this.documentFields.image]) {
-                return process.env.VUE_APP_HOST_URL + descriptor.imgPath + this.selectedDocument[this.documentFields.image]
+            if (this.document[this.documentFields.image]) {
+                return {
+                    //2nd image is the fallback in case there is an error iwth source image --- url(imgSource)url(fallbackImg)
+                    'background-image': `url(${process.env.VUE_APP_HOST_URL}${descriptor.imgPath}${this.document[this.documentFields.image]}),url(https://www.hebergementwebs.com/image/72/722fd28e2eabfe2f8a1e5b2c32d553f8.jpg/error-0x80070005-the-best-approaches.jpg)`
+                }
             }
-            //DEFAULT IMAGE
-            return process.env.VUE_APP_HOST_URL + descriptor.imgPath + `82300081364511eca64e159ee59cd4dc.jpg`
+            return {
+                //default image if none is uploaded for the selected document
+                'background-image': `url(${process.env.VUE_APP_HOST_URL}${descriptor.imgPath}82300081364511eca64e159ee59cd4dc.jpg)`
+            }
         },
         documentFields(): any {
             switch (this.viewType) {
@@ -78,26 +84,29 @@ export default defineComponent({
         documentButtons(): any {
             switch (this.viewType) {
                 case 'recent':
-                    return [{ icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitExecuteRecent }]
+                    return [
+                        { icon: 'fas fa-info-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
+                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeRecent') }
+                    ]
                 case 'repository':
                     return [
-                        { icon: 'fas fa-trash', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitDeleteDocumentFromOrganizer },
-                        { icon: 'fas fa-share', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitMoveDocumentToFolder },
-                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitExecuteDocumentFromOrganizer }
+                        { icon: 'fas fa-trash', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('deleteDocumentFromOrganizer') },
+                        { icon: 'fas fa-share', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('moveDocumentToFolder') },
+                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeDocumentFromOrganizer') }
                     ]
                 case 'analysis':
                     return [
                         { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
-                        { icon: 'fas fa-edit', class: 'p-button-text p-button-rounded p-button-plain', visible: this.isOwner, command: this.emitEditAnalysisDocument },
-                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitExecuteAnalysisDocument }
+                        { icon: 'fas fa-edit', class: 'p-button-text p-button-rounded p-button-plain', visible: this.isOwner, command: this.emitEvent('editAnalysisDocument') },
+                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeAnalysisDocument') }
                     ]
                 case 'businessModel':
-                    return [{ icon: 'fa fa-search', class: 'p-button-text p-button-rounded', visible: true, command: this.emitOpenDatasetInQBE }]
+                    return [{ icon: 'fa fa-search', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('openDatasetInQBE') }]
                 case 'federationDataset':
                     return [
-                        { icon: 'fas fa-trash-alt', class: 'p-button-text p-button-rounded p-button-plain', visible: (this.$store.state as any).user.isSuperadmin || (this.$store.state as any).user.userId === this.selectedDocument.owner, command: this.emitDeleteDataset },
-                        { icon: 'pi pi-pencil', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEditDataset },
-                        { icon: 'fa fa-search', class: 'p-button-text p-button-rounded', visible: true, command: this.emitOpenDatasetInQBE }
+                        { icon: 'fas fa-trash-alt', class: 'p-button-text p-button-rounded p-button-plain', visible: (this.$store.state as any).user.isSuperadmin || (this.$store.state as any).user.userId === this.document.owner, command: this.emitEvent('deleteDataset') },
+                        { icon: 'pi pi-pencil', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('editDataset') },
+                        { icon: 'fa fa-search', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('openDatasetInQBE') }
                     ]
                 default:
                     return console.log('How did this happen, no valid file type.')
@@ -110,7 +119,7 @@ export default defineComponent({
                     label: this.$t('workspace.myAnalysis.menuItems.share'),
                     icon: 'fas fa-share',
                     command: () => {
-                        this.$emit('shareAnalysisDocument', this.selectedDocument)
+                        this.emitEvent('shareAnalysisDocument')
                     }
                 },
                 {
@@ -118,7 +127,7 @@ export default defineComponent({
                     label: this.$t('workspace.myAnalysis.menuItems.clone'),
                     icon: 'fas fa-clone',
                     command: () => {
-                        this.$emit('cloneAnalysisDocument', this.selectedDocument)
+                        this.emitEvent('cloneAnalysisDocument')
                     }
                 },
                 {
@@ -126,7 +135,7 @@ export default defineComponent({
                     label: this.$t('workspace.myAnalysis.menuItems.delete'),
                     icon: 'fas fa-trash',
                     command: () => {
-                        this.$emit('deleteAnalysisDocument', this.selectedDocument)
+                        this.emitEvent('deleteAnalysisDocument')
                     }
                 },
                 {
@@ -134,7 +143,7 @@ export default defineComponent({
                     label: this.$t('workspace.myAnalysis.menuItems.upload'),
                     icon: 'fas fa-share-alt',
                     command: () => {
-                        this.$emit('uploadAnalysisPreviewFile', this.selectedDocument)
+                        this.emitEvent('uploadAnalysisPreviewFile')
                     }
                 }
             ]
@@ -144,20 +153,12 @@ export default defineComponent({
     data() {
         return {
             cardDescriptor,
-            sidebarVisible: false,
-            selectedDocument: {} as any,
-            sidebarFields: null as any
+            sidebarVisible: false
         }
     },
-    created() {
-        this.sidebarVisible = this.visible
-        this.selectedDocument = this.document
-    },
+    created() {},
     watch: {
-        visible() {
-            this.sidebarVisible = this.visible
-            this.selectedDocument = this.document
-        }
+        visible() {}
     },
     methods: {
         returnDefaultImage() {
@@ -172,41 +173,14 @@ export default defineComponent({
             let fDate = new Date(date)
             return fDate.toLocaleString()
         },
-        emitExecuteRecent() {
-            this.$emit('executeRecent', this.selectedDocument)
-        },
-        emitExecuteDocumentFromOrganizer() {
-            this.$emit('executeDocumentFromOrganizer', this.selectedDocument)
-        },
-        emitMoveDocumentToFolder() {
-            this.$emit('moveDocumentToFolder', this.selectedDocument)
-        },
-        emitDeleteDocumentFromOrganizer() {
-            this.$emit('deleteDocumentFromOrganizer', this.selectedDocument)
-        },
-        emitExecuteAnalysisDocument() {
-            this.$emit('executeAnalysisDocument', this.selectedDocument)
-        },
-        emitEditAnalysisDocument() {
-            this.$emit('editAnalysisDocument', this.selectedDocument)
-        },
-        emitOpenDatasetInQBE() {
-            this.$emit('openDatasetInQBE', this.selectedDocument)
-        },
-        emitEditDataset() {
-            this.$emit('editDataset', this.selectedDocument)
-        },
-        emitDeleteDataset() {
-            this.$emit('deleteDataset', this.selectedDocument)
-        },
-        logDoc() {
-            console.log(this.selectedDocument)
+        emitEvent(event) {
+            return () => this.$emit(event, this.document)
         }
     }
 })
 </script>
 <style lang="scss" scoped>
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 576px) {
     .card-image {
         display: none;
     }
