@@ -310,9 +310,9 @@ export default defineComponent({
         },
         sendRequest(url: string, federatedDataset: IFederatedDataset) {
             if (this.operation === 'create') {
-                return this.$http.post(url, federatedDataset)
+                return this.$http.post(url, federatedDataset, { headers: { 'X-Disable-Errors': true } })
             } else {
-                return this.$http.put(url, federatedDataset)
+                return this.$http.put(url, federatedDataset, { headers: { 'X-Disable-Errors': true } })
             }
         }
     }

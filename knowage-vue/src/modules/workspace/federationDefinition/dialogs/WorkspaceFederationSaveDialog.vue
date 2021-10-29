@@ -50,7 +50,7 @@
 
             <template #footer>
                 <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.close') }}</Button>
-                <Button class="kn-button kn-button--primary" @click="saveFederation"> {{ $t('common.save') }}</Button>
+                <Button class="kn-button kn-button--primary" :disabled="saveButtonDisabled" @click="saveFederation"> {{ $t('common.save') }}</Button>
             </template>
         </Dialog>
     </div>
@@ -78,6 +78,9 @@ export default defineComponent({
         federatedDataset() {
             this.loadDataset()
         }
+    },
+    saveButtonDisabled(): boolean {
+        return this.dataset.label.length === 0 || this.dataset.name.length === 0
     },
     created() {
         this.loadDataset()

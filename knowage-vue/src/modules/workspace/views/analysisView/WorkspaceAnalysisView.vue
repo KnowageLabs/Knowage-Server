@@ -58,12 +58,17 @@
         @executeAnalysisDocument="executeAnalysisDocument"
         @editAnalysisDocument="editAnalysisDocument"
         @shareAnalysisDocument="shareAnalysisDocument"
-        @cloneAnalysisDocument="cloneAnalysisDocument"
-        @deleteAnalysisDocumentConfirm="deleteAnalysisDocumentConfirm"
+        @cloneAnalysisDocument="cloneAnalysisDocumentConfirm"
+        @deleteAnalysisDocument="deleteAnalysisDocumentConfirm"
         @uploadAnalysisPreviewFile="uploadAnalysisPreviewFile"
         @close="showDetailSidebar = false"
     />
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
+
+    <WorkspaceAnalysisViewEditDialog :visible="editDialogVisible" :propAnalysis="selectedAnalysis" @close="editDialogVisible = false" @save="handleEditAnalysis"></WorkspaceAnalysisViewEditDialog>
+    <WorkspaceAnalysisViewWarningDialog :visible="warningDialogVisbile" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceAnalysisViewWarningDialog>
+
+    <KnInputFile v-if="!uploading" :changeFunction="uploadAnalysisFile" accept="image/*" :triggerInput="triggerUpload" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -75,10 +80,13 @@ import KnFabButton from '@/components/UI/KnFabButton.vue'
 import DataTable from 'primevue/datatable'
 import Menu from 'primevue/contextmenu'
 import Column from 'primevue/column'
+import KnInputFile from '@/components/UI/KnInputFile.vue'
+import WorkspaceAnalysisViewEditDialog from './dialogs/WorkspaceAnalysisViewEditDialog.vue'
+import WorkspaceAnalysisViewWarningDialog from './dialogs/WorkspaceAnalysisViewWarningDialog.vue'
 
 export default defineComponent({
     name: 'workspace-analysis-view',
-    components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu },
+    components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu, KnInputFile, WorkspaceAnalysisViewEditDialog, WorkspaceAnalysisViewWarningDialog },
     emits: ['showMenu', 'toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
@@ -96,7 +104,12 @@ export default defineComponent({
             menuButtons: [] as any,
             filters: {
                 global: [filterDefault]
-            } as Object
+            } as Object,
+            editDialogVisible: false,
+            warningDialogVisbile: false,
+            warningMessage: '',
+            triggerUpload: false,
+            uploading: false
         }
     },
     created() {
@@ -145,14 +158,61 @@ export default defineComponent({
                 msg: 'Functionality not in this sprint'
             })
         },
-        editAnalysisDocument(event) {
-            console.log('editAnalysisDocument', event)
+        editAnalysisDocument(analysis: any) {
+            console.log('editAnalysisDocument', analysis)
+            this.selectedAnalysis = analysis
+            this.editDialogVisible = true
+        },
+        async handleEditAnalysis(analysis: any) {
+            console.log('ANALYSIS FOR EDIT: ', analysis)
+            const formatedAnalysis = {
+                document: {
+                    name: analysis.label,
+                    label: analysis.name,
+                    description: analysis.description,
+                    id: analysis.id
+                },
+                updateFromWorkspace: true
+            }
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/saveDocument/', formatedAnalysis, { headers: { 'X-Disable-Errors': true } })
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.editDialogVisible = false
+                    this.showDetailSidebar = false
+                    this.getAnalysisDocs()
+                })
+                .catch((response) => {
+                    this.warningMessage = response
+                    this.warningDialogVisbile = true
+                })
         },
         shareAnalysisDocument(event) {
             console.log('shareAnalysisDocument', event)
         },
-        cloneAnalysisDocument(event) {
-            console.log('cloneAnalysisDocument', event)
+        async cloneAnalysisDocumentConfirm(analysis: any) {
+            this.$confirm.require({
+                header: this.$t('common.toast.cloneConfirmTitle'),
+                accept: async () => await this.cloneAnalysisDocument(analysis)
+            })
+        },
+        async cloneAnalysisDocument(analysis: any) {
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/clone?docId=${analysis.id}`)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.createTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.showDetailSidebar = false
+                    this.getAnalysisDocs()
+                })
+                .catch(() => {})
+            this.loading = true
         },
         deleteAnalysisDocumentConfirm(analysis: any) {
             this.$confirm.require({
@@ -163,10 +223,10 @@ export default defineComponent({
             })
         },
         deleteAnalysis(analysis: any) {
-            console.log('deleteAnalysisDocument', analysis)
+            // console.log('deleteAnalysisDocument', analysis)
             this.loading = true
             this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${analysis.name}`)
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${analysis.label}`)
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
@@ -178,8 +238,47 @@ export default defineComponent({
                 .catch(() => {})
             this.loading = false
         },
-        uploadAnalysisPreviewFile(event) {
-            console.log('uploadAnalysisPreviewFile', event)
+        uploadAnalysisPreviewFile(analysis: any) {
+            console.log('uploadAnalysisPreviewFile', analysis)
+            this.selectedAnalysis = analysis
+            this.triggerUpload = false
+            setTimeout(() => (this.triggerUpload = true), 200)
+        },
+        uploadAnalysisFile(event: any) {
+            this.uploading = true
+            let uploadedFile = event.target.files[0]
+
+            this.startUpload(uploadedFile)
+
+            this.triggerUpload = false
+            setTimeout(() => (this.uploading = false), 200)
+        },
+        startUpload(uploadedFile: any) {
+            console.log('UPLOAD STARTED!', uploadedFile)
+            var formData = new FormData()
+            formData.append('file', uploadedFile)
+            this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analysis/${this.selectedAnalysis.id}`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryFYwjkDOpT85ZFN3L'
+                    }
+                })
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.uploading'),
+                        msg: this.$t('common.toast.uploadSuccess')
+                    })
+                    this.showDetailSidebar = false
+                    this.getAnalysisDocs()
+                })
+                .catch()
+                .finally(() => {
+                    this.triggerUpload = false
+                })
+        },
+        closeWarningDialog() {
+            this.warningMessage = ''
+            this.warningDialogVisbile = false
         }
     }
 })
