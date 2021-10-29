@@ -1162,11 +1162,15 @@
     },
     "workspace": {
         "federationDefinition": {
+            "associationsEditor": "Associations Editor",
+            "associationsList": "Associations List",
             "availableDatasets": "Available datasets",
             "availableDatasetsMessage": "Click to add to federation",
             "datasetDetail": "Dataset details",
-            "onlyOneSelectedDatasetError": "Select at least two datasets!",
+            "datasetNotInRelationshipError": "All selected datasets must be contained at least in one relationship!",
             "noDatasetsSelectedError": "You didn't select any datasets!",
+            "onlyOneSelectedDatasetError": "Select at least two datasets!",
+            "relationshipAlreadyPresentError": "Relationship already exists",
             "removeSelectedDatasetError": "You can't delete the dataset! It is used in a relationship! To delete this dataset you have to remove the relationship first.",
             "saveFederation": "Save federation",
             "selectedDatasets": "Selected datasets",

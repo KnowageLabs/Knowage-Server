@@ -12,6 +12,10 @@
             <WorkspaceFederationDatasetList class="kn-flex p-m-2" :mode="'available'" :propDatasets="availableDatasets" @showInfo="showDatasetInfo" @datasetSelected="moveDataset"></WorkspaceFederationDatasetList>
             <WorkspaceFederationDatasetList class="kn-flex p-m-2" :mode="'selected'" :propDatasets="selectedDatasets" @datasetSelected="moveDataset"></WorkspaceFederationDatasetList>
         </div>
+        <div v-else>
+            <WorkspaceFederationDefinitionAssociationsEditor class="p-m-2" :selectedDatasets="selectedDatasets" :selectedMetafields="selectedMetafields" :resetSelectedMetafield="resetSelectedMetafield"></WorkspaceFederationDefinitionAssociationsEditor>
+            <WorkspaceFederationDefinitionAssociationsList class="p-m-2" :propAssociations="multirelationships" @createAssociationClick="createAssociation()"></WorkspaceFederationDefinitionAssociationsList>
+        </div>
 
         <div class="p-d-flex p-flex-row p-jc-end p-m-4">
             <Button class="kn-button kn-button--secondary" @click="changeSteps"> {{ step === 0 ? $t('common.next') : $t('common.back') }}</Button>
@@ -29,10 +33,12 @@ import { IFederatedDataset } from '../Workspace'
 import WorskpaceFederationDatasetDialog from './dialogs/WorskpaceFederationDatasetDialog.vue'
 import WorkspaceFederationWarningDialog from './dialogs/WorkspaceFederationWarningDialog.vue'
 import WorkspaceFederationDatasetList from './WorkspaceFederationDatasetList.vue'
+import WorkspaceFederationDefinitionAssociationsEditor from './WorkspaceFederationDefinitionAssociationsEditor.vue'
+import WorkspaceFederationDefinitionAssociationsList from './WorkspaceFederationDefinitionAssociationsList.vue'
 
 export default defineComponent({
     name: 'workspace-federation-definition',
-    components: { WorkspaceFederationDatasetList, WorskpaceFederationDatasetDialog, WorkspaceFederationWarningDialog },
+    components: { WorkspaceFederationDatasetList, WorskpaceFederationDatasetDialog, WorkspaceFederationWarningDialog, WorkspaceFederationDefinitionAssociationsEditor, WorkspaceFederationDefinitionAssociationsList },
     props: { id: { type: String } },
     data() {
         return {
@@ -41,8 +47,10 @@ export default defineComponent({
             availableDatasets: [] as any[],
             selectedDatasets: [] as any[],
             sourceDatasetUsedInRelations: [] as any[],
-            multiRelationships: [] as any[],
+            multirelationships: [] as any[],
             selectedDataset: null as any,
+            selectedMetafields: [] as any[],
+            resetSelectedMetafield: false,
             infoDialogVisible: false,
             warningDialogVisbile: false,
             warningMessage: '' as string,
@@ -83,6 +91,7 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/?includeDerived=no`).then((response) => {
                 response.data.forEach((el: any) => {
                     if (el.pars.length === 0) {
+                        this.formatDatasetMetaFields(el)
                         this.datasets.push(el)
                     }
                 })
@@ -90,18 +99,39 @@ export default defineComponent({
 
             // console.log('LOADED DATASETS: ', this.datasets)
         },
+        formatDatasetMetaFields(dataset: any) {
+            if (!dataset.metadata) {
+                dataset.metadata = {}
+            }
+
+            if (!dataset.metadata.fieldsMeta) {
+                dataset.metadata.fieldsMeta = []
+                if (dataset.meta && dataset.meta.columns) {
+                    let columnsJson = {}
+                    for (let c in dataset.meta.columns) {
+                        if (dataset.meta.columns[c].pname === 'fieldAlias') {
+                            columnsJson[dataset.meta.columns[c].column] = dataset.meta.columns[c].pvalue
+                        }
+                    }
+
+                    for (let column in columnsJson) {
+                        dataset.metadata.fieldsMeta.push({ name: column, alias: columnsJson[column] })
+                    }
+                }
+            }
+        },
         formatRelationship() {
             // console.log('DATASET RELATIONSHIP: ', this.federatedDataset?.relationships)
             this.federatedDataset?.relationships.forEach((relationship: any) => {
                 relationship.forEach((el: any) => {
                     this.sourceDatasetUsedInRelations.push(el.sourceTable.name)
                     this.sourceDatasetUsedInRelations.push(el.destinationTable.name)
-                    this.multiRelationships.push(el.sourceTable.name.toUpperCase() + '.' + el.sourceColumns[0] + ' -> ' + el.destinationTable.name.toUpperCase() + '.' + el.destinationColumns[0])
+                    this.multirelationships.push({ relationship: el.sourceTable.name.toUpperCase() + '.' + el.sourceColumns[0] + ' -> ' + el.destinationTable.name.toUpperCase() + '.' + el.destinationColumns[0], datasets: [el.sourceTable, el.destinationTable] })
                 })
             })
 
             // console.log('SOURCE DATASET USED IN RELATIONS: ', this.sourceDatasetUsedInRelations)
-            // console.log('MULTIRELATIONSHIPS: ', this.multiRelationships)
+            console.log('MULTIRELATIONSHIPS: ', this.multirelationships)
         },
         setSelectedDatasets() {
             this.availableDatasets = [...this.datasets]
@@ -134,9 +164,7 @@ export default defineComponent({
 
             return true
         },
-        saveFederation() {
-            console.log('SAVE FEDERATION CLICKED!')
-        },
+
         showDatasetInfo(dataset: any) {
             this.selectedDataset = dataset
             this.infoDialogVisible = true
@@ -163,11 +191,10 @@ export default defineComponent({
             }
         },
         datasetCanBeUnselected(dataset: any) {
-            console.log('DATASET CAN BE UNSELECTED: ', dataset)
-            console.log('SOURCE DATASET USED IN...: ', this.sourceDatasetUsedInRelations)
-            const index = this.sourceDatasetUsedInRelations.findIndex((el: any) => {
-                console.log(el + ' ' + dataset.label)
-                return el === dataset.label
+            // console.log('DATASET CAN BE UNSELECTED: ', dataset)
+            // console.log('SOURCE DATASET USED IN...: ', this.sourceDatasetUsedInRelations)
+            const index = this.multirelationships.findIndex((el: any) => {
+                return el.datasets[0].name === dataset.name || el.datasets[1].name === dataset.name
             })
             return index === -1
         },
@@ -178,6 +205,45 @@ export default defineComponent({
         closeFederationDefinition() {
             this.federatedDataset = null
             this.$router.push('/workspace/models')
+        },
+        createAssociation() {
+            console.log('CREATE ASSOCATION SLEECTED: ', this.selectedMetafields)
+            const association = {
+                relationship: this.selectedMetafields[0].dataset.label.toUpperCase() + '.' + this.selectedMetafields[0].metafield.name.toUpperCase() + ' -> ' + this.selectedMetafields[1].dataset.label.toUpperCase() + '.' + this.selectedMetafields[1].metafield.name.toUpperCase(),
+                datasets: [this.selectedMetafields[0].dataset, this.selectedMetafields[1].dataset]
+            }
+
+            if (this.selectedMetafields.length === 2 && !this.checkIfAssociationAlreadyPresent(association)) {
+                this.multirelationships.push(association)
+                this.selectedMetafields = []
+                this.resetSelectedMetafield = !this.resetSelectedMetafield
+            } else {
+                this.warningMessage = this.$t('workspace.federationDefinition.relationshipAlreadyPresentError')
+                this.warningDialogVisbile = true
+            }
+        },
+        checkIfAssociationAlreadyPresent(association: any) {
+            const index = this.multirelationships.findIndex((el: any) => el.relationship === association.relationship)
+            return index !== -1
+        },
+        checkIfAllSelectedDatasetArePresentInRelationships() {
+            let present = true
+
+            for (let i = 0; i < this.selectedDatasets.length; i++) {
+                const index = this.selectedMetafields.findIndex((el: any) => el.dataset.id === this.selectedDatasets[i].id)
+                if (index === -1) {
+                    present = false
+                    break
+                }
+            }
+
+            return present
+        },
+        saveFederation() {
+            if (!this.checkIfAllSelectedDatasetArePresentInRelationships()) {
+                this.warningMessage = this.$t('workspace.federationDefinition.datasetNotInRelationshipError')
+                this.warningDialogVisbile = true
+            }
         }
     }
 })
