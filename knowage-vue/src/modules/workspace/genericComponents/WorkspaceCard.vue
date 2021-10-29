@@ -57,12 +57,12 @@ export default defineComponent({
             if (this.document[this.documentFields.image]) {
                 return {
                     //2nd image is the fallback in case there is an error iwth source image --- url(imgSource)url(fallbackImg)
-                    'background-image': `url(${process.env.VUE_APP_HOST_URL}${descriptor.imgPath}${this.document[this.documentFields.image]}),url(https://www.hebergementwebs.com/image/72/722fd28e2eabfe2f8a1e5b2c32d553f8.jpg/error-0x80070005-the-best-approaches.jpg)`
+                    'background-image': `url(${process.env.VUE_APP_HOST_URL}${descriptor.imgPath}${this.document[this.documentFields.image]}),url(https://i.imgur.com/9N1aRkx.png)`
                 }
             }
             return {
                 //default image if none is uploaded for the selected document
-                'background-image': `url(https://martialartsplusinc.com/wp-content/uploads/2017/04/default-image.jpg)`
+                'background-image': `url(https://i.imgur.com/9N1aRkx.png)`
             }
         },
         documentFields(): any {
