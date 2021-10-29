@@ -68,6 +68,11 @@ export default defineComponent({
     components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu },
     emits: ['showMenu', 'toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
+    computed: {
+        isOwner(): any {
+            return (this.$store.state as any).user.fullName === this.selectedAnalysis.creationUser
+        }
+    },
     data() {
         return {
             analysisDescriptor,
@@ -80,6 +85,7 @@ export default defineComponent({
                     key: '0',
                     label: this.$t('workspace.myAnalysis.menuItems.edit'),
                     icon: 'fas fa-edit',
+                    visible: this.isOwner,
                     command: () => {
                         this.editAnalysisDocument(this.selectedAnalysis)
                     }
