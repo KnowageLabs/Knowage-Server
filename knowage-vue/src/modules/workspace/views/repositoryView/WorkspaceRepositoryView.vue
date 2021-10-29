@@ -5,12 +5,15 @@
             {{ $t('workspace.menuLabels.myRepository') }} - {{ selectedFolder.label }}
         </template>
         <template #right>
+            <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
+            <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
             <FabButton icon="fas fa-folder" data-test="new-folder-button" @click="displayCreateFolderDialog = true" />
         </template>
     </Toolbar>
     <InputText class="kn-material-input p-m-2" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
     <div class="p-m-2 overflow">
         <DataTable
+            v-if="!toggleCardDisplay"
             class="p-datatable-sm kn-table"
             :value="documents"
             :loading="loading"
@@ -38,7 +41,11 @@
                 </template>
             </Column>
         </DataTable>
+        <div v-if="toggleCardDisplay" class="p-grid p-m-2">
+            <WorkspaceCard v-for="(document, index) of documents" :key="index" :viewType="'repository'" :document="document" />
+        </div>
     </div>
+
     <Dialog id="saveDialog" class="kn-dialog--toolbar--primary importExportDialog" v-bind:visible="displayCreateFolderDialog" footer="footer" :closable="false" modal>
         <template #header>
             <h4>{{ $t('workspace.myRepository.newFolderTitle') }}</h4>
@@ -119,6 +126,7 @@ import { filterDefault } from '@/helpers/commons/filterHelper'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import { IDocument, IFolder } from '@/modules/workspace/Workspace'
 import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
+import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
 import repositoryDescriptor from './WorkspaceRepositoryViewDescriptor.json'
 import useValidate from '@vuelidate/core'
 import DataTable from 'primevue/datatable'
@@ -128,9 +136,9 @@ import Dialog from 'primevue/dialog'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 
 export default defineComponent({
-    components: { DataTable, Column, FabButton, Dialog, KnValidationMessages, DetailSidebar },
-    emits: ['showMenu', 'reloadRepositoryMenu'],
-    props: { selectedFolder: { type: Object }, id: { type: String, required: false } },
+    components: { DataTable, Column, FabButton, Dialog, KnValidationMessages, DetailSidebar, WorkspaceCard },
+    emits: ['showMenu', 'reloadRepositoryMenu', 'toggleDisplayView'],
+    props: { selectedFolder: { type: Object }, id: { type: String, required: false }, toggleCardDisplay: { type: Boolean } },
     computed: {
         buttonDisabled(): any {
             return this.v$.$invalid
@@ -195,6 +203,9 @@ export default defineComponent({
                     })
                 })
                 .finally(() => (this.displayCreateFolderDialog = false))
+        },
+        toggleDisplayView() {
+            this.$emit('toggleDisplayView')
         },
         logEvent(event) {
             console.log(event)

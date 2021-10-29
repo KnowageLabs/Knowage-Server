@@ -14,7 +14,7 @@
         </div>
         <div class=" p-d-flex p-flex-column" style="width:100%">
             <Button id="showSidenavIcon" v-if="$router.currentRoute._rawValue.fullPath === '/workspace/'" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="sidebarVisible = true" />
-            <router-view class="kn-router-view" :selectedFolder="selectedFolder" @showMenu="sidebarVisible = true" @reloadRepositoryMenu="getAllFolders" />
+            <router-view class="kn-router-view" :selectedFolder="selectedFolder" :toggleCardDisplay="toggleCardDisplay" @toggleDisplayView="toggleDisplayView" @showMenu="sidebarVisible = true" @reloadRepositoryMenu="getAllFolders" />
         </div>
     </div>
 
@@ -39,6 +39,7 @@ export default defineComponent({
     data() {
         return {
             sidebarVisible: false,
+            toggleCardDisplay: false,
             allFolders: [] as IFolder[],
             selectedFolder: {} as IFolder,
             allDocuments: [] as IDocument[],
@@ -124,6 +125,10 @@ export default defineComponent({
             this.$router.push(route)
             this.closeSidebar()
         },
+
+        toggleDisplayView() {
+            this.toggleCardDisplay = this.toggleCardDisplay ? false : true
+        },
         //#region ==================================== Create Menu Items ====================================
         createNodeTree() {
             console.log('   createNodeTree() {')
@@ -193,7 +198,7 @@ export default defineComponent({
 #sideMenu {
     width: 33.3333%;
 }
-@media screen and (max-width: 1017px) {
+@media screen and (max-width: 1024px) {
     #sideMenu {
         -webkit-transition: width 0.3s;
         transition: width 0.3s;
@@ -216,7 +221,7 @@ export default defineComponent({
 .mySidebar.p-sidebar .p-sidebar-content {
     padding: 0 !important;
 }
-@media screen and (min-width: 1017px) {
+@media screen and (min-width: 1025px) {
     #sideMenu {
         -webkit-transition: width 0.3s;
         transition: width 0.3s;
