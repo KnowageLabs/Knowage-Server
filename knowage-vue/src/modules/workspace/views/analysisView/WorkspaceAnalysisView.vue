@@ -55,6 +55,8 @@
 
     <WorkspaceAnalysisViewEditDialog :visible="editDialogVisible" :propAnalysis="selectedAnalysis" @close="editDialogVisible = false" @save="handleEditAnalysis"></WorkspaceAnalysisViewEditDialog>
     <WorkspaceAnalysisViewWarningDialog :visible="warningDialogVisbile" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceAnalysisViewWarningDialog>
+
+    <KnInputFile v-if="!uploading" :changeFunction="uploadAnalysisFile" accept="image/*" :triggerInput="triggerUpload" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -66,12 +68,13 @@ import KnFabButton from '@/components/UI/KnFabButton.vue'
 import DataTable from 'primevue/datatable'
 import Menu from 'primevue/contextmenu'
 import Column from 'primevue/column'
+import KnInputFile from '@/components/UI/KnInputFile.vue'
 import WorkspaceAnalysisViewEditDialog from './dialogs/WorkspaceAnalysisViewEditDialog.vue'
 import WorkspaceAnalysisViewWarningDialog from './dialogs/WorkspaceAnalysisViewWarningDialog.vue'
 
 export default defineComponent({
     name: 'workspace-analysis-view',
-    components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu, WorkspaceAnalysisViewEditDialog, WorkspaceAnalysisViewWarningDialog },
+    components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu, KnInputFile, WorkspaceAnalysisViewEditDialog, WorkspaceAnalysisViewWarningDialog },
     emits: ['showMenu', 'toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
@@ -92,7 +95,9 @@ export default defineComponent({
             } as Object,
             editDialogVisible: false,
             warningDialogVisbile: false,
-            warningMessage: ''
+            warningMessage: '',
+            triggerUpload: false,
+            uploading: false
         }
     },
     created() {
@@ -221,8 +226,43 @@ export default defineComponent({
                 .catch(() => {})
             this.loading = false
         },
-        uploadAnalysisPreviewFile(event) {
-            console.log('uploadAnalysisPreviewFile', event)
+        uploadAnalysisPreviewFile(analysis: any) {
+            console.log('uploadAnalysisPreviewFile', analysis)
+            this.selectedAnalysis = analysis
+            this.triggerUpload = false
+            setTimeout(() => (this.triggerUpload = true), 200)
+        },
+        uploadAnalysisFile(event: any) {
+            this.uploading = true
+            let uploadedFile = event.target.files[0]
+
+            this.startUpload(uploadedFile)
+
+            this.triggerUpload = false
+            setTimeout(() => (this.uploading = false), 200)
+        },
+        startUpload(uploadedFile: any) {
+            console.log('UPLOAD STARTED!', uploadedFile)
+            var formData = new FormData()
+            formData.append('file', uploadedFile)
+            this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analysis/${this.selectedAnalysis.id}`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryFYwjkDOpT85ZFN3L'
+                    }
+                })
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.uploading'),
+                        msg: this.$t('common.toast.uploadSuccess')
+                    })
+                    this.showDetailSidebar = false
+                    this.getAnalysisDocs()
+                })
+                .catch()
+                .finally(() => {
+                    this.triggerUpload = false
+                })
         },
         closeWarningDialog() {
             this.warningMessage = ''
