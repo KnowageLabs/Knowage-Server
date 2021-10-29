@@ -13,21 +13,7 @@
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
     <InputText class="kn-material-input p-m-2" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
     <div class="p-m-2 overflow">
-        <DataTable
-            v-if="!toggleCardDisplay"
-            class="p-datatable-sm kn-table"
-            :value="analysisDocuments"
-            :loading="loading"
-            :scrollable="true"
-            scrollHeight="89vh"
-            dataKey="id"
-            responsiveLayout="stack"
-            breakpoint="600px"
-            v-model:filters="filters"
-            v-model:selection="selectedAnalysis"
-            selectionMode="single"
-            @rowSelect="showDetailSidebar = true"
-        >
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="analysisDocuments" :loading="loading" :scrollable="true" scrollHeight="89vh" dataKey="id" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -41,10 +27,11 @@
                     {{ formatDate(data.creationDate) }}
                 </template>
             </Column>
-            <Column style="width:10%;text-align:end" @rowClick="false">
-                <template #body>
-                    <Button icon="fas fa-edit" class="p-button-link" />
-                    <Button icon="fas fa-play-circle" class="p-button-link" />
+            <Column>
+                <template #body="slotProps">
+                    <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="showMenu($event, slotProps.data)" />
+                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click="showSidebar(slotProps.data)" />
+                    <Button icon="fas fa-play-circle" class="p-button-link" @click="executeAnalysisDocument" />
                 </template>
             </Column>
         </DataTable>
@@ -64,6 +51,7 @@
         @uploadAnalysisPreviewFile="uploadAnalysisPreviewFile"
         @close="showDetailSidebar = false"
     />
+    <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -73,13 +61,19 @@ import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.v
 import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import DataTable from 'primevue/datatable'
+import Menu from 'primevue/contextmenu'
 import Column from 'primevue/column'
 
 export default defineComponent({
     name: 'workspace-analysis-view',
-    components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton },
+    components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu },
     emits: ['showMenu', 'toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
+    computed: {
+        isOwner(): any {
+            return (this.$store.state as any).user.fullName === this.selectedAnalysis.creationUser
+        }
+    },
     data() {
         return {
             analysisDescriptor,
@@ -87,6 +81,49 @@ export default defineComponent({
             showDetailSidebar: false,
             analysisDocuments: [] as any,
             selectedAnalysis: {} as any,
+            menuButtons: [
+                {
+                    key: '0',
+                    label: this.$t('workspace.myAnalysis.menuItems.edit'),
+                    icon: 'fas fa-edit',
+                    visible: this.isOwner,
+                    command: () => {
+                        this.editAnalysisDocument(this.selectedAnalysis)
+                    }
+                },
+                {
+                    key: '1',
+                    label: this.$t('workspace.myAnalysis.menuItems.share'),
+                    icon: 'fas fa-share',
+                    command: () => {
+                        this.shareAnalysisDocument(this.selectedAnalysis)
+                    }
+                },
+                {
+                    key: '2',
+                    label: this.$t('workspace.myAnalysis.menuItems.clone'),
+                    icon: 'fas fa-clone',
+                    command: () => {
+                        this.cloneAnalysisDocument(this.selectedAnalysis)
+                    }
+                },
+                {
+                    key: '3',
+                    label: this.$t('workspace.myAnalysis.menuItems.delete'),
+                    icon: 'fas fa-trash',
+                    command: () => {
+                        this.deleteAnalysisDocument(this.selectedAnalysis)
+                    }
+                },
+                {
+                    key: '4',
+                    label: this.$t('workspace.myAnalysis.menuItems.upload'),
+                    icon: 'fas fa-share-alt',
+                    command: () => {
+                        this.uploadAnalysisPreviewFile(this.selectedAnalysis)
+                    }
+                }
+            ] as any,
             filters: {
                 global: [filterDefault]
             } as Object
@@ -108,6 +145,16 @@ export default defineComponent({
         formatDate(date) {
             let fDate = new Date(date)
             return fDate.toLocaleString()
+        },
+        showSidebar(clickedDocument) {
+            this.selectedAnalysis = clickedDocument
+            this.showDetailSidebar = true
+        },
+        showMenu(event, selectedDocument) {
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs.optionsMenu.toggle(event)
+            this.selectedAnalysis = selectedDocument
         },
         executeAnalysisDocument(event) {
             console.log('executeAnalysisDocument', event)
