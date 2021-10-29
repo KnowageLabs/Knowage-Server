@@ -80,49 +80,7 @@ export default defineComponent({
             showDetailSidebar: false,
             analysisDocuments: [] as any,
             selectedAnalysis: {} as any,
-            menuButtons: [
-                {
-                    key: '0',
-                    label: this.$t('workspace.myAnalysis.menuItems.edit'),
-                    icon: 'fas fa-edit',
-                    visible: this.isOwner,
-                    command: () => {
-                        this.editAnalysisDocument(this.selectedAnalysis)
-                    }
-                },
-                {
-                    key: '1',
-                    label: this.$t('workspace.myAnalysis.menuItems.share'),
-                    icon: 'fas fa-share',
-                    command: () => {
-                        this.shareAnalysisDocument(this.selectedAnalysis)
-                    }
-                },
-                {
-                    key: '2',
-                    label: this.$t('workspace.myAnalysis.menuItems.clone'),
-                    icon: 'fas fa-clone',
-                    command: () => {
-                        this.cloneAnalysisDocument(this.selectedAnalysis)
-                    }
-                },
-                {
-                    key: '3',
-                    label: this.$t('workspace.myAnalysis.menuItems.delete'),
-                    icon: 'fas fa-trash',
-                    command: () => {
-                        this.deleteAnalysisDocument(this.selectedAnalysis)
-                    }
-                },
-                {
-                    key: '4',
-                    label: this.$t('workspace.myAnalysis.menuItems.upload'),
-                    icon: 'fas fa-share-alt',
-                    command: () => {
-                        this.uploadAnalysisPreviewFile(this.selectedAnalysis)
-                    }
-                }
-            ] as any,
+            menuButtons: [] as any,
             filters: {
                 global: [filterDefault]
             } as Object
@@ -149,11 +107,23 @@ export default defineComponent({
             this.selectedAnalysis = clickedDocument
             this.showDetailSidebar = true
         },
-        showMenu(event, selectedDocument) {
+        showMenu(event, clickedDocument) {
+            this.selectedAnalysis = clickedDocument
+            this.createMenuItems()
             // eslint-disable-next-line
             // @ts-ignore
             this.$refs.optionsMenu.toggle(event)
-            this.selectedAnalysis = selectedDocument
+        },
+        // prettier-ignore
+        createMenuItems() {
+            this.menuButtons = []
+            this.menuButtons.push(
+                { key: '0', label: this.$t('workspace.myAnalysis.menuItems.edit'), icon: 'fas fa-edit', command: () => { this.editAnalysisDocument(this.selectedAnalysis) }, visible: this.isOwner},
+                { key: '1', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share', command: () => { this.shareAnalysisDocument(this.selectedAnalysis) }},
+                { key: '2', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: () => { this.cloneAnalysisDocument(this.selectedAnalysis) }},
+                { key: '3', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: () => { this.deleteAnalysisDocument(this.selectedAnalysis) }},
+                { key: '4', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-share-alt', command: () => { this.uploadAnalysisPreviewFile(this.selectedAnalysis) }}
+            )
         },
         executeAnalysisDocument(event) {
             console.log('executeAnalysisDocument', event)
