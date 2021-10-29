@@ -37,6 +37,8 @@
             "display": "flex"
         },
         "cardImage": {
+            "background-repeat": "no-repeat",
+            "background-size": "cover",
             "border-bottom": "solid",
             "border-bottom-left-radius": "10px",
             "border-color": "gray",
