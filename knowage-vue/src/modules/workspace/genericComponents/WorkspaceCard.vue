@@ -6,13 +6,13 @@
         <!--  -->
         <span class="details-container" :style="cardDescriptor.style.detailsContainer">
             <div class="type-container" :style="cardDescriptor.style.typeContainer">
-                <p class="p-mb-1">{{ document[documentFields.type] }}</p>
+                <p>{{ document[documentFields.type] }}</p>
             </div>
             <div class="name-container" :style="cardDescriptor.style.nameContainer">
-                <h4 class="p-m-0" v-tooltip="document[documentFields.label]">
+                <h4 class="p-m-0" :style="cardDescriptor.style.nameContainerText" v-tooltip="document[documentFields.label]">
                     <b>{{ document[documentFields.label] }}</b>
                 </h4>
-                <p class="p-m-0">{{ document[documentFields.name] }}</p>
+                <p class="p-m-0" :style="cardDescriptor.style.nameContainerText" v-tooltip="document[documentFields.name]">{{ document[documentFields.name] }}</p>
             </div>
             <div class="button-container" :style="cardDescriptor.style.buttonContainer">
                 <span v-for="(button, index) of documentButtons" :key="index">
@@ -33,7 +33,7 @@ export default defineComponent({
     name: 'workspace-sidebar',
     components: { Menu },
     //prettier-ignore
-    emits: ['executeRecent','executeDocumentFromOrganizer','moveDocumentToFolder','deleteDocumentFromOrganizer','executeAnalysisDocument','editAnalysisDocument','shareAnalysisDocument','cloneAnalysisDocument','deleteAnalysisDocument','uploadAnalysisPreviewFile','openDatasetInQBE','editDataset','deleteDataset','openSidebar' ],
+    emits: ['executeRecent','executeDocumentFromOrganizer','moveDocumentToFolder','deleteDocumentFromOrganizer','executeAnalysisDocument','editAnalysisDocument','shareAnalysisDocument','cloneAnalysisDocument','deleteAnalysisDocument','uploadAnalysisPreviewFile','openDatasetInQBE','editDataset','deleteDataset','previewDataset','openSidebar' ],
     props: { visible: Boolean, viewType: String, document: Object as any },
     computed: {
         isOwner(): any {
@@ -55,6 +55,8 @@ export default defineComponent({
             switch (this.viewType) {
                 case 'recent':
                     return cardDescriptor.defaultViewFields
+                case 'dataset':
+                    return cardDescriptor.datasetViewFields
                 case 'repository':
                     return cardDescriptor.defaultViewFields
                 case 'analysis':
@@ -80,6 +82,12 @@ export default defineComponent({
                         { icon: 'fas fa-share', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('moveDocumentToFolder') },
                         { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeDocumentFromOrganizer') }
                     ]
+                case 'dataset':
+                    return [
+                        { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
+                        { icon: 'fas fa-info-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
+                        { icon: 'fas fa-eye', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('previewDataset') }
+                    ]
                 case 'analysis':
                     return [
                         { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
@@ -102,6 +110,8 @@ export default defineComponent({
             switch (this.viewType) {
                 case 'recent':
                     return []
+                case 'dataset':
+                    return this.datasetMenuButtons
                 case 'repository':
                     return []
                 case 'analysis':
@@ -120,7 +130,8 @@ export default defineComponent({
         return {
             cardDescriptor,
             sidebarVisible: false,
-            analysisMenuButtons: [] as any
+            analysisMenuButtons: [] as any,
+            datasetMenuButtons: [] as any
         }
     },
     methods: {

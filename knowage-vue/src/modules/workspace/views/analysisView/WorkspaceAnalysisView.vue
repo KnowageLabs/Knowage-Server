@@ -13,7 +13,7 @@
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
     <InputText class="kn-material-input p-m-2" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
     <div class="p-m-2 overflow">
-        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="analysisDocuments" :loading="loading" :scrollable="true" scrollHeight="89vh" dataKey="id" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="analysisDocuments" :loading="loading" dataKey="id" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -27,7 +27,7 @@
                     {{ formatDate(data.creationDate) }}
                 </template>
             </Column>
-            <Column>
+            <Column :style="mainDescriptor.style.iconColumn">
                 <template #body="slotProps">
                     <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="showMenu($event, slotProps.data)" />
                     <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click="showSidebar(slotProps.data)" />
@@ -74,6 +74,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
+import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import analysisDescriptor from './WorkspaceAnalysisViewDescriptor.json'
 import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
 import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
@@ -98,6 +99,7 @@ export default defineComponent({
     },
     data() {
         return {
+            mainDescriptor,
             analysisDescriptor,
             loading: false,
             showDetailSidebar: false,

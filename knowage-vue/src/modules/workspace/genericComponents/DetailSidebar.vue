@@ -76,12 +76,18 @@ export default defineComponent({
         documentButtons(): any {
             switch (this.viewType) {
                 case 'recent':
-                    return [{ icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitExecuteRecent }]
+                    return [{ icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeRecent') }]
                 case 'repository':
                     return [
-                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitExecuteDocumentFromOrganizer },
-                        { icon: 'fas fa-share', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitMoveDocumentToFolder },
-                        { icon: 'fas fa-trash', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitDeleteDocumentFromOrganizer }
+                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeDocumentFromOrganizer') },
+                        { icon: 'fas fa-share', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('moveDocumentToFolder') },
+                        { icon: 'fas fa-trash', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('deleteDocumentFromOrganizer') }
+                    ]
+                case 'dataset':
+                    return [
+                        { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
+                        { icon: 'fas fa-info-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
+                        { icon: 'fas fa-eye', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('previewDataset') }
                     ]
                 case 'analysis':
                     return [
@@ -166,6 +172,9 @@ export default defineComponent({
         formatDate(date) {
             let fDate = new Date(date)
             return fDate.toLocaleString()
+        },
+        emitEvent(event) {
+            return () => this.$emit(event, this.document)
         },
         //iz nekog razloga ne mogu samo da stavim this.$emit(), direkno u komandi dugmeta, ako to odradim pozivaju se emiteri samo kada se kreira komponenta, posle toga ne, al ovako radi
         emitExecuteRecent() {

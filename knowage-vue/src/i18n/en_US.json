@@ -1200,7 +1200,10 @@
                 "upload": "Upload preview file"
             }
         },
-        "myData": {},
+        "myData": {
+            "parametrical": "Parametrical",
+            "driverable": "Drivable"
+        },
         "myModels": {
             "deleteDataset": "Delete dataset",
             "editDataset": "Edit dataset",
