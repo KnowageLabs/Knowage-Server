@@ -15,6 +15,7 @@ export interface IDocument {
 }
 
 export interface IFolder {
+    id?: string,
     code: string
     descr?: string
     name: string

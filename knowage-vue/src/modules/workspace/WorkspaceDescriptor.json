@@ -1,4 +1,42 @@
 {
+    "menuItems": [
+        {
+            "icon": "fas fa-history",
+            "key": "0",
+            "label": "workspace.menuLabels.recent",
+            "value": "recent"
+        },
+        {
+            "icon": "fas fa-folder",
+            "key": "1",
+            "label": "workspace.menuLabels.myRepository",
+            "value": "repository"
+        },
+        {
+            "icon": "fas fa-database",
+            "key": "2",
+            "label": "workspace.menuLabels.myData",
+            "value": "data"
+        },
+        {
+            "icon": "fas fa-table",
+            "key": "3",
+            "label": "workspace.menuLabels.myModels",
+            "value": "models"
+        },
+        {
+            "icon": "fas fa-th-large",
+            "key": "5",
+            "label": "workspace.menuLabels.myAnalysis",
+            "value": "analysis"
+        },
+        {
+            "icon": "fas fa-stopwatch",
+            "key": "5",
+            "label": "workspace.menuLabels.schedulation",
+            "value": "schedulation"
+        }
+    ],
     "style": {
         "iconColumn": {
             "text-align": "end",
