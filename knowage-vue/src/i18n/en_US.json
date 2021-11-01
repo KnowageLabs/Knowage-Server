@@ -54,6 +54,7 @@
         "label": "label",
         "load": "Load",
         "loggedUser": "logged user",
+        "move": "Move",
         "name": "name",
         "new": "new",
         "next": "next",
@@ -1200,9 +1201,9 @@
             }
         },
         "myData": {
-            "parametrical": "Parametrical",
             "driverable": "Drivable",
-            "modified": "Modified"
+            "modified": "Modified",
+            "parametrical": "Parametrical"
         },
         "myModels": {
             "deleteDataset": "Delete dataset",
@@ -1213,6 +1214,7 @@
         },
         "myRepository": {
             "destinationFolder": "Destination folder",
+            "moveDocument": "Move Document",
             "newFolderTitle": "Create new folder"
         },
         "recent": {

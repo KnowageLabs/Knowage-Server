@@ -107,6 +107,8 @@
         @close="showDetailSidebar = false"
     />
 
+    <WorkspaceRepositoryMoveDialog :visible="moveDialogVisible" :propFolders="folders" @close="moveDialogVisible = false" @move="handleDocumentMove"></WorkspaceRepositoryMoveDialog>
+    <WorkspaceWarningDialog :visible="warningDialogVisbile" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
 </template>
 <script lang="ts">
@@ -123,11 +125,13 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Dialog from 'primevue/dialog'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import Menu from 'primevue/contextmenu'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import WorkspaceRepositoryMoveDialog from './dialogs/WorkspaceRepositoryMoveDialog.vue'
+import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDialog.vue'
 
 export default defineComponent({
-    components: { DataTable, Column, FabButton, Dialog, KnValidationMessages, DetailSidebar, WorkspaceCard, Menu },
+    components: { DataTable, Column, FabButton, Dialog, KnValidationMessages, DetailSidebar, WorkspaceCard, Menu, WorkspaceRepositoryMoveDialog, WorkspaceWarningDialog },
     emits: ['showMenu', 'reloadRepositoryMenu', 'toggleDisplayView'],
     props: { selectedFolder: { type: Object }, id: { type: String, required: false }, toggleCardDisplay: { type: Boolean } },
     computed: {
@@ -149,7 +153,11 @@ export default defineComponent({
             columns: repositoryDescriptor.columns,
             filters: {
                 global: [filterDefault]
-            } as Object
+            } as Object,
+            folders: [] as IFolder[], // premestiti u prop nakon promena u meniju?
+            moveDialogVisible: false,
+            warningDialogVisbile: false,
+            warningMessage: ''
         }
     },
     validations() {
@@ -162,10 +170,17 @@ export default defineComponent({
             this.getFolderDocuments()
         }
     },
-    created() {
+    async created() {
+        await this.loadFolders()
         this.getFolderDocuments()
     },
     methods: {
+        async loadFolders() {
+            this.loading = true
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/folders/`).then((response) => (this.folders = response.data))
+            this.loading = false
+            console.log('ALL FOLDERS: ', this.folders)
+        },
         getFolderDocuments() {
             this.loading = true
             return this.$http
@@ -194,7 +209,8 @@ export default defineComponent({
         createMenuItems() {
             this.menuButtons = []
             this.menuButtons.push(
-                { key: '3', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: () => { this.deleteDocumentFromOrganizer(this.selectedDocument) }},
+                { key: '3', label: this.$t('workspace.myRepository.moveDocument'), icon: 'fas fa-share', command: () => { this.moveDocumentToFolder(this.selectedDocument) }},
+                { key: '4', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: () => { this.deleteDocumentFromOrganizer(this.selectedDocument) }},
             )
         },
         async createNewFolder() {
@@ -224,11 +240,38 @@ export default defineComponent({
         executeDocumentFromOrganizer(event) {
             console.log('executeDocumentFromOrganizer() {', event)
         },
-        moveDocumentToFolder(event) {
-            console.log('moveDocumentToFolder() {', event)
+        moveDocumentToFolder(document: IDocument) {
+            console.log('moveDocumentToFolder() {', document)
+            this.selectedDocument = document
+            this.moveDialogVisible = true
+        },
+        async handleDocumentMove(folder: any) {
+            this.loading = true
+            console.log('SELECTED DOCUMENT FOR MOVE: ', this.selectedDocument)
+            console.log('SELECTED FOLDER FOR MOVE: ', folder)
+            await this.$http
+                .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documentsee/${this.selectedDocument.biObjId}/${this.selectedDocument.functId}/${folder.id}`)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.moveDialogVisible = false
+                    this.showDetailSidebar = false
+                    this.getFolderDocuments()
+                })
+                .catch((response) => {
+                    this.warningMessage = response
+                    this.warningDialogVisbile = true
+                })
+            this.loading = false
         },
         deleteDocumentFromOrganizer(event) {
             console.log('deleteDocumentFromOrganizer() {', event)
+        },
+        closeWarningDialog() {
+            this.warningMessage = ''
+            this.warningDialogVisbile = false
         }
     }
 })

@@ -24,7 +24,7 @@
 
         <WorskpaceFederationDatasetDialog :visible="infoDialogVisible" :dataset="selectedDataset" @close="closeInfoDialog"></WorskpaceFederationDatasetDialog>
         <WorkspaceFederationSaveDialog :visible="saveDialogVisible" :federatedDataset="federatedDataset" @close="closeSaveDialog" @save="handleSaveFederation"></WorkspaceFederationSaveDialog>
-        <WorkspaceFederationWarningDialog :visible="warningDialogVisbile" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceFederationWarningDialog>
+        <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.federationDefinition.title')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
     </div>
 </template>
 
@@ -32,7 +32,7 @@
 import { defineComponent } from 'vue'
 import { IFederatedDataset } from '../Workspace'
 import WorskpaceFederationDatasetDialog from './dialogs/WorskpaceFederationDatasetDialog.vue'
-import WorkspaceFederationWarningDialog from './dialogs/WorkspaceFederationWarningDialog.vue'
+import WorkspaceWarningDialog from '../genericComponents/WorkspaceWarningDialog.vue'
 import WorkspaceFederationSaveDialog from './dialogs/WorkspaceFederationSaveDialog.vue'
 import WorkspaceFederationDatasetList from './WorkspaceFederationDatasetList.vue'
 import WorkspaceFederationDefinitionAssociationsEditor from './WorkspaceFederationDefinitionAssociationsEditor.vue'
@@ -40,7 +40,7 @@ import WorkspaceFederationDefinitionAssociationsList from './WorkspaceFederation
 
 export default defineComponent({
     name: 'workspace-federation-definition',
-    components: { WorkspaceFederationDatasetList, WorskpaceFederationDatasetDialog, WorkspaceFederationWarningDialog, WorkspaceFederationDefinitionAssociationsEditor, WorkspaceFederationDefinitionAssociationsList, WorkspaceFederationSaveDialog },
+    components: { WorkspaceFederationDatasetList, WorskpaceFederationDatasetDialog, WorkspaceWarningDialog, WorkspaceFederationDefinitionAssociationsEditor, WorkspaceFederationDefinitionAssociationsList, WorkspaceFederationSaveDialog },
     props: { id: { type: String } },
     data() {
         return {
