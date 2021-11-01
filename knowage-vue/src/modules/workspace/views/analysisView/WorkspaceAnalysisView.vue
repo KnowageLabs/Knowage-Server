@@ -53,6 +53,7 @@
     />
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
 
+    <WorkspaceAnalysisViewShareDialog :visible="shareDialogVisible" :propFolders="folders" @close="shareDialogVisible = false" @share="handleAnalysshared($event, false)"></WorkspaceAnalysisViewShareDialog>
     <WorkspaceAnalysisViewEditDialog :visible="editDialogVisible" :propAnalysis="selectedAnalysis" @close="editDialogVisible = false" @save="handleEditAnalysis"></WorkspaceAnalysisViewEditDialog>
     <WorkspaceAnalysisViewWarningDialog :visible="warningDialogVisbile" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceAnalysisViewWarningDialog>
 
@@ -71,10 +72,11 @@ import Column from 'primevue/column'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import WorkspaceAnalysisViewEditDialog from './dialogs/WorkspaceAnalysisViewEditDialog.vue'
 import WorkspaceAnalysisViewWarningDialog from './dialogs/WorkspaceAnalysisViewWarningDialog.vue'
+import WorkspaceAnalysisViewShareDialog from './dialogs/WorkspaceAnalysisViewShareDialog.vue'
 
 export default defineComponent({
     name: 'workspace-analysis-view',
-    components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu, KnInputFile, WorkspaceAnalysisViewEditDialog, WorkspaceAnalysisViewWarningDialog },
+    components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu, KnInputFile, WorkspaceAnalysisViewEditDialog, WorkspaceAnalysisViewWarningDialog, WorkspaceAnalysisViewShareDialog },
     emits: ['showMenu', 'toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
@@ -93,11 +95,13 @@ export default defineComponent({
             filters: {
                 global: [filterDefault]
             } as Object,
+            folders: [] as any[],
             editDialogVisible: false,
             warningDialogVisbile: false,
             warningMessage: '',
             triggerUpload: false,
-            uploading: false
+            uploading: false,
+            shareDialogVisible: false
         }
     },
     created() {
@@ -147,7 +151,7 @@ export default defineComponent({
             })
         },
         editAnalysisDocument(analysis: any) {
-            console.log('editAnalysisDocument', analysis)
+            // console.log('editAnalysisDocument', analysis)
             this.selectedAnalysis = analysis
             this.editDialogVisible = true
         },
@@ -178,8 +182,46 @@ export default defineComponent({
                     this.warningDialogVisbile = true
                 })
         },
-        shareAnalysisDocument(event) {
-            console.log('shareAnalysisDocument', event)
+        async shareAnalysisDocument(analysis: any) {
+            // console.log('shareAnalysisDocument', analysis)
+            this.selectedAnalysis = analysis
+            this.loading = true
+            const shared = this.selectedAnalysis.functionalities.length > 1
+            if (!shared) {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/forsharing/${analysis.id}`).then((response) => {
+                    this.folders = response.data
+                    this.shareDialogVisible = true
+                })
+            } else {
+                await this.handleAnalysshared(null, shared)
+            }
+            // console.log('LOADED FOLDERS: ', this.folders)s
+            this.loading = false
+        },
+        async handleAnalysshared(selectedFolders: any, shared: boolean) {
+            console.log('handleAnalysshared SELECTED FOLDERS: ', selectedFolders)
+            this.loading = true
+
+            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/share?docId=${this.selectedAnalysis.id}&`
+            if (!shared) {
+                Object.keys(selectedFolders).forEach((id: any) => (url += `functs=${selectedFolders[id]}&`))
+            }
+            url += `isShare=${!shared}`
+
+            await this.$http
+                .post(url)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.shareDialogVisible = false
+                    this.showDetailSidebar = false
+                    this.getAnalysisDocs()
+                })
+                .catch(() => {})
+
+            this.loading = false
         },
         async cloneAnalysisDocumentConfirm(analysis: any) {
             this.$confirm.require({
@@ -248,7 +290,7 @@ export default defineComponent({
             this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analysis/${this.selectedAnalysis.id}`, formData, {
                     headers: {
-                        'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryFYwjkDOpT85ZFN3L'
+                        'Content-Type': 'multipart/form-data'
                     }
                 })
                 .then(() => {
