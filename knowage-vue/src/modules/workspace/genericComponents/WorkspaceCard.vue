@@ -55,10 +55,10 @@ export default defineComponent({
             switch (this.viewType) {
                 case 'recent':
                     return cardDescriptor.defaultViewFields
-                case 'dataset':
-                    return cardDescriptor.datasetViewFields
                 case 'repository':
                     return cardDescriptor.defaultViewFields
+                case 'dataset':
+                    return cardDescriptor.datasetViewFields
                 case 'analysis':
                     return cardDescriptor.analysisViewFields
                 case 'businessModel':

@@ -43,6 +43,43 @@
             "value": "description"
         }
     ],
+    "datasetViewFields": [
+        {
+            "translation": "importExport.gallery.column.name",
+            "type": "text",
+            "value": "name"
+        },
+        {
+            "translation": "managers.configurationManagement.headers.label",
+            "type": "text",
+            "value": "label"
+        },
+        {
+            "translation": "common.category",
+            "type": "category",
+            "value": "catTypeId"
+        },
+        {
+            "translation": "managers.businessModelManager.description",
+            "type": "text",
+            "value": "description"
+        },
+        {
+            "translation": "importExport.gallery.column.type",
+            "type": "text",
+            "value": "dsTypeCd"
+        },
+        {
+            "translation": "common.author",
+            "type": "text",
+            "value": "owner"
+        },
+        {
+            "translation": "workspace.myData.modified",
+            "type": "date",
+            "value": "dateIn"
+        }
+    ],
     "defaultViewFields": [
         {
             "translation": "importExport.gallery.column.name",

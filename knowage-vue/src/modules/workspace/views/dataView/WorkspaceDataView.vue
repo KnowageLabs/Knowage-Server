@@ -2,7 +2,8 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary" style="width:100%">
         <template #left>
             <Button id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
-            {{ $t('workspace.menuLabels.recentDocuments') }}
+            <!-- {{ $t('workspace.menuLabels.recentDocuments') }} -->
+            My Data
         </template>
         <template #right>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
@@ -41,7 +42,7 @@
                 <template #header> &ensp; </template>
                 <template #body="slotProps">
                     <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="logMe(slotProps.data)" />
-                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click="logMe(slotProps.data)" />
+                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click="showSidebar(slotProps.data)" />
                     <Button icon="fas fa-eye" class="p-button-link" @click="logMe(slotProps.data)" />
                 </template>
             </Column>
@@ -51,13 +52,13 @@
         </div>
     </div>
 
-    <DetailSidebar :visible="showDetailSidebar" :viewType="'dataset'" :document="selectedDataset" @close="showDetailSidebar = false" />
+    <DetailSidebar :visible="showDetailSidebar" :viewType="'dataset'" :document="selectedDataset" :datasetCategories="datasetCategories" @close="showDetailSidebar = false" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
-// import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
+import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
 import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -68,7 +69,7 @@ export default defineComponent({
         DataTable,
         Column,
         Chip,
-        // DetailSidebar,
+        DetailSidebar,
         WorkspaceCard
     },
     emits: ['toggleDisplayView'],
@@ -79,6 +80,7 @@ export default defineComponent({
             loading: false,
             showDetailSidebar: false,
             allDataset: [] as any,
+            datasetCategories: [] as any,
             selectedDataset: {} as any,
             filters: {
                 global: [filterDefault]
@@ -87,6 +89,7 @@ export default defineComponent({
     },
     created() {
         this.getAllDatasets()
+        this.getDatasetCategories()
     },
     methods: {
         logMe(event) {
@@ -101,6 +104,15 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/mydata/`)
                 .then((response) => {
                     this.allDataset = [...response.data.root]
+                })
+                .finally(() => (this.loading = false))
+        },
+        getDatasetCategories() {
+            this.loading = true
+            return this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domainsforfinaluser/ds-categories`)
+                .then((response) => {
+                    this.datasetCategories = [...response.data]
                 })
                 .finally(() => (this.loading = false))
         },
