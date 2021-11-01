@@ -67,7 +67,7 @@
 
     <WorkspaceAnalysisViewShareDialog :visible="shareDialogVisible" :propFolders="folders" @close="shareDialogVisible = false" @share="handleAnalysshared($event, false)"></WorkspaceAnalysisViewShareDialog>
     <WorkspaceAnalysisViewEditDialog :visible="editDialogVisible" :propAnalysis="selectedAnalysis" @close="editDialogVisible = false" @save="handleEditAnalysis"></WorkspaceAnalysisViewEditDialog>
-    <WorkspaceAnalysisViewWarningDialog :visible="warningDialogVisbile" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceAnalysisViewWarningDialog>
+    <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.menuLabels.myAnalysis')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
 
     <KnInputFile v-if="!uploading" :changeFunction="uploadAnalysisFile" accept="image/*" :triggerInput="triggerUpload" />
 </template>
@@ -83,12 +83,12 @@ import Menu from 'primevue/contextmenu'
 import Column from 'primevue/column'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import WorkspaceAnalysisViewEditDialog from './dialogs/WorkspaceAnalysisViewEditDialog.vue'
-import WorkspaceAnalysisViewWarningDialog from './dialogs/WorkspaceAnalysisViewWarningDialog.vue'
+import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDialog.vue'
 import WorkspaceAnalysisViewShareDialog from './dialogs/WorkspaceAnalysisViewShareDialog.vue'
 
 export default defineComponent({
     name: 'workspace-analysis-view',
-    components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu, KnInputFile, WorkspaceAnalysisViewEditDialog, WorkspaceAnalysisViewWarningDialog, WorkspaceAnalysisViewShareDialog },
+    components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu, KnInputFile, WorkspaceAnalysisViewEditDialog, WorkspaceWarningDialog, WorkspaceAnalysisViewShareDialog },
     emits: ['showMenu', 'toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {

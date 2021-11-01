@@ -1,25 +1,31 @@
 <template>
-    <Tree id="folders-tree" :value="nodes" selectionMode="single" v-model:selectionKeys="selectedFolderKey" @node-select="setSelectedFolder($event)" @node-unselect="removeSelectedFolder" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)"> </Tree>
+    <Tree id="folders-tree" :value="nodes" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)">
+        <template #default="slotProps">
+            <Checkbox name="folders" v-model="selectedFolders" :value="slotProps.node.id" @change="emitSelectedFolders" />
+            <i :class="slotProps.node.customIcon" class="p-mx-2"></i>
+            <b>{{ slotProps.node.label }}</b>
+        </template>
+    </Tree>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { IFolder } from '../Workspace'
+import { INode } from '../../../Workspace'
+import Checkbox from 'primevue/checkbox'
 import Tree from 'primevue/tree'
-import workspaceDocumentTreeDescriptor from './WorkspaceDocumentTreeDescriptor.json'
+import workspaceAnalysisFolderTreeDescriptor from './WorkspaceAnalysisFolderTreeDescriptor.json'
 
 export default defineComponent({
     name: 'workspace-document-tree',
-    components: { Tree },
-    props: { propFolders: { type: Array }, mode: { type: String } },
-    emits: ['folderSelected'],
+    components: { Checkbox, Tree },
+    props: { propFolders: { type: Array } },
+    emits: ['foldersSelected'],
     data() {
         return {
-            workspaceDocumentTreeDescriptor,
-            folders: [] as IFolder[],
-            nodes: [] as any[],
-            selectedFolderKey: {},
-            selectedFolder: null as any
+            workspaceAnalysisFolderTreeDescriptor,
+            folders: [] as any[],
+            nodes: [] as INode[],
+            selectedFolders: [] as any[]
         }
     },
     watch: {
@@ -36,32 +42,31 @@ export default defineComponent({
             this.createNodeTree()
         },
         loadFolders() {
-            this.folders = this.propFolders as IFolder[]
-            console.log('DOCUMENT TREE LOADED FODLERS: ', this.folders)
+            this.folders = this.propFolders as any[]
+            // console.log('TREE LOADED FODLERS: ', this.folders)
         },
         createNodeTree() {
-            console.log('   createNodeTree() {')
-            this.nodes = [] as any[]
-            const foldersWithMissingParent = [] as IFolder[]
-            this.folders.forEach((folder: IFolder) => {
+            this.nodes = []
+            const foldersWithMissingParent = [] as INode[]
+            this.folders.forEach((folder: any) => {
                 const node = {
-                    key: folder.name,
-                    icon: 'pi pi-folder',
-                    id: folder.functId,
-                    parentId: folder.parentFunct,
+                    key: folder.id,
+                    id: folder.id,
+                    parentId: folder.parentId,
                     label: folder.name,
-                    path: folder.path,
-                    prog: folder.prog,
-                    children: [] as IFolder[],
-                    data: { name: folder.name, hasDocuments: false }
+                    children: [] as INode[],
+                    data: folder,
+                    style: this.workspaceAnalysisFolderTreeDescriptor.node.style,
+                    customIcon: 'pi pi-folder'
                 }
-                node.children = foldersWithMissingParent.filter((folder: any) => node.id === folder.parentId)
+                const temp = foldersWithMissingParent.filter((folder: INode) => node.id === folder.parentId)
+                temp.forEach((el: any) => node.children.push(el))
                 this.attachFolderToTree(node, foldersWithMissingParent)
             })
         },
-        attachFolderToTree(folder: any, foldersWithMissingParent: any[]) {
+        attachFolderToTree(folder: INode, foldersWithMissingParent: INode[]) {
             if (folder.parentId) {
-                let parentFolder = null as any
+                let parentFolder = null as INode | null
                 for (let i = 0; i < foldersWithMissingParent.length; i++) {
                     if (folder.parentId === foldersWithMissingParent[i].id) {
                         foldersWithMissingParent[i].children?.push(folder)
@@ -82,11 +87,11 @@ export default defineComponent({
                 this.nodes.push(folder)
             }
         },
-        findParentFolder(folderToAdd: any, folderToSearch: any) {
+        findParentFolder(folderToAdd: INode, folderToSearch: INode) {
             if (folderToAdd.parentId === folderToSearch.id) {
                 return folderToSearch
             } else {
-                let tempFolder = null as any | null
+                let tempFolder = null as INode | null
                 if (folderToSearch.children) {
                     for (let i = 0; i < folderToSearch.children.length; i++) {
                         tempFolder = this.findParentFolder(folderToAdd, folderToSearch.children[i])
@@ -98,19 +103,14 @@ export default defineComponent({
                 return tempFolder
             }
         },
-        setOpenFolderIcon(node: any) {
-            node.icon = 'pi pi-folder-open'
+        setOpenFolderIcon(node: INode) {
+            node.customIcon = 'pi pi-folder-open'
         },
-        setClosedFolderIcon(node: any) {
-            node.icon = 'pi pi-folder'
+        setClosedFolderIcon(node: INode) {
+            node.customIcon = 'pi pi-folder'
         },
-        setSelectedFolder(folder: any) {
-            this.selectedFolder = folder
-            this.$emit('folderSelected', this.selectedFolder)
-        },
-        removeSelectedFolder() {
-            this.selectedFolder = null
-            this.$emit('folderSelected', this.selectedFolder)
+        emitSelectedFolders() {
+            this.$emit('foldersSelected', this.selectedFolders)
         }
     }
 })
