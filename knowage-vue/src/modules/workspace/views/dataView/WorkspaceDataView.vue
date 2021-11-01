@@ -51,7 +51,7 @@
         </div>
     </div>
 
-    <!-- <DetailSidebar :visible="showDetailSidebar" :viewType="'recent'" :document="selectedDocument" @executeRecent="executeRecent" @close="showDetailSidebar = false" /> -->
+    <DetailSidebar :visible="showDetailSidebar" :viewType="'dataset'" :document="selectedDataset" @close="showDetailSidebar = false" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
