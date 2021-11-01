@@ -1197,13 +1197,21 @@
                 "delete": "Delete Document",
                 "edit": "Edit Document",
                 "share": "Share Document",
+                "showDsDetails": "Show dataset details",
                 "upload": "Upload preview file"
             }
         },
         "myData": {
+            "title": "My Data",
+            "cloneDataset": "Clone Dataset",
+            "csvExport": "Export Dataset to CSV",
+            "deleteDataset": "Delete Dataset",
             "driverable": "Drivable",
+            "fileDownload": "Download Dataset file",
             "modified": "Modified",
-            "parametrical": "Parametrical"
+            "parametrical": "Parametrical",
+            "shareDataset": "Share/Unshare Dataset",
+            "xlsxExport": "Export Dataset to XLSX"
         },
         "myModels": {
             "deleteDataset": "Delete dataset",
