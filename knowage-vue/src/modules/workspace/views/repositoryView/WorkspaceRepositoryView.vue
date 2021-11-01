@@ -249,19 +249,21 @@ export default defineComponent({
             this.loading = true
             console.log('SELECTED DOCUMENT FOR MOVE: ', this.selectedDocument)
             console.log('SELECTED FOLDER FOR MOVE: ', folder)
-            await this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documentsee/2773/41/50`).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.updateTitle'),
-                    msg: this.$t('common.toast.success')
+            await this.$http
+                .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documentsee/${this.selectedDocument.biObjId}/${this.selectedDocument.functId}/${folder.id}`)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.moveDialogVisible = false
+                    this.showDetailSidebar = false
+                    this.getFolderDocuments()
                 })
-                this.moveDialogVisible = false
-                this.showDetailSidebar = false
-                this.getFolderDocuments()
-            })
-            // .catch((response) => {
-            //     this.warningMessage = response
-            //     this.warningDialogVisbile = true
-            // })
+                .catch((response) => {
+                    this.warningMessage = response
+                    this.warningDialogVisbile = true
+                })
             this.loading = false
         },
         deleteDocumentFromOrganizer(event) {
