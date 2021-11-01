@@ -32,22 +32,8 @@ import Menu from 'primevue/contextmenu'
 export default defineComponent({
     name: 'workspace-sidebar',
     components: { Menu },
-    emits: [
-        'executeRecent',
-        'executeDocumentFromOrganizer',
-        'moveDocumentToFolder',
-        'deleteDocumentFromOrganizer',
-        'executeAnalysisDocument',
-        'editAnalysisDocument',
-        'shareAnalysisDocument',
-        'cloneAnalysisDocument',
-        'deleteAnalysisDocument',
-        'uploadAnalysisPreviewFile',
-        'openDatasetInQBE',
-        'editDataset',
-        'deleteDataset',
-        'openSidebar'
-    ],
+    //prettier-ignore
+    emits: ['executeRecent','executeDocumentFromOrganizer','moveDocumentToFolder','deleteDocumentFromOrganizer','executeAnalysisDocument','editAnalysisDocument','shareAnalysisDocument','cloneAnalysisDocument','deleteAnalysisDocument','uploadAnalysisPreviewFile','openDatasetInQBE','editDataset','deleteDataset','openSidebar' ],
     props: { visible: Boolean, viewType: String, document: Object as any },
     computed: {
         isOwner(): any {
@@ -97,7 +83,7 @@ export default defineComponent({
                 case 'analysis':
                     return [
                         { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
-                        { icon: 'fas fa-edit', class: 'p-button-text p-button-rounded p-button-plain', visible: this.isOwner, command: this.emitEvent('editAnalysisDocument') },
+                        { icon: 'fas fa-info-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
                         { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeAnalysisDocument') }
                     ]
                 case 'businessModel':
@@ -113,68 +99,50 @@ export default defineComponent({
             }
         },
         menuButtons(): any {
-            return [
-                {
-                    key: '0',
-                    label: this.$t('workspace.myAnalysis.menuItems.share'),
-                    icon: 'fas fa-share',
-                    command: () => {
-                        this.emitEvent('shareAnalysisDocument')
-                    }
-                },
-                {
-                    key: '1',
-                    label: this.$t('workspace.myAnalysis.menuItems.clone'),
-                    icon: 'fas fa-clone',
-                    command: () => {
-                        this.emitEvent('cloneAnalysisDocument')
-                    }
-                },
-                {
-                    key: '2',
-                    label: this.$t('workspace.myAnalysis.menuItems.delete'),
-                    icon: 'fas fa-trash',
-                    command: () => {
-                        this.emitEvent('deleteAnalysisDocument')
-                    }
-                },
-                {
-                    key: '3',
-                    label: this.$t('workspace.myAnalysis.menuItems.upload'),
-                    icon: 'fas fa-share-alt',
-                    command: () => {
-                        this.emitEvent('uploadAnalysisPreviewFile')
-                    }
-                }
-            ]
+            switch (this.viewType) {
+                case 'recent':
+                    return []
+                case 'repository':
+                    return []
+                case 'analysis':
+                    return this.analysisMenuButtons
+                case 'businessModel':
+                    return []
+                case 'federationDataset':
+                    return []
+                default:
+                    return []
+            }
         }
     },
 
     data() {
         return {
             cardDescriptor,
-            sidebarVisible: false
+            sidebarVisible: false,
+            analysisMenuButtons: [] as any
         }
     },
-    created() {},
-    watch: {
-        visible() {}
-    },
     methods: {
-        returnDefaultImage() {
-            return process.env.VUE_APP_HOST_URL + descriptor.imgPath + `82300081364511eca64e159ee59cd4dc.jpg`
-        },
         showMenu(event) {
+            this.createMenuItems()
             // eslint-disable-next-line
             // @ts-ignore
             this.$refs.optionsMenu.toggle(event)
         },
-        formatDate(date) {
-            let fDate = new Date(date)
-            return fDate.toLocaleString()
-        },
         emitEvent(event) {
             return () => this.$emit(event, this.document)
+        },
+        // prettier-ignore
+        createMenuItems() {
+            this.analysisMenuButtons = []
+            this.analysisMenuButtons.push(
+                { key: '0', label: this.$t('workspace.myAnalysis.menuItems.edit'), icon: 'fas fa-edit', command: this.emitEvent('editAnalysisDocument') , visible: this.isOwner},
+                { key: '1', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share', command: this.emitEvent('shareAnalysisDocument') },
+                { key: '2', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: this.emitEvent('cloneAnalysisDocument') },
+                { key: '3', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: this.emitEvent('deleteAnalysisDocument') },
+                { key: '4', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-share-alt', command: this.emitEvent('uploadAnalysisPreviewFile') }
+            )
         }
     }
 })

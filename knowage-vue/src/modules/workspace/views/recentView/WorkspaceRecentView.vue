@@ -10,13 +10,10 @@
         </template>
     </Toolbar>
     <InputText class="kn-material-input p-m-2" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
-    <div class="p-m-2 overflow">
-        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="recentDocumentsList" :loading="loading" :scrollable="true" scrollHeight="89vh" dataKey="objId" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
+    <div class="overflow">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="recentDocumentsList" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
             </template>
             <Column field="documentType" :header="$t('importExport.gallery.column.type')" :sortable="true" />
             <Column field="documentName" :header="$t('importExport.gallery.column.name')" :sortable="true" />
@@ -25,10 +22,11 @@
                     {{ formatDate(data.requestTime) }}
                 </template>
             </Column>
-            <Column>
+            <Column :style="mainDescriptor.style.iconColumn">
+                <template #header> &ensp; </template>
                 <template #body="slotProps">
                     <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click.stop="showSidebar(slotProps.data)" />
-                    <Button icon="fas fa-play-circle" class="p-button-link" />
+                    <Button icon="fas fa-play-circle" class="p-button-link" @click="executeRecent" />
                 </template>
             </Column>
         </DataTable>
@@ -46,6 +44,7 @@ import { IDocument } from '@/modules/workspace/Workspace'
 import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
 import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
 import workspaceDescriptor from './WorkspaceRecentViewDescriptor.json'
+import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 
@@ -55,6 +54,7 @@ export default defineComponent({
     props: { toggleCardDisplay: { type: Boolean } },
     data() {
         return {
+            mainDescriptor,
             workspaceDescriptor,
             loading: false,
             showDetailSidebar: false,
@@ -84,6 +84,7 @@ export default defineComponent({
         },
         executeRecent(event) {
             console.log('executeRecent() {', event)
+            this.$store.commit('setInfo', { title: 'Todo', msg: 'Functionality not in this sprint' })
         },
         toggleDisplayView() {
             this.$emit('toggleDisplayView')

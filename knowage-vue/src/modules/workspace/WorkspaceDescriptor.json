@@ -1,1 +1,8 @@
-{}
+{
+    "style": {
+        "iconColumn": {
+            "display": "flex",
+            "justify-content": "flex-end"
+        }
+    }
+}

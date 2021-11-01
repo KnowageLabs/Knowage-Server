@@ -36,7 +36,19 @@
             </Column>
         </DataTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2">
-            <WorkspaceCard v-for="(document, index) of analysisDocuments" :key="index" :viewType="'analysis'" :document="document" />
+            <WorkspaceCard
+                v-for="(document, index) of analysisDocuments"
+                :key="index"
+                :viewType="'analysis'"
+                :document="document"
+                @executeAnalysisDocument="executeAnalysisDocument"
+                @editAnalysisDocument="editAnalysisDocument"
+                @shareAnalysisDocument="shareAnalysisDocument"
+                @cloneAnalysisDocument="cloneAnalysisDocument"
+                @deleteAnalysisDocument="deleteAnalysisDocumentConfirm"
+                @uploadAnalysisPreviewFile="uploadAnalysisPreviewFile"
+                @openSidebar="showSidebar"
+            />
         </div>
     </div>
     <DetailSidebar
