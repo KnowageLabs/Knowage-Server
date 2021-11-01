@@ -22,8 +22,8 @@
             <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" />
             <Column class="icon-cell" :style="mainDescriptor.style.iconColumn">
                 <template #body="slotProps">
-                    <Button icon="fas fa-trash" class="p-button-link" @click="logEvent(slotProps.data)" />
-                    <Button icon="fas fa-share" class="p-button-link" @click="logEvent(slotProps.data)" />
+                    <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="showMenu($event, slotProps.data)" />
+                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click="showSidebar(slotProps.data)" />
                     <Button icon="fas fa-play-circle" class="p-button-link" @click="logEvent(slotProps.data)" />
                 </template>
             </Column>
@@ -106,6 +106,8 @@
         @deleteDocumentFromOrganizer="deleteDocumentFromOrganizer"
         @close="showDetailSidebar = false"
     />
+
+    <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -122,9 +124,10 @@ import Column from 'primevue/column'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Dialog from 'primevue/dialog'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import Menu from 'primevue/contextmenu'
 
 export default defineComponent({
-    components: { DataTable, Column, FabButton, Dialog, KnValidationMessages, DetailSidebar, WorkspaceCard },
+    components: { DataTable, Column, FabButton, Dialog, KnValidationMessages, DetailSidebar, WorkspaceCard, Menu },
     emits: ['showMenu', 'reloadRepositoryMenu', 'toggleDisplayView'],
     props: { selectedFolder: { type: Object }, id: { type: String, required: false }, toggleCardDisplay: { type: Boolean } },
     computed: {
@@ -140,6 +143,7 @@ export default defineComponent({
             showDetailSidebar: false,
             displayCreateFolderDialog: false,
             documents: [] as IDocument[],
+            menuButtons: [] as any,
             selectedDocument: {} as IDocument,
             newFolder: {} as IFolder,
             columns: repositoryDescriptor.columns,
@@ -174,6 +178,24 @@ export default defineComponent({
         formatDate(date) {
             let fDate = new Date(date)
             return fDate.toLocaleString()
+        },
+        showSidebar(clickedDocument) {
+            this.selectedDocument = clickedDocument
+            this.showDetailSidebar = true
+        },
+        showMenu(event, clickedDocument) {
+            this.selectedDocument = clickedDocument
+            this.createMenuItems()
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs.optionsMenu.toggle(event)
+        },
+        // prettier-ignore
+        createMenuItems() {
+            this.menuButtons = []
+            this.menuButtons.push(
+                { key: '3', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: () => { this.deleteDocumentFromOrganizer(this.selectedDocument) }},
+            )
         },
         async createNewFolder() {
             this.newFolder.parentFunct = this.selectedFolder?.functId
