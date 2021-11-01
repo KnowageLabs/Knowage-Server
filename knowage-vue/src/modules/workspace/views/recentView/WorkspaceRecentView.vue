@@ -23,6 +23,7 @@
                 </template>
             </Column>
             <Column :style="mainDescriptor.style.iconColumn">
+                <template #header> &ensp; </template>
                 <template #body="slotProps">
                     <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click.stop="showSidebar(slotProps.data)" />
                     <Button icon="fas fa-play-circle" class="p-button-link" @click="executeRecent" />

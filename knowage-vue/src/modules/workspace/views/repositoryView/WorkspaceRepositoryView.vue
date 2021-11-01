@@ -12,21 +12,7 @@
     </Toolbar>
     <InputText class="kn-material-input p-m-2" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
     <div class="p-m-2 overflow">
-        <DataTable
-            v-if="!toggleCardDisplay"
-            class="p-datatable-sm kn-table"
-            :value="documents"
-            :loading="loading"
-            :scrollable="true"
-            scrollHeight="89vh"
-            dataKey="biObjId"
-            responsiveLayout="stack"
-            breakpoint="600px"
-            v-model:filters="filters"
-            v-model:selection="selectedDocument"
-            selectionMode="single"
-            @rowSelect="showDetailSidebar = true"
-        >
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="documents" :loading="loading" dataKey="biObjId" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -34,15 +20,16 @@
                 <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
             </template>
             <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" />
-            <Column class="icon-cell" @rowClick="false">
+            <Column class="icon-cell" :style="mainDescriptor.style.iconColumn">
                 <template #body="slotProps">
-                    <Button icon="fas fa-edit" class="p-button-link" @click="logEvent(slotProps.data)" />
-                    <Button icon="fas fa-play-circle" class="p-button-link" />
+                    <Button icon="fas fa-trash" class="p-button-link" @click="logEvent(slotProps.data)" />
+                    <Button icon="fas fa-share" class="p-button-link" @click="logEvent(slotProps.data)" />
+                    <Button icon="fas fa-play-circle" class="p-button-link" @click="logEvent(slotProps.data)" />
                 </template>
             </Column>
         </DataTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2">
-            <WorkspaceCard v-for="(document, index) of documents" :key="index" :viewType="'repository'" :document="document" />
+            <WorkspaceCard v-for="(document, index) of documents" :key="index" :viewType="'repository'" :document="document" @executeDocumentFromOrganizer="executeDocumentFromOrganizer" @moveDocumentToFolder="moveDocumentToFolder" @deleteDocumentFromOrganizer="deleteDocumentFromOrganizer" />
         </div>
     </div>
 
@@ -125,6 +112,7 @@ import { defineComponent } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import { IDocument, IFolder } from '@/modules/workspace/Workspace'
+import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
 import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
 import repositoryDescriptor from './WorkspaceRepositoryViewDescriptor.json'
@@ -147,6 +135,7 @@ export default defineComponent({
     data() {
         return {
             v$: useValidate() as any,
+            mainDescriptor,
             loading: false,
             showDetailSidebar: false,
             displayCreateFolderDialog: false,
