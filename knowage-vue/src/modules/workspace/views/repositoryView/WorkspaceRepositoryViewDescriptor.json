@@ -16,37 +16,5 @@
             "field": "documentDescription",
             "header": "managers.businessModelManager.description"
         }
-    ],
-    "validations": {
-        "newFolder": [
-            {
-                "fieldName": "code",
-                "validators": [
-                    {
-                        "key": "required"
-                    },
-                    {
-                        "key": "regex",
-                        "validator": {
-                            "type": "extendedAlphanumericRegex"
-                        }
-                    }
-                ]
-            },
-            {
-                "fieldName": "name",
-                "validators": [
-                    {
-                        "key": "required"
-                    },
-                    {
-                        "key": "regex",
-                        "validator": {
-                            "type": "extendedAlphanumericRegex"
-                        }
-                    }
-                ]
-            }
-        ]
-    }
+    ]
 }

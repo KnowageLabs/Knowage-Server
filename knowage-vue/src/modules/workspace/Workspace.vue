@@ -6,6 +6,7 @@
                     {{ $t('workspace.menuLabels.menuTitle') }}
                 </template>
             </Toolbar>
+            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
             <Listbox v-if="displayMenu" :options="workspaceDescriptor.menuItems">
                 <template #option="slotProps">
                     <div v-if="slotProps.option.value !== 'repository'" class="kn-list-item" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
@@ -17,7 +18,7 @@
                     <div v-else class="menu-accordion">
                         <Accordion>
                             <AccordionTab :header="$t('workspace.menuLabels.myRepository')">
-                                <WorkspaceDocumentTree :propFolders="allFolders" mode="select" @folderSelected="setSelectedFolder"></WorkspaceDocumentTree>
+                                <WorkspaceDocumentTree :propFolders="allFolders" mode="select" @folderSelected="setSelectedFolder" @delete="deleteFolder" @createFolder="showCreateFolderDialog"></WorkspaceDocumentTree>
                             </AccordionTab>
                         </Accordion>
                     </div>
@@ -26,7 +27,7 @@
         </div>
         <div class=" p-d-flex p-flex-column" style="width:100%">
             <Button id="showSidenavIcon" v-if="$router.currentRoute._rawValue.fullPath === '/workspace/'" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="sidebarVisible = true" />
-            <router-view class="kn-router-view" :selectedFolder="selectedFolder" :toggleCardDisplay="toggleCardDisplay" @toggleDisplayView="toggleDisplayView" @showMenu="sidebarVisible = true" @reloadRepositoryMenu="getAllFolders" />
+            <router-view class="kn-router-view" :selectedFolder="selectedFolder" :toggleCardDisplay="toggleCardDisplay" @toggleDisplayView="toggleDisplayView" @showMenu="sidebarVisible = true" @reloadRepositoryMenu="getAllFolders" @createFolderClick="displayCreateFolderDialog = true" />
         </div>
     </div>
 
@@ -36,6 +37,7 @@
                 {{ $t('workspace.menuLabels.menuTitle') }}
             </template>
         </Toolbar>
+        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         <Listbox :options="workspaceDescriptor.menuItems">
             <template #option="slotProps">
                 <div v-if="slotProps.option.value !== 'repository'" class="kn-list-item" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
@@ -47,13 +49,15 @@
                 <div v-else class="menu-accordion">
                     <Accordion>
                         <AccordionTab :header="$t('workspace.menuLabels.myRepository')">
-                            <WorkspaceDocumentTree :propFolders="allFolders" mode="select" @folderSelected="setSelectedFolder"></WorkspaceDocumentTree>
+                            <WorkspaceDocumentTree :propFolders="allFolders" mode="select" @folderSelected="setSelectedFolder" @delete="deleteFolder" @createFolder="showCreateFolderDialog"></WorkspaceDocumentTree>
                         </AccordionTab>
                     </Accordion>
                 </div>
             </template>
         </Listbox>
     </Sidebar>
+
+    <WorkspaceNewFolderDialog :visible="displayCreateFolderDialog" @close="displayCreateFolderDialog = false" @create="createNewFolder"></WorkspaceNewFolderDialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -64,10 +68,11 @@ import AccordionTab from 'primevue/accordiontab'
 import Listbox from 'primevue/listbox'
 import WorkspaceDocumentTree from './genericComponents/WorkspaceDocumentTree.vue'
 import workspaceDescriptor from './WorkspaceDescriptor.json'
+import WorkspaceNewFolderDialog from './views/repositoryView/dialogs/WorkspaceNewFolderDialog.vue'
 
 export default defineComponent({
     name: 'dataset-management',
-    components: { Sidebar, Listbox, Accordion, AccordionTab, WorkspaceDocumentTree },
+    components: { Sidebar, Listbox, Accordion, AccordionTab, WorkspaceDocumentTree, WorkspaceNewFolderDialog },
     data() {
         return {
             workspaceDescriptor,
@@ -77,7 +82,9 @@ export default defineComponent({
             selectedFolder: {} as IFolder,
             allDocuments: [] as IDocument[],
             items: [] as IFolder[],
-            displayMenu: false
+            displayMenu: false,
+            displayCreateFolderDialog: false,
+            loading: false
         }
     },
     created() {
@@ -113,6 +120,51 @@ export default defineComponent({
             this.selectedFolder = folder
             // console.log('SELECTED FOLDER IN WORKSPACE MAIN: ', this.selectedFolder)
             this.$router.push(`/workspace/repository/${folder.id}`)
+        },
+        async deleteFolder(folder: any) {
+            console.log('FOLDER FOR DELETE MAIN: ', folder)
+            this.loading = true
+            await this.$http
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/foldersee/${folder.id}`, { headers: { 'X-Disable-Errors': true } })
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.getAllRepositoryData()
+                    this.$router.push('/workspace')
+                })
+                .catch((response) => {
+                    console.log('response', response)
+                    this.$store.commit('setError', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: response.message === 'sbi.workspace.organizer.folder.error.delete' ? this.$t('workspace.myRepository.folderDeleteError') : response.message
+                    })
+                })
+            this.loading = false
+        },
+        showCreateFolderDialog(folder: any) {
+            this.selectedFolder = folder
+            this.displayCreateFolderDialog = true
+        },
+        async createNewFolder(newFolder: any) {
+            newFolder.parentFunct = this.selectedFolder?.id
+            newFolder.path = this.selectedFolder?.path + `/` + encodeURIComponent(newFolder.code)
+            newFolder.prog = this.selectedFolder?.prog
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/organizer/foldersee/', newFolder, { headers: { 'X-Disable-Errors': true } })
+                .then(() => {
+                    this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
+                    this.getAllFolders()
+                })
+                .catch((response) => {
+                    console.log('CREATE NEW FOLDER ERROR RESPONSE: ', response)
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: response
+                    })
+                })
+                .finally(() => (this.displayCreateFolderDialog = false))
         }
     }
 })

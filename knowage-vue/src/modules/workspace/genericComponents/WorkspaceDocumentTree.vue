@@ -1,5 +1,15 @@
 <template>
-    <Tree id="folders-tree" :value="nodes" selectionMode="single" v-model:selectionKeys="selectedFolderKey" @node-select="setSelectedFolder($event)" @node-unselect="removeSelectedFolder" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)"> </Tree>
+    <Tree id="folders-tree" :value="nodes" selectionMode="single" v-model:selectionKeys="selectedFolderKey" @node-select="setSelectedFolder($event)" @node-unselect="removeSelectedFolder" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)">
+        <template #default="slotProps">
+            <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonsVisible[slotProps.node.id] = true" @mouseleave="buttonsVisible[slotProps.node.id] = false">
+                <span>{{ slotProps.node.label }}</span>
+                <div v-show="mode === 'select' && buttonsVisible[slotProps.node.id]" class="p-ml-2">
+                    <Button icon="fa fa-plus" class="p-button-link p-button-sm p-p-0" @click.stop="createFolder(slotProps.node)" />
+                    <Button icon="far fa-trash-alt" class="p-button-link p-button-sm p-p-0" @click.stop="deleteFolderConfirm(slotProps.node)" />
+                </div>
+            </div>
+        </template>
+    </Tree>
 </template>
 
 <script lang="ts">
@@ -12,14 +22,15 @@ export default defineComponent({
     name: 'workspace-document-tree',
     components: { Tree },
     props: { propFolders: { type: Array }, mode: { type: String } },
-    emits: ['folderSelected'],
+    emits: ['folderSelected', 'delete', 'createFolder'],
     data() {
         return {
             workspaceDocumentTreeDescriptor,
             folders: [] as IFolder[],
             nodes: [] as any[],
             selectedFolderKey: {},
-            selectedFolder: null as any
+            selectedFolder: null as any,
+            buttonsVisible: []
         }
     },
     watch: {
@@ -111,6 +122,18 @@ export default defineComponent({
         removeSelectedFolder() {
             this.selectedFolder = null
             this.$emit('folderSelected', this.selectedFolder)
+        },
+        createFolder(folder: any) {
+            console.log('CREATE FOLDER: ', folder)
+            this.$emit('createFolder', folder)
+        },
+        deleteFolderConfirm(folder: any) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.$emit('delete', folder)
+            })
         }
     }
 })

@@ -1214,6 +1214,7 @@
         },
         "myRepository": {
             "destinationFolder": "Destination folder",
+            "folderDeleteError": "Folder could not be deleted. It contains at least one subfolder or at least one document",
             "moveDocument": "Move Document",
             "newFolderTitle": "Create new folder"
         },
