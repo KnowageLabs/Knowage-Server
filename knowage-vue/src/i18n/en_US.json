@@ -63,6 +63,7 @@
         "save": "save",
         "search": "search",
         "select": "select",
+        "share": "Share",
         "sort": "sort",
         "table": {
             "footer": {
@@ -1193,9 +1194,9 @@
             "menuItems": {
                 "clone": "Clone Document",
                 "delete": "Delete Document",
+                "edit": "Edit Document",
                 "share": "Share Document",
-                "upload": "Upload preview file",
-                "edit": "Edit Document"
+                "upload": "Upload preview file"
             }
         },
         "myData": {
@@ -1210,6 +1211,7 @@
             "title": "My Models"
         },
         "myRepository": {
+            "destinationFolder": "Destination folder",
             "newFolderTitle": "Create new folder"
         },
         "recent": {

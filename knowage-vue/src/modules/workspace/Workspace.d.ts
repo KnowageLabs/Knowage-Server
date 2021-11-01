@@ -94,3 +94,15 @@ export interface IFederatedDataset {
     degenerated?: boolean,
     owner?: any
 }
+
+export interface INode {
+    key: number | string,
+    icon?: string,
+    id: number,
+    parentId?: number,
+    label: string,
+    children?: iNode[],
+    selectable?: Boolean,
+    data: string | any
+    customIcon?: string
+}
