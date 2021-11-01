@@ -43,7 +43,6 @@ import { defineComponent } from 'vue'
 import { IDocument } from '@/modules/workspace/Workspace'
 import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
 import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
-import workspaceDescriptor from './WorkspaceRecentViewDescriptor.json'
 import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -55,7 +54,6 @@ export default defineComponent({
     data() {
         return {
             mainDescriptor,
-            workspaceDescriptor,
             loading: false,
             showDetailSidebar: false,
             recentDocumentsList: [] as IDocument[],

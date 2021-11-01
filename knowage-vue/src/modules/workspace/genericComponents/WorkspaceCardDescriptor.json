@@ -11,6 +11,12 @@
         "name": "description",
         "type": "dataSourceLabel"
     },
+    "datasetViewFields": {
+        "image": "previewFile",
+        "label": "label",
+        "name": "name",
+        "type": "dsTypeCd"
+    },
     "defaultViewFields": {
         "image": "previewFile",
         "label": "documentLabel",
@@ -64,6 +70,12 @@
         },
         "nameContainer": {
             "margin-left": "10px"
+        },
+        "nameContainerText": {
+            "overflow": "hidden",
+            "text-overflow": "ellipsis",
+            "white-space": "nowrap",
+            "width": "150px"
         },
         "typeContainer": {
             "align-items": "flex-start",
