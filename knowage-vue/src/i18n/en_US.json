@@ -1201,8 +1201,8 @@
             }
         },
         "myData": {
-            "parametrical": "Parametrical",
-            "driverable": "Drivable"
+            "driverable": "Drivable",
+            "parametrical": "Parametrical"
         },
         "myModels": {
             "deleteDataset": "Delete dataset",
@@ -1213,6 +1213,7 @@
         },
         "myRepository": {
             "destinationFolder": "Destination folder",
+            "moveDocument": "Move Document",
             "newFolderTitle": "Create new folder"
         },
         "recent": {
