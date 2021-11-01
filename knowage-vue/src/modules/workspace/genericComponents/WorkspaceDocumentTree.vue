@@ -43,7 +43,7 @@ export default defineComponent({
             console.log('   createNodeTree() {')
             this.nodes = [] as any[]
             const foldersWithMissingParent = [] as IFolder[]
-            this.folders.forEach((folder: IFolder) => {
+            this.folders?.forEach((folder: IFolder) => {
                 const node = {
                     key: folder.name,
                     icon: 'pi pi-folder',
