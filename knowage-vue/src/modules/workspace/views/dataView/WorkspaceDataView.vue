@@ -136,8 +136,8 @@ export default defineComponent({
         },
         canLoadData(): any {
             if (this.selectedDataset.actions) {
-                for (var i = 0; i < this.selectedDataset.actions.length; i++) {
-                    var action = this.selectedDataset.actions[i]
+                for (let i = 0; i < this.selectedDataset.actions.length; i++) {
+                    const action = this.selectedDataset.actions[i]
                     if (action.name == 'loaddata') {
                         return true
                     }
@@ -283,14 +283,15 @@ export default defineComponent({
             this.loading = false
         },
         async downloadDatasetFile(dataset: any) {
-            console.log('Download Dataset File', dataset)
+            //  console.log('Download Dataset File', dataset)
             await this.loadDataset(dataset.label)
             // console.log('SELECTED DS', this.selectedDataset)
             await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/download/file?dsLabel=${this.selectedDataset.label}&type=${this.selectedDataset.fileType.toLowerCase()}`, {
                     headers: {
                         Accept: 'application/json, text/plain, */*'
-                    }
+                    },
+                    responseType: 'blob'
                 })
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.errors) {
@@ -299,7 +300,7 @@ export default defineComponent({
                             msg: this.$t('common.error.downloading')
                         })
                     } else {
-                        downloadDirect(JSON.stringify(response.data), this.selectedDataset.label, this.getFileType(this.selectedDataset.fileType.toLowerCase()))
+                        downloadDirect(response.data, this.selectedDataset.label, this.getFileType(this.selectedDataset.fileType.toLowerCase()))
                         this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
                     }
                 })
