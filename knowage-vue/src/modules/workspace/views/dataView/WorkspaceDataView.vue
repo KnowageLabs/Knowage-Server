@@ -10,9 +10,9 @@
             <KnFabButton icon="fas fa-plus" data-test="new-folder-button" @click="showCreationMenu" />
         </template>
     </Toolbar>
+    <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
 
     <InputText class="kn-material-input p-m-2" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
-    <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
 
     <div class="overflow">
         <DataTable v-if="!toggleCardDisplay" style="width:100%" class="p-datatable-sm kn-table" :value="allDataset" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
@@ -62,7 +62,7 @@
                 @downloadDatasetFile="downloadDatasetFile"
                 @shareDataset="shareDataset"
                 @cloneDataset="cloneDataset"
-                @deleteDataset="deleteDataset"
+                @deleteDataset="deleteDatasetConfirm"
                 @openSidebar="showSidebar"
             />
         </div>
@@ -81,13 +81,17 @@
         @downloadDatasetFile="downloadDatasetFile"
         @shareDataset="shareDataset"
         @cloneDataset="cloneDataset"
-        @deleteDataset="deleteDataset"
+        @deleteDataset="deleteDatasetConfirm"
         @close="showDetailSidebar = false"
     />
 
     <DatasetWizard v-if="showDatasetDialog" :selectedDataset="selectedDataset" :visible="showDatasetDialog" @closeDialog="showDatasetDialog = false" />
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     <Menu id="creationMenu" ref="creationMenu" :model="creationMenuButtons" />
+
+    <WorkspaceDataCloneDialog :visible="cloneDialogVisible" :propDataset="selectedDataset" @close="cloneDialogVisible = false" @clone="handleDatasetClone"></WorkspaceDataCloneDialog>
+    <WorkspaceDataShareDialog :visible="shareDialogVisible" :propDataset="selectedDataset" :datasetCategories="datasetCategories" @close="shareDialogVisible = false"></WorkspaceDataShareDialog>
+    <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.myData.title')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -101,9 +105,12 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Chip from 'primevue/chip'
 import Menu from 'primevue/contextmenu'
+import WorkspaceDataCloneDialog from './dialogs/WorkspaceDataCloneDialog.vue'
+import WorkspaceDataShareDialog from './dialogs/WorkspaceDataShareDialog.vue'
+import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDialog.vue'
 
 export default defineComponent({
-    components: { DataTable, Column, Chip, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard },
+    components: { DataTable, Column, Chip, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog },
     emits: ['toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
@@ -150,7 +157,11 @@ export default defineComponent({
             creationMenuButtons: [] as any,
             filters: {
                 global: [filterDefault]
-            } as Object
+            } as Object,
+            cloneDialogVisible: false,
+            shareDialogVisible: false,
+            warningDialogVisbile: false,
+            warningMessage: ''
         }
     },
     created() {
@@ -174,6 +185,17 @@ export default defineComponent({
                 this.datasetCategories = [...response.data]
             })
         },
+        async loadDataset(datasetLabel: string) {
+            this.loading = true
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${datasetLabel}`)
+                .then((response) => {
+                    this.selectedDataset = response.data[0]
+                })
+                .catch(() => {})
+            this.loading = false
+            console.log('LOADED GET ONE DATASET: ', this.selectedDataset)
+        },
         toggleDisplayView() {
             this.$emit('toggleDisplayView')
         },
@@ -189,13 +211,13 @@ export default defineComponent({
         },
         showMenu(event, clickedDocument) {
             this.selectedDataset = clickedDocument
-            this.createMenuItems()
+            this.createMenuItems(clickedDocument)
             // eslint-disable-next-line
             // @ts-ignore
             this.$refs.optionsMenu.toggle(event)
         },
         // prettier-ignore
-        createMenuItems() {
+        createMenuItems(clickedDocument: any) {
             this.menuButtons = []
             this.menuButtons.push(
                 { key: '0', label: this.$t('workspace.myAnalysis.menuItems.showDsDetails'), icon: 'fas fa-pen', command: this.editFileDataset, visible: this.isDatasetOwner && this.selectedDataset.dsTypeCd == 'File' },
@@ -203,11 +225,11 @@ export default defineComponent({
                 { key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: this.exportToXlsx, visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable },
                 { key: '3', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: this.exportToCsv, visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' },
                 { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: this.downloadDatasetFile, visible: this.selectedDataset.dsTypeCd == 'File' },
-                { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: this.shareDataset, visible: this.canLoadData && this.isDatasetOwner },
-                { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: this.cloneDataset, visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' },
-                { key: '7', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: this.deleteDataset, visible: this.isDatasetOwner }
+                { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.shareDataset(clickedDocument), visible: this.canLoadData && this.isDatasetOwner },
+                { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: () => this.cloneDataset(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' },
+                { key: '7', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
             )
-            
+
         },
         createCreationMenuButtons() {
             this.creationMenuButtons = []
@@ -228,7 +250,11 @@ export default defineComponent({
             this.showDatasetDialog = true
         },
         openDatasetInQBE(event) {
-            console.log('openDatasetInQBE(event) { NIJE U OVOM SPRINTU', event)
+            console.log('openDatasetInQBE(event)', event)
+            this.$store.commit('setInfo', {
+                title: 'Todo',
+                msg: 'Functionality not in this sprint'
+            })
         },
         exportToXlsx(event) {
             console.log('exportToXlsx(event) {', event)
@@ -239,14 +265,60 @@ export default defineComponent({
         downloadDatasetFile(event) {
             console.log('downloadDatasetFile(event) {', event)
         },
-        shareDataset(event) {
-            console.log('shareDataset(event) {', event)
+        shareDataset(dataset: any) {
+            console.log('SHARE DATASET BEGIN: ', dataset)
+            this.shareDialogVisible = true
         },
-        cloneDataset(event) {
-            console.log('shareDcloneDatasetataset(event) {', event)
+        async cloneDataset(dataset: any) {
+            console.log('CLONE DATASET BEGIN', dataset)
+            await this.loadDataset(dataset.label)
+            this.cloneDialogVisible = true
         },
-        deleteDataset(event) {
-            console.log('deleteDataset(event) {', event)
+        async handleDatasetClone(dataset: any) {
+            console.log('DATSET FOR CLONE END: ', dataset)
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets`, dataset, { headers: { 'X-Disable-Errors': true } })
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.showDetailSidebar = false
+                    this.cloneDialogVisible = false
+                    this.getAllData()
+                })
+                .catch((response) => {
+                    this.warningDialogVisbile = true
+                    this.warningMessage = response
+                })
+        },
+        deleteDatasetConfirm(dataset: any) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: async () => await this.deleteDataset(dataset)
+            })
+        },
+        async deleteDataset(dataset: any) {
+            // console.log('deleteDataset ', dataset)
+            this.loading = true
+            await this.$http
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${dataset.label}`)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.showDetailSidebar = false
+                    this.getAllData()
+                })
+                .catch(() => {})
+            this.loading = false
+        },
+        closeWarningDialog() {
+            this.warningMessage = ''
+            this.warningDialogVisbile = false
         }
     }
 })
