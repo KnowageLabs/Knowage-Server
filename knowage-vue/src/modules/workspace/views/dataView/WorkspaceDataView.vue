@@ -223,8 +223,8 @@ export default defineComponent({
             this.menuButtons.push(
                 { key: '0', label: this.$t('workspace.myAnalysis.menuItems.showDsDetails'), icon: 'fas fa-pen', command: this.editFileDataset, visible: this.isDatasetOwner && this.selectedDataset.dsTypeCd == 'File' },
                 { key: '1', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: this.openDatasetInQBE, visible: this.showQbeEditButton },
-                { key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: this.exportToXlsx, visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable },
-                { key: '3', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: this.exportToCsv, visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' },
+                { key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable },
+                { key: '3', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.exportDataset(clickedDocument, 'csv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' },
                 { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: this.downloadDatasetFile, visible: this.selectedDataset.dsTypeCd == 'File' },
                 { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.shareDataset(clickedDocument), visible: this.canLoadData && this.isDatasetOwner },
                 { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: () => this.cloneDataset(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' },
@@ -237,7 +237,7 @@ export default defineComponent({
             this.creationMenuButtons.push(
                 { key: '0', label: this.$t('managers.businessModelManager.uploadFile'), command: this.toggleDatasetDialog, visible: true },
                 { key: '1', label: this.$t('workspace.myData.prepareData'), command: this.openDatasetInQBE, visible: true },
-                { key: '2', label: this.$t('workspace.myData.openData'), command: this.exportToXlsx, visible: true }
+                { key: '2', label: this.$t('workspace.myData.openData'), command: this.exportDataset, visible: true }
             )
         },
         toggleDatasetDialog() {
@@ -257,11 +257,29 @@ export default defineComponent({
                 msg: 'Functionality not in this sprint'
             })
         },
-        exportToXlsx(event) {
-            console.log('exportToXlsx(event) {', event)
-        },
-        exportToCsv(event) {
-            console.log('exportToCsv(event) {', event)
+        async exportDataset(dataset: any, format: string) {
+            console.log('export dataset ', dataset, ', format: ', format)
+            this.loading = true
+            //  { 'Content-Type': 'application/x-www-form-urlencoded' }
+            await this.$http
+                .post(
+                    process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/dataset/${dataset.id}/${format}`,
+                    {},
+                    {
+                        headers: {
+                            Accept: 'application/json, text/plain, */*',
+                            'Content-Type': 'application/json;charset=UTF-8'
+                        }
+                    }
+                )
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('workspace.myData.exportSuccess')
+                    })
+                })
+                .catch(() => {})
+            this.loading = false
         },
         downloadDatasetFile(event) {
             console.log('downloadDatasetFile(event) {', event)
