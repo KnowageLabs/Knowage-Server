@@ -1202,8 +1202,8 @@
             }
         },
         "myData": {
-            "title": "My Data",
             "cloneDataset": "Clone Dataset",
+            "clonedDatasetWizard": "Cloned Dataset Wizard",
             "csvExport": "Export Dataset to CSV",
             "deleteDataset": "Delete Dataset",
             "driverable": "Drivable",
@@ -1211,6 +1211,8 @@
             "modified": "Modified",
             "parametrical": "Parametrical",
             "shareDataset": "Share/Unshare Dataset",
+            "title": "My Data",
+            "unshareDataset": "Unshare Dataset",
             "xlsxExport": "Export Dataset to XLSX"
         },
         "myModels": {

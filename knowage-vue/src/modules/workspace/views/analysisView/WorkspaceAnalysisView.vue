@@ -67,7 +67,7 @@
     />
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
 
-    <WorkspaceAnalysisViewShareDialog :visible="shareDialogVisible" :propFolders="folders" @close="shareDialogVisible = false" @share="handleAnalysshared($event, false)"></WorkspaceAnalysisViewShareDialog>
+    <WorkspaceAnalysisViewShareDialog :visible="shareDialogVisible" :propFolders="folders" @close="shareDialogVisible = false" @share="handleAnalysShared($event, false)"></WorkspaceAnalysisViewShareDialog>
     <WorkspaceAnalysisViewEditDialog :visible="editDialogVisible" :propAnalysis="selectedAnalysis" @close="editDialogVisible = false" @save="handleEditAnalysis"></WorkspaceAnalysisViewEditDialog>
     <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.menuLabels.myAnalysis')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
 
@@ -208,13 +208,13 @@ export default defineComponent({
                     this.shareDialogVisible = true
                 })
             } else {
-                await this.handleAnalysshared(null, shared)
+                await this.handleAnalysShared(null, shared)
             }
             // console.log('LOADED FOLDERS: ', this.folders)s
             this.loading = false
         },
-        async handleAnalysshared(selectedFolders: any, shared: boolean) {
-            console.log('handleAnalysshared SELECTED FOLDERS: ', selectedFolders)
+        async handleAnalysShared(selectedFolders: any, shared: boolean) {
+            console.log('handleAnalysShared SELECTED FOLDERS: ', selectedFolders)
             this.loading = true
 
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/share?docId=${this.selectedAnalysis.id}&`
