@@ -241,7 +241,7 @@ export default defineComponent({
             )
         },
         toggleDatasetDialog() {
-            this.selectedDataset = []
+            this.selectedDataset = {}
             this.showDatasetDialog = true
         },
         previewDataset(event) {

@@ -144,10 +144,7 @@ export default defineComponent({
                     }
                 })
                 .then((response: AxiosResponse<any>) => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.uploading'),
-                        msg: this.$t('importExport.import.successfullyCompleted')
-                    })
+                    this.$store.commit('setInfo', { title: this.$t('common.uploading'), msg: this.$t('importExport.import.successfullyCompleted') })
                     this.dataset.fileType = response.data.fileType
                     this.dataset.fileName = response.data.fileName
                     this.$emit('fileUploaded')
@@ -163,7 +160,8 @@ export default defineComponent({
             await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/download/file?dsLabel=${encodedLabel}&type=${this.dataset.fileType}`, {
                     headers: {
-                        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+                        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                        'X-Disable-Errors': 'true'
                     }
                 })
                 .then(
