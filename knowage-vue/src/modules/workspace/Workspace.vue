@@ -6,8 +6,8 @@
                     {{ $t('workspace.menuLabels.menuTitle') }}
                 </template>
             </Toolbar>
-            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-            <Listbox v-if="displayMenu" :options="workspaceDescriptor.menuItems">
+            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+            <Listbox v-if="displayMenu" :options="workspaceDescriptor.menuItems" data-test="menu-list">
                 <template #option="slotProps">
                     <div v-if="slotProps.option.value !== 'repository'" class="kn-list-item" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
                         <i :class="slotProps.option.icon"></i>
@@ -19,14 +19,14 @@
                         <Accordion>
                             <AccordionTab>
                                 <template #header>
-                                    <div class="p-d-flex p-flex-row" @click="accordionIcon = !accordionIcon">
+                                    <div class="p-d-flex p-flex-row" @click="accordionIcon = !accordionIcon" data-test="document-accordion">
                                         <i class="pi pi-folder"></i>
                                         <span class="p-ml-2">{{ $t('workspace.menuLabels.myRepository') }}</span>
                                         <i v-if="accordionIcon" class="pi pi-chevron-right menu-accordion-icon"></i>
                                         <i v-if="!accordionIcon" class="pi pi-chevron-down menu-accordion-icon"></i>
                                     </div>
                                 </template>
-                                <WorkspaceDocumentTree :propFolders="allFolders" mode="select" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder" @delete="deleteFolder" @createFolder="showCreateFolderDialog"></WorkspaceDocumentTree>
+                                <WorkspaceDocumentTree :propFolders="allFolders" mode="select" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder" @delete="deleteFolder" @createFolder="showCreateFolderDialog" data-test="document-tree"></WorkspaceDocumentTree>
                             </AccordionTab>
                         </Accordion>
                     </div>
@@ -117,8 +117,10 @@ export default defineComponent({
             this.sidebarVisible = false
         },
         async getAllRepositoryData() {
+            this.loading = true
             await this.getAllFolders()
             await this.getAllDocuments()
+            this.loading = false
         },
         async getAllFolders() {
             return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/folders/`).then((response: AxiosResponse<any>) => {
