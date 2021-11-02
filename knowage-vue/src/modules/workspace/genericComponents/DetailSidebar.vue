@@ -15,13 +15,13 @@
                     <p class="p-m-0" v-if="field.type === 'category'">
                         {{ datasetCategory }}
                     </p>
-                    <p class="p-m-0" v-if="field.type === 'date'">{{ formatDate(selectedDocument[field.value]) }}</p>
-                    <p class="p-m-0" v-if="field.type != 'date' && field.type != 'category'">{{ selectedDocument[field.value] }}</p>
+                    <p class="p-m-0" v-if="field.type === 'date'">{{ formatDate(document[field.value]) }}</p>
+                    <p class="p-m-0" v-if="field.type != 'date' && field.type != 'category'">{{ document[field.value] }}</p>
                 </div>
             </div>
         </div>
     </Sidebar>
-    <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
+    <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" :style="descriptor.style.menuItems" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -32,32 +32,35 @@ import Menu from 'primevue/contextmenu'
 export default defineComponent({
     name: 'workspace-sidebar',
     components: { Sidebar, Menu },
-    emits: [
-        'close',
-        'executeRecent',
-        'executeDocumentFromOrganizer',
-        'moveDocumentToFolder',
-        'deleteDocumentFromOrganizer',
-        'executeAnalysisDocument',
-        'editAnalysisDocument',
-        'shareAnalysisDocument',
-        'cloneAnalysisDocument',
-        'deleteAnalysisDocument',
-        'uploadAnalysisPreviewFile',
-        'openDatasetInQBE',
-        'editDataset',
-        'previewDataset',
-        'deleteDataset'
-    ],
+    //prettier-ignore
+    emits: ['close','executeRecent','executeDocumentFromOrganizer','moveDocumentToFolder','deleteDocumentFromOrganizer','executeAnalysisDocument','editAnalysisDocument','shareAnalysisDocument','cloneAnalysisDocument','deleteAnalysisDocument','uploadAnalysisPreviewFile','openDatasetInQBE','editDataset','previewDataset','deleteDataset','editFileDataset','exportToXlsx','exportToCsv','getHelp','downloadDatasetFile','shareDataset','cloneDataset'],
     props: { visible: Boolean, viewType: String, document: Object as any, datasetCategories: Array as any },
     computed: {
         isOwner(): any {
-            return (this.$store.state as any).user.fullName === this.selectedDocument.creationUser
+            return (this.$store.state as any).user.fullName === this.document.creationUser
+        },
+        isDatasetOwner(): any {
+            return (this.$store.state as any).user.fullName === this.document.owner
+        },
+        showQbeEditButton(): any {
+            return (this.$store.state as any).user.fullName === this.document.owner && (this.document.dsTypeCd == 'Federated' || this.document.dsTypeCd == 'Qbe')
+        },
+        datasetHasDrivers(): any {
+            return this.document.drivers && this.document.length > 0
+        },
+        datasetHasParams(): any {
+            return this.document.pars && this.document.pars > 0
+        },
+        datasetIsIterable(): any {
+            // in order to export to XLSX, dataset must implement an iterator (BE side)
+            let notIterableDataSets = ['Federated']
+            if (notIterableDataSets.includes(this.document.dsTypeCd)) return false
+            else return true
         },
         canLoadData(): any {
-            if (this.selectedDocument.actions) {
-                for (var i = 0; i < this.selectedDocument.actions.length; i++) {
-                    var action = this.selectedDocument.actions[i]
+            if (this.document.actions) {
+                for (var i = 0; i < this.document.actions.length; i++) {
+                    var action = this.document.actions[i]
                     if (action.name == 'loaddata') {
                         return true
                     }
@@ -68,15 +71,15 @@ export default defineComponent({
         datasetCategory(): any {
             let category = ''
             this.datasetCategories.find((cat) => {
-                if (cat.VALUE_ID === this.selectedDocument.catTypeId) {
+                if (cat.VALUE_ID === this.document.catTypeId) {
                     category = cat.VALUE_CD
                 }
             })
             return category
         },
         documentImageSource(): any {
-            if (this.selectedDocument.previewFile) {
-                return process.env.VUE_APP_HOST_URL + descriptor.imgPath + this.selectedDocument.previewFile
+            if (this.document.previewFile) {
+                return process.env.VUE_APP_HOST_URL + descriptor.imgPath + this.document.previewFile
             }
             //DEFAULT IMAGE
             return process.env.VUE_APP_HOST_URL + descriptor.imgPath + `82300081364511eca64e159ee59cd4dc.jpg`
@@ -112,6 +115,7 @@ export default defineComponent({
                 case 'dataset':
                     return [
                         { icon: 'fas fa-eye', class: 'p-button-text p-button-rounded p-button-plain', visible: this.canLoadData, command: this.emitEvent('previewDataset') },
+                        { icon: 'fas fa-question-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('getHelp') },
                         { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu }
                     ]
                 case 'analysis':
@@ -126,47 +130,11 @@ export default defineComponent({
                     return [
                         { icon: 'fa fa-search', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openDatasetInQBE') },
                         { icon: 'pi pi-pencil', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('editDataset') },
-                        { icon: 'fas fa-trash-alt', class: 'p-button-text p-button-rounded p-button-plain', visible: (this.$store.state as any).user.isSuperadmin || (this.$store.state as any).user.userId === this.selectedDocument.owner, command: this.emitEvent('deleteDataset') }
+                        { icon: 'fas fa-trash-alt', class: 'p-button-text p-button-rounded p-button-plain', visible: (this.$store.state as any).user.isSuperadmin || (this.$store.state as any).user.userId === this.document.owner, command: this.emitEvent('deleteDataset') }
                     ]
                 default:
                     return console.log('How did this happen, no valid file type.')
             }
-        },
-        menuButtons(): any {
-            return [
-                {
-                    key: '0',
-                    label: this.$t('workspace.myAnalysis.menuItems.share'),
-                    icon: 'fas fa-share',
-                    command: () => {
-                        this.$emit('shareAnalysisDocument', this.selectedDocument)
-                    }
-                },
-                {
-                    key: '1',
-                    label: this.$t('workspace.myAnalysis.menuItems.clone'),
-                    icon: 'fas fa-clone',
-                    command: () => {
-                        this.$emit('cloneAnalysisDocument', this.selectedDocument)
-                    }
-                },
-                {
-                    key: '2',
-                    label: this.$t('workspace.myAnalysis.menuItems.delete'),
-                    icon: 'fas fa-trash',
-                    command: () => {
-                        this.$emit('deleteAnalysisDocument', this.selectedDocument)
-                    }
-                },
-                {
-                    key: '3',
-                    label: this.$t('workspace.myAnalysis.menuItems.upload'),
-                    icon: 'fas fa-share-alt',
-                    command: () => {
-                        this.$emit('uploadAnalysisPreviewFile', this.selectedDocument)
-                    }
-                }
-            ]
         }
     },
 
@@ -174,25 +142,46 @@ export default defineComponent({
         return {
             descriptor,
             sidebarVisible: false,
-            selectedDocument: {} as any,
-            sidebarFields: null as any
+            menuButtons: [] as any
         }
     },
     created() {
         this.sidebarVisible = this.visible
-        this.selectedDocument = this.document
     },
     watch: {
         visible() {
             this.sidebarVisible = this.visible
-            this.selectedDocument = this.document
         }
     },
     methods: {
         showMenu(event) {
+            this.createMenuItems()
             // eslint-disable-next-line
             // @ts-ignore
             this.$refs.optionsMenu.toggle(event)
+        },
+        createMenuItems() {
+            this.menuButtons = []
+            if (this.viewType == 'analysis') {
+                this.menuButtons.push(
+                    { key: '0', label: this.$t('workspace.myAnalysis.menuItems.edit'), icon: 'fas fa-edit', command: this.emitEvent('editAnalysisDocument'), visible: this.isOwner },
+                    { key: '1', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share', command: this.emitEvent('shareAnalysisDocument') },
+                    { key: '2', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: this.emitEvent('cloneAnalysisDocument') },
+                    { key: '3', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: this.emitEvent('deleteAnalysisDocument') },
+                    { key: '4', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-share-alt', command: this.emitEvent('uploadAnalysisPreviewFile') }
+                )
+            } else if (this.viewType == 'dataset') {
+                this.menuButtons.push(
+                    { key: '0', label: this.$t('workspace.myAnalysis.menuItems.showDsDetails'), icon: 'fas fa-pen', command: this.emitEvent('editFileDataset'), visible: this.isDatasetOwner && this.document.dsTypeCd == 'File' },
+                    { key: '1', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: this.emitEvent('openDatasetInQBE'), visible: this.showQbeEditButton },
+                    { key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: this.emitEvent('exportToXlsx'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.document.dsTypeCd != 'File' && this.datasetIsIterable },
+                    { key: '3', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: this.emitEvent('exportToCsv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.document.dsTypeCd != 'File' },
+                    { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: this.emitEvent('downloadDatasetFile'), visible: this.document.dsTypeCd == 'File' },
+                    { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: this.emitEvent('shareDataset'), visible: this.canLoadData && this.isDatasetOwner },
+                    { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: this.emitEvent('cloneDataset'), visible: this.canLoadData && this.document.dsTypeCd == 'Qbe' },
+                    { key: '7', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: this.emitEvent('deleteDataset'), visible: this.isDatasetOwner }
+                )
+            }
         },
         formatDate(date) {
             let fDate = new Date(date)

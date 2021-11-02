@@ -33,11 +33,40 @@ export default defineComponent({
     name: 'workspace-sidebar',
     components: { Menu },
     //prettier-ignore
-    emits: ['executeRecent','executeDocumentFromOrganizer','moveDocumentToFolder','deleteDocumentFromOrganizer','executeAnalysisDocument','editAnalysisDocument','shareAnalysisDocument','cloneAnalysisDocument','deleteAnalysisDocument','uploadAnalysisPreviewFile','openDatasetInQBE','editDataset','deleteDataset','previewDataset','openSidebar' ],
+    emits: ['executeRecent','executeDocumentFromOrganizer','moveDocumentToFolder','deleteDocumentFromOrganizer','executeAnalysisDocument','editAnalysisDocument','shareAnalysisDocument','cloneAnalysisDocument','deleteAnalysisDocument','uploadAnalysisPreviewFile','openDatasetInQBE','editDataset','deleteDataset','previewDataset','deleteDataset','editFileDataset','exportToXlsx','exportToCsv','getHelp','downloadDatasetFile','shareDataset','openSidebar'],
     props: { visible: Boolean, viewType: String, document: Object as any },
     computed: {
         isOwner(): any {
             return (this.$store.state as any).user.fullName === this.document.creationUser
+        },
+        isDatasetOwner(): any {
+            return (this.$store.state as any).user.fullName === this.document.owner
+        },
+        showQbeEditButton(): any {
+            return (this.$store.state as any).user.fullName === this.document.owner && (this.document.dsTypeCd == 'Federated' || this.document.dsTypeCd == 'Qbe')
+        },
+        datasetHasDrivers(): any {
+            return this.document.drivers && this.document.length > 0
+        },
+        datasetHasParams(): any {
+            return this.document.pars && this.document.pars > 0
+        },
+        datasetIsIterable(): any {
+            // in order to export to XLSX, dataset must implement an iterator (BE side)
+            let notIterableDataSets = ['Federated']
+            if (notIterableDataSets.includes(this.document.dsTypeCd)) return false
+            else return true
+        },
+        canLoadData(): any {
+            if (this.document.actions) {
+                for (var i = 0; i < this.document.actions.length; i++) {
+                    var action = this.document.actions[i]
+                    if (action.name == 'loaddata') {
+                        return true
+                    }
+                }
+            }
+            return false
         },
         documentImageSource(): any {
             if (this.document[this.documentFields.image]) {
@@ -105,24 +134,6 @@ export default defineComponent({
                 default:
                     return console.log('How did this happen, no valid file type.')
             }
-        },
-        menuButtons(): any {
-            switch (this.viewType) {
-                case 'recent':
-                    return []
-                case 'dataset':
-                    return this.datasetMenuButtons
-                case 'repository':
-                    return []
-                case 'analysis':
-                    return this.analysisMenuButtons
-                case 'businessModel':
-                    return []
-                case 'federationDataset':
-                    return []
-                default:
-                    return []
-            }
         }
     },
 
@@ -130,8 +141,7 @@ export default defineComponent({
         return {
             cardDescriptor,
             sidebarVisible: false,
-            analysisMenuButtons: [] as any,
-            datasetMenuButtons: [] as any
+            menuButtons: [] as any
         }
     },
     methods: {
@@ -146,14 +156,27 @@ export default defineComponent({
         },
         // prettier-ignore
         createMenuItems() {
-            this.analysisMenuButtons = []
-            this.analysisMenuButtons.push(
-                { key: '0', label: this.$t('workspace.myAnalysis.menuItems.edit'), icon: 'fas fa-edit', command: this.emitEvent('editAnalysisDocument') , visible: this.isOwner},
-                { key: '1', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share', command: this.emitEvent('shareAnalysisDocument') },
-                { key: '2', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: this.emitEvent('cloneAnalysisDocument') },
-                { key: '3', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: this.emitEvent('deleteAnalysisDocument') },
-                { key: '4', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-share-alt', command: this.emitEvent('uploadAnalysisPreviewFile') }
-            )
+            this.menuButtons = []
+            if (this.viewType == 'analysis') {
+                this.menuButtons.push(
+                    { key: '0', label: this.$t('workspace.myAnalysis.menuItems.edit'), icon: 'fas fa-edit', command: this.emitEvent('editAnalysisDocument'), visible: this.isOwner },
+                    { key: '1', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share', command: this.emitEvent('shareAnalysisDocument') },
+                    { key: '2', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: this.emitEvent('cloneAnalysisDocument') },
+                    { key: '3', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: this.emitEvent('deleteAnalysisDocument') },
+                    { key: '4', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-share-alt', command: this.emitEvent('uploadAnalysisPreviewFile') }
+                )
+            } else if (this.viewType == 'dataset') {
+                this.menuButtons.push(
+                    { key: '0', label: this.$t('workspace.myAnalysis.menuItems.showDsDetails'), icon: 'fas fa-pen', command: this.emitEvent('editFileDataset'), visible: this.isDatasetOwner && this.document.dsTypeCd == 'File' },
+                    { key: '1', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: this.emitEvent('openDatasetInQBE'), visible: this.showQbeEditButton },
+                    { key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: this.emitEvent('exportToXlsx'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.document.dsTypeCd != 'File' && this.datasetIsIterable },
+                    { key: '3', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: this.emitEvent('exportToCsv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.document.dsTypeCd != 'File' },
+                    { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: this.emitEvent('downloadDatasetFile'), visible: this.document.dsTypeCd == 'File' },
+                    { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: this.emitEvent('shareDataset'), visible: this.canLoadData && this.isDatasetOwner },
+                    { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: this.emitEvent('cloneDataset'), visible: this.canLoadData && this.document.dsTypeCd == 'Qbe' },
+                    { key: '7', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: this.emitEvent('deleteDataset'), visible: this.isDatasetOwner }
+                )
+            }
         }
     }
 })

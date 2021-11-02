@@ -2,8 +2,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary" style="width:100%">
         <template #left>
             <Button id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
-            <!-- {{ $t('workspace.menuLabels.recentDocuments') }} -->
-            My Data
+            {{ $t('workspace.myData.title') }}
         </template>
         <template #right>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
@@ -12,6 +11,7 @@
     </Toolbar>
 
     <InputText class="kn-material-input p-m-2" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
+    <ProgressBar mode="indeterminate" class="kn-progress-bar p-m-2" v-if="loading" data-test="progress-bar" />
 
     <div class="overflow">
         <DataTable v-if="!toggleCardDisplay" style="width:100%" class="p-datatable-sm kn-table" :value="allDataset" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
@@ -43,16 +43,46 @@
                 <template #body="slotProps">
                     <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="logMe(slotProps.data)" />
                     <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click="showSidebar(slotProps.data)" />
-                    <Button icon="fas fa-eye" class="p-button-link" @click="logMe(slotProps.data)" />
+                    <Button icon="fas fa-eye" class="p-button-link" @click="previewDataset(slotProps.data)" />
                 </template>
             </Column>
         </DataTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2">
-            <WorkspaceCard v-for="(dataset, index) of allDataset" :key="index" :viewType="'dataset'" :document="dataset" @previewDataset="previewDataset" @openSidebar="showSidebar" />
+            <WorkspaceCard
+                v-for="(dataset, index) of allDataset"
+                :key="index"
+                :viewType="'dataset'"
+                :document="dataset"
+                @previewDataset="previewDataset"
+                @editFileDataset="editFileDataset"
+                @openDatasetInQBE="openDatasetInQBE"
+                @exportToXlsx="exportToXlsx"
+                @exportToCsv="exportToCsv"
+                @downloadDatasetFile="downloadDatasetFile"
+                @shareDataset="shareDataset"
+                @cloneDataset="cloneDataset"
+                @deleteDataset="deleteDataset"
+                @openSidebar="showSidebar"
+            />
         </div>
     </div>
 
-    <DetailSidebar :visible="showDetailSidebar" :viewType="'dataset'" :document="selectedDataset" :datasetCategories="datasetCategories" @close="showDetailSidebar = false" />
+    <DetailSidebar
+        :visible="showDetailSidebar"
+        :viewType="'dataset'"
+        :document="selectedDataset"
+        :datasetCategories="datasetCategories"
+        @previewDataset="previewDataset"
+        @editFileDataset="editFileDataset"
+        @openDatasetInQBE="openDatasetInQBE"
+        @exportToXlsx="exportToXlsx"
+        @exportToCsv="exportToCsv"
+        @downloadDatasetFile="downloadDatasetFile"
+        @shareDataset="shareDataset"
+        @cloneDataset="cloneDataset"
+        @deleteDataset="deleteDataset"
+        @close="showDetailSidebar = false"
+    />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -88,40 +118,59 @@ export default defineComponent({
         }
     },
     created() {
-        this.getAllDatasets()
-        this.getDatasetCategories()
+        this.getAllData()
     },
     methods: {
-        logMe(event) {
-            console.log(event)
+        async getAllData() {
+            await this.getAllDatasets()
+            await this.getDatasetCategories()
+            this.loading = false
+        },
+        async getAllDatasets() {
+            this.loading = true
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/mydata/`).then((response) => {
+                this.allDataset = [...response.data.root]
+            })
+        },
+        async getDatasetCategories() {
+            this.loading = true
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domainsforfinaluser/ds-categories`).then((response) => {
+                this.datasetCategories = [...response.data]
+            })
         },
         toggleDisplayView() {
             this.$emit('toggleDisplayView')
         },
-        getAllDatasets() {
-            this.loading = true
-            return this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/mydata/`)
-                .then((response) => {
-                    this.allDataset = [...response.data.root]
-                })
-                .finally(() => (this.loading = false))
-        },
-        getDatasetCategories() {
-            this.loading = true
-            return this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domainsforfinaluser/ds-categories`)
-                .then((response) => {
-                    this.datasetCategories = [...response.data]
-                })
-                .finally(() => (this.loading = false))
-        },
-        previewDataset(event) {
-            console.log(event)
-        },
         showSidebar(clickedDataset) {
             this.selectedDataset = clickedDataset
             this.showDetailSidebar = true
+        },
+        previewDataset(event) {
+            console.log('previewDataset(event) {', event)
+        },
+        editFileDataset(event) {
+            console.log('editFileDataset(event) {', event)
+        },
+        openDatasetInQBE(event) {
+            console.log('openDatasetInQBE(event) {', event)
+        },
+        exportToXlsx(event) {
+            console.log('exportToXlsx(event) {', event)
+        },
+        exportToCsv(event) {
+            console.log('exportToCsv(event) {', event)
+        },
+        downloadDatasetFile(event) {
+            console.log('downloadDatasetFile(event) {', event)
+        },
+        shareDataset(event) {
+            console.log('shareDataset(event) {', event)
+        },
+        cloneDataset(event) {
+            console.log('shareDcloneDatasetataset(event) {', event)
+        },
+        deleteDataset(event) {
+            console.log('deleteDataset(event) {', event)
         }
     }
 })
