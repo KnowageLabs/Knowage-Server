@@ -1512,6 +1512,7 @@
             "parametrical": "Parametrical",
             "prepareData": "Prepare Data",
             "shareDataset": "Share/Unshare Dataset",
+            "shareDatasetHint": "By selecting a category from the combo box you are sharing the data set for all the users that are able to manage the specified data set category.",
             "title": "My Data",
             "unshareDataset": "Unshare Dataset",
             "xlsxExport": "Export Dataset to XLSX"
