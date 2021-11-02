@@ -15,7 +15,7 @@
     <InputText class="kn-material-input p-m-2" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" />
 
     <div class="p-m-2 overflow">
-        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="filteredAnalysisDocuments" :loading="loading" dataKey="id" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="filteredAnalysisDocuments" :loading="loading" dataKey="id" responsiveLayout="stack" breakpoint="600px">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -75,7 +75,6 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { filterDefault } from '@/helpers/commons/filterHelper'
 import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import analysisDescriptor from './WorkspaceAnalysisViewDescriptor.json'
 import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
@@ -109,9 +108,6 @@ export default defineComponent({
             filteredAnalysisDocuments: [] as any[],
             selectedAnalysis: {} as any,
             menuButtons: [] as any,
-            filters: {
-                global: [filterDefault]
-            } as Object,
             folders: [] as any[],
             searchWord: '' as string,
             editDialogVisible: false,

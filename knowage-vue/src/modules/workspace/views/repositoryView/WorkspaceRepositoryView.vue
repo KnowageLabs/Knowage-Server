@@ -13,9 +13,9 @@
 
     <WorkspaceRepositoryBreadcrumb :breadcrumbs="breadcrumbs" @breadcrumbClicked="$emit('breadcrumbClicked', $event)"></WorkspaceRepositoryBreadcrumb>
 
-    <InputText class="kn-material-input p-m-2" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
+    <InputText class="kn-material-input p-m-2" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" />
     <div class="p-m-2 overflow">
-        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="documents" :loading="loading" dataKey="biObjId" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="filteredDocuments" :loading="loading" dataKey="biObjId" responsiveLayout="stack" breakpoint="600px">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -32,7 +32,7 @@
             </Column>
         </DataTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2">
-            <WorkspaceCard v-for="(document, index) of documents" :key="index" :viewType="'repository'" :document="document" @executeDocumentFromOrganizer="executeDocumentFromOrganizer" @moveDocumentToFolder="moveDocumentToFolder" @deleteDocumentFromOrganizer="deleteDocumentFromOrganizer" />
+            <WorkspaceCard v-for="(document, index) of filteredDocuments" :key="index" :viewType="'repository'" :document="document" @executeDocumentFromOrganizer="executeDocumentFromOrganizer" @moveDocumentToFolder="moveDocumentToFolder" @deleteDocumentFromOrganizer="deleteDocumentFromOrganizer" />
         </div>
     </div>
 
@@ -52,7 +52,6 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { filterDefault } from '@/helpers/commons/filterHelper'
 import { IDocument, IFolder } from '@/modules/workspace/Workspace'
 import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
@@ -77,13 +76,12 @@ export default defineComponent({
             showDetailSidebar: false,
             displayCreateFolderDialog: false,
             documents: [] as IDocument[],
+            filteredDocuments: [] as IDocument[],
             menuButtons: [] as any,
             selectedDocument: {} as IDocument,
             newFolder: {} as IFolder,
             columns: repositoryDescriptor.columns,
-            filters: {
-                global: [filterDefault]
-            } as Object,
+            searchWord: '' as string,
             folders: [] as IFolder[], // premestiti u prop nakon promena u meniju?
             moveDialogVisible: false,
             warningDialogVisbile: false,
@@ -112,6 +110,7 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/${this.id}`)
                 .then((response) => {
                     this.documents = [...response.data]
+                    this.filteredDocuments = [...this.documents]
                 })
                 .finally(() => (this.loading = false))
         },
@@ -179,6 +178,22 @@ export default defineComponent({
         closeWarningDialog() {
             this.warningMessage = ''
             this.warningDialogVisbile = false
+        },
+        searchItems() {
+            setTimeout(() => {
+                if (!this.searchWord.trim().length) {
+                    this.filteredDocuments = [...this.documents] as IDocument[]
+                } else {
+                    this.filteredDocuments = this.filteredDocuments.filter((el: any) => {
+                        return (
+                            el.documentType?.toLowerCase().includes(this.searchWord.toLowerCase()) ||
+                            el.documentLabel?.toLowerCase().includes(this.searchWord.toLowerCase()) ||
+                            el.documentName?.toLowerCase().includes(this.searchWord.toLowerCase()) ||
+                            el.documentDescription?.toLowerCase().includes(this.searchWord.toLowerCase())
+                        )
+                    })
+                }
+            }, 250)
         }
     }
 })
