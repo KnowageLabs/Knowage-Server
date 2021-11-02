@@ -37,6 +37,7 @@ import WorkspaceFederationSaveDialog from './dialogs/WorkspaceFederationSaveDial
 import WorkspaceFederationDatasetList from './WorkspaceFederationDatasetList.vue'
 import WorkspaceFederationDefinitionAssociationsEditor from './WorkspaceFederationDefinitionAssociationsEditor.vue'
 import WorkspaceFederationDefinitionAssociationsList from './WorkspaceFederationDefinitionAssociationsList.vue'
+import { AxiosResponse } from 'axios'
 
 export default defineComponent({
     name: 'workspace-federation-definition',
@@ -86,11 +87,11 @@ export default defineComponent({
             this.loading = false
         },
         async loadFederatedDataset() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `federateddataset/${this.id}/`).then((response) => (this.federatedDataset = { ...response.data, relationships: JSON.parse(response.data.relationships) }))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `federateddataset/${this.id}/`).then((response: AxiosResponse<any>) => (this.federatedDataset = { ...response.data, relationships: JSON.parse(response.data.relationships) }))
         },
         async loadDatasets() {
             this.datasets = []
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/?includeDerived=no`).then((response) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/?includeDerived=no`).then((response: AxiosResponse<any>) => {
                 response.data.forEach((el: any) => {
                     if (el.pars.length === 0) {
                         this.formatDatasetMetaFields(el)
@@ -310,9 +311,9 @@ export default defineComponent({
         },
         sendRequest(url: string, federatedDataset: IFederatedDataset) {
             if (this.operation === 'create') {
-                return this.$http.post(url, federatedDataset, { headers: { 'X-Disable-Errors': true } })
+                return this.$http.post(url, federatedDataset, { headers: { 'X-Disable-Errors': 'true' } })
             } else {
-                return this.$http.put(url, federatedDataset, { headers: { 'X-Disable-Errors': true } })
+                return this.$http.put(url, federatedDataset, { headers: { 'X-Disable-Errors': 'true' } })
             }
         }
     }

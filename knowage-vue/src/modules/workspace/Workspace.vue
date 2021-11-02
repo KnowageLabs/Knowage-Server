@@ -79,8 +79,9 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import Sidebar from 'primevue/sidebar'
 import { IDocument, IFolder } from '@/modules/workspace/Workspace'
+import { AxiosResponse } from 'axios'
+import Sidebar from 'primevue/sidebar'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import Listbox from 'primevue/listbox'
@@ -120,13 +121,13 @@ export default defineComponent({
             await this.getAllDocuments()
         },
         async getAllFolders() {
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/folders/`).then((response) => {
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/folders/`).then((response: AxiosResponse<any>) => {
                 this.allFolders = [...response.data]
                 this.displayMenu = true
             })
         },
         async getAllDocuments() {
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/`).then((response) => {
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/`).then((response: AxiosResponse<any>) => {
                 this.allDocuments = [...response.data]
             })
         },
@@ -147,7 +148,7 @@ export default defineComponent({
             console.log('FOLDER FOR DELETE MAIN: ', folder)
             this.loading = true
             await this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/foldersee/${folder.id}`, { headers: { 'X-Disable-Errors': true } })
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/foldersee/${folder.id}`, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
@@ -156,7 +157,7 @@ export default defineComponent({
                     this.getAllRepositoryData()
                     this.$router.push('/workspace')
                 })
-                .catch((response) => {
+                .catch((response: any) => {
                     console.log('response', response)
                     this.$store.commit('setError', {
                         title: this.$t('common.toast.deleteTitle'),
@@ -174,12 +175,12 @@ export default defineComponent({
             newFolder.path = this.selectedFolder?.path + `/` + encodeURIComponent(newFolder.code)
             newFolder.prog = this.selectedFolder?.prog
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/organizer/foldersee/', newFolder, { headers: { 'X-Disable-Errors': true } })
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/organizer/foldersee/', newFolder, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
                     this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
                     this.getAllFolders()
                 })
-                .catch((response) => {
+                .catch((response: any) => {
                     console.log('CREATE NEW FOLDER ERROR RESPONSE: ', response)
                     this.$store.commit('setError', {
                         title: this.$t('common.error.generic'),

@@ -42,6 +42,7 @@ import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.v
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import SelectButton from 'primevue/selectbutton'
 import WorkspaceModelsTable from './tables/WorkspaceModelsTable.vue'
+import { AxiosResponse } from 'axios'
 
 export default defineComponent({
     name: 'workspace-models-view',
@@ -91,7 +92,7 @@ export default defineComponent({
         },
         async loadBusinessModels() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/?fileExtension=jar`).then((response) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/?fileExtension=jar`).then((response: AxiosResponse<any>) => {
                 this.businessModels = response.data.map((el: any) => {
                     return { ...el, type: 'businessModel' }
                 })
@@ -101,7 +102,7 @@ export default defineComponent({
         async loadFederatedDatasets() {
             this.loading = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `federateddataset/`).then(
-                (response) =>
+                (response: AxiosResponse<any>) =>
                     (this.federatedDatasets = response.data.map((el: any) => {
                         return { ...el, type: 'federatedDataset' }
                     }))

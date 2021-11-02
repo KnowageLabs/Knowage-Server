@@ -24,6 +24,7 @@ import { IPackage, ISchedulation } from '../../../Workspace'
 import Dialog from 'primevue/dialog'
 import workspaceSchedulationOldSchedulationsDialogDescriptor from './WorkspaceSchedulationOldSchedulationsDialogDescriptor.json'
 import WorkspaceSchedulationOldSchedulationsTable from './WorkspaceSchedulationOldSchedulationsTable.vue'
+import { AxiosResponse } from 'axios'
 
 export default defineComponent({
     name: 'workspace-schedulation-old-schedulations-dialog',
@@ -69,13 +70,13 @@ export default defineComponent({
         },
         async getDocumentId(documentName: string) {
             let documentId = null
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workspace/scheduler/${documentName}`).then((response) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workspace/scheduler/${documentName}`).then((response: AxiosResponse<any>) => {
                 documentId = response.data
             })
             return documentId
         },
         async loadDocumentSchedulers(documentId: number, schedulerName: string) {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/getSnapshotsForSchedulationAndDocument?id=${documentId}&scheduler=${schedulerName}`).then((response) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/getSnapshotsForSchedulationAndDocument?id=${documentId}&scheduler=${schedulerName}`).then((response: AxiosResponse<any>) => {
                 response.data?.schedulers.forEach((el: ISchedulation) => this.schedulations.push({ ...el, urlPath: response.data.urlPath }))
             })
         }

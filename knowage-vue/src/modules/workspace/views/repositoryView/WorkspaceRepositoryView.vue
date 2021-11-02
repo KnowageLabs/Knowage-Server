@@ -64,6 +64,7 @@ import Menu from 'primevue/contextmenu'
 import WorkspaceRepositoryMoveDialog from './dialogs/WorkspaceRepositoryMoveDialog.vue'
 import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDialog.vue'
 import WorkspaceRepositoryBreadcrumb from './breadcrumbs/WorkspaceRepositoryBreadcrumb.vue'
+import { AxiosResponse } from 'axios'
 
 export default defineComponent({
     components: { DataTable, Column, FabButton, DetailSidebar, WorkspaceCard, Menu, WorkspaceRepositoryMoveDialog, WorkspaceWarningDialog, WorkspaceRepositoryBreadcrumb },
@@ -100,7 +101,7 @@ export default defineComponent({
     methods: {
         async loadFolders() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/folders/`).then((response) => (this.folders = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/folders/`).then((response: AxiosResponse<any>) => (this.folders = response.data))
             this.loading = false
             console.log('ALL FOLDERS: ', this.folders)
         },
@@ -108,7 +109,7 @@ export default defineComponent({
             this.loading = true
             return this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/${this.id}`)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.documents = [...response.data]
                     this.filteredDocuments = [...this.documents]
                 })
@@ -166,7 +167,7 @@ export default defineComponent({
                     this.showDetailSidebar = false
                     this.getFolderDocuments()
                 })
-                .catch((response) => {
+                .catch((response: any) => {
                     this.warningMessage = response
                     this.warningDialogVisbile = true
                 })

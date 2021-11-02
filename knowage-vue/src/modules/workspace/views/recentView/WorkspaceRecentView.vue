@@ -41,6 +41,7 @@
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { defineComponent } from 'vue'
 import { IDocument } from '@/modules/workspace/Workspace'
+import { AxiosResponse } from 'axios'
 import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
 import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
 import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
@@ -71,7 +72,7 @@ export default defineComponent({
             this.loading = true
             return this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/recents`)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.recentDocumentsList = [...response.data]
                 })
                 .finally(() => (this.loading = false))

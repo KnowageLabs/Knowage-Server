@@ -11,6 +11,7 @@
 </template>
 
 <script lang="ts">
+import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import { IPackage } from '../../Workspace'
 import WorkspaceSchedulationOldSchedulationsDialog from './dialog/WorkspaceSchedulationOldSchedulationsDialog.vue'
@@ -34,7 +35,7 @@ export default defineComponent({
     methods: {
         async loadJobs() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/listAllJobs`).then((response) => (this.jobs = response.data.root))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/listAllJobs`).then((response: AxiosResponse<any>) => (this.jobs = response.data.root))
             this.loading = false
         },
         viewOldSchedulations(job: IPackage) {

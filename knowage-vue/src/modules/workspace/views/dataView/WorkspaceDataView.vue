@@ -108,6 +108,7 @@ import Menu from 'primevue/contextmenu'
 import WorkspaceDataCloneDialog from './dialogs/WorkspaceDataCloneDialog.vue'
 import WorkspaceDataShareDialog from './dialogs/WorkspaceDataShareDialog.vue'
 import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDialog.vue'
+import { AxiosResponse } from 'axios'
 
 export default defineComponent({
     components: { DataTable, Column, Chip, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog },
@@ -175,13 +176,13 @@ export default defineComponent({
         },
         async getAllDatasets() {
             this.loading = true
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/mydata/`).then((response) => {
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/mydata/`).then((response: AxiosResponse<any>) => {
                 this.allDataset = [...response.data.root]
             })
         },
         async getDatasetCategories() {
             this.loading = true
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domainsforfinaluser/ds-categories`).then((response) => {
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domainsforfinaluser/ds-categories`).then((response: AxiosResponse<any>) => {
                 this.datasetCategories = [...response.data]
             })
         },
@@ -189,7 +190,7 @@ export default defineComponent({
             this.loading = true
             await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${datasetLabel}`)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.selectedDataset = response.data[0]
                 })
                 .catch(() => {})
@@ -297,7 +298,7 @@ export default defineComponent({
         async handleDatasetClone(dataset: any) {
             console.log('DATSET FOR CLONE END: ', dataset)
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets`, dataset, { headers: { 'X-Disable-Errors': true } })
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets`, dataset, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
@@ -307,7 +308,7 @@ export default defineComponent({
                     this.cloneDialogVisible = false
                     this.getAllData()
                 })
-                .catch((response) => {
+                .catch((response: any) => {
                     this.warningDialogVisbile = true
                     this.warningMessage = response
                 })
