@@ -107,6 +107,7 @@ public abstract class AbstractFormatExporter {
 		try {
 			for (int i = 0; i < columns.length(); i++) {
 				JSONObject column = columns.getJSONObject(i);
+				// check if column is hidden with flag "Hide column"
 				if (column.has("style")) {
 					JSONObject style = column.optJSONObject("style");
 					if (style.has("hiddenColumn")) {
@@ -115,11 +116,70 @@ public abstract class AbstractFormatExporter {
 						}
 					}
 				}
+				// check if columns is hidden by using variables
+				if (column.has("variables")) {
+					JSONArray variables = column.getJSONArray("variables");
+					for (int j = 0; j < variables.length(); j++) {
+						JSONObject variable = variables.getJSONObject(j);
+						if (variable.optString("action").equalsIgnoreCase("hide")) {
+							if (variableMustHideColumn(column, variable))
+								hiddenColumns.add(i);
+						}
+					}
+				}
 			}
 			return hiddenColumns;
 		} catch (Exception e) {
-			logger.error("Error while getting hidden columns list");
+			logger.error("Error while getting hidden columns list", e);
 			return new ArrayList<Integer>();
+		}
+	}
+
+	protected boolean variableMustHideColumn(JSONObject column, JSONObject variable) {
+		try {
+			String variableValue = "";
+			Object value = getCockpitVariables().get(variable.getString("variable"));
+			if (value instanceof String) {
+				// static variable
+				variableValue = (String) value;
+			} else if (value instanceof JSONObject) {
+				// dataset variable
+				String key = variable.optString("key");
+				variableValue = ((JSONObject) value).optString(key);
+			}
+			String condition = variable.getString("condition");
+			switch (condition) {
+			case "==":
+				if (variable.getString("value").equals(variableValue))
+					return true;
+				break;
+			case "!=":
+				if (!variable.getString("value").equals(variableValue))
+					return true;
+				break;
+			case ">":
+				if (variable.getString("value").compareTo(variableValue) > 0)
+					return true;
+				break;
+			case "<":
+				if (variable.getString("value").compareTo(variableValue) < 0)
+					return true;
+				break;
+			case ">=":
+				if (variable.getString("value").compareTo(variableValue) >= 0)
+					return true;
+				break;
+			case "<=":
+				if (variable.getString("value").compareTo(variableValue) <= 0)
+					return true;
+				break;
+			default:
+				break;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error("Error while evaluating if column must be hidden according to variable.", e);
+			return false;
 		}
 	}
 
@@ -152,18 +212,17 @@ public abstract class AbstractFormatExporter {
 	}
 
 	protected String getTableColumnHeaderValue(JSONObject column) {
-		String header = null;
 		try {
 			if (column.has("variables")) {
 				JSONArray variables = column.getJSONArray("variables");
 				for (int i = 0; i < variables.length(); i++) {
 					JSONObject variable = variables.getJSONObject(i);
 					if (variable.getString("action").equalsIgnoreCase("header"))
-						header = getCockpitVariables().getString(variable.getString("variable"));
+						return getCockpitVariables().getString(variable.getString("variable"));
 				}
+				return column.getString("aliasToShow");
 			} else
-				header = column.getString("aliasToShow");
-			return header;
+				return column.getString("aliasToShow");
 		} catch (Exception e) {
 			logger.error("Error retrieving table column header values.", e);
 			return "";
