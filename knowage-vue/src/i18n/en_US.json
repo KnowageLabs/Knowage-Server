@@ -1202,15 +1202,17 @@
             }
         },
         "myData": {
-            "title": "My Data",
             "cloneDataset": "Clone Dataset",
             "csvExport": "Export Dataset to CSV",
             "deleteDataset": "Delete Dataset",
             "driverable": "Drivable",
             "fileDownload": "Download Dataset file",
             "modified": "Modified",
+            "openData": "Import Open Data",
             "parametrical": "Parametrical",
+            "prepareData": "Prepare Data",
             "shareDataset": "Share/Unshare Dataset",
+            "title": "My Data",
             "xlsxExport": "Export Dataset to XLSX"
         },
         "myModels": {

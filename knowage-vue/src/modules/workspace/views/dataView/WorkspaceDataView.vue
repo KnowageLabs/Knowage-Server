@@ -7,6 +7,7 @@
         <template #right>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
             <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
+            <KnFabButton icon="fas fa-plus" data-test="new-folder-button" @click="showCreationMenu" />
         </template>
     </Toolbar>
 
@@ -84,11 +85,15 @@
         @close="showDetailSidebar = false"
     />
 
+    <DatasetWizard v-if="showDatasetDialog" :selectedDataset="selectedDataset" :visible="showDatasetDialog" @closeDialog="showDatasetDialog = false" />
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
+    <Menu id="creationMenu" ref="creationMenu" :model="creationMenuButtons" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
+import KnFabButton from '@/components/UI/KnFabButton.vue'
+import DatasetWizard from './datasetWizard/WorkspaceDatasetWizardContainer.vue'
 import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
 import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
@@ -98,7 +103,7 @@ import Chip from 'primevue/chip'
 import Menu from 'primevue/contextmenu'
 
 export default defineComponent({
-    components: { DataTable, Column, Chip, DetailSidebar, WorkspaceCard, Menu },
+    components: { DataTable, Column, Chip, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard },
     emits: ['toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
@@ -137,10 +142,12 @@ export default defineComponent({
             mainDescriptor,
             loading: false,
             showDetailSidebar: false,
+            showDatasetDialog: false,
             allDataset: [] as any,
             datasetCategories: [] as any,
             selectedDataset: {} as any,
             menuButtons: [] as any,
+            creationMenuButtons: [] as any,
             filters: {
                 global: [filterDefault]
             } as Object
@@ -174,6 +181,12 @@ export default defineComponent({
             this.selectedDataset = clickedDataset
             this.showDetailSidebar = true
         },
+        showCreationMenu(event) {
+            this.createCreationMenuButtons()
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs.creationMenu.toggle(event)
+        },
         showMenu(event, clickedDocument) {
             this.selectedDataset = clickedDocument
             this.createMenuItems()
@@ -196,11 +209,23 @@ export default defineComponent({
             )
             
         },
+        createCreationMenuButtons() {
+            this.creationMenuButtons = []
+            this.creationMenuButtons.push(
+                { key: '0', label: this.$t('managers.businessModelManager.uploadFile'), command: this.toggleDatasetDialog, visible: true },
+                { key: '1', label: this.$t('workspace.myData.prepareData'), command: this.openDatasetInQBE, visible: true },
+                { key: '2', label: this.$t('workspace.myData.openData'), command: this.exportToXlsx, visible: true }
+            )
+        },
+        toggleDatasetDialog() {
+            this.selectedDataset = []
+            this.showDatasetDialog = true
+        },
         previewDataset(event) {
             console.log('previewDataset(event) {', event)
         },
-        editFileDataset(event) {
-            console.log('editFileDataset(event) {', event)
+        editFileDataset() {
+            this.showDatasetDialog = true
         },
         openDatasetInQBE(event) {
             console.log('openDatasetInQBE(event) { NIJE U OVOM SPRINTU', event)
