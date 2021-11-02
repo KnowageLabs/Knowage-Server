@@ -213,19 +213,17 @@ public abstract class AbstractExporter {
 	}
 
 	protected String getTableColumnHeaderValue(JSONObject column) {
-		String header = null;
 		try {
 			if (column.has("variables")) {
 				JSONArray variables = column.getJSONArray("variables");
 				for (int i = 0; i < variables.length(); i++) {
 					JSONObject variable = variables.getJSONObject(i);
 					if (variable.getString("action").equalsIgnoreCase("header"))
-						header = getCockpitVariables().getString(variable.getString("variable"));
+						return getCockpitVariables().getString(variable.getString("variable"));
 				}
-				header = column.getString("aliasToShow");
+				return column.getString("aliasToShow");
 			} else
-				header = column.getString("aliasToShow");
-			return header;
+				return column.getString("aliasToShow");
 		} catch (Exception e) {
 			logger.error("Error retrieving table column header values.", e);
 			return "";
