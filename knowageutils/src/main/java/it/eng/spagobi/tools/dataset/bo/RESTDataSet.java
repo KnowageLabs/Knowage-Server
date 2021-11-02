@@ -914,11 +914,18 @@ public class RESTDataSet extends ConfigurableDataSet {
 		/*
 		 * Workaround in case of multivalue parameters with spaces TODO: See if there is the possibility to add a solution before this place
 		 */
-		if (statement != null && statement.contains(" OR ") && statement.startsWith("\"") && dataset instanceof SolrDataSet) {
+		if (statement != null && statement.startsWith("\"") && dataset instanceof SolrDataSet) {
 
-			statement = statement.replaceAll("\"", "");
-			statement = statement.replaceAll("'", "\"");
-
+			if (statement.contains(" OR ")) {
+				statement = statement.replaceAll("\"", "");
+				statement = statement.replaceAll("'", "\"");
+			} else if (statement.equals("\"*\"")) {
+				statement = statement.replaceAll("\"", "");
+			} else if (statement.equals("\"'%'\"")) {
+				statement = statement.replaceAll("\"", "");
+				statement = statement.replaceAll("'", "");
+				statement = statement.replace("%", "*");
+			}
 		}
 
 		/*
