@@ -109,6 +109,7 @@ import WorkspaceDataCloneDialog from './dialogs/WorkspaceDataCloneDialog.vue'
 import WorkspaceDataShareDialog from './dialogs/WorkspaceDataShareDialog.vue'
 import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDialog.vue'
 import { AxiosResponse } from 'axios'
+import { downloadDirect } from '@/helpers/commons/fileHelper'
 
 export default defineComponent({
     components: { DataTable, Column, Chip, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog },
@@ -225,7 +226,7 @@ export default defineComponent({
                 { key: '1', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: this.openDatasetInQBE, visible: this.showQbeEditButton },
                 { key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable },
                 { key: '3', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.exportDataset(clickedDocument, 'csv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' },
-                { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: this.downloadDatasetFile, visible: this.selectedDataset.dsTypeCd == 'File' },
+                { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: () => this.downloadDatasetFile(clickedDocument), visible: this.selectedDataset.dsTypeCd == 'File' },
                 { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.shareDataset(clickedDocument), visible: this.canLoadData && this.isDatasetOwner },
                 { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: () => this.cloneDataset(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' },
                 { key: '7', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
@@ -281,8 +282,37 @@ export default defineComponent({
                 .catch(() => {})
             this.loading = false
         },
-        downloadDatasetFile(event) {
-            console.log('downloadDatasetFile(event) {', event)
+        async downloadDatasetFile(dataset: any) {
+            console.log('Download Dataset File', dataset)
+            await this.loadDataset(dataset.label)
+            // console.log('SELECTED DS', this.selectedDataset)
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/download/file?dsLabel=${this.selectedDataset.label}&type=${this.selectedDataset.fileType.toLowerCase()}`, {
+                    headers: {
+                        Accept: 'application/json, text/plain, */*'
+                    }
+                })
+                .then((response: AxiosResponse<any>) => {
+                    if (response.data.errors) {
+                        this.$store.commit('setError', {
+                            title: this.$t('common.error.downloading'),
+                            msg: this.$t('common.error.downloading')
+                        })
+                    } else {
+                        downloadDirect(JSON.stringify(response.data), this.selectedDataset.label, this.getFileType(this.selectedDataset.fileType.toLowerCase()))
+                        this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
+                    }
+                })
+        },
+        getFileType(type: string) {
+            switch (type) {
+                case 'csv':
+                    return 'text/csv'
+                case 'xls':
+                    return 'application/vnd.ms-excel'
+                case 'xlsx':
+                    return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            }
         },
         shareDataset(dataset: any) {
             console.log('SHARE DATASET BEGIN: ', dataset)
