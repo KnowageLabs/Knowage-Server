@@ -17,7 +17,15 @@
                     </div>
                     <div v-else class="menu-accordion">
                         <Accordion>
-                            <AccordionTab :header="$t('workspace.menuLabels.myRepository')">
+                            <AccordionTab>
+                                <template #header>
+                                    <div class="p-d-flex p-flex-row" @click="accordionIcon = !accordionIcon">
+                                        <i class="pi pi-folder"></i>
+                                        <span class="p-ml-2">{{ $t('workspace.menuLabels.myRepository') }}</span>
+                                        <i v-if="accordionIcon" class="pi pi-chevron-right menu-accordion-icon"></i>
+                                        <i v-if="!accordionIcon" class="pi pi-chevron-down menu-accordion-icon"></i>
+                                    </div>
+                                </template>
                                 <WorkspaceDocumentTree :propFolders="allFolders" mode="select" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder" @delete="deleteFolder" @createFolder="showCreateFolderDialog"></WorkspaceDocumentTree>
                             </AccordionTab>
                         </Accordion>
@@ -96,6 +104,7 @@ export default defineComponent({
             displayCreateFolderDialog: false,
             breadcrumbs: [] as any[],
             selectedBreadcrumb: null as any,
+            accordionIcon: true,
             loading: false
         }
     },
@@ -234,6 +243,14 @@ export default defineComponent({
 
 .menu-accordion .p-accordion-content {
     padding: 0 !important;
+}
+
+.menu-accordion .p-accordion-toggle-icon {
+    display: none;
+}
+
+.menu-accordion-icon {
+    margin-left: auto;
 }
 
 @media screen and (min-width: 1025px) {
