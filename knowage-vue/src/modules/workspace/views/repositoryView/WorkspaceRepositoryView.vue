@@ -10,6 +10,9 @@
             <FabButton icon="fas fa-folder" data-test="new-folder-button" @click="$emit('createFolderClick')" />
         </template>
     </Toolbar>
+
+    <WorkspaceRepositoryBreadcrumb :breadcrumbs="breadcrumbs" @breadcrumbClicked="$emit('breadcrumbClicked', $event)"></WorkspaceRepositoryBreadcrumb>
+
     <InputText class="kn-material-input p-m-2" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
     <div class="p-m-2 overflow">
         <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="documents" :loading="loading" dataKey="biObjId" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
@@ -61,11 +64,12 @@ import FabButton from '@/components/UI/KnFabButton.vue'
 import Menu from 'primevue/contextmenu'
 import WorkspaceRepositoryMoveDialog from './dialogs/WorkspaceRepositoryMoveDialog.vue'
 import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDialog.vue'
+import WorkspaceRepositoryBreadcrumb from './breadcrumbs/WorkspaceRepositoryBreadcrumb.vue'
 
 export default defineComponent({
-    components: { DataTable, Column, FabButton, DetailSidebar, WorkspaceCard, Menu, WorkspaceRepositoryMoveDialog, WorkspaceWarningDialog },
-    emits: ['showMenu', 'reloadRepositoryMenu', 'toggleDisplayView', 'createFolderClick'],
-    props: { selectedFolder: { type: Object }, id: { type: String, required: false }, toggleCardDisplay: { type: Boolean } },
+    components: { DataTable, Column, FabButton, DetailSidebar, WorkspaceCard, Menu, WorkspaceRepositoryMoveDialog, WorkspaceWarningDialog, WorkspaceRepositoryBreadcrumb },
+    emits: ['showMenu', 'reloadRepositoryMenu', 'toggleDisplayView', 'createFolderClick', 'breadcrumbClicked'],
+    props: { selectedFolder: { type: Object }, id: { type: String, required: false }, toggleCardDisplay: { type: Boolean }, breadcrumbs: { type: Array } },
     data() {
         return {
             mainDescriptor,

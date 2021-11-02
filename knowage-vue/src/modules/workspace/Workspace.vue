@@ -27,7 +27,17 @@
         </div>
         <div class=" p-d-flex p-flex-column" style="width:100%">
             <Button id="showSidenavIcon" v-if="$router.currentRoute._rawValue.fullPath === '/workspace/'" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="sidebarVisible = true" />
-            <router-view class="kn-router-view" :selectedFolder="selectedFolder" :toggleCardDisplay="toggleCardDisplay" @toggleDisplayView="toggleDisplayView" @showMenu="sidebarVisible = true" @reloadRepositoryMenu="getAllFolders" @createFolderClick="displayCreateFolderDialog = true" />
+            <router-view
+                class="kn-router-view"
+                :selectedFolder="selectedFolder"
+                :toggleCardDisplay="toggleCardDisplay"
+                :breadcrumbs="breadcrumbs"
+                @toggleDisplayView="toggleDisplayView"
+                @showMenu="sidebarVisible = true"
+                @reloadRepositoryMenu="getAllFolders"
+                @createFolderClick="displayCreateFolderDialog = true"
+                @breadcrumbClicked="setSelectedBreadcrumb($event)"
+            />
         </div>
     </div>
 
@@ -79,11 +89,13 @@ export default defineComponent({
             sidebarVisible: false,
             toggleCardDisplay: false,
             allFolders: [] as IFolder[],
-            selectedFolder: {} as IFolder,
+            selectedFolder: {} as any,
             allDocuments: [] as IDocument[],
             items: [] as IFolder[],
             displayMenu: false,
             displayCreateFolderDialog: false,
+            breadcrumbs: [] as any[],
+            selectedBreadcrumb: null as any,
             loading: false
         }
     },
@@ -118,7 +130,8 @@ export default defineComponent({
         },
         setSelectedFolder(folder: any) {
             this.selectedFolder = folder
-            // console.log('SELECTED FOLDER IN WORKSPACE MAIN: ', this.selectedFolder)
+            console.log('SELECTED FOLDER IN WORKSPACE MAIN: ', this.selectedFolder)
+            this.createBreadcrumbs()
             this.$router.push(`/workspace/repository/${folder.id}`)
         },
         async deleteFolder(folder: any) {
@@ -165,6 +178,22 @@ export default defineComponent({
                     })
                 })
                 .finally(() => (this.displayCreateFolderDialog = false))
+        },
+        createBreadcrumbs() {
+            // console.log('CURRENT FOLDER START METHOD: ', this.selectedFolder)
+            let currentFolder = this.selectedFolder as any
+            this.breadcrumbs = [] as any[]
+            do {
+                this.breadcrumbs.unshift({ label: currentFolder.data.name, node: currentFolder })
+                currentFolder = currentFolder.data.parentFolder
+                // console.log('CURRENT FOLDER: ', currentFolder)
+            } while (currentFolder)
+            console.log('CREATED BREADCRUMBS: ', this.breadcrumbs)
+        },
+        async setSelectedBreadcrumb(breadcrumb: any) {
+            console.log('SELCTED BREADCRUMB: ', breadcrumb)
+            this.selectedBreadcrumb = breadcrumb
+            this.$router.push(`/workspace/repository/${this.selectedBreadcrumb.node.id}`)
         }
     }
 })

@@ -75,6 +75,7 @@ export default defineComponent({
                 let parentFolder = null as any
                 for (let i = 0; i < foldersWithMissingParent.length; i++) {
                     if (folder.parentId === foldersWithMissingParent[i].id) {
+                        folder.data.parentFolder = foldersWithMissingParent[i]
                         foldersWithMissingParent[i].children?.push(folder)
                         break
                     }
@@ -82,6 +83,7 @@ export default defineComponent({
                 for (let i = 0; i < this.nodes.length; i++) {
                     parentFolder = this.findParentFolder(folder, this.nodes[i])
                     if (parentFolder) {
+                        folder.data.parentFolder = parentFolder
                         parentFolder.children?.push(folder)
                         break
                     }
