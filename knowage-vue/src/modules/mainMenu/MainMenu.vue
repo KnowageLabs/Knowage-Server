@@ -53,7 +53,7 @@ import RoleDialog from '@/modules/mainMenu/dialogs/RoleDialog.vue'
 import { getGravatar } from '@/helpers/commons/gravatarHelper'
 import { mapState } from 'vuex'
 import auth from '@/helpers/commons/authHelper'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import DownloadsDialog from '@/modules/mainMenu/dialogs/DownloadsDialog/DownloadsDialog.vue'
 import { IMenuItem } from '@/modules/mainMenu/MainMenu'
 
@@ -187,9 +187,9 @@ export default defineComponent({
             localObject.locale = splittedLocale[0] + '-' + splittedLocale[2].replaceAll('#', '') + '-' + splittedLocale[1]
         }
 
-        await axios
+        await this.$http
             .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale))
-            .then((response) => {
+            .then((response: AxiosResponse<any>) => {
                 this.technicalUserFunctionalities = response.data.technicalUserFunctionalities.filter((groupItem: any) => {
                     let childItems = groupItem.items.filter((x) => {
                         let currentHostName = this.licenses.hosts[0] ? this.licenses.hosts[0].hostName : undefined

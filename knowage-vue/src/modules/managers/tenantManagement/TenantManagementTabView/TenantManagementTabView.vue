@@ -38,7 +38,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iMultitenant, iTenantToSave } from '../TenantManagement'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import tabViewDescriptor from './TenantManagementTabViewDescriptor.json'
@@ -104,18 +104,18 @@ export default defineComponent({
     },
     methods: {
         loadData(dataType: string) {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant${dataType}`)
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant${dataType}`)
         },
 
         async loadAllData() {
             this.loading = true
-            await this.loadData('/themes').then((response) => {
+            await this.loadData('/themes').then((response: AxiosResponse<any>) => {
                 this.listOfThemes = response.data.root
             })
-            await this.loadData('/datasources').then((response) => {
+            await this.loadData('/datasources').then((response: AxiosResponse<any>) => {
                 this.listOfDataSources = response.data.root
             })
-            await this.loadData('/producttypes').then((response) => {
+            await this.loadData('/producttypes').then((response: AxiosResponse<any>) => {
                 this.listOfProductTypes = response.data.root
                 this.filterArrayByTargetArr(this.listOfProductTypes, this.availableLicenses)
             })
@@ -133,13 +133,13 @@ export default defineComponent({
             this.listOfSelectedDataSources = null
             this.touched = false
 
-            await this.loadData(`/producttypes?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response) => {
+            await this.loadData(`/producttypes?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response: AxiosResponse<any>) => {
                 var productTypes = response.data.root
 
                 this.listOfSelectedProducts = []
                 this.copySelectedElement(productTypes, this.listOfSelectedProducts)
             })
-            await this.loadData(`/datasources?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response) => {
+            await this.loadData(`/datasources?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response: AxiosResponse<any>) => {
                 var dataSources = response.data.root
 
                 this.listOfSelectedDataSources = []
@@ -161,7 +161,7 @@ export default defineComponent({
             }
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'multitenant/save'
 
-            await axios.post(url, this.createTenantToSave()).then((response) => {
+            await this.$http.post(url, this.createTenantToSave()).then((response: AxiosResponse<any>) => {
                 if (this.selectedTenant) {
                     this.$store.commit('setInfo', {
                         title: this.$t(this.tabViewDescriptor.operation[this.operation].toastTitle),

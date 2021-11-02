@@ -115,7 +115,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import detailDescriptor from './FunctionalitiesManagementDetailDescriptor.json'
@@ -216,7 +216,7 @@ export default defineComponent({
         },
         async loadParentFolder() {
             if (this.parentId) {
-                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/getParent/${this.parentId}`).then((response) => (this.parentFolder = response.data))
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/getParent/${this.parentId}`).then((response: AxiosResponse<any>) => (this.parentFolder = response.data))
             }
         },
         roleIsChecked(role: any, roles: [], roleField: string) {
@@ -269,7 +269,7 @@ export default defineComponent({
             functionality.createRoles = []
         },
         async createOrUpdate(functionalityToSend) {
-            return this.selectedFolder.id ? axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/${functionalityToSend.id}`, functionalityToSend) : axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/', functionalityToSend)
+            return this.selectedFolder.id ? this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/${functionalityToSend.id}`, functionalityToSend) : this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/', functionalityToSend)
         },
         async handleSubmit() {
             if (this.v$.$invalid) {
@@ -277,7 +277,7 @@ export default defineComponent({
             }
             let functionalityToSend = { ...this.selectedFolder }
             this.prepareFunctionalityToSend(functionalityToSend)
-            await this.createOrUpdate(functionalityToSend).then((response) => {
+            await this.createOrUpdate(functionalityToSend).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
                     this.$store.commit('setError', { title: 'Error', msg: response.data.error })
                 } else {

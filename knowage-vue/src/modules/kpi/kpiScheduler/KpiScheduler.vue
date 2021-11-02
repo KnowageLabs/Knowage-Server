@@ -53,7 +53,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iKpiSchedule } from './KpiScheduler'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Chip from 'primevue/chip'
 import kpiSchedulerDescriptor from './KpiSchedulerDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
@@ -79,9 +79,9 @@ export default defineComponent({
     methods: {
         async loadAllSchedules() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listSchedulerKPI')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.schedulerList = response.data
                     this.schedulerList.sort((a: iKpiSchedule, b: iKpiSchedule) => (a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1))
                 })
@@ -136,7 +136,7 @@ export default defineComponent({
             }
             const query = '?jobGroup=KPI_SCHEDULER_GROUP&triggerGroup=KPI_SCHEDULER_GROUP&jobName=' + schedule.id + '&triggerName=' + schedule.id
             const action = schedule.jobStatus?.toUpperCase() === 'SUSPENDED' ? 'resumeTrigger' : 'pauseTrigger'
-            axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '/scheduler/' + action + query).then((response) => {
+            this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '/scheduler/' + action + query).then((response: AxiosResponse<any>) => {
                 if (response.data.resp === 'ok') {
                     schedule.jobStatus = schedule.jobStatus === 'SUSPENDED' ? 'ACTIVE' : 'SUSPENDED'
                 }
@@ -151,7 +151,7 @@ export default defineComponent({
             })
         },
         async deleteSchedule(scheduleId: number) {
-            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${scheduleId}/deleteKpiScheduler`).then(() => {
+            await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${scheduleId}/deleteKpiScheduler`).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')

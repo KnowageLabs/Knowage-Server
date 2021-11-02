@@ -64,7 +64,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iDatasource, iMeasure, iRule, iPlaceholder } from './MeasureDefinition'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Dialog from 'primevue/dialog'
 import MeasureDefinitionFilterList from './MeasureDefinitionFilterList.vue'
 import MeasureDefinitionMetadataCard from './card/MeasureDefinitionMetadataCard/MeasureDefinitionMetadataCard.vue'
@@ -168,31 +168,31 @@ export default defineComponent({
     },
     methods: {
         async loadSelectedRule() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/${this.ruleVersion}/loadRule`).then((response) => (this.rule = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/${this.ruleVersion}/loadRule`).then((response: AxiosResponse<any>) => (this.rule = response.data))
         },
         async loadDataSources() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `datasources/?onlySqlLike=true`).then((response) => (this.datasourcesList = response.data.root))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `datasources/?onlySqlLike=true`).then((response: AxiosResponse<any>) => (this.datasourcesList = response.data.root))
         },
         async loadAliases() {
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listAvailableAlias`
             if (this.rule.id) {
                 url += `?ruleId=${this.id}&ruleVersion=${this.ruleVersion}`
             }
-            await axios.get(url).then((response) => {
+            await this.$http.get(url).then((response: AxiosResponse<any>) => {
                 this.availableAliasList = response.data.available
                 this.notAvailableAliasList = response.data.notAvailable
             })
         },
         async loadPlaceholders() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listPlaceholder`).then((response) => (this.placeholdersList = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listPlaceholder`).then((response: AxiosResponse<any>) => (this.placeholdersList = response.data))
         },
         async loadDomainsData() {
-            await this.loadDomainsByCode('KPI_RULEOUTPUT_TYPE').then((response) => (this.domainsKpiRuleoutput = response.data))
-            await this.loadDomainsByCode('TEMPORAL_LEVEL').then((response) => (this.domainsTemporalLevel = response.data))
-            await this.loadDomainsByCode('KPI_MEASURE_CATEGORY').then((response) => (this.domainsKpiMeasures = response.data))
+            await this.loadDomainsByCode('KPI_RULEOUTPUT_TYPE').then((response: AxiosResponse<any>) => (this.domainsKpiRuleoutput = response.data))
+            await this.loadDomainsByCode('TEMPORAL_LEVEL').then((response: AxiosResponse<any>) => (this.domainsTemporalLevel = response.data))
+            await this.loadDomainsByCode('KPI_MEASURE_CATEGORY').then((response: AxiosResponse<any>) => (this.domainsKpiMeasures = response.data))
         },
         loadDomainsByCode(code: string) {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/${code}`)
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/${code}`)
         },
         async setTabChanged(tabIndex: any) {
             this.activeTab = tabIndex
@@ -296,9 +296,9 @@ export default defineComponent({
             if ((this.rule.placeholders && this.rule.placeholders.length === 0) || hasPlaceholders) {
                 const postData = { rule: this.rule, maxItem: 10 }
 
-                await axios
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/queryPreview', postData, { headers: { 'X-Disable-Errors': true } })
-                    .then((response) => {
+                await this.$http
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/queryPreview', postData, { headers: { 'X-Disable-Errors': 'true' } })
+                    .then((response: AxiosResponse<any>) => {
                         this.columns = response.data.columns
                         this.rows = response.data.rows
                         this.columnToRuleOutputs()
@@ -332,8 +332,8 @@ export default defineComponent({
                 ruleOutput.category = { valueCd: ruleOutput.category?.valueCd as string }
             })
 
-            await axios
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/preSaveRule', this.rule, { headers: { 'X-Disable-Errors': true } })
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/preSaveRule', this.rule, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
                     if (this.rule.ruleOutputs.length === 0) {
                         this.errorTitle = this.$t('kpi.measureDefinition.presaveErrors.metadataMissing')
@@ -382,7 +382,7 @@ export default defineComponent({
             })
 
             delete this.rule.dataSource
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveRule', this.rule)
                 .then(() => {
                     this.$store.commit('setInfo', {
@@ -391,7 +391,7 @@ export default defineComponent({
                     })
                     this.$router.replace('/measure-definition')
                 })
-                .catch((response) => {
+                .catch((response: AxiosResponse<any>) => {
                     this.$store.commit('setError', {
                         title: this.$t('common.toast.' + this.operation + 'Title'),
                         msg: response

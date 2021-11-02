@@ -51,7 +51,7 @@
 <script lang="ts">
 /* eslint-disable no-prototype-builtins */
 import { defineComponent } from 'vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import dataSourceDescriptor from './DataSourceDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
@@ -82,18 +82,18 @@ export default defineComponent({
     },
     methods: {
         async getAllDatabases() {
-            return axios
+            return this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/databases`)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.listOfAvailableDatabases = response.data
                 })
                 .finally(() => (this.loading = false))
         },
 
         async getCurrentUser() {
-            return axios
+            return this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/currentuser`)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.user = response.data
                 })
                 .finally(() => (this.loading = false))
@@ -101,9 +101,9 @@ export default defineComponent({
 
         async getAllDatasources() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.datasources = response.data
                     this.convertToSeconds(this.datasources)
                 })
@@ -150,7 +150,7 @@ export default defineComponent({
             })
         },
         async deleteDatasource(datasourceId: number) {
-            await axios
+            await this.$http
                 .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/' + datasourceId)
                 .then(() => {
                     this.$store.commit('setInfo', {
