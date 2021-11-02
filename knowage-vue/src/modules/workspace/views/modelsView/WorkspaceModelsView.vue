@@ -16,8 +16,8 @@
         <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" @click="onTableModeChange" />
     </div>
 
-    <div class="p-m-2 overflow">
-        <WorkspaceModelsTable class="p-m-2" v-if="!toggleCardDisplay" :propItems="filteredItems" @selected="setSelectedModel" @openDatasetInQBEClick="openDatasetInQBE" @editDatasetClick="editDataset" @deleteDatasetClick="deleteDatasetConfirm"></WorkspaceModelsTable>
+    <div class="overflow">
+        <WorkspaceModelsTable v-if="!toggleCardDisplay" :propItems="filteredItems" @selected="setSelectedModel" @openDatasetInQBEClick="openDatasetInQBE" @editDatasetClick="editDataset" @deleteDatasetClick="deleteDatasetConfirm"></WorkspaceModelsTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2">
             <WorkspaceCard v-for="(document, index) of filteredItems" :key="index" :viewType="selectedModel && selectedModel.federation_id ? 'federationDataset' : 'businessModel'" :document="document" />
         </div>
@@ -141,7 +141,7 @@ export default defineComponent({
                 message: this.$t('common.toast.deleteMessage'),
                 header: this.$t('common.toast.deleteTitle'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: async() => await  this.deleteDataset(dataset)
+                accept: async () => await this.deleteDataset(dataset)
             })
         },
         async deleteDataset(dataset: IFederatedDataset) {

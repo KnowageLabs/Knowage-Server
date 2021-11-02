@@ -11,9 +11,11 @@
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <InputText class="kn-material-input p-m-2" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
+
+    <InputText class="kn-material-input p-m-2" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" />
+
     <div class="p-m-2 overflow">
-        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="analysisDocuments" :loading="loading" dataKey="id" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="filteredAnalysisDocuments" :loading="loading" dataKey="id" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -37,7 +39,7 @@
         </DataTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2">
             <WorkspaceCard
-                v-for="(document, index) of analysisDocuments"
+                v-for="(document, index) of filteredAnalysisDocuments"
                 :key="index"
                 :viewType="'analysis'"
                 :document="document"
@@ -104,12 +106,14 @@ export default defineComponent({
             loading: false,
             showDetailSidebar: false,
             analysisDocuments: [] as any,
+            filteredAnalysisDocuments: [] as any[],
             selectedAnalysis: {} as any,
             menuButtons: [] as any,
             filters: {
                 global: [filterDefault]
             } as Object,
             folders: [] as any[],
+            searchWord: '' as string,
             editDialogVisible: false,
             warningDialogVisbile: false,
             warningMessage: '',
@@ -128,6 +132,7 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/myAnalysisDocsList`)
                 .then((response) => {
                     this.analysisDocuments = [...response.data.root]
+                    this.filteredAnalysisDocuments = [...this.analysisDocuments]
                 })
                 .finally(() => (this.loading = false))
         },
@@ -323,6 +328,17 @@ export default defineComponent({
         closeWarningDialog() {
             this.warningMessage = ''
             this.warningDialogVisbile = false
+        },
+        searchItems() {
+            setTimeout(() => {
+                if (!this.searchWord.trim().length) {
+                    this.filteredAnalysisDocuments = [...this.analysisDocuments] as any[]
+                } else {
+                    this.filteredAnalysisDocuments = this.filteredAnalysisDocuments.filter((el: any) => {
+                        return el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.creationUser?.toLowerCase().includes(this.searchWord.toLowerCase())
+                    })
+                }
+            }, 250)
         }
     }
 })

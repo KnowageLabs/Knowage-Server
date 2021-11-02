@@ -1,5 +1,5 @@
 <template>
-    <DataTable :value="items" id="models-table" class="p-datatable-sm kn-table" v-model:filters="filters" filterDisplay="menu" dataKey="name" :paginator="true" :rows="20" responsiveLayout="stack" breakpoint="960px">
+    <DataTable :value="items" id="models-table" class="p-datatable-sm kn-table overflow" v-model:filters="filters" filterDisplay="menu" dataKey="name" responsiveLayout="stack" breakpoint="960px">
         <template #empty>
             <Message class="p-m-2" severity="info" :closable="false" :style="workspaceModelsTableDescriptor.styles.message">
                 {{ $t('common.info.noDataFound') }}
