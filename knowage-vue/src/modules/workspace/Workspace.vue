@@ -18,7 +18,7 @@
                     <div v-else class="menu-accordion">
                         <Accordion>
                             <AccordionTab :header="$t('workspace.menuLabels.myRepository')">
-                                <WorkspaceDocumentTree :propFolders="allFolders" mode="select" @folderSelected="setSelectedFolder" @delete="deleteFolder" @createFolder="showCreateFolderDialog"></WorkspaceDocumentTree>
+                                <WorkspaceDocumentTree :propFolders="allFolders" mode="select" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder" @delete="deleteFolder" @createFolder="showCreateFolderDialog"></WorkspaceDocumentTree>
                             </AccordionTab>
                         </Accordion>
                     </div>
@@ -59,7 +59,7 @@
                 <div v-else class="menu-accordion">
                     <Accordion>
                         <AccordionTab :header="$t('workspace.menuLabels.myRepository')">
-                            <WorkspaceDocumentTree :propFolders="allFolders" mode="select" @folderSelected="setSelectedFolder" @delete="deleteFolder" @createFolder="showCreateFolderDialog"></WorkspaceDocumentTree>
+                            <WorkspaceDocumentTree :propFolders="allFolders" mode="select" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder" @delete="deleteFolder" @createFolder="showCreateFolderDialog"></WorkspaceDocumentTree>
                         </AccordionTab>
                     </Accordion>
                 </div>

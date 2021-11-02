@@ -21,7 +21,7 @@ import workspaceDocumentTreeDescriptor from './WorkspaceDocumentTreeDescriptor.j
 export default defineComponent({
     name: 'workspace-document-tree',
     components: { Tree },
-    props: { propFolders: { type: Array }, mode: { type: String } },
+    props: { propFolders: { type: Array }, mode: { type: String }, selectedBreadcrumb: { type: Object } },
     emits: ['folderSelected', 'delete', 'createFolder'],
     data() {
         return {
@@ -36,6 +36,9 @@ export default defineComponent({
     watch: {
         propFolders() {
             this.loadTree()
+        },
+        selectedBreadcrumb() {
+            this.onBreadcrumbSelected()
         }
     },
     created() {
@@ -136,6 +139,12 @@ export default defineComponent({
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => this.$emit('delete', folder)
             })
+        },
+        onBreadcrumbSelected() {
+            // console.log('ON BREDCRUMB SELECT: ', this.selectedBreadcrumb)
+            this.selectedFolder = this.selectedBreadcrumb?.node
+            this.selectedFolderKey = {}
+            this.selectedFolderKey[this.selectedFolder.key] = true
         }
     }
 })
