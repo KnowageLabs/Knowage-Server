@@ -1501,6 +1501,7 @@
             }
         },
         "myData": {
+            "exportSuccess": "The download has started in background. You will find the result file in your download page.",
             "cloneDataset": "Clone Dataset",
             "clonedDatasetWizard": "Cloned Dataset Wizard",
             "csvExport": "Export Dataset to CSV",
