@@ -8,13 +8,13 @@
             </Toolbar>
         </template>
 
-        <form v-if="dataset" class="p-fluid p-formgrid p-grid">
-            <div class="p-field p-col-6  p-mt-5">
+        <form v-if="dataset">
+            <div class="p-m-4">
                 <span class="p-float-label ">
                     <InputText
                         id="label"
                         class="kn-material-input"
-                        maxLength="50"
+                        :maxLength="workspaceDataCloneDialogDescriptor.labelMaxLength"
                         v-model.trim="v$.dataset.label.$model"
                         :class="{
                             'p-invalid': v$.dataset.label.$invalid && v$.dataset.label.$dirty
@@ -23,20 +23,23 @@
                     />
                     <label for="label" class="kn-material-input-label">{{ $t('common.label') }} * </label>
                 </span>
-                <KnValidationMessages
-                    :vComp="v$.dataset.label"
-                    :additionalTranslateParams="{
-                        fieldName: $t('common.label')
-                    }"
-                />
+                <div class="p-d-flex p-flex-row p-jc-end">
+                    <KnValidationMessages
+                        :vComp="v$.dataset.label"
+                        :additionalTranslateParams="{
+                            fieldName: $t('common.label')
+                        }"
+                    />
+                    <p class="input-help p-m-0">{{ labelHelp }}</p>
+                </div>
             </div>
 
-            <div class="p-field p-col-6 p-mt-5">
+            <div class="p-m-4">
                 <span class="p-float-label ">
                     <InputText
                         id="name"
                         class="kn-material-input"
-                        maxLength="50"
+                        :maxLength="workspaceDataCloneDialogDescriptor.nameMaxLength"
                         v-model.trim="v$.dataset.name.$model"
                         :class="{
                             'p-invalid': v$.dataset.name.$invalid && v$.dataset.name.$dirty
@@ -45,19 +48,25 @@
                     />
                     <label for="name" class="kn-material-input-label">{{ $t('common.name') }} * </label>
                 </span>
-                <KnValidationMessages
-                    :vComp="v$.dataset.name"
-                    :additionalTranslateParams="{
-                        fieldName: $t('common.name')
-                    }"
-                />
+                <div class="p-d-flex p-flex-row p-jc-end">
+                    <KnValidationMessages
+                        :vComp="v$.dataset.name"
+                        :additionalTranslateParams="{
+                            fieldName: $t('common.name')
+                        }"
+                    />
+                    <p class="input-help p-m-0">{{ nameHelp }}</p>
+                </div>
             </div>
 
-            <div class="p-field p-col-12">
+            <div class="p-m-4">
                 <span class="p-float-label p-mb-2">
-                    <InputText id="description" class="kn-material-input" maxLength="160" v-model.trim="dataset.description" />
+                    <InputText id="description" class="kn-material-input" :maxLength="workspaceDataCloneDialogDescriptor.descriptionMaxLength" v-model.trim="dataset.description" />
                     <label for="description" class="kn-material-input-label"> {{ $t('common.description') }} </label>
                 </span>
+                <div class="p-d-flex p-flex-row p-jc-end">
+                    <p class="input-help p-m-0">{{ descriptionHelp }}</p>
+                </div>
             </div>
         </form>
 
@@ -101,6 +110,15 @@ export default defineComponent({
         }
     },
     computed: {
+        labelHelp(): string {
+            return (this.dataset.label?.length ?? '0') + ' / ' + workspaceDataCloneDialogDescriptor.labelMaxLength
+        },
+        nameHelp(): string {
+            return (this.dataset.name?.length ?? '0') + ' / ' + workspaceDataCloneDialogDescriptor.nameMaxLength
+        },
+        descriptionHelp(): string {
+            return (this.dataset.description?.length ?? '0') + ' / ' + workspaceDataCloneDialogDescriptor.descriptionMaxLength
+        },
         buttonDisabled(): any {
             return this.v$.$invalid
         }
@@ -133,3 +151,9 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.input-help {
+    font-size: smaller;
+}
+</style>

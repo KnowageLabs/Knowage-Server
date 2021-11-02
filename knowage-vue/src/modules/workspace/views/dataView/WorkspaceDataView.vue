@@ -87,7 +87,7 @@
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
 
     <WorkspaceDataCloneDialog :visible="cloneDialogVisible" :propDataset="selectedDataset" @close="cloneDialogVisible = false" @clone="handleDatasetClone"></WorkspaceDataCloneDialog>
-    <WorkspaceDataShareDialog :visible="shareDialogVisible" :propDataset="selectedDataset" :datasetCategories="datasetCategories" @close="shareDialogVisible = false"></WorkspaceDataShareDialog>
+    <WorkspaceDataShareDialog :visible="shareDialogVisible" :propDataset="selectedDataset" :datasetCategories="datasetCategories" @close="shareDialogVisible = false" @share="handleDatasetShare"></WorkspaceDataShareDialog>
     <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.myData.title')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
 </template>
 <script lang="ts">
@@ -243,6 +243,26 @@ export default defineComponent({
         shareDataset(dataset: any) {
             console.log('SHARE DATASET BEGIN: ', dataset)
             this.shareDialogVisible = true
+        },
+        async handleDatasetShare(dataset: any) {
+            console.log('SHARE DATASET END: ', dataset)
+            this.loading = true
+
+            const url = dataset.catTypeId ? `selfservicedataset/share/?catTypeId=${dataset.catTypeId}&id=${dataset.id}` : `selfservicedataset/share/?id=${dataset.id}`
+
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.showDetailSidebar = false
+                    this.shareDialogVisible = false
+                    this.getAllData()
+                })
+                .catch(() => {})
+            this.loading = false
         },
         async cloneDataset(dataset: any) {
             console.log('CLONE DATASET BEGIN', dataset)

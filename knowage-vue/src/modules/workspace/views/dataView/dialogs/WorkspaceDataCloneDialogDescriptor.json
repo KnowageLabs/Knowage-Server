@@ -1,9 +1,12 @@
 {
+    "descriptionMaxLength": "160",
     "dialog": {
         "style": {
             "width": "60vw"
         }
     },
+    "labelMaxLength": "50",
+    "nameMaxLength": "50",
     "validations": {
         "dataset": [
             {
