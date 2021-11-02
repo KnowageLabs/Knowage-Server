@@ -184,17 +184,16 @@ export default defineComponent({
         // prettier-ignore
         createMenuItems() {
             this.menuButtons = []
-
-                this.menuButtons.push(
-                    { key: '0', label: this.$t('workspace.myAnalysis.menuItems.showDsDetails'), icon: 'fas fa-pen', command: this.editFileDataset, visible: this.isDatasetOwner && this.selectedDataset.dsTypeCd == 'File' },
-                    { key: '1', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: this.openDatasetInQBE, visible: this.showQbeEditButton },
-                    { key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: this.exportToXlsx, visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable },
-                    { key: '3', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: this.exportToCsv, visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' },
-                    { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: this.downloadDatasetFile, visible: this.selectedDataset.dsTypeCd == 'File' },
-                    { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: this.shareDataset, visible: this.canLoadData && this.isDatasetOwner },
-                    { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: this.cloneDataset, visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' },
-                    { key: '7', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: this.deleteDataset, visible: this.isDatasetOwner }
-                )
+            this.menuButtons.push(
+                { key: '0', label: this.$t('workspace.myAnalysis.menuItems.showDsDetails'), icon: 'fas fa-pen', command: this.editFileDataset, visible: this.isDatasetOwner && this.selectedDataset.dsTypeCd == 'File' },
+                { key: '1', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: this.openDatasetInQBE, visible: this.showQbeEditButton },
+                { key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: this.exportToXlsx, visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable },
+                { key: '3', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: this.exportToCsv, visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' },
+                { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: this.downloadDatasetFile, visible: this.selectedDataset.dsTypeCd == 'File' },
+                { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: this.shareDataset, visible: this.canLoadData && this.isDatasetOwner },
+                { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: this.cloneDataset, visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' },
+                { key: '7', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: this.deleteDataset, visible: this.isDatasetOwner }
+            )
             
         },
         previewDataset(event) {
@@ -204,7 +203,7 @@ export default defineComponent({
             console.log('editFileDataset(event) {', event)
         },
         openDatasetInQBE(event) {
-            console.log('openDatasetInQBE(event) {', event)
+            console.log('openDatasetInQBE(event) { NIJE U OVOM SPRINTU', event)
         },
         exportToXlsx(event) {
             console.log('exportToXlsx(event) {', event)

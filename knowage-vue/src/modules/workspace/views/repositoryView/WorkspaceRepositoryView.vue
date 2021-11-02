@@ -2,7 +2,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary" style="width:100%">
         <template #left>
             <Button id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
-            {{ $t('workspace.menuLabels.myRepository') }} - {{ selectedFolder.label }}
+            {{ $t('workspace.menuLabels.myRepository') }}
         </template>
         <template #right>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
