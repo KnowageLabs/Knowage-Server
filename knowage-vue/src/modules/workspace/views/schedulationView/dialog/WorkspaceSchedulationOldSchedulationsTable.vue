@@ -12,7 +12,7 @@
         :paginator="schedulations.length > 20"
         :rows="20"
         responsiveLayout="stack"
-        breakpoint="960px"
+        breakpoint="600px"
     >
         <template #empty>
             <Message class="p-m-2" severity="info" :closable="false" :style="workspaceSchedulationOldSchedulationsTableDescriptor.styles.message">
@@ -76,19 +76,12 @@ export default defineComponent({
     methods: {
         loadSchedulations() {
             this.schedulations = this.propSchedulations as ISchedulation[]
-            // this.schedulations.sort((a: any, b: any) => {
-            //     return b.name > a.name ? 1 : -1
-            // })
         },
         getFormattedDate(date: any, format: any) {
             return formatDate(date, format)
         },
         downloadSnapshot(schedulation: ISchedulation) {
-            // console.log('DOWNLOAD SNAPSHOT CICKED! ', schedulation)
-            // console.log('USER: ', this.user)
             const url = process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?NEW_SESSION=TRUE&user_id=${this.user?.userUniqueIdentifier}&ACTION_NAME=GET_SNAPSHOT_CONTENT&SNAPSHOT_ID=${schedulation.id}&LIGHT_NAVIGATOR_DISABLED=TRUE&OBJECT_ID=${schedulation.biobjId}`
-
-            // console.log('URL: ', url)
             window.open(url, '_blank')
         }
     }

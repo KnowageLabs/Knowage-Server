@@ -1,5 +1,5 @@
 <template>
-    <DataTable :value="jobs" id="jobs-table" class="p-datatable-sm kn-table" dataKey="jobName" v-model:filters="filters" :globalFilterFields="workspaceSchedulationTableDescriptor.globalFilterFields" :paginator="jobs.length > 15" :rows="15" responsiveLayout="stack" breakpoint="960px">
+    <DataTable :value="jobs" id="jobs-table" class="p-datatable-sm kn-table" dataKey="jobName" v-model:filters="filters" :globalFilterFields="workspaceSchedulationTableDescriptor.globalFilterFields" responsiveLayout="stack" breakpoint="600px">
         <template #header>
             <div class="table-header p-d-flex p-ai-center">
                 <span id="search-container" class="p-input-icon-left p-mr-3">

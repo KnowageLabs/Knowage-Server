@@ -193,6 +193,8 @@ describe('Workspace Models View', () => {
     it('should filter the list of elements if a searchtext is provided', async () => {
         const wrapper = factory(false)
 
+        wrapper.vm.tableMode = 'Business'
+
         await flushPromises()
 
         expect(wrapper.vm.allItems.length).toBe(4)
@@ -216,7 +218,7 @@ describe('Workspace Models View', () => {
 
         expect(wrapper.find('[data-test="models-table"]').html()).not.toContain('Sales')
         expect(wrapper.find('[data-test="models-table"]').html()).not.toContain('Inventory')
-        expect(wrapper.find('[data-test="models-table"]').html()).toContain('Test name')
+        expect(wrapper.find('[data-test="models-table"]').html()).not.toContain('Test name')
     })
 
     it('should show a sidenav with details if one of the item is clicked', async () => {

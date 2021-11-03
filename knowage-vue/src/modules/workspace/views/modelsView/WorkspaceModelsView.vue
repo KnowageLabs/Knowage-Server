@@ -19,7 +19,16 @@
     <div class="overflow">
         <WorkspaceModelsTable v-if="!toggleCardDisplay" :propItems="filteredItems" @selected="setSelectedModel" @openDatasetInQBEClick="openDatasetInQBE" @editDatasetClick="editDataset" @deleteDatasetClick="deleteDatasetConfirm" data-test="models-table"></WorkspaceModelsTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2" data-test="card-container">
-            <WorkspaceCard v-for="(document, index) of filteredItems" :key="index" :viewType="selectedModel && selectedModel.federation_id ? 'federationDataset' : 'businessModel'" :document="document" />
+            <WorkspaceCard
+                v-for="(document, index) of filteredItems"
+                :key="index"
+                :viewType="document && document.federation_id ? 'federationDataset' : 'businessModel'"
+                :document="document"
+                @openSidebar="setSelectedModel"
+                @openDatasetInQBE="openDatasetInQBE"
+                @editDataset="editDataset"
+                @deleteDataset="deleteDatasetConfirm"
+            />
         </div>
     </div>
 
@@ -116,7 +125,8 @@ export default defineComponent({
                 if (!this.searchWord.trim().length) {
                     this.filteredItems = [...this.allItems] as (IBusinessModel | IFederatedDataset)[]
                 } else {
-                    this.filteredItems = this.allItems.filter((el: any) => {
+                    const items = this.tableMode === 'Business' ? (this.businessModels as (IBusinessModel | IFederatedDataset)[]) : (this.federatedDatasets as (IBusinessModel | IFederatedDataset)[])
+                    this.filteredItems = items.filter((el: any) => {
                         return el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.description?.toLowerCase().includes(this.searchWord.toLowerCase())
                     })
                 }
@@ -163,7 +173,6 @@ export default defineComponent({
         setSelectedModel(model: IBusinessModel | IFederatedDataset) {
             this.selectedModel = model
             this.showDetailSidebar = true
-            //console.log('SELECTED MODEL: ', this.selectedModel)
         },
         toggleDisplayView() {
             this.$emit('toggleDisplayView')
