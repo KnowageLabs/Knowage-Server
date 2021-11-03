@@ -12,10 +12,10 @@
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
-    <InputText class="kn-material-input p-m-2" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" />
+    <InputText class="kn-material-input p-m-2" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
 
     <div class="p-m-2 overflow">
-        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="filteredAnalysisDocuments" :loading="loading" dataKey="id" responsiveLayout="stack" breakpoint="600px">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="filteredAnalysisDocuments" :loading="loading" dataKey="id" responsiveLayout="stack" breakpoint="600px" data-test="analysis-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -31,8 +31,8 @@
             </Column>
             <Column :style="mainDescriptor.style.iconColumn">
                 <template #body="slotProps">
-                    <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="showMenu($event, slotProps.data)" />
-                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click="showSidebar(slotProps.data)" />
+                    <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="showMenu($event, slotProps.data)"  />
+                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.name"/>
                     <Button icon="fas fa-play-circle" class="p-button-link" @click="executeAnalysisDocument" />
                 </template>
             </Column>
@@ -64,6 +64,7 @@
         @deleteAnalysisDocument="deleteAnalysisDocumentConfirm"
         @uploadAnalysisPreviewFile="uploadAnalysisPreviewFile"
         @close="showDetailSidebar = false"
+        data-test="detail-sidebar"
     />
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
 
@@ -168,6 +169,7 @@ export default defineComponent({
         },
         editAnalysisDocument(analysis: any) {
             // console.log('editAnalysisDocument', analysis)
+            console.log('ANALYSIS FOR MOCK: ', this.analysisDocuments)
             this.selectedAnalysis = analysis
             this.editDialogVisible = true
         },
@@ -331,7 +333,7 @@ export default defineComponent({
                 if (!this.searchWord.trim().length) {
                     this.filteredAnalysisDocuments = [...this.analysisDocuments] as any[]
                 } else {
-                    this.filteredAnalysisDocuments = this.filteredAnalysisDocuments.filter((el: any) => {
+                    this.filteredAnalysisDocuments = this.analysisDocuments.filter((el: any) => {
                         return el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.creationUser?.toLowerCase().includes(this.searchWord.toLowerCase())
                     })
                 }

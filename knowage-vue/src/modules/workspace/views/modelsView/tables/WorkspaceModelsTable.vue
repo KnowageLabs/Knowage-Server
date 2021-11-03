@@ -16,7 +16,7 @@
                         <Button icon="pi pi-ellipsis-v" class="p-button-link" @click="toggle($event, slotProps.data)" />
                         <Menu ref="menu" :model="menuItems" :popup="true" />
                     </div>
-                    <Button icon="pi pi-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click.stop="$emit('selected', slotProps.data)" />
+                    <Button icon="pi pi-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click.stop="$emit('selected', slotProps.data)" :data-test="'info-button-' + slotProps.data.name" />
                     <Button icon="fa fa-search" class="p-button-link" v-tooltip.left="$t('workspace.myModels.openInQBE')" @click.stop="openDatasetInQBE(slotProps.data)" />
                 </div>
             </template>
@@ -38,7 +38,7 @@ export default defineComponent({
     name: 'workspace-models-table',
     components: { Column, DataTable, Menu },
     props: { propItems: { type: Array } },
-    emits: ['openDatasetInQBEClick', 'editDatasetClick', 'deleteDatasetClick'],
+    emits: ['openDatasetInQBEClick', 'editDatasetClick', 'deleteDatasetClick', 'selected'],
     data() {
         return {
             workspaceModelsTableDescriptor,
@@ -73,7 +73,7 @@ export default defineComponent({
         },
         loadItems() {
             this.items = this.propItems as IBusinessModel[] | IFederatedDataset[]
-            console.log('LOADED ITEMS: ', this.items)
+            // console.log('LOADED ITEMS: ', this.items)
         },
         canDeleteFederation(federation: IFederatedDataset) {
             return this.user.isSuperadmin || this.user.userId === federation.owner

@@ -12,12 +12,12 @@
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
     <div class="p-d-flex p-flex-row p-ai-center">
-        <InputText id="model-search" class="kn-material-input p-m-3" v-model="searchWord" :placeholder="$t('common.search')" @input="searchItems" />
+        <InputText id="model-search" class="kn-material-input p-m-3" v-model="searchWord" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
         <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" @click="onTableModeChange" />
     </div>
 
     <div class="overflow">
-        <WorkspaceModelsTable v-if="!toggleCardDisplay" :propItems="filteredItems" @selected="setSelectedModel" @openDatasetInQBEClick="openDatasetInQBE" @editDatasetClick="editDataset" @deleteDatasetClick="deleteDatasetConfirm"></WorkspaceModelsTable>
+        <WorkspaceModelsTable v-if="!toggleCardDisplay" :propItems="filteredItems" @selected="setSelectedModel" @openDatasetInQBEClick="openDatasetInQBE" @editDatasetClick="editDataset" @deleteDatasetClick="deleteDatasetConfirm" data-test="models-table"></WorkspaceModelsTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2">
             <WorkspaceCard v-for="(document, index) of filteredItems" :key="index" :viewType="selectedModel && selectedModel.federation_id ? 'federationDataset' : 'businessModel'" :document="document" />
         </div>
@@ -31,6 +31,7 @@
         @editDataset="editDataset"
         @deleteDataset="deleteDatasetConfirm"
         @close="showDetailSidebar = false"
+        data-test="detail-sidebar"
     />
 </template>
 
@@ -93,7 +94,8 @@ export default defineComponent({
         async loadBusinessModels() {
             this.loading = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/?fileExtension=jar`).then((response: AxiosResponse<any>) => {
-                this.businessModels = response.data.map((el: any) => {
+                this.businessModels = response.data
+                this.businessModels = this.businessModels.map((el: any) => {
                     return { ...el, type: 'businessModel' }
                 })
             })
@@ -101,12 +103,12 @@ export default defineComponent({
         },
         async loadFederatedDatasets() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `federateddataset/`).then(
-                (response: AxiosResponse<any>) =>
-                    (this.federatedDatasets = response.data.map((el: any) => {
-                        return { ...el, type: 'federatedDataset' }
-                    }))
-            )
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `federateddataset/`).then((response: AxiosResponse<any>) => {
+                this.federatedDatasets = response.data
+                this.federatedDatasets = this.federatedDatasets.map((el: any) => {
+                    return { ...el, type: 'federatedDataset' }
+                })
+            })
             this.loading = false
         },
         searchItems() {
@@ -114,7 +116,7 @@ export default defineComponent({
                 if (!this.searchWord.trim().length) {
                     this.filteredItems = [...this.allItems] as (IBusinessModel | IFederatedDataset)[]
                 } else {
-                    this.filteredItems = this.filteredItems.filter((el: any) => {
+                    this.filteredItems = this.allItems.filter((el: any) => {
                         return el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.description?.toLowerCase().includes(this.searchWord.toLowerCase())
                     })
                 }
@@ -134,7 +136,7 @@ export default defineComponent({
             this.$router.push('models/federation-definition/new-federation')
         },
         editDataset(dataset: IFederatedDataset) {
-            console.log('editDataset clicked! ', dataset)
+            // console.log('editDataset clicked! ', dataset)
             this.$router.push(`models/federation-definition/${dataset.federation_id}`)
         },
         deleteDatasetConfirm(dataset: IFederatedDataset) {
@@ -163,7 +165,7 @@ export default defineComponent({
         setSelectedModel(model: IBusinessModel | IFederatedDataset) {
             this.selectedModel = model
             this.showDetailSidebar = true
-            console.log('SELECTED MODEL: ', this.selectedModel)
+            //console.log('SELECTED MODEL: ', this.selectedModel)
         },
         toggleDisplayView() {
             this.$emit('toggleDisplayView')
