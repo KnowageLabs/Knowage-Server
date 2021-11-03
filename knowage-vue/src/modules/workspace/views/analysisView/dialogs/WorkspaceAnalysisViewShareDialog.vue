@@ -49,7 +49,6 @@ export default defineComponent({
     methods: {
         loadFolders() {
             this.folders = this.propFolders as any[]
-            // console.log('SHARE DIALOG LOADED FODLERS: ', this.folders)
         },
         closeDialog() {
             this.folders = []
@@ -60,7 +59,6 @@ export default defineComponent({
         },
         setSelectedFolders(folders: INode[]) {
             this.selectedFoldersKeys = folders
-            console.log('SELECTED FOLDERS IN DIALOG: ', this.selectedFoldersKeys)
         }
     }
 })

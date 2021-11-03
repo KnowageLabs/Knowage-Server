@@ -43,7 +43,6 @@ export default defineComponent({
         },
         loadFolders() {
             this.folders = this.propFolders as any[]
-            // console.log('TREE LOADED FODLERS: ', this.folders)
         },
         createNodeTree() {
             this.nodes = []

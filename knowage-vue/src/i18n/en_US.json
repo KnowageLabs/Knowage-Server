@@ -1516,7 +1516,9 @@
             "shareDatasetHint": "By selecting a category from the combo box you are sharing the data set for all the users that are able to manage the specified data set category.",
             "title": "My Data",
             "unshareDataset": "Unshare Dataset",
-            "xlsxExport": "Export Dataset to XLSX"
+            "xlsxExport": "Export Dataset to XLSX",
+            "parseError": "Impossible to parse file. Check its content and upload it again",
+            "wizardTitle": "Dataset Wizard"
         },
         "myModels": {
             "deleteDataset": "Delete dataset",

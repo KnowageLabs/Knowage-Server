@@ -103,7 +103,6 @@ export default defineComponent({
             this.loading = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/folders/`).then((response: AxiosResponse<any>) => (this.folders = response.data))
             this.loading = false
-            console.log('ALL FOLDERS: ', this.folders)
         },
         getFolderDocuments() {
             this.loading = true
@@ -148,14 +147,11 @@ export default defineComponent({
             console.log('executeDocumentFromOrganizer() {', event)
         },
         moveDocumentToFolder(document: IDocument) {
-            console.log('moveDocumentToFolder() {', document)
             this.selectedDocument = document
             this.moveDialogVisible = true
         },
         async handleDocumentMove(folder: any) {
             this.loading = true
-            console.log('SELECTED DOCUMENT FOR MOVE: ', this.selectedDocument)
-            console.log('SELECTED FOLDER FOR MOVE: ', folder)
             await this.$http
                 .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documentsee/${this.selectedDocument.biObjId}/${this.selectedDocument.functId}/${folder.id}`)
                 .then(() => {
