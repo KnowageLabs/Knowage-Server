@@ -36,15 +36,7 @@
         </div>
     </div>
 
-    <DetailSidebar
-        :visible="showDetailSidebar"
-        :viewType="'repository'"
-        :document="selectedDocument"
-        @executeDocumentFromOrganizer="executeDocumentFromOrganizer"
-        @moveDocumentToFolder="moveDocumentToFolder"
-        @deleteDocumentFromOrganizer="deleteDocumentFromOrganizer"
-        @close="showDetailSidebar = false"
-    />
+    <DetailSidebar :visible="showDetailSidebar" :viewType="'repository'" :document="selectedDocument" @executeDocumentFromOrganizer="executeDocumentFromOrganizer" @moveDocumentToFolder="moveDocumentToFolder" @deleteDocumentFromOrganizer="deleteDocumentConfirm" @close="showDetailSidebar = false" />
 
     <WorkspaceRepositoryMoveDialog :visible="moveDialogVisible" :propFolders="folders" @close="moveDialogVisible = false" @move="handleDocumentMove"></WorkspaceRepositoryMoveDialog>
     <WorkspaceWarningDialog :visible="warningDialogVisbile" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
@@ -134,7 +126,7 @@ export default defineComponent({
             this.menuButtons = []
             this.menuButtons.push(
                 { key: '3', label: this.$t('workspace.myRepository.moveDocument'), icon: 'fas fa-share', command: () => { this.moveDocumentToFolder(this.selectedDocument) }},
-                { key: '4', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: () => { this.deleteDocumentFromOrganizer(this.selectedDocument) }},
+                { key: '4', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: () => { this.deleteDocumentConfirm(this.selectedDocument) }},
             )
         },
         toggleDisplayView() {
@@ -169,8 +161,28 @@ export default defineComponent({
                 })
             this.loading = false
         },
-        deleteDocumentFromOrganizer(event) {
-            console.log('deleteDocumentFromOrganizer() {', event)
+        deleteDocumentConfirm(document: IDocument) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteDocument(document)
+            })
+        },
+        deleteDocument(document: IDocument) {
+            this.loading = true
+            this.$http
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/${document.functId}/${document.biObjId}`)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.showDetailSidebar = false
+                    this.getFolderDocuments()
+                })
+                .catch(() => {})
+            this.loading = false
         },
         closeWarningDialog() {
             this.warningMessage = ''
