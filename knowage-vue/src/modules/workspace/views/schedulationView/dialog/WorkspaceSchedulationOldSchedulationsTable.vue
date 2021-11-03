@@ -9,7 +9,7 @@
         dataKey="id"
         v-model:filters="filters"
         :globalFilterFields="workspaceSchedulationOldSchedulationsTableDescriptor.globalFilterFields"
-        :paginator="true"
+        :paginator="schedulations.length > 20"
         :rows="20"
         responsiveLayout="stack"
         breakpoint="960px"
@@ -36,7 +36,7 @@
         </Column>
         <Column :style="workspaceSchedulationOldSchedulationsTableDescriptor.iconColumn.style">
             <template #body="slotProps">
-                <Button icon="pi pi-download" class="p-button-link" v-tooltip.top="$t('common.download')" @click="downloadSnapshot(slotProps.data.urlPath)" />
+                <Button icon="pi pi-download" class="p-button-link" v-tooltip.top="$t('common.download')" @click="downloadSnapshot(slotProps.data)" />
             </template>
         </Column>
     </DataTable>
@@ -60,7 +60,8 @@ export default defineComponent({
         return {
             workspaceSchedulationOldSchedulationsTableDescriptor,
             schedulations: [] as ISchedulation[],
-            filters: { global: [filterDefault] } as Object
+            filters: { global: [filterDefault] } as Object,
+            user: null as any
         }
     },
     watch: {
@@ -69,6 +70,7 @@ export default defineComponent({
         }
     },
     created() {
+        this.user = (this.$store.state as any).user
         this.loadSchedulations()
     },
     methods: {
@@ -81,8 +83,13 @@ export default defineComponent({
         getFormattedDate(date: any, format: any) {
             return formatDate(date, format)
         },
-        downloadSnapshot(url: string) {
-            console.log('DOWNLOAD SNAPSHOT CICKED! ', url)
+        downloadSnapshot(schedulation: ISchedulation) {
+            console.log('DOWNLOAD SNAPSHOT CICKED! ', schedulation)
+            console.log('USER: ', this.user)
+            const url = process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?NEW_SESSION=TRUE&user_id=${this.user?.userUniqueIdentifier}&ACTION_NAME=GET_SNAPSHOT_CONTENT&SNAPSHOT_ID=${schedulation.id}&LIGHT_NAVIGATOR_DISABLED=TRUE&OBJECT_ID=${schedulation.biobjId}`
+
+            console.log('URL: ', url)
+            window.open(url, '_blank')
         }
     }
 })
