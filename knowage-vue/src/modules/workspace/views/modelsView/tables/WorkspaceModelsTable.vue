@@ -73,7 +73,6 @@ export default defineComponent({
         },
         loadItems() {
             this.items = this.propItems as IBusinessModel[] | IFederatedDataset[]
-            console.log('LOADED ITEMS: ', this.items)
         },
         canDeleteFederation(federation: IFederatedDataset) {
             return this.user.isSuperadmin || this.user.userId === federation.owner

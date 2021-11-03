@@ -51,10 +51,8 @@ export default defineComponent({
         },
         loadFolders() {
             this.folders = this.propFolders as IFolder[]
-            console.log('DOCUMENT TREE LOADED FODLERS: ', this.folders)
         },
         createNodeTree() {
-            console.log('   createNodeTree() {')
             this.nodes = [] as any[]
             const foldersWithMissingParent = [] as IFolder[]
             this.folders?.forEach((folder: IFolder) => {
@@ -129,7 +127,6 @@ export default defineComponent({
             this.$emit('folderSelected', this.selectedFolder)
         },
         createFolder(folder: any) {
-            console.log('CREATE FOLDER: ', folder)
             this.$emit('createFolder', folder)
         },
         deleteFolderConfirm(folder: any) {
@@ -141,7 +138,6 @@ export default defineComponent({
             })
         },
         onBreadcrumbSelected() {
-            // console.log('ON BREDCRUMB SELECT: ', this.selectedBreadcrumb)
             this.selectedFolder = this.selectedBreadcrumb?.node
             this.selectedFolderKey = {}
             this.selectedFolderKey[this.selectedFolder.key] = true

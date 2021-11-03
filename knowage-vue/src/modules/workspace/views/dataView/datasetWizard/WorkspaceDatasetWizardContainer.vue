@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="kn-dialog--toolbar--primary importExportDialog" :style="dataViewDescriptor.style.dialog" v-bind:visible="visible" footer="footer" :header="$t('datasetWizard')" :closable="false" modal>
+    <Dialog class="kn-dialog--toolbar--primary importExportDialog" :style="dataViewDescriptor.style.dialog" v-bind:visible="visible" footer="footer" :header="$t('workspace.myData.wizardTitle')" :closable="false" modal>
         <span v-if="wizardStep === 1">
             <Step1 :selectedDataset="dataset" />
         </span>
@@ -12,7 +12,7 @@
                 <Button class="kn-button kn-button--primary" label="LOG DATASET" @click="logDataset" />
                 <Button class="kn-button kn-button--secondary" :label="$t('common.cancel')" @click="$emit('closeDialog')" />
                 <Button v-if="wizardStep > 1" class="kn-button kn-button--secondary" :label="$t('common.back')" @click="wizardStep--" />
-                <Button class="kn-button kn-button--primary" :label="$t('common.next')" @click="submitStep1" />
+                <Button class="kn-button kn-button--primary" :label="$t('common.next')" @click="submitStepOne" />
             </div>
         </template>
     </Dialog>
@@ -22,7 +22,7 @@
 import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import dataViewDescriptor from './WorkspaceDatasetWizardDescriptor.json'
-import Step1 from './WorkspaceDatasetWizardStep1.vue'
+import Step1 from './WorkspaceDatasetWizardStepOne.vue'
 import Dialog from 'primevue/dialog'
 
 export default defineComponent({
@@ -89,13 +89,13 @@ export default defineComponent({
             this.dataset.tableName = dataset != undefined && dataset.persistTableName ? dataset.persistTableName : ''
             this.dataset.fileUploaded = false
         },
-        submitStep1() {
+        submitStepOne() {
             let params = {} as any
             params.SBI_EXECUTION_ID = -1
             params.isTech = false
             params.showOnlyOwner = true
             params.showDerivedDataset = false
-            this.dataset.type = 'dada'
+            this.dataset.type = 'File'
             this.dataset.exportToHdfs = false
             // this.dataset.tablePrefix = datasetParameters.TABLE_NAME_PREFIX + (this.$store.state as any).user.fullName + '_'
             this.dataset.tablePrefix = 'D_' + (this.$store.state as any).user.fullName + '_'
@@ -119,21 +119,20 @@ export default defineComponent({
             })
                 .then((response: AxiosResponse<any>) => {
                     if (!response.data.errors) {
-                        console.info('[SUCCESS]: The Step 1 form is submitted successfully.')
                         this.gridForPreview = response.data.gridForPreview
                         this.wizardStep++
-                        this.dataset.meta = {}
                         this.dataset.meta = response.data.meta
                         this.datasetColumns = response.data.datasetColumns
                         // this.prepareMetaForView()
                         // this.prepareDatasetForView()
                     } else {
-                        console.log(response.data.errors)
                         this.dataset.meta = []
                     }
                 })
                 .catch((error: any) => {
-                    console.log(error)
+                    error.message == 'error.mesage.description.data.set.parsing.error'
+                        ? this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('workspace.myData.parseError') })
+                        : this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t(error.message) })
                 })
         }
     }

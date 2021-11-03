@@ -159,20 +159,17 @@ export default defineComponent({
                 { key: '4', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-share-alt', command: () => { this.uploadAnalysisPreviewFile(this.selectedAnalysis) }}
             )
         },
-        executeAnalysisDocument(event) {
-            console.log('executeAnalysisDocument', event)
+        executeAnalysisDocument() {
             this.$store.commit('setInfo', {
                 title: 'Todo',
                 msg: 'Functionality not in this sprint'
             })
         },
         editAnalysisDocument(analysis: any) {
-            // console.log('editAnalysisDocument', analysis)
             this.selectedAnalysis = analysis
             this.editDialogVisible = true
         },
         async handleEditAnalysis(analysis: any) {
-            console.log('ANALYSIS FOR EDIT: ', analysis)
             const formatedAnalysis = {
                 document: {
                     name: analysis.label,
@@ -199,7 +196,6 @@ export default defineComponent({
                 })
         },
         async shareAnalysisDocument(analysis: any) {
-            // console.log('shareAnalysisDocument', analysis)
             this.selectedAnalysis = analysis
             this.loading = true
             const shared = this.selectedAnalysis.functionalities.length > 1
@@ -211,11 +207,9 @@ export default defineComponent({
             } else {
                 await this.handleAnalysShared(null, shared)
             }
-            // console.log('LOADED FOLDERS: ', this.folders)s
             this.loading = false
         },
         async handleAnalysShared(selectedFolders: any, shared: boolean) {
-            console.log('handleAnalysShared SELECTED FOLDERS: ', selectedFolders)
             this.loading = true
 
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/share?docId=${this.selectedAnalysis.id}&`
@@ -269,7 +263,6 @@ export default defineComponent({
             })
         },
         deleteAnalysis(analysis: any) {
-            // console.log('deleteAnalysisDocument', analysis)
             this.loading = true
             this.$http
                 .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${analysis.label}`)
@@ -285,7 +278,6 @@ export default defineComponent({
             this.loading = false
         },
         uploadAnalysisPreviewFile(analysis: any) {
-            console.log('uploadAnalysisPreviewFile', analysis)
             this.selectedAnalysis = analysis
             this.triggerUpload = false
             setTimeout(() => (this.triggerUpload = true), 200)
@@ -300,7 +292,6 @@ export default defineComponent({
             setTimeout(() => (this.uploading = false), 200)
         },
         startUpload(uploadedFile: any) {
-            console.log('UPLOAD STARTED!', uploadedFile)
             var formData = new FormData()
             formData.append('file', uploadedFile)
             this.$http

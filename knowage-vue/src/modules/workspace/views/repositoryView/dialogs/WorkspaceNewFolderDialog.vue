@@ -108,7 +108,6 @@ export default defineComponent({
             this.$emit('close')
         },
         createFolder() {
-            // console.log('createFolder: ', this.newFolder)
             this.$emit('create', this.newFolder)
             this.newFolder = {} as any
             this.v$.$reset()

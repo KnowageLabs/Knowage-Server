@@ -48,7 +48,6 @@ export default defineComponent({
     methods: {
         loadFolders() {
             this.folders = this.propFolders as any[]
-            console.log('MOVE DIALOG LOADED FOLDERS: ', this.folders)
         },
         closeDialog() {
             this.selectedFolder = null
@@ -59,7 +58,6 @@ export default defineComponent({
         },
         setSelectedFolder(folder: any) {
             this.selectedFolder = folder
-            console.log('SELECTED FOLDER IN MOVE DIALOG: ', this.selectedFolder)
         }
     }
 })

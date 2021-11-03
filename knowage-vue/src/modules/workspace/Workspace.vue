@@ -142,12 +142,10 @@ export default defineComponent({
         },
         setSelectedFolder(folder: any) {
             this.selectedFolder = folder
-            console.log('SELECTED FOLDER IN WORKSPACE MAIN: ', this.selectedFolder)
             this.createBreadcrumbs()
             this.$router.push(`/workspace/repository/${folder.id}`)
         },
         async deleteFolder(folder: any) {
-            console.log('FOLDER FOR DELETE MAIN: ', folder)
             this.loading = true
             await this.$http
                 .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/foldersee/${folder.id}`, { headers: { 'X-Disable-Errors': 'true' } })
@@ -160,7 +158,6 @@ export default defineComponent({
                     this.$router.push('/workspace')
                 })
                 .catch((response: any) => {
-                    console.log('response', response)
                     this.$store.commit('setError', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: response.message === 'sbi.workspace.organizer.folder.error.delete' ? this.$t('workspace.myRepository.folderDeleteError') : response.message
@@ -183,7 +180,6 @@ export default defineComponent({
                     this.getAllFolders()
                 })
                 .catch((response: any) => {
-                    console.log('CREATE NEW FOLDER ERROR RESPONSE: ', response)
                     this.$store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: response
@@ -192,18 +188,14 @@ export default defineComponent({
                 .finally(() => (this.displayCreateFolderDialog = false))
         },
         createBreadcrumbs() {
-            // console.log('CURRENT FOLDER START METHOD: ', this.selectedFolder)
             let currentFolder = this.selectedFolder as any
             this.breadcrumbs = [] as any[]
             do {
                 this.breadcrumbs.unshift({ label: currentFolder.data.name, node: currentFolder })
                 currentFolder = currentFolder.data.parentFolder
-                // console.log('CURRENT FOLDER: ', currentFolder)
             } while (currentFolder)
-            console.log('CREATED BREADCRUMBS: ', this.breadcrumbs)
         },
         async setSelectedBreadcrumb(breadcrumb: any) {
-            console.log('SELCTED BREADCRUMB: ', breadcrumb)
             this.selectedBreadcrumb = breadcrumb
             this.$router.push(`/workspace/repository/${this.selectedBreadcrumb.node.id}`)
         }

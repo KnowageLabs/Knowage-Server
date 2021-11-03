@@ -123,8 +123,7 @@ export default defineComponent({
         resetSearch() {
             this.searchWord = ''
         },
-        openDatasetInQBE(dataset: IBusinessModel | IFederatedDataset) {
-            console.log('openDatasetInQBE clicked! ', dataset)
+        openDatasetInQBE() {
             this.$store.commit('setInfo', {
                 title: 'Todo',
                 msg: 'Functionality not in this sprint'
@@ -134,7 +133,6 @@ export default defineComponent({
             this.$router.push('models/federation-definition/new-federation')
         },
         editDataset(dataset: IFederatedDataset) {
-            console.log('editDataset clicked! ', dataset)
             this.$router.push(`models/federation-definition/${dataset.federation_id}`)
         },
         deleteDatasetConfirm(dataset: IFederatedDataset) {
