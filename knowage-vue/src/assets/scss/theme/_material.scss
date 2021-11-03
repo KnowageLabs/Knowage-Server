@@ -3,6 +3,11 @@
     border-left: none !important;
     border-right: none !important;
     border-radius: 0 !important;
+
+    .p-inputnumber-input,
+    .p-inputtext {
+        @extend .kn-material-input;
+    }
 }
 
 label.kn-material-input-label {
