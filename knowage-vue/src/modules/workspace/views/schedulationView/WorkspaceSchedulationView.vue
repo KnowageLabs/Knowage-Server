@@ -5,7 +5,7 @@
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <WorkspaceSchedulationTable class="overflow p-m-2" :propJobs="jobs" @viewOldSchedulationsClick="viewOldSchedulations"></WorkspaceSchedulationTable>
+    <WorkspaceSchedulationTable class="overflow p-m-2" :propJobs="jobs" @viewOldSchedulationsClick="viewOldSchedulations" data-test="schedulation-table"></WorkspaceSchedulationTable>
 
     <WorkspaceSchedulationOldSchedulationsDialog :visible="schedulationsDialogVisible" :selectedJob="selectedJob" @close="closeOldSchedulationsDialog"></WorkspaceSchedulationOldSchedulationsDialog>
 </template>

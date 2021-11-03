@@ -1,10 +1,10 @@
 <template>
-    <DataTable :value="jobs" id="jobs-table" class="p-datatable-sm kn-table" dataKey="jobName" v-model:filters="filters" :globalFilterFields="workspaceSchedulationTableDescriptor.globalFilterFields" :paginator="true" :rows="20" responsiveLayout="stack" breakpoint="960px">
+    <DataTable :value="jobs" id="jobs-table" class="p-datatable-sm kn-table" dataKey="jobName" v-model:filters="filters" :globalFilterFields="workspaceSchedulationTableDescriptor.globalFilterFields" :paginator="jobs.length > 15" :rows="15" responsiveLayout="stack" breakpoint="960px">
         <template #header>
             <div class="table-header p-d-flex p-ai-center">
                 <span id="search-container" class="p-input-icon-left p-mr-3">
                     <i class="pi pi-search" />
-                    <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" />
+                    <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="search-input" />
                 </span>
             </div>
         </template>

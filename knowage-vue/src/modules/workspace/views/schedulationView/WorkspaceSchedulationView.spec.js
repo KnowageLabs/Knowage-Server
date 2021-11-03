@@ -1,10 +1,10 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import { nextTick } from 'vue-demi'
 import PrimeVue from 'primevue/config'
 import axios from 'axios'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
+import InputText from 'primevue/inputtext'
 import Menu from 'primevue/contextmenu'
 import Message from 'primevue/message'
 import ProgressBar from 'primevue/progressbar'
@@ -66,11 +66,8 @@ const $router = {
     push: jest.fn()
 }
 
-const factory = (cardDisplay) => {
+const factory = () => {
     return mount(WorkspaceSchedulationView, {
-        props: {
-            toggleCardDisplay: cardDisplay
-        },
         provide: [],
         global: {
             directives: {
@@ -81,6 +78,7 @@ const factory = (cardDisplay) => {
                 Button,
                 Column,
                 DataTable,
+                InputText,
                 Menu,
                 Message,
                 KnInputFile: true,
@@ -101,9 +99,6 @@ const factory = (cardDisplay) => {
     })
 }
 
-jest.useFakeTimers()
-jest.spyOn(global, 'setTimeout')
-
 describe('Workspace Schedulation View', () => {
     it('should show an hint if no elements are present in the selected mode', async () => {
         axios.get.mockReturnValueOnce(
@@ -113,7 +108,7 @@ describe('Workspace Schedulation View', () => {
                 }
             })
         )
-        const wrapper = factory(false)
+        const wrapper = factory()
 
         await flushPromises()
 
@@ -121,60 +116,36 @@ describe('Workspace Schedulation View', () => {
 
         expect(wrapper.find('[data-test="schedulation-table"]').html()).toContain('common.info.noDataFound')
     })
-    xit('should show a table if grid mode is switched for the selected mode', async () => {
-        const wrapper = factory(false)
+
+    it('should show a table with jobs', async () => {
+        const wrapper = factory()
 
         await flushPromises()
 
-        expect(wrapper.vm.businessModels.length).toBe(2)
-        expect(wrapper.vm.federatedDatasets.length).toBe(2)
+        expect(wrapper.vm.jobs).toStrictEqual(mockedJobs)
 
-        expect(wrapper.find('[data-test="models-table"]').html()).toContain('Sales')
-        expect(wrapper.find('[data-test="models-table"]').html()).toContain('Inventory')
-        expect(wrapper.find('[data-test="models-table"]').html()).toContain('Test name')
-        expect(wrapper.find('[data-test="models-table"]').html()).toContain('Bojan test')
+        expect(wrapper.find('[data-test="schedulation-table"]').html()).toContain('A - Bojan')
+        expect(wrapper.find('[data-test="schedulation-table"]').html()).toContain('Mocked Job')
+        expect(wrapper.find('[data-test="schedulation-table"]').html()).toContain('Development')
     })
 
-    xit('should filter the list of elements if a searchtext is provided', async () => {
-        const wrapper = factory(false)
+    it('should filter the list of elements if a searchtext is provided', async () => {
+        const wrapper = factory()
 
         await flushPromises()
 
-        expect(wrapper.vm.allItems.length).toBe(4)
-        expect(wrapper.vm.filteredItems.length).toBe(4)
+        expect(wrapper.vm.jobs).toStrictEqual(mockedJobs)
 
-        await wrapper.find('[data-test="search-input"]').setValue('Sales')
-        wrapper.vm.searchItems()
+        await wrapper.find('[data-test="search-input"]').setValue('Mocked Job')
 
-        jest.runAllTimers()
-        await nextTick()
+        expect(wrapper.find('[data-test="schedulation-table"]').html()).not.toContain('A - Bojan')
+        expect(wrapper.find('[data-test="schedulation-table"]').html()).toContain('Mocked Job')
+        expect(wrapper.find('[data-test="schedulation-table"]').html()).not.toContain('Development')
 
-        expect(wrapper.find('[data-test="models-table"]').html()).toContain('Sales')
-        expect(wrapper.find('[data-test="models-table"]').html()).not.toContain('Inventory')
-        expect(wrapper.find('[data-test="models-table"]').html()).not.toContain('Test name')
+        await wrapper.find('[data-test="search-input"]').setValue('Development')
 
-        await wrapper.find('[data-test="search-input"]').setValue('Test name')
-        wrapper.vm.searchItems()
-
-        jest.runAllTimers()
-        await nextTick()
-
-        expect(wrapper.find('[data-test="models-table"]').html()).not.toContain('Sales')
-        expect(wrapper.find('[data-test="models-table"]').html()).not.toContain('Inventory')
-        expect(wrapper.find('[data-test="models-table"]').html()).toContain('Test name')
-    })
-
-    xit('should show a sidenav with details if one of the item is clicked', async () => {
-        const wrapper = factory(false)
-
-        await flushPromises()
-
-        expect(wrapper.vm.allItems.length).toBe(4)
-        expect(wrapper.vm.filteredItems.length).toBe(4)
-
-        await wrapper.find('[data-test="info-button-Sales"]').trigger('click')
-
-        expect(wrapper.vm.showDetailSidebar).toBe(true)
-        expect(wrapper.find('[data-test="detail-sidebar"]').exists()).toBe(true)
+        expect(wrapper.find('[data-test="schedulation-table"]').html()).not.toContain('A - Bojan')
+        expect(wrapper.find('[data-test="schedulation-table"]').html()).not.toContain('Mocked Job')
+        expect(wrapper.find('[data-test="schedulation-table"]').html()).toContain('Development')
     })
 })
