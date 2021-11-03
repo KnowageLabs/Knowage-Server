@@ -299,6 +299,7 @@ describe('Workspace Analysis View', () => {
         expect(wrapper.vm.filteredAnalysisDocuments.length).toBe(0)
         expect(wrapper.find('[data-test="analysis-table"]').html()).toContain('common.info.noDataFound')
     })
+
     it('should show a table if grid mode is switched for the selected mode', async () => {
         const wrapper = factory(false)
 
@@ -313,6 +314,22 @@ describe('Workspace Analysis View', () => {
         expect(wrapper.find('[data-test="analysis-table"]').html()).toContain('CHOCOLATE_RATINGS')
         expect(wrapper.find('[data-test="analysis-table"]').html()).toContain('Copy of CHOCOLATE_RATINGS(1)')
         expect(wrapper.find('[data-test="analysis-table"]').html()).toContain('Admin')
+    })
+
+    it('should show cards if grid mode is switched for the selected mode', async () => {
+        const wrapper = factory(true)
+
+        await flushPromises()
+
+        expect(wrapper.vm.analysisDocuments.length).toBe(4)
+        expect(wrapper.vm.filteredAnalysisDocuments).toStrictEqual(mockedAnalysis)
+
+        expect(wrapper.vm.toggleCardDisplay).toBe(true)
+
+        expect(wrapper.find('[data-test="card-container"]').html()).toContain('Mocked')
+        expect(wrapper.find('[data-test="card-container"]').html()).toContain('CHOCOLATE_RATINGS')
+        expect(wrapper.find('[data-test="card-container"]').html()).toContain('Copy of CHOCOLATE_RATINGS(1)')
+        expect(wrapper.find('[data-test="card-container"]').html()).toContain('Admin')
     })
 
     it('should filter the list of elements if a searchtext is provided', async () => {

@@ -31,12 +31,21 @@
                 </template>
             </Column>
         </DataTable>
-        <div v-if="toggleCardDisplay" class="p-grid p-m-2">
+        <div v-if="toggleCardDisplay" class="p-grid p-m-2" data-test="card-container">
             <WorkspaceCard v-for="(document, index) of filteredDocuments" :key="index" :viewType="'repository'" :document="document" @executeDocumentFromOrganizer="executeDocumentFromOrganizer" @moveDocumentToFolder="moveDocumentToFolder" @deleteDocumentFromOrganizer="deleteDocumentFromOrganizer" />
         </div>
     </div>
 
-    <DetailSidebar :visible="showDetailSidebar" :viewType="'repository'" :document="selectedDocument" @executeDocumentFromOrganizer="executeDocumentFromOrganizer" @moveDocumentToFolder="moveDocumentToFolder" @deleteDocumentFromOrganizer="deleteDocumentConfirm" @close="showDetailSidebar = false"  data-test="detail-sidebar"/>
+    <DetailSidebar
+        :visible="showDetailSidebar"
+        :viewType="'repository'"
+        :document="selectedDocument"
+        @executeDocumentFromOrganizer="executeDocumentFromOrganizer"
+        @moveDocumentToFolder="moveDocumentToFolder"
+        @deleteDocumentFromOrganizer="deleteDocumentConfirm"
+        @close="showDetailSidebar = false"
+        data-test="detail-sidebar"
+    />
 
     <WorkspaceRepositoryMoveDialog :visible="moveDialogVisible" :propFolders="folders" @close="moveDialogVisible = false" @move="handleDocumentMove"></WorkspaceRepositoryMoveDialog>
     <WorkspaceWarningDialog :visible="warningDialogVisbile" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>

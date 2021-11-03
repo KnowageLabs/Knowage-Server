@@ -176,6 +176,20 @@ describe('Workspace Models View', () => {
         expect(wrapper.find('[data-test="models-table"]').html()).toContain('Bojan test')
     })
 
+    it('should show cards if grid mode is switched for the selected mode', async () => {
+        const wrapper = factory(true)
+
+        await flushPromises()
+
+        expect(wrapper.vm.businessModels.length).toBe(2)
+        expect(wrapper.vm.federatedDatasets.length).toBe(2)
+
+        expect(wrapper.find('[data-test="card-container"]').html()).toContain('Sales')
+        expect(wrapper.find('[data-test="card-container"]').html()).toContain('Inventory')
+        expect(wrapper.find('[data-test="card-container"]').html()).toContain('Test name')
+        expect(wrapper.find('[data-test="card-container"]').html()).toContain('Bojan test')
+    })
+
     it('should filter the list of elements if a searchtext is provided', async () => {
         const wrapper = factory(false)
 

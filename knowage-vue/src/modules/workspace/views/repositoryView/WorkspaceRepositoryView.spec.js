@@ -153,11 +153,11 @@ const $router = {
     push: jest.fn()
 }
 
-const factory = () => {
+const factory = (toggleCardDisplay) => {
     return mount(WorkspaceRepositoryView, {
         props: {
             id: '1',
-            toggleCardDisplay: false
+            toggleCardDisplay: toggleCardDisplay
         },
         provide: [],
         global: {
@@ -201,7 +201,7 @@ describe('Workspace Repository View', () => {
                 data: []
             })
         )
-        const wrapper = factory()
+        const wrapper = factory(false)
 
         await flushPromises()
 
@@ -210,7 +210,7 @@ describe('Workspace Repository View', () => {
     })
 
     it('should show a table if grid mode is switched for the selected mode', async () => {
-        const wrapper = factory()
+        const wrapper = factory(false)
 
         await flushPromises()
 
@@ -221,8 +221,20 @@ describe('Workspace Repository View', () => {
         expect(wrapper.find('[data-test="documents-table"]').html()).toContain('Mocked Document')
     })
 
+    it('should show cards if grid mode is switched for the selected mode', async () => {
+        const wrapper = factory(true)
+
+        await flushPromises()
+
+        expect(wrapper.vm.filteredDocuments).toStrictEqual(mockedDocuments)
+        expect(wrapper.vm.toggleCardDisplay).toBe(true)
+
+        expect(wrapper.find('[data-test="card-container"]').html()).toContain('CHOCOLATE_RATINGS')
+        expect(wrapper.find('[data-test="card-container"]').html()).toContain('Mocked Document')
+    })
+
     it('should filter the list of elements if a searchtext is provided', async () => {
-        const wrapper = factory()
+        const wrapper = factory(false)
 
         await flushPromises()
 
@@ -249,7 +261,7 @@ describe('Workspace Repository View', () => {
     })
 
     it('should show a sidenav with details if one of the item is clicked', async () => {
-        const wrapper = factory()
+        const wrapper = factory(false)
 
         await flushPromises()
 

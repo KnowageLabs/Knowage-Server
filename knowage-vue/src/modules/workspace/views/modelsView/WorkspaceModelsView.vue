@@ -18,7 +18,7 @@
 
     <div class="overflow">
         <WorkspaceModelsTable v-if="!toggleCardDisplay" :propItems="filteredItems" @selected="setSelectedModel" @openDatasetInQBEClick="openDatasetInQBE" @editDatasetClick="editDataset" @deleteDatasetClick="deleteDatasetConfirm" data-test="models-table"></WorkspaceModelsTable>
-        <div v-if="toggleCardDisplay" class="p-grid p-m-2">
+        <div v-if="toggleCardDisplay" class="p-grid p-m-2" data-test="card-container">
             <WorkspaceCard v-for="(document, index) of filteredItems" :key="index" :viewType="selectedModel && selectedModel.federation_id ? 'federationDataset' : 'businessModel'" :document="document" />
         </div>
     </div>

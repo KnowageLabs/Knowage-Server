@@ -37,7 +37,7 @@
                 </template>
             </Column>
         </DataTable>
-        <div v-if="toggleCardDisplay" class="p-grid p-m-2">
+        <div v-if="toggleCardDisplay" class="p-grid p-m-2" data-test="card-container">
             <WorkspaceCard
                 v-for="(document, index) of filteredAnalysisDocuments"
                 :key="index"
