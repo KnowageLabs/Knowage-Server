@@ -135,7 +135,7 @@ export default defineComponent({
                     delete this.dataset.catTypeId
                 }
             }
-            console.log('DATAASET LOADIED IN DIALOG: ', this.dataset)
+            // console.log('DATAASET LOADIED IN DIALOG: ', this.dataset)
         },
         closeDialog() {
             this.loadDataset()

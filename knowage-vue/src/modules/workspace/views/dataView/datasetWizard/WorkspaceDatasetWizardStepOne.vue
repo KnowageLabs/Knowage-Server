@@ -1,24 +1,12 @@
 <template>
-    <Card class="p-mt-3">
+    <Card class="p-mt-4">
         <template #content>
             <div class="p-d-flex">
                 <div class="p-field" :style="dataViewDescriptor.style.maxwidth">
                     <span class="p-float-label">
-                        <InputText
-                            id="fileName"
-                            class="kn-material-input"
-                            :style="dataViewDescriptor.style.maxwidth"
-                            v-model.trim="v$.dataset.fileName.$model"
-                            :class="{
-                                'p-invalid': v$.dataset.fileName.$invalid && v$.dataset.fileName.$dirty
-                            }"
-                            :disabled="true"
-                            @blur="v$.dataset.fileName.$touch()"
-                            @change="$emit('touched')"
-                        />
-                        <label for="fileName" class="kn-material-input-label"> {{ $t('downloadsDialog.columns.fileName') }} * </label>
+                        <InputText id="fileName" class="kn-material-input" :style="dataViewDescriptor.style.maxwidth" v-model.trim="dataset.fileName" :disabled="true" @change="$emit('touched')" />
+                        <label for="fileName" class="kn-material-input-label"> {{ $t('downloadsDialog.columns.fileName') }} </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.fileName" :additionalTranslateParams="{ fieldName: $t('downloadsDialog.columns.fileName') }" />
                 </div>
                 <Button icon="fas fa-upload fa-2x" class="p-button-text p-button-plain p-ml-2" @click="setUploadType" />
                 <Button icon="fas fa-download fa-2x" class="p-button-text y p-button-plain p-ml-2" @click="downloadDatasetFile" />
@@ -74,17 +62,15 @@
 <script lang="ts">
 import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
-import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
 import useValidate from '@vuelidate/core'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import dataViewDescriptor from './WorkspaceDatasetWizardDescriptor.json'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 
 export default defineComponent({
-    components: { Card, KnValidationMessages, KnInputFile, Dropdown },
+    components: { Card, KnInputFile, Dropdown },
     props: { selectedDataset: { type: Object as any } },
     emits: ['touched', 'fileUploaded', 'closeDialog'],
     data() {
@@ -107,14 +93,6 @@ export default defineComponent({
         selectedDataset() {
             this.dataset = this.selectedDataset
         }
-    },
-    validations() {
-        const fileFieldsRequired = (value) => {
-            return this.dataset.dsTypeCd != 'File' || value
-        }
-        const customValidators: ICustomValidatorMap = { 'file-fields-required': fileFieldsRequired }
-        const validationObject = { dataset: createValidations('dataset', dataViewDescriptor.validations.dataset, customValidators) }
-        return validationObject
     },
     methods: {
         //#region ===================== File Upload/Download ====================================================
@@ -148,7 +126,7 @@ export default defineComponent({
                     this.dataset.fileType = response.data.fileType
                     this.dataset.fileName = response.data.fileName
                     this.$emit('fileUploaded')
-                    this.resetFields()
+                    // this.resetFields()
                 })
                 .catch()
                 .finally(() => {
