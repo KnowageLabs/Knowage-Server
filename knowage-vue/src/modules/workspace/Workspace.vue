@@ -38,6 +38,7 @@
             <router-view
                 class="kn-router-view"
                 :selectedFolder="selectedFolder"
+                :allFolders="allFolders"
                 :toggleCardDisplay="toggleCardDisplay"
                 :breadcrumbs="breadcrumbs"
                 @toggleDisplayView="toggleDisplayView"

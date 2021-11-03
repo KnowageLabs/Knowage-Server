@@ -84,11 +84,11 @@ export default defineComponent({
             return formatDate(date, format)
         },
         downloadSnapshot(schedulation: ISchedulation) {
-            console.log('DOWNLOAD SNAPSHOT CICKED! ', schedulation)
-            console.log('USER: ', this.user)
+            // console.log('DOWNLOAD SNAPSHOT CICKED! ', schedulation)
+            // console.log('USER: ', this.user)
             const url = process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?NEW_SESSION=TRUE&user_id=${this.user?.userUniqueIdentifier}&ACTION_NAME=GET_SNAPSHOT_CONTENT&SNAPSHOT_ID=${schedulation.id}&LIGHT_NAVIGATOR_DISABLED=TRUE&OBJECT_ID=${schedulation.biobjId}`
 
-            console.log('URL: ', url)
+            // console.log('URL: ', url)
             window.open(url, '_blank')
         }
     }

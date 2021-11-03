@@ -13,9 +13,9 @@
 
     <WorkspaceRepositoryBreadcrumb :breadcrumbs="breadcrumbs" @breadcrumbClicked="$emit('breadcrumbClicked', $event)"></WorkspaceRepositoryBreadcrumb>
 
-    <InputText class="kn-material-input p-m-2" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" />
+    <InputText class="kn-material-input p-m-2" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
     <div class="p-m-2 overflow">
-        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="filteredDocuments" :loading="loading" dataKey="biObjId" responsiveLayout="stack" breakpoint="600px">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="filteredDocuments" :loading="loading" dataKey="biObjId" responsiveLayout="stack" breakpoint="600px" data-test="documents-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -26,7 +26,7 @@
             <Column class="icon-cell" :style="mainDescriptor.style.iconColumn">
                 <template #body="slotProps">
                     <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="showMenu($event, slotProps.data)" />
-                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click="showSidebar(slotProps.data)" />
+                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.documentName" />
                     <Button icon="fas fa-play-circle" class="p-button-link" @click="logEvent(slotProps.data)" />
                 </template>
             </Column>
@@ -36,7 +36,7 @@
         </div>
     </div>
 
-    <DetailSidebar :visible="showDetailSidebar" :viewType="'repository'" :document="selectedDocument" @executeDocumentFromOrganizer="executeDocumentFromOrganizer" @moveDocumentToFolder="moveDocumentToFolder" @deleteDocumentFromOrganizer="deleteDocumentConfirm" @close="showDetailSidebar = false" />
+    <DetailSidebar :visible="showDetailSidebar" :viewType="'repository'" :document="selectedDocument" @executeDocumentFromOrganizer="executeDocumentFromOrganizer" @moveDocumentToFolder="moveDocumentToFolder" @deleteDocumentFromOrganizer="deleteDocumentConfirm" @close="showDetailSidebar = false"  data-test="detail-sidebar"/>
 
     <WorkspaceRepositoryMoveDialog :visible="moveDialogVisible" :propFolders="folders" @close="moveDialogVisible = false" @move="handleDocumentMove"></WorkspaceRepositoryMoveDialog>
     <WorkspaceWarningDialog :visible="warningDialogVisbile" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
@@ -61,7 +61,7 @@ import { AxiosResponse } from 'axios'
 export default defineComponent({
     components: { DataTable, Column, FabButton, DetailSidebar, WorkspaceCard, Menu, WorkspaceRepositoryMoveDialog, WorkspaceWarningDialog, WorkspaceRepositoryBreadcrumb },
     emits: ['showMenu', 'reloadRepositoryMenu', 'toggleDisplayView', 'createFolderClick', 'breadcrumbClicked'],
-    props: { selectedFolder: { type: Object }, id: { type: String, required: false }, toggleCardDisplay: { type: Boolean }, breadcrumbs: { type: Array } },
+    props: { selectedFolder: { type: Object }, id: { type: String, required: false }, toggleCardDisplay: { type: Boolean }, breadcrumbs: { type: Array }, allFolders: { type: Array } },
     data() {
         return {
             mainDescriptor,
@@ -75,7 +75,7 @@ export default defineComponent({
             newFolder: {} as IFolder,
             columns: repositoryDescriptor.columns,
             searchWord: '' as string,
-            folders: [] as IFolder[], // premestiti u prop nakon promena u meniju?
+            folders: [] as IFolder[],
             moveDialogVisible: false,
             warningDialogVisbile: false,
             warningMessage: ''
@@ -84,17 +84,18 @@ export default defineComponent({
     watch: {
         id() {
             this.getFolderDocuments()
+        },
+        allFolders() {
+            this.loadFolders()
         }
     },
-    async created() {
-        await this.loadFolders()
+    created() {
+        this.loadFolders()
         this.getFolderDocuments()
     },
     methods: {
-        async loadFolders() {
-            this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/folders/`).then((response: AxiosResponse<any>) => (this.folders = response.data))
-            this.loading = false
+        loadFolders() {
+            this.folders = this.allFolders as IFolder[]
         },
         getFolderDocuments() {
             this.loading = true
@@ -193,7 +194,7 @@ export default defineComponent({
                 if (!this.searchWord.trim().length) {
                     this.filteredDocuments = [...this.documents] as IDocument[]
                 } else {
-                    this.filteredDocuments = this.filteredDocuments.filter((el: any) => {
+                    this.filteredDocuments = this.documents.filter((el: any) => {
                         return (
                             el.documentType?.toLowerCase().includes(this.searchWord.toLowerCase()) ||
                             el.documentLabel?.toLowerCase().includes(this.searchWord.toLowerCase()) ||

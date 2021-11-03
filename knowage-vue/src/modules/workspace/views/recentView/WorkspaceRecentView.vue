@@ -9,9 +9,9 @@
             <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
         </template>
     </Toolbar>
-    <InputText class="kn-material-input p-m-2" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
+    <InputText class="kn-material-input p-m-2" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
     <div class="overflow">
-        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="recentDocumentsList" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="filteredDocuments" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="recent-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -25,20 +25,19 @@
             <Column :style="mainDescriptor.style.iconColumn">
                 <template #header> &ensp; </template>
                 <template #body="slotProps">
-                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click.stop="showSidebar(slotProps.data)" />
+                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click.stop="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.documentName" />
                     <Button icon="fas fa-play-circle" class="p-button-link" @click="executeRecent" />
                 </template>
             </Column>
         </DataTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2">
-            <WorkspaceCard v-for="(document, index) of recentDocumentsList" :key="index" :viewType="'recent'" :document="document" @executeRecent="executeRecent" @openSidebar="showSidebar" />
+            <WorkspaceCard v-for="(document, index) of filteredDocuments" :key="index" :viewType="'recent'" :document="document" @executeRecent="executeRecent" @openSidebar="showSidebar" />
         </div>
     </div>
 
-    <DetailSidebar :visible="showDetailSidebar" :viewType="'recent'" :document="selectedDocument" @executeRecent="executeRecent" @close="showDetailSidebar = false" />
+    <DetailSidebar :visible="showDetailSidebar" :viewType="'recent'" :document="selectedDocument" @executeRecent="executeRecent" @close="showDetailSidebar = false" data-test="detail-sidebar" />
 </template>
 <script lang="ts">
-import { filterDefault } from '@/helpers/commons/filterHelper'
 import { defineComponent } from 'vue'
 import { IDocument } from '@/modules/workspace/Workspace'
 import { AxiosResponse } from 'axios'
@@ -58,10 +57,9 @@ export default defineComponent({
             loading: false,
             showDetailSidebar: false,
             recentDocumentsList: [] as IDocument[],
+            filteredDocuments: [] as IDocument[],
             selectedDocument: {} as IDocument,
-            filters: {
-                global: [filterDefault]
-            } as Object
+            searchWord: '' as string
         }
     },
     created() {
@@ -74,6 +72,7 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/recents`)
                 .then((response: AxiosResponse<any>) => {
                     this.recentDocumentsList = [...response.data]
+                    this.filteredDocuments = [...this.recentDocumentsList]
                 })
                 .finally(() => (this.loading = false))
         },
@@ -91,6 +90,17 @@ export default defineComponent({
         showSidebar(clickedDocument) {
             this.selectedDocument = clickedDocument
             this.showDetailSidebar = true
+        },
+        searchItems() {
+            setTimeout(() => {
+                if (!this.searchWord.trim().length) {
+                    this.filteredDocuments = [...this.recentDocumentsList] as any[]
+                } else {
+                    this.filteredDocuments = this.recentDocumentsList.filter((el: any) => {
+                        return el.documentType?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.documentName?.toLowerCase().includes(this.searchWord.toLowerCase())
+                    })
+                }
+            }, 250)
         }
     }
 })
