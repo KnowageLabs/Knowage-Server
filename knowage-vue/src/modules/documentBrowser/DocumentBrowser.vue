@@ -1,7 +1,7 @@
 <template>
     <div class="kn-page">
         <div>
-            <TabView id="document-browser-tab-view" v-model:activeIndex="activeIndex" @tab-change="test">
+            <TabView id="document-browser-tab-view" v-model:activeIndex="activeIndex" @tab-change="onTabChange">
                 <TabPanel>
                     <template #header>
                         <i class="fa fa-folder-open"></i>
@@ -45,26 +45,25 @@ export default defineComponent({
         }
     },
     created() {
-        console.log('CREATED HOME!', this.$route)
         if (this.$route.name === 'document-execution' && this.$route.params.id) {
             this.tabs.push({ item: null, mode: 'execute' })
             this.activeIndex = 1
         }
     },
     methods: {
-        test() {
-            console.log('ACTIVE INDEX: ', this.activeIndex)
+        onTabChange() {
             if (this.activeIndex === 0) {
+                this.$router.push('/document-browser')
                 return
             }
 
-            console.log('TEEEEEEEEST: ', this.tabs[this.activeIndex - 1].item.id)
-            console.log('TABS: ', this.tabs)
-            this.$router.push('/document-browser/document-execution/' + this.tabs[this.activeIndex - 1].item.id)
+            const id = this.tabs[this.activeIndex - 1].item ? this.tabs[this.activeIndex - 1].item.id : 'new-dashboard'
+            this.$router.push('/document-browser/document-execution/' + id)
         },
-        onItemSelect(item: any) {
-            this.tabs.push(item)
-            this.$router.push('/document-browser/document-execution/' + item.item.id)
+        onItemSelect(payload: any) {
+            this.tabs.push(payload)
+            const id = payload.item ? payload.item.id : 'new-dashboard'
+            this.$router.push('/document-browser/document-execution/' + id)
             this.activeIndex = this.tabs.length
         },
         toggle(event: any) {
@@ -103,6 +102,7 @@ export default defineComponent({
                 case 'current':
                     this.tabs.splice(this.activeIndex - 1, 1)
                     this.activeIndex = 0
+                    this.$router.push('/document-browser')
                     break
                 case 'other':
                     this.tabs = [this.tabs[this.activeIndex - 1]]
@@ -112,6 +112,7 @@ export default defineComponent({
                     this.tabs.splice(this.activeIndex)
                     break
                 case 'all':
+                    this.$router.push('/document-browser')
                     this.tabs = []
                     this.activeIndex = 0
             }
@@ -127,11 +128,12 @@ export default defineComponent({
 
 #tab-icon-container {
     position: absolute;
-    top: 0.2rem;
+    top: 0.6rem;
     right: 2rem;
 }
 
 #tab-icon {
-    font-size: 2rem;
+    font-size: 1.5rem;
+    cursor: pointer;
 }
 </style>

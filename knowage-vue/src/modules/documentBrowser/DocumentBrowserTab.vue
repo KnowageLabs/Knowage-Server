@@ -1,5 +1,4 @@
 <template>
-    <div>ITEM: {{ item }} MODE: {{ mode }}</div>
     <router-view></router-view>
 </template>
 

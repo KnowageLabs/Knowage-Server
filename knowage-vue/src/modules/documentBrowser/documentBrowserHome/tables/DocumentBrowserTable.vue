@@ -7,7 +7,7 @@
     <DataTable
         id="documents-datatable"
         :value="documents"
-        :paginator="true"
+        :paginator="documents.length > documentBrowserTableDescriptor.rows"
         :rows="documentBrowserTableDescriptor.rows"
         v-model:filters="filters"
         filterDisplay="menu"
