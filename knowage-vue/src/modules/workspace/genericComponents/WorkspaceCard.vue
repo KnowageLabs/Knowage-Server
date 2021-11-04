@@ -107,8 +107,8 @@ export default defineComponent({
                     ]
                 case 'repository':
                     return [
-                        { icon: 'fas fa-trash', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('deleteDocumentFromOrganizer') },
-                        { icon: 'fas fa-share', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('moveDocumentToFolder') },
+                        { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
+                        { icon: 'fas fa-info-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
                         { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeDocumentFromOrganizer') }
                     ]
                 case 'dataset':
@@ -183,6 +183,11 @@ export default defineComponent({
                 this.menuButtons.push( 
                         { key: '0', icon: 'pi pi-pencil', label: this.$t('workspace.myModels.editDataset'), class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('editDataset') },
                         { key: '1', icon: 'fas fa-trash-alt', label: this.$t('workspace.myModels.deleteDataset'), class: 'p-button-text p-button-rounded p-button-plain', visible: (this.$store.state as any).user.isSuperadmin || (this.$store.state as any).user.userId === this.document.owner, command: this.emitEvent('deleteDataset') })
+            } else if (this.viewType === 'repository') {
+                this.menuButtons.push(
+                { key: '3', label: this.$t('workspace.myRepository.moveDocument'), icon: 'fas fa-share', command:  this.emitEvent('moveDocumentToFolder') },
+                { key: '4', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command:   this.emitEvent('deleteDocumentFromOrganizer') },
+            )
             }
         }
     }

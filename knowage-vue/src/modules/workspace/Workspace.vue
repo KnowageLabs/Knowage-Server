@@ -1,6 +1,6 @@
 <template>
     <div class="kn-page p-d-flex p-flex-row">
-        <div id="sideMenu" class="kn-list--column">
+        <div id="sideMenu" class="kn-list--column" :style="workspaceDescriptor.style.menuWidth">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #left>
                     {{ $t('workspace.menuLabels.menuTitle') }}
@@ -20,7 +20,7 @@
                             <AccordionTab>
                                 <template #header>
                                     <div class="p-d-flex p-flex-row" @click="accordionIcon = !accordionIcon" data-test="document-accordion">
-                                        <i class="pi pi-folder"></i>
+                                        <i class="fas fa-folder"></i>
                                         <span class="p-ml-2">{{ $t('workspace.menuLabels.myRepository') }}</span>
                                         <i v-if="accordionIcon" class="pi pi-chevron-right menu-accordion-icon"></i>
                                         <i v-if="!accordionIcon" class="pi pi-chevron-down menu-accordion-icon"></i>
@@ -33,7 +33,7 @@
                 </template>
             </Listbox>
         </div>
-        <div class=" p-d-flex p-flex-column" style="width:100%">
+        <div class="p-d-flex p-flex-column" :style="workspaceDescriptor.style.maxWidth">
             <Button id="showSidenavIcon" v-if="$router.currentRoute._rawValue.fullPath === '/workspace/'" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="sidebarVisible = true" />
             <router-view
                 class="kn-router-view"
@@ -226,42 +226,31 @@ export default defineComponent({
 .overflow {
     overflow: auto;
 }
+.mySidebar .p-listbox-list li:nth-child(2),
 .mySidebar.p-sidebar .p-sidebar-header,
-.mySidebar.p-sidebar .p-sidebar-content {
+.mySidebar.p-sidebar .p-sidebar-content,
+.menu-accordion .p-accordion-content,
+.menu-accordion .p-tree,
+.menu-accordion-sidebar .p-accordion-content,
+.menu-accordion-sidebar .p-tree {
     padding: 0 !important;
 }
 .menu-accordion .p-accordion-tab-active {
     margin: 0 !important;
     padding: 0 !important;
-    border-bottom: 1 px solid #c2c2c2;
 }
 .menu-accordion .p-accordion-header-link {
     padding: 0.75rem 0.75rem !important;
+    border-bottom: 1px solid #f2f2f2 !important;
 }
-.menu-accordion .p-accordion-content,
-.menu-accordion .p-tree {
-    padding: 0 !important;
-}
-
 .menu-accordion .p-accordion-toggle-icon {
     display: none;
 }
-
 .menu-accordion-icon {
     margin-left: auto;
 }
-
-.menu-accordion-sidebar .p-accordion-content,
-.menu-accordion-sidebar .p-tree {
-    padding: 0 !important;
-}
-
 .menu-accordion-sidebar .p-accordion-tab-active {
     margin: 0 !important;
-}
-
-.mySidebar .p-listbox-list li:nth-child(2) {
-    padding: 0 !important;
 }
 
 @media screen and (min-width: 1025px) {

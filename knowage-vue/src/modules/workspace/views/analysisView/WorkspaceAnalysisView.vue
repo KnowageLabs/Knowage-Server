@@ -1,5 +1,5 @@
 <template>
-    <Toolbar class="kn-toolbar kn-toolbar--secondary" :style="mainDescriptor.style.maxWidth">
+    <Toolbar class="kn-toolbar kn-toolbar--secondary">
         <template #left>
             <Button id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
             {{ $t('workspace.menuLabels.myAnalysis') }}
@@ -7,12 +7,12 @@
         <template #right>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="$emit('toggleDisplayView')" />
             <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="$emit('toggleDisplayView')" />
-            <KnFabButton icon="fas fa-plus" data-test="new-folder-button" />
+            <KnFabButton icon="fas fa-plus" data-test="new-folder-button" @click="executeAnalysisDocument" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
-    <InputText class="kn-material-input p-m-2" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
+    <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
 
     <div class="p-m-2 overflow">
         <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="filteredAnalysisDocuments" :loading="loading" dataKey="id" responsiveLayout="stack" breakpoint="600px" data-test="analysis-table">
@@ -82,7 +82,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
-import analysisDescriptor from './WorkspaceAnalysisViewDescriptor.json'
 import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
 import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
@@ -109,7 +108,6 @@ export default defineComponent({
     data() {
         return {
             mainDescriptor,
-            analysisDescriptor,
             loading: false,
             showDetailSidebar: false,
             analysisDocuments: [] as any,

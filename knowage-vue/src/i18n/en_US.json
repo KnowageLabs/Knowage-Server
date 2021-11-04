@@ -1488,7 +1488,8 @@
             "myRepository": "My Repository",
             "recent": "Recent",
             "recentDocuments": "Recent Documents",
-            "schedulation": "Schedulation"
+            "schedulation": "Schedulation",
+            "advanced": "My Advanced Data"
         },
         "myAnalysis": {
             "menuItems": {

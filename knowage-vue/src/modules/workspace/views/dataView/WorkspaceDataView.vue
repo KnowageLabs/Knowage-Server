@@ -13,7 +13,7 @@
     <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
 
     <div class="p-d-flex p-flex-row p-ai-center">
-        <InputText class="kn-material-input p-m-2" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
+        <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
         <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" @click="getDatasetsByFilter" />
     </div>
 
@@ -45,9 +45,9 @@
             <Column :style="mainDescriptor.style.iconColumn">
                 <template #header> &ensp; </template>
                 <template #body="slotProps">
-                    <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="showMenu($event, slotProps.data)" />
-                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.name" />
-                    <Button icon="fas fa-eye" class="p-button-link" @click="previewDataset(slotProps.data)" />
+                    <Button icon="fas fa-ellipsis-v" class="p-button-link" @click.stop="showMenu($event, slotProps.data)" />
+                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click.stop="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.name" />
+                    <Button icon="fas fa-eye" class="p-button-link" @click.stop="previewDataset(slotProps.data)" />
                 </template>
             </Column>
         </DataTable>
@@ -465,3 +465,8 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss" scoped>
+#model-select-buttons {
+    margin: 2rem 2rem 2rem auto;
+}
+</style>

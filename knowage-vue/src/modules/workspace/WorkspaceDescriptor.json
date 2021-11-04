@@ -26,7 +26,7 @@
         },
         {
             "icon": "fas fa-th-large",
-            "key": "5",
+            "key": "4",
             "label": "workspace.menuLabels.myAnalysis",
             "value": "analysis"
         },
@@ -35,6 +35,12 @@
             "key": "5",
             "label": "workspace.menuLabels.schedulation",
             "value": "schedulation"
+        },
+        {
+            "icon": "fas fa-filter",
+            "key": "6",
+            "label": "workspace.menuLabels.advanced",
+            "value": "advanced"
         }
     ],
     "style": {
@@ -44,6 +50,9 @@
         },
         "maxWidth": {
             "width": "100%"
+        },
+        "filterInput": {
+            "width": "25%"
         },
         "message": {
             "align-items": "center",

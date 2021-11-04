@@ -86,7 +86,7 @@ export default defineComponent({
 .metafield-list {
     border: none;
     height: 25vh;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .selected-metafield {

@@ -1,43 +1,40 @@
 <template>
-    <Card>
-        <template #header>
-            <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
-                    {{ mode === 'available' ? $t('workspace.federationDefinition.availableDatasets') : $t('workspace.federationDefinition.selectedDatasets') }}
-                </template>
-            </Toolbar>
-        </template>
-
-        <template #content>
-            <Message class="p-m-4" severity="info" :closable="false" :style="workspaceFederationDatasetListDescriptor.styles.message">
+    <div class="p-col federation-listbox-container">
+        <Toolbar class="kn-toolbar kn-toolbar--secondary">
+            <template #left>
+                {{ mode === 'available' ? $t('workspace.federationDefinition.availableDatasets') : $t('workspace.federationDefinition.selectedDatasets') }} -
                 {{ mode === 'available' ? $t('workspace.federationDefinition.availableDatasetsMessage') : $t('workspace.federationDefinition.selectedDatasetsMessage') }}
-            </Message>
-
-            <Listbox class="federation-dataset-list" :options="dataset" :filter="true" optionLabel="name" @change="selectDataset($event.value)">
-                <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                <template #option="slotProps">
-                    <div class="kn-list-item p-d-flex p-flex-row">
-                        <div class="kn-list-item-text">
-                            <span>{{ slotProps.option.name }}</span>
-                        </div>
-                        <i v-if="mode === 'available'" class="fa fa-info-circle dataset-info-icon" @click.stop="$emit('showInfo', slotProps.option)"></i>
+            </template>
+        </Toolbar>
+        <!-- <InlineMessage severity="info" :closable="false" :style="workspaceFederationDatasetListDescriptor.styles.message">
+            {{ mode === 'available' ? $t('workspace.federationDefinition.availableDatasetsMessage') : $t('workspace.federationDefinition.selectedDatasetsMessage') }}
+        </InlineMessage> -->
+        <Listbox class="kn-list listbox-container" :options="dataset" :filter="true" optionLabel="name" @change="selectDataset($event.value)">
+            <template #empty>{{ $t('common.info.noDataFound') }}</template>
+            <template #option="slotProps">
+                <div class="kn-list-item p-d-flex p-flex-row">
+                    <div class="kn-list-item-text">
+                        <span>{{ slotProps.option.name }}</span>
                     </div>
-                </template>
-            </Listbox>
-        </template>
-    </Card>
+                    <i v-if="mode === 'available'" class="fas fa-info-circle dataset-info-icon" @click.stop="$emit('showInfo', slotProps.option)"></i>
+                </div>
+            </template>
+        </Listbox>
+    </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import Card from 'primevue/card'
 import Listbox from 'primevue/listbox'
-import Message from 'primevue/message'
+// import InlineMessage from 'primevue/inlinemessage'
 import workspaceFederationDatasetListDescriptor from './WorkspaceFederationDatasetListDescriptor.json'
 
 export default defineComponent({
     name: 'workspace-federation-dataset-list',
-    components: { Card, Listbox, Message },
+    components: {
+        Listbox
+        // InlineMessage
+    },
     props: { mode: { type: String }, propDatasets: { type: Array } },
     emits: ['showInfo', 'datasetSelected'],
     data() {
@@ -66,13 +63,23 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.federation-dataset-list {
-    border: none;
-    height: 70vh;
-    overflow-y: scroll;
+.federation-listbox-container {
+    // height: 89vh;
+    :deep(.p-card-body) {
+        padding: 0;
+        .p-card-content {
+            padding: 0;
+        }
+    }
+    .listbox-container {
+        border: 1px solid $color-borders;
+        border-top: none;
+        border-radius: 0;
+    }
 }
 
 .dataset-info-icon {
     margin-left: auto;
+    color: #a7a7a7;
 }
 </style>
