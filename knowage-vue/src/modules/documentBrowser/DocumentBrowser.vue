@@ -128,12 +128,13 @@ export default defineComponent({
 
 #tab-icon-container {
     position: absolute;
-    top: 0.6rem;
+    top: 0.8rem;
     right: 2rem;
 }
 
 #tab-icon {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
+    color: rgba(0, 0, 0, 0.6);
     cursor: pointer;
 }
 
