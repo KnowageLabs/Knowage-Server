@@ -13,12 +13,12 @@
     <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
 
     <div class="p-d-flex p-flex-row p-ai-center">
-        <InputText class="kn-material-input p-m-2" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
+        <InputText class="kn-material-input p-m-2" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
         <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" @click="getDatasetsByFilter" />
     </div>
 
     <div class="overflow">
-        <DataTable v-if="!toggleCardDisplay" style="width:100%" class="p-datatable-sm kn-table" :value="datasetList" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
+        <DataTable v-if="!toggleCardDisplay" style="width:100%" class="p-datatable-sm kn-table" :value="filteredDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -52,12 +52,12 @@
             </Column>
         </DataTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2">
-            <Message v-if="datasetList.length === 0" class="kn-flex p-m-2" severity="info" :closable="false" :style="mainDescriptor.style.message">
+            <Message v-if="filteredDatasets.length === 0" class="kn-flex p-m-2" severity="info" :closable="false" :style="mainDescriptor.style.message">
                 {{ $t('common.info.noDataFound') }}
             </Message>
             <template v-else>
                 <WorkspaceCard
-                    v-for="(dataset, index) of datasetList"
+                    v-for="(dataset, index) of filteredDatasets"
                     :key="index"
                     :viewType="'dataset'"
                     :document="dataset"
@@ -167,6 +167,7 @@ export default defineComponent({
             showDetailSidebar: false,
             showDatasetDialog: false,
             datasetList: [] as any,
+            filteredDatasets: [] as any,
             datasetCategories: [] as any,
             selectedDataset: {} as any,
             menuButtons: [] as any,
@@ -180,7 +181,8 @@ export default defineComponent({
             warningDialogVisbile: false,
             warningMessage: '',
             tableMode: 'My Datasets',
-            selectButtonOptions: ['My Datasets', 'Enterprise', 'Shared', 'All Datasets']
+            selectButtonOptions: ['My Datasets', 'Enterprise', 'Shared', 'All Datasets'],
+            searchWord: '' as string
         }
     },
     created() {
@@ -413,27 +415,51 @@ export default defineComponent({
             this.getDatasetsByFilter()
         },
         async getDatasetsByFilter() {
+            this.searchWord = ''
             switch (this.tableMode) {
                 case 'My Datasets':
                     this.datasetList = this.getDatasets('owned')
-                        .then((response: AxiosResponse<any>) => (this.datasetList = [...response.data.root]))
+                        .then((response: AxiosResponse<any>) => {
+                            this.datasetList = [...response.data.root]
+                            this.filteredDatasets = [...this.datasetList]
+                        })
                         .finally(() => (this.loading = false))
                     break
                 case 'Enterprise':
                     this.datasetList = this.getDatasets('enterprise')
-                        .then((response: AxiosResponse<any>) => (this.datasetList = [...response.data.root]))
+                        .then((response: AxiosResponse<any>) => {
+                            this.datasetList = [...response.data.root]
+                            this.filteredDatasets = [...this.datasetList]
+                        })
                         .finally(() => (this.loading = false))
                     break
                 case 'Shared':
                     this.datasetList = this.getDatasets('shared')
-                        .then((response: AxiosResponse<any>) => (this.datasetList = [...response.data.root]))
+                        .then((response: AxiosResponse<any>) => {
+                            this.datasetList = [...response.data.root]
+                            this.filteredDatasets = [...this.datasetList]
+                        })
                         .finally(() => (this.loading = false))
                     break
                 case 'All Datasets':
                     this.datasetList = this.getDatasets('mydata')
-                        .then((response: AxiosResponse<any>) => (this.datasetList = [...response.data.root]))
+                        .then((response: AxiosResponse<any>) => {
+                            this.datasetList = [...response.data.root]
+                            this.filteredDatasets = [...this.datasetList]
+                        })
                         .finally(() => (this.loading = false))
             }
+        },
+        searchItems() {
+            setTimeout(() => {
+                if (!this.searchWord.trim().length) {
+                    this.filteredDatasets = [...this.datasetList] as any[]
+                } else {
+                    this.filteredDatasets = this.datasetList.filter((el: any) => {
+                        return el.label?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.dsTypeCd?.toLowerCase().includes(this.searchWord.toLowerCase())
+                    })
+                }
+            }, 250)
         }
     }
 })
