@@ -1,5 +1,5 @@
 <template>
-    <Toolbar class="kn-toolbar kn-toolbar--secondary" style="width:100%">
+    <Toolbar class="kn-toolbar kn-toolbar--secondary" :style="mainDescriptor.style.maxWidth">
         <template #left>
             <Button id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
             {{ $t('workspace.menuLabels.myAnalysis') }}
@@ -38,19 +38,24 @@
             </Column>
         </DataTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2" data-test="card-container">
-            <WorkspaceCard
-                v-for="(document, index) of filteredAnalysisDocuments"
-                :key="index"
-                :viewType="'analysis'"
-                :document="document"
-                @executeAnalysisDocument="executeAnalysisDocument"
-                @editAnalysisDocument="editAnalysisDocument"
-                @shareAnalysisDocument="shareAnalysisDocument"
-                @cloneAnalysisDocument="cloneAnalysisDocument"
-                @deleteAnalysisDocument="deleteAnalysisDocumentConfirm"
-                @uploadAnalysisPreviewFile="uploadAnalysisPreviewFile"
-                @openSidebar="showSidebar"
-            />
+            <Message v-if="filteredAnalysisDocuments.length === 0" class="kn-flex p-m-2" severity="info" :closable="false" :style="mainDescriptor.style.message">
+                {{ $t('common.info.noDataFound') }}
+            </Message>
+            <template v-else>
+                <WorkspaceCard
+                    v-for="(document, index) of filteredAnalysisDocuments"
+                    :key="index"
+                    :viewType="'analysis'"
+                    :document="document"
+                    @executeAnalysisDocument="executeAnalysisDocument"
+                    @editAnalysisDocument="editAnalysisDocument"
+                    @shareAnalysisDocument="shareAnalysisDocument"
+                    @cloneAnalysisDocument="cloneAnalysisDocument"
+                    @deleteAnalysisDocument="deleteAnalysisDocumentConfirm"
+                    @uploadAnalysisPreviewFile="uploadAnalysisPreviewFile"
+                    @openSidebar="showSidebar"
+                />
+            </template>
         </div>
     </div>
     <DetailSidebar
@@ -83,6 +88,7 @@ import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.v
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import DataTable from 'primevue/datatable'
 import Menu from 'primevue/contextmenu'
+import Message from 'primevue/message'
 import Column from 'primevue/column'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import WorkspaceAnalysisViewEditDialog from './dialogs/WorkspaceAnalysisViewEditDialog.vue'
@@ -92,7 +98,7 @@ import { AxiosResponse } from 'axios'
 
 export default defineComponent({
     name: 'workspace-analysis-view',
-    components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu, KnInputFile, WorkspaceAnalysisViewEditDialog, WorkspaceWarningDialog, WorkspaceAnalysisViewShareDialog },
+    components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu, Message, KnInputFile, WorkspaceAnalysisViewEditDialog, WorkspaceWarningDialog, WorkspaceAnalysisViewShareDialog },
     emits: ['showMenu', 'toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {

@@ -1,5 +1,5 @@
 <template>
-    <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
+    <Toolbar class="kn-toolbar kn-toolbar--primary" :style="mainDescriptor.style.maxWidth">
         <template #left> {{ $t('workspace.federationDefinition.title') }}</template>
         <template #right>
             <Button class="kn-button p-button-text p-button-rounded" @click="closeFederationDefinition"> {{ $t('common.close') }}</Button></template
@@ -7,8 +7,8 @@
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
-    <div>
-        <div v-if="step === 0" class="p-d-flex p-flex-row">
+    <div class="kn-page-content">
+        <div v-if="step === 0" class="p-d-flex p-flex-row p-flex-wrap">
             <WorkspaceFederationDatasetList class="kn-flex p-m-2" :mode="'available'" :propDatasets="availableDatasets" @showInfo="showDatasetInfo" @datasetSelected="moveDataset"></WorkspaceFederationDatasetList>
             <WorkspaceFederationDatasetList class="kn-flex p-m-2" :mode="'selected'" :propDatasets="selectedDatasets" @datasetSelected="moveDataset"></WorkspaceFederationDatasetList>
         </div>
@@ -31,6 +31,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { IFederatedDataset } from '../Workspace'
+import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import WorskpaceFederationDatasetDialog from './dialogs/WorskpaceFederationDatasetDialog.vue'
 import WorkspaceWarningDialog from '../genericComponents/WorkspaceWarningDialog.vue'
 import WorkspaceFederationSaveDialog from './dialogs/WorkspaceFederationSaveDialog.vue'
@@ -45,6 +46,7 @@ export default defineComponent({
     props: { id: { type: String } },
     data() {
         return {
+            mainDescriptor,
             federatedDataset: null as IFederatedDataset | null,
             datasets: [] as any[],
             availableDatasets: [] as any[],

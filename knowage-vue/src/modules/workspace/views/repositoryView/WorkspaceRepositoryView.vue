@@ -32,7 +32,12 @@
             </Column>
         </DataTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2" data-test="card-container">
-            <WorkspaceCard v-for="(document, index) of filteredDocuments" :key="index" :viewType="'repository'" :document="document" @executeDocumentFromOrganizer="executeDocumentFromOrganizer" @moveDocumentToFolder="moveDocumentToFolder" @deleteDocumentFromOrganizer="deleteDocumentConfirm" />
+            <Message v-if="filteredDocuments.length === 0" class="kn-flex p-m-2" severity="info" :closable="false" :style="mainDescriptor.style.message">
+                {{ $t('common.info.noDataFound') }}
+            </Message>
+            <template v-else>
+                <WorkspaceCard v-for="(document, index) of filteredDocuments" :key="index" :viewType="'repository'" :document="document" @executeDocumentFromOrganizer="executeDocumentFromOrganizer" @moveDocumentToFolder="moveDocumentToFolder" @deleteDocumentFromOrganizer="deleteDocumentConfirm" />
+            </template>
         </div>
     </div>
 
@@ -56,6 +61,7 @@ import { defineComponent } from 'vue'
 import { IDocument, IFolder } from '@/modules/workspace/Workspace'
 import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
+import Message from 'primevue/message'
 import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
 import repositoryDescriptor from './WorkspaceRepositoryViewDescriptor.json'
 import DataTable from 'primevue/datatable'
@@ -68,7 +74,7 @@ import WorkspaceRepositoryBreadcrumb from './breadcrumbs/WorkspaceRepositoryBrea
 import { AxiosResponse } from 'axios'
 
 export default defineComponent({
-    components: { DataTable, Column, FabButton, DetailSidebar, WorkspaceCard, Menu, WorkspaceRepositoryMoveDialog, WorkspaceWarningDialog, WorkspaceRepositoryBreadcrumb },
+    components: { DataTable, Column, FabButton, DetailSidebar, WorkspaceCard, Menu, Message, WorkspaceRepositoryMoveDialog, WorkspaceWarningDialog, WorkspaceRepositoryBreadcrumb },
     emits: ['showMenu', 'reloadRepositoryMenu', 'toggleDisplayView', 'createFolderClick', 'breadcrumbClicked'],
     props: { selectedFolder: { type: Object }, id: { type: String, required: false }, toggleCardDisplay: { type: Boolean }, breadcrumbs: { type: Array }, allFolders: { type: Array } },
     data() {

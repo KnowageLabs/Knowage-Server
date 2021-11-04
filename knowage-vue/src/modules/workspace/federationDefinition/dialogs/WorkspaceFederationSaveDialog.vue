@@ -79,8 +79,10 @@ export default defineComponent({
             this.loadDataset()
         }
     },
-    saveButtonDisabled(): boolean {
-        return this.dataset.label.length === 0 || this.dataset.name.length === 0
+    computed: {
+        saveButtonDisabled(): boolean {
+            return this.dataset.label.length === 0 || this.dataset.name.length === 0
+        }
     },
     created() {
         this.loadDataset()

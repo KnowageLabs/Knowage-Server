@@ -31,7 +31,12 @@
             </Column>
         </DataTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2" data-test="card-container">
-            <WorkspaceCard v-for="(document, index) of filteredDocuments" :key="index" :viewType="'recent'" :document="document" @executeRecent="executeRecent" @openSidebar="showSidebar" />
+            <Message v-if="filteredDocuments.length === 0" class="kn-flex p-m-2" severity="info" :closable="false" :style="mainDescriptor.style.message">
+                {{ $t('common.info.noDataFound') }}
+            </Message>
+            <template v-else>
+                <WorkspaceCard v-for="(document, index) of filteredDocuments" :key="index" :viewType="'recent'" :document="document" @executeRecent="executeRecent" @openSidebar="showSidebar" />
+            </template>
         </div>
     </div>
 
@@ -42,13 +47,14 @@ import { defineComponent } from 'vue'
 import { IDocument } from '@/modules/workspace/Workspace'
 import { AxiosResponse } from 'axios'
 import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
+import Message from 'primevue/message'
 import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
 import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 
 export default defineComponent({
-    components: { DataTable, Column, DetailSidebar, WorkspaceCard },
+    components: { DataTable, Column, DetailSidebar, WorkspaceCard, Message },
     emits: ['showMenu', 'toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     data() {
