@@ -96,6 +96,7 @@
 
     <WorkspaceDataCloneDialog :visible="cloneDialogVisible" :propDataset="selectedDataset" @close="cloneDialogVisible = false" @clone="handleDatasetClone"></WorkspaceDataCloneDialog>
     <WorkspaceDataShareDialog :visible="shareDialogVisible" :propDataset="selectedDataset" :datasetCategories="datasetCategories" @close="shareDialogVisible = false" @share="handleDatasetShare"></WorkspaceDataShareDialog>
+    <WorkspaceDataPreviewDialog :visible="previewDialogVisible" @close="previewDialogVisible = false"></WorkspaceDataPreviewDialog>
     <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.myData.title')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
 </template>
 <script lang="ts">
@@ -111,13 +112,14 @@ import Column from 'primevue/column'
 import Chip from 'primevue/chip'
 import Menu from 'primevue/contextmenu'
 import WorkspaceDataCloneDialog from './dialogs/WorkspaceDataCloneDialog.vue'
+import WorkspaceDataPreviewDialog from './dialogs/WorkspaceDataPreviewDialog.vue'
 import WorkspaceDataShareDialog from './dialogs/WorkspaceDataShareDialog.vue'
 import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDialog.vue'
 import { AxiosResponse } from 'axios'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
 
 export default defineComponent({
-    components: { DataTable, Column, Chip, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog },
+    components: { DataTable, Column, Chip, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog, WorkspaceDataPreviewDialog },
     emits: ['toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
@@ -170,6 +172,7 @@ export default defineComponent({
             } as Object,
             cloneDialogVisible: false,
             shareDialogVisible: false,
+            previewDialogVisible: false,
             warningDialogVisbile: false,
             warningMessage: ''
         }
@@ -253,8 +256,10 @@ export default defineComponent({
             this.selectedDataset = {}
             this.showDatasetDialog = true
         },
-        previewDataset(event) {
-            console.log('previewDataset(event) {', event)
+        async previewDataset(dataset: any) {
+            console.log('previewDataset(event) {', dataset)
+            await this.loadDataset(dataset.label)
+            this.previewDialogVisible = true
         },
         editFileDataset() {
             this.showDatasetDialog = true
