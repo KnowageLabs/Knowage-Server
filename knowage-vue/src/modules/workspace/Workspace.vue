@@ -59,13 +59,13 @@
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         <Listbox :options="workspaceDescriptor.menuItems">
             <template #option="slotProps">
-                <div v-if="slotProps.option.value !== 'repository'" class="kn-list-item" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
+                <div v-if="slotProps.option.value !== 'repository'" class="kn-list-item p-d-flex p-flex-row" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
                     <i :class="slotProps.option.icon"></i>
-                    <div class="kn-list-item-text">
+                    <div class="kn-list-item-text p-ml-2">
                         <span>{{ $t(slotProps.option.label) }}</span>
                     </div>
                 </div>
-                <div v-else class="menu-accordion">
+                <div v-else class="menu-accordion-sidebar">
                     <Accordion>
                         <AccordionTab :header="$t('workspace.menuLabels.myRepository')">
                             <WorkspaceDocumentTree :propFolders="allFolders" mode="select" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder" @delete="deleteFolder" @createFolder="showCreateFolderDialog"></WorkspaceDocumentTree>
@@ -234,10 +234,15 @@ export default defineComponent({
 .menu-accordion .p-accordion-tab-active {
     margin: 0 !important;
     padding: 0 !important;
-    border-bottom: 1 px solid #f2f2f2;
+    border-bottom: 1 px solid #c2c2c2;
 }
 
-.menu-accordion .p-accordion-content {
+.menu-accordion .p-accordion-header-link {
+    padding: 0.75rem 0.75rem !important;
+}
+
+.menu-accordion .p-accordion-content,
+.menu-accordion .p-tree {
     padding: 0 !important;
 }
 
@@ -247,6 +252,19 @@ export default defineComponent({
 
 .menu-accordion-icon {
     margin-left: auto;
+}
+
+.menu-accordion-sidebar .p-accordion-content,
+.menu-accordion-sidebar .p-tree {
+    padding: 0 !important;
+}
+
+.menu-accordion-sidebar .p-accordion-tab-active {
+    margin: 0 !important;
+}
+
+.mySidebar .p-listbox-list li:nth-child(2) {
+    padding: 0 !important;
 }
 
 @media screen and (min-width: 1025px) {

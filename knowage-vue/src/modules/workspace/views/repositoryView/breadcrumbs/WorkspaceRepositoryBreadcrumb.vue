@@ -44,8 +44,12 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .breadcrumbs-item:hover {
     cursor: pointer;
+}
+
+.p-breadcrumb ul li:nth-child(2) {
+    display: none;
 }
 </style>
