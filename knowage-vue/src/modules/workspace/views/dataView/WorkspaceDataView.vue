@@ -18,7 +18,7 @@
     </div>
 
     <div class="overflow">
-        <DataTable v-if="!toggleCardDisplay" style="width:100%" class="p-datatable-sm kn-table" :value="filteredDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
+        <DataTable v-if="!toggleCardDisplay" style="width:100%" class="p-datatable-sm kn-table" :value="filteredDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -46,12 +46,12 @@
                 <template #header> &ensp; </template>
                 <template #body="slotProps">
                     <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="showMenu($event, slotProps.data)" />
-                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click="showSidebar(slotProps.data)" />
+                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.name" />
                     <Button icon="fas fa-eye" class="p-button-link" @click="previewDataset(slotProps.data)" />
                 </template>
             </Column>
         </DataTable>
-        <div v-if="toggleCardDisplay" class="p-grid p-m-2">
+        <div v-if="toggleCardDisplay" class="p-grid p-m-2" data-test="card-container">
             <Message v-if="filteredDatasets.length === 0" class="kn-flex p-m-2" severity="info" :closable="false" :style="mainDescriptor.style.message">
                 {{ $t('common.info.noDataFound') }}
             </Message>
@@ -64,8 +64,8 @@
                     @previewDataset="previewDataset"
                     @editFileDataset="editFileDataset"
                     @openDatasetInQBE="openDatasetInQBE"
-                    @exportToXlsx="exportToXlsx"
-                    @exportToCsv="exportToCsv"
+                    @exportToXlsx="exportDataset($event, 'xls')"
+                    @exportToCsv="exportDataset($event, 'csv')"
                     @downloadDatasetFile="downloadDatasetFile"
                     @shareDataset="shareDataset"
                     @cloneDataset="cloneDataset"
@@ -84,13 +84,14 @@
         @previewDataset="previewDataset"
         @editFileDataset="editFileDataset"
         @openDatasetInQBE="openDatasetInQBE"
-        @exportToXlsx="exportToXlsx"
-        @exportToCsv="exportToCsv"
+        @exportToXlsx="exportDataset($event, 'xls')"
+        @exportToCsv="exportDataset($event, 'csv')"
         @downloadDatasetFile="downloadDatasetFile"
         @shareDataset="shareDataset"
         @cloneDataset="cloneDataset"
         @deleteDataset="deleteDatasetConfirm"
         @close="showDetailSidebar = false"
+        data-test="detail-sidebar"
     />
 
     <DatasetWizard v-if="showDatasetDialog" :selectedDataset="selectedDataset" :visible="showDatasetDialog" @closeDialog="showDatasetDialog = false" @closeDialogAndReload="closeWizardAndRealod" />
