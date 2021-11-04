@@ -32,12 +32,9 @@
         <Column class="kn-truncated" :style="datasetPreviewTableDescriptor.columnStyle" v-for="col of columns" :field="col.field" :key="col.field" :sortable="true">
             <template #header>
                 {{ col.header }}
-                <i class="pi pi-filter-icon pi-filter" @click="searchVisible[col.field] = true" />
+                <i class="pi pi-filter-icon pi-filter" @click="searchVisible[col.field] = !searchVisible[col.field]" />
                 <InputText v-if="searchVisible[col.field]" type="text" v-model="searchInput[col.field]" class="p-column-filter" @input="onFilter(col)"></InputText>
             </template>
-            <!-- <template #filter="{filterModel}">
-                <InputText type="text" v-model="filterModel.value" class="p-column-filter" @input="onFilter($event, col)"></InputText>
-            </template> -->
         </Column>
     </DataTable>
 </template>
@@ -94,11 +91,11 @@ export default defineComponent({
                 this.globalFilterFields.push(el.field)
                 this.filters[el.field] = { operator: FilterOperator.AND, constraints: [filterDefault] }
             })
-            console.log('LOADED COLUMNS: ', this.columns)
+            // console.log('LOADED COLUMNS: ', this.columns)
         },
         loadRows() {
             this.rows = this.previewRows as any[]
-            console.log('LOADED ROWS: ', this.rows)
+            // console.log('LOADED ROWS: ', this.rows)
         },
         loadPagination() {
             this.lazyParams = this.pagination as any
@@ -108,8 +105,8 @@ export default defineComponent({
             this.$emit('pageChanged', this.lazyParams)
         },
         onSort(event: any) {
-            console.log('SORT: ', event)
-            console.log('COLUMNS', this.columns)
+            // console.log('SORT: ', event)
+            // console.log('COLUMNS', this.columns)
             // sorting: {column: "store_numb", order: "asc"}
             let column = ''
             const index = this.columns.findIndex((el: any) => el.field === event.sortField)
@@ -128,7 +125,7 @@ export default defineComponent({
             this.timer = setTimeout(() => {
                 const filter = { column: column.header, value: this.searchInput[column.field] }
                 const index = this.customFilters.findIndex((el: any) => el.column === column.header)
-                console.log('INDEX: ', index, ' VALUE: ', filter.value)
+                // console.log('INDEX: ', index, ' VALUE: ', filter.value)
                 if (index !== -1) {
                     if (!filter.value) {
                         this.customFilters.splice(index, 1)
