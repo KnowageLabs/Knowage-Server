@@ -230,17 +230,14 @@ export default defineComponent({
 .mySidebar.p-sidebar .p-sidebar-content {
     padding: 0 !important;
 }
-
 .menu-accordion .p-accordion-tab-active {
     margin: 0 !important;
     padding: 0 !important;
     border-bottom: 1 px solid #c2c2c2;
 }
-
 .menu-accordion .p-accordion-header-link {
     padding: 0.75rem 0.75rem !important;
 }
-
 .menu-accordion .p-accordion-content,
 .menu-accordion .p-tree {
     padding: 0 !important;
