@@ -85,7 +85,7 @@
         @close="showDetailSidebar = false"
     />
 
-    <DatasetWizard v-if="showDatasetDialog" :selectedDataset="selectedDataset" :visible="showDatasetDialog" @closeDialog="showDatasetDialog = false" />
+    <DatasetWizard v-if="showDatasetDialog" :selectedDataset="selectedDataset" :visible="showDatasetDialog" @closeDialog="showDatasetDialog = false" @closeDialogAndReload="closeWizardAndRealod" />
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     <Menu id="creationMenu" ref="creationMenu" :model="creationMenuButtons" />
 
@@ -389,6 +389,10 @@ export default defineComponent({
         closeWarningDialog() {
             this.warningMessage = ''
             this.warningDialogVisbile = false
+        },
+        closeWizardAndRealod() {
+            this.showDatasetDialog = false
+            this.getAllData()
         }
     }
 })
