@@ -111,7 +111,7 @@ export default defineComponent({
     z-index: 50;
     position: absolute;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     top: 0;
     left: 0;
 }
