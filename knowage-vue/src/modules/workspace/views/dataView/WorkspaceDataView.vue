@@ -12,10 +12,13 @@
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
 
-    <InputText class="kn-material-input p-m-2" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
+    <div class="p-d-flex p-flex-row p-ai-center">
+        <InputText class="kn-material-input p-m-2" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
+        <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" @click="getDatasetsByFilter" />
+    </div>
 
     <div class="overflow">
-        <DataTable v-if="!toggleCardDisplay" style="width:100%" class="p-datatable-sm kn-table" :value="allDataset" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
+        <DataTable v-if="!toggleCardDisplay" style="width:100%" class="p-datatable-sm kn-table" :value="datasetList" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" v-model:filters="filters">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -49,12 +52,12 @@
             </Column>
         </DataTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2">
-            <Message v-if="allDataset.length === 0" class="kn-flex p-m-2" severity="info" :closable="false" :style="mainDescriptor.style.message">
+            <Message v-if="datasetList.length === 0" class="kn-flex p-m-2" severity="info" :closable="false" :style="mainDescriptor.style.message">
                 {{ $t('common.info.noDataFound') }}
             </Message>
             <template v-else>
                 <WorkspaceCard
-                    v-for="(dataset, index) of allDataset"
+                    v-for="(dataset, index) of datasetList"
                     :key="index"
                     :viewType="'dataset'"
                     :document="dataset"
@@ -117,9 +120,10 @@ import WorkspaceDataShareDialog from './dialogs/WorkspaceDataShareDialog.vue'
 import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDialog.vue'
 import { AxiosResponse } from 'axios'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
+import SelectButton from 'primevue/selectbutton'
 
 export default defineComponent({
-    components: { DataTable, Column, Chip, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog, WorkspaceDataPreviewDialog },
+    components: { DataTable, Column, Chip, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog, WorkspaceDataPreviewDialog, SelectButton },
     emits: ['toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
@@ -162,7 +166,7 @@ export default defineComponent({
             loading: false,
             showDetailSidebar: false,
             showDatasetDialog: false,
-            allDataset: [] as any,
+            datasetList: [] as any,
             datasetCategories: [] as any,
             selectedDataset: {} as any,
             menuButtons: [] as any,
@@ -174,23 +178,24 @@ export default defineComponent({
             shareDialogVisible: false,
             previewDialogVisible: false,
             warningDialogVisbile: false,
-            warningMessage: ''
+            warningMessage: '',
+            tableMode: 'My Datasets',
+            selectButtonOptions: ['My Datasets', 'Enterprise', 'Shared', 'All Datasets']
         }
     },
     created() {
         this.getAllData()
     },
+
     methods: {
-        async getAllData() {
-            await this.getAllDatasets()
-            await this.getDatasetCategories()
-            this.loading = false
-        },
-        async getAllDatasets() {
+        getDatasets(filter: string) {
             this.loading = true
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/mydata/`).then((response: AxiosResponse<any>) => {
-                this.allDataset = [...response.data.root]
-            })
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${filter}/`)
+        },
+        async getAllData() {
+            await this.getDatasetsByFilter()
+            await this.getDatasetCategories()
+            // this.loading = false
         },
         async getDatasetCategories() {
             this.loading = true
@@ -347,7 +352,7 @@ export default defineComponent({
                     })
                     this.showDetailSidebar = false
                     this.shareDialogVisible = false
-                    this.getAllData()
+                    this.getDatasetsByFilter()
                 })
                 .catch(() => {})
             this.loading = false
@@ -368,7 +373,7 @@ export default defineComponent({
                     })
                     this.showDetailSidebar = false
                     this.cloneDialogVisible = false
-                    this.getAllData()
+                    this.getDatasetsByFilter()
                 })
                 .catch((response: any) => {
                     this.warningDialogVisbile = true
@@ -394,7 +399,7 @@ export default defineComponent({
                         msg: this.$t('common.toast.success')
                     })
                     this.showDetailSidebar = false
-                    this.getAllData()
+                    this.getDatasetsByFilter()
                 })
                 .catch(() => {})
             this.loading = false
@@ -405,7 +410,30 @@ export default defineComponent({
         },
         closeWizardAndRealod() {
             this.showDatasetDialog = false
-            this.getAllData()
+            this.getDatasetsByFilter()
+        },
+        async getDatasetsByFilter() {
+            switch (this.tableMode) {
+                case 'My Datasets':
+                    this.datasetList = this.getDatasets('owned')
+                        .then((response: AxiosResponse<any>) => (this.datasetList = [...response.data.root]))
+                        .finally(() => (this.loading = false))
+                    break
+                case 'Enterprise':
+                    this.datasetList = this.getDatasets('enterprise')
+                        .then((response: AxiosResponse<any>) => (this.datasetList = [...response.data.root]))
+                        .finally(() => (this.loading = false))
+                    break
+                case 'Shared':
+                    this.datasetList = this.getDatasets('shared')
+                        .then((response: AxiosResponse<any>) => (this.datasetList = [...response.data.root]))
+                        .finally(() => (this.loading = false))
+                    break
+                case 'All Datasets':
+                    this.datasetList = this.getDatasets('mydata')
+                        .then((response: AxiosResponse<any>) => (this.datasetList = [...response.data.root]))
+                        .finally(() => (this.loading = false))
+            }
         }
     }
 })
