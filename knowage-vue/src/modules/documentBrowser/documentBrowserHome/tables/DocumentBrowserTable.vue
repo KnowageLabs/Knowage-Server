@@ -4,59 +4,59 @@
             {{ documents.length + ' ' + $t('documentBrowser.documentsFound') }}
         </Message>
     </div>
-    <DataTable
-        id="documents-datatable"
-        :value="documents"
-        :paginator="documents.length > documentBrowserTableDescriptor.rows"
-        :rows="documentBrowserTableDescriptor.rows"
-        v-model:filters="filters"
-        filterDisplay="menu"
-        class="p-datatable-sm kn-table"
-        dataKey="id"
-        :responsiveLayout="documentBrowserTableDescriptor.responsiveLayout"
-        :breakpoint="documentBrowserTableDescriptor.breakpoint"
-        @rowClick="$emit('selected', $event.data)"
-        data-test="documents-datatable"
-    >
-        <template #empty>
-            <Message class="p-m-2" severity="info" :closable="false" :style="documentBrowserTableDescriptor.styles.message" data-test="no-documents-hint">
-                {{ $t('documentBrowser.noDocumentsHint') }}
-            </Message>
-        </template>
-        <template #header>
-            <div class="table-header p-d-flex" v-if="!searchMode">
-                <span class="p-input-icon-left p-mr-3 p-col-12">
-                    <i class="pi pi-search" />
-                    <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
-                </span>
-            </div>
-        </template>
-        <Column class="kn-truncated" :style="col.style" v-for="col of documentBrowserTableDescriptor.columns" :header="$t(col.header)" :field="col.field" :key="col.field" :sortField="col.field" :sortable="true">
-            <template #filter="{filterModel}">
-                <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
-            </template>
-        </Column>
-        <Column v-if="isSuperAdmin" class="kn-truncated" :header="$t('common.status')" field="stateCodeStr" sortField="stateCodeStr" :sortable="true">
-            <template #filter="{filterModel}">
-                <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
-            </template>
-            <template #body="slotProps">
-                <span data-test="document-status"> {{ slotProps.data['stateCodeStr'] }}</span>
-            </template></Column
+    <div class="table-header p-d-flex" v-if="!searchMode">
+        <span class="p-input-icon-left p-mr-3 p-col-12">
+            <i class="pi pi-search" />
+            <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
+        </span>
+    </div>
+    <div class="kn-overflow-y kn-flex">
+        <DataTable
+            id="documents-datatable"
+            :value="documents"
+            :paginator="documents.length > documentBrowserTableDescriptor.rows"
+            :rows="documentBrowserTableDescriptor.rows"
+            v-model:filters="filters"
+            filterDisplay="menu"
+            class="p-datatable-sm kn-table"
+            dataKey="id"
+            :responsiveLayout="documentBrowserTableDescriptor.responsiveLayout"
+            :breakpoint="documentBrowserTableDescriptor.breakpoint"
+            @rowClick="$emit('selected', $event.data)"
+            data-test="documents-datatable"
         >
-        <Column v-if="isSuperAdmin" :style="documentBrowserTableDescriptor.table.iconColumn.style" :header="$t('documentBrowser.visible')" field="visible" sortField="visible" :sortable="true">
-            <template #body="slotProps">
-                <span class="fa-stack">
-                    <i class="fa fa-eye fa-stack-1x"></i>
-                    <i v-if="!slotProps.data['visible']" class="fa fa-ban fa-stack-2x"></i>
-                </span> </template
-        ></Column>
-        <Column :style="documentBrowserTableDescriptor.table.iconColumn.style">
-            <template #body="slotProps">
-                <Button icon="fa fa-play-circle" class="p-button-link" @click.stop="executeDocument(slotProps.data)" />
+            <template #empty>
+                <Message class="p-m-2" severity="info" :closable="false" :style="documentBrowserTableDescriptor.styles.message" data-test="no-documents-hint">
+                    {{ $t('documentBrowser.noDocumentsHint') }}
+                </Message>
             </template>
-        </Column>
-    </DataTable>
+            <Column class="kn-truncated" :style="col.style" v-for="col of documentBrowserTableDescriptor.columns" :header="$t(col.header)" :field="col.field" :key="col.field" :sortField="col.field" :sortable="true">
+                <template #filter="{filterModel}">
+                    <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                </template>
+            </Column>
+            <Column v-if="isSuperAdmin" class="kn-truncated" :header="$t('common.status')" field="stateCodeStr" sortField="stateCodeStr" :sortable="true">
+                <template #filter="{filterModel}">
+                    <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                </template>
+                <template #body="slotProps">
+                    <span data-test="document-status"> {{ slotProps.data['stateCodeStr'] }}</span>
+                </template></Column
+            >
+            <Column v-if="isSuperAdmin" :style="documentBrowserTableDescriptor.table.iconColumn.style" :header="$t('documentBrowser.visible')" field="visible" sortField="visible" :sortable="true">
+                <template #body="slotProps">
+                    <span class="fa-stack">
+                        <i class="fa fa-eye fa-stack-1x"></i>
+                        <i v-if="!slotProps.data['visible']" class="fa fa-ban fa-stack-2x"></i>
+                    </span> </template
+            ></Column>
+            <Column :style="documentBrowserTableDescriptor.table.iconColumn.style">
+                <template #body="slotProps">
+                    <Button icon="fa fa-play-circle" class="p-button-link" @click.stop="executeDocument(slotProps.data)" />
+                </template>
+            </Column>
+        </DataTable>
+    </div>
 </template>
 
 <script lang="ts">
@@ -134,11 +134,11 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-#documents-datatable .p-datatable-wrapper {
-    height: auto;
-}
-
 #documents-found-hint {
     flex: 0.5;
+}
+
+.overflow {
+    overflow: auto;
 }
 </style>

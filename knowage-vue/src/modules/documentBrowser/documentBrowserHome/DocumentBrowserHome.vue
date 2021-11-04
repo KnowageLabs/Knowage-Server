@@ -1,49 +1,43 @@
 <template>
-    <div class="kn-page">
-        <div class="kn-page-content p-grid p-m-0">
-            <div id="document-browser-home-toolbar">
-                <Toolbar class="kn-toolbar kn-toolbar--primary">
-                    <template #left>
-                        <span>{{ searchMode ? $t('documentBrowser.documentsSearch') : $t('documentBrowser.title') }}</span>
-                        <span v-if="searchMode" class="p-mx-4">
-                            <i class="fa fa-arrow-left search-pointer p-mx-4" @click="exitSearchMode" />
-                            <InputText id="document-search" class="kn-material-input p-inputtext-sm p-mx-2" v-model="searchWord" :placeholder="$t('common.search')" />
-                            <i class="fa fa-times search-pointer p-mx-4" @click="searchWord = ''" />
-                            <i class="pi pi-search search-pointer p-mx-4" @click="loadDocuments" />
-                        </span>
-                    </template>
+    <Toolbar class="kn-toolbar kn-toolbar--primary">
+        <template #left>
+            <span>{{ searchMode ? $t('documentBrowser.documentsSearch') : $t('documentBrowser.title') }}</span>
+            <span v-if="searchMode" class="p-mx-4">
+                <i class="fa fa-arrow-left search-pointer p-mx-4" @click="exitSearchMode" />
+                <InputText id="document-search" class="kn-material-input p-inputtext-sm p-mx-2" v-model="searchWord" :placeholder="$t('common.search')" />
+                <i class="fa fa-times search-pointer p-mx-4" @click="searchWord = ''" />
+                <i class="pi pi-search search-pointer p-mx-4" @click="loadDocuments" />
+            </span>
+        </template>
 
-                    <template #right>
-                        <span v-if="!searchMode" class="p-mx-4">
-                            <i class="pi pi-search search-pointer" @click="searchMode = true" />
-                        </span>
-                        <KnFabButton v-if="isSuperAdmin && selectedFolder && selectedFolder.parentId" icon="fas fa-plus" @click="toggle($event)" aria-haspopup="true" aria-controls="overlay_menu"></KnFabButton>
-                        <Menu ref="menu" :model="items" :popup="true" />
-                    </template>
-                </Toolbar>
+        <template #right>
+            <span v-if="!searchMode" class="p-mx-4">
+                <i class="pi pi-search search-pointer" @click="searchMode = true" />
+            </span>
+            <KnFabButton v-if="isSuperAdmin && selectedFolder && selectedFolder.parentId" icon="fas fa-plus" @click="toggle($event)" aria-haspopup="true" aria-controls="overlay_menu"></KnFabButton>
+            <Menu ref="menu" :model="items" :popup="true" />
+        </template>
+    </Toolbar>
 
-                <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
-            </div>
+    <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
 
-            <div class="p-d-flex p-flex-row full-width">
-                <div v-show="!searchMode" class="kn-list--column kn-flex p-p-0">
-                    <DocumentBrowserTree :propFolders="folders" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder"></DocumentBrowserTree>
-                </div>
+    <div class="p-d-flex p-flex-row kn-flex p-m-0">
+        <div v-show="!searchMode" class="document-sidebar kn-flex">
+            <DocumentBrowserTree :propFolders="folders" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder"></DocumentBrowserTree>
+        </div>
 
-                <div id="detail-container" class="p-p-0 p-m-0 kn-page">
-                    <DocumentBrowserDetail
-                        v-if="selectedFolder || searchMode"
-                        :propDocuments="searchMode ? searchedDocuments : documents"
-                        :breadcrumbs="breadcrumbs"
-                        :searchMode="searchMode"
-                        @breadcrumbClicked="setSelectedBreadcrumb($event)"
-                        @documentCloned="loadDocuments"
-                        @documentStateChanged="loadDocuments"
-                        @itemSelected="$emit('itemSelected', $event)"
-                    ></DocumentBrowserDetail>
-                    <DocumentBrowserHint v-else data-test="document-browser-hint"></DocumentBrowserHint>
-                </div>
-            </div>
+        <div id="detail-container" class="p-d-flex p-flex-column">
+            <DocumentBrowserDetail
+                v-if="selectedFolder || searchMode"
+                :propDocuments="searchMode ? searchedDocuments : documents"
+                :breadcrumbs="breadcrumbs"
+                :searchMode="searchMode"
+                @breadcrumbClicked="setSelectedBreadcrumb($event)"
+                @documentCloned="loadDocuments"
+                @documentStateChanged="loadDocuments"
+                @itemSelected="$emit('itemSelected', $event)"
+            ></DocumentBrowserDetail>
+            <DocumentBrowserHint v-else data-test="document-browser-hint"></DocumentBrowserHint>
         </div>
     </div>
 </template>
@@ -160,6 +154,12 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@media screen and (max-width: 1024px) {
+    .document-sidebar {
+        display: none;
+    }
+}
+
 #document-browser-home-toolbar {
     width: 100%;
 }

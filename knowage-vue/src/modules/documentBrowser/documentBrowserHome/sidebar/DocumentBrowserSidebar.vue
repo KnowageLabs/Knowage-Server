@@ -16,7 +16,7 @@
         </Toolbar>
         <div class="p-m-4">
             <div v-if="selectedDocument.previewFile" class="p-text-center">
-                <img id="image-preview" :src="getImageUrl()" />
+                <img id="image-preview" :src="getImageUrl" />
             </div>
 
             <div v-if="document.functionalities && document.functionalities.length > 0" class="p-m-4">
@@ -82,6 +82,9 @@ export default defineComponent({
     computed: {
         isSuperAdmin(): boolean {
             return this.user?.isSuperadmin
+        },
+        getImageUrl(): string {
+            return process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
         }
     },
     created() {
@@ -94,9 +97,6 @@ export default defineComponent({
         },
         getFormatedDate(date: any) {
             return formatDate(date, 'MMM DD, YYYY h:mm:ss A')
-        },
-        getImageUrl() {
-            return process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
         },
         cloneDocumentConfirm() {
             this.$confirm.require({
@@ -130,7 +130,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #document-detail-toolbar .p-toolbar-group-left {
     width: 100%;
 }

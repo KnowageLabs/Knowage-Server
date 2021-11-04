@@ -1,7 +1,7 @@
 <template>
     <div class="kn-page">
-        <div>
-            <TabView id="document-browser-tab-view" v-model:activeIndex="activeIndex" @tab-change="onTabChange">
+        <div class="tab-container kn-page-content p-d-flex p-flex-column">
+            <TabView id="document-browser-tab-view" class="p-d-flex p-flex-column kn-flex" v-model:activeIndex="activeIndex" @tab-change="onTabChange">
                 <TabPanel>
                     <template #header>
                         <i class="fa fa-folder-open"></i>
@@ -135,5 +135,12 @@ export default defineComponent({
 #tab-icon {
     font-size: 1.5rem;
     cursor: pointer;
+}
+
+.tab-container .p-tabview .p-tabview-panel,
+.tab-container .p-tabview .p-tabview-panels {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 </style>

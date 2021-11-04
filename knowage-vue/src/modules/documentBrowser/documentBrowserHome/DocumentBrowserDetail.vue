@@ -1,10 +1,10 @@
 <template>
-    <div class="p-d-flex p-flex-row">
-        <div class="kn-flex">
-            <div class="document-table-container">
+    <div class="p-d-flex p-flex-row kn-flex">
+        <div class="p-d-flex p-flex-column kn-flex">
+            <div class="document-table-container p-d-flex p-flex-column kn-flex">
                 <div v-if="selectedDocument" id="document-detail-backdrop" @click="selectedDocument = null"></div>
                 <DocumentBrowserBreadcrumb v-if="!searchMode" :breadcrumbs="breadcrumbs" @breadcrumbClicked="$emit('breadcrumbClicked', $event)"></DocumentBrowserBreadcrumb>
-                <DocumentBrowserTable class="p-m-2" :propDocuments="documents" :searchMode="searchMode" @selected="setSelectedDocument" @itemSelected="$emit('itemSelected', $event)"></DocumentBrowserTable>
+                <DocumentBrowserTable :propDocuments="documents" :searchMode="searchMode" @selected="setSelectedDocument" @itemSelected="$emit('itemSelected', $event)"></DocumentBrowserTable>
             </div>
         </div>
         <div v-if="selectedDocument" id="document-browser-sidebar-container" data-test="document-browser-sidebar">
