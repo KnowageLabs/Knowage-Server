@@ -1,5 +1,5 @@
 <template>
-    <Toolbar class="kn-toolbar kn-toolbar--secondary" style="width:100%">
+    <Toolbar class="kn-toolbar kn-toolbar--secondary" :style="mainDescriptor.style.maxWidth">
         <template #left>
             <Button id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
             {{ $t('workspace.myData.title') }}

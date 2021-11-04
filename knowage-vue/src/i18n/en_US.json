@@ -1501,24 +1501,25 @@
             }
         },
         "myData": {
-            "exportSuccess": "The download has started in background. You will find the result file in your download page.",
             "cloneDataset": "Clone Dataset",
             "clonedDatasetWizard": "Cloned Dataset Wizard",
             "csvExport": "Export Dataset to CSV",
+            "datasetPreview": "Dataset Preview",
             "deleteDataset": "Delete Dataset",
             "driverable": "Drivable",
+            "exportSuccess": "The download has started in background. You will find the result file in your download page.",
             "fileDownload": "Download Dataset file",
             "modified": "Modified",
             "openData": "Import Open Data",
             "parametrical": "Parametrical",
+            "parseError": "Impossible to parse file. Check its content and upload it again",
             "prepareData": "Prepare Data",
             "shareDataset": "Share/Unshare Dataset",
             "shareDatasetHint": "By selecting a category from the combo box you are sharing the data set for all the users that are able to manage the specified data set category.",
             "title": "My Data",
             "unshareDataset": "Unshare Dataset",
-            "xlsxExport": "Export Dataset to XLSX",
-            "parseError": "Impossible to parse file. Check its content and upload it again",
-            "wizardTitle": "Dataset Wizard"
+            "wizardTitle": "Dataset Wizard",
+            "xlsxExport": "Export Dataset to XLSX"
         },
         "myModels": {
             "deleteDataset": "Delete dataset",

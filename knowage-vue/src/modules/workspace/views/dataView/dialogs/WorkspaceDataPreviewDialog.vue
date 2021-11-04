@@ -1,9 +1,18 @@
 <template>
-    <Dialog :style="workspaceDataPreviewDialogDescriptor.dialog.style" :header="$t('kpi.kpiScheduler.saveScheduler')" :visible="visible" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
-        <DatasetPreviewTable></DatasetPreviewTable>
-        <template #footer>
-            <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="$emit('close')"></Button>
+    <Dialog :style="workspaceDataPreviewDialogDescriptor.dialog.style" :visible="visible" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
+        <template #header>
+            <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12" :style="mainDescriptor.style.maxWidth">
+                <template #left>
+                    {{ $t('workspace.myData.datasetPreview') }}
+                </template>
+                <template #right>
+                    <Button class="kn-button p-button-text p-button-rounded p-button-plain" :label="$t('common.close')" @click="$emit('close')"></Button>
+                    <!-- <Button class="kn-button kn-button--primary p-button-sm" :label="$t('common.close')" @click="$emit('close')"></Button> -->
+                </template>
+            </Toolbar>
         </template>
+
+        <DatasetPreviewTable></DatasetPreviewTable>
     </Dialog>
 </template>
 
@@ -11,6 +20,7 @@
 import { defineComponent } from 'vue'
 import Dialog from 'primevue/dialog'
 import DatasetPreviewTable from '../tables/DatasetPreviewTable.vue'
+import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import workspaceDataPreviewDialogDescriptor from './WorkspaceDataPreviewDialogDescriptor.json'
 
 export default defineComponent({
@@ -20,6 +30,7 @@ export default defineComponent({
     emits: ['close'],
     data() {
         return {
+            mainDescriptor,
             workspaceDataPreviewDialogDescriptor
         }
     },
@@ -35,5 +46,9 @@ export default defineComponent({
 
 .full-screen-dialog .p-dialog .p-dialog-content {
     padding: 0;
+}
+
+::v-deep(.p-toolbar-group-right) {
+    height: 100%;
 }
 </style>
