@@ -21,7 +21,10 @@ package it.eng.knowage.cockpit.api.export.pdf;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -154,6 +157,7 @@ public class PdfExporter extends AbstractExporter {
 			pdfHiddenColumns = getPdfHiddenColumnsList(columnsOrdered, widgetContent.getJSONArray("columnSelectedOfDataset"));
 
 			JSONObject[] columnStyles = getColumnsStyles(columnsOrdered, widgetContent);
+			String[] columnDateFormats = getColumnDateFormats(columnsOrdered, widgetContent);
 			initColumnWidths(columnStyles, columnsOrdered.length());
 
 			BaseTable table = createBaseTable(pdDoc, pdPage);
@@ -187,6 +191,8 @@ public class PdfExporter extends AbstractExporter {
 
 			table.addHeaderRow(headerRow);
 
+			DateFormat inputDateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
+
 			for (int r = 0; r < rows.length(); r++) {
 				JSONObject rowObject = rows.getJSONObject(r);
 				Row<PDPage> row = table.createRow(10);
@@ -218,6 +224,16 @@ public class PdfExporter extends AbstractExporter {
 								logger.warn("Cannot format raw value {" + valueStr + "} with precision {" + precision + "}");
 							}
 						}
+						if (type.equalsIgnoreCase("date")) {
+							try {
+								DateFormat outputDateFormat = new SimpleDateFormat(columnDateFormats[c], getLocale());
+								Date date = inputDateFormat.parse(valueStr);
+								valueStr = outputDateFormat.format(date);
+							} catch (Exception e) {
+								// value stays as it is
+								logger.error("Cannot format date {" + valueStr + "} according to format {" + columnDateFormats[c] + "}", e);
+							}
+						}
 						Cell<PDPage> cell = row.createCell(columnPercentWidths[c], valueStr, HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
 						// first of all set alternate rows color
 						if (settings != null && settings.has("alternateRows")) {
@@ -246,6 +262,68 @@ public class PdfExporter extends AbstractExporter {
 
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot write data to PDF file", e);
+		}
+	}
+
+	private String[] getColumnDateFormats(JSONArray columnsOrdered, JSONObject widgetContent) {
+		try {
+			String[] toReturn = new String[columnsOrdered.length() + 10];
+			JSONArray columns = widgetContent.getJSONArray("columnSelectedOfDataset");
+			for (int i = 0; i < columnsOrdered.length(); i++) {
+				JSONObject orderedCol = columnsOrdered.getJSONObject(i);
+				for (int j = 0; j < columns.length(); j++) {
+					JSONObject col = columns.getJSONObject(j);
+					if (orderedCol.getString("header").equals(col.getString("aliasToShow"))) {
+						if (col.has("dateFormat")) {
+							String angularDateFormat = col.getString("dateFormat");
+							switch (angularDateFormat) {
+							case "LLLL":
+								toReturn[i] = "EEEE, MMMM d, yyyy h:mm:ss a";
+								break;
+							case "llll":
+								toReturn[i] = "EEEE, MMMM d, yyyy h:mm:ss a";
+								break;
+							case "LLL":
+								toReturn[i] = "MMMM d, yyyy h:mm:ss a";
+								break;
+							case "lll":
+								toReturn[i] = "MMMM d, yyyy h:mm:ss a";
+								break;
+							case "DD/MM/YYYY HH:mm:SS":
+								toReturn[i] = "dd/MM/YYYY HH:mm:SS";
+								break;
+							case "DD/MM/YYYY HH:mm":
+								toReturn[i] = "dd/MM/YYYY HH:mm";
+								break;
+							case "LL":
+								toReturn[i] = "MMMM d, yyyy";
+								break;
+							case "ll":
+								toReturn[i] = "MMMM d, yyyy";
+								break;
+							case "L":
+								toReturn[i] = "MM/dd/YYYY";
+								break;
+							case "l":
+								toReturn[i] = "MM/d/YYYY";
+								break;
+							case "LT":
+								toReturn[i] = "HH:mm a";
+								break;
+							case "LTS":
+								toReturn[i] = "HH:mm:SS a";
+								break;
+							default:
+								break;
+							}
+						}
+					}
+				}
+			}
+			return toReturn;
+		} catch (Exception e) {
+			logger.error("Error while retrieving table columns date formats.", e);
+			return new String[columnsOrdered.length() + 10];
 		}
 	}
 

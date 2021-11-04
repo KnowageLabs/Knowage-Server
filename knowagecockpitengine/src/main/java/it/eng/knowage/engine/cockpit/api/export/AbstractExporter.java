@@ -32,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporterClient;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
@@ -45,12 +46,27 @@ public abstract class AbstractExporter {
 	private final String userUniqueIdentifier;
 	protected final JSONObject body;
 	public static final String UNIQUE_ALIAS_PLACEHOLDER = "_$_";
+	protected static final String DATE_FORMAT = "dd/MM/yyyy";
 	public static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
 	protected List<Integer> hiddenColumns;
 
 	public AbstractExporter(String userUniqueIdentifier, JSONObject body) {
 		this.userUniqueIdentifier = userUniqueIdentifier;
 		this.body = body;
+		locale = getLocaleFromBody(body);
+	}
+
+	private Locale getLocaleFromBody(JSONObject body) {
+		try {
+			String language = body.getString(SpagoBIConstants.SBI_LANGUAGE);
+			String country = body.getString(SpagoBIConstants.SBI_COUNTRY);
+			Locale toReturn = new Locale(language, country);
+			return toReturn;
+		} catch (Exception e) {
+			logger.warn("Cannot get locale information from input parameters body", e);
+			return Locale.ENGLISH;
+		}
+
 	}
 
 	protected HashMap<String, String> getMapFromGroupsArray(JSONArray groupsArray, JSONArray aggr) {
