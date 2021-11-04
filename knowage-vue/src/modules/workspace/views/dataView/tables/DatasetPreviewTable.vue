@@ -120,10 +120,6 @@ export default defineComponent({
             this.$emit('sort', { column: column, order: order })
         },
         onFilter(column: any) {
-            console.log('SEARCH INPUT: ', this.searchInput)
-            console.log('SEARCH INPUT: ', event)
-            console.log('COLUMNs: ', this.columns)
-            console.log('COLUMN: ', column)
             if (this.timer) {
                 clearTimeout(this.timer)
                 this.timer = null
@@ -132,7 +128,16 @@ export default defineComponent({
             this.timer = setTimeout(() => {
                 const filter = { column: column.header, value: this.searchInput[column.field] }
                 const index = this.customFilters.findIndex((el: any) => el.column === column.header)
-                index === -1 ? this.customFilters.push(filter) : (this.customFilters[index] = filter)
+                console.log('INDEX: ', index, ' VALUE: ', filter.value)
+                if (index !== -1) {
+                    if (!filter.value) {
+                        this.customFilters.splice(index, 1)
+                    } else {
+                        this.customFilters[index] = filter
+                    }
+                } else {
+                    this.customFilters.push(filter)
+                }
                 this.$emit('filter', this.customFilters)
             }, 1000)
         }
