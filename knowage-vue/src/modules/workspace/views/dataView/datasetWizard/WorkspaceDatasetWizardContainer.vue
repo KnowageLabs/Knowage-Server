@@ -127,8 +127,7 @@ export default defineComponent({
             this.dataset.type = 'File'
             this.dataset.exportToHdfs = false
             this.dataset.limitPreview = true
-            // this.dataset.tablePrefix = datasetParameters.TABLE_NAME_PREFIX + (this.$store.state as any).user.fullName + '_'
-            this.dataset.tablePrefix = 'D_' + (this.$store.state as any).user.fullName + '_'
+            this.dataset.tablePrefix = ''
             this.dataset.persist ? '' : (this.dataset.persist = false)
             this.dataset.tableName ? '' : (this.dataset.tableName = '')
             this.dataset.skipRows == null ? (this.dataset.skipRows = '') : ''
@@ -235,7 +234,7 @@ export default defineComponent({
                     console.info('[SUCCESS]: The Step 4 form is submitted successfully. The file dataset is saved')
                     if (dsToSend.exportToHdfs) {
                         this.$http
-                            .post('1.0/hdfs', response.data.id, { headers: { 'X-Disable-Errors': 'true' } })
+                            .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/hdfs/${response.data.id}`, { headers: { 'X-Disable-Errors': 'true' } })
                             .then((responseHDFS: AxiosResponse<any>) => {
                                 console.log(responseHDFS)
                                 this.$store.commit('setInfo', { title: this.$t('Success'), msg: this.$t('sbi.ds.hdfs.request.work') })

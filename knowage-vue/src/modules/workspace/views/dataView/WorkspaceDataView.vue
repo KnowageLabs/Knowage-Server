@@ -119,6 +119,9 @@ export default defineComponent({
         isDatasetOwner(): any {
             return (this.$store.state as any).user.fullName === this.selectedDataset.owner
         },
+        showCkanIntegration(): any {
+            return (this.$store.state as any).user.functionalities.indexOf('CkanIntegrationFunctionality') > -1
+        },
         showQbeEditButton(): any {
             return (this.$store.state as any).user.fullName === this.selectedDataset.owner && (this.selectedDataset.dsTypeCd == 'Federated' || this.selectedDataset.dsTypeCd == 'Qbe')
         },
@@ -238,7 +241,7 @@ export default defineComponent({
             this.creationMenuButtons.push(
                 { key: '0', label: this.$t('managers.businessModelManager.uploadFile'), command: this.toggleDatasetDialog, visible: true },
                 { key: '1', label: this.$t('workspace.myData.prepareData'), command: this.openDatasetInQBE, visible: true },
-                { key: '2', label: this.$t('workspace.myData.openData'), command: this.exportDataset, visible: true }
+                { key: '2', label: this.$t('workspace.myData.openData'), command: this.exportDataset, visible: this.showCkanIntegration }
             )
         },
         toggleDatasetDialog() {
