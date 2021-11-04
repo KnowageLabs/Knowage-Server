@@ -49,22 +49,27 @@
             </Column>
         </DataTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2">
-            <WorkspaceCard
-                v-for="(dataset, index) of allDataset"
-                :key="index"
-                :viewType="'dataset'"
-                :document="dataset"
-                @previewDataset="previewDataset"
-                @editFileDataset="editFileDataset"
-                @openDatasetInQBE="openDatasetInQBE"
-                @exportToXlsx="exportToXlsx"
-                @exportToCsv="exportToCsv"
-                @downloadDatasetFile="downloadDatasetFile"
-                @shareDataset="shareDataset"
-                @cloneDataset="cloneDataset"
-                @deleteDataset="deleteDatasetConfirm"
-                @openSidebar="showSidebar"
-            />
+            <Message v-if="allDataset.length === 0" class="kn-flex p-m-2" severity="info" :closable="false" :style="mainDescriptor.style.message">
+                {{ $t('common.info.noDataFound') }}
+            </Message>
+            <template v-else>
+                <WorkspaceCard
+                    v-for="(dataset, index) of allDataset"
+                    :key="index"
+                    :viewType="'dataset'"
+                    :document="dataset"
+                    @previewDataset="previewDataset"
+                    @editFileDataset="editFileDataset"
+                    @openDatasetInQBE="openDatasetInQBE"
+                    @exportToXlsx="exportToXlsx"
+                    @exportToCsv="exportToCsv"
+                    @downloadDatasetFile="downloadDatasetFile"
+                    @shareDataset="shareDataset"
+                    @cloneDataset="cloneDataset"
+                    @deleteDataset="deleteDatasetConfirm"
+                    @openSidebar="showSidebar"
+                />
+            </template>
         </div>
     </div>
 

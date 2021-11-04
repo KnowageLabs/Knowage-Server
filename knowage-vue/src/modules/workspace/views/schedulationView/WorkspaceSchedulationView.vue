@@ -1,6 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary">
         <template #left>
+            <Button icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
             {{ $t('workspace.schedulation.title') }}
         </template>
     </Toolbar>
@@ -20,6 +21,7 @@ import WorkspaceSchedulationTable from './tables/WorkspaceSchedulationTable.vue'
 export default defineComponent({
     name: 'workspace-schedulation-view',
     components: { WorkspaceSchedulationOldSchedulationsDialog, WorkspaceSchedulationTable },
+    emits: ['showMenu'],
     data() {
         return {
             jobs: [] as IPackage[],
