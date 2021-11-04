@@ -75,7 +75,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-#ssociations-list {
+#associations-list {
     border: none;
 }
 
