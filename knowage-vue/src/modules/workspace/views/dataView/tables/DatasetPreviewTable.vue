@@ -1,18 +1,147 @@
 <template>
-    <h1>IT WORKS</h1>
+    <DataTable
+        id="preview-datatable"
+        :value="rows"
+        :lazy="true"
+        :paginator="lazyParams.size > 15"
+        :rows="15"
+        :totalRecords="lazyParams.size"
+        paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+        class="p-datatable-sm kn-table"
+        v-model:filters="filters"
+        filterDisplay="menu"
+        :currentPageReportTemplate="
+            $t('common.table.footer.paginated', {
+                first: '{first}',
+                last: '{last}',
+                totalRecords: '{totalRecords}'
+            })
+        "
+        stripedRows
+        showGridlines
+        responsiveLayout="stack"
+        breakpoint="960px"
+        @page="onPage($event)"
+        @sort="onSort"
+    >
+        <template #empty>
+            <div id="noFunctionsFound">
+                {{ $t('common.info.noDataFound') }}
+            </div>
+        </template>
+        <Column class="kn-truncated" :style="datasetPreviewTableDescriptor.columnStyle" v-for="col of columns" :field="col.field" :key="col.field" :sortable="true">
+            <template #header>
+                {{ col.header }}
+                <i class="pi pi-filter-icon pi-filter" @click="searchVisible[col.field] = true" />
+                <InputText v-if="searchVisible[col.field]" type="text" v-model="searchInput[col.field]" class="p-column-filter" @input="onFilter(col)"></InputText>
+            </template>
+            <!-- <template #filter="{filterModel}">
+                <InputText type="text" v-model="filterModel.value" class="p-column-filter" @input="onFilter($event, col)"></InputText>
+            </template> -->
+        </Column>
+    </DataTable>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { FilterOperator } from 'primevue/api'
+import { filterDefault } from '@/helpers/commons/filterHelper'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
 import datasetPreviewTableDescriptor from './DatasetPreviewTableDescriptor.json'
 
 export default defineComponent({
-    name: 'dataset-preview-table',
-    components: {},
+    name: 'function-catalog-preview-table',
+    components: { Column, DataTable },
+    props: { previewColumns: { type: Array }, previewRows: { type: Array }, pagination: { type: Object } },
+    emits: ['pageChanged', 'sort', 'filter'],
     data() {
-        return { datasetPreviewTableDescriptor }
+        return {
+            datasetPreviewTableDescriptor,
+            columns: [] as any[],
+            rows: [] as any[],
+            filters: { global: [filterDefault] } as Object,
+            globalFilterFields: [] as string[],
+            lazyParams: {} as any,
+            sorted: 'ASC',
+            timer: null as any,
+            searchInput: {} as any,
+            searchVisible: {} as any,
+            customFilters: [] as any
+        }
     },
-    async created() {},
-    methods: {}
+    watch: {
+        previewColumns() {
+            this.loadColumns()
+        },
+        previewRows() {
+            this.loadRows()
+        },
+        pagination() {
+            this.loadPagination()
+        }
+    },
+    created() {
+        this.loadColumns()
+        this.loadRows()
+        this.loadPagination()
+    },
+    methods: {
+        loadColumns() {
+            this.columns = []
+            this.previewColumns?.forEach((el: any) => {
+                this.columns.push(el)
+                this.globalFilterFields.push(el.field)
+                this.filters[el.field] = { operator: FilterOperator.AND, constraints: [filterDefault] }
+            })
+            console.log('LOADED COLUMNS: ', this.columns)
+        },
+        loadRows() {
+            this.rows = this.previewRows as any[]
+            console.log('LOADED ROWS: ', this.rows)
+        },
+        loadPagination() {
+            this.lazyParams = this.pagination as any
+        },
+        onPage(event: any) {
+            this.lazyParams = { paginationStart: event.first, paginationLimit: event.rows, paginationEnd: event.first + event.rows, size: this.lazyParams.size }
+            this.$emit('pageChanged', this.lazyParams)
+        },
+        onSort(event: any) {
+            console.log('SORT: ', event)
+            console.log('COLUMNS', this.columns)
+            // sorting: {column: "store_numb", order: "asc"}
+            let column = ''
+            const index = this.columns.findIndex((el: any) => el.field === event.sortField)
+            if (index !== -1) {
+                column = this.columns[index].header
+            }
+            const order = event.sortOrder === 1 ? 'asc' : 'desc'
+            this.$emit('sort', { column: column, order: order })
+        },
+        onFilter(column: any) {
+            console.log('SEARCH INPUT: ', this.searchInput)
+            console.log('SEARCH INPUT: ', event)
+            console.log('COLUMNs: ', this.columns)
+            console.log('COLUMN: ', column)
+            if (this.timer) {
+                clearTimeout(this.timer)
+                this.timer = null
+            }
+
+            this.timer = setTimeout(() => {
+                const filter = { column: column.header, value: this.searchInput[column.field] }
+                const index = this.customFilters.findIndex((el: any) => el.column === column.header)
+                index === -1 ? this.customFilters.push(filter) : (this.customFilters[index] = filter)
+                this.$emit('filter', this.customFilters)
+            }, 1000)
+        }
+    }
 })
 </script>
+
+<style lang="scss">
+#preview-datatable .p-datatable-wrapper {
+    height: auto;
+}
+</style>
