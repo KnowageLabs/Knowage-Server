@@ -59,8 +59,6 @@ export default defineComponent({
             if (this.propDataset) {
                 this.dataset = { ...this.propDataset }
             }
-            // console.log('DATASET LOADED IN SHARE DIALOG: ', this.dataset)
-            // console.log('DATASET CATEGORIES IN SHARE DIALOG: ', this.datasetCategories)
         },
         closeDialog() {
             this.loadDataset()

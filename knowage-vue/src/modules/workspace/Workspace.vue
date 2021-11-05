@@ -132,7 +132,6 @@ export default defineComponent({
     },
     created() {
         this.getAllRepositoryData()
-        console.log((this.$store.state as any).user)
     },
     methods: {
         closeSidebar() {

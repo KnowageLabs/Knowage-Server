@@ -216,7 +216,6 @@ export default defineComponent({
                 })
                 .catch(() => {})
             this.loading = false
-            console.log('LOADED GET ONE DATASET: ', this.selectedDataset)
         },
         toggleDisplayView() {
             this.$emit('toggleDisplayView')
@@ -247,7 +246,7 @@ export default defineComponent({
                 { key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable },
                 { key: '3', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.exportDataset(clickedDocument, 'csv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' },
                 { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: () => this.downloadDatasetFile(clickedDocument), visible: this.selectedDataset.dsTypeCd == 'File' },
-                { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.shareDataset(clickedDocument), visible: this.canLoadData && this.isDatasetOwner },
+                { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.shareDataset(), visible: this.canLoadData && this.isDatasetOwner },
                 { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: () => this.cloneDataset(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' },
                 { key: '7', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
             )
@@ -266,22 +265,19 @@ export default defineComponent({
             this.showDatasetDialog = true
         },
         async previewDataset(dataset: any) {
-            console.log('previewDataset(event) {', dataset)
             await this.loadDataset(dataset.label)
             this.previewDialogVisible = true
         },
         editFileDataset() {
             this.showDatasetDialog = true
         },
-        openDatasetInQBE(event) {
-            console.log('openDatasetInQBE(event)', event)
+        openDatasetInQBE() {
             this.$store.commit('setInfo', {
                 title: 'Todo',
                 msg: 'Functionality not in this sprint'
             })
         },
         async exportDataset(dataset: any, format: string) {
-            console.log('export dataset ', dataset, ', format: ', format)
             this.loading = true
             //  { 'Content-Type': 'application/x-www-form-urlencoded' }
             await this.$http
@@ -305,9 +301,7 @@ export default defineComponent({
             this.loading = false
         },
         async downloadDatasetFile(dataset: any) {
-            //  console.log('Download Dataset File', dataset)
             await this.loadDataset(dataset.label)
-            // console.log('SELECTED DS', this.selectedDataset)
             await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/download/file?dsLabel=${this.selectedDataset.label}&type=${this.selectedDataset.fileType.toLowerCase()}`, {
                     headers: {
@@ -337,12 +331,10 @@ export default defineComponent({
                     return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             }
         },
-        shareDataset(dataset: any) {
-            console.log('SHARE DATASET BEGIN: ', dataset)
+        shareDataset() {
             this.shareDialogVisible = true
         },
         async handleDatasetShare(dataset: any) {
-            console.log('SHARE DATASET END: ', dataset)
             this.loading = true
 
             const url = dataset.catTypeId ? `selfservicedataset/share/?catTypeId=${dataset.catTypeId}&id=${dataset.id}` : `selfservicedataset/share/?id=${dataset.id}`
@@ -362,12 +354,10 @@ export default defineComponent({
             this.loading = false
         },
         async cloneDataset(dataset: any) {
-            console.log('CLONE DATASET BEGIN', dataset)
             await this.loadDataset(dataset.label)
             this.cloneDialogVisible = true
         },
         async handleDatasetClone(dataset: any) {
-            console.log('DATSET FOR CLONE END: ', dataset)
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets`, dataset, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
@@ -393,7 +383,6 @@ export default defineComponent({
             })
         },
         async deleteDataset(dataset: any) {
-            // console.log('deleteDataset ', dataset)
             this.loading = true
             await this.$http
                 .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${dataset.label}`)

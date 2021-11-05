@@ -135,7 +135,6 @@ export default defineComponent({
                     delete this.dataset.catTypeId
                 }
             }
-            // console.log('DATAASET LOADIED IN DIALOG: ', this.dataset)
         },
         closeDialog() {
             this.loadDataset()
@@ -143,7 +142,6 @@ export default defineComponent({
             this.$emit('close')
         },
         cloneDataset() {
-            // console.log('createFolder: ', this.newFolder)
             this.$emit('clone', this.dataset)
             this.loadDataset()
             this.v$.$reset()

@@ -97,11 +97,9 @@ export default defineComponent({
                 this.globalFilterFields.push(el.field)
                 this.filters[el.field] = { operator: FilterOperator.AND, constraints: [filterDefault] }
             })
-            console.log('LOADED COLUMNS: ', this.columns)
         },
         loadRows() {
             this.rows = this.previewRows as any[]
-            console.log('LOADED ROWS: ', this.rows)
         },
         loadPagination() {
             this.lazyParams = this.pagination as any
@@ -111,9 +109,6 @@ export default defineComponent({
             this.$emit('pageChanged', this.lazyParams)
         },
         onSort(event: any) {
-            // console.log('SORT: ', event)
-            // console.log('COLUMNS', this.columns)
-            // sorting: {column: "store_numb", order: "asc"}
             let column = ''
             const index = this.columns.findIndex((el: any) => el.field === event.sortField)
             if (index !== -1) {
@@ -131,7 +126,7 @@ export default defineComponent({
             this.timer = setTimeout(() => {
                 const filter = { column: column.header, value: this.searchInput[column.field] }
                 const index = this.customFilters.findIndex((el: any) => el.column === column.header)
-                // console.log('INDEX: ', index, ' VALUE: ', filter.value)
+
                 if (index !== -1) {
                     if (!filter.value) {
                         this.customFilters.splice(index, 1)
