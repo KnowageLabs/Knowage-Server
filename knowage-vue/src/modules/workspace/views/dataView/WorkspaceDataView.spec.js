@@ -154,55 +154,45 @@ describe('Workspace Analysis View', () => {
         expect(wrapper.find('[data-test="datasets-table"]').html()).toContain('common.info.noDataFound')
     })
 
-    xit('should show a table if grid mode is switched for the selected mode', async () => {
+    it('should show a table if grid mode is switched for the selected mode', async () => {
         const wrapper = factory(false)
 
         await flushPromises()
 
-        expect(wrapper.vm.analysisDocuments.length).toBe(4)
-        expect(wrapper.vm.filteredAnalysisDocuments).toStrictEqual()
+        expect(wrapper.vm.datasetList.length).toBe(4)
+        expect(wrapper.vm.filteredDatasets).toStrictEqual(mockedDatasets)
 
         expect(wrapper.vm.toggleCardDisplay).toBe(false)
 
-        expect(wrapper.find('[data-test="analysis-table"]').html()).toContain('Mocked')
-        expect(wrapper.find('[data-test="analysis-table"]').html()).toContain('CHOCOLATE_RATINGS')
-        expect(wrapper.find('[data-test="analysis-table"]').html()).toContain('Copy of CHOCOLATE_RATINGS(1)')
-        expect(wrapper.find('[data-test="analysis-table"]').html()).toContain('Admin')
+        expect(wrapper.find('[data-test="datasets-table"]').html()).toContain('emo_user_function_catalog_salesOutput')
+        expect(wrapper.find('[data-test="datasets-table"]').html()).toContain('Mocked Dataset')
+        expect(wrapper.find('[data-test="datasets-table"]').html()).toContain('Test Unit')
+        expect(wrapper.find('[data-test="datasets-table"]').html()).toContain('Mocked')
     })
 
-    xit('should show cards if grid mode is switched for the selected mode', async () => {
+    it('should show cards if grid mode is switched for the selected mode', async () => {
         const wrapper = factory(true)
 
         await flushPromises()
 
-        expect(wrapper.vm.analysisDocuments.length).toBe(4)
-        expect(wrapper.vm.filteredAnalysisDocuments).toStrictEqual()
+        expect(wrapper.vm.datasetList.length).toBe(4)
+        expect(wrapper.vm.filteredDatasets).toStrictEqual(mockedDatasets)
 
         expect(wrapper.vm.toggleCardDisplay).toBe(true)
 
+        expect(wrapper.find('[data-test="card-container"]').html()).toContain('emo_user_function_catalog_salesOutput')
+        expect(wrapper.find('[data-test="card-container"]').html()).toContain('Mocked Dataset')
+        expect(wrapper.find('[data-test="card-container"]').html()).toContain('Test Unit')
         expect(wrapper.find('[data-test="card-container"]').html()).toContain('Mocked')
-        expect(wrapper.find('[data-test="card-container"]').html()).toContain('CHOCOLATE_RATINGS')
-        expect(wrapper.find('[data-test="card-container"]').html()).toContain('Copy of CHOCOLATE_RATINGS(1)')
-        expect(wrapper.find('[data-test="card-container"]').html()).toContain('Admin')
     })
 
-    xit('should filter the list of elements if a searchtext is provided', async () => {
+    it('should filter the list of elements if a searchtext is provided', async () => {
         const wrapper = factory(false)
 
         await flushPromises()
 
-        expect(wrapper.vm.analysisDocuments.length).toBe(4)
-        expect(wrapper.vm.filteredAnalysisDocuments).toStrictEqual()
-
-        await wrapper.find('[data-test="search-input"]').setValue('CHOCOLATE')
-        wrapper.vm.searchItems()
-
-        jest.runAllTimers()
-        await nextTick()
-
-        expect(wrapper.find('[data-test="analysis-table"]').html()).not.toContain('Mocked')
-        expect(wrapper.find('[data-test="analysis-table"]').html()).toContain('CHOCOLATE_RATINGS')
-        expect(wrapper.find('[data-test="analysis-table"]').html()).toContain('Copy of CHOCOLATE_RATINGS(1)')
+        expect(wrapper.vm.datasetList.length).toBe(4)
+        expect(wrapper.vm.filteredDatasets).toStrictEqual(mockedDatasets)
 
         await wrapper.find('[data-test="search-input"]').setValue('Mocked')
         wrapper.vm.searchItems()
@@ -210,20 +200,30 @@ describe('Workspace Analysis View', () => {
         jest.runAllTimers()
         await nextTick()
 
-        expect(wrapper.find('[data-test="analysis-table"]').html()).not.toContain('CHOCOLATE_RATINGS')
-        expect(wrapper.find('[data-test="analysis-table"]').html()).not.toContain('Copy of CHOCOLATE_RATINGS(1)')
-        expect(wrapper.find('[data-test="analysis-table"]').html()).toContain('Mocked')
+        expect(wrapper.find('[data-test="datasets-table"]').html()).toContain('Mocked Dataset')
+        expect(wrapper.find('[data-test="datasets-table"]').html()).not.toContain('Test Unit')
+        expect(wrapper.find('[data-test="datasets-table"]').html()).toContain('Mocked')
+
+        await wrapper.find('[data-test="search-input"]').setValue('Test')
+        wrapper.vm.searchItems()
+
+        jest.runAllTimers()
+        await nextTick()
+
+        expect(wrapper.find('[data-test="datasets-table"]').html()).not.toContain('Mocked Dataset')
+        expect(wrapper.find('[data-test="datasets-table"]').html()).toContain('Test Unit')
+        expect(wrapper.find('[data-test="datasets-table"]').html()).not.toContain('Mocked')
     })
 
-    xit('should show a sidenav with details if one of the item is clicked', async () => {
+    it('should show a sidenav with details if one of the item is clicked', async () => {
         const wrapper = factory(false)
 
         await flushPromises()
 
-        expect(wrapper.vm.analysisDocuments.length).toBe(4)
-        expect(wrapper.vm.filteredAnalysisDocuments).toStrictEqual()
+        expect(wrapper.vm.datasetList.length).toBe(4)
+        expect(wrapper.vm.filteredDatasets).toStrictEqual(mockedDatasets)
 
-        await wrapper.find('[data-test="info-button-CHOCOLATE_RATINGS"]').trigger('click')
+        await wrapper.find('[data-test="info-button-Mocked Dataset"]').trigger('click')
 
         expect(wrapper.vm.showDetailSidebar).toBe(true)
         expect(wrapper.find('[data-test="detail-sidebar"]').exists()).toBe(true)

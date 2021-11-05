@@ -57,7 +57,7 @@ export default defineComponent({
     methods: {
         async loadPreview() {
             this.loadDataset()
-            if (this.dataset.label) {
+            if (this.dataset.label && this.visible) {
                 await this.loadPreviewData()
             }
         },
