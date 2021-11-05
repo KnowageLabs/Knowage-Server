@@ -90,7 +90,7 @@
 
                 <Column field="severityId" header="Severity">
                     <template #editor="slotProps">
-                        <Dropdown v-model="slotProps.data['severityId']" :options="severityOptions" optionLabel="valueCd" optionValue="valueId" @change="setSeverityCd($event, slotProps.data)">
+                        <Dropdown v-model="slotProps.data['severityId']" :style="tresholdTabDescriptor.styles.input" :options="severityOptions" optionLabel="valueCd" optionValue="valueId" @change="setSeverityCd($event, slotProps.data)">
                             <template #option="slotProps">
                                 <span>{{ slotProps.option.valueCd }}</span>
                             </template>
