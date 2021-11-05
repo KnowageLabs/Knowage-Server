@@ -190,7 +190,7 @@ export default defineComponent({
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/organizer/foldersee/', newFolder, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
+                    this.$store.commit('setInfo', { title: this.$t('workspace.myRepository.folderCreatedMessage') })
                     this.getAllFolders()
                 })
                 .catch((response: any) => {

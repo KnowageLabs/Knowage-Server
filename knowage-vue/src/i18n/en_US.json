@@ -1481,6 +1481,7 @@
         },
         "hint": "Please change the hint to your liking in the i18 files.",
         "menuLabels": {
+            "advanced": "My Advanced Data",
             "menuTitle": "My Workspace",
             "myAnalysis": "My Analysis",
             "myData": "My Data",
@@ -1488,8 +1489,7 @@
             "myRepository": "My Repository",
             "recent": "Recent",
             "recentDocuments": "Recent Documents",
-            "schedulation": "Schedulation",
-            "advanced": "My Advanced Data"
+            "schedulation": "Schedulation"
         },
         "myAnalysis": {
             "menuItems": {
@@ -1531,6 +1531,7 @@
         },
         "myRepository": {
             "destinationFolder": "Destination folder",
+            "folderCreatedMessage": "Folder is created and added to the current path",
             "folderDeleteError": "Folder could not be deleted. It contains at least one subfolder or at least one document",
             "moveDocument": "Move Document",
             "newFolderTitle": "Create new folder"
