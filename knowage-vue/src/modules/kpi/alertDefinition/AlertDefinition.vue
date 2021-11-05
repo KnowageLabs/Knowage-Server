@@ -49,7 +49,7 @@ import { defineComponent } from 'vue'
 import { iAlert } from './AlertDefinition'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import alertDescriptor from './AlertDefinitionDescriptor.json'
 
 export default defineComponent({
@@ -69,10 +69,10 @@ export default defineComponent({
     methods: {
         async loadAllAlerts() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/listAlert')
                 .then(
-                    (response) =>
+                    (response: AxiosResponse<any>) =>
                         (this.alertList = response.data.map((alert: any) => {
                             return {
                                 id: alert.id,
@@ -96,7 +96,7 @@ export default defineComponent({
             })
         },
         async deleteAlert(id: number) {
-            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/' + id + '/delete').then(() => {
+            await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/' + id + '/delete').then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
@@ -108,7 +108,7 @@ export default defineComponent({
         async handleStatus(alert) {
             if (alert.status !== 'EXPIRED') {
                 var data = 'scheduler/' + (alert.status == 'SUSPENDED' ? 'resumeTrigger' : 'pauseTrigger') + '?jobGroup=ALERT_JOB_GROUP&triggerGroup=ALERT_JOB_GROUP&jobName=' + alert.id + '&triggerName=' + alert.id
-                await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + data)
+                await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + data)
                 this.loadAllAlerts()
             }
         },

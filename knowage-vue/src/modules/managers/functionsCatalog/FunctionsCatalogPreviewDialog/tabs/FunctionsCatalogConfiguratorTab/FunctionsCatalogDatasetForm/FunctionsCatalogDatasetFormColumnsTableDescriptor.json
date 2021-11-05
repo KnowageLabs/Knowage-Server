@@ -1,0 +1,9 @@
+{
+    "breakpoint": "960px",
+    "dataKey": "name",
+    "dropdownStyle": {
+        "border": "none"
+    },
+    "editMode": "cell",
+    "responsiveLayout": "stack"
+}

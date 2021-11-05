@@ -54,7 +54,6 @@ import it.eng.knowage.knowageapi.error.ImpossibleToReadFilesListException;
 import it.eng.knowage.knowageapi.error.ImpossibleToReadFolderListException;
 import it.eng.knowage.knowageapi.error.KnowageBusinessException;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
-import it.eng.knowage.knowageapi.error.TenantRepositoryMissingException;
 import it.eng.knowage.resourcemanager.resource.dto.DownloadFilesDTO;
 import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
 import it.eng.knowage.resourcemanager.resource.dto.MetadataDTO;
