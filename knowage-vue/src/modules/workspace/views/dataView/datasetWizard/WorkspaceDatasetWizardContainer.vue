@@ -15,7 +15,6 @@
 
         <template #footer>
             <div>
-                <Button class="kn-button kn-button--primary" label="LOG DATASET" @click="logDataset" />
                 <Button class="kn-button kn-button--secondary" :label="$t('common.cancel')" @click="$emit('closeDialog')" />
                 <Button class="kn-button kn-button--secondary" v-if="wizardStep > 1" :label="$t('common.back')" @click="wizardStep--" />
                 <Button class="kn-button kn-button--primary" :label="$t('common.next')" :disabled="!fileUploaded" @click="documentFields" />
@@ -50,7 +49,7 @@ export default defineComponent({
                 case 4:
                     return this.submitStepFour
                 default:
-                    return console.log('How did this happen, no valid file type.')
+                    return this.$emit('closeDialog')
             }
         }
     },
@@ -85,10 +84,6 @@ export default defineComponent({
                 })
                 .catch()
         },
-        logDataset() {
-            console.log(this.dataset)
-        },
-        //ova cela metoda postoji posto get response vraca pola propova kao string a ne number, i u slucaju da se pravi novi dataset
         initializeDatasetWizard(dataset, isEdited) {
             this.editingDatasetFile = isEdited
             isEdited ? (this.fileUploaded = true) : (this.fileUploaded = false)
@@ -215,7 +210,6 @@ export default defineComponent({
             params.SBI_EXECUTION_ID = -1
             params.isTech = false
             params.showOnlyOwner = true
-            console.log(dsToSend)
 
             await this.$http({
                 method: 'POST',
@@ -231,23 +225,15 @@ export default defineComponent({
                 }
             })
                 .then((response: AxiosResponse<any>) => {
-                    console.info('[SUCCESS]: The Step 4 form is submitted successfully. The file dataset is saved')
                     if (dsToSend.exportToHdfs) {
-                        this.$http
-                            .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/hdfs/${response.data.id}`, { headers: { 'X-Disable-Errors': 'true' } })
-                            .then((responseHDFS: AxiosResponse<any>) => {
-                                console.log(responseHDFS)
-                                this.$store.commit('setInfo', { title: this.$t('Success'), msg: this.$t('sbi.ds.hdfs.request.work') })
-                            })
-                            .catch((responseHDFS: any) => {
-                                this.$store.commit('setError', { title: this.$t('Error'), msg: responseHDFS.data.errors[0].message })
-                            })
+                        this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/hdfs/${response.data.id}`, { headers: { 'X-Disable-Errors': 'true' } }).catch((responseHDFS: any) => {
+                            this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: responseHDFS.data.errors[0].message })
+                        })
                     }
                     this.$emit('closeDialogAndReload')
                 })
-                .catch((error: any) => {
-                    console.log(error)
-                    this.$store.commit('setError', { title: this.$t('Error'), msg: 'CHECK LOG' })
+                .catch((response: any) => {
+                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: response.data.errors[0].message })
                 })
         }
     }

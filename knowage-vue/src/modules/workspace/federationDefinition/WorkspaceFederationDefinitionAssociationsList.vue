@@ -12,17 +12,19 @@
         </template>
 
         <template #content>
-            <Listbox id="associations-list" :options="associations">
-                <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                <template #option="slotProps">
-                    <div class="kn-list-item p-d-flex p-flex-row">
-                        <div class="kn-list-item-text">
-                            <span>{{ slotProps.option.relationship }}</span>
+            <div :style="workspaceFederationDatasetListDescriptor.styles.assContainer">
+                <Listbox id="associations-list" :options="associations" :listStyle="workspaceFederationDatasetListDescriptor.styles.maxHeight">
+                    <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                    <template #option="slotProps">
+                        <div class="kn-list-item p-d-flex p-flex-row">
+                            <div class="kn-list-item-text">
+                                <span>{{ slotProps.option.relationship }}</span>
+                            </div>
+                            <i class="fas fa-trash-alt delete-association-icon" @click.stop="deleteAssociationConfirm(slotProps.option)"></i>
                         </div>
-                        <i class="fas fa-trash-alt delete-association-icon" @click.stop="deleteAssociationConfirm(slotProps.option)"></i>
-                    </div>
-                </template>
-            </Listbox>
+                    </template>
+                </Listbox>
+            </div>
         </template>
     </Card>
 </template>
@@ -32,6 +34,7 @@ import { defineComponent } from 'vue'
 import Card from 'primevue/card'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
+import workspaceFederationDatasetListDescriptor from './WorkspaceFederationDatasetListDescriptor.json'
 
 export default defineComponent({
     name: 'workspace-federation-definition-associations-list',
@@ -40,6 +43,7 @@ export default defineComponent({
     emits: ['createAssociationClick'],
     data() {
         return {
+            workspaceFederationDatasetListDescriptor,
             associations: [] as any[]
         }
     },

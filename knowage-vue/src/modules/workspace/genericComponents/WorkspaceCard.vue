@@ -95,7 +95,7 @@ export default defineComponent({
                 case 'federationDataset':
                     return cardDescriptor.federationDatasetViewFields
                 default:
-                    return console.log('How did this happen, no valid file type.')
+                    return []
             }
         },
         documentButtons(): any {
@@ -135,7 +135,7 @@ export default defineComponent({
                         { icon: 'fa fa-search', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('openDatasetInQBE') }
                     ]
                 default:
-                    return console.log('How did this happen, no valid file type.')
+                    return []
             }
         }
     },
