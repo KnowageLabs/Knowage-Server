@@ -7,7 +7,7 @@
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
-    <div class="kn-page-content">
+    <div class=" kn-overflow-y">
         <div v-if="step === 0" class="p-d-flex p-flex-row p-flex-wrap">
             <WorkspaceFederationDatasetList class="kn-flex p-m-2" :mode="'available'" :propDatasets="availableDatasets" @showInfo="showDatasetInfo" @datasetSelected="moveDataset"></WorkspaceFederationDatasetList>
             <WorkspaceFederationDatasetList class="kn-flex p-m-2" :mode="'selected'" :propDatasets="selectedDatasets" @datasetSelected="moveDataset"></WorkspaceFederationDatasetList>
@@ -17,7 +17,7 @@
             <WorkspaceFederationDefinitionAssociationsList class="p-m-2" :propAssociations="multirelationships" @createAssociationClick="createAssociation()"></WorkspaceFederationDefinitionAssociationsList>
         </div>
 
-        <div class="p-d-flex p-flex-row p-jc-end p-m-4">
+        <div class="p-d-flex p-flex-row p-jc-end p-m-2">
             <Button class="kn-button kn-button--secondary" @click="changeSteps"> {{ step === 0 ? $t('common.next') : $t('common.back') }}</Button>
             <Button v-if="step === 1" class="kn-button kn-button--secondary p-mx-2" @click="saveFederation"> {{ $t('workspace.federationDefinition.saveFederation') }}</Button>
         </div>

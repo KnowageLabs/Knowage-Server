@@ -1,5 +1,5 @@
 <template>
-    <Toolbar class="kn-toolbar kn-toolbar--secondary" style="width:100%">
+    <Toolbar class="kn-toolbar kn-toolbar--secondary">
         <template #left>
             <Button id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
             {{ $t('workspace.menuLabels.myRepository') }}
@@ -13,7 +13,7 @@
 
     <WorkspaceRepositoryBreadcrumb :breadcrumbs="breadcrumbs" @breadcrumbClicked="$emit('breadcrumbClicked', $event)"></WorkspaceRepositoryBreadcrumb>
 
-    <InputText class="kn-material-input p-m-2" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
+    <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
     <div class="p-m-2 overflow">
         <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="filteredDocuments" :loading="loading" dataKey="biObjId" responsiveLayout="stack" breakpoint="600px" data-test="documents-table">
             <template #empty>
@@ -27,7 +27,7 @@
                 <template #body="slotProps">
                     <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="showMenu($event, slotProps.data)" />
                     <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.documentName" />
-                    <Button icon="fas fa-play-circle" class="p-button-link" @click="logEvent(slotProps.data)" />
+                    <Button icon="fas fa-play-circle" class="p-button-link" @click="executeDocumentFromOrganizer" />
                 </template>
             </Column>
         </DataTable>
@@ -36,7 +36,16 @@
                 {{ $t('common.info.noDataFound') }}
             </Message>
             <template v-else>
-                <WorkspaceCard v-for="(document, index) of filteredDocuments" :key="index" :viewType="'repository'" :document="document" @executeDocumentFromOrganizer="executeDocumentFromOrganizer" @moveDocumentToFolder="moveDocumentToFolder" @deleteDocumentFromOrganizer="deleteDocumentConfirm" />
+                <WorkspaceCard
+                    v-for="(document, index) of filteredDocuments"
+                    :key="index"
+                    :viewType="'repository'"
+                    :document="document"
+                    @executeDocumentFromOrganizer="executeDocumentFromOrganizer"
+                    @moveDocumentToFolder="moveDocumentToFolder"
+                    @deleteDocumentFromOrganizer="deleteDocumentConfirm"
+                    @openSidebar="showSidebar"
+                />
             </template>
         </div>
     </div>
@@ -82,12 +91,10 @@ export default defineComponent({
             mainDescriptor,
             loading: false,
             showDetailSidebar: false,
-            displayCreateFolderDialog: false,
             documents: [] as IDocument[],
             filteredDocuments: [] as IDocument[],
             menuButtons: [] as any,
             selectedDocument: {} as IDocument,
-            newFolder: {} as IFolder,
             columns: repositoryDescriptor.columns,
             searchWord: '' as string,
             folders: [] as IFolder[],
@@ -148,11 +155,11 @@ export default defineComponent({
         toggleDisplayView() {
             this.$emit('toggleDisplayView')
         },
-        logEvent(event) {
-            console.log(event)
-        },
-        executeDocumentFromOrganizer(event) {
-            console.log('executeDocumentFromOrganizer() {', event)
+        executeDocumentFromOrganizer() {
+            this.$store.commit('setInfo', {
+                title: 'Todo',
+                msg: 'Functionality not in this sprint'
+            })
         },
         moveDocumentToFolder(document: IDocument) {
             this.selectedDocument = document

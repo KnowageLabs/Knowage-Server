@@ -1,5 +1,5 @@
 <template>
-    <DataTable :value="items" id="models-table" class="p-datatable-sm kn-table overflow" v-model:filters="filters" filterDisplay="menu" dataKey="name" responsiveLayout="stack" breakpoint="960px">
+    <DataTable :value="items" id="models-table" class="p-datatable-sm kn-table" v-model:filters="filters" filterDisplay="menu" dataKey="name" responsiveLayout="stack" breakpoint="960px">
         <template #empty>
             <Message class="p-m-2" severity="info" :closable="false" :style="workspaceModelsTableDescriptor.styles.message">
                 {{ $t('common.info.noDataFound') }}
@@ -13,11 +13,11 @@
             <template #body="slotProps">
                 <div class="p-d-flex p-flex-row p-jc-end">
                     <div v-if="slotProps.data.type === 'federatedDataset'" class="p-d-flex p-flex-row">
-                        <Button icon="pi pi-ellipsis-v" class="p-button-link" @click="toggle($event, slotProps.data)" />
+                        <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="toggle($event, slotProps.data)" />
                         <Menu ref="menu" :model="menuItems" :popup="true" />
                     </div>
-                    <Button icon="pi pi-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click.stop="$emit('selected', slotProps.data)" :data-test="'info-button-' + slotProps.data.name" />
-                    <Button icon="fa fa-search" class="p-button-link" v-tooltip.left="$t('workspace.myModels.openInQBE')" @click.stop="openDatasetInQBE(slotProps.data)" />
+                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click.stop="$emit('selected', slotProps.data)" :data-test="'info-button-' + slotProps.data.name" />
+                    <Button icon="fas fa-search" class="p-button-link" v-tooltip.left="$t('workspace.myModels.openInQBE')" @click.stop="openDatasetInQBE(slotProps.data)" />
                 </div>
             </template>
         </Column>
