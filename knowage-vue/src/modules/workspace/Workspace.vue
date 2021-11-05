@@ -119,25 +119,12 @@ export default defineComponent({
             selectedBreadcrumb: null as any,
             accordionIcon: true,
             loading: false,
-            menuItems: [
-                { icon: 'fas fa-history', key: '0', label: 'workspace.menuLabels.recent', value: 'recent', visible: true },
-                { icon: 'fas fa-folder', key: '1', label: 'workspace.menuLabels.myRepository', value: 'repository' },
-                { icon: 'fas fa-database', key: '2', label: 'workspace.menuLabels.myData', value: 'data', visible: !(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.indexOf('SeeMyData') },
-                { icon: 'fas fa-table', key: '3', label: 'workspace.menuLabels.myModels', value: 'models', visible: true },
-                { icon: 'fas fa-th-large', key: '4', label: 'workspace.menuLabels.myAnalysis', value: 'analysis', visible: (this.$store.state as any).user.functionalities.indexOf('CreateDocument') },
-                {
-                    icon: 'fas fa-stopwatch',
-                    key: '5',
-                    label: 'workspace.menuLabels.schedulation',
-                    value: 'schedulation',
-                    visible: !(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.indexOf('SeeSnapshotsFunctionality') && (this.$store.state as any).user.functionalities.indexOf('ViewScheduledWorkspace')
-                },
-                { icon: 'fas fa-filter', key: '6', label: 'workspace.menuLabels.advanced', value: 'advanced', visible: true }
-            ]
+            menuItems: [] as any
         }
     },
     created() {
         this.getAllRepositoryData()
+        this.createMenuItems
         console.log((this.$store.state as any).user)
     },
     methods: {
@@ -226,6 +213,24 @@ export default defineComponent({
         async setSelectedBreadcrumb(breadcrumb: any) {
             this.selectedBreadcrumb = breadcrumb
             this.$router.push(`/workspace/repository/${this.selectedBreadcrumb.node.id}`)
+        },
+        createMenuItems() {
+            this.menuItems = []
+            this.menuItems.push(
+                { icon: 'fas fa-history', key: '0', label: 'workspace.menuLabels.recent', value: 'recent', visible: true },
+                { icon: 'fas fa-folder', key: '1', label: 'workspace.menuLabels.myRepository', value: 'repository' },
+                { icon: 'fas fa-database', key: '2', label: 'workspace.menuLabels.myData', value: 'data', visible: !(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.indexOf('SeeMyData') },
+                { icon: 'fas fa-table', key: '3', label: 'workspace.menuLabels.myModels', value: 'models', visible: true },
+                { icon: 'fas fa-th-large', key: '4', label: 'workspace.menuLabels.myAnalysis', value: 'analysis', visible: (this.$store.state as any).user.functionalities.indexOf('CreateDocument') },
+                {
+                    icon: 'fas fa-stopwatch',
+                    key: '5',
+                    label: 'workspace.menuLabels.schedulation',
+                    value: 'schedulation',
+                    visible: !(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.indexOf('SeeSnapshotsFunctionality') && (this.$store.state as any).user.functionalities.indexOf('ViewScheduledWorkspace')
+                },
+                { icon: 'fas fa-filter', key: '6', label: 'workspace.menuLabels.advanced', value: 'advanced', visible: true }
+            )
         }
     }
 })
