@@ -9,12 +9,12 @@
         </template>
 
         <template #content>
-            <div class="p-d-flex kn-flex" style="min-width:0;overflow: hidden;">
+            <div class="p-d-flex kn-flex" :style="workspaceFederationDatasetListDescriptor.styles.metaContainer">
                 <div class="p-d-flex p-flex-row kn-flex overflow">
                     <WorkspaceFederationDefinitionMetafieldsList
-                        style="min-width: 250px"
+                        :style="workspaceFederationDatasetListDescriptor.styles.metaList"
                         v-for="dataset in datasets"
-                        class="metafield-select-list p-m-2"
+                        class="metafield-select-list p-mx-2 p-mb-2"
                         :key="dataset.id"
                         :propDataset="dataset"
                         :selectedMetafields="selectedMetafields"
@@ -30,6 +30,7 @@
 import { defineComponent } from 'vue'
 import Card from 'primevue/card'
 import WorkspaceFederationDefinitionMetafieldsList from './WorkspaceFederationDefinitionMetafieldsList.vue'
+import workspaceFederationDatasetListDescriptor from './WorkspaceFederationDatasetListDescriptor.json'
 
 export default defineComponent({
     name: 'workspace-federation-definition-associations-editor',
@@ -37,7 +38,8 @@ export default defineComponent({
     props: { selectedDatasets: { type: Array }, selectedMetafields: { type: Array }, resetSelectedMetafield: { type: Boolean } },
     data() {
         return {
-            datasets: [] as any[]
+            datasets: [] as any[],
+            workspaceFederationDatasetListDescriptor
         }
     },
     watch: {

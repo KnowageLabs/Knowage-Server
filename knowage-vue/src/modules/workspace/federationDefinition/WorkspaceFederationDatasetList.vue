@@ -9,7 +9,7 @@
         <!-- <InlineMessage severity="info" :closable="false" :style="workspaceFederationDatasetListDescriptor.styles.message">
             {{ mode === 'available' ? $t('workspace.federationDefinition.availableDatasetsMessage') : $t('workspace.federationDefinition.selectedDatasetsMessage') }}
         </InlineMessage> -->
-        <Listbox class="kn-list listbox-container" :options="dataset" :filter="true" optionLabel="name" @change="selectDataset($event.value)">
+        <Listbox class="kn-list listbox-container" :listStyle="workspaceFederationDatasetListDescriptor.styles.dsList" :options="dataset" :filter="true" optionLabel="name" @change="selectDataset($event.value)">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
             <template #option="slotProps">
                 <div class="kn-list-item p-d-flex p-flex-row">
