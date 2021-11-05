@@ -7,7 +7,7 @@
                     <span>{{ dataset.label }}</span>
                 </template>
                 <template #right>
-                    <Button class="kn-button p-button-text p-button-rounded p-button-plain" :label="$t('common.close')" @click="$emit('close')"></Button>
+                    <Button class="kn-button p-button-text p-button-rounded p-button-plain" :label="$t('common.close')" @click="closeDialog"></Button>
                 </template>
             </Toolbar>
         </template>
@@ -15,7 +15,10 @@
         <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
 
         <div class="col-12 scrollable-table">
-            <DatasetPreviewTable :previewColumns="columns" :previewRows="rows" :pagination="pagination" @pageChanged="updatePagination($event)" @sort="onSort" @filter="onFilter"></DatasetPreviewTable>
+            <Message v-if="errorMessageVisible" class="kn-flex p-m-2" severity="warn" :closable="false" :style="mainDescriptor.style.message">
+                {{ errorMessage }}
+            </Message>
+            <DatasetPreviewTable v-else :previewColumns="columns" :previewRows="rows" :pagination="pagination" @pageChanged="updatePagination($event)" @sort="onSort" @filter="onFilter"></DatasetPreviewTable>
         </div>
     </Dialog>
 </template>
@@ -25,12 +28,13 @@ import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import Dialog from 'primevue/dialog'
 import DatasetPreviewTable from '../tables/DatasetPreviewTable.vue'
+import Message from 'primevue/message'
 import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import workspaceDataPreviewDialogDescriptor from './WorkspaceDataPreviewDialogDescriptor.json'
 
 export default defineComponent({
     name: 'kpi-scheduler-save-dialog',
-    components: { Dialog, DatasetPreviewTable },
+    components: { Dialog, DatasetPreviewTable, Message },
     props: { visible: { type: Boolean }, propDataset: { type: Object } },
     emits: ['close'],
     data() {
@@ -43,11 +47,16 @@ export default defineComponent({
             pagination: { start: 0, limit: 15 } as any,
             sort: null as any,
             filter: null as any,
+            errorMessageVisible: false,
+            errorMessage: '',
             loading: false
         }
     },
     watch: {
         async propDataset() {
+            await this.loadPreview()
+        },
+        async visible() {
             await this.loadPreview()
         }
     },
@@ -57,6 +66,7 @@ export default defineComponent({
     methods: {
         async loadPreview() {
             this.loadDataset()
+            console.log('LOAD PREVIEW VISIBLE', this.visible, ' LABEL', this.dataset.label)
             if (this.dataset.label && this.visible) {
                 await this.loadPreviewData()
             }
@@ -74,11 +84,17 @@ export default defineComponent({
             if (this.filter) {
                 postData.filters = this.filter
             }
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${this.dataset.label}/preview`, postData).then((response: AxiosResponse<any>) => {
-                this.setPreviewColumns(response.data)
-                this.rows = response.data.rows
-                this.pagination.size = response.data.results
-            })
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${this.dataset.label}/preview`, postData)
+                .then((response: AxiosResponse<any>) => {
+                    this.setPreviewColumns(response.data)
+                    this.rows = response.data.rows
+                    this.pagination.size = response.data.results
+                })
+                .catch((error) => {
+                    this.errorMessage = error.message
+                    this.errorMessageVisible = true
+                })
             this.loading = false
         },
         async updatePagination(lazyParams: any) {
@@ -102,6 +118,17 @@ export default defineComponent({
             for (let i = 1; i < data.metaData.fields.length; i++) {
                 this.columns.push({ header: data.metaData.fields[i].header, field: data.metaData.fields[i].name })
             }
+        },
+        closeDialog() {
+            this.dataset = null
+            this.rows = []
+            this.columns = []
+            this.pagination = { start: 0, limit: 15 }
+            this.sort = null
+            this.filter = null
+            this.errorMessageVisible = false
+            this.errorMessage = ''
+            this.$emit('close')
         }
     }
 })
