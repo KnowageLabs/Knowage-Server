@@ -30,9 +30,16 @@
         </template>
         <Column class="kn-truncated" :style="datasetPreviewTableDescriptor.columnStyle" v-for="col of columns" :field="col.field" :key="col.field" :sortable="true">
             <template #header>
-                {{ col.header }}
-                <i class="pi pi-filter-icon pi-filter" @click="searchVisible[col.field] = !searchVisible[col.field]" />
-                <InputText v-if="searchVisible[col.field]" type="text" v-model="searchInput[col.field]" class="p-column-filter" @input="onFilter(col)"></InputText>
+                <div class="dropdown">
+                    <div clas="p-d-flex p-flex-column">
+                        <p class="p-m-0">{{ col.header }}</p>
+                        <small>{{ col.type }}</small>
+                    </div>
+                    <i class="pi pi-filter-icon pi-filter p-ml-5" @click="searchVisible[col.field] = !searchVisible[col.field]" />
+                    <div class="dropdown-content" v-if="searchVisible[col.field]">
+                        <InputText v-model="searchInput[col.field]" class="p-inputtext-sm p-column-filter" @input="onFilter(col)"></InputText>
+                    </div>
+                </div>
             </template>
         </Column>
     </DataTable>
@@ -90,11 +97,11 @@ export default defineComponent({
                 this.globalFilterFields.push(el.field)
                 this.filters[el.field] = { operator: FilterOperator.AND, constraints: [filterDefault] }
             })
-            // console.log('LOADED COLUMNS: ', this.columns)
+            console.log('LOADED COLUMNS: ', this.columns)
         },
         loadRows() {
             this.rows = this.previewRows as any[]
-            // console.log('LOADED ROWS: ', this.rows)
+            console.log('LOADED ROWS: ', this.rows)
         },
         loadPagination() {
             this.lazyParams = this.pagination as any
@@ -144,5 +151,21 @@ export default defineComponent({
 <style lang="scss">
 #preview-datatable .p-datatable-wrapper {
     height: auto;
+}
+
+.dropdown {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.dropdown-content {
+    display: block;
+    position: absolute;
+    left: 110px;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 5000;
 }
 </style>
