@@ -34,7 +34,7 @@
             </Listbox>
         </div>
         <div class="p-d-flex p-flex-column" :style="workspaceDescriptor.style.maxWidth">
-            <Button id="showSidenavIcon" v-if="$router.currentRoute._rawValue.fullPath === '/workspace/'" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="sidebarVisible = true" />
+            <Button id="showSidenavIcon" v-if="$router.currentRoute._rawValue.fullPath === '/workspace'" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="sidebarVisible = true" />
             <router-view
                 class="kn-router-view"
                 :selectedFolder="selectedFolder"
