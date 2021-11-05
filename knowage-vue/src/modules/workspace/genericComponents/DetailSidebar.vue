@@ -99,7 +99,7 @@ export default defineComponent({
                 case 'federationDataset':
                     return descriptor.federationDatasetViewFields
                 default:
-                    return console.log('How did this happen, no valid file type.')
+                    return []
             }
         },
         documentButtons(): any {
@@ -133,7 +133,7 @@ export default defineComponent({
                         { icon: 'fas fa-trash-alt', class: 'p-button-text p-button-rounded p-button-plain', visible: (this.$store.state as any).user.isSuperadmin || (this.$store.state as any).user.userId === this.document.owner, command: this.emitEvent('deleteDataset') }
                     ]
                 default:
-                    return console.log('How did this happen, no valid file type.')
+                    return []
             }
         }
     },

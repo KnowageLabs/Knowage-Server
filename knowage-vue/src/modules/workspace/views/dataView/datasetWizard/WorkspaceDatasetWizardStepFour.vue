@@ -11,7 +11,7 @@
                 </div>
                 <div class="p-field  p-col-12">
                     <span class="p-float-label">
-                        <InputText id="description" class="kn-material-input" type="text" maxLength="150" v-model="dataset.description" data-test="description-input" />
+                        <InputText id="description" class="kn-material-input" type="text" maxLength="50" v-model="dataset.description" data-test="description-input" />
                         <label for="description" class="kn-material-input-label"> {{ $t('common.description') }} </label>
                     </span>
                 </div>
@@ -35,6 +35,7 @@
                                 id="persistTableName"
                                 class="kn-material-input"
                                 type="text"
+                                maxLength="50"
                                 v-model="dataset.tableName"
                                 :class="{
                                     'p-invalid': v$.dataset.tableName.$invalid && v$.dataset.tableName.$dirty
@@ -46,8 +47,6 @@
                         </span>
                         <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.tableName" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.persistTableName') }" />
                     </div>
-                    <!-- </template>
-                    </Card> -->
                 </div>
             </form>
         </template>

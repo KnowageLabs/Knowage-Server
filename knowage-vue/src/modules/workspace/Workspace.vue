@@ -125,7 +125,6 @@ export default defineComponent({
     created() {
         this.getAllRepositoryData()
         this.createMenuItems()
-        console.log((this.$store.state as any).user)
     },
     methods: {
         closeSidebar() {
