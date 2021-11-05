@@ -1,6 +1,7 @@
 <template>
     <DataTable
         id="preview-datatable"
+        v-model:first="first"
         :value="rows"
         :lazy="true"
         :paginator="lazyParams.size > 15"
@@ -35,7 +36,7 @@
                         <p class="p-m-0">{{ col.header }}</p>
                         <small>{{ col.type }}</small>
                     </div>
-                    <i class="pi pi-filter-icon pi-filter p-ml-5" @click="searchVisible[col.field] = !searchVisible[col.field]" />
+                    <i class="pi pi-filter-icon pi-filter p-ml-5" :class="{ 'filter-icon-active': searchInput[col.field] }" @click="searchVisible[col.field] = !searchVisible[col.field]" />
                     <div class="dropdown-content" v-if="searchVisible[col.field]">
                         <InputText v-model="searchInput[col.field]" class="p-inputtext-sm p-column-filter" @input="onFilter(col)"></InputText>
                     </div>
@@ -70,7 +71,8 @@ export default defineComponent({
             timer: null as any,
             searchInput: {} as any,
             searchVisible: {} as any,
-            customFilters: [] as any
+            customFilters: [] as any,
+            first: 0
         }
     },
     watch: {
@@ -162,5 +164,9 @@ export default defineComponent({
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 5000;
+}
+
+.filter-icon-active {
+    color: $color-primary;
 }
 </style>
