@@ -1,5 +1,5 @@
 <template>
-    <div class="kn-page p-d-flex p-flex-row">
+    <div class="kn-page p-d-flex p-flex-row" style="width:calc(100vw - 56px)">
         <div id="sideMenu" class="kn-list--column" :style="workspaceDescriptor.style.menuWidth">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #left>
@@ -57,18 +57,24 @@
             </template>
         </Toolbar>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-        <Listbox :options="workspaceDescriptor.menuItems">
+        <Listbox :options="menuItems">
             <template #option="slotProps">
-                <div v-if="slotProps.option.value !== 'repository'" class="kn-list-item p-d-flex p-flex-row" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
+                <div v-if="slotProps.option.value !== 'repository'" v-show="slotProps.option.visible" class="kn-list-item p-d-flex p-flex-row" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
                     <i :class="slotProps.option.icon"></i>
                     <div class="kn-list-item-text p-ml-2">
                         <span>{{ $t(slotProps.option.label) }}</span>
                     </div>
                 </div>
-                <div v-else class="menu-accordion-sidebar">
+                <div v-else v-show="showRepository" class="menu-accordion-sidebar">
                     <Accordion>
-                        <AccordionTab :header="$t('workspace.menuLabels.myRepository')">
-                            <WorkspaceDocumentTree :propFolders="allFolders" mode="select" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder" @delete="deleteFolder" @createFolder="showCreateFolderDialog"></WorkspaceDocumentTree>
+                        <AccordionTab>
+                            <template #header>
+                                <div class="p-d-flex p-flex-row" @click="accordionIcon = !accordionIcon" data-test="document-accordion">
+                                    <i class="fas fa-folder"></i>
+                                    <span class="p-ml-2">{{ $t('workspace.menuLabels.myRepository') }}</span>
+                                </div>
+                            </template>
+                            <WorkspaceDocumentTree :propFolders="allFolders" mode="select" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder" @delete="deleteFolder" @createFolder="showCreateFolderDialog" data-test="document-tree"></WorkspaceDocumentTree>
                         </AccordionTab>
                     </Accordion>
                 </div>
@@ -254,6 +260,9 @@ export default defineComponent({
 .menu-accordion-sidebar .p-accordion-content,
 .menu-accordion-sidebar .p-tree {
     padding: 0 !important;
+}
+.menu-accordion-sidebar .p-accordion-header {
+    margin: -7px !important;
 }
 .menu-accordion .p-accordion-tab-active {
     margin: 0 !important;

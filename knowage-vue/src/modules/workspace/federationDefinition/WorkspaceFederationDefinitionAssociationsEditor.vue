@@ -9,15 +9,18 @@
         </template>
 
         <template #content>
-            <div class="p-d-flex p-flex-row p-flex-wrap ">
-                <WorkspaceFederationDefinitionMetafieldsList
-                    v-for="dataset in datasets"
-                    class="metafield-select-list p-m-2"
-                    :key="dataset.id"
-                    :propDataset="dataset"
-                    :selectedMetafields="selectedMetafields"
-                    :resetSelectedMetafield="resetSelectedMetafield"
-                ></WorkspaceFederationDefinitionMetafieldsList>
+            <div class="p-d-flex kn-flex" style="min-width:0;overflow: hidden;">
+                <div class="p-d-flex p-flex-row kn-flex overflow">
+                    <WorkspaceFederationDefinitionMetafieldsList
+                        style="min-width: 250px"
+                        v-for="dataset in datasets"
+                        class="metafield-select-list p-m-2"
+                        :key="dataset.id"
+                        :propDataset="dataset"
+                        :selectedMetafields="selectedMetafields"
+                        :resetSelectedMetafield="resetSelectedMetafield"
+                    ></WorkspaceFederationDefinitionMetafieldsList>
+                </div>
             </div>
         </template>
     </Card>
