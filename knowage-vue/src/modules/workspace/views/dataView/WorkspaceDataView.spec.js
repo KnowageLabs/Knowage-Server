@@ -73,6 +73,40 @@ const mockedDatasets = [
     }
 ]
 
+const mockedEnterprise = [
+    {
+        drivers: [],
+        description: 'Dataset created from execution of document function_catalog by user demo_user',
+        tags: [],
+        dateIn: '2017-02-08T13:36:04Z',
+        author: 'demo_user',
+        name: 'Enterprise',
+        id: 4,
+        owner: 'demo_user',
+        label: 'Enterprise',
+        catTypeId: null,
+        dsTypeCd: 'File',
+        pars: []
+    }
+]
+
+const mockedShared = [
+    {
+        drivers: [],
+        description: 'Dataset created from execution of document function_catalog by user demo_user',
+        tags: [],
+        dateIn: '2017-02-08T13:36:04Z',
+        author: 'demo_user',
+        name: 'Shared',
+        id: 4,
+        owner: 'demo_user',
+        label: 'Shared',
+        catTypeId: null,
+        dsTypeCd: 'File',
+        pars: []
+    }
+]
+
 jest.mock('axios')
 
 const $http = {
@@ -80,6 +114,10 @@ const $http = {
         switch (url) {
             case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/owned/`:
                 return Promise.resolve({ data: { root: mockedDatasets } })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/shared/`:
+                return Promise.resolve({ data: { root: mockedShared } })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/enterprise/`:
+                return Promise.resolve({ data: { root: mockedEnterprise } })
             default:
                 return Promise.resolve({ data: [] })
         }
@@ -152,6 +190,24 @@ describe('Workspace Analysis View', () => {
         expect(wrapper.vm.datasetList.length).toBe(0)
         expect(wrapper.vm.filteredDatasets.length).toBe(0)
         expect(wrapper.find('[data-test="datasets-table"]').html()).toContain('common.info.noDataFound')
+    })
+
+    it('should show dataset types if dataset is selected', async () => {
+        const wrapper = factory(false)
+
+        await flushPromises()
+
+        await wrapper.find('[aria-label="Shared"]').trigger('click')
+
+        expect(wrapper.vm.tableMode).toBe('Shared')
+        expect(wrapper.vm.filteredDatasets).toStrictEqual(mockedShared)
+        expect(wrapper.find('[data-test="datasets-table"]').html()).toContain('Shared')
+
+        await wrapper.find('[aria-label="Enterprise"]').trigger('click')
+
+        expect(wrapper.vm.tableMode).toBe('Enterprise')
+        expect(wrapper.vm.filteredDatasets).toStrictEqual(mockedEnterprise)
+        expect(wrapper.find('[data-test="datasets-table"]').html()).toContain('Enterprise')
     })
 
     it('should show a table if grid mode is switched for the selected mode', async () => {

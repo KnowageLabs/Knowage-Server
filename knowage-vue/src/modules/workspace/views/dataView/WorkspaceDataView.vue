@@ -14,7 +14,7 @@
 
     <div class="p-d-flex p-flex-row p-ai-center">
         <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
-        <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" @click="getDatasetsByFilter" />
+        <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" @click="getDatasetsByFilter" data-test="dataset-select" />
     </div>
 
     <div class="overflow">
