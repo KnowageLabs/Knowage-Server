@@ -7,7 +7,7 @@
         :rows="15"
         :totalRecords="lazyParams.size"
         paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-        class="p-datatable-sm kn-table"
+        class="p-datatable-sm kn-table kn-flex"
         v-model:filters="filters"
         filterDisplay="menu"
         :currentPageReportTemplate="
@@ -18,7 +18,6 @@
             })
         "
         stripedRows
-        showGridlines
         responsiveLayout="stack"
         breakpoint="960px"
         @page="onPage($event)"
