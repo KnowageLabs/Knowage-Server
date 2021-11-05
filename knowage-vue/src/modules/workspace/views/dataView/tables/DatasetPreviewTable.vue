@@ -28,7 +28,7 @@
                 {{ $t('common.info.noDataFound') }}
             </div>
         </template>
-        <Column class="kn-truncated" :style="datasetPreviewTableDescriptor.columnStyle" v-for="col of columns" :field="col.field" :key="col.field" :sortable="true">
+        <Column :style="datasetPreviewTableDescriptor.columnStyle" v-for="col of columns" :field="col.field" :key="col.field" :sortable="true">
             <template #header>
                 <div class="dropdown">
                     <div clas="p-d-flex p-flex-column">
