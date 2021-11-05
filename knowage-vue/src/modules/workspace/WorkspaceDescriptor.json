@@ -1,58 +1,14 @@
 {
-    "menuItems": [
-        {
-            "icon": "fas fa-history",
-            "key": "0",
-            "label": "workspace.menuLabels.recent",
-            "value": "recent"
-        },
-        {
-            "icon": "fas fa-folder",
-            "key": "1",
-            "label": "workspace.menuLabels.myRepository",
-            "value": "repository"
-        },
-        {
-            "icon": "fas fa-database",
-            "key": "2",
-            "label": "workspace.menuLabels.myData",
-            "value": "data"
-        },
-        {
-            "icon": "fas fa-table",
-            "key": "3",
-            "label": "workspace.menuLabels.myModels",
-            "value": "models"
-        },
-        {
-            "icon": "fas fa-th-large",
-            "key": "4",
-            "label": "workspace.menuLabels.myAnalysis",
-            "value": "analysis"
-        },
-        {
-            "icon": "fas fa-stopwatch",
-            "key": "5",
-            "label": "workspace.menuLabels.schedulation",
-            "value": "schedulation"
-        },
-        {
-            "icon": "fas fa-filter",
-            "key": "6",
-            "label": "workspace.menuLabels.advanced",
-            "value": "advanced"
-        }
-    ],
     "style": {
+        "filterInput": {
+            "width": "25%"
+        },
         "iconColumn": {
             "text-align": "end",
             "width": "15%"
         },
         "maxWidth": {
             "width": "100%"
-        },
-        "filterInput": {
-            "width": "25%"
         },
         "message": {
             "align-items": "center",

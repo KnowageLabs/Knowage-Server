@@ -7,15 +7,15 @@
                 </template>
             </Toolbar>
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-            <Listbox v-if="displayMenu" :options="workspaceDescriptor.menuItems" data-test="menu-list">
+            <Listbox v-if="displayMenu" :options="menuItems" data-test="menu-list">
                 <template #option="slotProps">
-                    <div v-if="slotProps.option.value !== 'repository'" class="kn-list-item" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
+                    <div v-if="slotProps.option.value !== 'repository'" v-show="slotProps.option.visible" class="kn-list-item" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
                         <i :class="slotProps.option.icon"></i>
                         <div class="kn-list-item-text">
                             <span>{{ $t(slotProps.option.label) }}</span>
                         </div>
                     </div>
-                    <div v-else class="menu-accordion">
+                    <div v-else class="menu-accordion" v-show="showRepository">
                         <Accordion>
                             <AccordionTab>
                                 <template #header>
@@ -93,6 +93,11 @@ import WorkspaceNewFolderDialog from './views/repositoryView/dialogs/WorkspaceNe
 export default defineComponent({
     name: 'dataset-management',
     components: { Sidebar, Listbox, Accordion, AccordionTab, WorkspaceDocumentTree, WorkspaceNewFolderDialog },
+    computed: {
+        showRepository(): any {
+            return !(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.indexOf('SaveIntoFolderFunctionality')
+        }
+    },
     data() {
         return {
             workspaceDescriptor,
@@ -107,11 +112,27 @@ export default defineComponent({
             breadcrumbs: [] as any[],
             selectedBreadcrumb: null as any,
             accordionIcon: true,
-            loading: false
+            loading: false,
+            menuItems: [
+                { icon: 'fas fa-history', key: '0', label: 'workspace.menuLabels.recent', value: 'recent', visible: true },
+                { icon: 'fas fa-folder', key: '1', label: 'workspace.menuLabels.myRepository', value: 'repository' },
+                { icon: 'fas fa-database', key: '2', label: 'workspace.menuLabels.myData', value: 'data', visible: !(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.indexOf('SeeMyData') },
+                { icon: 'fas fa-table', key: '3', label: 'workspace.menuLabels.myModels', value: 'models', visible: true },
+                { icon: 'fas fa-th-large', key: '4', label: 'workspace.menuLabels.myAnalysis', value: 'analysis', visible: (this.$store.state as any).user.functionalities.indexOf('CreateDocument') },
+                {
+                    icon: 'fas fa-stopwatch',
+                    key: '5',
+                    label: 'workspace.menuLabels.schedulation',
+                    value: 'schedulation',
+                    visible: !(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.indexOf('SeeSnapshotsFunctionality') && (this.$store.state as any).user.functionalities.indexOf('ViewScheduledWorkspace')
+                },
+                { icon: 'fas fa-filter', key: '6', label: 'workspace.menuLabels.advanced', value: 'advanced', visible: true }
+            ]
         }
     },
     created() {
         this.getAllRepositoryData()
+        console.log((this.$store.state as any).user)
     },
     methods: {
         closeSidebar() {

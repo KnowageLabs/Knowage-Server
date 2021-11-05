@@ -14,11 +14,11 @@
                 </h4>
                 <p class="p-m-0" :style="cardDescriptor.style.nameContainerText" v-tooltip="document[documentFields.name]">{{ document[documentFields.name] }}</p>
             </div>
-            <div class="button-container" :style="cardDescriptor.style.buttonContainer">
+            <span :style="cardDescriptor.style.buttonContainer">
                 <span v-for="(button, index) of documentButtons" :key="index">
-                    <Button class="p-mx-1" v-if="button.visible" :icon="button.icon" :class="button.class" :style="cardDescriptor.style.icon" @click="button.command" />
+                    <Button :id="button.id" class="p-mx-1" v-if="button.visible" :icon="button.icon" :class="button.class" :style="cardDescriptor.style.icon" @click="button.command" />
                 </span>
-            </div>
+            </span>
         </span>
     </div>
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
@@ -102,36 +102,36 @@ export default defineComponent({
             switch (this.viewType) {
                 case 'recent':
                     return [
-                        { icon: 'fas fa-info-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
+                        { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
                         { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeRecent') }
                     ]
                 case 'repository':
                     return [
-                        { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
-                        { icon: 'fas fa-info-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
+                        { icon: 'fas fa-ellipsis-v', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
+                        { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
                         { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeDocumentFromOrganizer') }
                     ]
                 case 'dataset':
                     return [
-                        { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
-                        { icon: 'fas fa-info-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
+                        { icon: 'fas fa-ellipsis-v', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
+                        { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
                         { icon: 'fas fa-eye', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('previewDataset') }
                     ]
                 case 'analysis':
                     return [
-                        { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
-                        { icon: 'fas fa-info-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
+                        { icon: 'fas fa-ellipsis-v', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
+                        { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
                         { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeAnalysisDocument') }
                     ]
                 case 'businessModel':
                     return [
-                        { icon: 'fas fa-info-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
+                        { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
                         { icon: 'fa fa-search', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('openDatasetInQBE') }
                     ]
                 case 'federationDataset':
                     return [
-                        { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
-                        { icon: 'fas fa-info-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
+                        { icon: 'fas fa-ellipsis-v', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
+                        { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
                         { icon: 'fa fa-search', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('openDatasetInQBE') }
                     ]
                 default:
@@ -181,12 +181,12 @@ export default defineComponent({
                 )
             } else if (this.viewType === 'federationDataset') {
                 this.menuButtons.push( 
-                        { key: '0', icon: 'pi pi-pencil', label: this.$t('workspace.myModels.editDataset'), class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('editDataset') },
-                        { key: '1', icon: 'fas fa-trash-alt', label: this.$t('workspace.myModels.deleteDataset'), class: 'p-button-text p-button-rounded p-button-plain', visible: (this.$store.state as any).user.isSuperadmin || (this.$store.state as any).user.userId === this.document.owner, command: this.emitEvent('deleteDataset') })
+                    { key: '0', icon: 'pi pi-pencil', label: this.$t('workspace.myModels.editDataset'), class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('editDataset') },
+                    { key: '1', icon: 'fas fa-trash-alt', label: this.$t('workspace.myModels.deleteDataset'), class: 'p-button-text p-button-rounded p-button-plain', visible: (this.$store.state as any).user.isSuperadmin || (this.$store.state as any).user.userId === this.document.owner, command: this.emitEvent('deleteDataset') })
             } else if (this.viewType === 'repository') {
                 this.menuButtons.push(
-                { key: '3', label: this.$t('workspace.myRepository.moveDocument'), icon: 'fas fa-share', command:  this.emitEvent('moveDocumentToFolder') },
-                { key: '4', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command:   this.emitEvent('deleteDocumentFromOrganizer') },
+                    { key: '3', label: this.$t('workspace.myRepository.moveDocument'), icon: 'fas fa-share', command:  this.emitEvent('moveDocumentToFolder') },
+                    { key: '4', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command:   this.emitEvent('deleteDocumentFromOrganizer') },
             )
             }
         }
@@ -200,6 +200,9 @@ export default defineComponent({
     }
     .details-container {
         border-radius: 10px;
+    }
+    #list-button {
+        display: none;
     }
 }
 </style>
