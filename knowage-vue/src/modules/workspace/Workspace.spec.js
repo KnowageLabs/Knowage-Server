@@ -17,7 +17,7 @@ const $http = { get: axios.get.mockImplementation(() => Promise.resolve({ data: 
 
 const $store = {
     state: {
-        user: {}
+        user: { isSuperadmin: true, functionalities: ['SaveIntoFolderFunctionality'] }
     }
 }
 
