@@ -1,7 +1,8 @@
 <template>
     <Dialog class="kn-dialog--toolbar--primary importExportDialog" :style="dataViewDescriptor.style.dialog" v-bind:visible="visible" footer="footer" :header="$t('workspace.myData.wizardTitle')" :closable="false" modal>
+        {{ newFileUploaded }}
         <span v-if="wizardStep === 1">
-            <StepOne :selectedDataset="dataset" @fileUploaded="fileUploaded = true" />
+            <StepOne :selectedDataset="dataset" @fileUploaded="onFileUpload" />
         </span>
         <span v-if="wizardStep === 2">
             <StepTwo :selectedDataset="dataset" />
@@ -60,6 +61,7 @@ export default defineComponent({
             gridForPreview: {} as any,
             datasetColumns: [] as any,
             editingDatasetFile: false,
+            newFileUploaded: false,
             fileUploaded: false,
             wizardStep: 1
         }
@@ -75,6 +77,10 @@ export default defineComponent({
         }
     },
     methods: {
+        onFileUpload() {
+            this.fileUploaded = true
+            this.newFileUploaded = true
+        },
         async getSelectedDataset() {
             this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.selectedDataset.id}`)
@@ -129,6 +135,8 @@ export default defineComponent({
             this.dataset.limitRows == null ? (this.dataset.limitRows = '') : ''
             this.dataset.xslSheetNumber == null ? (this.dataset.xslSheetNumber = '') : ''
             this.dataset.meta = JSON.stringify(this.dataset.meta)
+            this.newFileUploaded ? (this.dataset.fileUploaded = true) : ''
+            console.log(this.dataset)
             this.$http({
                 method: 'POST',
                 url: process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'selfservicedataset/testDataSet',
