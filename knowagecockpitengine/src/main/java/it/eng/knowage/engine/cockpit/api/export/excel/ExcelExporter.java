@@ -26,7 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.ws.rs.core.UriBuilder;
@@ -53,7 +52,6 @@ import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -77,8 +75,6 @@ public class ExcelExporter extends AbstractFormatExporter {
 	private static final String SCRIPT_NAME = "cockpit-export-xls.js";
 	private static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
 	private static final int SHEET_NAME_MAX_LEN = 31;
-	private static final String DATE_FORMAT = "dd/MM/yyyy";
-	public static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
 
 	// used only for scheduled export
 	public ExcelExporter(String outputType, String userUniqueIdentifier, Map<String, String[]> parameterMap, String requestURL) {
@@ -90,20 +86,6 @@ public class ExcelExporter extends AbstractFormatExporter {
 	public ExcelExporter(String outputType, String userUniqueIdentifier, JSONObject body) {
 		super(userUniqueIdentifier, body);
 		this.isSingleWidgetExport = body.optBoolean("exportWidget");
-		super.locale = getLocaleFromBody(body);
-	}
-
-	private Locale getLocaleFromBody(JSONObject body) {
-		try {
-			String language = body.getString(SpagoBIConstants.SBI_LANGUAGE);
-			String country = body.getString(SpagoBIConstants.SBI_COUNTRY);
-			Locale toReturn = new Locale(language, country);
-			return toReturn;
-		} catch (Exception e) {
-			logger.warn("Cannot get locale information from input parameters body", e);
-			return Locale.ENGLISH;
-		}
-
 	}
 
 	public String getMimeType() {
