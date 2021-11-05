@@ -9,7 +9,7 @@
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
             <Listbox v-if="displayMenu" :options="menuItems" data-test="menu-list">
                 <template #option="slotProps">
-                    <div v-if="slotProps.option.value !== 'repository'" v-show="slotProps.option.visible" class="kn-list-item" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
+                    <div v-if="slotProps.option.value !== 'repository'" class="kn-list-item" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
                         <i :class="slotProps.option.icon"></i>
                         <div class="kn-list-item-text">
                             <span>{{ $t(slotProps.option.label) }}</span>
@@ -59,7 +59,7 @@
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         <Listbox :options="menuItems">
             <template #option="slotProps">
-                <div v-if="slotProps.option.value !== 'repository'" v-show="slotProps.option.visible" class="kn-list-item p-d-flex p-flex-row" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
+                <div v-if="slotProps.option.value !== 'repository'" class="kn-list-item p-d-flex p-flex-row" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
                     <i :class="slotProps.option.icon"></i>
                     <div class="kn-list-item-text p-ml-2">
                         <span>{{ $t(slotProps.option.label) }}</span>
@@ -124,7 +124,7 @@ export default defineComponent({
     },
     created() {
         this.getAllRepositoryData()
-        this.createMenuItems
+        this.createMenuItems()
         console.log((this.$store.state as any).user)
     },
     methods: {
@@ -216,21 +216,23 @@ export default defineComponent({
         },
         createMenuItems() {
             this.menuItems = []
-            this.menuItems.push(
-                { icon: 'fas fa-history', key: '0', label: 'workspace.menuLabels.recent', value: 'recent', visible: true },
-                { icon: 'fas fa-folder', key: '1', label: 'workspace.menuLabels.myRepository', value: 'repository' },
-                { icon: 'fas fa-database', key: '2', label: 'workspace.menuLabels.myData', value: 'data', visible: !(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.indexOf('SeeMyData') },
-                { icon: 'fas fa-table', key: '3', label: 'workspace.menuLabels.myModels', value: 'models', visible: true },
-                { icon: 'fas fa-th-large', key: '4', label: 'workspace.menuLabels.myAnalysis', value: 'analysis', visible: (this.$store.state as any).user.functionalities.indexOf('CreateDocument') },
-                {
+            this.menuItems.push({ icon: 'fas fa-history', key: '0', label: 'workspace.menuLabels.recent', value: 'recent' }, { icon: 'fas fa-folder', key: '1', label: 'workspace.menuLabels.myRepository', value: 'repository' })
+            if (!(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.indexOf('SeeMyData')) {
+                this.menuItems.push({ icon: 'fas fa-database', key: '2', label: 'workspace.menuLabels.myData', value: 'data' })
+            }
+            this.menuItems.push({ icon: 'fas fa-table', key: '3', label: 'workspace.menuLabels.myModels', value: 'models' })
+            if ((this.$store.state as any).user.functionalities.indexOf('CreateDocument')) {
+                this.menuItems.push({ icon: 'fas fa-th-large', key: '4', label: 'workspace.menuLabels.myAnalysis', value: 'analysis' })
+            }
+            if (!(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.indexOf('SeeSnapshotsFunctionality') && (this.$store.state as any).user.functionalities.indexOf('ViewScheduledWorkspace')) {
+                this.menuItems.push({
                     icon: 'fas fa-stopwatch',
                     key: '5',
                     label: 'workspace.menuLabels.schedulation',
-                    value: 'schedulation',
-                    visible: !(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.indexOf('SeeSnapshotsFunctionality') && (this.$store.state as any).user.functionalities.indexOf('ViewScheduledWorkspace')
-                },
-                { icon: 'fas fa-filter', key: '6', label: 'workspace.menuLabels.advanced', value: 'advanced', visible: true }
-            )
+                    value: 'schedulation'
+                })
+            }
+            this.menuItems.push({ icon: 'fas fa-filter', key: '6', label: 'workspace.menuLabels.advanced', value: 'advanced' })
         }
     }
 })
