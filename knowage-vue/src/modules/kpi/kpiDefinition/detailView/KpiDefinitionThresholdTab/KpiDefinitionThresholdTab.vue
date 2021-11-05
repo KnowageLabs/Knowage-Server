@@ -102,11 +102,7 @@
                 <Column field="color" :header="$t('kpi.kpiDefinition.color')">
                     <template #body="slotProps">
                         <ColorPicker v-model="slotProps.data['color']" format="hex" @change="$emit('touched')" />
-                        <span>{{ slotProps.data['color'] }}</span>
-                    </template>
-                    <template #editor="slotProps">
-                        <ColorPicker v-model="slotProps.data['color']" format="hex" @change="$emit('touched')" />
-                        <InputText :style="tresholdTabDescriptor.styles.input" v-model="slotProps.data['color']" @change="$emit('touched')" />
+                        <InputText class="kn-material-input" v-tooltip.top="slotProps.data['color']" :style="tresholdTabDescriptor.styles.colorInput" v-model="slotProps.data['color']" @change="$emit('touched')" />
                     </template>
                 </Column>
 
