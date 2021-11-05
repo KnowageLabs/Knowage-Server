@@ -257,7 +257,7 @@ export default defineComponent({
             this.creationMenuButtons.push(
                 { key: '0', label: this.$t('managers.businessModelManager.uploadFile'), command: this.toggleDatasetDialog, visible: true },
                 { key: '1', label: this.$t('workspace.myData.prepareData'), command: this.openDatasetInQBE, visible: true },
-                { key: '2', label: this.$t('workspace.myData.openData'), command: this.exportDataset, visible: this.showCkanIntegration }
+                { key: '2', label: this.$t('workspace.myData.openData'), command: this.openDatasetInQBE, visible: this.showCkanIntegration }
             )
         },
         toggleDatasetDialog() {
