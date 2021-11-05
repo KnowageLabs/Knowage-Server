@@ -14,11 +14,11 @@
 
         <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
 
-        <div class="col-12 scrollable-table">
+        <div class="p-d-flex p-flex-column kn-flex col-12 scrollable-table">
             <Message v-if="errorMessageVisible" class="kn-flex p-m-2" severity="warn" :closable="false" :style="mainDescriptor.style.message">
                 {{ errorMessage }}
             </Message>
-            <DatasetPreviewTable v-else :previewColumns="columns" :previewRows="rows" :pagination="pagination" @pageChanged="updatePagination($event)" @sort="onSort" @filter="onFilter"></DatasetPreviewTable>
+            <DatasetPreviewTable v-else class="p-d-flex p-flex-column kn-flex p-m-2" :previewColumns="columns" :previewRows="rows" :pagination="pagination" @pageChanged="updatePagination($event)" @sort="onSort" @filter="onFilter"></DatasetPreviewTable>
         </div>
     </Dialog>
 </template>
@@ -144,10 +144,11 @@ export default defineComponent({
 }
 
 .scrollable-table .p-datatable-wrapper {
-    max-width: 93vw;
+    flex: 1;
+    max-width: 96vw;
     overflow-x: auto;
 }
 .scrollable-table .p-datatable {
-    max-width: 93vw;
+    max-width: 96vw;
 }
 </style>
