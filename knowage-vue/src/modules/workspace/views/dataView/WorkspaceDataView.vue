@@ -14,7 +14,7 @@
 
     <div class="p-d-flex p-flex-row p-ai-center">
         <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
-        <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" @click="getDatasetsByFilter" />
+        <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" @click="getDatasetsByFilter" data-test="dataset-select" />
     </div>
 
     <div class="overflow">
@@ -115,6 +115,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Chip from 'primevue/chip'
 import Menu from 'primevue/contextmenu'
+import Message from 'primevue/message'
 import WorkspaceDataCloneDialog from './dialogs/WorkspaceDataCloneDialog.vue'
 import WorkspaceDataPreviewDialog from './dialogs/WorkspaceDataPreviewDialog.vue'
 import WorkspaceDataShareDialog from './dialogs/WorkspaceDataShareDialog.vue'
@@ -124,7 +125,7 @@ import { downloadDirect } from '@/helpers/commons/fileHelper'
 import SelectButton from 'primevue/selectbutton'
 
 export default defineComponent({
-    components: { DataTable, Column, Chip, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog, WorkspaceDataPreviewDialog, SelectButton },
+    components: { DataTable, Column, Chip, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog, WorkspaceDataPreviewDialog, SelectButton, Message },
     emits: ['toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {

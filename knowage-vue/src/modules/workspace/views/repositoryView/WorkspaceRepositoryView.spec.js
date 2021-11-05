@@ -8,6 +8,7 @@ import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Menu from 'primevue/contextmenu'
+import Message from 'primevue/message'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
 import WorkspaceRepositoryView from './WorkspaceRepositoryView.vue'
@@ -173,6 +174,7 @@ const factory = (toggleCardDisplay) => {
                 DataTable,
                 KnFabButton,
                 Menu,
+                Message,
                 KnInputFile: true,
                 ProgressBar,
                 Toolbar,
