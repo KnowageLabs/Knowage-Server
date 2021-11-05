@@ -86,8 +86,7 @@ export default defineComponent({
             let fDate = new Date(date)
             return fDate.toLocaleString()
         },
-        executeRecent(event) {
-            console.log('executeRecent() {', event)
+        executeRecent() {
             this.$store.commit('setInfo', { title: 'Todo', msg: 'Functionality not in this sprint' })
         },
         toggleDisplayView() {

@@ -66,14 +66,12 @@ export default defineComponent({
     methods: {
         async loadPreview() {
             this.loadDataset()
-            console.log('LOAD PREVIEW VISIBLE', this.visible, ' LABEL', this.dataset.label)
             if (this.dataset.label && this.visible) {
                 await this.loadPreviewData()
             }
         },
         loadDataset() {
             this.dataset = this.propDataset as any
-            console.log('LOADED DATASET: ', this.dataset)
         },
         async loadPreviewData() {
             this.loading = true
@@ -98,19 +96,16 @@ export default defineComponent({
             this.loading = false
         },
         async updatePagination(lazyParams: any) {
-            console.log('LAZY PARAMS: ', lazyParams)
             this.pagination.start = lazyParams.paginationStart
             this.pagination.limit = lazyParams.paginationLimit
             await this.loadPreview()
         },
         async onSort(event: any) {
             this.sort = event
-            console.log('SORT EVENT: ', event)
             await this.loadPreviewData()
         },
         async onFilter(event: any) {
             this.filter = event
-            console.log('FILTER EVENT: ', event)
             await this.loadPreviewData()
         },
         setPreviewColumns(data: any) {
