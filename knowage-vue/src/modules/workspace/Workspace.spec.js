@@ -80,10 +80,10 @@ describe('Workspace', () => {
 
         expect(wrapper.find('[data-test="menu-list"]').html()).toContain('workspace.menuLabels.recent')
         expect(wrapper.find('[data-test="menu-list"]').html()).toContain('workspace.menuLabels.myRepository')
-        expect(wrapper.find('[data-test="menu-list"]').html()).toContain('workspace.menuLabels.myData')
+        expect(wrapper.find('[data-test="menu-list"]').html()).not.toContain('workspace.menuLabels.myData')
         expect(wrapper.find('[data-test="menu-list"]').html()).toContain('workspace.menuLabels.myModels')
         expect(wrapper.find('[data-test="menu-list"]').html()).toContain('workspace.menuLabels.myAnalysis')
-        expect(wrapper.find('[data-test="menu-list"]').html()).toContain('workspace.menuLabels.schedulation')
+        expect(wrapper.find('[data-test="menu-list"]').html()).not.toContain('workspace.menuLabels.schedulation')
     })
 
     it("should show a folder tree if 'documents' is selected", async () => {
