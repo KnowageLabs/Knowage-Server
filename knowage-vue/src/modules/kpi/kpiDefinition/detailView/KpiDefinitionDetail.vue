@@ -333,7 +333,6 @@ export default defineComponent({
             this.showSaveDialog = false
             this.touched = false
             this.kpiToSave = { ...this.selectedKpi }
-            console.log(this.kpiToSave.threshold.thresholdValues)
             this.correctColors(this.kpiToSave.threshold.thresholdValues)
             if (typeof this.kpiToSave.definition === 'object') {
                 this.kpiToSave.definition.formula = this.formulaToSave
