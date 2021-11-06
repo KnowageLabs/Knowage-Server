@@ -333,6 +333,7 @@ export default defineComponent({
             this.showSaveDialog = false
             this.touched = false
             this.kpiToSave = { ...this.selectedKpi }
+            this.correctColors(this.kpiToSave.threshold.thresholdValues)
             if (typeof this.kpiToSave.definition === 'object') {
                 this.kpiToSave.definition.formula = this.formulaToSave
                 this.kpiToSave.definition = JSON.stringify(this.kpiToSave.definition)
@@ -356,6 +357,15 @@ export default defineComponent({
                         msg: response
                     })
                 })
+        },
+
+        correctColors(thresholdValues) {
+            thresholdValues.forEach((value: any) => {
+                if (!value.color.includes('#')) {
+                    let fixedColor = '#' + value.color
+                    value.color = fixedColor
+                }
+            })
         }
     }
 })
