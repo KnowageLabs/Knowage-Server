@@ -79,6 +79,9 @@
                                 :class="{
                                     'p-invalid': datasetFolderLabelDrity && (!document.datasetFolderLabel || document.datasetFolderLabel?.length === 0)
                                 }"
+                                :filter="true"
+                                filterMatchMode="contains"
+                                :filterFields="['label']"
                                 @blur="validateDocument('datasetFolderLabelDrity')"
                                 @change="validateDocument('datasetFolderLabelDrity')"
                             />
