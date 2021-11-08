@@ -128,7 +128,6 @@ public class CrosstabXLSExporter {
 		int columnsDepth = cs.getColumnsRoot().getSubTreeDepth();
 		int rowsDepth = cs.getRowsRoot().getSubTreeDepth();
 
-		MeasureFormatter measureFormatter = new MeasureFormatter(cs);
 		// + 1 because there may be also the bottom row with the totals
 		int totalRowsNumber = cs.getTotalNumberOfRows();
 
@@ -151,7 +150,7 @@ public class CrosstabXLSExporter {
 
 		// then put the matrix data
 		Monitor buildDataMatrixMonitor = MonitorFactory.start("CockpitEngine.CrossTabXLSExporter.buildDataMatrixMonitor");
-		buildDataMatrix(sheet, cs, columnsDepth + startRow - 1, rowsDepth - 1, createHelper, measureFormatter);
+		buildDataMatrix(sheet, cs, columnsDepth + startRow - 1, rowsDepth - 1, createHelper);
 		buildDataMatrixMonitor.stop();
 
 		// finally add row titles
@@ -181,16 +180,17 @@ public class CrosstabXLSExporter {
 		return totalRowsNumber + 4;
 	}
 
-	protected int buildDataMatrix(Sheet sheet, CrossTab cs, int rowOffset, int columnOffset, CreationHelper createHelper, MeasureFormatter measureFormatter)
-			throws JSONException {
-
+	protected int buildDataMatrix(Sheet sheet, CrossTab cs, int rowOffset, int columnOffset, CreationHelper createHelper) throws JSONException {
+		MeasureFormatter measureFormatter = new MeasureFormatter(cs);
 		CellStyle cellStyleForNA = buildNACellStyle(sheet);
+		String[][] dataMatrix = cs.getDataMatrix();
+		int numOfMeasures = cs.getMeasures().size();
 
 		Map<Integer, CellStyle> decimalFormats = new HashMap<Integer, CellStyle>();
 		int endRowNum = 0;
-		for (int i = 0; i < cs.getDataMatrix().length; i++) {
-			for (int j = 0; j < cs.getDataMatrix()[0].length; j++) {
-				String text = cs.getDataMatrix()[i][j];
+		for (int i = 0; i < dataMatrix.length; i++) {
+			for (int j = 0; j < dataMatrix[0].length; j++) {
+				String text = dataMatrix[i][j];
 				int rowNum = rowOffset + i;
 				int columnNum = columnOffset + j;
 				Row row = sheet.getRow(rowNum);
@@ -205,7 +205,7 @@ public class CrosstabXLSExporter {
 					Double valueFormatted = measureFormatter.applyScaleFactor(value, i, j);
 					cell.setCellValue(valueFormatted);
 					cell.setCellType(this.getCellTypeNumeric());
-					int measureIdx = j % cs.getMeasures().size();
+					int measureIdx = j % numOfMeasures;
 					String measureId = getMeasureId(cs, measureIdx);
 					CellStyle style = getStyle(decimals, decimalFormats, sheet, createHelper, cs.getCellType(i, j), measureId, value);
 					cell.setCellStyle(style);
