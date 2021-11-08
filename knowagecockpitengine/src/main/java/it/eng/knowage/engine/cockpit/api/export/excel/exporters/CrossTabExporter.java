@@ -211,14 +211,15 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 
 	protected int buildDataMatrix(Sheet sheet, CrossTab cs, int rowOffset, int columnOffset, CreationHelper createHelper, MeasureFormatter measureFormatter)
 			throws JSONException {
-
+		String[][] dataMatrix = cs.getDataMatrix();
 		CellStyle cellStyleForNA = buildNACellStyle(sheet);
-
-		Map<Integer, CellStyle> decimalFormats = new HashMap<Integer, CellStyle>();
 		int endRowNum = 0;
-		for (int i = 0; i < cs.getDataMatrix().length; i++) {
-			for (int j = 0; j < cs.getDataMatrix()[0].length; j++) {
-				String text = cs.getDataMatrix()[i][j];
+		int numOfMeasures = cs.getMeasures().size();
+
+		for (int i = 0; i < dataMatrix.length; i++) {
+			for (int j = 0; j < dataMatrix[0].length; j++) {
+				Monitor createCellMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.createCellMonitor");
+				String text = dataMatrix[i][j];
 				int rowNum = rowOffset + i;
 				int columnNum = columnOffset + j;
 				Row row = sheet.getRow(rowNum);
@@ -227,16 +228,21 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 				}
 				endRowNum = rowNum;
 				Cell cell = row.createCell(columnNum);
+				createCellMonitor.stop();
 				try {
+					Monitor setCellValueMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.setCellValueMonitor");
 					double value = Double.parseDouble(text);
 					int decimals = measureFormatter.getFormatXLS(i, j);
 					Double valueFormatted = measureFormatter.applyScaleFactor(value, i, j);
 					cell.setCellValue(valueFormatted);
 					cell.setCellType(this.getCellTypeNumeric());
-					int measureIdx = j % cs.getMeasures().size();
+					setCellValueMonitor.stop();
+					Monitor setCellStyleMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.setCellStyleMonitor");
+					int measureIdx = j % numOfMeasures;
 					String measureId = getMeasureId(cs, measureIdx);
 					CellStyle style = getStyle(decimals, sheet, createHelper, cs.getCellType(i, j), measureId, value);
 					cell.setCellStyle(style);
+					setCellStyleMonitor.stop();
 				} catch (NumberFormatException e) {
 					logger.debug("Text " + text + " is not recognized as a number");
 					cell.setCellValue(createHelper.createRichTextString(text));
