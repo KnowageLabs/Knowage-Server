@@ -65,7 +65,8 @@ export default defineComponent({
                     path: folder.path,
                     prog: folder.prog,
                     children: [] as IFolder[],
-                    data: { name: folder.name, hasDocuments: false }
+                    data: { name: folder.name, hasDocuments: false },
+                    style: this.workspaceDocumentTreeDescriptor.node.style
                 }
                 node.children = foldersWithMissingParent.filter((folder: any) => node.id === folder.parentId)
                 this.attachFolderToTree(node, foldersWithMissingParent)
