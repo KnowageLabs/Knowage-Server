@@ -2,13 +2,12 @@
     <div class="p-col federation-listbox-container">
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
             <template #left>
-                {{ mode === 'available' ? $t('workspace.federationDefinition.availableDatasets') : $t('workspace.federationDefinition.selectedDatasets') }} -
-                {{ mode === 'available' ? $t('workspace.federationDefinition.availableDatasetsMessage') : $t('workspace.federationDefinition.selectedDatasetsMessage') }}
+                {{ mode === 'available' ? $t('workspace.federationDefinition.availableDatasets') : $t('workspace.federationDefinition.selectedDatasets') }}
             </template>
         </Toolbar>
-        <!-- <InlineMessage severity="info" :closable="false" :style="workspaceFederationDatasetListDescriptor.styles.message">
+        <Message class="p-m-4" severity="info" :closable="false" :style="workspaceFederationDatasetListDescriptor.styles.message">
             {{ mode === 'available' ? $t('workspace.federationDefinition.availableDatasetsMessage') : $t('workspace.federationDefinition.selectedDatasetsMessage') }}
-        </InlineMessage> -->
+        </Message>
         <Listbox class="kn-list listbox-container" :listStyle="workspaceFederationDatasetListDescriptor.styles.dsList" :options="dataset" :filter="true" optionLabel="name" @change="selectDataset($event.value)">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
             <template #option="slotProps">
@@ -26,14 +25,14 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Listbox from 'primevue/listbox'
-// import InlineMessage from 'primevue/inlinemessage'
+import Message from 'primevue/message'
 import workspaceFederationDatasetListDescriptor from './WorkspaceFederationDatasetListDescriptor.json'
 
 export default defineComponent({
     name: 'workspace-federation-dataset-list',
     components: {
-        Listbox
-        // InlineMessage
+        Listbox,
+        Message
     },
     props: { mode: { type: String }, propDatasets: { type: Array } },
     emits: ['showInfo', 'datasetSelected'],
@@ -62,9 +61,8 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .federation-listbox-container {
-    // height: 89vh;
     :deep(.p-card-body) {
         padding: 0;
         .p-card-content {

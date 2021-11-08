@@ -129,10 +129,10 @@ export default defineComponent({
                     this.sourceDatasetUsedInRelations.push(el.sourceTable.name)
                     this.sourceDatasetUsedInRelations.push(el.destinationTable.name)
                     this.multirelationships.push({
-                        relationship: el.sourceTable.name.toUpperCase() + '.' + el.sourceColumns[0] + ' -> ' + el.destinationTable.name.toUpperCase() + '.' + el.destinationColumns[0],
+                        relationship: el.sourceTable?.name.toUpperCase() + '.' + el.sourceColumns[0] + ' -> ' + el.destinationTable?.name.toUpperCase() + '.' + el.destinationColumns[0],
                         datasets: [
-                            { ...el.sourceTable, label: el.sourceTable.name },
-                            { ...el.destinationTable, label: el.destinationTable.name }
+                            { ...el.sourceTable, label: el.sourceTable?.name },
+                            { ...el.destinationTable, label: el.destinationTable?.name }
                         ]
                     })
                 })
@@ -285,18 +285,18 @@ export default defineComponent({
         },
         async saveFederationDataset(federatedDataset: IFederatedDataset) {
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'federateddataset/post'
-            const tempId = federatedDataset.federation_id
+            const tempDataset = { ...federatedDataset }
 
-            if (federatedDataset.federation_id) {
+            if (tempDataset.federation_id) {
                 this.operation = 'update'
                 url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `federateddataset/${federatedDataset.federation_id}`
-                delete federatedDataset.federation_id
+                delete tempDataset.federation_id
             }
 
-            delete federatedDataset.owner
-            delete federatedDataset.degenerated
+            delete tempDataset.owner
+            delete tempDataset.degenerated
 
-            await this.sendRequest(url, federatedDataset)
+            await this.sendRequest(url, tempDataset)
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.' + this.operation + 'Title'),
@@ -305,11 +305,10 @@ export default defineComponent({
                     this.saveDialogVisible = false
                     this.$router.push('/workspace/models')
                 })
-                .catch((response) => {
-                    this.warningMessage = response
+                .catch((response: any) => {
+                    this.warningMessage = response.message
                     this.warningDialogVisbile = true
                 })
-            federatedDataset.federation_id = tempId
         },
         sendRequest(url: string, federatedDataset: IFederatedDataset) {
             if (this.operation === 'create') {
