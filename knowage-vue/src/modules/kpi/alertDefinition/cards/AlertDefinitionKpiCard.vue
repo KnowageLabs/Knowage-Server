@@ -42,7 +42,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import alertDescriptor from '../AlertDefinitionDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import Menu from 'primevue/menu'
@@ -121,7 +121,7 @@ export default defineComponent({
         },
         async loadKpi(kpiId, kpiVersion) {
             if (kpiId != undefined) {
-                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${kpiId}/${kpiVersion}/loadKpi`).then((response) => {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${kpiId}/${kpiVersion}/loadKpi`).then((response: AxiosResponse<any>) => {
                     this.oldKpi = { ...response.data }
                     this.kpi = { ...response.data }
                     this.$emit('kpiLoaded', this.kpi)
@@ -131,8 +131,8 @@ export default defineComponent({
         confirmLoadSelectedKpi(kpi) {
             if (this.alert.jsonOptions.actions.length > 0) {
                 this.$confirm.require({
-                    message: this.$t('Kpi editing in progres'),
-                    header: this.$t('Current kpi have associated action and will be removed. Are you sure?'),
+                    message: this.$t('kpi.alert.kpiEditingMessage'),
+                    header: this.$t('kpi.alert.kpiEditing'),
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
                         this.loadKpi(kpi.id, kpi.version)

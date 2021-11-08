@@ -49,6 +49,8 @@
                             :options="analyticalDrivers"
                             :placeholder="$t('managers.businessModelManager.analyticalDriverPlaceholder')"
                             :filter="true"
+                            filterMatchMode="contains"
+                            :filterFields="['label']"
                             :disabled="readonly"
                             @before-show="v$.driver.parameter.$touch()"
                             @change="showAnalyticalDropdownConfirm"
@@ -225,7 +227,7 @@
 import { defineComponent } from 'vue'
 import { iBusinessModelDriver } from '../../BusinessModelCatalogue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import businessModelDriverDetailDescriptor from './BusinessModelDriverDetailDescriptor.json'
 import businessModelDriverDetailValidationDescriptor from './BusinessModelDriverDetailValidationDescriptor.json'
 import Card from 'primevue/card'
@@ -364,24 +366,26 @@ export default defineComponent({
         },
         async loadDataDependencies() {
             this.conditions = []
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies?driverId=${this.driver?.id}`).then((response) =>
-                response.data.forEach((condition: any) => {
-                    const index = this.conditions.findIndex((cond) => cond.parFatherId === condition.parFatherId && cond.filterOperation == condition.filterOperation && cond.logicOperator == condition.logicOperator)
-                    condition.modalities = []
-                    condition.modalities.push({ conditionId: condition.id, useModeId: condition.useModeId, filterColumn: condition.filterColumn })
-                    if (index > -1) {
-                        this.conditions[index].modalities.push({ conditionId: condition.id, useModeId: condition.useModeId, filterColumn: condition.filterColumn })
-                    } else {
-                        this.conditions.push(condition)
-                    }
-                })
-            )
+            if (this.driver && this.driver.id) {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies?driverId=${this.driver.id}`).then((response: AxiosResponse<any>) =>
+                    response.data.forEach((condition: any) => {
+                        const index = this.conditions.findIndex((cond) => cond.parFatherId === condition.parFatherId && cond.filterOperation == condition.filterOperation && cond.logicOperator == condition.logicOperator)
+                        condition.modalities = []
+                        condition.modalities.push({ conditionId: condition.id, useModeId: condition.useModeId, filterColumn: condition.filterColumn })
+                        if (index > -1) {
+                            this.conditions[index].modalities.push({ conditionId: condition.id, useModeId: condition.useModeId, filterColumn: condition.filterColumn })
+                        } else {
+                            this.conditions.push(condition)
+                        }
+                    })
+                )
+            }
         },
         async loadModes() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.driver?.parameter?.id}/modes`).then((response) => (this.modes = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.driver?.parameter?.id}/modes`).then((response: AxiosResponse<any>) => (this.modes = response.data))
         },
         async loadLovs() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.driver?.parameter?.id}/lovs`).then((response) => (this.lovs = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.driver?.parameter?.id}/lovs`).then((response: AxiosResponse<any>) => (this.lovs = response.data))
         },
         getLovs(lovId: number) {
             const index = this.lovs.findIndex((lov) => lov.id === lovId)
@@ -417,7 +421,7 @@ export default defineComponent({
             }
         },
         async saveCondition(condition: any) {
-            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies`, condition).finally(() => (this.conditionFormVisible = false))
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies`, condition).finally(() => (this.conditionFormVisible = false))
         },
         async handleSubmit() {
             if (this.condition.id) {
@@ -452,7 +456,7 @@ export default defineComponent({
                         conditionForPost.prog++
                         delete conditionForPost.parFather
                         delete conditionForPost.modalities
-                        await this.sendRequest(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies`, conditionForPost).then((response) => {
+                        await this.sendRequest(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies`, conditionForPost).then((response: AxiosResponse<any>) => {
                             if (response.data.errors) {
                                 this.errorMessage = response.data.errors[0].message
                                 this.displayWarning = true
@@ -484,9 +488,9 @@ export default defineComponent({
         },
         sendRequest(url: string, condition: any) {
             if (this.operation === 'insert') {
-                return axios.post(url, condition)
+                return this.$http.post(url, condition)
             } else {
-                return axios.put(url, condition)
+                return this.$http.put(url, condition)
             }
         },
         showForm(event: any) {
@@ -533,7 +537,7 @@ export default defineComponent({
         async deleteCondition(condition: any) {
             delete condition.parFather
             delete condition.modalities
-            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies/delete`, condition).then(() => {
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies/delete`, condition).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')

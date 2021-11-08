@@ -1,0 +1,22 @@
+{
+    "style": {
+        "columnStyle": {
+            "height": "25px"
+        },
+        "maxWidth": {
+            "width": "100%"
+        }
+    },
+    "validations": {
+        "dataset": [
+            {
+                "fieldName": "dsTypeCd",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            }
+        ]
+    }
+}

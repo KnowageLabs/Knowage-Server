@@ -1,0 +1,22 @@
+{
+    "style": {
+        "maxWidth": {
+            "width": "100%"
+        }
+    },
+    "validations": {
+        "dataset": [
+            {
+                "fieldName": "dataSource",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "query-fields-required"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

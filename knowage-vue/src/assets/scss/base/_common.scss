@@ -17,6 +17,12 @@
 
 .kn-draggable {
     cursor: grab;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .kn-height-full-vertical {
@@ -69,4 +75,8 @@
 
 .kn-text-error {
     color: $color-error !important;
+}
+
+.kn-warning-icon {
+    color: $color-warning;
 }

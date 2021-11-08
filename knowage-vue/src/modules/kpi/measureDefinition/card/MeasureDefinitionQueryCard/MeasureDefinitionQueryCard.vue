@@ -25,7 +25,7 @@ import { defineComponent } from 'vue'
 import { iRule } from '../../MeasureDefinition'
 import { VCodeMirror } from 'vue3-code-mirror'
 import CodeMirror from 'codemirror'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import queryCardDescriptor from './MeasureDefinitionQueryCardDescriptor.json'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
@@ -85,7 +85,7 @@ export default defineComponent({
         },
         async loadDataSourceStructure() {
             if (this.selectedRule.dataSource) {
-                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources/structure/${this.selectedRule.dataSource.DATASOURCE_ID}`).then((response) => (this.datasourceStructure = response.data))
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources/structure/${this.selectedRule.dataSource.DATASOURCE_ID}`).then((response: AxiosResponse<any>) => (this.datasourceStructure = response.data))
             }
             this.$emit('touched')
 

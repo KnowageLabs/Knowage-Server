@@ -77,7 +77,11 @@ public class LocaleInterceptor implements ContainerRequestFilter, ContainerRespo
 	}
 
 	public Optional<String> readServletCookie(HttpServletRequest request, String name) {
-		return Arrays.stream(request.getCookies()).filter(cookie -> name.equals(cookie.getName())).map(Cookie::getValue).findAny();
+		if (request.getCookies() != null) {
+			return Arrays.stream(request.getCookies()).filter(cookie -> name.equals(cookie.getName())).map(Cookie::getValue).findAny();
+		} else {
+			return Optional.empty();
+		}
 	}
 
 }

@@ -51,6 +51,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.CellType;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.MeasureInfo;
@@ -74,7 +77,7 @@ import it.eng.spagobi.utilities.messages.EngineMessageBundle;
  *
  * @author Alberto Ghedin (alberto.ghedin@eng.it), Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public class CrossTabExporter extends GenericExporter implements IWidgetExporter {
+public class CrossTabExporter extends GenericWidgetExporter implements IWidgetExporter {
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(CrossTabExporter.class);
@@ -165,13 +168,24 @@ public class CrossTabExporter extends GenericExporter implements IWidgetExporter
 		CellStyle dimensionCellStyle = this.buildDimensionCellStyle(sheet);
 
 		// build headers for column first ...
+		Monitor buildColumnsHeaderMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.buildColumnsHeaderMonitor");
 		buildColumnsHeader(sheet, cs, cs.getColumnsRoot().getChildren(), startRow, rowsDepth - 1, createHelper, locale, memberCellStyle, dimensionCellStyle, 0);
-		// ... then build headers for rows ....
-		buildRowsHeaders(sheet, cs, cs.getRowsRoot().getChildren(), columnsDepth - 1 + startRow, 0, createHelper, locale, memberCellStyle);
-		// then put the matrix data
-		buildDataMatrix(sheet, cs, columnsDepth + startRow - 1, rowsDepth - 1, createHelper, measureFormatter);
+		buildColumnsHeaderMonitor.stop();
 
+		// ... then build headers for rows ....
+		Monitor buildRowsHeaderMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.buildRowsHeaderMonitor");
+		buildRowsHeaders(sheet, cs, cs.getRowsRoot().getChildren(), columnsDepth - 1 + startRow, 0, createHelper, locale, memberCellStyle);
+		buildRowsHeaderMonitor.stop();
+
+		// then put the matrix data
+		Monitor buildDataMatrixMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.buildDataMatrixMonitor");
+		buildDataMatrix(sheet, cs, columnsDepth + startRow - 1, rowsDepth - 1, createHelper, measureFormatter);
+		buildDataMatrixMonitor.stop();
+
+		// finally add row titles
+		Monitor buildRowHeaderTitleMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.buildRowHeaderTitleMonitor");
 		buildRowHeaderTitle(sheet, cs, columnsDepth - 2, 0, startRow, createHelper, locale, dimensionCellStyle);
+		buildRowHeaderTitleMonitor.stop();
 
 		return startRow + totalRowsNumber;
 	}

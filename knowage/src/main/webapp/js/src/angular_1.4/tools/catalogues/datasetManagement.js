@@ -377,17 +377,17 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 	{value:"csv",name:"CSV"}
  	];
 
-	// PYTHON ENVIRONMENTS CONFIG
-	sbiModule_restServices.promiseGet('2.0/configs/category', 'PYTHON_CONFIGURATION')
-	.then(function(response){
-		$scope.pythonEnvironments = $scope.buildEnvironments(response.data);
-	});
+	$scope.loadPythonEnvironments = function() {
+		sbiModule_restServices.promiseGet('2.0/configs/category', 'PYTHON_CONFIGURATION')
+		.then(function(response){
+			$scope.pythonEnvironments = $scope.buildEnvironments(response.data);
+		});
 
-	// R ENVIRONMENTS CONFIG
-	sbiModule_restServices.promiseGet('2.0/configs/category', 'R_CONFIGURATION')
-	.then(function(response){
-		$scope.rEnvironments = $scope.buildEnvironments(response.data);
-	});
+		sbiModule_restServices.promiseGet('2.0/configs/category', 'R_CONFIGURATION')
+		.then(function(response){
+			$scope.rEnvironments = $scope.buildEnvironments(response.data);
+		});
+	}
 
 	$scope.buildEnvironments = function (data) {
 		toReturn = []
@@ -585,8 +585,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 
 	$scope.requestAdditionalParameterAddItem = function() {
-
-		$scope.restRequestAdditionalParameters.push({"name":"","value":"","index":$scope.counterRequestAdditionalParameters++});
+	var index; 
+	if($scope.restRequestAdditionalParameters) {
+		index = $scope.restRequestAdditionalParameters.length++;
+		$scope.counterRequestAdditionalParameters = index;
+	}
+		$scope.restRequestAdditionalParameters.push({"name":"","value":"","index":$scope.counterRequestAdditionalParameters});
 
 		$timeout(
 				function() {
@@ -1104,28 +1108,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	if($scope.columnOrdering){
     		columnOrderingLabel = $scope.columnOrdering.name;
     	}
-    	urlBuilderService.setBaseUrl("countDataSetSearch/");
-
-    	if($scope.searchValue != "" || tagsHandlerService.getFilteredTagIds($scope.allTags).length > 0){
-
-    		var tags = {"tags":tagsHandlerService.getFilteredTagIds($scope.allTags)};
-    		var searchValue = {"searchValue" : $scope.searchValue}
-    		if($scope.searchValue != null)
-    		urlBuilderService.addQueryParams(searchValue);
-    		if(tagsHandlerService.getFilteredTagIds($scope.allTags).length > 0)
-    		urlBuilderService.addQueryParams(tags);
-    		var url = tagsHandlerService.getFilteredTagIds($scope.allTags).length > 0 || $scope.searchValue != null ?  urlBuilderService.build() : "countDataSets";
-    		sbiModule_restServices.promiseGet("1.0/datasets",  url)
-    		.then(function(response) {
-    			$scope.numOfDs = response.data;
-    			$scope.loadDatasetList(0, itemsPerPage, $scope.searchValue,  columnOrderingLabel,reverseOrdering);
-    		}, function(response) {
-    			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-    		});
-
-    	} else if ($scope.searchValue=="") {
-    		$scope.loadDatasetList(0, itemsPerPage, searchValue, columnOrderingLabel,reverseOrdering);
-    	}
+    	$scope.loadDatasetList(0, itemsPerPage, $scope.searchValue,  columnOrderingLabel,reverseOrdering);
     };
 
     $scope.changeDatasetPage=function(itemsPerPage,currentPageNumber){
@@ -1133,47 +1116,23 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	if($scope.currentPageNumber != currentPageNumber){
 	    	$scope.currentPageNumber = currentPageNumber;
 	    	if($scope.searchValue==undefined || $scope.searchValue.length==0 ){
-	    		sbiModule_restServices.promiseGet("1.0/datasets", "countDataSets")
-	    		.then(function(response) {
-	    			$scope.numOfDs = response.data;
-	    			var start = 0;
-	    			if(currentPageNumber>1){
-	    				start = (currentPageNumber - 1) * itemsPerPage;
-	    			}
-	    			if($scope.searchValue==undefined){
-	    				$scope.searchValue = null;
-	    			}
-	    			if($scope.reverseOrdering==undefined){
-	    				$scope.reverseOrdering=false;
-	    			}
+    			var start = 0;
+    			if(currentPageNumber>1){
+    				start = (currentPageNumber - 1) * itemsPerPage;
+    			}
+    			if($scope.searchValue==undefined){
+    				$scope.searchValue = null;
+    			}
+    			if($scope.reverseOrdering==undefined){
+    				$scope.reverseOrdering=false;
+    			}
 
-	    			var columnOrderingLabel = "";
-	    	    	if($scope.columnOrdering){
-	    	    		columnOrderingLabel = $scope.columnOrdering.name;
-	    	    	}
-	    			$scope.loadDatasetList(start, itemsPerPage, $scope.searchValue,columnOrderingLabel, $scope.reverseOrdering);
-	    		}, function(response) {
-	    			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-	    		});
-		} else if ($scope.searchValue!=undefined || $scope.searchValue.length!=0 ||  tagsHandlerService.getFilteredTagIds($scope.allTags).length > 0) {
-	    		var tags = {"tags":tagsHandlerService.getFilteredTagIds($scope.allTags)};
-	    	urlBuilderService.setBaseUrl("countDataSetSearch/");
-	        var tags = {"tags":tagsHandlerService.getFilteredTagIds($scope.allTags)};
-	        urlBuilderService.addQueryParams(tags);
-	    	var searchValue = {"searchValue" : $scope.searchValue}
-    		urlBuilderService.addQueryParams(searchValue);
-			sbiModule_restServices.promiseGet("1.0/datasets", urlBuilderService.build())
-	    		.then(function(response) {
-	    			$scope.numOfDs = response.data;
-	    			var start = 0;
-	    			if(currentPageNumber>1){
-	    				start = (currentPageNumber - 1) * itemsPerPage;
-	    			}
-	    			$scope.loadDatasetList(start, itemsPerPage, $scope.searchValue, "",null);
-	    		}, function(response) {
-	    			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-	    		});
-			}
+    			var columnOrderingLabel = "";
+    	    	if($scope.columnOrdering){
+    	    		columnOrderingLabel = $scope.columnOrdering.name;
+    	    	}
+    			$scope.loadDatasetList(start, itemsPerPage, $scope.searchValue,columnOrderingLabel, $scope.reverseOrdering);
+	    	}
     	}
 	}
 
@@ -1208,36 +1167,36 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		}
 
 
-		sbiModule_restServices.promiseGet("3.0/datasets","pagopt", queryParams)
-			.then(function(response) {
-				$scope.datasetsListTemp = angular.copy(response.data.root);
-				$scope.datasetsListPersisted = angular.copy($scope.datasetsListTemp);
-			    if (filter == "") {
-					sbiModule_restServices.promiseGet("1.0/datasets", "countDataSets")
-					.then(function(response) {
-						$scope.numOfDs = response.data;},function(response){
-							sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-						});
-				} else if(filter!=null || tagsHandlerService.getFilteredTagIds($scope.allTags).length > 0){
-					urlBuilderService.setBaseUrl("countDataSetSearch/");
-					var tags = {"tags":tagsHandlerService.getFilteredTagIds($scope.allTags)};
-					urlBuilderService.addQueryParams(tags);
-					var searchValue = {"searchValue" : $scope.searchValue}
-		    		urlBuilderService.addQueryParams(searchValue);
-					var url = (tagsHandlerService.getFilteredTagIds($scope.allTags).length == 0 && ($scope.searchValue == "" || $scope.searchValue == null)) ? "countDataSetSearch/" : urlBuilderService.build();
-					sbiModule_restServices.promiseGet("1.0/datasets",url)
-					.then(function(response) {
-						$scope.numOfDs = response.data;},function(response){
-							sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-						});
-				}
-			}, function(response) {
-				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-			});
+		sbiModule_restServices.promiseGet("3.0/datasets","catalog", queryParams)
+		.then(function(response) {
+			$scope.datasetsListTemp = angular.copy(response.data.root);
+			$scope.datasetsListPersisted = angular.copy($scope.datasetsListTemp);
+			if (isFirstLoading()) {
+				$scope.totalNumOfDs = $scope.datasetsListTemp.length;
+				$scope.numOfDs = $scope.datasetsListTemp.length;
+			}
+			if (isSearchBarCleared(filter)) {
+				$scope.numOfDs = $scope.totalNumOfDs;
+			} else if (isFilterByTagOrSearchBar(filter, tagsHandlerService)){
+				$scope.numOfDs = $scope.datasetsListTemp.length;
+			}
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+		});
 
 	}
 
+	var isFirstLoading = function(){
+		return !$scope.numOfDs;
+	}
 
+	var isSearchBarCleared = function(filter){
+		return filter == "";
+	}
+
+	var isFilterByTagOrSearchBar = function(filter, tagsHandlerService){
+		return (filter!=null || tagsHandlerService.getFilteredTagIds($scope.allTags).length > 0);
+	}
 
 	/**
 	 * Speed-menu option configuration for deleting of a dataset.
@@ -1897,6 +1856,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	// SELECT DATASET
 	$scope.loadDataSet = function(item,index) {
+		if (item.dsTypeCd.toLowerCase()=="python/r") {
+			$scope.loadPythonEnvironments();
+		}
 		sbiModule_restServices.promiseGet('1.0/datasets', item.label).then(function(response) {
 
 			var item = response.data[0];
@@ -2013,6 +1975,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					selectDataset(item,index);
 					$scope.setFormNotDirty();
 				}
+			}
+			if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr"){
+		 		$scope.restRequestAdditionalParameters = angular.copy($scope.selectedDataSet.restRequestAdditionalParameters);
 			}
 			 if($scope.selectedDataSet.dsTypeCd == "Qbe" && !qbeParameterDeletingMessage.includes("Qbe") ){
 					qbeParameterDeletingMessage =  parameterDeletingMessage + "Parameters for Qbe Dataset should be deleted from qbeDesigner";
@@ -2247,8 +2212,17 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				  }
 				  return JSON.stringify(obj) === JSON.stringify({});
 				}
-
+				
+			function IsJsonString(str) {
+    		try {
+        		JSON.parse(str);
+    			} catch (e) {
+        			return false;
+    			}
+ 			   return true;
+			}
 			if($scope.selectedDataSet.restRequestHeaders != undefined && !isObjectEmpty($scope.selectedDataSet.restRequestHeaders)) {
+				if (IsJsonString($scope.selectedDataSet.restRequestHeaders)){
 				for (var key in JSON.parse($scope.selectedDataSet.restRequestHeaders)) {
 
 					var restRequestHeaderTemp = {};
@@ -2262,6 +2236,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					  $scope.counterRequestHeaders++;
 					  restRequestHeadersTemp.push(restRequestHeaderTemp);
 
+				}
 				}
 			}
 
@@ -2453,7 +2428,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 
 	$scope.createNewDataSet = function() {
-
 		$scope.step=1;
 
 		if ($scope.datasetsListTemp.length == $scope.datasetsListPersisted.length + 1) {
@@ -4031,6 +4005,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     		}
     	}
     	else if (dsType.toLowerCase()=="rest" || dsType.toLowerCase()=="python/r" || dsType.toLowerCase()=="solr") {
+    		if (dsType.toLowerCase()=="python/r") {
+    			$scope.loadPythonEnvironments();
+    		}
     		$scope.restRequestHeaders = [];
     		$scope.restRequestAdditionalParameters = [];
     		$scope.restJsonPathAttributes = [];

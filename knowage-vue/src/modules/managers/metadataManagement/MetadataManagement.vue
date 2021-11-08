@@ -47,7 +47,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iMetadata } from './MetadataManagement'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import KnHint from '@/components/UI/KnHint.vue'
 import Listbox from 'primevue/listbox'
@@ -74,9 +74,9 @@ export default defineComponent({
         async loadAllMetadata() {
             this.loading = true
             this.metadataList = []
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata')
-                .then((response) =>
+                .then((response: AxiosResponse<any>) =>
                     response.data.map((metadata: any) => {
                         this.metadataList.push({
                             id: metadata.objMetaId,
@@ -113,7 +113,7 @@ export default defineComponent({
             })
         },
         async deleteMetadata(metadataId: number) {
-            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata/' + metadataId).then(() => {
+            await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata/' + metadataId).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')

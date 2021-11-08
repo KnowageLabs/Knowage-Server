@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%-- ------------------------------------------------------------------------%>
 
 <%@page import="it.eng.knowage.export.wrapper.beans.RenderOptions"%>
-<%@ page import="it.eng.knowage.engine.cockpit.api.export.pdf.PdfExporterV2" %>
+<%@ page import="it.eng.knowage.engine.cockpit.api.export.pdf.nodejs.PdfExporterV2" %>
 <%@ page import="javax.servlet.ServletContext" %>
 
 <%@ page contentType="applicaton/octet-stream" %>

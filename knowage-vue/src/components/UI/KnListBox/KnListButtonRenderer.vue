@@ -11,7 +11,7 @@
         </Menu>
     </template>
     <template v-else>
-        <Button v-for="(button, index) in buttons" :key="index" :icon="button.icon" class="p-button-text p-button-rounded p-button-plain" @click="clickedButton($event, button)" v-tooltip.bottom="$t(button.label)" />
+        <Button v-for="(button, index) in buttons" :key="index" :icon="button.icon" class="p-button-text p-button-rounded p-button-plain" @click="clickedButton($event, button)" v-tooltip.bottom="$t(button.label)" :data-test="'delete-button-' + index" />
     </template>
 </template>
 

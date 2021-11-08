@@ -8,7 +8,7 @@
                 <template #right>
                     <Button class="kn-button-sm p-button-text" :label="$t('managers.lovsManagement.preview')" :disabled="previewDisabled" @click="checkForDependencies(true)" />
                     <Button class="kn-button-sm p-button-text" :label="$t('managers.lovsManagement.test')" :disabled="previewDisabled" @click="onTestButtonClick" />
-                    <Button icon="fa fa-info-circle" class="p-button-text p-button-rounded p-button-plain" aria-label="Info" @click="infoDialogVisible = true" />
+                    <Button v-if="lovType !== 'DATASET'" icon="fa fa-info-circle" class="p-button-text p-button-rounded p-button-plain" aria-label="Info" @click="infoDialogVisible = true" />
                     <Button icon="fa fa-users" class="p-button-text p-button-rounded p-button-plain" aria-label="Profiles" @click="profileAttributesDialogVisible = true" />
                 </template>
             </Toolbar>
@@ -23,8 +23,8 @@
     </Card>
     <LovsManagementInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :infoTitle="infoTitle" :lovType="lov.itypeCd" @close="infoDialogVisible = false"></LovsManagementInfoDialog>
     <LovsManagementProfileAttributesList v-show="profileAttributesDialogVisible" :visible="profileAttributesDialogVisible" :profileAttributes="profileAttributes" @selected="setCodeInput($event)" @close="profileAttributesDialogVisible = false"></LovsManagementProfileAttributesList>
-    <LovsManagementParamsDialog v-show="paramsDialogVisible" :visible="paramsDialogVisible" :dependenciesList="dependenciesList" @preview="onPreview" @close="paramsDialogVisible = false"></LovsManagementParamsDialog>
-    <LovsManagementPreviewDialog v-show="previewDialogVisible" :visible="previewDialogVisible" :dataForPreview="dataForPreview" :pagination="pagination" @close="previewDialogVisible = false" @pageChanged="previewLov($event, false, true)"></LovsManagementPreviewDialog>
+    <LovsManagementParamsDialog v-show="paramsDialogVisible" :visible="paramsDialogVisible" :dependenciesList="dependenciesList" @preview="onPreview" @close="onParamsDialogClose"></LovsManagementParamsDialog>
+    <LovsManagementPreviewDialog v-show="previewDialogVisible" :visible="previewDialogVisible" :dataForPreview="dataForPreview" :pagination="pagination" @close="onPreviewClose" @pageChanged="previewLov($event, false, true)"></LovsManagementPreviewDialog>
     <LovsManagementTestDialog v-show="testDialogVisible" :visible="testDialogVisible" :selectedLov="lov" :testModel="treeListTypeModel" :testLovModel="testLovModel" :testLovTreeModel="testLovTreeModel" @close="testDialogVisible = false" @save="onTestSave($event)"></LovsManagementTestDialog>
 </template>
 
@@ -33,7 +33,7 @@ import { defineComponent } from 'vue'
 import { iLov } from '../../LovsManagement'
 import { lovProviderEnum } from '../../LovsManagementDetail.vue'
 import X2JS from 'x2js'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
 import lovsManagementWizardCardDescriptor from './LovsManagementWizardCardDescriptor.json'
 import LovsManagementQuery from './LovsManagementQuery/LovsManagementQuery.vue'
@@ -241,12 +241,12 @@ export default defineComponent({
             this.formatForTest()
             let listOfEmptyDependencies = [] as any[]
 
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/checkdependecies', { provider: this.x2js.js2xml(this.lov.lovProviderJSON) })
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     listOfEmptyDependencies = response.data
                 })
-                .catch((response) => {
+                .catch((response: AxiosResponse<any>) => {
                     this.$store.commit('setError', {
                         title: this.$t('common.toast.errorTitle'),
                         msg: response
@@ -255,6 +255,7 @@ export default defineComponent({
                 .finally(() => (this.touchedForTest = false))
 
             if (listOfEmptyDependencies.length > 0 && !this.dependenciesReady) {
+                console.log('LIST OF EMPTY FIRST IF: ', listOfEmptyDependencies)
                 this.dependenciesList = []
                 for (let i = 0; i < listOfEmptyDependencies.length; i++) {
                     this.dependenciesList.push({
@@ -264,9 +265,11 @@ export default defineComponent({
                 }
                 this.paramsDialogVisible = true
             } else {
+                console.log('LIST OF EMPTY SECOND IF: ', listOfEmptyDependencies)
                 await this.previewLov(this.pagination, false, showPreview)
                 this.buildTestTable()
             }
+            console.log('LIST OF DEPENDENCIES: ', this.dependenciesList)
         },
         async previewLov(value: any, hasDependencies: boolean, showPreview: boolean) {
             this.pagination = value
@@ -283,9 +286,9 @@ export default defineComponent({
                 postData.dependencies = this.dependenciesList
             }
 
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/preview', postData)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     if (response.status === 204) {
                         this.$store.commit('setError', {
                             title: this.$t('common.toast.errorTitle'),
@@ -301,7 +304,7 @@ export default defineComponent({
                         this.paramsDialogVisible = hasDependencies
                     }
                 })
-                .catch((response) => {
+                .catch((response: AxiosResponse<any>) => {
                     this.$store.commit('setError', {
                         title: this.$t('common.toast.errorTitle'),
                         msg: response
@@ -537,7 +540,7 @@ export default defineComponent({
             }
 
             await this.sendRequest(url)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     if (response.status == 409) {
                         this.$store.commit('setError', {
                             title: this.$t('common.toast.errorTitle'),
@@ -554,7 +557,7 @@ export default defineComponent({
                         this.$router.push(`${id}`)
                     }
                 })
-                .catch((response) => {
+                .catch((response: AxiosResponse<any>) => {
                     this.$store.commit('setError', {
                         title: this.$t('common.toast.' + this.operation + 'Title'),
                         msg: response
@@ -563,9 +566,9 @@ export default defineComponent({
         },
         sendRequest(url: string) {
             if (this.operation === 'create') {
-                return axios.post(url, this.lov)
+                return this.$http.post(url, this.lov)
             } else {
-                return axios.put(url, this.lov)
+                return this.$http.put(url, this.lov)
             }
         },
         onTestSave(payload: any) {
@@ -595,6 +598,14 @@ export default defineComponent({
         onTouched() {
             this.touchedForTest = true
             this.$emit('touched')
+        },
+        onPreviewClose() {
+            this.previewDialogVisible = false
+        },
+        onParamsDialogClose() {
+            this.paramsDialogVisible = false
+            this.dependenciesList = []
+            this.dependenciesReady = false
         }
     }
 })
