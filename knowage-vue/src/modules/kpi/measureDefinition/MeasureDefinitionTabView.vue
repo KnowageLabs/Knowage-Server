@@ -361,7 +361,7 @@ export default defineComponent({
                 })
                 .catch((error) => {
                     this.errorTitle = this.$t('kpi.measureDefinition.metadataError') + ' ' + this.$t('kpi.measureDefinition.wrongQuery')
-                    this.errorMessage = error
+                    this.errorMessage = error.message
                 })
 
             this.rule.dataSource = tempDataSource
@@ -394,7 +394,7 @@ export default defineComponent({
                 .catch((response) => {
                     this.$store.commit('setError', {
                         title: this.$t('common.toast.' + this.operation + 'Title'),
-                        msg: response
+                        msg: response.message
                     })
                 })
             this.loading = false
