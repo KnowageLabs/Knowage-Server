@@ -69,12 +69,12 @@ export default defineComponent({
         documentImageSource(): any {
             if (this.document[this.documentFields.image]) {
                 return {
-                    //2nd image is the fallback in case there is an error iwth source image --- url(imgSource)url(fallbackImg)
+                    //TODO: 2nd image is the fallback in case there is an error iwth source image --- url(imgSource)url(fallbackImg), Change default image to your liking
                     'background-image': `url(${process.env.VUE_APP_HOST_URL}${descriptor.imgPath}${this.document[this.documentFields.image]}),url(https://i.imgur.com/9N1aRkx.png)`
                 }
             }
             return {
-                //default image if none is uploaded for the selected document
+                //TODO: Change default image to your liking
                 'background-image': `url(https://i.imgur.com/9N1aRkx.png)`
             }
         },
