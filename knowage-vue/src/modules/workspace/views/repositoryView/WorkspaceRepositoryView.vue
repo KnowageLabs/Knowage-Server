@@ -14,7 +14,7 @@
     <WorkspaceRepositoryBreadcrumb :breadcrumbs="breadcrumbs" @breadcrumbClicked="$emit('breadcrumbClicked', $event)"></WorkspaceRepositoryBreadcrumb>
 
     <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
-    <div class="p-m-2 overflow">
+    <div class="p-m-2 kn-overflow">
         <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="filteredDocuments" :loading="loading" dataKey="biObjId" responsiveLayout="stack" breakpoint="600px" data-test="documents-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}

@@ -120,6 +120,7 @@
         }
     ],
     "imgPath": "/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=",
+    "imgSource": "82300081364511eca64e159ee59cd4dc.jpg",
     "style": {
         "menuItems": {
             "min-width": "200px"
@@ -129,7 +130,8 @@
             "flex-direction": "column"
         },
         "sidebarImage": {
-            "align-self": "center"
+            "align-self": "center",
+            "width": "80%"
         },
         "sidebarItem": {
             "height": "auto",

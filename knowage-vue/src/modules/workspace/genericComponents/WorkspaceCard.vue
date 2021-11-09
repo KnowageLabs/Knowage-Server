@@ -1,14 +1,12 @@
 <template>
     <div class="card-container p-col-12 p-md-6 p-lg-4 p-xl-3" :style="cardDescriptor.style.cardContainer">
         <div v-if="document[documentFields.image]" class="card-image" :style="[documentImageSource, cardDescriptor.style.cardImage]" />
-        <!-- TODO: insert the default image source -->
-        <div v-else class="card-image default" :style="[documentImageSource, cardDescriptor.style.cardImage]" />
-        <!--  -->
+        <div v-else class="card-image" :style="[documentImageSource, cardDescriptor.style.cardImage]" />
         <span class="details-container" :style="cardDescriptor.style.detailsContainer">
-            <div class="type-container" :style="cardDescriptor.style.typeContainer">
+            <div class="p-mr-3" :style="cardDescriptor.style.typeContainer">
                 <p>{{ document[documentFields.type] }}</p>
             </div>
-            <div class="name-container" :style="cardDescriptor.style.nameContainer">
+            <div class="p-ml-3">
                 <h4 class="p-m-0" :style="cardDescriptor.style.nameContainerText" v-tooltip="document[documentFields.label]">
                     <b>{{ document[documentFields.label] }}</b>
                 </h4>

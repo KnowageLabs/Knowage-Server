@@ -17,7 +17,7 @@
         <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" @click="getDatasetsByFilter" data-test="dataset-select" />
     </div>
 
-    <div class="overflow">
+    <div class="kn-overflow">
         <DataTable v-if="!toggleCardDisplay" style="width:100%" class="p-datatable-sm kn-table" :value="filteredDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}

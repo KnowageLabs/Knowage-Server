@@ -26,7 +26,6 @@
                         <template #left>
                             <InputSwitch v-model="dataset.persist" :disabled="disablePersist" class="p-mr-2" @change="$emit('touched')" />
                             <span>{{ $t('managers.datasetManagement.isPersisted') }} </span>
-                            <span v-if="dataset.persist"> &nbsp;| Table Prefix: {{ dataset.tablePrefix }} </span>
                         </template>
                     </Toolbar>
                     <div v-if="dataset.persist" class="p-field">

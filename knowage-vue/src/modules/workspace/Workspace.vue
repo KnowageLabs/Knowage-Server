@@ -256,9 +256,6 @@ export default defineComponent({
 </style>
 
 <style lang="scss">
-.overflow {
-    overflow: auto;
-}
 .mySidebar .p-listbox-list li:nth-child(2),
 .mySidebar.p-sidebar .p-sidebar-header,
 .mySidebar.p-sidebar .p-sidebar-content,

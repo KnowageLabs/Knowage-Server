@@ -10,7 +10,7 @@
         </template>
     </Toolbar>
     <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
-    <div class="overflow p-mx-2">
+    <div class="kn-overflow p-mx-2">
         <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="filteredDocuments" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="recent-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}

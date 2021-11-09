@@ -10,7 +10,7 @@
 
         <template #content>
             <div class="p-d-flex kn-flex" :style="workspaceFederationDatasetListDescriptor.styles.metaContainer">
-                <div class="p-d-flex p-flex-row kn-flex overflow">
+                <div class="p-d-flex p-flex-row kn-flex kn-overflow">
                     <WorkspaceFederationDefinitionMetafieldsList
                         :style="workspaceFederationDatasetListDescriptor.styles.metaList"
                         v-for="dataset in datasets"

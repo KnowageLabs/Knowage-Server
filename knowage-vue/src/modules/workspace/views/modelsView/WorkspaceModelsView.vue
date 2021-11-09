@@ -16,7 +16,7 @@
         <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" @click="onTableModeChange" />
     </div>
 
-    <div class="p-m-2 overflow">
+    <div class="p-m-2 kn-overflow">
         <WorkspaceModelsTable v-if="!toggleCardDisplay" :propItems="filteredItems" @selected="setSelectedModel" @openDatasetInQBEClick="openDatasetInQBE" @editDatasetClick="editDataset" @deleteDatasetClick="deleteDatasetConfirm" data-test="models-table"></WorkspaceModelsTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2" data-test="card-container">
             <Message v-if="filteredItems.length === 0" class="kn-flex p-m-2" severity="info" :closable="false" :style="mainDescriptor.style.message">

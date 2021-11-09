@@ -6,7 +6,7 @@
                     <Button v-if="button.visible" :icon="button.icon" :class="button.class" @click="button.command" />
                 </span>
             </div>
-            <img class="p-mt-5" onerror="this.src='https://i.imgur.com/9N1aRkx.png'" :style="descriptor.style.sidebarImage" align="center" :src="documentImageSource" style="width:80%" />
+            <img class="p-mt-5" onerror="this.src='https://i.imgur.com/9N1aRkx.png'" :style="descriptor.style.sidebarImage" align="center" :src="documentImageSource" />
             <div class="p-m-5">
                 <div class="p-mb-5" v-for="(field, index) of documentFields" :key="index">
                     <h3 class="p-m-0">
@@ -15,7 +15,7 @@
                     <p class="p-m-0" v-if="field.type === 'category'">
                         {{ datasetCategory }}
                     </p>
-                    <p class="p-m-0" v-if="field.type === 'date'">{{ formatDate(document[field.value]) }}</p>
+                    <p class="p-m-0" v-if="field.type === 'date'">{{ getFormattedDate(document[field.value], 'MM/DD/YYYY hh:mm:ss') }}</p>
                     <p class="p-m-0" v-if="field.type != 'date' && field.type != 'category'">{{ document[field.value] }}</p>
                 </div>
             </div>
@@ -28,6 +28,7 @@ import { defineComponent } from 'vue'
 import descriptor from './DetailSidebarDescriptor.json'
 import Sidebar from 'primevue/sidebar'
 import Menu from 'primevue/contextmenu'
+import { formatDate } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
     name: 'workspace-sidebar',
@@ -81,8 +82,8 @@ export default defineComponent({
             if (this.document.previewFile) {
                 return process.env.VUE_APP_HOST_URL + descriptor.imgPath + this.document.previewFile
             }
-            //DEFAULT IMAGE
-            return process.env.VUE_APP_HOST_URL + descriptor.imgPath + `82300081364511eca64e159ee59cd4dc.jpg`
+            //DEFAULT IMAGE: needs to be changed to whatever client wants
+            return process.env.VUE_APP_HOST_URL + descriptor.imgPath + descriptor.imgSource
         },
         documentFields(): any {
             switch (this.viewType) {
@@ -183,9 +184,8 @@ export default defineComponent({
                 )
             }
         },
-        formatDate(date) {
-            let fDate = new Date(date)
-            return fDate.toLocaleString()
+        getFormattedDate(date: any, format: any) {
+            return formatDate(date, format)
         },
         emitEvent(event) {
             return () => this.$emit(event, this.document)

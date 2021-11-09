@@ -1520,7 +1520,8 @@
             "title": "My Data",
             "unshareDataset": "Unshare Dataset",
             "wizardTitle": "Dataset Wizard",
-            "xlsxExport": "Export Dataset to XLSX"
+            "xlsxExport": "Export Dataset to XLSX",
+            "tablePrefix": "Table Prefix"
         },
         "myModels": {
             "deleteDataset": "Delete dataset",

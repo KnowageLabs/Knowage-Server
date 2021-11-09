@@ -68,9 +68,6 @@
         "icon": {
             "font-size": "30px"
         },
-        "nameContainer": {
-            "margin-left": "10px"
-        },
         "nameContainerText": {
             "overflow": "hidden",
             "text-overflow": "ellipsis",
@@ -80,9 +77,7 @@
         "typeContainer": {
             "align-items": "flex-start",
             "display": "flex",
-            "justify-content": "flex-end",
-            "margin": "0px",
-            "margin-right": "10px"
+            "justify-content": "flex-end"
         }
     }
 }
