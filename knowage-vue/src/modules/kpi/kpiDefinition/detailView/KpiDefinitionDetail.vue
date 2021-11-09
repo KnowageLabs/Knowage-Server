@@ -19,7 +19,7 @@
                     </template>
 
                     <KpiDefinitionFormulaTab
-                        :selectedKpi="selectedKpi"
+                        :propKpi="selectedKpi"
                         :measures="measureList"
                         :loading="loading"
                         :aliasToInput="aliasToInput"
@@ -84,30 +84,7 @@
                 <h4>{{ $t('kpi.kpiDefinition.addKpiAssociations') }}</h4>
             </template>
             <form class="p-fluid p-formgrid p-grid">
-                <div class="p-field p-col-12  p-mt-5">
-                    <span class="p-float-label p-mb-2">
-                        <InputText
-                            id="name"
-                            class="kn-material-input"
-                            type="text"
-                            maxLength="25"
-                            v-model.trim="v$.selectedKpi.name.$model"
-                            :class="{
-                                'p-invalid': v$.selectedKpi.name.$invalid && v$.selectedKpi.name.$dirty
-                            }"
-                            @blur="v$.selectedKpi.name.$touch()"
-                        />
-                        <label for="label" class="kn-material-input-label">{{ $t('common.name') }} * </label>
-                    </span>
-                    <KnValidationMessages
-                        :vComp="v$.selectedKpi.name"
-                        :additionalTranslateParams="{
-                            fieldName: $t('common.name')
-                        }"
-                    >
-                    </KnValidationMessages>
-                </div>
-                <div class="p-field p-col-12">
+                <div class="p-field p-col-12 p-mt-4">
                     <span class="p-float-label p-mb-2">
                         <AutoComplete
                             v-model="v$.selectedKpi.category.$model"
@@ -162,7 +139,7 @@ import Checkbox from 'primevue/checkbox'
 
 export default defineComponent({
     components: { TabView, TabPanel, KnValidationMessages, Listbox, KpiDefinitionThresholdTab, KpiDefinitionFormulaTab, Dialog, AutoComplete, Checkbox, KpiDefinitionCardinalityTab },
-    props: { id: { type: String, required: false }, version: { type: String, required: false }, cloneKpiVersion: { type: Number }, cloneKpiId: { type: Number }, showGuide: Boolean },
+    props: { id: { type: String, required: false }, version: { type: String, required: false }, cloneKpiVersion: { type: Number }, cloneKpiId: { type: Number } },
     computed: {
         buttonDisabled(): any {
             if (this.selectedKpi.threshold) {
