@@ -398,6 +398,7 @@ public class SpagoBIConstants {
 	public static final String KPI_SCHEDULATION = "KpiSchedulation";
 	public static final String PROFILE_MANAGEMENT = "ProfileManagement";
 	public static final String FINAL_USERS_MANAGEMENT = "FinalUsersManagement";
+	public static final String PROFILE_ATTRIBUTES_LIST = "ProfileAttributeListManagement";
 	public static final String SELF_SERVICE_DATASET_MANAGEMENT = "SelfServiceDatasetManagement";
 	public static final String READ_ROLES = "ReadRoles";
 
@@ -554,7 +555,6 @@ public class SpagoBIConstants {
 	public static final String USER_DATA_PROPERTIES_MANAGEMENT = "UserDefinedPropertyManagement";
 	public static final String TEMPLATE_MANAGEMENT = "TemplateManagement";
 	public static final String IMP_EXP_DOCUMENT = "ImpExpDocument";
-	public static final String IMPORT_EXPORT = "ImportExport";
 	public static final String IMP_EXP_RESOURCES = "ImpExpResources";
 	public static final String IMP_EXP_USERS = "ImpExpUsers";
 	public static final String IMP_EXP_KPIS = "ImpExpKpis";
@@ -605,5 +605,8 @@ public class SpagoBIConstants {
 	// Session Parameters
 	public static final String SESSION_PARAMETERS_STORE_NAME = "sessionParameterService";
 	public static final String SESSION_PARAMETER_STATE_OBJECT_KEY = "parameterStateKey";
+
+	// License Read Only
+	public static final String LICENSE_READ_ONLY = "LicenseReadOnly";
 
 }

@@ -1507,6 +1507,46 @@ public class ManageDataSetsForREST {
 	 * @param type
 	 * @return
 	 */
+	static String getSingleValueSolr(String value, String type) {
+		String toReturn = "";
+		if (type.equalsIgnoreCase(DataSetUtilities.STRING_TYPE)) {
+
+			if ((!(value.startsWith("'") && value.endsWith("'")))) {
+				toReturn = "\"" + value + "\"";
+			} else {
+				toReturn = value;
+			}
+
+		} else if (type.equalsIgnoreCase(DataSetUtilities.NUMBER_TYPE)) {
+
+			if (value.startsWith("'") && value.endsWith("'") && value.length() >= 2) {
+				toReturn = value.substring(1, value.length() - 1);
+			} else {
+				toReturn = value;
+			}
+			if (toReturn == null || toReturn.length() == 0) {
+				toReturn = "";
+			}
+		} else if (type.equalsIgnoreCase(DataSetUtilities.GENERIC_TYPE)) {
+			toReturn = value;
+		} else if (type.equalsIgnoreCase(DataSetUtilities.RAW_TYPE)) {
+			if (value.startsWith("'") && value.endsWith("'") && value.length() >= 2) {
+				toReturn = value.substring(1, value.length() - 1);
+			} else {
+				toReturn = value;
+			}
+		}
+
+		return toReturn;
+	}
+
+	/**
+	 * Protected for testing purposes
+	 *
+	 * @param value
+	 * @param type
+	 * @return
+	 */
 	static String getSingleValueREST(String value, String type) {
 		String toReturn = "";
 		if (type.equalsIgnoreCase(DataSetUtilities.STRING_TYPE)) {

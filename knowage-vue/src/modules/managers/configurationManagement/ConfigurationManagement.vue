@@ -79,7 +79,7 @@ import { iConfiguration } from './ConfigurationManagement'
 import { FilterOperator } from 'primevue/api'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import configurationManagementDescriptor from './ConfigurationManagementDescriptor.json'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
@@ -133,9 +133,9 @@ export default defineComponent({
     methods: {
         async loadConfigurations() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.configurations = response.data
                 })
                 .finally(() => (this.loading = false))
@@ -149,7 +149,7 @@ export default defineComponent({
             })
         },
         async deleteConfiguration(configurationId: number) {
-            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/' + configurationId).then(() => {
+            await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/' + configurationId).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')

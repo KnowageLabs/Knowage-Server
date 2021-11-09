@@ -70,7 +70,7 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import { FilterOperator } from 'primevue/api'
 import { filterDefault } from '@/helpers/commons/filterHelper'
@@ -127,7 +127,7 @@ export default defineComponent({
     },
     methods: {
         async loadDatasets() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/datasetsforlov/').then((response) => (this.datasets = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/datasetsforlov/').then((response: AxiosResponse<any>) => (this.datasets = response.data))
         },
         loadDataset() {
             this.selectedDataset = { ...this.dataset }

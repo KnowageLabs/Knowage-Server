@@ -69,6 +69,15 @@ public class KnowageApiConfigurationTest {
 		return factoryBean;
 	}
 
+	@Bean("knowage-config")
+	public LocalEntityManagerFactoryBean entityManagerFactoryForWidgetConfig() {
+		Map<String, Object> properties = getEntityManagerFactoriesProperties();
+		LocalEntityManagerFactoryBean factoryBean = new LocalEntityManagerFactoryBean();
+		factoryBean.setPersistenceUnitName("knowage-config");
+		factoryBean.setJpaPropertyMap(properties);
+		return factoryBean;
+	}
+
 	@Primary
 	@Bean
 	public PlatformTransactionManager mainTransactionManager() {
@@ -151,7 +160,7 @@ public class KnowageApiConfigurationTest {
 		env.put("java.naming.factory.initial", "org.osjava.sj.SimpleJndiContextFactory");
 		InitialContext initialContext = new InitialContext(env);
 
-		initialContext.bind("java:/comp/env/hmacKey", "abc123");
+		initialContext.bind("java:comp/env/hmacKey", "abc123");
 
 		return initialContext;
 	}

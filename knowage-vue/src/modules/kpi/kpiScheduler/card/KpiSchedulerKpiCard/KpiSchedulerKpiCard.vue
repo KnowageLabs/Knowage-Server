@@ -53,7 +53,7 @@
                     <Column class="kn-truncated" field="category.valueCd" :header="$t('common.category')" key="category.valueCd" :sortable="true"> </Column>
                     <Column class="kn-truncated" field="dateCreation" :header="$t('kpi.kpiScheduler.kpiName')" key="dateCreation" :sortable="true">
                         <template #body="slotProps">
-                            <span>{{ getFormatedDate(slotProps.data.dateCreation) }}</span>
+                            <span>{{ getFormattedDate(slotProps.data.dateCreation) }}</span>
                         </template>
                     </Column>
                     <Column class="kn-truncated" field="author" :header="$t('common.author')" key="author" :sortable="true"> </Column>
@@ -124,7 +124,7 @@ export default defineComponent({
             this.addKpiAssociationVisible = false
             this.$emit('kpiAdded', this.kpisList)
         },
-        getFormatedDate(date: any) {
+        getFormattedDate(date: any) {
             return formatDate(date, 'YYYY-MM-DD')
         },
         closeKpiAssociations() {

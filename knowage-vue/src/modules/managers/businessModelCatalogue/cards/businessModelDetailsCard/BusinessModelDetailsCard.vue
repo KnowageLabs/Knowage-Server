@@ -391,4 +391,8 @@ export default defineComponent({
 .full-screen-dialog.p-dialog .p-dialog-content {
     padding: 0;
 }
+
+.pi-upload {
+    display: none;
+}
 </style>

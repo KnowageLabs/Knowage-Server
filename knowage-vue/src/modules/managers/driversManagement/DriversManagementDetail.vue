@@ -16,7 +16,7 @@ import { defineComponent } from 'vue'
 import { iDriver } from './DriversManagement'
 import DriversDetailCard from './DriversDetailCard.vue'
 import UseMode from './useModes/DriversManagementUseMode.vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import driversManagemenDetailtDescriptor from './DriversManagementDetailDescriptor.json'
 
 export default defineComponent({
@@ -85,27 +85,27 @@ export default defineComponent({
 
     methods: {
         async getTypes() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'domains/listValueDescriptionByType?DOMAIN_TYPE=PAR_TYPE').then((response) => (this.types = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'domains/listValueDescriptionByType?DOMAIN_TYPE=PAR_TYPE').then((response: AxiosResponse<any>) => (this.types = response.data))
         },
         async getModes() {
             if (this.driver.id) {
-                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/' + this.driver.id + '/modes/').then((response) => (this.modes = response.data))
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/' + this.driver.id + '/modes/').then((response: AxiosResponse<any>) => (this.modes = response.data))
             } else this.modes = []
         },
         async getRoles() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles').then((response) => (this.roles = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles').then((response: AxiosResponse<any>) => (this.roles = response.data))
         },
         async getConstraints() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/checks').then((response) => (this.constraints = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/checks').then((response: AxiosResponse<any>) => (this.constraints = response.data))
         },
         async getselectionTypes() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'domains/listValueDescriptionByType?DOMAIN_TYPE=SELECTION_TYPE').then((response) => (this.selectionTypes = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'domains/listValueDescriptionByType?DOMAIN_TYPE=SELECTION_TYPE').then((response: AxiosResponse<any>) => (this.selectionTypes = response.data))
         },
         async getLayers() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDriversee/layers').then((response) => (this.layers = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDriversee/layers').then((response: AxiosResponse<any>) => (this.layers = response.data))
         },
         async getLovs() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all').then((response) => (this.lovs = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all').then((response: AxiosResponse<any>) => (this.lovs = response.data))
         },
         loadAll() {
             this.getTypes()
@@ -160,7 +160,7 @@ export default defineComponent({
             }
 
             await this.sendRequest(url)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     if (this.operation === 'insert') {
                         this.driver = response.data
                     }
@@ -192,16 +192,16 @@ export default defineComponent({
         },
         sendRequest(url: string) {
             if (this.operation === 'insert') {
-                return axios.post(url, this.driver)
+                return this.$http.post(url, this.driver)
             } else {
-                return axios.put(url, this.driver)
+                return this.$http.put(url, this.driver)
             }
         },
         sendUseModeRequest(url: string, useMode: any) {
             if (this.useModeOperation === 'insert') {
-                return axios.post(url, useMode)
+                return this.$http.post(url, useMode)
             } else {
-                return axios.put(url, useMode)
+                return this.$http.put(url, useMode)
             }
         },
         setDirty(): void {

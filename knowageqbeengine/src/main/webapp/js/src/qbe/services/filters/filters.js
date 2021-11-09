@@ -98,7 +98,8 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 			if(filters[i][propertyName]!=undefined && filters[i][propertyName]==propertyValue) {
 
 				filters.splice(i, 1);
-				this.generateExpressions (filters, expression, advancedFilters);
+				var newExpression = this.generateExpressions (filters, expression, advancedFilters);
+				angular.copy(newExpression, expression);
 				i--;
 			}
 
