@@ -5,11 +5,15 @@
                 <template #left>
                     {{ $t('managers.cacheManagement.runtimeInformationTitle') }}
                 </template>
+                <template #right>
+                    <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain" @click="refresh" />
+                </template>
             </Toolbar>
         </template>
         <template #content>
             <div class="p-d-flex p-flex-column">
                 <div class="kn-flex">
+                    dfssdfdfssdfsdfsddfsfd
                     <p>{{ $t('managers.cacheManagement.cacheEnabled') }}: {{ cache.cleaningEnabled }}</p>
                     <p>{{ $t('managers.cacheManagement.totalMemory') }}: {{ totalMemory }}</p>
                     <p>{{ $t('managers.cacheManagement.availableMemory') }}: {{ availableMemory }}</p>
@@ -46,6 +50,7 @@ export default defineComponent({
             required: true
         }
     },
+    emits: ['refresh'],
     data() {
         return {
             cache: {} as iCache,
@@ -85,6 +90,9 @@ export default defineComponent({
                     }
                 ]
             }
+        },
+        refresh() {
+            this.$emit('refresh')
         }
     }
 })

@@ -156,7 +156,6 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 		int columnsDepth = cs.getColumnsRoot().getSubTreeDepth();
 		int rowsDepth = cs.getRowsRoot().getSubTreeDepth();
 
-		MeasureFormatter measureFormatter = new MeasureFormatter(cs);
 		// + 1 because there may be also the bottom row with the totals
 		int totalRowsNumber = cs.getTotalNumberOfRows();
 
@@ -179,7 +178,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 
 		// then put the matrix data
 		Monitor buildDataMatrixMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.buildDataMatrixMonitor");
-		buildDataMatrix(sheet, cs, columnsDepth + startRow - 1, rowsDepth - 1, createHelper, measureFormatter);
+		buildDataMatrix(sheet, cs, columnsDepth + startRow - 1, rowsDepth - 1, createHelper);
 		buildDataMatrixMonitor.stop();
 
 		// finally add row titles
@@ -209,16 +208,16 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 		return totalRowsNumber + 4;
 	}
 
-	protected int buildDataMatrix(Sheet sheet, CrossTab cs, int rowOffset, int columnOffset, CreationHelper createHelper, MeasureFormatter measureFormatter)
-			throws JSONException {
-
+	protected int buildDataMatrix(Sheet sheet, CrossTab cs, int rowOffset, int columnOffset, CreationHelper createHelper) throws JSONException {
+		MeasureFormatter measureFormatter = new MeasureFormatter(cs);
+		String[][] dataMatrix = cs.getDataMatrix();
 		CellStyle cellStyleForNA = buildNACellStyle(sheet);
-
-		Map<Integer, CellStyle> decimalFormats = new HashMap<Integer, CellStyle>();
 		int endRowNum = 0;
-		for (int i = 0; i < cs.getDataMatrix().length; i++) {
-			for (int j = 0; j < cs.getDataMatrix()[0].length; j++) {
-				String text = cs.getDataMatrix()[i][j];
+		int numOfMeasures = cs.getMeasures().size();
+
+		for (int i = 0; i < dataMatrix.length; i++) {
+			for (int j = 0; j < dataMatrix[0].length; j++) {
+				String text = dataMatrix[i][j];
 				int rowNum = rowOffset + i;
 				int columnNum = columnOffset + j;
 				Row row = sheet.getRow(rowNum);
@@ -233,7 +232,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 					Double valueFormatted = measureFormatter.applyScaleFactor(value, i, j);
 					cell.setCellValue(valueFormatted);
 					cell.setCellType(this.getCellTypeNumeric());
-					int measureIdx = j % cs.getMeasures().size();
+					int measureIdx = j % numOfMeasures;
 					String measureId = getMeasureId(cs, measureIdx);
 					CellStyle style = getStyle(decimals, sheet, createHelper, cs.getCellType(i, j), measureId, value);
 					cell.setCellStyle(style);
