@@ -53,9 +53,13 @@
 			}
 		},
 		mounted() {
-			this.completeUrl = this.homePage.to ? process.env.VUE_APP_HOST_URL + this.homePage.to : this.homePage.url
+			this.setCompleteUrl()
 		},
-		methods: {},
+		methods: {
+			setCompleteUrl() {
+				this.completeUrl = this.homePage.to ? process.env.VUE_APP_HOST_URL + this.homePage.to.replaceAll('\\/', '/') : this.homePage.url
+			}
+		},
 		computed: {
 			...mapState({
 				homePage: 'homePage',
@@ -64,7 +68,7 @@
 		},
 		watch: {
 			homePage(oldHomePage, newHomePage) {
-				if (oldHomePage !== newHomePage) this.completeUrl = this.homePage.to ? process.env.VUE_APP_HOST_URL + this.homePage.to : this.homePage.url
+				if (oldHomePage !== newHomePage) this.setCompleteUrl()
 			}
 		}
 	})

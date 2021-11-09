@@ -41,6 +41,32 @@
         },
         "saveDialog": {
             "width": "20%"
+        },
+        "aliasButton": {
+            "text-transform": "uppercase"
+        },
+        "aliasList": {
+            "height": "39px"
         }
+    },
+    "validations": {
+        "selectedKpi": [
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "category",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            }
+        ]
     }
 }

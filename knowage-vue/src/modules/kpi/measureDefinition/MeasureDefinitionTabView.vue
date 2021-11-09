@@ -28,7 +28,8 @@
                             :codeInput="codeInput"
                             :preview="preview"
                             @queryChanged="queryChanged = true"
-                            @loadPreview="previewQuery(false, true)"
+                            @loadPreview="previewQuery(false, true, true)"
+                            @closePreview="preview = false"
                         ></MeasureDefinitionQueryCard>
                     </TabPanel>
 
@@ -52,7 +53,7 @@
 
     <MeasureDefinitionSubmitDialog v-if="showSaveDialog" :ruleName="rule.name" :newAlias="newAlias" :reusedAlias="reusedAlias" :newPlaceholder="newPlaceholder" :reusedPlaceholder="reusedPlaceholder" @close="showSaveDialog = false" @save="saveRule($event)"></MeasureDefinitionSubmitDialog>
 
-    <Dialog :style="metadataDefinitionTabViewDescriptor.dialog.style" :modal="true" :visible="errorDialogVisible" :header="errorTitle" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false">
+    <Dialog :autoZIndex="false" :style="metadataDefinitionTabViewDescriptor.errorDialog.style" :modal="true" :visible="errorDialogVisible" :header="errorTitle" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false">
         <p>{{ errorMessage }}</p>
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="closeErrorMessageDialog"></Button>
@@ -63,7 +64,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iDatasource, iMeasure, iRule, iPlaceholder } from './MeasureDefinition'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Dialog from 'primevue/dialog'
 import MeasureDefinitionFilterList from './MeasureDefinitionFilterList.vue'
 import MeasureDefinitionMetadataCard from './card/MeasureDefinitionMetadataCard/MeasureDefinitionMetadataCard.vue'
@@ -120,7 +121,7 @@ export default defineComponent({
             aliasesVisible: false,
             placeholderVisible: false,
             codeInput: null as string | null,
-            preview: true
+            preview: false
         }
     },
     computed: {
@@ -167,35 +168,38 @@ export default defineComponent({
     },
     methods: {
         async loadSelectedRule() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/${this.ruleVersion}/loadRule`).then((response) => (this.rule = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/${this.ruleVersion}/loadRule`).then((response: AxiosResponse<any>) => (this.rule = response.data))
         },
         async loadDataSources() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `datasources/?onlySqlLike=true`).then((response) => (this.datasourcesList = response.data.root))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `datasources/?onlySqlLike=true`).then((response: AxiosResponse<any>) => (this.datasourcesList = response.data.root))
         },
         async loadAliases() {
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listAvailableAlias`
             if (this.rule.id) {
                 url += `?ruleId=${this.id}&ruleVersion=${this.ruleVersion}`
             }
-            await axios.get(url).then((response) => {
+            await this.$http.get(url).then((response: AxiosResponse<any>) => {
                 this.availableAliasList = response.data.available
                 this.notAvailableAliasList = response.data.notAvailable
             })
         },
         async loadPlaceholders() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listPlaceholder`).then((response) => (this.placeholdersList = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listPlaceholder`).then((response: AxiosResponse<any>) => (this.placeholdersList = response.data))
         },
         async loadDomainsData() {
-            await this.loadDomainsByCode('KPI_RULEOUTPUT_TYPE').then((response) => (this.domainsKpiRuleoutput = response.data))
-            await this.loadDomainsByCode('TEMPORAL_LEVEL').then((response) => (this.domainsTemporalLevel = response.data))
-            await this.loadDomainsByCode('KPI_MEASURE_CATEGORY').then((response) => (this.domainsKpiMeasures = response.data))
+            await this.loadDomainsByCode('KPI_RULEOUTPUT_TYPE').then((response: AxiosResponse<any>) => (this.domainsKpiRuleoutput = response.data))
+            await this.loadDomainsByCode('TEMPORAL_LEVEL').then((response: AxiosResponse<any>) => (this.domainsTemporalLevel = response.data))
+            await this.loadDomainsByCode('KPI_MEASURE_CATEGORY').then((response: AxiosResponse<any>) => (this.domainsKpiMeasures = response.data))
         },
         loadDomainsByCode(code: string) {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/${code}`)
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/${code}`)
         },
         async setTabChanged(tabIndex: any) {
             this.activeTab = tabIndex
-            await this.previewQuery(false, false)
+
+            if (this.activeTab !== 0) {
+                await this.previewQuery(false, false, true)
+            }
 
             this.rule.ruleOutputs.forEach((ruleOutput: any) => {
                 this.setAliasIcon(ruleOutput)
@@ -269,7 +273,12 @@ export default defineComponent({
             })
             return used
         },
-        async previewQuery(save: boolean, hasPlaceholders: boolean) {
+        async previewQuery(save: boolean, hasPlaceholders: boolean, showDialog: boolean) {
+            this.loading = true
+
+            if (this.activeTab === 0 && showDialog) {
+                this.preview = true
+            }
             const tempRuleOutputs = this.rule.ruleOutputs
             this.rule.ruleOutputs.forEach((ruleOutput) => {
                 delete ruleOutput.aliasIcon
@@ -286,20 +295,17 @@ export default defineComponent({
 
             if ((this.rule.placeholders && this.rule.placeholders.length === 0) || hasPlaceholders) {
                 const postData = { rule: this.rule, maxItem: 10 }
-                await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/queryPreview', postData).then((response) => {
-                    if (response.data.errors) {
-                        this.errorTitle = this.$t('kpi.measureDefinition.metadataError') + ' ' + this.$t('kpi.measureDefinition.wrongQuery')
-                        this.errorMessage = response.data.errors[0].message
-                        this.preview = false
-                    } else {
+
+                await this.$http
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/queryPreview', postData, { headers: { 'X-Disable-Errors': 'true' } })
+                    .then((response: AxiosResponse<any>) => {
                         this.columns = response.data.columns
                         this.rows = response.data.rows
                         this.columnToRuleOutputs()
-                        if (this.activeTab === 0) {
-                            this.preview = true
-                        }
-                    }
-                })
+                    })
+                    .catch((error) => {
+                        this.setPreviewError(error.message)
+                    })
             }
             this.setNewAliases()
             this.setNewPlaceholders()
@@ -309,8 +315,15 @@ export default defineComponent({
 
             this.rule.dataSource = tempDatasource
             this.rule.ruleOutputs = tempRuleOutputs
+            this.loading = false
+        },
+        setPreviewError(error: string) {
+            this.errorTitle = this.$t('kpi.measureDefinition.metadataError') + ' ' + this.$t('kpi.measureDefinition.wrongQuery')
+            this.errorMessage = error
+            this.rows = []
         },
         async preSaveRule() {
+            this.loading = true
             const tempDataSource = this.rule.dataSource
             const tempRuleOutputs = this.rule.ruleOutputs
             delete this.rule.dataSource
@@ -319,41 +332,44 @@ export default defineComponent({
                 ruleOutput.category = { valueCd: ruleOutput.category?.valueCd as string }
             })
 
-            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/preSaveRule', this.rule).then((response) => {
-                if (this.rule.ruleOutputs.length === 0) {
-                    this.errorTitle = this.$t('kpi.measureDefinition.presaveErrors.metadataMissing')
-                    this.errorMessage = this.$t('kpi.measureDefinition.presaveErrors.metadataMissingText')
-                }
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/preSaveRule', this.rule, { headers: { 'X-Disable-Errors': 'true' } })
+                .then(() => {
+                    if (this.rule.ruleOutputs.length === 0) {
+                        this.errorTitle = this.$t('kpi.measureDefinition.presaveErrors.metadataMissing')
+                        this.errorMessage = this.$t('kpi.measureDefinition.presaveErrors.metadataMissingText')
+                    }
 
-                let measurePresent = false
-                this.rule.ruleOutputs.forEach((ruleOutput: any) => {
-                    if (ruleOutput.type.valueCd === 'TEMPORAL_ATTRIBUTE' && ruleOutput.hierarchy === null) {
-                        this.errorTitle = this.$t('kpi.measureDefinition.presaveErrors.noTemporalattributSet')
-                        this.errorMessage = this.$t('kpi.measureDefinition.presaveErrors.missingTemporalattributText')
-                    } else if (ruleOutput.type.valueCd === 'MEASURE') {
-                        measurePresent = true
+                    let measurePresent = false
+                    this.rule.ruleOutputs.forEach((ruleOutput: any) => {
+                        if (ruleOutput.type.valueCd === 'TEMPORAL_ATTRIBUTE' && ruleOutput.hierarchy === null) {
+                            this.errorTitle = this.$t('kpi.measureDefinition.presaveErrors.noTemporalattributSet')
+                            this.errorMessage = this.$t('kpi.measureDefinition.presaveErrors.missingTemporalattributText')
+                        } else if (ruleOutput.type.valueCd === 'MEASURE') {
+                            measurePresent = true
+                        }
+                    })
+
+                    if (!measurePresent) {
+                        this.errorTitle = this.$t('kpi.measureDefinition.presaveErrors.noMeasureSet')
+                        this.errorMessage = this.$t('kpi.measureDefinition.presaveErrors.metadataMissingText')
+                    }
+
+                    if (!this.errorMessage) {
+                        this.showSaveDialog = true
                     }
                 })
-
-                if (!measurePresent) {
-                    this.errorTitle = this.$t('kpi.measureDefinition.presaveErrors.noMeasureSet')
-                    this.errorMessage = this.$t('kpi.measureDefinition.presaveErrors.metadataMissingText')
-                }
-
-                if (response.data.errors) {
+                .catch((error) => {
                     this.errorTitle = this.$t('kpi.measureDefinition.metadataError') + ' ' + this.$t('kpi.measureDefinition.wrongQuery')
-                    this.errorMessage = response.data.errors[0]
-                }
-
-                if (!this.errorMessage) {
-                    this.showSaveDialog = true
-                }
-            })
+                    this.errorMessage = error
+                })
 
             this.rule.dataSource = tempDataSource
             this.rule.ruleOutputs = tempRuleOutputs
+            this.loading = false
         },
         async saveRule(ruleName: string) {
+            this.loading = true
             this.rule.name = ruleName
             if (this.rule.id) {
                 this.operation = 'update'
@@ -366,13 +382,22 @@ export default defineComponent({
             })
 
             delete this.rule.dataSource
-            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveRule', this.rule).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.' + this.operation + 'Title'),
-                    msg: this.$t('common.toast.success')
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveRule', this.rule)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.' + this.operation + 'Title'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.$router.replace('/measure-definition')
                 })
-                this.$router.replace('/measure-definition')
-            })
+                .catch((response: AxiosResponse<any>) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.toast.' + this.operation + 'Title'),
+                        msg: response
+                    })
+                })
+            this.loading = false
         },
         columnToRuleOutputs() {
             const tempMetadatas = [] as any[]
@@ -440,7 +465,7 @@ export default defineComponent({
         },
         submitConfirm() {
             if (!this.queryChanged) {
-                this.previewQuery(true, false)
+                this.previewQuery(true, false, false)
             } else {
                 this.$confirm.require({
                     message: this.$t('kpi.measureDefinition.metadataChangedMessage'),
@@ -448,7 +473,7 @@ export default defineComponent({
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
                         this.queryChanged = false
-                        this.previewQuery(true, false)
+                        this.previewQuery(true, false, false)
                     }
                 })
             }

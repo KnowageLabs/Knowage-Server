@@ -291,8 +291,7 @@ public class SolrDataSet extends RESTDataSet {
 		String body = null;
 		String address = null;
 		/*
-		 * In case in the future we will let the user to choose
-		 * between GET and POST...
+		 * In case in the future we will let the user to choose between GET and POST...
 		 */
 		HttpMethod method = HttpMethod.Post;
 		if (method == HttpMethod.Get) {
@@ -300,7 +299,7 @@ public class SolrDataSet extends RESTDataSet {
 		} else if (method == HttpMethod.Post) {
 			address = solrConfiguration.toString(false);
 			body = solrConfiguration.getQueryParameters();
-			requestHeaders.put("Content-Type", "application/x-www-form-urlencoded; charset=utf-8"); 
+			requestHeaders.put("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
 		}
 		setDataProxy(new SolrDataProxy(address, method, body, facetField, requestHeaders, offset, fetchSize, maxResults, isFacet()));
 	}
@@ -549,11 +548,12 @@ public class SolrDataSet extends RESTDataSet {
 							String temp = valuesArray[i];
 							if (!delim.isEmpty() && temp.startsWith(delim) && temp.endsWith(delim))
 								temp = temp.substring(1, temp.length() - 1);
-							temp = temp.replaceAll("'", "''");
+							temp = temp.replaceAll("'", "\"");
 							if (i == 0) {
 								if (!delim.isEmpty() && temp.startsWith(delim) && temp.endsWith(delim)) {
 									temp = temp.substring(1, temp.length() - 1);
 								}
+								temp = "\"" + temp + "\"";
 								newValuesFromArray = (temp);
 							}
 
@@ -561,7 +561,8 @@ public class SolrDataSet extends RESTDataSet {
 								if (!delim.isEmpty() && temp.startsWith(delim) && temp.endsWith(delim)) {
 									temp = temp.substring(1, temp.length() - 1);
 								}
-								newValuesFromArray = newValuesFromArray + "," + (temp);
+								temp = "\"" + temp + "\"";
+								newValuesFromArray = newValuesFromArray + " , " + (temp);
 							}
 
 						}

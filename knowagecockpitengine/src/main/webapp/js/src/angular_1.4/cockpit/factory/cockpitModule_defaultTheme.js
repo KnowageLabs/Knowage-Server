@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 angular.module('cockpitModule').factory('cockpitModule_defaultTheme',function(sbiModule_config,sbiModule_translate){
-	var alternatedBackgroundColor = '#E4E8EC';
+	var alternatedBackgroundColor = 'rgb(228, 232, 236)';
 	return{
 		cockpit: {
 			"style": {
@@ -61,8 +61,8 @@ angular.module('cockpitModule').factory('cockpitModule_defaultTheme',function(sb
 			      },
 			      "th": {
 			        "enabled": true,
-			        "background-color": "#899EAF",
-			        "color": "white",
+			        "background-color": "rgb(137, 158, 175)",
+			        "color": "rgb(255, 255, 255)",
 			        "justify-content": "center",
 			        "font-size": "14px"
 			      },

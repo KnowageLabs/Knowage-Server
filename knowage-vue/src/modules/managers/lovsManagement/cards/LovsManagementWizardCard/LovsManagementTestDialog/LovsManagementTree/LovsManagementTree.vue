@@ -46,7 +46,7 @@
                         <i class="pi pi-pencil edit-icon" />
                     </template>
                 </Column>
-                <Column class="kn-truncated p-mr-2" field="description" :header="$t('managers.lovsManagement.value')">
+                <Column class="kn-truncated p-mr-2" field="description" :header="$t('managers.lovsManagement.description')">
                     <template #editor="slotProps">
                         <Dropdown class="p-mr-2" v-model.trim="slotProps.data[slotProps.column.props.field]" optionLabel="name" optionValue="name" :options="options" />
                         <i class="pi pi-pencil edit-icon" />

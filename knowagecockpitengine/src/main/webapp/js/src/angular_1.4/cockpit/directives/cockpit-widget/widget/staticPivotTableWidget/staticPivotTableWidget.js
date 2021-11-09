@@ -1324,6 +1324,11 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		    			 }
 		    		  }
 
+		    		  if (!isTotalsLabelUnique()) {
+		    			  $scope.showAction($scope.translate.load('sbi.cockpit.widgets.staticpivot.uniqueTotalLabels'))
+		    			  return;
+		    		  }
+
 		    		  if($scope.localModel.content.crosstabDefinition.measures.length == 0 ||
 		    			($scope.localModel.content.crosstabDefinition.rows.length == 0 &&
 		    			$scope.localModel.content.crosstabDefinition.columns.length ==0)
@@ -1331,13 +1336,35 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		    			  $scope.showAction($scope.translate.load('sbi.cockpit.widgets.staticpivot.missingfield'));
 		    			  return;
 		    		  }
-		    		  if ($scope.localModel.content.crosstabDefinition)
+		    		  if ($scope.localModel.content.crosstabDefinition) {
 		    			  $scope.localModel.content.sortOptions =  fnOrder($scope.localModel.content.crosstabDefinition.columns, $scope.localModel.content.crosstabDefinition.rows) || {}; //update sorting
+		    		  }
+
 		    		  angular.copy($scope.localModel,model);//src, dest
 		    		  mdPanelRef.close();
 		    		  $scope.$destroy();
 		    		  finishEdit.resolve();
 
+		    	    }
+
+		    	    isTotalsLabelUnique=function(){
+		    	    	for (i=0; i<$scope.localModel.content.crosstabDefinition.measures.length; i++) {
+		    	    		var alias = $scope.localModel.content.crosstabDefinition.measures[i].alias;
+		    	    		if (!isAliasUnique(alias)) return false;
+		    	    	}
+		    	    	return true;
+		    	    }
+
+		    	    isAliasUnique=function(alias){
+		    	    	if (alias == $scope.localModel.content.crosstabDefinition.config.columnsubtotalLabel)
+		    	    		return false;
+		    	    	if (alias == $scope.localModel.content.crosstabDefinition.config.columntotalLabel)
+		    	    		return false;
+		    	    	if (alias == $scope.localModel.content.crosstabDefinition.config.rowsubtotalLabel)
+		    	    		return false;
+		    	    	if (alias == $scope.localModel.content.crosstabDefinition.config.rowtotalLabel)
+		    	    		return false;
+		    	    	return true;
 		    	    }
 
 			  		$scope.showAction = function(text) {

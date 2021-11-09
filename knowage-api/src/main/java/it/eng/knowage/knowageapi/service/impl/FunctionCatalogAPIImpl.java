@@ -50,39 +50,35 @@ public class FunctionCatalogAPIImpl implements FunctionCatalogAPI {
 
 	@Override
 	public List<FunctionDTO> find(String searchStr) {
-		return repository.findAll(searchStr)
-				.stream()
-				.map(TO_FUNCTION_DTO)
-				.collect(toList());
+		return repository.findAll(searchStr).stream().map(TO_FUNCTION_DTO).collect(toList());
+	}
+
+	@Override
+	public List<FunctionCompleteDTO> findComplete(String searchStr) {
+		return repository.findAll(searchStr).stream().map(TO_FUNCTION_COMPLETE_DTO).collect(toList());
 	}
 
 	@Override
 	public FunctionCompleteDTO get(UUID id) {
-		return Optional.ofNullable(repository.find(id.toString()))
-				.map(TO_FUNCTION_COMPLETE_DTO)
+		return Optional.ofNullable(repository.find(id.toString())).map(TO_FUNCTION_COMPLETE_DTO)
 				.orElseThrow(() -> new KnowageRuntimeException("Function with id " + id + " not found"));
 	}
 
 	@Override
 	public FunctionCompleteDTO create(FunctionCompleteDTO function) {
-		SbiCatalogFunction beFunction = Optional.ofNullable(function)
-				.map(TO_SBI_CATALOG_FUNCTION)
+		SbiCatalogFunction beFunction = Optional.ofNullable(function).map(TO_SBI_CATALOG_FUNCTION)
 				.orElseThrow(() -> new KnowageRuntimeException("Function cannot be null"));
 
-		return Optional.ofNullable(repository.create(beFunction))
-				.map(TO_FUNCTION_COMPLETE_DTO)
-				.get();
+		return Optional.ofNullable(repository.create(beFunction)).map(TO_FUNCTION_COMPLETE_DTO).get();
 	}
 
 	@Override
 	public FunctionCompleteDTO update(FunctionCompleteDTO function) {
-		SbiCatalogFunction beFunction = Optional.ofNullable(function)
-				.map(TO_SBI_CATALOG_FUNCTION)
+		SbiCatalogFunction beFunction = Optional.ofNullable(function).map(TO_SBI_CATALOG_FUNCTION)
 				.orElseThrow(() -> new KnowageRuntimeException("Function cannot be null"));
 
-		return Optional.ofNullable(repository.update(beFunction))
-				.map(TO_FUNCTION_COMPLETE_DTO)
-				.get();	}
+		return Optional.ofNullable(repository.update(beFunction)).map(TO_FUNCTION_COMPLETE_DTO).get();
+	}
 
 	@Override
 	public void delete(UUID id) throws KnowageBusinessException {

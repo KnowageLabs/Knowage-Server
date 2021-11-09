@@ -1,0 +1,17 @@
+{
+    "validations": {
+        "dataset": [
+            {
+                "fieldName": "sparqlEndpoint",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "sparql-fields-required"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

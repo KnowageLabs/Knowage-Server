@@ -114,140 +114,139 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iSettings } from '../../CacheManagement'
-import axios from 'axios'
-import Dropdown from 'primevue/dropdown'
-import InputNumber from 'primevue/inputnumber'
-import generalSettingsCardDescriptor from './GeneralSettingsCardDescriptor.json'
+    import { defineComponent } from 'vue'
+    import { iSettings } from '../../CacheManagement'
+    import Dropdown from 'primevue/dropdown'
+    import InputNumber from 'primevue/inputnumber'
+    import generalSettingsCardDescriptor from './GeneralSettingsCardDescriptor.json'
 
-export default defineComponent({
-    name: 'general-settings-card',
-    components: {
-        Dropdown,
-        InputNumber
-    },
-    props: {
-        item: {
-            type: Object,
-            required: true
+    export default defineComponent({
+        name: 'general-settings-card',
+        components: {
+            Dropdown,
+            InputNumber
         },
-        datasources: {
-            type: Array,
-            required: true
+        props: {
+            item: {
+                type: Object,
+                required: true
+            },
+            datasources: {
+                type: Array,
+                required: true
+            },
+            selectedDatasource: {
+                value: [Object, null],
+                required: true
+            }
         },
-        selectedDatasource: {
-            value: [Object, null],
-            required: true
-        }
-    },
-    emits: ['inserted'],
-    data() {
-        return {
-            generalSettingsCardDescriptor,
-            settings: {} as iSettings,
-            datasource: {},
-            datasourceOptions: []
-        }
-    },
-    watch: {
-        item() {
+        emits: ['inserted'],
+        data() {
+            return {
+                generalSettingsCardDescriptor,
+                settings: {} as iSettings,
+                datasource: {},
+                datasourceOptions: []
+            }
+        },
+        watch: {
+            item() {
+                this.loadSettings()
+            },
+            datasources() {
+                this.loadDatasources()
+            },
+            selectedDatasource() {
+                this.loadDatasource()
+            }
+        },
+        created() {
             this.loadSettings()
-        },
-        datasources() {
             this.loadDatasources()
-        },
-        selectedDatasource() {
             this.loadDatasource()
-        }
-    },
-    created() {
-        this.loadSettings()
-        this.loadDatasources()
-        this.loadDatasource()
-    },
-    methods: {
-        loadSettings() {
-            this.settings = { ...this.item } as iSettings
         },
-        loadDatasources() {
-            this.datasourceOptions = this.datasources as []
-        },
-        loadDatasource() {
-            this.datasource = { ...(this.selectedDatasource as Object) }
-        },
-        async save() {
-            await this.removeCache()
-            await this.saveDatasource()
-            await this.saveConfigurationOptions()
+        methods: {
+            loadSettings() {
+                this.settings = { ...this.item } as iSettings
+            },
+            loadDatasources() {
+                this.datasourceOptions = this.datasources as []
+            },
+            loadDatasource() {
+                this.datasource = { ...(this.selectedDatasource as Object) }
+            },
+            async save() {
+                await this.removeCache()
+                await this.saveDatasource()
+                await this.saveConfigurationOptions()
 
-            this.$store.commit('setInfo', {
-                title: this.$t('common.toast.success'),
-                msg: this.$t('common.toast.updateTitle')
-            })
-            this.$emit('inserted')
-        },
-        async saveConfigurationOptions() {
-            const configurations = [
-                { label: 'SPAGOBI.CACHE.NAMEPREFIX', value: this.settings.prefixForCacheTablesName },
-                { label: 'SPAGOBI.CACHE.SPACE_AVAILABLE', value: this.settings.spaceAvailable * 1048576 },
-                { label: 'SPAGOBI.CACHE.LIMIT_FOR_CLEAN', value: this.settings.limitForClean },
-                { label: 'SPAGOBI.CACHE.SCHEDULING_FULL_CLEAN', value: this.settings.schedulingFullClean.value, id: this.settings.schedulingFullClean.value },
-                { label: 'SPAGOBI.CACHE.LIMIT_FOR_STORE', value: this.settings.cacheLimitForStore },
-                { label: 'SPAGOBI.CACHE.DS_LAST_ACCESS_TTL', value: this.settings.lastAccessTtl },
-                { label: 'SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT', value: this.settings.createAndPersistTimeout },
-                { label: 'SPAGOBI.WORKMANAGER.SQLDBCACHE.TIMEOUT', value: this.settings.sqldbCacheTimeout },
-                { label: 'SPAGOBI.CACHE.HAZELCAST.TIMEOUT', value: this.settings.hazelcastTimeout },
-                { label: 'SPAGOBI.CACHE.HAZELCAST.LEASETIME', value: this.settings.hazelcastLeaseTime }
-            ]
-
-            await axios
-                .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/conf', { configurations: configurations })
-                .then()
-                .catch((error) => {
-                    console.log(error)
+                this.$store.commit('setInfo', {
+                    title: this.$t('common.toast.success'),
+                    msg: this.$t('common.toast.updateTitle')
                 })
-        },
-        async saveDatasource() {
-            await axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources', { ...this.datasource, writeDefault: true })
-        },
-        async removeCache() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/remove')
-        },
-        onInputNumberChange(field: string, value: number) {
-            this.settings[field] = value
-        },
-        discardChanges() {
-            this.loadSettings()
-            this.loadDatasource()
-        },
-        formatCacheDimension(size: number) {
-            if (isNaN(size)) return 0
-            if (size < 1024) return size.toFixed(2) + ' MB'
-            size /= 1024
-            if (size < 1024) return '~' + size.toFixed(2) + ' GB'
-            size /= 1024
-            return '~' + size.toFixed(2) + ' TB'
+                this.$emit('inserted')
+            },
+            async saveConfigurationOptions() {
+                const configurations = [
+                    { label: 'SPAGOBI.CACHE.NAMEPREFIX', value: this.settings.prefixForCacheTablesName },
+                    { label: 'SPAGOBI.CACHE.SPACE_AVAILABLE', value: this.settings.spaceAvailable * 1048576 },
+                    { label: 'SPAGOBI.CACHE.LIMIT_FOR_CLEAN', value: this.settings.limitForClean },
+                    { label: 'SPAGOBI.CACHE.SCHEDULING_FULL_CLEAN', value: this.settings.schedulingFullClean.value, id: this.settings.schedulingFullClean.value },
+                    { label: 'SPAGOBI.CACHE.LIMIT_FOR_STORE', value: this.settings.cacheLimitForStore },
+                    { label: 'SPAGOBI.CACHE.DS_LAST_ACCESS_TTL', value: this.settings.lastAccessTtl },
+                    { label: 'SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT', value: this.settings.createAndPersistTimeout },
+                    { label: 'SPAGOBI.WORKMANAGER.SQLDBCACHE.TIMEOUT', value: this.settings.sqldbCacheTimeout },
+                    { label: 'SPAGOBI.CACHE.HAZELCAST.TIMEOUT', value: this.settings.hazelcastTimeout },
+                    { label: 'SPAGOBI.CACHE.HAZELCAST.LEASETIME', value: this.settings.hazelcastLeaseTime }
+                ]
+
+                await this.$http
+                    .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/conf', { configurations: configurations })
+                    .then()
+                    .catch((error) => {
+                        console.log(error)
+                    })
+            },
+            async saveDatasource() {
+                await this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources', { ...this.datasource, writeDefault: true })
+            },
+            async removeCache() {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/remove')
+            },
+            onInputNumberChange(field: string, value: number) {
+                this.settings[field] = value
+            },
+            discardChanges() {
+                this.loadSettings()
+                this.loadDatasource()
+            },
+            formatCacheDimension(size: number) {
+                if (isNaN(size)) return 0
+                if (size < 1024) return size.toFixed(2) + ' MB'
+                size /= 1024
+                if (size < 1024) return '~' + size.toFixed(2) + ' GB'
+                size /= 1024
+                return '~' + size.toFixed(2) + ' TB'
+            }
         }
-    }
-})
+    })
 </script>
 
 <style lang="scss" scoped>
-::v-deep(.p-toolbar-group-right) {
-    height: 100%;
-}
+    ::v-deep(.p-toolbar-group-right) {
+        height: 100%;
+    }
 
-#prefix-input-container {
-    margin-top: 1.2rem;
-    margin-bottom: 2.2rem;
-}
+    #prefix-input-container {
+        margin-top: 1.2rem;
+        margin-bottom: 2.2rem;
+    }
 
-.small-label {
-    font-size: 0.9rem;
-}
+    .small-label {
+        font-size: 0.9rem;
+    }
 
-#spaceAvailable-hint {
-    font-size: 0.6rem;
-}
+    #spaceAvailable-hint {
+        font-size: 0.6rem;
+    }
 </style>
