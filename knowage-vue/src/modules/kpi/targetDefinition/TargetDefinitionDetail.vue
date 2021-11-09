@@ -1,37 +1,24 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0">
         <template #right>
-            <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" :disabled="buttonDisabled" @click="showCategoryDialog" />
+            <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" :disabled="buttonDisabled" @click="saveTemplate" />
             <Button class="kn-button p-button-text p-button-rounded" icon="pi pi-times" @click="closeTemplate" />
         </template>
     </Toolbar>
     <div class="p-grid p-m-0 p-fluid p-jc-center">
         <div class="p-col-9">
-            <target-definition-form :selectedTarget="target" @valueChanged="updateTarget" :vcomp="v$.target"></target-definition-form>
+            <target-definition-form :selectedTarget="target" :categories="categories" @valueChanged="updateTarget" :vcomp="v$.target"></target-definition-form>
             <apply-target-card :kpi="kpi" @kpiChanged="updateKpi" @showDialog="addKpiDialog"></apply-target-card>
         </div>
     </div>
     <add-kpi-dialog :kpi="filteredKpi" :dialogVisible="kpiDialogVisible" :loadingKpi="loadingAllKpi" @close="closeKpiDialog" @add="addKpi"></add-kpi-dialog>
-    <Dialog :header="$t('kpi.targetDefinition.saveTarget')" v-model:visible="categoryDialogVisiable" :modal="true" :closable="true" class="p-fluid kn-dialog--toolbar--primary">
-        <div class="p-pt-4">
-            <span class="p-float-label">
-                <AutoComplete id="category" v-model="target.category" :suggestions="filteredCategory" @complete="searchCategory($event)" field="valueName" />
-                <label for="category" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.kpiCategory') }}</label>
-            </span>
-        </div>
-        <template #footer>
-            <Button :label="$t('common.save')" icon="pi pi-check" class="kn-button kn-button--primary " @click="handleSubmit" />
-        </template>
-    </Dialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import { formatDate } from '@/helpers/commons/localeHelper'
-import AutoComplete from 'primevue/autocomplete'
 import targetDefinitionDetailDecriptor from './TargetDefinitionDetailDescriptor.json'
 import targetDefinitionValidationDescriptor from './TargetDefinitionValidationDescriptor.json'
-import Dialog from 'primevue/dialog'
 import { AxiosResponse } from 'axios'
 import { iCategory, iTargetDefinition, iValues } from './TargetDefinition'
 import useValidate from '@vuelidate/core'
@@ -42,8 +29,6 @@ import ApplyTargetCard from './ApplyTargetCard.vue'
 export default defineComponent({
     name: 'target-definition-detail',
     components: {
-        Dialog,
-        AutoComplete,
         AddKpiDialog,
         TargetDefinitionForm,
         ApplyTargetCard
@@ -65,8 +50,6 @@ export default defineComponent({
             kpi: [] as iValues[],
             filteredKpi: [] as iValues[],
             categories: [] as iCategory[],
-            filteredCategory: [] as iCategory[],
-            selectedCategory: {} as iCategory,
             loading: false,
             loadingAllKpi: false,
             kpiDialogVisible: false,
@@ -89,11 +72,11 @@ export default defineComponent({
             return this.v$.$invalid || this.kpi.length < 1
         }
     },
-    created() {
+    async created() {
         if (this.id) {
             this.loadTarget()
-            this.loadCategory()
         }
+        await this.loadCategory()
     },
     watch: {
         async id() {
@@ -167,18 +150,7 @@ export default defineComponent({
         async loadCategory() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains/listByCode/KPI_TARGET_CATEGORY').then((response: AxiosResponse<any>) => (this.categories = response.data))
         },
-        searchCategory(event) {
-            setTimeout(() => {
-                if (!event.query.trim().length) {
-                    this.filteredCategory = [...this.categories]
-                } else {
-                    this.filteredCategory = this.categories.filter((category) => {
-                        return category.valueName && category.valueName.toLowerCase().startsWith(event.query.toLowerCase())
-                    })
-                }
-            }, 250)
-        },
-        showCategoryDialog() {
+        async saveTemplate() {
             if (this.kpi.length < 1) {
                 this.$store.commit('setError', {
                     title: this.$t('kpi.targetDefinition.noKpi'),
@@ -187,8 +159,7 @@ export default defineComponent({
             } else if (this.v$.$invalid) {
                 this.v$.$touch()
             } else {
-                this.loadCategory()
-                this.categoryDialogVisiable = true
+                await this.handleSubmit()
             }
         },
         async handleSubmit() {
