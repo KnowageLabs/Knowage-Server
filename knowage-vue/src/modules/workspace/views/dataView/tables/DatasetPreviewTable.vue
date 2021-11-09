@@ -36,9 +36,11 @@
                         <p class="p-m-0">{{ col.header }}</p>
                         <small>{{ col.type }}</small>
                     </div>
-                    <i class="pi pi-filter-icon pi-filter p-ml-5" :class="{ 'filter-icon-active': searchInput[col.field] }" @click="searchVisible[col.field] = !searchVisible[col.field]" />
-                    <div class="dropdown-content" v-if="searchVisible[col.field]">
-                        <InputText v-model="searchInput[col.field]" class="p-inputtext-sm p-column-filter" @input="onFilter(col)"></InputText>
+                    <div class="dropdown-icon-container">
+                        <i class="pi pi-filter-icon pi-filter p-ml-5" :class="{ 'filter-icon-active': searchInput[col.field] }" @click="searchVisible[col.field] = !searchVisible[col.field]" />
+                        <div class="dropdown-content" v-if="searchVisible[col.field]">
+                            <InputText v-model="searchInput[col.field]" class="p-inputtext-sm p-column-filter" @input="onFilter(col)"></InputText>
+                        </div>
                     </div>
                 </div>
             </template>
@@ -157,10 +159,15 @@ export default defineComponent({
     align-items: center;
 }
 
+.dropdown-icon-container {
+    position: relative;
+}
+
 .dropdown-content {
     display: block;
     position: absolute;
-    left: 110px;
+    top: 0;
+    left: 50px;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 5000;
