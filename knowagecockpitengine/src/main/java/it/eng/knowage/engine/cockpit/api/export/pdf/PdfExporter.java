@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.knowage.cockpit.api.export.pdf;
+package it.eng.knowage.engine.cockpit.api.export.pdf;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;

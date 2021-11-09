@@ -90,7 +90,7 @@
 
                 <Column field="severityId" header="Severity">
                     <template #editor="slotProps">
-                        <Dropdown v-model="slotProps.data['severityId']" :options="severityOptions" optionLabel="valueCd" optionValue="valueId" @change="setSeverityCd($event, slotProps.data)">
+                        <Dropdown v-model="slotProps.data['severityId']" :style="tresholdTabDescriptor.styles.input" :options="severityOptions" optionLabel="valueCd" optionValue="valueId" @change="setSeverityCd($event, slotProps.data)">
                             <template #option="slotProps">
                                 <span>{{ slotProps.option.valueCd }}</span>
                             </template>
@@ -102,11 +102,7 @@
                 <Column field="color" :header="$t('kpi.kpiDefinition.color')">
                     <template #body="slotProps">
                         <ColorPicker v-model="slotProps.data['color']" format="hex" @change="$emit('touched')" />
-                        <span>{{ slotProps.data['color'] }}</span>
-                    </template>
-                    <template #editor="slotProps">
-                        <ColorPicker v-model="slotProps.data['color']" format="hex" @change="$emit('touched')" />
-                        <InputText :style="tresholdTabDescriptor.styles.input" v-model="slotProps.data['color']" @change="$emit('touched')" />
+                        <InputText class="kn-material-input" v-tooltip.top="slotProps.data['color']" :style="tresholdTabDescriptor.styles.colorInput" v-model="slotProps.data['color']" @change="$emit('touched')" />
                     </template>
                 </Column>
 
