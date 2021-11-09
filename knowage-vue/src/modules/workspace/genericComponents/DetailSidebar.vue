@@ -6,6 +6,7 @@
                     <Button v-if="button.visible" :icon="button.icon" :class="button.class" @click="button.command" />
                 </span>
             </div>
+            <!-- TODO: Change default image to your liking -->
             <img class="p-mt-5" onerror="this.src='https://i.imgur.com/9N1aRkx.png'" :style="descriptor.style.sidebarImage" align="center" :src="documentImageSource" />
             <div class="p-m-5">
                 <div class="p-mb-5" v-for="(field, index) of documentFields" :key="index">
@@ -82,7 +83,7 @@ export default defineComponent({
             if (this.document.previewFile) {
                 return process.env.VUE_APP_HOST_URL + descriptor.imgPath + this.document.previewFile
             }
-            //DEFAULT IMAGE: needs to be changed to whatever client wants
+            //TODO: Change default image to your liking
             return process.env.VUE_APP_HOST_URL + descriptor.imgPath + descriptor.imgSource
         },
         documentFields(): any {
