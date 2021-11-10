@@ -32,6 +32,10 @@
 					<groupId>org.jboss.resteasy</groupId>
 					<artifactId>jaxrs-api</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.jboss.resteasy</groupId>
+					<artifactId>resteasy-legacy</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		
