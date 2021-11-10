@@ -83,6 +83,7 @@
 
 		<spring.boot>2.4.3</spring.boot>
 		<apache.poi>4.1.2</apache.poi>
+		<resteasy.version>3.6.2.Final</resteasy.version>
 	</properties>
 
 	<modules>
