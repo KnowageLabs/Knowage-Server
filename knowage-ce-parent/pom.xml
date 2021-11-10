@@ -82,6 +82,7 @@
 		<js.version>${project.version}</js.version>
 		
 		<apache.poi>4.1.2</apache.poi>
+		<resteasy.version>3.6.2.Final</resteasy.version>
 	</properties>
 
   	<modules>
