@@ -212,40 +212,44 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 		MeasureFormatter measureFormatter = new MeasureFormatter(cs);
 		String[][] dataMatrix = cs.getDataMatrix();
 		CellStyle cellStyleForNA = buildNACellStyle(sheet);
-		int endRowNum = 0;
+		int rowNum = 0;
 		int numOfMeasures = cs.getMeasures().size();
 
 		for (int i = 0; i < dataMatrix.length; i++) {
+			rowNum = rowOffset + i;
+			Row row = sheet.getRow(rowNum);
+			if (row == null) {
+				row = sheet.createRow(rowNum);
+			}
 			for (int j = 0; j < dataMatrix[0].length; j++) {
 				String text = dataMatrix[i][j];
-				int rowNum = rowOffset + i;
 				int columnNum = columnOffset + j;
-				Row row = sheet.getRow(rowNum);
-				if (row == null) {
-					row = sheet.createRow(rowNum);
-				}
-				endRowNum = rowNum;
 				Cell cell = row.createCell(columnNum);
 				try {
+					Monitor valueFormattedMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.buildDataMatrix.valueFormattedMonitor");
 					double value = Double.parseDouble(text);
-					int decimals = measureFormatter.getFormatXLS(i, j);
 					Double valueFormatted = measureFormatter.applyScaleFactor(value, i, j);
-					cell.setCellValue(valueFormatted);
-					cell.setCellType(this.getCellTypeNumeric());
+					valueFormattedMonitor.stop();
+					Monitor cellStyleMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.buildDataMatrix.cellStyleMonitor");
 					int measureIdx = j % numOfMeasures;
 					String measureId = getMeasureId(cs, measureIdx);
+					int decimals = measureFormatter.getFormatXLS(i, j);
 					CellStyle style = getStyle(decimals, sheet, createHelper, cs.getCellType(i, j), measureId, value);
+					cellStyleMonitor.stop();
+					Monitor buildCellMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.buildDataMatrix.buildCellMonitor");
+					cell.setCellValue(valueFormatted);
+					cell.setCellType(this.getCellTypeNumeric());
 					cell.setCellStyle(style);
+					buildCellMonitor.stop();
 				} catch (NumberFormatException e) {
 					logger.debug("Text " + text + " is not recognized as a number");
 					cell.setCellValue(createHelper.createRichTextString(text));
 					cell.setCellType(this.getCellTypeString());
 					cell.setCellStyle(cellStyleForNA);
 				}
-
 			}
 		}
-		return endRowNum;
+		return rowNum;
 	}
 
 	private String getMeasureId(CrossTab cs, int index) {
