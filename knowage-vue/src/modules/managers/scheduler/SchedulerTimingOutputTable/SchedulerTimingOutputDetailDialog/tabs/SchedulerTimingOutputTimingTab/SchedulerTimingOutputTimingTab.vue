@@ -41,7 +41,7 @@
                 <div class="p-col-5">
                     <span>
                         <label for="startDateTiming" class="kn-material-input-label">{{ $t('cron.startDate') + ':' }}</label>
-                        <Calendar id="startDateTiming" class="kn-material-input custom-timepicker" :style="schedulerTimingOutputTimingTabDescriptor.style.calendarInput" v-model="trigger.startDateTiming" :showIcon="true" :manualInput="false" @date-select="setStartDate" />
+                        <Calendar id="startDateTiming" class="kn-material-input custom-timepicker" :style="schedulerTimingOutputTimingTabDescriptor.style.calendarInput" v-model="trigger.startDateTiming" :showIcon="true" :manualInput="true" @change="setStartDate" @date-select="setStartDate" />
                     </span>
                     <div v-if="!validDates" class="p-error p-grid">
                         <small class="p-col-12">
@@ -59,10 +59,10 @@
                             :style="schedulerTimingOutputTimingTabDescriptor.style.timePicker"
                             v-model="trigger.startTimeTiming"
                             :showTime="true"
-                            :manualInput="false"
+                            :manualInput="true"
                             :timeOnly="true"
                             hourFormat="24"
-                            :inline="true"
+                            @change="setStartDate"
                             @date-select="setStartDate"
                         />
                     </span>
@@ -73,7 +73,7 @@
                 <div class="p-col-5">
                     <span>
                         <label for="endDateTiming" class="kn-material-input-label">{{ $t('cron.endDate') + ':' }}</label>
-                        <Calendar id="endDateTiming" class="kn-material-input custom-timepicker" :style="schedulerTimingOutputTimingTabDescriptor.style.calendarInput" v-model="trigger.endDateTiming" :showIcon="true" :manualInput="false" @date-select="setEndDate" />
+                        <Calendar id="endDateTiming" class="kn-material-input custom-timepicker" :style="schedulerTimingOutputTimingTabDescriptor.style.calendarInput" v-model="trigger.endDateTiming" :showIcon="true" :manualInput="true" @change="setEndDate" @date-select="setEndDate" />
                     </span>
                     <div v-if="!validDates" class="p-error p-grid">
                         <small class="p-col-12">
@@ -91,10 +91,10 @@
                             :style="schedulerTimingOutputTimingTabDescriptor.style.timePicker"
                             v-model="trigger.endTimeTiming"
                             :showTime="true"
-                            :manualInput="false"
+                            :manualInput="true"
                             :timeOnly="true"
                             hourFormat="24"
-                            :inline="true"
+                            @change="setEndDate"
                             @date-select="setEndDate"
                         />
                     </span>
@@ -269,13 +269,19 @@ export default defineComponent({
         },
         setStartDate() {
             this.trigger.zonedStartTime = this.trigger.startDateTiming
-            this.trigger.zonedStartTime.setHours(this.trigger.startTimeTiming?.getHours())
-            this.trigger.zonedStartTime.setMinutes(this.trigger.startTimeTiming?.getMinutes())
+
+            if (this.trigger.zonedStartTime instanceof Date && this.trigger.startTimeTiming instanceof Date) {
+                this.trigger.zonedStartTime.setHours(this.trigger.startTimeTiming?.getHours())
+                this.trigger.zonedStartTime.setMinutes(this.trigger.startTimeTiming?.getMinutes())
+            }
         },
         setEndDate() {
             this.trigger.zonedEndTime = this.trigger.endDateTiming
-            this.trigger.zonedEndTime.setHours(this.trigger.endTimeTiming.getHours())
-            this.trigger.zonedEndTime.setMinutes(this.trigger.endTimeTiming.getMinutes())
+
+            if (this.trigger.zonedEndTime instanceof Date && this.trigger.endTimeTiming instanceof Date) {
+                this.trigger.zonedEndTime.setHours(this.trigger.endTimeTiming.getHours())
+                this.trigger.zonedEndTime.setMinutes(this.trigger.endTimeTiming.getMinutes())
+            }
         }
     }
 })
