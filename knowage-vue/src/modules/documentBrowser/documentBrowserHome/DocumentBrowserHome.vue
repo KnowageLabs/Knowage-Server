@@ -1,6 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--primary">
         <template #left>
+            <i class="fa fa-ellipsis-v p-mr-3" id="sidebar-button" />
             <span>{{ searchMode ? $t('documentBrowser.documentsSearch') : $t('documentBrowser.title') }}</span>
             <span v-if="searchMode" class="p-mx-4">
                 <i class="fa fa-arrow-left search-pointer p-mx-4" @click="exitSearchMode" />
@@ -154,9 +155,21 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+#sidebar-button {
+    display: none;
+}
+
+.document-sidebar {
+    border-right: 1px solid #c2c2c2;
+}
+
 @media screen and (max-width: 1024px) {
     .document-sidebar {
         display: none;
+    }
+
+    #sidebar-button {
+        display: inline;
     }
 }
 
