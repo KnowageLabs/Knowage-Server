@@ -119,14 +119,20 @@
 
 	<filter-mapping>
 		<filter-name>EncodingFilter</filter-name>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
 		<url-pattern>/restful-services/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>EngineCheckSessionFilter</filter-name>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
 		<url-pattern>/restful-services/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>SpagoBIAccessFilter</filter-name>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
 		<url-pattern>/restful-services/*</url-pattern>
 	</filter-mapping>
 

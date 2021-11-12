@@ -227,6 +227,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-html</artifactId>
+			<version>${resteasy.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>wsdl4j</groupId>
 			<artifactId>wsdl4j</artifactId>
 			<version>1.5.1</version>
