@@ -1,7 +1,9 @@
 <template>
     <Card :style="tabViewDescriptor.style.cardinalityCard">
         <template #content>
-            <div class="formula"></div>
+            <div class="CodeMirrorMathematica">
+                <div class="CodeMirror-code formula"></div>
+            </div>
         </template>
     </Card>
 
