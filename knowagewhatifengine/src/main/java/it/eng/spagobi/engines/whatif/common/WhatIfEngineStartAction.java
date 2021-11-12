@@ -23,7 +23,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.plugins.providers.html.View;
 
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 
@@ -43,24 +42,23 @@ public class WhatIfEngineStartAction extends WhatIfEngineAbstractStartAction {
 	@GET
 	@Path("/")
 	@Produces("text/html")
-	public View startWhatIfActionOlapGet() {
-		return startAction();
+	public void startWhatIfActionOlapGet() {
+		startAction();
 	}
 
 	@POST
 	@Path("/")
 	@Produces("text/html")
-	public View startWhatIfActionOlapPost() {
-		return startAction();
+	public void startWhatIfActionOlapPost() {
+		startAction();
 	}
 
 	/**
-	 * @return
 	 *
 	 */
-	private View startAction() {
+	private void startAction() {
 		logger.debug("Starting WHATIF");
-		return startAction(true);
+		startAction(true);
 	}
 
 }

@@ -37,7 +37,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.axis.encoding.Base64;
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -122,17 +121,17 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	@GET
 	@Path("/{pagename}")
-	public View openPageGet(@PathParam("pagename") String pageName) {
-		return openPageInternal(pageName);
+	public void openPageGet(@PathParam("pagename") String pageName) {
+		openPageInternal(pageName);
 	}
 
 	@POST
 	@Path("/{pagename}")
-	public View openPagePost(@PathParam("pagename") String pageName) {
-		return openPageInternal(pageName);
+	public void openPagePost(@PathParam("pagename") String pageName) {
+		openPageInternal(pageName);
 	}
 
-	private View openPageInternal(String pageName) {
+	private void openPageInternal(String pageName) {
 		CockpitEngineInstance engineInstance;
 		String dispatchUrl = null;
 
@@ -146,6 +145,9 @@ public class PageResource extends AbstractCockpitEngineResource {
 		}
 
 		try {
+			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
+			// HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+			// HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 
 			/**
 			 * Setting the encoding type to the response object, so the Cockpit engine when calling the rendering of the chart (chart.jsp) can display the real
@@ -224,7 +226,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 				dispatchUrl = "/WEB-INF/jsp/error.jsp";
 			}
 
-			return new View(dispatchUrl);
+			request.getRequestDispatcher(dispatchUrl).forward(request, response);
 		} catch (Exception e) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
 		} finally {

@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
 
 import org.apache.commons.lang.StringUtils;
-import org.jboss.resteasy.plugins.providers.html.View;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -73,7 +72,7 @@ public class WhatIfEngineAbstractStartAction extends AbstractEngineStartRestServ
 		return request;
 	}
 
-	public View startAction(boolean whatif) {
+	public void startAction(boolean whatif) {
 		logger.debug("IN");
 
 		try {
@@ -135,16 +134,18 @@ public class WhatIfEngineAbstractStartAction extends AbstractEngineStartRestServ
 			getExecutionSession().setAttributeInSession(ENGINE_INSTANCE, whatIfEngineInstance);
 
 			try {
-				return new View(SUCCESS_REQUEST_DISPATCHER_URL);
+
+				request.getRequestDispatcher(SUCCESS_REQUEST_DISPATCHER_URL).forward(request, response);
 			} catch (Exception e) {
 				logger.error("Error starting the What-If engine: error while forwarding the execution to the jsp " + SUCCESS_REQUEST_DISPATCHER_URL, e);
 				throw new SpagoBIEngineRuntimeException(
 						"Error starting the What-If engine: error while forwarding the execution to the jsp " + SUCCESS_REQUEST_DISPATCHER_URL, e);
-			} finally {
-				if (getAuditServiceProxy() != null) {
-					getAuditServiceProxy().notifyServiceEndEvent();
-				}
 			}
+
+			if (getAuditServiceProxy() != null) {
+				getAuditServiceProxy().notifyServiceEndEvent();
+			}
+
 		} catch (Exception e) {
 			logger.error("Error starting the What-If engine", e);
 			if (getAuditServiceProxy() != null) {
@@ -155,7 +156,7 @@ public class WhatIfEngineAbstractStartAction extends AbstractEngineStartRestServ
 
 			getExecutionSession().setAttributeInSession(STARTUP_ERROR, serviceException);
 			try {
-				return new View(FAILURE_REQUEST_DISPATCHER_URL);
+				request.getRequestDispatcher(FAILURE_REQUEST_DISPATCHER_URL).forward(request, response);
 			} catch (Exception ex) {
 				logger.error("Error starting the What-If engine: error while forwarding the execution to the jsp " + FAILURE_REQUEST_DISPATCHER_URL, ex);
 				throw new SpagoBIEngineRuntimeException(

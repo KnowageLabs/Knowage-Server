@@ -223,12 +223,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-html</artifactId>
-			<version>${resteasy.version}</version>
-		</dependency>
-
 	</dependencies>
 	
 </project>
