@@ -65,8 +65,8 @@
         "library": "Library",
         "load": "Load",
         "loggedUser": "logged user",
-        "move": "Move",
         "modify": "modify",
+        "move": "Move",
         "name": "name",
         "new": "new",
         "next": "next",
@@ -1499,6 +1499,7 @@
                 "edit": "Edit Document",
                 "share": "Share Document",
                 "showDsDetails": "Show dataset details",
+                "unshare": "Unshare Document",
                 "upload": "Upload preview file"
             }
         },
@@ -1518,11 +1519,11 @@
             "prepareData": "Prepare Data",
             "shareDataset": "Share/Unshare Dataset",
             "shareDatasetHint": "By selecting a category from the combo box you are sharing the data set for all the users that are able to manage the specified data set category.",
+            "tablePrefix": "Table Prefix",
             "title": "My Data",
             "unshareDataset": "Unshare Dataset",
             "wizardTitle": "Dataset Wizard",
-            "xlsxExport": "Export Dataset to XLSX",
-            "tablePrefix": "Table Prefix"
+            "xlsxExport": "Export Dataset to XLSX"
         },
         "myModels": {
             "deleteDataset": "Delete dataset",

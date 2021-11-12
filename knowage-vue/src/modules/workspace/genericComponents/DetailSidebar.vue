@@ -41,6 +41,9 @@ export default defineComponent({
         isOwner(): any {
             return (this.$store.state as any).user.fullName === this.document.creationUser
         },
+        isAnalysisShared(): any {
+            return this.document.functionalities.length > 1
+        },
         isDatasetOwner(): any {
             return (this.$store.state as any).user.fullName === this.document.owner
         },
@@ -167,10 +170,11 @@ export default defineComponent({
             if (this.viewType == 'analysis') {
                 this.menuButtons.push(
                     { key: '0', label: this.$t('workspace.myAnalysis.menuItems.edit'), icon: 'fas fa-edit', command: this.emitEvent('editAnalysisDocument'), visible: this.isOwner },
-                    { key: '1', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share', command: this.emitEvent('shareAnalysisDocument') },
-                    { key: '2', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: this.emitEvent('cloneAnalysisDocument') },
-                    { key: '3', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: this.emitEvent('deleteAnalysisDocument') },
-                    { key: '4', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-share-alt', command: this.emitEvent('uploadAnalysisPreviewFile') }
+                    { key: '1', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share-alt', command: this.emitEvent('shareAnalysisDocument'), visible: !this.isAnalysisShared },
+                    { key: '2', label: this.$t('workspace.myAnalysis.menuItems.unshare'), icon: 'fas fa-times-circle', command: this.emitEvent('shareAnalysisDocument'), visible: this.isAnalysisShared },
+                    { key: '3', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: this.emitEvent('cloneAnalysisDocument') },
+                    { key: '4', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: this.emitEvent('deleteAnalysisDocument') },
+                    { key: '5', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-upload', command: this.emitEvent('uploadAnalysisPreviewFile') }
                 )
             } else if (this.viewType == 'dataset') {
                 this.menuButtons.push(

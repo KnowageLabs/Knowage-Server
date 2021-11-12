@@ -1,5 +1,5 @@
 <template>
-    <div class="kn-page p-d-flex p-flex-row" style="width:calc(100vw - 56px)">
+    <div class="kn-page p-d-flex p-flex-row custom-kn-page-width">
         <div id="sideMenu" class="kn-list--column" :style="workspaceDescriptor.style.menuWidth">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #left>
@@ -44,7 +44,6 @@
                 @toggleDisplayView="toggleDisplayView"
                 @showMenu="sidebarVisible = true"
                 @reloadRepositoryMenu="getAllFolders"
-                @createFolderClick="displayCreateFolderDialog = true"
                 @breadcrumbClicked="setSelectedBreadcrumb($event)"
             />
         </div>
@@ -239,6 +238,9 @@ export default defineComponent({
 <style scoped lang="scss">
 #sideMenu {
     width: 33.3333%;
+}
+.custom-kn-page-width {
+    width: calc(100vw - #{$mainmenu-width});
 }
 @media screen and (max-width: 1024px) {
     #sideMenu {

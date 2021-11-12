@@ -17,7 +17,7 @@
         <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" @click="getDatasetsByFilter" data-test="dataset-select" />
     </div>
 
-    <div class="kn-overflow">
+    <div class="p-mx-2 kn-overflow">
         <DataTable v-if="!toggleCardDisplay" style="width:100%" class="p-datatable-sm kn-table" :value="filteredDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
@@ -34,12 +34,7 @@
             </Column>
             <Column :header="$t('workspace.myData.parametrical')">
                 <template #body="slotProps">
-                    <i v-if="slotProps.data.pars.length > 0" class="fas fa-check p-button-link" />
-                </template>
-            </Column>
-            <Column field="tags" :header="$t('workspace.myData.driverable')">
-                <template #body="slotProps">
-                    <i v-if="slotProps.data.drivers.length > 0" class="fas fa-check p-button-link" />
+                    <i v-if="slotProps.data.pars.length > 0 || slotProps.data.drivers.length > 0" class="fas fa-check p-button-link" />
                 </template>
             </Column>
             <Column :style="mainDescriptor.style.iconColumn">

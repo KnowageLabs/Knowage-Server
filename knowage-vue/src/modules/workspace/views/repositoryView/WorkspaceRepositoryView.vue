@@ -7,7 +7,6 @@
         <template #right>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
             <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
-            <FabButton icon="fas fa-folder" data-test="new-folder-button" @click="$emit('createFolderClick')" />
         </template>
     </Toolbar>
 
@@ -75,7 +74,6 @@ import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.v
 import repositoryDescriptor from './WorkspaceRepositoryViewDescriptor.json'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import FabButton from '@/components/UI/KnFabButton.vue'
 import Menu from 'primevue/contextmenu'
 import WorkspaceRepositoryMoveDialog from './dialogs/WorkspaceRepositoryMoveDialog.vue'
 import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDialog.vue'
@@ -83,8 +81,8 @@ import WorkspaceRepositoryBreadcrumb from './breadcrumbs/WorkspaceRepositoryBrea
 import { AxiosResponse } from 'axios'
 
 export default defineComponent({
-    components: { DataTable, Column, FabButton, DetailSidebar, WorkspaceCard, Menu, Message, WorkspaceRepositoryMoveDialog, WorkspaceWarningDialog, WorkspaceRepositoryBreadcrumb },
-    emits: ['showMenu', 'reloadRepositoryMenu', 'toggleDisplayView', 'createFolderClick', 'breadcrumbClicked'],
+    components: { DataTable, Column, DetailSidebar, WorkspaceCard, Menu, Message, WorkspaceRepositoryMoveDialog, WorkspaceWarningDialog, WorkspaceRepositoryBreadcrumb },
+    emits: ['showMenu', 'reloadRepositoryMenu', 'toggleDisplayView', 'breadcrumbClicked'],
     props: { selectedFolder: { type: Object }, id: { type: String, required: false }, toggleCardDisplay: { type: Boolean }, breadcrumbs: { type: Array }, allFolders: { type: Array } },
     data() {
         return {

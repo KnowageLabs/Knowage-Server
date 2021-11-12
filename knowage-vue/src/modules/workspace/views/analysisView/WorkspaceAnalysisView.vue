@@ -103,6 +103,9 @@ export default defineComponent({
     computed: {
         isOwner(): any {
             return (this.$store.state as any).user.fullName === this.selectedAnalysis.creationUser
+        },
+        isShared(): any {
+            return this.selectedAnalysis.functionalities.length > 1
         }
     },
     data() {
@@ -158,10 +161,11 @@ export default defineComponent({
             this.menuButtons = []
             this.menuButtons.push(
                 { key: '0', label: this.$t('workspace.myAnalysis.menuItems.edit'), icon: 'fas fa-edit', command: () => { this.editAnalysisDocument(this.selectedAnalysis) }, visible: this.isOwner},
-                { key: '1', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share', command: () => { this.shareAnalysisDocument(this.selectedAnalysis) }},
+                { key: '1', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share-alt', command: () => { this.shareAnalysisDocument(this.selectedAnalysis) }, visible: !this.isShared},
+                { key: '1', label: this.$t('workspace.myAnalysis.menuItems.unshare'), icon: 'fas fa-times-circle', command: () => { this.shareAnalysisDocument(this.selectedAnalysis) }, visible: this.isShared},
                 { key: '2', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: () => { this.cloneAnalysisDocument(this.selectedAnalysis) }},
                 { key: '3', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: () => { this.deleteAnalysisDocumentConfirm(this.selectedAnalysis) }},
-                { key: '4', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-share-alt', command: () => { this.uploadAnalysisPreviewFile(this.selectedAnalysis) }}
+                { key: '4', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-upload', command: () => { this.uploadAnalysisPreviewFile(this.selectedAnalysis) }}
             )
         },
         executeAnalysisDocument() {
