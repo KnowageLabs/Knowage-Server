@@ -14,7 +14,8 @@
                                 'p-invalid': !validDates
                             }"
                             :showIcon="true"
-                            :manualInput="false"
+                            :manualInput="true"
+                            @input="setDate('startDate')"
                             @date-select="setDate('startDate')"
                         />
                         <div v-if="!validDates" class="p-error p-grid">
@@ -28,7 +29,7 @@
                 <div class="p-col-4 p-d-flex p-ai-center">
                     <label for="startTime" class="kn-material-input-label p-m-2"> {{ $t('cron.startTime') + ':' }}</label>
                     <span>
-                        <Calendar id="startTime" :style="knCronDescriptor.style.timePicker" class="kn-material-input custom-timepicker" v-model="startTime" :manualInput="false" :timeOnly="true" hourFormat="24" :inline="true" @date-select="setDate('startDate')" />
+                        <Calendar id="startTime" :style="knCronDescriptor.style.timePicker" class="kn-material-input custom-timepicker" v-model="startTime" :manualInput="true" :timeOnly="true" hourFormat="24" @input="setDate('startDate')" @date-select="setDate('startDate')" />
                     </span>
                 </div>
             </div>
@@ -46,8 +47,9 @@
                                 'p-invalid': !validDates
                             }"
                             :showIcon="true"
-                            :manualInput="false"
+                            :manualInput="true"
                             :showButtonBar="true"
+                            @input="setDate('endDate')"
                             @date-select="setDate('endDate')"
                             @clear-click="clearEndDate"
                         />
@@ -62,7 +64,7 @@
                 <div v-if="endDate" class="p-col-6 p-d-flex p-ai-center">
                     <label for="endTime" class="kn-material-input-label p-m-2"> {{ $t('cron.endTime') + ':' }}</label>
                     <span>
-                        <Calendar id="endTime" :style="knCronDescriptor.style.timePicker" class="kn-material-input p-ml-2 custom-timepicker" v-model="endTime" :manualInput="false" :timeOnly="true" hourFormat="24" :inline="true" @date-select="setDate('endDate')" />
+                        <Calendar id="endTime" :style="knCronDescriptor.style.timePicker" class="kn-material-input p-ml-2 custom-timepicker" v-model="endTime" :manualInput="true" :timeOnly="true" hourFormat="24" @input="setDate('endDate')" @date-select="setDate('endDate')" />
                     </span>
                 </div>
             </div>
@@ -391,19 +393,21 @@ export default defineComponent({
             }
         },
         setDate(type: string) {
-            const date = type === 'startDate' ? this.startDate?.valueOf() : this.endDate?.valueOf()
-            const tempTime = type === 'startDate' ? this.startTime : this.endTime
+            setTimeout(() => {
+                const date = type === 'startDate' ? this.startDate?.valueOf() : this.endDate?.valueOf()
+                const tempTime = type === 'startDate' ? this.startTime : this.endTime
 
-            let time = 0
-            if (tempTime) {
-                time = tempTime.getHours() * 60 * 60 * 1000 + tempTime.getMinutes() * 60 * 1000
-            }
+                let time = 0
+                if (tempTime) {
+                    time = tempTime.getHours() * 60 * 60 * 1000 + tempTime.getMinutes() * 60 * 1000
+                }
 
-            if (date) {
-                this.currentFrequency[type] = date + time
-            }
+                if (date) {
+                    this.currentFrequency[type] = date + time
+                }
 
-            this.$emit('touched')
+                this.$emit('touched')
+            }, 250)
         },
         clearEndDate() {
             this.currentFrequency.endDate = null
