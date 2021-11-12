@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--primary">
         <template #left>
-            <i class="fa fa-ellipsis-v p-mr-3" id="sidebar-button" />
+            <i class="fa fa-ellipsis-v p-mr-3" id="sidebar-button" @click="toggleSidebarView" />
             <span>{{ searchMode ? $t('documentBrowser.documentsSearch') : $t('documentBrowser.title') }}</span>
             <span v-if="searchMode" class="p-mx-4">
                 <i class="fa fa-arrow-left search-pointer p-mx-4" @click="exitSearchMode" />
@@ -23,7 +23,7 @@
     <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
 
     <div class="p-d-flex p-flex-row kn-flex p-m-0">
-        <div v-show="!searchMode" class="document-sidebar kn-flex">
+        <div v-show="!searchMode && showSidebar" class="document-sidebar kn-flex kn-overflow-y">
             <DocumentBrowserTree :propFolders="folders" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder"></DocumentBrowserTree>
         </div>
 
@@ -68,6 +68,8 @@ export default defineComponent({
             searchMode: false,
             items: [] as any[],
             user: null as any,
+            showSidebar: true,
+            windowHeight: window.innerHeight,
             loading: false
         }
     },
@@ -79,12 +81,22 @@ export default defineComponent({
             return this.user.functionalities.includes('CreateCockpitFunctionality')
         }
     },
+    watch: {
+        windowHeight(newHeight, oldHeight) {
+            console.log('NEW H', newHeight, 'old H', oldHeight)
+        }
+    },
     async created() {
+        window.addEventListener('resize', this.onResize)
+
         await this.loadFolders()
         this.user = (this.$store.state as any).user
     },
 
     methods: {
+        onResize() {
+            this.windowHeight = window.innerHeight
+        },
         async loadFolders() {
             this.loading = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders/`).then((response: AxiosResponse<any>) => (this.folders = response.data))
@@ -149,6 +161,9 @@ export default defineComponent({
         },
         createNewCockpit() {
             this.$emit('itemSelected', { item: null, mode: 'createCockpit' })
+        },
+        toggleSidebarView() {
+            this.showSidebar = !this.showSidebar
         }
     }
 })
@@ -157,10 +172,12 @@ export default defineComponent({
 <style lang="scss" scoped>
 #sidebar-button {
     display: none;
+    cursor: pointer;
 }
 
 .document-sidebar {
     border-right: 1px solid #c2c2c2;
+    max-height: 95vh;
 }
 
 @media screen and (max-width: 1024px) {
