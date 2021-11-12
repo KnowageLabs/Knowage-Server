@@ -912,6 +912,23 @@ public class RESTDataSet extends ConfigurableDataSet {
 		statement = statement.replaceAll("\\$P\\{" + attribute + "\\}", replaceSpecials(replacement));
 
 		/*
+		 * Workaround in case of multivalue parameters with spaces TODO: See if there is the possibility to add a solution before this place
+		 */
+		if (statement != null && statement.startsWith("\"") && dataset instanceof SolrDataSet) {
+
+			if (statement.contains(" OR ")) {
+				statement = statement.replaceAll("\"", "");
+				statement = statement.replaceAll("'", "\"");
+			} else if (statement.equals("\"*\"")) {
+				statement = statement.replaceAll("\"", "");
+			} else if (statement.equals("\"'%'\"")) {
+				statement = statement.replaceAll("\"", "");
+				statement = statement.replaceAll("'", "");
+				statement = statement.replace("%", "*");
+			}
+		}
+
+		/*
 		 * profileAttributeStartIndex = statement.indexOf("$P{", profileAttributeEndIndex-1); if (profileAttributeStartIndex != -1) statement =
 		 * substituteParametersInString(statement, valuesMap, profileAttributeStartIndex);
 		 */

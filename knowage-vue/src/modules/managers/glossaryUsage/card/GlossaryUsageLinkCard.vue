@@ -156,7 +156,7 @@ export default defineComponent({
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     if (response.data.Status !== 'NON OK') {
                         type === 'tree'
                             ? linkItem.children.push({

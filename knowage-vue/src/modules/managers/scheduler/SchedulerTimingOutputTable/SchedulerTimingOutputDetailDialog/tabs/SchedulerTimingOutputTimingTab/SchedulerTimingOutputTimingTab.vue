@@ -127,7 +127,7 @@
                     <div class="kn-flex p-m-4">
                         <span>
                             <label class="kn-material-input-label">{{ $t('managers.scheduler.datasetVerification') }}</label>
-                            <Dropdown class="kn-material-input" v-model="trigger.chrono.parameter.dataset" :options="datasets" optionLabel="label" optionValue="id.dsId" />
+                            <Dropdown class="kn-material-input" v-model="trigger.chrono.parameter.dataset" :options="datasets" optionLabel="label" optionValue="id.dsId" :filter="true" filterMatchMode="contains" :filterFields="['label']" />
                         </span>
                     </div>
                     <div class="kn-flex p-m-4">
