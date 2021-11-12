@@ -397,7 +397,7 @@ export default defineComponent({
             const tempTime = type === 'startDate' ? this.startTime : this.endTime
 
             let time = 0
-            if (tempTime) {
+            if (tempTime && tempTime instanceof Date) {
                 time = tempTime.getHours() * 60 * 60 * 1000 + tempTime.getMinutes() * 60 * 1000
             }
 
