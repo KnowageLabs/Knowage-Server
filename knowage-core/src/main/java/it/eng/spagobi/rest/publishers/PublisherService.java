@@ -24,6 +24,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.plugins.providers.html.View;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -50,7 +51,7 @@ public class PublisherService extends AbstractSpagoBIResource {
 	private static final String JSP_PATH = "/WEB-INF/jsp/";
 
 	@GET
-	public void publish() {
+	public View publish() {
 
 		try {
 
@@ -62,13 +63,15 @@ public class PublisherService extends AbstractSpagoBIResource {
 			}
 
 			if (publisher != null) {
-				request.getRequestDispatcher(publisher).forward(request, response);
+				return new View(publisher);
 			}
 
 		} catch (Exception e) {
 			logger.error("Error forwarding request", e);
-			throw new SpagoBIServiceException("publish", e.getMessage());
+			throw new SpagoBIServiceException("publish", e);
 		}
+
+		return null;
 	}
 
 	/* Vulnerability patch: allows only jsp publishing */

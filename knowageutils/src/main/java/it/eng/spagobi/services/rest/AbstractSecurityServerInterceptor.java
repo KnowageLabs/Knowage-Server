@@ -136,7 +136,17 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 	@Override
 	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
 		logger.debug("IN");
-		UserProfileManager.unset();
+		/*
+		 * I commented the following because if a REST service forward the request
+		 * to another resource like a JSP, that JSP could need the tenant: for example,
+		 * a JSP that uses a DAO.
+		 *
+		 * I think it's not correct to manage user profile, tenant and other user-related info
+		 * at two differente stages like the servlet filter and JAX-RS interceptor: I think for
+		 * mixed resources (static plus REST) the perfect place is the lowest level and, in our
+		 * case, is the servlet filter.
+		 */
+		// UserProfileManager.unset();
 		logger.debug("OUT");
 	}
 

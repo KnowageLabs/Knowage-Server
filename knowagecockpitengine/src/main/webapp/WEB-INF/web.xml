@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" id="KnowageCockpitEngine" version="2.4">
+
+<web-app
+		id="knowagecockpitengine"
+		xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+		                    http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+		version="3.1" >
+
   <display-name>knowagecockpitengine</display-name>
-  <description>
-		Knowage - Cockpit Engine
-	</description>
+  <description>Knowage Cockpit Engine</description>
+
   <filter>
     <filter-name>EncodingFilter</filter-name>
     <filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
@@ -12,11 +19,10 @@
       <param-value>UTF-8</param-value>
     </init-param>
   </filter>
+
   <filter>
     <filter-name>SpagoBIAccessFilter</filter-name>
-    <filter-class>
-			it.eng.spagobi.utilities.filters.SpagoBIAccessFilter
-		</filter-class>
+		<filter-class>it.eng.spagobi.utilities.filters.SpagoBIAccessFilter</filter-class>
   </filter>
   
      <!--servlet>
@@ -81,6 +87,8 @@ ${enable.cas.start}  END-CAS -->
 
   <filter-mapping>
     <filter-name>EncodingFilter</filter-name>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
     <url-pattern>/servlet/AdapterHTTP</url-pattern>
     <url-pattern>/api/*</url-pattern>
   </filter-mapping>
@@ -125,6 +133,8 @@ ${enable.cas.start} END-CAS -->
 
   <filter-mapping>
     <filter-name>SpagoBIAccessFilter</filter-name>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
     <url-pattern>/servlet/AdapterHTTP</url-pattern>
   </filter-mapping>
   
@@ -144,6 +154,7 @@ ${enable.cas.start} END-CAS -->
     </init-param>
     <load-on-startup>0</load-on-startup>
   </servlet>
+
   <!-- START ProxyTicketReceptor -->
   <servlet>
     <servlet-name>ProxyTicketReceptor</servlet-name>

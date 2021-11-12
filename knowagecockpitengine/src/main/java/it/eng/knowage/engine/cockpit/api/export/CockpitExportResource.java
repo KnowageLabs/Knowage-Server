@@ -9,6 +9,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONObject;
 
 import it.eng.knowage.cockpit.api.export.pdf.PdfExporter;
@@ -29,7 +30,7 @@ public class CockpitExportResource extends AbstractCockpitEngineResource {
 
 	@GET
 	@Path("/excel")
-	public void exportToExcel() {
+	public View exportToExcel() {
 		logger.debug("IN");
 		response.setCharacterEncoding("UTF-8");
 		String dispatchUrl = null;
@@ -42,7 +43,7 @@ public class CockpitExportResource extends AbstractCockpitEngineResource {
 				response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			}
 
-			request.getRequestDispatcher(dispatchUrl).forward(request, response);
+			return new View(dispatchUrl);
 		} catch (Exception e) {
 			logger.error("Cannot redirect to jsp", e);
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);

@@ -100,6 +100,16 @@ ${enable.cas.start} END-CAS -->
   
   <filter-mapping>
 		<filter-name>CAS Validation Filter</filter-name>
+		<url-pattern>/restful-services/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+		<url-pattern>/restful-services/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>CAS Validation Filter</filter-name>
 		<url-pattern>/proxyCallback</url-pattern>	
   </filter-mapping>
 ${enable.cas.start} END-CAS -->
@@ -115,14 +125,20 @@ ${enable.cas.start} END-CAS -->
   
   <filter-mapping>
     <filter-name>EncodingFilter</filter-name>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
     <url-pattern>/restful-services/*</url-pattern>
   </filter-mapping>
   <filter-mapping>
     <filter-name>EngineCheckSessionFilter</filter-name>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
     <url-pattern>/restful-services/*</url-pattern>
   </filter-mapping>
   <filter-mapping>
     <filter-name>SpagoBIAccessFilter</filter-name>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
     <url-pattern>/restful-services/*</url-pattern>
   </filter-mapping>
   
@@ -143,12 +159,9 @@ ${enable.cas.start} END-CAS -->
   
   <servlet>
     <servlet-name>EngineTestServlet</servlet-name>
-    <servlet-class>
-			it.eng.spagobi.utilities.engines.EngineTestServlet
-		</servlet-class>
+		<servlet-class>it.eng.spagobi.utilities.engines.EngineTestServlet</servlet-class>
   </servlet>
  
-  
   <servlet-mapping>
     <servlet-name>AdapterHTTP</servlet-name>
     <url-pattern>/servlet/AdapterHTTP</url-pattern>
