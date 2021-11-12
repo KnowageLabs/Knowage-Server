@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.signup.service.rest;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashSet;
@@ -28,7 +27,6 @@ import java.util.Set;
 
 import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -41,6 +39,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -106,7 +105,7 @@ public class Signup {
 
 	@GET
 	@Path("/prepareUpdate")
-	public void prepareUpdate(@Context HttpServletRequest req) {
+	public View prepareUpdate(@Context HttpServletRequest req) {
 		logger.debug("IN");
 		try {
 			UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -150,17 +149,11 @@ public class Signup {
 			boolean activeSignup = strActiveSignup.equalsIgnoreCase("true");
 			req.setAttribute("activeSignup", activeSignup);
 
-			req.getRequestDispatcher(url).forward(req, servletResponse);
-			// req.getRequestDispatcher("/WEB-INF/jsp/signup/modify.jsp").forward(req, servletResponse);
-		} catch (ServletException e) {
-			logger.error("Error dispatching request");
-		} catch (IOException e) {
-			logger.error("Error writing content");
+			return new View(url);
 		} catch (Throwable t) {
 			logger.error("An unexpected error occurred while executing the subscribe action", t);
 			throw new SpagoBIServiceException("An unexpected error occurred while executing the subscribe action", t);
 		}
-		logger.debug("OUT");
 	}
 
 	@POST
@@ -346,29 +339,19 @@ public class Signup {
 	@GET
 	@Path("/prepareActive")
 	@PublicService
-	public void prepareActive(@Context HttpServletRequest req) {
-		logger.debug("IN");
-		try {
+	public View prepareActive(@Context HttpServletRequest req) {
+		String theme_name = (String) req.getAttribute(ChangeTheme.THEME_NAME);
+		logger.debug("theme selected: " + theme_name);
 
-			String theme_name = (String) req.getAttribute(ChangeTheme.THEME_NAME);
-			logger.debug("theme selected: " + theme_name);
+		String currTheme = (String) req.getAttribute("currTheme");
+		if (currTheme == null)
+			currTheme = ThemesManager.getDefaultTheme();
+		logger.debug("currTheme: " + currTheme);
 
-			String currTheme = (String) req.getAttribute("currTheme");
-			if (currTheme == null)
-				currTheme = ThemesManager.getDefaultTheme();
-			logger.debug("currTheme: " + currTheme);
-
-			String url = "/themes/" + currTheme + "/jsp/signup/active.jsp";
-			logger.debug("url for active: " + url);
-			req.setAttribute("currTheme", currTheme);
-			req.getRequestDispatcher(url).forward(req, servletResponse);
-		} catch (ServletException e) {
-			logger.error("Error dispatching request");
-		} catch (IOException e) {
-			logger.error("Error writing content");
-		}
-
-		logger.debug("OUT");
+		String url = "/themes/" + currTheme + "/jsp/signup/active.jsp";
+		logger.debug("url for active: " + url);
+		req.setAttribute("currTheme", currTheme);
+		return new View(url);
 	}
 
 	@GET
@@ -672,7 +655,7 @@ public class Signup {
 	@POST
 	@Path("/prepare")
 	@PublicService
-	public void prepare(@Context HttpServletRequest req) {
+	public View prepare(@Context HttpServletRequest req) {
 		String theme_name = (String) req.getAttribute(ChangeTheme.THEME_NAME);
 		logger.debug("theme selected: " + theme_name);
 
@@ -692,12 +675,7 @@ public class Signup {
 			req.setAttribute("communities", communities);
 			req.setAttribute("currTheme", currTheme);
 			req.setAttribute("locale", locale);
-			req.getRequestDispatcher(url).forward(req, servletResponse);
-			// req.getRequestDispatcher("/WEB-INF/jsp/signup/signup.jsp").forward(req, servletResponse);
-		} catch (ServletException e) {
-			logger.error("Error dispatching request");
-		} catch (IOException e) {
-			logger.error("Error writing content");
+			return new View(url);
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("An unexpected error occurred while executing the subscribe action", e);
 		}
