@@ -21,9 +21,8 @@
     </Toolbar>
 
     <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
-
     <div class="p-d-flex p-flex-row kn-flex p-m-0">
-        <div v-show="!searchMode && showSidebar" class="document-sidebar kn-flex kn-overflow-y">
+        <div v-show="!searchMode" class="document-sidebar kn-flex" :class="{ 'sidebar-hidden': isSidebarHidden }">
             <DocumentBrowserTree :propFolders="folders" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder"></DocumentBrowserTree>
         </div>
 
@@ -51,6 +50,7 @@ import DocumentBrowserTree from './DocumentBrowserTree.vue'
 import DocumentBrowserDetail from './DocumentBrowserDetail.vue'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Menu from 'primevue/menu'
+// import Sidebar from 'primevue/sidebar'
 
 export default defineComponent({
     name: 'document-browser-home',
@@ -68,8 +68,8 @@ export default defineComponent({
             searchMode: false,
             items: [] as any[],
             user: null as any,
-            showSidebar: true,
-            windowHeight: window.innerHeight,
+            sidebarVisible: false,
+            windowWidth: window.innerWidth,
             loading: false
         }
     },
@@ -79,11 +79,13 @@ export default defineComponent({
         },
         hasCreateCockpitFunctionality(): boolean {
             return this.user.functionalities.includes('CreateCockpitFunctionality')
-        }
-    },
-    watch: {
-        windowHeight(newHeight, oldHeight) {
-            console.log('NEW H', newHeight, 'old H', oldHeight)
+        },
+        isSidebarHidden(): boolean {
+            if (this.sidebarVisible) {
+                return false
+            } else {
+                return this.windowWidth < 1024
+            }
         }
     },
     async created() {
@@ -92,10 +94,12 @@ export default defineComponent({
         await this.loadFolders()
         this.user = (this.$store.state as any).user
     },
-
+    beforeUnmount() {
+        window.removeEventListener('resize', this.onResize)
+    },
     methods: {
         onResize() {
-            this.windowHeight = window.innerHeight
+            this.windowWidth = window.innerWidth
         },
         async loadFolders() {
             this.loading = true
@@ -163,7 +167,7 @@ export default defineComponent({
             this.$emit('itemSelected', { item: null, mode: 'createCockpit' })
         },
         toggleSidebarView() {
-            this.showSidebar = !this.showSidebar
+            this.sidebarVisible = !this.sidebarVisible
         }
     }
 })
@@ -177,14 +181,13 @@ export default defineComponent({
 
 .document-sidebar {
     border-right: 1px solid #c2c2c2;
-    max-height: 95vh;
+}
+
+.sidebar-hidden {
+    display: none;
 }
 
 @media screen and (max-width: 1024px) {
-    .document-sidebar {
-        display: none;
-    }
-
     #sidebar-button {
         display: inline;
     }
