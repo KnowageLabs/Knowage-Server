@@ -14,6 +14,9 @@
                 :globalFilterFields="functionsCatalogDatasetTableDescriptor.globalFilterFields"
                 :responsiveLayout="functionsCatalogDatasetTableDescriptor.responsiveLayout"
                 :breakpoint="functionsCatalogDatasetTableDescriptor.breakpoint"
+                pageLinkSize="2"
+                :scrollable="true"
+                :scrollHeight="functionsCatalogDatasetTableDescriptor.scrollHeight"
                 @rowClick="$emit('selected', $event.data)"
             >
                 <template #empty>
