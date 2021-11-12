@@ -1,59 +1,56 @@
 <template>
-    <Card>
-        <template #content>
-            <div v-if="parameter && !loading">
-                <h2>{{ parameter.name }}</h2>
-                <div class="p-d-flex p-flex-row p-ai-center">
-                    <div class="p-mx-2 kn-flex">
-                        <span>
-                            <label class="kn-material-input-label">{{ $t('managers.scheduler.parameterValueType') }}</label>
-                            <Dropdown class="kn-material-input" v-model="parameter.type" :options="parameter.temporal ? triggerStrategies : triggerStrategies.slice(0, 2)" optionLabel="label" optionValue="value" @change="onParameterTypeChange" />
-                        </span>
-                    </div>
-                    <div v-if="parameter.type === 'fixed'" class="p-mx-2 kn-flex">
-                        <span v-if="parameterValues.manualInput">
-                            <label class="kn-material-input-label">{{ $t('common.values') }}</label>
-                            <InputText class="kn-material-input" v-model="parameter.value" />
-                        </span>
-                        <span v-else>
-                            <label class="kn-material-input-label">{{ $t('common.values') }}</label>
-                            <MultiSelect class="kn-material-input" v-model="parameter.selectedValues" :options="parameterValues.values" @change="formatSelectedValues" />
-                        </span>
-                    </div>
-                    <div class="p-mx-2 kn-flex" v-else-if="parameter.type === 'loadAtRuntime'">
-                        <span>
-                            <label class="kn-material-input-label">{{ $t('common.role') }}</label>
-                            <Dropdown class="kn-material-input" v-model="parameter.value" :options="rolesOptions" optionLabel="role" optionValue="userAndRole" />
-                        </span>
-                    </div>
-                    <div class="p-mx-2 kn-flex" v-else-if="parameter.type === 'formula'">
-                        <span>
-                            <label class="kn-material-input-label">{{ $t('managers.scheduler.selectFormula') }}</label>
-                            <Dropdown class="kn-material-input" v-model="parameter.value" :options="formulaOptions" optionLabel="description" optionValue="name" />
-                        </span>
-                    </div>
-                    <div class="p-mx-2 kn-flex">
-                        <span>
-                            <label class="kn-material-input-label">{{ $t('managers.scheduler.iterations') }}</label>
-                            <Dropdown class="kn-material-input" v-model="parameter.iterative" :options="triggerIterations" optionLabel="label" optionValue="value" />
-                        </span>
-                    </div>
+    <div class="parameter-card">
+        <div v-if="parameter && !loading">
+            <h2>{{ parameter.name }}</h2>
+            <div class="p-grid p-ai-center">
+                <div class="p-m-0  p-col-12 p-md-12 p-lg-4 p-xl-4">
+                    <span>
+                        <label class="kn-material-input-label">{{ $t('managers.scheduler.parameterValueType') }}</label>
+                        <Dropdown class="kn-material-input" v-model="parameter.type" :options="parameter.temporal ? triggerStrategies : triggerStrategies.slice(0, 2)" optionLabel="label" optionValue="value" @change="onParameterTypeChange" />
+                    </span>
+                </div>
+                <div v-if="parameter.type === 'fixed'" class="p-m-0 p-col-12 p-md-12 p-lg-4 p-xl-4">
+                    <span v-if="parameterValues.manualInput">
+                        <label class="kn-material-input-label">{{ $t('common.values') }}</label>
+                        <InputText class="kn-material-input" v-model="parameter.value" />
+                    </span>
+                    <span v-else>
+                        <label class="kn-material-input-label">{{ $t('common.values') }}</label>
+                        <MultiSelect class="kn-material-input" v-model="parameter.selectedValues" :options="parameterValues.values" @change="formatSelectedValues" />
+                    </span>
+                </div>
+                <div class="p-m-0 p-col-12 p-md-12 p-lg-4 p-xl-4" v-else-if="parameter.type === 'loadAtRuntime'">
+                    <span>
+                        <label class="kn-material-input-label">{{ $t('common.role') }}</label>
+                        <Dropdown class="kn-material-input" v-model="parameter.value" :options="rolesOptions" optionLabel="role" optionValue="userAndRole" />
+                    </span>
+                </div>
+                <div class="p-m-0  p-col-12 p-md-12 p-lg-4 p-xl-4" v-else-if="parameter.type === 'formula'">
+                    <span>
+                        <label class="kn-material-input-label">{{ $t('managers.scheduler.selectFormula') }}</label>
+                        <Dropdown class="kn-material-input" v-model="parameter.value" :options="formulaOptions" optionLabel="description" optionValue="name" />
+                    </span>
+                </div>
+                <div class="p-m-0  p-col-12 p-md-12 p-lg-4 p-xl-4">
+                    <span>
+                        <label class="kn-material-input-label">{{ $t('managers.scheduler.iterations') }}</label>
+                        <Dropdown class="kn-material-input" v-model="parameter.iterative" :options="triggerIterations" optionLabel="label" optionValue="value" />
+                    </span>
                 </div>
             </div>
-        </template>
-    </Card>
+        </div>
+    </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 import MultiSelect from 'primevue/multiselect'
 
 export default defineComponent({
     name: 'scheduler-document-parameter-form',
-    components: { Card, Dropdown, MultiSelect },
+    components: { Dropdown, MultiSelect },
     props: { propParameter: { type: Object }, roles: { type: Array }, formulas: { type: Array }, documentLabel: { type: String } },
     emits: ['loading'],
     data() {
@@ -144,3 +141,9 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.parameter-card {
+    padding: 0;
+}
+</style>
