@@ -15,8 +15,8 @@
                 :responsiveLayout="functionsCatalogDatasetTableDescriptor.responsiveLayout"
                 :breakpoint="functionsCatalogDatasetTableDescriptor.breakpoint"
                 pageLinkSize="2"
-                :scrollable="true"
-                :scrollHeight="functionsCatalogDatasetTableDescriptor.scrollHeight"
+                scrollable="true"
+                :scrollHeight="'30vh'"
                 @rowClick="$emit('selected', $event.data)"
             >
                 <template #empty>
