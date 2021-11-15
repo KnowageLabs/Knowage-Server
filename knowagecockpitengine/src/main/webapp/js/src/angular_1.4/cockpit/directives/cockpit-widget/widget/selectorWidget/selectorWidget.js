@@ -173,8 +173,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var tempStyle = {};
 			if($scope.ngModel.settings.modalityView == 'grid' && $scope.ngModel.settings.gridColumnsWidth){
 				tempStyle.width = $scope.ngModel.settings.gridColumnsWidth;
-			}else{
-				if(tempStyle.width) delete tempStyle.width;
 			}
 			return tempStyle;
 		}
