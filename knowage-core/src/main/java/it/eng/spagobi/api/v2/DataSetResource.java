@@ -53,7 +53,6 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.geotools.data.DataSourceException;
-import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -658,11 +657,12 @@ public class DataSetResource extends AbstractDataSetResource {
 
 	@GET
 	@Path("/preview")
-	public View openPreview() {
+	public void openPreview() {
 		logger.debug("IN");
 		try {
 			response.setContentType(MediaType.TEXT_HTML);
-			return new View("/WEB-INF/jsp/commons/preview.jsp");
+			request.getRequestDispatcher("/WEB-INF/jsp/commons/preview.jsp").forward(request, response);
+			response.flushBuffer();
 		} catch (Exception e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} finally {

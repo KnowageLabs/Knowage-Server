@@ -30,7 +30,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -74,25 +73,29 @@ public class PageResource extends AbstractRestService {
 	@GET
 	@Path("/{pagename}")
 	@Produces("text/html")
-	public View openPageGet(@PathParam("pagename") String pageName) {
-		return openPage(pageName);
+	public void openPageGet(@PathParam("pagename") String pageName) {
+		openPage(pageName);
 	}
 
 	@POST
 	@Path("/{pagename}")
 	@Produces("text/html")
-	public View openPagePost(@PathParam("pagename") String pageName) {
-		return openPage(pageName);
+	public void openPagePost(@PathParam("pagename") String pageName) {
+		openPage(pageName);
 	}
 
 	/**
 	 * @param pageName
-	 * @return
 	 */
-	private View openPage(String pageName) {
+	private void openPage(String pageName) {
 		String dispatchUrl = urls.get(pageName);
 		try {
-			return new View(dispatchUrl);
+			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of
+			// RestEasy Wrapper
+			// HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+			// HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
+
+			request.getRequestDispatcher(dispatchUrl).forward(request, response);
 		} catch (Exception e) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
 		} finally {
