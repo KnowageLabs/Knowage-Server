@@ -43,6 +43,10 @@
         {
             "name": "java.sql.Timestamp",
             "value": "Timestamp"
+        },
+        {
+            "name": "java.math.BigDecimal",
+            "value": "Float"
         }
     ]
 }
