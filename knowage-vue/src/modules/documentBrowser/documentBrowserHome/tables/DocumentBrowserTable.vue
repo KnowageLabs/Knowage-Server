@@ -44,7 +44,7 @@
                         <span data-test="document-status"> {{ slotProps.data['stateCodeStr'] }}</span>
                     </template></Column
                 >
-                <Column v-if="isSuperAdmin" :style="documentBrowserTableDescriptor.table.iconColumn.style" :header="$t('documentBrowser.visible')" field="visible" sortField="visible" :sortable="true">
+                <Column v-if="isSuperAdmin" :style="documentBrowserTableDescriptor.table.iconColumn.style" :header="$t('common.visible')" field="visible" sortField="visible" :sortable="true">
                     <template #body="slotProps">
                         <span class="fa-stack">
                             <i class="fa fa-eye fa-stack-1x"></i>

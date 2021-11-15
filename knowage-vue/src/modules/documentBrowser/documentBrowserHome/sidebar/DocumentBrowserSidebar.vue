@@ -40,7 +40,7 @@
                 <p class="p-m-0">{{ document.description }}</p>
             </div>
             <div v-if="document.stateCodeStr" class="p-m-4">
-                <h3 class="p-m-0">{{ $t('documentBrowser.state') }}</h3>
+                <h3 class="p-m-0">{{ $t('common.state') }}</h3>
                 <p class="p-m-0">{{ document.stateCodeStr }}</p>
             </div>
             <div v-if="document.typeCode" class="p-m-4">
@@ -53,7 +53,7 @@
             </div>
             <div v-if="document.visible" class="p-m-4">
                 <h3 class="p-m-0">{{ $t('common.visibility') }}</h3>
-                <p class="p-m-0">{{ document.visible ? $t('documentBrowser.visible') : $t('documentBrowser.notVisible') }}</p>
+                <p class="p-m-0">{{ document.visible ? $t('common.visible') : $t('common.notVisible') }}</p>
             </div>
         </div>
     </div>

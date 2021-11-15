@@ -1,6 +1,6 @@
 <template>
     <div class="kn-page">
-        <div class="tab-container kn-page-content p-d-flex p-flex-column">
+        <div class="document-browser-tab-container kn-page-content p-d-flex p-flex-column">
             <TabView id="document-browser-tab-view" class="p-d-flex p-flex-column kn-flex" v-model:activeIndex="activeIndex" @tab-change="onTabChange">
                 <TabPanel>
                     <template #header>
@@ -18,8 +18,8 @@
                     <DocumentBrowserTab :item="tab.item" :mode="tab.mode"></DocumentBrowserTab>
                 </TabPanel>
             </TabView>
-            <div id="tab-icon-container" v-if="activeIndex !== 0">
-                <i id="tab-icon" class="fa fa-times-circle" @click="toggle($event)"></i>
+            <div id="document-browser-tab-icon-container" v-if="activeIndex !== 0">
+                <i id="document-browser-tab-icon" class="fa fa-times-circle" @click="toggle($event)"></i>
                 <Menu ref="menu" :model="menuItems" :popup="true" />
             </div>
         </div>
@@ -126,20 +126,20 @@ export default defineComponent({
     padding: 0;
 }
 
-#tab-icon-container {
+#document-browser-tab-icon-container {
     position: absolute;
     top: 0.8rem;
     right: 2rem;
 }
 
-#tab-icon {
+#document-browser-tab-icon {
     font-size: 1.2rem;
     color: rgba(0, 0, 0, 0.6);
     cursor: pointer;
 }
 
-.tab-container .p-tabview .p-tabview-panel,
-.tab-container .p-tabview .p-tabview-panels {
+.document-browser-tab-container .p-tabview .p-tabview-panel,
+.document-browser-tab-container .p-tabview .p-tabview-panels {
     display: flex;
     flex-direction: column;
     flex: 1;

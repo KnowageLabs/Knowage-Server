@@ -25,9 +25,9 @@
     "responsiveLayout": "stack",
     "rows": 15,
     "status": {
-        "sbidomains.nm.dev": "documentBrowser.development",
-        "sbidomains.nm.rel": "documentBrowser.released",
-        "sbidomains.nm.susp": "documentBrowser.suspended",
+        "sbidomains.nm.dev": "common.development",
+        "sbidomains.nm.rel": "common.released",
+        "sbidomains.nm.susp": "common.suspended",
         "sbidomains.nm.test": "common.test"
     },
     "styles": {
