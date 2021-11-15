@@ -117,7 +117,7 @@
 		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/restful-services/publish</url-pattern>
 		<url-pattern>/public/restful-services/publish</url-pattern>
-		<url-pattern>/WEB-INF/jsp</url-pattern>
+		<url-pattern>/WEB-INF/jsp/*</url-pattern>
 	</filter-mapping>
 
 	<!-- START-CAS ${enable.cas.end}
