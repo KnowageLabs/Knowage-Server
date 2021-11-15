@@ -103,6 +103,12 @@ export default defineComponent({
                         msg: this.$t('common.toast.deleteSuccess')
                     })
                 })
+                .catch(() => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('managers.functionsCatalog.deleteError')
+                    })
+                })
                 .finally(() => (this.loading = false))
 
             if (reponseOk) {
