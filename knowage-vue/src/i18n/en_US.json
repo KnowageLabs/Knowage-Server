@@ -818,6 +818,7 @@
             "dataServiceErrorTitle": "Data service error",
             "datasetColumn": " Dataset column",
             "datasetColumnsError": "All dataset columns must be set",
+            "deleteError": "Check that the function is not used in any dashboard",
             "environmentError": "Environment must be set",
             "executePreview": "Execute Preview",
             "functionLabelHint": "Name of the function that will be displayed",

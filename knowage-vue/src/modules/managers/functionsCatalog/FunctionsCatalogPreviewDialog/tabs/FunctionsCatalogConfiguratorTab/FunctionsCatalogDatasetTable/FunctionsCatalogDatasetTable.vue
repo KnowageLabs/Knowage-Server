@@ -1,5 +1,5 @@
 <template>
-    <Card>
+    <Card id="dataset-card">
         <template #content>
             <DataTable
                 id="dataset-datatable"
@@ -7,13 +7,16 @@
                 :paginator="true"
                 :rows="15"
                 :loading="loading"
-                class="p-datatable-sm kn-table"
+                class="p-datatable-sm kn-table kn-small-paginator"
                 dataKey="id"
                 v-model:filters="filters"
                 filterDisplay="menu"
                 :globalFilterFields="functionsCatalogDatasetTableDescriptor.globalFilterFields"
                 :responsiveLayout="functionsCatalogDatasetTableDescriptor.responsiveLayout"
                 :breakpoint="functionsCatalogDatasetTableDescriptor.breakpoint"
+                pageLinkSize="2"
+                scrollable="true"
+                :scrollHeight="functionsCatalogDatasetTableDescriptor.scrollHeight"
                 @rowClick="$emit('selected', $event.data)"
             >
                 <template #empty>
@@ -77,5 +80,17 @@ export default defineComponent({
 <style lang="scss">
 #dataset-datatable .p-datatable-wrapper {
     height: auto;
+}
+
+#dataset-datatable .p-paginator {
+    justify-content: center;
+}
+
+#dataset-card .p-card-body {
+    padding: 0;
+}
+
+#dataset-card .p-card-content {
+    height: 60vh;
 }
 </style>
