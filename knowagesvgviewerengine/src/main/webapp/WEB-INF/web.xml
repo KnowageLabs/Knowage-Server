@@ -170,10 +170,4 @@
 		<url-pattern>/restful-services-default</url-pattern>
 	</servlet-mapping>
 
-	<filter-mapping>
-		<filter-name>ProfileFilter</filter-name>
-		<dispatcher>FORWARD</dispatcher>
-		<url-pattern>/WEB-INF/jsp/*</url-pattern>
-	</filter-mapping>
-
 </web-app>

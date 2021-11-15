@@ -89,12 +89,6 @@
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/api/*</url-pattern>
 	</filter-mapping>
-	<filter-mapping>
-		<filter-name>EncodingFilter</filter-name>
-		<dispatcher>FORWARD</dispatcher>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
-		<url-pattern>/api/*</url-pattern>
-	</filter-mapping>
 
 <!-- START-CAS ${enable.cas.end}
 	<filter-mapping>
@@ -136,11 +130,6 @@
 
 	<filter-mapping>
 		<filter-name>SpagoBIAccessFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>SpagoBIAccessFilter</filter-name>
-		<dispatcher>FORWARD</dispatcher>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
 

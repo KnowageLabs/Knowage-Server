@@ -106,20 +106,9 @@
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
-		<filter-name>EncodingFilter</filter-name>
-		<dispatcher>FORWARD</dispatcher>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
 		<filter-name>SpagoBIAccessFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
-	<filter-mapping>
-		<filter-name>SpagoBIAccessFilter</filter-name>
-		<dispatcher>FORWARD</dispatcher>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
-	</filter-mapping>
-
 	<servlet>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<servlet-class>
