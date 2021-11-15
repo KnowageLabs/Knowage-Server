@@ -145,26 +145,7 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 
 				Set<Tuple> distinctValues = container.getTupleOfValues(columnNames);
 				if (!distinctValues.isEmpty()) {
-					if (columnNames != null && !columnNames.isEmpty()) {
-						for (String column : columnNames) {
-							logger.debug("Columns involved: " + column);
-						}
-					}
-					boolean exitNull = false;
-					Iterator<Tuple> ite = distinctValues.iterator();
-					while (ite.hasNext()) {
-						Tuple tup = ite.next();
-						if (tup != null && tup.getValues() != null) {
-							for (int i = 0; i < tup.getValues().size(); i++) {
-								if (tup.get(i) == null) {
-									exitNull = true;
-								}
-							}
 
-						}
-					}
-					if (exitNull)
-						continue;
 					logger.debug("b. Setting distinct values " + distinctValues + " as the only compatible values for the associative group " + group);
 					group.addValues(distinctValues);
 					result.addValues(group, distinctValues);

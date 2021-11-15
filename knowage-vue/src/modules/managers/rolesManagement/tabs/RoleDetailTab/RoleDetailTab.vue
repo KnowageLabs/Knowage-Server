@@ -123,7 +123,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 import Checkbox from 'primevue/checkbox'
@@ -176,7 +176,7 @@ export default defineComponent({
     },
     methods: {
         async loadRoleTypes() {
-            await this.loadDomains('ROLE_TYPE').then((response) => {
+            await this.loadDomains('ROLE_TYPE').then((response: AxiosResponse<any>) => {
                 this.roleTypes = response.data
                 this.translatedRoleTypes = response.data.map((roleType) => {
                     return {
@@ -190,7 +190,7 @@ export default defineComponent({
             this.$emit('fieldChanged', { fieldName, value })
         },
         loadDomains(type: string) {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`)
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`)
         },
         onRoleTypeChange(roleTypeIDField: string, roleTypeCDField: string, event) {
             const selRoleType = this.roleTypes.find((roleType) => roleType.VALUE_ID === event.value)

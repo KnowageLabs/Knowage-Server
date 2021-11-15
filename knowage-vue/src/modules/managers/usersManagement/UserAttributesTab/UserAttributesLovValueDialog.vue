@@ -32,7 +32,7 @@ import { FilterOperator } from 'primevue/api'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { iAttribute } from '../UsersManagement'
 import userAttributesLovValueDialogDescriptor from './UserAttributesLovValueDialogDescriptor.json'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 
 export default defineComponent({
     name: 'lovs-value-dialog',
@@ -78,7 +78,7 @@ export default defineComponent({
     methods: {
         async loadAttributeValue() {
             if (this.attribute?.lovId) {
-                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/lovs/${this.attribute.lovId}/preview`).then((response) => {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/lovs/${this.attribute.lovId}/preview`).then((response: AxiosResponse<any>) => {
                     this.lovValues = response.data.map((lovValue, index) => {
                         return { value: lovValue, id: index }
                     })

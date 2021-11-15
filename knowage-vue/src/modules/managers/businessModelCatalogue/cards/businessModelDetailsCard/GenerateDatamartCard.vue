@@ -46,7 +46,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Checkbox from 'primevue/checkbox'
 import Dialog from 'primevue/dialog'
 import InputSwitch from 'primevue/inputswitch'
@@ -102,7 +102,7 @@ export default defineComponent({
             this.currentUser = this.user
         },
         async loadModelInfo() {
-            await axios.get(`/knowagemeta/restful-services/1.0/metaWeb/modelInfos/${this.businessModel.id}?user_id=${this.user.userUniqueIdentifier}`).then((response) => {
+            await this.$http.get(`/knowagemeta/restful-services/1.0/metaWeb/modelInfos/${this.businessModel.id}?user_id=${this.user.userUniqueIdentifier}`).then((response: AxiosResponse<any>) => {
                 if (response.data.schemaName) {
                     this.schemaName = response.data.schemaName
                 }
@@ -115,7 +115,7 @@ export default defineComponent({
             const url =
                 `/knowagemeta/restful-services/1.0/metaWeb/buildModel/${this.businessModel.id}?user_id=${this.user.userId}` +
                 `&model=${encodeURIComponent(this.modelName)}&schema=${this.schemaName}&catalog=${this.catalogName}&registry=${this.isGeneratedForRegistry}&includeSources=${this.includeSources}`
-            axios.get(url).then(() => {
+            this.$http.get(url).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.createTitle'),
                     msg: this.$t('common.toast.success')

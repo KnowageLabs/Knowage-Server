@@ -147,7 +147,7 @@
                         </div>
 
                         <div class="p-field p-mb-5" :hidden="documentTreeHidden">
-                            <p>Open document browser on</p>
+                            <p>Open document browser on {{ v$.menuNode.initialPath.$model }}</p>
                             <DocumentBrowserTree :selected="v$.menuNode.initialPath.$model" @selectedDocumentNode="onSelectedDocumentNode" :loading="loading"></DocumentBrowserTree>
                         </div>
                     </form>
@@ -162,7 +162,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import axios, { AxiosResponse } from 'axios'
+import { AxiosResponse } from 'axios'
 import { iMenuNode } from '../MenuManagement'
 import { iRole } from '../../usersManagement/UsersManagement'
 import useValidate from '@vuelidate/core'
@@ -177,6 +177,7 @@ import FontAwesomePicker from '../IconPicker/IconPicker.vue'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import MenuConfigurationDescriptor from '../MenuManagementDescriptor.json'
 import MenuConfigurationValidationDescriptor from './MenuManagementValidationDescriptor.json'
+import MenuManagementElementDetailDescriptor from './MenuManagementElementDetailDescriptor.json'
 export default defineComponent({
     name: 'profile-attributes-detail',
     components: { Dropdown, DocumentBrowserTree, RelatedDocumentList, KnValidationMessages, Dialog, FontAwesomePicker, RolesCard },
@@ -234,7 +235,8 @@ export default defineComponent({
             menuNodeContent: MenuConfigurationDescriptor.menuNodeContent,
             workspaceOptions: MenuConfigurationDescriptor.workspaceOptions,
             staticPageOptions: MenuConfigurationDescriptor.staticPageOptions,
-            menuNodeContentFunctionalies: MenuConfigurationDescriptor.menuNodeContentFunctionalies
+            menuNodeContentFunctionalies: MenuConfigurationDescriptor.menuNodeContentFunctionalies,
+            menuManagementElementDetailDescriptor: MenuManagementElementDetailDescriptor.importantfields
         }
     },
     validations() {
@@ -383,12 +385,12 @@ export default defineComponent({
             this.closeRelatedDocumentModal()
         },
         async save() {
-            let response: AxiosResponse
+            let response: AxiosResponse<any>
 
             if (this.menuNode.menuId != null) {
-                response = await axios.put(this.apiUrl + 'menu/' + this.menuNode.menuId, this.menuNode, MenuConfigurationDescriptor.headers)
+                response = await this.$http.put(this.apiUrl + 'menu/' + this.menuNode.menuId, this.getMenuDataForSave(), MenuConfigurationDescriptor.headers)
             } else {
-                response = await axios.post(this.apiUrl + 'menu/', this.menuNode, MenuConfigurationDescriptor.headers)
+                response = await this.$http.post(this.apiUrl + 'menu/', this.getMenuDataForSave(), MenuConfigurationDescriptor.headers)
             }
             if (response.status == 200) {
                 if (response.data.errors) {
@@ -438,8 +440,19 @@ export default defineComponent({
                 this.toggleEmpty()
             }
         },
+        getMenuDataForSave() {
+            const menuNodeForSave = { ...this.menuNode }
+
+            const fieldsList: string[] = this.menuManagementElementDetailDescriptor.fieldsList
+            const fieldToSave: any = this.menuManagementElementDetailDescriptor.filedsToSave[menuNodeForSave.menuNodeContent]
+
+            fieldsList.forEach((field) => !fieldToSave.fields.includes(field) && (menuNodeForSave[field] = null))
+
+            delete menuNodeForSave.menuNodeContent
+            return menuNodeForSave
+        },
         async getDocumentNameByID(id: any) {
-            await axios.get(this.apiUrl + 'documents/' + id).then((response) => {
+            await this.$http.get(this.apiUrl + 'documents/' + id).then((response: AxiosResponse<any>) => {
                 this.menuNode.document = response.data.name
             })
         },

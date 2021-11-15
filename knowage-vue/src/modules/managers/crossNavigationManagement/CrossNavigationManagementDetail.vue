@@ -95,7 +95,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Dropdown from 'primevue/dropdown'
 import InputNumber from 'primevue/inputnumber'
 import useValidate from '@vuelidate/core'
@@ -175,9 +175,9 @@ export default defineComponent({
         },
         async loadNavigation() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/' + this.id + '/load/')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.navigation = response.data
                     if (this.navigation.simpleNavigation.type === 0) this.navigation.simpleNavigation.type = 3
                     this.simpleNavigation = this.navigation.simpleNavigation
@@ -204,8 +204,8 @@ export default defineComponent({
             if (this.navigation.simpleNavigation.type === 3) {
                 this.navigation.simpleNavigation.type = 0
             }
-            axios
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/save/', this.navigation, { headers: { 'X-Disable-Errors': true } })
+            this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/save/', this.navigation, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t(this.crossNavigationDescriptor.operation[this.operation].toastTitle),
@@ -265,8 +265,8 @@ export default defineComponent({
         },
         async loadInputParams(label) {
             let params = []
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/documents/' + label + '/parameters').then(
-                (response) =>
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/documents/' + label + '/parameters').then(
+                (response: AxiosResponse<any>) =>
                     (params = response.data.results.map((param: any) => {
                         return { id: param.id, name: param.label, type: 1, parType: param.parType }
                     }))
@@ -275,8 +275,8 @@ export default defineComponent({
         },
         async loadOutputParams(id) {
             let params = []
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/' + id + '/listOutParams').then(
-                (response) =>
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/' + id + '/listOutParams').then(
+                (response: AxiosResponse<any>) =>
                     (params = response.data.map((param: any) => {
                         return { id: param.id, name: param.name, type: 0, parType: param.type.valueCd }
                     }))

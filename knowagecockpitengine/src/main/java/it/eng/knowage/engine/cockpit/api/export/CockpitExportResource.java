@@ -9,11 +9,14 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONObject;
 
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
 import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter;
+import it.eng.knowage.engine.cockpit.api.export.pdf.PdfExporter;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/cockpit/export")
@@ -27,7 +30,7 @@ public class CockpitExportResource extends AbstractCockpitEngineResource {
 
 	@GET
 	@Path("/excel")
-	public void exportToExcel() {
+	public View exportToExcel() {
 		logger.debug("IN");
 		response.setCharacterEncoding("UTF-8");
 		String dispatchUrl = null;
@@ -40,7 +43,7 @@ public class CockpitExportResource extends AbstractCockpitEngineResource {
 				response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			}
 
-			request.getRequestDispatcher(dispatchUrl).forward(request, response);
+			return new View(dispatchUrl);
 		} catch (Exception e) {
 			logger.error("Cannot redirect to jsp", e);
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
@@ -82,6 +85,38 @@ public class CockpitExportResource extends AbstractCockpitEngineResource {
 		} catch (Exception e) {
 			logger.error("Cannot export to Excel", e);
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
+		} finally {
+			logger.debug("OUT");
+		}
+
+	}
+
+	@POST
+	@Path("/pdf")
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	public void exportPdf(@Context HttpServletRequest req) {
+		logger.debug("IN");
+		response.setCharacterEncoding("UTF-8");
+		try {
+			JSONObject body = RestUtilities.readBodyAsJSONObject(req);
+			String userId = body.getString(USER_ID);
+			String documentLabel = body.optString(DOCUMENT_LABEL);
+			PdfExporter pdfExporter = new PdfExporter(userId, body);
+			Integer documentId = body.optInt(DOCUMENT_ID);
+			String template = getIOManager().getTemplateAsString();
+			body.put("template", template);
+			byte[] data = pdfExporter.getBinaryData(documentId, documentLabel, template);
+
+			response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			response.setHeader("Content-length", Integer.toString(data.length));
+			response.setHeader("Content-Type", "application/pdf");
+			response.setHeader("Content-Disposition", "attachment; fileName=" + documentLabel + ".pdf");
+
+			response.getOutputStream().write(data, 0, data.length);
+			response.getOutputStream().flush();
+			response.getOutputStream().close();
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Cannot export to PDF", e);
 		} finally {
 			logger.debug("OUT");
 		}

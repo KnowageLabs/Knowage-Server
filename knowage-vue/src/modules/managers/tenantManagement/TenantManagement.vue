@@ -48,7 +48,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iMultitenant } from './TenantManagement'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import tenantsDescriptor from './TenantManagementDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
@@ -81,12 +81,12 @@ export default defineComponent({
     },
     methods: {
         loadData(dataType: string) {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant${dataType}`).finally(() => (this.loading = false))
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant${dataType}`).finally(() => (this.loading = false))
         },
         async getLicences() {
-            return axios
+            return this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license`)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     var host = response.data.hosts[0].hostName
                     var licenses = response.data.licenses[host]
                     this.listOfavailableLicenses = licenses
@@ -95,7 +95,7 @@ export default defineComponent({
         },
         async loadTenants() {
             this.loading = true
-            await this.loadData('').then((response) => {
+            await this.loadData('').then((response: AxiosResponse<any>) => {
                 this.multitenants = response.data.root
             })
             this.loading = false
@@ -110,7 +110,7 @@ export default defineComponent({
         },
         async deleteTenant(selectedTenant: Object) {
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'multitenant'
-            await axios.delete(url, { data: selectedTenant }).then(() => {
+            await this.$http.delete(url, { data: selectedTenant }).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
