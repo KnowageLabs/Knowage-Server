@@ -32,6 +32,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -105,22 +106,23 @@ public class PageResource extends AbstractChartEngineResource {
 	@GET
 	@Path("/{pagename}")
 	@Produces("text/html")
-	public void openPageGet(@PathParam("pagename") String pageName) {
-		openPage(pageName);
+	public View openPageGet(@PathParam("pagename") String pageName) {
+		return openPage(pageName);
 	}
 
 	@SuppressWarnings("unchecked")
 	@POST
 	@Path("/{pagename}")
 	@Produces("text/html")
-	public void openPagePost(@PathParam("pagename") String pageName) {
-		openPage(pageName);
+	public View openPagePost(@PathParam("pagename") String pageName) {
+		return openPage(pageName);
 	}
 
 	/**
 	 * @param pageName
+	 * @return
 	 */
-	private void openPage(String pageName) {
+	private View openPage(String pageName) {
 		GeoReportEngineInstance engineInstance;
 		String dispatchUrl = urls.get(pageName);
 
@@ -151,7 +153,7 @@ public class PageResource extends AbstractChartEngineResource {
 				break;
 			}
 
-			request.getRequestDispatcher(dispatchUrl).forward(request, response);
+			return new View(dispatchUrl);
 
 		} catch (Exception e) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
@@ -159,31 +161,6 @@ public class PageResource extends AbstractChartEngineResource {
 			logger.debug("OUT");
 		}
 	}
-
-	// executeTest is substituted from the servelet Test like all External
-	// Engines (creates a new session for the engine)
-	// @GET
-	// @Path("/executeTest")
-	// @Produces(MediaType.APPLICATION_JSON)
-	// // @UserConstraint(functionalities = { "publicFunctionality" })
-	// public String testAction(@Context HttpServletResponse response) {
-	//
-	// logger.debug("IN");
-	//
-	// try {
-	// JSONObject obj = new JSONObject();
-	// try {
-	// obj.put("result", "ok");
-	// } catch (JSONException e) {
-	// logger.error("Error building the success string");
-	// throw new SpagoBIRuntimeException("Error building the success string");
-	// }
-	// String successString = obj.toString();
-	// return successString;
-	// } finally {
-	// logger.debug("OUT");
-	// }
-	// }
 
 	private JSONObject buildBaseTemplate() {
 		JSONObject template;

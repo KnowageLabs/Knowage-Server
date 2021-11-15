@@ -24,6 +24,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.plugins.providers.html.View;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.ResourcePublisherMapping;
@@ -50,7 +51,7 @@ public class PublisherService extends AbstractSpagoBIResource {
 	private static final String PUBLISHER = "PUBLISHER";
 
 	@GET
-	public void publish() {
+	public View publish() {
 
 		try {
 
@@ -64,13 +65,16 @@ public class PublisherService extends AbstractSpagoBIResource {
 					throw new IllegalAccessException("Unauthorized access to a system resource");
 				}
 				String fullPath = publisher.replaceFirst(logicKey, resourcePath);
-				request.getRequestDispatcher(fullPath).forward(request, response);
+
+				return new View(fullPath);
 			}
 
 		} catch (Exception e) {
 			logger.error("Error forwarding request", e);
-			throw new SpagoBIServiceException("publish", e.getMessage());
+			throw new SpagoBIServiceException("publish", e);
 		}
+
+		return null;
 	}
 
 }
