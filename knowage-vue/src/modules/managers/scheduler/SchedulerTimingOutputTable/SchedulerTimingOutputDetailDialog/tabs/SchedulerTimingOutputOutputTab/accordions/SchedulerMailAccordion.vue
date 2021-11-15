@@ -64,6 +64,9 @@
                                     :options="datasets"
                                     optionLabel="label"
                                     optionValue="label"
+                                    :filter="true"
+                                    filterMatchMode="contains"
+                                    :filterFields="['label']"
                                     @blur="validateDocument('datasetLabelDirty')"
                                     @change="validateDocument('datasetLabelDirty')"
                                 />

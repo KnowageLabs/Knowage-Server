@@ -50,6 +50,7 @@
                                 }"
                                 :showIcon="true"
                                 @blur="v$.news.expirationDate.$touch()"
+                                @input="onManualDateChange"
                                 @dateSelect="onFieldChange('expirationDate', $event.valueOf())"
                                 data-test="expiration-input"
                             />
@@ -208,6 +209,9 @@ export default defineComponent({
             if (!this.news?.type) {
                 this.news.type = 1
             }
+        },
+        onManualDateChange() {
+            setTimeout(() => this.$emit('fieldChanged', { fieldName: 'expirationDate', value: this.news.expirationDate }), 250)
         }
     }
 })

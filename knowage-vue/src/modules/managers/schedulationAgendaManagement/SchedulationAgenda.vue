@@ -1,6 +1,6 @@
 <template>
     <div class="kn-page">
-        <div class="kn-page-content p-d-flex p-flex-column">
+        <div class="kn-page-content custom-kn-page-width p-d-flex p-flex-column">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #left>
                     {{ $t('managers.schedulationAgendaManagement.title') }}
@@ -11,57 +11,61 @@
             <div :style="schedulationAgendaDescriptor.hCard.style" class="card-no-padding flex-no-resize p-p-3">
                 <Card>
                     <template #content>
-                        <div class="p-d-flex p-ai-center p-flex-wrap">
-                            <div class="p-d-flex p-mx-2">
-                                <label for="startDate" class="kn-material-input-label p-m-2"> {{ $t('managers.schedulationAgendaManagement.detail.startDate') + ':' }}</label>
-                                <span>
-                                    <Calendar id="startDate" class="kn-material-input" v-model="startDateTime" :showIcon="true" :manualInput="false" :minDate="minStartDate" data-test="start-date" />
-                                </span>
-                            </div>
-
-                            <div class="p-d-flex p-ai-center p-mx-2">
-                                <label for="startTime" class="kn-material-input-label p-m-2"> {{ $t('managers.schedulationAgendaManagement.detail.startTime') + ':' }}</label>
-                                <span>
-                                    <Calendar id="startTime" class="kn-material-input custom-timepicker" v-model="startDateTime" :manualInput="false" :timeOnly="true" hourFormat="24" :inline="true" data-test="start-time" />
-                                </span>
-                            </div>
-
-                            <div class="p-d-flex p-mx-2">
-                                <label for="endDate" class="kn-material-input-label p-m-2"> {{ $t('managers.schedulationAgendaManagement.detail.endDate') + ':' }}</label>
-                                <span>
-                                    <Calendar id="endDate" class="kn-material-input" v-model="endDateTime" :showIcon="true" :manualInput="false" data-test="end-date" />
-                                </span>
-                            </div>
-
-                            <div class="p-d-flex p-ai-center p-mx-2">
-                                <label for="endTime" class="kn-material-input-label p-m-2"> {{ $t('managers.schedulationAgendaManagement.detail.endTime') + ':' }}</label>
-                                <span class="custom-timepicker">
-                                    <Calendar id="endTime" class="kn-material-input" v-model="endDateTime" :manualInput="false" :timeOnly="true" hourFormat="24" :inline="true" data-test="end-time" />
-                                </span>
-                            </div>
-
-                            <div class="p-d-flex p-ai-center p-mx-2">
-                                <div class="p-d-flex p-flex-column">
-                                    <label for="package" class="kn-material-input-label"> {{ $t('managers.schedulationAgendaManagement.detail.package') }} </label>
-                                    <InputText v-model="selectedPackageName" id="package" class="kn-material-input" type="text" data-test="package-input" @click="showForm('packageForm')" :readonly="true" />
+                        <div class="p-d-flex custom-overflow-parent-container">
+                            <div class="p-d-flex p-ai-center p-jc-between custom-overflow-auto">
+                                <div class="p-d-flex p-mx-2">
+                                    <label for="startDate" class="kn-material-input-label p-m-2"> {{ $t('managers.schedulationAgendaManagement.detail.startDate') + ':' }}</label>
+                                    <span>
+                                        <Calendar id="startDate" class="kn-material-input" v-model="startDateTime" :showIcon="true" :manualInput="false" :minDate="minStartDate" data-test="start-date" />
+                                    </span>
                                 </div>
-                                <Button v-if="selectedPackage" icon="pi pi-times-circle" class="p-button-text p-button-rounded p-button-plain" @click="removeSelectedPackage" />
-                            </div>
 
-                            <div class="p-d-flex p-ai-center p-mx-2">
-                                <div class="p-d-flex p-flex-column">
-                                    <label for="document" class="kn-material-input-label"> {{ $t('managers.schedulationAgendaManagement.detail.document') }} </label>
-                                    <InputText v-model="selectedDocumentName" id="document" class="kn-material-input" type="text" data-test="document-input" @click="showForm('documentForm')" :readonly="true" />
+                                <div class="p-d-flex p-ai-center p-mx-2">
+                                    <label for="startTime" class="kn-material-input-label p-m-2"> {{ $t('managers.schedulationAgendaManagement.detail.startTime') + ':' }}</label>
+                                    <span>
+                                        <Calendar id="startTime" class="kn-material-input custom-timepicker" v-model="startDateTime" :manualInput="false" :timeOnly="true" hourFormat="24" :inline="true" data-test="start-time" />
+                                    </span>
                                 </div>
-                                <Button v-if="selectedDocument" icon="pi pi-times-circle" class="p-button-text p-button-rounded p-button-plain" @click="removeSelectedDocument" />
-                            </div>
 
-                            <div class="p-d-flex p-ai-center">
-                                <div>
-                                    <Button class="p-button-text kn-button" :label="$t('common.search')" @click="runSearch" data-test="search-button" />
+                                <div class="p-d-flex p-mx-2">
+                                    <label for="endDate" class="kn-material-input-label p-m-2"> {{ $t('managers.schedulationAgendaManagement.detail.endDate') + ':' }}</label>
+                                    <span>
+                                        <Calendar id="endDate" class="kn-material-input" v-model="endDateTime" :showIcon="true" :manualInput="false" data-test="end-date" />
+                                    </span>
                                 </div>
+
+                                <div class="p-d-flex p-ai-center p-mx-2">
+                                    <label for="endTime" class="kn-material-input-label p-m-2"> {{ $t('managers.schedulationAgendaManagement.detail.endTime') + ':' }}</label>
+                                    <span class="custom-timepicker">
+                                        <Calendar id="endTime" class="kn-material-input" v-model="endDateTime" :manualInput="false" :timeOnly="true" hourFormat="24" :inline="true" data-test="end-time" />
+                                    </span>
+                                </div>
+
+                                <div class="p-d-flex p-ai-center p-mx-2">
+                                    <div class="p-d-flex p-flex-column">
+                                        <label for="package" class="kn-material-input-label"> {{ $t('managers.schedulationAgendaManagement.detail.package') }} </label>
+                                        <InputText v-model="selectedPackageName" id="package" class="kn-material-input" type="text" data-test="package-input" @click="showForm('packageForm')" :readonly="true" />
+                                    </div>
+                                    <Button icon="fas fa-external-link-alt" class="p-button-text p-button-rounded p-button-plain" @click="showForm('packageForm')" />
+                                    <Button v-if="selectedPackage" icon="pi pi-times-circle" class="p-button-text p-button-rounded p-button-plain" @click="removeSelectedPackage" />
+                                </div>
+
+                                <div class="p-d-flex p-ai-center p-mx-2">
+                                    <div class="p-d-flex p-flex-column">
+                                        <label for="document" class="kn-material-input-label"> {{ $t('managers.schedulationAgendaManagement.detail.document') }} </label>
+                                        <InputText v-model="selectedDocumentName" id="document" class="kn-material-input" type="text" data-test="document-input" @click="showForm('documentForm')" :readonly="true" />
+                                    </div>
+                                    <Button icon="fas fa-external-link-alt" class="p-button-text p-button-rounded p-button-plain" @click="showForm('documentForm')" />
+                                    <Button v-if="selectedDocument" icon="pi pi-times-circle" class="p-button-text p-button-rounded p-button-plain" @click="removeSelectedDocument" />
+                                </div>
+
+                                <div class="p-d-flex p-ai-center">
+                                    <div>
+                                        <Button class="p-button-text kn-button" :label="$t('common.search')" @click="runSearch" data-test="search-button" />
+                                    </div>
+                                </div>
+                                <h1></h1>
                             </div>
-                            <h1></h1>
                         </div>
                         <div class="kn-page-content p-grid p-m-0">
                             <div v-if="displayFormType == 'packageForm'">
@@ -258,5 +262,17 @@ export default defineComponent({
             padding: 0;
         }
     }
+}
+.custom-overflow-parent-container {
+    overflow: hidden;
+    min-width: 0;
+}
+.custom-overflow-auto {
+    min-width: 0;
+    overflow: auto;
+    flex-grow: 1;
+}
+.custom-kn-page-width {
+    width: calc(100vw - #{$mainmenu-width});
 }
 </style>

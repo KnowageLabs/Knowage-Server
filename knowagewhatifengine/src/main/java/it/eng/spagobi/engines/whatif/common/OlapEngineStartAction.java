@@ -24,6 +24,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.plugins.providers.html.View;
 
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 
@@ -36,24 +37,25 @@ public class OlapEngineStartAction extends WhatIfEngineAbstractStartAction {
 	@GET
 	@Path("/")
 	@Produces("text/html")
-	public void startActionOlapGet() {
-		startAction();
+	public View startActionOlapGet() {
+		return startAction();
 
 	}
 
 	@POST
 	@Path("/")
 	@Produces("text/html")
-	public void startActionOlapPost() {
-		startAction();
+	public View startActionOlapPost() {
+		return startAction();
 
 	}
 
 	/**
+	 * @return
 	 *
 	 */
-	private void startAction() {
+	private View startAction() {
 		logger.debug("Starting OLAP");
-		startAction(false);
+		return startAction(false);
 	}
 }
