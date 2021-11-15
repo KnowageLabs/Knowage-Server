@@ -7,7 +7,7 @@
                 :paginator="true"
                 :rows="15"
                 :loading="loading"
-                class="p-datatable-sm kn-table"
+                class="p-datatable-sm kn-table kn-small-paginator"
                 dataKey="id"
                 v-model:filters="filters"
                 filterDisplay="menu"
@@ -88,5 +88,9 @@ export default defineComponent({
 
 #dataset-card .p-card-body {
     padding: 0;
+}
+
+#dataset-card .p-card-content {
+    height: 60vh;
 }
 </style>
