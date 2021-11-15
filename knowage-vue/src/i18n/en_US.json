@@ -10,6 +10,7 @@
         "choose": "choose",
         "clone": "Clone",
         "close": "close",
+        "cockpit": "Cockpit",
         "codingLanguages": {
             "css": "css",
             "html": "html",
@@ -18,12 +19,14 @@
         },
         "collapse": "collapse",
         "copyOf": "Copy of",
+        "creationDate": "Creation Date",
         "dataset": "Dataset",
         "default": "Default",
         "delete": "delete",
         "deleteAll": "delete all",
         "description": "description",
         "details": "Details",
+        "development": "Development",
         "documents": "Documents",
         "download": "download",
         "downloading": "Downloading",
@@ -70,12 +73,15 @@
         "new": "new",
         "next": "next",
         "no": "No",
+        "notVisible": "Not visible",
         "output": "Output",
         "owner": "Owner",
         "parameter": "Parameter",
         "parameters": "Parameters",
+        "path": "Path",
         "paused": "Paused",
         "preview": "Preview",
+        "released": "Released",
         "reused": "Reused",
         "role": "Role",
         "run": "Run",
@@ -86,6 +92,9 @@
         "set": "Set",
         "sort": "sort",
         "source": "Source",
+        "state": "State",
+        "status": "Status",
+        "suspended": "Suspended",
         "table": {
             "footer": {
                 "paginated": "Showing {first} to {last} of {totalRecords}"
@@ -123,7 +132,8 @@
         "value": "Value",
         "values": "Values",
         "version": "version",
-        "warning": {},
+        "visibility": "Visibility",
+        "visible": "Visible",
         "yes": "Yes"
     },
     "cron": {
@@ -181,6 +191,29 @@
         "wednesday": "Wednesday",
         "weekday": "Weekday",
         "weekdays": "Weekdays"
+    },
+    "documentBrowser": {
+        "changeStateMessage": "Are you sure you want to change the state for this document?",
+        "changeStateTitle": "Change State",
+        "cloneDocument": "Clone Document",
+        "closeAllDocuments": "Close all documents",
+        "closeCurrentDocument": "Close current document",
+        "closeDocumentConfirmMessage": "Are you sure you want to continue?",
+        "closeDocumentConfirmTitle": "You are closing {numberOfDocuments} documents.",
+        "closeDocumentRight": "Close documents on right",
+        "closeOtherDocuments": "Close other documents",
+        "deleteDocument": "Delete Document",
+        "development": "Development",
+        "documentsFound": "Documents found",
+        "documentsSearch": "Search for documents",
+        "editDocument": "Edit Document",
+        "executeDocument": "Execute Document",
+        "genericDocument": "Generic document",
+        "hint": "No folder is selected",
+        "moveDownDocumentState": "Move Down State Document",
+        "moveUpDocumentState": "Move Up State Document",
+        "noDocumentsHint": "No documents to display",
+        "title": "Document browser"
     },
     "documentExecution": {
         "dossier": {
