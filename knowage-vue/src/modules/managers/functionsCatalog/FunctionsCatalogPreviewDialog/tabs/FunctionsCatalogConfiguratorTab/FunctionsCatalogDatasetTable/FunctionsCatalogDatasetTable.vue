@@ -1,5 +1,5 @@
 <template>
-    <Card>
+    <Card id="dataset-card">
         <template #content>
             <DataTable
                 id="dataset-datatable"
@@ -16,7 +16,7 @@
                 :breakpoint="functionsCatalogDatasetTableDescriptor.breakpoint"
                 pageLinkSize="2"
                 scrollable="true"
-                :scrollHeight="'30vh'"
+                :scrollHeight="functionsCatalogDatasetTableDescriptor.scrollHeight"
                 @rowClick="$emit('selected', $event.data)"
             >
                 <template #empty>
@@ -80,5 +80,13 @@ export default defineComponent({
 <style lang="scss">
 #dataset-datatable .p-datatable-wrapper {
     height: auto;
+}
+
+#dataset-datatable .p-paginator {
+    justify-content: center;
+}
+
+#dataset-card .p-card-body {
+    padding: 0;
 }
 </style>

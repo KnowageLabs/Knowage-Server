@@ -14,5 +14,5 @@
     ],
     "globalFilterFields": ["label", "dsType"],
     "responsiveLayout": "stack",
-    "scrollHeight": "80vh"
+    "scrollHeight": "40vh"
 }
