@@ -175,6 +175,7 @@ export default defineComponent({
                 await this.getSelectedDatasetVersions()
             } else {
                 this.selectedDataset = { ...detailViewDescriptor.newDataset }
+                this.selectedDatasetVersions = []
             }
         },
         //#endregion ===============================================================================================
