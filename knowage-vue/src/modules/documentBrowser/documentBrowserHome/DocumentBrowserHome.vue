@@ -21,7 +21,9 @@
     </Toolbar>
 
     <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
-    <div class="p-d-flex p-flex-row kn-flex p-m-0">
+    <div id="document-browser-detail" class="p-d-flex p-flex-row kn-flex p-m-0">
+        <div v-if="sidebarVisible && windowWidth < 1024" id="document-browser-sidebar-backdrop" @click="sidebarVisible = false"></div>
+
         <div v-show="!searchMode" class="document-sidebar kn-flex kn-overflow-y" :class="{ 'sidebar-hidden': isSidebarHidden, 'document-sidebar-absolute': sidebarVisible && windowWidth < 1024 }">
             <DocumentBrowserTree :propFolders="folders" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder"></DocumentBrowserTree>
         </div>
@@ -50,7 +52,6 @@ import DocumentBrowserTree from './DocumentBrowserTree.vue'
 import DocumentBrowserDetail from './DocumentBrowserDetail.vue'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Menu from 'primevue/menu'
-// import Sidebar from 'primevue/sidebar'
 
 export default defineComponent({
     name: 'document-browser-home',
@@ -186,8 +187,25 @@ export default defineComponent({
 
 .document-sidebar-absolute {
     position: absolute;
-    z-index: 1;
-    width: 200px;
+    z-index: 100;
+    width: 400px;
+    height: 100%;
+    background-color: white;
+}
+
+#document-browser-detail {
+    position: relative;
+}
+
+#document-browser-sidebar-backdrop {
+    background-color: rgba(33, 33, 33, 1);
+    opacity: 0.48;
+    z-index: 50;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
 }
 
 .sidebar-hidden {
