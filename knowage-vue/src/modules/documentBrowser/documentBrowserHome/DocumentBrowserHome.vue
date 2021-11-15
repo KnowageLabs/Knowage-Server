@@ -22,7 +22,7 @@
 
     <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
     <div class="p-d-flex p-flex-row kn-flex p-m-0">
-        <div v-show="!searchMode" class="document-sidebar kn-flex" :class="{ 'sidebar-hidden': isSidebarHidden }">
+        <div v-show="!searchMode" class="document-sidebar kn-flex kn-overflow-y" :class="{ 'sidebar-hidden': isSidebarHidden }">
             <DocumentBrowserTree :propFolders="folders" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder"></DocumentBrowserTree>
         </div>
 
@@ -181,6 +181,12 @@ export default defineComponent({
 
 .document-sidebar {
     border-right: 1px solid #c2c2c2;
+    height: 80vh;
+}
+
+.document-sidebar-absolue {
+    position: absolute;
+    z-index: 1;
 }
 
 .sidebar-hidden {
