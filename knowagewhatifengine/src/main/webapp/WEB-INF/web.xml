@@ -122,11 +122,26 @@
 		<url-pattern>/restful-services/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
+		<filter-name>EncodingFilter</filter-name>
+		<dispatcher>FORWARD</dispatcher>
+		<url-pattern>/restful-services/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
 		<filter-name>EngineCheckSessionFilter</filter-name>
 		<url-pattern>/restful-services/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
+		<filter-name>EngineCheckSessionFilter</filter-name>
+		<dispatcher>FORWARD</dispatcher>
+		<url-pattern>/restful-services/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
 		<filter-name>SpagoBIAccessFilter</filter-name>
+		<url-pattern>/restful-services/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>SpagoBIAccessFilter</filter-name>
+		<dispatcher>FORWARD</dispatcher>
 		<url-pattern>/restful-services/*</url-pattern>
 	</filter-mapping>
 
