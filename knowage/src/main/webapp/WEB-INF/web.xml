@@ -24,6 +24,14 @@
 		<filter-name>EncodingFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/WEB-INF/jsp</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>EncodingFilter</filter-name>
+		<dispatcher>FORWARD</dispatcher>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/WEB-INF/jsp</url-pattern>
 	</filter-mapping>
 
 	<filter>
@@ -112,6 +120,16 @@
 		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/restful-services/publish</url-pattern>
 		<url-pattern>/public/restful-services/publish</url-pattern>
+		<url-pattern>/WEB-INF/jsp</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
+		<dispatcher>FORWARD</dispatcher>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/restful-services/publish</url-pattern>
+		<url-pattern>/public/restful-services/publish</url-pattern>
+		<url-pattern>/WEB-INF/jsp</url-pattern>
 	</filter-mapping>
 
 	<!-- START-CAS ${enable.cas.end}
@@ -150,8 +168,14 @@
 			<param-value>hmac_user_name</param-value>
 		</init-param>
 	</filter>
+
 	<filter-mapping>
 		<filter-name>HmacLoginFilter</filter-name>
+		<url-pattern>/restful-services/publish</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>HmacLoginFilter</filter-name>
+		<dispatcher>FORWARD</dispatcher>
 		<url-pattern>/restful-services/publish</url-pattern>
 	</filter-mapping>
 
@@ -162,7 +186,15 @@
 		<url-pattern>/public/restful-services/publish</url-pattern>
 		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
-
+	<filter-mapping>
+		<filter-name>ProfileFilter</filter-name>
+		<dispatcher>FORWARD</dispatcher>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/restful-services/publish</url-pattern>
+		<url-pattern>/public/restful-services/publish</url-pattern>
+		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
+	</filter-mapping>
+	
 	<filter-mapping>
 		<filter-name>AntiInjectionFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
@@ -182,6 +214,14 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>HMACFilter</filter-name>
+		<url-pattern>/restful-services/1.0/datasets/list/persist</url-pattern>
+		<url-pattern>/restful-services/federateddataset/federation</url-pattern>
+		<url-pattern>/restful-services/federateddataset/insertNoDup</url-pattern>
+		<url-pattern>/restful-services/1.0/documents/saveChartTemplate</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>HMACFilter</filter-name>
+		<dispatcher>FORWARD</dispatcher>
 		<url-pattern>/restful-services/1.0/datasets/list/persist</url-pattern>
 		<url-pattern>/restful-services/federateddataset/federation</url-pattern>
 		<url-pattern>/restful-services/federateddataset/insertNoDup</url-pattern>
