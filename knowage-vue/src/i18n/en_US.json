@@ -185,12 +185,7 @@
         "moveDownDocumentState": "Move Down State Document",
         "moveUpDocumentState": "Move Up State Document",
         "noDocumentsHint": "No documents to display",
-        "notVisible": "Not visible",
-        "released": "Released",
-        "state": "State",
-        "suspended": "Suspended",
-        "title": "Document browser",
-        "visible": "Visible"
+        "title": "Document browser"
     },
     "documentExecution": {
         "dossier": {
