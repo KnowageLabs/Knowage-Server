@@ -124,7 +124,17 @@
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
+		<filter-name>EncodingFilter</filter-name>
+		<dispatcher>FORWARD</dispatcher>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
 		<filter-name>SpagoBIAccessFilter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>SpagoBIAccessFilter</filter-name>
+		<dispatcher>FORWARD</dispatcher>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
 	<servlet>
@@ -169,11 +179,5 @@
 		<servlet-name>org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher</servlet-name>
 		<url-pattern>/restful-services-default</url-pattern>
 	</servlet-mapping>
-
-	<filter-mapping>
-		<filter-name>ProfileFilter</filter-name>
-		<dispatcher>FORWARD</dispatcher>
-		<url-pattern>/WEB-INF/jsp/*</url-pattern>
-	</filter-mapping>
 
 </web-app>
