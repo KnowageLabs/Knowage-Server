@@ -19,6 +19,7 @@
 package it.eng.spagobi.services.rest;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
@@ -38,11 +39,14 @@ public class DeprecatedInterceptor implements ContainerResponseFilter {
 
 	@Override
 	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
-		if (resourceInfo.getResourceMethod().isAnnotationPresent(Deprecated.class)
-				|| resourceInfo.getResourceClass().isAnnotationPresent(Deprecated.class)) {
-			responseContext.getHeaders().add("X-Kn-Deprecated", "");
+		if (resourceInfo != null) {
+			Method resourceMethod = resourceInfo.getResourceMethod();
+			Class<?> resourceClass = resourceInfo.getResourceClass();
+			if (resourceMethod != null && resourceMethod.isAnnotationPresent(Deprecated.class)
+					|| resourceClass != null && resourceClass.isAnnotationPresent(Deprecated.class)) {
+				responseContext.getHeaders().add("X-Kn-Deprecated", "");
+			}
 		}
-
 	}
 
 }

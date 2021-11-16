@@ -1,5 +1,6 @@
-package it.eng.spagobi.api;
+package it.eng.spagobi.api.v2;
 
+import static it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils.createParameterValuesMap;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_OPTIONS_KEY;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_QUANTITY_JSON;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_TYPE_JSON;
@@ -10,10 +11,13 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
@@ -26,6 +30,9 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
@@ -42,7 +49,8 @@ import it.eng.spagobi.analiticalmodel.document.handlers.DriversRuntimeLoaderFact
 import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
 import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
-import it.eng.spagobi.api.v2.DocumentExecutionParametersResource;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.api.BusinessModelOpenParameters;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIMetaModelParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.MetaModelParuse;
@@ -75,23 +83,18 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
-/**
- * @deprecated Replaced by {@link DocumentExecutionParametersResource}
- */
-@Path("/1.0/documentExeParameters")
+@Path("/2.0/documentExeParameters")
 @ManageAuthorization
-@Deprecated
-public class DocumentExecutionParameters extends AbstractSpagoBIResource {
+public class DocumentExecutionParametersResource extends AbstractSpagoBIResource {
 
 	public static final String SERVICE_NAME = "GET DOCUMENT PARAMETERS ";
 
 	// request parameters
-	public static String PARAMETER_ID = "PARAMETER_ID";
-	public static String SELECTED_PARAMETER_VALUES = "PARAMETERS";
+	public static String PARAMETER_ID = "paramId";
+	public static String SELECTED_PARAMETER_VALUES = "parameters";
 	public static String FILTERS = "FILTERS";
 	public static String NODE_ID_SEPARATOR = "___SEPA__";
 
-	public static String MODE = "MODE";
 	public static String NODE = "node";
 	public static String MODE_SIMPLE = "simple";
 	public static String MODE_COMPLETE = "complete";
@@ -104,8 +107,8 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 	// case; cannot use MODALITY
 	// because already in use
 	public static String MASSIVE_EXPORT = "massiveExport";
-	private static final String ROLE = "ROLE";
-	private static final String OBJECT_LABEL = "OBJECT_LABEL";
+	private static final String ROLE = "role";
+	private static final String OBJECT_LABEL = "label";
 
 	private static final String DESCRIPTION_FIELD = "description";
 
@@ -117,21 +120,31 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 
 	private static final String[] VISIBLE_COLUMNS = new String[] { VALUE_FIELD, LABEL_FIELD, DESCRIPTION_FIELD };
 
-	static protected Logger logger = Logger.getLogger(DocumentExecutionParameters.class);
+	static protected Logger logger = Logger.getLogger(DocumentExecutionParametersResource.class);
 
+	@POST
+	@Path("/admissibleValues")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getParameters2(@Context HttpServletRequest req) throws Exception {
+		return getParameters(req);
+	}
+
+	/**
+	 * @throws Exception
+	 * @deprecated Replaced by {@link #getParameters2(HttpServletRequest)}
+	 */
 	@POST
 	@Path("/getParameters")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getParameters(@Context HttpServletRequest req) {
-		// HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
+	@Deprecated
+	public String getParameters(@Context HttpServletRequest req) throws Exception {
 
 		String result = "";
 
 		String biparameterId;
-		JSONObject selectedParameterValuesJSON;
+		JSONArray selectedParameterValuesJSON;
 		JSONObject filtersJSON = null;
 		Map selectedParameterValues;
-		String mode;
 		JSONObject valuesJSON;
 		// String contest;
 
@@ -156,11 +169,10 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 			role = (String) requestVal.opt(ROLE);
 			label = (String) requestVal.opt(OBJECT_LABEL);
 			biparameterId = (String) requestVal.opt(PARAMETER_ID);
-			selectedParameterValuesJSON = (JSONObject) requestVal.opt(SELECTED_PARAMETER_VALUES);
+			selectedParameterValuesJSON = (JSONArray) requestVal.opt(SELECTED_PARAMETER_VALUES);
 			if (requestVal.opt(FILTERS) != null) {
 				filtersJSON = (JSONObject) requestVal.opt(FILTERS);
 			}
-			mode = (requestVal.opt(MODE) == null) ? MODE_SIMPLE : (String) requestVal.opt(MODE);
 			// contest = (String) requestVal.opt(CONTEST);
 			if (requestVal.opt(NODE) != null) {
 				treeLovNodeValue = (String) requestVal.opt(NODE);
@@ -191,46 +203,8 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 						dum.refreshParametersValues(selectedParameterValuesJSON, false, obj);
 					}
 
-					// START converts JSON object with document's parameters into an
-					// hashmap
-					selectedParameterValues = null;
-					if (selectedParameterValuesJSON != null) {
-						try {
-							selectedParameterValues = new HashMap();
-							Iterator it = selectedParameterValuesJSON.keys();
-							while (it.hasNext()) {
-								String key = (String) it.next();
-								Object v = selectedParameterValuesJSON.get(key);
-								if (v == JSONObject.NULL) {
-									selectedParameterValues.put(key, null);
-								} else if (v instanceof JSONArray) {
-									JSONArray a = (JSONArray) v;
-									String[] nv = new String[a.length()];
-									for (int i = 0; i < a.length(); i++) {
-										if (a.get(i) != null) {
-											nv[i] = a.get(i).toString();
-										} else {
-											nv[i] = null;
-										}
-									}
-									selectedParameterValues.put(key, nv);
-								} else if (v instanceof String) {
-									selectedParameterValues.put(key, v);
-								} else if (v instanceof Integer) {
-									selectedParameterValues.put(key, "" + v);
-								} else if (v instanceof Double) {
-									selectedParameterValues.put(key, "" + v);
-								} else {
-									Assert.assertUnreachable("Attribute [" + key + "] value [" + v
-											+ "] of PARAMETERS is not of type JSONArray nor String. It is of type [" + v.getClass().getName() + "]");
-								}
-							}
-						} catch (JSONException e) {
-							throw new SpagoBIServiceException("parameter JSONObject is malformed", e);
-						}
-					}
-					// END converts JSON object with document's parameters into an
-					// hashmap
+					selectedParameterValues = createParameterValuesMap(selectedParameterValuesJSON);
+
 					// START get the relevant biobject parameter
 					biObjectParameter = null;
 					List parameters = obj.getDrivers();
@@ -308,10 +282,10 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 					// END filtering for correlation
 
 					if (lovProvDet.getLovType() != null && lovProvDet.getLovType().contains("tree")) {
-						JSONArray valuesJSONArray = getChildrenForTreeLov(lovProvDet, rows, mode, treeLovNodeLevel, treeLovNodeValue);
+						JSONArray valuesJSONArray = getChildrenForTreeLov(lovProvDet, rows, treeLovNodeLevel, treeLovNodeValue);
 						result = buildJsonResult("OK", "", null, valuesJSONArray, biparameterId).toString();
 					} else {
-						valuesJSON = buildJSONForLOV(lovProvDet, rows, mode, start, limit);
+						valuesJSON = buildJSONForLOV(lovProvDet, rows, start, limit);
 						result = buildJsonResult("OK", "", valuesJSON, null, biparameterId).toString();
 					}
 				} else {
@@ -319,46 +293,9 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 					if (selectedParameterValuesJSON != null) {
 						bum.refreshParametersMetamodelValues(selectedParameterValuesJSON, false, obj);
 					}
-					// START converts JSON object with document's parameters into an
-					// hashmap
-					selectedParameterValues = null;
-					if (selectedParameterValuesJSON != null) {
-						try {
-							selectedParameterValues = new HashMap();
-							Iterator it = selectedParameterValuesJSON.keys();
-							while (it.hasNext()) {
-								String key = (String) it.next();
-								Object v = selectedParameterValuesJSON.get(key);
-								if (v == JSONObject.NULL) {
-									selectedParameterValues.put(key, null);
-								} else if (v instanceof JSONArray) {
-									JSONArray a = (JSONArray) v;
-									String[] nv = new String[a.length()];
-									for (int i = 0; i < a.length(); i++) {
-										if (a.get(i) != null) {
-											nv[i] = a.get(i).toString();
-										} else {
-											nv[i] = null;
-										}
-									}
-									selectedParameterValues.put(key, nv);
-								} else if (v instanceof String) {
-									selectedParameterValues.put(key, v);
-								} else if (v instanceof Integer) {
-									selectedParameterValues.put(key, "" + v);
-								} else if (v instanceof Double) {
-									selectedParameterValues.put(key, "" + v);
-								} else {
-									Assert.assertUnreachable("Attribute [" + key + "] value [" + v
-											+ "] of PARAMETERS is not of type JSONArray nor String. It is of type [" + v.getClass().getName() + "]");
-								}
-							}
-						} catch (JSONException e) {
-							throw new SpagoBIServiceException("parameter JSONObject is malformed", e);
-						}
-					}
-					// END converts JSON object with document's parameters into an
-					// hashmap
+
+					selectedParameterValues = createParameterValuesMap(selectedParameterValuesJSON);
+
 					// START get the relevant biobject parameter
 					BIMetaModelParameter biMetaModelParameter = null;
 					List parameters = obj.getMetamodelDrivers();
@@ -423,11 +360,14 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 					}
 					// END filtering for correlation
 
+
+
+
 					if (lovProvDet.getLovType() != null && lovProvDet.getLovType().contains("tree")) {
-						JSONArray valuesJSONArray = getChildrenForTreeLov(lovProvDet, rows, mode, treeLovNodeLevel, treeLovNodeValue);
+						JSONArray valuesJSONArray = getChildrenForTreeLov(lovProvDet, rows, treeLovNodeLevel, treeLovNodeValue);
 						result = buildJsonResult("OK", "", null, valuesJSONArray, biparameterId).toString();
 					} else {
-						valuesJSON = buildJSONForLOV(lovProvDet, rows, mode, start, limit);
+						valuesJSON = buildJSONForLOV(lovProvDet, rows, start, limit);
 						result = buildJsonResult("OK", "", valuesJSON, null, biparameterId).toString();
 					}
 
@@ -527,8 +467,6 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 								paramDescrLst.add(itemDescr);
 							}
 						} catch (UnsupportedEncodingException e) {
-							// TODO Auto-generated catch block
-							// e.printStackTrace();
 							logger.debug("An error occured while decoding parameter with value[" + itemVal + "]" + e);
 						}
 					}
@@ -778,7 +716,7 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 		return jsonObj;
 	}
 
-	private JSONArray getChildrenForTreeLov(ILovDetail lovProvDet, List rows, String mode, int treeLovNodeLevel, String treeLovNodeValue) {
+	private JSONArray getChildrenForTreeLov(ILovDetail lovProvDet, List rows, int treeLovNodeLevel, String treeLovNodeValue) {
 		String valueColumn;
 		String descriptionColumn;
 		boolean addNode;
@@ -878,19 +816,38 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 
 	}
 
-	private JSONObject buildJSONForLOV(ILovDetail lovProvDet, List rows, String mode, Integer start, Integer limit) {
-		String valueColumn;
-		String descriptionColumn;
-		JSONObject valuesJSON;
-		String displayColumn;
+	private JSONObject buildJSONForLOV(ILovDetail lovProvDet, List rows, Integer start, Integer limit) throws Exception {
+		JSONObject valuesJSON = new JSONObject();
+
+		Map<String, Object> metadata = new LinkedHashMap<>();
+		String valueColumn = lovProvDet.getValueColumnName();
+		String displayColumn = lovProvDet.getDescriptionColumnName();
+		String descriptionColumn = displayColumn;
+		List<String> visibleColumnNames = lovProvDet.getVisibleColumnNames();
+		List<String> invisibleColumnNames = lovProvDet.getInvisibleColumnNames();
+		BiMap<String, String> colName2colPlaceholder = HashBiMap.create();
+		AtomicInteger colCount = new AtomicInteger(0);
+		JSONArray valuesDataJSON = new JSONArray();
+
+		visibleColumnNames.forEach(e -> {
+			colName2colPlaceholder.put("_col" + colCount.getAndIncrement(), e);
+		});
+
+		invisibleColumnNames.forEach(e -> {
+			colName2colPlaceholder.put("_col" + colCount.getAndIncrement(), e);
+		});
+
+		metadata.put("colsMap", colName2colPlaceholder);
+		metadata.put("descriptionColumn", descriptionColumn);
+		metadata.put("invisibleColumns", invisibleColumnNames);
+		metadata.put("valueColumn", valueColumn);
+		metadata.put("visibleColumns", visibleColumnNames);
+
+		valuesJSON.put("metadata", metadata);
+		valuesJSON.put("data", valuesDataJSON);
 
 		// START building JSON object to be returned
 		try {
-			JSONArray valuesDataJSON = new JSONArray();
-
-			valueColumn = lovProvDet.getValueColumnName();
-			displayColumn = lovProvDet.getDescriptionColumnName();
-			descriptionColumn = displayColumn;
 
 			int lb = (start != null) ? start.intValue() : 0;
 			int ub = (limit != null) ? lb + limit.intValue() : rows.size() - lb;
@@ -899,44 +856,34 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 			for (int q = lb; q < ub; q++) {
 				SourceBean row = (SourceBean) rows.get(q);
 				JSONObject valueJSON = new JSONObject();
+				Consumer<String> putInRow = e -> {
+					String placeHolder = colName2colPlaceholder.inverse().get(e);
 
-				if (MODE_EXTRA.equalsIgnoreCase(mode)) {
-					List columns = row.getContainedAttributes();
-					String value = (String) row.getAttribute(valueColumn);
-					String description = (String) row.getAttribute(descriptionColumn);
-					for (int i = 0; i < columns.size(); i++) {
-						SourceBeanAttribute attribute = (SourceBeanAttribute) columns.get(i);
-						valueJSON.put(attribute.getKey().toUpperCase(), attribute.getValue());
-						valueJSON.put("value", value);
-						valueJSON.put("label", description);
-						valueJSON.put("description", description);
+					Object value = row.getAttribute(e.toUpperCase());
+					if (value != null) {
+						try {
+							valueJSON.put(placeHolder, value.toString());
+						} catch (JSONException ex) {
+							throw new SpagoBIRuntimeException(ex);
+						}
 					}
-				} else if (MODE_COMPLETE.equalsIgnoreCase(mode)) {
-					List columns = row.getContainedAttributes();
-					for (int i = 0; i < columns.size(); i++) {
-						SourceBeanAttribute attribute = (SourceBeanAttribute) columns.get(i);
-						valueJSON.put(attribute.getKey().toUpperCase(), attribute.getValue());
-					}
-				} else {
-					String value = (String) row.getAttribute(valueColumn);
-					String description = (String) row.getAttribute(descriptionColumn);
-					valueJSON.put("value", value);
-					valueJSON.put("label", description);
-					valueJSON.put("description", description);
-				}
+				};
+
+				visibleColumnNames.forEach(putInRow);
+				invisibleColumnNames.forEach(putInRow);
 
 				valuesDataJSON.put(valueJSON);
 			}
 
 			String[] visiblecolumns;
 
-			visiblecolumns = (String[]) lovProvDet.getVisibleColumnNames().toArray(new String[0]);
+			visiblecolumns = visibleColumnNames.toArray(new String[0]);
 			for (int j = 0; j < visiblecolumns.length; j++) {
 				visiblecolumns[j] = visiblecolumns[j].toUpperCase();
 			}
 
-			valuesJSON = (JSONObject) JSONStoreFeedTransformer.getInstance().transform(valuesDataJSON, valueColumn.toUpperCase(), displayColumn.toUpperCase(),
-					descriptionColumn.toUpperCase(), visiblecolumns, new Integer(rows.size()));
+//			valuesJSON = (JSONObject) JSONStoreFeedTransformer.getInstance().transform(valuesDataJSON, valueColumn.toUpperCase(), displayColumn.toUpperCase(),
+//					descriptionColumn.toUpperCase(), visiblecolumns, new Integer(rows.size()));
 			return valuesJSON;
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("Impossible to serialize response", e);

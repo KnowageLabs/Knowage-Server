@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.api;
+package it.eng.spagobi.api.v2;
 
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_OPTIONS_KEY;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_QUANTITY_JSON;
@@ -40,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -70,6 +71,7 @@ import org.safehaus.uuid.UUIDGenerator;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import edu.emory.mathcs.backport.java.util.Collections;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.base.SessionContainer;
@@ -78,6 +80,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.BusinessModelOpenUtils;
 import it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.handlers.AbstractDriverRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.BusinessModelDriverRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.BusinessModelRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentDriverRuntime;
@@ -85,6 +88,8 @@ import it.eng.spagobi.analiticalmodel.document.handlers.DocumentRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.DriversRuntimeLoaderFactory;
 import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.api.BusinessModelOpenParameters;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIMetaModelParameterDAO;
@@ -121,25 +126,23 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
-/**
- * @deprecated Replaced by {@link it.eng.spagobi.api.v2.DocumentExecutionResource}
- */
-@Path("/1.0/documentexecution")
+@Path("/2.0/documentexecution")
 @ManageAuthorization
-@Deprecated
 public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	// GENERAL METADATA NAMES
-	public static final String LABEL = "metadata.docLabel";
-	public static final String NAME = "metadata.docName";
-	public static final String DESCR = "metadata.docDescr";
-	public static final String TYPE = "metadata.docType";
-	public static final String ENG_NAME = "metadata.docEngine";
-	public static final String RATING = "metadata.docRating";
-	public static final String SUBOBJ_NAME = "metadata.subobjName";
-	public static final String METADATA = "METADATA";
-	public static final String NODE_ID_SEPARATOR = "___SEPA__";
-	public static final String EDIT_MODE_ON = "true";
+	private static final String LABEL = "metadata.docLabel";
+	private static final String NAME = "metadata.docName";
+	private static final String DESCR = "metadata.docDescr";
+	private static final String TYPE = "metadata.docType";
+	private static final String ENG_NAME = "metadata.docEngine";
+	private static final String RATING = "metadata.docRating";
+	private static final String SUBOBJ_NAME = "metadata.subobjName";
+	private static final String METADATA = "METADATA";
+	private static final String NODE_ID_SEPARATOR = "___SEPA__";
+	private static final String EDIT_MODE_ON = "true";
+	private static final String PROPERTY_DATA = "data";
+	private static final String PROPERTY_METADATA = "metadata";
 
 	public static String MODE_SIMPLE = "simple";
 	// public static String MODE_COMPLETE = "complete";
@@ -559,22 +562,21 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			for (DocumentDriverRuntime objParameter : parameters) {
 				Integer paruseId = objParameter.getParameterUseId();
 				ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
+				Map<String, Object> metadata = new LinkedHashMap<>();
 
 				HashMap<String, Object> parameterAsMap = new HashMap<String, Object>();
 				parameterAsMap.put("id", objParameter.getBiObjectId());
 				parameterAsMap.put("label", objParameter.getLabel());
 				parameterAsMap.put("urlName", objParameter.getId());
 				parameterAsMap.put("type", objParameter.getParType());
-				parameterAsMap.put("typeCode", objParameter.getTypeCode());
 				parameterAsMap.put("selectionType", objParameter.getSelectionType());
 				parameterAsMap.put("valueSelection", parameterUse.getValueSelection());
-				parameterAsMap.put("selectedLayer", objParameter.getSelectedLayer());
-				parameterAsMap.put("selectedLayerProp", objParameter.getSelectedLayerProp());
 				parameterAsMap.put("visible", ((objParameter.isVisible())));
 				parameterAsMap.put("mandatory", ((objParameter.isMandatory())));
 				parameterAsMap.put("multivalue", objParameter.isMultivalue());
 				parameterAsMap.put("driverLabel", objParameter.getPar().getLabel());
 				parameterAsMap.put("driverUseLabel", objParameter.getAnalyticalDriverExecModality().getLabel());
+				parameterAsMap.put(PROPERTY_METADATA, metadata);
 
 				parameterAsMap.put("allowInternalNodeSelection",
 						objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
@@ -661,13 +663,16 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					ArrayList<HashMap<String, Object>> admissibleValues = objParameter.getAdmissibleValues();
 
 					if (!objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_LOOKUP)) {
-						parameterAsMap.put("defaultValues", admissibleValues);
+						parameterAsMap.put(PROPERTY_DATA, admissibleValues);
 					} else {
-						parameterAsMap.put("defaultValues", new ArrayList<>());
+						parameterAsMap.put(PROPERTY_DATA, new ArrayList<>());
 					}
-					parameterAsMap.put("defaultValuesMeta", objParameter.getLovVisibleColumnsNames());
-					parameterAsMap.put(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA, objParameter.getLovValueColumnName());
-					parameterAsMap.put(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA, objParameter.getLovDescriptionColumnName());
+
+					metadata.put("colsMap", objParameter.getColName2colPlaceholder());
+					metadata.put("descriptionColumn", objParameter.getLovDescriptionColumnName());
+					metadata.put("invisibleColumns", objParameter.getLovInvisibleColumnsNames());
+					metadata.put("valueColumn", objParameter.getLovValueColumnName());
+					metadata.put("visibleColumns", objParameter.getLovVisibleColumnsNames());
 
 					// hide the parameter if is mandatory and have one value in lov (no error parameter)
 					if (admissibleValues != null && admissibleValues.size() == 1 && objParameter.isMandatory() && !admissibleValues.get(0).containsKey("error")
@@ -688,7 +693,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				if (objParameter.getParType().equals("DATE_RANGE")) {
 					try {
 						ArrayList<HashMap<String, Object>> defaultValues = manageDataRange(biObject, role, objParameter.getId());
-						parameterAsMap.put("defaultValues", defaultValues);
+						parameterAsMap.put(PROPERTY_DATA, defaultValues);
 					} catch (SerializationException e) {
 						logger.debug("Filters DATE RANGE ERRORS ", e);
 					}
@@ -738,10 +743,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					}
 				}
 
-				parameterAsMap.put("dependsOn", objParameter.getDependencies());
-				parameterAsMap.put("dataDependencies", objParameter.getDataDependencies());
-				parameterAsMap.put("visualDependencies", objParameter.getVisualDependencies());
-				parameterAsMap.put("lovDependencies", (objParameter.getLovDependencies() != null) ? objParameter.getLovDependencies() : new ArrayList<>());
+				addDependencies(objParameter, parameterAsMap);
 
 				// load DEFAULT VALUE if present and if the parameter value is empty
 				if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0
@@ -783,8 +785,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					parameterAsMap.put("showOnPanel", "true");
 				}
 
-				parameterAsMap.put("isReadFromCache", driversCacheEnabled);
-
 				parametersArrayList.add(parameterAsMap);
 
 			}
@@ -805,13 +805,29 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			}
 		}
 
-		// filter out null values
 		for (int i = 0; i < parametersArrayList.size(); i++) {
 			Map<String, Object> parameter = parametersArrayList.get(i);
-			List defaultValuesList = (List) parameter.get("defaultValues");
+			List<Map<String, Object>> defaultValuesList = (List<Map<String, Object>>) parameter.get(PROPERTY_DATA);
+
 			if (defaultValuesList != null) {
-				defaultValuesList.removeIf(
-						defaultVal -> (((Map) defaultVal).get("value") == JSONObject.NULL || ((Map) defaultVal).get("description") == JSONObject.NULL));
+				// Filter out null values
+				defaultValuesList.removeIf(e -> e.get("value") == JSONObject.NULL || e.get("description") == JSONObject.NULL);
+
+				// Fix JSON structure of admissible values
+				defaultValuesList.forEach(e -> {
+					List<String> fieldsToBeRemoved = new ArrayList<>();
+
+					e.keySet().forEach(f -> {
+						if (!f.startsWith("_col")) {
+							fieldsToBeRemoved.add(f);
+						}
+					});
+
+					fieldsToBeRemoved.forEach(f -> {
+						e.remove(f);
+					});
+				});
+
 			}
 		}
 
@@ -1061,14 +1077,17 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		}
 		return defaultValues;
 	}
+	@POST
+	@Path("/admissibleValuesTree")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response getParameterValuesV2(@Context HttpServletRequest req) throws EMFUserError, IOException, JSONException {
+		return getParameterValues(req);
+	}
 
 	@POST
 	@Path("/parametervalues")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	// public Response getParameterValues(@QueryParam("label") String label, @QueryParam("role") String role, @QueryParam("biparameterId") String biparameterId,
-	// @QueryParam("mode") String mode, @QueryParam("treeLovNode") String treeLovNode,
-	// // @QueryParam("treeLovNode") Integer treeLovNodeLevel,
-	// @Context HttpServletRequest req) throws EMFUserError {
+	@Deprecated
 	public Response getParameterValues(@Context HttpServletRequest req) throws EMFUserError, IOException, JSONException {
 
 		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
@@ -1103,7 +1122,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		String treeLovNodeValue;
 		Integer treeLovNodeLevel;
 
-		if (treeLovNode.contains("lovroot")) {
+		if (treeLovNode == null || treeLovNode.equals("") || treeLovNode.contains("lovroot")) {
 			treeLovNodeValue = "lovroot";
 			treeLovNodeLevel = 0;
 		} else {
@@ -1112,20 +1131,18 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			treeLovNodeLevel = new Integer(splittedNode[1]);
 		}
 
-		// ArrayList<HashMap<String, Object>> result = DocumentExecutionUtils.getLovDefaultValues(
-		// role, biObject, biObjectParameter, requestVal, treeLovNodeLevel, treeLovNodeValue, req);
-		HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, biObject, biObjectParameter, requestVal, treeLovNodeLevel,
-				treeLovNodeValue, req);
+		Map<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, biObject, biObjectParameter, requestVal, treeLovNodeLevel,
+				treeLovNodeValue, req.getLocale());
 
-		ArrayList<HashMap<String, Object>> result = (ArrayList<HashMap<String, Object>>) defaultValuesData.get(DocumentExecutionUtils.DEFAULT_VALUES);
+		ArrayList<Map<String, Object>> result = (ArrayList<Map<String, Object>>) defaultValuesData.get(DocumentExecutionUtils.DEFAULT_VALUES);
 
-		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
+		Map<String, Object> resultAsMap = new HashMap<String, Object>();
 
 		if (result != null && result.size() > 0) {
-			resultAsMap.put("filterValues", result);
+			resultAsMap.put("rows", result);
 			resultAsMap.put("errors", new ArrayList<>());
 		} else {
-			resultAsMap.put("filterValues", new ArrayList<>());
+			resultAsMap.put("rows", new ArrayList<>());
 
 			List errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), biObject, req,
 					this.getAttributeAsString("SBI_ENVIRONMENT"), role, biObjectParameter.getParameter().getModalityValue().getSelectionType(), null, locale);
@@ -1637,8 +1654,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 								paramDescrLst.add(itemDescr);
 							}
 						} catch (UnsupportedEncodingException e) {
-							// TODO Auto-generated catch block
-							// e.printStackTrace();
 							logger.debug("An error occured while decoding parameter with value[" + itemVal + "]" + e);
 						}
 					}
@@ -1680,9 +1695,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				ArrayList<HashMap<String, Object>> admissibleValues = objParameter.getAdmissibleValues();
 
 				if (!objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_LOOKUP)) {
-					parameterAsMap.put("defaultValues", admissibleValues);
+					parameterAsMap.put(PROPERTY_DATA, admissibleValues);
 				} else {
-					parameterAsMap.put("defaultValues", new ArrayList<>());
+					parameterAsMap.put(PROPERTY_DATA, new ArrayList<>());
 				}
 				parameterAsMap.put("defaultValuesMeta", objParameter.getLovVisibleColumnsNames());
 				parameterAsMap.put(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA, objParameter.getLovValueColumnName());
@@ -1706,7 +1721,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			if (objParameter.getParType().equals("DATE_RANGE")) {
 				try {
 					ArrayList<HashMap<String, Object>> defaultValues = BMOP.manageDataRange(businessModel, role, objParameter.getId());
-					parameterAsMap.put("defaultValues", defaultValues);
+					parameterAsMap.put(PROPERTY_DATA, defaultValues);
 				} catch (SerializationException | EMFUserError | JSONException | IOException e) {
 					logger.debug("Filters DATE RANGE ERRORS ", e);
 				}
@@ -1754,10 +1769,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				}
 			}
 
-			parameterAsMap.put("dependsOn", objParameter.getDependencies());
-			parameterAsMap.put("dataDependencies", objParameter.getDataDependencies());
-			parameterAsMap.put("visualDependencies", objParameter.getVisualDependencies());
-			parameterAsMap.put("lovDependencies", (objParameter.getLovDependencies() != null) ? objParameter.getLovDependencies() : new ArrayList<>());
+			addDependencies(objParameter, parameterAsMap);
 
 			// load DEFAULT VALUE if present and if the parameter value is empty
 			if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0
@@ -1829,4 +1841,14 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		return parametersArrList;
 	}
+
+	private void addDependencies(AbstractDriverRuntime<?> objParameter, HashMap<String, Object> parameterAsMap) {
+		Map<String, Object> dependencies = new LinkedHashMap<>();
+		parameterAsMap.put("dependencies", dependencies);
+
+		dependencies.put("data", objParameter.getDataDependencies());
+		dependencies.put("visual", objParameter.getVisualDependencies());
+		dependencies.put("lov", Optional.ofNullable(objParameter.getLovDependencies()).orElse(Collections.emptyList()));
+	}
+
 }
