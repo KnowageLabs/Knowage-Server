@@ -8,11 +8,7 @@
             </template>
 
             <div v-if="document">
-                <Message class="p-m-4" severity="info" :closable="true" :style="schedulerTimingOutputOutputTabDescriptor.styles.message">
-                    <span v-html="$t('managers.scheduler.fixedRecipientsListHelp')"></span>
-                </Message>
-
-                <div class="p-m-4">
+                <div class="p-m-4" v-tooltip="$t('managers.scheduler.fixedRecipientsListHelp')">
                     <Checkbox v-model="document.useFixedRecipients" :binary="true" @change="removeDocumentExpressionAndDatasets" />
                     <span class="p-ml-2">{{ $t('managers.scheduler.fixedRecipientsList') }}</span>
                 </div>
@@ -42,11 +38,7 @@
                 </div>
 
                 <div v-if="drivers.length > 0" class="p-m-4">
-                    <Message severity="info" :closable="true" :style="schedulerTimingOutputOutputTabDescriptor.styles.message">
-                        <span>{{ $t('managers.scheduler.useDatasetListHelp') }}</span>
-                    </Message>
-
-                    <div class="p-my-4">
+                    <div class="p-my-4" v-tooltip="$t('managers.scheduler.useDatasetListHelp')">
                         <Checkbox v-model="document.useDataset" :binary="true" @change="removeDocumentFixedRecipientsAndExpression" />
                         <span class="p-ml-2" v-html="$t('managers.scheduler.useDatasetList')"></span>
                     </div>
@@ -97,11 +89,7 @@
                     </div>
                 </div>
 
-                <Message class="p-m-4" severity="info" :closable="true" :style="schedulerTimingOutputOutputTabDescriptor.styles.message">
-                    <span v-html="$t('managers.scheduler.useExpressionHelp')"></span>
-                </Message>
-
-                <div class="p-m-4">
+                <div class="p-m-4" v-tooltip="$t('managers.scheduler.useExpressionHelp')">
                     <Checkbox v-model="document.useExpression" :binary="true" @change="removeDocumentFixedRecipientsAndDatasets" />
                     <span class="p-ml-2" v-html="$t('managers.scheduler.useExpression')"></span>
                 </div>
