@@ -55,7 +55,7 @@
 import { defineComponent } from 'vue'
 import { iMeasure } from './MeasureDefinition'
 import { filterDefault } from '@/helpers/commons/filterHelper'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
@@ -89,7 +89,7 @@ export default defineComponent({
         },
         async loadMeasures() {
             this.measuresList = []
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listMeasure').then((response) =>
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listMeasure').then((response: AxiosResponse<any>) =>
                 response.data.forEach((measure) => {
                     if (measure.category) {
                         measure.categoryName = measure.translatedValueName
@@ -117,7 +117,7 @@ export default defineComponent({
             })
         },
         async deleteMeasure(measure: iMeasure) {
-            await axios
+            await this.$http
                 .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${measure.ruleId}/${measure.ruleVersion}/deleteRule`)
                 .then(() => {
                     this.$store.commit('setInfo', {

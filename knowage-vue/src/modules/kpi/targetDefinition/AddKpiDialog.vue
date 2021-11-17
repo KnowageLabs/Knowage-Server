@@ -1,5 +1,14 @@
 <template>
-    <Dialog :header="$t('kpi.targetDefinition.addKpiBtn')" :breakpoints="targetDefinitionDetailDescriptor.dialog.breakpoints" :style="targetDefinitionDetailDescriptor.dialog.style" :visible="dialogVisible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
+    <Dialog
+        :header="$t('kpi.targetDefinition.addKpiBtn')"
+        :breakpoints="targetDefinitionDetailDescriptor.dialog.breakpoints"
+        :style="targetDefinitionDetailDescriptor.dialog.style"
+        :contentStyle="targetDefinitionDetailDescriptor.dialog.contentStyle"
+        :visible="dialogVisible"
+        :modal="true"
+        :closable="false"
+        class="p-fluid kn-dialog--toolbar--primary"
+    >
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #left>
@@ -23,6 +32,8 @@
             responsiveLayout="stack"
             v-model:filters="filters"
             filterDisplay="menu"
+            :scrollable="true"
+            :scrollHeight="targetDefinitionDetailDescriptor.dialog.scrollHeight"
             :globalFilterFields="targetDefinitionDetailDescriptor.globalFilterFields"
         >
             <template #header>

@@ -49,7 +49,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iSchema } from './MondrianSchemas'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import mondrianDescriptor from './MondrianSchemasManagementDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnHint from '@/components/UI/KnHint.vue'
@@ -84,9 +84,9 @@ export default defineComponent({
     methods: {
         async loadAllSchemas() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/mondrianSchemasResource')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.schemas = response.data
                 })
                 .finally(() => (this.loading = false))
@@ -117,7 +117,7 @@ export default defineComponent({
             })
         },
         async deleteSchema(schemaId: number) {
-            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/mondrianSchemasResource/' + schemaId).then(() => {
+            await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/mondrianSchemasResource/' + schemaId).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')

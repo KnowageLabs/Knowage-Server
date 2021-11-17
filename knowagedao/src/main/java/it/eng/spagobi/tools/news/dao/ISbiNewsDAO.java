@@ -24,8 +24,11 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.news.bo.AdvancedNews;
 import it.eng.spagobi.tools.news.bo.BasicNews;
+import it.eng.spagobi.tools.news.metadata.SbiNews;
 
 public interface ISbiNewsDAO extends ISpagoBIDao {
+
+	public List<SbiNews> getAllSbiNews();
 
 	public List<BasicNews> getAllNews();
 

@@ -40,7 +40,6 @@ import it.eng.knowage.knowageapi.error.ImpossibleToCreateFolderException;
 import it.eng.knowage.knowageapi.error.ImpossibleToReadFolderListException;
 import it.eng.knowage.knowageapi.error.KnowageBusinessException;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
-import it.eng.knowage.knowageapi.error.TenantRepositoryMissingException;
 import it.eng.knowage.resourcemanager.resource.dto.CreateFolderDTO;
 import it.eng.knowage.resourcemanager.resource.dto.DownloadFolderDTO;
 import it.eng.knowage.resourcemanager.resource.dto.RootFolderDTO;
@@ -173,11 +172,7 @@ public class FoldersResource {
 			if (!delete) {
 				throw new ImpossibleToReadFolderListException("");
 			}
-			
-			
-			
-			
-			
+
 			return Response.status(Response.Status.OK).build();
 
 		} catch (KnowageBusinessException e) {
