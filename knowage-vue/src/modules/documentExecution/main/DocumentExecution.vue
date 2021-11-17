@@ -6,55 +6,139 @@
     </Toolbar>
     <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
 
-    <div></div>
+    <div>
+        <Registry v-if="mode === 'registry' && urlData && !loading && false" :id="urlData.sbiExecutionId"></Registry>
+        <!-- <Registry v-if="mode === 'registry' && urlData && !loading" :id="urlData.sbiExecutionId"></Registry> -->
+    </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
+import Registry from '../registry/Registry.vue'
+import PrimeVue from 'primevue/config'
 
 export default defineComponent({
     name: 'document-execution',
-    components: {},
+    components: { Registry },
     props: { id: { type: String } },
     data() {
         return {
             filtersData: null as any,
             urlData: null as any,
             exporters: null as any,
+            mode: null as any,
             user: null as any,
-            loading: false
+            loading: false,
+            PrimeVue: PrimeVue as any
         }
     },
     async created() {
+        console.log('CURRENT ROUTE: ', this.$route)
+
+        this.setMode()
+
+        this.PrimeVue.config.locale.dateFormat = 'dd/mm/yy'
+
+        console.log('MODE: ', this.mode)
+
         console.log('ID: ', this.id)
 
         this.user = (this.$store.state as any).user
 
         console.log('LOADED USER: ', this.user)
 
+        this.loading = true
         await this.loadFilters()
         await this.loadURL()
         await this.loadExporters()
+        this.loading = false
     },
     methods: {
+        setMode() {
+            if (this.$route.path.includes('registry')) {
+                this.mode = 'registry'
+            }
+        },
         async loadFilters() {
-            this.loading = true
             await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/filters`, { label: this.id, role: this.user.defaultRole, parameters: {} }).then((response: AxiosResponse<any>) => (this.filtersData = response.data))
-            this.loading = false
-            console.log('LOADED FILTERS DATA: ', this.filtersData)
+            // console.log('LOADED FILTERS DATA: ', this.filtersData)
         },
         async loadURL() {
-            this.loading = true
             await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, { label: this.id, role: this.user.defaultRole, parameters: {}, EDIT_MODE: 'null', IS_FOR_EXPORT: true }).then((response: AxiosResponse<any>) => (this.urlData = response.data))
-            this.loading = false
-            console.log('LOADED URL DATA: ', this.urlData)
+            this.sendForm()
+            // console.log('LOADED URL DATA: ', this.urlData)
         },
         async loadExporters() {
-            this.loading = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/exporters/${this.urlData.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
-            this.loading = false
-            console.log('LOADED EXPORTERS: ', this.exporters)
+            // console.log('LOADED EXPORTERS: ', this.exporters)
+        },
+        sendForm() {
+            const documentUrl = this.urlData.url + '&timereloadurl=' + new Date().getTime()
+            const postObject = { params: { document: null }, url: documentUrl.split('?')[0] }
+            const paramsFromUrl = documentUrl.split('?')[1].split('&')
+            // console.log('DOCUMENT URL: ', documentUrl)
+
+            console.log('PARAMS FROM URL: ', paramsFromUrl)
+
+            for (let i in paramsFromUrl) {
+                if (typeof paramsFromUrl !== 'function') {
+                    postObject.params[paramsFromUrl[i].split('=')[0]] = paramsFromUrl[i].split('=')[1]
+                }
+            }
+
+            console.log('POST OBJECT: ', postObject)
+
+            // TODO - Pitati odakle ovo dolazi?!!
+            // if(cockpitEditing.documentMode) postObject.params.documentMode = cockpitEditing.documentMode;
+
+            let postForm = document.getElementById('postForm_' + postObject.params.document) as any
+            if (!postForm) {
+                postForm = document.createElement('form')
+                postForm.id = 'postForm_' + postObject.params.document
+                postForm.action = postObject.url
+                postForm.method = 'post'
+                postForm.target = 'documentFrame'
+                document.body.appendChild(postForm)
+            }
+
+            let test = new FormData()
+
+            for (let k in postObject.params) {
+                const inputElement = document.getElementById('postForm_' + k) as any
+                if (inputElement) {
+                    inputElement.value = decodeURIComponent(postObject.params[k])
+                    inputElement.value = inputElement.value.replace(/\+/g, ' ')
+                } else {
+                    const element = document.createElement('input')
+                    element.type = 'hidden'
+                    element.id = 'postForm_' + k
+                    element.name = k
+                    element.value = decodeURIComponent(postObject.params[k])
+                    element.value = element.value.replace(/\+/g, ' ')
+                    postForm.appendChild(element)
+
+                    test.append(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
+                }
+            }
+
+            for (let i = postForm.elements.length - 1; i >= 0; i--) {
+                const postFormElement = postForm.elements[i].id.replace('postForm_', '')
+                if (!(postFormElement in postObject.params)) {
+                    postForm.removeChild(postForm.elements[i])
+                }
+            }
+
+            console.log('POST FORM: ', postForm)
+            console.log('POST FORM TEST: ', test)
+            postForm.submit()
+
+            this.$http.post(process.env.VUE_APP_HOST_URL + `/knowageqbeengine/servlet/AdapterHTTP`, test, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+                }
+            })
         }
     }
 })
