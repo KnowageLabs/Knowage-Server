@@ -34,6 +34,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
+import it.eng.spagobi.engines.drivers.generic.GenericDriver;
 import it.eng.spagobi.engines.drivers.kpi.KpiDriver;
 import it.eng.spagobi.monitoring.dao.AuditManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -109,6 +110,7 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 			}
 			// get the map of the parameters
 			Map mapPars = aEngineDriver.getParameterMap(obj, this.getUserProfile(), role);
+			mapPars.remove(GenericDriver.DOCUMENT_DESCRIPTION);
 			// adding "system" parameters
 			addSystemParametersForExternalEngines(mapPars, this.getLocale(), obj, executionModality, role);
 			url = GeneralUtilities.getUrl(engine.getUrl(), mapPars);
