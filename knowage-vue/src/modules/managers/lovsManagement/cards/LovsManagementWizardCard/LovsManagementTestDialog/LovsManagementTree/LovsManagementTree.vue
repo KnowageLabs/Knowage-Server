@@ -116,6 +116,14 @@ export default defineComponent({
         },
         loadModel() {
             this.selectedValues = this.treeModel as any[]
+
+            this.removeUnusedSelectedValues()
+        },
+        removeUnusedSelectedValues() {
+            for (let i = 0; i < this.selectedValues.length; i++) {
+                const index = this.data.findIndex((el: any) => el.name === this.selectedValues[i].value)
+                if (index === -1) this.selectedValues.splice(i, 1)
+            }
         },
         setSelectedValue(value: any) {
             const index = this.selectedValues.findIndex((el: any) => el.level === value.name)

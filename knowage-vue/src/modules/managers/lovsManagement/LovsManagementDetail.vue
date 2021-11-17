@@ -26,7 +26,7 @@
                 :save="save"
                 :previewDisabled="saveButtonDisabled"
                 @touched="setTouched"
-                @created="$emit('created')"
+                @created="onCreated()"
                 @selectedDataset="setSelectedDataset($event)"
                 @sorted="onSort($event)"
             ></LovsManagementWizardCard>
@@ -222,6 +222,10 @@ export default defineComponent({
         },
         onSort(sortedArray: any[]) {
             this.listForFixLov = sortedArray
+        },
+        async onCreated() {
+            this.$emit('created')
+            await this.loadPage()
         }
     }
 })
