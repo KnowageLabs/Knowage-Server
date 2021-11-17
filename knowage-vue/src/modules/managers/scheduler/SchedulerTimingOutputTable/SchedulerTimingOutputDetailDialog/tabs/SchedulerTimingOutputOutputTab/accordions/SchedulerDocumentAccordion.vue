@@ -119,13 +119,12 @@ import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
-import Message from 'primevue/message'
 import SchedulerDocumentAccordionTree from './SchedulerDocumentAccordionTree.vue'
 import schedulerTimingOutputOutputTabDescriptor from '../SchedulerTimingOutputOutputTabDescriptor.json'
 
 export default defineComponent({
     name: 'scheduler-document-accordion',
-    components: { Accordion, AccordionTab, Checkbox, Dropdown, Message, SchedulerDocumentAccordionTree },
+    components: { Accordion, AccordionTab, Checkbox, Dropdown, SchedulerDocumentAccordionTree },
     props: { propDocument: { type: Object }, functionalities: { type: Array }, datasets: { type: Array }, jobInfo: { type: Object } },
     data() {
         return {

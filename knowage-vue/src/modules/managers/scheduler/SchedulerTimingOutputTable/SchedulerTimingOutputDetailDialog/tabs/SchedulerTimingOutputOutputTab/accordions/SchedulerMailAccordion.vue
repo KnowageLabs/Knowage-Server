@@ -211,12 +211,11 @@ import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
-import Message from 'primevue/message'
 import schedulerTimingOutputOutputTabDescriptor from '../SchedulerTimingOutputOutputTabDescriptor.json'
 
 export default defineComponent({
     name: 'scheduler-mail-accordion',
-    components: { Accordion, AccordionTab, Checkbox, Dropdown, Message },
+    components: { Accordion, AccordionTab, Checkbox, Dropdown },
     props: { propDocument: { type: Object }, functionalities: { type: Array }, datasets: { type: Array }, jobInfo: { type: Object } },
     data() {
         return {
