@@ -14,9 +14,9 @@
                                 'p-invalid': !validDates
                             }"
                             :showIcon="true"
-                            :manualInput="false"
+                            :manualInput="true"
                         />
-                        <div v-if="!validDates" class="p-error p-grid">
+                        <div v-if="!validDates" class="p-error p-grid p-mt-1">
                             <small class="p-col-12">
                                 {{ $t('kpi.kpiScheduler.dateError') }}
                             </small>
@@ -35,10 +35,10 @@
                                 'p-invalid': !validDates
                             }"
                             :showIcon="true"
-                            :manualInput="false"
+                            :manualInput="true"
                             :showButtonBar="true"
                         />
-                        <div v-if="!validDates" class="p-error p-grid">
+                        <div v-if="!validDates" class="p-error p-grid p-mt-1">
                             <small class="p-col-12">
                                 {{ $t('kpi.kpiScheduler.dateError') }}
                             </small>

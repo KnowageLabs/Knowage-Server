@@ -122,7 +122,7 @@
                 <Column field="type" :header="$t('importExport.gallery.column.type')" :sortable="true" />
                 <Column field="dateIn" :header="$t('managers.mondrianSchemasManagement.headers.creationDate')" dataType="date" :sortable="true">
                     <template #body="{data}">
-                        {{ moment(data.dateIn).format('YYYY[/]MM[/]DD,  hh:mm:ss') }}
+                        {{ formatDate(data.dateIn) }}
                     </template>
                 </Column>
                 <Column @rowClick="false">
@@ -140,7 +140,6 @@
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import { AxiosResponse } from 'axios'
-import moment from 'moment'
 import useValidate from '@vuelidate/core'
 import detailTabDescriptor from './DatasetManagementDetailCardDescriptor.json'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
@@ -171,7 +170,6 @@ export default defineComponent({
     emits: ['touched', 'reloadVersions', 'loadingOlderVersion', 'olderVersionLoaded'],
     data() {
         return {
-            moment,
             detailTabDescriptor,
             loadingVersion: false,
             v$: useValidate() as any,

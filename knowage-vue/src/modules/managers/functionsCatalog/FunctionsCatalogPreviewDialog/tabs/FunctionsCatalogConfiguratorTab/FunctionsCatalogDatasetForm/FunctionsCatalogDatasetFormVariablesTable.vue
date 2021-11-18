@@ -16,9 +16,11 @@
         </Column>
         <Column :header="$t('common.value')">
             <template #editor="slotProps">
-                <InputText v-if="slotProps.data.type !== 'DATE'" :style="functionsCatalogDatasetFormVariablesTableDescriptor.inputStyle" class="p-mr-2" v-model="slotProps.data['value']" :type="slotProps.data.type === 'NUMBER' ? 'number' : 'text'" />
-                <Calendar v-else v-model="slotProps.data['value']"></Calendar>
-                <i class="pi pi-pencil edit-icon" />
+                <div class="p-d-flex p-flex-row p-ai-center">
+                    <InputText v-if="slotProps.data.type !== 'DATE'" :style="functionsCatalogDatasetFormVariablesTableDescriptor.inputStyle" class="p-mr-2  kn-flex" v-model="slotProps.data['value']" :type="slotProps.data.type === 'NUMBER' ? 'number' : 'text'" />
+                    <Calendar v-else v-model="slotProps.data['value']" class="kn-flex"></Calendar>
+                    <i class="pi pi-pencil edit-icon kn-flex" />
+                </div>
             </template>
             <template #body="slotProps">
                 <span class="p-mr-2">{{ slotProps.data.type === 'DATE' && slotProps.data.value ? getFormatedDate(slotProps.data['value']) : slotProps.data['value'] }}</span>

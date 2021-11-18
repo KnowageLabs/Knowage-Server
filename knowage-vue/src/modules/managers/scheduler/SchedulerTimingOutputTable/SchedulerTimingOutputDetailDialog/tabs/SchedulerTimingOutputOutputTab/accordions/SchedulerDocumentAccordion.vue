@@ -52,15 +52,13 @@
                 </div>
 
                 <div v-if="drivers.length > 0" class="p-m-2">
-                    <Message class="p-m-4" severity="info" :closable="true" :style="schedulerTimingOutputOutputTabDescriptor.styles.message">
-                        {{ $t('managers.scheduler.useFolderDatasetHint.partOne') }}
-                        <ul class="dataset-hint-list">
-                            <li>{{ $t('managers.scheduler.useFolderDatasetHint.partTwo') }}</li>
-                            <li>{{ $t('managers.scheduler.useFolderDatasetHint.partThree') }}</li>
-                        </ul>
-                    </Message>
-
-                    <div class="p-my-4">
+                    <div
+                        class="p-my-4"
+                        v-tooltip="
+                            `${$t('managers.scheduler.useFolderDatasetHint.partOne')}:
+                            ${$t('managers.scheduler.useFolderDatasetHint.partTwo')} ${$t('managers.scheduler.useFolderDatasetHint.partThree')}`
+                        "
+                    >
                         <Checkbox v-model="document.useFolderDataset" :binary="true" />
                         <span class="p-ml-2">{{ $t('managers.scheduler.folderFromDataset') }}</span>
                     </div>
@@ -121,13 +119,12 @@ import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
-import Message from 'primevue/message'
 import SchedulerDocumentAccordionTree from './SchedulerDocumentAccordionTree.vue'
 import schedulerTimingOutputOutputTabDescriptor from '../SchedulerTimingOutputOutputTabDescriptor.json'
 
 export default defineComponent({
     name: 'scheduler-document-accordion',
-    components: { Accordion, AccordionTab, Checkbox, Dropdown, Message, SchedulerDocumentAccordionTree },
+    components: { Accordion, AccordionTab, Checkbox, Dropdown, SchedulerDocumentAccordionTree },
     props: { propDocument: { type: Object }, functionalities: { type: Array }, datasets: { type: Array }, jobInfo: { type: Object } },
     data() {
         return {

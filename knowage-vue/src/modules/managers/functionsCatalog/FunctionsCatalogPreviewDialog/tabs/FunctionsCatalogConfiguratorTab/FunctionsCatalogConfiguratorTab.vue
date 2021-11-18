@@ -1,6 +1,6 @@
 <template>
     <div class="p-d-flex p-flex-row">
-        <div class="p-col-4 p-sm-4 p-md-3 p-m-2 p-p-0">
+        <div class="p-col-4 p-sm-4 p-md-3 p-m-0 p-p-0">
             <FunctionsCatalogDatasetTable :datasets="datasets" @selected="loadSelectedDataset"></FunctionsCatalogDatasetTable>
         </div>
         <div class="p-col-8 p-sm-8 p-md-9 p-m-2 p-p-0">

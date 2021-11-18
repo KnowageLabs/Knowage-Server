@@ -175,6 +175,7 @@ export default defineComponent({
                 await this.getSelectedDatasetVersions()
             } else {
                 this.selectedDataset = { ...detailViewDescriptor.newDataset }
+                this.selectedDatasetVersions = []
             }
         },
         //#endregion ===============================================================================================
@@ -227,19 +228,20 @@ export default defineComponent({
                     }
                 })
                 .then((response: AxiosResponse<any>) => {
-                    this.saveTags(dsToSave)
                     this.touched = false
                     this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
                     this.selectedDataset.id ? this.$emit('updated') : this.$emit('created', response)
+                    this.saveTags(dsToSave, response.data.id)
                 })
                 .catch()
         },
-        async saveTags(dsToSave) {
+        async saveTags(dsToSave, id) {
             let tags = {} as any
             tags.versNum = dsToSave.versNum + 1
             tags.tagsToAdd = dsToSave.tags
+
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${dsToSave.id}/dstags/`, tags, {
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${id}/dstags/`, tags, {
                     headers: {
                         Accept: 'application/json, text/plain, */*',
                         'Content-Type': 'application/json;charset=UTF-8'
