@@ -44,8 +44,11 @@
             },
             "uploading": "Error uploading "
         },
+        "execute": "Execute",
         "expand": "expand",
         "export": "export",
+        "exportCSV": "Export CSV",
+        "exportSuccess": "The download has started in background. You will find the result file in your download page.",
         "fileName": "File Name",
         "general": "General",
         "image": "image",
@@ -200,6 +203,12 @@
             "progressNotFinished": "Please wait until document will be generated.",
             "saveSuccess": "Activity successfully saved!",
             "title": "Dossier"
+        },
+        "main": {
+            "parameterClearTooltip": "Reset to default value",
+            "resetParametersTooltip": "Reset parameters form to default values",
+            "saveParametersFromStateTooltip": "Save parameters form state as viewpoint",
+            "savedParametersTooltip": "Open saved parameters window"
         },
         "registry": {
             "clearFilters": "Clear",
