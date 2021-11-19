@@ -31,7 +31,7 @@
         }
     },
     "css": {
-        "buttonClassHeader": "p-button-text p-button-rounded p-button-plain p-d-flex headerButton"
+        "buttonClassHeader": "p-button-text p-button-rounded p-button-plain"
     },
     "dataPreparation": {
         "refreshRate": {
@@ -71,17 +71,23 @@
                 "parameters": [
                     [
                         {
+                            "name": "columns",
+                            "type": "multiSelect",
+                            "validationRules": "required"
+                        },
+                        {
                             "name": "column",
                             "type": "string",
                             "validationRules": "required|alpha"
                         },
                         {
-                            "name": "columns",
-                            "type": "multiSelect"
-                        },
-                        {
                             "name": "formula",
                             "type": "textarea"
+                        },
+                        {
+                            "availableValues": [],
+                            "name": "outputType",
+                            "type": "dropdown"
                         }
                     ]
                 ]
@@ -122,16 +128,24 @@
                     [
                         {
                             "name": "columns",
-                            "type": "multiSelect"
+                            "type": "multiSelect",
+                            "validationRules": "required"
                         },
                         {
                             "name": "separator",
                             "type": "string",
-                            "validationRules": "required|alpha"
+                            "validationRules": "required|alpha_dash"
                         },
                         {
-                            "name": "columns",
-                            "type": "multiSelect"
+                            "name": "column",
+                            "type": "string",
+                            "validationRules": "required|alpha_dash"
+                        },
+                        {
+                            "availableValues": [],
+                            "name": "outputType",
+                            "type": "dropdown",
+                            "validationRules": "required|alpha_dash"
                         }
                     ]
                 ]
@@ -154,30 +168,50 @@
                     [
                         {
                             "name": "columns",
-                            "type": "dropdown"
+                            "type": "dropdown",
+                            "validationRules": "required"
                         },
+                        {
+                            "name": "column1",
+                            "type": "string",
+                            "validationRules": "required|alpha_dash"
+                        },
+                        {
+                            "name": "column2",
+                            "type": "string",
+                            "validationRules": "required|alpha_dash"
+                        }
+                    ],
+                    [
                         {
                             "availableValues": [
                                 {
-                                    "code": "equals",
-                                    "label": "="
+                                    "code": "split_separator",
+                                    "label": "managers.workspaceManagement.dataPreparation.transformations.useSeparator",
+                                    "relatedTo": "separator"
                                 },
                                 {
-                                    "code": "greater",
-                                    "label": ">"
+                                    "code": "split_numberOfChars",
+                                    "label": "managers.workspaceManagement.dataPreparation.transformations.useNumberOfChars",
+                                    "relatedTo": "separator"
                                 }
                             ],
-                            "name": "mergeColumnType",
+                            "name": "splitColumnMethod",
                             "placeholder": "managers.workspaceManagement.dataPreparation.transformations.condition",
-                            "type": "dropdown"
+                            "type": "dropdown",
+                            "validationRules": "required|alpha_dash"
                         },
                         {
                             "name": "separator",
+                            "relatedTo": "splitColumnMethod",
+                            "relatedWith": "split_separator",
                             "type": "string",
                             "validationRules": "alpha"
                         },
                         {
-                            "name": "numberOfCharacters",
+                            "name": "numberOfChars",
+                            "relatedTo": "splitColumnMethod",
+                            "relatedWith": "split_numberOfChars",
                             "type": "string",
                             "validationRules": "numeric"
                         }
@@ -202,7 +236,8 @@
                     [
                         {
                             "name": "columns",
-                            "type": "multiSelect"
+                            "type": "multiSelect",
+                            "validationRules": "required"
                         },
                         {
                             "availableValues": [
@@ -245,7 +280,8 @@
                             ],
                             "name": "conditions",
                             "placeholder": "managers.workspaceManagement.dataPreparation.transformations.condition",
-                            "type": "dropdown"
+                            "type": "dropdown",
+                            "validationRules": "required|alpha_dash"
                         },
                         {
                             "name": "text",
@@ -273,7 +309,8 @@
                     [
                         {
                             "name": "columns",
-                            "type": "multiSelect"
+                            "type": "multiSelect",
+                            "validationRules": "required"
                         },
                         {
                             "availableValues": [
@@ -364,7 +401,8 @@
                         },
                         {
                             "name": "columns",
-                            "type": "multiSelect"
+                            "type": "multiSelect",
+                            "validationRules": "required"
                         },
                         {
                             "name": "suffix",
@@ -392,7 +430,8 @@
                     [
                         {
                             "name": "columns",
-                            "type": "multiSelect"
+                            "type": "multiSelect",
+                            "validationRules": "required"
                         }
                     ]
                 ]
@@ -415,7 +454,8 @@
                     [
                         {
                             "name": "columns",
-                            "type": "multiSelect"
+                            "type": "multiSelect",
+                            "validationRules": "required"
                         }
                     ]
                 ]
@@ -435,7 +475,8 @@
                     [
                         {
                             "name": "columns",
-                            "type": "multiSelect"
+                            "type": "multiSelect",
+                            "validationRules": "required"
                         },
                         {
                             "name": "oldChar",
@@ -479,7 +520,8 @@
                     [
                         {
                             "name": "columns",
-                            "type": "multiSelect"
+                            "type": "multiSelect",
+                            "validationRules": "required"
                         }
                     ]
                 ]

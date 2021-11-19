@@ -1158,58 +1158,73 @@
                 "savePreparedDataset": "Save prepared dataset",
                 "transformations": {
                     "addColumn": {
-                        "description": "",
+                        "description": "TODO",
                         "label": "Add column"
                     },
                     "column": "Column",
+                    "column1": "Column 1",
+                    "column2": "Column 2",
                     "columns": "Columns",
                     "condition": "Condition",
+                    "conditions": "Conditions",
                     "deleteColumn": {
-                        "description": "",
+                        "description": "TODO",
                         "label": "Delete column"
                     },
                     "filter": {
-                        "description": "",
+                        "description": "TODO",
                         "label": "Filter"
                     },
                     "format": {
-                        "description": "",
+                        "description": "TODO",
                         "label": "Format"
                     },
+                    "formula": "Formula",
                     "label": "Transformations",
                     "logicOperator": "Logical operator",
                     "mergeColumns": {
-                        "description": "",
+                        "description": "TODO",
                         "label": "Merge columns"
                     },
+                    "newChar": "New char",
+                    "numberOfChars": "Number of characters",
+                    "oldChar": "Old char",
+                    "outputType": "Output Type",
                     "padding": {
-                        "description": "",
+                        "description": "TODO",
                         "label": "Padding"
                     },
+                    "prefix": "Prefix",
                     "removeDuplicates": {
                         "description": "Removes duplicate values from a range of values.",
                         "label": "Remove duplicates"
                     },
                     "removeNull": {
-                        "description": "",
+                        "description": "TODO",
                         "label": "Remove NULL"
                     },
                     "replace": {
                         "description": "replace(searchvalue, newvalue)",
                         "label": "Replace"
                     },
+                    "separator": "Separator",
                     "splitColumn": {
-                        "description": "",
+                        "description": "TODO",
                         "label": "Split column"
                     },
+                    "splitColumnMethod": "Split column method",
                     "statistics": {
-                        "description": "",
+                        "description": "TODO",
                         "label": "Statistics"
                     },
+                    "suffix": "Suffix",
+                    "text": "Text",
                     "trim": {
-                        "description": "",
+                        "description": "TODO",
                         "label": "Trim"
-                    }
+                    },
+                    "useNumberOfChars": "Use number of characters",
+                    "useSeparator": "Use separator"
                 }
             }
         }

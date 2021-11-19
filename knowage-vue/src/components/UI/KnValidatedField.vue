@@ -1,8 +1,8 @@
 <template>
     <div>
-        <span class="knValidatedFieldContainer">
-            <VeeField :as="as" :name="name" :label="label" :modelValue="modelValue" :class="cssClass" v-bind="$attrs" @input="$emit('modelUpdate', $event)" :validateOnChange="true" />
-            <label :class="cssClass + '-label'" :for="label">{{ label }}</label>
+        <span class="p-float-label knValidatedFieldContainer">
+            <VeeField :as="as" :name="name" :modelValue="modelValue" :class="cssClass" v-bind="$attrs" @input="$emit('modelUpdate', $event)" :validateOnChange="true" />
+            <label :class="cssClass + '-label'" :for="label">{{ $t(label) }}</label>
         </span>
         <VeeErrorMessage :name="name" class="kn-text-error" />
     </div>

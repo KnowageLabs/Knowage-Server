@@ -105,16 +105,12 @@
 
                 <Column v-for="(col, colIndex) in columns" :field="col.header" :key="colIndex" :style="col.style">
                     <template #header>
-                        <div class="p-grid p-m-0 p-d-flex kn-flex ">
+                        <div class="p-grid p-m-0 p-d-flex kn-flex">
                             <div class="p-col-3 p-m-0 p-p-0 p-jc-start p-ai-center">
                                 <Button :class="descriptor.css.buttonClassHeader" @click="toggle($event, 'opType-' + colIndex)">
                                     <span v-if="descriptor.compatibilityMap[col.type].icon.class" :class="descriptor.compatibilityMap[col.type].icon.class">{{ descriptor.compatibilityMap[col.type].icon.name }}</span>
                                     <i v-else :class="descriptor.compatibilityMap[col.type].icon"></i>
                                 </Button>
-                            </div>
-                            <div class="p-col-6 p-m-0 p-p-0 p-ai-center p-jc-center kn-truncated">
-                                <span>{{ $t(col.header) }}</span>
-
                                 <Menu :model="getCompatibilityType(col)" :ref="'opType-' + colIndex" :popup="true">
                                     <template #item="{item}">
                                         <span class="p-menuitem-link" @click="callFunction(descriptorTransformations.filter((x) => x.type === 'changeType')[0], col.header, item)">
@@ -126,13 +122,15 @@
                                     </template>
                                 </Menu>
                             </div>
+                            <div class="p-col-6 p-m-0 p-p-0 p-jc-start p-ai-center">
+                                <span class="kn-truncated">{{ $t(col.header) }}</span>
+                            </div>
                             <div class="p-col-3 p-m-0 p-p-0 p-d-flex p-jc-end p-ai-center">
                                 <Button icon="pi pi-ellipsis-v" :class="descriptor.css.buttonClassHeader" @click="toggle($event, 'trOpType-' + colIndex)" />
                                 <Menu :model="getTransformationsMenu(col)" :ref="'trOpType-' + colIndex" :popup="true">
                                     <template #item="{item}">
                                         <span class="p-menuitem-link" @click="callFunction(item, col.header)">
                                             <span :class="item.icon.class" v-if="item.icon.class">{{ item.icon.name }}</span>
-
                                             <i v-else :class="item.icon"></i> <span class="p-ml-2"> {{ $t(item.label) }}</span></span
                                         >
                                     </template>
@@ -273,14 +271,21 @@
 
                     this.handleTransformation(toReturn)
                 } else if (transformation.type === 'deleteColumn' && col) {
-                    transformation.config.parameters[0][0].value = type
-                    let toReturn = { parameters: [] as Array<any>, type: transformation.type }
-                    let obj = { columns: [] as Array<any> }
-                    obj.columns.push(col)
+                    this.$confirm.require({
+                        message: this.$t('common.toast.deleteMessage'),
+                        header: this.$t('common.toast.deleteTitle'),
+                        icon: 'pi pi-exclamation-triangle',
+                        accept: () => {
+                            transformation.config.parameters[0][0].value = type
+                            let toReturn = { parameters: [] as Array<any>, type: transformation.type }
+                            let obj = { columns: [] as Array<any> }
+                            obj.columns.push(col)
 
-                    toReturn.parameters.push(obj)
+                            toReturn.parameters.push(obj)
 
-                    this.handleTransformation(toReturn)
+                            this.handleTransformation(toReturn)
+                        }
+                    })
                 } else {
                     let requiresValues = false
                     for (var i = 0; i < transformation.config.parameters.length; i++) {
