@@ -2,7 +2,7 @@
 	<form>
 		<md-dialog-content layout="column" layout-padding layout-margin>
 			<div layout="row" style="width:100%" layout-align="center center">
-				<img src="/knowage/themes/commons/img/defaultTheme/logo.svg" />
+				<img src="../themes/commons/img/defaultTheme/logo.svg" />
 			</div>
 			 	 
 		 	 <div layout-padding>

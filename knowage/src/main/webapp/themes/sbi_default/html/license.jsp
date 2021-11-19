@@ -49,7 +49,7 @@
                     <md-list-item flex
                         class="md-2-line" ng-repeat="license in licenseData[host.hostName]">
                         <img
-                            ng-src="/knowage/themes/commons/img/licenseImages/{{license.product}}.png"
+                            ng-src="../themes/commons/img/licenseImages/{{license.product}}.png"
                             class="md-avatar" alt="{{license.product}}" style="border-radius: 0;"/>
                         <div flex class="md-list-item-text">
                             <h3>{{license.product}}</h3>
