@@ -100,7 +100,10 @@
 			executionService.resetParameter = function(parameter, mainReset) {
 
 				if(parameter.defaultValue != undefined && parameter.defaultValue != '' && parameter.defaultValue!= '[]'){
-					if (parameter.type == "NUM") parameter.parameterValue = parseInt(parameter.defaultValue);
+					if (parameter.type == "NUM") {
+						if (parameter.selectionType=='COMBOBOX') parameter.parameterValue = angular.copy(parameter.defaultValue);
+						else parameter.parameterValue = parseInt(parameter.defaultValue);
+					}
 					else if (parameter.type == "DATE") parameter.parameterValue = new Date(parameter.defaultValue.split("#")[0]);
 					else parameter.parameterValue = angular.copy(parameter.defaultValue);
 					parameter.parameterDescription = angular.copy(parameter.defaultValueDescription);
