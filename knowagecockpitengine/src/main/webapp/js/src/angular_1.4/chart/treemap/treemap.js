@@ -478,6 +478,10 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 			levels: [{
 				level: 1,
 				dataLabels: {
+						style: {
+                        	fontSize: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : ""
+                        },
+					
 					enabled: true,
 					formatter: function() {
 
