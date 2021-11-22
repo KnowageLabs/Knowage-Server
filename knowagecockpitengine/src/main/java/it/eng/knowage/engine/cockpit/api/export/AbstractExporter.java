@@ -34,6 +34,7 @@ import org.json.JSONObject;
 import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporterClient;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -49,6 +50,7 @@ public abstract class AbstractExporter {
 	protected static final String DATE_FORMAT = "dd/MM/yyyy";
 	public static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
 	protected List<Integer> hiddenColumns;
+	protected Map<String, String> i18nMessages;
 
 	public AbstractExporter(String userUniqueIdentifier, JSONObject body) {
 		this.userUniqueIdentifier = userUniqueIdentifier;
@@ -324,6 +326,19 @@ public abstract class AbstractExporter {
 			logger.error(message, e);
 			throw new SpagoBIRuntimeException(message);
 		}
+	}
+
+	protected String getInternationalizedHeader(String columnName) {
+		if (i18nMessages == null) {
+			I18NMessagesDAO messageDao = DAOFactory.getI18NMessageDAO();
+			try {
+				i18nMessages = messageDao.getAllI18NMessages(locale);
+			} catch (Exception e) {
+				logger.error("Error while getting i18n messages", e);
+				i18nMessages = new HashMap<String, String>();
+			}
+		}
+		return i18nMessages.getOrDefault(columnName, columnName);
 	}
 
 	protected boolean isSolrDataset(IDataSet dataSet) {

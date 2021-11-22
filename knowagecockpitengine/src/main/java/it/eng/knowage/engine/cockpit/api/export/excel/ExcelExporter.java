@@ -56,6 +56,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -79,6 +80,7 @@ public class ExcelExporter {
 	private int uniqueId = 0;
 	private String requestURL = "";
 	private List<Integer> hiddenColumns;
+	private Map<String, String> i18nMessages;
 
 	private static final String[] WIDGETS_TO_IGNORE = { "image", "text", "selector", "selection", "html" };
 	private static final String SCRIPT_NAME = "cockpit-export-xls.js";
@@ -600,6 +602,7 @@ public class ExcelExporter {
 							columnName = arrayHeader.get(columnName);
 						}
 					}
+					columnName = getInternationalizedHeader(columnName);
 
 					Cell cell = header.createCell(i);
 					cell.setCellValue(columnName);
@@ -697,6 +700,19 @@ public class ExcelExporter {
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
 		}
+	}
+
+	private String getInternationalizedHeader(String columnName) {
+		if (i18nMessages == null) {
+			I18NMessagesDAO messageDao = DAOFactory.getI18NMessageDAO();
+			try {
+				i18nMessages = messageDao.getAllI18NMessages(locale);
+			} catch (Exception e) {
+				logger.error("Error while getting i18n messages", e);
+				i18nMessages = new HashMap<String, String>();
+			}
+		}
+		return i18nMessages.getOrDefault(columnName, columnName);
 	}
 
 	private String getCellType(JSONObject column, String colName, JSONObject colStyle) {

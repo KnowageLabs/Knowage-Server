@@ -173,6 +173,7 @@ public class PdfExporter extends AbstractExporter {
 				if (arrayHeader.get(columnName) != null) {
 					columnName = arrayHeader.get(columnName);
 				}
+				columnName = getInternationalizedHeader(columnName);
 
 				Cell<PDPage> headerCell = headerRow.createCell(columnPercentWidths[i], columnName, HorizontalAlignment.get("center"),
 						VerticalAlignment.get("top"));
