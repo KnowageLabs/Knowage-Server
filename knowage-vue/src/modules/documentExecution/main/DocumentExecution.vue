@@ -13,7 +13,20 @@
     <div id="document-execution-view" class="p-d-flex p-flex-row">
         <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
 
-        <!-- <Registry v-if="mode === 'registry' && urlData && !loading && false" :id="urlData.sbiExecutionId"></Registry> -->
+        <!-- <Registry v-if="mode === 'registry' && urlData && !loading" :id="urlData.sbiExecutionId"></Registry> -->
+        <!-- <Registry v-if="mode === 'registry' && urlData && !loading" :id="'e2d23b864b7811ec9215b918e5768f09'"></Registry> -->
+
+        <!-- <router-view v-slot="{ Component }">
+            <keep-alive>
+                <component :is="Component" :key="$route.fullPath"></component>
+            </keep-alive>
+        </router-view> -->
+
+        <!-- <iframe
+            class="document-execution-iframe"
+            src="/knowageqbeengine/servlet/AdapterHTTP?DEFAULT_DATASOURCE_FOR_WRITING_LABEL=CacheDS&ACTION_NAME=QBE_ENGINE_START_ACTION&SBI_EXECUTION_ROLE=%2Fdemo%2Fadmin&SBI_COUNTRY=US&SPAGOBI_AUDIT_ID=47631&document=3249&NEW_SESSION=TRUE&SBI_LANGUAGE=en&user_id=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGVtb19hZG1pbiIsImV4cCI6MTYzNzYwNDk2NX0.6sLh03xSd0NHXcj03Egh3Js948ljYfvhCXZkzr30W0c&SBI_ENVIRONMENT=DOCBROWSER&SBI_EXECUTION_ID=d6bed3ee4b8011ec9215b918e5768f09&EDIT_MODE=null"
+        ></iframe> -->
+
         <KnParameterSidebar class="document-execution-parameter-sidebar" v-if="parameterSidebarVisible" :filtersData="filtersData" @execute="onExecute" @exportCSV="onExportCSV"></KnParameterSidebar>
     </div>
 </template>
@@ -26,10 +39,7 @@ import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSi
 
 export default defineComponent({
     name: 'document-execution',
-    components: {
-        KnParameterSidebar
-        // Registry
-    },
+    components: { KnParameterSidebar },
     props: { id: { type: String } },
     data() {
         return {
@@ -74,7 +84,11 @@ export default defineComponent({
         },
         async loadDocument() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.id}`).then((response: AxiosResponse<any>) => (this.document = response.data))
-            // console.log('LOADED DOCUMENT: ', this.document)
+            console.log('LOADED DOCUMENT: ', this.document)
+            switch (this.document.typeCode) {
+                case 'DATAMART':
+                    this.$router.push(`/document-execution/${this.document.label}/registry/${this.document.label}`)
+            }
         },
         async loadFilters() {
             await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/filters`, { label: this.id, role: this.user.defaultRole, parameters: {} }).then((response: AxiosResponse<any>) => (this.filtersData = response.data))
@@ -93,7 +107,7 @@ export default defineComponent({
             const documentUrl = this.urlData.url + '&timereloadurl=' + new Date().getTime()
             const postObject = { params: { document: null }, url: documentUrl.split('?')[0] }
             const paramsFromUrl = documentUrl.split('?')[1].split('&')
-            // console.log('DOCUMENT URL: ', documentUrl)
+            console.log('DOCUMENT URL: ', documentUrl)
 
             // console.log('PARAMS FROM URL: ', paramsFromUrl)
 
@@ -118,7 +132,7 @@ export default defineComponent({
                 document.body.appendChild(postForm)
             }
 
-            let test = new FormData()
+            let formData = new FormData()
 
             for (let k in postObject.params) {
                 const inputElement = document.getElementById('postForm_' + k) as any
@@ -134,25 +148,24 @@ export default defineComponent({
                     element.value = element.value.replace(/\+/g, ' ')
                     postForm.appendChild(element)
 
-                    test.append(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
+                    formData.append(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
                 }
             }
 
             for (let i = postForm.elements.length - 1; i >= 0; i--) {
                 const postFormElement = postForm.elements[i].id.replace('postForm_', '')
+
                 if (!(postFormElement in postObject.params)) {
                     postForm.removeChild(postForm.elements[i])
 
-                    console.log('postFormElement', postFormElement)
-                    delete test[postForm.elements[i]]
+                    formData.delete(postFormElement)
                 }
             }
 
-            // console.log('POST FORM: ', postForm)
-            // console.log('POST FORM TEST: ', test)
-            // postForm.submit()
+            // TODO: hardkodovano
+            formData.append('documentMode', 'VIEW')
 
-            this.$http.post(`/knowageqbeengine/servlet/AdapterHTTP`, test, {
+            this.$http.post(postObject.url, formData, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                     Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
@@ -208,5 +221,10 @@ export default defineComponent({
 
 .document-execution-parameter-sidebar {
     margin-left: auto;
+}
+
+.document-execution-iframe {
+    width: 100%;
+    height: 100%;
 }
 </style>

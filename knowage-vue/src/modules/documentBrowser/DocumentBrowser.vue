@@ -57,12 +57,12 @@ export default defineComponent({
                 return
             }
 
-            const id = this.tabs[this.activeIndex - 1].item ? this.tabs[this.activeIndex - 1].item.id : 'new-dashboard'
+            const id = this.tabs[this.activeIndex - 1].item ? this.tabs[this.activeIndex - 1].item.label : 'new-dashboard'
             this.$router.push('/document-browser/document-execution/' + id)
         },
         onItemSelect(payload: any) {
             this.tabs.push(payload)
-            const id = payload.item ? payload.item.id : 'new-dashboard'
+            const id = payload.item ? payload.item.label : 'new-dashboard'
             this.$router.push('/document-browser/document-execution/' + id)
             this.activeIndex = this.tabs.length
         },

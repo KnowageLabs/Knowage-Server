@@ -12,8 +12,8 @@ const routes = [
             },
             {
                 path: 'document-execution/:id',
-                name: 'document-execution',
-                component: () => import('@/modules/documentBrowser/DocumentExecutionConatiner.vue'),
+                name: 'document-browser-document-execution',
+                component: () => import('@/modules/documentExecution/main/DocumentExecution.vue'),
                 props: true
             }
         ]

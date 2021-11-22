@@ -1,9 +1,17 @@
 const routes = [
     {
-        path: '/document-execution/registry/:id',
-        name: 'document-execution-registry',
+        path: '/document-execution/:id',
+        name: 'document-execution',
         component: () => import('@/modules/documentExecution/main/DocumentExecution.vue'),
-        props: true
+        props: true,
+        children: [
+            {
+                path: 'registry/:id',
+                name: 'document-execution-registry',
+                component: () => import('@/modules/documentExecution/registry/Registry.vue'),
+                props: true
+            }
+        ]
     }
 ]
 
