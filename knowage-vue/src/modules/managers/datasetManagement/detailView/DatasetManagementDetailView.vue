@@ -232,6 +232,7 @@ export default defineComponent({
                     this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
                     this.selectedDataset.id ? this.$emit('updated') : this.$emit('created', response)
                     this.saveTags(dsToSave, response.data.id)
+                    this.saveSchedulation(dsToSave, response.data.id)
                 })
                 .catch()
         },
@@ -248,6 +249,20 @@ export default defineComponent({
                     }
                 })
                 .catch()
+        },
+        async saveSchedulation(dsToSave, id) {
+            if (dsToSave.isScheduled) {
+                await this.$http
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/persistence/dataset/id/${id}`, dsToSave, {
+                        headers: {
+                            Accept: 'application/json, text/plain, */*',
+                            'Content-Type': 'application/json;charset=UTF-8'
+                        }
+                    })
+                    .catch()
+            } else {
+                await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/persistence/dataset/label/${dsToSave.label}`).catch()
+            }
         },
         async manageDatasetFieldMetadata(fieldsColumns) {
             //Temporary workaround because fieldsColumns is now an object with a new structure after changing DataSetJSONSerializer
@@ -313,9 +328,9 @@ export default defineComponent({
                 var secondsForCron = 0
                 var minutesForCron = this.stringifySchedulingValues(this.scheduling.minutesSelected && this.scheduling.minutesSelected.length != 0, 'minutesSelected')
                 var hoursForCron = this.stringifySchedulingValues(repeatInterval != 'minute' && this.scheduling.hoursSelected && this.scheduling.hoursSelected.length != 0, 'hoursSelected')
-                var daysForCron = this.stringifySchedulingValues((repeatInterval === 'day' || repeatInterval === 'month') && this.scheduling.daysSelected.length != 0, 'daysSelected')
-                var monthsForCron = this.stringifySchedulingValues(repeatInterval === 'month' && this.scheduling.monthsSelected.length != 0, 'monthsSelected')
-                var weekdaysForCron = this.stringifySchedulingValues(repeatInterval === 'week' && this.scheduling.weekdaysSelected.length != 0, 'weekdaysSelected')
+                var daysForCron = this.stringifySchedulingValues((repeatInterval === 'day' || repeatInterval === 'month') && this.scheduling.daysSelected && this.scheduling.daysSelected.length != 0, 'daysSelected')
+                var monthsForCron = this.stringifySchedulingValues(repeatInterval === 'month' && this.scheduling.monthsSelected && this.scheduling.monthsSelected.length != 0, 'monthsSelected')
+                var weekdaysForCron = this.stringifySchedulingValues(repeatInterval === 'week' && this.scheduling.weekdaysSelected && this.scheduling.weekdaysSelected.length != 0, 'weekdaysSelected')
 
                 if (daysForCron == '*' && weekdaysForCron != '*') {
                     daysForCron = '?'
