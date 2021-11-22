@@ -1,6 +1,6 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--primary">
-        <template #left> </template>
+        <template #left>{{ document?.label }} </template>
 
         <template #right>
             <div>
@@ -142,6 +142,9 @@ export default defineComponent({
                 const postFormElement = postForm.elements[i].id.replace('postForm_', '')
                 if (!(postFormElement in postObject.params)) {
                     postForm.removeChild(postForm.elements[i])
+
+                    console.log('postFormElement', postFormElement)
+                    delete test[postForm.elements[i]]
                 }
             }
 
@@ -149,12 +152,12 @@ export default defineComponent({
             // console.log('POST FORM TEST: ', test)
             // postForm.submit()
 
-            // this.$http.post(process.env.VUE_APP_HOST_URL + `/knowageqbeengine/servlet/AdapterHTTP`, test, {
-            //     headers: {
-            //         'Content-Type': 'application/x-www-form-urlencoded',
-            //         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
-            //     }
-            // })
+            this.$http.post(`/knowageqbeengine/servlet/AdapterHTTP`, test, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+                }
+            })
         },
         onExecute() {
             console.log('EXECUTE PARAMS: ', this.filtersData)
