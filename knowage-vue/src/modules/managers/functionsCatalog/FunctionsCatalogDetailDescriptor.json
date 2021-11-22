@@ -2,8 +2,7 @@
     "dialog": {
         "style": {
             "height": "100vh",
-            "padding": "1rem",
-            "width": "100vw"
+            "padding": "1rem"
         }
     },
     "styles": {
