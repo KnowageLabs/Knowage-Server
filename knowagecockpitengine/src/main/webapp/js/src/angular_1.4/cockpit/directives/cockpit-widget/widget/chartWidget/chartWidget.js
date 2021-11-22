@@ -1466,7 +1466,7 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 					obj['formula'] = wconf.columnSelectedOfDatasetAggregations[index].formula;
 					obj['datasetOrTableFlag'] = wconf.columnSelectedOfDatasetAggregations[index].datasetOrTableFlag;
 				}
-				if(wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
+				if(wconf.columnSelectedOfDatasetAggregations && wconf.columnSelectedOfDatasetAggregations[index] && wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
 					obj.boundFunction = wconf.columnSelectedOfDatasetAggregations[index].boundFunction; 
 				}
 				aggregations.push(obj);
@@ -1488,7 +1488,7 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 					obj['fieldType'] = "ATTRIBUTE";
 					obj['orderType'] = chartCategory[i].orderType;
 					obj['orderColumn'] = chartCategory[i].orderColumn;
-					if(wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
+					if(wconf.columnSelectedOfDatasetAggregations && wconf.columnSelectedOfDatasetAggregations[index] && wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
 						obj.boundFunction = wconf.columnSelectedOfDatasetAggregations[index].boundFunction; 
 					}
 					aggregations.push(obj);
