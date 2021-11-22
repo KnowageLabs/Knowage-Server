@@ -57,21 +57,25 @@
             </div>
         </div>
     </div>
+
+    <DocumentDetails :visible="showDocumentDetails" @closeDetails="showDocumentDetails = false" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { formatDate } from '@/helpers/commons/localeHelper'
+import DocumentDetails from '@/modules/documentExecution/documentDetails/DocumentDetails.vue'
 
 export default defineComponent({
     name: 'document-browser-sidebar',
-    components: {},
+    components: { DocumentDetails },
     props: { selectedDocument: { type: Object } },
     emits: ['documentCloneClick', 'documentDeleteClick', 'itemSelected', 'documentChangeStateClicked'],
     data() {
         return {
             document: null as any,
-            user: null as any
+            user: null as any,
+            showDocumentDetails: false
         }
     },
     watch: {
@@ -124,7 +128,8 @@ export default defineComponent({
             this.$emit('itemSelected', { item: this.document, mode: 'execute' })
         },
         editDocument() {
-            this.$router.push(`/documentBrowser/editDocument/${this.document.id}`)
+            // this.$router.push(`/documentBrowser/editDocument/${this.document.id}`)
+            this.showDocumentDetails = true
         }
     }
 })

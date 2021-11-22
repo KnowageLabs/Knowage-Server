@@ -216,6 +216,27 @@
         "title": "Document browser"
     },
     "documentExecution": {
+        "documentDetails": {
+            "dataLineage": {
+                "title": "Data Lineage"
+            },
+            "drivers": {
+                "title": "Drivers"
+            },
+            "history": {
+                "title": "History"
+            },
+            "info": {
+                "infoTitle": "Informations",
+                "positionTitle": "Position",
+                "engine": "Engine",
+                "refresh": "Refresh (seconds)"
+            },
+            "outputParams": {
+                "title": "Output Parameters"
+            },
+            "title": "Document Details"
+        },
         "dossier": {
             "deleteConfirm": "Are you sure you want to delete the selected activity?",
             "deleteSuccess": "Successfully deleted selected activity.",

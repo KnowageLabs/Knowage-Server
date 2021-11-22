@@ -42,6 +42,8 @@
             <DocumentBrowserHint v-else data-test="document-browser-hint"></DocumentBrowserHint>
         </div>
     </div>
+
+    <DocumentDetails :visible="showDocumentDetails" @closeDetails="showDocumentDetails = false" />
 </template>
 
 <script lang="ts">
@@ -50,12 +52,13 @@ import { AxiosResponse } from 'axios'
 import DocumentBrowserHint from './DocumentBrowserHint.vue'
 import DocumentBrowserTree from './DocumentBrowserTree.vue'
 import DocumentBrowserDetail from './DocumentBrowserDetail.vue'
+import DocumentDetails from '@/modules/documentExecution/documentDetails/DocumentDetails.vue'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Menu from 'primevue/menu'
 
 export default defineComponent({
     name: 'document-browser-home',
-    components: { DocumentBrowserHint, DocumentBrowserTree, DocumentBrowserDetail, KnFabButton, Menu },
+    components: { DocumentBrowserHint, DocumentBrowserTree, DocumentBrowserDetail, KnFabButton, Menu, DocumentDetails },
     emits: ['itemSelected'],
     data() {
         return {
@@ -71,7 +74,8 @@ export default defineComponent({
             user: null as any,
             sidebarVisible: false,
             windowWidth: window.innerWidth,
-            loading: false
+            loading: false,
+            showDocumentDetails: false
         }
     },
     computed: {
@@ -162,7 +166,8 @@ export default defineComponent({
             }
         },
         createNewDocument() {
-            this.$router.push('/documentBrowser/newDocument')
+            // this.$router.push('/documentBrowser/newDocument')
+            this.showDocumentDetails = true
         },
         createNewCockpit() {
             this.$emit('itemSelected', { item: null, mode: 'createCockpit' })
