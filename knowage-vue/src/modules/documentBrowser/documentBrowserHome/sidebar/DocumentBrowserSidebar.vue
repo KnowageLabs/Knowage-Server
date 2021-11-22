@@ -58,7 +58,7 @@
         </div>
     </div>
 
-    <DocumentDetails :visible="showDocumentDetails" @closeDetails="showDocumentDetails = false" />
+    <DocumentDetails :selectedDocument="document" :visible="showDocumentDetails" @closeDetails="showDocumentDetails = false" />
 </template>
 
 <script lang="ts">
