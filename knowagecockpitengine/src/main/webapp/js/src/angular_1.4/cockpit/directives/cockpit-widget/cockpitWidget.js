@@ -488,7 +488,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			$scope.scopeInit(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
 			break;
 		case "RESIZE" :
-			if($scope.ngModel.type=="chart" || $scope.ngModel.type=="map" || $scope.ngModel.type=="static-pivot-table") {
+			if($scope.ngModel.type=="chart" || $scope.ngModel.type=="map" || $scope.ngModel.type=="static-pivot-table" || $scope.ngModel.type=="customchart") {
 				$scope.refreshWidget(undefined, 'resize');
 			}
 			break;
