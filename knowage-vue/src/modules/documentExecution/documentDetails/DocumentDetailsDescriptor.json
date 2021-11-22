@@ -1,9 +1,133 @@
 {
+    "states": [
+        {
+            "domainCode": "STATE",
+            "domainName": "Object state",
+            "translatedValueDescription": "Document temporanlly not in use",
+            "translatedValueName": "Suspended",
+            "valueCd": "SUSP",
+            "valueDescription": "sbidomains.ds.susp",
+            "valueId": 36,
+            "valueName": "sbidomains.nm.susp"
+        },
+        {
+            "domainCode": "STATE",
+            "domainName": "Object state",
+            "translatedValueDescription": "Document in development phase",
+            "translatedValueName": "Development",
+            "valueCd": "DEV",
+            "valueDescription": "sbidomains.ds.dev",
+            "valueId": 40,
+            "valueName": "sbidomains.nm.dev"
+        },
+        {
+            "domainCode": "STATE",
+            "domainName": "Object state",
+            "translatedValueDescription": "Document in testing phase",
+            "translatedValueName": "Test",
+            "valueCd": "TEST",
+            "valueDescription": "sbidomains.ds.test",
+            "valueId": 41,
+            "valueName": "sbidomains.nm.test"
+        },
+        {
+            "domainCode": "STATE",
+            "domainName": "Object state",
+            "translatedValueDescription": "Document released for end users use",
+            "translatedValueName": "Released",
+            "valueCd": "REL",
+            "valueDescription": "sbidomains.ds.rel",
+            "valueId": 42,
+            "valueName": "sbidomains.nm.rel"
+        }
+    ],
     "style": {
         "flex": {
             "display": "flex",
             "flex": 1,
             "flex-direction": "column"
+        },
+        "flexOne": {
+            "flex": 1
         }
-    }
+    },
+    "types": [
+        {
+            "$$hashKey": "object:159",
+            "domainCode": "BIOBJ_TYPE",
+            "domainName": "BI Object types",
+            "translatedValueDescription": "Dimensional analysis of significant facts",
+            "translatedValueName": "On-line analytical processing",
+            "valueCd": "OLAP",
+            "valueDescription": "sbidomains.ds.olap",
+            "valueId": 7,
+            "valueName": "sbidomains.nm.olap"
+        },
+        {
+            "$$hashKey": "object:160",
+            "domainCode": "BIOBJ_TYPE",
+            "domainName": "BI Object types",
+            "translatedValueDescription": "Office document",
+            "translatedValueName": "Office document",
+            "valueCd": "OFFICE_DOC",
+            "valueDescription": "sbidomains.ds.office_doc",
+            "valueId": 13,
+            "valueName": "sbidomains.nm.office_doc"
+        },
+        {
+            "$$hashKey": "object:161",
+            "domainCode": "BIOBJ_TYPE",
+            "domainName": "BI Object types",
+            "translatedValueDescription": "Collaboration",
+            "translatedValueName": "Collaboration",
+            "valueCd": "DOSSIER",
+            "valueDescription": "sbidomains.ds.dossier",
+            "valueId": 12,
+            "valueName": "sbidomains.nm.dossier"
+        },
+        {
+            "$$hashKey": "object:162",
+            "domainCode": "BIOBJ_TYPE",
+            "domainName": "BI Object types",
+            "translatedValueDescription": "Basic business intelligence objects type",
+            "translatedValueName": "Report",
+            "valueCd": "REPORT",
+            "valueDescription": "sbidomains.ds.report",
+            "valueId": 6,
+            "valueName": "sbidomains.nm.report"
+        },
+        {
+            "$$hashKey": "object:163",
+            "domainCode": "BIOBJ_TYPE",
+            "domainName": "BI Object types",
+            "translatedValueDescription": "Basic business intelligence objects type",
+            "translatedValueName": "Location Intelligence",
+            "valueCd": "MAP",
+            "valueDescription": "sbidomains.ds.map",
+            "valueId": 11,
+            "valueName": "sbidomains.nm.map"
+        },
+        {
+            "$$hashKey": "object:164",
+            "domainCode": "BIOBJ_TYPE",
+            "domainName": "BI Object types",
+            "translatedValueDescription": "ETL process",
+            "translatedValueName": "ETL process",
+            "valueCd": "ETL",
+            "valueDescription": "sbidomains.ds.etl",
+            "valueId": 14,
+            "valueName": "sbidomains.nm.etl"
+        },
+        {
+            "$$hashKey": "object:165",
+            "domainCode": "BIOBJ_TYPE",
+            "domainName": "BI Object types",
+            "translatedValueDescription": "Kpi business indicator",
+            "translatedValueName": "Kpi",
+            "valueCd": "KPI",
+            "valueDescription": "Kpi business indicator",
+            "valueId": 16,
+            "valueName": "Kpi"
+        }
+    ]
 }
