@@ -328,14 +328,16 @@ export default defineComponent({
             return false
         },
         setCheckboxValue(parameter: any) {
-            this.updateVisualDependency(parameter)
             console.log('parameter', parameter)
 
-            // console.log('selectedParameterCheckbox', this.selectedParameterCheckbox)
+            console.log('selectedParameterCheckbox', this.selectedParameterCheckbox)
 
-            parameter.parameterValue = this.selectedParameterCheckbox[parameter.id]
+            parameter.parameterValue = this.selectedParameterCheckbox[parameter.id].map((el: any) => {
+                return { value: el, description: el }
+            })
 
             console.log('parameter after', parameter)
+            this.updateVisualDependency(parameter)
         },
         getParameterDropdownOptions(parameter: any) {
             return parameter.defaultValues.filter((el: any) => el.isEnabled)
@@ -421,30 +423,44 @@ export default defineComponent({
             console.log(' >>> VISUAL DEP CHECK: ', parameter)
 
             let showOnPanel = 'true'
-
-            for (let i = 0; i < parameter.visualDependencies.length; i++) {
+            for (let i = 0; i < parameter.visualDependencies.length && showOnPanel === 'true'; i++) {
+                showOnPanel = 'false'
                 const visualDependency = parameter.visualDependencies[i]
 
                 const index = parameter.dependensToParameters.findIndex((el: any) => el.urlName === visualDependency.parFatherUrlName)
                 const parentParameter = parameter.dependensToParameters[index]
 
                 console.log(' >>>>> INDEX:', index)
+                console.log(' >>>>> PARENT PARAMETER:', parentParameter)
 
                 if (visualDependency.operation === 'contains') {
-                    for (let i = 0; i < parentParameter.parameterValue.length; i++) {
-                        if (parentParameter.parameterValue[i].value != visualDependency.compareValue) {
-                            showOnPanel = 'false'
-                            break
+                    if (Array.isArray(parentParameter.parameterValue)) {
+                        for (let i = 0; i < parentParameter.parameterValue.length; i++) {
+                            if (parentParameter.parameterValue[i].value === visualDependency.compareValue) {
+                                console.log(' >>>> ENTERED', parentParameter.parameterValue[i].value, ' === ', visualDependency.compareValue)
+                                showOnPanel = 'true'
+                                break
+                            }
+                        }
+                    } else {
+                        console.log(' >>>>>>>> ENTERED FOR SINGLE VALUE', parentParameter.parameterValue.value)
+                        console.log(' >>>>>>>> ENTERED FOR SINGLE VALUE COMPARE', visualDependency.compareValue)
+
+                        if (parentParameter.parameterValue.value === visualDependency.compareValue) {
+                            console.log(' >>>> ENTERED', parentParameter.parameterValue.value, ' === ', visualDependency.compareValue)
+                            showOnPanel = 'true'
                         }
                     }
                 } else if (visualDependency.operation === 'not contains') {
                     for (let i = 0; i < parentParameter.parameterValue.length; i++) {
-                        if (parentParameter.parameterValue[i].value == visualDependency.compareValue) {
+                        if (parentParameter.parameterValue[i].value === visualDependency.compareValue) {
                             showOnPanel = 'false'
                             break
                         }
                     }
                 }
+
+                // console.log('SHOW ON PANEL ITERATION ', i, showOnPanel)
             }
 
             parameter.showOnPanel = showOnPanel
