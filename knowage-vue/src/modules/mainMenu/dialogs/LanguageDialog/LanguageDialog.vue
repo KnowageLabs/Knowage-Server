@@ -23,7 +23,6 @@
     import { mapState } from 'vuex'
     import store from '@/App.store'
     import { AxiosResponse } from 'axios'
-    import { setLocale } from '@vee-validate/i18n'
     interface Language {
         locale: string
         disabled: boolean | false
@@ -60,7 +59,6 @@
                         store.commit('setLocale', language.locale)
                         localStorage.setItem('locale', language.locale)
                         this.$i18n.locale = language.locale
-                        setLocale(language.locale)
                         this.$store.commit('setLoading', false)
                         this.closeDialog()
                         this.$router.go(0)
