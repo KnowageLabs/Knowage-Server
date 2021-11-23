@@ -20,8 +20,10 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
     (res) => {
         if (res.data && res.data.errors) {
-            if (!res.config.headers['X-Disable-Errors']) store.commit('setError', { title: 'Server error', msg: res.data.errors[0].message })
-            return Promise.reject(res.data.errors[0])
+            // if (!res.config.headers['X-Disable-Errors']) store.commit('setError', { title: 'Server error', msg: res.data.errors[0].message })
+            // return Promise.reject(res.data.errors[0])
+            if (!res.config.headers['X-Disable-Errors']) store.commit('setError', { title: 'Server error', msg: res.data.errors[0]?.message })
+            return Promise.reject(res.data)
         }
         return res
     },

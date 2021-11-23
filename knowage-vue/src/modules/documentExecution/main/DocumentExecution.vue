@@ -27,7 +27,7 @@
             src="/knowageqbeengine/servlet/AdapterHTTP?DEFAULT_DATASOURCE_FOR_WRITING_LABEL=CacheDS&ACTION_NAME=QBE_ENGINE_START_ACTION&SBI_EXECUTION_ROLE=%2Fdemo%2Fadmin&SBI_COUNTRY=US&SPAGOBI_AUDIT_ID=47631&document=3249&NEW_SESSION=TRUE&SBI_LANGUAGE=en&user_id=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGVtb19hZG1pbiIsImV4cCI6MTYzNzYwNDk2NX0.6sLh03xSd0NHXcj03Egh3Js948ljYfvhCXZkzr30W0c&SBI_ENVIRONMENT=DOCBROWSER&SBI_EXECUTION_ID=d6bed3ee4b8011ec9215b918e5768f09&EDIT_MODE=null"
         ></iframe> -->
 
-        <KnParameterSidebar class="document-execution-parameter-sidebar" v-if="parameterSidebarVisible" :filtersData="filtersData" @execute="onExecute" @exportCSV="onExportCSV"></KnParameterSidebar>
+        <KnParameterSidebar class="document-execution-parameter-sidebar document-execution-parameter-sidebar kn-overflow-y" v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="document" @execute="onExecute" @exportCSV="onExportCSV"></KnParameterSidebar>
     </div>
 </template>
 
@@ -107,7 +107,7 @@ export default defineComponent({
             const documentUrl = this.urlData.url + '&timereloadurl=' + new Date().getTime()
             const postObject = { params: { document: null }, url: documentUrl.split('?')[0] }
             const paramsFromUrl = documentUrl.split('?')[1].split('&')
-            console.log('DOCUMENT URL: ', documentUrl)
+            // console.log('DOCUMENT URL: ', documentUrl)
 
             // console.log('PARAMS FROM URL: ', paramsFromUrl)
 
@@ -181,7 +181,20 @@ export default defineComponent({
             const postData = { documentId: this.document.id, documentLabel: this.document.label, exportType: 'CSV', parameters: {} }
             Object.keys(this.filtersData.filterStatus).forEach((key: any) => {
                 console.log('EL: ', this.filtersData.filterStatus[key])
-                postData.parameters[this.filtersData.filterStatus[key].urlName] = this.filtersData.filterStatus[key].parameterValue[0].value
+                const param = this.filtersData.filterStatus[key]
+                if (param.multivalue) {
+                    let tempString = ''
+                    for (let i = 0; i < this.filtersData.filterStatus[key].parameterValue.length; i++) {
+                        tempString += this.filtersData.filterStatus[key].parameterValue[i].value
+                        tempString += i === this.filtersData.filterStatus[key].parameterValue.length - 1 ? '' : ','
+                    }
+
+                    postData.parameters[this.filtersData.filterStatus[key].urlName] = tempString
+                } else if (param.type === 'NUM' && !param.selectionType) {
+                    postData.parameters[this.filtersData.filterStatus[key].urlName] = +this.filtersData.filterStatus[key].parameterValue[0].value
+                } else {
+                    postData.parameters[this.filtersData.filterStatus[key].urlName] = this.filtersData.filterStatus[key].parameterValue[0] ? this.filtersData.filterStatus[key].parameterValue[0].value : this.filtersData.filterStatus[key].parameterValue.value
+                }
             })
             this.loading = true
             await this.$http
@@ -226,5 +239,9 @@ export default defineComponent({
 .document-execution-iframe {
     width: 100%;
     height: 100%;
+}
+
+.document-execution-parameter-sidebar {
+    height: 60vh;
 }
 </style>

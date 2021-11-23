@@ -1,0 +1,90 @@
+<template>
+    <DataTable
+        :value="rows"
+        class="p-datatable-sm kn-table"
+        v-model:selection="selectedRow"
+        :selectionMode="multivalue ? false : 'single'"
+        v-model:filters="filters"
+        :globalFilterFields="globalFilterFields"
+        :paginator="rows.length > 20"
+        :rows="20"
+        dataKey="value"
+        responsiveLayout="stack"
+        breakpoint="600px"
+        :scrollable="true"
+        :scrollHeight="knParameterPopupDialogDescriptor.dialog.scrollHeight"
+        @row-select="$emit('selected', selectedRow)"
+        @row-unselect="$emit('selected', selectedRow)"
+        @row-select-all="$emit('selected', selectedRow)"
+        @row-unselect-all="$emit('selected', selectedRow)"
+    >
+        <template #empty>
+            <Message class="p-m-2" severity="info" :closable="false" :style="knParameterPopupDialogDescriptor.styles.message">
+                {{ $t('common.info.noDataFound') }}
+            </Message>
+        </template>
+
+        <template #header>
+            <div class="table-header p-d-flex p-ai-center">
+                <span id="search-container" class="p-input-icon-left p-mr-3">
+                    <i class="pi pi-search" />
+                    <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" />
+                </span>
+            </div>
+        </template>
+
+        <Column v-if="multivalue" selectionMode="multiple" :headerStyle="knParameterPopupDialogDescriptor.styles.checkboxColumn"></Column>
+        <Column class="kn-truncated" v-for="col of columns" :field="col.name" :header="col.header" :key="col.name" :sortable="true"> </Column>
+    </DataTable>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { filterDefault } from '@/helpers/commons/filterHelper'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
+import knParameterPopupDialogDescriptor from './KnParameterPopupDialogDescriptor.json'
+import Message from 'primevue/message'
+
+export default defineComponent({
+    name: 'kn-parameter-popup-dialog',
+    components: { Column, DataTable, Message },
+    props: { parameterPopUpData: { type: Object }, multivalue: { type: Boolean }, multipleSelectedRows: { type: Array } },
+    data() {
+        return {
+            knParameterPopupDialogDescriptor,
+            rows: [] as any[],
+            columns: [] as any[],
+            filters: { global: [filterDefault] } as Object,
+            globalFilterFields: [] as string[],
+            selectedRow: null as any
+        }
+    },
+    watch: {
+        parameterPopUpData() {
+            this.loadData()
+        }
+    },
+    created() {
+        this.loadData()
+    },
+    methods: {
+        loadData() {
+            this.rows = this.parameterPopUpData?.result.root
+
+            this.columns = this.parameterPopUpData?.result.metaData.fields.slice(1, -1)
+
+            this.columns.forEach((el: any) => this.globalFilterFields.push(el.name))
+
+            // console.log('LOADED ROWS: ', this.rows)
+            // console.log('LOADED COLUMNS: ', this.columns)
+            // console.log('MULTIVALUE: ', this.multivalue)
+            // console.log('MULTIPLE SELECTED ROWS IN TABLE: ', this.multipleSelectedRows)
+
+            if (this.multivalue) {
+                this.selectedRow = this.multipleSelectedRows
+            }
+        }
+    }
+})
+</script>
