@@ -1,25 +1,25 @@
 {
-	"compilerOptions": {
-		"target": "esnext",
-		"module": "esnext",
-		"strict": true,
-		"jsx": "preserve",
-		"importHelpers": true,
-		"moduleResolution": "node",
-		"resolveJsonModule": true,
-		"experimentalDecorators": true,
-		"skipLibCheck": true,
-		"esModuleInterop": true,
-		"allowSyntheticDefaultImports": true,
-		"noImplicitAny": false,
-		"sourceMap": true,
-		"baseUrl": ".",
-		"types": ["webpack-env", "jest"],
-		"paths": {
-			"@/*": ["src/*"]
-		},
-		"lib": ["esnext", "dom", "dom.iterable", "scripthost"]
-	},
-	"include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "tests/**/*.ts", "tests/**/*.tsx", "src/App.store.js", "src/services/webSocket.js"],
-	"exclude": ["node_modules"]
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "esnext",
+        "strict": true,
+        "jsx": "preserve",
+        "importHelpers": true,
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "experimentalDecorators": true,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "noImplicitAny": false,
+        "sourceMap": true,
+        "baseUrl": ".",
+        "types": ["webpack-env", "jest"],
+        "paths": {
+            "@/*": ["src/*"]
+        },
+        "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
+    },
+    "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "tests/**/*.ts", "tests/**/*.tsx", "src/App.store.js", "src/services/webSocket.js"],
+    "exclude": ["node_modules"]
 }

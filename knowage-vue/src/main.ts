@@ -42,7 +42,6 @@ import BadgeDirective from 'primevue/badgedirective'
 
 import ConfirmationService from 'primevue/confirmationservice'
 import internationalizationPlugin from './plugins/internationalization.js'
-import veeValidate from './plugins/veeValidate.js'
 
 import i18n from '@/App.i18n'
 
@@ -55,8 +54,7 @@ createApp(App)
     .use(ToastService)
     .use(ConfirmationService)
     .use(internationalizationPlugin, store.state.internationalization)
-    .use(veeValidate, i18n)
-    
+
     .directive('badge', BadgeDirective)
     .directive('tooltip', Tooltip)
 
