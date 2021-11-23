@@ -11,7 +11,7 @@
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0 toolbarCustomConfig">
             <template #left>
                 <span v-for="(menu, index) in getMenuForToolbar()" v-bind:key="index">
-                    <Button v-if="menu !== 'divider'" :class="descriptor.css.buttonClassHeader" v-tooltip.bottom="$t(menu.label)" @click="callFunction(menu)">
+                    <Button v-if="menu !== 'divider'" :class="descriptor.css.buttonClassHeader" v-tooltip.bottom="$t(menu.label)" @click="callFunction(menu)" :disabled="calculateDisabledProperty(menu)">
                         <span v-if="menu.icon.class" :class="menu.icon.class">{{ menu.icon.name }}</span>
                         <i v-else :class="menu.icon"></i>
                     </Button>
@@ -229,6 +229,14 @@
             }
         },
         methods: {
+            calculateDisabledProperty(menu): Boolean {
+                let disabled = false
+                if (menu.type === 'advancedFilter') {
+                    if (!this.dataset.config) disabled = true
+                    else disabled = this.dataset.config.transformations.filter((x) => x.type === 'filter').length < 2
+                }
+                return disabled
+            },
             getSidebarElementClass(index: number): string {
                 let cssClass = 'p-grid p-m-0 p-p-0 p-d-flex kn-flex transformationSidebarElement p-menuitem-link'
                 if (index < this.dataset.config.transformations.length - 1) cssClass += ' kn-disabled-text'
@@ -304,14 +312,24 @@
                 }
             },
             handleTransformation(t: any): void {
-                if (t.type === 'addColumn') {
-                    t.parameters[0].columns = [t.parameters[0].columns]
-                }
-
                 if (!this.dataset.config) this.dataset.config = {}
                 if (!this.dataset.config.transformations) this.dataset.config.transformations = []
-                this.dataset.config.transformations.push(t)
-                this.loadPreviewData()
+
+                let existing = this.dataset.config.transformations.filter((element) => {
+                    return JSON.stringify(t) === JSON.stringify(element)
+                })
+
+                if (existing && existing.length == 1) {
+                    //
+                    console.log('TRovato')
+                } else {
+                    if (t.type === 'addColumn') {
+                        t.parameters[0].columns = [t.parameters[0].columns]
+                    }
+
+                    this.dataset.config.transformations.push(t)
+                    this.loadPreviewData()
+                }
             },
             deleteTransformation(index: number): void {
                 this.dataset.config.transformations.splice(index, 1)

@@ -242,36 +242,72 @@
                         {
                             "availableValues": [
                                 {
-                                    "code": "equals",
+                                    "code": "=",
                                     "label": "="
                                 },
                                 {
-                                    "code": "greater",
-                                    "label": ">"
-                                },
-                                {
-                                    "code": "greaterOrEqual",
-                                    "label": ">="
-                                },
-                                {
-                                    "code": "less",
-                                    "label": "<"
-                                },
-                                {
-                                    "code": "lessOrEqual",
-                                    "label": "<="
-                                },
-                                {
-                                    "code": "notEquals",
+                                    "code": "!=",
                                     "label": "!="
                                 },
                                 {
+                                    "code": "like",
+                                    "label": "like"
+                                },
+                                {
+                                    "code": "notLike",
+                                    "label": "NOT like"
+                                },
+                                {
+                                    "code": "isNull",
+                                    "label": "is null"
+                                },
+                                {
+                                    "code": "isNotNull",
+                                    "label": "is NOT null"
+                                },
+                                {
+                                    "code": "=",
+                                    "label": "="
+                                },
+                                {
+                                    "code": "<",
+                                    "label": "< "
+                                },
+                                {
+                                    "code": ">",
+                                    "label": "> "
+                                },
+                                {
+                                    "code": "<=",
+                                    "label": "<= "
+                                },
+                                {
+                                    "code": ">=",
+                                    "label": ">= "
+                                },
+                                {
+                                    "code": "!=",
+                                    "label": "!= "
+                                },
+                                {
                                     "code": "in",
-                                    "label": "IN"
+                                    "label": "IN "
                                 },
                                 {
                                     "code": "notIn",
                                     "label": "NOT IN"
+                                },
+                                {
+                                    "code": "between",
+                                    "label": "Between"
+                                },
+                                {
+                                    "code": "after",
+                                    "label": "After"
+                                },
+                                {
+                                    "code": "before",
+                                    "label": "Before"
                                 },
                                 {
                                     "code": "between",
@@ -315,36 +351,64 @@
                         {
                             "availableValues": [
                                 {
-                                    "code": "equals",
+                                    "code": "like",
+                                    "label": "like"
+                                },
+                                {
+                                    "code": "notLike",
+                                    "label": "NOT like"
+                                },
+                                {
+                                    "code": "isNull",
+                                    "label": "is null"
+                                },
+                                {
+                                    "code": "isNotNull",
+                                    "label": "is NOT null"
+                                },
+                                {
+                                    "code": "equal",
                                     "label": "="
                                 },
                                 {
-                                    "code": "greater",
-                                    "label": ">"
+                                    "code": "minorThan",
+                                    "label": "< "
                                 },
                                 {
-                                    "code": "greaterOrEqual",
-                                    "label": ">="
+                                    "code": "greaterThan",
+                                    "label": "> "
                                 },
                                 {
-                                    "code": "less",
-                                    "label": "<"
+                                    "code": "minorOrEqualsThan<=",
+                                    "label": "<= "
                                 },
                                 {
-                                    "code": "lessOrEqual",
-                                    "label": "<="
+                                    "code": "greaterOrEqualsThan",
+                                    "label": ">= "
                                 },
                                 {
                                     "code": "notEquals",
-                                    "label": "!="
+                                    "label": "!= "
                                 },
                                 {
                                     "code": "in",
-                                    "label": "IN"
+                                    "label": "IN "
                                 },
                                 {
                                     "code": "notIn",
                                     "label": "NOT IN"
+                                },
+                                {
+                                    "code": "between",
+                                    "label": "Between"
+                                },
+                                {
+                                    "code": "after",
+                                    "label": "After"
+                                },
+                                {
+                                    "code": "before",
+                                    "label": "Before"
                                 },
                                 {
                                     "code": "between",
