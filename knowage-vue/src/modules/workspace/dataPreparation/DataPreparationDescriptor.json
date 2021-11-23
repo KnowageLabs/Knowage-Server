@@ -12,11 +12,11 @@
                 "class": "material-icons",
                 "name": "numbers"
             },
-            "values": ["java.lang.String", "java.lang.Double"]
+            "values": ["java.lang.String", "java.lang.Float", "java.lang.Double"]
         },
         "java.lang.String": {
             "icon": "fas fa-quote-left",
-            "values": ["java.lang.String"]
+            "values": ["java.lang.String", "java.lang.Integer", "java.lang.Double"]
         },
         "java.math.BigDecimal": {
             "icon": {
@@ -67,89 +67,28 @@
     "transformations": [
         {
             "category": "tableStructure",
-            "config": {
-                "parameters": [
-                    [
-                        {
-                            "name": "columns",
-                            "type": "multiSelect",
-                            "validationRules": "required"
-                        },
-                        {
-                            "name": "column",
-                            "type": "string",
-                            "validationRules": "required|alpha"
-                        },
-                        {
-                            "name": "formula",
-                            "type": "textarea"
-                        },
-                        {
-                            "availableValues": [],
-                            "name": "outputType",
-                            "type": "dropdown"
-                        }
-                    ]
-                ]
-            },
             "description": "managers.workspaceManagement.dataPreparation.transformations.addColumn.description",
             "editColumn": false,
             "icon": "pi pi-plus-circle",
             "label": "managers.workspaceManagement.dataPreparation.transformations.addColumn.label",
+            "name": "addColumn",
             "position": 0,
             "toolbar": true,
-            "type": "addColumn"
+            "type": "custom"
         },
         {
             "category": "tableStructure",
-            "config": {
-                "parameters": [
-                    [
-                        {
-                            "name": "column",
-                            "type": "string",
-                            "validationRules": "required|alpha"
-                        }
-                    ]
-                ]
-            },
             "description": "managers.workspaceManagement.dataPreparation.transformations.deleteColumn.description",
             "editColumn": true,
             "icon": "pi pi-minus-circle",
             "label": "managers.workspaceManagement.dataPreparation.transformations.deleteColumn.label",
+            "name": "deleteColumn",
             "position": 1,
             "toolbar": false,
-            "type": "deleteColumn"
+            "type": "simple"
         },
         {
             "category": "tableStructure",
-            "config": {
-                "parameters": [
-                    [
-                        {
-                            "name": "columns",
-                            "type": "multiSelect",
-                            "validationRules": "required"
-                        },
-                        {
-                            "name": "separator",
-                            "type": "string",
-                            "validationRules": "required|alpha_dash"
-                        },
-                        {
-                            "name": "column",
-                            "type": "string",
-                            "validationRules": "required|alpha_dash"
-                        },
-                        {
-                            "availableValues": [],
-                            "name": "outputType",
-                            "type": "dropdown",
-                            "validationRules": "required|alpha_dash"
-                        }
-                    ]
-                ]
-            },
             "description": "managers.workspaceManagement.dataPreparation.transformations.mergeColumns.description",
             "editColumn": false,
             "icon": {
@@ -157,67 +96,13 @@
                 "name": "merge_type"
             },
             "label": "managers.workspaceManagement.dataPreparation.transformations.mergeColumns.label",
+            "name": "mergeColumns",
             "position": 0,
             "toolbar": true,
-            "type": "mergeColumns"
+            "type": "simple"
         },
         {
             "category": "tableStructure",
-            "config": {
-                "parameters": [
-                    [
-                        {
-                            "name": "columns",
-                            "type": "dropdown",
-                            "validationRules": "required"
-                        },
-                        {
-                            "name": "column1",
-                            "type": "string",
-                            "validationRules": "required|alpha_dash"
-                        },
-                        {
-                            "name": "column2",
-                            "type": "string",
-                            "validationRules": "required|alpha_dash"
-                        }
-                    ],
-                    [
-                        {
-                            "availableValues": [
-                                {
-                                    "code": "split_separator",
-                                    "label": "managers.workspaceManagement.dataPreparation.transformations.useSeparator",
-                                    "relatedTo": "separator"
-                                },
-                                {
-                                    "code": "split_numberOfChars",
-                                    "label": "managers.workspaceManagement.dataPreparation.transformations.useNumberOfChars",
-                                    "relatedTo": "separator"
-                                }
-                            ],
-                            "name": "splitColumnMethod",
-                            "placeholder": "managers.workspaceManagement.dataPreparation.transformations.condition",
-                            "type": "dropdown",
-                            "validationRules": "required|alpha_dash"
-                        },
-                        {
-                            "name": "separator",
-                            "relatedTo": "splitColumnMethod",
-                            "relatedWith": "split_separator",
-                            "type": "string",
-                            "validationRules": "alpha"
-                        },
-                        {
-                            "name": "numberOfChars",
-                            "relatedTo": "splitColumnMethod",
-                            "relatedWith": "split_numberOfChars",
-                            "type": "string",
-                            "validationRules": "numeric"
-                        }
-                    ]
-                ]
-            },
             "description": "managers.workspaceManagement.dataPreparation.transformations.splitColumns.description",
             "editColumn": false,
             "icon": {
@@ -225,108 +110,13 @@
                 "name": "call_split"
             },
             "label": "managers.workspaceManagement.dataPreparation.transformations.splitColumns.label",
+            "name": "splitColumns",
             "position": 0,
             "toolbar": true,
-            "type": "splitColumns"
+            "type": "custom"
         },
         {
             "category": "filtering",
-            "config": {
-                "parameters": [
-                    [
-                        {
-                            "name": "columns",
-                            "type": "multiSelect",
-                            "validationRules": "required"
-                        },
-                        {
-                            "availableValues": [
-                                {
-                                    "code": "=",
-                                    "label": "="
-                                },
-                                {
-                                    "code": "!=",
-                                    "label": "!="
-                                },
-                                {
-                                    "code": "like",
-                                    "label": "like"
-                                },
-                                {
-                                    "code": "notLike",
-                                    "label": "NOT like"
-                                },
-                                {
-                                    "code": "isNull",
-                                    "label": "is null"
-                                },
-                                {
-                                    "code": "isNotNull",
-                                    "label": "is NOT null"
-                                },
-                                {
-                                    "code": "=",
-                                    "label": "="
-                                },
-                                {
-                                    "code": "<",
-                                    "label": "< "
-                                },
-                                {
-                                    "code": ">",
-                                    "label": "> "
-                                },
-                                {
-                                    "code": "<=",
-                                    "label": "<= "
-                                },
-                                {
-                                    "code": ">=",
-                                    "label": ">= "
-                                },
-                                {
-                                    "code": "!=",
-                                    "label": "!= "
-                                },
-                                {
-                                    "code": "in",
-                                    "label": "IN "
-                                },
-                                {
-                                    "code": "notIn",
-                                    "label": "NOT IN"
-                                },
-                                {
-                                    "code": "between",
-                                    "label": "Between"
-                                },
-                                {
-                                    "code": "after",
-                                    "label": "After"
-                                },
-                                {
-                                    "code": "before",
-                                    "label": "Before"
-                                },
-                                {
-                                    "code": "between",
-                                    "label": "Between"
-                                }
-                            ],
-                            "name": "conditions",
-                            "placeholder": "managers.workspaceManagement.dataPreparation.transformations.condition",
-                            "type": "dropdown",
-                            "validationRules": "required|alpha_dash"
-                        },
-                        {
-                            "name": "text",
-                            "type": "string",
-                            "validationRules": "required|alpha_dash"
-                        }
-                    ]
-                ]
-            },
             "description": "managers.workspaceManagement.dataPreparation.transformations.filter.description",
             "editColumn": true,
             "icon": {
@@ -334,114 +124,13 @@
                 "name": "auto_fix_normal"
             },
             "label": "managers.workspaceManagement.dataPreparation.transformations.filter.label",
+            "name": "filter",
             "position": 2,
             "toolbar": true,
-            "type": "filter"
+            "type": "simple"
         },
         {
             "category": "filtering",
-            "config": {
-                "parameters": [
-                    [
-                        {
-                            "name": "columns",
-                            "type": "multiSelect",
-                            "validationRules": "required"
-                        },
-                        {
-                            "availableValues": [
-                                {
-                                    "code": "like",
-                                    "label": "like"
-                                },
-                                {
-                                    "code": "notLike",
-                                    "label": "NOT like"
-                                },
-                                {
-                                    "code": "isNull",
-                                    "label": "is null"
-                                },
-                                {
-                                    "code": "isNotNull",
-                                    "label": "is NOT null"
-                                },
-                                {
-                                    "code": "equal",
-                                    "label": "="
-                                },
-                                {
-                                    "code": "minorThan",
-                                    "label": "< "
-                                },
-                                {
-                                    "code": "greaterThan",
-                                    "label": "> "
-                                },
-                                {
-                                    "code": "minorOrEqualsThan<=",
-                                    "label": "<= "
-                                },
-                                {
-                                    "code": "greaterOrEqualsThan",
-                                    "label": ">= "
-                                },
-                                {
-                                    "code": "notEquals",
-                                    "label": "!= "
-                                },
-                                {
-                                    "code": "in",
-                                    "label": "IN "
-                                },
-                                {
-                                    "code": "notIn",
-                                    "label": "NOT IN"
-                                },
-                                {
-                                    "code": "between",
-                                    "label": "Between"
-                                },
-                                {
-                                    "code": "after",
-                                    "label": "After"
-                                },
-                                {
-                                    "code": "before",
-                                    "label": "Before"
-                                },
-                                {
-                                    "code": "between",
-                                    "label": "Between"
-                                }
-                            ],
-                            "name": "conditions",
-                            "placeholder": "managers.workspaceManagement.dataPreparation.transformations.condition",
-                            "type": "dropdown"
-                        },
-                        {
-                            "name": "text",
-                            "type": "string",
-                            "validationRules": "required|alpha_dash"
-                        },
-                        {
-                            "availableValues": [
-                                {
-                                    "code": "AND",
-                                    "label": "common.and"
-                                },
-                                {
-                                    "code": "OR",
-                                    "label": "common.or"
-                                }
-                            ],
-                            "name": "logicOperator",
-                            "placeholder": "managers.workspaceManagement.dataPreparation.transformations.logicOperator",
-                            "type": "dropdown"
-                        }
-                    ]
-                ]
-            },
             "description": "managers.workspaceManagement.dataPreparation.transformations.advancedFilter.description",
             "editColumn": false,
             "icon": {
@@ -449,33 +138,13 @@
                 "name": "auto_fix_high"
             },
             "label": "managers.workspaceManagement.dataPreparation.transformations.advancedFilter.label",
+            "name": "advancedFilter",
             "position": 2,
             "toolbar": true,
-            "type": "advancedFilter"
+            "type": "custom"
         },
         {
             "category": "visualization",
-            "config": {
-                "parameters": [
-                    [
-                        {
-                            "name": "prefix",
-                            "type": "string",
-                            "validationRules": "required|alpha_dash"
-                        },
-                        {
-                            "name": "columns",
-                            "type": "multiSelect",
-                            "validationRules": "required"
-                        },
-                        {
-                            "name": "suffix",
-                            "type": "string",
-                            "validationRules": "required|alpha_dash"
-                        }
-                    ]
-                ]
-            },
             "description": "managers.workspaceManagement.dataPreparation.transformations.padding.description",
             "editColumn": true,
             "icon": {
@@ -483,23 +152,13 @@
                 "name": "padding"
             },
             "label": "managers.workspaceManagement.dataPreparation.transformations.padding.label",
+            "name": "padding",
             "position": 4,
             "toolbar": true,
-            "type": "padding"
+            "type": "simple"
         },
         {
             "category": "cleaning",
-            "config": {
-                "parameters": [
-                    [
-                        {
-                            "name": "columns",
-                            "type": "multiSelect",
-                            "validationRules": "required"
-                        }
-                    ]
-                ]
-            },
             "description": "managers.workspaceManagement.dataPreparation.transformations.removeDuplicates.description",
             "editColumn": true,
             "icon": {
@@ -507,116 +166,66 @@
                 "name": "control_point_duplicate"
             },
             "label": "managers.workspaceManagement.dataPreparation.transformations.removeDuplicates.label",
+            "name": "removeDuplicates",
             "position": 5,
             "toolbar": true,
-            "type": "removeDuplicates"
+            "type": "simple"
         },
         {
             "category": "cleaning",
-            "config": {
-                "parameters": [
-                    [
-                        {
-                            "name": "columns",
-                            "type": "multiSelect",
-                            "validationRules": "required"
-                        }
-                    ]
-                ]
-            },
             "description": "managers.workspaceManagement.dataPreparation.transformations.removeNull.description",
             "editColumn": true,
             "icon": "fas fa-columns",
             "label": "managers.workspaceManagement.dataPreparation.transformations.removeNull.label",
+            "name": "removeNull",
             "position": 6,
             "toolbar": true,
-            "type": "removeNull"
+            "type": "simple"
         },
         {
             "category": "editing",
-            "config": {
-                "parameters": [
-                    [
-                        {
-                            "name": "columns",
-                            "type": "multiSelect",
-                            "validationRules": "required"
-                        },
-                        {
-                            "name": "oldChar",
-                            "type": "string",
-                            "validationRules": "required|alpha_dash"
-                        },
-                        {
-                            "name": "newChar",
-                            "type": "string",
-                            "validationRules": "required|alpha_dash"
-                        }
-                    ]
-                ]
-            },
             "description": "managers.workspaceManagement.dataPreparation.transformations.replace.description",
             "editColumn": true,
             "icon": "fas fa-sync-alt",
             "incompatibleDataTypes": ["date"],
             "label": "managers.workspaceManagement.dataPreparation.transformations.replace.label",
+            "name": "replace",
             "position": 7,
             "toolbar": true,
-            "type": "replace"
+            "type": "simple"
         },
         {
             "category": "reporting",
-            "config": {
-                "parameters": []
-            },
             "description": "managers.workspaceManagement.dataPreparation.transformations.statistics.description",
             "editColumn": false,
             "icon": "pi pi-chart-bar",
             "label": "managers.workspaceManagement.dataPreparation.transformations.statistics.label",
+            "name": "statistics",
             "position": 8,
             "toolbar": false,
-            "type": "statistics"
+            "type": "custom"
         },
         {
             "category": "cleaning",
-            "config": {
-                "parameters": [
-                    [
-                        {
-                            "name": "columns",
-                            "type": "multiSelect",
-                            "validationRules": "required"
-                        }
-                    ]
-                ]
-            },
             "description": "managers.workspaceManagement.dataPreparation.transformations.trim.description",
             "editColumn": true,
             "icon": "fas fa-cut",
             "label": "managers.workspaceManagement.dataPreparation.transformations.trim.label",
+            "name": "trim",
             "position": 9,
             "toolbar": false,
-            "type": "trim"
+            "type": "simple"
         },
         {
             "category": "tableStructure",
-            "config": {
-                "parameters": [
-                    [
-                        {
-                            "name": "column",
-                            "type": "string"
-                        }
-                    ]
-                ]
-            },
             "description": "managers.workspaceManagement.dataPreparation.transformations.changeType.description",
             "editColumn": false,
             "icon": "fas fa-hashtag",
             "label": "managers.workspaceManagement.dataPreparation.transformations.changeType.label",
+            "name": "changeType",
             "position": 3,
             "toolbar": false,
-            "type": "changeType"
+            "type": "simple"
         }
     ]
 }

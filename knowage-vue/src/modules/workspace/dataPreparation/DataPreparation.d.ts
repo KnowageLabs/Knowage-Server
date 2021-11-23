@@ -1,17 +1,14 @@
 export interface ITransformation {
-    type: String
-    config: ITransformationConfig
-    description: String
-}
-export interface ITransformationConfig {
+    type: string
     parameters: Array<Array<ITransformationParameter>>
-    conditions?: Array
+    description: string
+    name: string
 }
 
 export interface ITransformationParameter {
-    name: String
+    name: string
     value: string
-    availableValues?: Array
+    availableOptions?: Array
     type: string
 }
 
@@ -22,9 +19,9 @@ export interface IDataPreparationColumn {
 }
 
 export interface IDataPreparationDataset {
-    name: String
-    label: String
-    description: String
-    visibility: String
+    name: string
+    label: string
+    description: string
+    visibility: string
     refreshRate: {}
 }

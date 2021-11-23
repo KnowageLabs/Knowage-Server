@@ -160,6 +160,8 @@
     import DataPreparationSaveDialog from '@/modules/workspace/dataPreparation/DataPreparationSaveDialog.vue'
     import { IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
 
+    import DataPreparationSimpleDescriptor from '@/modules/workspace/dataPreparation/DataPreparationSimple/DataPreparationSimpleDescriptor.json'
+
     export default defineComponent({
         name: 'data-preparation-detail',
         props: {
@@ -181,7 +183,8 @@
                 columns: [] as IDataPreparationColumn[],
                 col: null,
                 descriptorTransformations: Array<any>(),
-                dataset: {} as any
+                dataset: {} as any,
+                simpleDescriptor: DataPreparationSimpleDescriptor
             }
         },
 
@@ -294,10 +297,12 @@
                             this.handleTransformation(toReturn)
                         }
                     })
-                } else {
+                } /* else {
                     let requiresValues = false
-                    for (var i = 0; i < transformation.config.parameters.length; i++) {
-                        let element = transformation.config.parameters[i]
+                    //TODO Apply searching on custom descriptors
+                    let pars = transformation.type === 'simple' ? this.simpleDescriptor[transformation.name].parameters : []
+                    for (var i = 0; i < pars.length; i++) {
+                        let element = pars[i]
                         requiresValues = element.filter((x) => !x.value).length > 0
 
                         if (requiresValues) break
@@ -309,27 +314,20 @@
                     } else {
                         this.handleTransformation(transformation)
                     }
-                }
+                } */
+                this.selectedTransformation = transformation
+                this.col = col
             },
             handleTransformation(t: any): void {
                 if (!this.dataset.config) this.dataset.config = {}
                 if (!this.dataset.config.transformations) this.dataset.config.transformations = []
 
-                let existing = this.dataset.config.transformations.filter((element) => {
-                    return JSON.stringify(t) === JSON.stringify(element)
-                })
-
-                if (existing && existing.length == 1) {
-                    //
-                    console.log('TRovato')
-                } else {
-                    if (t.type === 'addColumn') {
-                        t.parameters[0].columns = [t.parameters[0].columns]
-                    }
-
-                    this.dataset.config.transformations.push(t)
-                    this.loadPreviewData()
+                if (t.type === 'addColumn') {
+                    t.parameters[0].columns = [t.parameters[0].columns]
                 }
+
+                this.dataset.config.transformations.push(t)
+                this.loadPreviewData()
             },
             deleteTransformation(index: number): void {
                 this.dataset.config.transformations.splice(index, 1)

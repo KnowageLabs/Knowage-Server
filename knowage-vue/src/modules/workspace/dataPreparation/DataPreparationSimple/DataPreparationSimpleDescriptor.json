@@ -1,0 +1,194 @@
+{
+    "changeType": {
+        "parameters": [
+            [
+                {
+                    "name": "column",
+                    "type": "string"
+                }
+            ]
+        ]
+    },
+    "deleteColumn": {
+        "parameters": [
+            [
+                {
+                    "name": "column",
+                    "type": "string",
+                    "validationRules": "required|alpha"
+                }
+            ]
+        ]
+    },
+    "filter": {
+        "parameters": [
+            [
+                {
+                    "name": "columns",
+                    "type": "multiSelect",
+                    "validationRules": "required"
+                },
+                {
+                    "availableOptions": [
+                        {
+                            "code": "=",
+                            "label": "="
+                        },
+                        {
+                            "code": "!=",
+                            "label": "!="
+                        },
+                        {
+                            "code": "like",
+                            "label": "like"
+                        },
+                        {
+                            "code": "notLike",
+                            "label": "NOT like"
+                        },
+                        {
+                            "code": "isNull",
+                            "label": "is null"
+                        },
+                        {
+                            "code": "isNotNull",
+                            "label": "is NOT null"
+                        },
+                        {
+                            "code": "=",
+                            "label": "="
+                        },
+                        {
+                            "code": "<",
+                            "label": "< "
+                        },
+                        {
+                            "code": ">",
+                            "label": "> "
+                        },
+                        {
+                            "code": "<=",
+                            "label": "<= "
+                        },
+                        {
+                            "code": ">=",
+                            "label": ">= "
+                        },
+                        {
+                            "code": "!=",
+                            "label": "!= "
+                        },
+                        {
+                            "code": "in",
+                            "label": "IN "
+                        },
+                        {
+                            "code": "notIn",
+                            "label": "NOT IN"
+                        },
+                        {
+                            "code": "between",
+                            "label": "Between"
+                        },
+                        {
+                            "code": "after",
+                            "label": "After"
+                        },
+                        {
+                            "code": "before",
+                            "label": "Before"
+                        },
+                        {
+                            "code": "between",
+                            "label": "Between"
+                        }
+                    ],
+                    "name": "conditions",
+                    "placeholder": "managers.workspaceManagement.dataPreparation.transformations.condition",
+                    "type": "dropdown",
+                    "validationRules": "required|alpha_dash"
+                },
+                {
+                    "name": "text",
+                    "type": "string",
+                    "validationRules": "required|alpha_dash"
+                }
+            ]
+        ]
+    },
+    "padding": {
+        "parameters": [
+            [
+                {
+                    "name": "prefix",
+                    "type": "string",
+                    "validationRules": "required|alpha_dash"
+                },
+                {
+                    "name": "columns",
+                    "type": "multiSelect",
+                    "validationRules": "required"
+                },
+                {
+                    "name": "suffix",
+                    "type": "string",
+                    "validationRules": "required|alpha_dash"
+                }
+            ]
+        ]
+    },
+    "removeDuplicates": {
+        "parameters": [
+            [
+                {
+                    "name": "columns",
+                    "type": "multiSelect",
+                    "validationRules": "required"
+                }
+            ]
+        ]
+    },
+    "removeNull": {
+        "parameters": [
+            [
+                {
+                    "name": "columns",
+                    "type": "multiSelect",
+                    "validationRules": "required"
+                }
+            ]
+        ]
+    },
+    "replace": {
+        "parameters": [
+            [
+                {
+                    "name": "columns",
+                    "type": "multiSelect",
+                    "validationRules": "required"
+                },
+                {
+                    "name": "oldChar",
+                    "type": "string",
+                    "validationRules": "required|alpha_dash"
+                },
+                {
+                    "name": "newChar",
+                    "type": "string",
+                    "validationRules": "required|alpha_dash"
+                }
+            ]
+        ]
+    },
+    "trim": {
+        "parameters": [
+            [
+                {
+                    "name": "columns",
+                    "type": "multiSelect",
+                    "validationRules": "required"
+                }
+            ]
+        ]
+    }
+}
