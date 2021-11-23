@@ -23,7 +23,7 @@
     </Card>
     <LovsManagementInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :infoTitle="infoTitle" :lovType="lov.itypeCd" @close="infoDialogVisible = false"></LovsManagementInfoDialog>
     <LovsManagementProfileAttributesList v-show="profileAttributesDialogVisible" :visible="profileAttributesDialogVisible" :profileAttributes="profileAttributes" @selected="setCodeInput($event)" @close="profileAttributesDialogVisible = false"></LovsManagementProfileAttributesList>
-    <LovsManagementParamsDialog v-show="paramsDialogVisible" :visible="paramsDialogVisible" :dependenciesList="dependenciesList" @preview="onPreview" @close="paramsDialogVisible = false"></LovsManagementParamsDialog>
+    <LovsManagementParamsDialog v-show="paramsDialogVisible" :visible="paramsDialogVisible" :dependenciesList="dependenciesList" @preview="onPreview" @close="onParamsDialogClose"></LovsManagementParamsDialog>
     <LovsManagementPreviewDialog v-show="previewDialogVisible" :visible="previewDialogVisible" :dataForPreview="dataForPreview" :pagination="pagination" @close="onPreviewClose" @pageChanged="previewLov($event, false, true)"></LovsManagementPreviewDialog>
     <LovsManagementTestDialog v-show="testDialogVisible" :visible="testDialogVisible" :selectedLov="lov" :testModel="treeListTypeModel" :testLovModel="testLovModel" :testLovTreeModel="testLovTreeModel" @close="testDialogVisible = false" @save="onTestSave($event)"></LovsManagementTestDialog>
 </template>
@@ -255,6 +255,7 @@ export default defineComponent({
                 .finally(() => (this.touchedForTest = false))
 
             if (listOfEmptyDependencies.length > 0 && !this.dependenciesReady) {
+                console.log('LIST OF EMPTY FIRST IF: ', listOfEmptyDependencies)
                 this.dependenciesList = []
                 for (let i = 0; i < listOfEmptyDependencies.length; i++) {
                     this.dependenciesList.push({
@@ -264,9 +265,11 @@ export default defineComponent({
                 }
                 this.paramsDialogVisible = true
             } else {
+                console.log('LIST OF EMPTY SECOND IF: ', listOfEmptyDependencies)
                 await this.previewLov(this.pagination, false, showPreview)
                 this.buildTestTable()
             }
+            console.log('LIST OF DEPENDENCIES: ', this.dependenciesList)
         },
         async previewLov(value: any, hasDependencies: boolean, showPreview: boolean) {
             this.pagination = value
@@ -470,7 +473,8 @@ export default defineComponent({
             tempObj['DESCRIPTION-COLUMN'] = this.treeListTypeModel['DESCRIPTION-COLUMN']
             tempObj['VALUE-COLUMN'] = this.treeListTypeModel['VALUE-COLUMN']
             tempObj['VISIBLE-COLUMNS'] = this.treeListTypeModel['VISIBLE-COLUMNS']
-            for (var i = 0; i < this.testLovModel.length; i++) {
+
+            for (let i = 0; i < this.testLovModel.length; i++) {
                 if (this.treeListTypeModel['VISIBLE-COLUMNS'].indexOf(this.testLovModel[i].name) === -1) {
                     this.formatedInvisibleValues.push(this.testLovModel[i].name)
                 }
@@ -496,6 +500,8 @@ export default defineComponent({
                 }
             }
             tempObj['INVISIBLE-COLUMNS'] = this.formatedInvisibleValues.join()
+
+            tempObj['VISIBLE-COLUMNS'] = this.treeListTypeModel['VISIBLE-COLUMNS']
         },
         setLovInputTypeId(inputType: string) {
             switch (inputType) {
@@ -572,6 +578,13 @@ export default defineComponent({
             this.treeListTypeModel = payload.treeListTypeModel
             this.testLovModel = payload.model
             this.testLovTreeModel = payload.treeModel
+
+            this.treeListTypeModel['VISIBLE-COLUMNS'] = ''
+            for (let i = 0; i < this.testLovModel.length; i++) {
+                this.treeListTypeModel['VISIBLE-COLUMNS'] += this.testLovModel[i].name
+                this.treeListTypeModel['VISIBLE-COLUMNS'] += i === this.testLovModel.length - 1 ? '' : ','
+            }
+
             this.handleSubmit(this.sendSave)
             this.testDialogVisible = false
         },
@@ -598,6 +611,11 @@ export default defineComponent({
         },
         onPreviewClose() {
             this.previewDialogVisible = false
+        },
+        onParamsDialogClose() {
+            this.paramsDialogVisible = false
+            this.dependenciesList = []
+            this.dependenciesReady = false
         }
     }
 })

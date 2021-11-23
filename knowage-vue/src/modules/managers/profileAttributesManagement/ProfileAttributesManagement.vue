@@ -137,9 +137,8 @@ export default defineComponent({
                         .catch(() => {
                             this.$store.commit('setError', {
                                 title: this.$t('managers.profileAttributesManagement.info.deleteTitle'),
-                                msg: this.$t('managers.profileAttributesManagement.info.deleteMessage')
+                                msg: this.$t('managers.profileAttributesManagement.error.profileAttributeDeletion')
                             })
-                            this.loadAllAttributes()
                         })
                         .catch((error) => {
                             this.$store.commit('setError', {

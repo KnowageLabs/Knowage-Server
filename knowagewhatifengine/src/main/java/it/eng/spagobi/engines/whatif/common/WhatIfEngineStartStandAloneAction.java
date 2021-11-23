@@ -30,6 +30,7 @@ import javax.ws.rs.core.Context;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.plugins.providers.html.View;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.whatif.WhatIfEngine;
@@ -56,7 +57,7 @@ public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineServi
 
 	@GET
 	@Produces("text/html")
-	public void startAction(@Context HttpServletResponse response) {
+	public View startAction(@Context HttpServletResponse response) {
 
 		logger.debug("IN");
 
@@ -78,13 +79,7 @@ public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineServi
 
 			getExecutionSession().setAttributeInSession(ENGINE_INSTANCE, whatIfEngineInstance);
 
-			try {
-				servletRequest.getRequestDispatcher(REQUEST_DISPATCHER_URL).forward(servletRequest, response);
-			} catch (Exception e) {
-				logger.error("Error starting the What-If engine: error while forwarding the execution to the jsp " + REQUEST_DISPATCHER_URL, e);
-				throw new SpagoBIEngineRuntimeException(
-						"Error starting the What-If engine: error while forwarding the execution to the jsp " + REQUEST_DISPATCHER_URL, e);
-			}
+			return new View(REQUEST_DISPATCHER_URL);
 
 		} catch (Exception e) {
 			logger.error("Error starting the What-If engine", e);

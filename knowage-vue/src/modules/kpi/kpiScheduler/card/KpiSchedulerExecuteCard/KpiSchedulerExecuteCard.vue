@@ -44,7 +44,7 @@
                 </template>
                 <Column :style="executeCardDescriptor.table.columns.style" field="timeRun" :header="$t('kpi.kpiScheduler.timeRun')" :sortable="true">
                     <template #body="slotProps">
-                        {{ getFormatedDate(slotProps.data.timeRun) }}
+                        {{ getFormattedDate(slotProps.data.timeRun) }}
                     </template>
                 </Column>
                 <Column class="kn-truncated" :style="executeCardDescriptor.table.columns.style" v-for="col of executeCardDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"> </Column>

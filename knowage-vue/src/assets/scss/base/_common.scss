@@ -17,6 +17,12 @@
 
 .kn-draggable {
     cursor: grab;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .kn-height-full-vertical {
@@ -57,6 +63,16 @@
     flex-direction: column;
 }
 
+.kn-small-paginator {
+    @media screen and (max-width: 1200px) {
+        .p-paginator-first,
+        .p-paginator-last,
+        .p-paginator-pages {
+            display: none;
+        }
+    }
+}
+
 .kn-truncated {
     text-overflow: ellipsis;
     overflow: hidden;
@@ -69,4 +85,8 @@
 
 .kn-text-error {
     color: $color-error !important;
+}
+
+.kn-warning-icon {
+    color: $color-warning;
 }

@@ -50,6 +50,7 @@
                     </template>
                     <Column :expander="true" :headerStyle="glossaryUsageLinkCardDescriptor.expanderHeaderStyle" />
                     <Column class="kn-truncated" v-for="col of glossaryUsageLinkCardDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"></Column>
+                    <Column v-if="showModelColumn" class="kn-truncated" field="model" :header="'model'" :sortable="true"></Column>
                 </DataTable>
                 <div class="kn-flex" v-if="selectedItem && selectedItem.id && selectedItem.itemType !== 'document'">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary">
@@ -82,6 +83,7 @@ export default defineComponent({
     props: {
         title: { type: String },
         items: { type: Array },
+        showModelColumn: { type: Boolean },
         words: { type: Object },
         treeWords: { type: Object }
     },
@@ -154,31 +156,33 @@ export default defineComponent({
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)
-                .then(() => {
-                    type === 'tree'
-                        ? linkItem.children.push({
-                              key: word.WORD_ID,
-                              id: word.WORD_ID,
-                              label: word.WORD,
-                              children: [] as any[],
-                              data: word,
-                              style: glossaryUsageLinkCardDescriptor.node.style,
-                              leaf: true,
-                              parent: linkItem,
-                              itemType: itemType
-                          })
-                        : this.associatedWords[linkItem.id].push(word)
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.createTitle'),
-                        msg: this.$t('common.toast.success')
-                    })
+                .then((response: AxiosResponse<any>) => {
+                    if (response.data.Status !== 'NON OK') {
+                        type === 'tree'
+                            ? linkItem.children.push({
+                                  key: word.WORD_ID,
+                                  id: word.WORD_ID,
+                                  label: word.WORD,
+                                  children: [] as any[],
+                                  data: word,
+                                  style: glossaryUsageLinkCardDescriptor.node.style,
+                                  leaf: true,
+                                  parent: linkItem,
+                                  itemType: itemType
+                              })
+                            : this.associatedWords[linkItem.id].push(word)
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.createTitle'),
+                            msg: this.$t('common.toast.success')
+                        })
+                    } else {
+                        this.$store.commit('setError', {
+                            title: this.$t('common.error.generic'),
+                            msg: response.data.Message === 'sbi.glossary.word.new.name.duplicate' ? this.$t('managers.glossary.glossaryUsage.duplicateWord') : response.data.Message
+                        })
+                    }
                 })
-                .catch((response: AxiosResponse<any>) => {
-                    this.$store.commit('setError', {
-                        title: this.$t('common.error.generic'),
-                        msg: response
-                    })
-                })
+                .catch(() => {})
                 .finally(() => (this.loading = false))
         },
         async addAssociatedWordDocument(document: any, word: iWord) {

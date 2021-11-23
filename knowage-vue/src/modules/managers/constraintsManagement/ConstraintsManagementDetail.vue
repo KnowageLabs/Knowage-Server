@@ -49,9 +49,21 @@
                     </div>
                     <div class="p-field p-col-12">
                         <span class="p-float-label">
-                            <InputText id="description" class="kn-material-input" type="text" v-model.trim="constraint.description" :disabled="inputDisabled" @input="$emit('touched')" maxlength="160" />
+                            <InputText
+                                id="description"
+                                class="kn-material-input"
+                                type="text"
+                                v-model.trim="v$.constraint.description.$model"
+                                :class="{
+                                    'p-invalid': v$.constraint.description.$invalid && v$.constraint.description.$dirty
+                                }"
+                                :disabled="inputDisabled"
+                                @input="$emit('touched')"
+                                maxlength="160"
+                            />
                             <label for="description" class="kn-material-input-label">{{ $t('common.description') }} </label>
                         </span>
+                        <KnValidationMessages class="p-mt-1" :vComp="v$.constraint.description" :additionalTranslateParams="{ fieldName: $t('common.description') }"></KnValidationMessages>
                     </div>
                     <div class="p-field p-col-4">
                         <span class="p-float-label">

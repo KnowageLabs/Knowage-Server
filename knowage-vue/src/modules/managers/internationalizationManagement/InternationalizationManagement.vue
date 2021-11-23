@@ -51,8 +51,8 @@
                         <template #body="slotProps">
                             <div class="p-d-flex p-jc-center p-ai-center">
                                 <Button icon="pi pi-save" class="p-button-link" @click="saveLabel(language, slotProps.data)" v-tooltip.top="$t('common.save')" />
-                                <Button v-if="language.defaultLanguage" icon="pi pi-trash" class="p-button-link" @click="deleteLabelConfirm(language, slotProps.data)" v-tooltip.top="$t('common.delete')" />
-                                <Button v-if="!language.defaultLanguage" icon="pi pi-times" class="p-button-link" @click="deleteLabelConfirm(language, slotProps.data)" v-tooltip.top="$t('common.cancel')" />
+                                <Button v-if="language.defaultLanguage" icon="pi pi-trash" class="p-button-link" @click="deleteLabelConfirm(language, slotProps, true)" v-tooltip.top="$t('common.delete')" />
+                                <Button v-if="!language.defaultLanguage" icon="pi pi-times" class="p-button-link" @click="deleteLabelConfirm(language, slotProps, false)" v-tooltip.top="$t('common.cancel')" />
                             </div>
                         </template>
                     </Column>

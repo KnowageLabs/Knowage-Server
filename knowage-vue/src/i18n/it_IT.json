@@ -7,6 +7,13 @@
         "loggedUser": "utente loggato",
         "search": "ricerca",
         "tenant": "tenant",
+        "toast": {
+            "deleteConfirmTitle": "Conferma eliminazione",
+            "deleteMessage": "Questo elemento sarà eliminato. Sei sicuro di voler continuare?",
+            "deleteSuccess": "Elemento eliminato con successo",
+            "deleteTitle": "Eliminato",
+            "success": "Operazione completata con successo"
+        },
         "version": "versione"
     },
     "home": {

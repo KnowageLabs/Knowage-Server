@@ -30,9 +30,9 @@
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
-                        <div class="kn-list-item kn-draggable" data-test="list-item">
+                        <div class="kn-list-item kn-draggable" draggable="true" @dragstart="onDragStart($event, slotProps.option)" data-test="list-item">
                             <i class="pi pi-bars"></i>
-                            <div class="kn-list-item-text" draggable="true" @click.stop="editWord(slotProps.option.WORD_ID)" @dragstart="onDragStart($event, slotProps.option)">
+                            <div class="kn-list-item-text" @click.stop="editWord(slotProps.option.WORD_ID)">
                                 <span>{{ slotProps.option.WORD }}</span>
                             </div>
                             <Button icon="pi pi-info-circle" class="p-button-text p-button-rounded p-button-plain" @click.stop="showInfo(slotProps.option)" data-test="info-button" />

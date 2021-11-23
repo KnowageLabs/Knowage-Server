@@ -27,7 +27,7 @@
             </div>
 
             <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <router-view :cloneKpiId="cloneKpiId" :cloneKpiVersion="cloneKpiVersion" :showGuide="showGuide" @touched="touched = true" @closed="onFormClose" @kpiUpdated="reloadAndReroute" @kpiCreated="reloadAndReroute" @showDialog="displayInfoDialog" @onGuideClose="showGuide = false" />
+                <router-view :cloneKpiId="cloneKpiId" :cloneKpiVersion="cloneKpiVersion" @touched="touched = true" @closed="onFormClose" @kpiUpdated="reloadAndReroute" @kpiCreated="reloadAndReroute" @showDialog="displayInfoDialog" @onGuideClose="showGuide = false" />
             </div>
         </div>
     </div>
@@ -51,7 +51,6 @@ export default defineComponent({
             displayModal: false,
             hintVisible: true,
             cloneKpi: false,
-            showGuide: true,
             kpiList: [] as any,
             kpiToClone: {} as any,
             cloneKpiId: Number,
@@ -125,7 +124,10 @@ export default defineComponent({
             let kpiToLoad = this.kpiList.find((kpi) => {
                 if (kpi.name === event) return true
             })
-            const path = `/kpi-definition/${kpiToLoad.id}/${kpiToLoad.version}`
+            let path = ''
+            if (kpiToLoad) {
+                path = `/kpi-definition/${kpiToLoad.id}/${kpiToLoad.version}`
+            }
             this.$router.push(path)
 
             this.touched = false

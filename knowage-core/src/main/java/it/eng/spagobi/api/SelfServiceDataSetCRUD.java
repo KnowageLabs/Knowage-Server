@@ -386,7 +386,6 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 			String meta = selfServiceDataSetDTO.getMeta();
 			// attributes for persisting dataset
 			String persist = selfServiceDataSetDTO.getPersist();
-			String tablePrefix = selfServiceDataSetDTO.getTablePrefix();
 			String tableName = selfServiceDataSetDTO.getTableName();
 
 			IDataSet ds = dao.loadDataSetByLabel(label);
@@ -409,8 +408,8 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 
 			// retrieve persist data
 			dsNew.setPersisted(Boolean.valueOf(persist));
-			if (tablePrefix != null)
-				dsNew.setPersistTableName(tablePrefix.toUpperCase() + tableName.toUpperCase());
+			if (tableName != null)
+				dsNew.setPersistTableName(tableName.toUpperCase());
 			else
 				dsNew.setPersistTableName(null);
 
@@ -443,7 +442,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 				dataset.setPersisted(true);
 				if ((tableName != null) && (tableName.length() > 0)) {
 					// use specified name
-					dataset.setPersistTableName(tablePrefix.toUpperCase() + tableName.toUpperCase());
+					dataset.setPersistTableName(tableName.toUpperCase());
 				} else {
 					// otherwise use dataset name as table name
 					String name = selfServiceDataSetDTO.getName();

@@ -2,11 +2,12 @@
     <div class="kn-page-content p-m-0">
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
             <template #left>{{ $t('managers.glossary.glossaryDefinition.title') }}</template>
-            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+
             <template #right>
                 <FabButton icon="fas fa-plus" class="fab-button" @click="addNewGlossary('Save')" />
             </template>
         </Toolbar>
+        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         <Card class="p-m-3">
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
@@ -75,15 +76,15 @@
                             <div
                                 class="p-d-flex p-flex-row p-ai-center"
                                 :class="{ dropzone: dropzoneActive[slotProps.node.key] }"
-                                @mouseover="buttonVisible[slotProps.node.id] = true"
-                                @mouseleave="buttonVisible[slotProps.node.id] = false"
+                                @mouseover="buttonVisible[slotProps.node.key] = true"
+                                @mouseleave="buttonVisible[slotProps.node.key] = false"
                                 @drop="saveWordConfirm($event, slotProps.node)"
                                 @dragover.prevent
                                 @dragenter.prevent="setDropzoneClass(true, slotProps.node)"
                                 @dragleave.prevent="setDropzoneClass(false, slotProps.node)"
                             >
-                                <span>{{ slotProps.node.label }}</span>
-                                <div v-show="buttonVisible[slotProps.node.id]" class="p-ml-2">
+                                <span class="node-label">{{ slotProps.node.label }}</span>
+                                <div v-show="buttonVisible[slotProps.node.key]">
                                     <Button
                                         v-if="!slotProps.node.data.HAVE_WORD_CHILD && slotProps.node.data.CONTENT_NM"
                                         icon="pi pi-bars"
@@ -122,7 +123,15 @@ import Tree from 'primevue/tree'
 
 export default defineComponent({
     name: 'glossary-definition-detail',
-    components: { Card, Dropdown, GlossaryDefinitionHint, GlossaryDefinitionNodeDialog, FabButton, Message, Tree },
+    components: {
+        Card,
+        Dropdown,
+        GlossaryDefinitionHint,
+        GlossaryDefinitionNodeDialog,
+        FabButton,
+        Message,
+        Tree
+    },
     props: { reloadTree: { type: Boolean } },
     emits: ['addWord', 'infoClicked'],
     data() {
@@ -203,9 +212,10 @@ export default defineComponent({
         },
         createNode(el: any, parent: any) {
             return {
-                key: el.CONTENT_ID ?? el.WORD_ID,
+                key: el.CONTENT_ID ? `content-${el.CONTENT_ID}` : `word-${el.WORD_ID}`,
                 id: el.CONTENT_ID ?? el.WORD_ID,
                 label: el.CONTENT_NM ?? el.WORD,
+                icon: el.WORD_ID && !(el.HAVE_WORD_CHILD || el.HAVE_CONTENTS_CHILD) ? 'pi pi-circle-on' : '',
                 children: [] as iNode[],
                 data: el,
                 style: this.glossaryDefinitionDescriptor.node.style,
@@ -241,23 +251,12 @@ export default defineComponent({
                 })
                 this.nodes.push(tempNode)
             })
-            this.expandAll()
-        },
-        expandAll() {
-            for (let node of this.nodes) {
-                this.expandNode(node)
-            }
-            this.expandedKeys = { ...this.expandedKeys }
-        },
-        expandNode(node: iNode) {
-            if (node.children && node.children.length) {
-                this.expandedKeys[node.key] = true
-                for (let child of node.children) {
-                    this.expandNode(child)
-                }
-            }
         },
         async saveWordConfirm(event: any, item: any) {
+            if (item.data.HAVE_CONTENTS_CHILD || item.data.WORD_ID) {
+                return
+            }
+
             const word = JSON.parse(event.dataTransfer.getData('text/plain'))
             this.$confirm.require({
                 message: this.$t('managers.glossary.glossaryDefinition.saveWordConfirmMessage'),
@@ -296,7 +295,10 @@ export default defineComponent({
                         msg: response
                     })
                 })
-                .finally(() => (this.loading = false))
+                .finally(() => {
+                    this.loading = false
+                    this.dropzoneActive = []
+                })
         },
         async deleteNodeConfirm(node: any) {
             this.$confirm.require({
@@ -333,6 +335,7 @@ export default defineComponent({
                 }
             }
 
+            this.dropzoneActive = []
             this.loading = false
         },
         async showNodeDialog(node: any, mode: string) {
@@ -456,7 +459,10 @@ export default defineComponent({
         },
         addWord(node: iNode) {
             this.selectedNode = node
-            this.$emit('addWord', { parent: node.data, glossaryId: this.selectedGlossaryId })
+            this.$emit('addWord', {
+                parent: node.data,
+                glossaryId: this.selectedGlossaryId
+            })
         },
         async addNewGlossary(type: string) {
             this.showTree = false
@@ -475,11 +481,20 @@ export default defineComponent({
                     SaveOrUpdate: 'Save'
                 }
             } else {
-                this.selectedGlossary = { GLOSSARY_ID: this.selectedGlossary?.GLOSSARY_ID, GLOSSARY_CD: this.selectedGlossary?.GLOSSARY_CD, GLOSSARY_DS: this.selectedGlossary?.GLOSSARY_DS, GLOSSARY_NM: this.$t('common.copyOf') + ' ' + this.selectedGlossary?.GLOSSARY_NM } as iGlossary
+                this.selectedGlossary = {
+                    GLOSSARY_ID: this.selectedGlossary?.GLOSSARY_ID,
+                    GLOSSARY_CD: this.selectedGlossary?.GLOSSARY_CD,
+                    GLOSSARY_DS: this.selectedGlossary?.GLOSSARY_DS,
+                    GLOSSARY_NM: this.$t('common.copyOf') + ' ' + this.selectedGlossary?.GLOSSARY_NM
+                } as iGlossary
                 await this.handleSaveGlossary()
             }
 
-            this.originalGlossary = { GLOSSARY_CD: '', GLOSSARY_DS: '', GLOSSARY_NM: '' } as iGlossary
+            this.originalGlossary = {
+                GLOSSARY_CD: '',
+                GLOSSARY_DS: '',
+                GLOSSARY_NM: ''
+            } as iGlossary
         },
         async handleSaveGlossary() {
             this.loading = true
@@ -559,7 +574,7 @@ export default defineComponent({
             }
         },
         setDropzoneClass(value: boolean, node: any) {
-            if (node.data.CONTENT_ID) {
+            if (node.data.CONTENT_ID && !node.data.HAVE_CONTENTS_CHILD) {
                 this.dropzoneActive[node.key] = value
             }
         }
@@ -594,5 +609,10 @@ export default defineComponent({
     width: 200px;
     height: 30px;
     border: 1px dashed;
+}
+
+.node-label {
+    word-wrap: break-word;
+    width: 300px;
 }
 </style>
