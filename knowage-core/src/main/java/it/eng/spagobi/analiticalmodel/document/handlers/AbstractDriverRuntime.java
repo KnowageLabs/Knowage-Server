@@ -106,7 +106,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	String lovDescriptionColumnName;
 	List<String> lovVisibleColumnsNames;
 	List<String> lovInvisibleColumnsNames;
-	private BiMap<String, String> colName2colPlaceholder = HashBiMap.create();
+	private BiMap<String, String> colPlaceholder2ColName = HashBiMap.create();
 
 	int valuesCount;
 	// used to comunicate to the client the unique
@@ -309,11 +309,11 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 				AtomicInteger colCount = new AtomicInteger(0);
 
 				lovVisibleColumnsNames.forEach(e -> {
-					colName2colPlaceholder.put("_col" + colCount.getAndIncrement(), e);
+					colPlaceholder2ColName.put("_col" + colCount.getAndIncrement(), e);
 				});
 
 				lovInvisibleColumnsNames.forEach(e -> {
-					colName2colPlaceholder.put("_col" + colCount.getAndIncrement(), e);
+					colPlaceholder2ColName.put("_col" + colCount.getAndIncrement(), e);
 				});
 			}
 
@@ -469,7 +469,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 				Object value = item.get(colKeyUp);
 				itemAsMap.put(colKeyUp, value);
 
-				itemAsMap.put(colName2colPlaceholder.inverse().get(colKey), value);
+				itemAsMap.put(colPlaceholder2ColName.inverse().get(colKey), value);
 			}
 		}
 
@@ -481,7 +481,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 				Object value = item.get(colKeyUp);
 				itemAsMap.put(colKeyUp, value);
 
-				itemAsMap.put(colName2colPlaceholder.inverse().get(colKey), value);
+				itemAsMap.put(colPlaceholder2ColName.inverse().get(colKey), value);
 			}
 		}
 
@@ -1023,8 +1023,8 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 		return lovInvisibleColumnsNames;
 	}
 
-	public BiMap<String, String> getColName2colPlaceholder() {
-		return colName2colPlaceholder;
+	public BiMap<String, String> getColPlaceholder2ColName() {
+		return colPlaceholder2ColName;
 	}
 
 }
