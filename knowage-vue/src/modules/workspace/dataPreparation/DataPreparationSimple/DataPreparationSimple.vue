@@ -108,7 +108,7 @@
             this.localTransformation = this.transformation ? { ...this.transformation } : ({} as ITransformation)
 
             let name = this.transformation && this.transformation.name ? this.transformation.name : ''
-            if (name) this.localTransformation.parameters = this.descriptor[name].parameters
+            if (name && this.transformation?.type === 'simple') this.localTransformation.parameters = this.descriptor[name].parameters
         },
         methods: {
             handleMultiSelectChange(e: Event): void {

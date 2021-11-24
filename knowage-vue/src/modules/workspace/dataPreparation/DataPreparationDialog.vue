@@ -29,6 +29,7 @@
     import DataPreparationValidationDescriptor from './DataPreparationValidationDescriptor.json'
     import DataPreparationSimple from './DataPreparationSimple/DataPreparationSimple.vue'
     import DataPreparationSimpleDescriptor from '@/modules/workspace/dataPreparation/DataPreparationSimple/DataPreparationSimpleDescriptor.json'
+    import DataPreparationCustomDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationCustomDescriptor.json'
 
     export default defineComponent({
         name: 'data-preparation-detail-dialog',
@@ -39,7 +40,7 @@
         },
         components: { DataPreparationSimple, Dialog, Message },
         data() {
-            return { localCopy: {} as ITransformation | undefined, v$: useValidate() as any, validationDescriptor: DataPreparationValidationDescriptor, simpleDescriptor: DataPreparationSimpleDescriptor }
+            return { localCopy: {} as ITransformation | undefined, v$: useValidate() as any, validationDescriptor: DataPreparationValidationDescriptor, simpleDescriptor: DataPreparationSimpleDescriptor, customDescriptor: DataPreparationCustomDescriptor }
         },
         validations() {
             return {
@@ -161,7 +162,7 @@
 
             refreshTransfrormation(): void {
                 if (this.localCopy) {
-                    let pars = this.localCopy.type === 'simple' ? this.simpleDescriptor[this.localCopy.name].parameters : []
+                    let pars = this.localCopy.type === 'simple' ? this.simpleDescriptor[this.localCopy.name].parameters : this.customDescriptor[this.localCopy.name].parameters
                     pars.forEach((element) => {
                         element.forEach((item) => {
                             item.availableOptions?.forEach((element) => {

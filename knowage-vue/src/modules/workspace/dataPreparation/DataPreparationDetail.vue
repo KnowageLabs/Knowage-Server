@@ -24,7 +24,9 @@
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         <div class="kn-page-content p-grid p-m-0 managerDetail">
             <Sidebar v-model:visible="visibleRight" position="right">
-                <span>{{ $t('managers.workspaceManagement.dataPreparation.transformations.label') }}</span>
+                <div>{{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }} : {{ dataset.label }}</div>
+                <Divider class="p-m-0 p-p-0 dividerCustomConfig" />
+                <div class="kn-truncated">{{ $t('managers.workspaceManagement.dataPreparation.transformations.label') }}</div>
                 <!-- 
 				<Menu v-if="dataset.config && dataset.config.transformations && dataset.config.transformations.length > 0" :model="dataset.config.transformations" :ref="sidebar" :popup="false" class="customSidebarMenu">
 					<template #item="{item}">
@@ -85,7 +87,7 @@
                 :value="datasetData"
                 class="p-datatable-sm kn-table functionalityTable"
                 dataKey="id"
-                :paginator="true"
+                :paginator="datasetData.length > 10"
                 :rows="10"
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 breakpoint="960px"
@@ -95,6 +97,8 @@
                 columnResizeMode="expand"
                 showGridlines
                 responsiveLayout="scroll"
+                :scrollable="true"
+                scrollHeight="calc(100% - 58px)"
             >
                 <template #empty>
                     {{ $t('common.info.noDataFound') }}
@@ -108,28 +112,42 @@
                         <div class="p-grid p-m-0 p-d-flex kn-flex">
                             <div class="p-col-3 p-m-0 p-p-0 p-jc-start p-ai-center">
                                 <Button :class="descriptor.css.buttonClassHeader" @click="toggle($event, 'opType-' + colIndex)">
-                                    <span v-if="descriptor.compatibilityMap[col.type].icon.class" :class="descriptor.compatibilityMap[col.type].icon.class">{{ descriptor.compatibilityMap[col.type].icon.name }}</span>
-                                    <i v-else :class="descriptor.compatibilityMap[col.type].icon"></i>
+                                    <span v-if="descriptorTransformations.filter((x) => x.name === 'changeRole')[0].icon.class" :class="descriptorTransformations.filter((x) => x.name === 'changeRole')[0].icon.class">{{
+                                        descriptorTransformations.filter((x) => x.name === 'changeRole')[0].icon.name
+                                    }}</span>
+                                    <i v-else :class="descriptorTransformations.filter((x) => x.name === 'changeRole')[0].icon"></i>
                                 </Button>
-                                <Menu :model="getCompatibilityType(col)" :ref="'opType-' + colIndex" :popup="true">
-                                    <template #item="{item}">
-                                        <span class="p-menuitem-link" @click="callFunction(descriptorTransformations.filter((x) => x.type === 'changeType')[0], col.header, item)">
+                                <OverlayPanel :ref="'opType-' + colIndex" :popup="true">
+                                    <span class="p-float-label">
+                                        <Dropdown v-model="col.fieldType" :options="translateRoles()" optionLabel="label" optionValue="code" class="kn-material-input" :class="{ 'p-invalid': col.validationRules && col.validationRules.includes('required') && !col.Type }" />
+                                    </span>
+                                </OverlayPanel>
+                                <!-- <Menu :model="getCompatibilityType(col)" :ref="'opType-' + colIndex" :popup="true">
+                                                                         <template #item="{item}">
+                                        <span class="p-menuitem-link" @click="callFunction(descriptorTransformations.filter((x) => x.type === 'changeRole')[0], col.header, item)">
                                             <span v-if="descriptor.compatibilityMap[item].icon.class" :class="descriptor.compatibilityMap[item].icon.class">{{ descriptor.compatibilityMap[item].icon.name }}</span>
                                             <i v-else :class="descriptor.compatibilityMap[item].icon"></i>
 
                                             <span class="p-ml-2"> {{ $t(item) }}</span>
                                         </span>
                                     </template>
-                                </Menu>
+                                    <template #item="{item}">
+                                        {{ item }}
+                                    </template>
+                                </Menu> -->
                             </div>
                             <div class="p-col-6 p-m-0 p-p-0 p-jc-start p-ai-center">
-                                <span class="kn-truncated">{{ $t(col.header) }}</span>
+                                <div class="kn-list-item">
+                                    <span v-if="col.edit"> <InputText class="kn-material-input" type="text" v-model="col.fieldAlias" @keyup.enter="switchEditMode(col)" @blur="switchEditMode(col)"></InputText> </span><span v-else>{{ col.fieldAlias }}</span>
+                                    <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain" @click="switchEditMode(col)" />
+                                </div>
+                                <div class="kn-list-item-text-secondary kn-truncated roleType">{{ $t(col.fieldType) }}</div>
                             </div>
                             <div class="p-col-3 p-m-0 p-p-0 p-d-flex p-jc-end p-ai-center">
                                 <Button icon="pi pi-ellipsis-v" :class="descriptor.css.buttonClassHeader" @click="toggle($event, 'trOpType-' + colIndex)" />
                                 <Menu :model="getTransformationsMenu(col)" :ref="'trOpType-' + colIndex" :popup="true">
                                     <template #item="{item}">
-                                        <span class="p-menuitem-link" @click="callFunction(item, col.header)">
+                                        <span class="p-menuitem-link" @click="callFunction(item, col)">
                                             <span :class="item.icon.class" v-if="item.icon.class">{{ item.icon.name }}</span>
                                             <i v-else :class="item.icon"></i> <span class="p-ml-2"> {{ $t(item.label) }}</span></span
                                         >
@@ -152,7 +170,9 @@
     import DataTable from 'primevue/datatable'
     import DataPreparationDescriptor from './DataPreparationDescriptor.json'
     import Divider from 'primevue/divider'
+    import Dropdown from 'primevue/dropdown'
     import Sidebar from 'primevue/sidebar'
+    import OverlayPanel from 'primevue/overlaypanel'
 
     import Menu from 'primevue/menu'
 
@@ -167,7 +187,7 @@
         props: {
             id: Object
         },
-        components: { Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Sidebar, Menu },
+        components: { Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Dropdown, OverlayPanel, Sidebar, Menu },
 
         data() {
             return {
@@ -198,16 +218,20 @@
             if (this.dataset) {
                 await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datapreparation/' + this.id + '/datasetinfo').then((response: AxiosResponse<any>) => {
                     this.columns = []
-                    response.data.meta.columns
-                        .filter((x) => x.pname == 'Type')
-                        .forEach((element) => {
-                            let obj = {} as IDataPreparationColumn
-                            obj.header = element.column
-                            obj.type = element.pvalue
-                            obj.disabled = false as boolean
+                    let obj = {} as IDataPreparationColumn
+                    var i = 0
+                    for (var idx in response.data.meta.columns) {
+                        i++
+                        let column = response.data.meta.columns[idx]
+                        obj.header = column.column
+                        obj.disabled = false as boolean
+                        obj[column.pname] = column.pvalue
 
+                        if (i % 3 == 0) {
                             this.columns.push(obj)
-                        })
+                            obj = {} as IDataPreparationColumn
+                        }
+                    }
 
                     this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datapreparation/' + this.id + '/preview', this.dataset).then((response: AxiosResponse<any>) => {
                         this.datasetData = []
@@ -267,27 +291,45 @@
                 return this.descriptorTransformations
                     .filter((x) => x.editColumn)
                     .filter((x) => {
-                        if (x.incompatibleDataTypes) return !x.incompatibleDataTypes?.includes(col.type)
+                        if (x.incompatibleDataTypes) return !x.incompatibleDataTypes?.includes(col.Type)
                         return true
                     })
             },
             callFunction(transformation: any, col, type?): void {
-                if (transformation.type === 'changeType') {
-                    transformation.config.parameters[0][0].value = type
+                if (transformation.name === 'changeType') {
+                    /*                    transformation.config.parameters[0][0].value = type
                     let toReturn = { parameters: [] as Array<any>, type: transformation.type }
                     let obj = { columns: [] as Array<any>, type: type }
                     obj.columns.push(col)
 
-                    toReturn.parameters.push(obj)
+                    toReturn.parameters.push(obj) */
+                    let parsArray = this.simpleDescriptor[transformation.name].parameters
+                    for (var i = 0; i < parsArray.length; i++) {
+                        let parArray = parsArray[i]
+                        for (var j = 0; j < parArray.length; j++) {
+                            let element = parArray[j]
+                            if (element.name === 'destType') {
+                                element.availableOptions = col ? this.getCompatibilityType(col) : this.descriptor.compatibilityMap['all'].values
 
-                    this.handleTransformation(toReturn)
-                } else if (transformation.type === 'deleteColumn' && col) {
+                                element.availableOptions.forEach((element) => {
+                                    let splitted = element.label.split('.', -1)
+
+                                    element.label = splitted.length > 0 ? splitted[splitted.length - 1] : splitted[0]
+                                })
+                            }
+                        }
+                    }
+
+                    this.handleTransformation(transformation)
+                    this.selectedTransformation = transformation
+                    this.col = col.header
+                } else if (transformation.name === 'deleteColumn' && col) {
                     this.$confirm.require({
                         message: this.$t('common.toast.deleteMessage'),
                         header: this.$t('common.toast.deleteTitle'),
                         icon: 'pi pi-exclamation-triangle',
                         accept: () => {
-                            transformation.config.parameters[0][0].value = type
+                            transformation.parameters[0][0].value = type
                             let toReturn = { parameters: [] as Array<any>, type: transformation.type }
                             let obj = { columns: [] as Array<any> }
                             obj.columns.push(col)
@@ -297,26 +339,28 @@
                             this.handleTransformation(toReturn)
                         }
                     })
-                } /* else {
-                    let requiresValues = false
-                    //TODO Apply searching on custom descriptors
-                    let pars = transformation.type === 'simple' ? this.simpleDescriptor[transformation.name].parameters : []
-                    for (var i = 0; i < pars.length; i++) {
-                        let element = pars[i]
-                        requiresValues = element.filter((x) => !x.value).length > 0
+                } else {
+                    /* else {
+                            let requiresValues = false
+                            //TODO Apply searching on custom descriptors
+                            let pars = transformation.type === 'simple' ? this.simpleDescriptor[transformation.name].parameters : []
+                            for (var i = 0; i < pars.length; i++) {
+                                let element = pars[i]
+                                requiresValues = element.filter((x) => !x.value).length > 0
 
-                        if (requiresValues) break
-                    }
+                                if (requiresValues) break
+                            }
 
-                    if (requiresValues) {
-                        this.selectedTransformation = transformation
-                        this.col = col
-                    } else {
-                        this.handleTransformation(transformation)
-                    }
-                } */
-                this.selectedTransformation = transformation
-                this.col = col
+                            if (requiresValues) {
+                                this.selectedTransformation = transformation
+                                this.col = col
+                            } else {
+                                this.handleTransformation(transformation)
+                            }
+                        } */
+                    this.selectedTransformation = transformation
+                    if (col) this.col = col.header
+                }
             },
             handleTransformation(t: any): void {
                 if (!this.dataset.config) this.dataset.config = {}
@@ -334,7 +378,7 @@
                 this.loadPreviewData()
             },
             getCompatibilityType(col: IDataPreparationColumn): void {
-                return this.descriptor.compatibilityMap[col.type].values
+                return this.descriptor.compatibilityMap[col.Type].values
             },
             addColumn(item): void {
                 console.log(item)
@@ -373,13 +417,21 @@
             },
             async loadPreviewData() {
                 /* 				await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/dataset/preview', this.selectedTransformation).then((response: AxiosResponse<any>) => {
-    	console.log(response)
-    	this.selectedTransformation = null
-    }) */
+            	console.log(response)
+            	this.selectedTransformation = null
+            }) */
 
                 console.log(this.dataset.config.transformations)
 
                 this.selectedTransformation = null
+            },
+            translateRoles() {
+                let translatedRoles = this.descriptor.roles
+                translatedRoles.forEach((x) => (x.label = this.$t(x.label)))
+                return translatedRoles
+            },
+            switchEditMode(col) {
+                col.edit = !col.edit
             }
         }
     })
@@ -419,5 +471,9 @@
         width: 100% !important;
         border: none !important;
         padding: 0px !important;
+    }
+
+    .roleType {
+        font-size: 0.67em;
     }
 </style>

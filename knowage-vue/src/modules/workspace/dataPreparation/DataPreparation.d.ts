@@ -14,8 +14,10 @@ export interface ITransformationParameter {
 
 export interface IDataPreparationColumn {
     header: string
-    type: string
-    disabled: Boolean
+    Type: string
+    fieldType: string
+    fieldAlias: string
+    disabled: boolean
 }
 
 export interface IDataPreparationDataset {

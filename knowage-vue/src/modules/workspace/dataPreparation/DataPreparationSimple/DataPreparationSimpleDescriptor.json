@@ -3,8 +3,16 @@
         "parameters": [
             [
                 {
-                    "name": "column",
-                    "type": "string"
+                    "name": "columns",
+                    "type": "multiSelect",
+                    "validationRules": "required"
+                },
+                {
+                    "availableOptions": [],
+                    "name": "destType",
+                    "placeholder": "managers.workspaceManagement.dataPreparation.transformations.destType",
+                    "type": "dropdown",
+                    "validationRules": "required|alpha_dash"
                 }
             ]
         ]

@@ -1469,6 +1469,114 @@
             "templateSuccessfullyUploaded": "@:managers.widgetGallery.templateSuccessfully uploaded",
             "title": "Gallery management",
             "uploadTemplate": "Upload template"
+        },
+        "workspaceManagement": {
+            "dataPreparation": {
+                "dataset": {
+                    "description": "Description",
+                    "label": "Label",
+                    "name": "Name",
+                    "refreshRate": {
+                        "frequency": {
+                            "DAILY": "Every day",
+                            "HOURL": "Every hour",
+                            "MONTHLY": "Every month",
+                            "NEVER": "Never",
+                            "WEEKLY": "Every week",
+                            "YEARLY": "Every year"
+                        },
+                        "label": "Refresh rate"
+                    },
+                    "visibility": "Visibility"
+                },
+                "detail": "Detail",
+                "originalDataset": "Original dataset",
+                "parametersConfiguration": "Parameters configuration",
+                "roles": {
+                    "attribute": "ATTRIBUTE",
+                    "measure": "MEASURE"
+                },
+                "savePreparedDataset": "Save prepared dataset",
+                "transformations": {
+                    "addColumn": {
+                        "description": "TODO",
+                        "label": "Add column"
+                    },
+                    "changeRole": {
+                        "description": "Change role for the fields",
+                        "label": "Change role"
+                    },
+                    "changeType": {
+                        "description": "Change type for the fields",
+                        "label": "Change type"
+                    },
+                    "column": "Column",
+                    "column1": "Column 1",
+                    "column2": "Column 2",
+                    "columns": "Columns",
+                    "condition": "Condition",
+                    "conditions": "Conditions",
+                    "deleteColumn": {
+                        "description": "TODO",
+                        "label": "Delete column"
+                    },
+                    "destType": "Destination type",
+                    "filter": {
+                        "description": "TODO",
+                        "label": "Filter"
+                    },
+                    "format": {
+                        "description": "TODO",
+                        "label": "Format"
+                    },
+                    "formula": "Formula",
+                    "label": "Transformations",
+                    "logicOperator": "Logical operator",
+                    "mergeColumns": {
+                        "description": "The output type is always String",
+                        "label": "Merge columns"
+                    },
+                    "newChar": "New char",
+                    "numberOfChars": "Number of characters",
+                    "oldChar": "Old char",
+                    "outputType": "Output Type",
+                    "padding": {
+                        "description": "TODO",
+                        "label": "Padding"
+                    },
+                    "prefix": "Prefix",
+                    "removeDuplicates": {
+                        "description": "Removes duplicate values from a range of values.",
+                        "label": "Remove duplicates"
+                    },
+                    "removeNull": {
+                        "description": "TODO",
+                        "label": "Remove NULL"
+                    },
+                    "replace": {
+                        "description": "replace(searchvalue, newvalue)",
+                        "label": "Replace"
+                    },
+                    "separator": "Separator",
+                    "splitColumn": {
+                        "description": "TODO",
+                        "label": "Split column"
+                    },
+                    "splitColumnMethod": "Split column method",
+                    "statistics": {
+                        "description": "TODO",
+                        "label": "Statistics"
+                    },
+                    "suffix": "Suffix",
+                    "text": "Text",
+                    "trim": {
+                        "description": "TODO",
+                        "label": "Trim"
+                    },
+                    "useNumberOfChars": "Use number of characters",
+                    "useSeparator": "Use separator"
+                }
+            }
         }
     },
     "menu": {

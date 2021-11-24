@@ -1,33 +1,122 @@
 {
     "compatibilityMap": {
+        "all": {
+            "values": [
+                {
+                    "code": "string",
+                    "label": "java.lang.String"
+                },
+                {
+                    "code": "integer",
+                    "label": "java.lang.Integer"
+                },
+                {
+                    "code": "string",
+                    "label": "java.util.String"
+                },
+                {
+                    "code": "float",
+                    "label": "java.lang.Float"
+                },
+                {
+                    "code": "double",
+                    "label": "java.lang.Double"
+                }
+            ]
+        },
         "java.lang.Double": {
             "icon": {
                 "class": "material-icons",
                 "name": "numbers"
             },
-            "values": ["java.lang.String"]
+            "values": [
+                {
+                    "code": "string",
+                    "label": "java.lang.String"
+                }
+            ]
         },
         "java.lang.Integer": {
             "icon": {
                 "class": "material-icons",
                 "name": "numbers"
             },
-            "values": ["java.lang.String", "java.lang.Float", "java.lang.Double"]
+            "values": [
+                {
+                    "code": "string",
+                    "label": "java.lang.String"
+                },
+                {
+                    "code": "float",
+                    "label": "java.lang.Float"
+                },
+                {
+                    "code": "double",
+                    "label": "java.lang.Double"
+                }
+            ]
+        },
+        "java.lang.Long": {
+            "values": [
+                {
+                    "code": "string",
+                    "label": "java.lang.String"
+                },
+                {
+                    "code": "double",
+                    "label": "java.lang.Double"
+                }
+            ]
         },
         "java.lang.String": {
             "icon": "fas fa-quote-left",
-            "values": ["java.lang.String", "java.lang.Integer", "java.lang.Double"]
+            "values": [
+                {
+                    "code": "string",
+                    "label": "java.lang.String"
+                },
+                {
+                    "code": "integer",
+                    "label": "java.lang.Integer"
+                },
+                {
+                    "code": "double",
+                    "label": "java.lang.Double"
+                }
+            ]
         },
         "java.math.BigDecimal": {
             "icon": {
                 "class": "material-icons",
                 "name": "numbers"
             },
-            "values": ["java.lang.String", "java.lang.Double"]
+            "values": [
+                {
+                    "code": "string",
+                    "label": "java.lang.String"
+                },
+                {
+                    "code": "double",
+                    "label": "java.lang.Double"
+                }
+            ]
+        },
+        "java.sql.Date": {
+            "values": [
+                {
+                    "code": "string",
+                    "label": "java.lang.String"
+                }
+            ]
         },
         "java.util.String": {
             "icon": "far fa-calendar-alt",
-            "values": ["java.lang.String"]
+            "values": [
+                {
+                    "code": "string",
+                    "label": "java.lang.String"
+                }
+            ]
         }
     },
     "css": {
@@ -64,6 +153,16 @@
             ]
         }
     },
+    "roles": [
+        {
+            "code": "ATTRIBUTE",
+            "label": "managers.workspaceManagement.dataPreparation.roles.attribute"
+        },
+        {
+            "code": "MEASURE",
+            "label": "managers.workspaceManagement.dataPreparation.roles.measure"
+        }
+    ],
     "transformations": [
         {
             "category": "tableStructure",
@@ -97,9 +196,9 @@
             },
             "label": "managers.workspaceManagement.dataPreparation.transformations.mergeColumns.label",
             "name": "mergeColumns",
-            "position": 0,
+            "position": 2,
             "toolbar": true,
-            "type": "simple"
+            "type": "custom"
         },
         {
             "category": "tableStructure",
@@ -111,7 +210,7 @@
             },
             "label": "managers.workspaceManagement.dataPreparation.transformations.splitColumns.label",
             "name": "splitColumns",
-            "position": 0,
+            "position": 3,
             "toolbar": true,
             "type": "custom"
         },
@@ -125,7 +224,7 @@
             },
             "label": "managers.workspaceManagement.dataPreparation.transformations.filter.label",
             "name": "filter",
-            "position": 2,
+            "position": 4,
             "toolbar": true,
             "type": "simple"
         },
@@ -139,7 +238,7 @@
             },
             "label": "managers.workspaceManagement.dataPreparation.transformations.advancedFilter.label",
             "name": "advancedFilter",
-            "position": 2,
+            "position": 5,
             "toolbar": true,
             "type": "custom"
         },
@@ -153,7 +252,7 @@
             },
             "label": "managers.workspaceManagement.dataPreparation.transformations.padding.label",
             "name": "padding",
-            "position": 4,
+            "position": 6,
             "toolbar": true,
             "type": "simple"
         },
@@ -167,7 +266,7 @@
             },
             "label": "managers.workspaceManagement.dataPreparation.transformations.removeDuplicates.label",
             "name": "removeDuplicates",
-            "position": 5,
+            "position": 7,
             "toolbar": true,
             "type": "simple"
         },
@@ -178,7 +277,7 @@
             "icon": "fas fa-columns",
             "label": "managers.workspaceManagement.dataPreparation.transformations.removeNull.label",
             "name": "removeNull",
-            "position": 6,
+            "position": 8,
             "toolbar": true,
             "type": "simple"
         },
@@ -190,7 +289,7 @@
             "incompatibleDataTypes": ["date"],
             "label": "managers.workspaceManagement.dataPreparation.transformations.replace.label",
             "name": "replace",
-            "position": 7,
+            "position": 9,
             "toolbar": true,
             "type": "simple"
         },
@@ -201,7 +300,7 @@
             "icon": "pi pi-chart-bar",
             "label": "managers.workspaceManagement.dataPreparation.transformations.statistics.label",
             "name": "statistics",
-            "position": 8,
+            "position": 10,
             "toolbar": false,
             "type": "custom"
         },
@@ -212,18 +311,29 @@
             "icon": "fas fa-cut",
             "label": "managers.workspaceManagement.dataPreparation.transformations.trim.label",
             "name": "trim",
-            "position": 9,
+            "position": 11,
             "toolbar": false,
             "type": "simple"
         },
         {
             "category": "tableStructure",
             "description": "managers.workspaceManagement.dataPreparation.transformations.changeType.description",
-            "editColumn": false,
+            "editColumn": true,
             "icon": "fas fa-hashtag",
             "label": "managers.workspaceManagement.dataPreparation.transformations.changeType.label",
             "name": "changeType",
-            "position": 3,
+            "position": 12,
+            "toolbar": true,
+            "type": "simple"
+        },
+        {
+            "category": "tableStructure",
+            "description": "managers.workspaceManagement.dataPreparation.transformations.changeRole.description",
+            "editColumn": false,
+            "icon": "fas fa-hashtag",
+            "label": "managers.workspaceManagement.dataPreparation.transformations.changeRole.label",
+            "name": "changeRole",
+            "position": 13,
             "toolbar": false,
             "type": "simple"
         }

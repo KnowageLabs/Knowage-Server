@@ -126,6 +126,9 @@
             ]
         ]
     },
+    "mergeColumns": {
+        "parameters": []
+    },
     "splitColumns": {
         "parameters": [
             [
