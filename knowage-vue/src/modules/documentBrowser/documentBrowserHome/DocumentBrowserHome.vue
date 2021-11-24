@@ -38,12 +38,13 @@
                 @documentCloned="loadDocuments"
                 @documentStateChanged="loadDocuments"
                 @itemSelected="$emit('itemSelected', $event)"
+                @showDocumentDetails="showDocumentDetailsDialog"
             ></DocumentBrowserDetail>
             <DocumentBrowserHint v-else data-test="document-browser-hint"></DocumentBrowserHint>
         </div>
     </div>
 
-    <DocumentDetails :visible="showDocumentDetails" @closeDetails="showDocumentDetails = false" />
+    <DocumentDetails v-if="showDocumentDetails && !loading" :selectedDocument="selectedDocument" :visible="showDocumentDetails" @closeDetails="showDocumentDetails = false" />
 </template>
 
 <script lang="ts">
@@ -75,7 +76,8 @@ export default defineComponent({
             sidebarVisible: false,
             windowWidth: window.innerWidth,
             loading: false,
-            showDocumentDetails: false
+            showDocumentDetails: false,
+            selectedDocument: null as any
         }
     },
     computed: {
@@ -167,6 +169,14 @@ export default defineComponent({
         },
         createNewDocument() {
             // this.$router.push('/documentBrowser/newDocument')
+            this.selectedDocument = {}
+            this.showDocumentDetails = true
+        },
+        async showDocumentDetailsDialog(event) {
+            this.loading = true
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${event.id}`).then((response: AxiosResponse<any>) => (this.selectedDocument = response.data))
+            this.loading = false
+            // this.selectedDocument = { ...event }
             this.showDocumentDetails = true
         },
         createNewCockpit() {

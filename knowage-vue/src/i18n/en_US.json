@@ -11,7 +11,6 @@
         "clone": "Clone",
         "close": "close",
         "cockpit": "Cockpit",
-        "locked": "Locked",
         "codingLanguages": {
             "css": "css",
             "html": "html",
@@ -68,6 +67,7 @@
         "language": "Language",
         "library": "Library",
         "load": "Load",
+        "locked": "Locked",
         "loggedUser": "logged user",
         "modify": "modify",
         "name": "name",
@@ -228,14 +228,26 @@
                 "title": "History"
             },
             "info": {
+                "attribute": "Select Attribute",
+                "engine": "Engine",
+                "engineHint": "Select a type to unlock the available engines",
                 "infoTitle": "Informations",
                 "positionTitle": "Position",
-                "engine": "Engine",
+                "previewImage": "Preview Image",
+                "profiledVisibility": "Defined Restrictions",
                 "refresh": "Refresh (seconds)",
-                "previewImage": "Preview Image"
+                "refreshHint": "Select the number of milliseconds after the document will refresh",
+                "uploadTemplate": "Upload template",
+                "restrictionValueHint": "Enter Value",
+                "restrictionsTitle": "Visibility Restrictions",
+                "visibilityLocationTitle": "Select the functionalities where the document will be visible",
+                "datasetDialogTitle": "Select Dataset"
             },
             "outputParams": {
                 "title": "Output Parameters"
+            },
+            "subreports": {
+                "title": "Subreports"
             },
             "title": "Document Details"
         },

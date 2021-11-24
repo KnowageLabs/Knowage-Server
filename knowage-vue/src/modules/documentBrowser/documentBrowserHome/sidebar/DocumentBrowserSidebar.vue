@@ -5,7 +5,7 @@
                 <div id="document-icons-container" class="p-d-flex p-flex-row p-jc-around ">
                     <i class="fa fa-play-circle document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.executeDocument')" @click="executeDocument" />
                     <template v-if="isSuperAdmin">
-                        <i class="pi pi-pencil document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.editDocument')" @click="editDocument" />
+                        <i class="pi pi-pencil document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.editDocument')" @click="$emit('showDocumentDetails', document)" />
                         <i class="far fa-copy document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.cloneDocument')" @click="cloneDocumentConfirm" />
                         <i class="far fa-trash-alt document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.deleteDocument')" @click="deleteDocumentConfirm" />
                         <i v-if="document.stateCode === 'TEST'" class="fa fa-arrow-up document-pointer p-mx-4" v-tooltip.left="$t('documentBrowser.moveUpDocumentState')" @click="changeStateDocumentConfirm('UP')" />
@@ -57,25 +57,20 @@
             </div>
         </div>
     </div>
-
-    <DocumentDetails :selectedDocument="document" :visible="showDocumentDetails" @closeDetails="showDocumentDetails = false" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { formatDate } from '@/helpers/commons/localeHelper'
-import DocumentDetails from '@/modules/documentExecution/documentDetails/DocumentDetails.vue'
 
 export default defineComponent({
     name: 'document-browser-sidebar',
-    components: { DocumentDetails },
     props: { selectedDocument: { type: Object } },
-    emits: ['documentCloneClick', 'documentDeleteClick', 'itemSelected', 'documentChangeStateClicked'],
+    emits: ['documentCloneClick', 'documentDeleteClick', 'itemSelected', 'documentChangeStateClicked', 'showDocumentDetails'],
     data() {
         return {
             document: null as any,
-            user: null as any,
-            showDocumentDetails: false
+            user: null as any
         }
     },
     watch: {
@@ -126,10 +121,6 @@ export default defineComponent({
         },
         executeDocument() {
             this.$emit('itemSelected', { item: this.document, mode: 'execute' })
-        },
-        editDocument() {
-            // this.$router.push(`/documentBrowser/editDocument/${this.document.id}`)
-            this.showDocumentDetails = true
         }
     }
 })

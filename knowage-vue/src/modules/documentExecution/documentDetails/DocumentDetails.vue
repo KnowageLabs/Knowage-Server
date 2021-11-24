@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="document-details-dialog p-fluid kn-dialog--toolbar--primary" :contentStyle="mainDescriptor.style.flex" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="9999" :autoZIndex="true">
+    <Dialog class="document-details-dialog p-fluid kn-dialog--toolbar--primary" :contentStyle="mainDescriptor.style.flex" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #left>
@@ -12,31 +12,47 @@
             </Toolbar>
         </template>
         <div class="document-details-tab-container p-d-flex p-flex-column" :style="mainDescriptor.style.flexOne">
+            <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
             <TabView class="document-details-tabview" :style="mainDescriptor.style.flex">
                 <TabPanel>
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.info.infoTitle') }}</span>
                     </template>
-                    <InformationsTab :selectedDocument="selectedDocument" />
+                    <InformationsTab
+                        v-if="!loading"
+                        :selectedDocument="selectedDocument"
+                        :documentTypes="types"
+                        :documentEngines="engines"
+                        :availableDatasources="dataSources"
+                        :availableStates="states"
+                        :selectedDataset="selectedDataset"
+                        :availableTemplates="templates"
+                        :availableAttributes="attributes"
+                    />
                 </TabPanel>
-                <TabPanel>
+                <TabPanel v-if="this.selectedDocument?.id">
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.drivers.title') }}</span>
                     </template>
                 </TabPanel>
-                <TabPanel>
+                <TabPanel v-if="this.selectedDocument?.id">
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.outputParams.title') }}</span>
                     </template>
                 </TabPanel>
-                <TabPanel>
+                <TabPanel v-if="this.selectedDocument?.id">
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.dataLineage.title') }}</span>
                     </template>
                 </TabPanel>
-                <TabPanel>
+                <TabPanel v-if="this.selectedDocument?.id">
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.history.title') }}</span>
+                    </template>
+                </TabPanel>
+                <TabPanel v-if="this.selectedDocument?.id && this.selectedDocument?.typeCode == 'REPORT' && this.selectedDocument?.engine == 'knowagejasperreporte'">
+                    <template #header>
+                        <span>{{ $t('documentExecution.documentDetails.subreports.title') }}</span>
                     </template>
                 </TabPanel>
             </TabView>
@@ -46,12 +62,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-// import { AxiosResponse } from 'axios'
+import { AxiosResponse } from 'axios'
 import mainDescriptor from './DocumentDetailsDescriptor.json'
-import InformationsTab from './tabs/DocumentDetailsInformations.vue'
+import InformationsTab from './tabs/informations/DocumentDetailsInformations.vue'
 import Dialog from 'primevue/dialog'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
+import { iDocument, iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 
 export default defineComponent({
     name: 'document-details',
@@ -61,23 +78,82 @@ export default defineComponent({
     data() {
         return {
             mainDescriptor,
-            document: {} as any
+            loading: false,
+            document: {} as iDocument,
+            selectedDataset: {} as any,
+            dataSources: [] as iDataSource[],
+            analyticalDrivers: [] as iAnalyticalDriver[],
+            drivers: [] as iDriver[],
+            engines: [] as iEngine[],
+            templates: [] as iTemplate[],
+            attributes: [] as iAttribute[],
+            states: mainDescriptor.states,
+            types: mainDescriptor.types
         }
     },
     watch: {},
-    created() {},
-    //analyticalDrivers: http://localhost:8080/knowage/restful-services/2.0/datasources
-    //datasources: http://localhost:8080/knowage/restful-services/2.0/analyticalDrivers
+    created() {
+        this.getAllPersistentData()
+    },
     //document: http://localhost:8080/knowage/restful-services/2.0/documents/${id}
+    //datasources: http://localhost:8080/knowage/restful-services/2.0/datasources
+    //analyticalDrivers: http://localhost:8080/knowage/restful-services/2.0/analyticalDrivers
     //drivers: http://localhost:8080/knowage/restful-services/2.0/documentdetails/${id}/drivers
     //engines: http://localhost:8080/knowage/restful-services/2.0/engines
+    //template: `2.0/documentdetails/${this.selectedDocument?.id}/templates
 
     //folderId: ??
     //resourcePath: ??
     //states: ??
-    //template: ??
     //types: ??
-    methods: {}
+    methods: {
+        async getAllPersistentData() {
+            await this.getAnalyticalDrivers()
+            await this.getDatasources()
+            await this.getDocumentDrivers()
+            await this.getTemplates()
+            await this.getEngines()
+            await this.getAttributes()
+            await this.getDataset()
+        },
+        async getAnalyticalDrivers() {
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers`).then((response: AxiosResponse<any>) => (this.analyticalDrivers = response.data))
+        },
+        async getDatasources() {
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources`).then((response: AxiosResponse<any>) => (this.dataSources = response.data))
+        },
+        async getDocumentDrivers() {
+            if (this.selectedDocument?.id) {
+                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument?.id}/drivers`).then((response: AxiosResponse<any>) => (this.drivers = response.data))
+            }
+        },
+        async getTemplates() {
+            if (this.selectedDocument?.id) {
+                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument?.id}/templates`).then((response: AxiosResponse<any>) => (this.templates = response.data))
+            }
+        },
+        async getEngines() {
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/engines`).then((response: AxiosResponse<any>) => (this.engines = response.data))
+        },
+        async getAttributes() {
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/attributes`).then((response: AxiosResponse<any>) => (this.attributes = response.data))
+        },
+        async getDataset() {
+            if (this.selectedDocument?.dataSetId) {
+                this.loading = true
+                this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.selectedDocument?.dataSetId}`, { headers: { 'X-Disable-Errors': 'true' } })
+                    .then((response: AxiosResponse<any>) => {
+                        this.selectedDataset = response.data[0]
+                    })
+                    //ERROR SE NE VIDI ZBOG TOAST Z-INDEXA OVO MORA DA SE SREDI
+                    .catch((error) => {
+                        this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message })
+                    })
+                    .finally(() => (this.loading = false))
+            }
+        }
+    }
 })
 </script>
 
@@ -95,6 +171,7 @@ export default defineComponent({
     margin: 0;
 }
 
+.document-details-dialog.p-dialog .p-dialog-header,
 .document-details-dialog.p-dialog .p-dialog-content {
     padding: 0;
     margin: 0;
