@@ -83,7 +83,7 @@
                         >
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)"></i>
                     </div>
-                    <Dropdown v-if="!parameter.multivalue" class="kn-material-input" v-model="parameter.parameterValue" :options="getParameterDropdownOptions(parameter)" optionLabel="label" @change="updateVisualDependency(parameter)" />
+                    <Dropdown v-if="!parameter.multivalue" class="kn-material-input" v-model="parameter.parameterValue[0]" :options="getParameterDropdownOptions(parameter)" optionLabel="label" @change="updateVisualDependency(parameter)" />
                     <MultiSelect v-else v-model="parameter.parameterValue" :options="getParameterDropdownOptions(parameter)" optionLabel="label" @change="updateVisualDependency(parameter)" />
                 </div>
 
@@ -201,9 +201,7 @@ export default defineComponent({
             this.parameters.filterStatus = []
 
             this.filtersData?.filterStatus.forEach((el: any) => {
-                // console.log('LOADEING EL: ', el)
                 if (el.selectionType == 'LIST' && el.showOnPanel == 'true' && el.multivalue) {
-                    // console.log('LOADED SELECTED EL: ', el)
                     this.selectedParameterCheckbox[el.id] = el.parameterValue?.map((parameterValue: any) => parameterValue.value)
                 } else if (el.selectionType == 'COMBOBOX' && el.showOnPanel == 'true') {
                     el.multivalue ? this.setSelectedMultivalueCombobox(el) : this.setSelectedCombobox(el)
@@ -213,56 +211,38 @@ export default defineComponent({
 
             this.parameters?.filterStatus.forEach((el: any) => this.setVisualDependency(el))
             this.parameters?.filterStatus.forEach((el: any) => this.updateVisualDependency(el))
-            console.log('LOADED PARAMETERS: ', this.parameters)
-            // console.log('LOADED SELECTED: ', this.selectedParameterCheckbox)
         },
         setVisualDependency(parameter: any) {
-            // console.log('SET VISAUL DEPENDENCY PARAM: ', parameter)
             if (parameter.visualDependencies.length !== 0) {
-                // console.log('>>> PARAMETER DEPENDENCY', parameter.visualDependencies)
                 parameter.visualDependencies.forEach((dependency: any) => {
-                    // console.log('>>> DEPENDENCY', dependency)
-                    // console.log('>>> PARAMs', this.parameters.filterStatus)
                     const index = this.parameters.filterStatus.findIndex((param: any) => {
                         return param.urlName === dependency.parFatherUrlName
                     })
-                    // console.log('>>> INDEX: ', index)
                     if (index !== -1) {
-                        // console.log(' >>> FOUND DEPENDENCY: ', this.parameters.filterStatus[index])
                         const tempParameter = this.parameters.filterStatus[index]
                         parameter.dependensToParameters ? parameter.dependensToParameters.push(tempParameter) : (parameter.dependensToParameters = [tempParameter])
-                        // console.log('>>> TEMP PARENT PARAMETER:', tempParameter)
                         tempParameter.dependentParameters ? tempParameter.dependentParameters.push(parameter) : (tempParameter.dependentParameters = [parameter])
                     }
                 })
             }
-            // console.log(' >>> SET VISAUL DEPENDENCY PARAM AFTER: ', parameter)
         },
         setSelectedCombobox(parameter: any) {
-            // console.log('SET SELECTED COMBO', parameter)
             const index = parameter.defaultValues.findIndex((el: any) => {
-                //console.log(el.value + ' === ' + parameter.parameterValue[0].value)
                 return el.value === parameter.parameterValue[0]?.value
             })
-            // console.log('INDEX: ', index)
-            if (index !== -1) parameter.parameterValue = parameter.defaultValues[index]
+            if (index !== -1) parameter.parameterValue = [parameter.defaultValues[index]]
         },
         setSelectedMultivalueCombobox(parameter: any) {
-            // console.log('SET SELECTED MULTIVALUE COMBO', parameter)
             const formatedValues = [] as any[]
             parameter.parameterValue?.forEach((parameterValue: any) => {
-                // console.log('PARAMETER: ', parameterValue)
                 const index = parameter.defaultValues?.findIndex((el: any) => {
-                    // console.log('EEEEEEEEEL', el)
                     return el.value === parameterValue.value
                 })
                 if (index !== -1) formatedValues.push(parameter.defaultValues[index])
             })
-            // console.log('FORMATED VALUES: ', formatedValues)
             parameter.parameterValue = formatedValues
         },
         resetParameterValue(parameter: any) {
-            console.log('RESET PARAMETER VALUE BEFORE: ', parameter)
             if (parameter.selectionType === 'LIST' && parameter.showOnPanel === 'true' && parameter.multivalue) {
                 parameter.parameterValue = parameter.driverDefaultValue
                 this.selectedParameterCheckbox[parameter.id] = parameter.driverDefaultValue?.map((parameterValue: any) => parameterValue.value)
@@ -271,20 +251,19 @@ export default defineComponent({
             } else if ((parameter.selectionType === 'LOOKUP' || parameter.selectionType === 'TREE') && parameter.showOnPanel === 'true' && parameter.multivalue) {
                 parameter.parameterValue = parameter.driverDefaultValue
             } else {
+                if (!parameter.parameterValue[0]) {
+                    parameter.parameterValue[0] = { value: '', description: '' }
+                }
                 parameter.parameterValue[0].value = parameter.driverDefaultValue[0].value
             }
-            console.log('RESET PARAMETER VALUE AFTER: ', parameter)
         },
         resetParameterCombobox(parameter: any) {
-            console.log('RESET COMBOBOX PARAMETER: ', parameter)
             const index = parameter.defaultValues.findIndex((el: any) => {
-                console.log(el.value + ' === ' + parameter.driverDefaultValue[0].value)
                 return el.value === parameter.driverDefaultValue[0].value
             })
-            if (index !== -1) parameter.parameterValue = parameter.defaultValues[index]
+            if (index !== -1) parameter.parameterValue = [parameter.defaultValues[index]]
         },
         resetParameterComboboxMulti(parameter: any) {
-            console.log('RESET COMBOBOX MULTI PARAMETER: ', parameter)
             const formatedValues = [] as any[]
             parameter.driverDefaultValue?.forEach((parameterValue: any) => {
                 const index = parameter.defaultValues?.findIndex((el: any) => {
@@ -292,7 +271,6 @@ export default defineComponent({
                 })
                 if (index !== -1) formatedValues.push(parameter.defaultValues[index])
             })
-            console.log('FORMATED VALUES RESET: ', formatedValues)
             parameter.parameterValue = formatedValues
         },
         toggle(event: any) {
@@ -306,21 +284,15 @@ export default defineComponent({
         },
         requiredFiledMissing() {
             for (let i = 0; i < this.parameters.filterStatus.length; i++) {
-                // console.log('TEST: ', this.parameters.filterStatus[i])
                 const parameter = this.parameters.filterStatus[i]
 
                 if (parameter.mandatory && parameter.showOnPanel == 'true') {
-                    if ((parameter.type === 'STRING' || parameter.type === 'NUM' || parameter.type === 'DATE') && !parameter.selectionType && parameter.valueSelection === 'man_in' && !parameter.parameterValue[0].value) {
-                        console.log('ENTERED 1', parameter)
+                    if (!parameter.parameterValue || parameter.parameterValue.length === 0) {
                         return true
-                    } else if ((parameter.selectionType === 'LIST' || parameter.selectionType === 'COMBOBOX' || parameter.selectionType === 'LOOKUP' || parameter.selectionType == 'TREE') && parameter.multivalue && parameter.parameterValue.length === 0) {
-                        console.log('ENTERED 2', parameter)
-
-                        return true
-                    } else if ((parameter.selectionType === 'LOOKUP' || parameter.selectionType === 'TREE') && !parameter.multivalue && (!parameter.parameterValue[0] || !parameter.parameterValue[0].value)) {
-                        console.log('ENTERED 3', parameter)
-
-                        return true
+                    } else {
+                        parameter.parameterValue.forEach((el: any) => {
+                            if (!el.value) return true
+                        })
                     }
                 }
             }
@@ -328,15 +300,9 @@ export default defineComponent({
             return false
         },
         setCheckboxValue(parameter: any) {
-            console.log('parameter', parameter)
-
-            console.log('selectedParameterCheckbox', this.selectedParameterCheckbox)
-
             parameter.parameterValue = this.selectedParameterCheckbox[parameter.id].map((el: any) => {
                 return { value: el, description: el }
             })
-
-            console.log('parameter after', parameter)
             this.updateVisualDependency(parameter)
         },
         getParameterDropdownOptions(parameter: any) {
@@ -369,18 +335,12 @@ export default defineComponent({
 
             Object.keys(this.parameters.filterStatus).forEach((key: any) => {
                 const parameter = this.parameters.filterStatus[key]
-                // console.log('EL: ', parameter)
 
-                if (parameter.selectionType == 'LOOKUP' || parameter.selectionType == 'TREE') {
-                    PARAMETERS[parameter.urlName] = parameter.parameterValue[0] ? [parameter.parameterValue[0].value] : []
-                    PARAMETERS[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0] ? parameter.parameterValue[0].description : ''
-                } else if (parameter.type === 'NUM') {
-                    PARAMETERS[parameter.urlName] = +parameter.parameterValue[0].value
-                    PARAMETERS[parameter.urlName + '_field_visible_description'] = +parameter.parameterValue[0].description
-                } else if (parameter.type === 'DATE') {
-                    PARAMETERS[parameter.urlName] = parameter.parameterValue[0].value
-                    PARAMETERS[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].value
-                } else if ((parameter.selectionType == 'LIST' || parameter.selectionType == 'COMBOBOX') && parameter.multivalue) {
+                // TODO srediti popup-single i tree
+                if (parameter.valueSelection === 'man_in') {
+                    PARAMETERS[parameter.urlName] = parameter.type === 'NUM' ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
+                    PARAMETERS[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].description
+                } else if (parameter.multivalue) {
                     let tempArrayValue = [] as any[]
                     let tempArrayDescription = [] as any[]
                     for (let i = 0; i < parameter.parameterValue.length; i++) {
@@ -390,6 +350,9 @@ export default defineComponent({
 
                     PARAMETERS[parameter.urlName] = tempArrayValue
                     PARAMETERS[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].description
+                } else if (parameter.type === 'DATE') {
+                    PARAMETERS[parameter.urlName] = parameter.parameterValue[0].value
+                    PARAMETERS[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].value
                 } else {
                     PARAMETERS[parameter.urlName] = parameter.parameterValue[0] ? parameter.parameterValue[0].value : parameter.parameterValue.value
                     PARAMETERS[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0] ? parameter.parameterValue[0].description : parameter.parameterValue.description
@@ -399,28 +362,26 @@ export default defineComponent({
             return PARAMETERS
         },
         onPopupSave(parameter: any) {
-            // console.log('POPUP SAVE AFTER: ', this.parameters.filterStatus)
             this.updateVisualDependency(parameter)
             this.popupDialogVisible = false
         },
         onTreeSave(parameter: any) {
-            // console.log('TREE SAVE AFTER: ', this.parameters.filterStatus)
             this.updateVisualDependency(parameter)
             this.treeDialogVisible = false
         },
         updateVisualDependency(parameter: any) {
-            console.log('PARAMETER FOR VISUAL UPDATE: ', parameter)
+            // console.log('PARAMETER FOR VISUAL UPDATE: ', parameter)
 
             parameter.dependentParameters?.forEach((dependentParameter: any) => {
-                console.log('DEPENEDENT PARAM: ', dependentParameter)
+                // console.log('DEPENEDENT PARAM: ', dependentParameter)
 
                 this.visualDependencyCheck(dependentParameter)
 
-                console.log('DEPENEDEN AFTER: ', dependentParameter)
+                // console.log('DEPENEDEN AFTER: ', dependentParameter)
             })
         },
         visualDependencyCheck(parameter: any) {
-            console.log(' >>> VISUAL DEP CHECK: ', parameter)
+            // console.log(' >>> VISUAL DEP CHECK: ', parameter)
 
             let showOnPanel = 'true'
             for (let i = 0; i < parameter.visualDependencies.length && showOnPanel === 'true'; i++) {
@@ -430,27 +391,27 @@ export default defineComponent({
                 const index = parameter.dependensToParameters.findIndex((el: any) => el.urlName === visualDependency.parFatherUrlName)
                 const parentParameter = parameter.dependensToParameters[index]
 
-                console.log(' >>>>> INDEX:', index)
-                console.log(' >>>>> PARENT PARAMETER:', parentParameter)
+                // console.log(' >>>>> INDEX:', index)
+                // console.log(' >>>>> PARENT PARAMETER:', parentParameter)
 
                 if (visualDependency.operation === 'contains') {
-                    if (Array.isArray(parentParameter.parameterValue)) {
-                        for (let i = 0; i < parentParameter.parameterValue.length; i++) {
-                            if (parentParameter.parameterValue[i].value === visualDependency.compareValue) {
-                                console.log(' >>>> ENTERED', parentParameter.parameterValue[i].value, ' === ', visualDependency.compareValue)
-                                showOnPanel = 'true'
-                                break
-                            }
-                        }
-                    } else {
-                        console.log(' >>>>>>>> ENTERED FOR SINGLE VALUE', parentParameter.parameterValue.value)
-                        console.log(' >>>>>>>> ENTERED FOR SINGLE VALUE COMPARE', visualDependency.compareValue)
-
-                        if (parentParameter.parameterValue.value === visualDependency.compareValue) {
-                            console.log(' >>>> ENTERED', parentParameter.parameterValue.value, ' === ', visualDependency.compareValue)
+                    // if (Array.isArray(parentParameter.parameterValue)) {
+                    for (let i = 0; i < parentParameter.parameterValue.length; i++) {
+                        if (parentParameter.parameterValue[i].value === visualDependency.compareValue) {
+                            // console.log(' >>>> ENTERED', parentParameter.parameterValue[i].value, ' === ', visualDependency.compareValue)
                             showOnPanel = 'true'
+                            break
                         }
                     }
+                    // } else {
+                    //     console.log(' >>>>>>>> ENTERED FOR SINGLE VALUE', parentParameter.parameterValue.value)
+                    //     console.log(' >>>>>>>> ENTERED FOR SINGLE VALUE COMPARE', visualDependency.compareValue)
+
+                    //     if (parentParameter.parameterValue.value === visualDependency.compareValue) {
+                    //         console.log(' >>>> ENTERED', parentParameter.parameterValue.value, ' === ', visualDependency.compareValue)
+                    //         showOnPanel = 'true'
+                    //     }
+                    // }
                 } else if (visualDependency.operation === 'not contains') {
                     for (let i = 0; i < parentParameter.parameterValue.length; i++) {
                         if (parentParameter.parameterValue[i].value === visualDependency.compareValue) {

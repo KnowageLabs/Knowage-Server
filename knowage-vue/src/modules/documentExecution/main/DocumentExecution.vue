@@ -3,8 +3,14 @@
         <template #left>{{ document?.label }} </template>
 
         <template #right>
-            <div>
-                <i class="fa fa-filter kn-cursor-pointer" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible"></i>
+            <div class="p-d-flex p-jc-around">
+                <i class="pi pi-pencil kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocument"></i>
+                <i class="pi pi-book kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></i>
+                <i class="pi pi-refresh kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.refresh')" @click="refresh"></i>
+                <i class="fa fa-filter kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible"></i>
+                <i class="fa fa-ellipsis-v kn-cursor-pointer  p-mx-4" v-tooltip.left="$t('common.menu')" @click="toggle"></i>
+                <Menu ref="menu" :model="toolbarMenuItems" :popup="true" />
+                <i class="fa fa-times kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.close')" @click="closeDocument"></i>
             </div>
         </template>
     </Toolbar>
@@ -22,24 +28,27 @@
             </keep-alive>
         </router-view> -->
 
-        <!-- <iframe
-            class="document-execution-iframe"
-            src="/knowageqbeengine/servlet/AdapterHTTP?DEFAULT_DATASOURCE_FOR_WRITING_LABEL=CacheDS&ACTION_NAME=QBE_ENGINE_START_ACTION&SBI_EXECUTION_ROLE=%2Fdemo%2Fadmin&SBI_COUNTRY=US&SPAGOBI_AUDIT_ID=47631&document=3249&NEW_SESSION=TRUE&SBI_LANGUAGE=en&user_id=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGVtb19hZG1pbiIsImV4cCI6MTYzNzYwNDk2NX0.6sLh03xSd0NHXcj03Egh3Js948ljYfvhCXZkzr30W0c&SBI_ENVIRONMENT=DOCBROWSER&SBI_EXECUTION_ID=d6bed3ee4b8011ec9215b918e5768f09&EDIT_MODE=null"
-        ></iframe> -->
+        <!-- <iframe class="document-execution-iframe" :src="url"></iframe> -->
 
         <KnParameterSidebar class="document-execution-parameter-sidebar document-execution-parameter-sidebar kn-overflow-y" v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="document" @execute="onExecute" @exportCSV="onExportCSV"></KnParameterSidebar>
+
+        <DocumentExecutionHelpDialog :visible="helpDialogVisible" :propDocument="document" @close="helpDialogVisible = false"></DocumentExecutionHelpDialog>
+        <DocumentExecutionRankDialog :visible="rankDialogVisible" :propDocumentRank="documentRank" @close="rankDialogVisible = false"></DocumentExecutionRankDialog>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
+import DocumentExecutionHelpDialog from './dialogs/DocumentExecutionHelpDialog.vue'
+import DocumentExecutionRankDialog from './dialogs/DocumentExecutionRankDialog.vue'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
+import Menu from 'primevue/menu'
 // import Registry from '../registry/Registry.vue'
 
 export default defineComponent({
     name: 'document-execution',
-    components: { KnParameterSidebar },
+    components: { DocumentExecutionHelpDialog, DocumentExecutionRankDialog, KnParameterSidebar, Menu },
     props: { id: { type: String } },
     data() {
         return {
@@ -49,8 +58,20 @@ export default defineComponent({
             exporters: null as any,
             mode: null as any,
             parameterSidebarVisible: false,
+            toolbarMenuItems: [] as any[],
+            helpDialogVisible: false,
+            documentRank: null as any,
+            rankDialogVisible: false,
             user: null as any,
             loading: false
+        }
+    },
+    computed: {
+        url() {
+            return (
+                process.env.VUE_APP_HOST_URL +
+                '/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=3251&OBJECT_LABEL=Registry_Test_1&MENU_PARAMETERS=%7B%7D&LIGHT_NAVIGATOR_DISABLED=TRUE&SBI_EXECUTION_ID=null&OBJECT_NAME=Registry_Test_1&EDIT_MODE=null&TOOLBAR_VISIBLE=null&CAN_RESET_PARAMETERS=null&EXEC_FROM=null&CROSS_PARAMETER=null'
+            )
         }
     },
     async created() {
@@ -69,6 +90,75 @@ export default defineComponent({
         await this.loadPage()
     },
     methods: {
+        editCockpitDocument() {
+            console.log('TODO - EDIT COCKPIT DOCUMENT')
+        },
+        openHelp() {
+            this.helpDialogVisible = true
+        },
+        refresh() {
+            console.log('TODO - REFRESH')
+        },
+        toggle(event: any) {
+            this.createMenuItems()
+            const menu = this.$refs.menu as any
+            menu.toggle(event)
+        },
+        createMenuItems() {
+            this.toolbarMenuItems = []
+            this.toolbarMenuItems.push(
+                {
+                    label: this.$t('common.file'),
+                    items: [{ icon: 'pi pi-print', label: this.$t('common.print'), command: () => this.print() }]
+                },
+                {
+                    label: this.$t('common.export'),
+                    items: [{ icon: 'pi pi-print', label: this.$t('common.export'), command: () => this.export() }]
+                },
+                {
+                    label: this.$t('common.info.info'),
+                    items: [
+                        { icon: 'pi pi-info-circle', label: this.$t('common.metadata'), command: () => this.openMetadata() },
+                        { icon: 'pi pi-star', label: this.$t('common.rank'), command: () => this.openRank() },
+                        { icon: 'pi pi-file', label: this.$t('common.notes'), command: () => this.openNotes() }
+                    ]
+                },
+                {
+                    label: this.$t('common.shortcuts'),
+                    items: [
+                        { icon: '', label: this.$t('common.notes'), command: () => this.showScheduledExecutions() },
+                        { icon: 'pi pi-file', label: this.$t('common.notes'), command: () => this.copyLink() },
+                        { icon: 'pi pi-file', label: this.$t('common.notes'), command: () => this.openNotes() }
+                    ]
+                }
+            )
+        },
+        print() {
+            console.log('TODO - PRINT')
+        },
+        export() {
+            console.log('TODO - EXPORT')
+        },
+        openMetadata() {
+            console.log('TODO - OPEN METADATA')
+        },
+        async openRank() {
+            console.log('TODO - OPEN RANK')
+            await this.getRank()
+            this.rankDialogVisible = true
+        },
+        openNotes() {
+            console.log('TODO - OPEN NOTES')
+        },
+        showScheduledExecutions() {
+            console.log('TODO - OPEN SCHEDULED EXECUTIONS')
+        },
+        copyLink() {
+            console.log('TODO - OPEN COPY LINK')
+        },
+        closeDocument() {
+            console.log('TODO - CLOSE DOCUMENT')
+        },
         setMode() {
             if (this.$route.path.includes('registry')) {
                 this.mode = 'registry'
@@ -209,6 +299,20 @@ export default defineComponent({
                 .catch(() => {})
             this.loading = false
             console.log('BLA', postData)
+        },
+        async getRank() {
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documentrating/getvote`, { obj: this.document.id })
+                .then((response: AxiosResponse<any>) => (this.documentRank = response.data))
+                .catch((error: any) =>
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: error
+                    })
+                )
+            this.loading = false
+            console.log('LOADED DOCUMENT VOTE MAIN: ', this.documentRank)
         }
     }
 })

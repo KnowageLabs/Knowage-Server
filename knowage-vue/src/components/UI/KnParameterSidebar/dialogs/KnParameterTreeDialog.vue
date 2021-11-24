@@ -69,14 +69,13 @@ export default defineComponent({
     methods: {
         async loadTree() {
             this.loadParameter()
-            if (this.parameter && this.formatedParameterValues) {
+            if (this.parameter && this.formatedParameterValues && this.visible) {
                 await this.loadLeaf(null)
             }
         },
         loadParameter() {
             this.parameter = this.selectedParameter
             this.multivalue = this.selectedParameter?.multivalue
-
             // console.log('LOADED PARAMETER: ', this.parameter)
             // console.log('LOADED PARAMETER values: ', this.formatedParameterValues)
         },
@@ -118,7 +117,10 @@ export default defineComponent({
             if (node.leaf) {
                 // console.log('NODE IS CHECKED: ', node)
                 const index = this.parameter.parameterValue.findIndex((el: any) => el.value === node.data.value)
-                if (index !== -1) this.selectedValuesKeys[node.key] = { checked: true, partialyChecked: false }
+                if (index !== -1) {
+                    this.selectedValuesKeys[node.key] = { checked: true, partialyChecked: false }
+                    this.multipleSelectedValues.push(node.data)
+                }
             }
         },
         attachContentToTree(parent: any, content: any[]) {
@@ -185,6 +187,7 @@ export default defineComponent({
                 this.selectedValue = null
             } else {
                 this.parameter.parameterValue = []
+                console.log('SELECTED VALUES MULTI: ', this.multipleSelectedValues)
                 this.multipleSelectedValues?.forEach((el: any) => this.parameter.parameterValue.push({ value: el.value, description: el.description }))
                 this.multipleSelectedValues = []
             }
