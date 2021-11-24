@@ -226,20 +226,6 @@
             "name": "filter",
             "position": 4,
             "toolbar": true,
-            "type": "simple"
-        },
-        {
-            "category": "filtering",
-            "description": "managers.workspaceManagement.dataPreparation.transformations.advancedFilter.description",
-            "editColumn": false,
-            "icon": {
-                "class": "material-icons",
-                "name": "auto_fix_high"
-            },
-            "label": "managers.workspaceManagement.dataPreparation.transformations.advancedFilter.label",
-            "name": "advancedFilter",
-            "position": 5,
-            "toolbar": true,
             "type": "custom"
         },
         {

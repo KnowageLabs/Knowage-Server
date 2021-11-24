@@ -4,6 +4,7 @@
             [
                 {
                     "name": "columns",
+                    "optionLabel": "header",
                     "type": "multiSelect",
                     "validationRules": "required"
                 },
@@ -24,11 +25,12 @@
             ]
         ]
     },
-    "advancedFilter": {
+    "filter": {
         "parameters": [
             [
                 {
                     "name": "columns",
+                    "optionLabel": "header",
                     "type": "multiSelect",
                     "validationRules": "required"
                 },
@@ -134,6 +136,8 @@
             [
                 {
                     "name": "columns",
+                    "optionLabel": "header",
+                    "optionValue": "header",
                     "type": "dropdown",
                     "validationRules": "required"
                 },

@@ -4,6 +4,7 @@
             [
                 {
                     "name": "columns",
+                    "optionLabel": "header",
                     "type": "multiSelect",
                     "validationRules": "required"
                 },
@@ -28,102 +29,6 @@
             ]
         ]
     },
-    "filter": {
-        "parameters": [
-            [
-                {
-                    "name": "columns",
-                    "type": "multiSelect",
-                    "validationRules": "required"
-                },
-                {
-                    "availableOptions": [
-                        {
-                            "code": "=",
-                            "label": "="
-                        },
-                        {
-                            "code": "!=",
-                            "label": "!="
-                        },
-                        {
-                            "code": "like",
-                            "label": "like"
-                        },
-                        {
-                            "code": "notLike",
-                            "label": "NOT like"
-                        },
-                        {
-                            "code": "isNull",
-                            "label": "is null"
-                        },
-                        {
-                            "code": "isNotNull",
-                            "label": "is NOT null"
-                        },
-                        {
-                            "code": "=",
-                            "label": "="
-                        },
-                        {
-                            "code": "<",
-                            "label": "< "
-                        },
-                        {
-                            "code": ">",
-                            "label": "> "
-                        },
-                        {
-                            "code": "<=",
-                            "label": "<= "
-                        },
-                        {
-                            "code": ">=",
-                            "label": ">= "
-                        },
-                        {
-                            "code": "!=",
-                            "label": "!= "
-                        },
-                        {
-                            "code": "in",
-                            "label": "IN "
-                        },
-                        {
-                            "code": "notIn",
-                            "label": "NOT IN"
-                        },
-                        {
-                            "code": "between",
-                            "label": "Between"
-                        },
-                        {
-                            "code": "after",
-                            "label": "After"
-                        },
-                        {
-                            "code": "before",
-                            "label": "Before"
-                        },
-                        {
-                            "code": "between",
-                            "label": "Between"
-                        }
-                    ],
-                    "name": "conditions",
-                    "placeholder": "managers.workspaceManagement.dataPreparation.transformations.condition",
-                    "type": "dropdown",
-                    "validationRules": "required|alpha_dash"
-                },
-                {
-                    "name": "text",
-                    "type": "string",
-                    "validationRules": "required|alpha_dash"
-                }
-            ]
-        ]
-    },
     "padding": {
         "parameters": [
             [
@@ -134,6 +39,7 @@
                 },
                 {
                     "name": "columns",
+                    "optionLabel": "header",
                     "type": "multiSelect",
                     "validationRules": "required"
                 },
@@ -150,6 +56,7 @@
             [
                 {
                     "name": "columns",
+                    "optionLabel": "header",
                     "type": "multiSelect",
                     "validationRules": "required"
                 }
@@ -161,6 +68,7 @@
             [
                 {
                     "name": "columns",
+                    "optionLabel": "header",
                     "type": "multiSelect",
                     "validationRules": "required"
                 }
@@ -172,6 +80,7 @@
             [
                 {
                     "name": "columns",
+                    "optionLabel": "header",
                     "type": "multiSelect",
                     "validationRules": "required"
                 },
@@ -193,6 +102,7 @@
             [
                 {
                     "name": "columns",
+                    "optionLabel": "header",
                     "type": "multiSelect",
                     "validationRules": "required"
                 }

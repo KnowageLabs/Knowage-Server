@@ -1,7 +1,7 @@
 <template>
     <span v-for="(fieldArray, fieldIndex) in localTransformation.parameters" v-bind:key="fieldIndex" class="p-d-flex">
         <div v-for="(field, index) in fieldArray" v-bind:key="index" :class="[field.type === 'textarea' ? 'p-col-6' : 'p-col-4', 'p-field p-ml-2 kn-flex']">
-            <span v-if="field.type == 'string'" class="p-float-label">
+            <span v-if="field.type == 'string' && (!field.relatedWith || (field.relatedWith && isFieldVisible(field)))" class="p-float-label">
                 <InputText
                     :id="name"
                     type="text"
@@ -36,7 +36,7 @@
                 <MultiSelect
                     v-model="field['selectedItems_fieldIndex_' + fieldIndex + '_index_' + index]"
                     :options="columns"
-                    :optionLabel="field.optionLabel ? field.optionLabel : 'label'"
+                    optionLabel="header"
                     display="chip"
                     optionDisabled="disabled"
                     @change="handleMultiSelectChange($event)"
@@ -68,12 +68,16 @@
                 />
             </span>
         </div>
+        <span class="p-d-flex p-jc-center p-ai-center" v-if="localTransformation.name === 'filter'">
+            <Button icon="pi pi-plus" class="p-button-text p-button-rounded p-button-plain" @click="addNewRow()"/>
+            <Button icon="pi pi-trash" :class="'p-button-text p-button-rounded p-button-plain ' + (localTransformation.parameters.length > 1 ? '' : 'kn-hide')" @click="deleteRow(fieldIndex)"
+        /></span>
     </span>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import DataPreparationSimpleDescriptor from '@/modules/workspace/dataPreparation/DataPreparationSimple/DataPreparationSimpleDescriptor.json'
+import DataPreparationCustomDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationCustomDescriptor.json'
 import Calendar from 'primevue/calendar'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
@@ -85,29 +89,63 @@ import { ITransformation } from '@/modules/workspace/dataPreparation/DataPrepara
 import { IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
 
 export default defineComponent({
-    name: 'data-preparation-simple',
+    name: 'data-preparation-custom',
 
     props: { col: String, columns: { type: Array as PropType<Array<IDataPreparationColumn>> }, transformation: {} as PropType<ITransformation> },
     components: { Calendar, Dropdown, InputSwitch, MultiSelect, Textarea, KnTextarea },
     emits: ['update:transformation'],
     data() {
-        return { descriptor: DataPreparationSimpleDescriptor as any, parameters: [] as any, localTransformation: {} as ITransformation }
+        return { descriptor: DataPreparationCustomDescriptor as any, parameters: [] as any, localTransformation: {} as ITransformation }
     },
     mounted() {
         this.localTransformation = this.transformation ? { ...this.transformation } : ({} as ITransformation)
 
         let name = this.transformation && this.transformation.name ? this.transformation.name : ''
-        if (name && this.transformation?.type === 'simple') this.localTransformation.parameters = this.descriptor[name].parameters
+        if (name && this.transformation?.type === 'custom') this.localTransformation.parameters = this.descriptor[name].parameters
     },
     methods: {
+        addNewRow() {
+            this.localTransformation?.parameters.push(this.localTransformation?.parameters[0])
+        },
+        deleteRow(index) {
+            if (this.localTransformation) {
+                if (this.localTransformation.parameters?.length > 1) this.localTransformation?.parameters.splice(index, 1)
+            }
+        },
         handleMultiSelectChange(e: Event): void {
             if (e) {
                 this.refreshTransfrormation()
             }
         },
+        isFieldVisible(field): boolean {
+            let visible = true
+            if (field.relatedWith && field.relatedTo && this.localTransformation) {
+                for (let i in this.localTransformation.parameters) {
+                    var obj = this.localTransformation.parameters[i].filter((x) => x.name === field.relatedTo)
+                    if (obj.length > 0) {
+                        let keyValue
+                        let keys = Object.keys(obj[0])
+                        for (let i in keys) {
+                            let key = keys[i]
+                            if (key.includes('selectedCondition')) {
+                                keyValue = key
+                                break
+                            }
+                        }
+                        if (keyValue) {
+                            visible = visible && obj[0][keyValue] === field.relatedWith
+                        } else {
+                            visible = false
+                            break
+                        }
+                    }
+                }
+            }
+            return visible
+        },
         refreshTransfrormation(): void {
             if (this.localTransformation) {
-                let pars = this.localTransformation.type === 'simple' ? this.descriptor[this.localTransformation.name].parameters : []
+                let pars = this.localTransformation.type === 'custom' ? this.descriptor[this.localTransformation.name].parameters : []
                 pars.forEach((element) => {
                     element.forEach((item) => {
                         item.availableOptions?.forEach((element) => {
