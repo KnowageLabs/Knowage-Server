@@ -141,7 +141,7 @@
                                     <span v-if="col.edit"> <InputText class="kn-material-input" type="text" v-model="col.fieldAlias" @keyup.enter="switchEditMode(col)" @blur="switchEditMode(col)"></InputText> </span><span v-else>{{ col.fieldAlias }}</span>
                                     <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain" @click="switchEditMode(col)" />
                                 </div>
-                                <div class="kn-list-item-text-secondary kn-truncated roleType">{{ $t(col.fieldType) }}</div>
+                                <div class="kn-list-item-text-secondary kn-truncated roleType">{{ $t(removePrefixFromType(col.Type)) }}</div>
                             </div>
                             <div class="p-col-3 p-m-0 p-p-0 p-d-flex p-jc-end p-ai-center">
                                 <Button icon="pi pi-ellipsis-v" :class="descriptor.css.buttonClassHeader" @click="toggle($event, 'trOpType-' + colIndex)" />
@@ -312,9 +312,7 @@
                                 element.availableOptions = col ? this.getCompatibilityType(col) : this.descriptor.compatibilityMap['all'].values
 
                                 element.availableOptions.forEach((element) => {
-                                    let splitted = element.label.split('.', -1)
-
-                                    element.label = splitted.length > 0 ? splitted[splitted.length - 1] : splitted[0]
+                                    element.label = this.removePrefixFromType(element.label)
                                 })
                             }
                         }
@@ -411,6 +409,11 @@
                     }
                 }
                 return menu
+            },
+            removePrefixFromType(type: String): String {
+                let splitted = type.split('.', -1)
+
+                return splitted.length > 0 ? splitted[splitted.length - 1] : splitted[0]
             },
             saveDataset(): void {
                 this.showSaveDialog = true
