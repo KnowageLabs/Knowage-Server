@@ -109,21 +109,6 @@
                     "name": "text",
                     "type": "string",
                     "validationRules": "required|alpha_dash"
-                },
-                {
-                    "availableOptions": [
-                        {
-                            "code": "AND",
-                            "label": "common.and"
-                        },
-                        {
-                            "code": "OR",
-                            "label": "common.or"
-                        }
-                    ],
-                    "name": "logicOperator",
-                    "placeholder": "managers.workspaceManagement.dataPreparation.transformations.logicOperator",
-                    "type": "dropdown"
                 }
             ]
         ]
