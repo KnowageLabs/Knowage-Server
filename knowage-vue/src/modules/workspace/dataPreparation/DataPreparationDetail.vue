@@ -98,7 +98,7 @@
                 showGridlines
                 responsiveLayout="scroll"
                 :scrollable="true"
-                scrollHeight="calc(100% - 58px)"
+                scrollDirection="both"
             >
                 <template #empty>
                     {{ $t('common.info.noDataFound') }}
@@ -107,7 +107,7 @@
                     {{ $t('common.info.dataLoading') }}
                 </template>
 
-                <Column v-for="(col, colIndex) in columns" :field="col.header" :key="colIndex" :style="col.style">
+                <Column v-for="(col, colIndex) in columns" :field="col.header" :key="colIndex" :style="{ width: '200px' }">
                     <template #header>
                         <Button :class="descriptor.css.buttonClassHeader" @click="toggle($event, 'opType-' + colIndex)">
                             <span v-if="descriptorTransformations.filter((x) => x.name === 'changeRole')[0].icon.class" :class="descriptorTransformations.filter((x) => x.name === 'changeRole')[0].icon.class">{{ descriptorTransformations.filter((x) => x.name === 'changeRole')[0].icon.name }}</span>
@@ -421,6 +421,9 @@ export default defineComponent({
 
 <style lang="scss">
 .kn-data-preparation {
+    .managerDetail {
+        width: calc(100vw - $mainmenu-width);
+    }
     .p-datatable.p-datatable-sm.data-prep-table {
         width: 100%;
         .p-column-header-content {
