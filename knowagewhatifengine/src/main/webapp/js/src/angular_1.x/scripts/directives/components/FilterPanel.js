@@ -594,6 +594,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			}
 
 			filterSlice();
+			hlght = false;
 			$mdDialog.hide();
 		}
 		else
@@ -603,6 +604,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				$scope.bindMode=false;
 				selectedFlag = false;
 				$scope.isSlicer=true;
+				hlght = false;
 				$mdDialog.hide();
 			}else{
 
