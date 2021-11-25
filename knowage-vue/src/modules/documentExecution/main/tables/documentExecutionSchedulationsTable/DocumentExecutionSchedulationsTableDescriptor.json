@@ -1,5 +1,12 @@
 {
-    "globalFilterFields": ["name", "dateCreation"],
+    "dialog": {
+        "style": {
+            "height": "80vh",
+            "padding": 0,
+            "width": "80vw"
+        }
+    },
+    "globalFilterFields": ["name", "description", "dateCreation"],
     "iconColumn": {
         "style": {
             "text-align": "end",

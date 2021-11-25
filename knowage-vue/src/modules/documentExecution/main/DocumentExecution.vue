@@ -1,44 +1,49 @@
 <template>
-    <Toolbar class="kn-toolbar kn-toolbar--primary">
-        <template #left>{{ document?.label }} </template>
+    <div>
+        <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
+            <template #left>{{ document?.label }} </template>
 
-        <template #right>
-            <div class="p-d-flex p-jc-around">
-                <i class="pi pi-pencil kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocument"></i>
-                <i class="pi pi-book kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></i>
-                <i class="pi pi-refresh kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.refresh')" @click="refresh"></i>
-                <i class="fa fa-filter kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible"></i>
-                <i class="fa fa-ellipsis-v kn-cursor-pointer  p-mx-4" v-tooltip.left="$t('common.menu')" @click="toggle"></i>
-                <Menu ref="menu" :model="toolbarMenuItems" :popup="true" />
-                <i class="fa fa-times kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.close')" @click="closeDocument"></i>
-            </div>
-        </template>
-    </Toolbar>
-    <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
+            <template #right>
+                <div class="p-d-flex p-jc-around">
+                    <i class="pi pi-pencil kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocument"></i>
+                    <i class="pi pi-book kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></i>
+                    <i class="pi pi-refresh kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.refresh')" @click="refresh"></i>
+                    <i class="fa fa-filter kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible"></i>
+                    <i class="fa fa-ellipsis-v kn-cursor-pointer  p-mx-4" v-tooltip.left="$t('common.menu')" @click="toggle"></i>
+                    <Menu ref="menu" :model="toolbarMenuItems" :popup="true" />
+                    <i class="fa fa-times kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.close')" @click="closeDocument"></i>
+                </div>
+            </template>
+        </Toolbar>
+        <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
 
-    <div id="document-execution-view" class="p-d-flex p-flex-row">
-        <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
+        <div>
+            <div ref="document-execution-view" id="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
+                <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
 
-        <!-- <Registry v-if="mode === 'registry' && urlData && !loading" :id="urlData.sbiExecutionId"></Registry> -->
-        <!-- <Registry v-if="mode === 'registry' && urlData && !loading" :id="'e2d23b864b7811ec9215b918e5768f09'"></Registry> -->
+                <!-- <Registry v-if="mode === 'registry' && urlData && !loading" :id="urlData.sbiExecutionId"></Registry> -->
+                <!-- <Registry v-if="mode === 'registry' && urlData && !loading" :id="'e2d23b864b7811ec9215b918e5768f09'"></Registry> -->
 
-        <!-- <router-view v-slot="{ Component }">
+                <!-- <router-view v-slot="{ Component }">
             <keep-alive>
                 <component :is="Component" :key="$route.fullPath"></component>
             </keep-alive>
         </router-view> -->
 
-        <!-- <iframe class="document-execution-iframe" :src="url"></iframe> -->
+                <!-- <iframe class="document-execution-iframe" :src="url"></iframe> -->
 
-        <DocumentExecutionSchedulationsTable v-if="schedulationsTableVisible"></DocumentExecutionSchedulationsTable>
+                <DocumentExecutionSchedulationsTable v-if="schedulationsTableVisible" :propSchedulations="schedulations" @deleteSchedulation="onDeleteSchedulation" @close="schedulationsTableVisible = false"></DocumentExecutionSchedulationsTable>
 
-        <KnParameterSidebar class="document-execution-parameter-sidebar document-execution-parameter-sidebar kn-overflow-y" v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="document" @execute="onExecute" @exportCSV="onExportCSV"></KnParameterSidebar>
+                <KnParameterSidebar class="document-execution-parameter-sidebar document-execution-parameter-sidebar kn-overflow-y" v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="document" @execute="onExecute" @exportCSV="onExportCSV"></KnParameterSidebar>
 
-        <DocumentExecutionHelpDialog :visible="helpDialogVisible" :propDocument="document" @close="helpDialogVisible = false"></DocumentExecutionHelpDialog>
-        <DocumentExecutionRankDialog :visible="rankDialogVisible" :propDocumentRank="documentRank" @close="rankDialogVisible = false" @saveRank="onSaveRank"></DocumentExecutionRankDialog>
-        <DocumentExecutionNotesDialog :visible="notesDialogVisible" :propDocument="document" @close="notesDialogVisible = false"></DocumentExecutionNotesDialog>
-        <DocumentExecutionMetadataDialog :visible="metadataDialogVisible" :propDocument="document" :propMetadata="metadata" :propLoading="loading" @close="metadataDialogVisible = false" @saveMetadata="onMetadataSave"></DocumentExecutionMetadataDialog>
-        <DocumentExecutionMailDialog :visible="mailDialogVisible" @close="mailDialogVisible = false" @sendMail="onMailSave"></DocumentExecutionMailDialog>
+                <DocumentExecutionHelpDialog :visible="helpDialogVisible" :propDocument="document" @close="helpDialogVisible = false"></DocumentExecutionHelpDialog>
+                <DocumentExecutionRankDialog :visible="rankDialogVisible" :propDocumentRank="documentRank" @close="rankDialogVisible = false" @saveRank="onSaveRank"></DocumentExecutionRankDialog>
+                <DocumentExecutionNotesDialog :visible="notesDialogVisible" :propDocument="document" @close="notesDialogVisible = false"></DocumentExecutionNotesDialog>
+                <DocumentExecutionMetadataDialog :visible="metadataDialogVisible" :propDocument="document" :propMetadata="metadata" :propLoading="loading" @close="metadataDialogVisible = false" @saveMetadata="onMetadataSave"></DocumentExecutionMetadataDialog>
+                <DocumentExecutionMailDialog :visible="mailDialogVisible" @close="mailDialogVisible = false" @sendMail="onMailSave"></DocumentExecutionMailDialog>
+                <DocumentExecutionLinkDialog :visible="linkDialogVisible" :linkInfo="linkInfo" @close="linkDialogVisible = false"></DocumentExecutionLinkDialog>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -51,13 +56,14 @@ import DocumentExecutionNotesDialog from './dialogs/documentExecutionNotesDialog
 import DocumentExecutionMetadataDialog from './dialogs/documentExecutionMetadataDialog/DocumentExecutionMetadataDialog.vue'
 import DocumentExecutionMailDialog from './dialogs/documentExecutionMailDialog/DocumentExecutionMailDialog.vue'
 import DocumentExecutionSchedulationsTable from './tables/documentExecutionSchedulationsTable/DocumentExecutionSchedulationsTable.vue'
+import DocumentExecutionLinkDialog from './dialogs/documentExecutionLinkDialog/DocumentExecutionLinkDialog.vue'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 import Menu from 'primevue/menu'
 // import Registry from '../registry/Registry.vue'
 
 export default defineComponent({
     name: 'document-execution',
-    components: { DocumentExecutionHelpDialog, DocumentExecutionRankDialog, DocumentExecutionNotesDialog, DocumentExecutionMetadataDialog, DocumentExecutionMailDialog, DocumentExecutionSchedulationsTable, KnParameterSidebar, Menu },
+    components: { DocumentExecutionHelpDialog, DocumentExecutionRankDialog, DocumentExecutionNotesDialog, DocumentExecutionMetadataDialog, DocumentExecutionMailDialog, DocumentExecutionSchedulationsTable, DocumentExecutionLinkDialog, KnParameterSidebar, Menu },
     props: { id: { type: String } },
     data() {
         return {
@@ -77,6 +83,8 @@ export default defineComponent({
             metadata: null as any,
             schedulationsTableVisible: false,
             schedulations: [] as any[],
+            linkDialogVisible: false,
+            linkInfo: null as any,
             user: null as any,
             loading: false
         }
@@ -140,21 +148,43 @@ export default defineComponent({
                 },
                 {
                     label: this.$t('common.shortcuts'),
-                    items: [
-                        { icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() },
-                        { icon: 'pi pi-file', label: this.$t('common.notes'), command: () => this.copyLink() },
-                        { icon: 'pi pi-file', label: this.$t('common.notes'), command: () => this.openNotes() }
-                    ]
+                    items: []
                 }
             )
 
             if (this.user.functionalities.includes('SendMailFunctionality') && this.document.typeCode === 'REPORT') {
                 this.toolbarMenuItems[1].items.push({ icon: 'pi pi-envelope', label: this.$t('common.sendByEmail'), command: () => this.openMailDialog() })
             }
+            if (this.user.functionalities.includes('SeeSnapshotsFunctionality')) {
+                this.toolbarMenuItems[3].items.unshift({ icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() })
+            }
+
+            if (this.user.functionalities.includes('EnableToCopyAndEmbed')) {
+                this.toolbarMenuItems[3].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.copyLink'), command: () => this.copyLink() })
+                this.toolbarMenuItems[3].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.embedInHtml'), command: () => this.copyLink() })
+            }
         },
         print() {
-            console.log('TODO - PRINT')
+            window.print()
+            // this.PrintElem('document-execution-view')
         },
+        // PrintElem(elem) {
+        //     var mywindow = window.open('', 'PRINT', 'height=800,width=1000')
+
+        //     mywindow?.document.write('<html><head><title>' + document.title + '</title>')
+        //     mywindow?.document.write('</head><body >')
+        //     mywindow?.document.write('<h1>' + document.title + '</h1>')
+        //     mywindow?.document.write(document.getElementById(elem)?.innerHTML as any)
+        //     mywindow?.document.write('</body></html>')
+
+        //     mywindow?.document.close() // necessary for IE >= 10
+        //     mywindow?.focus() // necessary for IE >= 10*/
+
+        //     mywindow?.print()
+        //     mywindow?.close()
+
+        //     return true
+        // },
         export() {
             console.log('TODO - EXPORT')
         },
@@ -177,11 +207,27 @@ export default defineComponent({
         async showScheduledExecutions() {
             this.loading = true
             this.schedulationsTableVisible = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/getSnapshots?id=${this.document.id}`).then((response: AxiosResponse<any>) => (this.metadata = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/getSnapshots?id=${this.document.id}`).then((response: AxiosResponse<any>) => {
+                response.data?.schedulers.forEach((el: any) => this.schedulations.push({ ...el, urlPath: response.data.urlPath }))
+            })
             this.loading = false
         },
-        copyLink() {
+        async copyLink() {
             console.log('TODO - OPEN COPY LINK')
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/canHavePublicExecutionUrl`, { label: this.document.label })
+                .then((response: AxiosResponse<any>) => {
+                    this.linkInfo = response.data
+                    this.linkDialogVisible = true
+                })
+                .catch((error: any) =>
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: error
+                    })
+                )
+            this.loading = false
         },
         closeDocument() {
             console.log('TODO - CLOSE DOCUMENT')
@@ -440,6 +486,26 @@ export default defineComponent({
                     })
                 })
             this.loading = false
+        },
+        async onDeleteSchedulation(schedulation: any) {
+            // console.log('SCHEDULATION FOR DELETE: ', schedulation)
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/deleteSnapshot`, { SNAPSHOT: '' + schedulation.id })
+                .then(async () => {
+                    this.removeSchedulation(schedulation)
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                })
+                .catch(() => {})
+            this.loading = false
+        },
+        removeSchedulation(schedulation: any) {
+            // console.log('SCHEDULATION FOR REMOVE: ', schedulation)
+            const index = this.schedulations.findIndex((el: any) => el.id === schedulation.id)
+            if (index !== -1) this.schedulations.splice(index, 1)
         }
     }
 })
@@ -474,5 +540,32 @@ export default defineComponent({
 
 .document-execution-parameter-sidebar {
     height: 60vh;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #myDivToPrint,
+    #myDivToPrint * {
+        visibility: visible;
+    }
+    #myDivToPrint {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+    // .myDivToPrint {
+    //     background-color: white;
+    //     height: 100%;
+    //     width: 100%;
+    //     position: fixed;
+    //     top: 0;
+    //     left: 0;
+    //     margin: 0;
+    //     padding: 15px;
+    //     font-size: 14px;
+    //     line-height: 18px;
+    // }
 }
 </style>
