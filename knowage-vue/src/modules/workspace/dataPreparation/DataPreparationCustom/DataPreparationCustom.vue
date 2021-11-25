@@ -76,109 +76,109 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import DataPreparationCustomDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationCustomDescriptor.json'
-import Calendar from 'primevue/calendar'
-import Dropdown from 'primevue/dropdown'
-import InputSwitch from 'primevue/inputswitch'
-import MultiSelect from 'primevue/multiselect'
-import KnTextarea from '@/components/UI/KnTextarea.vue'
-import Textarea from 'primevue/textarea'
+    import { defineComponent, PropType } from 'vue'
+    import DataPreparationCustomDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationCustomDescriptor.json'
+    import Calendar from 'primevue/calendar'
+    import Dropdown from 'primevue/dropdown'
+    import InputSwitch from 'primevue/inputswitch'
+    import MultiSelect from 'primevue/multiselect'
+    import KnTextarea from '@/components/UI/KnTextarea.vue'
+    import Textarea from 'primevue/textarea'
 
-import { ITransformation } from '@/modules/workspace/dataPreparation/DataPreparation'
-import { IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
+    import { ITransformation } from '@/modules/workspace/dataPreparation/DataPreparation'
+    import { IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
 
-export default defineComponent({
-    name: 'data-preparation-custom',
+    export default defineComponent({
+        name: 'data-preparation-custom',
 
-    props: { col: String, columns: { type: Array as PropType<Array<IDataPreparationColumn>> }, transformation: {} as PropType<ITransformation> },
-    components: { Calendar, Dropdown, InputSwitch, MultiSelect, Textarea, KnTextarea },
-    emits: ['update:transformation'],
-    data() {
-        return { descriptor: DataPreparationCustomDescriptor as any, parameters: [] as any, localTransformation: {} as ITransformation }
-    },
-    mounted() {
-        this.localTransformation = this.transformation ? { ...this.transformation } : ({} as ITransformation)
-
-        let name = this.transformation && this.transformation.name ? this.transformation.name : ''
-        if (name && this.transformation?.type === 'custom') this.localTransformation.parameters = this.descriptor[name].parameters
-    },
-    methods: {
-        addNewRow() {
-            this.localTransformation?.parameters.push(this.localTransformation?.parameters[0])
+        props: { col: String, columns: { type: Array as PropType<Array<IDataPreparationColumn>> }, transformation: {} as PropType<ITransformation> },
+        components: { Calendar, Dropdown, InputSwitch, MultiSelect, Textarea, KnTextarea },
+        emits: ['update:transformation'],
+        data() {
+            return { descriptor: DataPreparationCustomDescriptor as any, parameters: [] as any, localTransformation: {} as ITransformation }
         },
-        deleteRow(index) {
-            if (this.localTransformation) {
-                if (this.localTransformation.parameters?.length > 1) this.localTransformation?.parameters.splice(index, 1)
-            }
+        mounted() {
+            this.localTransformation = this.transformation ? { ...this.transformation } : ({} as ITransformation)
+
+            let name = this.transformation && this.transformation.name ? this.transformation.name : ''
+            if (name && this.transformation?.type === 'custom') this.localTransformation.parameters = this.descriptor[name].parameters
         },
-        handleMultiSelectChange(e: Event): void {
-            if (e) {
-                this.refreshTransfrormation()
-            }
-        },
-        isFieldVisible(field): boolean {
-            let visible = true
-            if (field.relatedWith && field.relatedTo && this.localTransformation) {
-                for (let i in this.localTransformation.parameters) {
-                    var obj = this.localTransformation.parameters[i].filter((x) => x.name === field.relatedTo)
-                    if (obj.length > 0) {
-                        let keyValue
-                        let keys = Object.keys(obj[0])
-                        for (let i in keys) {
-                            let key = keys[i]
-                            if (key.includes('selectedCondition')) {
-                                keyValue = key
+        methods: {
+            addNewRow() {
+                this.localTransformation?.parameters.push(this.localTransformation?.parameters[0])
+            },
+            deleteRow(index) {
+                if (this.localTransformation) {
+                    if (this.localTransformation.parameters?.length > 1) this.localTransformation?.parameters.splice(index, 1)
+                }
+            },
+            handleMultiSelectChange(e: Event): void {
+                if (e) {
+                    this.refreshTransfrormation()
+                }
+            },
+            isFieldVisible(field): boolean {
+                let visible = true
+                if (field.relatedWith && field.relatedTo && this.localTransformation) {
+                    for (let i in this.localTransformation.parameters) {
+                        var obj = this.localTransformation.parameters[i].filter((x) => x.name === field.relatedTo)
+                        if (obj.length > 0) {
+                            let keyValue
+                            let keys = Object.keys(obj[0])
+                            for (let i in keys) {
+                                let key = keys[i]
+                                if (key.includes('selectedCondition')) {
+                                    keyValue = key
+                                    break
+                                }
+                            }
+                            if (keyValue) {
+                                visible = visible && obj[0][keyValue] === field.relatedWith
+                            } else {
+                                visible = false
                                 break
                             }
                         }
-                        if (keyValue) {
-                            visible = visible && obj[0][keyValue] === field.relatedWith
-                        } else {
-                            visible = false
-                            break
-                        }
                     }
                 }
-            }
-            return visible
-        },
-        refreshTransfrormation(): void {
-            if (this.localTransformation) {
-                let pars = this.localTransformation.type === 'custom' ? this.descriptor[this.localTransformation.name].parameters : []
-                pars.forEach((element) => {
-                    element.forEach((item) => {
-                        item.availableOptions?.forEach((element) => {
-                            element.label = this.$t(element.label)
-                        })
-                        if (item.type === 'multiSelect' && item.name === 'columns') {
-                            if (this.col) {
-                                let selectedItem: Array<IDataPreparationColumn> | undefined = this.columns?.filter((x) => x.header == this.col)
-                                if (selectedItem && selectedItem.length > 0) {
-                                    selectedItem[0].disabled = true
+                return visible
+            },
+            refreshTransfrormation(): void {
+                if (this.localTransformation) {
+                    let pars = this.localTransformation.type === 'custom' ? this.descriptor[this.localTransformation.name].parameters : []
+                    pars.forEach((element) => {
+                        element.forEach((item) => {
+                            item.availableOptions?.forEach((element) => {
+                                element.label = this.$t(element.label)
+                            })
+                            if (item.type === 'multiSelect' && item.name === 'columns') {
+                                if (this.col) {
+                                    let selectedItem: Array<IDataPreparationColumn> | undefined = this.columns?.filter((x) => x.header == this.col)
+                                    if (selectedItem && selectedItem.length > 0) {
+                                        selectedItem[0].disabled = true
 
-                                    item['selectedItems_fieldIndex_0_index_0'] = selectedItem
+                                        item['selectedItems_fieldIndex_0_index_0'] = selectedItem
+                                    }
+                                } else {
+                                    this.columns?.forEach((e) => (e.disabled = false))
                                 }
-                            } else {
-                                this.columns?.forEach((e) => (e.disabled = false))
                             }
-                        }
+                        })
                     })
-                })
+                }
+            }
+        },
+        /*         updated() {
+            this.$emit('update:transformation', this.localTransformation)
+        } */
+        watch: {
+            localTransformation(oldValue, newValue) {
+                if (oldValue !== newValue) {
+                    this.$emit('update:transformation', newValue)
+                }
             }
         }
-    },
-    updated() {
-        this.$emit('update:transformation', this.localTransformation)
-    },
-    watch: {
-        localTransformation(oldValue, newValue) {
-            if (oldValue !== newValue) {
-                this.$emit('update:transformation', newValue)
-            }
-        }
-    }
-})
+    })
 </script>
 
 <style lang="scss" scoped></style>
