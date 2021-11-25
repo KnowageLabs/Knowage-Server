@@ -30,25 +30,34 @@
 
         <!-- <iframe class="document-execution-iframe" :src="url"></iframe> -->
 
+        <DocumentExecutionSchedulationsTable v-if="schedulationsTableVisible"></DocumentExecutionSchedulationsTable>
+
         <KnParameterSidebar class="document-execution-parameter-sidebar document-execution-parameter-sidebar kn-overflow-y" v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="document" @execute="onExecute" @exportCSV="onExportCSV"></KnParameterSidebar>
 
         <DocumentExecutionHelpDialog :visible="helpDialogVisible" :propDocument="document" @close="helpDialogVisible = false"></DocumentExecutionHelpDialog>
-        <DocumentExecutionRankDialog :visible="rankDialogVisible" :propDocumentRank="documentRank" @close="rankDialogVisible = false"></DocumentExecutionRankDialog>
+        <DocumentExecutionRankDialog :visible="rankDialogVisible" :propDocumentRank="documentRank" @close="rankDialogVisible = false" @saveRank="onSaveRank"></DocumentExecutionRankDialog>
+        <DocumentExecutionNotesDialog :visible="notesDialogVisible" :propDocument="document" @close="notesDialogVisible = false"></DocumentExecutionNotesDialog>
+        <DocumentExecutionMetadataDialog :visible="metadataDialogVisible" :propDocument="document" :propMetadata="metadata" :propLoading="loading" @close="metadataDialogVisible = false" @saveMetadata="onMetadataSave"></DocumentExecutionMetadataDialog>
+        <DocumentExecutionMailDialog :visible="mailDialogVisible" @close="mailDialogVisible = false" @sendMail="onMailSave"></DocumentExecutionMailDialog>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
-import DocumentExecutionHelpDialog from './dialogs/DocumentExecutionHelpDialog.vue'
-import DocumentExecutionRankDialog from './dialogs/DocumentExecutionRankDialog.vue'
+import DocumentExecutionHelpDialog from './dialogs/documentExecutionHelpDialog/DocumentExecutionHelpDialog.vue'
+import DocumentExecutionRankDialog from './dialogs/documentExecutionRankDialog/DocumentExecutionRankDialog.vue'
+import DocumentExecutionNotesDialog from './dialogs/documentExecutionNotesDialog/DocumentExecutionNotesDialog.vue'
+import DocumentExecutionMetadataDialog from './dialogs/documentExecutionMetadataDialog/DocumentExecutionMetadataDialog.vue'
+import DocumentExecutionMailDialog from './dialogs/documentExecutionMailDialog/DocumentExecutionMailDialog.vue'
+import DocumentExecutionSchedulationsTable from './tables/documentExecutionSchedulationsTable/DocumentExecutionSchedulationsTable.vue'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 import Menu from 'primevue/menu'
 // import Registry from '../registry/Registry.vue'
 
 export default defineComponent({
     name: 'document-execution',
-    components: { DocumentExecutionHelpDialog, DocumentExecutionRankDialog, KnParameterSidebar, Menu },
+    components: { DocumentExecutionHelpDialog, DocumentExecutionRankDialog, DocumentExecutionNotesDialog, DocumentExecutionMetadataDialog, DocumentExecutionMailDialog, DocumentExecutionSchedulationsTable, KnParameterSidebar, Menu },
     props: { id: { type: String } },
     data() {
         return {
@@ -62,6 +71,12 @@ export default defineComponent({
             helpDialogVisible: false,
             documentRank: null as any,
             rankDialogVisible: false,
+            notesDialogVisible: false,
+            metadataDialogVisible: false,
+            mailDialogVisible: false,
+            metadata: null as any,
+            schedulationsTableVisible: false,
+            schedulations: [] as any[],
             user: null as any,
             loading: false
         }
@@ -126,12 +141,16 @@ export default defineComponent({
                 {
                     label: this.$t('common.shortcuts'),
                     items: [
-                        { icon: '', label: this.$t('common.notes'), command: () => this.showScheduledExecutions() },
+                        { icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() },
                         { icon: 'pi pi-file', label: this.$t('common.notes'), command: () => this.copyLink() },
                         { icon: 'pi pi-file', label: this.$t('common.notes'), command: () => this.openNotes() }
                     ]
                 }
             )
+
+            if (this.user.functionalities.includes('SendMailFunctionality') && this.document.typeCode === 'REPORT') {
+                this.toolbarMenuItems[1].items.push({ icon: 'pi pi-envelope', label: this.$t('common.sendByEmail'), command: () => this.openMailDialog() })
+            }
         },
         print() {
             console.log('TODO - PRINT')
@@ -139,19 +158,27 @@ export default defineComponent({
         export() {
             console.log('TODO - EXPORT')
         },
-        openMetadata() {
-            console.log('TODO - OPEN METADATA')
+        openMailDialog() {
+            this.mailDialogVisible = true
+        },
+        async openMetadata() {
+            this.loading = true
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecutionee/${this.document.id}/documentMetadata`).then((response: AxiosResponse<any>) => (this.metadata = response.data))
+            this.metadataDialogVisible = true
+            this.loading = false
         },
         async openRank() {
-            console.log('TODO - OPEN RANK')
             await this.getRank()
             this.rankDialogVisible = true
         },
         openNotes() {
-            console.log('TODO - OPEN NOTES')
+            this.notesDialogVisible = true
         },
-        showScheduledExecutions() {
-            console.log('TODO - OPEN SCHEDULED EXECUTIONS')
+        async showScheduledExecutions() {
+            this.loading = true
+            this.schedulationsTableVisible = true
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/getSnapshots?id=${this.document.id}`).then((response: AxiosResponse<any>) => (this.metadata = response.data))
+            this.loading = false
         },
         copyLink() {
             console.log('TODO - OPEN COPY LINK')
@@ -268,7 +295,43 @@ export default defineComponent({
         async onExportCSV() {
             console.log('ON EXPORT CSV CLICKED!', this.document)
             console.log('ON EXPORT CSV CLICKED!', this.filtersData)
-            const postData = { documentId: this.document.id, documentLabel: this.document.label, exportType: 'CSV', parameters: {} }
+            const postData = { documentId: this.document.id, documentLabel: this.document.label, exportType: 'CSV', parameters: this.getFormattedParameters() }
+            // Object.keys(this.filtersData.filterStatus).forEach((key: any) => {
+            //     console.log('EL: ', this.filtersData.filterStatus[key])
+            //     const param = this.filtersData.filterStatus[key]
+            //     if (param.multivalue) {
+            //         let tempString = ''
+            //         for (let i = 0; i < this.filtersData.filterStatus[key].parameterValue.length; i++) {
+            //             tempString += this.filtersData.filterStatus[key].parameterValue[i].value
+            //             tempString += i === this.filtersData.filterStatus[key].parameterValue.length - 1 ? '' : ','
+            //         }
+
+            //         postData.parameters[this.filtersData.filterStatus[key].urlName] = tempString
+            //     } else if (param.type === 'NUM' && !param.selectionType) {
+            //         postData.parameters[this.filtersData.filterStatus[key].urlName] = +this.filtersData.filterStatus[key].parameterValue[0].value
+            //     } else {
+            //         postData.parameters[this.filtersData.filterStatus[key].urlName] = this.filtersData.filterStatus[key].parameterValue[0] ? this.filtersData.filterStatus[key].parameterValue[0].value : this.filtersData.filterStatus[key].parameterValue.value
+            //     }
+            // })
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/cockpitData`, postData)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('common.exportSuccess')
+                    })
+                })
+                .catch(() => {})
+            this.loading = false
+            console.log('BLA', postData)
+        },
+        getFormattedParameters() {
+            if (!this.filtersData) {
+                return
+            }
+
+            const parameters = {} as any
             Object.keys(this.filtersData.filterStatus).forEach((key: any) => {
                 console.log('EL: ', this.filtersData.filterStatus[key])
                 const param = this.filtersData.filterStatus[key]
@@ -279,26 +342,15 @@ export default defineComponent({
                         tempString += i === this.filtersData.filterStatus[key].parameterValue.length - 1 ? '' : ','
                     }
 
-                    postData.parameters[this.filtersData.filterStatus[key].urlName] = tempString
+                    parameters[this.filtersData.filterStatus[key].urlName] = tempString
                 } else if (param.type === 'NUM' && !param.selectionType) {
-                    postData.parameters[this.filtersData.filterStatus[key].urlName] = +this.filtersData.filterStatus[key].parameterValue[0].value
+                    parameters[this.filtersData.filterStatus[key].urlName] = +this.filtersData.filterStatus[key].parameterValue[0].value
                 } else {
-                    postData.parameters[this.filtersData.filterStatus[key].urlName] = this.filtersData.filterStatus[key].parameterValue[0] ? this.filtersData.filterStatus[key].parameterValue[0].value : this.filtersData.filterStatus[key].parameterValue.value
+                    parameters[this.filtersData.filterStatus[key].urlName] = this.filtersData.filterStatus[key].parameterValue[0] ? this.filtersData.filterStatus[key].parameterValue[0].value : this.filtersData.filterStatus[key].parameterValue.value
                 }
             })
-            this.loading = true
-            await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/cockpitData`, postData)
-                .then(() => {
-                    console.log('USPELO')
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.updateTitle'),
-                        msg: this.$t('common.exportSuccess')
-                    })
-                })
-                .catch(() => {})
-            this.loading = false
-            console.log('BLA', postData)
+
+            return parameters
         },
         async getRank() {
             this.loading = true
@@ -313,6 +365,81 @@ export default defineComponent({
                 )
             this.loading = false
             console.log('LOADED DOCUMENT VOTE MAIN: ', this.documentRank)
+        },
+        async onSaveRank(newRank: any) {
+            console.log('NEW RANK: ', newRank)
+            if (newRank) {
+                this.loading = true
+                await this.$http
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documentrating/vote`, { rating: newRank, obj: this.document.id })
+                    .then(() =>
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.updateTitle'),
+                            msg: this.$t('documentExecution.main.rankSaveSucces')
+                        })
+                    )
+                    .catch((error: any) =>
+                        this.$store.commit('setError', {
+                            title: this.$t('common.error.generic'),
+                            msg: error
+                        })
+                    )
+                this.loading = false
+            }
+            this.rankDialogVisible = false
+        },
+        async onMetadataSave(metadata: any) {
+            console.log('ON METADATA SAVE: ', metadata)
+            this.loading = true
+            const jsonMeta = [] as any[]
+            const properties = ['shortText', 'longText']
+            properties.forEach((property: string) =>
+                metadata[property].forEach((el: any) => {
+                    if (el.value) {
+                        jsonMeta.push(el)
+                    }
+                })
+            )
+
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecutionee/saveDocumentMetadata`, { id: this.document.id, jsonMeta: jsonMeta })
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.createTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.metadataDialogVisible = false
+                })
+                .catch((error: any) => {
+                    console.log('ERROR: ', error)
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: error
+                    })
+                })
+            this.loading = false
+        },
+        async onMailSave(mail: any) {
+            console.log('MAIL FOR SAVE: ', mail)
+            this.loading = true
+            const postData = { ...mail, label: this.document.label, docId: this.document.id, userId: this.user.userId, parameters: this.getFormattedParameters() }
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecutionmail/sendMail`, postData)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.createTitle'),
+                        msg: this.$t('common.sendMailSuccess')
+                    })
+                    this.mailDialogVisible = false
+                })
+                .catch((error: any) => {
+                    console.log('ERROR: ', error)
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: error
+                    })
+                })
+            this.loading = false
         }
     }
 })

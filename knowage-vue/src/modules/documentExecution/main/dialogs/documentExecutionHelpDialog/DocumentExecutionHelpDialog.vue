@@ -47,7 +47,6 @@ export default defineComponent({
     methods: {
         loadDocument() {
             this.document = this.propDocument ? { ...this.propDocument } : {}
-            console.log('HELP DIALOG LOADED DOCUMENT: ', this.document)
         },
         closeDialog() {
             this.$emit('close')

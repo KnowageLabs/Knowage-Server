@@ -1,0 +1,75 @@
+<template>
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :visible="visible" :modal="true" :closable="false">
+        <template #header>
+            <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
+                <template #left>
+                    {{ $t('common.rank') }}
+                </template>
+            </Toolbar>
+        </template>
+
+        <div class="p-p-2">
+            <label>{{ documentRank === 0 ? $t('documentExecution.main.firstToRate') : $t('documentExecution.main.currentRank') }}</label>
+            <Rating v-if="documentRank !== 0" class="document-execution-rank-stars" v-model="documentRank" :disabled="true" :cancel="false"></Rating>
+        </div>
+
+        <div class="p-p-2">
+            <label>{{ $t('documentExecution.main.yourRating') + ': ' }}</label>
+            <Rating class="document-execution-rank-stars" v-model="newRank" :cancel="false"></Rating>
+        </div>
+
+        <template #footer>
+            <div class="p-d-flex p-flex-row p-jc-end">
+                <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
+                <Button class="kn-button kn-button--primary" @click="save"> {{ $t('common.save') }}</Button>
+            </div>
+        </template>
+    </Dialog>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue'
+import Dialog from 'primevue/dialog'
+import Rating from 'primevue/rating'
+
+export default defineComponent({
+    name: 'document-execution-help-dialog',
+    components: { Dialog, Rating },
+    props: { visible: { type: Boolean }, propDocumentRank: { type: Object } },
+    emits: ['close', 'saveRank'],
+    data() {
+        return {
+            documentRank: null as any,
+            newRank: null as any
+        }
+    },
+    watch: {
+        propDocumentRank() {
+            this.loadDocumentRank()
+        }
+    },
+    created() {
+        this.loadDocumentRank()
+    },
+    methods: {
+        loadDocumentRank() {
+            this.newRank = null
+            this.documentRank = this.propDocumentRank
+            // console.log('DOCUMENT RANK DIALOG LOADED: ', this.documentRank)
+        },
+        closeDialog() {
+            this.newRank = null
+            this.$emit('close')
+        },
+        save() {
+            this.$emit('saveRank', this.newRank)
+        }
+    }
+})
+</script>
+
+<style lang="scss">
+.document-execution-rank-stars .p-rating-icon {
+    font-size: 2rem;
+}
+</style>
