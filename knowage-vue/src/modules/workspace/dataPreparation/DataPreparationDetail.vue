@@ -20,7 +20,7 @@
             </template>
             <template #right><Button icon="pi pi-arrow-left" :class="descriptor.css.buttonClassHeader" @click="visibleRight = true"/></template>
         </Toolbar>
-        <Divider class="p-m-0 p-p-0 dividerCustomConfig" />
+        <Divider class="kn-divider" />
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         <div class="kn-page-content p-grid p-m-0 managerDetail">
             <Sidebar v-model:visible="visibleRight" position="right">
@@ -426,6 +426,13 @@ export default defineComponent({
     }
     .p-datatable.p-datatable-sm.data-prep-table {
         width: 100%;
+        .p-datatable-thead {
+            tr {
+                th {
+                    background-color: $table-header-background-color;
+                }
+            }
+        }
         .p-column-header-content {
             flex: 1;
             .p-button.p-button-icon-only.p-button-rounded {
