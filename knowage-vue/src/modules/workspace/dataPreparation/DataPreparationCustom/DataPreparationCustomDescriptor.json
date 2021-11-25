@@ -129,7 +129,21 @@
         ]
     },
     "mergeColumns": {
-        "parameters": []
+        "parameters": [
+            [
+                {
+                    "name": "columns",
+                    "optionLabel": "header",
+                    "type": "multiSelect",
+                    "validationRules": "required"
+                },
+                {
+                    "name": "column",
+                    "type": "string",
+                    "validationRules": "required|alpha"
+                }
+            ]
+        ]
     },
     "splitColumns": {
         "parameters": [
