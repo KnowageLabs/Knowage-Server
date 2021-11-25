@@ -1,6 +1,6 @@
 <template>
-    <span v-for="(fieldArray, fieldIndex) in localTransformation.parameters" v-bind:key="fieldIndex" class="p-d-flex">
-        <div v-for="(field, index) in fieldArray" v-bind:key="index" :class="[field.type === 'textarea' ? 'p-col-6' : 'p-col-4', 'p-field p-ml-2 kn-flex']">
+    <span v-for="(fieldArray, fieldIndex) in localTransformation.parameters" v-bind:key="fieldIndex" class="p-d-flex data-prep-simple-transformation">
+        <div v-for="(field, index) in fieldArray" v-bind:key="index" class="p-field p-ml-2 kn-flex">
             <span v-if="field.type == 'string'" class="p-float-label">
                 <InputText
                     :id="name"
@@ -143,4 +143,14 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+.data-prep-simple-transformation {
+    .p-field {
+        .p-multiselect,
+        .p-inputtext,
+        .p-dropdown {
+            width: 100%;
+        }
+    }
+}
+</style>
