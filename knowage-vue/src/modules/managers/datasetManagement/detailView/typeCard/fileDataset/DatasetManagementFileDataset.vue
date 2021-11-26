@@ -20,8 +20,8 @@
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.fileName" :additionalTranslateParams="{ fieldName: $t('downloadsDialog.columns.fileName') }" />
                 </div>
-                <Button icon="fas fa-upload fa-2x" class="p-button-text p-button-plain p-ml-2" @click="setUploadType" />
-                <Button icon="fas fa-download fa-2x" class="p-button-text y p-button-plain p-ml-2" @click="downloadDatasetFile" />
+                <Button icon="fas fa-upload" class="p-button-text p-button-plain p-ml-2" @click="setUploadType" />
+                <Button icon="fas fa-download" class="p-button-text y p-button-plain p-ml-2" @click="downloadDatasetFile" />
                 <KnInputFile v-if="!uploading" :changeFunction="uploadDatasetFile" accept=".csv, .xls, .xlsx" :triggerInput="triggerUpload" />
             </div>
 
