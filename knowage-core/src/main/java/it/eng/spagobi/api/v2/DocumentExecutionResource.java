@@ -777,6 +777,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 								String valColName = inverse.get(lovValueColumnName);
 								String descColName = inverse.get(lovDescriptionColumnName);
 
+								// TODO : workaround
+								valColName = Optional.ofNullable(valColName).orElse("value");
+								descColName = Optional.ofNullable(descColName).orElse("desc");
+
 								Map<String, Object> ret = new LinkedHashMap<>();
 
 								ret.put(valColName, e.getValue());
