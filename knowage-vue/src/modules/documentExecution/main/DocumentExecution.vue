@@ -166,25 +166,7 @@ export default defineComponent({
         },
         print() {
             window.print()
-            // this.PrintElem('document-execution-view')
         },
-        // PrintElem(elem) {
-        //     var mywindow = window.open('', 'PRINT', 'height=800,width=1000')
-
-        //     mywindow?.document.write('<html><head><title>' + document.title + '</title>')
-        //     mywindow?.document.write('</head><body >')
-        //     mywindow?.document.write('<h1>' + document.title + '</h1>')
-        //     mywindow?.document.write(document.getElementById(elem)?.innerHTML as any)
-        //     mywindow?.document.write('</body></html>')
-
-        //     mywindow?.document.close() // necessary for IE >= 10
-        //     mywindow?.focus() // necessary for IE >= 10*/
-
-        //     mywindow?.print()
-        //     mywindow?.close()
-
-        //     return true
-        // },
         export() {
             console.log('TODO - EXPORT')
         },
@@ -511,7 +493,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 #document-execution-view {
     position: relative;
     height: 100%;
@@ -546,26 +528,24 @@ export default defineComponent({
     body * {
         visibility: hidden;
     }
-    #myDivToPrint,
-    #myDivToPrint * {
+    #document-execution-view,
+    #document-execution-view * {
         visibility: visible;
     }
-    #myDivToPrint {
+    #document-execution-view {
         position: absolute;
         left: 0;
         top: 0;
+        background-color: white;
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        margin: 0;
+        padding: 15px;
+        font-size: 14px;
+        line-height: 18px;
     }
-    // .myDivToPrint {
-    //     background-color: white;
-    //     height: 100%;
-    //     width: 100%;
-    //     position: fixed;
-    //     top: 0;
-    //     left: 0;
-    //     margin: 0;
-    //     padding: 15px;
-    //     font-size: 14px;
-    //     line-height: 18px;
-    // }
 }
 </style>

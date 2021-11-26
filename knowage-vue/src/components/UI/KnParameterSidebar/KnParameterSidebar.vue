@@ -4,8 +4,8 @@
             <template #left>
                 <div id="kn-parameter-sidebar-toolbar-icons-container" class="p-d-flex p-flex-row p-jc-around">
                     <i class="fa fa-eraser kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.resetParametersTooltip')"></i>
-                    <i class="pi pi-pencil kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.savedParametersTooltip')"></i>
-                    <i class="fas fa-save kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.saveParametersFromStateTooltip')"></i>
+                    <i class="pi pi-pencil kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.savedParametersTooltip')" @click="openSavedParametersDialog"></i>
+                    <i class="fas fa-save kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.saveParametersFromStateTooltip')" @click="openSaveParameterDialog"></i>
                 </div>
             </template>
         </Toolbar>
@@ -142,6 +142,8 @@
 
         <KnParameterPopupDialog :visible="popupDialogVisible" :selectedParameter="selectedParameter" :propLoading="loading" :parameterPopUpData="parameterPopUpData" @close="popupDialogVisible = false" @save="onPopupSave"></KnParameterPopupDialog>
         <KnParameterTreeDialog :visible="treeDialogVisible" :selectedParameter="selectedParameter" :formatedParameterValues="formatedParameterValues" :document="document" @close="onTreeClose" @save="onTreeSave"></KnParameterTreeDialog>
+        <KnParameterSaveDialog :visible="parameterSaveDialogVisible" :propLoading="loading" @close="parameterSaveDialogVisible = false" @saveViewpoint="saveViewpoint"></KnParameterSaveDialog>
+        <KnParameterSavedParametersDialog :visible="savedParametersDialogVisible" :propViewpoints="viewpoints" @close="savedParametersDialogVisible = false" @fillForm="fillParameterForm" @executeViewpoint="executeViewpoint" @deleteViewpoint="deleteViewpoint"></KnParameterSavedParametersDialog>
     </div>
 </template>
 
@@ -154,13 +156,15 @@ import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import KnParameterPopupDialog from './dialogs/KnParameterPopupDialog.vue'
 import KnParameterTreeDialog from './dialogs/KnParameterTreeDialog.vue'
+import KnParameterSaveDialog from './dialogs/KnParameterSaveDialog.vue'
+import KnParameterSavedParametersDialog from './dialogs/KnParameterSavedParametersDialog.vue'
 import Menu from 'primevue/menu'
 import MultiSelect from 'primevue/multiselect'
 import RadioButton from 'primevue/radiobutton'
 
 export default defineComponent({
     name: 'kn-parameter-sidebar',
-    components: { Calendar, Chip, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, Menu, MultiSelect, RadioButton },
+    components: { Calendar, Chip, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton },
     props: { filtersData: { type: Object }, propDocument: { type: Object } },
     emits: ['execute', 'exportCSV'],
     data() {
@@ -174,6 +178,9 @@ export default defineComponent({
             parameterPopUpData: null as any,
             treeDialogVisible: false,
             formatedParameterValues: null as any,
+            parameterSaveDialogVisible: false,
+            savedParametersDialogVisible: false,
+            viewpoints: [],
             loading: false
         }
     },
@@ -425,6 +432,74 @@ export default defineComponent({
             }
 
             parameter.showOnPanel = showOnPanel
+        },
+        openSaveParameterDialog() {
+            this.parameterSaveDialogVisible = true
+        },
+        async saveViewpoint(viewpoint: any) {
+            console.log('VIEWPOINT FOR SAVE: ', viewpoint)
+            const postData = { ...viewpoint, OBJECT_LABEL: this.document.label, ROLE: (this.$store.state as any).user.defaultRole, VIEWPOINT: this.getFormatedParameters() }
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/addViewpoint`, postData)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.createTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.parameterSaveDialogVisible = false
+                })
+                .catch((error: any) =>
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: error
+                    })
+                )
+            this.loading = false
+        },
+        async openSavedParametersDialog() {
+            const role = (this.$store.state as any).user.defaultRole
+            this.loading = true
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/getViewpoints?label=${this.document.label}&role=${role}`).then((response: AxiosResponse<any>) => {
+                this.viewpoints = response.data.viewpoints
+                this.savedParametersDialogVisible = true
+            })
+            this.loading = false
+        },
+        fillParameterForm(viewpoint: any) {
+            console.log('VIEWPOINT FOR FILL FORM: ', viewpoint)
+            console.log(' >>> TEEEEEEEST ', this.decodeViewpointPrameterValues(viewpoint.vpValueParams))
+        },
+        decodeViewpointPrameterValues(string: string) {
+            const parametersJson = {}
+
+            const parameterArray = string.split('%26')
+            for (let i = 0; i < parameterArray.length; i++) {
+                const temp = parameterArray[i].split('%3D')
+                parametersJson[temp[0]] = temp[1]
+            }
+            return parametersJson
+        },
+        executeViewpoint(viewpoint: any) {
+            console.log('EXECUTE VIEWPOINT: ', viewpoint)
+        },
+        async deleteViewpoint(viewpoint: any) {
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/deleteViewpoint`, { VIEWPOINT: '' + viewpoint.vpId })
+                .then(async () => {
+                    this.removeViewpoint(viewpoint)
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                })
+                .catch(() => {})
+            this.loading = false
+        },
+        removeViewpoint(viewpoint: any) {
+            const index = this.viewpoints.findIndex((el: any) => el.vpId === viewpoint.vpId)
+            if (index !== -1) this.viewpoints.splice(index, 1)
         }
     }
 })
