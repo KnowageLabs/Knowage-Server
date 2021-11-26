@@ -3,14 +3,23 @@
         <Toolbar id="kn-parameter-sidebar-toolbar" class="kn-toolbar kn-toolbar--secondary">
             <template #left>
                 <div id="kn-parameter-sidebar-toolbar-icons-container" class="p-d-flex p-flex-row p-jc-around">
-                    <i class="fa fa-eraser kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.resetParametersTooltip')"></i>
+                    <i class="fa fa-eraser kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.resetParametersTooltip')" @click="resetAllParameters"></i>
                     <i class="pi pi-pencil kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.savedParametersTooltip')" @click="openSavedParametersDialog"></i>
                     <i class="fas fa-save kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.saveParametersFromStateTooltip')" @click="openSaveParameterDialog"></i>
                 </div>
             </template>
         </Toolbar>
 
+        {{ user.sessionRole }}
+
         <div class="p-fluid kn-parameter-sidebar-content">
+            <div class="p-field p-m-4" v-if="user && (!user.sessionRole || user.sessionRole === 'No default role selected')">
+                <div class="p-d-flex">
+                    <label class="kn-material-input-label">{{ $t('common.roles') }}</label>
+                </div>
+                <Dropdown class="kn-material-input" v-model="newSessionRole" :options="user.roles" @change="setNewSessionRole" />
+            </div>
+
             <div v-for="(parameter, index) in parameters.filterStatus" :key="index">
                 <!-- Manual Text/Number Input -->
                 <div class="p-field p-m-4" v-if="(parameter.type === 'STRING' || parameter.type === 'NUM') && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
@@ -181,25 +190,46 @@ export default defineComponent({
             parameterSaveDialogVisible: false,
             savedParametersDialogVisible: false,
             viewpoints: [],
+            newSessionRole: '' as any,
+            user: null as any,
             loading: false
         }
     },
     watch: {
+        sessionRole() {
+            this.newSessionRole = ''
+            this.parameters = { isReadyForExecution: false, filterStatus: [] }
+        },
         filtersData() {
             this.loadDocument()
             this.loadParameters()
         }
     },
     computed: {
+        sessionRole(): string {
+            return (this.$store.state as any).user.sessionRole
+        },
         buttonsDisabled(): boolean {
             return this.requiredFiledMissing()
         }
     },
     created() {
+        this.user = (this.$store.state as any).user
+
         this.loadDocument()
         this.loadParameters()
+
+        console.log('STORE: ', this.$store)
     },
     methods: {
+        setNewSessionRole() {
+            console.log(' >>> USER: ', this.user)
+            console.log(' >>> NE ROLE: ', this.newSessionRole)
+            this.$store.commit('setUserSessionRole', this.newSessionRole)
+            console.log('THIS STORE USER: ', (this.$store.state as any).user)
+            this.$emit('execute')
+            this.parameters = { isReadyForExecution: false, filterStatus: [] }
+        },
         loadDocument() {
             this.document = this.propDocument
         },
@@ -263,6 +293,9 @@ export default defineComponent({
                 }
                 parameter.parameterValue[0].value = parameter.driverDefaultValue[0].value
             }
+        },
+        resetAllParameters() {
+            this.parameters.filterStatus.forEach((el: any) => this.resetParameterValue(el))
         },
         resetParameterCombobox(parameter: any) {
             const index = parameter.defaultValues.findIndex((el: any) => {
@@ -332,8 +365,8 @@ export default defineComponent({
         },
         async getParameterPopupInfo(parameter: any) {
             this.loading = true
-            // TODO: user role? videti, nije odgovorio jos
-            const postData = { MODE: 'extra', OBJECT_LABEL: this.document.label, PARAMETERS: this.getFormatedParameters(), PARAMETER_ID: parameter.urlName, ROLE: (this.$store.state as any).user.defaultRole }
+
+            const postData = { MODE: 'extra', OBJECT_LABEL: this.document.label, PARAMETERS: this.getFormatedParameters(), PARAMETER_ID: parameter.urlName, ROLE: this.sessionRole }
             await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentExeParameters/getParameters`, postData).then((response: AxiosResponse<any>) => (this.parameterPopUpData = response.data))
             this.loading = false
         },
@@ -458,9 +491,8 @@ export default defineComponent({
             this.loading = false
         },
         async openSavedParametersDialog() {
-            const role = (this.$store.state as any).user.defaultRole
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/getViewpoints?label=${this.document.label}&role=${role}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/getViewpoints?label=${this.document.label}&role=${this.sessionRole}`).then((response: AxiosResponse<any>) => {
                 this.viewpoints = response.data.viewpoints
                 this.savedParametersDialogVisible = true
             })

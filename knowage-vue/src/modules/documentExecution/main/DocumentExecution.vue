@@ -90,6 +90,9 @@ export default defineComponent({
         }
     },
     computed: {
+        sessionRole(): string {
+            return this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
+        },
         url() {
             return (
                 process.env.VUE_APP_HOST_URL +
@@ -99,6 +102,7 @@ export default defineComponent({
     },
     async created() {
         //console.log('CURRENT ROUTE: ', this.$route)
+        this.user = (this.$store.state as any).user
 
         this.setMode()
 
@@ -106,11 +110,11 @@ export default defineComponent({
 
         // console.log('ID: ', this.id)
 
-        this.user = (this.$store.state as any).user
+        console.log('LOADED USER: ', this.user)
 
-        // console.log('LOADED USER: ', this.user)
-
-        await this.loadPage()
+        if (this.user.sessionRole !== 'No default role selected') {
+            await this.loadPage()
+        }
     },
     methods: {
         editCockpitDocument() {
@@ -136,15 +140,11 @@ export default defineComponent({
                 },
                 {
                     label: this.$t('common.export'),
-                    items: [{ icon: 'pi pi-print', label: this.$t('common.export'), command: () => this.export() }]
+                    items: [{ icon: 'pi pi-download', label: this.$t('common.export'), command: () => this.export() }]
                 },
                 {
                     label: this.$t('common.info.info'),
-                    items: [
-                        { icon: 'pi pi-info-circle', label: this.$t('common.metadata'), command: () => this.openMetadata() },
-                        { icon: 'pi pi-star', label: this.$t('common.rank'), command: () => this.openRank() },
-                        { icon: 'pi pi-file', label: this.$t('common.notes'), command: () => this.openNotes() }
-                    ]
+                    items: [{ icon: 'pi pi-star', label: this.$t('common.rank'), command: () => this.openRank() }]
                 },
                 {
                     label: this.$t('common.shortcuts'),
@@ -152,9 +152,20 @@ export default defineComponent({
                 }
             )
 
+            this.exporters.forEach((exporter: any) => this.toolbarMenuItems[1].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => this.export() }))
+
             if (this.user.functionalities.includes('SendMailFunctionality') && this.document.typeCode === 'REPORT') {
                 this.toolbarMenuItems[1].items.push({ icon: 'pi pi-envelope', label: this.$t('common.sendByEmail'), command: () => this.openMailDialog() })
             }
+
+            if (this.user.functionalities.includes('SeeMetadataFunctionality')) {
+                this.toolbarMenuItems[2].items.unshift({ icon: 'pi pi-info-circle', label: this.$t('common.metadata'), command: () => this.openMetadata() })
+            }
+
+            if (this.user.functionalities.includes('SeeNotesFunctionality')) {
+                this.toolbarMenuItems[2].items.push({ icon: 'pi pi-file', label: this.$t('common.notes'), command: () => this.openNotes() })
+            }
+
             if (this.user.functionalities.includes('SeeSnapshotsFunctionality')) {
                 this.toolbarMenuItems[3].items.unshift({ icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() })
             }
@@ -169,6 +180,12 @@ export default defineComponent({
         },
         export() {
             console.log('TODO - EXPORT')
+            const url =
+                process.env.VUE_APP_HOST_URL +
+                `/knowageqbeengine/servlet/AdapterHTTP?&documentName=Registry_Test_1&SBI_EXECUTION_ROLE=%2Fdemo%2Fadmin&SBI_COUNTRY=US&document=3251&SBI_LANGUAGE=en&SBI_SCRIPT=&dateformat=dd%2FMM%2Fyyyy&SBI_SPAGO_CONTROLLER=%2Fservlet%2FAdapterHTTP&user_id=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGVtb19hZG1pbiIsImV4cCI6MTYzNzk1MDM4N30.v0om2xcCIWR7lf2_28pKa_zfgjuSYQB-aU8WRVWgpuo&SBI_EXECUTION_ID=190c98b14eac11eca5075bc8d2018299&isFromCross=false&SBI_ENVIRONMENT=DOCBROWSER&outputType=application%2Fvnd.ms-excel&ACTION_NAME=EXPORT_RESULT_ACTION&MIME_TYPE=application%2Fvnd.ms-excel&RESPONSE_TYPE=RESPONSE_TYPE_ATTACHMENT`
+            window.open(url, '_blank')
+
+            // http://localhost:8080/knowageqbeengine/servlet/AdapterHTTP?&documentName=Registry_Test_1&SBI_EXECUTION_ROLE=%2Fdemo%2Fadmin&SBI_COUNTRY=US&document=3251&SBI_LANGUAGE=en&SBI_SCRIPT=&dateformat=dd%2FMM%2Fyyyy&SBI_SPAGO_CONTROLLER=%2Fservlet%2FAdapterHTTP&user_id=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGVtb19hZG1pbiIsImV4cCI6MTYzNzk1MDM4N30.v0om2xcCIWR7lf2_28pKa_zfgjuSYQB-aU8WRVWgpuo&SBI_EXECUTION_ID=190c98b14eac11eca5075bc8d2018299&isFromCross=false&SBI_ENVIRONMENT=DOCBROWSER&outputType=application%2Fvnd.ms-excel&ACTION_NAME=EXPORT_RESULT_ACTION&MIME_TYPE=application%2Fvnd.ms-excel&RESPONSE_TYPE=RESPONSE_TYPE_ATTACHMENT
         },
         openMailDialog() {
             this.mailDialogVisible = true
@@ -236,11 +253,11 @@ export default defineComponent({
             }
         },
         async loadFilters() {
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/filters`, { label: this.id, role: this.user.defaultRole, parameters: {} }).then((response: AxiosResponse<any>) => (this.filtersData = response.data))
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/filters`, { label: this.id, role: this.sessionRole, parameters: {} }).then((response: AxiosResponse<any>) => (this.filtersData = response.data))
             console.log('LOADED FILTERS DATA: ', this.filtersData)
         },
         async loadURL() {
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, { label: this.id, role: this.user.defaultRole, parameters: {}, EDIT_MODE: 'null', IS_FOR_EXPORT: true }).then((response: AxiosResponse<any>) => (this.urlData = response.data))
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, { label: this.id, role: this.sessionRole, parameters: {}, EDIT_MODE: 'null', IS_FOR_EXPORT: true }).then((response: AxiosResponse<any>) => (this.urlData = response.data))
             this.sendForm()
             // console.log('LOADED URL DATA: ', this.urlData)
         },
@@ -317,8 +334,9 @@ export default defineComponent({
                 }
             })
         },
-        onExecute() {
+        async onExecute() {
             console.log('EXECUTE PARAMS: ', this.filtersData)
+            await this.loadPage()
         },
         async onExportCSV() {
             console.log('ON EXPORT CSV CLICKED!', this.document)
