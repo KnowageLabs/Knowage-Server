@@ -1,5 +1,5 @@
 <template>
-    <div v-for="(field, index) in localTransformation.parameters" v-bind:key="index" :class="[' p-d-flex data-prep-simple-transformation p-field p-ml-2 kn-flex p-d-flex', field.type === 'textarea' ? 'p-col-6' : 'p-col-4']">
+    <div v-for="(field, index) in localTransformation.parameters" v-bind:key="index" class="p-field p-ml-2 kn-flex">
         <span v-if="field.type == 'string' && (!field.relatedWith || (field.relatedWith && isFieldVisible(field)))" class="p-float-label">
             <InputText :id="name" type="text" v-model="localTransformation[field.name]" :class="['kn-material-input', field.validationRules && field.validationRules.includes('required') && !localTransformation[field.name] ? 'p-invalid' : '']" />
             <label :for="'input' + '_index_' + index" class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.' + field.name) }}</label>
@@ -152,16 +152,17 @@
                 }
             }
         },
-        updated() {
-            this.$emit('update:transformation', this.localTransformation)
-        }
-        /* watch: {
-            localTransformation(oldValue, newValue) {
-                if (oldValue !== newValue) {
-                    this.$emit('update:transformation', newValue)
-                }
+
+        watch: {
+            localTransformation: {
+                handler(oldValue, newValue) {
+                    if (oldValue !== newValue) {
+                        this.$emit('update:transformation', newValue)
+                    }
+                },
+                deep: true
             }
-        } */
+        }
     })
 </script>
 
