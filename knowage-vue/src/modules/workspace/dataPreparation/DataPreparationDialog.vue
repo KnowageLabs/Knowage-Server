@@ -66,33 +66,33 @@
                 let t = this.localCopy
                 let toReturn = { parameters: [] as Array<any>, type: t?.type }
 
-                t?.parameters?.forEach((element, fieldIndex) => {
+                t?.parameters?.forEach((item, index) => {
                     let obj = { columns: [] as Array<any> }
-                    element.forEach((item, index) => {
-                        let postfix = '_fieldIndex_' + fieldIndex + '_index_' + index
-                        switch (item.type) {
-                            case 'multiSelect': {
-                                this.handleItem(item, obj, 'selectedItems' + postfix)
-                                break
-                            }
-                            case 'calendar': {
-                                this.handleItem(item, obj, 'calendar' + postfix)
-                                break
-                            }
-                            case 'string': {
-                                this.handleItem(item, obj, 'input' + postfix)
-                                break
-                            }
-                            case 'dropdown': {
-                                this.handleItem(item, obj, 'selectedCondition' + postfix)
-                                break
-                            }
-                            case 'textarea': {
-                                this.handleItem(item, obj, 'textarea' + postfix)
-                                break
-                            }
+
+                    let postfix = '_index_' + index
+                    switch (item.type) {
+                        case 'multiSelect': {
+                            this.handleItem(item, obj, 'selectedItems' + postfix)
+                            break
                         }
-                    })
+                        case 'calendar': {
+                            this.handleItem(item, obj, 'calendar' + postfix)
+                            break
+                        }
+                        case 'string': {
+                            this.handleItem(item, obj, 'input' + postfix)
+                            break
+                        }
+                        case 'dropdown': {
+                            this.handleItem(item, obj, 'selectedCondition' + postfix)
+                            break
+                        }
+                        case 'textarea': {
+                            this.handleItem(item, obj, 'textarea' + postfix)
+                            break
+                        }
+                    }
+
                     toReturn.parameters.push(obj)
                 })
 
@@ -139,24 +139,20 @@
             refreshTransfrormation(): void {
                 if (this.localCopy) {
                     let pars = this.localCopy.type === 'simple' ? this.simpleDescriptor[this.localCopy.name].parameters : this.customDescriptor[this.localCopy.name].parameters
-                    pars.forEach((element) => {
-                        element.forEach((item) => {
-                            item.availableOptions?.forEach((element) => {
-                                element.label = this.$t(element.label)
-                            })
-                            if (item.type === 'multiSelect' && item.name === 'columns') {
-                                if (this.col) {
-                                    let selectedItem: Array<IDataPreparationColumn> | undefined = this.columns?.filter((x) => x.header == this.col)
-                                    if (selectedItem && selectedItem.length > 0) {
-                                        selectedItem[0].disabled = true
-
-                                        item['selectedItems_fieldIndex_0_index_0'] = selectedItem
-                                    }
-                                } else {
-                                    this.columns?.forEach((e) => (e.disabled = false))
-                                }
-                            }
+                    pars.forEach((item) => {
+                        item.availableOptions?.forEach((element) => {
+                            element.label = this.$t(element.label)
                         })
+                        if (item.type === 'multiSelect' && item.name === 'columns') {
+                            if (this.col) {
+                                let selectedItem: Array<IDataPreparationColumn> | undefined = this.columns?.filter((x) => x.header == this.col)
+                                if (selectedItem && selectedItem.length > 0) {
+                                    selectedItem[0].disabled = true
+                                }
+                            } else {
+                                this.columns?.forEach((e) => (e.disabled = false))
+                            }
+                        }
                     })
                 }
             },

@@ -1,190 +1,180 @@
 {
     "addColumn": {
         "parameters": [
-            [
-                {
-                    "name": "columns",
-                    "optionLabel": "header",
-                    "type": "multiSelect",
-                    "validationRules": "required"
-                },
-                {
-                    "name": "column",
-                    "type": "string",
-                    "validationRules": "required|alpha"
-                },
-                {
-                    "name": "formula",
-                    "type": "textarea"
-                },
-                {
-                    "availableOptions": [],
-                    "name": "outputType",
-                    "type": "dropdown"
-                }
-            ]
+            {
+                "name": "columns",
+                "optionLabel": "header",
+                "type": "multiSelect",
+                "validationRules": "required"
+            },
+            {
+                "name": "column",
+                "type": "string",
+                "validationRules": "required|alpha"
+            },
+            {
+                "name": "formula",
+                "type": "textarea"
+            },
+            {
+                "availableOptions": [],
+                "name": "outputType",
+                "type": "dropdown"
+            }
         ]
     },
     "filter": {
         "parameters": [
-            [
-                {
-                    "name": "columns",
-                    "optionLabel": "header",
-                    "type": "multiSelect",
-                    "validationRules": "required"
-                },
-                {
-                    "availableOptions": [
-                        {
-                            "code": "like",
-                            "label": "like"
-                        },
-                        {
-                            "code": "notLike",
-                            "label": "NOT like"
-                        },
-                        {
-                            "code": "isNull",
-                            "label": "is null"
-                        },
-                        {
-                            "code": "isNotNull",
-                            "label": "is NOT null"
-                        },
-                        {
-                            "code": "equals",
-                            "label": "="
-                        },
-                        {
-                            "code": "minorThan",
-                            "label": "< "
-                        },
-                        {
-                            "code": "greaterThan",
-                            "label": "> "
-                        },
-                        {
-                            "code": "minorOrEqualsThan<=",
-                            "label": "<= "
-                        },
-                        {
-                            "code": "greaterOrEqualsThan",
-                            "label": ">= "
-                        },
-                        {
-                            "code": "notEquals",
-                            "label": "!= "
-                        },
-                        {
-                            "code": "in",
-                            "label": "IN "
-                        },
-                        {
-                            "code": "notIn",
-                            "label": "NOT IN"
-                        },
-                        {
-                            "code": "between",
-                            "label": "Between"
-                        },
-                        {
-                            "code": "after",
-                            "label": "After"
-                        },
-                        {
-                            "code": "before",
-                            "label": "Before"
-                        },
-                        {
-                            "code": "between",
-                            "label": "Between"
-                        }
-                    ],
-                    "name": "conditions",
-                    "placeholder": "managers.workspaceManagement.dataPreparation.transformations.condition",
-                    "type": "dropdown"
-                },
-                {
-                    "name": "text",
-                    "type": "string",
-                    "validationRules": "required|alpha_dash"
-                }
-            ]
+            {
+                "name": "columns",
+                "optionLabel": "header",
+                "type": "multiSelect",
+                "validationRules": "required"
+            },
+            {
+                "availableOptions": [
+                    {
+                        "code": "like",
+                        "label": "like"
+                    },
+                    {
+                        "code": "notLike",
+                        "label": "NOT like"
+                    },
+                    {
+                        "code": "isNull",
+                        "label": "is null"
+                    },
+                    {
+                        "code": "isNotNull",
+                        "label": "is NOT null"
+                    },
+                    {
+                        "code": "equals",
+                        "label": "="
+                    },
+                    {
+                        "code": "minorThan",
+                        "label": "< "
+                    },
+                    {
+                        "code": "greaterThan",
+                        "label": "> "
+                    },
+                    {
+                        "code": "minorOrEqualsThan<=",
+                        "label": "<= "
+                    },
+                    {
+                        "code": "greaterOrEqualsThan",
+                        "label": ">= "
+                    },
+                    {
+                        "code": "notEquals",
+                        "label": "!= "
+                    },
+                    {
+                        "code": "in",
+                        "label": "IN "
+                    },
+                    {
+                        "code": "notIn",
+                        "label": "NOT IN"
+                    },
+                    {
+                        "code": "between",
+                        "label": "Between"
+                    },
+                    {
+                        "code": "after",
+                        "label": "After"
+                    },
+                    {
+                        "code": "before",
+                        "label": "Before"
+                    },
+                    {
+                        "code": "between",
+                        "label": "Between"
+                    }
+                ],
+                "name": "conditions",
+                "placeholder": "managers.workspaceManagement.dataPreparation.transformations.condition",
+                "type": "dropdown"
+            },
+            {
+                "name": "text",
+                "type": "string",
+                "validationRules": "required|alpha_dash"
+            }
         ]
     },
     "mergeColumns": {
         "parameters": [
-            [
-                {
-                    "name": "columns",
-                    "optionLabel": "header",
-                    "type": "multiSelect",
-                    "validationRules": "required"
-                },
-                {
-                    "name": "column",
-                    "type": "string",
-                    "validationRules": "required|alpha"
-                }
-            ]
+            {
+                "name": "columns",
+                "optionLabel": "header",
+                "type": "multiSelect",
+                "validationRules": "required"
+            },
+            {
+                "name": "column",
+                "type": "string",
+                "validationRules": "required|alpha"
+            }
         ]
     },
     "splitColumns": {
         "parameters": [
-            [
-                {
-                    "name": "columns",
-                    "optionLabel": "header",
-                    "optionValue": "header",
-                    "type": "dropdown",
-                    "validationRules": "required"
-                },
-                {
-                    "name": "column1",
-                    "type": "string",
-                    "validationRules": "required|alpha_dash"
-                },
-                {
-                    "name": "column2",
-                    "type": "string",
-                    "validationRules": "required|alpha_dash"
-                }
-            ],
-            [
-                {
-                    "availableOptions": [
-                        {
-                            "code": "split_separator",
-                            "label": "managers.workspaceManagement.dataPreparation.transformations.useSeparator",
-                            "relatedTo": "separator"
-                        },
-                        {
-                            "code": "split_numberOfChars",
-                            "label": "managers.workspaceManagement.dataPreparation.transformations.useNumberOfChars",
-                            "relatedTo": "separator"
-                        }
-                    ],
-                    "name": "splitColumnMethod",
-                    "placeholder": "managers.workspaceManagement.dataPreparation.transformations.condition",
-                    "type": "dropdown",
-                    "validationRules": "required|alpha_dash"
-                },
-                {
-                    "name": "separator",
-                    "relatedTo": "splitColumnMethod",
-                    "relatedWith": "split_separator",
-                    "type": "string",
-                    "validationRules": "alpha"
-                },
-                {
-                    "name": "numberOfChars",
-                    "relatedTo": "splitColumnMethod",
-                    "relatedWith": "split_numberOfChars",
-                    "type": "string",
-                    "validationRules": "numeric"
-                }
-            ]
+            {
+                "name": "columns",
+                "optionLabel": "header",
+                "optionValue": "header",
+                "type": "dropdown",
+                "validationRules": "required"
+            },
+            {
+                "name": "column1",
+                "type": "string",
+                "validationRules": "required|alpha_dash"
+            },
+            {
+                "name": "column2",
+                "type": "string",
+                "validationRules": "required|alpha_dash"
+            },
+            {
+                "availableOptions": [
+                    {
+                        "code": "split_separator",
+                        "label": "managers.workspaceManagement.dataPreparation.transformations.useSeparator",
+                        "relatedTo": "separator"
+                    },
+                    {
+                        "code": "split_numberOfChars",
+                        "label": "managers.workspaceManagement.dataPreparation.transformations.useNumberOfChars",
+                        "relatedTo": "separator"
+                    }
+                ],
+                "name": "splitColumnMethod",
+                "placeholder": "managers.workspaceManagement.dataPreparation.transformations.condition",
+                "type": "dropdown",
+                "validationRules": "required|alpha_dash"
+            },
+            {
+                "name": "separator",
+                "relatedTo": "splitColumnMethod",
+                "relatedWith": "split_separator",
+                "type": "string",
+                "validationRules": "alpha"
+            },
+            {
+                "name": "numberOfChars",
+                "relatedTo": "splitColumnMethod",
+                "relatedWith": "split_numberOfChars",
+                "type": "string",
+                "validationRules": "numeric"
+            }
         ]
     },
     "statistics": {

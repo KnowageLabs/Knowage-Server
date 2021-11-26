@@ -1,6 +1,6 @@
 export interface ITransformation {
     type: string
-    parameters: Array<Array<ITransformationParameter>>
+    parameters: Array<ITransformationParameter>
     description: string
     name: string
 }
