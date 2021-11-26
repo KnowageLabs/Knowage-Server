@@ -156,10 +156,12 @@
     "roles": [
         {
             "code": "ATTRIBUTE",
+            "icon": "fas fa-font",
             "label": "managers.workspaceManagement.dataPreparation.roles.attribute"
         },
         {
             "code": "MEASURE",
+            "icon": "fas fa-hashtag",
             "label": "managers.workspaceManagement.dataPreparation.roles.measure"
         }
     ],

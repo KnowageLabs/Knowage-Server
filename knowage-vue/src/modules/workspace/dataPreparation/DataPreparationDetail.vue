@@ -110,16 +110,16 @@
                 <Column v-for="(col, colIndex) in columns" :field="col.header" :key="colIndex" :style="{ width: '200px' }">
                     <template #header>
                         <Button :class="descriptor.css.buttonClassHeader" @click="toggle($event, 'opType-' + colIndex)">
-                            <span v-if="descriptorTransformations.filter((x) => x.name === 'changeRole')[0].icon.class" :class="descriptorTransformations.filter((x) => x.name === 'changeRole')[0].icon.class">{{ descriptorTransformations.filter((x) => x.name === 'changeRole')[0].icon.name }}</span>
-                            <i v-else :class="descriptorTransformations.filter((x) => x.name === 'changeRole')[0].icon"></i>
+                            <i :class="descriptor.roles.filter((x) => x.code === 'ATTRIBUTE')[0].icon"></i>
                         </Button>
                         <OverlayPanel :ref="'opType-' + colIndex" :popup="true">
                             <span class="p-float-label">
-                                <Dropdown v-model="col.fieldType" :options="translateRoles()" optionLabel="label" optionValue="code" class="kn-material-input" :class="{ 'p-invalid': col.validationRules && col.validationRules.includes('required') && !col.Type }" />
+                                <Dropdown v-model="col.fieldType" :options="translateRoles()" optionLabel="label" optionValue="code" class="kn-material-input" />
                             </span>
                         </OverlayPanel>
                         <div style="display: flex; flex-direction: column; flex:1;">
-                            <span>{{ col.fieldAlias }}</span>
+                            <input class="kn-input-text-sm" type="text" v-model="col.fieldAlias" v-if="col.editing" @blur="changeAlias(col)" @keydown.enter="changeAlias(col)" />
+                            <span v-else class="kn-clickable" @click="changeAlias(col)">{{ col.fieldAlias }}</span>
                             <span class="kn-list-item-text-secondary kn-truncated roleType">{{ $t(removePrefixFromType(col.Type)) }}</span>
                         </div>
                         <Button icon="pi pi-ellipsis-v" :class="descriptor.css.buttonClassHeader" @click="toggle($event, 'trOpType-' + colIndex)" />
@@ -239,6 +239,10 @@ export default defineComponent({
                 else disabled = this.dataset.config.transformations.filter((x) => x.type === 'filter').length < 2
             }
             return disabled
+        },
+        changeAlias(col): void {
+            if (col.editing) delete col.editing
+            else col.editing = true
         },
         closeTemplate(): void {
             this.$router.push({ name: 'data-preparation' })
