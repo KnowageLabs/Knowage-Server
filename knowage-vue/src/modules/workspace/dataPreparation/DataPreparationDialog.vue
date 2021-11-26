@@ -8,7 +8,7 @@
         modal
         :breakpoints="{ '960px': '75vw', '640px': '100vw' }"
     >
-        <Message severity="info" :closable="false">{{ $t(localCopy.description) }}</Message>
+        <Message severity="info" :closable="false" v-if="localCopy && localCopy.description">{{ $t(localCopy.description) }}</Message>
 
         <DataPreparationSimple v-bind:transformation="localCopy" v-bind:visible="localCopy.type === 'simple'" :columns="columns" :col="col" />
         <DataPreparationCustom v-bind:transformation="localCopy" v-bind:visible="localCopy.type === 'custom'" :columns="columns" :col="col" />
@@ -51,11 +51,11 @@
         },
         emits: ['update:transformation', 'update:col', 'send-transformation'],
 
-        beforeUpdate() {
+        created() {
             this.localCopy = JSON.parse(JSON.stringify(this.transformation))
         },
-        updated() {
-            this.refreshTransfrormation()
+        beforeUpdate() {
+            this.localCopy = JSON.parse(JSON.stringify(this.transformation))
         },
 
         methods: {

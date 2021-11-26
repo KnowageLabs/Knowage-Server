@@ -313,17 +313,6 @@
             "position": 12,
             "toolbar": true,
             "type": "simple"
-        },
-        {
-            "category": "tableStructure",
-            "description": "managers.workspaceManagement.dataPreparation.transformations.changeRole.description",
-            "editColumn": false,
-            "icon": "fas fa-hashtag",
-            "label": "managers.workspaceManagement.dataPreparation.transformations.changeRole.label",
-            "name": "changeRole",
-            "position": 13,
-            "toolbar": false,
-            "type": "simple"
         }
     ]
 }

@@ -118,6 +118,11 @@
                 "validationRules": "required"
             },
             {
+                "name": "separator",
+                "type": "string",
+                "validationRules": "alpha"
+            },
+            {
                 "name": "column",
                 "type": "string",
                 "validationRules": "required|alpha"
