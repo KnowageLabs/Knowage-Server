@@ -83,6 +83,7 @@
         "paused": "Paused",
         "preview": "Preview",
         "released": "Released",
+        "required": "Required",
         "reused": "Reused",
         "role": "Role",
         "run": "Run",
@@ -104,6 +105,7 @@
         "tags": "tags",
         "tenant": "tenant",
         "test": "test",
+        "title": "Title",
         "toast": {
             "cloneConfirmTitle": "Confirm item clone?",
             "createTitle": "Created",
@@ -222,13 +224,27 @@
                 "title": "Data Lineage"
             },
             "drivers": {
-                "title": "Drivers"
+                "conditionSavedMsg": "Data dependency is successfully created",
+                "conditionsTitle": "Driver data conditions",
+                "deleteMessage": "Are You sure You want to delete this driver? It will not be deleted until the driver is saved!",
+                "detailsTitle": "Driver's details",
+                "dropdownSearchHint": "Search for Analytical Driver",
+                "noVisCond": "No visibility condition selected",
+                "noDriverSelected": "No Drivers Selected",
+                "noDataCond": "No data condition selected",
+                "paramValue": " value of the parameter ",
+                "parameterUrlName": "Url Name",
+                "title": "Drivers",
+                "visibilityTitle": "Driver visibility conditions",
+                "visualizationHint": "Set driver visualization condition",
+                "visualizationTitle": "Driver Visualization"
             },
             "history": {
                 "title": "History"
             },
             "info": {
                 "attribute": "Select Attribute",
+                "datasetDialogTitle": "Select Dataset",
                 "engine": "Engine",
                 "engineHint": "Select a type to unlock the available engines",
                 "infoTitle": "Informations",
@@ -237,11 +253,10 @@
                 "profiledVisibility": "Defined Restrictions",
                 "refresh": "Refresh (seconds)",
                 "refreshHint": "Select the number of milliseconds after the document will refresh",
-                "uploadTemplate": "Upload template",
                 "restrictionValueHint": "Enter Value",
                 "restrictionsTitle": "Visibility Restrictions",
-                "visibilityLocationTitle": "Select the functionalities where the document will be visible",
-                "datasetDialogTitle": "Select Dataset"
+                "uploadTemplate": "Upload template",
+                "visibilityLocationTitle": "Select the functionalities where the document will be visible"
             },
             "outputParams": {
                 "title": "Output Parameters"

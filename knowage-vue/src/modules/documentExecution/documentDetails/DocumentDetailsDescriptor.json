@@ -42,6 +42,14 @@
         }
     ],
     "style": {
+        "absoluteScroll": {
+            "height": "100%",
+            "left": 0,
+            "overflow": "auto",
+            "position": "absolute",
+            "top": 0,
+            "width": "100%"
+        },
         "flex": {
             "display": "flex",
             "flex": 1,
@@ -49,6 +57,24 @@
         },
         "flexOne": {
             "flex": 1
+        },
+        "flexOneRelative": {
+            "flex": 1,
+            "position": "relative"
+        },
+        "height100": {
+            "height": "100%"
+        },
+        "white": {
+            "color": "white"
+        },
+        "width100": {
+            "width": "100%"
+        },
+        "driverDetailsContainer": {
+            "display": "flex",
+            "flex": 3,
+            "flex-direction": "column"
         }
     },
     "types": [

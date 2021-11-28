@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="document-details-dialog" :contentStyle="mainDescriptor.style.flex" position="right" :visible="visible" :modal="false" :closable="false" :baseZIndex="10" :autoZIndex="true">
+    <Dialog class="document-details-dialog remove-padding" :contentStyle="mainDescriptor.style.flex" position="right" :visible="visible" :modal="false" :closable="false" :baseZIndex="10" :autoZIndex="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary" :style="infoDescriptor.style.maxwidth">
                 <template #left>
@@ -67,11 +67,3 @@ export default defineComponent({
     }
 })
 </script>
-
-<style lang="scss">
-.dataset-dialog.p-dialog .p-dialog-content,
-.dataset-dialog.p-dialog .p-dialog-header {
-    padding: 0;
-    margin: 0;
-}
-</style>

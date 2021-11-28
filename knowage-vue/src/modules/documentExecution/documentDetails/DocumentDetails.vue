@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="document-details-dialog p-fluid kn-dialog--toolbar--primary" :contentStyle="mainDescriptor.style.flex" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
+    <Dialog class="document-details-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="mainDescriptor.style.flex" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #left>
@@ -34,6 +34,7 @@
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.drivers.title') }}</span>
                     </template>
+                    <DriversTab v-if="!loading" :selectedDocument="selectedDocument" :availableDrivers="drivers" :availableAnalyticalDrivers="analyticalDrivers" />
                 </TabPanel>
                 <TabPanel v-if="this.selectedDocument?.id">
                     <template #header>
@@ -65,6 +66,7 @@ import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import mainDescriptor from './DocumentDetailsDescriptor.json'
 import InformationsTab from './tabs/informations/DocumentDetailsInformations.vue'
+import DriversTab from './tabs/drivers/DocumentDetailsDrivers.vue'
 import Dialog from 'primevue/dialog'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
@@ -72,7 +74,7 @@ import { iDocument, iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate,
 
 export default defineComponent({
     name: 'document-details',
-    components: { InformationsTab, TabView, TabPanel, Dialog },
+    components: { InformationsTab, DriversTab, TabView, TabPanel, Dialog },
     props: { selectedDocument: { type: Object }, visible: { type: Boolean, required: false } },
     emits: ['closeDetails'],
     data() {
@@ -171,8 +173,8 @@ export default defineComponent({
     margin: 0;
 }
 
-.document-details-dialog.p-dialog .p-dialog-header,
-.document-details-dialog.p-dialog .p-dialog-content {
+.remove-padding.p-dialog .p-dialog-header,
+.remove-padding.p-dialog .p-dialog-content {
     padding: 0;
     margin: 0;
 }

@@ -1,0 +1,83 @@
+{
+    "availableOperators": ["contains", "not contains"],
+    "knListSettings": {
+        "buttons": [
+            {
+                "emits": "delete",
+                "icon": "fas fa-trash-alt",
+                "label": "common.delete"
+            }
+        ],
+        "defaultSortField": "label",
+        "filterFields": ["label", "name"],
+        "interaction": {
+            "type": "event"
+        },
+        "sortFields": ["label", "name"],
+        "textField": false,
+        "titleField": "label"
+    },
+    "style": {
+        "conditionDialog": {
+            "min-width": "60%"
+        }
+    },
+    "validations": {
+        "driver": [
+            {
+                "fieldName": "label",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "parameterUrlName",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "parameter",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            }
+        ],
+        "selectedCondition": [
+            {
+                "fieldName": "viewLabel",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "compareValue",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            }
+        ]
+    }
+}

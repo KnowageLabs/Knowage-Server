@@ -27,6 +27,7 @@ export interface iDocument {
     tenant: string
     typeCode: string
     visible: boolean
+    modelLocked: boolean
 }
 
 export interface iDataSource {
@@ -69,7 +70,6 @@ export interface iAnalyticalDriver {
 }
 
 export interface iDriver {
-    biObjectID: number
     colSpan: any
     hasValidValues: boolean
     id: number
@@ -90,6 +90,9 @@ export interface iDriver {
     thickPerc: any
     transientParmeters: boolean
     visible: boolean
+    newDriver?: any
+    biObjectID?: number
+    biMetaModelID?: number
 }
 
 export interface iEngine {
@@ -131,4 +134,15 @@ export interface iAttribute {
     multivalue: boolean
     syntax: any
     value: any
+}
+
+export interface iVisualDependency {
+    compareValue: string
+    id?: number
+    operation: string
+    parFatherId: number
+    parFatherUrlName: string
+    parId: number
+    prog: number
+    viewLabel: string
 }
