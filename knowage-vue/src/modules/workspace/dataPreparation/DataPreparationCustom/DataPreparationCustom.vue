@@ -143,7 +143,7 @@
             },
             refreshTransfrormation(): void {
                 if (this.localTransformation) {
-                    let pars = this.descriptor[this.localTransformation.name].parameters
+                    let pars = this.localTransformation.type === 'custom' ? this.descriptor[this.localTransformation.name].parameters : []
                     pars.forEach((item) => {
                         item.availableOptions?.forEach((element) => {
                             element.label = this.$t(element.label)
