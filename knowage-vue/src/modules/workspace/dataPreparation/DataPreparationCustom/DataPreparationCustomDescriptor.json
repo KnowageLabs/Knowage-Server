@@ -8,7 +8,7 @@
                 "validationRules": "required"
             },
             {
-                "name": "column",
+                "name": "columnName",
                 "type": "string",
                 "validationRules": "required|alpha"
             },
@@ -28,84 +28,113 @@
             {
                 "name": "columns",
                 "optionLabel": "header",
-                "type": "multiSelect",
+                "optionValue": "header",
+                "type": "dropdown",
                 "validationRules": "required"
             },
             {
                 "availableOptions": [
                     {
+                        "availableForTypes": "string",
                         "code": "like",
                         "label": "like"
                     },
                     {
+                        "availableForTypes": "string",
                         "code": "notLike",
                         "label": "NOT like"
                     },
                     {
+                        "availableForTypes": "string|date",
                         "code": "isNull",
                         "label": "is null"
                     },
                     {
+                        "availableForTypes": "string|date",
                         "code": "isNotNull",
                         "label": "is NOT null"
                     },
                     {
+                        "availableForTypes": "string|number",
                         "code": "equals",
                         "label": "="
                     },
                     {
+                        "availableForTypes": "string|number",
                         "code": "minorThan",
                         "label": "< "
                     },
                     {
+                        "availableForTypes": "string|number",
                         "code": "greaterThan",
                         "label": "> "
                     },
                     {
+                        "availableForTypes": "string|number",
                         "code": "minorOrEqualsThan<=",
                         "label": "<= "
                     },
                     {
+                        "availableForTypes": "string|number",
                         "code": "greaterOrEqualsThan",
                         "label": ">= "
                     },
                     {
+                        "availableForTypes": "string|number",
                         "code": "notEquals",
                         "label": "!= "
                     },
                     {
+                        "availableForTypes": "string|number",
                         "code": "in",
                         "label": "IN "
                     },
                     {
+                        "availableForTypes": "string|number",
                         "code": "notIn",
                         "label": "NOT IN"
                     },
                     {
-                        "code": "between",
-                        "label": "Between"
-                    },
-                    {
+                        "availableForTypes": "date",
                         "code": "after",
                         "label": "After"
                     },
                     {
+                        "availableForTypes": "date",
                         "code": "before",
                         "label": "Before"
                     },
                     {
+                        "availableForTypes": "date",
                         "code": "between",
                         "label": "Between"
                     }
                 ],
+                "dependsFromField": "columns",
                 "name": "conditions",
                 "placeholder": "managers.workspaceManagement.dataPreparation.transformations.condition",
                 "type": "dropdown"
             },
             {
+                "dependsFromColumnTypes": "date",
+                "dependsFromField": "conditions",
+                "dependsFromOptions": "like|notLike",
                 "name": "text",
                 "type": "string",
                 "validationRules": "required|alpha_dash"
+            },
+            {
+                "dependsFromColumnTypes": "date",
+                "dependsFromField": "conditions",
+                "dependsFromOptions": "after|between",
+                "name": "startDate",
+                "type": "date"
+            },
+            {
+                "dependsFromField": "conditions",
+                "dependsFromOptions": "before|between",
+                "name": "endDate",
+                "type": "date"
             }
         ]
     },
@@ -123,7 +152,7 @@
                 "validationRules": "alpha"
             },
             {
-                "name": "column",
+                "name": "columnName",
                 "type": "string",
                 "validationRules": "required|alpha"
             }
@@ -152,13 +181,11 @@
                 "availableOptions": [
                     {
                         "code": "split_separator",
-                        "label": "managers.workspaceManagement.dataPreparation.transformations.useSeparator",
-                        "relatedTo": "separator"
+                        "label": "managers.workspaceManagement.dataPreparation.transformations.useSeparator"
                     },
                     {
                         "code": "split_numberOfChars",
-                        "label": "managers.workspaceManagement.dataPreparation.transformations.useNumberOfChars",
-                        "relatedTo": "separator"
+                        "label": "managers.workspaceManagement.dataPreparation.transformations.useNumberOfChars"
                     }
                 ],
                 "name": "splitColumnMethod",
@@ -167,16 +194,16 @@
                 "validationRules": "required|alpha_dash"
             },
             {
+                "dependsFromField": "splitColumnMethod",
+                "dependsFromOptions": "split_separator",
                 "name": "separator",
-                "relatedTo": "splitColumnMethod",
-                "relatedWith": "split_separator",
                 "type": "string",
                 "validationRules": "alpha"
             },
             {
+                "dependsFromField": "splitColumnMethod",
+                "dependsFromOptions": "split_numberOfChars",
                 "name": "numberOfChars",
-                "relatedTo": "splitColumnMethod",
-                "relatedWith": "split_numberOfChars",
                 "type": "string",
                 "validationRules": "numeric"
             }

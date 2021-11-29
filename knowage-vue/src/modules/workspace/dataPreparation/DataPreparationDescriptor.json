@@ -314,5 +314,15 @@
             "toolbar": true,
             "type": "simple"
         }
-    ]
+    ],
+    "typeMap": {
+        "java.lang.Double": "number",
+        "java.lang.Float": "number",
+        "java.lang.Integer": "number",
+        "java.lang.Long": "number",
+        "java.lang.String": "string",
+        "java.math.BigDecimal": "number",
+        "java.sql.Date": "date",
+        "java.util.String": "string"
+    }
 }

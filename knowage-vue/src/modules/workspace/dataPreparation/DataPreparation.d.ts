@@ -10,6 +10,8 @@ export interface ITransformationParameter {
     value?: string
     availableOptions?: Array
     type: string
+    relatedToField?: string
+    relatedToOption?: string
 }
 
 export interface IDataPreparationColumn {

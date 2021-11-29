@@ -10,8 +10,8 @@
     >
         <Message severity="info" :closable="false" v-if="localCopy && localCopy.description">{{ $t(localCopy.description) }}</Message>
 
-        <DataPreparationSimple :transformation="localCopy" v-bind:visible="localCopy.type === 'simple'" :columns="columns" :col="col" />
-        <DataPreparationCustom :transformation="localCopy" v-bind:visible="localCopy.type === 'custom'" :columns="columns" :col="col" />
+        <DataPreparationSimple v-if="localCopy.type === 'simple'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" />
+        <DataPreparationCustom v-if="localCopy.type === 'custom'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" />
 
         <template #footer>
             <Button class="p-button-text kn-button thirdButton" :label="$t('common.cancel')" @click="resetAndClose" />
@@ -52,14 +52,14 @@
         emits: ['update:transformation', 'update:col', 'send-transformation'],
 
         created() {
-            this.localCopy = JSON.parse(JSON.stringify(this.transformation))
-
             this.simpleDescriptor = { ...DataPreparationSimpleDescriptor } as any
 
             this.customDescriptor = { ...DataPreparationCustomDescriptor } as any
         },
         beforeUpdate() {
-            this.localCopy = JSON.parse(JSON.stringify(this.transformation))
+            if (!this.localCopy?.parameters) {
+                this.localCopy = JSON.parse(JSON.stringify(this.transformation))
+            }
         },
 
         methods: {
@@ -68,7 +68,7 @@
             },
             convertTransformation() {
                 let t = this.localCopy
-                let toReturn = { parameters: [] as Array<any>, type: t?.type }
+                let toReturn = { parameters: [] as Array<any>, type: t?.name }
 
                 t?.parameters?.forEach((item, index) => {
                     let obj = { columns: [] as Array<any> }
@@ -136,6 +136,10 @@
 
             resetAndClose(): void {
                 this.closeDialog()
+            },
+
+            updateLocalCopy(t: ITransformation): void {
+                this.localCopy = t
             }
         }
     })
@@ -147,7 +151,6 @@
         width: 60%;
         max-width: 1200px;
         min-height: 150px;
-
         &:deep(.p-dialog-content) {
             @extend .dataPreparationDialog;
         }

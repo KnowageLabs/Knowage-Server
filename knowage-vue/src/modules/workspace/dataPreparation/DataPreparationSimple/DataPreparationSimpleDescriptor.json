@@ -45,7 +45,7 @@
     "deleteColumn": {
         "parameters": [
             {
-                "name": "column",
+                "name": "columnName",
                 "type": "string",
                 "validationRules": "required|alpha"
             }
