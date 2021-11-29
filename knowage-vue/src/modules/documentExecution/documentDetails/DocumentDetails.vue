@@ -46,6 +46,8 @@
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.dataLineage.title') }}</span>
                     </template>
+
+                    <DataLineageTab v-if="!loading" :selectedDocument="selectedDocument" :metaSourceResource="metaSourceResource" :savedTables="savedTables" />
                 </TabPanel>
                 <TabPanel v-if="this.selectedDocument?.id">
                     <template #header>
@@ -69,6 +71,7 @@ import mainDescriptor from './DocumentDetailsDescriptor.json'
 import InformationsTab from './tabs/informations/DocumentDetailsInformations.vue'
 import DriversTab from './tabs/drivers/DocumentDetailsDrivers.vue'
 import OutputParamsTab from './tabs/outputParams/DocumentDetailsOutputParameters.vue'
+import DataLineageTab from './tabs/dataLineage/DocumentDetailsDataLineage.vue'
 import Dialog from 'primevue/dialog'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
@@ -76,8 +79,8 @@ import { iDocument, iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate,
 
 export default defineComponent({
     name: 'document-details',
-    components: { InformationsTab, DriversTab, OutputParamsTab, TabView, TabPanel, Dialog },
-    props: { selectedDocument: { type: Object }, visible: { type: Boolean, required: false } },
+    components: { InformationsTab, DriversTab, OutputParamsTab, DataLineageTab, TabView, TabPanel, Dialog },
+    props: { selectedDocument: { type: Object, required: true }, visible: { type: Boolean, required: false } },
     emits: ['closeDetails'],
     data() {
         return {
@@ -93,6 +96,8 @@ export default defineComponent({
             attributes: [] as iAttribute[],
             parTypes: [] as any[],
             dateFormats: [] as any[],
+            metaSourceResource: [] as any,
+            savedTables: [] as any,
             states: mainDescriptor.states,
             types: mainDescriptor.types
         }
@@ -122,6 +127,8 @@ export default defineComponent({
             await this.getAttributes()
             await this.getParTypes()
             await this.getDateFormats()
+            await this.getDataSources()
+            await this.getTablesByDocumentID()
             await this.getDataset()
         },
         async getAnalyticalDrivers() {
@@ -151,6 +158,12 @@ export default defineComponent({
         },
         async getDateFormats() {
             this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/DATE_FORMAT`).then((response: AxiosResponse<any>) => (this.dateFormats = response.data))
+        },
+        async getDataSources() {
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`).then((response: AxiosResponse<any>) => ((this.metaSourceResource = response.data), (this.metaSourceResource = this.mainDescriptor.metaSourceResource)))
+        },
+        async getTablesByDocumentID() {
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/document/${this.selectedDocument.id}`).then((response: AxiosResponse<any>) => ((this.savedTables = response.data), (this.savedTables = this.mainDescriptor.savedTables)))
         },
         async getDataset() {
             if (this.selectedDocument?.dataSetId) {

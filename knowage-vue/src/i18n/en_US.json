@@ -221,7 +221,10 @@
     "documentExecution": {
         "documentDetails": {
             "dataLineage": {
-                "title": "Data Lineage"
+                "title": "Data Lineage",
+                "selectSource": "Select Source",
+                "noDatasources": "No data source present, add some",
+                "noTables": "Data source has no tables"
             },
             "drivers": {
                 "ad": "Driver AD",

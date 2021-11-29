@@ -102,7 +102,6 @@ export default defineComponent({
     },
     created() {
         this.document = this.selectedDocument
-        console.log('SELECTED DOCUMENT ------------', this.selectedDocument)
     },
     validations() {
         const validationObject = { selectedParam: createValidations('selectedParam', outputParamDescriptor.validations.selectedParam) }
