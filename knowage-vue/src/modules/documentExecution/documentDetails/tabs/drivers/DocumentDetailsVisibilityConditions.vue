@@ -104,11 +104,11 @@ export default defineComponent({
     },
     watch: {
         selectedDriver() {
-            this.getVisualDependenciesByDriverId()
+            this.selectedDriver.id ? this.getVisualDependenciesByDriverId() : ''
         }
     },
     created() {
-        this.getVisualDependenciesByDriverId()
+        this.selectedDriver.id ? this.getVisualDependenciesByDriverId() : ''
     },
     validations() {
         const validationObject = { selectedCondition: createValidations('selectedCondition', driversDescriptor.validations.selectedCondition) }

@@ -118,7 +118,7 @@
                     </template>
                 </Card>
                 <div v-if="drivers.length > 1 && selectedDriver.id" class="p-grid p-mt-1">
-                    <DataConditions :availableDrivers="drivers" :dataDependencyObjects="dataDependencyObjects" />
+                    <DataConditions :availableDrivers="drivers" :selectedDocument="selectedDocument" :selectedDriver="selectedDriver" />
                     <VisibilityConditions v-if="selectedDocument.engine" :availableDrivers="drivers" :selectedDocument="selectedDocument" :selectedDriver="selectedDriver" />
                 </div>
             </div>
@@ -243,7 +243,7 @@ export default defineComponent({
                 this.getLovsByAnalyticalDriverId()
             }
             if (this.selectedDriver.id) {
-                this.getDataDependenciesByDriverId()
+                // this.getDataDependenciesByDriverId()
             }
         },
         setQuerryParameters(driverID) {
