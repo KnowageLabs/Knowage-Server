@@ -88,21 +88,16 @@ export default defineComponent({
                 this.loading = false
                 return
             }
-
-            // TODO: user role? videti, nije odgovorio jos
-            const postData = { label: this.document?.label, role: (this.$store.state as any).user.defaultRole, parameterId: this.parameter.urlName, mode: 'complete', treeLovNode: parent ? parent.id : 'lovroot', PARAMETERS: this.formatedParameterValues }
+            const postData = { label: this.document?.label, role: (this.$store.state as any).user.sessionRole, parameterId: this.parameter.urlName, mode: 'complete', treeLovNode: parent ? parent.id : 'lovroot', parameters: this.formatedParameterValues }
 
             let content = [] as any[]
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/parametervalues`, postData)
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/admissibleValuesTree`, postData)
                 .then((response: AxiosResponse<any>) => console.log('RESPONSE DATA TREE: ', response.data))
                 .catch((response) => {
-                    console.log('ERROR: ', response)
-                    // console.log('FILTER VALUES: ', response.filterValues)
-                    response.filterValues.forEach((el: any) => {
-                        if (el.isEnabled) {
-                            content.push(this.createNode(el, parent))
-                        }
+                    console.log('FILTER VALUES: ', response.data.rows)
+                    response.data.rows.forEach((el: any) => {
+                        content.push(this.createNode(el, parent))
                     })
                 })
             // console.log('CONTENT: ', content)
@@ -133,16 +128,16 @@ export default defineComponent({
             }
         },
         createNode(el: any, parent: any) {
-            // console.log('TREE EL: ', el)
+            console.log('TREE EL: ', el)
             return {
                 key: el.id,
                 id: el.id,
                 label: el.label,
                 children: [] as any[],
-                data: el,
+                data: { value: el.data, description: '' },
                 style: this.knParameterTreeDialogDescriptor.node.style,
-                leaf: el.leaf ? true : false,
-                selectable: el.leaf ? true : false,
+                leaf: el.leaf,
+                selectable: el.leaf,
                 parent: parent,
                 icon: el.leaf ? 'pi pi-file' : 'pi pi-folder'
             }
@@ -183,7 +178,9 @@ export default defineComponent({
         },
         save() {
             if (!this.multivalue) {
+                console.log('SAVE SELECTED VALUE: ', this.selectedValue)
                 this.parameter.parameterValue = this.selectedValue ? [{ value: this.selectedValue.value, description: this.selectedValue.description }] : []
+                this.selectedValuesKeys = {}
                 this.selectedValue = null
             } else {
                 this.parameter.parameterValue = []

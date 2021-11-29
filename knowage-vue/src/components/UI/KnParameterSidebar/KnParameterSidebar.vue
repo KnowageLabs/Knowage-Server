@@ -12,6 +12,8 @@
 
         {{ user.sessionRole }}
 
+        {{ buttonsDisabled }}
+
         <div class="p-fluid kn-parameter-sidebar-content">
             <div class="p-field p-m-4" v-if="user && (!user.sessionRole || user.sessionRole === 'No default role selected')">
                 <div class="p-d-flex">
@@ -57,8 +59,6 @@
                     />
                 </div>
 
-                <!-- TODO: NEMA! Date Range -->
-
                 <!-- LOV list radio/multiple input -->
                 <div class="p-field p-m-4" v-if="parameter.selectionType === 'LIST' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
@@ -73,10 +73,10 @@
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)"></i>
                     </div>
                     <div class="p-d-flex p-flex-column">
-                        <div class="p-field-radiobutton" v-for="(defaultParameter, index) in parameter.defaultValues" :key="index">
-                            <RadioButton v-if="!parameter.multivalue && defaultParameter.isEnabled" :value="defaultParameter.value" v-model="parameter.parameterValue[0].value" @change="updateVisualDependency(parameter)" />
-                            <Checkbox v-if="parameter.multivalue && defaultParameter.isEnabled" :value="defaultParameter.value" v-model="selectedParameterCheckbox[parameter.id]" @change="setCheckboxValue(parameter)" />
-                            <label>{{ defaultParameter.label }}</label>
+                        <div class="p-field-radiobutton" v-for="(option, index) in parameter.data" :key="index">
+                            <RadioButton v-if="!parameter.multivalue" :value="option.value" v-model="parameter.parameterValue[0].value" @change="updateVisualDependency(parameter)" />
+                            <Checkbox v-if="parameter.multivalue" :value="option.value" v-model="selectedParameterCheckbox[parameter.id]" @change="setCheckboxValue(parameter)" />
+                            <label>{{ option.value }}</label>
                         </div>
                     </div>
                 </div>
@@ -94,8 +94,8 @@
                         >
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)"></i>
                     </div>
-                    <Dropdown v-if="!parameter.multivalue" class="kn-material-input" v-model="parameter.parameterValue[0]" :options="getParameterDropdownOptions(parameter)" optionLabel="label" @change="updateVisualDependency(parameter)" />
-                    <MultiSelect v-else v-model="parameter.parameterValue" :options="getParameterDropdownOptions(parameter)" optionLabel="label" @change="updateVisualDependency(parameter)" />
+                    <Dropdown v-if="!parameter.multivalue" class="kn-material-input" v-model="parameter.parameterValue[0]" :options="parameter.data" optionLabel="value" @change="updateVisualDependency(parameter)" />
+                    <MultiSelect v-else v-model="parameter.parameterValue" :options="parameter.data" optionLabel="value" @change="updateVisualDependency(parameter)" />
                 </div>
 
                 <!-- POP UP -->
@@ -114,10 +114,7 @@
                     <div class="p-d-flex p-flex-row">
                         <i class="pi pi-external-link kn-cursor-pointer p-mr-2" @click="openPopupDialog(parameter)"></i>
                         <div>
-                            <!-- <Chip v-if="!parameter.multivalue">{{ parameter.parameterValue[0].value }}</Chip>
-                            <template v-else> -->
                             <Chip v-for="(parameterValue, index) in parameter.parameterValue" :key="index">{{ parameterValue.value }}</Chip>
-                            <!-- </template> -->
                         </div>
                     </div>
                 </div>
@@ -138,10 +135,7 @@
                     <div class="p-d-flex p-flex-row">
                         <i class="pi pi-external-link kn-cursor-pointer p-mr-2" @click="openTreeDialog(parameter)"></i>
                         <div>
-                            <!-- <Chip v-if="!parameter.multivalue">{{ parameter.parameterValue[0].value }}</Chip>
-                            <template v-else> -->
                             <Chip v-for="(parameterValue, index) in parameter.parameterValue" :key="index">{{ parameterValue.value }}</Chip>
-                            <!-- </template> -->
                         </div>
                     </div>
                 </div>
@@ -177,7 +171,19 @@ import RadioButton from 'primevue/radiobutton'
 
 export default defineComponent({
     name: 'kn-parameter-sidebar',
-    components: { Calendar, Chip, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton },
+    components: {
+        Calendar,
+        Chip,
+        Checkbox,
+        Dropdown,
+        KnParameterPopupDialog,
+        KnParameterTreeDialog,
+        KnParameterSaveDialog,
+        KnParameterSavedParametersDialog,
+        Menu,
+        MultiSelect,
+        RadioButton
+    },
     props: { filtersData: { type: Object }, propDocument: { type: Object } },
     emits: ['execute', 'exportCSV'],
     data() {
@@ -242,16 +248,29 @@ export default defineComponent({
             this.parameters.filterStatus = []
 
             this.filtersData?.filterStatus.forEach((el: any) => {
+                el.parameterValue = []
+                if (el.driverDefaultValue?.length > 0) {
+                    el.parameterValue = el.driverDefaultValue.map((defaultValue: any) => {
+                        return { value: defaultValue.value ?? defaultValue._col0, description: defaultValue.desc ?? defaultValue._col1 }
+                    })
+                }
+
+                if (el.data) {
+                    el.data = el.data.map((data: any) => {
+                        return { value: data._col0, description: data._col1 }
+                    })
+                }
+
                 if (el.selectionType == 'LIST' && el.showOnPanel == 'true' && el.multivalue) {
                     this.selectedParameterCheckbox[el.id] = el.parameterValue?.map((parameterValue: any) => parameterValue.value)
-                } else if (el.selectionType == 'COMBOBOX' && el.showOnPanel == 'true') {
-                    el.multivalue ? this.setSelectedMultivalueCombobox(el) : this.setSelectedCombobox(el)
                 }
+
                 this.parameters.filterStatus.push(el)
             })
 
-            this.parameters?.filterStatus.forEach((el: any) => this.setVisualDependency(el))
-            this.parameters?.filterStatus.forEach((el: any) => this.updateVisualDependency(el))
+            //  this.parameters?.filterStatus.forEach((el: any) => this.setVisualDependency(el))
+            // this.parameters?.filterStatus.forEach((el: any) => this.updateVisualDependency(el))
+            console.log('>>> LOADED PARAMETERS: ', this.parameters?.filterStatus)
         },
         setVisualDependency(parameter: any) {
             if (parameter.visualDependencies.length !== 0) {
@@ -267,55 +286,30 @@ export default defineComponent({
                 })
             }
         },
-        setSelectedCombobox(parameter: any) {
-            const index = parameter.defaultValues.findIndex((el: any) => {
-                return el.value === parameter.parameterValue[0]?.value
-            })
-            if (index !== -1) parameter.parameterValue = [parameter.defaultValues[index]]
-        },
-        setSelectedMultivalueCombobox(parameter: any) {
-            const formatedValues = [] as any[]
-            parameter.parameterValue?.forEach((parameterValue: any) => {
-                const index = parameter.defaultValues?.findIndex((el: any) => {
-                    return el.value === parameterValue.value
-                })
-                if (index !== -1) formatedValues.push(parameter.defaultValues[index])
-            })
-            parameter.parameterValue = formatedValues
-        },
         resetParameterValue(parameter: any) {
-            if (parameter.selectionType === 'LIST' && parameter.showOnPanel === 'true' && parameter.multivalue) {
-                parameter.parameterValue = parameter.driverDefaultValue
-                this.selectedParameterCheckbox[parameter.id] = parameter.driverDefaultValue?.map((parameterValue: any) => parameterValue.value)
-            } else if (parameter.selectionType === 'COMBOBOX' && parameter.showOnPanel === 'true') {
-                parameter.multivalue ? this.resetParameterComboboxMulti(parameter) : this.resetParameterCombobox(parameter)
-            } else if ((parameter.selectionType === 'LOOKUP' || parameter.selectionType === 'TREE') && parameter.showOnPanel === 'true' && parameter.multivalue) {
-                parameter.parameterValue = parameter.driverDefaultValue
+            if ((parameter.selectionType === 'LIST' || parameter.selectionType === 'COMBOBOX') && parameter.showOnPanel === 'true' && parameter.multivalue) {
+                parameter.parameterValue = []
+                this.selectedParameterCheckbox[parameter.id] = []
+                for (let i = 0; i < parameter.driverDefaultValue.length; i++) {
+                    const temp = parameter.driverDefaultValue[i]
+                    parameter.parameterValue.push({ value: temp._col0, description: temp._col1 })
+                    this.selectedParameterCheckbox[parameter.id].push(temp._col0)
+                }
+            } else if ((parameter.selectionType === 'COMBOBOX' || parameter.selectionType === 'TREE') && parameter.showOnPanel === 'true' && parameter.multivalue) {
+                parameter.parameterValue = [...parameter.driverDefaultValue]
+            } else if (parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true' && parameter.multivalue) {
+                parameter.parameterValue = parameter.driverDefaultValue.map((el: any) => {
+                    return { value: el._col0, description: el._col1 }
+                })
             } else {
                 if (!parameter.parameterValue[0]) {
-                    parameter.parameterValue[0] = { value: '', description: '' }
+                    parameter.parameterValue[0] = { value: '', desc: '' }
                 }
-                parameter.parameterValue[0].value = parameter.driverDefaultValue[0].value
+                parameter.parameterValue[0].value = parameter.driverDefaultValue[0].value ?? parameter.driverDefaultValue[0]._col0
             }
         },
         resetAllParameters() {
             this.parameters.filterStatus.forEach((el: any) => this.resetParameterValue(el))
-        },
-        resetParameterCombobox(parameter: any) {
-            const index = parameter.defaultValues.findIndex((el: any) => {
-                return el.value === parameter.driverDefaultValue[0].value
-            })
-            if (index !== -1) parameter.parameterValue = [parameter.defaultValues[index]]
-        },
-        resetParameterComboboxMulti(parameter: any) {
-            const formatedValues = [] as any[]
-            parameter.driverDefaultValue?.forEach((parameterValue: any) => {
-                const index = parameter.defaultValues?.findIndex((el: any) => {
-                    return el.value === parameterValue.value
-                })
-                if (index !== -1) formatedValues.push(parameter.defaultValues[index])
-            })
-            parameter.parameterValue = formatedValues
         },
         toggle(event: any) {
             this.createMenuItems()
@@ -330,12 +324,19 @@ export default defineComponent({
             for (let i = 0; i < this.parameters.filterStatus.length; i++) {
                 const parameter = this.parameters.filterStatus[i]
 
+                // console.log('PARAMETER REQUIRED: ', parameter)
+
                 if (parameter.mandatory && parameter.showOnPanel == 'true') {
                     if (!parameter.parameterValue || parameter.parameterValue.length === 0) {
+                        // console.log('REQUIRED 1', parameter)
                         return true
                     } else {
                         parameter.parameterValue.forEach((el: any) => {
-                            if (!el.value) return true
+                            //  console.log('REQUIRED 2', el)
+                            if (!el.value) {
+                                // console.log('ENTERED REQUIRED 2!!!!!!!!!')
+                                return true
+                            }
                         })
                     }
                 }
@@ -348,9 +349,6 @@ export default defineComponent({
                 return { value: el, description: el }
             })
             this.updateVisualDependency(parameter)
-        },
-        getParameterDropdownOptions(parameter: any) {
-            return parameter.defaultValues.filter((el: any) => el.isEnabled)
         },
         openPopupDialog(parameter: any) {
             this.selectedParameter = parameter
@@ -370,40 +368,43 @@ export default defineComponent({
         async getParameterPopupInfo(parameter: any) {
             this.loading = true
 
-            const postData = { MODE: 'extra', OBJECT_LABEL: this.document.label, PARAMETERS: this.getFormatedParameters(), PARAMETER_ID: parameter.urlName, ROLE: this.sessionRole }
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentExeParameters/getParameters`, postData).then((response: AxiosResponse<any>) => (this.parameterPopUpData = response.data))
+            const postData = { label: this.document.label, parameters: this.getFormatedParameters(), paramId: parameter.urlName, role: this.sessionRole }
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentExeParameters/admissibleValues`, postData).then((response: AxiosResponse<any>) => (this.parameterPopUpData = response.data))
             this.loading = false
         },
         getFormatedParameters() {
-            let PARAMETERS = {}
+            let parameters = [] as any[]
 
             Object.keys(this.parameters.filterStatus).forEach((key: any) => {
                 const parameter = this.parameters.filterStatus[key]
 
-                // TODO srediti popup-single i tree
-                if (parameter.valueSelection === 'man_in') {
-                    PARAMETERS[parameter.urlName] = parameter.type === 'NUM' ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
-                    PARAMETERS[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].description
-                } else if (parameter.multivalue) {
-                    let tempArrayValue = [] as any[]
-                    let tempArrayDescription = [] as any[]
-                    for (let i = 0; i < parameter.parameterValue.length; i++) {
-                        tempArrayValue.push(parameter.parameterValue[i].value)
-                        tempArrayDescription.push(parameter.parameterValue[i].description)
-                    }
+                console.log('PARAMETER: ', parameter)
 
-                    PARAMETERS[parameter.urlName] = tempArrayValue
-                    PARAMETERS[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].description
+                // parameter.multivalue ? parameters.push({ value: parameter.parameterValue, description: parameter.parameterDescription }) : parameters.push({ value: parameter.parameterValue[0].value, description: parameter.parameterDescription[0].description })
+
+                if (parameter.valueSelection === 'man_in') {
+                    parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
+                } else if (parameter.multivalue) {
+                    parameters.push({ label: parameter.label, value: parameter.parameterValue, description: parameter.parameterDescription })
+                    // let tempArrayValue = [] as any[]
+                    // let tempArrayDescription = [] as any[]
+                    // for (let i = 0; i < parameter.parameterValue.length; i++) {
+                    //     tempArrayValue.push(parameter.parameterValue[i].value)
+                    //     tempArrayDescription.push(parameter.parameterValue[i].description)
+                    // }
+
+                    // parameter[parameter.urlName] = tempArrayValue
+                    // parameter[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].description
                 } else if (parameter.type === 'DATE') {
-                    PARAMETERS[parameter.urlName] = parameter.parameterValue[0].value
-                    PARAMETERS[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].value
+                    parameter[parameter.urlName] = parameter.parameterValue[0].value
+                    parameter[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].value
                 } else {
-                    PARAMETERS[parameter.urlName] = parameter.parameterValue[0] ? parameter.parameterValue[0].value : parameter.parameterValue.value
-                    PARAMETERS[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0] ? parameter.parameterValue[0].description : parameter.parameterValue.description
+                    parameter[parameter.urlName] = parameter.parameterValue[0] ? parameter.parameterValue[0].value : parameter.parameterValue.value
+                    parameter[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0] ? parameter.parameterValue[0].description : parameter.parameterValue.description
                 }
             })
 
-            return PARAMETERS
+            return parameters
         },
         onPopupSave(parameter: any) {
             this.updateVisualDependency(parameter)
@@ -552,7 +553,7 @@ export default defineComponent({
 }
 
 #kn-parameter-sidebar {
-    z-index: 150;
+    z-index: 100;
     background-color: white;
     height: 100%;
     width: 350px;

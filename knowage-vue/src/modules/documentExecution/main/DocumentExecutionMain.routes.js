@@ -12,6 +12,12 @@ const routes = [
         //         props: true
         //     }
         // ]
+    },
+    {
+        path: '/document-composite/:id',
+        name: 'document-execution-document-composite',
+        component: () => import('@/modules/documentExecution/main/DocumentExecution.vue'),
+        props: true
     }
 ]
 

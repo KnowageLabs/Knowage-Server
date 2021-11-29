@@ -72,12 +72,14 @@ export default defineComponent({
             if (this.multivalue) {
                 this.setMultipleSelectedRows()
             }
-            // console.log('LOADED PARAMETER: ', this.parameter)
+            console.log('LOADED PARAMETER: ', this.parameter)
         },
         setMultipleSelectedRows() {
             // console.log('SELECTED PARAMETER: ', this.parameter)
             // console.log('SELECTED ROWS: ', this.multipleSelectedRows)
-            this.multipleSelectedRows = this.parameter.parameterValue
+            this.multipleSelectedRows = this.parameter.parameterValue.map((el: any) => {
+                return { _col0: el.value, _col1: el.value }
+            })
         },
         loadPopupData() {
             this.popupData = this.parameterPopUpData
@@ -105,14 +107,14 @@ export default defineComponent({
             }
         },
         save() {
-            // console.log('PARAMETER: ', this.parameter)
+            console.log('PARAMETER: ', this.parameter)
             if (this.selectedRow && !this.multivalue) {
-                this.parameter.parameterValue = [{ value: this.selectedRow.value, description: this.selectedRow.description }]
+                this.parameter.parameterValue = [{ value: this.selectedRow._col0, description: this.selectedRow._col1 }]
 
                 this.selectedRow = null
             } else {
                 this.parameter.parameterValue = []
-                this.multipleSelectedRows?.forEach((el: any) => this.parameter.parameterValue.push({ value: el.value, description: el.description }))
+                this.multipleSelectedRows?.forEach((el: any) => this.parameter.parameterValue.push({ value: el._col0, description: el._col1 }))
             }
 
             this.popupData = null

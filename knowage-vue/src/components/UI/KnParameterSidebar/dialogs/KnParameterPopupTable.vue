@@ -8,7 +8,7 @@
         :globalFilterFields="globalFilterFields"
         :paginator="rows.length > 20"
         :rows="20"
-        dataKey="value"
+        dataKey="_col0"
         responsiveLayout="stack"
         breakpoint="600px"
         :scrollable="true"
@@ -34,7 +34,7 @@
         </template>
 
         <Column v-if="multivalue" selectionMode="multiple" :headerStyle="knParameterPopupDialogDescriptor.styles.checkboxColumn"></Column>
-        <Column class="kn-truncated" v-for="col of columns" :field="col.name" :header="col.header" :key="col.name" :sortable="true"> </Column>
+        <Column class="kn-truncated" v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" :sortable="true"> </Column>
     </DataTable>
 </template>
 
@@ -70,11 +70,16 @@ export default defineComponent({
     },
     methods: {
         loadData() {
-            this.rows = this.parameterPopUpData?.result.root
+            console.log('POPUP DATA: ', this.parameterPopUpData)
 
-            this.columns = this.parameterPopUpData?.result.metaData.fields.slice(1, -1)
+            this.rows = this.parameterPopUpData?.result.data
 
-            this.columns.forEach((el: any) => this.globalFilterFields.push(el.name))
+            this.columns = []
+            Object.keys(this.parameterPopUpData?.result.metadata.colsMap).forEach((key: string) => {
+                this.columns.push({ header: this.parameterPopUpData?.result.metadata.colsMap[key], field: key })
+            })
+
+            this.columns.forEach((el: any) => this.globalFilterFields.push(el.field))
 
             // console.log('LOADED ROWS: ', this.rows)
             // console.log('LOADED COLUMNS: ', this.columns)
