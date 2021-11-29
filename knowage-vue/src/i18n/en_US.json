@@ -275,6 +275,7 @@
             "currentRank": "Curent Rank is...",
             "customMetadata": "Custom Metadata",
             "editCockpit": "Edit cockpit document",
+            "viewCockpit": "View cockpit document",
             "embedInHtml": "Embed in HTML",
             "exportInPDF": "Export in PDF",
             "exportInRTF": "Export in RTF",

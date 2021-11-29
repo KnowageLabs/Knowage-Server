@@ -17,21 +17,22 @@
 
                 <DocumentExecutionNotesForm :selectedNote="selectedNote"></DocumentExecutionNotesForm>
             </TabPanel>
-            <TabPanel>
+            <!-- TODO: Notes list will be implemented when backend services are fixed. -->
+            <!-- <TabPanel>
                 <template #header>
                     <span>{{ $t('common.notesList') }}</span>
                 </template>
 
                 <DocumentExecutionNotesList :propNotes="notes" :document="document" @editNote="onEditNote" @deleteNote="onDeleteNote"></DocumentExecutionNotesList>
-            </TabPanel>
+            </TabPanel> -->
         </TabView>
 
         <template #footer>
-            <div class="p-d-flex p-flex-row p-jc-end">
+            <div class="p-d-flex p-flex-row">
                 <Button v-if="activeTab === 1" class="kn-button kn-button--primary" @click="exportNotes('pdf')"> {{ $t('documentExecution.main.exportInPDF') }}</Button>
                 <Button v-if="activeTab === 1" class="kn-button kn-button--primary" @click="exportNotes('rtf')"> {{ $t('documentExecution.main.exportInRTF') }}</Button>
 
-                <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.close') }}</Button>
+                <Button class="kn-button kn-button--primary p-ml-auto" @click="closeDialog"> {{ $t('common.close') }}</Button>
                 <Button v-if="activeTab === 0" class="kn-button kn-button--primary" @click="saveNote" :disabled="saveButtonDisabled"> {{ $t('common.save') }}</Button>
             </div>
         </template>
@@ -45,13 +46,14 @@ import { downloadDirect } from '@/helpers/commons/fileHelper'
 import Dialog from 'primevue/dialog'
 import documentExecutionNotesDialogDescriptor from './DocumentExecutionNotesDialogDescriptor.json'
 import DocumentExecutionNotesForm from './DocumentExecutionNotesForm.vue'
-import DocumentExecutionNotesList from './DocumentExecutionNotesList.vue'
+// TODO: Notes list will be implemented when backend services are fixed.
+// import DocumentExecutionNotesList from './DocumentExecutionNotesList.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'document-execution-notes-dialog',
-    components: { Dialog, DocumentExecutionNotesForm, DocumentExecutionNotesList, TabView, TabPanel },
+    components: { Dialog, DocumentExecutionNotesForm, TabView, TabPanel },
     props: { visible: { type: Boolean }, propDocument: { type: Object } },
     emits: ['close'],
     data() {
@@ -65,6 +67,11 @@ export default defineComponent({
         }
     },
     watch: {
+        async visible() {
+            if (this.visible) {
+                await this.loadDocument()
+            }
+        },
         async propDocument() {
             await this.loadDocument()
         }
@@ -101,6 +108,10 @@ export default defineComponent({
                     })
                 )
             this.loading = false
+
+            if (this.notes.length > 0) {
+                this.selectedNote = this.notes[0]
+            }
             console.log('LOADED NOTES: ', this.notes)
         },
         async saveNote() {

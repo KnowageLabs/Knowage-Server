@@ -13,7 +13,7 @@
                 <Editor v-model="note.content" :readonly="true"></Editor>
             </div>
 
-            <div class="p-m-2">
+            <div class="p-d-flex p-flex-row p-jc-end p-m-2">
                 <Button icon="pi pi-pencil" class="p-button-link" @click="$emit('editNote', note)" />
                 <Button icon="pi pi-trash" class="p-button-link" @click="deleteNoteConfirm(note)" />
             </div>

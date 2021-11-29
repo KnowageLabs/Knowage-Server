@@ -5,7 +5,8 @@
 
             <template #right>
                 <div class="p-d-flex p-jc-around">
-                    <i class="pi pi-pencil kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocument"></i>
+                    <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'VIEW'" class="pi pi-pencil kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocument"></i>
+                    <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'" class="fa fa-eye kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocument"></i>
                     <i class="pi pi-book kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></i>
                     <i class="pi pi-refresh kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.refresh')" @click="refresh"></i>
                     <i class="fa fa-filter kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible"></i>
@@ -24,11 +25,11 @@
                 <!-- <Registry v-if="mode === 'registry' && urlData && !loading" :id="urlData.sbiExecutionId"></Registry> -->
                 <!-- <Registry v-if="mode === 'registry' && urlData && !loading" :id="'e2d23b864b7811ec9215b918e5768f09'"></Registry> -->
 
-                <!-- <router-view v-slot="{ Component }">
-            <keep-alive>
-                <component :is="Component" :key="$route.fullPath"></component>
-            </keep-alive>
-        </router-view> -->
+                <!-- <router-view v-if="!loading" v-slot="{ Component }">
+                    <keep-alive>
+                        <component :is="Component" :key="$route.fullPath"></component>
+                    </keep-alive>
+                </router-view> -->
 
                 <!-- <iframe class="document-execution-iframe" :src="url"></iframe> -->
 
@@ -68,6 +69,9 @@ export default defineComponent({
     data() {
         return {
             document: null as any,
+            hiddenFormData: {} as any,
+            hiddenFormUrl: '' as string,
+            documentMode: 'VIEW',
             filtersData: null as any,
             urlData: null as any,
             exporters: null as any,
@@ -96,7 +100,7 @@ export default defineComponent({
         url() {
             return (
                 process.env.VUE_APP_HOST_URL +
-                '/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=3251&OBJECT_LABEL=Registry_Test_1&MENU_PARAMETERS=%7B%7D&LIGHT_NAVIGATOR_DISABLED=TRUE&SBI_EXECUTION_ID=null&OBJECT_NAME=Registry_Test_1&EDIT_MODE=null&TOOLBAR_VISIBLE=null&CAN_RESET_PARAMETERS=null&EXEC_FROM=null&CROSS_PARAMETER=null'
+                '/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=3306&OBJECT_LABEL=DOC_DEFAULT_2&MENU_PARAMETERS=%7B%7D&LIGHT_NAVIGATOR_DISABLED=TRUE&SBI_EXECUTION_ID=null&OBJECT_NAME=DOC_DEFAULT_2&EDIT_MODE=null&TOOLBAR_VISIBLE=null&CAN_RESET_PARAMETERS=null&EXEC_FROM=null&CROSS_PARAMETER=null'
             )
         }
     },
@@ -119,12 +123,17 @@ export default defineComponent({
     methods: {
         editCockpitDocument() {
             console.log('TODO - EDIT COCKPIT DOCUMENT')
+            this.documentMode = this.documentMode === 'EDIT' ? 'VIEW' : 'EDIT'
+            this.hiddenFormData.documentMode = this.documentMode
+            console.log('TEST', this.hiddenFormData)
+            // this.sendHiddenFormData()
         },
         openHelp() {
             this.helpDialogVisible = true
         },
-        refresh() {
-            console.log('TODO - REFRESH')
+        async refresh() {
+            this.parameterSidebarVisible = false
+            await this.loadPage()
         },
         toggle(event: any) {
             this.createMenuItems()
@@ -152,7 +161,7 @@ export default defineComponent({
                 }
             )
 
-            this.exporters.forEach((exporter: any) => this.toolbarMenuItems[1].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => this.export() }))
+            this.exporters?.forEach((exporter: any) => this.toolbarMenuItems[1].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => this.export() }))
 
             if (this.user.functionalities.includes('SendMailFunctionality') && this.document.typeCode === 'REPORT') {
                 this.toolbarMenuItems[1].items.push({ icon: 'pi pi-envelope', label: this.$t('common.sendByEmail'), command: () => this.openMailDialog() })
@@ -212,7 +221,6 @@ export default defineComponent({
             this.loading = false
         },
         async copyLink() {
-            console.log('TODO - OPEN COPY LINK')
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/canHavePublicExecutionUrl`, { label: this.document.label })
@@ -240,34 +248,46 @@ export default defineComponent({
             this.loading = true
             await this.loadDocument()
             await this.loadFilters()
-            await this.loadURL()
+            if (this.filtersData?.isReadyForExecution) {
+                await this.loadURL()
+            } else {
+                this.parameterSidebarVisible = true
+            }
             await this.loadExporters()
             this.loading = false
+
+            // TODO LOAD URL HARDCODED
+            await this.loadURL()
         },
         async loadDocument() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.id}`).then((response: AxiosResponse<any>) => (this.document = response.data))
             console.log('LOADED DOCUMENT: ', this.document)
-            switch (this.document.typeCode) {
-                case 'DATAMART':
-                    this.$router.push(`/document-execution/${this.document.label}/registry/${this.document.label}`)
-            }
         },
         async loadFilters() {
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/filters`, { label: this.id, role: this.sessionRole, parameters: {} }).then((response: AxiosResponse<any>) => (this.filtersData = response.data))
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, { label: this.id, role: this.sessionRole, parameters: {} })
+                .then((response: AxiosResponse<any>) => (this.filtersData = response.data))
+                .catch((error: any) => console.log('ERROR: ', error))
             console.log('LOADED FILTERS DATA: ', this.filtersData)
         },
         async loadURL() {
             await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, { label: this.id, role: this.sessionRole, parameters: {}, EDIT_MODE: 'null', IS_FOR_EXPORT: true }).then((response: AxiosResponse<any>) => (this.urlData = response.data))
-            this.sendForm()
+            await this.sendForm()
+            // switch (this.document.typeCode) {
+            //     case 'DATAMART':
+            //         this.$router.push(`/document-execution/${this.document.label}/registry/${this.urlData.sbiExecutionId}`)
+            //         break
+            // }
             // console.log('LOADED URL DATA: ', this.urlData)
         },
         async loadExporters() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/exporters/${this.urlData.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
             // console.log('LOADED EXPORTERS: ', this.exporters)
         },
-        sendForm() {
+        async sendForm() {
             const documentUrl = this.urlData.url + '&timereloadurl=' + new Date().getTime()
             const postObject = { params: { document: null }, url: documentUrl.split('?')[0] }
+            this.hiddenFormUrl = postObject.url
             const paramsFromUrl = documentUrl.split('?')[1].split('&')
             // console.log('DOCUMENT URL: ', documentUrl)
 
@@ -294,7 +314,7 @@ export default defineComponent({
                 document.body.appendChild(postForm)
             }
 
-            let formData = new FormData()
+            this.hiddenFormData = new FormData()
 
             for (let k in postObject.params) {
                 const inputElement = document.getElementById('postForm_' + k) as any
@@ -310,7 +330,7 @@ export default defineComponent({
                     element.value = element.value.replace(/\+/g, ' ')
                     postForm.appendChild(element)
 
-                    formData.append(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
+                    this.hiddenFormData.append(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
                 }
             }
 
@@ -320,19 +340,30 @@ export default defineComponent({
                 if (!(postFormElement in postObject.params)) {
                     postForm.removeChild(postForm.elements[i])
 
-                    formData.delete(postFormElement)
+                    this.hiddenFormData.delete(postFormElement)
                 }
             }
 
             // TODO: hardkodovano
-            formData.append('documentMode', 'VIEW')
+            this.hiddenFormData.append('documentMode', 'VIEW')
 
-            this.$http.post(postObject.url, formData, {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
-                }
-            })
+            await this.sendHiddenFormData()
+            // this.$http.post(postObject.url, this.hiddenFormData, {
+            //     headers: {
+            //         'Content-Type': 'application/x-www-form-urlencoded',
+            //         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+            //     }
+            // })
+        },
+        async sendHiddenFormData() {
+            await this.$http
+                .post(this.hiddenFormUrl, this.hiddenFormData, {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+                    }
+                })
+                .catch((error: any) => console.log('ERROR: ', error))
         },
         async onExecute() {
             console.log('EXECUTE PARAMS: ', this.filtersData)

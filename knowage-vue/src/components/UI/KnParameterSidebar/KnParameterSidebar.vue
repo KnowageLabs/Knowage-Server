@@ -24,7 +24,7 @@
                 <!-- Manual Text/Number Input -->
                 <div class="p-field p-m-4" v-if="(parameter.type === 'STRING' || parameter.type === 'NUM') && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
-                        <label class="kn-material-input-label">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
+                        <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters }">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)"></i>
                     </div>
                     <InputText
@@ -41,7 +41,7 @@
                 <!-- Date -->
                 <div class="p-field p-m-4" v-if="parameter.type === 'DATE' && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
-                        <label class="kn-material-input-label">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
+                        <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters }">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)"></i>
                     </div>
                     <Calendar
@@ -65,7 +65,8 @@
                         <label
                             class="kn-material-input-label"
                             :class="{
-                                'kn-parameter-label-error': parameter.mandatory && ((!parameter.multivalue && !parameter.parameterValue[0].value) || (parameter.multivalue && parameter.parameterValue.length === 0))
+                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && !parameter.parameterValue[0].value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
+                                'p-text-italic': parameter.dependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
                         >
@@ -86,7 +87,8 @@
                         <label
                             class="kn-material-input-label"
                             :class="{
-                                'kn-parameter-label-error': parameter.mandatory && ((!parameter.multivalue && !parameter.parameterValue.value) || (parameter.multivalue && parameter.parameterValue.length === 0))
+                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && !parameter.parameterValue[0].value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
+                                'p-text-italic': parameter.dependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
                         >
@@ -102,7 +104,8 @@
                         <label
                             class="kn-material-input-label"
                             :class="{
-                                'kn-parameter-label-error': parameter.mandatory && ((!parameter.multivalue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0))
+                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
+                                'p-text-italic': parameter.dependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
                         >
@@ -125,7 +128,8 @@
                         <label
                             class="kn-material-input-label"
                             :class="{
-                                'kn-parameter-label-error': parameter.mandatory && ((!parameter.multivalue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0))
+                                'kn-parameter-label-error': parameter.mandatory && ((!parameter.multivalue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
+                                'p-text-italic': parameter.dependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
                         >
@@ -257,7 +261,7 @@ export default defineComponent({
                     })
                     if (index !== -1) {
                         const tempParameter = this.parameters.filterStatus[index]
-                        parameter.dependensToParameters ? parameter.dependensToParameters.push(tempParameter) : (parameter.dependensToParameters = [tempParameter])
+                        parameter.dependsOnParameters ? parameter.dependsOnParameters.push(tempParameter) : (parameter.dependsOnParameters = [tempParameter])
                         tempParameter.dependentParameters ? tempParameter.dependentParameters.push(parameter) : (tempParameter.dependentParameters = [parameter])
                     }
                 })
@@ -428,8 +432,8 @@ export default defineComponent({
                 showOnPanel = 'false'
                 const visualDependency = parameter.visualDependencies[i]
 
-                const index = parameter.dependensToParameters.findIndex((el: any) => el.urlName === visualDependency.parFatherUrlName)
-                const parentParameter = parameter.dependensToParameters[index]
+                const index = parameter.dependsOnParameters.findIndex((el: any) => el.urlName === visualDependency.parFatherUrlName)
+                const parentParameter = parameter.dependsOnParameters[index]
 
                 // console.log(' >>>>> INDEX:', index)
                 // console.log(' >>>>> PARENT PARAMETER:', parentParameter)
@@ -439,6 +443,7 @@ export default defineComponent({
                     for (let i = 0; i < parentParameter.parameterValue.length; i++) {
                         if (parentParameter.parameterValue[i].value === visualDependency.compareValue) {
                             // console.log(' >>>> ENTERED', parentParameter.parameterValue[i].value, ' === ', visualDependency.compareValue)
+                            parameter.label = visualDependency.viewLabel
                             showOnPanel = 'true'
                             break
                         }
