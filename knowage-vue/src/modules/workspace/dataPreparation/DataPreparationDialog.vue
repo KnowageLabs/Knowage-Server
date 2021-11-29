@@ -10,8 +10,8 @@
     >
         <Message severity="info" :closable="false" v-if="localCopy && localCopy.description">{{ $t(localCopy.description) }}</Message>
 
-        <DataPreparationSimple v-bind:transformation="localCopy" v-bind:visible="localCopy.type === 'simple'" :columns="columns" :col="col" />
-        <DataPreparationCustom v-bind:transformation="localCopy" v-bind:visible="localCopy.type === 'custom'" :columns="columns" :col="col" />
+        <DataPreparationSimple :transformation="localCopy" v-bind:visible="localCopy.type === 'simple'" :columns="columns" :col="col" />
+        <DataPreparationCustom :transformation="localCopy" v-bind:visible="localCopy.type === 'custom'" :columns="columns" :col="col" />
 
         <template #footer>
             <Button class="p-button-text kn-button thirdButton" :label="$t('common.cancel')" @click="resetAndClose" />
@@ -53,6 +53,10 @@
 
         created() {
             this.localCopy = JSON.parse(JSON.stringify(this.transformation))
+
+            this.simpleDescriptor = { ...DataPreparationSimpleDescriptor } as any
+
+            this.customDescriptor = { ...DataPreparationCustomDescriptor } as any
         },
         beforeUpdate() {
             this.localCopy = JSON.parse(JSON.stringify(this.transformation))
@@ -125,36 +129,9 @@
                 })
             },
 
-            handleMultiSelectChange(e: Event): void {
-                if (e) {
-                    this.refreshTransfrormation()
-                }
-            },
-
             handleTransformation(): void {
                 let convertedTransformation = this.convertTransformation()
                 this.$emit('send-transformation', convertedTransformation)
-            },
-
-            refreshTransfrormation(): void {
-                if (this.localCopy) {
-                    let pars = this.localCopy.type === 'simple' ? this.simpleDescriptor[this.localCopy.name].parameters : this.customDescriptor[this.localCopy.name].parameters
-                    pars.forEach((item) => {
-                        item.availableOptions?.forEach((element) => {
-                            element.label = this.$t(element.label)
-                        })
-                        if (item.type === 'multiSelect' && item.name === 'columns') {
-                            if (this.col) {
-                                let selectedItem: Array<IDataPreparationColumn> | undefined = this.columns?.filter((x) => x.header == this.col)
-                                if (selectedItem && selectedItem.length > 0) {
-                                    selectedItem[0].disabled = true
-                                }
-                            } else {
-                                this.columns?.forEach((e) => (e.disabled = false))
-                            }
-                        }
-                    })
-                }
             },
 
             resetAndClose(): void {

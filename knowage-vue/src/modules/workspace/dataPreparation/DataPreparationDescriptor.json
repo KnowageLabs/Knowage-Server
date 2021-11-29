@@ -204,14 +204,14 @@
         },
         {
             "category": "tableStructure",
-            "description": "managers.workspaceManagement.dataPreparation.transformations.splitColumns.description",
+            "description": "managers.workspaceManagement.dataPreparation.transformations.splitColumn.description",
             "editColumn": false,
             "icon": {
                 "class": "material-icons",
                 "name": "call_split"
             },
-            "label": "managers.workspaceManagement.dataPreparation.transformations.splitColumns.label",
-            "name": "splitColumns",
+            "label": "managers.workspaceManagement.dataPreparation.transformations.splitColumn.label",
+            "name": "splitColumn",
             "position": 3,
             "toolbar": true,
             "type": "custom"

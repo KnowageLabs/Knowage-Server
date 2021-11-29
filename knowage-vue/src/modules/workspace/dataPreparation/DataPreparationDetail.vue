@@ -244,30 +244,21 @@
             },
             callFunction(transformation: any, col, type?): void {
                 if (transformation.name === 'changeType') {
-                    /*                    transformation.config.parameters[0][0].value = type
-                    let toReturn = { parameters: [] as Array<any>, type: transformation.type }
-                    let obj = { columns: [] as Array<any>, type: type }
-                    obj.columns.push(col)
-
-                    toReturn.parameters.push(obj) */
                     let parsArray = this.simpleDescriptor[transformation.name].parameters
                     for (var i = 0; i < parsArray.length; i++) {
-                        let parArray = parsArray[i]
-                        for (var j = 0; j < parArray.length; j++) {
-                            let element = parArray[j]
-                            if (element.name === 'destType') {
-                                element.availableOptions = col ? this.getCompatibilityType(col) : this.descriptor.compatibilityMap['all'].values
+                        let element = parsArray[i]
+                        if (element.name === 'destType') {
+                            element.availableOptions = col ? this.getCompatibilityType(col) : this.descriptor.compatibilityMap['all'].values
 
-                                element.availableOptions.forEach((element) => {
-                                    element.label = this.removePrefixFromType(element.label)
-                                })
-                            }
+                            element.availableOptions.forEach((element) => {
+                                element.label = this.removePrefixFromType(element.label)
+                            })
                         }
                     }
 
                     this.handleTransformation(transformation)
                     this.selectedTransformation = transformation
-                    this.col = col.header
+                    if (col) this.col = col.header
                 } else if (transformation.name === 'deleteColumn' && col) {
                     this.$confirm.require({
                         message: this.$t('common.toast.deleteMessage'),
@@ -285,24 +276,6 @@
                         }
                     })
                 } else {
-                    /* else {
-                            let requiresValues = false
-                            //TODO Apply searching on custom descriptors
-                            let pars = transformation.type === 'simple' ? this.simpleDescriptor[transformation.name].parameters : []
-                            for (var i = 0; i < pars.length; i++) {
-                                let element = pars[i]
-                                requiresValues = element.filter((x) => !x.value).length > 0
-
-                                if (requiresValues) break
-                            }
-
-                            if (requiresValues) {
-                                this.selectedTransformation = transformation
-                                this.col = col
-                            } else {
-                                this.handleTransformation(transformation)
-                            }
-                        } */
                     this.selectedTransformation = transformation
                     if (col) this.col = col.header
                 }

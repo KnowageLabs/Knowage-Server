@@ -95,7 +95,7 @@
             }
         },
 
-        beforeMount() {
+        mounted() {
             this.setupLocal()
         },
         methods: {
@@ -113,11 +113,12 @@
                         item.availableOptions?.forEach((element) => {
                             element.label = this.$t(element.label)
                         })
-                        if (item.type === 'multiSelect' && item.name === 'columns') {
+                        if (item.name === 'columns' && item.type === 'multiSelect') {
                             if (this.col) {
                                 let selectedItem: Array<IDataPreparationColumn> | undefined = this.columns?.filter((x) => x.header == this.col)
                                 if (selectedItem && selectedItem.length > 0) {
                                     selectedItem[0].disabled = true
+                                    item.value = selectedItem
                                 }
                             } else {
                                 this.columns?.forEach((e) => (e.disabled = false))
@@ -136,6 +137,8 @@
 
                         this.localTransformation.parameters = JSON.parse(JSON.stringify(pars))
                     }
+
+                    this.refreshTransfrormation()
                 }
             }
         },

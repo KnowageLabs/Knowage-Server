@@ -94,16 +94,7 @@
             return { descriptor: DataPreparationCustomDescriptor as any, localTransformation: {} as ITransformation, currentId: 0 }
         },
         mounted() {
-            this.localTransformation = this.transformation ? { ...this.transformation } : ({} as ITransformation)
-
-            this.descriptor = { ...DataPreparationCustomDescriptor } as any
-
-            let name = this.transformation && this.transformation.name ? this.transformation.name : ''
-            if (name && this.transformation?.type === 'custom') {
-                let pars = this.descriptor[name].parameters
-
-                this.localTransformation.parameters = JSON.parse(JSON.stringify(pars))
-            }
+            this.setupLocal()
         },
         methods: {
             addNewRow() {
@@ -152,24 +143,37 @@
             },
             refreshTransfrormation(): void {
                 if (this.localTransformation) {
-                    let pars = this.localTransformation.type === 'custom' ? this.descriptor[this.localTransformation.name].parameters : []
+                    let pars = this.descriptor[this.localTransformation.name].parameters
                     pars.forEach((item) => {
                         item.availableOptions?.forEach((element) => {
                             element.label = this.$t(element.label)
                         })
-                        if (item.type === 'multiSelect' && item.name === 'columns') {
+                        if (item.name === 'columns' && (item.type === 'multiSelect' || item.type === 'dropdown')) {
                             if (this.col) {
                                 let selectedItem: Array<IDataPreparationColumn> | undefined = this.columns?.filter((x) => x.header == this.col)
                                 if (selectedItem && selectedItem.length > 0) {
                                     selectedItem[0].disabled = true
 
-                                    item['selectedItems_index_0'] = selectedItem
+                                    item.value = selectedItem
                                 }
                             } else {
                                 this.columns?.forEach((e) => (e.disabled = false))
                             }
                         }
                     })
+                }
+            },
+            setupLocal(): void {
+                this.localTransformation = this.transformation ? { ...this.transformation } : ({} as ITransformation)
+
+                this.descriptor = { ...DataPreparationCustomDescriptor } as any
+
+                let name = this.transformation && this.transformation.name ? this.transformation.name : ''
+                if (name && this.transformation?.type === 'custom') {
+                    let pars = this.descriptor[name].parameters
+
+                    this.localTransformation.parameters = JSON.parse(JSON.stringify(pars))
+                    this.refreshTransfrormation()
                 }
             }
         },

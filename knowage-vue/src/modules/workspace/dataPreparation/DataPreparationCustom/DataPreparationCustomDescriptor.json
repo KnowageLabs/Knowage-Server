@@ -129,7 +129,7 @@
             }
         ]
     },
-    "splitColumns": {
+    "splitColumn": {
         "parameters": [
             {
                 "name": "columns",
