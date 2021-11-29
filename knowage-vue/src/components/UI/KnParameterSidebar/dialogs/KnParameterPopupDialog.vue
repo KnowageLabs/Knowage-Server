@@ -108,8 +108,8 @@ export default defineComponent({
         },
         save() {
             console.log('PARAMETER: ', this.parameter)
-            if (this.selectedRow && !this.multivalue) {
-                this.parameter.parameterValue = [{ value: this.selectedRow._col0, description: this.selectedRow._col1 }]
+            if (!this.multivalue) {
+                this.parameter.parameterValue = this.selectedRow ? [{ value: this.selectedRow._col0, description: this.selectedRow._col1 }] : []
 
                 this.selectedRow = null
             } else {

@@ -125,7 +125,7 @@
                         <label
                             class="kn-material-input-label"
                             :class="{
-                                'kn-parameter-label-error': parameter.mandatory && ((!parameter.multivalue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
+                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
                                 'p-text-italic': parameter.dependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
@@ -268,13 +268,14 @@ export default defineComponent({
                 this.parameters.filterStatus.push(el)
             })
 
-            //  this.parameters?.filterStatus.forEach((el: any) => this.setVisualDependency(el))
-            // this.parameters?.filterStatus.forEach((el: any) => this.updateVisualDependency(el))
+            this.parameters?.filterStatus.forEach((el: any) => this.setVisualDependency(el))
+            this.parameters?.filterStatus.forEach((el: any) => this.updateVisualDependency(el))
             console.log('>>> LOADED PARAMETERS: ', this.parameters?.filterStatus)
         },
         setVisualDependency(parameter: any) {
-            if (parameter.visualDependencies.length !== 0) {
-                parameter.visualDependencies.forEach((dependency: any) => {
+            console.log(' >>> VIS DEP PARMAETR: ', parameter)
+            if (parameter.dependencies.visual.length !== 0) {
+                parameter.dependencies.visual.forEach((dependency: any) => {
                     const index = this.parameters.filterStatus.findIndex((param: any) => {
                         return param.urlName === dependency.parFatherUrlName
                     })
@@ -331,13 +332,12 @@ export default defineComponent({
                         // console.log('REQUIRED 1', parameter)
                         return true
                     } else {
-                        parameter.parameterValue.forEach((el: any) => {
-                            //  console.log('REQUIRED 2', el)
-                            if (!el.value) {
+                        for (let i = 0; i < parameter.parameterValue.length; i++) {
+                            if (!parameter.parameterValue[i].value) {
                                 // console.log('ENTERED REQUIRED 2!!!!!!!!!')
                                 return true
                             }
-                        })
+                        }
                     }
                 }
             }
@@ -420,57 +420,70 @@ export default defineComponent({
             parameter.dependentParameters?.forEach((dependentParameter: any) => {
                 // console.log('DEPENEDENT PARAM: ', dependentParameter)
 
-                this.visualDependencyCheck(dependentParameter)
+                this.visualDependencyCheck(dependentParameter, parameter)
 
                 // console.log('DEPENEDEN AFTER: ', dependentParameter)
             })
         },
-        visualDependencyCheck(parameter: any) {
-            // console.log(' >>> VISUAL DEP CHECK: ', parameter)
+        visualDependencyCheck(parameter: any, changedParameter: any) {
+            console.log(' >>> VISUAL DEP CHECK: ', parameter)
 
             let showOnPanel = 'true'
-            for (let i = 0; i < parameter.visualDependencies.length && showOnPanel === 'true'; i++) {
+            for (let i = 0; i < parameter.dependencies.visual.length && showOnPanel === 'true'; i++) {
                 showOnPanel = 'false'
-                const visualDependency = parameter.visualDependencies[i]
+                const visualDependency = parameter.dependencies.visual[i]
 
                 const index = parameter.dependsOnParameters.findIndex((el: any) => el.urlName === visualDependency.parFatherUrlName)
                 const parentParameter = parameter.dependsOnParameters[index]
 
-                // console.log(' >>>>> INDEX:', index)
-                // console.log(' >>>>> PARENT PARAMETER:', parentParameter)
-
-                if (visualDependency.operation === 'contains') {
-                    // if (Array.isArray(parentParameter.parameterValue)) {
-                    for (let i = 0; i < parentParameter.parameterValue.length; i++) {
-                        if (parentParameter.parameterValue[i].value === visualDependency.compareValue) {
-                            // console.log(' >>>> ENTERED', parentParameter.parameterValue[i].value, ' === ', visualDependency.compareValue)
+                for (let i = 0; i < parentParameter.parameterValue.length; i++) {
+                    if (parentParameter.parameterValue[i].value === visualDependency.compareValue) {
+                        // console.log(' >>>> ENTERED', parentParameter.parameterValue[i].value, ' === ', visualDependency.compareValue)
+                        console.log('CHANGED PARAM', changedParameter, 'VISUAL DEP', visualDependency)
+                        if (changedParameter.urlName === visualDependency.parFatherUrlName) {
                             parameter.label = visualDependency.viewLabel
-                            showOnPanel = 'true'
-                            break
                         }
-                    }
-                    // } else {
-                    //     console.log(' >>>>>>>> ENTERED FOR SINGLE VALUE', parentParameter.parameterValue.value)
-                    //     console.log(' >>>>>>>> ENTERED FOR SINGLE VALUE COMPARE', visualDependency.compareValue)
-
-                    //     if (parentParameter.parameterValue.value === visualDependency.compareValue) {
-                    //         console.log(' >>>> ENTERED', parentParameter.parameterValue.value, ' === ', visualDependency.compareValue)
-                    //         showOnPanel = 'true'
-                    //     }
-                    // }
-                } else if (visualDependency.operation === 'not contains') {
-                    for (let i = 0; i < parentParameter.parameterValue.length; i++) {
-                        if (parentParameter.parameterValue[i].value === visualDependency.compareValue) {
-                            showOnPanel = 'false'
-                            break
-                        }
+                        showOnPanel = 'true'
+                        break
                     }
                 }
 
-                // console.log('SHOW ON PANEL ITERATION ', i, showOnPanel)
+                if (visualDependency.operation === 'not contains') {
+                    if (showOnPanel == 'true') {
+                        showOnPanel = 'false'
+                        break
+                    } else {
+                        showOnPanel = 'true'
+                    }
+                }
             }
 
             parameter.showOnPanel = showOnPanel
+
+            // if (visualDependency.operation === 'contains') {
+            //     for (let i = 0; i < parentParameter.parameterValue.length; i++) {
+            //         if (parentParameter.parameterValue[i].value === visualDependency.compareValue) {
+            //             // console.log(' >>>> ENTERED', parentParameter.parameterValue[i].value, ' === ', visualDependency.compareValue)
+            //             console.log('CHANGED PARAM', changedParameter, 'VISUAL DEP', visualDependency)
+            //             if (changedParameter.urlName === visualDependency.parFatherUrlName) {
+            //                 parameter.label = visualDependency.viewLabel
+            //             }
+            //             showOnPanel = 'true'
+            //             break
+            //         }
+            //     }
+            // } else if (visualDependency.operation === 'not contains') {
+            //     console.log(' >>> >>> ENTERED NOT CONTAINS')
+            //     for (let i = 0; i < parentParameter.parameterValue.length; i++) {
+            //         console.log(' >>>> TEST', parentParameter.parameterValue[i].value, ' === ', visualDependency.compareValue)
+            //         if (parentParameter.parameterValue[i].value === visualDependency.compareValue) {
+            //             showOnPanel = 'false'
+            //             break
+            //         }
+            //     }
+            // }
+
+            // console.log('SHOW ON PANEL ITERATION ', i, showOnPanel)
         },
         openSaveParameterDialog() {
             this.parameterSaveDialogVisible = true
