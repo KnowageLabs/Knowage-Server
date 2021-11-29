@@ -263,7 +263,12 @@
                 "visibilityLocationTitle": "Select the functionalities where the document will be visible"
             },
             "outputParams": {
-                "title": "Output Parameters"
+                "title": "Output Parameters",
+                "paramName": "Parameter Name",
+                "paramType": "Parameter Type",
+                "paramDetails": "Output parameter details",
+                "noParamSelected": "No parameter selected",
+                "customValue": "Custom Value"
             },
             "subreports": {
                 "title": "Subreports"

@@ -40,6 +40,7 @@
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.outputParams.title') }}</span>
                     </template>
+                    <OutputParamsTab v-if="!loading" :selectedDocument="selectedDocument" :typeList="parTypes" :dateFormats="dateFormats" />
                 </TabPanel>
                 <TabPanel v-if="this.selectedDocument?.id">
                     <template #header>
@@ -67,6 +68,7 @@ import { AxiosResponse } from 'axios'
 import mainDescriptor from './DocumentDetailsDescriptor.json'
 import InformationsTab from './tabs/informations/DocumentDetailsInformations.vue'
 import DriversTab from './tabs/drivers/DocumentDetailsDrivers.vue'
+import OutputParamsTab from './tabs/outputParams/DocumentDetailsOutputParameters.vue'
 import Dialog from 'primevue/dialog'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
@@ -74,7 +76,7 @@ import { iDocument, iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate,
 
 export default defineComponent({
     name: 'document-details',
-    components: { InformationsTab, DriversTab, TabView, TabPanel, Dialog },
+    components: { InformationsTab, DriversTab, OutputParamsTab, TabView, TabPanel, Dialog },
     props: { selectedDocument: { type: Object }, visible: { type: Boolean, required: false } },
     emits: ['closeDetails'],
     data() {
@@ -89,6 +91,8 @@ export default defineComponent({
             engines: [] as iEngine[],
             templates: [] as iTemplate[],
             attributes: [] as iAttribute[],
+            parTypes: [] as any[],
+            dateFormats: [] as any[],
             states: mainDescriptor.states,
             types: mainDescriptor.types
         }
@@ -103,11 +107,11 @@ export default defineComponent({
     //drivers: http://localhost:8080/knowage/restful-services/2.0/documentdetails/${id}/drivers
     //engines: http://localhost:8080/knowage/restful-services/2.0/engines
     //template: `2.0/documentdetails/${this.selectedDocument?.id}/templates
+    //types: ??
 
     //folderId: ??
     //resourcePath: ??
     //states: ??
-    //types: ??
     methods: {
         async getAllPersistentData() {
             await this.getAnalyticalDrivers()
@@ -116,6 +120,8 @@ export default defineComponent({
             await this.getTemplates()
             await this.getEngines()
             await this.getAttributes()
+            await this.getParTypes()
+            await this.getDateFormats()
             await this.getDataset()
         },
         async getAnalyticalDrivers() {
@@ -139,6 +145,12 @@ export default defineComponent({
         },
         async getAttributes() {
             this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/attributes`).then((response: AxiosResponse<any>) => (this.attributes = response.data))
+        },
+        async getParTypes() {
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/PAR_TYPE`).then((response: AxiosResponse<any>) => (this.parTypes = response.data))
+        },
+        async getDateFormats() {
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/DATE_FORMAT`).then((response: AxiosResponse<any>) => (this.dateFormats = response.data))
         },
         async getDataset() {
             if (this.selectedDocument?.dataSetId) {
