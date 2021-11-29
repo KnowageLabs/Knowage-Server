@@ -22,7 +22,7 @@
             <div ref="document-execution-view" id="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
                 <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
 
-                <!-- <Registry v-if="mode === 'registry' && urlData && !loading" :id="urlData.sbiExecutionId"></Registry> -->
+                <Registry v-if="mode === 'registry' && urlData && !loading" :id="urlData.sbiExecutionId"></Registry>
                 <!-- <Registry v-if="mode === 'registry' && urlData && !loading" :id="'e2d23b864b7811ec9215b918e5768f09'"></Registry> -->
 
                 <!-- <router-view v-if="!loading" v-slot="{ Component }">
@@ -31,7 +31,7 @@
                     </keep-alive>
                 </router-view> -->
 
-                <!-- <iframe class="document-execution-iframe" :src="url"></iframe> -->
+                <!-- <iframe id="document-execution-iframe" src=""></iframe> -->
 
                 <DocumentExecutionSchedulationsTable v-if="schedulationsTableVisible" :propSchedulations="schedulations" @deleteSchedulation="onDeleteSchedulation" @close="schedulationsTableVisible = false"></DocumentExecutionSchedulationsTable>
 
@@ -60,11 +60,11 @@ import DocumentExecutionSchedulationsTable from './tables/documentExecutionSched
 import DocumentExecutionLinkDialog from './dialogs/documentExecutionLinkDialog/DocumentExecutionLinkDialog.vue'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 import Menu from 'primevue/menu'
-// import Registry from '../registry/Registry.vue'
+import Registry from '../registry/Registry.vue'
 
 export default defineComponent({
     name: 'document-execution',
-    components: { DocumentExecutionHelpDialog, DocumentExecutionRankDialog, DocumentExecutionNotesDialog, DocumentExecutionMetadataDialog, DocumentExecutionMailDialog, DocumentExecutionSchedulationsTable, DocumentExecutionLinkDialog, KnParameterSidebar, Menu },
+    components: { DocumentExecutionHelpDialog, DocumentExecutionRankDialog, DocumentExecutionNotesDialog, DocumentExecutionMetadataDialog, DocumentExecutionMailDialog, DocumentExecutionSchedulationsTable, DocumentExecutionLinkDialog, KnParameterSidebar, Menu, Registry },
     props: { id: { type: String } },
     data() {
         return {
@@ -90,7 +90,8 @@ export default defineComponent({
             linkDialogVisible: false,
             linkInfo: null as any,
             user: null as any,
-            loading: false
+            loading: false,
+            iframe: {} as any
         }
     },
     computed: {
@@ -257,7 +258,7 @@ export default defineComponent({
             this.loading = false
 
             // TODO LOAD URL HARDCODED
-            await this.loadURL()
+            // await this.loadURL()
         },
         async loadDocument() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.id}`).then((response: AxiosResponse<any>) => (this.document = response.data))
@@ -273,12 +274,6 @@ export default defineComponent({
         async loadURL() {
             await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, { label: this.id, role: this.sessionRole, parameters: {}, EDIT_MODE: 'null', IS_FOR_EXPORT: true }).then((response: AxiosResponse<any>) => (this.urlData = response.data))
             await this.sendForm()
-            // switch (this.document.typeCode) {
-            //     case 'DATAMART':
-            //         this.$router.push(`/document-execution/${this.document.label}/registry/${this.urlData.sbiExecutionId}`)
-            //         break
-            // }
-            // console.log('LOADED URL DATA: ', this.urlData)
         },
         async loadExporters() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/exporters/${this.urlData.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
@@ -289,20 +284,12 @@ export default defineComponent({
             const postObject = { params: { document: null }, url: documentUrl.split('?')[0] }
             this.hiddenFormUrl = postObject.url
             const paramsFromUrl = documentUrl.split('?')[1].split('&')
-            // console.log('DOCUMENT URL: ', documentUrl)
-
-            // console.log('PARAMS FROM URL: ', paramsFromUrl)
 
             for (let i in paramsFromUrl) {
                 if (typeof paramsFromUrl !== 'function') {
                     postObject.params[paramsFromUrl[i].split('=')[0]] = paramsFromUrl[i].split('=')[1]
                 }
             }
-
-            // console.log('POST OBJECT: ', postObject)
-
-            // TODO - Pitati odakle ovo dolazi?!!
-            // if(cockpitEditing.documentMode) postObject.params.documentMode = cockpitEditing.documentMode;
 
             let postForm = document.getElementById('postForm_' + postObject.params.document) as any
             if (!postForm) {
@@ -314,7 +301,7 @@ export default defineComponent({
                 document.body.appendChild(postForm)
             }
 
-            this.hiddenFormData = new FormData()
+            this.hiddenFormData = new URLSearchParams()
 
             for (let k in postObject.params) {
                 const inputElement = document.getElementById('postForm_' + k) as any
@@ -333,13 +320,11 @@ export default defineComponent({
                     this.hiddenFormData.append(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
                 }
             }
-
+            // encodeURIComponent
             for (let i = postForm.elements.length - 1; i >= 0; i--) {
                 const postFormElement = postForm.elements[i].id.replace('postForm_', '')
 
                 if (!(postFormElement in postObject.params)) {
-                    postForm.removeChild(postForm.elements[i])
-
                     this.hiddenFormData.delete(postFormElement)
                 }
             }
@@ -348,12 +333,6 @@ export default defineComponent({
             this.hiddenFormData.append('documentMode', 'VIEW')
 
             await this.sendHiddenFormData()
-            // this.$http.post(postObject.url, this.hiddenFormData, {
-            //     headers: {
-            //         'Content-Type': 'application/x-www-form-urlencoded',
-            //         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
-            //     }
-            // })
         },
         async sendHiddenFormData() {
             await this.$http
@@ -362,6 +341,21 @@ export default defineComponent({
                         'Content-Type': 'application/x-www-form-urlencoded',
                         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
                     }
+                })
+                .then((response) => {
+                    console.log('HIDDEN FORM RESPONSE: ', response)
+                    // this.iframe = response.data
+                    // const iFrameDiv = document.getElementById('document-execution-iframe') as any
+                    // console.log('CONTENT WINDOW: ', iFrameDiv.contentWindow)
+                    // console.log(' >>> iFrameDiv', iFrameDiv)
+
+                    // if (iFrameDiv?.contentWindow) {
+                    //     iFrameDiv.contentWindow.open()
+
+                    //     iFrameDiv.contentWindow.document.firstChild.innerHTML = this.iframe
+                    //     iFrameDiv.contentWindow.write(this.iframe)
+                    //     iFrameDiv.contentWindow.close()
+                    // }
                 })
                 .catch((error: any) => console.log('ERROR: ', error))
         },
