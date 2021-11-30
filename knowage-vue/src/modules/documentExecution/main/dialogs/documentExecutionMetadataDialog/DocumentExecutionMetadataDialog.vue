@@ -185,7 +185,7 @@ export default defineComponent({
             console.log('METADATA FOR SAVE: ', this.metadata)
             console.log('UPLOADED FILES: ', this.uploadedFiles)
 
-            // this.$emit('saveMetadata', this.metadata)
+            this.$emit('saveMetadata', this.metadata)
         }
     }
 })

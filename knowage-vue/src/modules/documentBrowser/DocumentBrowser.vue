@@ -15,7 +15,7 @@
                         <span>{{ tab.item?.name ? tab.item?.name : 'new dashboard' }}</span>
                     </template>
 
-                    <DocumentBrowserTab :item="tab.item" :mode="tab.mode"></DocumentBrowserTab>
+                    <DocumentBrowserTab :item="tab.item" :mode="tab.mode" @close="closeDocument('current')"></DocumentBrowserTab>
                 </TabPanel>
             </TabView>
             <div id="document-browser-tab-icon-container" v-if="activeIndex !== 0">
@@ -58,13 +58,53 @@ export default defineComponent({
             }
 
             const id = this.tabs[this.activeIndex - 1].item ? this.tabs[this.activeIndex - 1].item.label : 'new-dashboard'
-            this.$router.push('/document-browser/document-execution/' + id)
+
+            let routeDocumentType = this.getRouteDocumentType(this.tabs[this.activeIndex - 1].item)
+            this.$router.push(`/document-browser/${routeDocumentType}/` + id)
         },
         onItemSelect(payload: any) {
             this.tabs.push(payload)
             const id = payload.item ? payload.item.label : 'new-dashboard'
-            this.$router.push('/document-browser/document-execution/' + id)
+            console.log(' DOCUMENT BROWSER SELECTED ITEM: ', payload.item)
+            let routeDocumentType = this.getRouteDocumentType(payload.item)
+
+            this.$router.push(`/document-browser/${routeDocumentType}/` + id)
             this.activeIndex = this.tabs.length
+        },
+        getRouteDocumentType(item: any) {
+            let routeDocumentType = ''
+
+            switch (item.typeCode) {
+                case 'DATAMART':
+                    routeDocumentType = 'registry'
+                    break
+                case 'DOCUMENT_COMPOSITE':
+                    routeDocumentType = 'document-composite'
+                    break
+                case 'OFFICE_DOC':
+                    routeDocumentType = 'office-doc'
+                    break
+                case 'OLAP':
+                    routeDocumentType = 'olap'
+                    break
+                case 'MAP':
+                    routeDocumentType = 'map'
+                    break
+                case 'REPORT':
+                    routeDocumentType = 'report'
+                    break
+                case 'KPI':
+                    routeDocumentType = 'kpi'
+                    break
+                case 'DOSSIER':
+                    routeDocumentType = 'dossier'
+                    break
+                case 'ETL':
+                    routeDocumentType = 'etl'
+                    break
+            }
+
+            return routeDocumentType
         },
         toggle(event: any) {
             this.createMenuItems()

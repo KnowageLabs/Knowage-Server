@@ -34,7 +34,7 @@
                         :type="parameter.type === 'NUM' ? 'number' : 'text'"
                         v-model="parameter.parameterValue[0].value"
                         :class="{
-                            'p-invalid': parameter.mandatory && !parameter.parameterValue[0].value
+                            'p-invalid': parameter.mandatory && !parameter.parameterValue[0]?.value
                         }"
                         @input="updateVisualDependency(parameter)"
                     />
@@ -52,7 +52,7 @@
                         :showIcon="true"
                         :manualInput="true"
                         :class="{
-                            'p-invalid': parameter.mandatory && !parameter.parameterValue[0].value
+                            'p-invalid': parameter.mandatory && !parameter.parameterValue[0]?.value
                         }"
                         @change="updateVisualDependency(parameter)"
                         @date-select="updateVisualDependency(parameter)"
@@ -65,7 +65,7 @@
                         <label
                             class="kn-material-input-label"
                             :class="{
-                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && !parameter.parameterValue[0].value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
+                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
                                 'p-text-italic': parameter.dependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
@@ -87,7 +87,7 @@
                         <label
                             class="kn-material-input-label"
                             :class="{
-                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && !parameter.parameterValue[0].value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
+                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
                                 'p-text-italic': parameter.dependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
@@ -157,6 +157,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
+import { formatDate } from '@/helpers/commons/localeHelper'
 import Calendar from 'primevue/calendar'
 import Chip from 'primevue/chip'
 import Checkbox from 'primevue/checkbox'
@@ -229,14 +230,14 @@ export default defineComponent({
         this.loadDocument()
         this.loadParameters()
 
-        console.log('STORE: ', this.$store)
+        // console.log('STORE: ', this.$store)
     },
     methods: {
         setNewSessionRole() {
-            console.log(' >>> USER: ', this.user)
-            console.log(' >>> NE ROLE: ', this.newSessionRole)
+            // console.log(' >>> USER: ', this.user)
+            // console.log(' >>> NE ROLE: ', this.newSessionRole)
             this.$store.commit('setUserSessionRole', this.newSessionRole)
-            console.log('THIS STORE USER: ', (this.$store.state as any).user)
+            // console.log('THIS STORE USER: ', (this.$store.state as any).user)
             this.$emit('execute')
             this.parameters = { isReadyForExecution: false, filterStatus: [] }
         },
@@ -273,7 +274,7 @@ export default defineComponent({
             console.log('>>> LOADED PARAMETERS: ', this.parameters?.filterStatus)
         },
         setVisualDependency(parameter: any) {
-            console.log(' >>> VIS DEP PARMAETR: ', parameter)
+            // console.log(' >>> VIS DEP PARMAETR: ', parameter)
             if (parameter.dependencies.visual.length !== 0) {
                 parameter.dependencies.visual.forEach((dependency: any) => {
                     const index = this.parameters.filterStatus.findIndex((param: any) => {
@@ -382,25 +383,51 @@ export default defineComponent({
 
                 // parameter.multivalue ? parameters.push({ value: parameter.parameterValue, description: parameter.parameterDescription }) : parameters.push({ value: parameter.parameterValue[0].value, description: parameter.parameterDescription[0].description })
 
-                if (parameter.valueSelection === 'man_in') {
+                if (!parameter.multivalue) {
                     parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
-                } else if (parameter.multivalue) {
-                    parameters.push({ label: parameter.label, value: parameter.parameterValue, description: parameter.parameterDescription })
-                    // let tempArrayValue = [] as any[]
-                    // let tempArrayDescription = [] as any[]
-                    // for (let i = 0; i < parameter.parameterValue.length; i++) {
-                    //     tempArrayValue.push(parameter.parameterValue[i].value)
-                    //     tempArrayDescription.push(parameter.parameterValue[i].description)
-                    // }
-
-                    // parameter[parameter.urlName] = tempArrayValue
-                    // parameter[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].description
-                } else if (parameter.type === 'DATE') {
-                    parameter[parameter.urlName] = parameter.parameterValue[0].value
-                    parameter[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].value
                 } else {
-                    parameter[parameter.urlName] = parameter.parameterValue[0] ? parameter.parameterValue[0].value : parameter.parameterValue.value
-                    parameter[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0] ? parameter.parameterValue[0].description : parameter.parameterValue.description
+                    parameters.push({ label: parameter.label, value: parameter.parameterValue, description: parameter.parameterDescription })
+                }
+
+                // if (parameter.valueSelection === 'man_in') {
+                //     parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
+                // } else if (parameter.multivalue) {
+                //     parameters.push({ label: parameter.label, value: parameter.parameterValue, description: parameter.parameterDescription })
+                // } else if (parameter.type === 'DATE') {
+                //     parameter[parameter.urlName] = parameter.parameterValue[0].value
+                //     parameter[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].value
+                // } else {
+                //     parameter[parameter.urlName] = parameter.parameterValue[0] ? parameter.parameterValue[0].value : parameter.parameterValue.value
+                //     parameter[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0] ? parameter.parameterValue[0].description : parameter.parameterValue.description
+                // }
+            })
+
+            return parameters
+        },
+        getParameterValues() {
+            let parameters = {} as any
+
+            Object.keys(this.parameters.filterStatus).forEach((key: any) => {
+                const parameter = this.parameters.filterStatus[key]
+
+                console.log('PARAMETER: ', parameter)
+                if (parameter.type === 'DATE') {
+                    parameters[parameter.urlName] = parameter.parameterValue[0].value
+                    parameters[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].value
+                } else if (parameter.valueSelection === 'man_in' && !parameter.multivalue) {
+                    parameters[parameter.urlName] = parameter.type === 'NUM' ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
+                    parameters[parameter.urlName + '_field_visible_description'] = parameter.type === 'NUM' ? +parameter.parameterValue[0].description : parameter.parameterValue[0].description
+                } else if (parameter.selectionType === 'TREE' || parameter.selectionType === 'LOOKUP' || parameter.multivalue) {
+                    parameters[parameter.urlName] = parameter.parameterValue.map((el: any) => el.value)
+                    let tempString = ''
+                    for (let i = 0; i < parameter.parameterValue.length; i++) {
+                        tempString += parameter.parameterValue[i].description
+                        tempString += i === parameter.parameterValue.length - 1 ? '' : ';'
+                    }
+                    parameters[parameter.urlName + '_field_visible_description'] = tempString
+                } else {
+                    parameters[parameter.urlName] = parameter.parameterValue[0] ? parameter.parameterValue[0].value : parameter.parameterValue.value
+                    parameters[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0] ? parameter.parameterValue[0].description : parameter.parameterValue.description
                 }
             })
 
@@ -415,7 +442,7 @@ export default defineComponent({
             this.treeDialogVisible = false
         },
         updateVisualDependency(parameter: any) {
-            // console.log('PARAMETER FOR VISUAL UPDATE: ', parameter)
+            console.log('PARAMETER FOR VISUAL UPDATE: ', parameter)
 
             parameter.dependentParameters?.forEach((dependentParameter: any) => {
                 // console.log('DEPENEDENT PARAM: ', dependentParameter)
@@ -426,7 +453,7 @@ export default defineComponent({
             })
         },
         visualDependencyCheck(parameter: any, changedParameter: any) {
-            console.log(' >>> VISUAL DEP CHECK: ', parameter)
+            // console.log(' >>> VISUAL DEP CHECK: ', parameter)
 
             let showOnPanel = 'true'
             for (let i = 0; i < parameter.dependencies.visual.length && showOnPanel === 'true'; i++) {
@@ -439,7 +466,7 @@ export default defineComponent({
                 for (let i = 0; i < parentParameter.parameterValue.length; i++) {
                     if (parentParameter.parameterValue[i].value === visualDependency.compareValue) {
                         // console.log(' >>>> ENTERED', parentParameter.parameterValue[i].value, ' === ', visualDependency.compareValue)
-                        console.log('CHANGED PARAM', changedParameter, 'VISUAL DEP', visualDependency)
+                        // console.log('CHANGED PARAM', changedParameter, 'VISUAL DEP', visualDependency)
                         if (changedParameter.urlName === visualDependency.parFatherUrlName) {
                             parameter.label = visualDependency.viewLabel
                         }
@@ -459,38 +486,13 @@ export default defineComponent({
             }
 
             parameter.showOnPanel = showOnPanel
-
-            // if (visualDependency.operation === 'contains') {
-            //     for (let i = 0; i < parentParameter.parameterValue.length; i++) {
-            //         if (parentParameter.parameterValue[i].value === visualDependency.compareValue) {
-            //             // console.log(' >>>> ENTERED', parentParameter.parameterValue[i].value, ' === ', visualDependency.compareValue)
-            //             console.log('CHANGED PARAM', changedParameter, 'VISUAL DEP', visualDependency)
-            //             if (changedParameter.urlName === visualDependency.parFatherUrlName) {
-            //                 parameter.label = visualDependency.viewLabel
-            //             }
-            //             showOnPanel = 'true'
-            //             break
-            //         }
-            //     }
-            // } else if (visualDependency.operation === 'not contains') {
-            //     console.log(' >>> >>> ENTERED NOT CONTAINS')
-            //     for (let i = 0; i < parentParameter.parameterValue.length; i++) {
-            //         console.log(' >>>> TEST', parentParameter.parameterValue[i].value, ' === ', visualDependency.compareValue)
-            //         if (parentParameter.parameterValue[i].value === visualDependency.compareValue) {
-            //             showOnPanel = 'false'
-            //             break
-            //         }
-            //     }
-            // }
-
-            // console.log('SHOW ON PANEL ITERATION ', i, showOnPanel)
         },
         openSaveParameterDialog() {
             this.parameterSaveDialogVisible = true
         },
         async saveViewpoint(viewpoint: any) {
             console.log('VIEWPOINT FOR SAVE: ', viewpoint)
-            const postData = { ...viewpoint, OBJECT_LABEL: this.document.label, ROLE: (this.$store.state as any).user.defaultRole, VIEWPOINT: this.getFormatedParameters() }
+            const postData = { ...viewpoint, OBJECT_LABEL: this.document.label, ROLE: this.sessionRole, VIEWPOINT: this.getParameterValues() }
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/addViewpoint`, postData)
@@ -501,12 +503,7 @@ export default defineComponent({
                     })
                     this.parameterSaveDialogVisible = false
                 })
-                .catch((error: any) =>
-                    this.$store.commit('setError', {
-                        title: this.$t('common.error.generic'),
-                        msg: error
-                    })
-                )
+                .catch(() => {})
             this.loading = false
         },
         async openSavedParametersDialog() {
@@ -518,8 +515,45 @@ export default defineComponent({
             this.loading = false
         },
         fillParameterForm(viewpoint: any) {
-            console.log('VIEWPOINT FOR FILL FORM: ', viewpoint)
-            console.log(' >>> TEEEEEEEST ', this.decodeViewpointPrameterValues(viewpoint.vpValueParams))
+            //console.log('VIEWPOINT FOR FILL FORM: ', viewpoint)
+            //console.log(' >>> TEEEEEEEST ', this.decodeViewpointPrameterValues(viewpoint.vpValueParams))
+            const tempParameters = this.decodeViewpointPrameterValues(viewpoint.vpValueParams)
+            Object.keys(tempParameters)?.forEach((key: any) => {
+                // console.log(key + '  tempParam: ', tempParameters[key])
+
+                const index = this.parameters.filterStatus.findIndex((el: any) => el.urlName === key)
+                if (index !== -1) {
+                    // console.log(' >>> BLA', this.parameters.filterStatus[index])
+                    const parameter = this.parameters.filterStatus[index]
+                    if (parameter.type === 'DATE') {
+                        parameter.parameterValue[0].value = this.getFormattedDate(tempParameters[key], 'MM/DD/YYYY')
+                    } else if ((parameter.valueSelection === 'man_in' || parameter.selectionType === 'COMBOBOX') && !parameter.multivalue) {
+                        parameter.parameterValue[0].value = tempParameters[key]
+                        parameter.parameterValue[0].description = tempParameters[key + '_field_visible_description']
+                    } else if (parameter.selectionType === 'TREE' || parameter.selectionType === 'LOOKUP' || parameter.multivalue) {
+                        const tempArrayValues = JSON.parse(tempParameters[key])
+                        const tempArrayDescriptions = tempParameters[key + '_field_visible_description'].split(';')
+                        // console.log('TEST values: ', tempArrayValues)
+                        // console.log('TEST descriptions: ', tempArrayDescriptions)
+
+                        parameter.parameterValue = []
+                        for (let i = 0; i < tempArrayValues.length; i++) {
+                            parameter.parameterValue[i] = { value: tempArrayValues[i], description: tempArrayDescriptions[i] ?? '' }
+                        }
+
+                        if (parameter.selectionType === 'LIST') {
+                            this.selectedParameterCheckbox[parameter.id] = parameter.parameterValue?.map((parameterValue: any) => parameterValue.value)
+                        }
+
+                        // console.log(' >>>>> MULTIVALUE PARAM AFTER FILL ', parameter)
+                    }
+                }
+
+                this.savedParametersDialogVisible = false
+            })
+        },
+        getFormattedDate(date: any, format: any) {
+            return formatDate(date, format)
         },
         decodeViewpointPrameterValues(string: string) {
             const parametersJson = {}
@@ -570,7 +604,10 @@ export default defineComponent({
     background-color: white;
     height: 100%;
     width: 350px;
-    position: relative;
+    // position: relative;
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 
 .parameter-clear-icon {

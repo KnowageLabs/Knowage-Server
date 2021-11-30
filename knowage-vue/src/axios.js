@@ -19,14 +19,15 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
     (res) => {
-        // if (res.data && res.data.errors) {
-        //     if (!res.config.headers['X-Disable-Errors']) store.commit('setError', { title: 'Server error', msg: res.data.errors[0].message })
-        //     return Promise.reject(res.data.errors[0])
-        // }
         if (res.data && res.data.errors) {
-            if (!res.config.headers['X-Disable-Errors']) store.commit('setError', { title: 'Server error', msg: res.data.errors[0]?.message })
-            return Promise.reject(res)
+            if (!res.config.headers['X-Disable-Errors']) store.commit('setError', { title: 'Server error', msg: res.data.errors[0].message })
+            return Promise.reject(res.data.errors[0])
         }
+        // TODO - Remove this, for popup tree testing
+        // if (res.data && res.data.errors) {
+        //     if (!res.config.headers['X-Disable-Errors']) store.commit('setError', { title: 'Server error', msg: res.data.errors[0]?.message })
+        //     return Promise.reject(res)
+        // }
         return res
     },
     function(error) {

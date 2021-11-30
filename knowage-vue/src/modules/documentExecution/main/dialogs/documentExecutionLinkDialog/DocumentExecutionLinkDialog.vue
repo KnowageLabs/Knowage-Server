@@ -21,8 +21,8 @@
 
             <div class="p-fluid p-formgrid p-grid p-m-2">
                 <div class="p-field p-col-12">
-                    <InputText class="kn-material-input p-inputtext-sm" v-model="publicUrl" />
-                    <Textarea class="kn-material-input" v-model="publicUrl"></Textarea>
+                    <Textarea v-if="embedHTML" class="kn-material-input" v-model="publicUrl"></Textarea>
+                    <InputText v-else class="kn-material-input p-inputtext-sm" v-model="publicUrl" />
                 </div>
             </div>
         </div>
@@ -44,16 +44,18 @@ import Textarea from 'primevue/textarea'
 export default defineComponent({
     name: 'document-execution-link-dialog',
     components: { Dialog, Textarea },
-    props: { visible: { type: Boolean }, linkInfo: { type: Object } },
+    props: { visible: { type: Boolean }, linkInfo: { type: Object }, embedHTML: { type: Object } },
     emits: ['close'],
     data() {
         return {
             documentExecutionLinkDialogDescriptor,
-            publicUrl: ''
+            publicUrl: this.$route.fullPath
         }
     },
     watch: {},
-    created() {},
+    created() {
+        console.log('ROUTE: ', this.$route)
+    },
     methods: {
         closeDialog() {
             this.$emit('close')

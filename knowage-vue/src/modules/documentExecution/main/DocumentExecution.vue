@@ -9,7 +9,7 @@
                     <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'" class="fa fa-eye kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocument"></i>
                     <i class="pi pi-book kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></i>
                     <i class="pi pi-refresh kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.refresh')" @click="refresh"></i>
-                    <i class="fa fa-filter kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible"></i>
+                    <i v-if="filtersData?.filterStatus.length > 0" class="fa fa-filter kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible"></i>
                     <i class="fa fa-ellipsis-v kn-cursor-pointer  p-mx-4" v-tooltip.left="$t('common.menu')" @click="toggle"></i>
                     <Menu ref="menu" :model="toolbarMenuItems" :popup="true" />
                     <i class="fa fa-times kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.close')" @click="closeDocument"></i>
@@ -18,32 +18,24 @@
         </Toolbar>
         <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
 
-        <div>
-            <div ref="document-execution-view" id="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
-                <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
+        <div ref="document-execution-view" id="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
+            <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
 
-                <Registry v-if="mode === 'registry' && urlData && !loading" :id="urlData.sbiExecutionId"></Registry>
-                <!-- <Registry v-if="mode === 'registry' && urlData && !loading" :id="'e2d23b864b7811ec9215b918e5768f09'"></Registry> -->
+            <Registry v-if="mode === 'registry' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible" :id="urlData.sbiExecutionId"></Registry>
+            <Dossier v-else-if="mode === 'dossier' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible" :id="document.id"></Dossier>
 
-                <!-- <router-view v-if="!loading" v-slot="{ Component }">
-                    <keep-alive>
-                        <component :is="Component" :key="$route.fullPath"></component>
-                    </keep-alive>
-                </router-view> -->
+            <!-- <iframe v-else-if="mode === 'iframe'"  id="document-execution-iframe" :src="url"></iframe> -->
 
-                <!-- <iframe id="document-execution-iframe" src=""></iframe> -->
+            <DocumentExecutionSchedulationsTable id="document-execution-schedulations-table" v-if="schedulationsTableVisible" :propSchedulations="schedulations" @deleteSchedulation="onDeleteSchedulation" @close="schedulationsTableVisible = false"></DocumentExecutionSchedulationsTable>
 
-                <DocumentExecutionSchedulationsTable v-if="schedulationsTableVisible" :propSchedulations="schedulations" @deleteSchedulation="onDeleteSchedulation" @close="schedulationsTableVisible = false"></DocumentExecutionSchedulationsTable>
+            <KnParameterSidebar class="document-execution-parameter-sidebar kn-overflow-y" v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="document" @execute="onExecute" @exportCSV="onExportCSV"></KnParameterSidebar>
 
-                <KnParameterSidebar class="document-execution-parameter-sidebar kn-overflow-y" v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="document" @execute="onExecute" @exportCSV="onExportCSV"></KnParameterSidebar>
-
-                <DocumentExecutionHelpDialog :visible="helpDialogVisible" :propDocument="document" @close="helpDialogVisible = false"></DocumentExecutionHelpDialog>
-                <DocumentExecutionRankDialog :visible="rankDialogVisible" :propDocumentRank="documentRank" @close="rankDialogVisible = false" @saveRank="onSaveRank"></DocumentExecutionRankDialog>
-                <DocumentExecutionNotesDialog :visible="notesDialogVisible" :propDocument="document" @close="notesDialogVisible = false"></DocumentExecutionNotesDialog>
-                <DocumentExecutionMetadataDialog :visible="metadataDialogVisible" :propDocument="document" :propMetadata="metadata" :propLoading="loading" @close="metadataDialogVisible = false" @saveMetadata="onMetadataSave"></DocumentExecutionMetadataDialog>
-                <DocumentExecutionMailDialog :visible="mailDialogVisible" @close="mailDialogVisible = false" @sendMail="onMailSave"></DocumentExecutionMailDialog>
-                <DocumentExecutionLinkDialog :visible="linkDialogVisible" :linkInfo="linkInfo" @close="linkDialogVisible = false"></DocumentExecutionLinkDialog>
-            </div>
+            <DocumentExecutionHelpDialog :visible="helpDialogVisible" :propDocument="document" @close="helpDialogVisible = false"></DocumentExecutionHelpDialog>
+            <DocumentExecutionRankDialog :visible="rankDialogVisible" :propDocumentRank="documentRank" @close="rankDialogVisible = false" @saveRank="onSaveRank"></DocumentExecutionRankDialog>
+            <DocumentExecutionNotesDialog :visible="notesDialogVisible" :propDocument="document" @close="notesDialogVisible = false"></DocumentExecutionNotesDialog>
+            <DocumentExecutionMetadataDialog :visible="metadataDialogVisible" :propDocument="document" :propMetadata="metadata" :propLoading="loading" @close="metadataDialogVisible = false" @saveMetadata="onMetadataSave"></DocumentExecutionMetadataDialog>
+            <DocumentExecutionMailDialog :visible="mailDialogVisible" @close="mailDialogVisible = false" @sendMail="onMailSave"></DocumentExecutionMailDialog>
+            <DocumentExecutionLinkDialog :visible="linkDialogVisible" :linkInfo="linkInfo" :embedHTML="embedHTML" @close="linkDialogVisible = false"></DocumentExecutionLinkDialog>
         </div>
     </div>
 </template>
@@ -61,11 +53,13 @@ import DocumentExecutionLinkDialog from './dialogs/documentExecutionLinkDialog/D
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 import Menu from 'primevue/menu'
 import Registry from '../registry/Registry.vue'
+import Dossier from '../dossier/Dossier.vue'
 
 export default defineComponent({
     name: 'document-execution',
-    components: { DocumentExecutionHelpDialog, DocumentExecutionRankDialog, DocumentExecutionNotesDialog, DocumentExecutionMetadataDialog, DocumentExecutionMailDialog, DocumentExecutionSchedulationsTable, DocumentExecutionLinkDialog, KnParameterSidebar, Menu, Registry },
+    components: { DocumentExecutionHelpDialog, DocumentExecutionRankDialog, DocumentExecutionNotesDialog, DocumentExecutionMetadataDialog, DocumentExecutionMailDialog, DocumentExecutionSchedulationsTable, DocumentExecutionLinkDialog, KnParameterSidebar, Menu, Registry, Dossier },
     props: { id: { type: String } },
+    emits: ['close'],
     data() {
         return {
             document: null as any,
@@ -89,6 +83,8 @@ export default defineComponent({
             schedulations: [] as any[],
             linkDialogVisible: false,
             linkInfo: null as any,
+            sbiExecutionId: null as string | null,
+            embedHTML: false,
             user: null as any,
             loading: false,
             iframe: {} as any
@@ -181,8 +177,8 @@ export default defineComponent({
             }
 
             if (this.user.functionalities.includes('EnableToCopyAndEmbed')) {
-                this.toolbarMenuItems[3].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.copyLink'), command: () => this.copyLink() })
-                this.toolbarMenuItems[3].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.embedInHtml'), command: () => this.copyLink() })
+                this.toolbarMenuItems[3].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.copyLink'), command: () => this.copyLink(false) })
+                this.toolbarMenuItems[3].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.embedInHtml'), command: () => this.copyLink(true) })
             }
         },
         print() {
@@ -215,34 +211,36 @@ export default defineComponent({
         },
         async showScheduledExecutions() {
             this.loading = true
+            this.parameterSidebarVisible = false
             this.schedulationsTableVisible = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/getSnapshots?id=${this.document.id}`).then((response: AxiosResponse<any>) => {
                 response.data?.schedulers.forEach((el: any) => this.schedulations.push({ ...el, urlPath: response.data.urlPath }))
             })
             this.loading = false
         },
-        async copyLink() {
+        async copyLink(embedHTML: boolean) {
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/canHavePublicExecutionUrl`, { label: this.document.label })
                 .then((response: AxiosResponse<any>) => {
+                    this.embedHTML = embedHTML
                     this.linkInfo = response.data
                     this.linkDialogVisible = true
                 })
-                .catch((error: any) =>
-                    this.$store.commit('setError', {
-                        title: this.$t('common.error.generic'),
-                        msg: error
-                    })
-                )
+                .catch(() => {})
             this.loading = false
         },
         closeDocument() {
-            console.log('TODO - CLOSE DOCUMENT')
+            this.$router.push('/document-browser')
+            this.$emit('close')
         },
         setMode() {
             if (this.$route.path.includes('registry')) {
                 this.mode = 'registry'
+            } else if (this.$route.path.includes('dossier')) {
+                this.mode = 'dossier'
+            } else {
+                this.mode = 'iframe'
             }
         },
         async loadPage() {
@@ -251,10 +249,11 @@ export default defineComponent({
             await this.loadFilters()
             if (this.filtersData?.isReadyForExecution) {
                 await this.loadURL()
+                await this.loadExporters()
             } else {
                 this.parameterSidebarVisible = true
             }
-            await this.loadExporters()
+
             this.loading = false
 
             // TODO LOAD URL HARDCODED
@@ -272,7 +271,16 @@ export default defineComponent({
             console.log('LOADED FILTERS DATA: ', this.filtersData)
         },
         async loadURL() {
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, { label: this.id, role: this.sessionRole, parameters: {}, EDIT_MODE: 'null', IS_FOR_EXPORT: true }).then((response: AxiosResponse<any>) => (this.urlData = response.data))
+            const postData = { label: this.id, role: this.sessionRole, parameters: this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
+
+            if (this.sbiExecutionId) {
+                postData.SBI_EXECUTION_ID = this.sbiExecutionId
+            }
+
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData).then((response: AxiosResponse<any>) => {
+                this.urlData = response.data
+                this.sbiExecutionId = this.urlData.sbiExecutionId
+            })
             await this.sendForm()
         },
         async loadExporters() {
@@ -291,15 +299,15 @@ export default defineComponent({
                 }
             }
 
-            let postForm = document.getElementById('postForm_' + postObject.params.document) as any
-            if (!postForm) {
-                postForm = document.createElement('form')
-                postForm.id = 'postForm_' + postObject.params.document
-                postForm.action = postObject.url
-                postForm.method = 'post'
-                postForm.target = 'documentFrame'
-                document.body.appendChild(postForm)
-            }
+            let postForm = null as any
+            //if (!postForm) {
+            postForm = document.createElement('form')
+            postForm.id = 'postForm_' + postObject.params.document
+            postForm.action = postObject.url
+            postForm.method = 'post'
+            postForm.target = 'documentFrame'
+            // document.body.appendChild(postForm)
+            // }
 
             this.hiddenFormData = new URLSearchParams()
 
@@ -361,7 +369,11 @@ export default defineComponent({
         },
         async onExecute() {
             console.log('EXECUTE PARAMS: ', this.filtersData)
-            await this.loadPage()
+            this.loading = true
+            this.filtersData.isReadyForExecution = true
+            await this.loadURL()
+            this.parameterSidebarVisible = false
+            this.loading = false
         },
         async onExportCSV() {
             console.log('ON EXPORT CSV CLICKED!', this.document)
@@ -399,29 +411,65 @@ export default defineComponent({
         },
         getFormattedParameters() {
             if (!this.filtersData) {
-                return
+                return {}
             }
 
-            const parameters = {} as any
-            Object.keys(this.filtersData.filterStatus).forEach((key: any) => {
-                console.log('EL: ', this.filtersData.filterStatus[key])
-                const param = this.filtersData.filterStatus[key]
-                if (param.multivalue) {
-                    let tempString = ''
-                    for (let i = 0; i < this.filtersData.filterStatus[key].parameterValue.length; i++) {
-                        tempString += this.filtersData.filterStatus[key].parameterValue[i].value
-                        tempString += i === this.filtersData.filterStatus[key].parameterValue.length - 1 ? '' : ','
-                    }
+            let parameters = {} as any
 
-                    parameters[this.filtersData.filterStatus[key].urlName] = tempString
-                } else if (param.type === 'NUM' && !param.selectionType) {
-                    parameters[this.filtersData.filterStatus[key].urlName] = +this.filtersData.filterStatus[key].parameterValue[0].value
-                } else {
-                    parameters[this.filtersData.filterStatus[key].urlName] = this.filtersData.filterStatus[key].parameterValue[0] ? this.filtersData.filterStatus[key].parameterValue[0].value : this.filtersData.filterStatus[key].parameterValue.value
+            Object.keys(this.filtersData.filterStatus).forEach((key: any) => {
+                const parameter = this.filtersData.filterStatus[key]
+
+                console.log('PARAMETER: ', parameter)
+
+                if (parameter.parameterValue) {
+                    if (parameter.type === 'DATE') {
+                        parameters[parameter.urlName] = parameter.parameterValue[0].value
+                        parameters[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].value
+                    } else if (parameter.valueSelection === 'man_in' && !parameter.multivalue) {
+                        parameters[parameter.urlName] = parameter.type === 'NUM' ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
+                        parameters[parameter.urlName + '_field_visible_description'] = parameter.type === 'NUM' ? +parameter.parameterValue[0].description : parameter.parameterValue[0].description
+                    } else if (parameter.selectionType === 'TREE' || parameter.selectionType === 'LOOKUP' || parameter.multivalue) {
+                        parameters[parameter.urlName] = parameter.parameterValue.map((el: any) => el.value)
+                        let tempString = ''
+                        for (let i = 0; i < parameter.parameterValue.length; i++) {
+                            tempString += parameter.parameterValue[i].description
+                            tempString += i === parameter.parameterValue.length - 1 ? '' : ';'
+                        }
+                        parameters[parameter.urlName + '_field_visible_description'] = tempString
+                    } else {
+                        parameters[parameter.urlName] = parameter.parameterValue[0] ? parameter.parameterValue[0].value : parameter.parameterValue.value
+                        parameters[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0] ? parameter.parameterValue[0].description : parameter.parameterValue.description
+                    }
                 }
             })
 
             return parameters
+
+            // const parameters = {} as any
+            // Object.keys(this.filtersData.filterStatus).forEach((key: any) => {
+            //     console.log('EL: ', this.filtersData.filterStatus[key])
+            //     const param = this.filtersData.filterStatus[key]
+
+            //     if (this.filtersData.filterStatus[key].parameterValue) {
+            //         if (param.multivalue) {
+            //             let tempString = ''
+            //             if (this.filtersData.filterStatus[key].parameterValue) {
+            //                 for (let i = 0; i < this.filtersData.filterStatus[key].parameterValue.length; i++) {
+            //                     tempString += this.filtersData.filterStatus[key].parameterValue[i].value
+            //                     tempString += i === this.filtersData.filterStatus[key].parameterValue.length - 1 ? '' : ','
+            //                 }
+            //             }
+
+            //             parameters[this.filtersData.filterStatus[key].urlName] = tempString
+            //         } else if (param.type === 'NUM' && !param.selectionType) {
+            //             parameters[this.filtersData.filterStatus[key].urlName] = this.filtersData.filterStatus[key].parameterValue ? +this.filtersData.filterStatus[key].parameterValue[0].value : ''
+            //         } else {
+            //             parameters[this.filtersData.filterStatus[key].urlName] = this.filtersData.filterStatus[key].parameterValue ? this.filtersData.filterStatus[key].parameterValue[0].value : ''
+            //         }
+            //     }
+            // })
+
+            // return parameters
         },
         async getRank() {
             this.loading = true
@@ -539,7 +587,7 @@ export default defineComponent({
 <style lang="scss">
 #document-execution-view {
     position: relative;
-    height: 100%;
+    height: 100vh;
     width: 100%;
 }
 
@@ -565,6 +613,11 @@ export default defineComponent({
 
 .document-execution-parameter-sidebar {
     height: 60vh;
+}
+
+#document-execution-schedulations-table {
+    position: relative;
+    z-index: 100;
 }
 
 @media print {
