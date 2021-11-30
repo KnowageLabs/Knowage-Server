@@ -3,7 +3,7 @@
         <DataPreparationDialog v-model:transformation="selectedTransformation" @send-transformation="handleTransformation" :columns="columns" v-model:col="col" />
         <DataPreparationSaveDialog v-model:visibility="showSaveDialog" v-model:dataset="dataset" />
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-            <template #left> {{ $t('managers.workspaceManagement.dataPreparation.detail') }} </template>
+            <template #left> {{ $t('managers.workspaceManagement.dataPreparation.label') }} ({{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}: {{ dataset.label }})</template>
             <template #right>
                 <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDataset" />
                 <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeTemplate()" /> </template
@@ -24,12 +24,12 @@
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         <div class="kn-page-content p-grid p-m-0 managerDetail">
             <Sidebar v-model:visible="visibleRight" position="right">
-                <div>{{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }} : {{ dataset.label }}</div>
+                <div>{{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}: {{ dataset.label }}</div>
                 <Divider class="p-m-0 p-p-0 dividerCustomConfig" />
                 <div class="kn-truncated">{{ $t('managers.workspaceManagement.dataPreparation.transformations.label') }}</div>
 
                 <div v-if="dataset.config && dataset.config.transformations && dataset.config.transformations.length > 0" class="sidebarClass">
-                    <div v-for="(tr, index) in dataset.config.transformations" v-bind:key="index" v-tooltip="getTextForSidebar(tr)" :class="getSidebarElementClass(index)">
+                    <div v-for="(tr, index) in dataset.config.transformations.reverse()" v-bind:key="index" v-tooltip="getTextForSidebar(tr)" :class="getSidebarElementClass(index)">
                         <span :class="'p-col-1 ' + descriptorTransformations.filter((x) => x.name === tr.type)[0].icon.class" v-if="descriptorTransformations.filter((x) => x.name === tr.type)[0].icon.class">{{ descriptorTransformations.filter((x) => x.name === tr.type)[0].icon.name }}</span>
                         <i v-else :class="'p-col-1 ' + descriptorTransformations.filter((x) => x.name === tr.type)[0].icon"></i>
 
@@ -40,8 +40,8 @@
                             </span></span
                         >
 
-                        <div class="p-col-1" v-if="index == dataset.config.transformations.length - 1">
-                            <i class="p-jc-end pi pi-times" @click="deleteTransformation(index)"></i>
+                        <div class="p-col-1" v-if="index == 0">
+                            <i class="p-jc-end pi pi-trash" @click="deleteTransformation(index)"></i>
                         </div>
                     </div>
                 </div>
@@ -121,6 +121,7 @@
     import { IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
 
     import DataPreparationSimpleDescriptor from '@/modules/workspace/dataPreparation/DataPreparationSimple/DataPreparationSimpleDescriptor.json'
+    import DataPreparationCustomDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationCustomDescriptor.json'
 
     export default defineComponent({
         name: 'data-preparation-detail',
@@ -144,7 +145,8 @@
                 col: null,
                 descriptorTransformations: Array<any>(),
                 dataset: {} as any,
-                simpleDescriptor: DataPreparationSimpleDescriptor
+                simpleDescriptor: DataPreparationSimpleDescriptor,
+                customDescriptor: DataPreparationCustomDescriptor
             }
         },
 
@@ -213,7 +215,7 @@
             },
             getSidebarElementClass(index: number): string {
                 let cssClass = 'p-grid p-m-0 p-p-0 p-d-flex kn-flex transformationSidebarElement p-menuitem-link'
-                if (index < this.dataset.config.transformations.length - 1) cssClass += ' kn-disabled-text'
+                if (index > 0) cssClass += ' kn-disabled-text'
 
                 return cssClass
             },
@@ -242,12 +244,12 @@
                         return true
                     })
             },
-            callFunction(transformation: any, col, type?): void {
-                if (transformation.name === 'changeType') {
-                    let parsArray = this.simpleDescriptor[transformation.name].parameters
+            callFunction(transformation: any, col): void {
+                if (transformation.name === 'changeType' || transformation.name === 'splitColumn') {
+                    let parsArray = transformation.name === 'changeType' ? this.simpleDescriptor[transformation.name].parameters : this.customDescriptor[transformation.name].parameters
                     for (var i = 0; i < parsArray.length; i++) {
                         let element = parsArray[i]
-                        if (element.name === 'destType') {
+                        if (element.name === 'destType' || element.name === 'destType1' || element.name === 'destType2') {
                             element.availableOptions = col ? this.getCompatibilityType(col) : this.descriptor.compatibilityMap['all'].values
 
                             element.availableOptions.forEach((element) => {
@@ -256,7 +258,7 @@
                         }
                     }
 
-                    this.handleTransformation(transformation)
+                    /* this.handleTransformation(transformation) */
                     this.selectedTransformation = transformation
                     if (col) this.col = col.header
                 } else if (transformation.name === 'deleteColumn' && col) {
@@ -265,10 +267,13 @@
                         header: this.$t('common.toast.deleteTitle'),
                         icon: 'pi pi-exclamation-triangle',
                         accept: () => {
-                            transformation.parameters[0][0].value = type
-                            let toReturn = { parameters: [] as Array<any>, type: transformation.type }
+                            let par = this.simpleDescriptor[transformation.name].parameters[0]
+                            par.value = col.header
+                            transformation.parameters = []
+                            transformation.parameters.push(par)
+                            let toReturn = { parameters: [] as Array<any>, type: 'deleteColumn' }
                             let obj = { columns: [] as Array<any> }
-                            obj.columns.push(col)
+                            obj.columns.push(col.header)
 
                             toReturn.parameters.push(obj)
 

@@ -1489,7 +1489,7 @@
                     },
                     "visibility": "Visibility"
                 },
-                "detail": "Detail",
+                "label": "Data preparation",
                 "originalDataset": "Original dataset",
                 "parametersConfiguration": "Parameters configuration",
                 "roles": {

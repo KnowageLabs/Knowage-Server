@@ -174,8 +174,22 @@
                 "validationRules": "required|alpha_dash"
             },
             {
+                "availableOptions": [],
+                "name": "destType1",
+                "placeholder": "managers.workspaceManagement.dataPreparation.transformations.destType",
+                "type": "dropdown",
+                "validationRules": "required|alpha_dash"
+            },
+            {
                 "name": "column2",
                 "type": "string",
+                "validationRules": "required|alpha_dash"
+            },
+            {
+                "availableOptions": [],
+                "name": "destType2",
+                "placeholder": "managers.workspaceManagement.dataPreparation.transformations.destType",
+                "type": "dropdown",
                 "validationRules": "required|alpha_dash"
             },
             {
