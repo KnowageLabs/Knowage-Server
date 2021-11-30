@@ -136,7 +136,6 @@ function cockpitCustomChartControllerFunction(
 					jsLoadSemaphore();
 				}else setJs();
 			}
-			},500)
 		}
 	}
 
