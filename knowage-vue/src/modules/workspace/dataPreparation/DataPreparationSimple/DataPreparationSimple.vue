@@ -22,6 +22,7 @@
                     :showClear="!field.validationRules || (field.validationRules && !field.validationRules.includes('required'))"
                     :optionLabel="field.optionLabel ? field.optionLabel : 'label'"
                     :optionValue="field.optionValue ? field.optionValue : 'code'"
+                    :disabled="col"
                     class="kn-material-input"
                     :class="{ 'p-invalid': field.validationRules && field.validationRules.includes('required') && !field.value }"
                 />
@@ -98,17 +99,22 @@
             refreshTransfrormation(): void {
                 if (this.localTransformation) {
                     let pars = this.localTransformation.type === 'simple' ? this.descriptor[this.localTransformation.name].parameters : []
-
                     pars.forEach((item) => {
-                        if (item.name === 'columns' && item.type === 'multiSelect') {
-                            if (this.col) {
-                                let selectedItem: Array<IDataPreparationColumn> | undefined = this.columns?.filter((x) => x.header == this.col)
-                                if (selectedItem && selectedItem.length > 0) {
-                                    selectedItem[0].disabled = true
-                                    item.value = selectedItem
+                        if (item.name == 'columns' && (item.type === 'multiSelect' || item.type === 'dropdown')) {
+                            let localTransformationItemArray = this.localTransformation.parameters.filter((x) => x.name == item.name)
+                            if (localTransformationItemArray?.length > 0) {
+                                let localTransformationItem = localTransformationItemArray[0]
+
+                                if (this.col) {
+                                    let selectedItem: Array<IDataPreparationColumn> | undefined = this.columns?.filter((x) => x.header == this.col)
+                                    if (selectedItem && selectedItem.length > 0) {
+                                        selectedItem[0].disabled = true
+                                        localTransformationItem.value = item.type === 'multiSelect' ? selectedItem : selectedItem[0][item.optionValue]
+                                    }
+                                } else {
+                                    localTransformationItem.value = undefined
+                                    this.columns?.forEach((e) => (e.disabled = false))
                                 }
-                            } else {
-                                this.columns?.forEach((e) => (e.disabled = false))
                             }
                         }
                     })

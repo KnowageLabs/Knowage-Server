@@ -53,13 +53,7 @@
 
         created() {
             this.simpleDescriptor = { ...DataPreparationSimpleDescriptor } as any
-
             this.customDescriptor = { ...DataPreparationCustomDescriptor } as any
-        },
-        beforeUpdate() {
-            if (!this.localCopy?.parameters) {
-                this.localCopy = JSON.parse(JSON.stringify(this.transformation))
-            }
         },
 
         methods: {
@@ -140,6 +134,16 @@
 
             updateLocalCopy(t: ITransformation): void {
                 this.localCopy = t
+            }
+        },
+        watch: {
+            transformation: {
+                handler(newValue, oldValue) {
+                    if (oldValue !== newValue) {
+                        this.localCopy = JSON.parse(JSON.stringify(newValue))
+                    }
+                },
+                deep: true
             }
         }
     })

@@ -23,6 +23,7 @@
                     :optionLabel="field.optionLabel ? field.optionLabel : 'label'"
                     :optionValue="field.optionValue ? field.optionValue : 'code'"
                     class="kn-material-input"
+                    :disabled="col"
                     :class="{ 'p-invalid': field.validationRules && field.validationRules.includes('required') && !field.value }"
                     @change="handleSelectChange($event)"
                 />
@@ -135,18 +136,20 @@
             },
             handleSelectChange(e: Event): void {
                 if (e) {
-                    this.refreshTransfrormation()
+                    this.localTransformation.parameters.forEach((item) => {
+                        this.handleRelatedFields(this.localTransformation.parameters, item)
+                    })
                 }
             },
             isFieldVisible(field): boolean {
                 let visible = true
                 if (field.dependsFromField && this.localTransformation) {
-                    let obj = this.localTransformation.parameters.filter((x) => x.name === field.dependsFromField)
+                    let objArr = this.localTransformation.parameters.filter((x) => x.name === field.dependsFromField)
 
-                    if (obj) {
-                        if (!obj[0].value) return false
+                    if (objArr?.length > 0) {
+                        if (!objArr[0].value) return false
 
-                        if (field.dependsFromOptions) visible = visible && field.dependsFromOptions.split('|').includes(obj[0].value)
+                        if (field.dependsFromOptions) visible = visible && field.dependsFromOptions.split('|').includes(objArr[0].value)
                     }
                 }
                 return visible
@@ -156,19 +159,23 @@
                 if (this.localTransformation) {
                     let pars = this.localTransformation.type === 'custom' ? this.descriptor[this.localTransformation.name].parameters : []
                     pars.forEach((item) => {
-                        if (item.name === 'columns') {
-                            if (this.col) {
-                                let selectedItem: Array<IDataPreparationColumn> | undefined = this.columns?.filter((x) => x.header == this.col)
-                                if (selectedItem && selectedItem.length > 0) {
-                                    selectedItem[0].disabled = true
+                        if (item.name == 'columns' && (item.type === 'multiSelect' || item.type === 'dropdown')) {
+                            let localTransformationItemArray = this.localTransformation.parameters.filter((x) => x.name == item.name)
+                            if (localTransformationItemArray?.length > 0) {
+                                let localTransformationItem = localTransformationItemArray[0]
 
-                                    item.value = selectedItem
+                                if (this.col) {
+                                    let selectedItem: Array<IDataPreparationColumn> | undefined = this.columns?.filter((x) => x.header == this.col)
+                                    if (selectedItem && selectedItem.length > 0) {
+                                        selectedItem[0].disabled = true
+                                        localTransformationItem.value = item.type === 'multiSelect' ? selectedItem : selectedItem[0][item.optionValue]
+                                    }
+                                } else {
+                                    localTransformationItem.value = undefined
+                                    this.columns?.forEach((e) => (e.disabled = false))
                                 }
-                            } else {
-                                this.columns?.forEach((e) => (e.disabled = false))
                             }
                         }
-                        this.handleRelatedFields(pars, item)
                     })
                 }
             },

@@ -30,11 +30,11 @@
 
                 <div v-if="dataset.config && dataset.config.transformations && dataset.config.transformations.length > 0" class="sidebarClass">
                     <div v-for="(tr, index) in dataset.config.transformations" v-bind:key="index" v-tooltip="getTextForSidebar(tr)" :class="getSidebarElementClass(index)">
-                        <span :class="'p-col-1 ' + descriptorTransformations.filter((x) => x.type === tr.type)[0].icon.class" v-if="descriptorTransformations.filter((x) => x.type === tr.type)[0].icon.class">{{ descriptorTransformations.filter((x) => x.type === tr.type)[0].icon.name }}</span>
-                        <i v-else :class="'p-col-1 ' + descriptorTransformations.filter((x) => x.type === tr.type)[0].icon"></i>
+                        <span :class="'p-col-1 ' + descriptorTransformations.filter((x) => x.name === tr.type)[0].icon.class" v-if="descriptorTransformations.filter((x) => x.name === tr.type)[0].icon.class">{{ descriptorTransformations.filter((x) => x.name === tr.type)[0].icon.name }}</span>
+                        <i v-else :class="'p-col-1 ' + descriptorTransformations.filter((x) => x.name === tr.type)[0].icon"></i>
 
                         <span class="p-col-10 typeAndDescription kn-truncated">
-                            <span class="kn-list-item">{{ $t(descriptorTransformations.filter((x) => x.type === tr.type)[0].label) }} </span>
+                            <span class="kn-list-item">{{ $t(descriptorTransformations.filter((x) => x.name === tr.type)[0].label) }} </span>
                             <span class="transformationDescription kn-truncated">
                                 {{ getTextForSidebar(tr) }}
                             </span></span

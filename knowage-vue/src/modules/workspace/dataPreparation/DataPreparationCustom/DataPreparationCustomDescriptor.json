@@ -113,7 +113,8 @@
                 "dependsFromField": "columns",
                 "name": "conditions",
                 "placeholder": "managers.workspaceManagement.dataPreparation.transformations.condition",
-                "type": "dropdown"
+                "type": "dropdown",
+                "validationRules": "required"
             },
             {
                 "dependsFromColumnTypes": "date",

@@ -7,7 +7,7 @@ export interface ITransformation {
 
 export interface ITransformationParameter {
     name: string
-    value?: string
+    value?: Object
     availableOptions?: Array
     type: string
     relatedToField?: string
