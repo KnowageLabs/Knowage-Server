@@ -127,16 +127,15 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.dataPreparationDialog {
-    min-width: 600px;
-    width: 60%;
-    max-width: 1200px;
-    min-height: 150px;
-    &:deep(.p-dialog-content) {
-        @extend .dataPreparationDialog;
+    .dataPreparationDialog {
+        .p-dialog-content {
+            min-width: 600px;
+            width: 60%;
+            max-width: 1200px;
+            min-height: 150px;
+        }
+        .elementClass {
+            flex-direction: column;
+        }
     }
-    .elementClass {
-        flex-direction: column;
-    }
-}
 </style>

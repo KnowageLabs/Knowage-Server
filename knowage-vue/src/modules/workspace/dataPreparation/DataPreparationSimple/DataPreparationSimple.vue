@@ -22,7 +22,7 @@
                     :showClear="!field.validationRules || (field.validationRules && !field.validationRules.includes('required'))"
                     :optionLabel="field.optionLabel ? field.optionLabel : 'label'"
                     :optionValue="field.optionValue ? field.optionValue : 'code'"
-                    :disabled="col"
+                    :disabled="col && field.name === 'columns'"
                     class="kn-material-input"
                     :class="{ 'p-invalid': field.validationRules && field.validationRules.includes('required') && !field.value }"
                 />
@@ -112,7 +112,6 @@
                                         localTransformationItem.value = item.type === 'multiSelect' ? selectedItem : selectedItem[0][item.optionValue]
                                     }
                                 } else {
-                                    localTransformationItem.value = undefined
                                     this.columns?.forEach((e) => (e.disabled = false))
                                 }
                             }

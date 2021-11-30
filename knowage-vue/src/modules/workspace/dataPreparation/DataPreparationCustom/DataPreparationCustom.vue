@@ -1,78 +1,76 @@
-<template
-    ><div class="custom">
-        <span v-for="(field, index) in localTransformation.parameters" v-bind:key="index" class="p-field data-prep-custom-transformation elementClass">
-            <span v-if="field.type == 'string' && (!field.dependsFromField || (field.dependsFromField && isFieldVisible(field)))" class="p-float-label">
-                <InputText :id="field.id" type="text" v-model="field.value" :class="['kn-material-input', field.validationRules && field.validationRules.includes('required') && !field.value ? 'p-invalid' : '']" />
-                <label :for="'input' + '_index_' + index" class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.' + field.name) }}</label>
-            </span>
-            <span v-if="field.type === 'date' && (!field.dependsFromField || (field.dependsFromField && isFieldVisible(field)))" class="p-float-label">
-                <Calendar :id="field.id" v-model="field.value" class="kn-material-input" :class="{ 'p-invalid': field.validationRules && field.validationRules.includes('required') && !field.value }" />
-                <label :for="field.type + '_index_' + index" class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.' + field.name) }}</label>
-            </span>
-
-            <span v-if="field.type === 'boolean' && (!field.dependsFromField || (field.dependsFromField && isFieldVisible(field)))" class="p-float-label">
-                <InputSwitch :id="field.id" v-model="field.value" />
-                <label :for="'inputSwitch' + '_index_' + index" class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.' + field.name) }}</label>
-            </span>
-            <span v-if="field.type === 'dropdown' && (!field.dependsFromField || (field.dependsFromField && isFieldVisible(field)))" class="p-float-label">
-                <Dropdown
-                    :id="field.id"
-                    v-model="field.value"
-                    :options="field.availableOptions ? field.availableOptions : columns"
-                    :showClear="!field.validationRules || (field.validationRules && !field.validationRules.includes('required'))"
-                    :optionLabel="field.optionLabel ? field.optionLabel : 'label'"
-                    :optionValue="field.optionValue ? field.optionValue : 'code'"
-                    class="kn-material-input"
-                    :disabled="col"
-                    :class="{ 'p-invalid': field.validationRules && field.validationRules.includes('required') && !field.value }"
-                    @change="handleSelectChange($event)"
-                />
-                <label :for="'selectedCondition' + '_index_' + index" class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.' + field.name) }}</label>
-            </span>
-
-            <span v-if="field.type == 'multiSelect' && (!field.dependsFromField || (field.dependsFromField && isFieldVisible(field)))" class="p-float-label">
-                <MultiSelect
-                    :id="field.id"
-                    v-model="field.value"
-                    :options="columns"
-                    optionLabel="header"
-                    display="chip"
-                    optionDisabled="disabled"
-                    @change="handleSelectChange($event)"
-                    :allow-empty="false"
-                    :disabled="col"
-                    class="kn-material-input"
-                    :filter="true"
-                    :class="{ 'p-invalid': field.validationRules && field.validationRules.includes('required') && !field.value }"
-                /><label :for="'selectedItems' + '_index_' + index" class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.columns') }}</label></span
-            >
-
-            <span v-if="field.type == 'textarea'" class="p-float-label">
-                <Textarea :id="field.id" v-model="field.value" rows="5" cols="30" class="kn-material-input" :class="{ 'p-invalid': field.validationRules && field.validationRules.includes('required') && !field.value }" :autoResize="false" />
-                <label :for="field.type + '_index_' + index" class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.' + field.name) }}</label>
-                <KnTextarea
-                    :id="field.id"
-                    v-model="field.value"
-                    rows="5"
-                    cols="30"
-                    :name="field.type + '_index_' + index"
-                    :label="$t('managers.workspaceManagement.dataPreparation.transformations.' + field.name)"
-                    :autoResize="false"
-                    :required="field.validationRules && field.validationRules.includes('required')"
-                />
-            </span>
-            <span>
-                <Button
-                    icon="pi pi-trash"
-                    :class="'p-button-text p-button-rounded p-button-plain ' + (localTransformation.parameters.length > 1 ? '' : 'kn-hide')"
-                    @click="deleteRow(index)"
-                    v-if="localTransformation.name === 'filter' && index % descriptor[localTransformation.name].parameters.length == descriptor[localTransformation.name].parameters.length - 1"
-            /></span>
+<template>
+    <div v-for="(field, index) in localTransformation.parameters" v-bind:key="index" class="data-prep-custom-transformation">
+        <span v-if="field.type == 'string' && (!field.dependsFromField || (field.dependsFromField && isFieldVisible(field)))" class="p-float-label">
+            <InputText :id="field.id" type="text" v-model="field.value" :class="['kn-material-input', field.validationRules && field.validationRules.includes('required') && !field.value ? 'p-invalid' : '']" />
+            <label :for="'input' + '_index_' + index" class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.' + field.name) }}</label>
         </span>
-        <span class="p-d-flex p-jc-center p-ai-center" v-if="localTransformation.name === 'filter'">
-            <Button icon="pi pi-plus" class="p-button-text p-button-rounded p-button-plain" @click="addNewRow()" />
+        <span v-if="field.type === 'date' && (!field.dependsFromField || (field.dependsFromField && isFieldVisible(field)))" class="p-float-label">
+            <Calendar :id="field.id" v-model="field.value" class="kn-material-input" :class="{ 'p-invalid': field.validationRules && field.validationRules.includes('required') && !field.value }" />
+            <label :for="field.type + '_index_' + index" class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.' + field.name) }}</label>
         </span>
+
+        <span v-if="field.type === 'boolean' && (!field.dependsFromField || (field.dependsFromField && isFieldVisible(field)))" class="p-float-label">
+            <InputSwitch :id="field.id" v-model="field.value" />
+            <label :for="'inputSwitch' + '_index_' + index" class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.' + field.name) }}</label>
+        </span>
+        <span v-if="field.type === 'dropdown' && (!field.dependsFromField || (field.dependsFromField && isFieldVisible(field)))" class="p-float-label">
+            <Dropdown
+                :id="field.id"
+                v-model="field.value"
+                :options="field.availableOptions ? field.availableOptions : columns"
+                :showClear="!field.validationRules || (field.validationRules && !field.validationRules.includes('required'))"
+                :optionLabel="field.optionLabel ? field.optionLabel : 'label'"
+                :optionValue="field.optionValue ? field.optionValue : 'code'"
+                class="kn-material-input"
+                :disabled="col && field.name === 'columns'"
+                :class="{ 'p-invalid': field.validationRules && field.validationRules.includes('required') && !field.value }"
+                @change="handleSelectChange($event)"
+            />
+            <label :for="'selectedCondition' + '_index_' + index" class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.' + field.name) }}</label>
+        </span>
+
+        <span v-if="field.type == 'multiSelect' && (!field.dependsFromField || (field.dependsFromField && isFieldVisible(field)))" class="p-float-label">
+            <MultiSelect
+                :id="field.id"
+                v-model="field.value"
+                :options="columns"
+                optionLabel="header"
+                display="chip"
+                optionDisabled="disabled"
+                @change="handleSelectChange($event)"
+                :allow-empty="false"
+                :disabled="col"
+                class="kn-material-input"
+                :filter="true"
+                :class="{ 'p-invalid': field.validationRules && field.validationRules.includes('required') && !field.value }"
+            /><label :for="'selectedItems' + '_index_' + index" class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.columns') }}</label></span
+        >
+
+        <span v-if="field.type == 'textarea'" class="p-float-label">
+            <Textarea :id="field.id" v-model="field.value" rows="5" cols="30" class="kn-material-input" :class="{ 'p-invalid': field.validationRules && field.validationRules.includes('required') && !field.value }" :autoResize="false" />
+            <label :for="field.type + '_index_' + index" class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.' + field.name) }}</label>
+            <KnTextarea
+                :id="field.id"
+                v-model="field.value"
+                rows="5"
+                cols="30"
+                :name="field.type + '_index_' + index"
+                :label="$t('managers.workspaceManagement.dataPreparation.transformations.' + field.name)"
+                :autoResize="false"
+                :required="field.validationRules && field.validationRules.includes('required')"
+            />
+        </span>
+        <span>
+            <Button
+                icon="pi pi-trash"
+                :class="'p-button-text p-button-rounded p-button-plain ' + (localTransformation.parameters.length > 1 ? '' : 'kn-hide')"
+                @click="deleteRow(index)"
+                v-if="localTransformation.name === 'filter' && index % descriptor[localTransformation.name].parameters.length == descriptor[localTransformation.name].parameters.length - 1"
+        /></span>
     </div>
+    <span class="p-d-flex p-jc-center p-ai-center" v-if="localTransformation.name === 'filter'">
+        <Button icon="pi pi-plus" class="p-button-text p-button-rounded p-button-plain" @click="addNewRow()" />
+    </span>
 </template>
 
 <script lang="ts">
@@ -171,11 +169,13 @@
                                         localTransformationItem.value = item.type === 'multiSelect' ? selectedItem : selectedItem[0][item.optionValue]
                                     }
                                 } else {
-                                    localTransformationItem.value = undefined
                                     this.columns?.forEach((e) => (e.disabled = false))
                                 }
                             }
                         }
+                    })
+                    this.localTransformation.parameters.forEach((item) => {
+                        this.handleRelatedFields(this.localTransformation.parameters, item)
                     })
                 }
             },
@@ -212,7 +212,7 @@
     })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
     .data-prep-custom-transformation {
         .p-field {
             .p-multiselect,
@@ -223,16 +223,7 @@
         }
     }
 
-    .custom {
-        min-width: 600px;
-        width: 60%;
-        max-width: 1200px;
-        min-height: 150px;
-        &:deep(.p-dialog-content) {
-            @extend .custom;
-        }
-        .elementClass {
-            flex-direction: column;
-        }
+    .elementClass {
+        flex-direction: column;
     }
 </style>
