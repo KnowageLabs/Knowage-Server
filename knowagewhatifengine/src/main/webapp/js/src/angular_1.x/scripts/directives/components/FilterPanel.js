@@ -992,12 +992,14 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	   }
 
 	   $scope.updateSelectedMembers = function (item) {
+		   const member = $scope.currentSelectedMembers.find(function(aMember) {return aMember.uniqueName == item.uniqueName});
 		   if (item.visible) {
-			   // if member is selected, add it into the array
-			   $scope.currentSelectedMembers.push(item);
+			   // if member is selected and not already there, add it into the array
+			   if (!member) {
+				   $scope.currentSelectedMembers.push(item);
+			   }
 		   } else {
-			   // if member is not selected, remove it from the array; we must search it by uniqueName first
-			   const member = $scope.currentSelectedMembers.find(function(aMember) {return aMember.uniqueName == item.uniqueName});
+			   // if member is not selected, remove it from the array if it is there
 			   if (member) {
 				   const index = $scope.currentSelectedMembers.indexOf(member);
 				   $scope.currentSelectedMembers.splice(index, 1);
