@@ -1,5 +1,5 @@
 <template>
-    <router-view v-if="!loading" v-slot="{ Component }" @close="$emit('close', item)">
+    <router-view v-slot="{ Component }" @close="$emit('close', item)">
         <keep-alive>
             <component :is="Component" :key="$route.fullPath"></component>
         </keep-alive>

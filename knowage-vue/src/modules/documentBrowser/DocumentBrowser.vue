@@ -45,8 +45,11 @@ export default defineComponent({
         }
     },
     created() {
-        if (this.$route.name === 'document-execution' && this.$route.params.id) {
-            this.tabs.push({ item: null, mode: 'execute' })
+        const routeNames = ['document-browser-registry', 'document-browser-document-composite', 'document-browser-office-doc', 'document-browser-olap', 'document-browser-map', 'document-browser-report', 'document-browser-kpi', 'document-browser-dossier', 'document-browser-etl']
+        console.log('ROUTE NAME: ', this.$route.name)
+        if (this.$route.params.id && routeNames.includes(this.$route.name as string)) {
+            this.tabs.push({ item: { name: this.$route.params.id, label: this.$route.params.id }, mode: 'execute' })
+
             this.activeIndex = 1
         }
     },
@@ -59,6 +62,7 @@ export default defineComponent({
 
             const id = this.tabs[this.activeIndex - 1].item ? this.tabs[this.activeIndex - 1].item.label : 'new-dashboard'
 
+            console.log('ITEM ON TAB CHANGE: ', this.tabs[this.activeIndex - 1].item)
             let routeDocumentType = this.getRouteDocumentType(this.tabs[this.activeIndex - 1].item)
             this.$router.push(`/document-browser/${routeDocumentType}/` + id)
         },
@@ -176,6 +180,10 @@ export default defineComponent({
     font-size: 1.2rem;
     color: rgba(0, 0, 0, 0.6);
     cursor: pointer;
+}
+
+.document-browser-tab-container {
+    position: relative;
 }
 
 .document-browser-tab-container .p-tabview .p-tabview-panel,

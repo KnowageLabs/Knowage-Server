@@ -9,7 +9,7 @@
                     <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'" class="fa fa-eye kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocument"></i>
                     <i class="pi pi-book kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></i>
                     <i class="pi pi-refresh kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.refresh')" @click="refresh"></i>
-                    <i v-if="filtersData?.filterStatus.length > 0" class="fa fa-filter kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible"></i>
+                    <i v-if="filtersData?.filterStatus.length > 0" class="fa fa-filter kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible" data-test="parameter-sidebar-icon"></i>
                     <i class="fa fa-ellipsis-v kn-cursor-pointer  p-mx-4" v-tooltip.left="$t('common.menu')" @click="toggle"></i>
                     <Menu ref="menu" :model="toolbarMenuItems" :popup="true" />
                     <i class="fa fa-times kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.close')" @click="closeDocument"></i>
@@ -21,14 +21,14 @@
         <div ref="document-execution-view" id="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
             <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
 
-            <Registry v-if="mode === 'registry' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible" :id="urlData.sbiExecutionId"></Registry>
-            <Dossier v-else-if="mode === 'dossier' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible" :id="document.id"></Dossier>
+            <Registry v-if="mode === 'registry' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible" :id="urlData.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
+            <Dossier v-else-if="mode === 'dossier' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible" :id="document.id" :reloadTrigger="reloadTrigger"></Dossier>
 
-            <!-- <iframe v-else-if="mode === 'iframe'"  id="document-execution-iframe" :src="url"></iframe> -->
+            <!-- <iframe v-else-if="mode === 'iframe'" id="document-execution-iframe" :src="url"></iframe> -->
 
             <DocumentExecutionSchedulationsTable id="document-execution-schedulations-table" v-if="schedulationsTableVisible" :propSchedulations="schedulations" @deleteSchedulation="onDeleteSchedulation" @close="schedulationsTableVisible = false"></DocumentExecutionSchedulationsTable>
 
-            <KnParameterSidebar class="document-execution-parameter-sidebar kn-overflow-y" v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="document" @execute="onExecute" @exportCSV="onExportCSV"></KnParameterSidebar>
+            <KnParameterSidebar class="document-execution-parameter-sidebar kn-overflow-y" v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="document" @execute="onExecute" @exportCSV="onExportCSV" data-test="parameter-sidebar"></KnParameterSidebar>
 
             <DocumentExecutionHelpDialog :visible="helpDialogVisible" :propDocument="document" @close="helpDialogVisible = false"></DocumentExecutionHelpDialog>
             <DocumentExecutionRankDialog :visible="rankDialogVisible" :propDocumentRank="documentRank" @close="rankDialogVisible = false" @saveRank="onSaveRank"></DocumentExecutionRankDialog>
@@ -78,7 +78,7 @@ export default defineComponent({
             notesDialogVisible: false,
             metadataDialogVisible: false,
             mailDialogVisible: false,
-            metadata: null as any,
+            metadata: {} as any,
             schedulationsTableVisible: false,
             schedulations: [] as any[],
             linkDialogVisible: false,
@@ -86,6 +86,7 @@ export default defineComponent({
             sbiExecutionId: null as string | null,
             embedHTML: false,
             user: null as any,
+            reloadTrigger: false,
             loading: false,
             iframe: {} as any
         }
@@ -96,7 +97,7 @@ export default defineComponent({
         },
         url() {
             return (
-                process.env.VUE_APP_HOST_URL +
+                'http://localhost:3000/' +
                 '/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=3306&OBJECT_LABEL=DOC_DEFAULT_2&MENU_PARAMETERS=%7B%7D&LIGHT_NAVIGATOR_DISABLED=TRUE&SBI_EXECUTION_ID=null&OBJECT_NAME=DOC_DEFAULT_2&EDIT_MODE=null&TOOLBAR_VISIBLE=null&CAN_RESET_PARAMETERS=null&EXEC_FROM=null&CROSS_PARAMETER=null'
             )
         }
@@ -130,9 +131,10 @@ export default defineComponent({
         },
         async refresh() {
             this.parameterSidebarVisible = false
-            await this.loadPage()
+            await this.loadURL()
+            this.reloadTrigger = !this.reloadTrigger
         },
-        toggle(event: any) {
+        toggle(event: Event) {
             this.createMenuItems()
             const menu = this.$refs.menu as any
             menu.toggle(event)
@@ -186,12 +188,12 @@ export default defineComponent({
         },
         export() {
             console.log('TODO - EXPORT')
-            const url =
-                process.env.VUE_APP_HOST_URL +
-                `/knowageqbeengine/servlet/AdapterHTTP?&documentName=Registry_Test_1&SBI_EXECUTION_ROLE=%2Fdemo%2Fadmin&SBI_COUNTRY=US&document=3251&SBI_LANGUAGE=en&SBI_SCRIPT=&dateformat=dd%2FMM%2Fyyyy&SBI_SPAGO_CONTROLLER=%2Fservlet%2FAdapterHTTP&user_id=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGVtb19hZG1pbiIsImV4cCI6MTYzNzk1MDM4N30.v0om2xcCIWR7lf2_28pKa_zfgjuSYQB-aU8WRVWgpuo&SBI_EXECUTION_ID=190c98b14eac11eca5075bc8d2018299&isFromCross=false&SBI_ENVIRONMENT=DOCBROWSER&outputType=application%2Fvnd.ms-excel&ACTION_NAME=EXPORT_RESULT_ACTION&MIME_TYPE=application%2Fvnd.ms-excel&RESPONSE_TYPE=RESPONSE_TYPE_ATTACHMENT`
-            window.open(url, '_blank')
 
-            // http://localhost:8080/knowageqbeengine/servlet/AdapterHTTP?&documentName=Registry_Test_1&SBI_EXECUTION_ROLE=%2Fdemo%2Fadmin&SBI_COUNTRY=US&document=3251&SBI_LANGUAGE=en&SBI_SCRIPT=&dateformat=dd%2FMM%2Fyyyy&SBI_SPAGO_CONTROLLER=%2Fservlet%2FAdapterHTTP&user_id=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGVtb19hZG1pbiIsImV4cCI6MTYzNzk1MDM4N30.v0om2xcCIWR7lf2_28pKa_zfgjuSYQB-aU8WRVWgpuo&SBI_EXECUTION_ID=190c98b14eac11eca5075bc8d2018299&isFromCross=false&SBI_ENVIRONMENT=DOCBROWSER&outputType=application%2Fvnd.ms-excel&ACTION_NAME=EXPORT_RESULT_ACTION&MIME_TYPE=application%2Fvnd.ms-excel&RESPONSE_TYPE=RESPONSE_TYPE_ATTACHMENT
+            //  if (document.type === 'document-composite') {
+            window.postMessage({ type: 'exportCockpitTo', format: 'pdf' }, '*')
+            window.postMessage({ type: 'copyLinkHTML' }, '*')
+            // }
+            window.parent.postMessage({ nome: 'davide' }, '*')
         },
         openMailDialog() {
             this.mailDialogVisible = true
@@ -261,14 +263,14 @@ export default defineComponent({
         },
         async loadDocument() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.id}`).then((response: AxiosResponse<any>) => (this.document = response.data))
-            console.log('LOADED DOCUMENT: ', this.document)
+            // console.log('LOADED DOCUMENT: ', this.document)
         },
         async loadFilters() {
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, { label: this.id, role: this.sessionRole, parameters: {} })
                 .then((response: AxiosResponse<any>) => (this.filtersData = response.data))
                 .catch((error: any) => console.log('ERROR: ', error))
-            console.log('LOADED FILTERS DATA: ', this.filtersData)
+            // console.log('LOADED FILTERS DATA: ', this.filtersData)
         },
         async loadURL() {
             const postData = { label: this.id, role: this.sessionRole, parameters: this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
@@ -281,6 +283,7 @@ export default defineComponent({
                 this.urlData = response.data
                 this.sbiExecutionId = this.urlData.sbiExecutionId
             })
+            // console.log('LOADED URL DATA: ', this.urlData)
             await this.sendForm()
         },
         async loadExporters() {
@@ -373,6 +376,7 @@ export default defineComponent({
             this.filtersData.isReadyForExecution = true
             await this.loadURL()
             this.parameterSidebarVisible = false
+            this.reloadTrigger = !this.reloadTrigger
             this.loading = false
         },
         async onExportCSV() {

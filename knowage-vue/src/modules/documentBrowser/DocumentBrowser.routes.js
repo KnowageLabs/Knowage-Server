@@ -12,55 +12,55 @@ const routes = [
             },
             {
                 path: 'registry/:id',
-                name: 'document-browser-document-execution-registry',
+                name: 'document-browser-registry',
                 component: () => import('@/modules/documentExecution/main/DocumentExecution.vue'),
                 props: true
             },
             {
                 path: 'document-composite/:id',
-                name: 'document-browser-document-execution-document-composite',
+                name: 'document-browser-document-composite',
                 component: () => import('@/modules/documentExecution/main/DocumentExecution.vue'),
                 props: true
             },
             {
                 path: 'office-doc/:id',
-                name: 'document-browser-document-execution-office-doc',
+                name: 'document-browser-office-doc',
                 component: () => import('@/modules/documentExecution/main/DocumentExecution.vue'),
                 props: true
             },
             {
                 path: 'olap/:id',
-                name: 'document-browser-document-execution-olap',
+                name: 'document-browser-olap',
                 component: () => import('@/modules/documentExecution/main/DocumentExecution.vue'),
                 props: true
             },
             {
                 path: 'map/:id',
-                name: 'document-browser-document-execution-map',
+                name: 'document-browser-map',
                 component: () => import('@/modules/documentExecution/main/DocumentExecution.vue'),
                 props: true
             },
             {
                 path: 'report/:id',
-                name: 'document-browser-document-execution-report',
+                name: 'document-browser-report',
                 component: () => import('@/modules/documentExecution/main/DocumentExecution.vue'),
                 props: true
             },
             {
                 path: 'kpi/:id',
-                name: 'document-browser-document-execution-kpi',
+                name: 'document-browser-kpi',
                 component: () => import('@/modules/documentExecution/main/DocumentExecution.vue'),
                 props: true
             },
             {
                 path: 'dossier/:id',
-                name: 'document-browser-document-execution-dossier',
+                name: 'document-browser-dossier',
                 component: () => import('@/modules/documentExecution/main/DocumentExecution.vue'),
                 props: true
             },
             {
                 path: 'etl/:id',
-                name: 'document-browser-document-execution-etl',
+                name: 'document-browser-etl',
                 component: () => import('@/modules/documentExecution/main/DocumentExecution.vue'),
                 props: true
             }

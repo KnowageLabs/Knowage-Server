@@ -44,7 +44,7 @@ import Textarea from 'primevue/textarea'
 export default defineComponent({
     name: 'document-execution-link-dialog',
     components: { Dialog, Textarea },
-    props: { visible: { type: Boolean }, linkInfo: { type: Object }, embedHTML: { type: Object } },
+    props: { visible: { type: Boolean }, linkInfo: { type: Object }, embedHTML: { type: Boolean } },
     emits: ['close'],
     data() {
         return {

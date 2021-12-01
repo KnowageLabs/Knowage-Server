@@ -65,7 +65,7 @@ export default defineComponent({
         RegistryPivotDatatable,
         RegistryFiltersCard
     },
-    props: { id: { type: String } },
+    props: { id: { type: String }, reloadTrigger: { type: Boolean } },
     data() {
         return {
             registryDescriptor,
@@ -86,6 +86,10 @@ export default defineComponent({
     },
     watch: {
         async id() {
+            await this.loadPage()
+            this.stopWarningsState = []
+        },
+        async reloadTrigger() {
             await this.loadPage()
             this.stopWarningsState = []
         }

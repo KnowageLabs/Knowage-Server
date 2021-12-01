@@ -101,7 +101,7 @@ import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 export default defineComponent({
     name: 'dossier',
     components: { Card, Column, DataTable, KnHint, KnValidationMessages },
-    props: { id: { type: String, required: false } },
+    props: { id: { type: String, required: false }, reloadTrigger: { type: Boolean } },
     computed: {
         showHint() {
             if (this.dossierActivities.length != 0) {
@@ -111,6 +111,15 @@ export default defineComponent({
         },
         buttonDisabled(): any {
             return this.v$.$invalid
+        }
+    },
+    watch: {
+        async reloadTrigger() {
+            this.getDossierTemplate()
+            this.getDossierActivities()
+            this.interval = setInterval(() => {
+                this.getDossierActivities()
+            }, 10000)
         }
     },
     created() {

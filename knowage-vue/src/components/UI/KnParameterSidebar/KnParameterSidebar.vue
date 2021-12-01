@@ -26,8 +26,8 @@
                 <!-- Manual Text/Number Input -->
                 <div class="p-field p-m-4" v-if="(parameter.type === 'STRING' || parameter.type === 'NUM') && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
-                        <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters }">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
-                        <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)"></i>
+                        <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters }"  :data-test="'parameter-input-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
+                        <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-input-clear-' + parameter.id"></i>
                     </div>
                     <InputText
                         class="kn-material-input p-inputtext-sm"
@@ -37,14 +37,15 @@
                             'p-invalid': parameter.mandatory && !parameter.parameterValue[0]?.value
                         }"
                         @input="updateVisualDependency(parameter)"
+                        :data-test="'parameter-input-' + parameter.id"
                     />
                 </div>
 
                 <!-- Date -->
                 <div class="p-field p-m-4" v-if="parameter.type === 'DATE' && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
-                        <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters }">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
-                        <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)"></i>
+                        <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters }" :data-test="'parameter-date-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
+                        <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-date-clear-' + parameter.id"></i>
                     </div>
                     <Calendar
                         v-model="parameter.parameterValue[0].value"
@@ -56,6 +57,7 @@
                         }"
                         @change="updateVisualDependency(parameter)"
                         @date-select="updateVisualDependency(parameter)"
+                        :data-test="'parameter-date-input-' + parameter.id"
                     />
                 </div>
 
@@ -68,12 +70,13 @@
                                 'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
                                 'p-text-italic': parameter.dependsOnParameters
                             }"
+                            :data-test="'parameter-checkbox-label-' + parameter.id"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
                         >
-                        <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)"></i>
+                        <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-checkbox-clear-' + parameter.id"></i>
                     </div>
                     <div class="p-d-flex p-flex-column">
-                        <div class="p-field-radiobutton" v-for="(option, index) in parameter.data" :key="index">
+                        <div class="p-field-radiobutton" v-for="(option, index) in parameter.data" :key="index"  :data-test="'parameter-list-' + parameter.id">
                             <RadioButton v-if="!parameter.multivalue" :value="option.value" v-model="parameter.parameterValue[0].value" @change="updateVisualDependency(parameter)" />
                             <Checkbox v-if="parameter.multivalue" :value="option.value" v-model="selectedParameterCheckbox[parameter.id]" @change="setCheckboxValue(parameter)" />
                             <label>{{ option.value }}</label>
@@ -247,6 +250,8 @@ export default defineComponent({
         loadParameters() {
             this.parameters.isReadyForExecution = this.filtersData?.isReadyForExecution
             this.parameters.filterStatus = []
+
+            console.log('>>> LOADED ORIGINAL PARAMETERS: ', this.filtersData?.filterStatus)
 
             this.filtersData?.filterStatus.forEach((el: any) => {
                 el.parameterValue = []
