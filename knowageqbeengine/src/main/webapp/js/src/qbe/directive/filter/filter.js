@@ -36,7 +36,7 @@ angular.module('qbe_filter', ['ngMaterial','angular_table','targetApp' ])
 	}
 });
 
-function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule_inputParams, sbiModule_translate, $http, sbiModule_config,$mdPanel, $mdDialog, $httpParamSerializer, sbiModule_restServices, entity_service){
+function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule_inputParams, sbiModule_translate, $http, sbiModule_config,$mdPanel, $mdDialog, $httpParamSerializer, sbiModule_restServices, entity_service, $injector){
 	$scope.showTable = new Map();
 	$scope.spatial = sbiModule_user.functionalities.indexOf("SpatialFilter")>-1;
 	$scope.filters=angular.copy($scope.ngModel.queryFilters);
@@ -56,6 +56,9 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 	$scope.fieldFilter = function (item) {
 		if(item.leftOperandValue==$scope.field.id) return item
 	}
+	// Watch out! There are some $watch on expression attribute
+	$scope.altExpression = {};
+	angular.copy($scope.ngModel.expression, $scope.altExpression);
 
 	$scope.isloadTemporalFiltersVisible = function(dataType){
 		return sbiModule_user.functionalities.indexOf("Timespan")>-1
@@ -204,12 +207,13 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 				"entity": $scope.ngModel.field.entity
 			}
 		$scope.filters.push(object);
+		filters_service.push($scope.altExpression, object);
 		$scope.showTable.set(object.filterId, false);
 	}
 
 	$scope.deleteFilter = function (filter){
 
-		filters_service.deleteFilter($scope.filters,filter,$scope.ngModel.expression,$scope.ngModel.advancedFilters);
+		filters_service.deleteFilter($scope.filters,filter,$scope.altExpression,$scope.ngModel.advancedFilters);
 	}
 
 	$scope.entitiesField=[];
@@ -372,7 +376,8 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 			$scope.ngModel.queryFilters.length = 0;
 			$scope.ngModel.advancedFilters.length = 0;
 			Array.prototype.push.apply($scope.ngModel.queryFilters, $scope.filters);
-			angular.copy(filters_service.generateExpressions ($scope.filters,$scope.ngModel.expression) ,$scope.ngModel.expression);
+			filters_service.refresh($scope.filters, $scope.altExpression);
+			angular.copy($scope.altExpression, $scope.ngModel.expression);
 			Array.prototype.push.apply($scope.ngModel.advancedFilters, $scope.advancedFilters);
 			$scope.ngModel.mdPanelRef.close();
 		}
@@ -409,7 +414,8 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 		$scope.ngModel.pars.length = 0;
 		Array.prototype.push.apply($scope.ngModel.pars, $scope.pars);
 		Array.prototype.push.apply($scope.ngModel.queryFilters, $scope.filters);
-		angular.copy(filters_service.generateExpressions ($scope.filters,$scope.ngModel.expression) ,$scope.ngModel.expression);
+		filters_service.refresh($scope.filters, $scope.altExpression);
+		angular.copy($scope.altExpression, $scope.ngModel.expression);
 		$scope.ngModel.mdPanelRef.close();
 	};
 

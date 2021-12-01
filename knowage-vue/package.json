@@ -22,6 +22,7 @@
         "js-base64": "3.6.1",
         "mitt": "^2.1.0",
         "moment": "2.29.1",
+        "pleaserotate.js": "^0.1.2",
         "primeflex": "^2.0.0",
         "primeicons": "^4.1.0",
         "primevue": "3.5.1",

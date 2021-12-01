@@ -123,7 +123,7 @@
 			<ITEM id="5008" label="menu.modelCatalogResourceManagement"
 				to="/models-management" toBeLicensed="KnowagePA"/>
 			<ITEM id="5009" label="menu.resourceManagement" requiredFunctionality="ResourceManagement,ResourceManagementDev"
-				to="/resource-management" />
+				to="/resource-management" toBeLicensed="KnowageSI"/>
 		</GROUP_ITEM>
 
 		<GROUP_ITEM id="6000" label="menu.KpiModel"

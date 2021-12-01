@@ -138,6 +138,49 @@
 			}
 		}
 
+		var findByName = function(tree, filterName){
+			var equalNode;
+			traverseDF(tree,function(node){
+			
+				if(node.type == "NODE_CONST" && node.value == filterName) {
+					equalNode = node;
+				};
+			})
+
+			return equalNode;
+		}
+
+		function removeInPlace(expression, filterName) {
+			var currentNodeInExpression = findByName(expression, filterName);
+			var parentOfCurrentNode = getParent(expression, currentNodeInExpression);
+			var parentOfParent = null;
+			
+			// Get PAR node for filter group exactly two elements
+			try {
+				parentOfParent = getParent(expression, parentOfCurrentNode);
+			} catch(err) {}
+			
+			try {
+				var siblings = getSiblings(expression, currentNodeInExpression);
+
+				var indexOfCurrentNode = siblings.indexOf(currentNodeInExpression);
+				siblings.splice(indexOfCurrentNode, 1)
+				
+				if (siblings.length == 1 && parentOfParent && parentOfParent.value == "PAR") {
+					try {
+						parentOfCurrentNode = parentOfParent;
+					} catch(err2) {}
+	
+				}
+	
+				replace(expression, siblings[0], parentOfCurrentNode);
+
+			} catch(err) {
+				// no siblings
+				angular.copy({}, expression);
+			}
+		
+		}
 
 		return {
 			childProperty : childProperty,
@@ -150,8 +193,9 @@
 			replace : replace,
 			remove : remove,
 			traverseDF : traverseDF,
-			getParent : getParent
-
+			getParent : getParent,
+			findByName : findByName,
+			removeInPlace : removeInPlace
 		}
 	})
 })()
