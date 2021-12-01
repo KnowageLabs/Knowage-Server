@@ -1,0 +1,195 @@
+{
+    "csvDelimiterCharacterTypes": [
+        {
+            "name": ",",
+            "value": ","
+        },
+        {
+            "name": ";",
+            "value": ";"
+        },
+        {
+            "name": "\\t",
+            "value": "\\t"
+        },
+        {
+            "name": "|",
+            "value": "|"
+        }
+    ],
+    "csvEncodingTypes": [
+        {
+            "name": "windows-1252",
+            "value": "windows-1252"
+        },
+        {
+            "name": "UTF-8",
+            "value": "UTF-8"
+        },
+        {
+            "name": "UTF-16",
+            "value": "UTF-16"
+        },
+        {
+            "name": "US-ASCII",
+            "value": "US-ASCII"
+        },
+        {
+            "name": "ISO-8859-1",
+            "value": "ISO-8859-1"
+        }
+    ],
+    "csvQuoteCharacterTypes": [
+        {
+            "name": "\"",
+            "value": "\""
+        },
+        {
+            "name": "'",
+            "value": "'"
+        }
+    ],
+    "dateFormatTypes": [
+        {
+            "name": "dd/MM/yyyy",
+            "value": "dd/MM/yyyy"
+        },
+        {
+            "name": "MM/dd/yyyy",
+            "value": "MM/dd/yyyy"
+        },
+        {
+            "name": "dd-MM-yyyy",
+            "value": "dd-MM-yyyy"
+        },
+        {
+            "name": "MM-dd-yyyy",
+            "value": "MM-dd-yyyy"
+        },
+        {
+            "name": "yyyy-MM-dd",
+            "value": "yyyy-MM-dd"
+        },
+        {
+            "name": "yyyy:MM:dd",
+            "value": "yyyy:MM:dd"
+        },
+        {
+            "name": "dd.MM.yyyy",
+            "value": "dd.MM.yyyy"
+        },
+        {
+            "name": "MM.dd.yyyy",
+            "value": "MM.dd.yyyy"
+        }
+    ],
+    "fieldsMetadataTypes": [
+        {
+            "name": "ATTRIBUTE",
+            "value": "ATTRIBUTE"
+        },
+        {
+            "name": "SPATIAL ATTRIBUTE",
+            "value": "SPATIAL_ATTRIBUTE"
+        },
+        {
+            "name": "MEASURE",
+            "value": "MEASURE"
+        }
+    ],
+    "style": {
+        "dialog": {
+            "width": "50vw"
+        },
+        "maxwidth": {
+            "border-bottom": "none",
+            "width": "100%"
+        }
+    },
+    "timestampFormatTypes": [
+        {
+            "name": "dd/MM/yyyy HH:mm:ss",
+            "value": "dd/MM/yyyy HH:mm:ss"
+        },
+        {
+            "name": "MM/dd/yyyy hh:mm:ss a",
+            "value": "MM/dd/yyyy hh:mm:ss a"
+        },
+        {
+            "name": "dd-MM-yyyy hh:mm:ss a",
+            "value": "dd-MM-yyyy hh:mm:ss a"
+        },
+        {
+            "name": "MM-dd-yyyy hh:mm:ss a",
+            "value": "MM-dd-yyyy hh:mm:ss a"
+        },
+        {
+            "name": "yyyy-MM-dd hh:mm:ss a",
+            "value": "yyyy-MM-dd hh:mm:ss a"
+        },
+        {
+            "name": "yyyy:MM:dd hh:mm:ss a",
+            "value": "yyyy:MM:dd hh:mm:ss a"
+        },
+        {
+            "name": "dd.MM.yyyy HH:mm:ss",
+            "value": "dd.MM.yyyy HH:mm:ss"
+        },
+        {
+            "name": "MM.dd.yyyy HH:mm:ss",
+            "value": "MM.dd.yyyy HH:mm:ss"
+        }
+    ],
+    "validations": {
+        "dataset": [
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "wizard-field-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "tableName",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "persist-field-required"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "valueTypes": [
+        {
+            "name": "java.lang.String",
+            "value": "String"
+        },
+        {
+            "name": "java.lang.Double",
+            "value": "Double"
+        },
+        {
+            "name": "java.lang.Integer",
+            "value": "Integer"
+        },
+        {
+            "name": "java.lang.Long",
+            "value": "Long"
+        },
+        {
+            "name": "java.util.Date",
+            "value": "Date"
+        },
+        {
+            "name": "java.sql.Timestamp",
+            "value": "Timestamp"
+        }
+    ]
+}

@@ -1,0 +1,145 @@
+{
+    "analysisViewFields": [
+        {
+            "translation": "importExport.gallery.column.name",
+            "type": "text",
+            "value": "name"
+        },
+        {
+            "translation": "managers.configurationManagement.headers.label",
+            "type": "text",
+            "value": "label"
+        },
+        {
+            "translation": "managers.businessModelManager.description",
+            "type": "text",
+            "value": "description"
+        },
+        {
+            "translation": "importExport.gallery.column.type",
+            "type": "text",
+            "value": "typeCode"
+        },
+        {
+            "translation": "common.author",
+            "type": "text",
+            "value": "creationUser"
+        },
+        {
+            "translation": "managers.mondrianSchemasManagement.headers.creationDate",
+            "type": "date",
+            "value": "creationDate"
+        }
+    ],
+    "businessModelViewFields": [
+        {
+            "translation": "common.name",
+            "type": "text",
+            "value": "name"
+        },
+        {
+            "translation": "common.description",
+            "type": "text",
+            "value": "description"
+        }
+    ],
+    "datasetViewFields": [
+        {
+            "translation": "importExport.gallery.column.name",
+            "type": "text",
+            "value": "name"
+        },
+        {
+            "translation": "managers.configurationManagement.headers.label",
+            "type": "text",
+            "value": "label"
+        },
+        {
+            "translation": "common.category",
+            "type": "category",
+            "value": "catTypeId"
+        },
+        {
+            "translation": "managers.businessModelManager.description",
+            "type": "text",
+            "value": "description"
+        },
+        {
+            "translation": "importExport.gallery.column.type",
+            "type": "text",
+            "value": "dsTypeCd"
+        },
+        {
+            "translation": "common.author",
+            "type": "text",
+            "value": "owner"
+        },
+        {
+            "translation": "workspace.myData.modified",
+            "type": "date",
+            "value": "dateIn"
+        }
+    ],
+    "defaultViewFields": [
+        {
+            "translation": "importExport.gallery.column.name",
+            "type": "text",
+            "value": "documentName"
+        },
+        {
+            "translation": "managers.configurationManagement.headers.label",
+            "type": "text",
+            "value": "documentLabel"
+        },
+        {
+            "translation": "managers.businessModelManager.description",
+            "type": "text",
+            "value": "documentDescription"
+        },
+        {
+            "translation": "importExport.gallery.column.type",
+            "type": "text",
+            "value": "documentType"
+        },
+        {
+            "translation": "workspace.recent.sidebarLabels.executionTime",
+            "type": "date",
+            "value": "requestTime"
+        }
+    ],
+    "federationDatasetViewFields": [
+        {
+            "translation": "common.label",
+            "type": "text",
+            "value": "label"
+        },
+        {
+            "translation": "common.name",
+            "type": "text",
+            "value": "name"
+        }
+    ],
+    "imgPath": "/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=",
+    "imgSource": "82300081364511eca64e159ee59cd4dc.jpg",
+    "style": {
+        "menuItems": {
+            "min-width": "200px"
+        },
+        "sidebarContainer": {
+            "display": "flex",
+            "flex-direction": "column"
+        },
+        "sidebarImage": {
+            "align-self": "center",
+            "width": "80%"
+        },
+        "sidebarItem": {
+            "height": "auto",
+            "min-height": "72px"
+        },
+        "sidebarToolbar": {
+            "display": "flex",
+            "justify-content": "space-evenly"
+        }
+    }
+}
