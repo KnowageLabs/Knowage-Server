@@ -1,7 +1,7 @@
 <template>
-    <Breadcrumb :home="home" :model="items">
+    <Breadcrumb class="workspace-breadcrumbs" :home="home" :model="items">
         <template #item="{item}">
-            <span class="breadcrumbs-item" @click="selectBreadcrumb">{{ item.label }}</span>
+            <span class="workspace-breadcrumbs-item" @click="selectBreadcrumb">{{ item.label }}</span>
         </template>
     </Breadcrumb>
 </template>
@@ -45,11 +45,11 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.breadcrumbs-item:hover {
+.workspace-breadcrumbs-item:hover {
     cursor: pointer;
 }
 
-.p-breadcrumb ul li:nth-child(2) {
+.workspace-breadcrumbs.p-breadcrumb ul li:nth-child(2) {
     display: none;
 }
 </style>

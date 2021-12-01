@@ -1,5 +1,5 @@
 <template>
-    <Dialog :style="workspaceDataPreviewDialogDescriptor.dialog.style" :contentStyle="workspaceDataPreviewDialogDescriptor.dialog.style" :visible="visible" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
+    <Dialog :style="workspaceDataPreviewDialogDescriptor.dialog.style" :contentStyle="workspaceDataPreviewDialogDescriptor.dialog.style" :visible="visible" :modal="true" class="workspace-full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12" :style="mainDescriptor.style.maxWidth">
                 <template #left>
@@ -14,7 +14,7 @@
 
         <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
 
-        <div class="p-d-flex p-flex-column kn-flex col-12 scrollable-table">
+        <div class="p-d-flex p-flex-column kn-flex col-12 workspace-scrollable-table">
             <Message v-if="errorMessageVisible" class="kn-flex p-m-2" severity="warn" :closable="false" :style="mainDescriptor.style.message">
                 {{ errorMessage }}
             </Message>
@@ -130,20 +130,20 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.full-screen-dialog.p-dialog {
+.workspace-full-screen-dialog.p-dialog {
     max-height: 100%;
 }
 
-.full-screen-dialog .p-dialog .p-dialog-content {
+.workspace-full-screen-dialog .p-dialog .p-dialog-content {
     padding: 0;
 }
 
-.scrollable-table .p-datatable-wrapper {
+.workspace-scrollable-table .p-datatable-wrapper {
     flex: 1;
     max-width: 96vw;
     overflow-x: auto;
 }
-.scrollable-table .p-datatable {
+.workspace-scrollable-table .p-datatable {
     max-width: 96vw;
 }
 </style>
