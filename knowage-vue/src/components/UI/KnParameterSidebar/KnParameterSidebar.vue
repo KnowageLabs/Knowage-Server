@@ -12,8 +12,6 @@
 
         {{ user.sessionRole }}
 
-        {{ buttonsDisabled }}
-
         <div class="p-fluid kn-parameter-sidebar-content">
             <div class="p-field p-m-4" v-if="user && (!user.sessionRole || user.sessionRole === 'No default role selected')">
                 <div class="p-d-flex">
@@ -26,7 +24,7 @@
                 <!-- Manual Text/Number Input -->
                 <div class="p-field p-m-4" v-if="(parameter.type === 'STRING' || parameter.type === 'NUM') && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
-                        <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters }"  :data-test="'parameter-input-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
+                        <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters }" :data-test="'parameter-input-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-input-clear-' + parameter.id"></i>
                     </div>
                     <InputText
@@ -76,7 +74,7 @@
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-checkbox-clear-' + parameter.id"></i>
                     </div>
                     <div class="p-d-flex p-flex-column">
-                        <div class="p-field-radiobutton" v-for="(option, index) in parameter.data" :key="index"  :data-test="'parameter-list-' + parameter.id">
+                        <div class="p-field-radiobutton" v-for="(option, index) in parameter.data" :key="index" :data-test="'parameter-list-' + parameter.id">
                             <RadioButton v-if="!parameter.multivalue" :value="option.value" v-model="parameter.parameterValue[0].value" @change="updateVisualDependency(parameter)" />
                             <Checkbox v-if="parameter.multivalue" :value="option.value" v-model="selectedParameterCheckbox[parameter.id]" @change="setCheckboxValue(parameter)" />
                             <label>{{ option.value }}</label>
@@ -161,6 +159,7 @@
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import { formatDate } from '@/helpers/commons/localeHelper'
+import { iDocument, iParameter } from './KnParameterSidebar'
 import Calendar from 'primevue/calendar'
 import Chip from 'primevue/chip'
 import Checkbox from 'primevue/checkbox'
@@ -192,19 +191,19 @@ export default defineComponent({
     emits: ['execute', 'exportCSV'],
     data() {
         return {
-            document: null as any,
-            parameters: { isReadyForExecution: false, filterStatus: [] } as any,
+            document: null as iDocument | null,
+            parameters: { isReadyForExecution: false, filterStatus: [] } as { filterStatus: iParameter[]; isReadyForExecution: boolean },
             executeMenuItems: [] as any[],
             selectedParameterCheckbox: {} as any,
             popupDialogVisible: false,
-            selectedParameter: null as any,
+            selectedParameter: null as iParameter | null,
             parameterPopUpData: null as any,
             treeDialogVisible: false,
             formatedParameterValues: null as any,
             parameterSaveDialogVisible: false,
             savedParametersDialogVisible: false,
             viewpoints: [],
-            newSessionRole: '' as any,
+            newSessionRole: '' as string,
             user: null as any,
             loading: false
         }
@@ -245,7 +244,7 @@ export default defineComponent({
             this.parameters = { isReadyForExecution: false, filterStatus: [] }
         },
         loadDocument() {
-            this.document = this.propDocument
+            this.document = this.propDocument as iDocument
         },
         loadParameters() {
             this.parameters.isReadyForExecution = this.filtersData?.isReadyForExecution
@@ -254,19 +253,6 @@ export default defineComponent({
             console.log('>>> LOADED ORIGINAL PARAMETERS: ', this.filtersData?.filterStatus)
 
             this.filtersData?.filterStatus.forEach((el: any) => {
-                el.parameterValue = []
-                if (el.driverDefaultValue?.length > 0) {
-                    el.parameterValue = el.driverDefaultValue.map((defaultValue: any) => {
-                        return { value: defaultValue.value ?? defaultValue._col0, description: defaultValue.desc ?? defaultValue._col1 }
-                    })
-                }
-
-                if (el.data) {
-                    el.data = el.data.map((data: any) => {
-                        return { value: data._col0, description: data._col1 }
-                    })
-                }
-
                 if (el.selectionType == 'LIST' && el.showOnPanel == 'true' && el.multivalue) {
                     this.selectedParameterCheckbox[el.id] = el.parameterValue?.map((parameterValue: any) => parameterValue.value)
                 }
@@ -374,7 +360,7 @@ export default defineComponent({
         async getParameterPopupInfo(parameter: any) {
             this.loading = true
 
-            const postData = { label: this.document.label, parameters: this.getFormatedParameters(), paramId: parameter.urlName, role: this.sessionRole }
+            const postData = { label: this.document?.label, parameters: this.getFormatedParameters(), paramId: parameter.urlName, role: this.sessionRole }
             await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentExeParameters/admissibleValues`, postData).then((response: AxiosResponse<any>) => (this.parameterPopUpData = response.data))
             this.loading = false
         },
@@ -430,9 +416,6 @@ export default defineComponent({
                         tempString += i === parameter.parameterValue.length - 1 ? '' : ';'
                     }
                     parameters[parameter.urlName + '_field_visible_description'] = tempString
-                } else {
-                    parameters[parameter.urlName] = parameter.parameterValue[0] ? parameter.parameterValue[0].value : parameter.parameterValue.value
-                    parameters[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0] ? parameter.parameterValue[0].description : parameter.parameterValue.description
                 }
             })
 
@@ -497,7 +480,7 @@ export default defineComponent({
         },
         async saveViewpoint(viewpoint: any) {
             console.log('VIEWPOINT FOR SAVE: ', viewpoint)
-            const postData = { ...viewpoint, OBJECT_LABEL: this.document.label, ROLE: this.sessionRole, VIEWPOINT: this.getParameterValues() }
+            const postData = { ...viewpoint, OBJECT_LABEL: this.document?.label, ROLE: this.sessionRole, VIEWPOINT: this.getParameterValues() }
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/addViewpoint`, postData)
@@ -513,7 +496,7 @@ export default defineComponent({
         },
         async openSavedParametersDialog() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/getViewpoints?label=${this.document.label}&role=${this.sessionRole}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/getViewpoints?label=${this.document?.label}&role=${this.sessionRole}`).then((response: AxiosResponse<any>) => {
                 this.viewpoints = response.data.viewpoints
                 this.savedParametersDialogVisible = true
             })
@@ -571,7 +554,9 @@ export default defineComponent({
             return parametersJson
         },
         executeViewpoint(viewpoint: any) {
-            console.log('EXECUTE VIEWPOINT: ', viewpoint)
+            this.fillParameterForm(viewpoint)
+            this.$emit('execute')
+            this.savedParametersDialogVisible = false
         },
         async deleteViewpoint(viewpoint: any) {
             this.loading = true

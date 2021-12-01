@@ -275,6 +275,7 @@ const factory = () => {
             plugins: [PrimeVue],
             stubs: {
                 Button,
+                DocumentExecutionBreadcrumb: true,
                 DocumentExecutionHelpDialog: true,
                 DocumentExecutionRankDialog: true,
                 DocumentExecutionNotesDialog: true,
