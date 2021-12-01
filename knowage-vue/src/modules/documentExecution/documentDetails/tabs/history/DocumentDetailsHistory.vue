@@ -97,6 +97,7 @@ export default defineComponent({
             codeMirrorScriptType: {} as any,
             tst: '',
             scriptOptions: {
+                readOnly: true,
                 mode: 'text/javascript',
                 indentWithTabs: true,
                 smartIndent: true,

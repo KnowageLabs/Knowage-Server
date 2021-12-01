@@ -8,15 +8,23 @@
                 "emits": "delete",
                 "icon": "fas fa-trash-alt",
                 "label": "common.delete"
+            },
+            {
+                "emits": "moveUp",
+                "icon": "fas fa-arrow-up",
+                "label": "moveUp"
+            },
+            {
+                "emits": "moveDown",
+                "icon": "fas fa-arrow-down",
+                "label": "moveDown"
             }
         ],
-        "defaultSortField": "label",
-        "filterFields": ["label", "name"],
+        "defaultSortField": "priority",
         "interaction": {
             "type": "event"
         },
-        "sortFields": ["label", "name"],
-        "textField": false,
+        "textField": "priority",
         "titleField": "label"
     },
     "style": {

@@ -221,16 +221,17 @@
     "documentExecution": {
         "documentDetails": {
             "dataLineage": {
-                "title": "Data Lineage",
-                "selectSource": "Select Source",
                 "noDatasources": "No data source present, add some",
-                "noTables": "Data source has no tables"
+                "noTables": "Data source has no tables",
+                "selectSource": "Select Source",
+                "title": "Data Lineage"
             },
             "drivers": {
                 "ad": "Driver AD",
                 "adDepends": "depends from the AD",
                 "conditionSavedMsg": "Data dependency is successfully created",
                 "conditionsTitle": "Driver data conditions",
+                "dataConditionsValue": "value of the parameter",
                 "dataHint": "Filter operator is used for comparing a column value of the AD",
                 "dataTitle": "Driver data conditions",
                 "deleteMessage": "Are You sure You want to delete this driver? It will not be deleted until the driver is saved!",
@@ -247,16 +248,16 @@
                 "visualizationTitle": "Driver Visualization"
             },
             "history": {
-                "title": "History",
-                "listTitle": "Template History",
+                "activeButton": "Set active Template",
+                "activeError": "An error occured while setting active template",
+                "activeOk": "Active template changed",
+                "deleteButton": "Delete Template",
+                "downloadButton": "Download Template",
                 "listHint": "Upload new template here",
+                "listTitle": "Template History",
                 "template": "Template",
                 "templateHint": "Content of this file type cannot be shown",
-                "activeButton": "Set active Template",
-                "downloadButton": "Download Template",
-                "deleteButton": "Delete Template",
-                "activeOk": "Active template changed",
-                "activeError": "An error occured while setting active template",
+                "title": "History",
                 "uploadError": "An error occured while uploading template"
             },
             "info": {
@@ -276,12 +277,12 @@
                 "visibilityLocationTitle": "Select the functionalities where the document will be visible"
             },
             "outputParams": {
-                "title": "Output Parameters",
+                "customValue": "Custom Value",
+                "noParamSelected": "No parameter selected",
+                "paramDetails": "Output parameter details",
                 "paramName": "Parameter Name",
                 "paramType": "Parameter Type",
-                "paramDetails": "Output parameter details",
-                "noParamSelected": "No parameter selected",
-                "customValue": "Custom Value"
+                "title": "Output Parameters"
             },
             "subreports": {
                 "title": "Subreports"

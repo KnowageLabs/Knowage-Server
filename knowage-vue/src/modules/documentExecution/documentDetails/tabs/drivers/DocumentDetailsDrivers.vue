@@ -11,7 +11,18 @@
             </Toolbar>
             <div id="drivers-list-container" :style="mainDescriptor.style.flexOneRelative">
                 <div :style="mainDescriptor.style.absoluteScroll">
-                    <KnListBox :style="mainDescriptor.style.height100" :options="drivers" :settings="driversDescriptor.knListSettings" @click="selectDriver($event.item)" @delete.stop="deleteDriverConfirm($event)"></KnListBox>
+                    <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
+                    <KnListBox
+                        v-if="!loading"
+                        :style="mainDescriptor.style.height100"
+                        :options="drivers"
+                        :settings="driversDescriptor.knListSettings"
+                        @click="selectDriver($event.item)"
+                        @delete.stop="deleteDriverConfirm($event)"
+                        @moveUp.stop="movePriorityNew($event.item, 'up')"
+                        @moveDown.stop="movePriorityNew($event.item, 'down')"
+                    >
+                    </KnListBox>
                 </div>
             </div>
         </div>
@@ -19,6 +30,9 @@
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
                     {{ $t('documentExecution.documentDetails.drivers.detailsTitle') }}
+                </template>
+                <template #right>
+                    <Button :label="$t('common.save')" class="p-button-text p-button-rounded p-button-plain" :style="mainDescriptor.style.white" @click="saveDriver" />
                 </template>
             </Toolbar>
             <div id="driver-details-container" class="p-m-2" :style="mainDescriptor.style.flexOneRelative">
@@ -117,6 +131,7 @@
                         </form>
                     </template>
                 </Card>
+                {{ lovIdAndColumns }}
                 <div v-if="drivers.length > 1 && selectedDriver.id" class="p-grid p-mt-1">
                     <DataConditions :availableDrivers="drivers" :selectedDocument="selectedDocument" :selectedDriver="selectedDriver" />
                     <VisibilityConditions v-if="selectedDocument.engine" :availableDrivers="drivers" :selectedDocument="selectedDocument" :selectedDriver="selectedDriver" />
@@ -159,11 +174,13 @@ export default defineComponent({
             lovIdAndColumns: [] as any,
             visusalDependencyObjects: [] as any,
             dataDependencyObjects: [] as any,
-            transformedObj: {} as any
+            transformedObj: {} as any,
+            loading: false
         }
     },
     created() {
-        this.drivers = this.availableDrivers
+        // this.drivers = this.availableDrivers
+        this.getDocumentDrivers()
     },
     validations() {
         const validationObject = { selectedDriver: createValidations('driver', driversDescriptor.validations.driver) }
@@ -208,6 +225,15 @@ export default defineComponent({
                 }
             })
         },
+        async getDocumentDrivers() {
+            this.loading = true
+            if (this.selectedDocument?.id) {
+                this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument?.id}/drivers`)
+                    .then((response: AxiosResponse<any>) => (this.drivers = response.data))
+                    .finally(() => (this.loading = false))
+            }
+        },
         setLovColumns(lov) {
             var lovIdAndColumns = {} as any
             var lovColumns = [] as any
@@ -239,8 +265,8 @@ export default defineComponent({
             this.selectedDriver = driver
             this.setParameterInfo(this.selectedDriver)
             if (this.selectedDriver.parID) {
-                this.getParusesByAnalyticalDriverId()
-                this.getLovsByAnalyticalDriverId()
+                // this.getParusesByAnalyticalDriverId()
+                // this.getLovsByAnalyticalDriverId()
             }
             if (this.selectedDriver.id) {
                 // this.getDataDependenciesByDriverId()
@@ -296,15 +322,27 @@ export default defineComponent({
         setInfoForChangedDriver(driver) {
             if (this.availableAnalyticalDrivers) {
                 for (var i = 0; i < this.availableAnalyticalDrivers.length; i++) {
-                    if (driver.parameter && this.availableAnalyticalDrivers[i].label == driver.parameter.label) {
+                    if (driver && driver.parameter && this.availableAnalyticalDrivers[i].label == driver.parameter.label) {
                         driver.parameter = { ...this.availableAnalyticalDrivers[i] }
                         driver.parID = this.availableAnalyticalDrivers[i].id
                     }
                 }
             }
         },
-        movePriority(priority, direction) {
-            // priority = event.item.priority
+        async movePriorityNew(driver, direction) {
+            direction == 'up' ? (driver.priority -= 1) : (driver.priority += 1)
+            await this.$http
+                .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers/${driver.id}`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                .then(() => {
+                    this.$store.commit('setInfo', { title: 'Succes', msg: 'Driver priority changed' })
+                    this.getDocumentDrivers()
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+        },
+        movePriority(driver, direction) {
+            let priority = driver.priority
             var cur, next, prev
             for (var p in this.drivers) {
                 if (this.drivers[p].priority == priority) cur = p
@@ -324,6 +362,23 @@ export default defineComponent({
                 this.drivers[next].priority--
                 this.addToChangedDrivers(this.drivers[cur])
                 this.addToChangedDrivers(this.drivers[prev])
+            }
+        },
+        async saveDriver() {
+            await this.saveRequest()
+                .then(() => {
+                    this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
+                    this.getDocumentDrivers()
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+        },
+        saveRequest() {
+            if (!this.selectedDriver.id) {
+                return this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers`, this.selectedDriver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+            } else {
+                return this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers/${this.selectedDriver.id}`, this.selectedDriver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
             }
         },
         deleteDriverConfirm(event) {
