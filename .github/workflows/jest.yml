@@ -15,5 +15,5 @@ jobs:
           node-version: '12'
       - run: npm install
         working-directory: ./knowage-vue
-      - run: npm run test:unit
+      - run: npm run test:ci
         working-directory: ./knowage-vue
