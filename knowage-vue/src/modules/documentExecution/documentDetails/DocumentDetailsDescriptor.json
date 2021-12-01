@@ -109,6 +109,9 @@
             "top": 0,
             "width": "100%"
         },
+        "codemirror": {
+            "height": "99%"
+        },
         "driverDetailsContainer": {
             "display": "flex",
             "flex": 3,

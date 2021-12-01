@@ -247,7 +247,17 @@
                 "visualizationTitle": "Driver Visualization"
             },
             "history": {
-                "title": "History"
+                "title": "History",
+                "listTitle": "Template History",
+                "listHint": "Upload new template here",
+                "template": "Template",
+                "templateHint": "Content of this file type cannot be shown",
+                "activeButton": "Set active Template",
+                "downloadButton": "Download Template",
+                "deleteButton": "Delete Template",
+                "activeOk": "Active template changed",
+                "activeError": "An error occured while setting active template",
+                "uploadError": "An error occured while uploading template"
             },
             "info": {
                 "attribute": "Select Attribute",

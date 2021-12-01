@@ -53,6 +53,7 @@
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.history.title') }}</span>
                     </template>
+                    <HistoryTab v-if="!loading" :selectedDocument="selectedDocument" />
                 </TabPanel>
                 <TabPanel v-if="this.selectedDocument?.id && this.selectedDocument?.typeCode == 'REPORT' && this.selectedDocument?.engine == 'knowagejasperreporte'">
                     <template #header>
@@ -72,6 +73,7 @@ import InformationsTab from './tabs/informations/DocumentDetailsInformations.vue
 import DriversTab from './tabs/drivers/DocumentDetailsDrivers.vue'
 import OutputParamsTab from './tabs/outputParams/DocumentDetailsOutputParameters.vue'
 import DataLineageTab from './tabs/dataLineage/DocumentDetailsDataLineage.vue'
+import HistoryTab from './tabs/history/DocumentDetailsHistory.vue'
 import Dialog from 'primevue/dialog'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
@@ -79,7 +81,7 @@ import { iDocument, iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate,
 
 export default defineComponent({
     name: 'document-details',
-    components: { InformationsTab, DriversTab, OutputParamsTab, DataLineageTab, TabView, TabPanel, Dialog },
+    components: { InformationsTab, DriversTab, OutputParamsTab, DataLineageTab, HistoryTab, TabView, TabPanel, Dialog },
     props: { selectedDocument: { type: Object, required: true }, visible: { type: Boolean, required: false } },
     emits: ['closeDetails'],
     data() {
