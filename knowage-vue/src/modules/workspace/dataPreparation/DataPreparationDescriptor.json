@@ -323,6 +323,8 @@
         "java.lang.String": "string",
         "java.math.BigDecimal": "number",
         "java.sql.Date": "date",
-        "java.util.String": "string"
+        "java.sql.Timestamp": "timestamp",
+        "java.util.String": "string",
+        "oracle.sql.TIMESTAMP": "timestamp"
     }
 }

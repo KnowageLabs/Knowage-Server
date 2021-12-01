@@ -45,12 +45,12 @@
                         "label": "NOT like"
                     },
                     {
-                        "availableForTypes": "string|date",
+                        "availableForTypes": "string|date|timestamp",
                         "code": "isNull",
                         "label": "is null"
                     },
                     {
-                        "availableForTypes": "string|date",
+                        "availableForTypes": "string|date|timestamp",
                         "code": "isNotNull",
                         "label": "is NOT null"
                     },
@@ -95,17 +95,17 @@
                         "label": "NOT IN"
                     },
                     {
-                        "availableForTypes": "date",
+                        "availableForTypes": "date|timestamp",
                         "code": "after",
                         "label": "After"
                     },
                     {
-                        "availableForTypes": "date",
+                        "availableForTypes": "date|timestamp",
                         "code": "before",
                         "label": "Before"
                     },
                     {
-                        "availableForTypes": "date",
+                        "availableForTypes": "date|timestamp",
                         "code": "between",
                         "label": "Between"
                     }

@@ -74,156 +74,156 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent, PropType } from 'vue'
-    import DataPreparationCustomDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationCustomDescriptor.json'
-    import DataPreparationDescriptor from '@/modules/workspace/dataPreparation/DataPreparationDescriptor.json'
-    import Calendar from 'primevue/calendar'
-    import Dropdown from 'primevue/dropdown'
-    import InputSwitch from 'primevue/inputswitch'
-    import MultiSelect from 'primevue/multiselect'
-    import KnTextarea from '@/components/UI/KnTextarea.vue'
-    import Textarea from 'primevue/textarea'
+import { defineComponent, PropType } from 'vue'
+import DataPreparationCustomDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationCustomDescriptor.json'
+import DataPreparationDescriptor from '@/modules/workspace/dataPreparation/DataPreparationDescriptor.json'
+import Calendar from 'primevue/calendar'
+import Dropdown from 'primevue/dropdown'
+import InputSwitch from 'primevue/inputswitch'
+import MultiSelect from 'primevue/multiselect'
+import KnTextarea from '@/components/UI/KnTextarea.vue'
+import Textarea from 'primevue/textarea'
 
-    import { ITransformation } from '@/modules/workspace/dataPreparation/DataPreparation'
-    import { IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
+import { ITransformation } from '@/modules/workspace/dataPreparation/DataPreparation'
+import { IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
 
-    export default defineComponent({
-        name: 'data-preparation-custom',
+export default defineComponent({
+    name: 'data-preparation-custom',
 
-        props: { col: String, columns: { type: Array as PropType<Array<IDataPreparationColumn>> }, transformation: {} as PropType<ITransformation> },
-        components: { Calendar, Dropdown, InputSwitch, MultiSelect, Textarea, KnTextarea },
-        emits: ['update:transformation'],
-        data() {
-            return { descriptor: DataPreparationCustomDescriptor as any, dataPreparationDescriptor: DataPreparationDescriptor as any, localTransformation: {} as ITransformation, currentId: 0 }
+    props: { col: String, columns: { type: Array as PropType<Array<IDataPreparationColumn>> }, transformation: {} as PropType<ITransformation> },
+    components: { Calendar, Dropdown, InputSwitch, MultiSelect, Textarea, KnTextarea },
+    emits: ['update:transformation'],
+    data() {
+        return { descriptor: DataPreparationCustomDescriptor as any, dataPreparationDescriptor: DataPreparationDescriptor as any, localTransformation: {} as ITransformation, currentId: 0 }
+    },
+    mounted() {
+        this.setupLocal()
+    },
+    methods: {
+        addNewRow() {
+            this.descriptor[this.localTransformation.name].parameters.forEach((x) => {
+                let tmp = JSON.parse(JSON.stringify(x))
+
+                this.localTransformation?.parameters.push(tmp)
+            })
         },
-        mounted() {
-            this.setupLocal()
+        deleteRow(index) {
+            if (this.localTransformation) {
+                let parLength = this.descriptor[this.localTransformation.name].parameters.length
+                if (this.localTransformation.parameters.length > 1) this.localTransformation.parameters.splice(index - parLength + 1, parLength)
+            }
         },
-        methods: {
-            addNewRow() {
-                this.descriptor[this.localTransformation.name].parameters.forEach((x) => {
-                    let tmp = JSON.parse(JSON.stringify(x))
 
-                    this.localTransformation?.parameters.push(tmp)
-                })
-            },
-            deleteRow(index) {
-                if (this.localTransformation) {
-                    let parLength = this.descriptor[this.localTransformation.name].parameters.length
-                    if (this.localTransformation.parameters.length > 1) this.localTransformation.parameters.splice(index - parLength + 1, parLength)
-                }
-            },
+        handleRelatedFields(pars, item) {
+            let relatedFieldArray = pars.filter((x) => {
+                return x.dependsFromField === item.name
+            })
 
-            handleRelatedFields(pars, item) {
-                let relatedFieldArray = pars.filter((x) => {
-                    return x.dependsFromField === item.name
-                })
-
-                if (relatedFieldArray && relatedFieldArray.length > 0) {
-                    let relatedField = relatedFieldArray[0]
-                    let itemValue = this.localTransformation.parameters.filter((x) => x.name === item.name)
-                    if (itemValue && itemValue.length > 0) {
-                        let column = this.columns?.filter((x) => x.header === itemValue[0].value)
-                        if (column && column.length > 0) {
-                            let type = this.dataPreparationDescriptor.typeMap[column[0].Type]
-                            this.localTransformation.parameters.filter((x) => x.name === relatedField.name)[0].availableOptions = relatedField.availableOptions.filter((x) => x.availableForTypes.split('|').includes(type))
-                        }
-                    }
-                    this.translate(relatedField)
-                }
-            },
-            handleSelectChange(e: Event): void {
-                if (e) {
-                    this.localTransformation.parameters.forEach((item) => {
-                        this.handleRelatedFields(this.localTransformation.parameters, item)
-                    })
-                }
-            },
-            isFieldVisible(field): boolean {
-                let visible = true
-                if (field.dependsFromField && this.localTransformation) {
-                    let objArr = this.localTransformation.parameters.filter((x) => x.name === field.dependsFromField)
-
-                    if (objArr?.length > 0) {
-                        if (!objArr[0].value) return false
-
-                        if (field.dependsFromOptions) visible = visible && field.dependsFromOptions.split('|').includes(objArr[0].value)
+            if (relatedFieldArray && relatedFieldArray.length > 0) {
+                let relatedField = relatedFieldArray[0]
+                let itemValue = this.localTransformation.parameters.filter((x) => x.name === item.name)
+                if (itemValue && itemValue.length > 0) {
+                    let column = this.columns?.filter((x) => x.header === itemValue[0].value)
+                    if (column && column.length > 0) {
+                        let type = this.dataPreparationDescriptor.typeMap[column[0].Type]
+                        this.localTransformation.parameters.filter((x) => x.name === relatedField.name)[0].availableOptions = relatedField.availableOptions.filter((x) => x.availableForTypes.split('|').includes(type))
                     }
                 }
-                return visible
-            },
+                this.translate(relatedField)
+            }
+        },
+        handleSelectChange(e: Event): void {
+            if (e) {
+                this.localTransformation.parameters.forEach((item) => {
+                    this.handleRelatedFields(this.localTransformation.parameters, item)
+                })
+            }
+        },
+        isFieldVisible(field): boolean {
+            let visible = true
+            if (field.dependsFromField && this.localTransformation) {
+                let objArr = this.localTransformation.parameters.filter((x) => x.name === field.dependsFromField)
 
-            refreshTransfrormation(): void {
-                if (this.localTransformation) {
-                    let pars = this.localTransformation.type === 'custom' ? this.descriptor[this.localTransformation.name].parameters : []
-                    pars.forEach((item) => {
-                        if (item.name == 'columns' && (item.type === 'multiSelect' || item.type === 'dropdown')) {
-                            let localTransformationItemArray = this.localTransformation.parameters.filter((x) => x.name == item.name)
-                            if (localTransformationItemArray?.length > 0) {
-                                let localTransformationItem = localTransformationItemArray[0]
+                if (objArr?.length > 0) {
+                    if (!objArr[0].value) return false
 
-                                if (this.col) {
-                                    let selectedItem: Array<IDataPreparationColumn> | undefined = this.columns?.filter((x) => x.header == this.col)
-                                    if (selectedItem && selectedItem.length > 0) {
-                                        selectedItem[0].disabled = true
-                                        localTransformationItem.value = item.type === 'multiSelect' ? selectedItem : selectedItem[0][item.optionValue]
-                                    }
-                                } else {
-                                    this.columns?.forEach((e) => (e.disabled = false))
+                    if (field.dependsFromOptions) visible = visible && field.dependsFromOptions.split('|').includes(objArr[0].value)
+                }
+            }
+            return visible
+        },
+
+        refreshTransfrormation(): void {
+            if (this.localTransformation) {
+                let pars = this.localTransformation.type === 'custom' ? this.descriptor[this.localTransformation.name].parameters : []
+                pars.forEach((item) => {
+                    if (item.name == 'columns' && (item.type === 'multiSelect' || item.type === 'dropdown')) {
+                        let localTransformationItemArray = this.localTransformation.parameters.filter((x) => x.name == item.name)
+                        if (localTransformationItemArray?.length > 0) {
+                            let localTransformationItem = localTransformationItemArray[0]
+
+                            if (this.col) {
+                                let selectedItem: Array<IDataPreparationColumn> | undefined = this.columns?.filter((x) => x.header == this.col)
+                                if (selectedItem && selectedItem.length > 0) {
+                                    selectedItem[0].disabled = true
+                                    localTransformationItem.value = item.type === 'multiSelect' ? selectedItem : selectedItem[0][item.optionValue]
                                 }
+                            } else {
+                                this.columns?.forEach((e) => (e.disabled = false))
                             }
                         }
-                    })
-                    this.localTransformation.parameters.forEach((item) => {
-                        this.handleRelatedFields(this.localTransformation.parameters, item)
-                    })
-                }
-            },
-            setupLocal(): void {
-                this.localTransformation = this.transformation ? { ...this.transformation } : ({} as ITransformation)
-
-                this.descriptor = { ...DataPreparationCustomDescriptor } as any
-
-                let name = this.transformation && this.transformation.name ? this.transformation.name : ''
-                if (name && this.transformation?.type === 'custom') {
-                    let pars = this.descriptor[name].parameters
-
-                    this.localTransformation.parameters = JSON.parse(JSON.stringify(pars))
-                    this.refreshTransfrormation()
-                }
-            },
-            translate(item): [] {
-                return item.availableOptions?.forEach((element) => {
-                    element.label = this.$t(element.label)
+                    }
+                })
+                this.localTransformation.parameters.forEach((item) => {
+                    this.handleRelatedFields(this.localTransformation.parameters, item)
                 })
             }
         },
+        setupLocal(): void {
+            this.localTransformation = this.transformation ? { ...this.transformation } : ({} as ITransformation)
 
-        watch: {
-            localTransformation: {
-                handler(newValue, oldValue) {
-                    if (oldValue !== newValue) {
-                        this.$emit('update:transformation', newValue)
-                    }
-                },
-                deep: true
+            this.descriptor = { ...DataPreparationCustomDescriptor } as any
+
+            let name = this.transformation && this.transformation.name ? this.transformation.name : ''
+            if (name && this.transformation?.type === 'custom') {
+                let pars = this.descriptor[name].parameters
+
+                this.localTransformation.parameters = JSON.parse(JSON.stringify(pars))
+                this.refreshTransfrormation()
             }
+        },
+        translate(item): [] {
+            return item.availableOptions?.forEach((element) => {
+                element.label = this.$t(element.label)
+            })
         }
-    })
+    },
+
+    watch: {
+        localTransformation: {
+            handler(newValue, oldValue) {
+                if (oldValue !== newValue) {
+                    this.$emit('update:transformation', newValue)
+                }
+            },
+            deep: true
+        }
+    }
+})
 </script>
 
 <style lang="scss">
-    .data-prep-custom-transformation {
-        .p-field {
-            .p-multiselect,
-            .p-inputtext,
-            .p-dropdown {
-                width: 100%;
-            }
+.data-prep-custom-transformation {
+    .p-field {
+        .p-multiselect,
+        .p-inputtext,
+        .p-dropdown {
+            width: 100%;
         }
     }
+}
 
-    .elementClass {
-        flex-direction: column;
-    }
+.elementClass {
+    flex-direction: column;
+}
 </style>
