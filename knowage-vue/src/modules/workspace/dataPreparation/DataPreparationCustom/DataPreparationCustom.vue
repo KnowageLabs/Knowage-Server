@@ -17,7 +17,7 @@
             <Dropdown
                 :id="field.id"
                 v-model="field.value"
-                :options="field.availableOptions ? field.availableOptions : columns"
+                :options="getAvailableOptions(field, columns)"
                 :showClear="!field.validationRules || (field.validationRules && !field.validationRules.includes('required'))"
                 :optionLabel="field.optionLabel ? field.optionLabel : 'label'"
                 :optionValue="field.optionValue ? field.optionValue : 'code'"
@@ -126,7 +126,15 @@ export default defineComponent({
                     let column = this.columns?.filter((x) => x.header === itemValue[0].value)
                     if (column && column.length > 0) {
                         let type = this.dataPreparationDescriptor.typeMap[column[0].Type]
-                        this.localTransformation.parameters.filter((x) => x.name === relatedField.name)[0].availableOptions = relatedField.availableOptions.filter((x) => x.availableForTypes.split('|').includes(type))
+                        let currentAvailableOptions = relatedField.availableOptions.filter((x) => x.availableForTypes.split('|').includes(type))
+                        this.localTransformation.parameters
+                            .filter((x) => x.name === relatedField.name)[0]
+                            .availableOptions.forEach((option) => {
+                                option.visible = false
+                                currentAvailableOptions.forEach((available) => {
+                                    if (available.code === option.code) option.visible = true
+                                })
+                            })
                     }
                 }
                 this.translate(relatedField)
@@ -151,6 +159,11 @@ export default defineComponent({
                 }
             }
             return visible
+        },
+
+        getAvailableOptions(field, columns) {
+            if (!field.availableOptions) return columns
+            else return field.availableOptions.filter((x) => x.visible)
         },
 
         refreshTransfrormation(): void {
