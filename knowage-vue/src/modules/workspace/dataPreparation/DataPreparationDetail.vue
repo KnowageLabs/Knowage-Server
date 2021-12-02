@@ -18,31 +18,36 @@
                     <Divider v-else layout="vertical" />
                 </span>
             </template>
-            <template #right><Button icon="pi pi-arrow-left" :class="descriptor.css.buttonClassHeader" @click="visibleRight = true"/></template>
+            <template #right>
+                <div class="arrow-button-container">
+                    <Button icon="pi pi-arrow-left" :class="descriptor.css.buttonClassHeader" style="overflow: visible" @click="visibleRight = true" />
+                    <Badge class="arrow-badge" v-if="dataset.config && dataset.config.transformations && dataset.config.transformations.length > 0" :value="dataset.config && dataset.config.transformations && dataset.config.transformations.length"></Badge>
+                </div>
+            </template>
         </Toolbar>
         <Divider class="kn-divider" />
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         <div class="kn-page-content p-grid p-m-0 managerDetail">
-            <Sidebar v-model:visible="visibleRight" position="right">
+            <Sidebar v-model:visible="visibleRight" position="right" class="kn-data-preparation-sidenav">
                 <div>{{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}: {{ dataset.label }}</div>
                 <Divider class="p-m-0 p-p-0 dividerCustomConfig" />
                 <div class="kn-truncated">{{ $t('managers.workspaceManagement.dataPreparation.transformations.label') }}</div>
 
                 <div v-if="dataset.config && dataset.config.transformations && dataset.config.transformations.length > 0" class="sidebarClass">
-                    <div v-for="(tr, index) in dataset.config.transformations.reverse()" v-bind:key="index" v-tooltip="getTextForSidebar(tr)" :class="getSidebarElementClass(index)">
-                        <span :class="'p-col-1 ' + descriptorTransformations.filter((x) => x.name === tr.type)[0].icon.class" v-if="descriptorTransformations.filter((x) => x.name === tr.type)[0].icon.class">{{ descriptorTransformations.filter((x) => x.name === tr.type)[0].icon.name }}</span>
-                        <i v-else :class="'p-col-1 ' + descriptorTransformations.filter((x) => x.name === tr.type)[0].icon"></i>
+                    <div v-for="(tr, index) in dataset.config.transformations.reverse()" v-bind:key="index" :class="getSidebarElementClass(index)" class="sidenav-transformation">
+                        <span class="transformation-icon" :class="descriptorTransformations.filter((x) => x.name === tr.type)[0].icon.class" v-if="descriptorTransformations.filter((x) => x.name === tr.type)[0].icon.class">{{
+                            descriptorTransformations.filter((x) => x.name === tr.type)[0].icon.name
+                        }}</span>
+                        <i v-else class="transformation-icon" :class="descriptorTransformations.filter((x) => x.name === tr.type)[0].icon"></i>
 
-                        <span class="p-col-10 typeAndDescription kn-truncated">
-                            <span class="kn-list-item">{{ $t(descriptorTransformations.filter((x) => x.name === tr.type)[0].label) }} </span>
-                            <span class="transformationDescription kn-truncated">
+                        <span class="typeAndDescription kn-truncated kn-flex">
+                            <span class="kn-list-item" :title="$t(descriptorTransformations.filter((x) => x.name === tr.type)[0].label)">{{ $t(descriptorTransformations.filter((x) => x.name === tr.type)[0].label) }} </span>
+                            <span class="transformationDescription kn-truncated" :title="getTextForSidebar(tr)">
                                 {{ getTextForSidebar(tr) }}
-                            </span></span
-                        >
+                            </span>
+                        </span>
 
-                        <div class="p-col-1" v-if="index == 0">
-                            <i class="p-jc-end pi pi-trash" @click="deleteTransformation(index)"></i>
-                        </div>
+                        <Button v-if="index == 0" icon="p-jc-end pi pi-trash" :class="descriptor.css.buttonClassHeader" @click="deleteTransformation(index)" v-tooltip="$t('common.delete')" />
                     </div>
                 </div>
             </Sidebar>
@@ -103,333 +108,354 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
+import { defineComponent } from 'vue'
 
-    import { AxiosResponse } from 'axios'
-    import Column from 'primevue/column'
-    import DataTable from 'primevue/datatable'
-    import DataPreparationDescriptor from './DataPreparationDescriptor.json'
-    import Divider from 'primevue/divider'
-    import Dropdown from 'primevue/dropdown'
-    import Sidebar from 'primevue/sidebar'
-    import OverlayPanel from 'primevue/overlaypanel'
+import { AxiosResponse } from 'axios'
+import Badge from 'primevue/badge'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
+import DataPreparationDescriptor from './DataPreparationDescriptor.json'
+import Divider from 'primevue/divider'
+import Dropdown from 'primevue/dropdown'
+import Sidebar from 'primevue/sidebar'
+import OverlayPanel from 'primevue/overlaypanel'
 
-    import Menu from 'primevue/menu'
+import Menu from 'primevue/menu'
 
-    import DataPreparationDialog from '@/modules/workspace/dataPreparation/DataPreparationDialog.vue'
-    import DataPreparationSaveDialog from '@/modules/workspace/dataPreparation/DataPreparationSaveDialog.vue'
-    import { IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
+import DataPreparationDialog from '@/modules/workspace/dataPreparation/DataPreparationDialog.vue'
+import DataPreparationSaveDialog from '@/modules/workspace/dataPreparation/DataPreparationSaveDialog.vue'
+import { IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
 
-    import DataPreparationSimpleDescriptor from '@/modules/workspace/dataPreparation/DataPreparationSimple/DataPreparationSimpleDescriptor.json'
-    import DataPreparationCustomDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationCustomDescriptor.json'
+import DataPreparationSimpleDescriptor from '@/modules/workspace/dataPreparation/DataPreparationSimple/DataPreparationSimpleDescriptor.json'
+import DataPreparationCustomDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationCustomDescriptor.json'
 
-    export default defineComponent({
-        name: 'data-preparation-detail',
-        props: {
-            id: Object
-        },
-        components: { Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Dropdown, OverlayPanel, Sidebar, Menu },
+export default defineComponent({
+    name: 'data-preparation-detail',
+    props: {
+        id: Object
+    },
+    components: { Badge, Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Dropdown, OverlayPanel, Sidebar, Menu },
 
-        data() {
-            return {
-                descriptor: DataPreparationDescriptor,
-                loading: false as boolean,
-                datasetData: Array<any>(),
-                displayDataPreparationDialog: false as boolean,
-                selectedProduct: null,
-                visibleRight: false as boolean,
-                visibility: false as boolean,
-                selectedTransformation: null,
-                showSaveDialog: false as boolean,
-                columns: [] as IDataPreparationColumn[],
-                col: null,
-                descriptorTransformations: Array<any>(),
-                dataset: {} as any,
-                simpleDescriptor: DataPreparationSimpleDescriptor,
-                customDescriptor: DataPreparationCustomDescriptor
-            }
-        },
+    data() {
+        return {
+            descriptor: DataPreparationDescriptor,
+            loading: false as boolean,
+            datasetData: Array<any>(),
+            displayDataPreparationDialog: false as boolean,
+            selectedProduct: null,
+            visibleRight: false as boolean,
+            visibility: false as boolean,
+            selectedTransformation: null,
+            showSaveDialog: false as boolean,
+            columns: [] as IDataPreparationColumn[],
+            col: null,
+            descriptorTransformations: Array<any>(),
+            dataset: {} as any,
+            simpleDescriptor: DataPreparationSimpleDescriptor,
+            customDescriptor: DataPreparationCustomDescriptor
+        }
+    },
 
-        async created() {
-            this.loading = true
-            this.descriptorTransformations = Object.assign([], this.descriptor.transformations)
+    async created() {
+        this.loading = true
+        this.descriptorTransformations = Object.assign([], this.descriptor.transformations)
 
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/' + this.id).then((response: AxiosResponse<any>) => {
-                this.dataset = response.data[0]
-            })
-            if (this.dataset) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datapreparation/' + this.id + '/datasetinfo').then((response: AxiosResponse<any>) => {
-                    this.columns = []
-                    let obj = {} as IDataPreparationColumn
-                    var i = 0
-                    for (var idx in response.data.meta.columns) {
-                        i++
-                        let column = response.data.meta.columns[idx]
-                        obj.header = column.column
-                        obj.disabled = false as boolean
-                        obj[column.pname] = column.pvalue
+        await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/' + this.id).then((response: AxiosResponse<any>) => {
+            this.dataset = response.data[0]
+        })
+        if (this.dataset) {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datapreparation/' + this.id + '/datasetinfo').then((response: AxiosResponse<any>) => {
+                this.columns = []
+                let obj = {} as IDataPreparationColumn
+                var i = 0
+                for (var idx in response.data.meta.columns) {
+                    i++
+                    let column = response.data.meta.columns[idx]
+                    obj.header = column.column
+                    obj.disabled = false as boolean
+                    obj[column.pname] = column.pvalue
 
-                        if (i % 3 == 0) {
-                            this.columns.push(obj)
-                            obj = {} as IDataPreparationColumn
-                        }
+                    if (i % 3 == 0) {
+                        this.columns.push(obj)
+                        obj = {} as IDataPreparationColumn
                     }
+                }
 
-                    this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datapreparation/' + this.id + '/preview', this.dataset).then((response: AxiosResponse<any>) => {
-                        this.datasetData = []
+                this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datapreparation/' + this.id + '/preview', this.dataset).then((response: AxiosResponse<any>) => {
+                    this.datasetData = []
 
-                        response.data.rows.forEach((element) => {
-                            let obj = {}
-                            const keys = Object.keys(element)
-                            keys.forEach((key) => {
-                                let index = parseInt(key.replace('column_', ''), 10) - 1
-                                if (index >= 0 && index < this.columns.length) {
-                                    let v = this.columns[index] as IDataPreparationColumn
+                    response.data.rows.forEach((element) => {
+                        let obj = {}
+                        const keys = Object.keys(element)
+                        keys.forEach((key) => {
+                            let index = parseInt(key.replace('column_', ''), 10) - 1
+                            if (index >= 0 && index < this.columns.length) {
+                                let v = this.columns[index] as IDataPreparationColumn
 
-                                    if (v) obj[v.header] = element[key]
-                                }
-                            })
-                            this.datasetData.push(obj)
-
-                            this.loading = false
+                                if (v) obj[v.header] = element[key]
+                            }
                         })
+                        this.datasetData.push(obj)
+
+                        this.loading = false
                     })
                 })
+            })
+        }
+    },
+    methods: {
+        calculateDisabledProperty(menu): Boolean {
+            let disabled = false
+            if (menu.type === 'advancedFilter') {
+                if (!this.dataset.config) disabled = true
+                else disabled = this.dataset.config.transformations.filter((x) => x.type === 'filter').length < 2
+            }
+            return disabled
+        },
+        changeAlias(col): void {
+            if (col.editing) delete col.editing
+            else col.editing = true
+        },
+        closeTemplate(): void {
+            this.$router.push({ name: 'data-preparation' })
+        },
+        getSidebarElementClass(index: number): string {
+            let cssClass = 'p-grid p-m-0 p-p-0 p-d-flex kn-flex transformationSidebarElement p-menuitem-link'
+            if (index > 0) cssClass += ' kn-disabled-text'
+
+            return cssClass
+        },
+        getTextForSidebar(tr): string {
+            let text = ''
+
+            tr.parameters.forEach((element) => {
+                if (text !== '') text += '\n'
+                const keys = Object.keys(element)
+                let first = true
+                keys.forEach((key) => {
+                    if (!first) text += '; '
+                    text += key + ':' + element[key]
+                    first = false
+                })
+            })
+
+            return '(' + text + ')'
+        },
+
+        getTransformationsMenu(col: IDataPreparationColumn): Array<any> {
+            return this.descriptorTransformations
+                .filter((x) => x.editColumn)
+                .filter((x) => {
+                    if (x.incompatibleDataTypes) return !x.incompatibleDataTypes?.includes(col.Type)
+                    return true
+                })
+        },
+        callFunction(transformation: any, col): void {
+            if (transformation.name === 'changeType' || transformation.name === 'splitColumn') {
+                let parsArray = transformation.name === 'changeType' ? this.simpleDescriptor[transformation.name].parameters : this.customDescriptor[transformation.name].parameters
+                for (var i = 0; i < parsArray.length; i++) {
+                    let element = parsArray[i]
+                    if (element.name === 'destType' || element.name === 'destType1' || element.name === 'destType2') {
+                        element.availableOptions = col ? this.getCompatibilityType(col) : this.descriptor.compatibilityMap['all'].values
+
+                        element.availableOptions.forEach((element) => {
+                            element.label = this.removePrefixFromType(element.label)
+                        })
+                    }
+                }
+
+                /* this.handleTransformation(transformation) */
+                this.selectedTransformation = transformation
+                if (col) this.col = col.header
+            } else if (transformation.name === 'deleteColumn' && col) {
+                this.$confirm.require({
+                    message: this.$t('common.toast.deleteMessage'),
+                    header: this.$t('common.toast.deleteTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        let par = this.simpleDescriptor[transformation.name].parameters[0]
+                        par.value = col.header
+                        transformation.parameters = []
+                        transformation.parameters.push(par)
+                        let toReturn = { parameters: [] as Array<any>, type: 'deleteColumn' }
+                        let obj = { columns: [] as Array<any> }
+                        obj.columns.push(col.header)
+
+                        toReturn.parameters.push(obj)
+
+                        this.handleTransformation(toReturn)
+                    }
+                })
+            } else {
+                this.selectedTransformation = transformation
+                if (col) this.col = col.header
             }
         },
-        methods: {
-            calculateDisabledProperty(menu): Boolean {
-                let disabled = false
-                if (menu.type === 'advancedFilter') {
-                    if (!this.dataset.config) disabled = true
-                    else disabled = this.dataset.config.transformations.filter((x) => x.type === 'filter').length < 2
-                }
-                return disabled
-            },
-            changeAlias(col): void {
-                if (col.editing) delete col.editing
-                else col.editing = true
-            },
-            closeTemplate(): void {
-                this.$router.push({ name: 'data-preparation' })
-            },
-            getSidebarElementClass(index: number): string {
-                let cssClass = 'p-grid p-m-0 p-p-0 p-d-flex kn-flex transformationSidebarElement p-menuitem-link'
-                if (index > 0) cssClass += ' kn-disabled-text'
+        handleTransformation(t: any): void {
+            if (!this.dataset.config) this.dataset.config = {}
+            if (!this.dataset.config.transformations) this.dataset.config.transformations = []
 
-                return cssClass
-            },
-            getTextForSidebar(tr): string {
-                let text = ''
+            if (t.type === 'addColumn') {
+                t.parameters[0].columns = [t.parameters[0].columns]
+            }
 
-                tr.parameters.forEach((element) => {
-                    if (text !== '') text += '\n'
-                    const keys = Object.keys(element)
-                    let first = true
-                    keys.forEach((key) => {
-                        if (!first) text += '; '
-                        text += key + ':' + element[key]
-                        first = false
-                    })
+            this.dataset.config.transformations.push(t)
+            this.loadPreviewData()
+        },
+        deleteTransformation(index: number): void {
+            this.dataset.config.transformations.splice(index, 1)
+            this.loadPreviewData()
+        },
+        getCompatibilityType(col: IDataPreparationColumn): void {
+            return this.descriptor.compatibilityMap[col.Type].values
+        },
+        addColumn(item): void {
+            console.log(item)
+        },
+        toggle(event: Event, trOp: string): void {
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs[trOp].toggle(event)
+        },
+        getMenuForToolbar(): Array<any> {
+            let tmp = this.descriptorTransformations
+                .filter((x) => x.toolbar)
+                .sort(function(a, b) {
+                    if (a.position > b.position) return 1
+                    if (a.position < b.position) return -1
+                    return 0
                 })
 
-                return '(' + text + ')'
-            },
+            let menu = [] as Array<any>
+            if (tmp.length > 0) {
+                let type = tmp[0].category
+                menu.push(tmp[0])
 
-            getTransformationsMenu(col: IDataPreparationColumn): Array<any> {
-                return this.descriptorTransformations
-                    .filter((x) => x.editColumn)
-                    .filter((x) => {
-                        if (x.incompatibleDataTypes) return !x.incompatibleDataTypes?.includes(col.Type)
-                        return true
-                    })
-            },
-            callFunction(transformation: any, col): void {
-                if (transformation.name === 'changeType' || transformation.name === 'splitColumn') {
-                    let parsArray = transformation.name === 'changeType' ? this.simpleDescriptor[transformation.name].parameters : this.customDescriptor[transformation.name].parameters
-                    for (var i = 0; i < parsArray.length; i++) {
-                        let element = parsArray[i]
-                        if (element.name === 'destType' || element.name === 'destType1' || element.name === 'destType2') {
-                            element.availableOptions = col ? this.getCompatibilityType(col) : this.descriptor.compatibilityMap['all'].values
-
-                            element.availableOptions.forEach((element) => {
-                                element.label = this.removePrefixFromType(element.label)
-                            })
-                        }
+                for (let i = 1; i < tmp.length; i++) {
+                    if (type !== tmp[i].category) {
+                        type = tmp[i].category
+                        menu.push('divider')
                     }
-
-                    /* this.handleTransformation(transformation) */
-                    this.selectedTransformation = transformation
-                    if (col) this.col = col.header
-                } else if (transformation.name === 'deleteColumn' && col) {
-                    this.$confirm.require({
-                        message: this.$t('common.toast.deleteMessage'),
-                        header: this.$t('common.toast.deleteTitle'),
-                        icon: 'pi pi-exclamation-triangle',
-                        accept: () => {
-                            let par = this.simpleDescriptor[transformation.name].parameters[0]
-                            par.value = col.header
-                            transformation.parameters = []
-                            transformation.parameters.push(par)
-                            let toReturn = { parameters: [] as Array<any>, type: 'deleteColumn' }
-                            let obj = { columns: [] as Array<any> }
-                            obj.columns.push(col.header)
-
-                            toReturn.parameters.push(obj)
-
-                            this.handleTransformation(toReturn)
-                        }
-                    })
-                } else {
-                    this.selectedTransformation = transformation
-                    if (col) this.col = col.header
+                    menu.push(tmp[i])
                 }
-            },
-            handleTransformation(t: any): void {
-                if (!this.dataset.config) this.dataset.config = {}
-                if (!this.dataset.config.transformations) this.dataset.config.transformations = []
+            }
+            return menu
+        },
+        removePrefixFromType(type: String): String {
+            let splitted = type.split('.', -1)
 
-                if (t.type === 'addColumn') {
-                    t.parameters[0].columns = [t.parameters[0].columns]
-                }
-
-                this.dataset.config.transformations.push(t)
-                this.loadPreviewData()
-            },
-            deleteTransformation(index: number): void {
-                this.dataset.config.transformations.splice(index, 1)
-                this.loadPreviewData()
-            },
-            getCompatibilityType(col: IDataPreparationColumn): void {
-                return this.descriptor.compatibilityMap[col.Type].values
-            },
-            addColumn(item): void {
-                console.log(item)
-            },
-            toggle(event: Event, trOp: string): void {
-                // eslint-disable-next-line
-                // @ts-ignore
-                this.$refs[trOp].toggle(event)
-            },
-            getMenuForToolbar(): Array<any> {
-                let tmp = this.descriptorTransformations
-                    .filter((x) => x.toolbar)
-                    .sort(function(a, b) {
-                        if (a.position > b.position) return 1
-                        if (a.position < b.position) return -1
-                        return 0
-                    })
-
-                let menu = [] as Array<any>
-                if (tmp.length > 0) {
-                    let type = tmp[0].category
-                    menu.push(tmp[0])
-
-                    for (let i = 1; i < tmp.length; i++) {
-                        if (type !== tmp[i].category) {
-                            type = tmp[i].category
-                            menu.push('divider')
-                        }
-                        menu.push(tmp[i])
-                    }
-                }
-                return menu
-            },
-            removePrefixFromType(type: String): String {
-                let splitted = type.split('.', -1)
-
-                return splitted.length > 0 ? splitted[splitted.length - 1] : splitted[0]
-            },
-            saveDataset(): void {
-                this.showSaveDialog = true
-            },
-            async loadPreviewData() {
-                /* 				await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/dataset/preview', this.selectedTransformation).then((response: AxiosResponse<any>) => {
+            return splitted.length > 0 ? splitted[splitted.length - 1] : splitted[0]
+        },
+        saveDataset(): void {
+            this.showSaveDialog = true
+        },
+        async loadPreviewData() {
+            /* 				await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/dataset/preview', this.selectedTransformation).then((response: AxiosResponse<any>) => {
             	console.log(response)
             	this.selectedTransformation = null
             }) */
 
-                console.log(this.dataset.config.transformations)
+            console.log(this.dataset.config.transformations)
 
-                this.selectedTransformation = null
-            },
-            translateRoles() {
-                let translatedRoles = this.descriptor.roles
-                translatedRoles.forEach((x) => (x.label = this.$t(x.label)))
-                return translatedRoles
-            },
-            switchEditMode(col) {
-                col.edit = !col.edit
-            }
+            this.selectedTransformation = null
+        },
+        translateRoles() {
+            let translatedRoles = this.descriptor.roles
+            translatedRoles.forEach((x) => (x.label = this.$t(x.label)))
+            return translatedRoles
+        },
+        switchEditMode(col) {
+            col.edit = !col.edit
         }
-    })
+    }
+})
 </script>
 
 <style lang="scss">
-    .kn-data-preparation {
-        .managerDetail {
-            width: calc(100vw - $mainmenu-width);
+.kn-data-preparation {
+    .arrow-button-container {
+        position: relative;
+        left: -10px;
+        .arrow-badge {
+            position: absolute;
+            top: 0;
+            left: 25px;
         }
-        .p-datatable.p-datatable-sm.data-prep-table {
-            width: 100%;
-            .p-datatable-thead {
-                tr {
-                    th {
-                        background-color: $table-header-background-color;
-                    }
-                }
-            }
-            .p-column-header-content {
-                flex: 1;
-                .p-button.p-button-icon-only.p-button-rounded {
-                    min-width: 2.25rem;
-                }
-            }
-            .p-datatable-tbody > tr > td {
-                padding: 0.1rem;
-                font-size: 0.9rem;
-            }
-        }
-    }
-    .toolbarCustomConfig {
-        background-color: white !important;
-    }
-    .dividerCustomConfig {
-        border: 1px solid;
-        border-color: $color-borders;
-    }
-    .p-overlaypanel-content {
-        padding: 0px !important;
-    }
-    .transformationDescription {
-        color: $list-item-text-secondary-color;
-        font-size: $list-item-text-secondary-font-size;
     }
 
-    .typeAndDescription {
-        flex-direction: column;
+    .managerDetail {
+        width: calc(100vw - $mainmenu-width);
+    }
+    .p-datatable.p-datatable-sm.data-prep-table {
+        width: 100%;
+        .p-datatable-thead {
+            tr {
+                th {
+                    background-color: $table-header-background-color;
+                }
+            }
+        }
+        .p-column-header-content {
+            flex: 1;
+            .p-button.p-button-icon-only.p-button-rounded {
+                min-width: 2.25rem;
+            }
+        }
+        .p-datatable-tbody > tr > td {
+            padding: 0.1rem;
+            font-size: 0.9rem;
+        }
+    }
+}
+.kn-data-preparation-sidenav {
+    .sidenav-transformation {
         display: flex;
-        align-items: flex-start;
-    }
-
-    .p-sidebar-content {
-        height: 100vw;
-    }
-
-    .transformationSidebarElement {
+        width: 100%;
         align-items: center;
+        .transformation-icon {
+            min-width: 24px;
+        }
     }
+}
+.toolbarCustomConfig {
+    background-color: white !important;
+}
+.dividerCustomConfig {
+    border: 1px solid;
+    border-color: $color-borders;
+}
+.p-overlaypanel-content {
+    padding: 0px !important;
+}
+.transformationDescription {
+    color: $list-item-text-secondary-color;
+    font-size: $list-item-text-secondary-font-size;
+}
 
-    .customSidebarMenu {
-        width: 100% !important;
-        border: none !important;
-        padding: 0px !important;
-    }
+.typeAndDescription {
+    flex-direction: column;
+    display: flex;
+    align-items: flex-start;
+}
 
-    .roleType {
-        font-size: 0.67em;
-    }
-    .sidebarClass {
-        flex-direction: column-reverse;
-    }
+.p-sidebar-content {
+    height: 100vw;
+}
+
+.transformationSidebarElement {
+    align-items: center;
+}
+
+.customSidebarMenu {
+    width: 100% !important;
+    border: none !important;
+    padding: 0px !important;
+}
+
+.roleType {
+    font-size: 0.67em;
+}
+.sidebarClass {
+    flex-direction: column-reverse;
+}
 </style>

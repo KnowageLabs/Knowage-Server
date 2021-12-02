@@ -1,5 +1,5 @@
 <template>
-    <div v-for="(field, index) in localTransformation.parameters" v-bind:key="index" class="data-prep-custom-transformation">
+    <div v-for="(field, index) in localTransformation.parameters" v-bind:key="index" class="p-field data-prep-custom-transformation">
         <span v-if="field.type == 'string' && (!field.dependsFromField || (field.dependsFromField && isFieldVisible(field)))" class="p-float-label">
             <InputText :id="field.id" type="text" v-model="field.value" :class="['kn-material-input', field.validationRules && field.validationRules.includes('required') && !field.value ? 'p-invalid' : '']" />
             <label :for="'input' + '_index_' + index" class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.' + field.name) }}</label>

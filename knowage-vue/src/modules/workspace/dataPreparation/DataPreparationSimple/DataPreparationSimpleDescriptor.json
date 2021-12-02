@@ -76,6 +76,26 @@
             }
         ]
     },
+    "mergeColumns": {
+        "parameters": [
+            {
+                "name": "columns",
+                "optionLabel": "header",
+                "type": "multiSelect",
+                "validationRules": "required"
+            },
+            {
+                "name": "separator",
+                "type": "string",
+                "validationRules": "alpha"
+            },
+            {
+                "name": "columnName",
+                "type": "string",
+                "validationRules": "required|alpha"
+            }
+        ]
+    },
     "padding": {
         "parameters": [
             {

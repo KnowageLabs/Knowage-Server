@@ -200,7 +200,7 @@
             "name": "mergeColumns",
             "position": 2,
             "toolbar": true,
-            "type": "custom"
+            "type": "simple"
         },
         {
             "category": "tableStructure",
