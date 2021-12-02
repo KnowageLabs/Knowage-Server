@@ -38,7 +38,10 @@
                 "fieldName": "label",
                 "validators": [
                     {
-                        "key": "required"
+                        "key": "required",
+                        "validator": {
+                            "type": "drivers-validator"
+                        }
                     },
                     {
                         "key": "regex",
@@ -52,7 +55,10 @@
                 "fieldName": "parameterUrlName",
                 "validators": [
                     {
-                        "key": "required"
+                        "key": "required",
+                        "validator": {
+                            "type": "drivers-validator"
+                        }
                     },
                     {
                         "key": "regex",
@@ -66,7 +72,10 @@
                 "fieldName": "parameter",
                 "validators": [
                     {
-                        "key": "required"
+                        "key": "required",
+                        "validator": {
+                            "type": "drivers-validator"
+                        }
                     }
                 ]
             }

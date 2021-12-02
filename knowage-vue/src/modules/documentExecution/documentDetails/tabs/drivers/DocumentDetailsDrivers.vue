@@ -35,106 +35,109 @@
                     <Button :label="$t('common.save')" class="p-button-text p-button-rounded p-button-plain" :style="mainDescriptor.style.white" @click="saveDriver" />
                 </template>
             </Toolbar>
-            <div id="driver-details-container" class="p-m-2" :style="mainDescriptor.style.flexOneRelative">
-                <div class="kn-details-info-div" v-if="Object.keys(selectedDriver).length === 0">
-                    {{ $t('documentExecution.documentDetails.drivers.noDriverSelected') }}
-                </div>
-                <Card v-else>
-                    <template #content>
-                        {{ selectedDriver }}
-                        <form class="p-fluid p-formgrid p-grid p-m-1">
-                            <div class="p-field p-col-12">
-                                <span class="p-float-label">
-                                    <InputText
-                                        id="label"
-                                        class="kn-material-input"
-                                        type="text"
-                                        maxLength="40"
-                                        v-model="v$.selectedDriver.label.$model"
-                                        :class="{
-                                            'p-invalid': v$.selectedDriver.label.$invalid && v$.selectedDriver.label.$dirty
-                                        }"
-                                        @blur="v$.selectedDriver.label.$touch()"
-                                        @change="addToChangedDrivers(selectedDriver)"
-                                    />
-                                    <label for="label" class="kn-material-input-label"> {{ $t('common.title') }} * </label>
-                                </span>
-                                <KnValidationMessages class="p-mt-1" :vComp="v$.selectedDriver.label" :additionalTranslateParams="{ fieldName: $t('common.title') }" />
-                            </div>
-                            <div class="p-field p-col-12">
-                                <span class="p-float-label">
-                                    <Dropdown
-                                        id="analytical"
-                                        class="kn-material-input"
-                                        v-model="v$.selectedDriver.parameter.$model"
-                                        :options="availableAnalyticalDrivers"
-                                        :class="{
-                                            'p-invalid': v$.selectedDriver.parameter.$invalid && v$.selectedDriver.parameter.$dirty
-                                        }"
-                                        optionLabel="label"
-                                        :filter="true"
-                                        :filterPlaceholder="$t('documentExecution.documentDetails.drivers.dropdownSearchHint')"
-                                        @blur="v$.selectedDriver.parameter.$touch()"
-                                        @change="addToChangedDrivers(selectedDriver)"
-                                    >
-                                        <template #value="slotProps">
-                                            <div class="p-dropdown-driver-value" v-if="slotProps.value">
-                                                <span>{{ slotProps.value.label }}</span>
-                                            </div>
-                                            <span v-else>
-                                                {{ $t('common.info.noDataFound') }}
-                                            </span>
-                                        </template>
-                                        <template #option="slotProps">
-                                            <div class="p-dropdown-driver-option">
-                                                <span>{{ slotProps.option.label }}</span>
-                                            </div>
-                                        </template>
-                                    </Dropdown>
-                                    <label for="analytical" class="kn-material-input-label"> {{ $t('managers.businessModelManager.analyticalDriver') }} </label>
-                                </span>
-                                <KnValidationMessages class="p-mt-1" :vComp="v$.selectedDriver.parameter" :additionalTranslateParams="{ fieldName: $t('managers.businessModelManager.analyticalDriver') }" />
-                            </div>
-                            <div class="p-field p-col-12">
-                                <span class="p-float-label">
-                                    <InputText
-                                        id="parameterUrlName"
-                                        class="kn-material-input"
-                                        type="text"
-                                        maxLength="20"
-                                        v-model="v$.selectedDriver.parameterUrlName.$model"
-                                        :class="{
-                                            'p-invalid': v$.selectedDriver.parameterUrlName.$invalid && v$.selectedDriver.parameterUrlName.$dirty
-                                        }"
-                                        @blur="v$.selectedDriver.parameterUrlName.$touch()"
-                                        @change="addToChangedDrivers(selectedDriver)"
-                                    />
-                                    <label for="parameterUrlName" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.drivers.parameterUrlName') }} * </label>
-                                </span>
-                                <KnValidationMessages class="p-mt-1" :vComp="v$.selectedDriver.label" :additionalTranslateParams="{ fieldName: $t('documentExecution.documentDetails.drivers.parameterUrlName') }" />
-                            </div>
-                            <span class="p-field p-col-12 p-md-4 p-jc-center p-mt-3">
-                                <InputSwitch id="visible" v-model="selectedDriver.visible" @change="addToChangedDrivers(selectedDriver)" />
-                                <i class="far fa-eye p-ml-2" />
-                                <label for="visible" class="kn-material-input-label p-ml-2"> {{ $t('common.visible') }} </label>
-                            </span>
-                            <span class="p-field p-col-12 p-md-4 p-jc-center p-mt-3">
-                                <InputSwitch id="required" v-model="selectedDriver.required" @change="addToChangedDrivers(selectedDriver)" />
-                                <i class="fas fa-asterisk p-ml-2" />
-                                <label for="required" class="kn-material-input-label p-ml-2"> {{ $t('common.required') }} </label>
-                            </span>
-                            <span class="p-field p-col-12 p-md-4 p-jc-center p-mt-3">
-                                <InputSwitch id="multivalue" v-model="selectedDriver.multivalue" @change="addToChangedDrivers(selectedDriver)" />
-                                <i class="fas fa-list p-ml-2" />
-                                <label for="multivalue" class="kn-material-input-label p-ml-2"> {{ $t('managers.businessModelManager.multivalue') }} </label>
-                            </span>
-                        </form>
-                    </template>
-                </Card>
-                {{ lovIdAndColumns }}
-                <div v-if="drivers.length > 1 && selectedDriver.id" class="p-grid p-mt-1">
-                    <DataConditions :availableDrivers="drivers" :selectedDocument="selectedDocument" :selectedDriver="selectedDriver" />
-                    <VisibilityConditions v-if="selectedDocument.engine" :availableDrivers="drivers" :selectedDocument="selectedDocument" :selectedDriver="selectedDriver" />
+            <div id="driver-details-container" :style="mainDescriptor.style.flexOneRelative">
+                <div :style="mainDescriptor.style.absoluteScroll">
+                    <div class="p-m-2">
+                        <div class="kn-details-info-div" v-if="Object.keys(selectedDriver).length === 0">
+                            {{ $t('documentExecution.documentDetails.drivers.noDriverSelected') }}
+                        </div>
+                        <Card v-else>
+                            <template #content>
+                                {{ selectedDriver }}
+                                <form class="p-fluid p-formgrid p-grid p-m-1">
+                                    <div class="p-field p-col-12">
+                                        <span class="p-float-label">
+                                            <InputText
+                                                id="label"
+                                                class="kn-material-input"
+                                                type="text"
+                                                maxLength="40"
+                                                v-model="v$.selectedDriver.label.$model"
+                                                :class="{
+                                                    'p-invalid': v$.selectedDriver.label.$invalid && v$.selectedDriver.label.$dirty
+                                                }"
+                                                @blur="v$.selectedDriver.label.$touch()"
+                                                @change="addToChangedDrivers(selectedDriver)"
+                                            />
+                                            <label for="label" class="kn-material-input-label"> {{ $t('common.title') }} * </label>
+                                        </span>
+                                        <KnValidationMessages class="p-mt-1" :vComp="v$.selectedDriver.label" :additionalTranslateParams="{ fieldName: $t('common.title') }" />
+                                    </div>
+                                    <div class="p-field p-col-12">
+                                        <span class="p-float-label">
+                                            <Dropdown
+                                                id="analytical"
+                                                class="kn-material-input"
+                                                v-model="v$.selectedDriver.parameter.$model"
+                                                :options="availableAnalyticalDrivers"
+                                                :class="{
+                                                    'p-invalid': v$.selectedDriver.parameter.$invalid && v$.selectedDriver.parameter.$dirty
+                                                }"
+                                                optionLabel="label"
+                                                :filter="true"
+                                                :filterPlaceholder="$t('documentExecution.documentDetails.drivers.dropdownSearchHint')"
+                                                @blur="v$.selectedDriver.parameter.$touch()"
+                                                @change="addToChangedDrivers(selectedDriver)"
+                                            >
+                                                <template #value="slotProps">
+                                                    <div class="p-dropdown-driver-value" v-if="slotProps.value">
+                                                        <span>{{ slotProps.value.label }}</span>
+                                                    </div>
+                                                    <span v-else>
+                                                        {{ $t('common.info.noDataFound') }}
+                                                    </span>
+                                                </template>
+                                                <template #option="slotProps">
+                                                    <div class="p-dropdown-driver-option">
+                                                        <span>{{ slotProps.option.label }}</span>
+                                                    </div>
+                                                </template>
+                                            </Dropdown>
+                                            <label for="analytical" class="kn-material-input-label"> {{ $t('managers.businessModelManager.analyticalDriver') }} </label>
+                                        </span>
+                                        <KnValidationMessages class="p-mt-1" :vComp="v$.selectedDriver.parameter" :additionalTranslateParams="{ fieldName: $t('managers.businessModelManager.analyticalDriver') }" />
+                                    </div>
+                                    <div class="p-field p-col-12">
+                                        <span class="p-float-label">
+                                            <InputText
+                                                id="parameterUrlName"
+                                                class="kn-material-input"
+                                                type="text"
+                                                maxLength="20"
+                                                v-model="v$.selectedDriver.parameterUrlName.$model"
+                                                :class="{
+                                                    'p-invalid': v$.selectedDriver.parameterUrlName.$invalid && v$.selectedDriver.parameterUrlName.$dirty
+                                                }"
+                                                @blur="v$.selectedDriver.parameterUrlName.$touch()"
+                                                @change="addToChangedDrivers(selectedDriver)"
+                                            />
+                                            <label for="parameterUrlName" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.drivers.parameterUrlName') }} * </label>
+                                        </span>
+                                        <KnValidationMessages class="p-mt-1" :vComp="v$.selectedDriver.label" :additionalTranslateParams="{ fieldName: $t('documentExecution.documentDetails.drivers.parameterUrlName') }" />
+                                    </div>
+                                    <span class="p-field p-col-12 p-md-4 p-jc-center p-mt-3">
+                                        <InputSwitch id="visible" v-model="selectedDriver.visible" @change="addToChangedDrivers(selectedDriver)" />
+                                        <i class="far fa-eye p-ml-2" />
+                                        <label for="visible" class="kn-material-input-label p-ml-2"> {{ $t('common.visible') }} </label>
+                                    </span>
+                                    <span class="p-field p-col-12 p-md-4 p-jc-center p-mt-3">
+                                        <InputSwitch id="required" v-model="selectedDriver.required" @change="addToChangedDrivers(selectedDriver)" />
+                                        <i class="fas fa-asterisk p-ml-2" />
+                                        <label for="required" class="kn-material-input-label p-ml-2"> {{ $t('common.required') }} </label>
+                                    </span>
+                                    <span class="p-field p-col-12 p-md-4 p-jc-center p-mt-3">
+                                        <InputSwitch id="multivalue" v-model="selectedDriver.multivalue" @change="addToChangedDrivers(selectedDriver)" />
+                                        <i class="fas fa-list p-ml-2" />
+                                        <label for="multivalue" class="kn-material-input-label p-ml-2"> {{ $t('managers.businessModelManager.multivalue') }} </label>
+                                    </span>
+                                </form>
+                            </template>
+                        </Card>
+                        <div v-if="drivers.length > 1 && selectedDriver.id" class="p-grid p-mt-1">
+                            <DataConditions :availableDrivers="drivers" :selectedDocument="selectedDocument" :selectedDriver="selectedDriver" />
+                            <VisibilityConditions v-if="selectedDocument.engine" :availableDrivers="drivers" :selectedDocument="selectedDocument" :selectedDriver="selectedDriver" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -143,7 +146,7 @@
 
 <script lang="ts">
 import { iDriver, iAnalyticalDriver, iDocument } from '@/modules/documentExecution/documentDetails/DocumentDetails'
-import { createValidations } from '@/helpers/commons/validationHelper'
+import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import mainDescriptor from '@/modules/documentExecution/documentDetails/DocumentDetailsDescriptor.json'
@@ -179,52 +182,17 @@ export default defineComponent({
         }
     },
     created() {
-        // this.drivers = this.availableDrivers
         this.getDocumentDrivers()
     },
     validations() {
-        const validationObject = { selectedDriver: createValidations('driver', driversDescriptor.validations.driver) }
+        const outputParamsValidator = (value) => {
+            return Object.keys(this.selectedDriver).length === 0 || value
+        }
+        const customValidators: ICustomValidatorMap = { 'drivers-validator': outputParamsValidator }
+        const validationObject = { selectedDriver: createValidations('driver', driversDescriptor.validations.driver, customValidators) }
         return validationObject
     },
     methods: {
-        async getDataDependenciesByDriverId() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/datadependencies?driverId=${this.selectedDriver.id}`).then((response: AxiosResponse<any>) => {
-                this.dataDependencyObjects = response.data
-                this.transformedObj = {}
-                console.log('getDataDependenciesByDriverId', this.dataDependencyObjects)
-                // this.transformingCorrelations(response.data)
-            })
-        },
-        // transformingCorrelations(correlations, transformKey?, fromPost?) {
-        //     // eslint-disable-next-line no-prototype-builtins
-        //     if (this.transformedObj[transformKey] && !fromPost) {
-        //         delete this.transformedObj[transformKey]
-        //     }
-        //     for (var i = 0; i < correlations.length; i++) {
-        //         var fatherIdfilterOperation = correlations[i].parFatherId + correlations[i].filterOperation
-
-        //         if (this.transformedObj[fatherIdfilterOperation] == undefined) {
-        //             this.transformedObj[fatherIdfilterOperation] = []
-        //         }
-        //         if (correlations[i].id && correlations[i].deleteItem == undefined) {
-        //             this.transformedObj[fatherIdfilterOperation].push(correlations[i])
-        //         }
-        //     }
-        //     if (this.transformedObj[fatherIdfilterOperation] != undefined && this.transformedObj[fatherIdfilterOperation].length == 0) delete this.transformedObj[fatherIdfilterOperation]
-
-        //     console.log('transformingCorrelations', this.transformedObj)
-        //     return this.transformedObj
-        // },
-        async getParusesByAnalyticalDriverId() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.selectedDriver.parID}/modes`).then((response: AxiosResponse<any>) => (this.driverParuses = response.data))
-        },
-        async getLovsByAnalyticalDriverId() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.selectedDriver.parID}/lovs`).then((response: AxiosResponse<any>) => {
-                for (var i = 0; i < response.data.length; i++) {
-                    this.lovIdAndColumns.push(this.setLovColumns(response.data[i]))
-                }
-            })
-        },
         async getDocumentDrivers() {
             this.loading = true
             if (this.selectedDocument?.id) {
@@ -234,43 +202,9 @@ export default defineComponent({
                     .finally(() => (this.loading = false))
             }
         },
-        setLovColumns(lov) {
-            var lovIdAndColumns = {} as any
-            var lovColumns = [] as any
-            var lovObject = JSON.parse(lov.lovProviderJSON)
-            if (lovObject != [] && lovObject.QUERY) {
-                var visibleColumns = lovObject.QUERY['VISIBLE-COLUMNS']
-                var invisibleColumns = lovObject.QUERY['INVISIBLE-COLUMNS']
-
-                var visibleColumnsArr = visibleColumns ? visibleColumns.split(',') : []
-                var invisibleColumnsArr = invisibleColumns ? invisibleColumns.split(',') : []
-                for (var i of visibleColumnsArr) {
-                    lovColumns.push(i)
-                }
-                for (var j of invisibleColumnsArr) {
-                    lovColumns.push(j)
-                }
-
-                lovIdAndColumns.id = lov.id
-                lovIdAndColumns.columns = lovColumns
-                    .filter(function(el) {
-                        return '' !== el
-                    })
-                    .sort()
-            }
-            console.log(lovIdAndColumns)
-            return lovIdAndColumns
-        },
         selectDriver(driver) {
             this.selectedDriver = driver
             this.setParameterInfo(this.selectedDriver)
-            if (this.selectedDriver.parID) {
-                // this.getParusesByAnalyticalDriverId()
-                // this.getLovsByAnalyticalDriverId()
-            }
-            if (this.selectedDriver.id) {
-                // this.getDataDependenciesByDriverId()
-            }
         },
         setQuerryParameters(driverID) {
             return '?driverId=' + driverID

@@ -14,17 +14,17 @@
             <template #option="slotProps">
                 <div class="kn-list-item">
                     <div class="kn-list-item-text">
-                        {{ slotProps.option }}
-                        <!-- <span class="kn-truncated" v-tooltip.top="slotProps.option[0].filterOperation + $t('documentExecution.documentDetails.drivers.dataConditionsValue') + slotProps.option[0].parFatherUrlName">
+                        <!-- {{ slotProps }} -->
+                        <span class="kn-truncated" v-tooltip.top="slotProps.option[0].filterOperation + $t('documentExecution.documentDetails.drivers.dataConditionsValue') + slotProps.option[0].parFatherUrlName">
                             <b>{{ slotProps.option[0].filterOperation }} {{ $t('documentExecution.documentDetails.drivers.dataConditionsValue') }}</b> {{ slotProps.option[0].parFatherUrlName }}
-                        </span> -->
+                        </span>
                     </div>
                     <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteDataCondition(slotProps.index)" />
                 </div>
             </template>
         </Listbox>
 
-        <!-- <Dialog class="remove-padding" :style="driversDescriptor.style.conditionDialog" :visible="showDataConditionDialog" :modal="true" :closable="false">
+        <Dialog class="remove-padding" :style="driversDescriptor.style.conditionDialog" :visible="showDataConditionDialog" :modal="true" :closable="false">
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--primary" :style="mainDescriptor.style.width100">
                     <template #left>
@@ -34,25 +34,26 @@
             </template>
 
             <div class="kn-details-info-div">
-                {{ $t('documentExecution.documentDetails.drivers.dataHint') }}
+                <!-- {{ $t('documentExecution.documentDetails.drivers.dataHint') }} -->
+                {{ selectedCondition }}
             </div>
 
             <form class="p-fluid p-formgrid p-grid p-m-2">
                 <div class="p-field p-col-12 p-md-4">
                     <span class="p-float-label ">
-                        <Dropdown id="driver" class="kn-material-input" v-model="selectedCondition.parFatherId" :options="filteredDrivers" optionLabel="label" optionValue="id" @change="setParFatherUrlName" />
+                        <Dropdown id="driver" class="kn-material-input" v-model="selectedCondition[0].parFatherId" :options="filteredDrivers" optionLabel="label" optionValue="id" @change="setParFatherUrlName" />
                         <label for="driver" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.drivers.ad') }} {{ $t('documentExecution.documentDetails.drivers.adDepends') }} </label>
                     </span>
                 </div>
                 <div class="p-field p-col-12 p-md-4">
                     <span class="p-float-label ">
-                        <Dropdown id="filterOp" class="kn-material-input" v-model="selectedCondition.filterOperation" :options="availableOperators" />
+                        <Dropdown id="filterOp" class="kn-material-input" v-model="selectedCondition[0].filterOperation" :options="availableOperators" />
                         <label for="filterOp" class="kn-material-input-label"> {{ $t('managers.businessModelManager.filterOperator') }} </label>
                     </span>
                 </div>
                 <div class="p-field p-col-12 p-md-4">
                     <span class="p-float-label ">
-                        <Dropdown id="logicalOp" class="kn-material-input" v-model="selectedCondition.logicOperator" :options="connectingOperators" />
+                        <Dropdown id="logicalOp" class="kn-material-input" v-model="selectedCondition[0].logicOperator" :options="connectingOperators" />
                         <label for="logicalOp" class="kn-material-input-label"> {{ $t('managers.businessModelManager.logicOperator') }} </label>
                     </span>
                 </div>
@@ -67,7 +68,7 @@
                 <Button class="p-button-text kn-button" :label="$t('common.cancel')" @click="showDataConditionDialog = false" />
                 <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="saveCondition" />
             </template>
-        </Dialog> -->
+        </Dialog>
     </div>
 </template>
 
@@ -78,15 +79,15 @@ import { AxiosResponse } from 'axios'
 import mainDescriptor from '@/modules/documentExecution/documentDetails/DocumentDetailsDescriptor.json'
 import driversDescriptor from './DocumentDetailsDriversDescriptor.json'
 import Listbox from 'primevue/listbox'
-// import Dialog from 'primevue/dialog'
-// import Dropdown from 'primevue/dropdown'
+import Dialog from 'primevue/dialog'
+import Dropdown from 'primevue/dropdown'
 
 export default defineComponent({
     name: 'document-drivers',
     components: {
-        Listbox
-        // Dialog,
-        // Dropdown
+        Listbox,
+        Dialog,
+        Dropdown
     },
     props: { availableDrivers: { type: Array as PropType<iDriver[]>, required: true }, selectedDocument: { type: Object as PropType<iDocument>, required: true }, selectedDriver: { type: Object as PropType<iDriver>, required: true } },
     emits: ['driversChanged'],
@@ -111,6 +112,7 @@ export default defineComponent({
         selectedDriver() {
             this.excludeCurrentDriverFromList()
             this.getParusesByAnalyticalDriverId()
+            this.getLovsByAnalyticalDriverId()
             this.selectedDriver.id ? this.getDataDependenciesByDriverId() : ''
         }
     },
@@ -121,6 +123,7 @@ export default defineComponent({
         this.selectedDriver.id ? this.getDataDependenciesByDriverId() : ''
     },
     methods: {
+        //#region ===================== Get Dependencies and Transform them  ====================================================
         async getDataDependenciesByDriverId() {
             this.loading = true
             this.$http
@@ -154,9 +157,12 @@ export default defineComponent({
             console.log('transformingCorrelations', this.transformedObj)
             return this.transformedObj
         },
+        //#endregion ===============================================================================================
         async getParusesByAnalyticalDriverId() {
             this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.selectedDriver.parID}/modes`).then((response: AxiosResponse<any>) => (this.driverParuses = response.data))
         },
+
+        //#region ===================== Get Lovs for Dropdown and set the values  ====================================================
         async getLovsByAnalyticalDriverId() {
             this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.selectedDriver.parID}/lovs`).then((response: AxiosResponse<any>) => {
                 for (var i = 0; i < response.data.length; i++) {
@@ -191,6 +197,8 @@ export default defineComponent({
             console.log(lovIdAndColumns)
             return lovIdAndColumns
         },
+        //#endregion ===============================================================================================
+
         getLovColumnsForParuse(paruse) {
             for (var i = 0; i < this.lovIdAndColumns.length; i++) {
                 if (paruse.idLov == this.lovIdAndColumns[i].id) {
@@ -209,15 +217,17 @@ export default defineComponent({
             })
         },
         openDataConditionDialog(condition?) {
-            condition != 'newCondition' ? (this.selectedCondition = { ...condition }) : (this.selectedCondition = { parId: this.selectedDriver.id } as any)
+            console.log(condition)
+            condition != 'newCondition' ? (this.selectedCondition = { ...condition }) : (this.selectedCondition = [{ parId: this.selectedDriver.id, filterOperation: this.availableOperators[0], logicOperator: this.connectingOperators[0] }])
             this.getLovColumnsForParuse(this.selectedCondition)
             this.showDataConditionDialog = true
         },
+
+        //#region ===================== Delete Functionality  ====================================================
         deleteDataCondition(transformKey) {
             console.log(this.transformedObj[transformKey])
             this.dataDependenciesForDeleting = [...this.transformedObj[transformKey]]
             this.deleteDataDependencies(this.selectedDocument.id)
-            // this.removeFromTransformedObj(transformKey)
         },
         async deleteDataDependencies(driverableObjectId) {
             for (var i = 0; i < this.dataDependenciesForDeleting.length; i++) {
@@ -237,6 +247,7 @@ export default defineComponent({
                     this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error })
                 })
         }
+        //#endregion ===============================================================================================
     }
 })
 </script>

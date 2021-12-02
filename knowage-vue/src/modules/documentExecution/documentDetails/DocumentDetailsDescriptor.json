@@ -104,13 +104,11 @@
         "absoluteScroll": {
             "height": "100%",
             "left": 0,
-            "overflow": "auto",
+            "overflow-x": "hidden",
+            "overflow-y": "auto",
             "position": "absolute",
             "top": 0,
             "width": "100%"
-        },
-        "codemirror": {
-            "height": "99%"
         },
         "driverDetailsContainer": {
             "display": "flex",

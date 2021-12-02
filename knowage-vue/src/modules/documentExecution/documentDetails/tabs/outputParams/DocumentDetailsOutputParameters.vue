@@ -75,7 +75,7 @@
 
 <script lang="ts">
 import { iDocument } from '@/modules/documentExecution/documentDetails/DocumentDetails'
-import { createValidations } from '@/helpers/commons/validationHelper'
+import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import { defineComponent, PropType } from 'vue'
 import mainDescriptor from '@/modules/documentExecution/documentDetails/DocumentDetailsDescriptor.json'
 import driversDescriptor from '@/modules/documentExecution/documentDetails/tabs/drivers/DocumentDetailsDriversDescriptor.json'
@@ -104,7 +104,11 @@ export default defineComponent({
         this.document = this.selectedDocument
     },
     validations() {
-        const validationObject = { selectedParam: createValidations('selectedParam', outputParamDescriptor.validations.selectedParam) }
+        const outputParamsValidator = (value) => {
+            return Object.keys(this.selectedParam).length === 0 || value
+        }
+        const customValidators: ICustomValidatorMap = { 'output-params-validator': outputParamsValidator }
+        const validationObject = { selectedParam: createValidations('selectedParam', outputParamDescriptor.validations.selectedParam, customValidators) }
         return validationObject
     },
     methods: {

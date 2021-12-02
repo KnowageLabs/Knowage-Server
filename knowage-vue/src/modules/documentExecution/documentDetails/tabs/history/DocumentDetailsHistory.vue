@@ -35,9 +35,9 @@
                     <Button label="Open Designer" class="p-button-text p-button-rounded p-button-plain" :style="mainDescriptor.style.white" @click="openDesigner" />
                 </template>
             </Toolbar>
-            <div id="driver-details-container" class="p-m-2" :style="mainDescriptor.style.flexOneRelative">
+            <div id="driver-details-container" :style="mainDescriptor.style.flexOneRelative">
                 <div :style="mainDescriptor.style.absoluteScroll">
-                    <VCodeMirror v-if="showTemplateContent" class="p-mt-2" ref="codeMirrorScriptType" :style="mainDescriptor.style.codemirror" v-model:value="selectedTemplateContent" :options="scriptOptions" @keyup="$emit('touched')" />
+                    <VCodeMirror v-if="showTemplateContent" ref="codeMirrorScriptType" :style="mainDescriptor.style.height100" v-model:value="selectedTemplateContent" :options="scriptOptions" @keyup="$emit('touched')" />
                     <div v-else class="kn-details-info-div">
                         {{ $t('documentExecution.documentDetails.history.templateHint') }}
                     </div>

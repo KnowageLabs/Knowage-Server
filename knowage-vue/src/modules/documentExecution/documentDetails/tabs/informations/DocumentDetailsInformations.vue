@@ -10,22 +10,16 @@
                 <div :style="mainDescriptor.style.absoluteScroll">
                     <Card class="p-m-2">
                         <template #content>
-                            <!-- {{ document }}
-                        {{ document }}
-                        {{ document }}
-                        {{ document }} -->
-                            <!-- {{ v$.$invalid }} -->
-                            <!-- {{ selectedDataset }} -->
-                            <div id="upload-template-container" v-if="!activeTemplate.id">
+                            <div id="upload-template-container" v-if="templates.length == 0">
                                 <div class="p-field p-col-12 p-d-flex">
                                     <div :style="mainDescriptor.style.flexOne">
                                         <span class="p-float-label">
-                                            <InputText id="fileName" class="kn-material-input" v-model="activeTemplate.name" :disabled="true" />
+                                            <InputText id="fileName" class="kn-material-input" v-model="templateToUpload.name" :disabled="true" />
                                             <label for="fileName" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.uploadTemplate') }} </label>
                                         </span>
                                     </div>
                                     <Button icon="fas fa-upload fa-1x" class="p-button-text p-button-plain p-ml-2" @click="setUploadType" />
-                                    <KnInputFile :changeFunction="uploadDatasetFile" accept=".png, .jpg, .jpeg" :triggerInput="triggerUpload" />
+                                    <KnInputFile label="" v-if="!uploading" :changeFunction="setTemplateForUpload" :triggerInput="triggerUpload" />
                                 </div>
                             </div>
                             <form class="p-fluid p-formgrid p-grid p-m-1">
@@ -93,8 +87,8 @@
                                             <label for="fileName" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.previewImage') }} </label>
                                         </span>
                                     </div>
-                                    <Button icon="fas fa-upload fa-1x" class="p-button-text p-button-plain p-ml-2" @click="setUploadType" />
-                                    <KnInputFile :changeFunction="uploadDatasetFile" accept=".png, .jpg, .jpeg" :triggerInput="triggerUpload" />
+                                    <!-- <Button icon="fas fa-upload fa-1x" class="p-button-text p-button-plain p-ml-2" @click="setUploadType" />
+                                    <KnInputFile :changeFunction="setTemplateForUpload" accept=".png, .jpg, .jpeg" :triggerInput="triggerUpload" /> -->
                                 </div>
                                 <div class="p-field p-col-12 p-lg-6">
                                     <span class="p-float-label">
@@ -131,7 +125,7 @@
                                             @blur="v$.document.engine.$touch()"
                                             @change="$emit('touched')"
                                         />
-                                        <label for="engine" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.engine') }} </label>
+                                        <label for="engine" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.engine') }} *</label>
                                     </span>
                                     <small>{{ $t('documentExecution.documentDetails.info.engineHint') }}</small>
                                     <KnValidationMessages class="p-mt-1" :vComp="v$.document.engine" :additionalTranslateParams="{ fieldName: $t('documentExecution.documentDetails.info.engine') }" />
@@ -261,7 +255,6 @@
 import { iDocument, iDataSource, iEngine, iTemplate, iAttribute } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 import { defineComponent, PropType } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
-// import { AxiosResponse } from 'axios'
 import mainDescriptor from '../../DocumentDetailsDescriptor.json'
 import infoDescriptor from './DocumentDetailsInformationsDescriptor.json'
 import useValidate from '@vuelidate/core'
@@ -271,10 +264,11 @@ import Card from 'primevue/card'
 import Textarea from 'primevue/textarea'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
+import KnInputFile from '@/components/UI/KnInputFile.vue'
 
 export default defineComponent({
     name: 'document-details-informations',
-    components: { DatasetDialog, Card, Textarea, Dropdown, InputSwitch, KnValidationMessages },
+    components: { DatasetDialog, Card, Textarea, Dropdown, InputSwitch, KnValidationMessages, KnInputFile },
     props: {
         selectedDocument: { type: Object as PropType<iDocument> },
         selectedDataset: { type: Object },
@@ -285,6 +279,7 @@ export default defineComponent({
         availableTemplates: { type: Array as PropType<iTemplate[]> },
         availableAttributes: { type: Array as PropType<iAttribute[]> }
     },
+    emits: ['setTemplateForUpload'],
     computed: {
         filteredEngines(): any {
             if (this.document.typeCode) {
@@ -329,12 +324,14 @@ export default defineComponent({
             infoDescriptor,
             showDatasetDialog: false,
             lockedByUser: false,
+            uploading: false,
+            triggerUpload: false,
             document: {} as iDocument,
             dataset: {} as any,
             templates: [] as iTemplate[],
-            activeTemplate: {} as any,
             restrictionValue: '',
-            visibilityAttribute: ''
+            visibilityAttribute: '',
+            templateToUpload: { name: '' } as any
         }
     },
 
@@ -352,16 +349,10 @@ export default defineComponent({
     },
     methods: {
         setData() {
+            this.templates = this.availableTemplates as iTemplate[]
             this.document = this.selectedDocument as iDocument
             this.dataset = this.selectedDataset
-            this.templates = this.availableTemplates as iTemplate[]
-            this.setActiveTemplate()
             this.IsLockedByUser()
-        },
-        setActiveTemplate() {
-            this.templates.filter((template) => {
-                template.active == true ? (this.activeTemplate = template) : ''
-            })
         },
         IsLockedByUser() {
             this.lockedByUser = this.document.lockedByUser === 'true' ? true : false
@@ -384,6 +375,17 @@ export default defineComponent({
         saveSelectedDataset(event) {
             this.document.dataSetId = event.id
             this.dataset = event
+        },
+        setUploadType() {
+            this.triggerUpload = false
+            setTimeout(() => (this.triggerUpload = true), 200)
+        },
+        setTemplateForUpload(event) {
+            this.uploading = true
+            this.templateToUpload = event.target.files[0]
+            this.$emit('setTemplateForUpload', event.target.files[0])
+            this.triggerUpload = false
+            setTimeout(() => (this.uploading = false), 200)
         }
     }
 })

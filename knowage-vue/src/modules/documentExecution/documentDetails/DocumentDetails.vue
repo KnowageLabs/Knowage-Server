@@ -6,7 +6,7 @@
                     {{ $t('documentExecution.documentDetails.title') }}
                 </template>
                 <template #right>
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" />
+                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('closeDetails')" />
                 </template>
             </Toolbar>
@@ -28,6 +28,7 @@
                         :selectedDataset="selectedDataset"
                         :availableTemplates="templates"
                         :availableAttributes="attributes"
+                        @setTemplateForUpload="setTemplateForUpload"
                     />
                 </TabPanel>
                 <TabPanel v-if="this.selectedDocument?.id">
@@ -68,6 +69,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
+import useValidate from '@vuelidate/core'
 import mainDescriptor from './DocumentDetailsDescriptor.json'
 import InformationsTab from './tabs/informations/DocumentDetailsInformations.vue'
 import DriversTab from './tabs/drivers/DocumentDetailsDrivers.vue'
@@ -77,18 +79,19 @@ import HistoryTab from './tabs/history/DocumentDetailsHistory.vue'
 import Dialog from 'primevue/dialog'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
-import { iDocument, iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute } from '@/modules/documentExecution/documentDetails/DocumentDetails'
+import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 
 export default defineComponent({
     name: 'document-details',
     components: { InformationsTab, DriversTab, OutputParamsTab, DataLineageTab, HistoryTab, TabView, TabPanel, Dialog },
     props: { selectedDocument: { type: Object, required: true }, visible: { type: Boolean, required: false } },
-    emits: ['closeDetails'],
+    emits: ['closeDetails', 'reloadDocument'],
     data() {
         return {
+            v$: useValidate() as any,
             mainDescriptor,
             loading: false,
-            document: {} as iDocument,
+            templateToUpload: null as any,
             selectedDataset: {} as any,
             dataSources: [] as iDataSource[],
             analyticalDrivers: [] as iAnalyticalDriver[],
@@ -104,23 +107,17 @@ export default defineComponent({
             types: mainDescriptor.types
         }
     },
-    watch: {},
+    watch: {
+        selectedDocument() {
+            this.getAllPersistentData()
+        }
+    },
     created() {
         this.getAllPersistentData()
     },
-    //document: http://localhost:8080/knowage/restful-services/2.0/documents/${id}
-    //datasources: http://localhost:8080/knowage/restful-services/2.0/datasources
-    //analyticalDrivers: http://localhost:8080/knowage/restful-services/2.0/analyticalDrivers
-    //drivers: http://localhost:8080/knowage/restful-services/2.0/documentdetails/${id}/drivers
-    //engines: http://localhost:8080/knowage/restful-services/2.0/engines
-    //template: `2.0/documentdetails/${this.selectedDocument?.id}/templates
-    //types: ??
-
-    //folderId: ??
-    //resourcePath: ??
-    //states: ??
     methods: {
         async getAllPersistentData() {
+            this.loading = true
             await this.getAnalyticalDrivers()
             await this.getDatasources()
             await this.getDocumentDrivers()
@@ -129,9 +126,9 @@ export default defineComponent({
             await this.getAttributes()
             await this.getParTypes()
             await this.getDateFormats()
-            await this.getDataSources()
             await this.getTablesByDocumentID()
             await this.getDataset()
+            await this.getDataSources()
         },
         async getAnalyticalDrivers() {
             this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers`).then((response: AxiosResponse<any>) => (this.analyticalDrivers = response.data))
@@ -162,14 +159,18 @@ export default defineComponent({
             this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/DATE_FORMAT`).then((response: AxiosResponse<any>) => (this.dateFormats = response.data))
         },
         async getDataSources() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`).then((response: AxiosResponse<any>) => ((this.metaSourceResource = response.data), (this.metaSourceResource = this.mainDescriptor.metaSourceResource)))
+            this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`)
+                .then((response: AxiosResponse<any>) => ((this.metaSourceResource = response.data), (this.metaSourceResource = this.mainDescriptor.metaSourceResource)))
+                .finally(() => (this.loading = false))
         },
         async getTablesByDocumentID() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/document/${this.selectedDocument.id}`).then((response: AxiosResponse<any>) => ((this.savedTables = response.data), (this.savedTables = this.mainDescriptor.savedTables)))
+            if (this.selectedDocument.id) {
+                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/document/${this.selectedDocument.id}`).then((response: AxiosResponse<any>) => ((this.savedTables = response.data), (this.savedTables = this.mainDescriptor.savedTables)))
+            }
         },
         async getDataset() {
             if (this.selectedDocument?.dataSetId) {
-                this.loading = true
                 this.$http
                     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.selectedDocument?.dataSetId}`, { headers: { 'X-Disable-Errors': 'true' } })
                     .then((response: AxiosResponse<any>) => {
@@ -179,8 +180,55 @@ export default defineComponent({
                     .catch((error) => {
                         this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message })
                     })
-                    .finally(() => (this.loading = false))
             }
+        },
+        setTemplateForUpload(event) {
+            this.templateToUpload = event
+        },
+        async uploadTemplate(uploadedFile, responseId) {
+            console.log(uploadedFile)
+            var formData = new FormData()
+            formData.append('file', uploadedFile)
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${responseId}/templates`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'X-Disable-Errors': 'true'
+                    }
+                })
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.success'),
+                        msg: this.$t('common.toast.uploadSuccess')
+                    })
+                })
+                .catch(() => {
+                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.uploadError') })
+                })
+        },
+        saveRequest() {
+            if (!this.selectedDocument.id) {
+                return this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails`, this.selectedDocument, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+            } else {
+                return this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}`, this.selectedDocument, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+            }
+        },
+        async saveDocument() {
+            delete this.selectedDocument.drivers
+            delete this.selectedDocument.outputParameters
+            delete this.selectedDocument.dataSetLabel
+            await this.saveRequest()
+                .then((response: AxiosResponse<any>) => {
+                    this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
+                    this.templateToUpload ? this.uploadTemplate(this.templateToUpload, response.data.id) : ''
+                    this.$emit('reloadDocument', response.data.id)
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+        },
+        logV() {
+            console.log(this.v$)
         }
     }
 })

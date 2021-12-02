@@ -22,7 +22,10 @@
                 "fieldName": "name",
                 "validators": [
                     {
-                        "key": "required"
+                        "key": "required",
+                        "validator": {
+                            "type": "output-params-validator"
+                        }
                     }
                 ]
             }

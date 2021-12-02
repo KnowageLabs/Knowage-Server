@@ -44,7 +44,7 @@
         </div>
     </div>
 
-    <DocumentDetails v-if="showDocumentDetails && !loading" :selectedDocument="selectedDocument" :visible="showDocumentDetails" @closeDetails="showDocumentDetails = false" />
+    <DocumentDetails v-if="showDocumentDetails && !loading" :selectedDocument="selectedDocument" :visible="showDocumentDetails" @closeDetails="showDocumentDetails = false" @reloadDocument="getSelectedDocument" />
 </template>
 
 <script lang="ts">
@@ -168,16 +168,19 @@ export default defineComponent({
             }
         },
         createNewDocument() {
-            // this.$router.push('/documentBrowser/newDocument')
-            this.selectedDocument = {}
+            this.selectedDocument = { engine: '', functionalities: [], label: '', lockedByUser: false, name: '', refreshSeconds: 0, stateCode: '', typeCode: '', visible: true }
             this.showDocumentDetails = true
         },
         async showDocumentDetailsDialog(event) {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${event.id}`).then((response: AxiosResponse<any>) => (this.selectedDocument = response.data))
-            this.loading = false
-            // this.selectedDocument = { ...event }
+            await this.getSelectedDocument(event.id)
             this.showDocumentDetails = true
+        },
+        async getSelectedDocument(id) {
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${id}`)
+                .then((response: AxiosResponse<any>) => (this.selectedDocument = response.data))
+                .finally(() => (this.loading = false))
         },
         createNewCockpit() {
             this.$emit('itemSelected', { item: null, mode: 'createCockpit' })
