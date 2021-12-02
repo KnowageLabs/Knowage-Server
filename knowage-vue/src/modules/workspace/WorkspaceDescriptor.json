@@ -1,21 +1,20 @@
 {
-	"nodes": {
-		"root": [
-			{
-				"children": [
-					{
-						"data": "Data Preparation Folder",
-						"icon": "pi pi-fw pi-cog",
-						"key": "0-0",
-						"label": "Data Preparation",
-						"to": "/data-preparation"
-					}
-				],
-				"data": "Data Folder",
-				"icon": "pi pi-fw pi-inbox",
-				"key": "0",
-				"label": "Data"
-			}
-		]
-	}
+    "style": {
+        "filterInput": {
+            "width": "25%"
+        },
+        "iconColumn": {
+            "text-align": "end",
+            "width": "15%"
+        },
+        "maxWidth": {
+            "width": "100%"
+        },
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        }
+    }
 }

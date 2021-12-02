@@ -82,6 +82,7 @@
         mounted() {
             this.onLoad()
         },
+
         methods: {
             closeDialog() {
                 this.$emit('update:visibility', false)

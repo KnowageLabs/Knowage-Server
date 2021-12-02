@@ -33,10 +33,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.SimpleExpression;
 
 import it.eng.qbe.statement.hibernate.HQLStatement;
 import it.eng.qbe.statement.hibernate.HQLStatement.IConditionalOperator;
@@ -180,8 +177,11 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				aSession = getSession();
 				tx = aSession.beginTransaction();
 
-				aSession.createQuery("UPDATE SbiUser us SET us.failedLoginAttempts = 0 WHERE us.userId = :userId").setParameter("userId", userId)
-						.executeUpdate();
+				SbiUser user = getSbiUserByUserId(userId);
+
+				user.setFailedLoginAttempts(0);
+
+				aSession.update(user);
 
 				tx.commit();
 			}
@@ -615,11 +615,9 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				aSession = getSession();
 				tx = aSession.beginTransaction();
 
-				ProjectionList projList = Projections.projectionList().add(Projections.property("failedLoginAttempts"), "failedLoginAttempts");
+				SbiUser user = getSbiUserByUserId(userId);
 
-				SimpleExpression eq = Restrictions.eq("userId", userId);
-
-				result = (Integer) aSession.createCriteria(SbiUser.class).add(eq).setProjection(projList).uniqueResult();
+				result = user.getFailedLoginAttempts();
 
 				tx.commit();
 			}
@@ -656,8 +654,11 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				aSession = getSession();
 				tx = aSession.beginTransaction();
 
-				aSession.createQuery("UPDATE SbiUser us SET us.failedLoginAttempts = us.failedLoginAttempts + 1 WHERE us.userId = :userId")
-						.setParameter("userId", userId).executeUpdate();
+				SbiUser user = getSbiUserByUserId(userId);
+
+				user.setFailedLoginAttempts(user.getFailedLoginAttempts() + 1);
+
+				aSession.update(user);
 
 				tx.commit();
 			}
@@ -833,6 +834,15 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			LogMF.debug(logger, "IN : user id = [{0}]", userId);
 			// case insensitive search!!!!
 			Criteria criteria = aSession.createCriteria(SbiUser.class);
+
+			/*
+			 * Here we use ignoreCase() because some sort of problem with
+			 * collations coming from SpagoBI.
+			 *
+			 * See also other occurrences of this comment.
+			 *
+			 * TODO : Fix ignoreCase()!
+			 */
 			criteria.add(Restrictions.eq("userId", userId).ignoreCase());
 			SbiUser user = (SbiUser) criteria.uniqueResult();
 

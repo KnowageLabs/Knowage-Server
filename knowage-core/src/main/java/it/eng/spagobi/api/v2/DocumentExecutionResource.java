@@ -42,6 +42,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -68,6 +69,7 @@ import org.json.JSONObject;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
+import com.google.common.collect.BiMap;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
@@ -563,6 +565,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				Integer paruseId = objParameter.getParameterUseId();
 				ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
 				Map<String, Object> metadata = new LinkedHashMap<>();
+				BiMap<String, String> colPlaceholder2ColName = objParameter.getColPlaceholder2ColName();
+				String lovDescriptionColumnName = objParameter.getLovDescriptionColumnName();
+				String lovValueColumnName = objParameter.getLovValueColumnName();
 
 				HashMap<String, Object> parameterAsMap = new HashMap<String, Object>();
 				parameterAsMap.put("id", objParameter.getBiObjectId());
@@ -668,10 +673,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						parameterAsMap.put(PROPERTY_DATA, new ArrayList<>());
 					}
 
-					metadata.put("colsMap", objParameter.getColName2colPlaceholder());
-					metadata.put("descriptionColumn", objParameter.getLovDescriptionColumnName());
+					metadata.put("colsMap", colPlaceholder2ColName);
+					metadata.put("descriptionColumn", lovDescriptionColumnName);
 					metadata.put("invisibleColumns", objParameter.getLovInvisibleColumnsNames());
-					metadata.put("valueColumn", objParameter.getLovValueColumnName());
+					metadata.put("valueColumn", lovValueColumnName);
 					metadata.put("visibleColumns", objParameter.getLovVisibleColumnsNames());
 
 					// hide the parameter if is mandatory and have one value in lov (no error parameter)
@@ -746,6 +751,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				addDependencies(objParameter, parameterAsMap);
 
 				// load DEFAULT VALUE if present and if the parameter value is empty
+
+				Object defValue = null;
 				if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0
 						&& objParameter.getDefaultValues().get(0).getValue() != null) {
 					DefaultValuesList valueList = null;
@@ -762,6 +769,31 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 					valueList = objParameter.getDefaultValues();
 
+					if (!valueList.isEmpty()) {
+						defValue = valueList.stream()
+							.map(e -> {
+
+								BiMap<String, String> inverse = colPlaceholder2ColName.inverse();
+								String valColName = inverse.get(lovValueColumnName);
+								String descColName = inverse.get(lovDescriptionColumnName);
+
+								// TODO : workaround
+								valColName = Optional.ofNullable(valColName).orElse("value");
+								descColName = Optional.ofNullable(descColName).orElse("desc");
+
+								Map<String, Object> ret = new LinkedHashMap<>();
+
+								ret.put(valColName, e.getValue());
+
+								if (!valColName.equals(descColName)) {
+									ret.put(descColName, e.getDescription());
+								}
+
+								return ret;
+							})
+							.collect(Collectors.toList());
+					}
+
 					if (jsonCrossParameters.isNull(objParameter.getId())
 							// && !sessionParametersMap.containsKey(objParameter.getId())) {
 							&& !sessionParametersMap.containsKey(sessionKey)) {
@@ -770,9 +802,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						}
 					}
 
-					// in every case fill default values!
-					parameterAsMap.put("driverDefaultValue", valueList);
 				}
+
+				// in every case fill default values!
+				parameterAsMap.put("driverDefaultValue", defValue);
 
 				LovValue maxValue = objParameter.getMaxValue();
 				if (maxValue != null && maxValue.getValue() != null) {
@@ -808,6 +841,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		for (int i = 0; i < parametersArrayList.size(); i++) {
 			Map<String, Object> parameter = parametersArrayList.get(i);
 			List<Map<String, Object>> defaultValuesList = (List<Map<String, Object>>) parameter.get(PROPERTY_DATA);
+
+			parameter.remove("parameterValue");
 
 			if (defaultValuesList != null) {
 				// Filter out null values
