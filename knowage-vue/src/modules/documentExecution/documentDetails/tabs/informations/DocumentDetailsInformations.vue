@@ -232,15 +232,9 @@
                                 {{ $t('documentExecution.documentDetails.info.visibilityLocationTitle') }}
                             </template>
                         </Toolbar>
-                        <Card>
+                        <Card class="card-0-padding">
                             <template #content>
-                                <form class="p-fluid p-formgrid p-grid p-m-1">
-                                    Tree Goes Here
-                                    <!-- {{ document }}
-                            {{ document }}
-                            {{ document }}
-                            {{ document }} -->
-                                </form>
+                                <DocumentDetailsTree :propFunctionalities="folders" :propSelectedFolders="document.functionalities" @selected="setFunctionality" />
                             </template>
                         </Card>
                     </div>
@@ -265,17 +259,20 @@ import Textarea from 'primevue/textarea'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
+import DocumentDetailsTree from './DocumentDetailsTree.vue'
 
 export default defineComponent({
     name: 'document-details-informations',
-    components: { DatasetDialog, Card, Textarea, Dropdown, InputSwitch, KnValidationMessages, KnInputFile },
+    components: { DatasetDialog, Card, Textarea, Dropdown, InputSwitch, KnValidationMessages, KnInputFile, DocumentDetailsTree },
     props: {
         selectedDocument: { type: Object as PropType<iDocument> },
         selectedDataset: { type: Object },
+        selectedFolder: { type: Object, required: true },
         documentTypes: { type: Array as any, required: true },
         documentEngines: { type: Array as PropType<iEngine[]>, required: true },
         availableDatasources: { type: Array as PropType<iDataSource[]> },
         availableStates: { type: Array },
+        availableFolders: { type: Array as any },
         availableTemplates: { type: Array as PropType<iTemplate[]> },
         availableAttributes: { type: Array as PropType<iAttribute[]> }
     },
@@ -329,12 +326,12 @@ export default defineComponent({
             document: {} as iDocument,
             dataset: {} as any,
             templates: [] as iTemplate[],
+            folders: [] as any,
             restrictionValue: '',
             visibilityAttribute: '',
             templateToUpload: { name: '' } as any
         }
     },
-
     created() {
         this.setData()
     },
@@ -352,6 +349,8 @@ export default defineComponent({
             this.templates = this.availableTemplates as iTemplate[]
             this.document = this.selectedDocument as iDocument
             this.dataset = this.selectedDataset
+            this.folders = [...this.availableFolders]
+
             this.IsLockedByUser()
         },
         IsLockedByUser() {
@@ -386,7 +385,16 @@ export default defineComponent({
             this.$emit('setTemplateForUpload', event.target.files[0])
             this.triggerUpload = false
             setTimeout(() => (this.uploading = false), 200)
+        },
+        setFunctionality(event) {
+            this.document.functionalities = event
         }
     }
 })
 </script>
+<style lang="scss">
+.card-0-padding .p-card-body,
+.card-0-padding .p-card-content {
+    padding: 0px;
+}
+</style>

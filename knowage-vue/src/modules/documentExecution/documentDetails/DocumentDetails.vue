@@ -21,6 +21,8 @@
                     <InformationsTab
                         v-if="!loading"
                         :selectedDocument="selectedDocument"
+                        :availableFolders="availableFolders"
+                        :selectedFolder="selectedFolder"
                         :documentTypes="types"
                         :documentEngines="engines"
                         :availableDatasources="dataSources"
@@ -84,7 +86,7 @@ import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute
 export default defineComponent({
     name: 'document-details',
     components: { InformationsTab, DriversTab, OutputParamsTab, DataLineageTab, HistoryTab, TabView, TabPanel, Dialog },
-    props: { selectedDocument: { type: Object, required: true }, visible: { type: Boolean, required: false } },
+    props: { selectedDocument: { type: Object, required: true }, selectedFolder: { type: Object, required: true }, visible: { type: Boolean, required: false } },
     emits: ['closeDetails', 'reloadDocument'],
     data() {
         return {
@@ -103,6 +105,7 @@ export default defineComponent({
             dateFormats: [] as any[],
             metaSourceResource: [] as any,
             savedTables: [] as any,
+            availableFolders: [] as any,
             states: mainDescriptor.states,
             types: mainDescriptor.types
         }
@@ -119,6 +122,7 @@ export default defineComponent({
         async getAllPersistentData() {
             this.loading = true
             await this.getAnalyticalDrivers()
+            await this.getFunctionalities()
             await this.getDatasources()
             await this.getDocumentDrivers()
             await this.getTemplates()
@@ -129,6 +133,9 @@ export default defineComponent({
             await this.getTablesByDocumentID()
             await this.getDataset()
             await this.getDataSources()
+        },
+        async getFunctionalities() {
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders?includeDocs=false`).then((response: AxiosResponse<any>) => (this.availableFolders = response.data))
         },
         async getAnalyticalDrivers() {
             this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers`).then((response: AxiosResponse<any>) => (this.analyticalDrivers = response.data))
@@ -226,9 +233,6 @@ export default defineComponent({
                 .catch((error) => {
                     console.log(error)
                 })
-        },
-        logV() {
-            console.log(this.v$)
         }
     }
 })
