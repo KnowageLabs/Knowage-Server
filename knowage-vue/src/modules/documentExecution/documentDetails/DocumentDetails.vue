@@ -31,6 +31,7 @@
                         :availableTemplates="templates"
                         :availableAttributes="attributes"
                         @setTemplateForUpload="setTemplateForUpload"
+                        @setImageForUpload="setImageForUpload"
                     />
                 </TabPanel>
                 <TabPanel v-if="this.selectedDocument?.id">
@@ -94,6 +95,7 @@ export default defineComponent({
             mainDescriptor,
             loading: false,
             templateToUpload: null as any,
+            imageToUpload: null as any,
             selectedDataset: {} as any,
             dataSources: [] as iDataSource[],
             analyticalDrivers: [] as iAnalyticalDriver[],
@@ -213,6 +215,32 @@ export default defineComponent({
                     this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.uploadError') })
                 })
         },
+        setImageForUpload(event) {
+            this.imageToUpload = event
+            console.log('IMAGE EVENT', event)
+        },
+        async uploadImage(uploadedFile, responseId) {
+            console.log(uploadedFile)
+            var formData = new FormData()
+            formData.append('file', uploadedFile)
+            formData.append('fileName', uploadedFile.name)
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${responseId}/image`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'X-Disable-Errors': 'true'
+                    }
+                })
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.success'),
+                        msg: this.$t('common.toast.uploadSuccess')
+                    })
+                })
+                .catch(() => {
+                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.uploadError') })
+                })
+        },
         saveRequest() {
             if (!this.selectedDocument.id) {
                 return this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails`, this.selectedDocument, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
@@ -228,6 +256,7 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
                     this.templateToUpload ? this.uploadTemplate(this.templateToUpload, response.data.id) : ''
+                    this.imageToUpload ? this.uploadImage(this.imageToUpload, response.data.id) : ''
                     this.$emit('reloadDocument', response.data.id)
                 })
                 .catch((error) => {

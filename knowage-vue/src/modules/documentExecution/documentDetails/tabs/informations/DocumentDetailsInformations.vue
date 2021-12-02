@@ -87,8 +87,8 @@
                                             <label for="fileName" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.previewImage') }} </label>
                                         </span>
                                     </div>
-                                    <!-- <Button icon="fas fa-upload fa-1x" class="p-button-text p-button-plain p-ml-2" @click="setUploadType" />
-                                    <KnInputFile :changeFunction="setTemplateForUpload" accept=".png, .jpg, .jpeg" :triggerInput="triggerUpload" /> -->
+                                    <Button icon="fas fa-upload fa-1x" class="p-button-text p-button-plain p-ml-2" @click="setImageUploadType" />
+                                    <KnInputFile :changeFunction="setImageForUpload" accept=".png, .jpg, .jpeg" :triggerInput="triggerImageUpload" />
                                 </div>
                                 <div class="p-field p-col-12 p-lg-6">
                                     <span class="p-float-label">
@@ -276,7 +276,7 @@ export default defineComponent({
         availableTemplates: { type: Array as PropType<iTemplate[]> },
         availableAttributes: { type: Array as PropType<iAttribute[]> }
     },
-    emits: ['setTemplateForUpload'],
+    emits: ['setTemplateForUpload', 'setImageForUpload'],
     computed: {
         filteredEngines(): any {
             if (this.document.typeCode) {
@@ -323,13 +323,15 @@ export default defineComponent({
             lockedByUser: false,
             uploading: false,
             triggerUpload: false,
+            triggerImageUpload: false,
             document: {} as iDocument,
             dataset: {} as any,
             templates: [] as iTemplate[],
             folders: [] as any,
             restrictionValue: '',
             visibilityAttribute: '',
-            templateToUpload: { name: '' } as any
+            templateToUpload: { name: '' } as any,
+            imageToUpload: { name: '' } as any
         }
     },
     created() {
@@ -384,6 +386,17 @@ export default defineComponent({
             this.templateToUpload = event.target.files[0]
             this.$emit('setTemplateForUpload', event.target.files[0])
             this.triggerUpload = false
+            setTimeout(() => (this.uploading = false), 200)
+        },
+        setImageUploadType() {
+            this.triggerImageUpload = false
+            setTimeout(() => (this.triggerImageUpload = true), 200)
+        },
+        setImageForUpload(event) {
+            this.uploading = true
+            this.imageToUpload = event.target.files[0]
+            this.$emit('setImageForUpload', event.target.files[0])
+            this.triggerImageUpload = false
             setTimeout(() => (this.uploading = false), 200)
         },
         setFunctionality(event) {
