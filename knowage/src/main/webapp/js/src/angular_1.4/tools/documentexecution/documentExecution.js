@@ -124,6 +124,13 @@
 			docExecute_paramRolePanelService.toggleParametersPanel(false);
 		}
 
+		
+		window.addEventListener("message", (event) => {
+			if(event.data.type && event.data.type === 'htmlLink') {
+				$scope.copyLinkHTML(event.data.embedHTML); 
+			}
+		})
+
 
 		$scope.isOrganizerEnabled = function () {
 			if(!$scope.addToWorkspaceEnabled){
@@ -785,17 +792,31 @@ var execCrossNavigation=function(frameid, doclabel, params, subobjid, title, tar
 
 var execExternalCrossNavigation=function(outputParameters,inputParameters,targetCrossNavigation,docLabel,otherOutputParameters){
 	
-	var currentScope = angular.element(frameElement).scope();
-	while(currentScope != undefined){
-		if(currentScope.navigateTo != undefined){
-			break;
+	// temporary section needed as a workaround to get vue instance
+	var hasVueParent = false
+	if(window.parent.__VUE__){
+		hasVueParent = window.parent
+	}else if(window.parent.parent.__VUE__){
+		hasVueParent = window.parent.parent
+	}
+	
+	if(hasVueParent){
+		hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameters,"inputParameters":inputParameters,"targetCrossNavigation":targetCrossNavigation,"docLabel":docLabel, "otherOutputParameters":otherOutputParameters}, '*')
+	}else{
+		var currentScope = angular.element(frameElement).scope();
+		while(currentScope != undefined){
+			if(currentScope.navigateTo != undefined){
+				break;
+			}
+			currentScope = currentScope.$parent;
 		}
-		currentScope = currentScope.$parent;
+		if(!currentScope){
+			currentScope = angular.element(document.querySelector('#documentFrame')).scope();
+		}
+		currentScope.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel,otherOutputParameters);
 	}
-	if(!currentScope){
-		currentScope = angular.element(document.querySelector('#documentFrame')).scope();
-	}
-	currentScope.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel,otherOutputParameters);
+	
+	
 };
 
 var execPreviewDataset = function(datasetLabel, parameters, directDownload) {
