@@ -20,9 +20,6 @@
                 <template #left>
                     {{ $t('documentExecution.documentDetails.outputParams.paramDetails') }}
                 </template>
-                <template #right>
-                    <Button :label="$t('common.save')" class="p-button-text p-button-rounded p-button-plain" :style="mainDescriptor.style.white" :disabled="!selectedParam.name" @click="saveParam" />
-                </template>
             </Toolbar>
             <div id="driver-details-container" class="p-m-2" :style="mainDescriptor.style.flexOneRelative">
                 <div class="kn-details-info-div" v-if="Object.keys(selectedParam).length === 0">
@@ -42,6 +39,7 @@
                                             'p-invalid': v$.selectedParam.name.$invalid && v$.selectedParam.name.$dirty
                                         }"
                                         @blur="v$.selectedParam.name.$touch()"
+                                        @input="markSelectedParamForChange"
                                     />
                                     <label for="title" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.outputParams.paramName') }} *</label>
                                 </span>
@@ -49,19 +47,19 @@
                             </div>
                             <div class="p-field p-col-12">
                                 <span class="p-float-label">
-                                    <Dropdown id="type" class="kn-material-input" v-model="selectedParam.type" :options="typeList" optionLabel="valueCd" :disabled="selectedParam.isUserDefined === null" />
+                                    <Dropdown id="type" class="kn-material-input" v-model="selectedParam.type" :options="typeList" optionLabel="valueCd" :disabled="selectedParam.isUserDefined === null" @change="markSelectedParamForChange" />
                                     <label for="type" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.outputParams.paramType') }} </label>
                                 </span>
                             </div>
                             <div v-if="selectedParam.type.valueCd === 'DATE'" class="p-field p-col-12">
                                 <span class="p-float-label">
-                                    <Dropdown id="dateFormat" class="kn-material-input" v-model="selectedParam.formatCode" :options="dateFormats" optionLabel="translatedValueName" optionValue="valueCd" :disabled="selectedParam.isUserDefined === null" />
+                                    <Dropdown id="dateFormat" class="kn-material-input" v-model="selectedParam.formatCode" :options="dateFormats" optionLabel="translatedValueName" optionValue="valueCd" :disabled="selectedParam.isUserDefined === null" @change="markSelectedParamForChange" />
                                     <label for="dateFormat" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanDateFormat') }} </label>
                                 </span>
                             </div>
                             <div v-if="selectedParam.type.valueCd === 'DATE' && selectedParam.formatCode === 'CUSTOM'" class="p-field p-col-12">
                                 <span class="p-float-label">
-                                    <InputText id="title" class="kn-material-input" v-model="selectedParam.formatValue" :disabled="selectedParam.isUserDefined === null" />
+                                    <InputText id="title" class="kn-material-input" v-model="selectedParam.formatValue" :disabled="selectedParam.isUserDefined === null" @input="markSelectedParamForChange" />
                                     <label for="title" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.outputParams.customValue') }} *</label>
                                 </span>
                             </div>
@@ -74,7 +72,7 @@
 </template>
 
 <script lang="ts">
-import { iDocument } from '@/modules/documentExecution/documentDetails/DocumentDetails'
+import { iDocument, iParType, iDateFormat, iOutputParam } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import { defineComponent, PropType } from 'vue'
 import mainDescriptor from '@/modules/documentExecution/documentDetails/DocumentDetailsDescriptor.json'
@@ -88,15 +86,15 @@ import Dropdown from 'primevue/dropdown'
 export default defineComponent({
     name: 'document-drivers',
     components: { KnListBox, Dropdown, KnValidationMessages },
-    props: { selectedDocument: { type: Object as PropType<iDocument>, required: true }, typeList: { type: Array as any, required: true }, dateFormats: { type: Array as any, required: true } },
+    props: { selectedDocument: { type: Object as PropType<iDocument>, required: true }, typeList: { type: Array as PropType<iParType[]>, required: true }, dateFormats: { type: Array as PropType<iDateFormat[]>, required: true } },
     emits: ['driversChanged'],
     data() {
         return {
+            v$: useValidate() as any,
             mainDescriptor,
             driversDescriptor,
             outputParamDescriptor,
-            v$: useValidate() as any,
-            selectedParam: {} as any,
+            selectedParam: {} as iOutputParam,
             document: {} as any
         }
     },
@@ -113,28 +111,17 @@ export default defineComponent({
     },
     methods: {
         addParam() {
-            this.selectedParam = { biObjectId: this.document.id, formatCode: '', formatValue: '', isUserDefined: true, type: this.typeList[0] ? this.typeList[0] : {} }
+            this.selectedParam = { numberOfErrors: 1, biObjectId: this.document.id, formatCode: null, formatValue: null, isUserDefined: true, type: this.typeList[0] ? this.typeList[0] : ({} as iParType), tempId: this.document.outputParameters.length + 1 } as iOutputParam
             this.document.outputParameters.push(this.selectedParam)
         },
         selectParam(event) {
             this.selectedParam = event
         },
-        async saveParam() {
-            await this.saveRequest()
-                .then(() => {
-                    this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
-                })
-                .catch((error) => {
-                    console.log(error)
-                })
+        markSelectedParamForChange() {
+            this.selectedParam.isChanged = true
+            this.selectedParam.numberOfErrors = this.v$.$errors.length
         },
-        saveRequest() {
-            if (!this.selectedParam.id) {
-                return this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters`, this.selectedParam, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-            } else {
-                return this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters/${this.selectedParam.id}`, this.selectedParam, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-            }
-        },
+
         deleteParamConfirm(event) {
             this.$confirm.require({
                 header: this.$t('common.toast.deleteConfirmTitle'),
@@ -144,29 +131,22 @@ export default defineComponent({
             })
         },
         async deleteParam(paramToDelete) {
-            await this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters/${paramToDelete.id}`, { headers: { 'X-Disable-Errors': 'true' } })
-                .then(() => {
-                    let deletedParam = this.document.outputParameters.findIndex((param) => param.id === paramToDelete.id)
-                    this.document.outputParameters.splice(deletedParam, 1)
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
-                })
-                .catch((error) => {
-                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message })
-                })
+            if (paramToDelete.id) {
+                await this.$http
+                    .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters/${paramToDelete.id}`, { headers: { 'X-Disable-Errors': 'true' } })
+                    .then(() => {
+                        let deletedParam = this.document.outputParameters.findIndex((param) => param.id === paramToDelete.id)
+                        this.document.outputParameters.splice(deletedParam, 1)
+                        this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                    })
+                    .catch((error) => {
+                        this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message })
+                    })
+            } else {
+                let deletedParam = this.document.outputParameters.findIndex((param) => param.tempId === paramToDelete.tempId)
+                this.document.outputParameters.splice(deletedParam, 1)
+            }
         }
     }
 })
 </script>
-<style lang="scss">
-.kn-details-info-div {
-    margin: 8px !important;
-    border: 1px solid rgba(204, 204, 204, 0.6);
-    padding: 8px;
-    background-color: #e6e6e6;
-    text-align: center;
-    position: relative;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-}
-</style>

@@ -101,6 +101,9 @@
         }
     ],
     "style": {
+        "tableHeader": {
+            "width": "3em"
+        },
         "absoluteScroll": {
             "height": "100%",
             "left": 0,

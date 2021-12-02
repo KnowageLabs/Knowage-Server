@@ -113,7 +113,7 @@
                                             />
                                             <label for="parameterUrlName" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.drivers.parameterUrlName') }} * </label>
                                         </span>
-                                        <KnValidationMessages class="p-mt-1" :vComp="v$.selectedDriver.label" :additionalTranslateParams="{ fieldName: $t('documentExecution.documentDetails.drivers.parameterUrlName') }" />
+                                        <KnValidationMessages class="p-mt-1" :vComp="v$.selectedDriver.parameterUrlName" :additionalTranslateParams="{ fieldName: $t('documentExecution.documentDetails.drivers.parameterUrlName') }" />
                                     </div>
                                     <span class="p-field p-col-12 p-md-4 p-jc-center p-mt-3">
                                         <InputSwitch id="visible" v-model="selectedDriver.visible" @change="addToChangedDrivers(selectedDriver)" />

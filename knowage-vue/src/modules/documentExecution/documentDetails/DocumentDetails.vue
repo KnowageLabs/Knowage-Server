@@ -6,20 +6,21 @@
                     {{ $t('documentExecution.documentDetails.title') }}
                 </template>
                 <template #right>
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" />
+                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" :disabled="invalidDrivers > 0" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('closeDetails')" />
+                    <Button label="LogME" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="logV" />
                 </template>
             </Toolbar>
         </template>
+        {{ v$.$invalid }}
         <div class="document-details-tab-container p-d-flex p-flex-column" :style="mainDescriptor.style.flexOne">
             <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
-            <TabView class="document-details-tabview" :style="mainDescriptor.style.flex">
+            <TabView v-if="!loading" class="document-details-tabview" :style="mainDescriptor.style.flex">
                 <TabPanel>
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.info.infoTitle') }}</span>
                     </template>
                     <InformationsTab
-                        v-if="!loading"
                         :selectedDocument="selectedDocument"
                         :availableFolders="availableFolders"
                         :selectedFolder="selectedFolder"
@@ -38,26 +39,27 @@
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.drivers.title') }}</span>
                     </template>
-                    <DriversTab v-if="!loading" :selectedDocument="selectedDocument" :availableDrivers="drivers" :availableAnalyticalDrivers="analyticalDrivers" />
+                    <DriversTab :selectedDocument="selectedDocument" :availableDrivers="drivers" :availableAnalyticalDrivers="analyticalDrivers" />
                 </TabPanel>
                 <TabPanel v-if="this.selectedDocument?.id">
                     <template #header>
-                        <span>{{ $t('documentExecution.documentDetails.outputParams.title') }}</span>
+                        <span v-bind:class="{ 'details-warning-color': invalidDrivers }">{{ $t('documentExecution.documentDetails.outputParams.title') }}</span>
+                        <Badge :value="invalidDrivers" class="p-ml-2" severity="danger" v-if="invalidDrivers > 0"></Badge>
                     </template>
-                    <OutputParamsTab v-if="!loading" :selectedDocument="selectedDocument" :typeList="parTypes" :dateFormats="dateFormats" />
+                    <OutputParamsTab :selectedDocument="selectedDocument" :typeList="parTypes" :dateFormats="dateFormats" />
                 </TabPanel>
                 <TabPanel v-if="this.selectedDocument?.id">
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.dataLineage.title') }}</span>
                     </template>
 
-                    <DataLineageTab v-if="!loading" :selectedDocument="selectedDocument" :metaSourceResource="metaSourceResource" :savedTables="savedTables" />
+                    <DataLineageTab :selectedDocument="selectedDocument" :metaSourceResource="metaSourceResource" :savedTables="savedTables" />
                 </TabPanel>
                 <TabPanel v-if="this.selectedDocument?.id">
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.history.title') }}</span>
                     </template>
-                    <HistoryTab v-if="!loading" :selectedDocument="selectedDocument" />
+                    <HistoryTab :selectedDocument="selectedDocument" />
                 </TabPanel>
                 <TabPanel v-if="this.selectedDocument?.id && this.selectedDocument?.typeCode == 'REPORT' && this.selectedDocument?.engine == 'knowagejasperreporte'">
                     <template #header>
@@ -81,14 +83,15 @@ import DataLineageTab from './tabs/dataLineage/DocumentDetailsDataLineage.vue'
 import HistoryTab from './tabs/history/DocumentDetailsHistory.vue'
 import Dialog from 'primevue/dialog'
 import TabView from 'primevue/tabview'
+import Badge from 'primevue/badge'
 import TabPanel from 'primevue/tabpanel'
-import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute } from '@/modules/documentExecution/documentDetails/DocumentDetails'
+import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute, iParType, iDateFormat, iFolder, iTableSmall, iOutputParam } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 
 export default defineComponent({
     name: 'document-details',
-    components: { InformationsTab, DriversTab, OutputParamsTab, DataLineageTab, HistoryTab, TabView, TabPanel, Dialog },
-    props: { selectedDocument: { type: Object, required: true }, selectedFolder: { type: Object, required: true }, visible: { type: Boolean, required: false } },
-    emits: ['closeDetails', 'reloadDocument'],
+    components: { InformationsTab, DriversTab, OutputParamsTab, DataLineageTab, HistoryTab, TabView, TabPanel, Dialog, Badge },
+    props: { documentId: { type: Number, required: true }, selectedFolder: { type: Object, required: true }, visible: { type: Boolean, required: false } },
+    emits: ['closeDetails'],
     data() {
         return {
             v$: useValidate() as any,
@@ -97,32 +100,38 @@ export default defineComponent({
             templateToUpload: null as any,
             imageToUpload: null as any,
             selectedDataset: {} as any,
+            selectedDocument: {} as any,
             dataSources: [] as iDataSource[],
             analyticalDrivers: [] as iAnalyticalDriver[],
             drivers: [] as iDriver[],
             engines: [] as iEngine[],
             templates: [] as iTemplate[],
             attributes: [] as iAttribute[],
-            parTypes: [] as any[],
-            dateFormats: [] as any[],
+            parTypes: [] as iParType[],
+            dateFormats: [] as iDateFormat[],
             metaSourceResource: [] as any,
-            savedTables: [] as any,
-            availableFolders: [] as any,
+            savedTables: [] as iTableSmall[],
+            availableFolders: [] as iFolder[],
             states: mainDescriptor.states,
             types: mainDescriptor.types
         }
     },
-    watch: {
-        selectedDocument() {
-            this.getAllPersistentData()
+    computed: {
+        invalidDrivers(): number {
+            if (this.selectedDocument && this.selectedDocument.outputParameters) {
+                return this.selectedDocument.outputParameters.filter((parameter: any) => parameter.numberOfErrors > 0).length
+            }
+            return 0
         }
     },
-    created() {
-        this.getAllPersistentData()
+    async created() {
+        await this.loadPage()
     },
     methods: {
-        async getAllPersistentData() {
+        //#region ===================== Get Persistent Data ====================================================
+        async loadPage() {
             this.loading = true
+            await this.getSelectedDocument()
             await this.getAnalyticalDrivers()
             await this.getFunctionalities()
             await this.getDatasources()
@@ -135,62 +144,63 @@ export default defineComponent({
             await this.getTablesByDocumentID()
             await this.getDataset()
             await this.getDataSources()
+            this.loading = false
+        },
+        async getSelectedDocument() {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.documentId}`).then((response: AxiosResponse<any>) => (this.selectedDocument = response.data))
         },
         async getFunctionalities() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders?includeDocs=false`).then((response: AxiosResponse<any>) => (this.availableFolders = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders?includeDocs=false`).then((response: AxiosResponse<any>) => (this.availableFolders = response.data))
         },
         async getAnalyticalDrivers() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers`).then((response: AxiosResponse<any>) => (this.analyticalDrivers = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers`).then((response: AxiosResponse<any>) => (this.analyticalDrivers = response.data))
         },
         async getDatasources() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources`).then((response: AxiosResponse<any>) => (this.dataSources = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources`).then((response: AxiosResponse<any>) => (this.dataSources = response.data))
         },
         async getDocumentDrivers() {
             if (this.selectedDocument?.id) {
-                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument?.id}/drivers`).then((response: AxiosResponse<any>) => (this.drivers = response.data))
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument?.id}/drivers`).then((response: AxiosResponse<any>) => (this.drivers = response.data))
             }
         },
         async getTemplates() {
             if (this.selectedDocument?.id) {
-                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument?.id}/templates`).then((response: AxiosResponse<any>) => (this.templates = response.data))
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument?.id}/templates`).then((response: AxiosResponse<any>) => (this.templates = response.data))
             }
         },
         async getEngines() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/engines`).then((response: AxiosResponse<any>) => (this.engines = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/engines`).then((response: AxiosResponse<any>) => (this.engines = response.data))
         },
         async getAttributes() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/attributes`).then((response: AxiosResponse<any>) => (this.attributes = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/attributes`).then((response: AxiosResponse<any>) => (this.attributes = response.data))
         },
         async getParTypes() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/PAR_TYPE`).then((response: AxiosResponse<any>) => (this.parTypes = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/PAR_TYPE`).then((response: AxiosResponse<any>) => (this.parTypes = response.data))
         },
         async getDateFormats() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/DATE_FORMAT`).then((response: AxiosResponse<any>) => (this.dateFormats = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/DATE_FORMAT`).then((response: AxiosResponse<any>) => (this.dateFormats = response.data))
         },
         async getDataSources() {
-            this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`)
-                .then((response: AxiosResponse<any>) => ((this.metaSourceResource = response.data), (this.metaSourceResource = this.mainDescriptor.metaSourceResource)))
-                .finally(() => (this.loading = false))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`).then((response: AxiosResponse<any>) => ((this.metaSourceResource = response.data), (this.metaSourceResource = this.mainDescriptor.metaSourceResource)))
         },
         async getTablesByDocumentID() {
             if (this.selectedDocument.id) {
-                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/document/${this.selectedDocument.id}`).then((response: AxiosResponse<any>) => ((this.savedTables = response.data), (this.savedTables = this.mainDescriptor.savedTables)))
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/document/${this.selectedDocument.id}`).then((response: AxiosResponse<any>) => ((this.savedTables = response.data), (this.savedTables = this.mainDescriptor.savedTables)))
             }
         },
         async getDataset() {
             if (this.selectedDocument?.dataSetId) {
-                this.$http
+                await this.$http
                     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.selectedDocument?.dataSetId}`, { headers: { 'X-Disable-Errors': 'true' } })
                     .then((response: AxiosResponse<any>) => {
                         this.selectedDataset = response.data[0]
                     })
-                    //ERROR SE NE VIDI ZBOG TOAST Z-INDEXA OVO MORA DA SE SREDI
                     .catch((error) => {
                         this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message })
                     })
             }
         },
+        //#endregion ===============================================================================================
         setTemplateForUpload(event) {
             this.templateToUpload = event
         },
@@ -200,16 +210,7 @@ export default defineComponent({
             formData.append('file', uploadedFile)
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${responseId}/templates`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        'X-Disable-Errors': 'true'
-                    }
-                })
-                .then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.success'),
-                        msg: this.$t('common.toast.uploadSuccess')
-                    })
+                    headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' }
                 })
                 .catch(() => {
                     this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.uploadError') })
@@ -226,42 +227,77 @@ export default defineComponent({
             formData.append('fileName', uploadedFile.name)
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${responseId}/image`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        'X-Disable-Errors': 'true'
-                    }
-                })
-                .then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.success'),
-                        msg: this.$t('common.toast.uploadSuccess')
-                    })
+                    headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' }
                 })
                 .catch(() => {
-                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.uploadError') })
+                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.info.imageUploadError') })
                 })
         },
-        saveRequest() {
+        async saveOutputParams() {
+            // FOREACH REPORTUJE UNDEFINED ZASTO?
+            // this.outputParameters.forEach((parameter: iOutputParam) => {
+            //     this.saveOutputParamsRequest(parameter)
+            //         .then(() => {
+            //             this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
+            //         })
+            //         .catch((error) => {
+            //             console.log(error)
+            //         })
+            // })
+            this.selectedDocument.outputParameters.forEach((parameter: iOutputParam) => {
+                if (!parameter.id) {
+                    delete parameter.numberOfErrors
+                    delete parameter.tempId
+                    delete parameter.isChanged
+                    this.$http
+                        .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters`, parameter, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                        .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.outputParams.persistError') }))
+                } else if (parameter.isChanged) {
+                    delete parameter.numberOfErrors
+                    delete parameter.isChanged
+                    this.$http
+                        .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters/${parameter.id}`, parameter, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                        .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.outputParams.persistError') }))
+                }
+            })
+        },
+        // saveOutputParamsRequest(parameter) {
+        //     if (!parameter.id) {
+        //         delete parameter.numberOfErrors
+        //         delete parameter.tempId
+        //         return this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters`, parameter, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+        //     } else if (parameter.isChanged) {
+        //         delete parameter.numberOfErrors
+        //         delete parameter.isChanged
+        //         return this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters/${parameter.id}`, parameter, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+        //     }
+        // },
+        saveRequest(docToSave) {
             if (!this.selectedDocument.id) {
-                return this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails`, this.selectedDocument, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                return this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails`, docToSave, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
             } else {
-                return this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}`, this.selectedDocument, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                return this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${docToSave.id}`, docToSave, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
             }
         },
         async saveDocument() {
-            delete this.selectedDocument.drivers
-            delete this.selectedDocument.outputParameters
-            delete this.selectedDocument.dataSetLabel
-            await this.saveRequest()
+            let docToSave = { ...this.selectedDocument }
+            delete docToSave.drivers
+            delete docToSave.outputParameters
+            delete docToSave.dataSetLabel
+
+            console.log(this.selectedDocument.outputParameters)
+            await this.saveRequest(docToSave)
                 .then((response: AxiosResponse<any>) => {
-                    this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
+                    this.saveOutputParams()
                     this.templateToUpload ? this.uploadTemplate(this.templateToUpload, response.data.id) : ''
                     this.imageToUpload ? this.uploadImage(this.imageToUpload, response.data.id) : ''
-                    this.$emit('reloadDocument', response.data.id)
+                    this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
+                    this.loadPage()
                 })
-                .catch((error) => {
-                    console.log(error)
-                })
+                .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
+        },
+        logV() {
+            console.log(this.v$)
         }
     }
 })
@@ -292,5 +328,20 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     flex: 1;
+}
+
+.kn-details-info-div {
+    margin: 8px !important;
+    border: 1px solid rgba(204, 204, 204, 0.6);
+    padding: 8px;
+    background-color: #e6e6e6;
+    text-align: center;
+    position: relative;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+}
+
+.details-warning-color {
+    color: red;
 }
 </style>

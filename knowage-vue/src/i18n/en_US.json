@@ -221,8 +221,12 @@
     "documentExecution": {
         "documentDetails": {
             "dataLineage": {
+                "deleteError": "Error deleting table",
+                "deleteOk": "Table deleted",
                 "noDatasources": "No data source present, add some",
                 "noTables": "Data source has no tables",
+                "persistError": "Error persisting table",
+                "persistOk": "Table persisted",
                 "selectSource": "Select Source",
                 "title": "Data Lineage"
             },
@@ -265,6 +269,7 @@
                 "datasetDialogTitle": "Select Dataset",
                 "engine": "Engine",
                 "engineHint": "Select a type to unlock the available engines",
+                "imageUploadError": "Error uploading image",
                 "infoTitle": "Informations",
                 "positionTitle": "Position",
                 "previewImage": "Preview Image",
@@ -282,7 +287,8 @@
                 "paramDetails": "Output parameter details",
                 "paramName": "Parameter Name",
                 "paramType": "Parameter Type",
-                "title": "Output Parameters"
+                "title": "Output Parameters",
+                "persistError": "Error saving output param"
             },
             "subreports": {
                 "title": "Subreports"

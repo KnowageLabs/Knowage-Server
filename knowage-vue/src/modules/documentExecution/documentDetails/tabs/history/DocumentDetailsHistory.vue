@@ -48,6 +48,7 @@
 </template>
 
 <script lang="ts">
+import { iTemplate } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { iDocument } from '@/modules/documentExecution/documentDetails/DocumentDetails'
@@ -87,8 +88,8 @@ export default defineComponent({
             mainDescriptor,
             driversDescriptor,
             historyDescriptor,
-            selectedTemplate: {} as any,
-            listOfTemplates: [] as any,
+            selectedTemplate: {} as iTemplate,
+            listOfTemplates: [] as iTemplate[],
             selectedTemplateFileType: null as any,
             selectedTemplateContent: '' as any,
             loading: false,
@@ -118,7 +119,7 @@ export default defineComponent({
             this.loading = true
             this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates`)
-                .then((response: AxiosResponse<any>) => (this.listOfTemplates = response.data))
+                .then((response: AxiosResponse<any>) => (this.listOfTemplates = response.data as iTemplate[]))
                 .finally(() => (this.loading = false))
         },
         async getSelectedTemplate(templateId) {
@@ -161,11 +162,10 @@ export default defineComponent({
             if (template && template.name) {
                 let fileType = template.name.split('.')
                 this.selectedTemplateFileType = fileType[fileType.length - 1]
-                console.log(this.selectedTemplateFileType)
             }
         },
         selectTemplate(event) {
-            this.selectedTemplate = event
+            this.selectedTemplate = event as iTemplate
             this.setFileType(event)
             this.changeCodemirrorMode()
             this.getSelectedTemplate(event.id)
@@ -181,26 +181,15 @@ export default defineComponent({
             setTimeout(() => (this.uploading = false), 200)
         },
         async uploadTemplate(uploadedFile) {
-            console.log(uploadedFile)
             var formData = new FormData()
             formData.append('file', uploadedFile)
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        'X-Disable-Errors': 'true'
-                    }
-                })
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates`, formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.success'),
-                        msg: this.$t('common.toast.uploadSuccess')
-                    })
+                    this.$store.commit('setInfo', { title: this.$t('common.toast.success'), msg: this.$t('common.toast.uploadSuccess') })
                     this.getAllTemplates()
                 })
-                .catch(() => {
-                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.uploadError') })
-                })
+                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.uploadError') }))
                 .finally(() => (this.triggerUpload = false))
         },
         setActiveTemplate(template) {
@@ -210,49 +199,35 @@ export default defineComponent({
                     this.$store.commit('setInfo', { title: this.$t('common.toast.success'), msg: this.$t('documentExecution.documentDetails.history.activeOk') })
                     this.getAllTemplates()
                 })
-                .catch(() => {
-                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.activeError') })
-                })
+                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.activeError') }))
         },
         async downloadTemplate(template) {
             let fileType = template.name.split('.')
             await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/${template.id}/${fileType[fileType.length - 1]}/file`, {
-                    headers: {
-                        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-                        'X-Disable-Errors': 'true'
-                    }
+                    headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9', 'X-Disable-Errors': 'true' }
                 })
-                .then(
-                    (response: AxiosResponse<any>) => {
-                        if (response.data.errors) {
-                            this.$store.commit('setError', {
-                                title: this.$t('common.error.downloading'),
-                                msg: this.$t('common.error.errorCreatingPackage')
-                            })
-                        } else {
-                            this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
-                            if (response.headers) {
-                                var contentDisposition = response.headers['content-disposition']
-                                var contentDispositionMatcher = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)
-                                if (contentDispositionMatcher && contentDispositionMatcher.length > 1) {
-                                    var fileAndExtension = contentDispositionMatcher[1]
-                                    var completeFileName = fileAndExtension.replaceAll('"', '')
-                                    if (fileType[fileType.length - 1] == 'json' || fileType[fileType.length - 1] == 'sbicockpit') {
-                                        downloadDirect(JSON.stringify(response.data), completeFileName, 'text/html; charset=UTF-8')
-                                    } else {
-                                        downloadDirect(response.data, completeFileName, 'text/html; charset=UTF-8')
-                                    }
+                .then((response: AxiosResponse<any>) => {
+                    if (response.data.errors) {
+                        this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
+                    } else {
+                        this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
+                        if (response.headers) {
+                            var contentDisposition = response.headers['content-disposition']
+                            var contentDispositionMatcher = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)
+                            if (contentDispositionMatcher && contentDispositionMatcher.length > 1) {
+                                var fileAndExtension = contentDispositionMatcher[1]
+                                var completeFileName = fileAndExtension.replaceAll('"', '')
+                                if (fileType[fileType.length - 1] == 'json' || fileType[fileType.length - 1] == 'sbicockpit') {
+                                    downloadDirect(JSON.stringify(response.data), completeFileName, 'text/html; charset=UTF-8')
+                                } else {
+                                    downloadDirect(response.data, completeFileName, 'text/html; charset=UTF-8')
                                 }
                             }
                         }
-                    },
-                    (error) =>
-                        this.$store.commit('setError', {
-                            title: this.$t('common.error.downloading'),
-                            msg: this.$t(error)
-                        })
-                )
+                    }
+                })
+                .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
         },
         deleteTemplateConfirm(template) {
             this.$confirm.require({
@@ -269,9 +244,7 @@ export default defineComponent({
                     this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                     this.getAllTemplates()
                 })
-                .catch((error) => {
-                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message })
-                })
+                .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
         },
         openDesigner() {
             this.$store.commit('setInfo', { title: 'TODO', msg: 'Functionality not in this sprint!!!' })

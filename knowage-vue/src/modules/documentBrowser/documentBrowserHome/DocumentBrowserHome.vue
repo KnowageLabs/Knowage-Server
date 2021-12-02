@@ -44,7 +44,7 @@
         </div>
     </div>
 
-    <DocumentDetails v-if="showDocumentDetails && !loading" :selectedDocument="selectedDocument" :selectedFolder="selectedFolder" :visible="showDocumentDetails" @closeDetails="showDocumentDetails = false" @reloadDocument="getSelectedDocument" />
+    <DocumentDetails v-if="showDocumentDetails" :documentId="documentId" :selectedDocument="selectedDocument" :selectedFolder="selectedFolder" :visible="showDocumentDetails" @closeDetails="showDocumentDetails = false" @reloadDocument="getSelectedDocument" />
 </template>
 
 <script lang="ts">
@@ -77,7 +77,8 @@ export default defineComponent({
             windowWidth: window.innerWidth,
             loading: false,
             showDocumentDetails: false,
-            selectedDocument: null as any
+            selectedDocument: null as any,
+            documentId: null as any
         }
     },
     computed: {
@@ -172,15 +173,8 @@ export default defineComponent({
             this.showDocumentDetails = true
         },
         async showDocumentDetailsDialog(event) {
-            this.loading = true
-            await this.getSelectedDocument(event.id)
+            this.documentId = event.id
             this.showDocumentDetails = true
-        },
-        async getSelectedDocument(id) {
-            await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${id}`)
-                .then((response: AxiosResponse<any>) => (this.selectedDocument = response.data))
-                .finally(() => (this.loading = false))
         },
         createNewCockpit() {
             this.$emit('itemSelected', { item: null, mode: 'createCockpit' })

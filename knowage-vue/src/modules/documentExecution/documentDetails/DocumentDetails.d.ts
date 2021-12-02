@@ -146,3 +146,71 @@ export interface iVisualDependency {
     prog: number
     viewLabel: string
 }
+
+export interface iParType {
+    domainCode: string
+    domainName: string
+    translatedValueDescription: string
+    translatedValueName: string
+    valueCd: string
+    valueDescription: string
+    valueId: number
+    valueName: string
+}
+
+export interface iDateFormat {
+    domainCode: string
+    domainName: string
+    translatedValueDescription: string
+    translatedValueName: string
+    valueCd: string
+    valueDescription: string
+    valueId: number
+    valueName: string
+}
+
+export interface iFolder {
+    biObjects: any
+    codType: string
+    code: string
+    createRoles: any
+    description: string
+    devRoles: any
+    execRoles: any
+    id: number
+    name: string
+    parentId: null
+    path: string
+    prog: number
+    testRoles: any
+}
+
+export interface iMetaSource {
+    location: any
+    name: string
+    role: any
+    sourceCatalogue: any
+    sourceId: number
+    sourceSchema: string
+    type: string
+    url: string
+}
+
+export interface iTableSmall {
+    deleted: boolean
+    name: string
+    tableId: number
+}
+
+export interface iOutputParam {
+    biObjectId: number
+    formatCode: string | null
+    formatValue: string | null
+    id: number
+    isUserDefined: boolean
+    name: string
+    tempId?: number
+    type: iParType
+    isChanged?: boolean
+    numberOfErrors?: any
+}

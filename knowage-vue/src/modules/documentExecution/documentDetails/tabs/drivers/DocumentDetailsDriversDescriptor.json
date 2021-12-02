@@ -85,7 +85,10 @@
                 "fieldName": "viewLabel",
                 "validators": [
                     {
-                        "key": "required"
+                        "key": "required",
+                        "validator": {
+                            "type": "visibility-validator"
+                        }
                     }
                 ]
             },
@@ -93,7 +96,10 @@
                 "fieldName": "compareValue",
                 "validators": [
                     {
-                        "key": "required"
+                        "key": "required",
+                        "validator": {
+                            "type": "visibility-validator"
+                        }
                     }
                 ]
             }

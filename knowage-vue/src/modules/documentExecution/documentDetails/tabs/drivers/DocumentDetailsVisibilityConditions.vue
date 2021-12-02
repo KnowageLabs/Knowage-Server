@@ -75,7 +75,7 @@
 <script lang="ts">
 import { iDriver, iDocument, iVisualDependency } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 import { defineComponent, PropType } from 'vue'
-import { createValidations } from '@/helpers/commons/validationHelper'
+import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import { AxiosResponse } from 'axios'
 import useValidate from '@vuelidate/core'
 import mainDescriptor from '@/modules/documentExecution/documentDetails/DocumentDetailsDescriptor.json'
@@ -111,7 +111,14 @@ export default defineComponent({
         this.selectedDriver.id ? this.getVisualDependenciesByDriverId() : ''
     },
     validations() {
-        const validationObject = { selectedCondition: createValidations('selectedCondition', driversDescriptor.validations.selectedCondition) }
+        // const validationObject = { selectedCondition: createValidations('selectedCondition', driversDescriptor.validations.selectedCondition) }
+        // return validationObject
+
+        const visibilityValidator = (value) => {
+            return Object.keys(this.selectedCondition).length === 0 || value
+        }
+        const customValidators: ICustomValidatorMap = { 'visibility-validator': visibilityValidator }
+        const validationObject = { selectedCondition: createValidations('selectedCondition', driversDescriptor.validations.selectedCondition, customValidators) }
         return validationObject
     },
     methods: {

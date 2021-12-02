@@ -59,12 +59,17 @@
                                     </span>
                                     <KnValidationMessages class="p-mt-1" :vComp="v$.document.name" :additionalTranslateParams="{ fieldName: $t('common.name') }" />
                                 </div>
-                                <div class="p-field p-col-12">
+
+                                <div class="p-field p-col-12 p-lg-6">
+                                    <img id="image-preview" :src="getImageUrl" height="175" />
+                                </div>
+
+                                <div class="p-field p-col-12 p-lg-6">
                                     <span class="p-float-label">
                                         <Textarea
                                             id="description"
                                             class="kn-material-input"
-                                            rows="3"
+                                            rows="9"
                                             maxLength="400"
                                             :autoResize="true"
                                             v-model="v$.document.description.$model"
@@ -79,7 +84,6 @@
                                     <KnValidationMessages class="p-mt-1" :vComp="v$.document.description" :additionalTranslateParams="{ fieldName: $t('common.description') }" />
                                 </div>
 
-                                <!-- <img :src="imageSource" height="180" /> -->
                                 <div class="p-field p-col-12 p-d-flex">
                                     <div :style="mainDescriptor.style.flexOne">
                                         <span class="p-float-label">
@@ -246,7 +250,7 @@
 </template>
 
 <script lang="ts">
-import { iDocument, iDataSource, iEngine, iTemplate, iAttribute } from '@/modules/documentExecution/documentDetails/DocumentDetails'
+import { iDocument, iDataSource, iEngine, iTemplate, iAttribute, iFolder } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 import { defineComponent, PropType } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import mainDescriptor from '../../DocumentDetailsDescriptor.json'
@@ -267,12 +271,12 @@ export default defineComponent({
     props: {
         selectedDocument: { type: Object as PropType<iDocument> },
         selectedDataset: { type: Object },
-        selectedFolder: { type: Object, required: true },
+        availableStates: { type: Array },
+        selectedFolder: { type: Object as PropType<iFolder>, required: true },
         documentTypes: { type: Array as any, required: true },
         documentEngines: { type: Array as PropType<iEngine[]>, required: true },
         availableDatasources: { type: Array as PropType<iDataSource[]> },
-        availableStates: { type: Array },
-        availableFolders: { type: Array as any },
+        availableFolders: { type: Array as PropType<iFolder[]> },
         availableTemplates: { type: Array as PropType<iTemplate[]> },
         availableAttributes: { type: Array as PropType<iAttribute[]> }
     },
@@ -310,8 +314,8 @@ export default defineComponent({
                     return false
             }
         },
-        imageSource(): string {
-            return process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.document.id}/image`
+        getImageUrl(): string {
+            return process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
         }
     },
     data() {
@@ -319,19 +323,19 @@ export default defineComponent({
             v$: useValidate() as any,
             mainDescriptor,
             infoDescriptor,
-            showDatasetDialog: false,
-            lockedByUser: false,
             uploading: false,
+            lockedByUser: false,
             triggerUpload: false,
+            showDatasetDialog: false,
             triggerImageUpload: false,
-            document: {} as iDocument,
             dataset: {} as any,
+            folders: [] as iFolder[],
+            document: {} as iDocument,
             templates: [] as iTemplate[],
-            folders: [] as any,
-            restrictionValue: '',
-            visibilityAttribute: '',
             templateToUpload: { name: '' } as any,
-            imageToUpload: { name: '' } as any
+            imageToUpload: { name: '' } as any,
+            visibilityAttribute: '',
+            restrictionValue: ''
         }
     },
     created() {
@@ -351,8 +355,7 @@ export default defineComponent({
             this.templates = this.availableTemplates as iTemplate[]
             this.document = this.selectedDocument as iDocument
             this.dataset = this.selectedDataset
-            this.folders = [...this.availableFolders]
-
+            this.folders = this.availableFolders as iFolder[]
             this.IsLockedByUser()
         },
         IsLockedByUser() {

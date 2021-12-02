@@ -28,9 +28,10 @@
                                 <div v-if="dataSource && tablesList.length == 0" class="kn-details-info-div">
                                     {{ $t('documentExecution.documentDetails.dataLineage.noTables') }}
                                 </div>
-                                <DataTable v-if="dataSource && tablesList.length > 0" class="p-datatable-sm kn-table" :value="tablesList" v-model:selection="selectedTables" dataKey="tableId" responsiveLayout="scroll" @rowSelect="onRowSelect" @rowUnselect="onRowUnselect">
-                                    <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
-                                    <Column field="name" header="Table Name"></Column>
+                                <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
+                                <DataTable v-if="dataSource && tablesList.length > 0 && !loading" class="p-datatable-sm kn-table" :value="tablesList" v-model:selection="selectedTables" dataKey="tableId" responsiveLayout="scroll" @rowSelect="peristTable" @rowUnselect="deleteTable">
+                                    <Column class="lineage-table-header" selectionMode="multiple" :headerStyle="mainDescriptor.style.tableHeader"> </Column>
+                                    <Column field="name" :header="$t('managers.datasetManagement.flatTableName')"></Column>
                                 </DataTable>
                             </template>
                         </Card>
@@ -43,7 +44,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iDocument } from '@/modules/documentExecution/documentDetails/DocumentDetails'
+import { iDocument, iMetaSource, iTableSmall } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 import { AxiosResponse } from 'axios'
 import mainDescriptor from '@/modules/documentExecution/documentDetails/DocumentDetailsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -53,28 +54,30 @@ import Column from 'primevue/column'
 export default defineComponent({
     name: 'data-lineage',
     components: { Dropdown, DataTable, Column },
-    props: { selectedDocument: { type: Object as PropType<iDocument>, required: true }, metaSourceResource: { type: Array as any, required: true }, savedTables: { type: Array as any, required: true } },
+    props: { selectedDocument: { type: Object as PropType<iDocument>, required: true }, metaSourceResource: { type: Array as PropType<iMetaSource[]>, required: true }, savedTables: { type: Array as PropType<iTableSmall[]>, required: true } },
     emits: [],
     data() {
         return {
             mainDescriptor,
-            dataSource: null as any,
-            tablesList: [] as any,
-            selectedTables: [] as any,
-            tablesForRemoving: [] as any,
-            selected: null as any
+            dataSource: {} as iMetaSource,
+            tablesList: [] as iTableSmall[],
+            selectedTables: [] as iTableSmall[],
+            loading: false
         }
     },
     created() {},
 
     methods: {
         async getTablesBySourceID() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/${this.dataSource.sourceId}/metatables`).then((response: AxiosResponse<any>) => {
-                this.tablesList = response.data
-                this.tablesList = mainDescriptor.tablesListFoodmart
-                console.log('tablesList', this.tablesList)
-                this.setCheckedTables()
-            })
+            this.loading = true
+            this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/${this.dataSource.sourceId}/metatables`)
+                .then((response: AxiosResponse<any>) => {
+                    this.tablesList = response.data as iTableSmall[]
+                    this.tablesList = mainDescriptor.tablesListFoodmart
+                    this.setCheckedTables()
+                })
+                .finally(() => (this.loading = false))
         },
         setCheckedTables() {
             for (var i = 0; i < this.tablesList.length; i++) {
@@ -84,26 +87,28 @@ export default defineComponent({
                     }
                 }
             }
-            console.log('setCheckedTables', this.tablesList)
         },
-        onRowSelect(event) {
-            console.log('select', event)
+        peristTable(event) {
+            this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/${this.selectedDocument.id}`, event.data, {
+                    headers: { 'X-Disable-Errors': 'true' }
+                })
+                .then(() => this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.dataLineage.persistOk') }))
+                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.dataLineage.persistError') }))
         },
-        onRowUnselect(event) {
-            console.log('unselect', event)
+        deleteTable(event) {
+            this.$http
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/${this.selectedDocument.id}/${event.data.tableId}`, {
+                    headers: { 'X-Disable-Errors': 'true' }
+                })
+                .then(() => this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.dataLineage.deleteOk') }))
+                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.dataLineage.deleteError') }))
         }
     }
 })
 </script>
 <style lang="scss">
-.kn-details-info-div {
-    margin: 8px !important;
-    border: 1px solid rgba(204, 204, 204, 0.6);
-    padding: 8px;
-    background-color: #e6e6e6;
-    text-align: center;
-    position: relative;
-    text-transform: uppercase;
-    font-size: 0.8rem;
+.lineage-table-header .p-column-header-content {
+    display: none;
 }
 </style>
