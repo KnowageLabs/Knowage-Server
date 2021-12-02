@@ -1,0 +1,10 @@
+{
+    "descriptionMaxLength": "400",
+    "dialog": {
+        "style": {
+            "width": "60vw"
+        }
+    },
+    "labelMaxLength": "100",
+    "nameMaxLength": "200"
+}

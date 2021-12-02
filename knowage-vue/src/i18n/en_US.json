@@ -83,6 +83,7 @@
         "message": "Message",
         "metadata": "Metadata",
         "modify": "modify",
+        "move": "Move",
         "name": "name",
         "new": "new",
         "next": "next",
@@ -95,6 +96,7 @@
         "onlineHelp": "Help Online",
         "output": "Output",
         "owner": "Owner",
+        "packages": "Packages",
         "parameter": "Parameter",
         "parameters": "Parameters",
         "password": "Password",
@@ -120,6 +122,7 @@
         "sendMail": "Send Mail",
         "sendMailSuccess": "Email Sent",
         "set": "Set",
+        "share": "Share",
         "shortcuts": "Shortcuts",
         "snapshot": "Snapshot",
         "sort": "sort",
@@ -135,6 +138,7 @@
         "tags": "tags",
         "tenant": "tenant",
         "test": "test",
+        "time": "Time",
         "to": "To",
         "toast": {
             "cloneConfirmTitle": "Confirm item clone?",
@@ -290,8 +294,8 @@
             "savedParametersTooltip": "Open saved parameters window",
             "scheduledExecutions": "Scheduled executions",
             "selectFileError": "Select a file to Upload!",
-            "userRoleError": "User does not have valid roles for the execution of the selected document",
             "showScheduledExecutions": "Show scheduled executions",
+            "userRoleError": "User does not have valid roles for the execution of the selected document",
             "viewCockpit": "View cockpit document",
             "yourRating": "Your rating"
         },
@@ -1552,5 +1556,94 @@
     "role": {
         "defaultRolePlaceholder": "No default role selected",
         "roleSelection": "Role Selection"
+    },
+    "workspace": {
+        "federationDefinition": {
+            "associationsEditor": "Associations Editor",
+            "associationsList": "Associations List",
+            "availableDatasets": "Available datasets",
+            "availableDatasetsMessage": "Click to add to federation",
+            "datasetDetail": "Dataset details",
+            "datasetNotInRelationshipError": "All selected datasets must be contained at least in one relationship!",
+            "noDatasetsSelectedError": "You didn't select any datasets!",
+            "onlyOneSelectedDatasetError": "Select at least two datasets!",
+            "relationshipAlreadyPresentError": "Relationship already exists",
+            "removeSelectedDatasetError": "You can't delete the dataset! It is used in a relationship! To delete this dataset you have to remove the relationship first.",
+            "saveFederation": "Save federation",
+            "savingFederation": "Saving Federation",
+            "selectedDatasets": "Selected datasets",
+            "selectedDatasetsMessage": "Click to remove from federation",
+            "title": "Federation definition"
+        },
+        "hint": "Please change the hint to your liking in the i18 files.",
+        "menuLabels": {
+            "advanced": "My Advanced Data",
+            "menuTitle": "My Workspace",
+            "myAnalysis": "My Analysis",
+            "myData": "My Data",
+            "myModels": "My Models",
+            "myRepository": "My Repository",
+            "recent": "Recent",
+            "recentDocuments": "Recent Documents",
+            "schedulation": "Schedulation"
+        },
+        "myAnalysis": {
+            "menuItems": {
+                "clone": "Clone Document",
+                "delete": "Delete Document",
+                "edit": "Edit Document",
+                "share": "Share Document",
+                "showDsDetails": "Show dataset details",
+                "unshare": "Unshare Document",
+                "upload": "Upload preview file"
+            }
+        },
+        "myData": {
+            "cloneDataset": "Clone Dataset",
+            "clonedDatasetWizard": "Cloned Dataset Wizard",
+            "csvExport": "Export Dataset to CSV",
+            "datasetPreview": "Dataset Preview",
+            "deleteDataset": "Delete Dataset",
+            "driverable": "Drivable",
+            "exportSuccess": "The download has started in background. You will find the result file in your download page.",
+            "fileDownload": "Download Dataset file",
+            "modified": "Modified",
+            "openData": "Import Open Data",
+            "parametrical": "Parametrical",
+            "parseError": "Impossible to parse file. Check its content and upload it again",
+            "prepareData": "Prepare Data",
+            "shareDataset": "Share/Unshare Dataset",
+            "shareDatasetHint": "By selecting a category from the combo box you are sharing the data set for all the users that are able to manage the specified data set category.",
+            "tablePrefix": "Table Prefix",
+            "title": "My Data",
+            "unshareDataset": "Unshare Dataset",
+            "wizardTitle": "Dataset Wizard",
+            "xlsxExport": "Export Dataset to XLSX"
+        },
+        "myModels": {
+            "deleteDataset": "Delete dataset",
+            "editDataset": "Edit dataset",
+            "openInQBE": "Open dataset in QBE",
+            "showInfo": "Show dataset info",
+            "title": "My Models"
+        },
+        "myRepository": {
+            "destinationFolder": "Destination folder",
+            "folderCreatedMessage": "Folder is created and added to the current path",
+            "folderDeleteError": "Folder could not be deleted. It contains at least one subfolder or at least one document",
+            "moveDocument": "Move Document",
+            "newFolderTitle": "Create new folder"
+        },
+        "recent": {
+            "sidebarLabels": {
+                "executionTime": "Execution Time"
+            }
+        },
+        "schedulation": {
+            "executedSchedulations": "Executed schedulations",
+            "oldSchedulationsMessage": "In the following table you will find all executed schedulations from selected job.",
+            "ranSchedulations": "View ran schedulations",
+            "title": "Schedulations"
+        }
     }
 }

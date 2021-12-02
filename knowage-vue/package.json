@@ -7,6 +7,7 @@
         "serve": "vue-cli-service serve --port 3000",
         "build": "vue-cli-service build --mode production --no-clean",
         "test:unit": "vue-cli-service test:unit --watch",
+        "test:ci": "vue-cli-service test:unit",
         "lint": "vue-cli-service lint"
     },
     "main": "main.ts",
@@ -22,6 +23,7 @@
         "js-base64": "3.6.1",
         "mitt": "^2.1.0",
         "moment": "2.29.1",
+        "pleaserotate.js": "^0.1.2",
         "primeflex": "^2.0.0",
         "primeicons": "^4.1.0",
         "primevue": "3.5.1",

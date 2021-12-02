@@ -196,6 +196,37 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 	}
 	$scope.isFromNewCockpit= cockpitModule_generalServices.isFromNewCockpit();
 
+	window.addEventListener("message", (event) => {
+		if(event.data.type && event.data.type === 'export') {
+			if(event.data.format && event.data.format === 'pdf') {
+				$scope.exportPdf().then(function(){},function(error){
+					$mdDialog.show(
+							$mdDialog.alert()
+								.parent(angular.element(document.body))
+								.clickOutsideToClose(true)
+								.title('Error during export')
+								.textContent(error)
+								.ok('Close')
+								);
+				});
+			}
+			if(event.data.format && event.data.format === 'pdf') {
+				$scope.exportExcel(message).then(function(){},
+					function(error){
+						$mdDialog.show(
+						  $mdDialog.alert()
+							.parent(angular.element(document.body))
+							.clickOutsideToClose(true)
+							.title('Error during export')
+							.textContent(error)
+							.ok('Close')
+						);
+					});
+			}
+		}
+	})
+	
+	
 	var handler = {};
 	handler.handleMessage = function(message){
 		if(message == 'pdfExport') $scope.exportPdf().then(function(){},

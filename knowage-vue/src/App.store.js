@@ -1,7 +1,11 @@
 import { createStore } from 'vuex'
+import overlayStore from './overlay/Overlay.store'
 
 // Create a new store instance.
 const store = createStore({
+    modules: {
+        overlayStore
+    },
     state() {
         return {
             user: {},
