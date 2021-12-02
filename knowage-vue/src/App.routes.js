@@ -7,7 +7,6 @@ import documentExecutionRoutes from '@/modules/documentExecution/documentExecuti
 import documentBrowserRoutes from '@/modules/documentBrowser/DocumentBrowser.routes.js'
 import workspaceRoutes from '@/modules/workspace/workspace.routes.js'
 import overlayRoutes from '@/overlay/Overlay.routes.js'
-import workspaceRoutes from '@/modules/workspace/Workspace.routes.js'
 import dataPreparationRoutes from '@/modules/workspace/dataPreparation/DataPreparation.routes.js'
 
 const baseRoutes = [
@@ -59,15 +58,15 @@ const baseRoutes = [
 ]
 
 const routes = baseRoutes
-	.concat(managersRoutes)
-	.concat(importExportRoutes)
-	.concat(kpiRoutes)
-	.concat(documentExecutionRoutes)
+    .concat(managersRoutes)
+    .concat(importExportRoutes)
+    .concat(kpiRoutes)
+    .concat(documentExecutionRoutes)
     .concat(documentBrowserRoutes)
     .concat(workspaceRoutes)
     .concat(overlayRoutes)
-	.concat(workspaceRoutes)
-	.concat(dataPreparationRoutes)
+    .concat(workspaceRoutes)
+    .concat(dataPreparationRoutes)
 
 const router = createRouter({
     base: process.env.VUE_APP_PUBLIC_PATH,
