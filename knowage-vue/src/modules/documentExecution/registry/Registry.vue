@@ -95,6 +95,7 @@ export default defineComponent({
         }
     },
     async created() {
+        console.log('REGISTRY CREATED!!!!!!!!!!!!!!!!!!!1')
         await this.loadPage()
     },
     methods: {

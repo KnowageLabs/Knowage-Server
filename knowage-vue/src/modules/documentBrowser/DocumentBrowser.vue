@@ -49,9 +49,11 @@ export default defineComponent({
     },
     created() {
         if (this.$route.params.id && this.$route.name === 'document-browser-document-execution') {
-            this.tabs.push({ item: { name: this.$route.params.id, label: this.$route.params.id, mode: this.$route.params.mode }, mode: 'execute' })
+            const tempItem = { item: { name: this.$route.params.id, label: this.$route.params.id, mode: this.$route.params.mode }, mode: 'execute' }
+            this.tabs.push(tempItem)
 
             this.activeIndex = 1
+            this.selectedItem = tempItem
         }
     },
     methods: {

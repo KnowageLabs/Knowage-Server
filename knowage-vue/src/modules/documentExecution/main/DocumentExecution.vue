@@ -139,6 +139,8 @@ export default defineComponent({
         }
     },
     async created() {
+        console.log('DOCUMENT EXECUTION CREATED!!!!!!!!!1')
+
         //console.log('CURRENT ROUTE: ', this.$route)
         this.user = (this.$store.state as any).user
         this.userRole = this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null

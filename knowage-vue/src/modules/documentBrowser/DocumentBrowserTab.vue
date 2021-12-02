@@ -1,7 +1,7 @@
 <template>
     <router-view v-slot="{ Component }" @close="$emit('close', item)">
         <keep-alive>
-            <component :is="Component" :key="$route.fullPath"></component>
+            <component :is="Component" :key="$route.fullPath + Date.now()"></component>
         </keep-alive>
     </router-view>
 </template>
