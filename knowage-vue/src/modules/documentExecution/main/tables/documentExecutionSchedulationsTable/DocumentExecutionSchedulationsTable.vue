@@ -4,8 +4,8 @@
             <template #left>{{ $t('documentExecution.main.scheduledExecutions') }} </template>
 
             <template #right>
-                <Button id="document-execution-schedulations-close-button" class="kn-button kn-button--primary" @click="closeTable"> {{ $t('common.cancel') }}</Button></template
-            >
+                <Button id="document-execution-schedulations-close-button" class="kn-button kn-button--primary" @click="closeTable"> {{ $t('common.close') }}</Button>
+            </template>
         </Toolbar>
 
         <DataTable
@@ -90,7 +90,6 @@ export default defineComponent({
     methods: {
         loadSchedulations() {
             this.schedulations = this.propSchedulations as any[]
-            console.log('LOADED SCHEDULATIONS: ', this.schedulations)
         },
         getFormattedDate(date: any, format: any) {
             return formatDate(date, format)
@@ -98,8 +97,6 @@ export default defineComponent({
         downloadSnapshot(schedulation: any) {
             this.url = process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?NEW_SESSION=TRUE&user_id=${this.user?.userUniqueIdentifier}&ACTION_NAME=GET_SNAPSHOT_CONTENT&SNAPSHOT_ID=${schedulation.id}&LIGHT_NAVIGATOR_DISABLED=TRUE&OBJECT_ID=${schedulation.biobjId}`
             this.snapshotDialogVisible = true
-
-            // window.open(url, '_blank')
         },
         deleteSchedulationConfirm(schedulation: any) {
             this.$confirm.require({

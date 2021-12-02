@@ -112,7 +112,6 @@ export default defineComponent({
             if (this.notes.length > 0) {
                 this.selectedNote = this.notes[0]
             }
-            console.log('LOADED NOTES: ', this.notes)
         },
         async saveNote() {
             this.loading = true
@@ -139,7 +138,6 @@ export default defineComponent({
         },
         async onDeleteNote(note: any) {
             this.loading = true
-            console.log('NOTE FOR DELETE: ', note)
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documentnotes/deleteNote`, { id: this.document.id, execReq: note.execReq, owner: note.owner })
                 .then(async () => {
@@ -171,8 +169,6 @@ export default defineComponent({
                 )
                 .then((response: AxiosResponse<any>) => {
                     const byteArray = new Uint8Array(response.data.file)
-                    console.log('RESPONSE HEADERS: ', response.headers)
-                    // TODO - ask for rtf
                     downloadDirect(byteArray, this.document.label, type === 'pdf' ? 'application/pdf' : 'application/rtf')
                 })
                 .catch((error: any) =>

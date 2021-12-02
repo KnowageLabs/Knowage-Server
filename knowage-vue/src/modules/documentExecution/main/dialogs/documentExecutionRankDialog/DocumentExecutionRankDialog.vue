@@ -55,7 +55,6 @@ export default defineComponent({
         loadDocumentRank() {
             this.newRank = null
             this.documentRank = this.propDocumentRank
-            // console.log('DOCUMENT RANK DIALOG LOADED: ', this.documentRank)
         },
         closeDialog() {
             this.newRank = null

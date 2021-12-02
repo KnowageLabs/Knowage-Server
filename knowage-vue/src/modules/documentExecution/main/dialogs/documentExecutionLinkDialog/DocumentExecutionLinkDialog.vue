@@ -15,8 +15,8 @@
                     <span>{{ $t('documentExecution.main.publicUrlExecutionDisabled') }}</span>
                 </p>
             </div>
-            <div>
-                <p>{{ $t('documentExecution.main.copyLinkAndShare') + ' (' + $t('documentExecution.main.linkToDocumentInfo') + ')' }}</p>
+            <div class="p-m-2">
+                <p>{{ $t('documentExecution.main.copyLinkAndShare') }}</p>
             </div>
 
             <div class="p-fluid p-formgrid p-grid p-m-2">
@@ -49,16 +49,28 @@ export default defineComponent({
     data() {
         return {
             documentExecutionLinkDialogDescriptor,
-            publicUrl: this.$route.fullPath
+            publicUrl: ''
         }
     },
-    watch: {},
+    watch: {
+        visible() {
+            this.getPublicUrl()
+        }
+    },
     created() {
-        console.log('ROUTE: ', this.$route)
+        this.getPublicUrl()
     },
     methods: {
+        getPublicUrl() {
+            if (this.embedHTML) {
+                this.publicUrl = '<iframe width="600" height="600" src=' + process.env.VUE_APP_HOST_URL + this.$route.fullPath + ' frameborder="0"></iframe>'
+            } else {
+                this.publicUrl = process.env.VUE_APP_HOST_URL + this.$route.fullPath
+            }
+        },
         closeDialog() {
             this.$emit('close')
+            this.publicUrl = ''
         }
     }
 })

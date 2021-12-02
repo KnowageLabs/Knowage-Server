@@ -13,11 +13,11 @@
         {{ user.sessionRole }}
 
         <div class="p-fluid kn-parameter-sidebar-content">
-            <div class="p-field p-m-4" v-if="user && (!user.sessionRole || user.sessionRole === 'No default role selected')">
+            <div class="p-field p-m-4" v-if="user && (!sessionRole || sessionRole === 'No default role selected')">
                 <div class="p-d-flex">
                     <label class="kn-material-input-label">{{ $t('common.roles') }}</label>
                 </div>
-                <Dropdown class="kn-material-input" v-model="newSessionRole" :options="user.roles" @change="setNewSessionRole" />
+                <Dropdown class="kn-material-input" v-model="role" :options="user.roles" @change="setNewSessionRole" />
             </div>
 
             <div v-for="(parameter, index) in parameters.filterStatus" :key="index">
@@ -32,7 +32,7 @@
                         :type="parameter.type === 'NUM' ? 'number' : 'text'"
                         v-model="parameter.parameterValue[0].value"
                         :class="{
-                            'p-invalid': parameter.mandatory && !parameter.parameterValue[0]?.value
+                            'p-invalid': parameter.mandatory && parameter.parameterValue && !parameter.parameterValue[0]?.value
                         }"
                         @input="updateVisualDependency(parameter)"
                         :data-test="'parameter-input-' + parameter.id"
@@ -51,7 +51,7 @@
                         :showIcon="true"
                         :manualInput="true"
                         :class="{
-                            'p-invalid': parameter.mandatory && !parameter.parameterValue[0]?.value
+                            'p-invalid': parameter.mandatory && parameter.parameterValue && !parameter.parameterValue[0]?.value
                         }"
                         @change="updateVisualDependency(parameter)"
                         @date-select="updateVisualDependency(parameter)"
@@ -142,10 +142,10 @@
                 </div>
             </div>
         </div>
-        <div class="p-fluid p-d-flex p-flex-row p-m-5 kn-parameter-sidebar-buttons">
+        <div v-if="parameters && parameters.filterStatus.length > 0" class="p-fluid p-d-flex p-flex-row p-mx-5 kn-parameter-sidebar-buttons">
             <Button class="kn-button kn-button--primary" :disabled="buttonsDisabled" @click="$emit('execute')"> {{ $t('common.execute') }}</Button>
-            <Button class="kn-button kn-button--primary" icon="fa fa-chevron-down" :disabled="buttonsDisabled" @click="toggle($event)" />
-            <Menu ref="menu" :model="executeMenuItems" :popup="true" />
+            <Button class="kn-button kn-button--primary p-ml-1" icon="fa fa-chevron-down" :disabled="buttonsDisabled" @click="toggle($event)" />
+            <Menu ref="executeButtonMenu" :model="executeMenuItems" :popup="true" />
         </div>
 
         <KnParameterPopupDialog :visible="popupDialogVisible" :selectedParameter="selectedParameter" :propLoading="loading" :parameterPopUpData="parameterPopUpData" @close="popupDialogVisible = false" @save="onPopupSave"></KnParameterPopupDialog>
@@ -187,8 +187,8 @@ export default defineComponent({
         MultiSelect,
         RadioButton
     },
-    props: { filtersData: { type: Object }, propDocument: { type: Object } },
-    emits: ['execute', 'exportCSV'],
+    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String } },
+    emits: ['execute', 'exportCSV', 'roleChanged'],
     data() {
         return {
             document: null as iDocument | null,
@@ -203,19 +203,22 @@ export default defineComponent({
             parameterSaveDialogVisible: false,
             savedParametersDialogVisible: false,
             viewpoints: [],
-            newSessionRole: '' as string,
             user: null as any,
+            role: null as any,
             loading: false
         }
     },
     watch: {
         sessionRole() {
-            this.newSessionRole = ''
+            this.role = ''
             this.parameters = { isReadyForExecution: false, filterStatus: [] }
         },
         filtersData() {
             this.loadDocument()
             this.loadParameters()
+        },
+        userRole() {
+            this.role = this.userRole
         }
     },
     computed: {
@@ -228,6 +231,7 @@ export default defineComponent({
     },
     created() {
         this.user = (this.$store.state as any).user
+        this.role = this.userRole
 
         this.loadDocument()
         this.loadParameters()
@@ -238,9 +242,9 @@ export default defineComponent({
         setNewSessionRole() {
             // console.log(' >>> USER: ', this.user)
             // console.log(' >>> NE ROLE: ', this.newSessionRole)
-            this.$store.commit('setUserSessionRole', this.newSessionRole)
+            // this.$store.commit('setUserSessionRole', this.newSessionRole)
             // console.log('THIS STORE USER: ', (this.$store.state as any).user)
-            this.$emit('execute')
+            this.$emit('roleChanged', this.role)
             this.parameters = { isReadyForExecution: false, filterStatus: [] }
         },
         loadDocument() {
@@ -252,7 +256,7 @@ export default defineComponent({
 
             console.log('>>> LOADED ORIGINAL PARAMETERS: ', this.filtersData?.filterStatus)
 
-            this.filtersData?.filterStatus.forEach((el: any) => {
+            this.filtersData?.filterStatus?.forEach((el: any) => {
                 if (el.selectionType == 'LIST' && el.showOnPanel == 'true' && el.multivalue) {
                     this.selectedParameterCheckbox[el.id] = el.parameterValue?.map((parameterValue: any) => parameterValue.value)
                 }
@@ -306,7 +310,9 @@ export default defineComponent({
         },
         toggle(event: any) {
             this.createMenuItems()
-            const menu = this.$refs.menu as any
+            console.log('REFS: ', this.$refs)
+            const menu = this.$refs.executeButtonMenu as any
+            console.log('MENU: ', menu)
             menu.toggle(event)
         },
         createMenuItems() {
@@ -607,13 +613,10 @@ export default defineComponent({
 .kn-parameter-sidebar-content {
     height: 80vh;
     overflow: auto;
+    position: relative;
 }
 
-// .kn-parameter-sidebar-buttons {
-//     margin-top: auto;
-// }
-
-.kn-parameter-label-error {
-    color: red !important;
+.kn-parameter-sidebar-buttons {
+    margin-top: auto;
 }
 </style>

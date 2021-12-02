@@ -44,7 +44,6 @@ export default defineComponent({
     methods: {
         loadNote() {
             this.note = this.selectedNote
-            console.log('LOADED NOTE: ', this.note)
         }
     }
 })

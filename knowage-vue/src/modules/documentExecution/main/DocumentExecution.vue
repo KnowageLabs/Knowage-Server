@@ -1,5 +1,5 @@
 <template>
-    <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
+    <Toolbar v-if="!this.embed" class="kn-toolbar kn-toolbar--primary p-col-12">
         <template #left>
             <span>{{ document?.label }}</span>
         </template>
@@ -10,7 +10,7 @@
                 <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'" class="fa fa-eye kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocument"></i>
                 <i class="pi pi-book kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></i>
                 <i class="pi pi-refresh kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.refresh')" @click="refresh"></i>
-                <i v-if="filtersData?.filterStatus?.length > 0" class="fa fa-filter kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible" data-test="parameter-sidebar-icon"></i>
+                <i v-if="filtersData?.filterStatus?.length > 0 || !sessionRole" class="fa fa-filter kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible" data-test="parameter-sidebar-icon"></i>
                 <i class="fa fa-ellipsis-v kn-cursor-pointer  p-mx-4" v-tooltip.left="$t('common.menu')" @click="toggle"></i>
                 <Menu ref="menu" :model="toolbarMenuItems" :popup="true" />
                 <i class="fa fa-times kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.close')" @click="closeDocument"></i>
@@ -23,14 +23,26 @@
     <div ref="document-execution-view" id="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
         <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
 
-        <Registry v-if="mode === 'registry' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible" :id="urlData.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
-        <Dossier v-else-if="mode === 'dossier' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible" :id="document.id" :reloadTrigger="reloadTrigger"></Dossier>
+        <template v-if="filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible">
+            <Registry v-if="mode === 'registry'" :id="urlData.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
+            <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger"></Dossier>
 
-        <!-- <iframe v-else-if="mode === 'iframe'" class="document-execution-iframe" :src="url"></iframe> -->
+            <iframe v-else-if="mode === 'iframe'" class="document-execution-iframe" :src="url"></iframe>
+        </template>
 
         <DocumentExecutionSchedulationsTable id="document-execution-schedulations-table" v-if="schedulationsTableVisible" :propSchedulations="schedulations" @deleteSchedulation="onDeleteSchedulation" @close="schedulationsTableVisible = false"></DocumentExecutionSchedulationsTable>
 
-        <KnParameterSidebar class="document-execution-parameter-sidebar kn-overflow-y" v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="document" @execute="onExecute" @exportCSV="onExportCSV" data-test="parameter-sidebar"></KnParameterSidebar>
+        <KnParameterSidebar
+            class="document-execution-parameter-sidebar kn-overflow-y"
+            v-if="parameterSidebarVisible"
+            :filtersData="filtersData"
+            :propDocument="document"
+            :userRole="userRole"
+            @execute="onExecute"
+            @exportCSV="onExportCSV"
+            @roleChanged="onRoleChange"
+            data-test="parameter-sidebar"
+        ></KnParameterSidebar>
 
         <DocumentExecutionHelpDialog :visible="helpDialogVisible" :propDocument="document" @close="helpDialogVisible = false"></DocumentExecutionHelpDialog>
         <DocumentExecutionRankDialog :visible="rankDialogVisible" :propDocumentRank="documentRank" @close="rankDialogVisible = false" @saveRank="onSaveRank"></DocumentExecutionRankDialog>
@@ -106,6 +118,8 @@ export default defineComponent({
             user: null as any,
             reloadTrigger: false,
             breadcrumbs: [] as any[],
+            embed: false,
+            userRole: null,
             loading: false
         }
     },
@@ -113,16 +127,21 @@ export default defineComponent({
         sessionRole(): string {
             return this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
         },
-        url() {
-            return (
-                process.env.VUE_APP_HOST_URL +
-                '/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=3306&OBJECT_LABEL=DOC_DEFAULT_2&TOOLBAR_VISIBLE=false&MENU_PARAMETERS=%7B%7D&LIGHT_NAVIGATOR_DISABLED=TRUE&SBI_EXECUTION_ID=null&OBJECT_NAME=DOC_DEFAULT_2&EDIT_MODE=null&TOOLBAR_VISIBLE=null&CAN_RESET_PARAMETERS=null&EXEC_FROM=null&CROSS_PARAMETER=null'
-            )
+        url(): string {
+            if (this.document) {
+                return (
+                    process.env.VUE_APP_HOST_URL +
+                    `/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=${this.document.id}&OBJECT_LABEL=${this.document.label}&TOOLBAR_VISIBLE=false&MENU_PARAMETERS=%7B%7D&LIGHT_NAVIGATOR_DISABLED=TRUE&SBI_EXECUTION_ID=${this.sbiExecutionId}&OBJECT_NAME=${this.document.name}&CROSS_PARAMETER=null`
+                )
+            } else {
+                return ''
+            }
         }
     },
     async created() {
         //console.log('CURRENT ROUTE: ', this.$route)
         this.user = (this.$store.state as any).user
+        this.userRole = this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
 
         this.setMode()
 
@@ -132,17 +151,19 @@ export default defineComponent({
 
         console.log('LOADED USER: ', this.user)
 
-        if (this.user.sessionRole !== 'No default role selected') {
+        if (this.userRole) {
             await this.loadPage()
+        } else {
+            this.parameterSidebarVisible = true
         }
     },
     methods: {
         editCockpitDocument() {
             console.log('TODO - EDIT COCKPIT DOCUMENT')
             this.documentMode = this.documentMode === 'EDIT' ? 'VIEW' : 'EDIT'
-            this.hiddenFormData.documentMode = this.documentMode
+            this.hiddenFormData.set('documentMode', this.documentMode)
             console.log('TEST', this.hiddenFormData)
-            // this.sendHiddenFormData()
+            this.sendHiddenFormData()
         },
         openHelp() {
             this.helpDialogVisible = true
@@ -166,7 +187,7 @@ export default defineComponent({
                 },
                 {
                     label: this.$t('common.export'),
-                    items: [{ icon: 'pi pi-download', label: this.$t('common.export'), command: () => this.export() }]
+                    items: []
                 },
                 {
                     label: this.$t('common.info.info'),
@@ -178,7 +199,7 @@ export default defineComponent({
                 }
             )
 
-            this.exporters?.forEach((exporter: any) => this.toolbarMenuItems[1].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => this.export() }))
+            this.exporters?.forEach((exporter: any) => this.toolbarMenuItems[1].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => this.export(exporter.name) }))
 
             if (this.user.functionalities.includes('SendMailFunctionality') && this.document.typeCode === 'REPORT') {
                 this.toolbarMenuItems[1].items.push({ icon: 'pi pi-envelope', label: this.$t('common.sendByEmail'), command: () => this.openMailDialog() })
@@ -204,14 +225,11 @@ export default defineComponent({
         print() {
             window.print()
         },
-        export() {
+        export(type: string) {
             console.log('TODO - EXPORT')
 
-            //  if (document.type === 'document-composite') {
-            window.postMessage({ type: 'exportCockpitTo', format: 'pdf' }, '*')
-            window.postMessage({ type: 'copyLinkHTML' }, '*')
-            // }
-            window.parent.postMessage({ nome: 'davide' }, '*')
+            window.frames[0].frames[0].frames.postMessage({ type: 'export', format: type.toLowerCase() }, '*')
+            //  window.frames[0].frames[0].frames.postMessage({ type: 'copyLinkHTML' }, '*')
         },
         openMailDialog() {
             this.mailDialogVisible = true
@@ -240,14 +258,18 @@ export default defineComponent({
         },
         async copyLink(embedHTML: boolean) {
             this.loading = true
-            await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/canHavePublicExecutionUrl`, { label: this.document.label })
-                .then((response: AxiosResponse<any>) => {
-                    this.embedHTML = embedHTML
-                    this.linkInfo = response.data
-                    this.linkDialogVisible = true
-                })
-                .catch(() => {})
+            if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER') {
+                await this.$http
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/canHavePublicExecutionUrl`, { label: this.document.label })
+                    .then((response: AxiosResponse<any>) => {
+                        this.embedHTML = embedHTML
+                        this.linkInfo = response.data
+                        this.linkDialogVisible = true
+                    })
+                    .catch(() => {})
+            } else {
+                window.frames[0].postMessage({ type: 'htmlLink', embedHTML: embedHTML }, '*')
+            }
             this.loading = false
         },
         closeDocument() {
@@ -255,6 +277,8 @@ export default defineComponent({
             this.$emit('close')
         },
         setMode() {
+            this.embed = this.$route.path.includes('embed')
+
             if (this.$route.path.includes('registry')) {
                 this.mode = 'registry'
             } else if (this.$route.path.includes('dossier')) {
@@ -270,14 +294,11 @@ export default defineComponent({
             if (this.filtersData?.isReadyForExecution) {
                 await this.loadURL()
                 await this.loadExporters()
-            } else {
+            } else if (this.filtersData?.filterStatus) {
                 this.parameterSidebarVisible = true
             }
 
             this.loading = false
-
-            // TODO LOAD URL HARDCODED
-            // await this.loadURL()
         },
         async loadDocument() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.id}`).then((response: AxiosResponse<any>) => (this.document = response.data))
@@ -289,11 +310,18 @@ export default defineComponent({
         },
         async loadFilters() {
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, { label: this.id, role: this.sessionRole, parameters: {} })
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, { label: this.id, role: this.userRole, parameters: {} })
                 .then((response: AxiosResponse<any>) => (this.filtersData = response.data))
-                .catch((error: any) => console.log('ERROR: ', error))
+                .catch((error: any) => {
+                    if (error.response.status === 500) {
+                        this.$store.commit('setError', {
+                            title: this.$t('common.error.generic'),
+                            msg: this.$t('documentExecution.main.userRoleError')
+                        })
+                    }
+                })
 
-            this.filtersData?.filterStatus.forEach((el: any) => {
+            this.filtersData?.filterStatus?.forEach((el: any) => {
                 el.parameterValue = el.multivalue ? [] : [{ value: '', description: '' }]
                 if (el.driverDefaultValue?.length > 0) {
                     el.parameterValue = el.driverDefaultValue.map((defaultValue: any) => {
@@ -306,6 +334,10 @@ export default defineComponent({
                         return { value: data._col0, description: data._col1 }
                     })
                 }
+
+                if ((el.selectionType === 'COMBOBOX' || el.selectionType === 'LIST') && el.multivalue && el.mandatory && el.data.length === 1) {
+                    el.showOnPanel = 'false'
+                }
             })
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
@@ -314,7 +346,7 @@ export default defineComponent({
             console.log('BREADCRUMBS AFTER LOADED FILTERS DATA: ', this.breadcrumbs)
         },
         async loadURL() {
-            const postData = { label: this.id, role: this.sessionRole, parameters: this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
+            const postData = { label: this.id, role: this.userRole, parameters: this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
 
             if (this.sbiExecutionId) {
                 postData.SBI_EXECUTION_ID = this.sbiExecutionId
@@ -335,7 +367,7 @@ export default defineComponent({
                 this.breadcrumbs[index].urlData = this.urlData
                 this.sbiExecutionId = this.urlData?.sbiExecutionId as string
             }
-            // console.log('LOADED URL DATA: ', this.urlData)
+            console.log('LOADED URL DATA: ', this.urlData)
             console.log('BREADCRUMBS AFTER LOADED URL DATA: ', this.breadcrumbs)
             await this.sendForm()
         },
@@ -393,8 +425,7 @@ export default defineComponent({
                 }
             }
 
-            // TODO: hardkodovano
-            this.hiddenFormData.append('documentMode', 'VIEW')
+            this.hiddenFormData.append('documentMode', this.documentMode)
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) this.breadcrumbs[index].hiddenFormData = this.hiddenFormData
@@ -460,7 +491,7 @@ export default defineComponent({
             console.log('BLA', postData)
         },
         getFormattedParameters() {
-            if (!this.filtersData) {
+            if (!this.filtersData || !this.filtersData.filterStatus) {
                 return {}
             }
 
@@ -475,7 +506,7 @@ export default defineComponent({
                     if (parameter.type === 'DATE') {
                         parameters[parameter.urlName] = this.getFormattedDate(parameter.parameterValue[0].value, 'MM/DD/YYYY')
                         parameters[parameter.urlName + '_field_visible_description'] = this.getFormattedDate(parameter.parameterValue[0].value, 'MM/DD/YYYY')
-                    } else if (parameter.valueSelection === 'man_in' && !parameter.multivalue) {
+                    } else if (parameter.valueSelection === 'man_in') {
                         parameters[parameter.urlName] = parameter.type === 'NUM' ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
                         parameters[parameter.urlName + '_field_visible_description'] = parameter.type === 'NUM' ? +parameter.parameterValue[0].description : parameter.parameterValue[0].description
                     } else if (parameter.selectionType === 'TREE' || parameter.selectionType === 'LOOKUP' || parameter.multivalue) {
@@ -581,7 +612,6 @@ export default defineComponent({
                     this.metadataDialogVisible = false
                 })
                 .catch((error: any) => {
-                    console.log('ERROR: ', error)
                     this.$store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: error
@@ -636,6 +666,13 @@ export default defineComponent({
         },
         onBreadcrumbClick(item: any) {
             console.log('BREADCRUMB CLICKED ITEM: ', item)
+        },
+        async onRoleChange(role: string) {
+            this.userRole = role as any
+            this.filtersData = {} as { filterStatus: iParameter[]; isReadyForExecution: boolean }
+            this.urlData = null
+            this.exporters = null
+            await this.loadPage()
         }
     }
 })
@@ -685,6 +722,11 @@ export default defineComponent({
     #document-execution-view * {
         visibility: visible;
     }
+
+    .document-execution-parameter-sidebar {
+        visibility: hidden;
+    }
+
     #document-execution-view {
         position: absolute;
         left: 0;
@@ -696,9 +738,6 @@ export default defineComponent({
         top: 0;
         left: 0;
         margin: 0;
-        padding: 15px;
-        font-size: 14px;
-        line-height: 18px;
     }
 }
 </style>

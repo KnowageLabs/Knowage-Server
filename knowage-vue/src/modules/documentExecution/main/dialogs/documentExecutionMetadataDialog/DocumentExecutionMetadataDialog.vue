@@ -72,7 +72,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-// import { AxiosResponse } from 'axios'
 import Dialog from 'primevue/dialog'
 import Editor from 'primevue/editor'
 import documentExecutionMetadataDialogDescriptor from './DocumentExecutionMetadataDialogDescriptor.json'
@@ -110,7 +109,6 @@ export default defineComponent({
         }
     },
     created() {
-        // console.log('USER: ', (this.$store.state as any).user)
         this.setLoading()
         this.loadDocument()
         this.loadMetadata()
@@ -128,19 +126,14 @@ export default defineComponent({
                     file: this.propMetadata.FILE ? [...this.propMetadata.FILE] : []
                 }
             }
-            console.log('METADATA LOADED: ', this.metadata)
         },
         setLoading() {
             this.loading = this.propLoading
         },
         uploadFile(event: any) {
-            console.log('FILE UPLOAD EVENT: ', event.target.id)
-            console.log('FILE UPLOAD', event.target.files[0])
             this.uploadedFiles[event.target.id] = event.target.files[0]
-            console.log('ALL UPLOADED FILES: ', this.uploadedFiles)
         },
         async uploadMetaFile(meta: any) {
-            console.log('UPLOAD FILE: ', meta)
             if (!this.uploadedFiles[meta.id]) {
                 this.$store.commit('setError', {
                     title: this.$t('common.error.generic'),
@@ -150,7 +143,6 @@ export default defineComponent({
                 this.loading = true
 
                 const formData = new FormData()
-                console.log('FILE FOR UPLOAD: ', this.uploadedFiles[meta.id])
                 formData.append('file', this.uploadedFiles[meta.id])
                 formData.append('fileName', this.uploadedFiles[meta.id].name)
                 await this.$http
@@ -171,7 +163,6 @@ export default defineComponent({
             }
         },
         cleanFile(meta: any) {
-            // console.log('CLEAN FILE: ', meta)
             const temp = this.$refs[meta.id] as any
             if (temp) {
                 temp.resetInput()
@@ -182,9 +173,6 @@ export default defineComponent({
             this.$emit('close')
         },
         save() {
-            console.log('METADATA FOR SAVE: ', this.metadata)
-            console.log('UPLOADED FILES: ', this.uploadedFiles)
-
             this.$emit('saveMetadata', this.metadata)
         }
     }

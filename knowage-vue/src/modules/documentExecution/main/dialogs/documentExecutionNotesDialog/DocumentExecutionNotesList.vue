@@ -46,7 +46,6 @@ export default defineComponent({
     methods: {
         loadNotes() {
             this.notes = this.propNotes as any[]
-            console.log('LOADED NOTES IN LIST: ', this.notes)
         },
         deleteNoteConfirm(note: any) {
             this.$confirm.require({
