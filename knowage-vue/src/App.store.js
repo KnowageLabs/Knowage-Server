@@ -52,9 +52,6 @@ const store = createStore({
         setUser(state, user) {
             state.user = user
         },
-        setUserSessionRole(state, sessionRole) {
-            state.user.sessionRole = sessionRole
-        },
         setError(state, error) {
             state.error = error
         },

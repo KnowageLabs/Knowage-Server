@@ -242,7 +242,6 @@ export default defineComponent({
         setNewSessionRole() {
             // console.log(' >>> USER: ', this.user)
             // console.log(' >>> NE ROLE: ', this.newSessionRole)
-            // this.$store.commit('setUserSessionRole', this.newSessionRole)
             // console.log('THIS STORE USER: ', (this.$store.state as any).user)
             this.$emit('roleChanged', this.role)
             this.parameters = { isReadyForExecution: false, filterStatus: [] }
