@@ -20,7 +20,7 @@
 	angular.module('RegistryDocument')
 		.filter('decimal', ['$filter', function($filter){
 			return function(input, format){				
-				if(format !== undefined) {
+				if(format && format !== undefined) {
 					var decimalPlaces = format.split('.');
 					var filter = $filter('number')(input, decimalPlaces.length);
 					return filter;

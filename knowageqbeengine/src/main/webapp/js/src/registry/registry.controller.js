@@ -68,6 +68,13 @@
 		$scope.propertyName = '';
 		$scope.reverse = false;
 		$scope.dateFormat='MM/dd/yyyy';
+		
+		$scope.searchTerm = '';
+
+        $scope.clearSearchTerm = function() {
+          $scope.searchTerm = '';
+        };
+
 
 		// array object to define the registry configuration
 
@@ -360,6 +367,7 @@
 		$scope.dependentColumns = [];
 
 		$scope.addColumnOptions = function(column, row, $mdOpenMenu) {
+			$scope.searchTerm = '';
 			$mdOpenMenu();
 			row.selected = true;
 
@@ -498,6 +506,7 @@
 
 		//Filters handling
 		$scope.addFilterOptions = function(filterField){
+					$scope.searchTerm = '';
 			var promise = regFilterGetData.getData(filterField);
 			promise.then(function(response) {
 				addOptions(filterField,response);
@@ -532,6 +541,7 @@
 		};
 
 		var addOptions = function(filterField,options) {
+			$scope.searchTerm = '';
 			var filter =  $filter('filter')(registryConfiguration.filters,{field:filterField}, true)[0];
 			filter.options = options;
 		};
