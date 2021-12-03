@@ -6,9 +6,8 @@
                     {{ $t('documentExecution.documentDetails.title') }}
                 </template>
                 <template #right>
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" :disabled="invalidDrivers > 0" />
+                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" :disabled="invalidDrivers > 0 || invalidOutputParams > 0 || v$.$invalid" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('closeDetails')" />
-                    <Button label="LogME" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="logV" />
                 </template>
             </Toolbar>
         </template>
@@ -37,14 +36,15 @@
                 </TabPanel>
                 <TabPanel v-if="this.selectedDocument?.id">
                     <template #header>
-                        <span>{{ $t('documentExecution.documentDetails.drivers.title') }}</span>
+                        <span v-bind:class="{ 'details-warning-color': invalidDrivers }">{{ $t('documentExecution.documentDetails.drivers.title') }}</span>
+                        <Badge :value="invalidDrivers" class="p-ml-2" severity="danger" v-if="invalidDrivers > 0"></Badge>
                     </template>
                     <DriversTab :selectedDocument="selectedDocument" :availableDrivers="drivers" :availableAnalyticalDrivers="analyticalDrivers" />
                 </TabPanel>
                 <TabPanel v-if="this.selectedDocument?.id">
                     <template #header>
-                        <span v-bind:class="{ 'details-warning-color': invalidDrivers }">{{ $t('documentExecution.documentDetails.outputParams.title') }}</span>
-                        <Badge :value="invalidDrivers" class="p-ml-2" severity="danger" v-if="invalidDrivers > 0"></Badge>
+                        <span v-bind:class="{ 'details-warning-color': invalidOutputParams }">{{ $t('documentExecution.documentDetails.outputParams.title') }}</span>
+                        <Badge :value="invalidOutputParams" class="p-ml-2" severity="danger" v-if="invalidOutputParams > 0"></Badge>
                     </template>
                     <OutputParamsTab :selectedDocument="selectedDocument" :typeList="parTypes" :dateFormats="dateFormats" />
                 </TabPanel>
@@ -117,9 +117,15 @@ export default defineComponent({
         }
     },
     computed: {
-        invalidDrivers(): number {
+        invalidOutputParams(): number {
             if (this.selectedDocument && this.selectedDocument.outputParameters) {
                 return this.selectedDocument.outputParameters.filter((parameter: any) => parameter.numberOfErrors > 0).length
+            }
+            return 0
+        },
+        invalidDrivers(): number {
+            if (this.selectedDocument && this.selectedDocument.drivers) {
+                return this.selectedDocument.drivers.filter((parameter: any) => parameter.numberOfErrors > 0).length
             }
             return 0
         }
@@ -234,9 +240,8 @@ export default defineComponent({
                 })
         },
         async saveOutputParams() {
-            // FOREACH REPORTUJE UNDEFINED ZASTO?
-            // this.outputParameters.forEach((parameter: iOutputParam) => {
-            //     this.saveOutputParamsRequest(parameter)
+            // this.selectedDocument.outputParameters.forEach((parameter: iOutputParam) => {
+            //     this.saveOutputParamsRequest(parameter) // FOREACH REPORTUJE UNDEFINED ZASTO?
             //         .then(() => {
             //             this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
             //         })
@@ -272,6 +277,24 @@ export default defineComponent({
         //         return this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters/${parameter.id}`, parameter, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
         //     }
         // },
+        async saveDrivers() {
+            this.selectedDocument.drivers.forEach((driver: iDriver) => {
+                driver.modifiable = 0
+                if (!driver.id) {
+                    delete driver.numberOfErrors
+                    delete driver.isChanged
+                    this.$http
+                        .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                        .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.outputParams.persistError') }))
+                } else if (driver.isChanged) {
+                    delete driver.numberOfErrors
+                    delete driver.isChanged
+                    this.$http
+                        .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers/${driver.id}`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                        .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.outputParams.persistError') }))
+                }
+            })
+        },
         saveRequest(docToSave) {
             if (!this.selectedDocument.id) {
                 return this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails`, docToSave, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
@@ -285,19 +308,17 @@ export default defineComponent({
             delete docToSave.outputParameters
             delete docToSave.dataSetLabel
 
-            console.log(this.selectedDocument.outputParameters)
+            console.log(this.selectedDocument.drivers)
             await this.saveRequest(docToSave)
                 .then((response: AxiosResponse<any>) => {
                     this.saveOutputParams()
+                    this.saveDrivers()
                     this.templateToUpload ? this.uploadTemplate(this.templateToUpload, response.data.id) : ''
                     this.imageToUpload ? this.uploadImage(this.imageToUpload, response.data.id) : ''
                     this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
                     this.loadPage()
                 })
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
-        },
-        logV() {
-            console.log(this.v$)
         }
     }
 })

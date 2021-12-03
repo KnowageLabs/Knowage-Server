@@ -138,6 +138,7 @@ export default defineComponent({
                         let deletedParam = this.document.outputParameters.findIndex((param) => param.id === paramToDelete.id)
                         this.document.outputParameters.splice(deletedParam, 1)
                         this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                        this.selectedParam = {} as iOutputParam
                     })
                     .catch((error) => {
                         this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message })
@@ -145,6 +146,7 @@ export default defineComponent({
             } else {
                 let deletedParam = this.document.outputParameters.findIndex((param) => param.tempId === paramToDelete.tempId)
                 this.document.outputParameters.splice(deletedParam, 1)
+                this.selectedParam = {} as iOutputParam
             }
         }
     }

@@ -6,7 +6,7 @@
                     {{ $t('documentExecution.documentDetails.drivers.title') }}
                 </template>
                 <template #right>
-                    <Button :label="$t('common.add')" class="p-button-text p-button-rounded p-button-plain" :style="mainDescriptor.style.white" @click="addDriver" />
+                    <Button :label="$t('common.add')" class="p-button-text p-button-rounded p-button-plain" :style="mainDescriptor.style.white" @click="addNewDriver" />
                 </template>
             </Toolbar>
             <div id="drivers-list-container" :style="mainDescriptor.style.flexOneRelative">
@@ -15,12 +15,12 @@
                     <KnListBox
                         v-if="!loading"
                         :style="mainDescriptor.style.height100"
-                        :options="drivers"
+                        :options="document.drivers"
                         :settings="driversDescriptor.knListSettings"
                         @click="selectDriver($event.item)"
                         @delete.stop="deleteDriverConfirm($event)"
-                        @moveUp.stop="movePriorityNew($event.item, 'up')"
-                        @moveDown.stop="movePriorityNew($event.item, 'down')"
+                        @moveUp.stop="movePriority($event.item, 'up')"
+                        @moveDown.stop="movePriority($event.item, 'down')"
                     >
                     </KnListBox>
                 </div>
@@ -57,7 +57,7 @@
                                                     'p-invalid': v$.selectedDriver.label.$invalid && v$.selectedDriver.label.$dirty
                                                 }"
                                                 @blur="v$.selectedDriver.label.$touch()"
-                                                @change="addToChangedDrivers(selectedDriver)"
+                                                @change="markSelectedDriverForChange"
                                             />
                                             <label for="label" class="kn-material-input-label"> {{ $t('common.title') }} * </label>
                                         </span>
@@ -77,7 +77,7 @@
                                                 :filter="true"
                                                 :filterPlaceholder="$t('documentExecution.documentDetails.drivers.dropdownSearchHint')"
                                                 @blur="v$.selectedDriver.parameter.$touch()"
-                                                @change="addToChangedDrivers(selectedDriver)"
+                                                @change="markSelectedDriverForChange, setParId($event.value.id)"
                                             >
                                                 <template #value="slotProps">
                                                     <div class="p-dropdown-driver-value" v-if="slotProps.value">
@@ -109,33 +109,33 @@
                                                     'p-invalid': v$.selectedDriver.parameterUrlName.$invalid && v$.selectedDriver.parameterUrlName.$dirty
                                                 }"
                                                 @blur="v$.selectedDriver.parameterUrlName.$touch()"
-                                                @change="addToChangedDrivers(selectedDriver)"
+                                                @change="markSelectedDriverForChange"
                                             />
                                             <label for="parameterUrlName" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.drivers.parameterUrlName') }} * </label>
                                         </span>
                                         <KnValidationMessages class="p-mt-1" :vComp="v$.selectedDriver.parameterUrlName" :additionalTranslateParams="{ fieldName: $t('documentExecution.documentDetails.drivers.parameterUrlName') }" />
                                     </div>
                                     <span class="p-field p-col-12 p-md-4 p-jc-center p-mt-3">
-                                        <InputSwitch id="visible" v-model="selectedDriver.visible" @change="addToChangedDrivers(selectedDriver)" />
+                                        <InputSwitch id="visible" v-model="selectedDriver.visible" @change="markSelectedDriverForChange" />
                                         <i class="far fa-eye p-ml-2" />
                                         <label for="visible" class="kn-material-input-label p-ml-2"> {{ $t('common.visible') }} </label>
                                     </span>
                                     <span class="p-field p-col-12 p-md-4 p-jc-center p-mt-3">
-                                        <InputSwitch id="required" v-model="selectedDriver.required" @change="addToChangedDrivers(selectedDriver)" />
+                                        <InputSwitch id="required" v-model="selectedDriver.required" @change="markSelectedDriverForChange" />
                                         <i class="fas fa-asterisk p-ml-2" />
                                         <label for="required" class="kn-material-input-label p-ml-2"> {{ $t('common.required') }} </label>
                                     </span>
                                     <span class="p-field p-col-12 p-md-4 p-jc-center p-mt-3">
-                                        <InputSwitch id="multivalue" v-model="selectedDriver.multivalue" @change="addToChangedDrivers(selectedDriver)" />
+                                        <InputSwitch id="multivalue" v-model="selectedDriver.multivalue" @change="markSelectedDriverForChange" />
                                         <i class="fas fa-list p-ml-2" />
                                         <label for="multivalue" class="kn-material-input-label p-ml-2"> {{ $t('managers.businessModelManager.multivalue') }} </label>
                                     </span>
                                 </form>
                             </template>
                         </Card>
-                        <div v-if="drivers.length > 1 && selectedDriver.id" class="p-grid p-mt-1">
-                            <DataConditions :availableDrivers="drivers" :selectedDocument="selectedDocument" :selectedDriver="selectedDriver" />
-                            <VisibilityConditions v-if="selectedDocument.engine" :availableDrivers="drivers" :selectedDocument="selectedDocument" :selectedDriver="selectedDriver" />
+                        <div v-if="document.drivers.length > 1 && selectedDriver.id" class="p-grid p-mt-1">
+                            <DataConditions :availableDrivers="document.drivers" :selectedDocument="selectedDocument" :selectedDriver="selectedDriver" />
+                            <VisibilityConditions v-if="selectedDocument.engine" :availableDrivers="document.drivers" :selectedDocument="selectedDocument" :selectedDriver="selectedDriver" />
                         </div>
                     </div>
                 </div>
@@ -178,11 +178,13 @@ export default defineComponent({
             visusalDependencyObjects: [] as any,
             dataDependencyObjects: [] as any,
             transformedObj: {} as any,
+            document: {} as any,
             loading: false
         }
     },
     created() {
         this.getDocumentDrivers()
+        this.document = this.selectedDocument
     },
     validations() {
         const outputParamsValidator = (value) => {
@@ -198,7 +200,7 @@ export default defineComponent({
             if (this.selectedDocument?.id) {
                 this.$http
                     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument?.id}/drivers`)
-                    .then((response: AxiosResponse<any>) => (this.drivers = response.data))
+                    .then((response: AxiosResponse<any>) => (this.document.drivers = response.data))
                     .finally(() => (this.loading = false))
             }
         },
@@ -206,11 +208,14 @@ export default defineComponent({
             this.selectedDriver = driver
             this.setParameterInfo(this.selectedDriver)
         },
-        setQuerryParameters(driverID) {
-            return '?driverId=' + driverID
+        setParId(id) {
+            this.selectedDriver.parID = id
+        },
+        markSelectedDriverForChange() {
+            this.selectedDriver.isChanged = true
+            this.selectedDriver.numberOfErrors = this.v$.$errors.length
         },
         setParameterInfo(driver) {
-            console.log('etParameterInfo(driver) {')
             if (this.availableAnalyticalDrivers) {
                 for (var i = 0; i < this.availableAnalyticalDrivers.length; i++) {
                     if ((driver.parameter && this.availableAnalyticalDrivers[i].id == driver.parID) || (driver.parameter && this.availableAnalyticalDrivers[i].name == driver.parameter.name)) {
@@ -220,50 +225,79 @@ export default defineComponent({
                 }
             }
         },
+
+        addNewDriver() {
+            this.transformedObj = {}
+            let newDriver = {
+                label: '',
+                parameter: this.availableAnalyticalDrivers[0] ? this.availableAnalyticalDrivers[0] : null,
+                parameterUrlName: '',
+                priority: this.document.drivers.length == 0 ? 1 : this.document.drivers.length + 1,
+                biObjectID: this.selectedDocument.id,
+                visible: true,
+                required: true,
+                multivalue: false,
+                numberOfErrors: 1
+            } as iDriver
+            if (this.selectedDocument.id) {
+                if (this.document.drivers) {
+                    this.document.drivers.push(newDriver)
+                    this.selectDriver(this.document.drivers[this.document.drivers.length - 1])
+                } else {
+                    this.document.drivers = [newDriver]
+                    this.selectDriver(this.document.drivers[1])
+                }
+            }
+        },
+        //#region old add, qestion
         addDriver() {
             if (this.selectedDocument.modelLocked) {
                 if (this.selectedDocument.id) {
-                    if (this.drivers) {
-                        this.drivers.push({ label: '', parameter: {} as any, parameterUrlName: '', priority: this.drivers.length == 0 ? 1 : this.drivers.length + 1, newDriver: 'true', biMetaModelID: this.selectedDocument.id, visible: true, required: true, multivalue: false } as iDriver)
-                        var index = this.drivers.length
-                        this.selectDriver(this.drivers[index - 1])
+                    if (this.document.drivers) {
+                        this.document.drivers.push({
+                            label: '',
+                            parameter: {} as any,
+                            parameterUrlName: '',
+                            priority: this.document.drivers.length == 0 ? 1 : this.document.drivers.length + 1,
+                            newDriver: 'true',
+                            biMetaModelID: this.selectedDocument.id,
+                            visible: true,
+                            required: true,
+                            multivalue: false
+                        } as iDriver)
+                        var index = this.document.drivers.length
+                        this.selectDriver(this.document.drivers[index - 1])
                     } else {
-                        this.drivers = [{ label: '', parameter: {} as any, parameterUrlName: '', priority: 1, newDriver: 'true', biMetaModelID: this.selectedDocument.id, visible: true, required: true, multivalue: false } as iDriver]
-                        this.selectDriver(this.drivers[1])
+                        this.document.drivers = [{ label: '', parameter: {} as any, parameterUrlName: '', priority: 1, newDriver: 'true', biMetaModelID: this.selectedDocument.id, visible: true, required: true, multivalue: false } as iDriver]
+                        this.selectDriver(this.document.drivers[1])
                     }
                 }
             } else {
                 this.transformedObj = {}
                 if (this.selectedDocument.id) {
-                    if (this.drivers) {
-                        this.drivers.push({ label: '', parameter: {} as any, parameterUrlName: '', priority: this.drivers.length == 0 ? 1 : this.drivers.length + 1, newDriver: 'true', biObjectID: this.selectedDocument.id, visible: true, required: true, multivalue: false } as iDriver)
-                        index = this.drivers.length
-                        this.selectDriver(this.drivers[index - 1])
+                    if (this.document.drivers) {
+                        this.document.drivers.push({
+                            label: '',
+                            parameter: {} as any,
+                            parameterUrlName: '',
+                            priority: this.document.drivers.length == 0 ? 1 : this.document.drivers.length + 1,
+                            newDriver: 'true',
+                            biObjectID: this.selectedDocument.id,
+                            visible: true,
+                            required: true,
+                            multivalue: false
+                        } as iDriver)
+                        index = this.document.drivers.length
+                        this.selectDriver(this.document.drivers[index - 1])
                     } else {
-                        this.drivers = [{ label: '', parameter: {} as any, parameterUrlName: '', priority: 1, newDriver: 'true', biObjectID: this.selectedDocument.id, visible: true, required: true, multivalue: false } as iDriver]
-                        this.selectDriver(this.drivers[1])
+                        this.document.drivers = [{ label: '', parameter: {} as any, parameterUrlName: '', priority: 1, newDriver: 'true', biObjectID: this.selectedDocument.id, visible: true, required: true, multivalue: false } as iDriver]
+                        this.selectDriver(this.document.drivers[1])
                     }
                 }
             }
         },
-        addToChangedDrivers(driver) {
-            this.setInfoForChangedDriver(driver)
-            this.driversToChange.indexOf(driver) == -1 ? this.driversToChange.push(driver) : ''
-            console.log('changed One', driver)
-            console.log('all changed drivers', this.driversToChange)
-            this.$emit('driversChanged')
-        },
-        setInfoForChangedDriver(driver) {
-            if (this.availableAnalyticalDrivers) {
-                for (var i = 0; i < this.availableAnalyticalDrivers.length; i++) {
-                    if (driver && driver.parameter && this.availableAnalyticalDrivers[i].label == driver.parameter.label) {
-                        driver.parameter = { ...this.availableAnalyticalDrivers[i] }
-                        driver.parID = this.availableAnalyticalDrivers[i].id
-                    }
-                }
-            }
-        },
-        async movePriorityNew(driver, direction) {
+        //#endregion
+        async movePriority(driver, direction) {
             direction == 'up' ? (driver.priority -= 1) : (driver.priority += 1)
             await this.$http
                 .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers/${driver.id}`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
@@ -274,29 +308,6 @@ export default defineComponent({
                 .catch((error) => {
                     console.log(error)
                 })
-        },
-        movePriority(driver, direction) {
-            let priority = driver.priority
-            var cur, next, prev
-            for (var p in this.drivers) {
-                if (this.drivers[p].priority == priority) cur = p
-                if (direction == 'up' && this.drivers[p].priority == priority - 1) prev = p
-                this.addToChangedDrivers(this.drivers[p])
-                if (direction == 'down' && this.drivers[p].priority == priority + 1) next = p
-                this.addToChangedDrivers(this.drivers[p])
-            }
-            if (direction == 'up') {
-                this.drivers[cur].priority--
-                this.drivers[prev].priority++
-                this.addToChangedDrivers(this.drivers[cur])
-                this.addToChangedDrivers(this.drivers[prev])
-            }
-            if (direction == 'down') {
-                this.drivers[cur].priority++
-                this.drivers[next].priority--
-                this.addToChangedDrivers(this.drivers[cur])
-                this.addToChangedDrivers(this.drivers[prev])
-            }
         },
         async saveDriver() {
             await this.saveRequest()
@@ -320,29 +331,27 @@ export default defineComponent({
                 header: this.$t('common.toast.deleteConfirmTitle'),
                 message: this.$t('documentExecution.documentDetails.drivers.deleteMessage'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => this.addDriverForDeletion(event.item)
+                accept: () => this.deleteDriver(event.item)
             })
         },
-        addDriverForDeletion(driver) {
-            for (var i = 0; i < this.drivers.length; i++) {
-                if (this.drivers[i].id == driver.id) {
-                    if (!driver.newDriver) {
-                        this.driversToDelete.push(driver)
-                    }
-                    this.drivers.splice(i, 1)
-                }
+        async deleteDriver(driverToDelete) {
+            if (driverToDelete.id) {
+                await this.$http
+                    .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.document.id}/drivers/${driverToDelete.id}`, { headers: { 'X-Disable-Errors': 'true' } })
+                    .then(() => {
+                        let deletedDriver = this.document.drivers.findIndex((param) => param.id === driverToDelete.id)
+                        this.document.drivers.splice(deletedDriver, 1)
+                        this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                        this.selectedDriver = {} as iDriver
+                    })
+                    .catch((error) => {
+                        this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message })
+                    })
+            } else {
+                let deletedDriver = this.document.drivers.findIndex((param) => param.priority === driverToDelete.priority)
+                this.document.drivers.splice(deletedDriver, 1)
+                this.selectedDriver = {} as iDriver
             }
-            if (this.drivers.length > 0) {
-                var priorityOfDeletedDriver = driver.priority
-                for (var d in this.drivers) {
-                    if (this.drivers[d].priority > priorityOfDeletedDriver) {
-                        this.drivers[d].priority--
-                    }
-                }
-            }
-            console.log('deleted: ', driver)
-            console.log('all to delete: ', this.driversToDelete)
-            console.log('check priority: ', this.drivers)
         },
         logEvent(event) {
             console.log(event)

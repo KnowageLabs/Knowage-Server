@@ -79,7 +79,7 @@ export interface iDriver {
     modifiable: number
     multivalue: boolean
     parID: number
-    parameter: any
+    parameter: iAnalyticalDriver
     parameterUrlName: string
     parameterValues: any
     parameterValuesDescription: any
@@ -90,9 +90,11 @@ export interface iDriver {
     thickPerc: any
     transientParmeters: boolean
     visible: boolean
-    newDriver?: any
     biObjectID?: number
     biMetaModelID?: number
+    newDriver?: any
+    numberOfErrors?: number
+    isChanged?: boolean
 }
 
 export interface iEngine {

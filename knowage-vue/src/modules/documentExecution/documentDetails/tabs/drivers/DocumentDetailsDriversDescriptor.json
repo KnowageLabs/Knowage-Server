@@ -102,6 +102,28 @@
                         }
                     }
                 ]
+            },
+            {
+                "fieldName": "parFatherId",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "visibility-validator"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "operation",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "visibility-validator"
+                        }
+                    }
+                ]
             }
         ]
     }

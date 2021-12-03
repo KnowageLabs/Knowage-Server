@@ -46,15 +46,34 @@
             </div>
             <div class="p-field p-col-12 p-md-4">
                 <span class="p-float-label ">
-                    <Dropdown id="driver" class="kn-material-input" v-model="selectedCondition.parFatherId" :options="availableDrivers" optionLabel="label" optionValue="id" @change="setParFatherUrlName" />
-                    <label for="driver" class="kn-material-input-label"> {{ $t('managers.businessModelManager.analyticalDriver') }} </label>
+                    <Dropdown
+                        id="driver"
+                        class="kn-material-input"
+                        v-model="v$.selectedCondition.parFatherId.$model"
+                        :options="availableDrivers"
+                        optionLabel="label"
+                        optionValue="id"
+                        :class="{ 'p-invalid': v$.selectedCondition.parFatherId.$invalid && v$.selectedCondition.parFatherId.$dirty }"
+                        @blur="v$.selectedCondition.parFatherId.$touch()"
+                        @change="setParFatherUrlName"
+                    />
+                    <label for="driver" class="kn-material-input-label"> {{ $t('managers.businessModelManager.analyticalDriver') }} *</label>
                 </span>
+                <KnValidationMessages class="p-mt-1" :vComp="v$.selectedCondition.parFatherId" :additionalTranslateParams="{ fieldName: $t('managers.businessModelManager.analyticalDriver') }" />
             </div>
             <div class="p-field p-col-12 p-md-4">
                 <span class="p-float-label">
-                    <Dropdown id="operator" class="kn-material-input" v-model="selectedCondition.operation" :options="availableOperators" />
-                    <label for="operator" class="kn-material-input-label"> {{ $t('managers.businessModelManager.analyticalDriver') }} </label>
+                    <Dropdown
+                        id="operator"
+                        class="kn-material-input"
+                        v-model="v$.selectedCondition.operation.$model"
+                        :options="availableOperators"
+                        :class="{ 'p-invalid': v$.selectedCondition.operation.$invalid && v$.selectedCondition.operation.$dirty }"
+                        @blur="v$.selectedCondition.operation.$touch()"
+                    />
+                    <label for="operator" class="kn-material-input-label"> {{ $t('managers.businessModelManager.analyticalDriver') }} *</label>
                 </span>
+                <KnValidationMessages class="p-mt-1" :vComp="v$.selectedCondition.operation" :additionalTranslateParams="{ fieldName: $t('managers.businessModelManager.analyticalDriver') }" />
             </div>
             <div class="p-field p-col-12 p-md-4">
                 <span class="p-float-label">
@@ -66,7 +85,7 @@
         </form>
 
         <template #footer>
-            <Button class="p-button-text kn-button" :label="$t('common.cancel')" @click="showVisibilityConditionDialog = false" />
+            <Button class="p-button-text kn-button" :label="$t('common.cancel')" @click=";(showVisibilityConditionDialog = false), (selectedCondition = {})" />
             <Button class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="v$.$invalid" @click="saveCondition" />
         </template>
     </Dialog>
