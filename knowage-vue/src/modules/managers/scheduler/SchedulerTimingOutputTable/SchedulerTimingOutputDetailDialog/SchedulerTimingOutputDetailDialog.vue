@@ -199,9 +199,6 @@ export default defineComponent({
             this.deleteTriggerProps(formattedTrigger)
             this.formatTriggerDocuments(formattedTrigger)
 
-            console.log('ORIGINAL TRIGGER: ', this.trigger)
-            console.log('FORMATTED TRIGGER: ', formattedTrigger)
-
             return formattedTrigger
         },
         deleteTriggerProps(formattedTrigger: any) {
