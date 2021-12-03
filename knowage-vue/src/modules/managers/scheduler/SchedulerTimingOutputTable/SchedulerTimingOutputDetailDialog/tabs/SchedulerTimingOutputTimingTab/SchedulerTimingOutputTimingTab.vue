@@ -224,6 +224,8 @@ export default defineComponent({
             }
         },
         setTriggerDates() {
+            console.log('LOADED TRIGGER: ', this.trigger)
+
             this.trigger.startDateTiming = this.trigger.zonedStartTime ? new Date(this.trigger.zonedStartTime) : new Date()
             this.trigger.startTimeTiming = this.trigger.zonedStartTime ? new Date(this.trigger.zonedStartTime) : new Date()
             this.trigger.startDateTiming.setHours(0)
