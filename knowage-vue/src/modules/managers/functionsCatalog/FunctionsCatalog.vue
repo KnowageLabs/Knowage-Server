@@ -1,23 +1,21 @@
 <template>
     <div class="kn-page">
-        <div class="">
-            <div class="p-col p-p-0">
-                <Toolbar class="kn-toolbar kn-toolbar--primary">
-                    <template #left>
-                        {{ $t('managers.functionsCatalog.title') }}
-                    </template>
-                    <template #right>
-                        <KnFabButton icon="fas fa-plus" @click="showForm(null)" />
-                    </template>
-                </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+        <Toolbar class="kn-toolbar kn-toolbar--primary">
+            <template #left>
+                {{ $t('managers.functionsCatalog.title') }}
+            </template>
+            <template #right>
+                <KnFabButton icon="fas fa-plus" @click="showForm(null)" />
+            </template>
+        </Toolbar>
+        <div class="p-d-flex p-flex-column kn-flex functions-main-content">
+            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
 
-                <FunctionsCatalogFilterCards class="p-m-3" :propFilters="filters" @selected="onSelectedFilter"></FunctionsCatalogFilterCards>
-                <FunctionsCatalogDatatable class="p-m-3" :user="user" :propLoading="loading" :items="functions" @selected="showForm" @preview="onPreview" @deleted="deleteFunction"></FunctionsCatalogDatatable>
-            </div>
+            <FunctionsCatalogFilterCards class="p-m-3" :propFilters="filters" @selected="onSelectedFilter"></FunctionsCatalogFilterCards>
+            <FunctionsCatalogDatatable class="p-m-3" :user="user" :propLoading="loading" :items="functions" @selected="showForm" @preview="onPreview" @deleted="deleteFunction"></FunctionsCatalogDatatable>
         </div>
 
-        <div class="kn-page-content">
+        <div>
             <FunctionsCatalogDetail v-show="detailDialogVisible" :visible="detailDialogVisible" :propFunction="selectedFunction" :functionTypes="filters" @close="onDetailClose" @created="onCreated"></FunctionsCatalogDetail>
             <FunctionsCatalogPreviewDialog :visible="previewDialogVisible" :propFunction="selectedFunction" :datasets="datasets" @close="onPreviewClose"></FunctionsCatalogPreviewDialog>
         </div>
@@ -105,6 +103,12 @@ export default defineComponent({
                         msg: this.$t('common.toast.deleteSuccess')
                     })
                 })
+                .catch(() => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('managers.functionsCatalog.deleteError')
+                    })
+                })
                 .finally(() => (this.loading = false))
 
             if (reponseOk) {
@@ -151,13 +155,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.keyword-chip {
-    cursor: pointer;
-    text-transform: uppercase;
-}
-
-.keyword-chip-active {
-    background-color: rgb(59, 103, 140);
-    color: #fff;
+.functions-main-content {
+    height: 90vh;
 }
 </style>

@@ -1,0 +1,26 @@
+{
+    "columns": [
+        {
+            "field": "name",
+            "header": "common.name"
+        },
+        {
+            "field": "description",
+            "header": "common.description"
+        }
+    ],
+    "iconColumn": {
+        "style": {
+            "text-align": "end",
+            "width": "10%"
+        }
+    },
+    "styles": {
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        }
+    }
+}

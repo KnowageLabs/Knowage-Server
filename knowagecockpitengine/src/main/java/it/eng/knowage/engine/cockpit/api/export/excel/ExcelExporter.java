@@ -45,6 +45,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.knowage.engine.cockpit.api.export.AbstractFormatExporter;
+import it.eng.knowage.engine.cockpit.api.export.ExporterClient;
 import it.eng.knowage.engine.cockpit.api.export.excel.exporters.IWidgetExporter;
 import it.eng.knowage.engine.cockpit.api.export.excel.exporters.WidgetExporterFactory;
 import it.eng.qbe.serializer.SerializationException;
@@ -490,6 +491,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 							columnName = arrayHeader.get(columnName);
 						}
 					}
+					columnName = getInternationalizedHeader(columnName);
 
 					Cell cell = header.createCell(i);
 					cell.setCellValue(columnName);

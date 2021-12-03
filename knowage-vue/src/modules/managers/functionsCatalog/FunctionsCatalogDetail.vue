@@ -1,5 +1,5 @@
 <template>
-    <Dialog id="function-catalog-detail-dialog" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :contentStyle="functionsCatalogDetailDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog id="function-catalog-detail-dialog" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :contentStyle="functionsCatalogDetailDescriptor.dialog.style" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #left>
@@ -310,10 +310,13 @@ export default defineComponent({
 <style lang="scss">
 .full-screen-dialog.p-dialog {
     max-height: 100%;
+    width: calc(100vw - #{$mainmenu-width});
+    margin: 0;
 }
 
 .full-screen-dialog.p-dialog .p-dialog-content {
     padding: 0;
+    margin: 0;
 }
 
 #function-catalog-detail-dialog .p-toolbar-group-right {

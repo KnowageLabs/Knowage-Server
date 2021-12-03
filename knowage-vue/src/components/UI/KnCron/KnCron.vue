@@ -18,7 +18,7 @@
                             @change="setDate('startDate')"
                             @date-select="setDate('startDate')"
                         />
-                        <div v-if="!validDates" class="p-error p-grid">
+                        <div v-show="!validDates" class="p-error p-grid">
                             <small class="p-col-12">
                                 {{ $t('kpi.kpiScheduler.dateError') }}
                             </small>
@@ -53,7 +53,7 @@
                             @date-select="setDate('endDate')"
                             @clear-click="clearEndDate"
                         />
-                        <div v-if="!validDates" class="p-error p-grid">
+                        <div v-show="!validDates" class="p-error p-grid">
                             <small class="p-col-12">
                                 {{ $t('kpi.kpiScheduler.dateError') }}
                             </small>

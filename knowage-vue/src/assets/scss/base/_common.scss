@@ -42,6 +42,14 @@
     overflow-y: auto;
 }
 
+.kn-overflow-x {
+    overflow-x: auto;
+}
+
+.kn-overflow {
+    overflow: auto;
+}
+
 .kn-no-select {
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
@@ -61,6 +69,16 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
+}
+
+.kn-small-paginator {
+    @media screen and (max-width: 1200px) {
+        .p-paginator-first,
+        .p-paginator-last,
+        .p-paginator-pages {
+            display: none;
+        }
+    }
 }
 
 .kn-truncated {
