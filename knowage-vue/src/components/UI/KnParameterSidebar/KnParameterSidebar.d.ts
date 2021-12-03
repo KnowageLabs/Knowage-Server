@@ -79,3 +79,16 @@ export interface iAdmissibleTreeValues {
     rows: { data: string, isEnabled: boolean, label: string, id: string, leaf: boolean }[],
     errors: any[]
 }
+
+export interface iNode {
+    key: number,
+    id: number,
+    label: string,
+    children: iNode[],
+    data: { value: string, description: string },
+    style: any,
+    leaf: boolean,
+    selectable: boolean,
+    parent: iNode,
+    icon: string
+}

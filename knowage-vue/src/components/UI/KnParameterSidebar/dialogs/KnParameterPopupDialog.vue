@@ -20,6 +20,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { iAdmissibleValues, iParameter } from '../KnParameterSidebar'
 import Dialog from 'primevue/dialog'
 import knParameterPopupDialogDescriptor from './KnParameterPopupDialogDescriptor.json'
 import KnParameterPopupTable from './KnParameterPopupTable.vue'
@@ -32,10 +33,10 @@ export default defineComponent({
     data() {
         return {
             knParameterPopupDialogDescriptor,
-            parameter: null as any,
-            popupData: null as any,
-            selectedRow: null as any,
-            multipleSelectedRows: [] as any,
+            parameter: null as iParameter | null,
+            popupData: null as iAdmissibleValues | null,
+            selectedRow: null as { _col0: string; _col1: string } | null,
+            multipleSelectedRows: [] as { _col0: string; _col1: string }[],
             multivalue: false,
             loading: false
         }
@@ -66,24 +67,20 @@ export default defineComponent({
             this.loading = false
         },
         loadParameter() {
-            this.parameter = this.selectedParameter
+            this.parameter = this.selectedParameter as iParameter
             this.multivalue = this.selectedParameter?.multivalue
 
             if (this.multivalue) {
                 this.setMultipleSelectedRows()
             }
-            console.log('LOADED PARAMETER: ', this.parameter)
         },
         setMultipleSelectedRows() {
-            // console.log('SELECTED PARAMETER: ', this.parameter)
-            // console.log('SELECTED ROWS: ', this.multipleSelectedRows)
-            this.multipleSelectedRows = this.parameter.parameterValue.map((el: any) => {
+            this.multipleSelectedRows = this.parameter?.parameterValue.map((el: any) => {
                 return { _col0: el.value, _col1: el.value }
-            })
+            }) as { _col0: string; _col1: string }[]
         },
         loadPopupData() {
-            this.popupData = this.parameterPopUpData
-            // console.log('LOADED DATA: ', this.popupData)
+            this.popupData = this.parameterPopUpData as iAdmissibleValues
         },
 
         setLoading() {
@@ -96,25 +93,22 @@ export default defineComponent({
             this.selectedRow = null
         },
         onRowSelected(selectedRows: any) {
-            // console.log('MULTIVALUE? ', this.multivalue)
-            // console.log('SELECTED ROW: ', selectedRows)
             if (!this.multivalue) {
                 this.selectedRow = selectedRows
-                // console.log('SELECTED ROW: ', this.selectedRow)
             } else {
                 this.multipleSelectedRows = selectedRows
-                // console.log('SELECTED MULTIPLE ROWS AFTER PUSH: ', this.multipleSelectedRows)
             }
         },
         save() {
-            console.log('PARAMETER: ', this.parameter)
+            if (!this.parameter) return
+
             if (!this.multivalue) {
                 this.parameter.parameterValue = this.selectedRow ? [{ value: this.selectedRow._col0, description: this.selectedRow._col1 }] : []
 
                 this.selectedRow = null
             } else {
                 this.parameter.parameterValue = []
-                this.multipleSelectedRows?.forEach((el: any) => this.parameter.parameterValue.push({ value: el._col0, description: el._col1 }))
+                this.multipleSelectedRows?.forEach((el: any) => this.parameter?.parameterValue.push({ value: el._col0, description: el._col1 }))
             }
 
             this.popupData = null

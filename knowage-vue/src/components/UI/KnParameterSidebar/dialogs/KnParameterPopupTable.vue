@@ -53,8 +53,8 @@ export default defineComponent({
     data() {
         return {
             knParameterPopupDialogDescriptor,
-            rows: [] as any[],
-            columns: [] as any[],
+            rows: [] as { _col0: string; _col1: string }[],
+            columns: [] as { header: string; field: string }[],
             filters: { global: [filterDefault] } as Object,
             globalFilterFields: [] as string[],
             selectedRow: null as any
@@ -70,8 +70,6 @@ export default defineComponent({
     },
     methods: {
         loadData() {
-            console.log('POPUP DATA: ', this.parameterPopUpData)
-
             this.rows = this.parameterPopUpData?.result.data
 
             this.columns = []
@@ -80,11 +78,6 @@ export default defineComponent({
             })
 
             this.columns.forEach((el: any) => this.globalFilterFields.push(el.field))
-
-            // console.log('LOADED ROWS: ', this.rows)
-            // console.log('LOADED COLUMNS: ', this.columns)
-            // console.log('MULTIVALUE: ', this.multivalue)
-            // console.log('MULTIPLE SELECTED ROWS IN TABLE: ', this.multipleSelectedRows)
 
             if (this.multivalue) {
                 this.selectedRow = this.multipleSelectedRows

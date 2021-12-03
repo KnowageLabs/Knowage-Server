@@ -33,10 +33,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
+import { iNode, iParameter } from '../KnParameterSidebar'
 import Dialog from 'primevue/dialog'
 import knParameterTreeDialogDescriptor from './KnParameterTreeDialogDescriptor.json'
 import Tree from 'primevue/tree'
-import { AxiosResponse } from 'axios'
 
 export default defineComponent({
     name: 'kn-parameter-tree-dialog',
@@ -46,8 +47,8 @@ export default defineComponent({
     data() {
         return {
             knParameterTreeDialogDescriptor,
-            parameter: null as any,
-            nodes: [] as any[],
+            parameter: null as iParameter | null,
+            nodes: [] as iNode[],
             selectedValuesKeys: {} as any,
             selectedValue: null as any,
             multipleSelectedValues: [] as any[],
@@ -74,21 +75,17 @@ export default defineComponent({
             }
         },
         loadParameter() {
-            this.parameter = this.selectedParameter
+            this.parameter = this.selectedParameter as iParameter
             this.multivalue = this.selectedParameter?.multivalue
-            // console.log('LOADED PARAMETER: ', this.parameter)
-            // console.log('LOADED PARAMETER values: ', this.formatedParameterValues)
         },
         async loadLeaf(parent: any) {
-            // console.log('PARENT: ', parent)
-
             this.loading = true
 
             if (parent && parent.leaf) {
                 this.loading = false
                 return
             }
-            const postData = { label: this.document?.label, role: (this.$store.state as any).user.sessionRole, parameterId: this.parameter.urlName, mode: 'complete', treeLovNode: parent ? parent.id : 'lovroot', parameters: this.formatedParameterValues }
+            const postData = { label: this.document?.label, role: (this.$store.state as any).user.sessionRole, parameterId: this.parameter?.urlName, mode: 'complete', treeLovNode: parent ? parent.id : 'lovroot', parameters: this.formatedParameterValues }
 
             let content = [] as any[]
             await this.$http
@@ -100,25 +97,22 @@ export default defineComponent({
                         content.push(this.createNode(el, parent))
                     })
                 })
-            // console.log('CONTENT: ', content)
             content.forEach((el: any) => this.checkIfNodeIsSelected(el))
 
             this.attachContentToTree(parent, content)
             this.loading = false
             if (parent) this.setOpenFolderIcon(parent)
-            // console.log('NODES AFTER: ', this.nodes)
         },
-        checkIfNodeIsSelected(node: any) {
+        checkIfNodeIsSelected(node: iNode) {
             if (node.leaf) {
-                // console.log('NODE IS CHECKED: ', node)
-                const index = this.parameter.parameterValue.findIndex((el: any) => el.value === node.data.value)
+                const index = this.parameter?.parameterValue.findIndex((el: any) => el.value === node.data.value)
                 if (index !== -1) {
                     this.selectedValuesKeys[node.key] = { checked: true, partialyChecked: false }
                     this.multipleSelectedValues.push(node.data)
                 }
             }
         },
-        attachContentToTree(parent: any, content: any[]) {
+        attachContentToTree(parent: iNode, content: iNode[]) {
             if (parent) {
                 parent.children = []
                 parent.children = content
@@ -127,13 +121,12 @@ export default defineComponent({
                 this.nodes = content
             }
         },
-        createNode(el: any, parent: any) {
-            console.log('TREE EL: ', el)
+        createNode(el: iNode, parent: iNode) {
             return {
                 key: el.id,
                 id: el.id,
                 label: el.label,
-                children: [] as any[],
+                children: [] as iNode[],
                 data: { value: el.data, description: '' },
                 style: this.knParameterTreeDialogDescriptor.node.style,
                 leaf: el.leaf,
@@ -142,32 +135,26 @@ export default defineComponent({
                 icon: el.leaf ? 'pi pi-file' : 'pi pi-folder'
             }
         },
-        setOpenFolderIcon(node: any) {
+        setOpenFolderIcon(node: iNode) {
             node.icon = 'pi pi-folder-open'
         },
-        setClosedFolderIcon(node: any) {
+        setClosedFolderIcon(node: iNode) {
             node.icon = 'pi pi-folder'
         },
-        setSelectedValue(node: any) {
-            console.log('SELECTED NODE: ', node)
+        setSelectedValue(node: iNode) {
             if (!this.multivalue) {
                 this.selectedValue = node.data
             } else {
                 this.multipleSelectedValues.push(node.data)
             }
-            console.log('SELECTED VALUES: ', this.multipleSelectedValues)
-            console.log('SELECTED VALUE KEYS: ', this.selectedValuesKeys)
         },
-        removeSelectedValue(node: any) {
-            console.log('UNSELECTED NODE: ', node)
+        removeSelectedValue(node: iNode) {
             if (!this.multivalue) {
                 this.selectedValue = null
             } else {
                 const index = this.multipleSelectedValues.findIndex((el: any) => el.value === node.data.value)
                 if (index !== -1) this.multipleSelectedValues.splice(index, 1)
             }
-
-            console.log('SELECTED VALUES AFTER UNSELECT: ', this.multipleSelectedValues)
         },
         closeDialog() {
             this.$emit('close')
@@ -177,15 +164,15 @@ export default defineComponent({
             this.nodes = []
         },
         save() {
+            if (!this.parameter) return
+
             if (!this.multivalue) {
-                console.log('SAVE SELECTED VALUE: ', this.selectedValue)
                 this.parameter.parameterValue = this.selectedValue ? [{ value: this.selectedValue.value, description: this.selectedValue.description }] : []
                 this.selectedValuesKeys = {}
                 this.selectedValue = null
             } else {
                 this.parameter.parameterValue = []
-                console.log('SELECTED VALUES MULTI: ', this.multipleSelectedValues)
-                this.multipleSelectedValues?.forEach((el: any) => this.parameter.parameterValue.push({ value: el.value, description: el.description }))
+                this.multipleSelectedValues?.forEach((el: any) => this.parameter?.parameterValue.push({ value: el.value, description: el.description }))
                 this.multipleSelectedValues = []
             }
 
