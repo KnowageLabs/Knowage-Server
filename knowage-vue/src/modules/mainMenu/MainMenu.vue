@@ -160,11 +160,12 @@
                     let menu = dynMenu[idx]
                     if (this.user.sessionRole && menu.roles.includes(this.user.sessionRole) && (menu.to || menu.url)) return menu
                     if (!this.user.sessionRole) {
-                        this.user.roles.forEach((element) => {
+                        for (var i = 0; i < this.user.roles.length; i++) {
+                            let element = this.user.roles[i]
                             if (menu.roles.includes(element) && (menu.to || menu.url)) {
                                 return menu
                             }
-                        })
+                        }
                     }
                 }
                 return toRet
