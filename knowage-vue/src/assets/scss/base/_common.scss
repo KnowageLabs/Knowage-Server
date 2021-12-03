@@ -42,6 +42,14 @@
     overflow-y: auto;
 }
 
+.kn-overflow-x {
+    overflow-x: auto;
+}
+
+.kn-overflow {
+    overflow: auto;
+}
+
 .kn-no-select {
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */

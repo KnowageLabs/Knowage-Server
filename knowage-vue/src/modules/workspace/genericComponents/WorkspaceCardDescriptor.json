@@ -1,0 +1,83 @@
+{
+    "analysisViewFields": {
+        "image": "previewFile",
+        "label": "label",
+        "name": "name",
+        "type": "typeCode"
+    },
+    "businessModelViewFields": {
+        "image": "previewFile",
+        "label": "name",
+        "name": "description",
+        "type": "dataSourceLabel"
+    },
+    "datasetViewFields": {
+        "image": "previewFile",
+        "label": "label",
+        "name": "name",
+        "type": "dsTypeCd"
+    },
+    "defaultViewFields": {
+        "image": "previewFile",
+        "label": "documentLabel",
+        "name": "documentName",
+        "type": "documentType"
+    },
+    "federationDatasetViewFields": {
+        "image": "previewFile",
+        "label": "label",
+        "name": "name",
+        "type": "owner"
+    },
+    "style": {
+        "buttonContainer": {
+            "align-items": "flex-end",
+            "display": "flex",
+            "height": "100%",
+            "justify-content": "flex-end",
+            "margin": "0px",
+            "margin-bottom": "5px",
+            "margin-right": "7px"
+        },
+        "cardContainer": {
+            "display": "flex"
+        },
+        "cardImage": {
+            "background-repeat": "no-repeat",
+            "background-size": "cover",
+            "border-bottom": "solid",
+            "border-bottom-left-radius": "10px",
+            "border-color": "gray",
+            "border-left": "solid",
+            "border-top": "solid",
+            "border-top-left-radius": "10px",
+            "border-width": "1px",
+            "width": "20%"
+        },
+        "detailsContainer": {
+            "border-bottom-right-radius": "10px",
+            "border-color": "gray",
+            "border-style": "solid",
+            "border-top-right-radius": "10px",
+            "border-width": "1px",
+            "display": "flex",
+            "flex-direction": "column",
+            "min-height": "130px",
+            "width": "100%"
+        },
+        "icon": {
+            "font-size": "30px"
+        },
+        "nameContainerText": {
+            "overflow": "hidden",
+            "text-overflow": "ellipsis",
+            "white-space": "nowrap",
+            "width": "150px"
+        },
+        "typeContainer": {
+            "align-items": "flex-start",
+            "display": "flex",
+            "justify-content": "flex-end"
+        }
+    }
+}

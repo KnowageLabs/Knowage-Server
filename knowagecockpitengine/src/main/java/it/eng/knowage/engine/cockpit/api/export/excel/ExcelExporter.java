@@ -491,6 +491,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 							columnName = arrayHeader.get(columnName);
 						}
 					}
+					columnName = getInternationalizedHeader(columnName);
 
 					Cell cell = header.createCell(i);
 					cell.setCellValue(columnName);
