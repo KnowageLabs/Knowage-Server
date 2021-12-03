@@ -62,7 +62,7 @@ import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
-import { iURLData, iExporter } from './DocumentExecution'
+import { iURLData, iExporter, iSchedulation } from './DocumentExecution'
 import DocumentExecutionBreadcrumb from './breadcrumbs/DocumentExecutionBreadcrumb.vue'
 import DocumentExecutionHelpDialog from './dialogs/documentExecutionHelpDialog/DocumentExecutionHelpDialog.vue'
 import DocumentExecutionRankDialog from './dialogs/documentExecutionRankDialog/DocumentExecutionRankDialog.vue'
@@ -152,7 +152,7 @@ export default defineComponent({
             }
         })
 
-        console.log('DOCUMENT EXECUTION CREATED!!!!!!!!!1')
+        // console.log('DOCUMENT EXECUTION CREATED!!!!!!!!!1')
 
         //console.log('CURRENT ROUTE: ', this.$route)
         this.user = (this.$store.state as any).user
@@ -246,10 +246,7 @@ export default defineComponent({
             window.print()
         },
         export(type: string) {
-            console.log('TODO - EXPORT')
-
             window.frames[0].frames[0].frames.postMessage({ type: 'export', format: type.toLowerCase() }, '*')
-            //  window.frames[0].frames[0].frames.postMessage({ type: 'copyLinkHTML' }, '*')
         },
         openMailDialog() {
             this.mailDialogVisible = true
@@ -324,15 +321,14 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.document?.label}`).then((response: AxiosResponse<any>) => (this.document = response.data))
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
-            console.log('INDEX: ', index)
+
             if (index !== -1) {
                 this.breadcrumbs[index].document = this.document
             } else {
-                console.log('CAAAAAAAAAAAAAAALED FOR ', this.document.label)
                 this.breadcrumbs.push({ label: this.document.label, document: this.document })
             }
             // console.log('LOADED DOCUMENT: ', this.document)
-            console.log('BREADCRUMBS AFTER LOADED DOCUMENT: ', this.breadcrumbs)
+            // console.log('BREADCRUMBS AFTER LOADED DOCUMENT: ', this.breadcrumbs)
         },
         async loadFilters() {
             console.log(' >>>>>>>>>>>>>>>>>>>> LOADING FILTERS FOR DOCUMENT: ', this.document)
@@ -370,7 +366,7 @@ export default defineComponent({
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) this.breadcrumbs[index].filtersData = this.filtersData
             console.log('LOADED FILTERS DATA: ', this.filtersData)
-            console.log('BREADCRUMBS AFTER LOADED FILTERS DATA: ', this.breadcrumbs)
+            // console.log('BREADCRUMBS AFTER LOADED FILTERS DATA: ', this.breadcrumbs)
         },
         async loadURL() {
             console.log('LOADING URL FROM VUE APP!')
@@ -493,26 +489,7 @@ export default defineComponent({
             //     }
         },
         async onExportCSV() {
-            console.log('ON EXPORT CSV CLICKED!', this.document)
-            console.log('ON EXPORT CSV CLICKED!', this.filtersData)
             const postData = { documentId: this.document.id, documentLabel: this.document.label, exportType: 'CSV', parameters: this.getFormattedParametersForCSVExport() }
-            // Object.keys(this.filtersData.filterStatus).forEach((key: any) => {
-            //     console.log('EL: ', this.filtersData.filterStatus[key])
-            //     const param = this.filtersData.filterStatus[key]
-            //     if (param.multivalue) {
-            //         let tempString = ''
-            //         for (let i = 0; i < this.filtersData.filterStatus[key].parameterValue.length; i++) {
-            //             tempString += this.filtersData.filterStatus[key].parameterValue[i].value
-            //             tempString += i === this.filtersData.filterStatus[key].parameterValue.length - 1 ? '' : ','
-            //         }
-
-            //         postData.parameters[this.filtersData.filterStatus[key].urlName] = tempString
-            //     } else if (param.type === 'NUM' && !param.selectionType) {
-            //         postData.parameters[this.filtersData.filterStatus[key].urlName] = +this.filtersData.filterStatus[key].parameterValue[0].value
-            //     } else {
-            //         postData.parameters[this.filtersData.filterStatus[key].urlName] = this.filtersData.filterStatus[key].parameterValue[0] ? this.filtersData.filterStatus[key].parameterValue[0].value : this.filtersData.filterStatus[key].parameterValue.value
-            //     }
-            // })
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/cockpitData`, postData)
@@ -524,7 +501,6 @@ export default defineComponent({
                 })
                 .catch(() => {})
             this.loading = false
-            console.log('BLA', postData)
         },
         getFormattedParameters() {
             if (!this.filtersData || !this.filtersData.filterStatus) {
@@ -535,8 +511,6 @@ export default defineComponent({
 
             Object.keys(this.filtersData.filterStatus).forEach((key: any) => {
                 const parameter = this.filtersData.filterStatus[key]
-
-                // console.log('PARAMETER: ', parameter)
 
                 if (parameter.parameterValue) {
                     if (parameter.type === 'DATE') {
@@ -569,8 +543,6 @@ export default defineComponent({
             Object.keys(this.filtersData.filterStatus).forEach((key: any) => {
                 const parameter = this.filtersData.filterStatus[key]
 
-                // console.log('PARAMETER: ', parameter)
-
                 if (parameter.parameterValue) {
                     if (parameter.type === 'DATE') {
                         parameters[parameter.urlName] = this.getFormattedDate(parameter.parameterValue[0].value, 'MM/DD/YYYY')
@@ -601,10 +573,8 @@ export default defineComponent({
                     })
                 )
             this.loading = false
-            // console.log('LOADED DOCUMENT VOTE MAIN: ', this.documentRank)
         },
         async onSaveRank(newRank: any) {
-            // console.log('NEW RANK: ', newRank)
             if (newRank) {
                 this.loading = true
                 await this.$http
@@ -626,7 +596,6 @@ export default defineComponent({
             this.rankDialogVisible = false
         },
         async onMetadataSave(metadata: any) {
-            // console.log('ON METADATA SAVE: ', metadata)
             this.loading = true
             const jsonMeta = [] as any[]
             const properties = ['shortText', 'longText']
@@ -656,7 +625,6 @@ export default defineComponent({
             this.loading = false
         },
         async onMailSave(mail: any) {
-            // console.log('MAIL FOR SAVE: ', mail)
             this.loading = true
             const postData = { ...mail, label: this.document.label, docId: this.document.id, userId: this.user.userId, parameters: this.getFormattedParameters() }
             await this.$http
@@ -678,7 +646,6 @@ export default defineComponent({
             this.loading = false
         },
         async onDeleteSchedulation(schedulation: any) {
-            // console.log('SCHEDULATION FOR DELETE: ', schedulation)
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/deleteSnapshot`, { SNAPSHOT: '' + schedulation.id })
@@ -692,8 +659,7 @@ export default defineComponent({
                 .catch(() => {})
             this.loading = false
         },
-        removeSchedulation(schedulation: any) {
-            // console.log('SCHEDULATION FOR REMOVE: ', schedulation)
+        removeSchedulation(schedulation: iSchedulation) {
             const index = this.schedulations.findIndex((el: any) => el.id === schedulation.id)
             if (index !== -1) this.schedulations.splice(index, 1)
         },
@@ -701,7 +667,6 @@ export default defineComponent({
             return formatDate(date, format)
         },
         onBreadcrumbClick(item: any) {
-            // console.log('BREADCRUMB CLICKED ITEM: ', item)
             this.document = item.document
             this.filtersData = item.filtersData
             this.urlData = item.urlData
@@ -726,7 +691,7 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
             this.loading = false
 
-            console.log('TEMP: ', temp)
+            console.log('DATA FROM ANGULAR: ', temp)
 
             this.document = { ...temp[0].document, navigationParams: temp[0].navigationParams }
             console.log('NEW DOCUMENT: ', this.document)
