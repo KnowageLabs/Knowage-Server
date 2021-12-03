@@ -69,11 +69,7 @@
 		$scope.reverse = false;
 		$scope.dateFormat='MM/dd/yyyy';
 		
-		$scope.searchTerm = '';
 
-        $scope.clearSearchTerm = function() {
-          $scope.searchTerm = '';
-        };
 
 
 		// array object to define the registry configuration

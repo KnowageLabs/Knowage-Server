@@ -25,7 +25,7 @@
                         <input  ng-model="filter.value" ng-if="filter.presentation === 'MANUAL' && !filter.static" ng-keyup="addToFilters(filter)" ng-keydown="$event.keyCode === 13 && getFilteredData(filters)" ng-disabled="filter.static">
                         <md-select md-on-open="addFilterOptions(filter.field)" ng-model="filter.value" ng-if="filter.presentation == 'COMBO'" 
                             ng-change="addToFilters(filter)" ng-disabled="filter.static"
-                            md-on-close="clearSearchTerm()">
+                            md-on-close="searchTerm = ''">
                             <md-select-header class="demo-select-header">
                                 <input ng-model="searchTerm" ng-value="searchTerm" aria-label="Dropdown filter"
                                     type="search" 
@@ -110,7 +110,7 @@
                                                     <input type="{{setDataType(col.dataType)}}" step="{{getStep(col.dataType)}}" name="textField" ng-model="row[col.field]" ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null"  aria-label="data change"
                                                         ng-if="col.editor=='TEXT' && col.dataType !== 'boolean'">  
                                                     <div ng-if="row.selected && !isDependentColumn(col)">
-                                                        <md-select ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'" ng-change="notifyAboutDependency(col, $event)" md-on-close="clearSearchTerm()">
+                                                        <md-select ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'" ng-change="notifyAboutDependency(col, $event)" md-on-close="searchTerm = ''">
                                                             <md-select-header class="demo-select-header">
                                                                 <input ng-model="searchTerm" ng-value="searchTerm" aria-label="Dropdown filter"
                                                                     type="search" 
@@ -120,7 +120,7 @@
                                                         </md-select>
                                                     </div>
                                                     <div ng-if="row.selected && isDependentColumn(col)">
-                                                        <md-select ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'" md-on-close="clearSearchTerm()">
+                                                        <md-select ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'" md-on-close="searchTerm = ''">
                                                             <md-select-header class="demo-select-header">
                                                                 <input ng-model="searchTerm" ng-value="searchTerm" aria-label="Dropdown filter"
                                                                     type="search" 
@@ -184,7 +184,7 @@
                                                     <input type="{{setDataType(col.dataType)}}" step="{{getStep(col.dataType)}}" name="textField" ng-model="row[col.field]" ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change"
                                                         ng-if="col.editor=='TEXT' && col.dataType !== 'boolean'"> 
                                                     <div ng-if="row.selected && !isDependentColumn(col)">
-                                                        <md-select ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'" ng-change="notifyAboutDependency(col, $event)" md-on-close="clearSearchTerm()">
+                                                        <md-select ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'" ng-change="notifyAboutDependency(col, $event)" md-on-close="searchTerm = ''">
                                                             <md-select-header class="demo-select-header">
                                                                 <input ng-model="searchTerm" ng-value="searchTerm" aria-label="Dropdown filter"
                                                                     type="search" 
@@ -194,7 +194,7 @@
                                                         </md-select>
                                                     </div>
                                                     <div ng-if="row.selected && isDependentColumn(col)">
-                                                        <md-select ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'" md-on-close="clearSearchTerm()">
+                                                        <md-select ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'" md-on-close="searchTerm = ''">
                                                             <md-select-header class="demo-select-header">
                                                                 <input ng-model="searchTerm" ng-value="searchTerm" aria-label="Dropdown filter"
                                                                     type="search" 
