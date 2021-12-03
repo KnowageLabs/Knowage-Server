@@ -57,6 +57,7 @@
 import { defineComponent } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { formatDate } from '@/helpers/commons/localeHelper'
+import { iSchedulation } from '../../DocumentExecution'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
@@ -71,9 +72,9 @@ export default defineComponent({
     data() {
         return {
             documentExecutionSchedulationsTableDescriptor,
-            schedulations: [] as any[],
+            schedulations: [] as iSchedulation[],
             filters: { global: [filterDefault] } as Object,
-            url: '' as any,
+            url: '' as string,
             snapshotDialogVisible: false,
             user: null as any
         }
@@ -98,7 +99,7 @@ export default defineComponent({
             this.url = process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?NEW_SESSION=TRUE&user_id=${this.user?.userUniqueIdentifier}&ACTION_NAME=GET_SNAPSHOT_CONTENT&SNAPSHOT_ID=${schedulation.id}&LIGHT_NAVIGATOR_DISABLED=TRUE&OBJECT_ID=${schedulation.biobjId}`
             this.snapshotDialogVisible = true
         },
-        deleteSchedulationConfirm(schedulation: any) {
+        deleteSchedulationConfirm(schedulation: iSchedulation) {
             this.$confirm.require({
                 message: this.$t('documentExecution.dossier.deleteConfirm'),
                 header: this.$t('documentExecution.dossier.deleteTitle'),

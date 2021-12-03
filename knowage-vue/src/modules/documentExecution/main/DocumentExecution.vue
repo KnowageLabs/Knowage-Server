@@ -348,7 +348,7 @@ export default defineComponent({
                     }
                 })
 
-            this.filtersData?.filterStatus?.forEach((el: any) => {
+            this.filtersData?.filterStatus?.forEach((el: iParameter) => {
                 el.parameterValue = el.multivalue ? [] : [{ value: '', description: '' }]
                 if (el.driverDefaultValue?.length > 0) {
                     el.parameterValue = el.driverDefaultValue.map((defaultValue: any) => {

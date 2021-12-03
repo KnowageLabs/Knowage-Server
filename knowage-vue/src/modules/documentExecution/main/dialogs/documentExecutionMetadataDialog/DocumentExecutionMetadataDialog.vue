@@ -72,6 +72,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { iMetadata } from '../../DocumentExecution'
 import Dialog from 'primevue/dialog'
 import Editor from 'primevue/editor'
 import documentExecutionMetadataDialogDescriptor from './DocumentExecutionMetadataDialogDescriptor.json'
@@ -89,7 +90,7 @@ export default defineComponent({
         return {
             documentExecutionMetadataDialogDescriptor,
             document: null as any,
-            metadata: null as any,
+            metadata: null as iMetadata | null,
             uploadedFiles: {} as any,
             loading: false
         }

@@ -3,6 +3,7 @@ export interface iParameter {
     metadata: {
         colsMap: any
     },
+    data: any,
     visible: boolean,
     valueSelection: string,
     showOnPanel: string,

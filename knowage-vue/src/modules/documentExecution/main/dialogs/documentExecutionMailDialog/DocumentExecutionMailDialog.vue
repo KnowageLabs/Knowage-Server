@@ -70,6 +70,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { iMail } from '../../DocumentExecution'
 import Dialog from 'primevue/dialog'
 import Editor from 'primevue/editor'
 import documentExecutionMailDialogDescriptor from './DocumentExecutionMailDialogDescriptor.json'
@@ -82,7 +83,7 @@ export default defineComponent({
     data() {
         return {
             documentExecutionMailDialogDescriptor,
-            mail: {} as any,
+            mail: {} as iMail,
             mailToDirty: false
         }
     },
@@ -100,7 +101,7 @@ export default defineComponent({
     created() {},
     methods: {
         closeDialog() {
-            this.mail = {}
+            this.mail = {} as iMail
             this.$emit('close')
         },
         save() {

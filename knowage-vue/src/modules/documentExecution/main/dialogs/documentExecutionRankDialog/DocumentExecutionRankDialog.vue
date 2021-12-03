@@ -39,8 +39,8 @@ export default defineComponent({
     emits: ['close', 'saveRank'],
     data() {
         return {
-            documentRank: null as any,
-            newRank: null as any
+            documentRank: null as string | null,
+            newRank: null as string | null
         }
     },
     watch: {
@@ -54,7 +54,7 @@ export default defineComponent({
     methods: {
         loadDocumentRank() {
             this.newRank = null
-            this.documentRank = this.propDocumentRank
+            this.documentRank = this.propDocumentRank as any
         },
         closeDialog() {
             this.newRank = null

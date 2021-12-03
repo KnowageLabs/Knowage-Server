@@ -43,6 +43,7 @@
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
+import { iNote } from '../../DocumentExecution'
 import Dialog from 'primevue/dialog'
 import documentExecutionNotesDialogDescriptor from './DocumentExecutionNotesDialogDescriptor.json'
 import DocumentExecutionNotesForm from './DocumentExecutionNotesForm.vue'
@@ -60,8 +61,8 @@ export default defineComponent({
         return {
             documentExecutionNotesDialogDescriptor,
             document: null as any,
-            notes: [] as any,
-            selectedNote: {} as any,
+            notes: [] as iNote[],
+            selectedNote: {} as iNote,
             activeTab: 0,
             loading: false
         }
@@ -93,7 +94,7 @@ export default defineComponent({
             }
         },
         closeDialog() {
-            this.selectedNote = {}
+            this.selectedNote = {} as iNote
             this.$emit('close')
         },
         async loadNotes() {
@@ -132,11 +133,11 @@ export default defineComponent({
                 )
             this.loading = false
         },
-        onEditNote(note: any) {
+        onEditNote(note: iNote) {
             this.selectedNote = { ...note }
             this.activeTab = 0
         },
-        async onDeleteNote(note: any) {
+        async onDeleteNote(note: iNote) {
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documentnotes/deleteNote`, { id: this.document.id, execReq: note.execReq, owner: note.owner })
