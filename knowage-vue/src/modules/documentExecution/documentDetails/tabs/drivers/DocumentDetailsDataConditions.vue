@@ -154,7 +154,6 @@ export default defineComponent({
                 delete this.transformedObj[fatherIdfilterOperation]
             }
 
-            console.log('transformingCorrelations', this.transformedObj)
             return this.transformedObj
         },
         //#endregion ===============================================================================================
@@ -194,7 +193,6 @@ export default defineComponent({
                     })
                     .sort()
             }
-            console.log(lovIdAndColumns)
             return lovIdAndColumns
         },
         //#endregion ===============================================================================================
@@ -217,7 +215,6 @@ export default defineComponent({
             })
         },
         openDataConditionDialog(condition?) {
-            console.log(condition)
             condition != 'newCondition' ? (this.selectedCondition = { ...condition }) : (this.selectedCondition = [{ parId: this.selectedDriver.id, filterOperation: this.availableOperators[0], logicOperator: this.connectingOperators[0] }])
             this.getLovColumnsForParuse(this.selectedCondition)
             this.showDataConditionDialog = true
@@ -225,7 +222,6 @@ export default defineComponent({
 
         //#region ===================== Delete Functionality  ====================================================
         deleteDataCondition(transformKey) {
-            console.log(this.transformedObj[transformKey])
             this.dataDependenciesForDeleting = [...this.transformedObj[transformKey]]
             this.deleteDataDependencies(this.selectedDocument.id)
         },

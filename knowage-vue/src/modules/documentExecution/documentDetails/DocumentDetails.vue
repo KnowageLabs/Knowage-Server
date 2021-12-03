@@ -11,7 +11,6 @@
                 </template>
             </Toolbar>
         </template>
-        {{ v$.$invalid }}
         <div class="document-details-tab-container p-d-flex p-flex-column" :style="mainDescriptor.style.flexOne">
             <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
             <TabView v-if="!loading" class="document-details-tabview" :style="mainDescriptor.style.flex">
@@ -137,19 +136,21 @@ export default defineComponent({
         //#region ===================== Get Persistent Data ====================================================
         async loadPage() {
             this.loading = true
-            await this.getSelectedDocument()
-            await this.getAnalyticalDrivers()
-            await this.getFunctionalities()
-            await this.getDatasources()
-            await this.getDocumentDrivers()
-            await this.getTemplates()
-            await this.getEngines()
-            await this.getAttributes()
-            await this.getParTypes()
-            await this.getDateFormats()
-            await this.getTablesByDocumentID()
-            await this.getDataset()
-            await this.getDataSources()
+            await Promise.all([
+                this.getSelectedDocument(),
+                this.getAnalyticalDrivers(),
+                this.getFunctionalities(),
+                this.getDatasources(),
+                this.getDocumentDrivers(),
+                this.getTemplates(),
+                this.getEngines(),
+                this.getAttributes(),
+                this.getParTypes(),
+                this.getDateFormats(),
+                this.getTablesByDocumentID(),
+                this.getDataset(),
+                this.getDataSources()
+            ])
             this.loading = false
         },
         async getSelectedDocument() {
@@ -211,7 +212,6 @@ export default defineComponent({
             this.templateToUpload = event
         },
         async uploadTemplate(uploadedFile, responseId) {
-            console.log(uploadedFile)
             var formData = new FormData()
             formData.append('file', uploadedFile)
             await this.$http
@@ -224,10 +224,8 @@ export default defineComponent({
         },
         setImageForUpload(event) {
             this.imageToUpload = event
-            console.log('IMAGE EVENT', event)
         },
         async uploadImage(uploadedFile, responseId) {
-            console.log(uploadedFile)
             var formData = new FormData()
             formData.append('file', uploadedFile)
             formData.append('fileName', uploadedFile.name)
@@ -240,15 +238,6 @@ export default defineComponent({
                 })
         },
         async saveOutputParams() {
-            // this.selectedDocument.outputParameters.forEach((parameter: iOutputParam) => {
-            //     this.saveOutputParamsRequest(parameter) // FOREACH REPORTUJE UNDEFINED ZASTO?
-            //         .then(() => {
-            //             this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
-            //         })
-            //         .catch((error) => {
-            //             console.log(error)
-            //         })
-            // })
             this.selectedDocument.outputParameters.forEach((parameter: iOutputParam) => {
                 if (!parameter.id) {
                     delete parameter.numberOfErrors
@@ -266,17 +255,6 @@ export default defineComponent({
                 }
             })
         },
-        // saveOutputParamsRequest(parameter) {
-        //     if (!parameter.id) {
-        //         delete parameter.numberOfErrors
-        //         delete parameter.tempId
-        //         return this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters`, parameter, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-        //     } else if (parameter.isChanged) {
-        //         delete parameter.numberOfErrors
-        //         delete parameter.isChanged
-        //         return this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters/${parameter.id}`, parameter, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-        //     }
-        // },
         async saveDrivers() {
             this.selectedDocument.drivers.forEach((driver: iDriver) => {
                 driver.modifiable = 0
@@ -285,13 +263,13 @@ export default defineComponent({
                     delete driver.isChanged
                     this.$http
                         .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-                        .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.outputParams.persistError') }))
+                        .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.drivers.persistError') }))
                 } else if (driver.isChanged) {
                     delete driver.numberOfErrors
                     delete driver.isChanged
                     this.$http
                         .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers/${driver.id}`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-                        .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.outputParams.persistError') }))
+                        .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.drivers.persistError') }))
                 }
             })
         },
@@ -308,7 +286,6 @@ export default defineComponent({
             delete docToSave.outputParameters
             delete docToSave.dataSetLabel
 
-            console.log(this.selectedDocument.drivers)
             await this.saveRequest(docToSave)
                 .then((response: AxiosResponse<any>) => {
                     this.saveOutputParams()

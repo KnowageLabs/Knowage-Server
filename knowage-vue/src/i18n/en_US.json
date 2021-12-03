@@ -246,10 +246,12 @@
                 "noVisCond": "No visibility condition selected",
                 "paramValue": " value of the parameter ",
                 "parameterUrlName": "Url Name",
+                "persistError": "Error saving output param",
                 "title": "Drivers",
                 "visibilityTitle": "Driver visibility conditions",
                 "visualizationHint": "Set driver visualization condition",
-                "visualizationTitle": "Driver Visualization"
+                "visualizationTitle": "Driver Visualization",
+                "priorityError": "Error updating priority"
             },
             "history": {
                 "activeButton": "Set active Template",
@@ -287,8 +289,8 @@
                 "paramDetails": "Output parameter details",
                 "paramName": "Parameter Name",
                 "paramType": "Parameter Type",
-                "title": "Output Parameters",
-                "persistError": "Error saving output param"
+                "persistError": "Error saving output param",
+                "title": "Output Parameters"
             },
             "subreports": {
                 "title": "Subreports"

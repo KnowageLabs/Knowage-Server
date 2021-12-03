@@ -31,9 +31,6 @@
                 <template #left>
                     {{ $t('documentExecution.documentDetails.drivers.detailsTitle') }}
                 </template>
-                <template #right>
-                    <Button :label="$t('common.save')" class="p-button-text p-button-rounded p-button-plain" :style="mainDescriptor.style.white" @click="saveDriver" />
-                </template>
             </Toolbar>
             <div id="driver-details-container" :style="mainDescriptor.style.flexOneRelative">
                 <div :style="mainDescriptor.style.absoluteScroll">
@@ -305,26 +302,7 @@ export default defineComponent({
                     this.$store.commit('setInfo', { title: 'Succes', msg: 'Driver priority changed' })
                     this.getDocumentDrivers()
                 })
-                .catch((error) => {
-                    console.log(error)
-                })
-        },
-        async saveDriver() {
-            await this.saveRequest()
-                .then(() => {
-                    this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
-                    this.getDocumentDrivers()
-                })
-                .catch((error) => {
-                    console.log(error)
-                })
-        },
-        saveRequest() {
-            if (!this.selectedDriver.id) {
-                return this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers`, this.selectedDriver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-            } else {
-                return this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers/${this.selectedDriver.id}`, this.selectedDriver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-            }
+                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.drivers.priorityError') }))
         },
         deleteDriverConfirm(event) {
             this.$confirm.require({
@@ -352,9 +330,6 @@ export default defineComponent({
                 this.document.drivers.splice(deletedDriver, 1)
                 this.selectedDriver = {} as iDriver
             }
-        },
-        logEvent(event) {
-            console.log(event)
         }
     }
 })
