@@ -88,7 +88,7 @@ export default defineComponent({
         async loadDocument() {
             this.document = this.propDocument
 
-            if (this.document) {
+            if (this.document && this.document.id) {
                 await this.loadNotes()
             }
         },
