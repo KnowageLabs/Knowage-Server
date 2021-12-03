@@ -20,8 +20,8 @@
     <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
     <DocumentExecutionBreadcrumb v-if="breadcrumbs.length > 1" :breadcrumbs="breadcrumbs" @breadcrumbClicked="onBreadcrumbClick"></DocumentExecutionBreadcrumb>
 
-    <Button @click="test()">TEST EXECUTE/REFRESH</Button>
-    <Button @click="testMode()">TEST MODE</Button>
+    <!-- <Button @click="test()">TEST EXECUTE/REFRESH</Button>
+    <Button @click="testMode()">TEST MODE</Button> -->
 
     <div ref="document-execution-view" id="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
         <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
