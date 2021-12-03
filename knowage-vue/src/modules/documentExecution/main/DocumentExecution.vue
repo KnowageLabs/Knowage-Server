@@ -32,7 +32,7 @@
         </template>
 
         <!-- <iframe id="documentFrame" name="documentFrame" v-else-if="mode === 'iframe'" class="document-execution-iframe" :src="url"></iframe> -->
-        <iframe id="documentFrame" name="documentFrame" v-show="mode === 'iframe' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible" class="document-execution-iframe" :src="url"></iframe>
+        <iframe id="documentFrame" name="documentFrame" v-show="mode === 'iframe' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible" class="document-execution-iframe"></iframe>
 
         <DocumentExecutionSchedulationsTable id="document-execution-schedulations-table" v-if="schedulationsTableVisible" :propSchedulations="schedulations" @deleteSchedulation="onDeleteSchedulation" @close="schedulationsTableVisible = false"></DocumentExecutionSchedulationsTable>
 
