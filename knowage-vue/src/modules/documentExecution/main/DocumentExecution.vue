@@ -31,7 +31,8 @@
             <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger"></Dossier>
         </template>
 
-        <iframe id="documentFrame" name="documentFrame" v-else-if="mode === 'iframe'" class="document-execution-iframe" :src="url"></iframe>
+        <!-- <iframe id="documentFrame" name="documentFrame" v-else-if="mode === 'iframe'" class="document-execution-iframe" :src="url"></iframe> -->
+        <iframe id="documentFrame" name="documentFrame" v-show="mode === 'iframe' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible" class="document-execution-iframe" :src="url"></iframe>
 
         <DocumentExecutionSchedulationsTable id="document-execution-schedulations-table" v-if="schedulationsTableVisible" :propSchedulations="schedulations" @deleteSchedulation="onDeleteSchedulation" @close="schedulationsTableVisible = false"></DocumentExecutionSchedulationsTable>
 
@@ -372,6 +373,8 @@ export default defineComponent({
             console.log('BREADCRUMBS AFTER LOADED FILTERS DATA: ', this.breadcrumbs)
         },
         async loadURL() {
+            console.log('LOADING URL FROM VUE APP!')
+
             const postData = { label: this.id, role: this.userRole, parameters: this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
 
             if (this.sbiExecutionId) {
@@ -394,7 +397,7 @@ export default defineComponent({
                 this.sbiExecutionId = this.urlData?.sbiExecutionId as string
             }
             console.log('LOADED URL DATA: ', this.urlData)
-            console.log('BREADCRUMBS AFTER LOADED URL DATA: ', this.breadcrumbs)
+            // console.log('BREADCRUMBS AFTER LOADED URL DATA: ', this.breadcrumbs)
             await this.sendForm()
         },
         async loadExporters() {
@@ -459,7 +462,7 @@ export default defineComponent({
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) this.breadcrumbs[index].hiddenFormData = this.hiddenFormData
 
-            console.log('BREADCRUMBS AFTER HIDDEN FORM DATA: ', this.breadcrumbs)
+            // console.log('BREADCRUMBS AFTER HIDDEN FORM DATA: ', this.breadcrumbs)
 
             // await this.sendHiddenFormData()
         },
@@ -477,7 +480,7 @@ export default defineComponent({
                 .catch((error: any) => console.log('ERROR: ', error))
         },
         async onExecute() {
-            console.log('EXECUTE PARAMS: ', this.filtersData)
+            // console.log('EXECUTE PARAMS: ', this.filtersData)
             // if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER') {
             this.loading = true
             this.filtersData.isReadyForExecution = true
@@ -533,7 +536,7 @@ export default defineComponent({
             Object.keys(this.filtersData.filterStatus).forEach((key: any) => {
                 const parameter = this.filtersData.filterStatus[key]
 
-                console.log('PARAMETER: ', parameter)
+                // console.log('PARAMETER: ', parameter)
 
                 if (parameter.parameterValue) {
                     if (parameter.type === 'DATE') {
@@ -566,7 +569,7 @@ export default defineComponent({
             Object.keys(this.filtersData.filterStatus).forEach((key: any) => {
                 const parameter = this.filtersData.filterStatus[key]
 
-                console.log('PARAMETER: ', parameter)
+                // console.log('PARAMETER: ', parameter)
 
                 if (parameter.parameterValue) {
                     if (parameter.type === 'DATE') {
@@ -598,10 +601,10 @@ export default defineComponent({
                     })
                 )
             this.loading = false
-            console.log('LOADED DOCUMENT VOTE MAIN: ', this.documentRank)
+            // console.log('LOADED DOCUMENT VOTE MAIN: ', this.documentRank)
         },
         async onSaveRank(newRank: any) {
-            console.log('NEW RANK: ', newRank)
+            // console.log('NEW RANK: ', newRank)
             if (newRank) {
                 this.loading = true
                 await this.$http
@@ -623,7 +626,7 @@ export default defineComponent({
             this.rankDialogVisible = false
         },
         async onMetadataSave(metadata: any) {
-            console.log('ON METADATA SAVE: ', metadata)
+            // console.log('ON METADATA SAVE: ', metadata)
             this.loading = true
             const jsonMeta = [] as any[]
             const properties = ['shortText', 'longText']
@@ -653,7 +656,7 @@ export default defineComponent({
             this.loading = false
         },
         async onMailSave(mail: any) {
-            console.log('MAIL FOR SAVE: ', mail)
+            // console.log('MAIL FOR SAVE: ', mail)
             this.loading = true
             const postData = { ...mail, label: this.document.label, docId: this.document.id, userId: this.user.userId, parameters: this.getFormattedParameters() }
             await this.$http
@@ -698,7 +701,7 @@ export default defineComponent({
             return formatDate(date, format)
         },
         onBreadcrumbClick(item: any) {
-            console.log('BREADCRUMB CLICKED ITEM: ', item)
+            // console.log('BREADCRUMB CLICKED ITEM: ', item)
             this.document = item.document
             this.filtersData = item.filtersData
             this.urlData = item.urlData
