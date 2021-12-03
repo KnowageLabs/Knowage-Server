@@ -24,6 +24,7 @@ export interface iParameter {
     id: number,
     parameterDescription: string[],
     dependentParameters?: iParameter[]
+    dependsOnParameters?: iParameter[]
 }
 
 
@@ -56,4 +57,25 @@ export interface iDocument {
     tenant: string
     typeCode: string
     visible: boolean
+}
+
+export interface iAdmissibleValues {
+    status: string,
+    error: string,
+    idParam: string,
+    result: {
+        metadata: {
+            "colsMap": any
+            "descriptionColumn": string,
+            "invisibleColumns": string[],
+            "valueColumn": string,
+            "visibleColumns": string[]
+        },
+        data: { _col0: string, _col1: string }[]
+    }
+}
+
+export interface iAdmissibleTreeValues {
+    rows: { data: string, isEnabled: boolean, label: string, id: string, leaf: boolean }[],
+    errors: any[]
 }

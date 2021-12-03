@@ -10,8 +10,6 @@
             </template>
         </Toolbar>
 
-        {{ user.sessionRole }}
-
         <div class="p-fluid kn-parameter-sidebar-content">
             <div class="p-field p-m-4" v-if="user && (!sessionRole || sessionRole === 'No default role selected')">
                 <div class="p-d-flex">
@@ -159,7 +157,7 @@
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import { formatDate } from '@/helpers/commons/localeHelper'
-import { iDocument, iParameter } from './KnParameterSidebar'
+import { iDocument, iParameter, iAdmissibleValues } from './KnParameterSidebar'
 import Calendar from 'primevue/calendar'
 import Chip from 'primevue/chip'
 import Checkbox from 'primevue/checkbox'
@@ -193,18 +191,18 @@ export default defineComponent({
         return {
             document: null as iDocument | null,
             parameters: { isReadyForExecution: false, filterStatus: [] } as { filterStatus: iParameter[]; isReadyForExecution: boolean },
-            executeMenuItems: [] as any[],
+            executeMenuItems: [] as { label: string; command: Function }[],
             selectedParameterCheckbox: {} as any,
             popupDialogVisible: false,
             selectedParameter: null as iParameter | null,
-            parameterPopUpData: null as any,
+            parameterPopUpData: null as iAdmissibleValues | null,
             treeDialogVisible: false,
             formatedParameterValues: null as any,
             parameterSaveDialogVisible: false,
             savedParametersDialogVisible: false,
             viewpoints: [],
             user: null as any,
-            role: null as any,
+            role: null as string | null,
             loading: false
         }
     },
@@ -218,7 +216,7 @@ export default defineComponent({
             this.loadParameters()
         },
         userRole() {
-            this.role = this.userRole
+            this.role = this.userRole as string
         }
     },
     computed: {
@@ -231,18 +229,13 @@ export default defineComponent({
     },
     created() {
         this.user = (this.$store.state as any).user
-        this.role = this.userRole
+        this.role = this.userRole as string
 
         this.loadDocument()
         this.loadParameters()
-
-        // console.log('STORE: ', this.$store)
     },
     methods: {
         setNewSessionRole() {
-            // console.log(' >>> USER: ', this.user)
-            // console.log(' >>> NE ROLE: ', this.newSessionRole)
-            // console.log('THIS STORE USER: ', (this.$store.state as any).user)
             this.$emit('roleChanged', this.role)
             this.parameters = { isReadyForExecution: false, filterStatus: [] }
         },
@@ -253,9 +246,7 @@ export default defineComponent({
             this.parameters.isReadyForExecution = this.filtersData?.isReadyForExecution
             this.parameters.filterStatus = []
 
-            console.log('>>> LOADED ORIGINAL PARAMETERS: ', this.filtersData?.filterStatus)
-
-            this.filtersData?.filterStatus?.forEach((el: any) => {
+            this.filtersData?.filterStatus?.forEach((el: iParameter) => {
                 if (el.selectionType == 'LIST' && el.showOnPanel == 'true' && el.multivalue) {
                     this.selectedParameterCheckbox[el.id] = el.parameterValue?.map((parameterValue: any) => parameterValue.value)
                 }
@@ -265,10 +256,8 @@ export default defineComponent({
 
             this.parameters?.filterStatus.forEach((el: any) => this.setVisualDependency(el))
             this.parameters?.filterStatus.forEach((el: any) => this.updateVisualDependency(el))
-            console.log('>>> LOADED PARAMETERS: ', this.parameters?.filterStatus)
         },
-        setVisualDependency(parameter: any) {
-            // console.log(' >>> VIS DEP PARMAETR: ', parameter)
+        setVisualDependency(parameter: iParameter) {
             if (parameter.dependencies.visual.length !== 0) {
                 parameter.dependencies.visual.forEach((dependency: any) => {
                     const index = this.parameters.filterStatus.findIndex((param: any) => {
@@ -284,7 +273,7 @@ export default defineComponent({
         },
         resetParameterValue(parameter: any) {
             if ((parameter.selectionType === 'LIST' || parameter.selectionType === 'COMBOBOX') && parameter.showOnPanel === 'true' && parameter.multivalue) {
-                parameter.parameterValue = []
+                parameter.parameterValue = [] as { value: string; description: string }[]
                 this.selectedParameterCheckbox[parameter.id] = []
                 for (let i = 0; i < parameter.driverDefaultValue.length; i++) {
                     const temp = parameter.driverDefaultValue[i]
@@ -307,11 +296,9 @@ export default defineComponent({
         resetAllParameters() {
             this.parameters.filterStatus.forEach((el: any) => this.resetParameterValue(el))
         },
-        toggle(event: any) {
+        toggle(event: Event) {
             this.createMenuItems()
-            console.log('REFS: ', this.$refs)
             const menu = this.$refs.executeButtonMenu as any
-            console.log('MENU: ', menu)
             menu.toggle(event)
         },
         createMenuItems() {
@@ -322,16 +309,12 @@ export default defineComponent({
             for (let i = 0; i < this.parameters.filterStatus.length; i++) {
                 const parameter = this.parameters.filterStatus[i]
 
-                // console.log('PARAMETER REQUIRED: ', parameter)
-
                 if (parameter.mandatory && parameter.showOnPanel == 'true') {
                     if (!parameter.parameterValue || parameter.parameterValue.length === 0) {
-                        // console.log('REQUIRED 1', parameter)
                         return true
                     } else {
                         for (let i = 0; i < parameter.parameterValue.length; i++) {
                             if (!parameter.parameterValue[i].value) {
-                                // console.log('ENTERED REQUIRED 2!!!!!!!!!')
                                 return true
                             }
                         }
@@ -341,18 +324,18 @@ export default defineComponent({
 
             return false
         },
-        setCheckboxValue(parameter: any) {
+        setCheckboxValue(parameter: iParameter) {
             parameter.parameterValue = this.selectedParameterCheckbox[parameter.id].map((el: any) => {
                 return { value: el, description: el }
             })
             this.updateVisualDependency(parameter)
         },
-        openPopupDialog(parameter: any) {
+        openPopupDialog(parameter: iParameter) {
             this.selectedParameter = parameter
             this.getParameterPopupInfo(parameter)
             this.popupDialogVisible = true
         },
-        openTreeDialog(parameter: any) {
+        openTreeDialog(parameter: iParameter) {
             this.selectedParameter = parameter
             this.formatedParameterValues = this.getFormatedParameters()
             this.treeDialogVisible = true
@@ -362,7 +345,7 @@ export default defineComponent({
             this.formatedParameterValues = null
             this.treeDialogVisible = false
         },
-        async getParameterPopupInfo(parameter: any) {
+        async getParameterPopupInfo(parameter: iParameter) {
             this.loading = true
 
             const postData = { label: this.document?.label, parameters: this.getFormatedParameters(), paramId: parameter.urlName, role: this.sessionRole }
@@ -375,27 +358,11 @@ export default defineComponent({
             Object.keys(this.parameters.filterStatus).forEach((key: any) => {
                 const parameter = this.parameters.filterStatus[key]
 
-                console.log('PARAMETER: ', parameter)
-
-                // parameter.multivalue ? parameters.push({ value: parameter.parameterValue, description: parameter.parameterDescription }) : parameters.push({ value: parameter.parameterValue[0].value, description: parameter.parameterDescription[0].description })
-
                 if (!parameter.multivalue) {
                     parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
                 } else {
                     parameters.push({ label: parameter.label, value: parameter.parameterValue, description: parameter.parameterDescription })
                 }
-
-                // if (parameter.valueSelection === 'man_in') {
-                //     parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
-                // } else if (parameter.multivalue) {
-                //     parameters.push({ label: parameter.label, value: parameter.parameterValue, description: parameter.parameterDescription })
-                // } else if (parameter.type === 'DATE') {
-                //     parameter[parameter.urlName] = parameter.parameterValue[0].value
-                //     parameter[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].value
-                // } else {
-                //     parameter[parameter.urlName] = parameter.parameterValue[0] ? parameter.parameterValue[0].value : parameter.parameterValue.value
-                //     parameter[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0] ? parameter.parameterValue[0].description : parameter.parameterValue.description
-                // }
             })
 
             return parameters
@@ -406,7 +373,6 @@ export default defineComponent({
             Object.keys(this.parameters.filterStatus).forEach((key: any) => {
                 const parameter = this.parameters.filterStatus[key]
 
-                console.log('PARAMETER: ', parameter)
                 if (parameter.type === 'DATE') {
                     parameters[parameter.urlName] = parameter.parameterValue[0].value
                     parameters[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].value
@@ -426,65 +392,54 @@ export default defineComponent({
 
             return parameters
         },
-        onPopupSave(parameter: any) {
+        onPopupSave(parameter: iParameter) {
             this.updateVisualDependency(parameter)
             this.popupDialogVisible = false
         },
-        onTreeSave(parameter: any) {
+        onTreeSave(parameter: iParameter) {
             this.updateVisualDependency(parameter)
             this.treeDialogVisible = false
         },
-        updateVisualDependency(parameter: any) {
-            console.log('PARAMETER FOR VISUAL UPDATE: ', parameter)
-
-            parameter.dependentParameters?.forEach((dependentParameter: any) => {
-                // console.log('DEPENEDENT PARAM: ', dependentParameter)
-
-                this.visualDependencyCheck(dependentParameter, parameter)
-
-                // console.log('DEPENEDEN AFTER: ', dependentParameter)
-            })
+        updateVisualDependency(parameter: iParameter) {
+            parameter.dependentParameters?.forEach((dependentParameter: iParameter) => this.visualDependencyCheck(dependentParameter, parameter))
         },
-        visualDependencyCheck(parameter: any, changedParameter: any) {
-            // console.log(' >>> VISUAL DEP CHECK: ', parameter)
-
+        visualDependencyCheck(parameter: iParameter, changedParameter: any) {
             let showOnPanel = 'true'
             for (let i = 0; i < parameter.dependencies.visual.length && showOnPanel === 'true'; i++) {
                 showOnPanel = 'false'
                 const visualDependency = parameter.dependencies.visual[i]
 
-                const index = parameter.dependsOnParameters.findIndex((el: any) => el.urlName === visualDependency.parFatherUrlName)
-                const parentParameter = parameter.dependsOnParameters[index]
+                if (parameter.dependsOnParameters) {
+                    const index = parameter.dependsOnParameters.findIndex((el: any) => el.urlName === visualDependency.parFatherUrlName)
+                    const parentParameter = parameter.dependsOnParameters[index]
 
-                for (let i = 0; i < parentParameter.parameterValue.length; i++) {
-                    if (parentParameter.parameterValue[i].value === visualDependency.compareValue) {
-                        // console.log(' >>>> ENTERED', parentParameter.parameterValue[i].value, ' === ', visualDependency.compareValue)
-                        // console.log('CHANGED PARAM', changedParameter, 'VISUAL DEP', visualDependency)
-                        if (changedParameter.urlName === visualDependency.parFatherUrlName) {
-                            parameter.label = visualDependency.viewLabel
+                    for (let i = 0; i < parentParameter.parameterValue.length; i++) {
+                        if (parentParameter.parameterValue[i].value === visualDependency.compareValue) {
+                            if (changedParameter.urlName === visualDependency.parFatherUrlName) {
+                                parameter.label = visualDependency.viewLabel
+                            }
+                            showOnPanel = 'true'
+                            break
                         }
-                        showOnPanel = 'true'
-                        break
+                    }
+
+                    if (visualDependency.operation === 'not contains') {
+                        if (showOnPanel == 'true') {
+                            showOnPanel = 'false'
+                            break
+                        } else {
+                            showOnPanel = 'true'
+                        }
                     }
                 }
 
-                if (visualDependency.operation === 'not contains') {
-                    if (showOnPanel == 'true') {
-                        showOnPanel = 'false'
-                        break
-                    } else {
-                        showOnPanel = 'true'
-                    }
-                }
+                parameter.showOnPanel = showOnPanel
             }
-
-            parameter.showOnPanel = showOnPanel
         },
         openSaveParameterDialog() {
             this.parameterSaveDialogVisible = true
         },
         async saveViewpoint(viewpoint: any) {
-            console.log('VIEWPOINT FOR SAVE: ', viewpoint)
             const postData = { ...viewpoint, OBJECT_LABEL: this.document?.label, ROLE: this.sessionRole, VIEWPOINT: this.getParameterValues() }
             this.loading = true
             await this.$http
@@ -508,15 +463,10 @@ export default defineComponent({
             this.loading = false
         },
         fillParameterForm(viewpoint: any) {
-            //console.log('VIEWPOINT FOR FILL FORM: ', viewpoint)
-            //console.log(' >>> TEEEEEEEST ', this.decodeViewpointPrameterValues(viewpoint.vpValueParams))
             const tempParameters = this.decodeViewpointPrameterValues(viewpoint.vpValueParams)
             Object.keys(tempParameters)?.forEach((key: any) => {
-                // console.log(key + '  tempParam: ', tempParameters[key])
-
                 const index = this.parameters.filterStatus.findIndex((el: any) => el.urlName === key)
                 if (index !== -1) {
-                    // console.log(' >>> BLA', this.parameters.filterStatus[index])
                     const parameter = this.parameters.filterStatus[index]
                     if (parameter.type === 'DATE') {
                         parameter.parameterValue[0].value = this.getFormattedDate(tempParameters[key], 'MM/DD/YYYY')
@@ -526,9 +476,6 @@ export default defineComponent({
                     } else if (parameter.selectionType === 'TREE' || parameter.selectionType === 'LOOKUP' || parameter.multivalue) {
                         const tempArrayValues = JSON.parse(tempParameters[key])
                         const tempArrayDescriptions = tempParameters[key + '_field_visible_description'].split(';')
-                        // console.log('TEST values: ', tempArrayValues)
-                        // console.log('TEST descriptions: ', tempArrayDescriptions)
-
                         parameter.parameterValue = []
                         for (let i = 0; i < tempArrayValues.length; i++) {
                             parameter.parameterValue[i] = { value: tempArrayValues[i], description: tempArrayDescriptions[i] ?? '' }
@@ -537,8 +484,6 @@ export default defineComponent({
                         if (parameter.selectionType === 'LIST') {
                             this.selectedParameterCheckbox[parameter.id] = parameter.parameterValue?.map((parameterValue: any) => parameterValue.value)
                         }
-
-                        // console.log(' >>>>> MULTIVALUE PARAM AFTER FILL ', parameter)
                     }
                 }
 
