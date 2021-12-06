@@ -285,7 +285,8 @@ export default defineComponent({
             this.loading = false
         },
         closeDocument() {
-            this.$router.push('/document-browser')
+            const link = this.$route.path.includes('workspace') ? '/workspace' : '/document-browser'
+            this.$router.push(link)
             this.$emit('close')
         },
         setMode() {
@@ -423,14 +424,15 @@ export default defineComponent({
             this.hiddenFormData = new URLSearchParams()
 
             for (let k in postObject.params) {
-                console.log('>>>>> K: ', k)
+                // console.log('>>>>> K: ', k)
                 const inputElement = document.getElementById('postForm_' + postObject.params.document + k) as any
                 if (inputElement) {
-                    console.log('>>>>> K FOUND: ', k)
+                    //  console.log('>>>>> K FOUND: ', k)
                     inputElement.value = decodeURIComponent(postObject.params[k])
                     inputElement.value = inputElement.value.replace(/\+/g, ' ')
+                    this.hiddenFormData.set(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
                 } else {
-                    console.log('>>>>> K NEW: ', k)
+                    //  console.log('>>>>> K NEW: ', k)
 
                     const element = document.createElement('input')
                     element.type = 'hidden'

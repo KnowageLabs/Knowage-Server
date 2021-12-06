@@ -15,11 +15,9 @@
                         <span>{{ tab.item?.name ? tab.item?.name : 'new dashboard' }}</span>
                     </template>
 
-                    <!-- <DocumentBrowserTab :item="tab.item" :mode="tab.mode" @close="closeDocument('current')"></DocumentBrowserTab> -->
+                    <DocumentBrowserTab :item="tab.item" :mode="tab.mode" @close="closeDocument('current')"></DocumentBrowserTab>
                 </TabPanel>
             </TabView>
-
-            <DocumentBrowserTab v-if="selectedItem" :item="selectedItem.item" :mode="selectedItem.mode" @close="closeDocument('current')"></DocumentBrowserTab>
             <div id="document-browser-tab-icon-container" v-if="activeIndex !== 0">
                 <i id="document-browser-tab-icon" class="fa fa-times-circle" @click="toggle($event)"></i>
                 <Menu ref="menu" :model="menuItems" :popup="true" />
@@ -43,17 +41,15 @@ export default defineComponent({
         return {
             tabs: [] as any[],
             activeIndex: 0,
-            menuItems: [] as any[],
-            selectedItem: null as any
+            menuItems: [] as any[]
         }
     },
     created() {
+        console.log('ROUTE NAME: ', this.$route.name)
         if (this.$route.params.id && this.$route.name === 'document-browser-document-execution') {
-            const tempItem = { item: { name: this.$route.params.id, label: this.$route.params.id, mode: this.$route.params.mode }, mode: 'execute' }
-            this.tabs.push(tempItem)
+            this.tabs.push({ item: { name: this.$route.params.id, label: this.$route.params.id }, mode: 'execute' })
 
             this.activeIndex = 1
-            this.selectedItem = tempItem
         }
     },
     methods: {
@@ -66,14 +62,11 @@ export default defineComponent({
             const id = this.tabs[this.activeIndex - 1].item ? this.tabs[this.activeIndex - 1].item.label : 'new-dashboard'
 
             console.log('ITEM ON TAB CHANGE: ', this.tabs[this.activeIndex - 1].item)
-            let routeDocumentType = this.tabs[this.activeIndex - 1].item.mode ? this.tabs[this.activeIndex - 1].item.mode : this.getRouteDocumentType(this.tabs[this.activeIndex - 1].item)
+            let routeDocumentType = this.$route.params.mode ?? this.getRouteDocumentType(this.tabs[this.activeIndex - 1].item)
             this.$router.push(`/document-browser/${routeDocumentType}/` + id)
         },
         onItemSelect(payload: any) {
             this.tabs.push(payload)
-
-            this.selectedItem = payload
-
             const id = payload.item ? payload.item.label : 'new-dashboard'
             console.log(' DOCUMENT BROWSER SELECTED ITEM: ', payload.item)
             let routeDocumentType = this.getRouteDocumentType(payload.item)
