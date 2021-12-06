@@ -241,8 +241,8 @@ export default defineComponent({
                 })
             } else {
                 this.condition = {
-                    parFather: this.availableDrivers[0],
-                    parFatherId: this.availableDrivers[0].id,
+                    parFather: this.excludeCurrentDriverFromList()[0],
+                    parFatherId: this.excludeCurrentDriverFromList()[0].id,
                     filterOperation: 'equal',
                     logicOperator: 'AND'
                 }
