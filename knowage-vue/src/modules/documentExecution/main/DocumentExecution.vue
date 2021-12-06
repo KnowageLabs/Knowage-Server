@@ -1,5 +1,5 @@
 <template>
-    <Toolbar v-if="!this.embed" class="kn-toolbar kn-toolbar--primary p-col-12">
+    <Toolbar v-if="!embed" class="kn-toolbar kn-toolbar--primary p-col-12">
         <template #left>
             <span>{{ document?.label }}</span>
         </template>
@@ -19,9 +19,6 @@
     </Toolbar>
     <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
     <DocumentExecutionBreadcrumb v-if="breadcrumbs.length > 1" :breadcrumbs="breadcrumbs" @breadcrumbClicked="onBreadcrumbClick"></DocumentExecutionBreadcrumb>
-
-    <!-- <Button @click="test()">TEST EXECUTE/REFRESH</Button>
-    <Button @click="testMode()">TEST MODE</Button> -->
 
     <div ref="document-execution-view" id="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
         <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
@@ -144,11 +141,9 @@ export default defineComponent({
     },
     async created() {
         window.addEventListener('message', (event) => {
-            console.log('EVENT: ', event)
+            // console.log('EVENT: ', event)
             if (event.data.type === 'crossNavigation') {
                 this.executeCrossNavigation(event)
-            } else if (event.data.type === 'modeChanged') {
-                console.log('EVENT MODE CHANGED: ', event)
             }
         })
 
@@ -183,7 +178,7 @@ export default defineComponent({
             this.hiddenFormData.set('documentMode', this.documentMode)
             console.log('TEST', this.hiddenFormData)
             // window.frames[0].postMessage({ type: 'changeMode', mode: this.documentMode }, '*')
-            this.sendHiddenFormData()
+            this.loadURL()
         },
         openHelp() {
             this.helpDialogVisible = true
@@ -295,6 +290,9 @@ export default defineComponent({
         },
         setMode() {
             this.embed = this.$route.path.includes('embed')
+            if (this.embed) {
+                this.$store.commit('setDocumentExecutionEmbed')
+            }
 
             if (this.$route.path.includes('registry')) {
                 this.mode = 'registry'
@@ -412,27 +410,31 @@ export default defineComponent({
                 }
             }
 
-            let postForm = null as any
-            //if (!postForm) {
-            postForm = document.createElement('form')
-            postForm.id = 'postForm_' + postObject.params.document
-            postForm.action = postObject.url
-            postForm.method = 'post'
-            postForm.target = 'documentFrame'
-            document.body.appendChild(postForm)
-            // }
+            let postForm = document.getElementById('postForm_' + postObject.params.document) as any
+            if (!postForm) {
+                postForm = document.createElement('form')
+                postForm.id = 'postForm_' + postObject.params.document
+                postForm.action = 'http://localhost:8080' + postObject.url
+                postForm.method = 'post'
+                postForm.target = 'documentFrame'
+                document.body.appendChild(postForm)
+            }
 
             this.hiddenFormData = new URLSearchParams()
 
             for (let k in postObject.params) {
-                const inputElement = document.getElementById('postForm_' + k) as any
+                console.log('>>>>> K: ', k)
+                const inputElement = document.getElementById('postForm_' + postObject.params.document + k) as any
                 if (inputElement) {
+                    console.log('>>>>> K FOUND: ', k)
                     inputElement.value = decodeURIComponent(postObject.params[k])
                     inputElement.value = inputElement.value.replace(/\+/g, ' ')
                 } else {
+                    console.log('>>>>> K NEW: ', k)
+
                     const element = document.createElement('input')
                     element.type = 'hidden'
-                    element.id = 'postForm_' + k
+                    element.id = 'postForm_' + postObject.params.document + k
                     element.name = k
                     element.value = decodeURIComponent(postObject.params[k])
                     element.value = element.value.replace(/\+/g, ' ')
@@ -453,14 +455,17 @@ export default defineComponent({
             this.hiddenFormData.append('documentMode', this.documentMode)
 
             console.log('SENDING FORM FROM VUE!!!!!!!!!!!!!!!!!!!')
-            postForm.submit()
+
+            if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER') {
+                await this.sendHiddenFormData()
+            } else {
+                postForm.submit()
+            }
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) this.breadcrumbs[index].hiddenFormData = this.hiddenFormData
 
             // console.log('BREADCRUMBS AFTER HIDDEN FORM DATA: ', this.breadcrumbs)
-
-            // await this.sendHiddenFormData()
         },
         async sendHiddenFormData() {
             await this.$http
@@ -476,17 +481,12 @@ export default defineComponent({
                 .catch((error: any) => console.log('ERROR: ', error))
         },
         async onExecute() {
-            // console.log('EXECUTE PARAMS: ', this.filtersData)
-            // if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER') {
             this.loading = true
             this.filtersData.isReadyForExecution = true
             await this.loadURL()
             this.parameterSidebarVisible = false
             this.reloadTrigger = !this.reloadTrigger
             this.loading = false
-            //    // } else {
-            //         window.frames[0].postMessage({ type: 'execute', parameters: this.getFormattedParameters() }, '*')
-            //     }
         },
         async onExportCSV() {
             const postData = { documentId: this.document.id, documentLabel: this.document.label, exportType: 'CSV', parameters: this.getFormattedParametersForCSVExport() }
@@ -706,14 +706,6 @@ export default defineComponent({
             }
 
             await this.loadPage()
-        },
-        test() {
-            console.log('CAAALED ANGULAR TEST EXECUTE ')
-            window.frames[0].postMessage({ type: 'execute', parameters: this.getFormattedParameters() }, '*')
-        },
-        testMode() {
-            console.log('CAAALED ANGULAR TEST MODE ')
-            window.frames[0].postMessage({ type: 'changeMode', mode: 'EDIT', parameters: this.hiddenFormData }, '*')
         }
     }
 })
