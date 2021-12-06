@@ -40,7 +40,6 @@
                         </div>
                         <Card v-else>
                             <template #content>
-                                {{ selectedDriver }}
                                 <form class="p-fluid p-formgrid p-grid p-m-1">
                                     <div class="p-field p-col-12">
                                         <span class="p-float-label">

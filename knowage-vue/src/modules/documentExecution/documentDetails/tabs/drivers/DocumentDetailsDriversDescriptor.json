@@ -29,7 +29,11 @@
     },
     "style": {
         "conditionDialog": {
+            "max-width": "60%",
             "min-width": "60%"
+        },
+        "modalityCheckbox": {
+            "align-self": "center"
         }
     },
     "validations": {

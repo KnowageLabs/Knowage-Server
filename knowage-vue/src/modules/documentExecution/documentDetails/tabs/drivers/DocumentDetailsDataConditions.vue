@@ -5,26 +5,25 @@
                 {{ $t('documentExecution.documentDetails.drivers.conditionsTitle') }}
             </template>
             <template #right>
-                <Button :label="$t('managers.businessModelManager.addCondition')" class="p-button-text p-button-rounded p-button-plain" :style="mainDescriptor.style.white" @click="openDataConditionDialog('newCondition')" />
+                <Button :label="$t('managers.businessModelManager.addCondition')" class="p-button-text p-button-rounded p-button-plain" :style="mainDescriptor.style.white" @click="showForm" />
             </template>
         </Toolbar>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-        <Listbox class="kn-list data-condition-list" :options="transformedObj" @change="openDataConditionDialog($event.value)">
+        <Listbox class="kn-list data-condition-list" :options="conditions" @change="showForm">
             <template #empty>{{ $t('documentExecution.documentDetails.drivers.noDataCond') }} </template>
             <template #option="slotProps">
                 <div class="kn-list-item">
                     <div class="kn-list-item-text">
-                        <!-- {{ slotProps }} -->
-                        <span class="kn-truncated" v-tooltip.top="slotProps.option[0].filterOperation + $t('documentExecution.documentDetails.drivers.dataConditionsValue') + slotProps.option[0].parFatherUrlName">
-                            <b>{{ slotProps.option[0].filterOperation }} {{ $t('documentExecution.documentDetails.drivers.dataConditionsValue') }}</b> {{ slotProps.option[0].parFatherUrlName }}
+                        <span class="kn-truncated" v-tooltip.top="slotProps.option.filterOperation + $t('documentExecution.documentDetails.drivers.dataConditionsValue') + slotProps.option.parFatherUrlName">
+                            <b>{{ slotProps.option.filterOperation }} {{ $t('documentExecution.documentDetails.drivers.dataConditionsValue') }}</b> {{ slotProps.option.parFatherUrlName }}
                         </span>
                     </div>
-                    <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteDataCondition(slotProps.index)" />
+                    <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteConditions(slotProps.option)" />
                 </div>
             </template>
         </Listbox>
 
-        <Dialog class="remove-padding" :style="driversDescriptor.style.conditionDialog" :visible="showDataConditionDialog" :modal="true" :closable="false">
+        <Dialog class="remove-padding" :style="driversDescriptor.style.conditionDialog" :visible="conditionFormVisible" :modal="true" :closable="false">
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--primary" :style="mainDescriptor.style.width100">
                     <template #left>
@@ -32,41 +31,60 @@
                     </template>
                 </Toolbar>
             </template>
+            <div id="form-container" class="p-m-1">
+                <div class="kn-details-info-div">
+                    {{ $t('documentExecution.documentDetails.drivers.dataHint') }}
+                </div>
 
-            <div class="kn-details-info-div">
-                <!-- {{ $t('documentExecution.documentDetails.drivers.dataHint') }} -->
-                {{ selectedCondition }}
+                <form class="p-fluid p-formgrid p-grid p-mx-2 p-mt-5">
+                    <div class="p-field p-col-12 p-md-4">
+                        <span class="p-float-label ">
+                            <Dropdown id="driver" class="kn-material-input" v-model="condition.parFatherId" :options="excludeCurrentDriverFromList()" optionLabel="label" optionValue="id" @change="setParFatherUrlName" />
+                            <label for="driver" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.drivers.ad') }} {{ $t('documentExecution.documentDetails.drivers.adDepends') }} </label>
+                        </span>
+                    </div>
+                    <div class="p-field p-col-12 p-md-4">
+                        <span class="p-float-label ">
+                            <Dropdown id="filterOp" class="kn-material-input" v-model="condition.filterOperation" :options="availableOperators" />
+                            <label for="filterOp" class="kn-material-input-label"> {{ $t('managers.businessModelManager.filterOperator') }} </label>
+                        </span>
+                    </div>
+                    <div class="p-field p-col-12 p-md-4">
+                        <span class="p-float-label ">
+                            <Dropdown id="logicalOp" class="kn-material-input" v-model="condition.logicOperator" :options="connectingOperators" />
+                            <label for="logicalOp" class="kn-material-input-label"> {{ $t('managers.businessModelManager.logicOperator') }} </label>
+                        </span>
+                    </div>
+                    <div v-for="mode in modes" :key="mode.useID" class="p-col-12 p-mb-4">
+                        <form class="p-fluid p-formgrid p-grid">
+                            <p class="p-col-12 p-m-0">{{ $t('managers.businessModelManager.modality') + ': ' + mode.name }}</p>
+                            <div class="mode-inputs p-col-4" :style="driversDescriptor.style.modalityCheckbox">
+                                <Checkbox class="p-mr-2" :value="mode.useID" v-model="selectedModes" :disabled="readonly" />
+                                <label>{{ $t('managers.businessModelManager.check') }}</label>
+                            </div>
+                            <div class="mode-inputs p-col-8">
+                                <label class="kn-material-input-label">{{ $t('managers.businessModelManager.lovsColumn') }}</label>
+                                <Dropdown id="parFather" class="kn-material-input" v-model="modalities[mode.useID]" :options="getLovs(mode.idLov)" :placeholder="$t('managers.businessModelManager.lovsColumnSelect')">
+                                    <template #value="slotProps">
+                                        <div v-if="slotProps.value">
+                                            <span>{{ slotProps.value }}</span>
+                                        </div>
+                                    </template>
+                                    <template #option="slotProps">
+                                        <div>
+                                            <span>{{ slotProps.option }}</span>
+                                        </div>
+                                    </template>
+                                </Dropdown>
+                            </div>
+                        </form>
+                    </div>
+                </form>
             </div>
 
-            <form class="p-fluid p-formgrid p-grid p-m-2">
-                <div class="p-field p-col-12 p-md-4">
-                    <span class="p-float-label ">
-                        <Dropdown id="driver" class="kn-material-input" v-model="selectedCondition[0].parFatherId" :options="filteredDrivers" optionLabel="label" optionValue="id" @change="setParFatherUrlName" />
-                        <label for="driver" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.drivers.ad') }} {{ $t('documentExecution.documentDetails.drivers.adDepends') }} </label>
-                    </span>
-                </div>
-                <div class="p-field p-col-12 p-md-4">
-                    <span class="p-float-label ">
-                        <Dropdown id="filterOp" class="kn-material-input" v-model="selectedCondition[0].filterOperation" :options="availableOperators" />
-                        <label for="filterOp" class="kn-material-input-label"> {{ $t('managers.businessModelManager.filterOperator') }} </label>
-                    </span>
-                </div>
-                <div class="p-field p-col-12 p-md-4">
-                    <span class="p-float-label ">
-                        <Dropdown id="logicalOp" class="kn-material-input" v-model="selectedCondition[0].logicOperator" :options="connectingOperators" />
-                        <label for="logicalOp" class="kn-material-input-label"> {{ $t('managers.businessModelManager.logicOperator') }} </label>
-                    </span>
-                </div>
-                <div v-for="(paruse, index) of driverParuses" :key="index">
-                    <div class="kn-details-info-div">
-                        {{ paruse }}
-                    </div>
-                </div>
-            </form>
-
             <template #footer>
-                <Button class="p-button-text kn-button" :label="$t('common.cancel')" @click="showDataConditionDialog = false" />
-                <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="saveCondition" />
+                <Button class="p-button-text kn-button" :label="$t('common.cancel')" @click="conditionFormVisible = false" />
+                <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="handleSubmit" />
             </template>
         </Dialog>
     </div>
@@ -81,13 +99,15 @@ import driversDescriptor from './DocumentDetailsDriversDescriptor.json'
 import Listbox from 'primevue/listbox'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
+import Checkbox from 'primevue/checkbox'
 
 export default defineComponent({
     name: 'document-drivers',
     components: {
         Listbox,
         Dialog,
-        Dropdown
+        Dropdown,
+        Checkbox
     },
     props: { availableDrivers: { type: Array as PropType<iDriver[]>, required: true }, selectedDocument: { type: Object as PropType<iDocument>, required: true }, selectedDriver: { type: Object as PropType<iDriver>, required: true } },
     emits: ['driversChanged'],
@@ -95,155 +115,237 @@ export default defineComponent({
         return {
             mainDescriptor,
             driversDescriptor,
-            dataDependencyObjects: [] as any,
-            dataDependenciesForDeleting: [] as any,
-            filteredDrivers: [] as any,
-            driverParuses: [] as any,
             availableOperators: driversDescriptor.dataOperators,
             connectingOperators: driversDescriptor.connectingOperators,
-            lovIdAndColumns: [] as any,
-            selectedCondition: {} as any,
-            transformedObj: {} as any,
-            showDataConditionDialog: false,
-            loading: false
+            modes: [] as any,
+            lovs: [] as any,
+            condition: {} as any,
+            conditionFormVisible: false,
+            loading: false,
+            modalities: {} as any,
+            selectedModes: [] as any,
+            originalModalities: [] as any[],
+            conditions: [] as any[],
+            oldDropdownValue: null as any,
+            driver: null as any | null,
+            operation: 'insert',
+            errorMessage: '',
+            displayWarning: false
         }
     },
     watch: {
-        selectedDriver() {
-            this.excludeCurrentDriverFromList()
-            this.getParusesByAnalyticalDriverId()
-            this.getLovsByAnalyticalDriverId()
-            this.selectedDriver.id ? this.getDataDependenciesByDriverId() : ''
+        async selectedDriver() {
+            this.loadSelectedDriver()
+            if (this.driver) {
+                await this.loadDataDependencies()
+                if (this.driver.parameter) {
+                    await this.loadModes()
+                    await this.loadLovs()
+                }
+            }
         }
     },
-    created() {
-        this.excludeCurrentDriverFromList()
-        this.getParusesByAnalyticalDriverId()
-        this.getLovsByAnalyticalDriverId()
-        this.selectedDriver.id ? this.getDataDependenciesByDriverId() : ''
+    async created() {
+        this.loadSelectedDriver()
+        if (this.selectedDriver) {
+            await this.loadDataDependencies()
+            await this.loadModes()
+            await this.loadLovs()
+        }
     },
     methods: {
-        //#region ===================== Get Dependencies and Transform them  ====================================================
-        async getDataDependenciesByDriverId() {
-            this.loading = true
-            this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/datadependencies?driverId=${this.selectedDriver.id}`)
-                .then((response: AxiosResponse<any>) => {
-                    this.dataDependencyObjects[this.selectedDriver.id] = response.data
-                    this.transformedObj = {} as any
-                    this.transformingCorrelations(response.data)
-                })
-                .finally(() => (this.loading = false))
-        },
-        transformingCorrelations(correlations, transformKey?, fromPost?) {
-            // eslint-disable-next-line no-prototype-builtins
-            if (this.transformedObj[transformKey] && !fromPost) {
-                delete this.transformedObj[transformKey]
-            }
-            for (var i = 0; i < correlations.length; i++) {
-                var fatherIdfilterOperation = correlations[i].parFatherId + correlations[i].filterOperation
+        loadSelectedDriver() {
+            this.oldDropdownValue = null
+            this.driver = this.selectedDriver as any
 
-                if (this.transformedObj[fatherIdfilterOperation] == undefined) {
-                    this.transformedObj[fatherIdfilterOperation] = []
-                }
-                if (correlations[i].id && correlations[i].deleteItem == undefined) {
-                    this.transformedObj[fatherIdfilterOperation].push(correlations[i])
+            if (this.driver) {
+                if (this.driver.parameter) {
+                    this.oldDropdownValue = this.driver.parameter
                 }
             }
-            if (this.transformedObj[fatherIdfilterOperation] != undefined && this.transformedObj[fatherIdfilterOperation].length == 0) {
-                delete this.transformedObj[fatherIdfilterOperation]
-            }
-
-            return this.transformedObj
         },
-        //#endregion ===============================================================================================
-        async getParusesByAnalyticalDriverId() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.selectedDriver.parID}/modes`).then((response: AxiosResponse<any>) => (this.driverParuses = response.data))
-        },
-
-        //#region ===================== Get Lovs for Dropdown and set the values  ====================================================
-        async getLovsByAnalyticalDriverId() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.selectedDriver.parID}/lovs`).then((response: AxiosResponse<any>) => {
-                for (var i = 0; i < response.data.length; i++) {
-                    this.lovIdAndColumns.push(this.setLovColumns(response.data[i]))
-                }
-            })
-        },
-        setLovColumns(lov) {
-            var lovIdAndColumns = {} as any
-            var lovColumns = [] as any
-            var lovObject = JSON.parse(lov.lovProviderJSON)
-            if (lovObject != [] && lovObject.QUERY) {
-                var visibleColumns = lovObject.QUERY['VISIBLE-COLUMNS']
-                var invisibleColumns = lovObject.QUERY['INVISIBLE-COLUMNS']
-
-                var visibleColumnsArr = visibleColumns ? visibleColumns.split(',') : []
-                var invisibleColumnsArr = invisibleColumns ? invisibleColumns.split(',') : []
-                for (var i of visibleColumnsArr) {
-                    lovColumns.push(i)
-                }
-                for (var j of invisibleColumnsArr) {
-                    lovColumns.push(j)
-                }
-
-                lovIdAndColumns.id = lov.id
-                lovIdAndColumns.columns = lovColumns
-                    .filter(function(el) {
-                        return '' !== el
+        async loadDataDependencies() {
+            this.conditions = []
+            if (this.driver && this.driver.id) {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/datadependencies?driverId=${this.selectedDriver.id}`).then((response: AxiosResponse<any>) =>
+                    response.data.forEach((condition: any) => {
+                        const index = this.conditions.findIndex((cond) => cond.parFatherId === condition.parFatherId && cond.filterOperation == condition.filterOperation && cond.logicOperator == condition.logicOperator)
+                        condition.modalities = []
+                        condition.modalities.push({ conditionId: condition.id, useModeId: condition.useModeId, filterColumn: condition.filterColumn })
+                        if (index > -1) {
+                            this.conditions[index].modalities.push({ conditionId: condition.id, useModeId: condition.useModeId, filterColumn: condition.filterColumn })
+                        } else {
+                            this.conditions.push(condition)
+                        }
                     })
-                    .sort()
+                )
             }
-            return lovIdAndColumns
         },
-        //#endregion ===============================================================================================
-
-        getLovColumnsForParuse(paruse) {
-            for (var i = 0; i < this.lovIdAndColumns.length; i++) {
-                if (paruse.idLov == this.lovIdAndColumns[i].id) {
-                    if (this.lovIdAndColumns[i].columns != undefined) {
-                        return this.lovIdAndColumns[i].columns
-                    } else return ['VALUE', 'DESCRIPTION']
-                }
+        async loadModes() {
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.selectedDriver.parID}/modes`).then((response: AxiosResponse<any>) => (this.modes = response.data))
+        },
+        async loadLovs() {
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.selectedDriver.parID}/lovs`).then((response: AxiosResponse<any>) => (this.lovs = response.data))
+        },
+        getLovs(lovId: number) {
+            const index = this.lovs.findIndex((lov) => lov.id === lovId)
+            if (index > -1) {
+                const lov = JSON.parse(this.lovs[index].lovProviderJSON)
+                return lov.QUERY['VISIBLE-COLUMNS'].split(',')
             }
+        },
+        isModeActive(modeId: number) {
+            const index = this.selectedModes.findIndex((id: any) => {
+                return id === modeId
+            })
+            return index === -1
+        },
+        urlNotUnique(url: string) {
+            const index = this.availableDrivers.findIndex((driver) => driver.parameterUrlName === url && driver.id != this.driver?.id)
+            return index === -1
         },
         excludeCurrentDriverFromList() {
-            this.filteredDrivers = this.availableDrivers.filter((driver) => driver.id != this.selectedDriver.id)
+            return this.availableDrivers.filter((driver) => driver.id != this.selectedDriver.id)
         },
         setParFatherUrlName(event) {
             this.availableDrivers.filter((driver) => {
-                driver.id === event.value ? (this.selectedCondition.parFatherUrlName = driver.parameterUrlName) : ''
+                driver.id === event.value ? (this.condition.parFatherUrlName = driver.parameterUrlName) : ''
             })
         },
-        openDataConditionDialog(condition?) {
-            condition != 'newCondition' ? (this.selectedCondition = { ...condition }) : (this.selectedCondition = [{ parId: this.selectedDriver.id, filterOperation: this.availableOperators[0], logicOperator: this.connectingOperators[0] }])
-            this.getLovColumnsForParuse(this.selectedCondition)
-            this.showDataConditionDialog = true
-        },
-
-        //#region ===================== Delete Functionality  ====================================================
-        deleteDataCondition(transformKey) {
-            this.dataDependenciesForDeleting = [...this.transformedObj[transformKey]]
-            this.deleteDataDependencies(this.selectedDocument.id)
-        },
-        async deleteDataDependencies(driverableObjectId) {
-            for (var i = 0; i < this.dataDependenciesForDeleting.length; i++) {
-                delete this.dataDependenciesForDeleting[i].deleteItem
-                console.log(driverableObjectId)
-                await this.deleteDriverDataDependency(this.dataDependenciesForDeleting[i])
+        showAnalyticalDropdownConfirm() {
+            if (this.oldDropdownValue) {
+                this.$confirm.require({
+                    message: this.$t('managers.businessModelManager.analyticalDropdownConfirm'),
+                    header: this.$t('common.toast.deleteTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    // accept: () => this.deleteAllConditions(),
+                    accept: () => '',
+                    reject: () => this.resetDrodpwonValue()
+                })
             }
-            this.dataDependenciesForDeleting = []
         },
-        async deleteDriverDataDependency(dataDependency) {
-            this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/datadependencies/delete`, dataDependency)
-                .then(() => {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+        resetDrodpwonValue() {
+            if (this.driver) {
+                this.driver.parameter = this.oldDropdownValue
+            }
+        },
+        showForm(event: any) {
+            this.originalModalities = []
+            this.selectedModes = []
+            if (event.value) {
+                this.condition = { ...event.value, parFather: this.selectedDriver }
+                this.condition.modalities.forEach((modality: any) => {
+                    this.originalModalities.push(modality)
+                    this.selectedModes.push(modality.useModeId)
+                    this.modalities[modality.useModeId] = modality.filterColumn
                 })
-                .catch((error) => {
-                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error })
+            } else {
+                this.condition = {
+                    parFather: this.availableDrivers[0],
+                    parFatherId: this.availableDrivers[0].id,
+                    filterOperation: 'equal',
+                    logicOperator: 'AND'
+                }
+            }
+            this.conditionFormVisible = true
+        },
+        async handleSubmit() {
+            if (this.condition.id) {
+                this.operation = 'update'
+            }
+            const modalityKeys = Object.keys(this.modalities)
+            for (let i = 0; i < this.selectedModes.length; i++) {
+                for (let j = 0; j < modalityKeys.length; j++) {
+                    if (this.selectedModes[i] === +modalityKeys[j]) {
+                        const conditionForPost = {
+                            ...this.condition,
+                            parFatherId: this.condition.parFather.id,
+                            parFatherUrlName: (this.selectedDriver as any).parameterUrlName,
+                            parId: (this.selectedDriver as any).id,
+                            useModeId: +modalityKeys[j],
+                            filterColumn: this.modalities[this.selectedModes[i]]
+                        }
+
+                        if (this.operation === 'update') {
+                            const index = this.originalModalities.findIndex((modality) => {
+                                return modality.conditionId === conditionForPost.id
+                            })
+                            if (index > -1) {
+                                this.originalModalities.splice(index, 1)
+                            }
+                        }
+
+                        if (!conditionForPost.prog) {
+                            conditionForPost.prog = 0
+                        }
+                        conditionForPost.prog++
+                        delete conditionForPost.parFather
+                        delete conditionForPost.modalities
+                        await this.sendRequest(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/datadependencies`, conditionForPost).then((response: AxiosResponse<any>) => {
+                            if (response.data.errors) {
+                                this.errorMessage = response.data.errors[0].message
+                                this.displayWarning = true
+                            } else {
+                                this.$store.commit('setInfo', {
+                                    title: this.$t('common.toast.success'),
+                                    msg: this.$t('documentExecution.documentDetails.drivers.conditionSavedMsg')
+                                })
+                            }
+                        })
+                    }
+                }
+            }
+            this.originalModalities.forEach((modality) => {
+                this.deleteCondition({
+                    ...this.condition,
+                    id: modality.conditionId,
+                    parFatherId: this.condition.parFatherId,
+                    parFatherUrlName: (this.selectedDriver as any).parameterUrlName,
+                    parId: (this.selectedDriver as any).id,
+                    useModeId: modality.useModeId,
+                    filterColumn: modality.filterColumn
                 })
+            })
+            this.originalModalities = []
+
+            this.loadData()
+        },
+        sendRequest(url: string, condition: any) {
+            if (this.operation === 'insert') {
+                return this.$http.post(url, condition, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+            } else {
+                return this.$http.put(url, condition, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+            }
+        },
+        async deleteConditions(condition: any) {
+            condition.modalities.forEach((mode: any) => {
+                this.deleteCondition({ ...condition, id: mode.conditionId, useModeId: mode.useModeId, filterColumn: mode.filterColumn })
+            })
+        },
+        async deleteCondition(condition: any) {
+            delete condition.parFather
+            delete condition.modalities
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/datadependencies/delete`, condition, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } }).then(() => {
+                this.$store.commit('setInfo', {
+                    title: this.$t('common.toast.deleteTitle'),
+                    msg: this.$t('common.toast.deleteSuccess')
+                })
+                this.loadData()
+            })
+        },
+        deleteAllConditions() {
+            this.oldDropdownValue = this.driver?.parameter
+            this.conditions.forEach((condition) => this.deleteCondition(condition))
+        },
+        loadData() {
+            this.loadDataDependencies()
+            this.loadModes()
+            this.loadLovs()
+            this.selectedModes = []
+            this.condition = {}
+            this.operation = 'insert'
+            this.conditionFormVisible = false
         }
-        //#endregion ===============================================================================================
     }
 })
 </script>
