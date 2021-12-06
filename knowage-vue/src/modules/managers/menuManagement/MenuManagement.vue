@@ -16,7 +16,7 @@
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
                 <KnHint :title="'managers.menuManagement.title'" :hint="'managers.menuManagement.hint'" v-if="hideForm"></KnHint>
-                <MenuElementsDetail v-if="!hideForm" :selectedRoles="selectedMenuNode.roles" :roles="roles" :selectedMenuNode="selectedMenuNode" @refreshRecordSet="loadMenuNodes" @closesForm="closeForm" @dataChanged="dirty = true" :hidden="hideForm"></MenuElementsDetail>
+                <MenuElementsDetail v-if="!hideForm" :selectedRoles="selectedMenuNode.roles" :roles="roles" :selectedMenuNode="selectedMenuNode" :menuNodes="menuNodes" @refreshRecordSet="loadMenuNodes" @closesForm="closeForm" @dataChanged="dirty = true" :hidden="hideForm"></MenuElementsDetail>
             </div>
         </div>
     </div>
