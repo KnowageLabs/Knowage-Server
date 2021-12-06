@@ -49,13 +49,13 @@ public enum PasswordEncrypterHolder {
 		Logger logger = Logger.getLogger(PasswordEncrypterHolder.class);
 		byte[] fileContent = null;
 		try {
-			String fileLocation = (String) new InitialContext().lookup("java:/comp/env/password_encryption_secret");
+			String fileLocation = (String) new InitialContext().lookup("java:comp/env/password_encryption_secret");
 
 			fileContent = getKeyBytes(fileLocation);
 
 		} catch (NamingException e) {
 			String message = "Unable to find resource for security initialization. [password_encryption_secret] envinronment variable is missing.";
-			logger.error(String.format("%s %s", message, documentationLink));
+			logger.error(String.format("%s %s", message, documentationLink), e);
 			throw new Error(message, e);
 		}
 
@@ -75,7 +75,7 @@ public enum PasswordEncrypterHolder {
 
 		} catch (IOException e) {
 			String message = "Unable to find file for security initialization.";
-			logger.error(String.format("%s %s", message, documentationLink));
+			logger.error(String.format("%s %s", message, documentationLink), e);
 			throw new Error(message, e);
 		}
 

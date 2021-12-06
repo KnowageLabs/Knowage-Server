@@ -68,12 +68,14 @@
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-json</artifactId>
+			<exclusions>
+				<!-- Collide with slf4j-log4j12 -->
+				<exclusion>
+					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-classic</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -96,6 +98,7 @@
 			<artifactId>resteasy-spring-boot-starter</artifactId>
 			<version>4.7.0.Final</version>
 		</dependency>
+
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
@@ -107,6 +110,11 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.16</version>
 			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
 		</dependency>
 
 		<dependency>
@@ -167,6 +175,13 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.jboss.resteasy/resteasy-multipart-provider -->
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-multipart-provider</artifactId>
+			<version>4.6.0.Final</version>
+		</dependency>
+		
 		<!-- 
 			   ____        _          __             _            _       
 			  / __ \      | |        / _|           | |          | |      
@@ -216,6 +231,13 @@
 			<groupId>com.github.h-thurow</groupId>
 			<artifactId>simple-jndi</artifactId>
 			<version>0.23.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc8</artifactId>
+			<version>18.3.0.0</version>
 			<scope>test</scope>
 		</dependency>
 

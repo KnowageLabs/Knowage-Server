@@ -21,8 +21,8 @@
 	<div ng-if=!mergePdfsInto1 flex layout="column">
 
 	
-	<md-toolbar flex>
-	    <div class="md-toolbar-tools" flex layout-align="center center">
+	<md-toolbar>
+	    <div class="md-toolbar-tools" >
 	      	<h2 class="md-flex" >{{translate.load("sbi.execution.snapshots.title")}}</h2>
 	     	<span flex></span>
 	      	<md-button title="Close" aria-label="Close" class="toolbar-button-custom" 

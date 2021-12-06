@@ -88,7 +88,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		}
 		// cycles for already preset values
 		for (var j in modelColumns) {
-			if(modelColumns[j].isCalculated){
+			if(modelColumns[j].isCalculated || modelColumns[j].isFunction){
 				columnsMap[modelColumns[j].name] = modelColumns[j]
 			}
 			if (columnsMap[modelColumns[j].name]) {

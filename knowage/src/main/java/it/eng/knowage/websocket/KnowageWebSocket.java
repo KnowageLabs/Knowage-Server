@@ -20,11 +20,7 @@ package it.eng.knowage.websocket;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArraySet;
 
-import javax.servlet.http.HttpSession;
 import javax.websocket.EncodeException;
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
@@ -32,185 +28,60 @@ import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
-import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
-import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.api.v2.export.Entry;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.tenant.Tenant;
-import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.tools.dataset.resource.export.Utilities;
-import it.eng.spagobi.tools.news.dao.ISbiNewsReadDAO;
-import it.eng.spagobi.tools.news.manager.INewsManager;
-import it.eng.spagobi.tools.news.manager.NewsManagerImpl;
-import it.eng.spagobi.user.UserProfileManager;
-
-@ServerEndpoint(value = "/webSocket/{login}", encoders = KnowageWebSocketMessageEncoder.class, decoders = KnowageWebSocketMessageDecoder.class, configurator = HttpSessionConfigurator.class)
+@ServerEndpoint(value = "/webSocket", encoders = KnowageWebSocketMessageEncoder.class, decoders = KnowageWebSocketMessageDecoder.class, configurator = HttpSessionConfigurator.class)
 public class KnowageWebSocket {
 
 	private static final Logger LOGGER = Logger.getLogger(KnowageWebSocket.class);
 
-	private Session session;
-	private static Map<Object, Session> userSession = new HashMap<>();
-	private HttpSession httpSession;
+	private static NewsFeed newsFeed = new NewsFeed();
+	private static AsyncDownloadsFeed asyncDownloadsFeed = new AsyncDownloadsFeed();
 
-	private static Map<Object, KnowageWebSocket> userWebSockets = new HashMap<>();
-	private static CopyOnWriteArraySet<KnowageWebSocket> webSocketSet = new CopyOnWriteArraySet<>();
+	private static final HashMap<Session, SessionData> session2SessionData = new HashMap<>();
 
 	@OnOpen
-	public void onOpen(@PathParam("login") boolean login, Session session, EndpointConfig config) throws IOException, EncodeException {
+	public void onOpen(Session session, EndpointConfig config) throws IOException, EncodeException {
 
-		try {
-			webSocketSet.add(this);
-			this.session = session;
+		SessionData sessionData = new SessionData(session, config);
 
-			this.httpSession = (HttpSession) config.getUserProperties().get("HTTP_SESSION");
+		session2SessionData.put(session, sessionData);
 
-			if (login) {
-				JSONObject masterJsonObject = getMasterMessageObject();
-				broadcast(masterJsonObject);
-			}
-		} catch (Exception e) {
-			LOGGER.error("Error opening the web socket for notifications", e);
-		}
-	}
+		newsFeed.addListener(sessionData);
+		asyncDownloadsFeed.addListener(sessionData);
 
-	private JSONObject getMasterMessageObject() {
-		return getMasterMessageObject(true, true);
-	}
-
-	private JSONObject getMasterMessageObject(boolean news, boolean downloads) {
-		JSONObject masterJsonObject = new JSONObject();
-
-		initializeUserProfileAndTenant();
-		try {
-			if (news)
-				masterJsonObject.put("news", handleNews());
-
-			if (downloads)
-				masterJsonObject.put("downloads", handleDownloads());
-		} catch (JSONException e) {
-			String message = "Error while creating JSON message";
-			LOGGER.error(message);
-		}
-		return masterJsonObject;
-	}
-
-	private void initializeUserProfileAndTenant() {
-		IEngUserProfile userProfile = UserProfileManager.getProfile();
-
-		if (userProfile == null) {
-			userProfile = (IEngUserProfile) this.httpSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-
-			UserProfileManager.setProfile((UserProfile) userProfile);
-
-			String tenantId = ((UserProfile) userProfile).getOrganization();
-			LogMF.debug(LOGGER, "Tenant identifier is [{0}]", tenantId);
-			// putting tenant id on thread local
-			Tenant tenant = new Tenant(tenantId);
-			TenantManager.setTenant(tenant);
-
-			Object userUniqueIdentifier = userProfile.getUserUniqueIdentifier();
-			userSession.computeIfAbsent(userUniqueIdentifier, k -> session);
-			userWebSockets.computeIfAbsent(userUniqueIdentifier, k -> this);
-		}
-	}
-
-	private JSONObject handleDownloads() {
-		Utilities exportResourceUtilities = new Utilities();
-
-		int total = 0;
-		long alreadyDownloaded = 0;
-		JSONObject downloads = null;
-		try {
-			List<Entry> exportedFilesList = exportResourceUtilities.getAllExportedFiles(true);
-			total = exportedFilesList.size();
-			alreadyDownloaded = exportedFilesList.stream().filter(Entry::isAlreadyDownloaded).count();
-			downloads = new JSONObject();
-
-			JSONObject countJSONObject = new JSONObject();
-
-			countJSONObject.put("total", total);
-			countJSONObject.put("alreadyDownloaded", alreadyDownloaded);
-
-			downloads.put("count", countJSONObject);
-
-		} catch (JSONException e) {
-			String message = "Error while creating download JSON message";
-			LOGGER.error(message);
-		} catch (IOException e1) {
-			String message = "Error while searching exported datasets";
-			LOGGER.error(message);
-		}
-
-		return downloads;
-	}
-
-	private JSONObject handleNews() {
-		UserProfile userProfile = UserProfileManager.getProfile();
-
-		INewsManager newsManager = new NewsManagerImpl();
-		int total = newsManager.getAllNews(userProfile).size();
-
-		ISbiNewsReadDAO newsReadDao = DAOFactory.getSbiNewsReadDAO();
-		newsReadDao.setUserProfile(userProfile);
-		List<Integer> listOfReads = newsReadDao.getReadNews(userProfile);
-		int unread = total - listOfReads.size();
-
-		JSONObject news = new JSONObject();
-		try {
-			JSONObject countJSONObject = new JSONObject();
-
-			countJSONObject.put("total", total);
-			countJSONObject.put("unread", unread);
-
-			news.put("count", countJSONObject);
-		} catch (JSONException e) {
-			String message = "Error while creating news JSON message";
-			LOGGER.error(message);
-		}
-
-		return news;
+		// Force sync of news
+		newsFeed.refresh(sessionData.subscribeForOrganization());
 	}
 
 	@OnMessage
-	public void onMessage(Session session, String message) throws IOException, EncodeException, JSONException {
+	public void onMessage(Session session, String message) throws JSONException {
+		SessionData sessionData = session2SessionData.get(session);
 
-		JSONObject messageJSON = new JSONObject(message);
-
-		broadcast(getMasterMessageObject(messageJSON.has("news"), messageJSON.has("downloads")));
-	}
-
-	private void broadcast(JSONObject message) throws IOException, EncodeException {
-
-		webSocketSet.forEach(x -> {
-
-			try {
-				x.session.getBasicRemote().sendObject(message);
-			} catch (IOException | EncodeException e) {
-				LOGGER.error("Error during broadcasting", e);
-			}
-		});
-
+		// Force sync of news
+		newsFeed.refresh(sessionData.subscribeForOrganization());
 	}
 
 	@OnClose
 	public void onClose(Session session) {
-
-		webSocketSet.remove(this);
-
+		handleCloseOrError(session);
 	}
 
 	@OnError
 	public void onError(Session session, Throwable throwable) {
+		handleCloseOrError(session);
 		LOGGER.error("Web socket handler get following error", throwable);
+	}
+
+	private void handleCloseOrError(Session session) {
+		if (!session.isOpen()) {
+			SessionData sessionData = session2SessionData.get(session);
+			newsFeed.removeListener(sessionData);
+			asyncDownloadsFeed.removeListener(sessionData);
+		}
 	}
 
 }

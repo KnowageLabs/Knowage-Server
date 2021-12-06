@@ -1,6 +1,7 @@
 export interface IGalleryTemplate {
     id: string
     author: string
+    label?: string
     name: string
     type: string
     description?: string

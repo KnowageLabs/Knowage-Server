@@ -57,7 +57,8 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT,
+			SpagoBIConstants.PROFILE_ATTRIBUTES_LIST })
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<ProfileAttribute> getProfileAttributes() {
 		ISbiAttributeDAO objDao = null;
@@ -165,7 +166,7 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 			return Response.ok().build();
 		} catch (EMFUserError e) {
 			logger.error("Error while deleting resource", e);
-			throw new SpagoBIRestServiceException(getLocale(), e);
+			throw new SpagoBIRestServiceException(getLocale(), e, "MessageFiles.messages");
 
 		}
 	}

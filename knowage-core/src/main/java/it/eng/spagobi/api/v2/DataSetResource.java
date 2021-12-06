@@ -53,6 +53,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.geotools.data.DataSourceException;
+import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -657,12 +658,11 @@ public class DataSetResource extends AbstractDataSetResource {
 
 	@GET
 	@Path("/preview")
-	public void openPreview() {
+	public View openPreview() {
 		logger.debug("IN");
 		try {
 			response.setContentType(MediaType.TEXT_HTML);
-			request.getRequestDispatcher("/WEB-INF/jsp/commons/preview.jsp").forward(request, response);
-			response.flushBuffer();
+			return new View("/WEB-INF/jsp/commons/preview.jsp");
 		} catch (Exception e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} finally {
@@ -798,11 +798,15 @@ public class DataSetResource extends AbstractDataSetResource {
 				JSONArray jsonCategories = new JSONArray();
 				IDataSet dataSet = getDatasetManagementAPI().getDataSet(label);
 
+				Set<String> qbeHiddenColumns = getQbeDataSetHiddenColumns(dataSet);
+
 				IMetaData metadata = dataSet.getMetadata();
 				for (int i = 0; i < metadata.getFieldCount(); i++) {
 					IFieldMetaData fieldMetaData = metadata.getFieldMeta(i);
-					JSONObject json = new JSONObject();
 					String alias = fieldMetaData.getAlias();
+					if (qbeHiddenColumns.contains(alias))
+						continue;
+					JSONObject json = new JSONObject();
 					json.put("id", alias);
 					json.put("alias", alias);
 					json.put("columnName", alias);
@@ -852,6 +856,25 @@ public class DataSetResource extends AbstractDataSetResource {
 			logger.error("Error while previewing dataset " + label, e);
 			throw new SpagoBIRuntimeException("Error while previewing dataset " + label + ". " + e.getMessage(), e);
 		}
+	}
+
+	private Set<String> getQbeDataSetHiddenColumns(IDataSet dataSet) {
+		Set<String> hiddenColumns = new HashSet<String>();
+		if (dataSet.getDsType().equals("SbiQbeDataSet")) {
+			try {
+				JSONObject dsConfig = new JSONObject(dataSet.getConfiguration());
+				JSONObject qbeQuery = new JSONObject(dsConfig.getString("qbeJSONQuery"));
+				JSONArray fields = qbeQuery.getJSONObject("catalogue").getJSONArray("queries").getJSONObject(0).getJSONArray("fields");
+				for (int i = 0; i < fields.length(); i++) {
+					JSONObject field = fields.getJSONObject(i);
+					if (field.has("visible") && field.getBoolean("visible") == false)
+						hiddenColumns.add(field.getString("alias"));
+				}
+			} catch (Exception e) {
+				logger.error("Error while getting list of hidden QBE columns.", e);
+			}
+		}
+		return hiddenColumns;
 	}
 
 	@POST
@@ -1069,7 +1092,7 @@ public class DataSetResource extends AbstractDataSetResource {
 				} else {
 					parameterAsMap.put("defaultValues", new ArrayList<>());
 				}
-				parameterAsMap.put("defaultValuesMeta", objParameter.getLovColumnsNames());
+				parameterAsMap.put("defaultValuesMeta", objParameter.getLovVisibleColumnsNames());
 				parameterAsMap.put(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA, objParameter.getLovValueColumnName());
 				parameterAsMap.put(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA, objParameter.getLovDescriptionColumnName());
 

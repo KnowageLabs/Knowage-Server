@@ -107,7 +107,8 @@ function cockpitChartWidgetControllerFunction(
 		cockpitModule_properties,
 		cockpitModule_template,
 		sbiModule_util,
-		$mdDialog){
+		$mdDialog,
+		$mdColorPalette){
 	$scope.property={style:{}};
 	$scope.selectedTab = {'tab' : 0};
 	$scope.cockpitModule_widgetSelection = cockpitModule_widgetSelection;
@@ -684,6 +685,33 @@ function cockpitChartWidgetControllerFunction(
 	    				  return true;
 			    	  }
 
+	   				var checkFunctions=function(){
+						var measuresFound = [];
+							for (var i=0; i<$scope.localModel.columnSelectedOfDatasetAggregations.length; i++) {
+			  					var col = $scope.localModel.columnSelectedOfDatasetAggregations[i];
+			  					if (col.isFunction) {
+			  						for (var j=0; j<$scope.localModel.columnSelectedOfDatasetAggregations[i].boundFunction.inputColumns.length; j++) {
+										var foundField = false;
+										var columnToCheck = $scope.localModel.columnSelectedOfDatasetAggregations[i].boundFunction.inputColumns[j].dsColumn;										
+										for (var ij=0; ij<$scope.localModel.columnSelectedOfDataset.length; ij++) {
+											if ($scope.localModel.columnSelectedOfDataset[ij].fieldType == 'MEASURE') {
+												if ($scope.localModel.columnSelectedOfDataset[ij].aliasToShow == columnToCheck) {													
+													foundField = true;
+												}
+											}										
+										}
+										if (foundField == false) {
+											measuresFound.push(columnToCheck);
+										}
+									}
+									if (measuresFound.length>0) {
+										sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.widget.designer.chartValidation.missingFunctionsMeasures").replace("{0}", measuresFound));
+										return false;
+									}
+								}
+			  				}
+					   return true;
+					}
 
 // check if right number of operands have been specified depending on operator
 // type
@@ -816,6 +844,7 @@ function cockpitChartWidgetControllerFunction(
 // }
 			    		  else {
 			    			  if(checkConfiguration()){
+								if (checkFunctions()){
 			    				  if($scope.somethingChanged){
 			    					  $scope.localModel.wtype = "chart";
 			    					  $scope.localModel.designer = "Chart Engine Designer";
@@ -832,6 +861,7 @@ function cockpitChartWidgetControllerFunction(
 			    				  doRefresh(undefined,'init');
 			    				  finishEdit.resolve();
 		    				  }
+							}
 			    		  }
 			    	  }
 
@@ -895,7 +925,7 @@ function cockpitChartWidgetControllerFunction(
 			  		function aggregationRenderer(params) {
 			  			var aggregation = '<i class="fa fa-edit"></i> <i>'+params.value+'</i>';
 			  			changeAggregationOnSerie(params.data.alias, params.value);
-			  	        return params.data.fieldType == "MEASURE"  && !params.data.isCalculated ? aggregation : '';
+			  			return (params.data.fieldType == "MEASURE" && !params.data.isCalculated && !params.data.isFunction) ? aggregation : '';
 
 			  		}
 			  		function changeAggregationOnSerie(alias, aggFunc) {
@@ -1024,7 +1054,11 @@ function cockpitChartWidgetControllerFunction(
 			  				return '<calculated-field ng-model="localModel"  callback-update-grid="updateGrid()" callback-update-alias="updateAliasOnSerie(newAlias, oldAlias)" selected-item="'+params.rowIndex+'" additional-info="datasetAdditionalInfos"></calculated-field>' +
 			  				'<md-button class="md-icon-button" ng-click="deleteColumn(\''+params.data.alias+'\',$event)"><md-icon md-font-icon="fa fa-trash"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.column.delete")}}</md-tooltip></md-button>';
 			  			}
+			  			if(params.data.isFunction){
 
+			  				return '<catalog-function ng-model="localModel"  callback-update-grid="updateGrid()" callback-update-alias="updateAliasOnSerie(newAlias, oldAlias)" selected-item="'+params.rowIndex+'" additional-info="datasetAdditionalInfos"></catalog-function>' +
+			  				'<md-button class="md-icon-button" ng-click="deleteColumn(\''+params.data.alias+'\',$event)"><md-icon md-font-icon="fa fa-trash"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.column.delete")}}</md-tooltip></md-button>';
+			  			}
 			  		}
 
 			  		$scope.deleteColumn = function(rowName,event) {
@@ -1038,13 +1072,31 @@ function cockpitChartWidgetControllerFunction(
 		  				for(var k in $scope.localModel.columnSelectedOfDatasetAggregations){
 							if($scope.localModel.columnSelectedOfDatasetAggregations[k].alias == rowName) {
 								var item = $scope.localModel.columnSelectedOfDatasetAggregations[k];
-								var index=$scope.localModel.columnSelectedOfDatasetAggregations.indexOf(item);
-								$scope.localModel.columnSelectedOfDatasetAggregations.splice(index,1);
 							}
 						}
-						if($scope.localModel.settings && $scope.localModel.settings.sortingColumn && $scope.localModel.settings.sortingColumn == item.aliasToShow){
-							$scope.localModel.settings.sortingColumn = null;
-						}
+		  				if (!item.isFunction) {
+							var index=$scope.localModel.columnSelectedOfDatasetAggregations.indexOf(item);
+							$scope.localModel.columnSelectedOfDatasetAggregations.splice(index,1);
+							if($scope.localModel.settings && $scope.localModel.settings.sortingColumn && $scope.localModel.settings.sortingColumn == item.aliasToShow){
+								$scope.localModel.settings.sortingColumn = null;
+							}
+		  				} else {
+		  					//if column to be deleted belongs to a function, we must delete all the other columns belonging to that function as well
+		  					var id = item.boundFunction.id;
+			  				colsToRemove = [];
+			  				for (var i=0; i<$scope.localModel.columnSelectedOfDatasetAggregations.length; i++) {
+			  					var col = $scope.localModel.columnSelectedOfDatasetAggregations[i];
+			  					if (col.isFunction && col.boundFunction.id == id)
+			  						colsToRemove.push(col);
+			  				}
+			  				for (var j=0; j<colsToRemove.length; j++) {
+			  					var index=$scope.localModel.columnSelectedOfDatasetAggregations.indexOf(colsToRemove[j]);
+			  					$scope.localModel.columnSelectedOfDatasetAggregations.splice(index,1);
+			  					if($scope.localModel.settings && $scope.localModel.settings.sortingColumn && $scope.localModel.settings.sortingColumn == colsToRemove[j].aliasToShow){
+									$scope.localModel.settings.sortingColumn = null;
+								}
+			  				}
+		  				}
 		  			}
 
 			  		$scope.$watchCollection('localModel.columnSelectedOfDatasetAggregations',function(newValue,oldValue){
@@ -1415,6 +1467,9 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 					obj['formula'] = wconf.columnSelectedOfDatasetAggregations[index].formula;
 					obj['datasetOrTableFlag'] = wconf.columnSelectedOfDatasetAggregations[index].datasetOrTableFlag;
 				}
+				if(wconf.columnSelectedOfDatasetAggregations && wconf.columnSelectedOfDatasetAggregations[index] && wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
+					obj.boundFunction = wconf.columnSelectedOfDatasetAggregations[index].boundFunction; 
+				}
 				aggregations.push(obj);
 			}
 
@@ -1426,7 +1481,7 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 
 			if(Array.isArray(chartCategory)){
 				for(var i = 0; i < chartCategory.length; i++){
-
+                    var index = sbiModule_util.findInArray(wconf.columnSelectedOfDatasetAggregations, 'alias', chartCategory[i].column);
 					var obj = {};
 					obj['name'] = chartCategory[i].column;
 					obj['alias'] = chartCategory[i].name;
@@ -1434,6 +1489,9 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 					obj['fieldType'] = "ATTRIBUTE";
 					obj['orderType'] = chartCategory[i].orderType;
 					obj['orderColumn'] = chartCategory[i].orderColumn;
+					if(wconf.columnSelectedOfDatasetAggregations && wconf.columnSelectedOfDatasetAggregations[index] && wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
+						obj.boundFunction = wconf.columnSelectedOfDatasetAggregations[index].boundFunction; 
+					}
 					aggregations.push(obj);
 				}
 			} else {
@@ -1441,13 +1499,16 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 					chartCategory.name=chartCategory.column
 				}
 				var obj = {};
+				var index = sbiModule_util.findInArray(wconf.columnSelectedOfDatasetAggregations, 'alias', chartCategory.column);
 				obj['name'] = chartCategory.column;
 				obj['alias'] = chartCategory.name;
 				obj['aliasToShow'] = chartCategory.alias;
 				obj['orderType'] = chartCategory.drillOrder && chartCategory.drillOrder[chartCategory.column] ? chartCategory.drillOrder[chartCategory.column].orderType : chartCategory.orderType ;
 				obj['orderColumn'] =  chartCategory.drillOrder && chartCategory.drillOrder[chartCategory.column] ? chartCategory.drillOrder[chartCategory.column].orderColumn : chartCategory.orderColumn ;
 				obj['fieldType'] = "ATTRIBUTE";
-
+				if(wconf.columnSelectedOfDatasetAggregations && wconf.columnSelectedOfDatasetAggregations[index] && wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
+					obj.boundFunction = wconf.columnSelectedOfDatasetAggregations[index].boundFunction;
+				}
 				aggregations.push(obj);
 
 				if(chartTemplate.CHART.type.toLowerCase()=="bubble" || (chartsForGrouping.indexOf(chartTemplate.CHART.type.toLowerCase() )>-1) && ( chartTemplate.CHART.groupCategories || chartTemplate.CHART.groupSeries || chartTemplate.CHART.groupSeriesCateg) && chartCategory.groupby!=""){
@@ -1482,7 +1543,23 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 	}
 	wconf.columnSelectedOfDataset = aggregations;
 }
+	buildCatalogFunctionConfiguration = function(catalogFunc, colDef) {
+		var functionConfig = {};
+		functionConfig.inputColumns = catalogFunc.inputColumns;
+		functionConfig.inputVariables = catalogFunc.inputVariables;
+		functionConfig.outputColumns = catalogFunc.outputColumns;
+		functionConfig.environment = JSON.parse(catalogFunc.environment).label;
 
+		if (colDef) {
+			for (var i=0; i<functionConfig.outputColumns.length; i++) {
+				if (functionConfig.outputColumns[i].name == colDef.name) {
+					functionConfig.outputColumns[i].alias = colDef.aliasToShow;
+				}
+			}
+		}
+
+		return functionConfig;
+	}
 // this function register the widget in the cockpitModule_widgetConfigurator
 // factory
 addWidgetFunctionality("chart",{'initialDimension':{'width':5, 'height':5},'updateble':true,'cliccable':true, 'drillable' : false});

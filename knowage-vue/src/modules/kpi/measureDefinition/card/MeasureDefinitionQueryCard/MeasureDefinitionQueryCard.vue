@@ -17,7 +17,7 @@
             </div>
         </template>
     </Card>
-    <MeasureDefinitionPreviewDialog v-if="previewVisible && preview" :currentRule="selectedRule" :placeholders="placeholders" :columns="columns" :rows="rows" @close="previewVisible = false" @loadPreview="$emit('loadPreview')"></MeasureDefinitionPreviewDialog>
+    <MeasureDefinitionPreviewDialog v-if="preview" :currentRule="selectedRule" :placeholders="placeholders" :columns="columns" :propRows="rows" @close="$emit('closePreview')" @loadPreview="$emit('loadPreview')"></MeasureDefinitionPreviewDialog>
 </template>
 
 <script lang="ts">
@@ -25,7 +25,7 @@ import { defineComponent } from 'vue'
 import { iRule } from '../../MeasureDefinition'
 import { VCodeMirror } from 'vue3-code-mirror'
 import CodeMirror from 'codemirror'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import queryCardDescriptor from './MeasureDefinitionQueryCardDescriptor.json'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
@@ -35,7 +35,7 @@ export default defineComponent({
     name: 'measure-definition-query-card',
     components: { Card, Dropdown, VCodeMirror, MeasureDefinitionPreviewDialog },
     props: { rule: { type: Object, required: true }, datasourcesList: { type: Array, required: true }, aliases: { type: Array }, placeholders: { type: Array }, columns: { type: Array }, rows: { type: Array }, codeInput: { type: String }, preview: { type: Boolean } },
-    emits: ['touched', 'queryChanged', 'loadPreview'],
+    emits: ['touched', 'queryChanged', 'loadPreview', 'closePreview'],
     data() {
         return {
             queryCardDescriptor,
@@ -58,7 +58,6 @@ export default defineComponent({
                 } as any,
                 hintOptions: { tables: this.datasourceStructure }
             },
-            previewVisible: false,
             cursorPosition: null
         }
     },
@@ -71,9 +70,8 @@ export default defineComponent({
         codeInput() {
             this.cursorPosition = this.codeMirror.getCursor()
             this.codeMirror.replaceRange(this.codeInput, this.cursorPosition)
-        },
-        preview(value) {
-            this.previewVisible = value
+            this.selectedRule.definition = this.code
+            this.$emit('queryChanged')
         }
     },
     async mounted() {
@@ -87,7 +85,7 @@ export default defineComponent({
         },
         async loadDataSourceStructure() {
             if (this.selectedRule.dataSource) {
-                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources/structure/${this.selectedRule.dataSource.DATASOURCE_ID}`).then((response) => (this.datasourceStructure = response.data))
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources/structure/${this.selectedRule.dataSource.DATASOURCE_ID}`).then((response: AxiosResponse<any>) => (this.datasourceStructure = response.data))
             }
             this.$emit('touched')
 
@@ -98,9 +96,14 @@ export default defineComponent({
             }
         },
         setupCodeMirror() {
-            if (this.$refs.codeMirror) {
+            const interval = setInterval(() => {
+                if (!this.$refs.codeMirror) return
                 this.codeMirror = (this.$refs.codeMirror as any).editor as any
-            }
+                setTimeout(() => {
+                    this.codeMirror.refresh()
+                }, 0)
+                clearInterval(interval)
+            }, 200)
 
             CodeMirror.registerHelper('hint', 'alias', () => {
                 const cur = this.codeMirror.getCursor()
@@ -188,7 +191,6 @@ export default defineComponent({
         },
         showPreview() {
             this.$emit('loadPreview')
-            this.previewVisible = true
         }
     }
 })

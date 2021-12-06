@@ -310,26 +310,13 @@ function templateBuildControllerFunction(
 		}
 
 		if(template.chart.options!=undefined){
-			if(template.chart.options.showtarget=="true"){
-				$scope.options.showtarget=true;
-			}else{
-				$scope.options.showtarget=false;
-			}
-			if(template.chart.options.showtargetpercentage=="true"){
-				$scope.options.showtargetpercentage=true;
-			}else{
-				$scope.options.showtargetpercentage=false;
-			}
-			if(template.chart.options.showthreshold=="true"){
-				$scope.options.showthreshold=true;
-			}else{
-				$scope.options.showthreshold=false;
-			}
-			if(template.chart.options.showvalue=="true"){
-				$scope.options.showvalue=true;
-			}else{
-				$scope.options.showvalue=false;
-			}
+			$scope.options.showtarget=template.chart.options.showtarget;
+
+			$scope.options.showtargetpercentage=template.chart.options.showtargetpercentage;
+			
+			$scope.options.showthreshold=template.chart.options.showthreshold;
+			
+			$scope.options.showvalue=template.chart.options.showvalue;
 
 			//$scope.options.vieweas = template.chart.options.vieweas
 		}

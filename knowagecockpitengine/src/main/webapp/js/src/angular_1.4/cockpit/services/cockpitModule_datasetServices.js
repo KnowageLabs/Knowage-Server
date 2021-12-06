@@ -920,6 +920,8 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 			chartTemplate.CHART.outcomingEventsEnabled = true;
 			chartTemplate.CHART.cliccable = ngModel.cliccable;
 			chartTemplate.CHART.drillable = ngModel.drillable;
+			bodyJSON.aggregations = this.getI18NAggregations(bodyJSON.aggregations);
+			
 			this.replaceVariables(chartTemplate.CHART);
 			var body = {"aggregations":bodyJSON, "chartTemp":chartTemplate, "exportWebData":false}
 			sbiModule_restServices.promisePost("1.0/chart/jsonChartTemplate", encodeURIComponent(dataset.label) + "/getDataAndConf" + params, body)
@@ -1311,6 +1313,19 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 		return clone;
 
 	}
+
+   // returns the internationalized aggregations
+	this.getI18NAggregations = function (aggregations) {
+		var measuresArray = aggregations.measures;
+		for (i=0; i<measuresArray.length;i++){
+			measuresArray[i].alias = sbiModule_i18n.getI18n(measuresArray[i].alias.slice(0, measuresArray[i].alias.lastIndexOf("_"))) +"_" + measuresArray[i].alias.substring(measuresArray[i].alias.lastIndexOf("_") + 1);
+			measuresArray[i].id =  sbiModule_i18n.getI18n(measuresArray[i].id.slice(0, measuresArray[i].id.lastIndexOf("_"))) +"_"+ measuresArray[i].id.substring(measuresArray[i].id.lastIndexOf("_") + 1);
+			}
+		 aggregations.measures = measuresArray;
+	return aggregations;
+		
+	}
+
 
 	this.traverse = function(o, func) {
 		for (var i in o) {

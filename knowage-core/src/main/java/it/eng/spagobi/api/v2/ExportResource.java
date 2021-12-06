@@ -109,7 +109,7 @@ public class ExportResource {
 	public List<Entry> dataset(@DefaultValue("false") @QueryParam("showAll") boolean showAll) throws IOException {
 
 		logger.debug("IN");
-		Utilities exportResourceUtilities = new Utilities();
+		Utilities exportResourceUtilities = Utilities.getInstance();
 
 		List<Entry> ret = exportResourceUtilities.getAllExportedFiles(showAll);
 
@@ -229,7 +229,7 @@ public class ExportResource {
 		try {
 			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
-			JobDetail exportJob = ExportJobBuilder.fromDataSetIdAndUserProfile(dataSetId, userProfile).withTypeOfXls().withDrivers(drivers)
+			JobDetail exportJob = ExportJobBuilder.fromDataSetIdAndUserProfile(dataSetId, userProfile).withTypeOfXlsx().withDrivers(drivers)
 					.withParameters(params).withLocale(locale).build();
 
 			scheduler.addJob(exportJob, true);

@@ -3,6 +3,10 @@ import IframeRenderer from '@/modules/commons/IframeRenderer.vue'
 import managersRoutes from '@/modules/managers/managers.routes.js'
 import importExportRoutes from '@/modules/importExport/ImportExport.routes.js'
 import kpiRoutes from '@/modules/kpi/kpi.routes.js'
+import documentExecutionRoutes from '@/modules/documentExecution/documentExecution.routes.js'
+import documentBrowserRoutes from '@/modules/documentBrowser/DocumentBrowser.routes.js'
+import workspaceRoutes from '@/modules/workspace/workspace.routes.js'
+import overlayRoutes from '@/overlay/Overlay.routes.js'
 
 const baseRoutes = [
     {
@@ -56,6 +60,10 @@ const routes = baseRoutes
     .concat(managersRoutes)
     .concat(importExportRoutes)
     .concat(kpiRoutes)
+    .concat(documentExecutionRoutes)
+    .concat(documentBrowserRoutes)
+    .concat(workspaceRoutes)
+    .concat(overlayRoutes)
 
 const router = createRouter({
     base: process.env.VUE_APP_PUBLIC_PATH,
@@ -63,11 +71,18 @@ const router = createRouter({
     routes
 })
 
-/*router.beforeEach((to, from, next) => {
-	console.log('to',to)
-	console.log('from',from)
-	console.log('next',next)
+/* router.beforeEach((to, from, next) => {
+	console.log(from)
+
+	if (to.name === 'home') {
+		if (store.state.homePage.to) {
+			next({ name: 'homeIFrame', params: { to: store.state.homePage.to } })
+		}
+		if (store.state.homePage.url) {
+			next({ name: 'homeIFrame', params: { url: store.state.homePage.url } })
+		}
+	}
 	next()
-})*/
+}) */
 
 export default router

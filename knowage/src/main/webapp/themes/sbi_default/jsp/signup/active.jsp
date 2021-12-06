@@ -25,23 +25,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
          import="it.eng.spago.base.*,
                  it.eng.spagobi.commons.constants.SpagoBIConstants"
 %>
-<%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
-<%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
-<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
-<%@page import="it.eng.spago.base.SourceBean"%>
-<%@page import="it.eng.spago.navigation.LightNavigationManager"%>
 <%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
-<%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>
-<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@page import="java.util.Enumeration"%>
-<%@page import="java.util.Locale"%>
-<%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>	
 
  <%
+ IUrlBuilder urlBuilder = UrlBuilderFactory.getUrlBuilder("WEB");
  String baseUrl = urlBuilder.getResourceLink(request, "restful-services/signup/active");
  String getURL=request.getRequestURL().toString().substring(0, request.getRequestURL().toString().indexOf("knowage")) + "knowage/";
+ String currTheme = ThemesManager.getDefaultTheme();
 %>
 	
 <html>

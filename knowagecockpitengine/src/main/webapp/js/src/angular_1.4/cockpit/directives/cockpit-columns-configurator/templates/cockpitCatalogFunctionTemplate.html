@@ -6,7 +6,7 @@
     </md-toolbar>
     
     <md-dialog-content layout="row" flex>
-    	<md-card flex="20" flex-sm="30" flex-xs="40" class="left">
+    	<md-card flex="25" flex-sm="30" flex-xs="40" class="left">
         	<md-card-content class="noPadding">
    		   		<div ng-show="functionsGrid.api.getDisplayedRowCount() > 0" ag-grid="functionsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary ag-full-dimensions"></div>
    		   		<div ng-show="functionsGrid.api.getDisplayedRowCount() <= 0">
@@ -17,6 +17,9 @@
     	<md-card layout="column" flex class="right" ng-class="{'icon-r': selectedFunction.language=='R', 'icon-python': selectedFunction.language=='Python'}">
         	<md-card-content layout="column" class="noPadding">
         		<div ng-show="selectedFunction">
+        			<div>
+        				<h2>{{selectedFunction.name}}</h2>
+        			</div>
         			<div ng-show="selectedFunction.description">
 	        			<md-subheader> {{::translate.load('sbi.cockpit.widgets.table.catalogFunctions.function.description')}} </md-subheader>
 	        			<p style="margin: 0.5em" ng-bind-html="textToHtml(selectedFunction.description)"></p>

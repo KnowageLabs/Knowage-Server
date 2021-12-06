@@ -102,13 +102,7 @@ public class SynapseDataBase extends AbstractDataBase implements CacheDataBase {
 	 */
 	@Override
 	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
-		String query = " SELECT " + " CASE count(*) " + " WHEN 0 THEN 0 "
-				+ " ELSE SUM(pg_total_relation_size('\"' || table_schema || '\".\"' || table_name || '\"')) " + " END AS size "
-				+ " FROM information_schema.tables " + " WHERE " + " table_name like '" + tableNamePrefix + "%'";
-		if ((schema != null) && (!schema.isEmpty())) {
-			query += " AND table_schema = '" + schema + "'";
-		}
-		return query;
+		return null;
 	}
 
 }

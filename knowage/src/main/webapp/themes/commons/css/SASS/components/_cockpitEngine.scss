@@ -1623,6 +1623,7 @@
     cockpit-grid {
     	overflow-y: auto;
     	overflow-y: overlay;
+    	position: relative;
     }
 
     .gridster {
@@ -1630,11 +1631,13 @@
 			width: calc(100% - 20px);
 		}
 		&.cockpitEditMode{
-			background-size:100% 30px !important;
+			/*background-size:100% 30px !important;*/
+			background-size: 2% 30px !important;
 			min-height: 100% !important;
 			background-position: 0 0 !important;
 			background-repeat: repeat !important;
-			background-image:repeating-linear-gradient(0deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 30px), repeating-linear-gradient(-90deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 2%) !important;
+			background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeAQMAAAAB/jzhAAAAAXNSR0IB2cksfwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAZQTFRFAAAA4+PjQpPE2wAAAAJ0Uk5TAP9bkSK1AAAAFUlEQVR4nGNgYGBgYRhMxP////8AACz5BG4ege3ZAAAAAElFTkSuQmCC');
+			/*background-image:repeating-linear-gradient(0deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 30px), repeating-linear-gradient(-90deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 2%) !important;*/
 			.showActionButtonHandler {
 				opacity: .4 !important;
 				&:hover {
@@ -2146,7 +2149,7 @@
 		&[multi-select] table>thead>tr>th:nth-child(2),&:not(multi-select) table>thead>tr>th:nth-child(1),
 		&[multi-select]  table>tbody>tr>td:nth-child(2),&:not(multi-select) table>tbody>tr>td:nth-child(1),
 		&:not(multi-select) table>tbody>tr>td:nth-child(n+1):nth-last-child(n+2){
-			padding: 0 !important;
+			padding: 0;
 		}
 		&::-webkit-scrollbar-track{
 			-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);

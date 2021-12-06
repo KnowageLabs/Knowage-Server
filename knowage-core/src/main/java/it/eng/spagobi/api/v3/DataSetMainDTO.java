@@ -112,4 +112,8 @@ class DataSetMainDTO {
 		return usedByNDocs;
 	}
 
+	public Integer getCatTypeId() {
+		return dataset.getCategoryId();
+	}
+
 }

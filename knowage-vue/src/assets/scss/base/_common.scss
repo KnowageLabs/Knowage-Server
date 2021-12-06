@@ -15,6 +15,16 @@
     flex-direction: column;
 }
 
+.kn-draggable {
+    cursor: grab;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 .kn-height-full-vertical {
     height: 100vh;
     overflow: hidden;
@@ -30,6 +40,14 @@
 
 .kn-overflow-y {
     overflow-y: auto;
+}
+
+.kn-overflow-x {
+    overflow-x: auto;
+}
+
+.kn-overflow {
+    overflow: auto;
 }
 
 .kn-no-select {
@@ -53,6 +71,16 @@
     flex-direction: column;
 }
 
+.kn-small-paginator {
+    @media screen and (max-width: 1200px) {
+        .p-paginator-first,
+        .p-paginator-last,
+        .p-paginator-pages {
+            display: none;
+        }
+    }
+}
+
 .kn-truncated {
     text-overflow: ellipsis;
     overflow: hidden;
@@ -65,4 +93,8 @@
 
 .kn-text-error {
     color: $color-error !important;
+}
+
+.kn-warning-icon {
+    color: $color-warning;
 }

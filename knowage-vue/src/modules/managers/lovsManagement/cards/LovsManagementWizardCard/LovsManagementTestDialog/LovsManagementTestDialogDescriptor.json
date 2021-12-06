@@ -1,0 +1,23 @@
+{
+    "dialog": {
+        "style": {
+            "height": "100vh",
+            "width": "100vw",
+            "padding": "2rem"
+        }
+    },
+    "treeTypes": [
+        {
+            "name": "Simple",
+            "value": "simple"
+        },
+        {
+            "name": "Tree",
+            "value": "tree"
+        },
+        {
+            "name": "Tree selectable inner nodes",
+            "value": "treeinner"
+        }
+    ]
+}

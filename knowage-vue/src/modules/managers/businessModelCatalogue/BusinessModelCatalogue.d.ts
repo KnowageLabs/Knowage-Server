@@ -6,6 +6,7 @@ export interface iBusinessModel {
     dataSourceLabel: string,
     category: any,
     modelLocked: boolean,
+    modelLocker: string,
     smartView: boolean,
     tablePrefixLike?: string,
     tablePrefixNotLike?: string

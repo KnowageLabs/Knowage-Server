@@ -55,6 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			sbiModule_restServices,
 			sbiModule_dateServices,
 			sbiModule_config,
+			sbiModule_messaging,
 			cockpitModule_analyticalDrivers,
 			cockpitModule_datasetServices,
 			cockpitModule_widgetConfigurator,
@@ -99,7 +100,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return x.column_1;
 		}
 
+
 		$scope.selectElement = function(e,isBulk){
+			if(isBulk && e.pointerId === -1) return;
+			if(isBulk && e.originalTarget && e.originalTarget.tagName.toLowerCase() === "input") return;
+
 			if(e.target.attributes.disabled || e.target.parentNode.attributes.disabled) return;
 
 			if(e.target.attributes.value && e.target.attributes.value.value){
@@ -111,12 +116,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}else if(e.target.parentNode.attributes.value && e.target.parentNode.attributes.value.value){
 				if(!isBulk) $scope.toggleParameter(getValueFromString(e.target.parentNode.attributes.value.value));
 				else $scope.prepareParameter(getValueFromString(e.target.parentNode.attributes.value.value));
-			}
-			else if(e.target.parentNode.querySelectorAll("input")[0].value){
+			}else if(e.target.parentNode.querySelector("input") && e.target.parentNode.querySelector("input").value){
+				if(!isBulk) $scope.toggleParameter(getValueFromString(e.target.parentNode.querySelector("input").value));
+				else $scope.prepareParameter(getValueFromString(e.target.parentNode.querySelector("input").value));
+			}else if(e.target.parentNode.querySelectorAll("input")[0].value){
 				 $scope.toggleParameter(getValueFromString(e.target.parentNode.querySelectorAll("input")[0].value)); 
 			}
 			
 		}
+
 		
 //		$scope.$watch("selectedDate.startDate",function(newValue,oldValue){
 //			if (newValue){
@@ -136,6 +144,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if(!$scope.selectedDate.startDate || !$scope.selectedDate.endDate) return;
 				var from = $scope.selectedDate.startDate.getTime();
 				var to = $scope.selectedDate.endDate.getTime();
+				if(from > to){
+ 					   sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.cockpit.widget.selector.daterange"));		 
+				return;
+				}
+				
 				var values = $scope.ngModel.activeValues || $scope.datasetRecords.rows;
 				for(var k in values){
 					var value = values[k].column_1 || values[k];
@@ -157,11 +170,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.gridWidth = function() {
-			var tempStyle = $scope.ngModel.style ? $scope.ngModel.style : {};
+			var tempStyle = {};
 			if($scope.ngModel.settings.modalityView == 'grid' && $scope.ngModel.settings.gridColumnsWidth){
 				tempStyle.width = $scope.ngModel.settings.gridColumnsWidth;
-			}else{
-				if(tempStyle.width) delete tempStyle.width;
 			}
 			return tempStyle;
 		}

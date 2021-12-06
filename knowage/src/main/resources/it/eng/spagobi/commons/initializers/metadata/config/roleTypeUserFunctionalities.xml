@@ -391,5 +391,19 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="PythonDataset" roleType="DEV_ROLE" />
 
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="WidgetGalleryManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ResourceManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ResourceManagementDev" roleType="DEV_ROLE" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ProfileAttributeListManagement" roleType="ADMIN"/>
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ProfileAttributeListManagement" roleType="DEV_ROLE"/>
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ProfileAttributeListManagement" roleType="MODEL_ADMIN"/>
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ProfileAttributeListManagement" roleType="TEST_ROLE"/>
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ProfileAttributeListManagement" roleType="USER"/>
+		
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="LicenseReadOnly" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="LicenseReadOnly" roleType="DEV_ROLE"/>
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="LicenseReadOnly" roleType="MODEL_ADMIN"/>
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="LicenseReadOnly" roleType="TEST_ROLE"/>
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="LicenseReadOnly" roleType="USER"/>
 	
 </ROLE_TYPE_USER_FUNCTIONALITIES>
