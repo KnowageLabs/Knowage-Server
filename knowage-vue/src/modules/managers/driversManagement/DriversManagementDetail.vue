@@ -48,7 +48,7 @@ export default defineComponent({
             return this.selectionTypes.filter((type) => type.VALUE_CD != 'SLIDER')
         },
         isDateType(): any {
-            return this.driver.typeId === 28
+            return this.driver.type === 'Date'
         }
     },
     data() {

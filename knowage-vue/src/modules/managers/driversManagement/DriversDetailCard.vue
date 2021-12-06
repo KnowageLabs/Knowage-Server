@@ -41,19 +41,19 @@
                         <Dropdown
                             id="type"
                             class="kn-material-input"
-                            v-model="v$.driver.typeId.$model"
+                            v-model="v$.driver.type.$model"
                             :options="types"
-                            optionValue="VALUE_ID"
+                            optionValue="VALUE_NM"
                             optionLabel="VALUE_NM"
                             :class="{
-                                'p-invalid': v$.driver.typeId.$invalid && v$.driver.typeId.$dirty
+                                'p-invalid': v$.driver.type.$invalid && v$.driver.type.$dirty
                             }"
-                            @blur="v$.driver.typeId.$touch()"
+                            @blur="v$.driver.type.$touch()"
                             @change="setDirty"
                         />
                         <label for="type" class="kn-material-input-label"> {{ $t('common.type') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.driver.typeId" :additionalTranslateParams="{ fieldName: $t('common.type') }"></KnValidationMessages>
+                    <KnValidationMessages class="p-mt-1" :vComp="v$.driver.type" :additionalTranslateParams="{ fieldName: $t('common.type') }"></KnValidationMessages>
                 </div>
                 <div class="p-field p-col-8">
                     <span class="p-float-label">
