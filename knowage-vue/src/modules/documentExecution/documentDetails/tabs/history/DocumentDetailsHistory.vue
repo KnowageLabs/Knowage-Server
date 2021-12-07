@@ -38,8 +38,8 @@
             <div id="driver-details-container" :style="mainDescriptor.style.flexOneRelative">
                 <div :style="mainDescriptor.style.absoluteScroll">
                     <VCodeMirror v-if="showTemplateContent" ref="codeMirrorScriptType" :style="mainDescriptor.style.height100" v-model:value="selectedTemplateContent" :options="scriptOptions" @keyup="$emit('touched')" />
-                    <div v-else class="kn-details-info-div">
-                        {{ $t('documentExecution.documentDetails.history.templateHint') }}
+                    <div v-else>
+                        <InlineMessage severity="info" class="p-m-2"> {{ $t('documentExecution.documentDetails.history.templateHint') }}</InlineMessage>
                     </div>
                 </div>
             </div>
@@ -59,10 +59,11 @@ import driversDescriptor from '@/modules/documentExecution/documentDetails/tabs/
 import historyDescriptor from './DocumentDetailsHistory.json'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
+import InlineMessage from 'primevue/inlinemessage'
 
 export default defineComponent({
     name: 'document-drivers',
-    components: { KnListBox, KnInputFile, VCodeMirror },
+    components: { KnListBox, KnInputFile, VCodeMirror, InlineMessage },
     props: { selectedDocument: { type: Object as PropType<iDocument>, required: true } },
     computed: {
         showTemplateContent(): any {

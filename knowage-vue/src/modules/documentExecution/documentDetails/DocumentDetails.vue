@@ -31,6 +31,7 @@
                         :availableAttributes="attributes"
                         @setTemplateForUpload="setTemplateForUpload"
                         @setImageForUpload="setImageForUpload"
+                        @deleteImage="deleteImage"
                     />
                 </TabPanel>
                 <TabPanel v-if="this.selectedDocument?.id">
@@ -89,7 +90,7 @@ import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute
 export default defineComponent({
     name: 'document-details',
     components: { InformationsTab, DriversTab, OutputParamsTab, DataLineageTab, HistoryTab, TabView, TabPanel, Dialog, Badge },
-    props: { documentId: { type: Number, required: true }, selectedFolder: { type: Object, required: true }, visible: { type: Boolean, required: false } },
+    props: { docId: { type: Number, required: true }, selectedFolder: { type: Object, required: true }, visible: { type: Boolean, required: false } },
     emits: ['closeDetails'],
     data() {
         return {
@@ -130,14 +131,14 @@ export default defineComponent({
         }
     },
     async created() {
-        await this.loadPage()
+        await this.loadPage(this.docId)
     },
     methods: {
         //#region ===================== Get Persistent Data ====================================================
-        async loadPage() {
+        async loadPage(id) {
             this.loading = true
             await Promise.all([
-                this.getSelectedDocument(),
+                await this.getSelectedDocumentById(id),
                 this.getAnalyticalDrivers(),
                 this.getFunctionalities(),
                 this.getDatasources(),
@@ -153,8 +154,12 @@ export default defineComponent({
             ])
             this.loading = false
         },
-        async getSelectedDocument() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.documentId}`).then((response: AxiosResponse<any>) => (this.selectedDocument = response.data))
+        async getSelectedDocumentById(id) {
+            if (id) {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${id}`).then((response: AxiosResponse<any>) => (this.selectedDocument = response.data))
+            } else {
+                this.selectedDocument = this.mainDescriptor.newDocument
+            }
         },
         async getFunctionalities() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders?includeDocs=false`).then((response: AxiosResponse<any>) => (this.availableFolders = response.data))
@@ -212,66 +217,82 @@ export default defineComponent({
             this.templateToUpload = event
         },
         async uploadTemplate(uploadedFile, responseId) {
-            var formData = new FormData()
-            formData.append('file', uploadedFile)
-            await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${responseId}/templates`, formData, {
-                    headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' }
-                })
-                .catch(() => {
-                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.uploadError') })
-                })
+            if (this.templateToUpload) {
+                var formData = new FormData()
+                formData.append('file', uploadedFile)
+                await this.$http
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${responseId}/templates`, formData, {
+                        headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' }
+                    })
+                    .then(() => (this.templateToUpload = null))
+                    .catch(() => {
+                        this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.uploadError') })
+                    })
+            }
+        },
+        deleteImage() {
+            this.$http
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/image`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                .then(() => this.loadPage(this.docId))
+                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.info.imageError') }))
         },
         setImageForUpload(event) {
             this.imageToUpload = event
         },
         async uploadImage(uploadedFile, responseId) {
-            var formData = new FormData()
-            formData.append('file', uploadedFile)
-            formData.append('fileName', uploadedFile.name)
-            await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${responseId}/image`, formData, {
-                    headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' }
-                })
-                .catch(() => {
-                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.info.imageUploadError') })
-                })
+            if (this.imageToUpload) {
+                var formData = new FormData()
+                formData.append('file', uploadedFile)
+                formData.append('fileName', uploadedFile.name)
+                await this.$http
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${responseId}/image`, formData, {
+                        headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' }
+                    })
+                    .then(() => (this.imageToUpload = null))
+                    .catch(() => {
+                        this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.info.imageUploadError') })
+                    })
+            }
         },
         async saveOutputParams() {
-            this.selectedDocument.outputParameters.forEach((parameter: iOutputParam) => {
-                if (!parameter.id) {
-                    delete parameter.numberOfErrors
-                    delete parameter.tempId
-                    delete parameter.isChanged
-                    this.$http
-                        .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters`, parameter, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-                        .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.outputParams.persistError') }))
-                } else if (parameter.isChanged) {
-                    delete parameter.numberOfErrors
-                    delete parameter.isChanged
-                    this.$http
-                        .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters/${parameter.id}`, parameter, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-                        .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.outputParams.persistError') }))
-                }
-            })
+            if (this.selectedDocument.outputParameters) {
+                this.selectedDocument.outputParameters.forEach((parameter: iOutputParam) => {
+                    if (!parameter.id) {
+                        delete parameter.numberOfErrors
+                        delete parameter.tempId
+                        delete parameter.isChanged
+                        this.$http
+                            .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters`, parameter, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                            .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.outputParams.persistError') }))
+                    } else if (parameter.isChanged) {
+                        delete parameter.numberOfErrors
+                        delete parameter.isChanged
+                        this.$http
+                            .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters/${parameter.id}`, parameter, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                            .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.outputParams.persistError') }))
+                    }
+                })
+            }
         },
         async saveDrivers() {
-            this.selectedDocument.drivers.forEach((driver: iDriver) => {
-                driver.modifiable = 0
-                if (!driver.id) {
-                    delete driver.numberOfErrors
-                    delete driver.isChanged
-                    this.$http
-                        .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-                        .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.drivers.persistError') }))
-                } else if (driver.isChanged) {
-                    delete driver.numberOfErrors
-                    delete driver.isChanged
-                    this.$http
-                        .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers/${driver.id}`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-                        .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.drivers.persistError') }))
-                }
-            })
+            if (this.selectedDocument.drivers) {
+                this.selectedDocument.drivers.forEach((driver: iDriver) => {
+                    driver.modifiable = 0
+                    if (!driver.id) {
+                        delete driver.numberOfErrors
+                        delete driver.isChanged
+                        this.$http
+                            .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                            .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.drivers.persistError') }))
+                    } else if (driver.isChanged) {
+                        delete driver.numberOfErrors
+                        delete driver.isChanged
+                        this.$http
+                            .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers/${driver.id}`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                            .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.drivers.persistError') }))
+                    }
+                })
+            }
         },
         saveRequest(docToSave) {
             if (!this.selectedDocument.id) {
@@ -287,13 +308,15 @@ export default defineComponent({
             delete docToSave.dataSetLabel
 
             await this.saveRequest(docToSave)
-                .then((response: AxiosResponse<any>) => {
-                    this.saveOutputParams()
-                    this.saveDrivers()
-                    this.templateToUpload ? this.uploadTemplate(this.templateToUpload, response.data.id) : ''
-                    this.imageToUpload ? this.uploadImage(this.imageToUpload, response.data.id) : ''
+                .then(async (response: AxiosResponse<any>) => {
+                    await this.saveOutputParams()
+                    await this.saveDrivers()
+                    await this.uploadTemplate(this.templateToUpload, response.data.id)
+                    await this.uploadImage(this.imageToUpload, response.data.id)
                     this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
-                    this.loadPage()
+                    setTimeout(() => {
+                        this.loadPage(response.data.id)
+                    }, 200)
                 })
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
         }
@@ -326,17 +349,6 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     flex: 1;
-}
-
-.kn-details-info-div {
-    margin: 8px !important;
-    border: 1px solid rgba(204, 204, 204, 0.6);
-    padding: 8px;
-    background-color: #e6e6e6;
-    text-align: center;
-    position: relative;
-    text-transform: uppercase;
-    font-size: 0.8rem;
 }
 
 .details-warning-color {

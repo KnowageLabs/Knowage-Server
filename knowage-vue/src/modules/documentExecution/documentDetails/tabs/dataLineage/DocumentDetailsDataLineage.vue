@@ -22,11 +22,11 @@
                                         <label for="dataSource" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.dataLineage.selectSource') }} </label>
                                     </span>
                                 </div>
-                                <div v-if="metaSourceResource.length == 0" class="kn-details-info-div">
-                                    {{ $t('documentExecution.documentDetails.dataLineage.noDatasources') }}
+                                <div v-if="metaSourceResource.length == 0">
+                                    <InlineMessage severity="info">{{ $t('documentExecution.documentDetails.dataLineage.noDatasources') }}</InlineMessage>
                                 </div>
-                                <div v-if="dataSource && tablesList.length == 0" class="kn-details-info-div">
-                                    {{ $t('documentExecution.documentDetails.dataLineage.noTables') }}
+                                <div v-if="dataSource && tablesList.length == 0">
+                                    <InlineMessage severity="info">{{ $t('documentExecution.documentDetails.dataLineage.noTables') }}</InlineMessage>
                                 </div>
                                 <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
                                 <DataTable v-if="dataSource && tablesList.length > 0 && !loading" class="p-datatable-sm kn-table" :value="tablesList" v-model:selection="selectedTables" dataKey="tableId" responsiveLayout="scroll" @rowSelect="peristTable" @rowUnselect="deleteTable">
@@ -50,10 +50,11 @@ import mainDescriptor from '@/modules/documentExecution/documentDetails/Document
 import Dropdown from 'primevue/dropdown'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import InlineMessage from 'primevue/inlinemessage'
 
 export default defineComponent({
     name: 'data-lineage',
-    components: { Dropdown, DataTable, Column },
+    components: { Dropdown, DataTable, Column, InlineMessage },
     props: { selectedDocument: { type: Object as PropType<iDocument>, required: true }, metaSourceResource: { type: Array as PropType<iMetaSource[]>, required: true }, savedTables: { type: Array as PropType<iTableSmall[]>, required: true } },
     emits: [],
     data() {

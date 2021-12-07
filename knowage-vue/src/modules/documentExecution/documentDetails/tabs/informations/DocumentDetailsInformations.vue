@@ -92,6 +92,7 @@
                                         </span>
                                     </div>
                                     <Button icon="fas fa-upload fa-1x" class="p-button-text p-button-plain p-ml-2" @click="setImageUploadType" />
+                                    <Button v-if="document.previewFile" icon="fas fa-trash fa-1x" class="p-button-text p-button-plain p-ml-2" @click="$emit('deleteImage')" />
                                     <KnInputFile :changeFunction="setImageForUpload" accept=".png, .jpg, .jpeg" :triggerInput="triggerImageUpload" />
                                 </div>
                                 <div class="p-field p-col-12 p-lg-6">
@@ -280,7 +281,7 @@ export default defineComponent({
         availableTemplates: { type: Array as PropType<iTemplate[]> },
         availableAttributes: { type: Array as PropType<iAttribute[]> }
     },
-    emits: ['setTemplateForUpload', 'setImageForUpload'],
+    emits: ['setTemplateForUpload', 'setImageForUpload', 'deleteImage'],
     computed: {
         filteredEngines(): any {
             if (this.document.typeCode) {

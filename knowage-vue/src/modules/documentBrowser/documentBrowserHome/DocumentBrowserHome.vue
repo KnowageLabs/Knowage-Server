@@ -44,7 +44,7 @@
         </div>
     </div>
 
-    <DocumentDetails v-if="showDocumentDetails" :documentId="documentId" :selectedDocument="selectedDocument" :selectedFolder="selectedFolder" :visible="showDocumentDetails" @closeDetails="showDocumentDetails = false" @reloadDocument="getSelectedDocument" />
+    <DocumentDetails v-if="showDocumentDetails" :docId="documentId" :selectedDocument="selectedDocument" :selectedFolder="selectedFolder" :visible="showDocumentDetails" @closeDetails="showDocumentDetails = false" @reloadDocument="getSelectedDocument" />
 </template>
 
 <script lang="ts">
@@ -169,7 +169,7 @@ export default defineComponent({
             }
         },
         createNewDocument() {
-            this.selectedDocument = { engine: '', functionalities: [], label: '', lockedByUser: false, name: '', refreshSeconds: 0, stateCode: '', typeCode: '', visible: true }
+            this.documentId = null
             this.showDocumentDetails = true
         },
         async showDocumentDetailsDialog(event) {

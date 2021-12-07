@@ -21,6 +21,17 @@
             "url": "url"
         }
     ],
+    "newDocument": {
+        "engine": "",
+        "functionalities": [],
+        "label": "",
+        "lockedByUser": false,
+        "name": "",
+        "refreshSeconds": 0,
+        "stateCode": "",
+        "typeCode": "",
+        "visible": true
+    },
     "savedTables": [
         {
             "deleted": false,
@@ -101,9 +112,6 @@
         }
     ],
     "style": {
-        "tableHeader": {
-            "width": "3em"
-        },
         "absoluteScroll": {
             "height": "100%",
             "left": 0,
@@ -133,11 +141,17 @@
         "height100": {
             "height": "100%"
         },
+        "tableHeader": {
+            "width": "3em"
+        },
         "white": {
             "color": "white"
         },
         "width100": {
             "width": "100%"
+        },
+        "width90": {
+            "width": "98%"
         }
     },
     "tablesListDemo": [

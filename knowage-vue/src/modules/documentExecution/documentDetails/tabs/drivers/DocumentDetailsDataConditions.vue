@@ -32,8 +32,8 @@
                 </Toolbar>
             </template>
             <div id="form-container" class="p-m-1">
-                <div class="kn-details-info-div">
-                    {{ $t('documentExecution.documentDetails.drivers.dataHint') }}
+                <div>
+                    <InlineMessage severity="info" :style="mainDescriptor.style.width100">{{ $t('documentExecution.documentDetails.drivers.dataHint') }}</InlineMessage>
                 </div>
 
                 <form class="p-fluid p-formgrid p-grid p-mx-2 p-mt-5">
@@ -100,15 +100,11 @@ import Listbox from 'primevue/listbox'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import Checkbox from 'primevue/checkbox'
+import InlineMessage from 'primevue/inlinemessage'
 
 export default defineComponent({
     name: 'document-drivers',
-    components: {
-        Listbox,
-        Dialog,
-        Dropdown,
-        Checkbox
-    },
+    components: { Listbox, Dialog, Dropdown, Checkbox, InlineMessage },
     props: { availableDrivers: { type: Array as PropType<iDriver[]>, required: true }, selectedDocument: { type: Object as PropType<iDocument>, required: true }, selectedDriver: { type: Object as PropType<iDriver>, required: true } },
     emits: ['driversChanged'],
     data() {

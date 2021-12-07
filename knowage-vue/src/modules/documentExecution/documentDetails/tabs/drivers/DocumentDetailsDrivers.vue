@@ -35,8 +35,8 @@
             <div id="driver-details-container" :style="mainDescriptor.style.flexOneRelative">
                 <div :style="mainDescriptor.style.absoluteScroll">
                     <div class="p-m-2">
-                        <div class="kn-details-info-div" v-if="Object.keys(selectedDriver).length === 0">
-                            {{ $t('documentExecution.documentDetails.drivers.noDriverSelected') }}
+                        <div v-if="Object.keys(selectedDriver).length === 0">
+                            <InlineMessage severity="info">{{ $t('documentExecution.documentDetails.drivers.noDriverSelected') }}</InlineMessage>
                         </div>
                         <Card v-else>
                             <template #content>
@@ -154,10 +154,11 @@ import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import InputSwitch from 'primevue/inputswitch'
 import Dropdown from 'primevue/dropdown'
+import InlineMessage from 'primevue/inlinemessage'
 
 export default defineComponent({
     name: 'document-drivers',
-    components: { DataConditions, VisibilityConditions, KnListBox, KnValidationMessages, InputSwitch, Dropdown },
+    components: { DataConditions, VisibilityConditions, KnListBox, KnValidationMessages, InputSwitch, Dropdown, InlineMessage },
     props: { selectedDocument: { type: Object as PropType<iDocument>, required: true }, availableDrivers: { type: Array as PropType<iDriver[]>, required: true }, availableAnalyticalDrivers: { type: Array as PropType<iAnalyticalDriver[]>, required: true } },
     emits: ['driversChanged'],
     data() {
@@ -333,15 +334,3 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss">
-.kn-details-info-div {
-    margin: 8px !important;
-    border: 1px solid rgba(204, 204, 204, 0.6);
-    padding: 8px;
-    background-color: #e6e6e6;
-    text-align: center;
-    position: relative;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-}
-</style>

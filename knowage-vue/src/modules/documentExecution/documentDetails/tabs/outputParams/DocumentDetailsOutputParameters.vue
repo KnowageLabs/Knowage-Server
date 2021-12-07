@@ -22,8 +22,8 @@
                 </template>
             </Toolbar>
             <div id="driver-details-container" class="p-m-2" :style="mainDescriptor.style.flexOneRelative">
-                <div class="kn-details-info-div" v-if="Object.keys(selectedParam).length === 0">
-                    {{ $t('documentExecution.documentDetails.outputParams.noParamSelected') }}
+                <div v-if="Object.keys(selectedParam).length === 0">
+                    <InlineMessage severity="info"> {{ $t('documentExecution.documentDetails.outputParams.noParamSelected') }}</InlineMessage>
                 </div>
                 <Card v-else>
                     <template #content>
@@ -82,10 +82,11 @@ import useValidate from '@vuelidate/core'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import Dropdown from 'primevue/dropdown'
+import InlineMessage from 'primevue/inlinemessage'
 
 export default defineComponent({
     name: 'document-drivers',
-    components: { KnListBox, Dropdown, KnValidationMessages },
+    components: { KnListBox, Dropdown, KnValidationMessages, InlineMessage },
     props: { selectedDocument: { type: Object as PropType<iDocument>, required: true }, typeList: { type: Array as PropType<iParType[]>, required: true }, dateFormats: { type: Array as PropType<iDateFormat[]>, required: true } },
     emits: ['driversChanged'],
     data() {

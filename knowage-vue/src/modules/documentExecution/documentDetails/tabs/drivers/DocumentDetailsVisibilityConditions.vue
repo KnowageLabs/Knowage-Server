@@ -32,9 +32,7 @@
             </Toolbar>
         </template>
 
-        <div class="kn-details-info-div">
-            {{ $t('documentExecution.documentDetails.drivers.visualizationHint') }}
-        </div>
+        <InlineMessage severity="info" class="p-m-2" :style="mainDescriptor.style.width90">{{ $t('documentExecution.documentDetails.drivers.visualizationHint') }}</InlineMessage>
 
         <form class="p-fluid p-formgrid p-grid p-m-2">
             <div class="p-field p-col-12 p-mt-2">
@@ -103,10 +101,11 @@ import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import Listbox from 'primevue/listbox'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
+import InlineMessage from 'primevue/inlinemessage'
 
 export default defineComponent({
     name: 'document-drivers',
-    components: { Listbox, Dialog, Dropdown, KnValidationMessages },
+    components: { Listbox, Dialog, Dropdown, KnValidationMessages, InlineMessage },
     props: { selectedDocument: { type: Object as PropType<iDocument>, required: true }, availableDrivers: { type: Array as PropType<iDriver[]>, required: true }, selectedDriver: { type: Object as PropType<iDriver>, required: true } },
     emits: ['driversChanged'],
     data() {
@@ -130,9 +129,6 @@ export default defineComponent({
         this.selectedDriver.id ? this.getVisualDependenciesByDriverId() : ''
     },
     validations() {
-        // const validationObject = { selectedCondition: createValidations('selectedCondition', driversDescriptor.validations.selectedCondition) }
-        // return validationObject
-
         const visibilityValidator = (value) => {
             return Object.keys(this.selectedCondition).length === 0 || value
         }
@@ -160,15 +156,22 @@ export default defineComponent({
             })
         },
         async saveCondition() {
-            await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/visualdependencies`, this.selectedCondition, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+            await this.saveRequest()
                 .then(() => {
                     this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.drivers.conditionSavedMsg') })
+                    this.showVisibilityConditionDialog = false
                     this.getVisualDependenciesByDriverId()
                 })
                 .catch((error) => {
                     this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: error })
                 })
+        },
+        saveRequest() {
+            if (!this.selectedCondition.id) {
+                return this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/visualdependencies`, this.selectedCondition, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+            } else {
+                return this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/visualdependencies`, this.selectedCondition, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+            }
         },
         async deleteCondition(conditionToDelete) {
             await this.$http
