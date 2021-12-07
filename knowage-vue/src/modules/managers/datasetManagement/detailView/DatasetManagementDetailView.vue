@@ -67,15 +67,7 @@
             </TabPanel>
         </TabView>
 
-        <Dialog v-model:visible="showPreviewDialog" class="kn-dialog--toolbar--primary" :style="detailViewDescriptor.style.previewDialog" :maximizable="true" :draggable="false">
-            <template #header>
-                <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-                    <template #left><i class="fas fa-database" /> dataset: {{ selectedDataset.label }}</template>
-                </Toolbar>
-            </template>
-
-            <PreviewTable :selectedDataset="selectedDataset" @close="showPreviewDialog = false" />
-        </Dialog>
+        <WorkspaceDataPreviewDialog :visible="showPreviewDialog" :propDataset="selectedDataset" @close="showPreviewDialog = false"></WorkspaceDataPreviewDialog>
     </div>
 </template>
 
@@ -89,13 +81,12 @@ import TypeCard from './typeCard/DatasetManagementTypeCard.vue'
 import AdvancedCard from './advancedCard/DatasetManagementAdvancedCard.vue'
 import LinkCard from './linkCard/DatasetManagementLinkCard.vue'
 import MetadataCard from './metadataCard/DatasetManagementMetadataCard.vue'
-import PreviewTable from './previewTable/DatasetManagementPreviewTable.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
-import Dialog from 'primevue/dialog'
+import WorkspaceDataPreviewDialog from '@/modules/workspace/views/dataView/dialogs/WorkspaceDataPreviewDialog.vue'
 
 export default defineComponent({
-    components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard, TypeCard, MetadataCard, Dialog, PreviewTable },
+    components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard, TypeCard, MetadataCard, WorkspaceDataPreviewDialog },
     props: {
         id: { type: String, required: false },
         scopeTypes: { type: Array as any, required: true },
