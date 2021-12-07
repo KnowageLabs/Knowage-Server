@@ -547,6 +547,7 @@ public class ExcelExporter {
 			JSONObject widgetData = dataStore.getJSONObject("widgetData");
 			JSONObject widgetContent = widgetData.getJSONObject("content");
 			HashMap<String, String> arrayHeader = new HashMap<String, String>();
+			HashMap<String, String> chartAggregationsMap = new HashMap<String, String>();
 			if (widgetData.getString("type").equalsIgnoreCase("table")) {
 				for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
 					JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
@@ -557,6 +558,15 @@ public class ExcelExporter {
 						key = column.getString("name");
 					}
 					arrayHeader.put(key, column.getString("aliasToShow"));
+				}
+			} else if (widgetData.getString("type").equalsIgnoreCase("chart")) {
+				for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
+					JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
+					if (column.has("aggregationSelected") && column.has("alias")) {
+						String col = column.getString("alias");
+						String aggregation = column.getString("aggregationSelected");
+						chartAggregationsMap.put(col, aggregation);
+					}
 				}
 			}
 
@@ -597,12 +607,23 @@ public class ExcelExporter {
 				for (int i = 0; i < columnsOrdered.length(); i++) {
 					JSONObject column = columnsOrdered.getJSONObject(i);
 					String columnName = column.getString("header");
+					String chartAggregation = null;
 					if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("discovery")) {
 						if (arrayHeader.get(columnName) != null) {
 							columnName = arrayHeader.get(columnName);
 						}
+					} else if (widgetData.getString("type").equalsIgnoreCase("chart")) {
+						chartAggregation = chartAggregationsMap.get(columnName);
+						if (chartAggregation != null) {
+							columnName = columnName.split("_" + chartAggregation)[0];
+						}
 					}
+
 					columnName = getInternationalizedHeader(columnName);
+
+					if (widgetData.getString("type").equalsIgnoreCase("chart") && chartAggregation != null) {
+						columnName = columnName + "_" + chartAggregation;
+					}
 
 					Cell cell = header.createCell(i);
 					cell.setCellValue(columnName);
