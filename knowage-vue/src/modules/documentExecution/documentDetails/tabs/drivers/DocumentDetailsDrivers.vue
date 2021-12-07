@@ -109,7 +109,12 @@
                                             />
                                             <label for="parameterUrlName" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.drivers.parameterUrlName') }} * </label>
                                         </span>
-                                        <KnValidationMessages class="p-mt-1" :vComp="v$.selectedDriver.parameterUrlName" :additionalTranslateParams="{ fieldName: $t('documentExecution.documentDetails.drivers.parameterUrlName') }" />
+                                        <KnValidationMessages
+                                            class="p-mt-1"
+                                            :vComp="v$.selectedDriver.parameterUrlName"
+                                            :additionalTranslateParams="{ fieldName: $t('documentExecution.documentDetails.drivers.parameterUrlName') }"
+                                            :specificTranslateKeys="{ custom_unique: 'managers.businessModelManager.driversUrlNotUnique' }"
+                                        />
                                     </div>
                                     <span class="p-field p-col-12 p-md-4 p-jc-center p-mt-3">
                                         <InputSwitch id="visible" v-model="selectedDriver.visible" @change="markSelectedDriverForChange" />
@@ -184,14 +189,22 @@ export default defineComponent({
         this.document = this.selectedDocument
     },
     validations() {
-        const outputParamsValidator = (value) => {
-            return Object.keys(this.selectedDriver).length === 0 || value
+        const customValidators: ICustomValidatorMap = {
+            'custom-unique': (value: string) => {
+                return this.urlNotUnique(value)
+            },
+            'drivers-validator': (value: string) => {
+                return Object.keys(this.selectedDriver).length === 0 || value
+            }
         }
-        const customValidators: ICustomValidatorMap = { 'drivers-validator': outputParamsValidator }
         const validationObject = { selectedDriver: createValidations('driver', driversDescriptor.validations.driver, customValidators) }
         return validationObject
     },
     methods: {
+        urlNotUnique(url: string) {
+            const index = this.document.drivers.findIndex((driver) => driver.parameterUrlName === url && driver.id != this.selectedDriver?.id)
+            return index === -1
+        },
         async getDocumentDrivers() {
             this.loading = true
             if (this.selectedDocument?.id) {
@@ -246,54 +259,6 @@ export default defineComponent({
                 }
             }
         },
-        //#region old add, qestion
-        addDriver() {
-            if (this.selectedDocument.modelLocked) {
-                if (this.selectedDocument.id) {
-                    if (this.document.drivers) {
-                        this.document.drivers.push({
-                            label: '',
-                            parameter: {} as any,
-                            parameterUrlName: '',
-                            priority: this.document.drivers.length == 0 ? 1 : this.document.drivers.length + 1,
-                            newDriver: 'true',
-                            biMetaModelID: this.selectedDocument.id,
-                            visible: true,
-                            required: true,
-                            multivalue: false
-                        } as iDriver)
-                        var index = this.document.drivers.length
-                        this.selectDriver(this.document.drivers[index - 1])
-                    } else {
-                        this.document.drivers = [{ label: '', parameter: {} as any, parameterUrlName: '', priority: 1, newDriver: 'true', biMetaModelID: this.selectedDocument.id, visible: true, required: true, multivalue: false } as iDriver]
-                        this.selectDriver(this.document.drivers[1])
-                    }
-                }
-            } else {
-                this.transformedObj = {}
-                if (this.selectedDocument.id) {
-                    if (this.document.drivers) {
-                        this.document.drivers.push({
-                            label: '',
-                            parameter: {} as any,
-                            parameterUrlName: '',
-                            priority: this.document.drivers.length == 0 ? 1 : this.document.drivers.length + 1,
-                            newDriver: 'true',
-                            biObjectID: this.selectedDocument.id,
-                            visible: true,
-                            required: true,
-                            multivalue: false
-                        } as iDriver)
-                        index = this.document.drivers.length
-                        this.selectDriver(this.document.drivers[index - 1])
-                    } else {
-                        this.document.drivers = [{ label: '', parameter: {} as any, parameterUrlName: '', priority: 1, newDriver: 'true', biObjectID: this.selectedDocument.id, visible: true, required: true, multivalue: false } as iDriver]
-                        this.selectDriver(this.document.drivers[1])
-                    }
-                }
-            }
-        },
-        //#endregion
         async movePriority(driver, direction) {
             direction == 'up' ? (driver.priority -= 1) : (driver.priority += 1)
             await this.$http

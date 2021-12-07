@@ -59,15 +59,18 @@
                 "fieldName": "parameterUrlName",
                 "validators": [
                     {
-                        "key": "required",
-                        "validator": {
-                            "type": "drivers-validator"
-                        }
+                        "key": "required"
                     },
                     {
                         "key": "regex",
                         "validator": {
-                            "type": "extendedAlphanumericRegex"
+                            "type": "alphanumericNoSpaces"
+                        }
+                    },
+                    {
+                        "key": "custom_unique",
+                        "validator": {
+                            "type": "custom-unique"
                         }
                     }
                 ]
