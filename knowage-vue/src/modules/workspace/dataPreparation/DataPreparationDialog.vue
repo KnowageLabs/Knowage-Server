@@ -12,6 +12,7 @@
 
         <DataPreparationSimple v-if="localCopy.type === 'simple'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" />
         <DataPreparationCustom v-if="localCopy.type === 'custom'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" />
+        <DataPreparationFilter v-if="localCopy.type === 'filter'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" />
 
         <template #footer>
             <Button class="p-button-text kn-button thirdButton" :label="$t('common.cancel')" @click="resetAndClose" />
@@ -26,23 +27,24 @@ import { createValidations } from '@/helpers/commons/validationHelper'
 import useValidate from '@vuelidate/core'
 import Dialog from 'primevue/dialog'
 import Message from 'primevue/message'
-import { ITransformation, IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
+import { ITransformation, IDataPreparationColumn, ITransformationParameter } from '@/modules/workspace/dataPreparation/DataPreparation'
 import DataPreparationValidationDescriptor from './DataPreparationValidationDescriptor.json'
 import DataPreparationSimple from './DataPreparationSimple/DataPreparationSimple.vue'
 import DataPreparationSimpleDescriptor from '@/modules/workspace/dataPreparation/DataPreparationSimple/DataPreparationSimpleDescriptor.json'
 import DataPreparationCustom from './DataPreparationCustom/DataPreparationCustom.vue'
 import DataPreparationCustomDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationCustomDescriptor.json'
+import DataPreparationFilter from './DataPreparationCustom/DataPreparationFilterTransformation.vue'
 
 export default defineComponent({
     name: 'data-preparation-detail-dialog',
     props: {
-        transformation: {} as PropType<ITransformation>,
+        transformation: {} as PropType<ITransformation<ITransformationParameter>>,
         columns: { type: Array as PropType<Array<IDataPreparationColumn>> },
         col: String
     },
-    components: { DataPreparationSimple, Dialog, Message, DataPreparationCustom },
+    components: { DataPreparationSimple, Dialog, Message, DataPreparationCustom, DataPreparationFilter },
     data() {
-        return { localCopy: {} as ITransformation | undefined, v$: useValidate() as any, validationDescriptor: DataPreparationValidationDescriptor, simpleDescriptor: DataPreparationSimpleDescriptor, customDescriptor: DataPreparationCustomDescriptor }
+        return { localCopy: {} as ITransformation<ITransformationParameter> | undefined, v$: useValidate() as any, validationDescriptor: DataPreparationValidationDescriptor, simpleDescriptor: DataPreparationSimpleDescriptor, customDescriptor: DataPreparationCustomDescriptor }
     },
     validations() {
         return {
@@ -114,7 +116,7 @@ export default defineComponent({
             this.closeDialog()
         },
 
-        updateLocalCopy(t: ITransformation): void {
+        updateLocalCopy(t: ITransformation<ITransformationParameter>): void {
             this.localCopy = t
         }
     },

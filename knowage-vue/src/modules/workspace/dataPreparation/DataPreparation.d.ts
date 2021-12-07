@@ -1,6 +1,6 @@
-export interface ITransformation {
+export interface ITransformation<T> {
     type: string
-    parameters: Array<ITransformationParameter>
+    parameters: Array<T>
     description: string
     name: string
 }
@@ -8,7 +8,7 @@ export interface ITransformation {
 export interface ITransformationParameter {
     name: string
     value?: Object
-    availableOptions?: Array
+    availableOptions?: Array<any>
     type: string
     relatedToField?: string
     relatedToOption?: string
@@ -28,4 +28,12 @@ export interface IDataPreparationDataset {
     description: string
     visibility: string
     refreshRate: {}
+}
+
+export interface IFilterTransformationParameter {
+    column: IDataPreparationColumn
+    condition: string
+    text?: string
+    startDate?: Date
+    endDate?: Date
 }

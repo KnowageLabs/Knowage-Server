@@ -84,17 +84,17 @@ import MultiSelect from 'primevue/multiselect'
 import KnTextarea from '@/components/UI/KnTextarea.vue'
 import Textarea from 'primevue/textarea'
 
-import { ITransformation } from '@/modules/workspace/dataPreparation/DataPreparation'
+import { ITransformation, ITransformationParameter } from '@/modules/workspace/dataPreparation/DataPreparation'
 import { IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
 
 export default defineComponent({
     name: 'data-preparation-custom',
 
-    props: { col: String, columns: { type: Array as PropType<Array<IDataPreparationColumn>> }, transformation: {} as PropType<ITransformation> },
+    props: { col: String, columns: { type: Array as PropType<Array<IDataPreparationColumn>> }, transformation: {} as PropType<ITransformation<ITransformationParameter>> },
     components: { Calendar, Dropdown, InputSwitch, MultiSelect, Textarea, KnTextarea },
     emits: ['update:transformation'],
     data() {
-        return { descriptor: DataPreparationCustomDescriptor as any, dataPreparationDescriptor: DataPreparationDescriptor as any, localTransformation: {} as ITransformation, currentId: 0 }
+        return { descriptor: DataPreparationCustomDescriptor as any, dataPreparationDescriptor: DataPreparationDescriptor as any, localTransformation: {} as ITransformation<ITransformationParameter>, currentId: 0 }
     },
     mounted() {
         this.setupLocal()
@@ -129,7 +129,7 @@ export default defineComponent({
                         let currentAvailableOptions = relatedField.availableOptions.filter((x) => x.availableForTypes.split('|').includes(type))
                         this.localTransformation.parameters
                             .filter((x) => x.name === relatedField.name)[0]
-                            .availableOptions.forEach((option) => {
+                            .availableOptions?.forEach((option) => {
                                 option.visible = false
                                 currentAvailableOptions.forEach((available) => {
                                     if (available.code === option.code) option.visible = true
@@ -193,7 +193,7 @@ export default defineComponent({
             }
         },
         setupLocal(): void {
-            this.localTransformation = this.transformation ? { ...this.transformation } : ({} as ITransformation)
+            this.localTransformation = this.transformation ? { ...this.transformation } : ({} as ITransformation<ITransformationParameter>)
 
             this.descriptor = { ...DataPreparationCustomDescriptor } as any
 

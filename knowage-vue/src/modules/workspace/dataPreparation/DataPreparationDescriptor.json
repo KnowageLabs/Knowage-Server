@@ -228,7 +228,7 @@
             "name": "filter",
             "position": 4,
             "toolbar": true,
-            "type": "custom"
+            "type": "filter"
         },
         {
             "category": "visualization",

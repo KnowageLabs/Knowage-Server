@@ -1526,6 +1526,7 @@
                         "label": "Delete column"
                     },
                     "destType": "Destination type",
+                    "endDate": "End Date",
                     "filter": {
                         "description": "TODO",
                         "label": "Filter"
@@ -1542,6 +1543,7 @@
                         "label": "Merge columns"
                     },
                     "newChar": "New char",
+                    "number": "Number",
                     "numberOfChars": "Number of characters",
                     "oldChar": "Old char",
                     "outputType": "Output Type",
@@ -1568,6 +1570,7 @@
                         "label": "Split column"
                     },
                     "splitColumnMethod": "Split column method",
+                    "startDate": "Start Date",
                     "statistics": {
                         "description": "TODO",
                         "label": "Statistics"
@@ -1579,7 +1582,8 @@
                         "label": "Trim"
                     },
                     "useNumberOfChars": "Use number of characters",
-                    "useSeparator": "Use separator"
+                    "useSeparator": "Use separator",
+                    "values": "Values"
                 }
             }
         }

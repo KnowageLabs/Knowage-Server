@@ -63,7 +63,7 @@ import InputSwitch from 'primevue/inputswitch'
 import MultiSelect from 'primevue/multiselect'
 import Textarea from 'primevue/textarea'
 
-import { ITransformation } from '@/modules/workspace/dataPreparation/DataPreparation'
+import { ITransformation, ITransformationParameter } from '@/modules/workspace/dataPreparation/DataPreparation'
 import { IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import useValidate from '@vuelidate/core'
@@ -71,11 +71,11 @@ import useValidate from '@vuelidate/core'
 export default defineComponent({
     name: 'data-preparation-simple',
 
-    props: { col: String, columns: { type: Array as PropType<Array<IDataPreparationColumn>> }, transformation: {} as PropType<ITransformation> },
+    props: { col: String, columns: { type: Array as PropType<Array<IDataPreparationColumn>> }, transformation: {} as PropType<ITransformation<ITransformationParameter>> },
     components: { Calendar, Dropdown, InputSwitch, MultiSelect, Textarea },
     emits: ['update:transformation'],
     data() {
-        return { descriptor: DataPreparationSimpleDescriptor as any, localTransformation: {} as ITransformation, v$: useValidate() as any, dirty: false, currentId: 0 }
+        return { descriptor: DataPreparationSimpleDescriptor as any, localTransformation: {} as ITransformation<ITransformationParameter>, v$: useValidate() as any, dirty: false, currentId: 0 }
     },
     validations() {
         if (this.transformation?.type === 'simple') {
@@ -121,7 +121,7 @@ export default defineComponent({
         },
         setupLocal() {
             if (Object.keys(this.localTransformation).length == 0) {
-                this.localTransformation = this.transformation ? { ...this.transformation } : ({} as ITransformation)
+                this.localTransformation = this.transformation ? { ...this.transformation } : ({} as ITransformation<ITransformationParameter>)
 
                 let name = this.transformation && this.transformation.name ? this.transformation.name : ''
                 if (name && this.transformation?.type === 'simple') {

@@ -1,0 +1,91 @@
+{
+    "availableConditions": [
+        {
+            "availableForTypes": "string",
+            "code": "like",
+            "label": "like"
+        },
+        {
+            "availableForTypes": "string",
+            "code": "notLike",
+            "label": "NOT like"
+        },
+        {
+            "availableForTypes": "string|date|timestamp",
+            "code": "isNull",
+            "label": "is null"
+        },
+        {
+            "availableForTypes": "string|date|timestamp",
+            "code": "isNotNull",
+            "label": "is NOT null"
+        },
+        {
+            "availableForTypes": "string|number",
+            "code": "equals",
+            "label": "="
+        },
+        {
+            "availableForTypes": "string|number",
+            "code": "minorThan",
+            "label": "< "
+        },
+        {
+            "availableForTypes": "string|number",
+            "code": "greaterThan",
+            "label": "> "
+        },
+        {
+            "availableForTypes": "string|number",
+            "code": "minorOrEqualsThan<=",
+            "label": "<= "
+        },
+        {
+            "availableForTypes": "string|number",
+            "code": "greaterOrEqualsThan",
+            "label": ">= "
+        },
+        {
+            "availableForTypes": "string|number",
+            "code": "notEquals",
+            "label": "!= "
+        },
+        {
+            "availableForTypes": "string|number",
+            "code": "in",
+            "label": "IN "
+        },
+        {
+            "availableForTypes": "string|number",
+            "code": "notIn",
+            "label": "NOT IN"
+        },
+        {
+            "availableForTypes": "date|timestamp",
+            "code": "after",
+            "label": "After"
+        },
+        {
+            "availableForTypes": "date|timestamp",
+            "code": "before",
+            "label": "Before"
+        },
+        {
+            "availableForTypes": "date|timestamp",
+            "code": "between",
+            "label": "Between"
+        }
+    ],
+    "typesMap": {
+        "java.lang.Double": "number",
+        "java.lang.Float": "number",
+        "java.lang.Integer": "number",
+        "java.lang.Long": "number",
+        "java.lang.String": "string",
+        "java.math.BigDecimal": "number",
+        "java.sql.Date": "date",
+        "java.sql.Timestamp": "timestamp",
+        "java.util.String": "string",
+        "oracle.sql.TIMESTAMP": "timestamp"
+    }
+}
