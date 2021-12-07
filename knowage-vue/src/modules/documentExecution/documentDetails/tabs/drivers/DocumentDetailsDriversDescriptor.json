@@ -59,7 +59,10 @@
                 "fieldName": "parameterUrlName",
                 "validators": [
                     {
-                        "key": "required"
+                        "key": "required",
+                        "validator": {
+                            "type": "drivers-validator"
+                        }
                     },
                     {
                         "key": "regex",
