@@ -182,7 +182,7 @@
                 this.dirty = true
             },
             saveOrUpdateUser(user: iUser) {
-                const endpointPath = `${process.env.VUE_APP_RESTFUL_SERVICES_PATH}/2.0/users`
+                const endpointPath = `${process.env.VUE_APP_RESTFUL_SERVICES_PATH}2.0/users`
                 return this.userDetailsForm.id ? this.$http.put<any>(`${endpointPath}/${user.id}`, user) : this.$http.post<any>(endpointPath, user)
             },
             async saveUser() {
@@ -235,7 +235,7 @@
             onUserDelete(id: number) {
                 this.loading = true
                 this.$http
-                    .delete(`${process.env.VUE_APP_RESTFUL_SERVICES_PATH}/2.0/users/${id}`)
+                    .delete(`${process.env.VUE_APP_RESTFUL_SERVICES_PATH}2.0/users/${id}`)
                     .then(() => {
                         this.loadAllUsers()
                         this.$store.commit('setInfo', {

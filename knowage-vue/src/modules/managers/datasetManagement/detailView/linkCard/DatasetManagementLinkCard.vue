@@ -100,10 +100,12 @@ export default defineComponent({
 
     methods: {
         async getSelectedTables() {
-            this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDsRelationResource/dataset/${this.dataset.id}/`)
-                .then((response: AxiosResponse<any>) => (this.selectedTables = response.data))
-                .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error }))
+            if (this.dataset.id) {
+                this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDsRelationResource/dataset/${this.dataset.id}/`)
+                    .then((response: AxiosResponse<any>) => (this.selectedTables = response.data))
+                    .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error }))
+            }
         },
         async getAvailableSources() {
             this.$http

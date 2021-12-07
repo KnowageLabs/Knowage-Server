@@ -1,38 +1,45 @@
 {
-	"common": {
-		"close": "chiudi",
-		"loggedUser": "utente loggato",
-		"search": "ricerca",
-		"tenant": "tenant",
-		"version": "versione",
-		"error": {
-			"exceededSize": "Uploaded file exceedes max size {size}"
-		}
-	},
-	"home": {
-		"test": "italiano"
-	},
-	"infoDialog": {
-		"aboutKnowage": "About Knowage",
-		"copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
-		"sourceCode": "Codice sorgente disponibile su "
-	},
-	"language": {
-		"en_GB": "inglese (GB)",
-		"en_US": "inglese (US)",
-		"es_ES": "spagnolo",
-		"fr_FR": "francese",
-		"it_IT": "italiano",
-		"pt_BR": "portoghese",
-		"languageSelection": "Selezione Lingua"
-	},
-	"managers": {
-		"widgetGallery": {
-			"title": "Gestione Gallery",
-			"hint": "The templates allow you to access ready-made elements to proceed more quickly to the creation of dashboards. To view the details of a template, select one of those on the side, or press the \"+\" button to add or import one.",
-			"importTemplate": "Importa template",
-			"newTemplate": "Nuovo Template",
-			"noResults": "Nessun template disponibile per la ricerca corrente"
-		}
-	}
+    "common": {
+        "close": "chiudi",
+        "error": {
+            "exceededSize": "Uploaded file exceedes max size {size}"
+        },
+        "loggedUser": "utente loggato",
+        "search": "ricerca",
+        "tenant": "tenant",
+        "toast": {
+            "deleteConfirmTitle": "Conferma eliminazione",
+            "deleteMessage": "Questo elemento sarà eliminato. Sei sicuro di voler continuare?",
+            "deleteSuccess": "Elemento eliminato con successo",
+            "deleteTitle": "Eliminato",
+            "success": "Operazione completata con successo"
+        },
+        "version": "versione"
+    },
+    "home": {
+        "test": "italiano"
+    },
+    "infoDialog": {
+        "aboutKnowage": "About Knowage",
+        "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
+        "sourceCode": "Codice sorgente disponibile su "
+    },
+    "language": {
+        "en_GB": "inglese (GB)",
+        "en_US": "inglese (US)",
+        "es_ES": "spagnolo",
+        "fr_FR": "francese",
+        "it_IT": "italiano",
+        "languageSelection": "Selezione Lingua",
+        "pt_BR": "portoghese"
+    },
+    "managers": {
+        "widgetGallery": {
+            "hint": "The templates allow you to access ready-made elements to proceed more quickly to the creation of dashboards. To view the details of a template, select one of those on the side, or press the \"+\" button to add or import one.",
+            "importTemplate": "Importa template",
+            "newTemplate": "Nuovo Template",
+            "noResults": "Nessun template disponibile per la ricerca corrente",
+            "title": "Gestione Gallery"
+        }
+    }
 }

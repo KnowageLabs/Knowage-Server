@@ -2487,6 +2487,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				} else {
 					criteria.addOrder(Order.asc("timeRun")).addOrder(Order.asc("kpiId")).addOrder(Order.asc("kpiVersion"));
 				}
+				logger.debug("Evaluated Kpi criteria: " + criteria);
 				return criteria;
 			}
 		});

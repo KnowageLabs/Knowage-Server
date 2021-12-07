@@ -80,11 +80,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	/**
 	 * Load data source by id.
 	 *
-	 * @param dsID
-	 *            the ds id
+	 * @param dsID the ds id
 	 * @return the data source
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#loadDataSourceByID(java.lang.Integer)
 	 */
 	@Override
@@ -123,11 +121,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	/**
 	 * Load data source by label.
 	 *
-	 * @param label
-	 *            the label
+	 * @param label the label
 	 * @return the data source
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#loadDataSourceByLabel(string)
 	 */
 	@Override
@@ -180,15 +176,15 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			tx = tmpSession.beginTransaction();
 
 			Query hibQuery = null;
-			
+
 			hibQuery = tmpSession.createQuery("from SbiDataSource ds where ds.label = :label");
 			hibQuery.setString("label", label);
-			
+
 			SbiDataSource hibDS = (SbiDataSource) hibQuery.uniqueResult();
-			if(hibDS == null) {
+			if (hibDS == null) {
 				return null;
 			}
-			
+
 			biDS = toDataSource(hibDS);
 			tx.commit();
 		} catch (HibernateException e) {
@@ -200,11 +196,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				if (tmpSession.isOpen())
 					tmpSession.close();
 			}
-		}		
+		}
 		logger.debug("OUT");
 		return biDS;
 	}
-	
+
 	@Override
 	public IDataSource loadDataSourceWriteDefault() throws EMFUserError {
 		logger.debug("IN");
@@ -254,8 +250,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	 * Load all data sources.
 	 *
 	 * @return the list
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#loadAllDataSources()
 	 */
 	@Override
@@ -314,7 +309,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibQuery = aSession.createQuery("select ds.sbiDataSource from SbiOrganizationDatasource ds where (ds.sbiOrganizations.name = :tenantName or ds.sbiDataSource.commonInfo.userIn = :userId) or length(ds.sbiDataSource.jndi) > 0");			
+			Query hibQuery = aSession.createQuery(
+					"select ds.sbiDataSource from SbiOrganizationDatasource ds where (ds.sbiOrganizations.name = :tenantName or ds.sbiDataSource.commonInfo.userIn = :userId) or length(ds.sbiDataSource.jndi) > 0");
 			hibQuery.setString("tenantName", getTenant());
 			hibQuery.setString("userId", profile.getUserId().toString());
 
@@ -346,11 +342,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	/**
 	 * Load dialect by id.
 	 *
-	 * @param dialectId
-	 *            the dialect id
+	 * @param dialectId the dialect id
 	 * @return the dialect
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
 	public Domain loadDialect(int dialectId) throws EMFUserError {
@@ -378,10 +372,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	/**
 	 * Modify data source.
 	 *
-	 * @param aDataSource
-	 *            the a data source
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @param aDataSource the a data source
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#modifyDataSource(it.eng.spagobi.tools.datasource.bo.IDataSource)
 	 */
 	@Override
@@ -407,12 +399,12 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			// If DataSource Label has changed all LOVS with that DS need to be
 			// changed
 			SbiDataSource hibDataSource = (SbiDataSource) aSession.load(SbiDataSource.class, new Integer(aDataSource.getDsId()));
-			
+
 			// If datasource has a null pwd, get the old value from DB
 			if (StringUtils.isEmpty(aDataSource.getPwd())) {
 				aDataSource.setPwd(hibDataSource.getPwd());
 			}
-			
+
 			if (aDataSource.getLabel() != null && hibDataSource.getLabel() != null) {
 				if (!aDataSource.getLabel().equals(hibDataSource.getLabel())) {
 					logger.debug("DataSource label is changed- update lovs and dataset referring to it");
@@ -589,10 +581,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	/**
 	 * Insert data source.
 	 *
-	 * @param aDataSource
-	 *            the a data source
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @param aDataSource the a data source
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#insertDataSource(it.eng.spagobi.tools.datasource.bo.IDataSource)
 	 */
 	@Override
@@ -671,10 +661,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	/**
 	 * Erase data source.
 	 *
-	 * @param aDataSource
-	 *            the a data source
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @param aDataSource the a data source
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#eraseDataSource(it.eng.spagobi.tools.datasource.bo.DataSource)
 	 */
 	@Override
@@ -720,8 +708,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	/**
 	 * From the hibernate DataSource at input, gives the corrispondent <code>DataSource</code> object.
 	 *
-	 * @param hibDataSource
-	 *            The hybernate data source
+	 * @param hibDataSource The hybernate data source
 	 * @return The corrispondent <code>DataSource</code> object
 	 */
 	public static IDataSource toDataSource(SbiDataSource hibDataSource) {
@@ -822,11 +809,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	/**
 	 * Checks for bi obj associated.
 	 *
-	 * @param dsId
-	 *            the ds id
+	 * @param dsId the ds id
 	 * @return true, if checks for bi obj associated
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#hasBIObjAssociated(java.lang.String)
 	 */
 	@Override
@@ -973,6 +958,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 					sbiLov = (SbiLov) iterator.next();
 					String lovProvider = sbiLov.getLovProvider();
 					lovProvider = escapeXML(lovProvider, true);
+					lovProvider = removeStatement(lovProvider); // KNOWAGE-6312: removed statement for double quote character issue, if this character is
+																// present, it is unescapable because of xml2json process will roll back it
 
 					try {
 						String statementString = Xml.xml2json(lovProvider);
@@ -1086,6 +1073,36 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		String firstPart = prov.substring(0, cutStart);
 		String secondPart = prov.substring(cutEnd, prov.length());
 		prov = firstPart + statement + secondPart;
+		return prov;
+	}
+
+	private String getStatement(String prov) {
+		String statement = null;
+		int cutStartIndex = prov.indexOf("<STMT>");
+		cutStartIndex = cutStartIndex + 6;
+		int cutEndIndex = prov.indexOf("</STMT>");
+		statement = prov.substring(cutStartIndex, cutEndIndex);
+
+		statement = StringEscapeUtils.escapeXml(statement);
+		return statement;
+
+	}
+
+	private String removeStatement(String prov) {
+		String statement = null;
+		int cutStartIndex = prov.indexOf("<STMT>");
+		cutStartIndex = cutStartIndex + 6;
+		int cutEndIndex = prov.indexOf("</STMT>");
+		statement = prov.substring(cutStartIndex, cutEndIndex);
+
+		statement = StringEscapeUtils.escapeXml(statement);
+
+		int cutStart = prov.indexOf("<STMT>");
+		cutStart = cutStart + 6;
+		int cutEnd = prov.indexOf("</STMT>");
+		String firstPart = prov.substring(0, cutStart);
+		String secondPart = prov.substring(cutEnd, prov.length());
+		prov = firstPart + secondPart;
 		return prov;
 	}
 }
