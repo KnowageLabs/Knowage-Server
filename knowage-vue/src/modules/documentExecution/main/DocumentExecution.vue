@@ -6,8 +6,8 @@
 
         <template #right>
             <div class="p-d-flex p-jc-around">
-                <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'VIEW'" class="pi pi-pencil kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocument"></i>
-                <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'" class="fa fa-eye kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocument"></i>
+                <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'VIEW'" class="pi pi-pencil kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocumentConfirm"></i>
+                <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'" class="fa fa-eye kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocumentConfirm"></i>
                 <i class="pi pi-book kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></i>
                 <i class="pi pi-refresh kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.refresh')" @click="refresh"></i>
                 <i v-if="filtersData?.filterStatus?.length > 0 || !sessionRole" class="fa fa-filter kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible" data-test="parameter-sidebar-icon"></i>
@@ -172,13 +172,27 @@ export default defineComponent({
         }
     },
     methods: {
-        editCockpitDocument() {
+        editCockpitDocumentConfirm() {
+            if (this.documentMode === 'EDIT') {
+                this.$confirm.require({
+                    message: this.$t('documentExecution.main.editModeConfirm'),
+                    header: this.$t('documentExecution.main.editCockpit'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.editCockpitDocument()
+                })
+            } else {
+                this.editCockpitDocument()
+            }
+        },
+        async editCockpitDocument() {
+            this.loading = true
             console.log('TODO - EDIT COCKPIT DOCUMENT')
             this.documentMode = this.documentMode === 'EDIT' ? 'VIEW' : 'EDIT'
             this.hiddenFormData.set('documentMode', this.documentMode)
             console.log('TEST', this.hiddenFormData)
             // window.frames[0].postMessage({ type: 'changeMode', mode: this.documentMode }, '*')
-            this.loadURL()
+            await this.loadURL()
+            this.loading = false
         },
         openHelp() {
             this.helpDialogVisible = true
@@ -241,7 +255,11 @@ export default defineComponent({
             window.print()
         },
         export(type: string) {
-            window.frames[0].frames[0].frames.postMessage({ type: 'export', format: type.toLowerCase() }, '*')
+            let tempFrame = window.frames
+            while (tempFrame && tempFrame.name !== 'documentFrame') {
+                tempFrame = tempFrame[0].frames
+            }
+            tempFrame.postMessage({ type: 'export', format: type.toLowerCase() }, '*')
         },
         openMailDialog() {
             this.mailDialogVisible = true
@@ -332,7 +350,7 @@ export default defineComponent({
         async loadFilters() {
             console.log(' >>>>>>>>>>>>>>>>>>>> LOADING FILTERS FOR DOCUMENT: ', this.document)
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, { label: this.id, role: this.userRole, parameters: this.document.navigationParams ?? {} })
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, { label: this.document.label, role: this.userRole, parameters: this.document.navigationParams ?? {} })
                 .then((response: AxiosResponse<any>) => (this.filtersData = response.data))
                 .catch((error: any) => {
                     if (error.response.status === 500) {
@@ -370,7 +388,7 @@ export default defineComponent({
         async loadURL() {
             console.log('LOADING URL FROM VUE APP!')
 
-            const postData = { label: this.id, role: this.userRole, parameters: this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
+            const postData = { label: this.document.label, role: this.userRole, parameters: this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
 
             if (this.sbiExecutionId) {
                 postData.SBI_EXECUTION_ID = this.sbiExecutionId
@@ -401,7 +419,8 @@ export default defineComponent({
         },
         async sendForm() {
             const documentUrl = this.urlData?.url + '&timereloadurl=' + new Date().getTime()
-            const postObject = { params: { document: null }, url: documentUrl.split('?')[0] }
+            const postObject = { params: { document: null } as any, url: documentUrl.split('?')[0] }
+            postObject.params.documentMode = this.documentMode
             this.hiddenFormUrl = postObject.url
             const paramsFromUrl = documentUrl.split('?')[1].split('&')
 
@@ -673,6 +692,8 @@ export default defineComponent({
             this.filtersData = item.filtersData
             this.urlData = item.urlData
             this.hiddenFormData = item.hiddenFormData
+
+            this.loadPage()
         },
         async onRoleChange(role: string) {
             this.userRole = role as any
@@ -684,18 +705,19 @@ export default defineComponent({
         async executeCrossNavigation(event: any) {
             console.log('EVENT DATA: ', event.data)
 
-            await this.loadCrossNavigationByDocument()
+            await this.loadCrossNavigationByDocument(event.data)
         },
-        async loadCrossNavigationByDocument() {
+        async loadCrossNavigationByDocument(angularData: any) {
             let temp = {} as any
 
             this.loading = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
             this.loading = false
 
-            console.log('DATA FROM ANGULAR: ', temp)
+            console.log('DATA FROM RESPONSE: ', temp)
+            console.log('DATA FROM ANGULAR: ', angularData)
 
-            this.document = { ...temp[0].document, navigationParams: temp[0].navigationParams }
+            this.document = { ...temp[0].document, navigationParams: this.formatNavigationParams(angularData.otherOutputParameters, temp[0].navigationParams) }
             console.log('NEW DOCUMENT: ', this.document)
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
@@ -708,6 +730,28 @@ export default defineComponent({
             }
 
             await this.loadPage()
+        },
+        formatNavigationParams(otherOutputParameters: any[], navigationParams: any) {
+            let formatedParams = {} as any
+
+            console.log('OTHER OUTPUT PARAMETRS:', otherOutputParameters)
+            console.log('NAVIGATION PARAMETRS:', navigationParams)
+
+            otherOutputParameters.forEach((el: any) => {
+                console.log('CURRENT EL: ', el)
+                console.log('CURRNET EL KEY: ', Object.keys(el)[0])
+
+                const index = Object.keys(navigationParams).findIndex((key: string) => key === Object.keys(el)[0])
+                console.log('INDEX', index)
+                if (index !== -1) {
+                    console.log('FOUND', el)
+                    formatedParams[Object.keys(el)[0]] = el[Object.keys(el)[0]]
+                    formatedParams[Object.keys(el)[0] + '_field_visible_description'] = el[Object.keys(el)[0]]
+                }
+            })
+
+            console.log('FORMATED PARAMS AT END: ', formatedParams)
+            return formatedParams
         }
     }
 })
@@ -763,12 +807,9 @@ export default defineComponent({
     }
 
     #document-execution-view {
-        position: absolute;
-        left: 0;
-        top: 0;
         background-color: white;
-        height: 100%;
-        width: 100%;
+        height: 100vh;
+        width: 100vh;
         position: fixed;
         top: 0;
         left: 0;

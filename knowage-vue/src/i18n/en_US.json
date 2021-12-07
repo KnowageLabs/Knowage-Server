@@ -297,7 +297,8 @@
             "showScheduledExecutions": "Show scheduled executions",
             "userRoleError": "User does not have valid roles for the execution of the selected document",
             "viewCockpit": "View cockpit document",
-            "yourRating": "Your rating"
+            "yourRating": "Your rating",
+            "editModeConfirm": "You are leaving edit mode. Continue?"
         },
         "registry": {
             "clearFilters": "Clear",

@@ -1,7 +1,7 @@
 <template>
-    <router-view v-slot="{ Component }" @close="$emit('close', item)">
+    <router-view v-if="item" v-slot="{ Component }" @close="$emit('close', item)">
         <keep-alive>
-            <component :is="Component" :key="$route.fullPath + Date.now()"></component>
+            <component :is="Component" :key="item.routerId"></component>
         </keep-alive>
     </router-view>
 </template>
@@ -15,8 +15,11 @@ export default defineComponent({
     emits: ['close'],
     props: { item: { type: Object }, mode: { type: String } },
     data() {
-        return {}
+        return {
+            selectedItem: {}
+        }
     },
+    watch: {},
     created() {},
     methods: {}
 })
