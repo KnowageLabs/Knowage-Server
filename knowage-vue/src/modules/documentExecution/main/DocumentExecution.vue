@@ -50,7 +50,7 @@
         <DocumentExecutionNotesDialog :visible="notesDialogVisible" :propDocument="document" @close="notesDialogVisible = false"></DocumentExecutionNotesDialog>
         <DocumentExecutionMetadataDialog :visible="metadataDialogVisible" :propDocument="document" :propMetadata="metadata" :propLoading="loading" @close="metadataDialogVisible = false" @saveMetadata="onMetadataSave"></DocumentExecutionMetadataDialog>
         <DocumentExecutionMailDialog :visible="mailDialogVisible" @close="mailDialogVisible = false" @sendMail="onMailSave"></DocumentExecutionMailDialog>
-        <DocumentExecutionLinkDialog :visible="linkDialogVisible" :linkInfo="linkInfo" :embedHTML="embedHTML" @close="linkDialogVisible = false"></DocumentExecutionLinkDialog>
+        <DocumentExecutionLinkDialog :visible="linkDialogVisible" :linkInfo="linkInfo" :embedHTML="embedHTML" :propDocument="document" :parameters="linkParameters" @close="linkDialogVisible = false"></DocumentExecutionLinkDialog>
     </div>
 </template>
 
@@ -119,6 +119,7 @@ export default defineComponent({
             user: null as any,
             reloadTrigger: false,
             breadcrumbs: [] as any[],
+            linkParameters: [],
             embed: false,
             userRole: null,
             loading: false
@@ -288,18 +289,20 @@ export default defineComponent({
         },
         async copyLink(embedHTML: boolean) {
             this.loading = true
-            if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER') {
-                await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/canHavePublicExecutionUrl`, { label: this.document.label })
-                    .then((response: AxiosResponse<any>) => {
-                        this.embedHTML = embedHTML
-                        this.linkInfo = response.data
-                        this.linkDialogVisible = true
-                    })
-                    .catch(() => {})
-            } else {
-                window.frames[0].postMessage({ type: 'htmlLink', embedHTML: embedHTML }, '*')
-            }
+            this.linkParameters = this.getFormattedParameters()
+            console.log('link params: ', this.linkParameters)
+            //  if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER') {
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/canHavePublicExecutionUrl`, { label: this.document.label })
+                .then((response: AxiosResponse<any>) => {
+                    this.embedHTML = embedHTML
+                    this.linkInfo = response.data
+                    this.linkDialogVisible = true
+                })
+                .catch(() => {})
+            //  } else {
+            //   window.frames[0].postMessage({ type: 'htmlLink', embedHTML: embedHTML }, '*')
+            //}
             this.loading = false
         },
         closeDocument() {
