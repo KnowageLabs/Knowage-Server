@@ -1500,10 +1500,11 @@
             "title": "Business Model"
         },
         "physicalModel": {
-            "fkey": "Foreign Key",
+            "foreignKey": "Foreign Key",
             "tables": "Tables",
             "title": "Physical Model",
-            "update": "Update Physical Model"
+            "updatePhysicalModel": "Update Physical Model",
+            "propertyList": "Property list"
         },
         "selectDialog": {
             "noPhysicalModelsSelectedError": "Select at least one Physical Model",
