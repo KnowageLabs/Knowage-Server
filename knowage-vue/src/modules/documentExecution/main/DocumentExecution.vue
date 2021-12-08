@@ -805,14 +805,16 @@ export default defineComponent({
         visibility: visible;
     }
 
-    .document-execution-parameter-sidebar {
+    #document-execution-view .document-execution-parameter-sidebar,
+    #document-execution-view .document-execution-parameter-sidebar *,
+    #document-execution-view #document-execution-backdrop {
         visibility: hidden;
     }
 
     #document-execution-view {
         background-color: white;
-        height: 100vh;
-        width: 100vh;
+        height: 100%;
+        width: 100%;
         position: fixed;
         top: 0;
         left: 0;
