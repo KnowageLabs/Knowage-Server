@@ -1,11 +1,11 @@
 <template>
-    <div v-if="!loading" class="data-condition-container p-col">
+    <div v-if="!loading" class="kn-remove-card-padding p-col">
         <Toolbar class="kn-toolbar kn-toolbar--default">
             <template #left>
                 {{ $t('documentExecution.documentDetails.drivers.conditionsTitle') }}
             </template>
             <template #right>
-                <Button :label="$t('managers.businessModelManager.addCondition')" class="p-button-text p-button-rounded p-button-plain" :style="mainDescriptor.style.white" @click="showForm" />
+                <Button :label="$t('managers.businessModelManager.addCondition')" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="showForm" />
             </template>
         </Toolbar>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
@@ -25,7 +25,7 @@
 
         <Dialog class="remove-padding" :style="driversDescriptor.style.conditionDialog" :visible="conditionFormVisible" :modal="true" :closable="false">
             <template #header>
-                <Toolbar class="kn-toolbar kn-toolbar--primary" :style="mainDescriptor.style.width100">
+                <Toolbar class="kn-toolbar kn-toolbar--primary kn-width-full">
                     <template #left>
                         {{ $t('documentExecution.documentDetails.drivers.visualizationTitle') }}
                     </template>
@@ -33,7 +33,7 @@
             </template>
             <div id="form-container" class="p-m-1">
                 <div>
-                    <InlineMessage severity="info" :style="mainDescriptor.style.width100">{{ $t('documentExecution.documentDetails.drivers.dataHint') }}</InlineMessage>
+                    <InlineMessage severity="info" class="kn-width-full">{{ $t('documentExecution.documentDetails.drivers.dataHint') }}</InlineMessage>
                 </div>
 
                 <form class="p-fluid p-formgrid p-grid p-mx-2 p-mt-5">
@@ -346,16 +346,8 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
-.data-condition-container {
-    :deep(.p-card-body) {
-        padding: 0;
-        .p-card-content {
-            padding: 0;
-        }
-    }
-    .data-condition-list {
-        border: 1px solid $color-borders;
-        border-top: none;
-    }
+.kn-remove-card-padding .data-condition-list {
+    border: 1px solid $color-borders;
+    border-top: none;
 }
 </style>

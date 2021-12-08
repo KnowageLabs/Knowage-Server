@@ -11,9 +11,9 @@
                 </template>
             </Toolbar>
         </template>
-        <div class="document-details-tab-container p-d-flex p-flex-column" :style="mainDescriptor.style.flexOne">
+        <div class="document-details-tab-container p-d-flex p-flex-column kn-flex">
             <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
-            <TabView v-if="!loading" class="document-details-tabview" :style="mainDescriptor.style.flex">
+            <TabView v-if="!loading" class="document-details-tabview p-d-flex p-flex-column kn-flex">
                 <TabPanel>
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.info.infoTitle') }}</span>

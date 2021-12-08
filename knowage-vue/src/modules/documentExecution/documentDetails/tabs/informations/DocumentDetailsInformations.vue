@@ -1,18 +1,18 @@
 <template>
-    <div class="p-grid p-m-0" :style="mainDescriptor.style.flexOne">
-        <div class="p-col-7 p-m-0 p-p-0 right-border" :style="mainDescriptor.style.flex">
+    <div class="p-grid p-m-0 kn-flex">
+        <div class="p-col-7 p-m-0 p-p-0 right-border p-d-flex p-flex-column kn-flex">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
                     {{ $t('documentExecution.documentDetails.info.infoTitle') }}
                 </template>
             </Toolbar>
-            <div id="informations-content" :style="mainDescriptor.style.flexOneRelative">
+            <div id="informations-content" class="kn-flex kn-relative">
                 <div :style="mainDescriptor.style.absoluteScroll">
                     <Card class="p-m-2">
                         <template #content>
                             <div id="upload-template-container" v-if="templates.length == 0">
                                 <div class="p-field p-col-12 p-d-flex">
-                                    <div :style="mainDescriptor.style.flexOne">
+                                    <div class="kn-flex">
                                         <span class="p-float-label">
                                             <InputText id="fileName" class="kn-material-input" v-model="templateToUpload.name" :disabled="true" />
                                             <label for="fileName" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.uploadTemplate') }} </label>
@@ -61,7 +61,7 @@
                                 </div>
 
                                 <div class="p-field p-col-12 p-lg-6">
-                                    <img id="image-preview" :src="getImageUrl" height="175" />
+                                    <img id="image-preview" :src="getImageUrl" :height="mainDescriptor.style.previewImage" />
                                 </div>
 
                                 <div class="p-field p-col-12 p-lg-6">
@@ -85,7 +85,7 @@
                                 </div>
 
                                 <div class="p-field p-col-12 p-d-flex">
-                                    <div :style="mainDescriptor.style.flexOne">
+                                    <div class="kn-flex">
                                         <span class="p-float-label">
                                             <InputText id="fileName" class="kn-material-input" v-model="document.previewFile" :disabled="true" />
                                             <label for="fileName" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.previewImage') }} </label>
@@ -142,7 +142,7 @@
                                 </span>
 
                                 <div v-if="isDataSetVisible" class="p-field p-col-12 p-lg-6 p-d-flex">
-                                    <div :style="mainDescriptor.style.flexOne">
+                                    <div class="kn-flex">
                                         <span class="p-float-label">
                                             <InputText id="dataset" class="kn-material-input" v-model="dataset.name" :disabled="true" />
                                             <label for="dataset" class="kn-material-input-label"> {{ $t('common.dataset') }} </label>
@@ -193,13 +193,13 @@
                 </div>
             </div>
         </div>
-        <div class="p-col-5 p-m-0 p-p-0" :style="mainDescriptor.style.flex">
+        <div class="p-col-5 p-m-0 p-p-0 p-d-flex p-flex-column kn-flex">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
                     {{ $t('documentExecution.documentDetails.info.positionTitle') }}
                 </template>
             </Toolbar>
-            <div id="position-content" :style="mainDescriptor.style.flexOneRelative">
+            <div id="position-content" class="kn-flex kn-relative">
                 <div :style="mainDescriptor.style.absoluteScroll">
                     <div id="restriction-container" class="p-m-2">
                         <Toolbar class="kn-toolbar kn-toolbar--default">

@@ -131,24 +131,9 @@
             "flex": 1,
             "flex-direction": "column"
         },
-        "flexOne": {
-            "flex": 1
-        },
-        "flexOneRelative": {
-            "flex": 1,
-            "position": "relative"
-        },
-        "height100": {
-            "height": "100%"
-        },
+        "previewImage": "175",
         "tableHeader": {
             "width": "3em"
-        },
-        "white": {
-            "color": "white"
-        },
-        "width100": {
-            "width": "100%"
         },
         "width90": {
             "width": "98%"

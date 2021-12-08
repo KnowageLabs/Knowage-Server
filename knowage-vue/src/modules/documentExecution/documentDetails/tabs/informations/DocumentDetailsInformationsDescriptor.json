@@ -4,9 +4,6 @@
         "center": {
             "align-self": "center",
             "text-align": "center"
-        },
-        "maxwidth": {
-            "width": "100%"
         }
     },
     "validations": {

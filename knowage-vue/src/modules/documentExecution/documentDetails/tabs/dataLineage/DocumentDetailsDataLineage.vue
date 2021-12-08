@@ -1,12 +1,12 @@
 <template>
-    <div class="p-grid p-m-0" :style="mainDescriptor.style.flexOne">
-        <div :style="mainDescriptor.style.flex">
+    <div class="p-grid p-m-0 kn-flex">
+        <div class="p-d-flex p-flex-column kn-flex">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
                     {{ $t('documentExecution.documentDetails.dataLineage.title') }}
                 </template>
             </Toolbar>
-            <div :style="mainDescriptor.style.flexOneRelative">
+            <div class="kn-flex kn-relative">
                 <div :style="mainDescriptor.style.absoluteScroll">
                     <div id="driver-details-container" class="p-m-2">
                         <Toolbar class="kn-toolbar kn-toolbar--default">

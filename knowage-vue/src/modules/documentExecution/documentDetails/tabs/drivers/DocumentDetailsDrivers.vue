@@ -1,20 +1,20 @@
 <template>
-    <div class="p-grid p-m-0" :style="mainDescriptor.style.flexOne">
-        <div class="p-col-4 p-sm-4 p-md-3 p-p-0" :style="mainDescriptor.style.flex">
+    <div class="p-grid p-m-0 kn-flex">
+        <div class="p-col-4 p-sm-4 p-md-3 p-p-0 p-d-flex p-flex-column kn-flex">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
                     {{ $t('documentExecution.documentDetails.drivers.title') }}
                 </template>
                 <template #right>
-                    <Button :label="$t('common.add')" class="p-button-text p-button-rounded p-button-plain" :style="mainDescriptor.style.white" @click="addNewDriver" />
+                    <Button :label="$t('common.add')" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="addNewDriver" />
                 </template>
             </Toolbar>
-            <div id="drivers-list-container" :style="mainDescriptor.style.flexOneRelative">
+            <div id="drivers-list-container" class="kn-flex kn-relative">
                 <div :style="mainDescriptor.style.absoluteScroll">
                     <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
                     <KnListBox
                         v-if="!loading"
-                        :style="mainDescriptor.style.height100"
+                        class="kn-height-full"
                         :options="document.drivers"
                         :settings="driversDescriptor.knListSettings"
                         @click="selectDriver($event.item)"
@@ -32,7 +32,7 @@
                     {{ $t('documentExecution.documentDetails.drivers.detailsTitle') }}
                 </template>
             </Toolbar>
-            <div id="driver-details-container" :style="mainDescriptor.style.flexOneRelative">
+            <div id="driver-details-container" class="kn-flex kn-relative">
                 <div :style="mainDescriptor.style.absoluteScroll">
                     <div class="p-m-2">
                         <div v-if="Object.keys(selectedDriver).length === 0">

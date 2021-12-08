@@ -1,7 +1,7 @@
 <template>
     <Dialog class="document-details-dialog remove-padding" :contentStyle="mainDescriptor.style.flex" position="right" :visible="visible" :modal="false" :closable="false" :baseZIndex="10" :autoZIndex="true">
         <template #header>
-            <Toolbar class="kn-toolbar kn-toolbar--secondary" :style="infoDescriptor.style.maxwidth">
+            <Toolbar class="kn-toolbar kn-toolbar--secondary kn-width-full">
                 <template #left>
                     {{ $t('documentExecution.documentDetails.info.datasetDialogTitle') }}
                 </template>
