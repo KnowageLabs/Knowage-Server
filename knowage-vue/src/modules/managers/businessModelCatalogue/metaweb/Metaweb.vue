@@ -9,14 +9,14 @@
                 </template>
             </Toolbar>
         </template>
-        <div class="metaweb-tab-container p-d-flex p-flex-column" :style="mainDescriptor.style.flexOne">
+        <div class="metaweb-tab-container p-d-flex p-flex-column kn-flex">
             <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
-            <TabView v-if="!loading" class="metaweb-tabview" :style="mainDescriptor.style.flex">
+            <TabView v-if="!loading" class="metaweb-tabview p-d-flex p-flex-column kn-flex">
                 <TabPanel>
                     <template #header>
                         <span>{{ $t('metaweb.businessModel.title') }}</span>
                     </template>
-                    test1
+                    <BusinessModelTab />
                 </TabPanel>
                 <TabPanel>
                     <template #header>
@@ -34,9 +34,11 @@ import mainDescriptor from './MetawebDescriptor.json'
 import Dialog from 'primevue/dialog'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
+import BusinessModelTab from './businessModel/MetawebBusinessModel.vue'
+
 export default defineComponent({
     name: 'metaweb',
-    components: { TabView, TabPanel, Dialog },
+    components: { BusinessModelTab, TabView, TabPanel, Dialog },
     props: { visible: { type: Boolean } },
     emits: ['closeMetaweb'],
     data() {
