@@ -238,7 +238,7 @@
 
             <GenerateDatamartCard v-if="generateDatamartVisible" :businessModel="selectedBusinessModel" :user="user" @close="generateDatamartVisible = false" @generated="onDatamartGenerated"></GenerateDatamartCard>
 
-            <MetawebSelectDialog :visible="metawebSelectDialogVisible" @close="metawebSelectDialogVisible = false"></MetawebSelectDialog>
+            <MetawebSelectDialog :visible="metawebSelectDialogVisible" :selectedBusinessModel="selectedBusinessModel" @close="metawebSelectDialogVisible = false"></MetawebSelectDialog>
         </template>
     </Card>
 </template>
@@ -384,11 +384,6 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
-.input-container {
-    flex: 0.5;
-}
-</style>
 <style lang="scss">
 .full-screen-dialog.p-dialog {
     max-height: 100%;

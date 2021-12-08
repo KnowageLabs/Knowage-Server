@@ -1,9 +1,11 @@
 {
-    "style": {
-        "flex": {
+    "dialog": {
+        "style": {
             "display": "flex",
             "flex": 1,
-            "flex-direction": "column"
+            "flex-direction": "column",
+            "height": "100vh",
+            "padding": "1rem"
         }
     }
 }
