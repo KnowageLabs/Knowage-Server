@@ -10,8 +10,8 @@
                     <Button class="kn-button p-button-text" :label="$t('common.continue')" @click="onContinue"></Button>
                 </template>
             </Toolbar>
-            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="true" />
         </template>
+        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="true" />
 
         <DataTable :value="rows" class="p-datatable-sm kn-table" v-model:filters="filters" :globalFilterFields="metawebSelectDialogDescriptor.globalFilterFields" responsiveLayout="stack" breakpoint="960px">
             <template #empty>
@@ -146,9 +146,47 @@ export default defineComponent({
         },
         closeDialog() {
             this.$emit('close')
+            this.selected = {}
+            this.allPhysicalSelected = false
+            this.allBusinessSelected = false
         },
         onContinue() {
-            console.log('CONTINUE CLICKED!')
+            console.log('CONTINUE CLICKED!', this.selected)
+
+            if (!this.checkIfPhysicalModelIsSelected()) {
+                console.log('NOT SELECTED!')
+                return
+            }
+
+            this.loading = true
+            const physicalModels = [] as string[]
+            const businessModels = [] as string[]
+
+            Object.keys(this.selected).forEach((key: string) => {
+                // console.log('CURRENT ON CONTINUE: ', this.selected[key])
+                if (this.selected[key].physical) physicalModels.push(key)
+                if (this.selected[key].business) businessModels.push(key)
+            })
+
+            const postData = { datasourceId: '' + this.businessModel?.dataSourceId, physicalModels: physicalModels, businessModels: businessModels, modelName: this.businessModel?.name }
+
+            console.log('DATA FOR SENDING: ', postData)
+            this.loading = false
+        },
+        checkIfPhysicalModelIsSelected() {
+            let isSelected = false
+            const keys = Object.keys(this.selected)
+
+            for (let i = 0; i < keys.length; i++) {
+                // console.log('TEMP: ', this.selected[keys[i]])
+                if (this.selected[keys[i]].physical) {
+                    isSelected = true
+                    break
+                }
+            }
+
+            // console.log('IS SELECTED: ', isSelected)
+            return isSelected
         }
     }
 })
