@@ -63,6 +63,7 @@ export default defineComponent({
     name: 'metaweb-select-dialog',
     components: { Checkbox, Column, DataTable, Dialog },
     props: { visible: { type: Boolean }, selectedBusinessModel: { type: Object as PropType<iBusinessModel> } },
+    emits: ['close', 'metaSelected'],
     data() {
         return {
             metawebSelectDialogDescriptor,
@@ -94,7 +95,6 @@ export default defineComponent({
         },
         loadBusinessModel() {
             this.businessModel = this.selectedBusinessModel as iBusinessModel
-            console.log('LOADED BUSINESS MODEL: ', this.businessModel)
         },
         async loadDatasourceStructure() {
             this.loading = true
@@ -102,7 +102,6 @@ export default defineComponent({
                 await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources/structure/${this.businessModel.dataSourceId}`).then((response: AxiosResponse<any>) => (this.datasourceStructure = response.data))
             }
             this.loading = false
-            console.log('LOADED DATASOURCE STRUCTURE: ', this.datasourceStructure)
         },
         loadRows() {
             this.rows = []
@@ -112,20 +111,13 @@ export default defineComponent({
                     this.selected[key] = { physical: false, business: false }
                 })
             }
-            console.log('LOADED ROWS: ', this.rows)
-            console.log('LOADED SELECTED: ', this.selected)
         },
         setChecked(row: { value: string }, typeChecked: string) {
-            console.log('SET CHECKED TEST: ', row)
-            console.log('SELECTED AFTER CHECK: ', this.selected)
-
             if (typeChecked === 'business' && this.selected[row.value].business) {
                 this.selected[row.value].physical = true
             } else if (typeChecked === 'physical' && !this.selected[row.value].physical) {
                 this.selected[row.value].business = false
             }
-
-            console.log('SELECTED AFTER CHANGES AFTER CHECK: ', this.selected)
         },
         setAllChecked(typeChecked: string) {
             Object.keys(this.selected).forEach((key: string) => {
@@ -150,42 +142,50 @@ export default defineComponent({
             this.allPhysicalSelected = false
             this.allBusinessSelected = false
         },
-        onContinue() {
-            console.log('CONTINUE CLICKED!', this.selected)
-
+        async onContinue() {
             if (!this.checkIfPhysicalModelIsSelected()) {
-                console.log('NOT SELECTED!')
+                this.$store.commit('setError', {
+                    title: this.$t('common.error.generic'),
+                    msg: this.$t('metaweb.selectDialog.noPhysicalModelsSelectedError')
+                })
                 return
             }
 
+            await this.sendCheckedMetaweb()
+        },
+        async sendCheckedMetaweb() {
             this.loading = true
             const physicalModels = [] as string[]
             const businessModels = [] as string[]
 
+            this.prepareDataForPost(physicalModels, businessModels)
+
+            await this.$http
+                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/create`, { datasourceId: '' + this.businessModel?.dataSourceId, physicalModels: physicalModels, businessModels: businessModels, modelName: this.businessModel?.name })
+                .then((response: AxiosResponse<any>) => {
+                    this.$emit('metaSelected', response.data)
+                })
+                .catch(() => {})
+
+            this.loading = false
+        },
+        prepareDataForPost(physicalModels, businessModels) {
             Object.keys(this.selected).forEach((key: string) => {
-                // console.log('CURRENT ON CONTINUE: ', this.selected[key])
                 if (this.selected[key].physical) physicalModels.push(key)
                 if (this.selected[key].business) businessModels.push(key)
             })
-
-            const postData = { datasourceId: '' + this.businessModel?.dataSourceId, physicalModels: physicalModels, businessModels: businessModels, modelName: this.businessModel?.name }
-
-            console.log('DATA FOR SENDING: ', postData)
-            this.loading = false
         },
         checkIfPhysicalModelIsSelected() {
             let isSelected = false
             const keys = Object.keys(this.selected)
 
             for (let i = 0; i < keys.length; i++) {
-                // console.log('TEMP: ', this.selected[keys[i]])
                 if (this.selected[keys[i]].physical) {
                     isSelected = true
                     break
                 }
             }
 
-            // console.log('IS SELECTED: ', isSelected)
             return isSelected
         }
     }
