@@ -237,6 +237,8 @@
             </Dialog>
 
             <GenerateDatamartCard v-if="generateDatamartVisible" :businessModel="selectedBusinessModel" :user="user" @close="generateDatamartVisible = false" @generated="onDatamartGenerated"></GenerateDatamartCard>
+
+            <MetawebSelectDialog :visible="metawebSelectDialogVisible" @close="metawebSelectDialogVisible = false"></MetawebSelectDialog>
         </template>
     </Card>
 </template>
@@ -254,6 +256,7 @@ import GenerateDatamartCard from './GenerateDatamartCard.vue'
 import InputSwitch from 'primevue/inputswitch'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import MetawebSelectDialog from '../../metaweb/MetawebSelectDialog/MetawebSelectDialog.vue'
 import useValidate from '@vuelidate/core'
 
 export default defineComponent({
@@ -265,7 +268,8 @@ export default defineComponent({
         GenerateDatamartCard,
         InputSwitch,
         KnInputFile,
-        KnValidationMessages
+        KnValidationMessages,
+        MetawebSelectDialog
     },
     props: {
         selectedBusinessModel: {
@@ -338,6 +342,7 @@ export default defineComponent({
             metaWebVisible: false,
             showMetaWeb: false,
             generateDatamartVisible: false,
+            metawebSelectDialogVisible: false,
             touched: false,
             v$: useValidate() as any
         }
@@ -370,7 +375,7 @@ export default defineComponent({
             this.$emit('fieldChanged', { fieldName: 'smartView', value: this.businessModel.smartView })
         },
         goToMetaWeb() {
-            this.showMetaWeb = true
+            this.metawebSelectDialogVisible = true
         },
         onDatamartGenerated() {
             this.$emit('datamartGenerated')
