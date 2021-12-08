@@ -24,7 +24,7 @@
 
             <!-- {{ tabs }} -->
 
-            <DocumentBrowserTab v-if="selectedItem" :item="selectedItem.item" :mode="selectedItem.mode" @close="closeDocument('current')"></DocumentBrowserTab>
+            <DocumentBrowserTab v-show="selectedItem" :item="selectedItem?.item" :mode="selectedItem?.mode" @close="closeDocument('current')"></DocumentBrowserTab>
             <div id="document-browser-tab-icon-container" v-if="activeIndex !== 0">
                 <i id="document-browser-tab-icon" class="fa fa-times-circle" @click="toggle($event)"></i>
                 <Menu ref="menu" :model="menuItems" :popup="true" />

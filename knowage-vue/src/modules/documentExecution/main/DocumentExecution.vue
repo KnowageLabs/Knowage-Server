@@ -20,6 +20,8 @@
     <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
     <DocumentExecutionBreadcrumb v-if="breadcrumbs.length > 1" :breadcrumbs="breadcrumbs" @breadcrumbClicked="onBreadcrumbClick"></DocumentExecutionBreadcrumb>
 
+    <!-- <button @click="test">TEST</button> -->
+
     <div ref="document-execution-view" id="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
         <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
 
@@ -29,7 +31,14 @@
         </template>
 
         <!-- <iframe id="documentFrame" name="documentFrame" v-else-if="mode === 'iframe'" class="document-execution-iframe" :src="url"></iframe> -->
-        <iframe id="documentFrame" name="documentFrame" v-show="mode === 'iframe' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible" class="document-execution-iframe"></iframe>
+        <iframe
+            v-for="(item, index) in breadcrumbs"
+            :key="index"
+            ref="documentFrame"
+            :name="'documentFrame' + index"
+            v-show="mode === 'iframe' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && item.label === document.label"
+            class="document-execution-iframe"
+        ></iframe>
 
         <DocumentExecutionSchedulationsTable id="document-execution-schedulations-table" v-if="schedulationsTableVisible" :propSchedulations="schedulations" @deleteSchedulation="onDeleteSchedulation" @close="schedulationsTableVisible = false"></DocumentExecutionSchedulationsTable>
 
@@ -122,8 +131,28 @@ export default defineComponent({
             linkParameters: [],
             embed: false,
             userRole: null,
-            loading: false
+            loading: false,
+            iframeMounted: false,
+            iframe: null as any
         }
+    },
+    beforeUpdate() {
+        console.log('>>>>>>> BEFORE UPDATE CALLED')
+    },
+    activated() {
+        console.log('>>>>>>> ACTIVATED')
+    },
+    deactivated() {
+        console.log('>>>>>>> DEACTIVATED')
+    },
+    mounted() {
+        console.log('111 - MOUNTED: ', this.iframeMounted)
+        // console.log('111 - REFS: ', this.$refs)
+        if (!this.iframeMounted) {
+            this.iframe = this.$refs['documentFrame']
+            this.iframeMounted = true
+        }
+        console.log('111 - IFRAME: ', this.iframe)
     },
     computed: {
         sessionRole(): string {
@@ -421,6 +450,8 @@ export default defineComponent({
             // console.log('LOADED EXPORTERS: ', this.exporters)
         },
         async sendForm() {
+            const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+
             const documentUrl = this.urlData?.url + '&timereloadurl=' + new Date().getTime()
             const postObject = { params: { document: null } as any, url: documentUrl.split('?')[0] }
             postObject.params.documentMode = this.documentMode
@@ -439,7 +470,8 @@ export default defineComponent({
                 postForm.id = 'postForm_' + postObject.params.document
                 postForm.action = 'http://localhost:8080' + postObject.url
                 postForm.method = 'post'
-                postForm.target = 'documentFrame'
+                postForm.target = 'documentFrame' + tempIndex
+                // postForm.target = 'documentFrame'
                 document.body.appendChild(postForm)
             }
 
@@ -696,7 +728,7 @@ export default defineComponent({
             this.urlData = item.urlData
             this.hiddenFormData = item.hiddenFormData
 
-            this.loadPage()
+            // this.loadPage()
         },
         async onRoleChange(role: string) {
             this.userRole = role as any
@@ -755,6 +787,9 @@ export default defineComponent({
 
             console.log('FORMATED PARAMS AT END: ', formatedParams)
             return formatedParams
+        },
+        test() {
+            console.log('IFRAME: ', this.iframe)
         }
     }
 })
