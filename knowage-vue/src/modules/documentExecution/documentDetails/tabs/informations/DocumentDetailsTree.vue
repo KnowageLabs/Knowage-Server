@@ -32,6 +32,7 @@ export default defineComponent({
         propFunctionalities() {
             this.loadFunctionalities()
             this.createNodeTree()
+            this.expandAll()
         },
         propSelectedFolders() {
             this.loadSelectedFolders()
@@ -40,6 +41,7 @@ export default defineComponent({
     created() {
         this.loadFunctionalities()
         this.createNodeTree()
+        this.expandAll()
         this.loadSelectedFolders()
     },
     methods: {
@@ -109,6 +111,12 @@ export default defineComponent({
                 }
                 return tempFolder
             }
+        },
+        expandAll() {
+            for (let node of this.nodes) {
+                this.expandNode(node)
+            }
+            this.expandedKeys = { ...this.expandedKeys }
         },
         expandNode(node: any) {
             if (node.children && node.children.length) {
