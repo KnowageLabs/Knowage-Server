@@ -7,12 +7,14 @@
                     <Button class="p-button-text p-button-rounded p-button-plain p-button-sm">{{ $t('metaweb.physicalModel.updatePhysicalModel') }}</Button>
                 </template>
             </Toolbar>
+
+            <MetawebPhysicalModelList :propPhysicalModels="meta.physicalModels"></MetawebPhysicalModelList>
         </div>
 
         <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 p-d-flex p-flex-column">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
-                    test
+                    NAME OF THE ITEM
                 </template>
             </Toolbar>
             <div class="metaweb-tab-container p-d-flex p-flex-column kn-flex">
@@ -35,16 +37,27 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import mock from './mock.json'
+import MetawebPhysicalModelList from './metawebPhysicalModelList/MetawebPhysicalModelList.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'metaweb-physical-model',
-    components: { TabView, TabPanel },
+    components: { MetawebPhysicalModelList, TabView, TabPanel },
     data() {
-        return {}
+        return {
+            meta: null as any
+        }
     },
-    async created() {},
-    methods: {}
+    created() {
+        this.loadMeta()
+    },
+    methods: {
+        loadMeta() {
+            this.meta = mock
+            console.log('LOADED META: ', this.meta)
+        }
+    }
 })
 </script>

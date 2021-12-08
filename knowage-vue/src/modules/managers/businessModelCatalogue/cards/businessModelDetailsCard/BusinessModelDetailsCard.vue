@@ -259,7 +259,7 @@ import GenerateDatamartCard from './GenerateDatamartCard.vue'
 import InputSwitch from 'primevue/inputswitch'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import MetawebSelectDialog from '../../metaweb/MetawebSelectDialog/MetawebSelectDialog.vue'
+import MetawebSelectDialog from '../../metaweb/metawebSelectDialog/MetawebSelectDialog.vue'
 import Metaweb from '@/modules/managers/businessModelCatalogue/metaweb/Metaweb.vue'
 import useValidate from '@vuelidate/core'
 

@@ -22,6 +22,8 @@
                     <template #header>
                         <span>{{ $t('metaweb.physicalModel.title') }}</span>
                     </template>
+
+                    <MetawebPhysicalModel></MetawebPhysicalModel>
                 </TabPanel>
             </TabView>
         </div>
@@ -35,10 +37,11 @@ import Dialog from 'primevue/dialog'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import BusinessModelTab from './businessModel/MetawebBusinessModel.vue'
+import MetawebPhysicalModel from './physicalModel/MetawebPhysicalModel.vue'
 
 export default defineComponent({
     name: 'metaweb',
-    components: { BusinessModelTab, TabView, TabPanel, Dialog },
+    components: { BusinessModelTab, MetawebPhysicalModel, TabView, TabPanel, Dialog },
     props: { visible: { type: Boolean } },
     emits: ['closeMetaweb'],
     data() {
