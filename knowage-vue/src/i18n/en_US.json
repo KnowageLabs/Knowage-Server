@@ -481,28 +481,6 @@
         "warningBeforeDelete": "You are attempting to remove {0} license. This operation cannot be undone. After deletion, you will have to log in again.",
         "wrongType": "You have chosen wrong type of license"
     },
-    "metaweb": {
-        "title": "Metaweb",
-        "businessModel": {
-            "title": "Business Model",
-            "businessClass": "Business Class",
-            "businessView": "Business View",
-            "tabView": {
-                "propertyTitle": "Property List",
-                "attributes": "Attributes",
-                "calcField": "Calculated Field",
-                "inbound": "Inbound",
-                "outbound": "Outbound",
-                "filter": "Filter"
-            }
-        },
-        "physicalModel": {
-            "title": "Physical Model",
-            "tables": "Tables",
-            "update": "Update Physical Model",
-            "fkey": "Foreign Key"
-        }
-    },
     "managers": {
         "businessModelManager": {
             "add": "Add",
@@ -1506,6 +1484,31 @@
         "importExport": "Artifacts",
         "modelCatalogResourceManagement": "Models manager",
         "resourceManagement": "Resource manager"
+    },
+    "metaweb": {
+        "businessModel": {
+            "businessClass": "Business Class",
+            "businessView": "Business View",
+            "tabView": {
+                "attributes": "Attributes",
+                "calcField": "Calculated Field",
+                "filter": "Filter",
+                "inbound": "Inbound",
+                "outbound": "Outbound",
+                "propertyTitle": "Property List"
+            },
+            "title": "Business Model"
+        },
+        "physicalModel": {
+            "fkey": "Foreign Key",
+            "tables": "Tables",
+            "title": "Physical Model",
+            "update": "Update Physical Model"
+        },
+        "selectDialog": {
+            "tableName": "Table Name"
+        },
+        "title": "Metaweb"
     },
     "newsDialog": {
         "description": "Description",

@@ -13,12 +13,37 @@
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="true" />
         </template>
 
-        <DataTable :value="rows" class="p-datatable-sm kn-table" responsiveLayout="stack" breakpoint="960px">
+        <DataTable :value="rows" class="p-datatable-sm kn-table" v-model:filters="filters" :globalFilterFields="metawebSelectDialogDescriptor.globalFilterFields" responsiveLayout="stack" breakpoint="960px">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
 
-            <Column field="value" :header="$t('common.name')"></Column>
+            <template #header>
+                <div class="table-header p-d-flex">
+                    <span class="p-input-icon-left p-mr-3 p-col-12">
+                        <i class="pi pi-search" />
+                        <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
+                    </span>
+                </div>
+            </template>
+
+            <Column field="value" :header="$t('metaweb.selectDialog.tableName')"></Column>
+            <Column :header="$t('metaweb.physicalModel.title')" :style="metawebSelectDialogDescriptor.table.checkboxColumn.style">
+                <template #header>
+                    <Checkbox class="p-mr-2" v-model="allPhysicalSelected" :binary="true" @change="setAllChecked('physical')" />
+                </template>
+                <template #body="slotProps">
+                    <Checkbox v-model="selected[slotProps.data.value].physical" :binary="true" @change="setChecked(slotProps.data, 'physical')" />
+                </template>
+            </Column>
+            <Column :header="$t('metaweb.businessModel.title')" :style="metawebSelectDialogDescriptor.table.checkboxColumn.style">
+                <template #header>
+                    <Checkbox class="p-mr-2" v-model="allBusinessSelected" :binary="true" @change="setAllChecked('business')" />
+                </template>
+                <template #body="slotProps">
+                    <Checkbox v-model="selected[slotProps.data.value].business" :binary="true" @change="setChecked(slotProps.data, 'business')" />
+                </template>
+            </Column>
         </DataTable>
     </Dialog>
 </template>
@@ -27,6 +52,8 @@
 import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { iBusinessModel } from '../../BusinessModelCatalogue'
+import { filterDefault } from '@/helpers/commons/filterHelper'
+import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
@@ -34,14 +61,20 @@ import metawebSelectDialogDescriptor from './MetawebSelectDialogDescriptor.json'
 
 export default defineComponent({
     name: 'metaweb-select-dialog',
-    components: { Column, DataTable, Dialog },
+    components: { Checkbox, Column, DataTable, Dialog },
     props: { visible: { type: Boolean }, selectedBusinessModel: { type: Object as PropType<iBusinessModel> } },
     data() {
         return {
             metawebSelectDialogDescriptor,
             businessModel: null as iBusinessModel | null,
             datasourceStructure: null as any,
-            rows: [] as any[],
+            rows: [] as { value: string }[],
+            selected: {} as any,
+            allPhysicalSelected: false,
+            allBusinessSelected: false,
+            filters: {
+                global: [filterDefault]
+            } as Object,
             loading: false
         }
     },
@@ -57,6 +90,7 @@ export default defineComponent({
         async loadData() {
             this.loadBusinessModel()
             await this.loadDatasourceStructure()
+            this.loadRows()
         },
         loadBusinessModel() {
             this.businessModel = this.selectedBusinessModel as iBusinessModel
@@ -69,6 +103,46 @@ export default defineComponent({
             }
             this.loading = false
             console.log('LOADED DATASOURCE STRUCTURE: ', this.datasourceStructure)
+        },
+        loadRows() {
+            this.rows = []
+            if (this.datasourceStructure) {
+                Object.keys(this.datasourceStructure).forEach((key: string) => {
+                    this.rows.push({ value: key })
+                    this.selected[key] = { physical: false, business: false }
+                })
+            }
+            console.log('LOADED ROWS: ', this.rows)
+            console.log('LOADED SELECTED: ', this.selected)
+        },
+        setChecked(row: { value: string }, typeChecked: string) {
+            console.log('SET CHECKED TEST: ', row)
+            console.log('SELECTED AFTER CHECK: ', this.selected)
+
+            if (typeChecked === 'business' && this.selected[row.value].business) {
+                this.selected[row.value].physical = true
+            } else if (typeChecked === 'physical' && !this.selected[row.value].physical) {
+                this.selected[row.value].business = false
+            }
+
+            console.log('SELECTED AFTER CHANGES AFTER CHECK: ', this.selected)
+        },
+        setAllChecked(typeChecked: string) {
+            Object.keys(this.selected).forEach((key: string) => {
+                if (typeChecked === 'business') {
+                    this.selected[key].business = this.allBusinessSelected
+                    if (this.allBusinessSelected) {
+                        this.selected[key].physical = true
+                        this.allPhysicalSelected = true
+                    }
+                } else {
+                    this.selected[key].physical = this.allPhysicalSelected
+                    if (!this.allPhysicalSelected) {
+                        this.selected[key].business = false
+                        this.allBusinessSelected = false
+                    }
+                }
+            })
         },
         closeDialog() {
             this.$emit('close')

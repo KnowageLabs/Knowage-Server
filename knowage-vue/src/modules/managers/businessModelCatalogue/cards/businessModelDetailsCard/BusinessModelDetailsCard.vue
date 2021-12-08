@@ -240,7 +240,6 @@
             <GenerateDatamartCard v-if="generateDatamartVisible" :businessModel="selectedBusinessModel" :user="user" @close="generateDatamartVisible = false" @generated="onDatamartGenerated"></GenerateDatamartCard>
 
             <MetawebSelectDialog :visible="metawebSelectDialogVisible" :selectedBusinessModel="selectedBusinessModel" @close="metawebSelectDialogVisible = false"></MetawebSelectDialog>
-            <MetawebSelectDialog :visible="metawebSelectDialogVisible" @close="metawebSelectDialogVisible = false"></MetawebSelectDialog>
 
             <Metaweb :visible="metawebDialogVisible" @closeMetaweb="metawebDialogVisible = false" />
         </template>
