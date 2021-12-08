@@ -63,6 +63,7 @@ export default defineComponent({
     name: 'metaweb-select-dialog',
     components: { Checkbox, Column, DataTable, Dialog },
     props: { visible: { type: Boolean }, selectedBusinessModel: { type: Object as PropType<iBusinessModel> } },
+    emits: ['close', 'metaSelected'],
     data() {
         return {
             metawebSelectDialogDescriptor,
@@ -150,11 +151,15 @@ export default defineComponent({
             this.allPhysicalSelected = false
             this.allBusinessSelected = false
         },
-        onContinue() {
+        async onContinue() {
             console.log('CONTINUE CLICKED!', this.selected)
 
             if (!this.checkIfPhysicalModelIsSelected()) {
                 console.log('NOT SELECTED!')
+                this.$store.commit('setError', {
+                    title: this.$t('common.error.generic'),
+                    msg: this.$t('metaweb.selectDialog.noPhysicalModelsSelectedError')
+                })
                 return
             }
 
@@ -171,6 +176,14 @@ export default defineComponent({
             const postData = { datasourceId: '' + this.businessModel?.dataSourceId, physicalModels: physicalModels, businessModels: businessModels, modelName: this.businessModel?.name }
 
             console.log('DATA FOR SENDING: ', postData)
+
+            await this.$http
+                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/create`, postData)
+                .then((response: AxiosResponse<any>) => {
+                    this.$emit('metaSelected', response.data)
+                })
+                .catch(() => {})
+
             this.loading = false
         },
         checkIfPhysicalModelIsSelected() {

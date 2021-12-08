@@ -239,9 +239,9 @@
 
             <GenerateDatamartCard v-if="generateDatamartVisible" :businessModel="selectedBusinessModel" :user="user" @close="generateDatamartVisible = false" @generated="onDatamartGenerated"></GenerateDatamartCard>
 
-            <MetawebSelectDialog :visible="metawebSelectDialogVisible" :selectedBusinessModel="selectedBusinessModel" @close="metawebSelectDialogVisible = false"></MetawebSelectDialog>
+            <MetawebSelectDialog :visible="metawebSelectDialogVisible" :selectedBusinessModel="selectedBusinessModel" @close="metawebSelectDialogVisible = false" @metaSelected="onMetaSelect"></MetawebSelectDialog>
 
-            <Metaweb :visible="metawebDialogVisible" @closeMetaweb="metawebDialogVisible = false" />
+            <Metaweb :visible="metawebDialogVisible" :meta="meta" @closeMetaweb="metawebDialogVisible = false" />
         </template>
     </Card>
 </template>
@@ -349,6 +349,7 @@ export default defineComponent({
             generateDatamartVisible: false,
             metawebSelectDialogVisible: false,
             metawebDialogVisible: false,
+            meta: null as any,
             touched: false,
             v$: useValidate() as any
         }
@@ -388,6 +389,12 @@ export default defineComponent({
         },
         onDatamartGenerated() {
             this.$emit('datamartGenerated')
+        },
+        onMetaSelect(meta: any) {
+            console.log('META ON SELECT: ', meta)
+            this.meta = meta
+            this.metawebSelectDialogVisible = false
+            this.metawebDialogVisible = true
         }
     }
 })
