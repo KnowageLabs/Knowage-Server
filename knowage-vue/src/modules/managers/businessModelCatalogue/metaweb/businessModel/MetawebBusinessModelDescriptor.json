@@ -1,0 +1,22 @@
+{
+    "filterFields": ["name"],
+    "style": {
+        "businessClassListContainer": {
+            "height": "calc(100% - 36px)",
+            "overflow-x": "hidden",
+            "overflow-y": "auto",
+            "position": "absolute",
+            "width": "100%"
+        },
+        "businessViewListContainer": {
+            "height": "calc(100% - 36px)",
+            "overflow-x": "hidden",
+            "overflow-y": "auto",
+            "position": "absolute",
+            "width": "100%"
+        },
+        "mainList": {
+            "height": "100%"
+        }
+    }
+}
