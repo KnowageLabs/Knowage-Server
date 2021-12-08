@@ -1,6 +1,6 @@
 <template>
     <div class="p-grid p-m-0 kn-flex">
-        <div id="CONTAINER ELEMENT 1 " class="p-col-4 p-sm-4 p-md-3 p-p-0 p-d-flex p-flex-column kn-flex">
+        <div id="CONTAINER ELEMENT LIST" class="p-col-4 p-sm-4 p-md-3 p-p-0 p-d-flex p-flex-column kn-flex">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #left> {{ $t('metaweb.businessModel.businessClass') }}/{{ $t('metaweb.businessModel.businessView') }} </template>
                 <template #right>
@@ -13,7 +13,7 @@
                 </div>
             </div>
         </div>
-        <div id="CONTAINER ELEMENT 2 " class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 p-d-flex p-flex-column" :style="mainDescriptor.style.flex3">
+        <div id="CONTAINER ELEMENT DETAILS" class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 p-d-flex p-flex-column" :style="mainDescriptor.style.flex3">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
                     test
@@ -23,10 +23,10 @@
                 </template>
             </Toolbar>
             <div class="metaweb-tab-container p-d-flex p-flex-column kn-flex">
-                <TabView class="metaweb-tabview p-d-flex p-flex-column kn-flex">
+                <TabView class="metaweb-tabview p-d-flex p-flex-column kn-flex" scrollable>
                     <TabPanel>
                         <template #header>
-                            <span>{{ $t('metaweb.businessModel.title') }}</span>
+                            <span>{{ $t('metaweb.businessModel.tabView.propertyTitle') }}</span>
                         </template>
                         <div :style="mainDescriptor.style.absoluteScroll">
                             {{ mainDescriptor.test }}
@@ -34,7 +34,39 @@
                     </TabPanel>
                     <TabPanel>
                         <template #header>
-                            <span>{{ $t('metaweb.physicalModel.title') }}</span>
+                            <span>{{ $t('metaweb.businessModel.tabView.attributes') }}</span>
+                        </template>
+                        <div :style="mainDescriptor.style.absoluteScroll">
+                            {{ mainDescriptor.test }}
+                        </div>
+                    </TabPanel>
+                    <TabPanel>
+                        <template #header>
+                            <span>{{ $t('metaweb.businessModel.tabView.calcField') }}</span>
+                        </template>
+                        <div :style="mainDescriptor.style.absoluteScroll">
+                            {{ mainDescriptor.test }}
+                        </div>
+                    </TabPanel>
+                    <TabPanel>
+                        <template #header>
+                            <span>{{ $t('metaweb.businessModel.tabView.outbound') }}</span>
+                        </template>
+                        <div :style="mainDescriptor.style.absoluteScroll">
+                            {{ mainDescriptor.test }}
+                        </div>
+                    </TabPanel>
+                    <TabPanel>
+                        <template #header>
+                            <span>{{ $t('metaweb.businessModel.tabView.filter') }}</span>
+                        </template>
+                        <div :style="mainDescriptor.style.absoluteScroll">
+                            {{ mainDescriptor.test }}
+                        </div>
+                    </TabPanel>
+                    <TabPanel>
+                        <template #header>
+                            <span>{{ $t('metaweb.businessModel.tabView.propertyTitle') }}</span>
                         </template>
                         <div :style="mainDescriptor.style.absoluteScroll">
                             {{ mainDescriptor.test }}
