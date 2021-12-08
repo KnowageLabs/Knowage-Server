@@ -140,6 +140,7 @@
                     <div class="input-container p-d-flex p-flex-row" v-else-if="metaWebVisible">
                         <div class="p-m-2">
                             <Button class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.metaWeb')" @click="goToMetaWeb" data-test="metaweb-button"></Button>
+                            <Button class="kn-button kn-button--primary" label="MainMetaweb" @click="openMetaWeb"></Button>
                         </div>
                         <div class="p-m-2" v-if="toGenerate">
                             <Button class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.generate')" @click="generateDatamartVisible = true"></Button>
@@ -239,6 +240,9 @@
             <GenerateDatamartCard v-if="generateDatamartVisible" :businessModel="selectedBusinessModel" :user="user" @close="generateDatamartVisible = false" @generated="onDatamartGenerated"></GenerateDatamartCard>
 
             <MetawebSelectDialog :visible="metawebSelectDialogVisible" :selectedBusinessModel="selectedBusinessModel" @close="metawebSelectDialogVisible = false"></MetawebSelectDialog>
+            <MetawebSelectDialog :visible="metawebSelectDialogVisible" @close="metawebSelectDialogVisible = false"></MetawebSelectDialog>
+
+            <Metaweb :visible="metawebDialogVisible" @closeMetaweb="metawebDialogVisible = false" />
         </template>
     </Card>
 </template>
@@ -257,6 +261,7 @@ import InputSwitch from 'primevue/inputswitch'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import MetawebSelectDialog from '../../metaweb/MetawebSelectDialog/MetawebSelectDialog.vue'
+import Metaweb from '@/modules/managers/businessModelCatalogue/metaweb/Metaweb.vue'
 import useValidate from '@vuelidate/core'
 
 export default defineComponent({
@@ -269,7 +274,8 @@ export default defineComponent({
         InputSwitch,
         KnInputFile,
         KnValidationMessages,
-        MetawebSelectDialog
+        MetawebSelectDialog,
+        Metaweb
     },
     props: {
         selectedBusinessModel: {
@@ -343,6 +349,7 @@ export default defineComponent({
             showMetaWeb: false,
             generateDatamartVisible: false,
             metawebSelectDialogVisible: false,
+            metawebDialogVisible: false,
             touched: false,
             v$: useValidate() as any
         }
@@ -376,6 +383,9 @@ export default defineComponent({
         },
         goToMetaWeb() {
             this.metawebSelectDialogVisible = true
+        },
+        openMetaWeb() {
+            this.metawebDialogVisible = true
         },
         onDatamartGenerated() {
             this.$emit('datamartGenerated')
