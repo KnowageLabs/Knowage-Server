@@ -8,13 +8,13 @@
                 </template>
             </Toolbar>
 
-            <MetawebPhysicalModelList :propMeta="meta"></MetawebPhysicalModelList>
+            <MetawebPhysicalModelList :propMeta="meta" @selected="onSelectedItem"></MetawebPhysicalModelList>
         </div>
 
         <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 p-d-flex p-flex-column">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
-                    NAME OF THE ITEM
+                    {{ selectedItem?.name }}
                 </template>
             </Toolbar>
             <div class="metaweb-tab-container p-d-flex p-flex-column kn-flex">
@@ -37,6 +37,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { iColumn, iPhysicalModel } from '../Metaweb'
 import mock from './mock.json'
 import MetawebPhysicalModelList from './metawebPhysicalModelList/MetawebPhysicalModelList.vue'
 import TabView from 'primevue/tabview'
@@ -47,7 +48,8 @@ export default defineComponent({
     components: { MetawebPhysicalModelList, TabView, TabPanel },
     data() {
         return {
-            meta: null as any
+            meta: null as any,
+            selectedItem: null as iColumn | iPhysicalModel | null
         }
     },
     created() {
@@ -57,6 +59,10 @@ export default defineComponent({
         loadMeta() {
             this.meta = mock
             console.log('LOADED META: ', this.meta)
+        },
+        onSelectedItem(selectedItem: iColumn | iPhysicalModel) {
+            this.selectedItem = selectedItem
+            console.log('SELECTED ITEM: ', this.selectedItem)
         }
     }
 })
