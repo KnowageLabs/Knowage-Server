@@ -1491,11 +1491,17 @@
     },
     "metaweb": {
         "businessModel": {
+            "sourceHint": "Select source table",
+            "targetHint": "Select target table",
+            "summaryHint": "Link tables to see the summary",
             "businessClass": "Business Class",
             "businessView": "Business View",
             "newBusiness": "New Business Class",
             "newView": "New Business View",
             "physTable": "Physical Table",
+            "sourceAttr": "Source Attributes",
+            "sourceTable": "Source Table",
+            "summary": "Summary",
             "tabView": {
                 "attributes": "Attributes",
                 "calcField": "Calculated Field",
@@ -1504,6 +1510,8 @@
                 "outbound": "Outbound",
                 "propertyTitle": "Property List"
             },
+            "targetAttr": "Target Attributes",
+            "targetTable": "Target Table",
             "title": "Business Model"
         },
         "physicalModel": {

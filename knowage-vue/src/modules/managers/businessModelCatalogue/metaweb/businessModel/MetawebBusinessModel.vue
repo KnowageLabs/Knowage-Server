@@ -113,6 +113,7 @@
     </div>
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     <BusinessClassDialog v-if="showBusinessClassDialog" :physicalModels="metaMock.metaSales.physicalModels" :showBusinessClassDialog="showBusinessClassDialog" @closeDialog="showBusinessClassDialog = false" />
+    <BusinessViewDialog v-if="showBusinessViewDialog" :physicalModels="metaMock.metaSales.physicalModels" :showBusinessViewDialog="showBusinessViewDialog" @closeDialog="showBusinessViewDialog = false" />
 </template>
 
 <script lang="ts">
@@ -126,10 +127,11 @@ import metaMock from '../MetawebMock.json'
 import bmDescriptor from './MetawebBusinessModelDescriptor.json'
 import Menu from 'primevue/contextmenu'
 import BusinessClassDialog from './dialogs/MetawebBusinessClassDialog.vue'
+import BusinessViewDialog from './dialogs/MetawebBusinessViewDialog.vue'
 
 export default defineComponent({
     name: 'metaweb-business-model',
-    components: { BusinessClassDialog, KnFabButton, TabView, TabPanel, Listbox, Menu },
+    components: { BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Listbox, Menu },
     props: {},
     computed: {},
     data() {
@@ -138,7 +140,8 @@ export default defineComponent({
             mainDescriptor,
             metaMock,
             menuButtons: [] as any,
-            showBusinessClassDialog: false
+            showBusinessClassDialog: false,
+            showBusinessViewDialog: false
         }
     },
     created() {
@@ -152,13 +155,16 @@ export default defineComponent({
         },
         createMenuItems() {
             this.menuButtons = []
-            this.menuButtons.push({ key: '0', label: this.$t('metaweb.businessModel.newBusiness'), command: () => this.dbm() }, { key: '1', label: this.$t('metaweb.businessModel.newView'), command: () => this.logEvent })
+            this.menuButtons.push({ key: '0', label: this.$t('metaweb.businessModel.newBusiness'), command: () => this.showBusinessClass() }, { key: '1', label: this.$t('metaweb.businessModel.newView'), command: () => this.showBusinessView() })
         },
         logEvent(event) {
             console.log(event)
         },
-        dbm() {
+        showBusinessClass() {
             this.showBusinessClassDialog = true
+        },
+        showBusinessView() {
+            this.showBusinessViewDialog = true
         }
     }
 })
