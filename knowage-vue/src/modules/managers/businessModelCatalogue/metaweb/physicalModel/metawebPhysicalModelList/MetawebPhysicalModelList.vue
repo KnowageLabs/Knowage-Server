@@ -8,7 +8,7 @@
                 </div>
             </template>
 
-            <Listbox class="metaweb-physical-model-column-listbox" v-model="selectedItem" :options="physicalModel.columns" @change="emitSelectedItem">
+            <Listbox class="metaweb-physical-model-column-listbox" v-model="selectedPhysicalModel" :options="physicalModel.columns" @change="emitSelectedItem">
                 <template #option="slotProps">
                     <div>
                         <i :class="slotProps.option.primaryKey ? 'fa fa-key gold-key' : 'fa fa-columns'" class="p-mr-2"></i>
@@ -35,7 +35,7 @@ export default defineComponent({
     data() {
         return {
             meta: null as any,
-            selectedItem: null as iColumn | iPhysicalModel | null
+            selectedPhysicalModel: null as iColumn | iPhysicalModel | null
         }
     },
     watch: {
@@ -52,11 +52,11 @@ export default defineComponent({
             console.log('LOADED META FOR PHYSICAL MODELS: ', this.propMeta)
         },
         emitSelectedItem() {
-            this.$emit('selected', this.selectedItem)
+            this.$emit('selected', this.selectedPhysicalModel)
         },
         setSelected(index: number) {
-            this.selectedItem = this.meta.physicalModels[index]
-            this.$emit('selected', this.selectedItem)
+            this.selectedPhysicalModel = this.meta.physicalModels[index]
+            this.$emit('selected', this.selectedPhysicalModel)
         }
     }
 })

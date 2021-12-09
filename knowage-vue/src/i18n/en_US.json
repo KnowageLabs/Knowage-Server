@@ -18,6 +18,7 @@
             "python": "python"
         },
         "collapse": "collapse",
+        "comment": "Comment",
         "continue": "Continue",
         "copyOf": "Copy of",
         "creationDate": "Creation Date",
@@ -95,6 +96,7 @@
         "select": "select",
         "set": "Set",
         "share": "Share",
+        "size": "Size",
         "sort": "sort",
         "source": "Source",
         "state": "State",
@@ -103,7 +105,8 @@
         "table": {
             "footer": {
                 "paginated": "Showing {first} to {last} of {totalRecords}"
-            }
+            },
+            "table": "Table"
         },
         "tags": "tags",
         "tenant": "tenant",
@@ -1501,10 +1504,19 @@
             "title": "Business Model"
         },
         "physicalModel": {
+            "dataType": "dataType",
+            "decimalDigits": "decimalDigits",
+            "defaultValue": "defaultValue",
             "foreignKey": "Foreign Key",
+            "misc": "Misc",
+            "nullable": "nullable",
+            "octectLength": "octectLength",
+            "position": "position",
             "propertyList": "Property list",
+            "radix": "radix",
             "tables": "Tables",
             "title": "Physical Model",
+            "typeName": "typeName",
             "updatePhysicalModel": "Update Physical Model"
         },
         "selectDialog": {
