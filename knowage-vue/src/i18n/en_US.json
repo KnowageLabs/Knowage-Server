@@ -84,6 +84,7 @@
         "path": "Path",
         "paused": "Paused",
         "preview": "Preview",
+        "properties": "properties",
         "released": "Released",
         "reused": "Reused",
         "role": "Role",
@@ -1501,10 +1502,10 @@
         },
         "physicalModel": {
             "foreignKey": "Foreign Key",
+            "propertyList": "Property list",
             "tables": "Tables",
             "title": "Physical Model",
-            "updatePhysicalModel": "Update Physical Model",
-            "propertyList": "Property list"
+            "updatePhysicalModel": "Update Physical Model"
         },
         "selectDialog": {
             "noPhysicalModelsSelectedError": "Select at least one Physical Model",
