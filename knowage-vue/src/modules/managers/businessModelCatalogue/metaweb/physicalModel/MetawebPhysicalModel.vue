@@ -28,10 +28,12 @@
 
                         <MetawebPropertyListTab :selectedPhysicalModel="selectedPhysicalModel"></MetawebPropertyListTab>
                     </TabPanel>
-                    <TabPanel>
+                    <TabPanel v-if="selectedPhysicalModel?.type === 'TABLE'">
                         <template #header>
                             <span>{{ $t('metaweb.physicalModel.foreignKey') }}</span>
                         </template>
+
+                        <MetawebForeignKeyTab class="p-m-2" :propForeignKeys="selectedPhysicalModel.foreignKeys"></MetawebForeignKeyTab>
                     </TabPanel>
                 </TabView>
             </div>
@@ -42,7 +44,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iColumn, iPhysicalModel } from '../Metaweb'
-import mock from './mock.json'
+import metawebMock from '../MetawebMock.json'
+import MetawebForeignKeyTab from './tabs/MetawebForeignKeyTab.vue'
 import MetawebPhysicalModelList from './metawebPhysicalModelList/MetawebPhysicalModelList.vue'
 import MetawebPropertyListTab from './tabs/MetawebPropertyListTab.vue'
 import TabView from 'primevue/tabview'
@@ -51,7 +54,7 @@ import physDescriptor from './PhysicalModelDescriptor.json'
 
 export default defineComponent({
     name: 'metaweb-physical-model',
-    components: { MetawebPhysicalModelList, MetawebPropertyListTab, TabView, TabPanel },
+    components: { MetawebForeignKeyTab, MetawebPhysicalModelList, MetawebPropertyListTab, TabView, TabPanel },
     data() {
         return {
             physDescriptor,
@@ -64,7 +67,7 @@ export default defineComponent({
     },
     methods: {
         loadMeta() {
-            this.meta = mock
+            this.meta = metawebMock.metaSales
             console.log('LOADED META: ', this.meta)
         },
         onSelectedItem(selectedPhysicalModel: iColumn | iPhysicalModel) {

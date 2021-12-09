@@ -1514,7 +1514,9 @@
             "position": "position",
             "propertyList": "Property list",
             "radix": "radix",
+            "sourceColumns": "Source columns",
             "tables": "Tables",
+            "targetColumns": "Target columns",
             "title": "Physical Model",
             "typeName": "typeName",
             "updatePhysicalModel": "Update Physical Model"
