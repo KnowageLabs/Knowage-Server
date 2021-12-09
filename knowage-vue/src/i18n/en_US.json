@@ -1490,6 +1490,9 @@
         "businessModel": {
             "businessClass": "Business Class",
             "businessView": "Business View",
+            "newBusiness": "New Business Class",
+            "newView": "New Business View",
+            "physTable": "Physical Table",
             "tabView": {
                 "attributes": "Attributes",
                 "calcField": "Calculated Field",

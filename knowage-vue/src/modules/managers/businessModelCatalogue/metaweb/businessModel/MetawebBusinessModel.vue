@@ -8,7 +8,7 @@
                         <span>{{ $t('metaweb.businessModel.businessClass') }}</span>
                     </template>
                     <template #right>
-                        <KnFabButton icon="fas fa-plus" />
+                        <KnFabButton icon="fas fa-plus" @click="showMenu" />
                     </template>
                 </Toolbar>
                 <div :style="bmDescriptor.style.businessClassListContainer">
@@ -111,6 +111,8 @@
             </div>
         </div>
     </div>
+    <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
+    <BusinessClassDialog v-if="showBusinessClassDialog" :physicalModels="metaMock.metaSales.physicalModels" :showBusinessClassDialog="showBusinessClassDialog" @closeDialog="showBusinessClassDialog = false" />
 </template>
 
 <script lang="ts">
@@ -122,20 +124,42 @@ import TabPanel from 'primevue/tabpanel'
 import Listbox from 'primevue/listbox'
 import metaMock from '../MetawebMock.json'
 import bmDescriptor from './MetawebBusinessModelDescriptor.json'
+import Menu from 'primevue/contextmenu'
+import BusinessClassDialog from './dialogs/MetawebBusinessClassDialog.vue'
 
 export default defineComponent({
     name: 'metaweb-business-model',
-    components: { KnFabButton, TabView, TabPanel, Listbox },
+    components: { BusinessClassDialog, KnFabButton, TabView, TabPanel, Listbox, Menu },
     props: {},
     computed: {},
     data() {
         return {
             bmDescriptor,
             mainDescriptor,
-            metaMock
+            metaMock,
+            menuButtons: [] as any,
+            showBusinessClassDialog: false
         }
     },
-    created() {},
-    methods: {}
+    created() {
+        this.createMenuItems()
+    },
+    methods: {
+        showMenu(event) {
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs.optionsMenu.toggle(event)
+        },
+        createMenuItems() {
+            this.menuButtons = []
+            this.menuButtons.push({ key: '0', label: this.$t('metaweb.businessModel.newBusiness'), command: () => this.dbm() }, { key: '1', label: this.$t('metaweb.businessModel.newView'), command: () => this.logEvent })
+        },
+        logEvent(event) {
+            console.log(event)
+        },
+        dbm() {
+            this.showBusinessClassDialog = true
+        }
+    }
 })
 </script>

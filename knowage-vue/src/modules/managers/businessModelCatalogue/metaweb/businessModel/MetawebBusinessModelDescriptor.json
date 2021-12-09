@@ -1,6 +1,12 @@
 {
     "filterFields": ["name"],
     "style": {
+        "bsDialog": {
+            "height": "70%",
+            "max-height": "70%",
+            "min-height": "70%",
+            "min-width": "70%"
+        },
         "businessClassListContainer": {
             "height": "calc(100% - 36px)",
             "overflow-x": "hidden",
@@ -15,6 +21,7 @@
             "position": "absolute",
             "width": "100%"
         },
+        "globalFilterFields": ["name"],
         "mainList": {
             "height": "100%"
         }
