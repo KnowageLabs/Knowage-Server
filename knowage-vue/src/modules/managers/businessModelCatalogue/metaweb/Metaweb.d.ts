@@ -44,3 +44,9 @@ export interface iForeignKey {
     sourceName: string,
     uniqueName: string | null
 }
+
+export interface iChangedData {
+    missingColumns: string[]
+    missingTables: string[]
+    removingItems: string[]
+}
