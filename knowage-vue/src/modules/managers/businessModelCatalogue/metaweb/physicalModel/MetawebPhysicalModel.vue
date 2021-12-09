@@ -7,10 +7,12 @@
                     <Button class="p-button-text p-button-rounded p-button-plain p-button-sm">{{ $t('metaweb.physicalModel.updatePhysicalModel') }}</Button>
                 </template>
             </Toolbar>
-
-            <MetawebPhysicalModelList :propMeta="meta"></MetawebPhysicalModelList>
+            <div class="kn-flex kn-relative">
+                <div class="metaweb-right-border" :style="physDescriptor.style.mainListContainer">
+                    <MetawebPhysicalModelList :style="physDescriptor.style.mainList" :propMeta="meta"></MetawebPhysicalModelList>
+                </div>
+            </div>
         </div>
-
         <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 p-d-flex p-flex-column">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
@@ -41,12 +43,14 @@ import mock from './mock.json'
 import MetawebPhysicalModelList from './metawebPhysicalModelList/MetawebPhysicalModelList.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
+import physDescriptor from './PhysicalModelDescriptor.json'
 
 export default defineComponent({
     name: 'metaweb-physical-model',
     components: { MetawebPhysicalModelList, TabView, TabPanel },
     data() {
         return {
+            physDescriptor,
             meta: null as any
         }
     },

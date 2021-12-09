@@ -1,5 +1,5 @@
 <template>
-    <Dialog id="metaweb-select-dialog" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :contentStyle="metawebSelectDialogDescriptor.dialog.style" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
+    <Dialog id="metaweb-select-dialog" class="metaweb-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="metawebSelectDialogDescriptor.dialog.style" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #left>
@@ -13,7 +13,7 @@
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="true" />
 
-        <DataTable :value="rows" class="p-datatable-sm kn-table" v-model:filters="filters" :globalFilterFields="metawebSelectDialogDescriptor.globalFilterFields" responsiveLayout="stack" breakpoint="960px">
+        <DataTable :value="rows" class="p-datatable-sm kn-table p-ml-1" :scrollable="true" scrollHeight="100%" v-model:filters="filters" :globalFilterFields="metawebSelectDialogDescriptor.globalFilterFields">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -27,8 +27,8 @@
                 </div>
             </template>
 
-            <Column field="value" :header="$t('metaweb.selectDialog.tableName')"></Column>
-            <Column :header="$t('metaweb.physicalModel.title')" :style="metawebSelectDialogDescriptor.table.checkboxColumn.style">
+            <Column field="value" :header="$t('metaweb.selectDialog.tableName')" style="flex:5"></Column>
+            <Column :header="$t('metaweb.physicalModel.title')">
                 <template #header>
                     <Checkbox class="p-mr-2" v-model="allPhysicalSelected" :binary="true" @change="setAllChecked('physical')" />
                 </template>
@@ -36,7 +36,7 @@
                     <Checkbox v-model="selected[slotProps.data.value].physical" :binary="true" @change="setChecked(slotProps.data, 'physical')" />
                 </template>
             </Column>
-            <Column :header="$t('metaweb.businessModel.title')" :style="metawebSelectDialogDescriptor.table.checkboxColumn.style">
+            <Column :header="$t('metaweb.businessModel.title')">
                 <template #header>
                     <Checkbox class="p-mr-2" v-model="allBusinessSelected" :binary="true" @change="setAllChecked('business')" />
                 </template>
@@ -57,7 +57,7 @@ import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
-import metawebSelectDialogDescriptor from './MetawebSelectDialogDescriptor.json'
+import metawebSelectDialogDescriptor from '@/modules/managers/businessModelCatalogue/metaweb/metawebSelectDialog/MetawebSelectDialogDescriptor.json'
 
 export default defineComponent({
     name: 'metaweb-select-dialog',
