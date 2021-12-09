@@ -8,7 +8,7 @@
                 </template>
             </Toolbar>
 
-            <MetawebPhysicalModelList :propPhysicalModels="meta.physicalModels"></MetawebPhysicalModelList>
+            <MetawebPhysicalModelList :propMeta="meta"></MetawebPhysicalModelList>
         </div>
 
         <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 p-d-flex p-flex-column">
