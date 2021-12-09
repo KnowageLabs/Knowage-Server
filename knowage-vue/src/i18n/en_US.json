@@ -1525,7 +1525,16 @@
             "noPhysicalModelsSelectedError": "Select at least one Physical Model",
             "tableName": "Table Name"
         },
-        "title": "Metaweb"
+        "title": "Metaweb",
+        "updatePhysicalModel": {
+            "addNewColumns": "New columns that will be added",
+            "deletedColumns": "Elements that will be marked as deleted",
+            "newTables": "New Physical tables to import",
+            "noDeletedColumns": "No elements deleted",
+            "noNewColumns": "No elements added",
+            "noNewTables": "No new table to add",
+            "title": "Update physical model"
+        }
     },
     "newsDialog": {
         "description": "Description",

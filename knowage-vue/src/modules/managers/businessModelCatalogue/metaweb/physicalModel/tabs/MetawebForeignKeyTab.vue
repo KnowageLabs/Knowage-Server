@@ -23,15 +23,19 @@
                 </div>
             </template>
 
-            <Column class="kn-truncated" field="name" :header="$t('common.name')" key="name" :sortable="true"></Column>
+            <Column class="kn-truncated" field="name" :header="$t('common.name')" key="name" :sortable="true">
+                <template #body="slotProps">
+                    <span v-tooltip.top="slotProps.data.name">{{ slotProps.data.name }}</span>
+                </template>
+            </Column>
             <Column class="kn-truncated" :header="$t('metaweb.physicalModel.sourceColumns')" :sortable="true">
                 <template #body="slotProps">
-                    {{ getColumns(slotProps.data, 'sourceColumns') }}
+                    <span v-tooltip.top="getColumns(slotProps.data, 'sourceColumns')">{{ getColumns(slotProps.data, 'sourceColumns') }}</span>
                 </template>
             </Column>
             <Column class="kn-truncated" :header="$t('metaweb.physicalModel.targetColumns')" :sortable="true">
                 <template #body="slotProps">
-                    {{ getColumns(slotProps.data, 'destinationColumns') }}
+                    <span v-tooltip.top="getColumns(slotProps.data, 'destinationColumns')">{{ getColumns(slotProps.data, 'destinationColumns') }}</span>
                 </template>
             </Column>
         </DataTable>
@@ -47,7 +51,7 @@ import DataTable from 'primevue/datatable'
 import metawebForeignKeyTabDescriptor from './MetawebForeignKeyTabDescriptor.json'
 
 export default defineComponent({
-    name: 'metaweb-foreign-key-model',
+    name: 'metaweb-foreign-key-tab',
     components: { Column, DataTable },
     props: { propForeignKeys: { type: Array } },
     data() {

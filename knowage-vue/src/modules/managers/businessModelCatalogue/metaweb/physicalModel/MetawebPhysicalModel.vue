@@ -4,7 +4,7 @@
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #left> {{ $t('metaweb.physicalModel.tables') }}</template>
                 <template #right>
-                    <Button class="p-button-text p-button-rounded p-button-plain p-button-sm">{{ $t('metaweb.physicalModel.updatePhysicalModel') }}</Button>
+                    <Button class="p-button-text p-button-rounded p-button-plain p-button-sm" @click="openUpdateDialog">{{ $t('metaweb.physicalModel.updatePhysicalModel') }}</Button>
                 </template>
             </Toolbar>
             <div class="kn-flex kn-relative">
@@ -38,28 +38,36 @@
                 </TabView>
             </div>
         </div>
+
+        <MetawebPhysicalModelUpdateDialog :visible="updateDialogVisible" :changedItem="changedItem" @close="updateDialogVisible = false"></MetawebPhysicalModelUpdateDialog>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iColumn, iPhysicalModel } from '../Metaweb'
+// import { AxiosResponse } from 'axios'
+import { iChangedData, iColumn, iPhysicalModel } from '../Metaweb'
 import metawebMock from '../MetawebMock.json'
 import MetawebForeignKeyTab from './tabs/MetawebForeignKeyTab.vue'
 import MetawebPhysicalModelList from './metawebPhysicalModelList/MetawebPhysicalModelList.vue'
 import MetawebPropertyListTab from './tabs/MetawebPropertyListTab.vue'
+import MetawebPhysicalModelUpdateDialog from './metawebPhysicalModelUpdateDialog/MetawebPhysicalModelUpdateDialog.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import physDescriptor from './PhysicalModelDescriptor.json'
+import updateMock from './updateMock.json'
 
 export default defineComponent({
     name: 'metaweb-physical-model',
-    components: { MetawebForeignKeyTab, MetawebPhysicalModelList, MetawebPropertyListTab, TabView, TabPanel },
+    components: { MetawebForeignKeyTab, MetawebPhysicalModelList, MetawebPropertyListTab, MetawebPhysicalModelUpdateDialog, TabView, TabPanel },
+    emits: ['loading'],
     data() {
         return {
             physDescriptor,
             meta: null as any,
-            selectedPhysicalModel: null as iColumn | iPhysicalModel | null
+            selectedPhysicalModel: null as iColumn | iPhysicalModel | null,
+            updateDialogVisible: false,
+            changedItem: null as iChangedData | null
         }
     },
     created() {
@@ -73,6 +81,15 @@ export default defineComponent({
         onSelectedItem(selectedPhysicalModel: iColumn | iPhysicalModel) {
             this.selectedPhysicalModel = selectedPhysicalModel
             console.log('SELECTED ITEM: ', this.selectedPhysicalModel)
+        },
+        async openUpdateDialog() {
+            this.$emit('loading', true)
+            // TODO Fix API Service
+            // await this.$http.get(process.env.VUE_APP_META_API_URL + `1.0/metaWeb/updatePhysicalModel`).then((response: AxiosResponse<any>) => (this.changedItem = response.data))
+            this.changedItem = updateMock
+            this.updateDialogVisible = true
+            this.$emit('loading', false)
+            console.log('LOADED CHANGED DATA: ', this.changedItem)
         }
     }
 })

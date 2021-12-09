@@ -23,7 +23,7 @@
                         <span>{{ $t('metaweb.physicalModel.title') }}</span>
                     </template>
 
-                    <MetawebPhysicalModel></MetawebPhysicalModel>
+                    <MetawebPhysicalModel @loading="setLoading"></MetawebPhysicalModel>
                 </TabPanel>
             </TabView>
         </div>
@@ -47,12 +47,17 @@ export default defineComponent({
     data() {
         return {
             v$: useValidate() as any,
-            mainDescriptor
+            mainDescriptor,
+            loading: false
         }
     },
     computed: {},
     created() {},
-    methods: {}
+    methods: {
+        setLoading(loading: boolean) {
+            this.loading = loading
+        }
+    }
 })
 </script>
 <style lang="scss">
