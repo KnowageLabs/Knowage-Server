@@ -2,10 +2,8 @@
     "filterFields": ["name"],
     "style": {
         "bsDialog": {
-            "height": "70%",
-            "max-height": "70%",
-            "min-height": "70%",
-            "min-width": "70%"
+            "max-height": "80%",
+            "min-width": "80%"
         },
         "businessClassListContainer": {
             "height": "calc(100% - 36px)",
@@ -25,5 +23,33 @@
         "mainList": {
             "height": "100%"
         }
+    },
+    "validations": {
+        "tmpBnssView": [
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "bv-dialog-required"
+                        }
+                    }
+                ]
+            }
+        ],
+        "tmpBusinessModel": [
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "bm-dialog-required"
+                        }
+                    }
+                ]
+            }
+        ]
     }
 }

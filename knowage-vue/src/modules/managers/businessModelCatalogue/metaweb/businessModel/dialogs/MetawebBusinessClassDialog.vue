@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="remove-padding" :visible="showBusinessClassDialog" :modal="true" :closable="false">
+    <Dialog class="bsdialog" :style="bsDescriptor.style.bsDialog" :visible="showBusinessClassDialog" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary kn-width-full">
                 <template #left>
@@ -7,23 +7,33 @@
                 </template>
             </Toolbar>
         </template>
-        <form ref="bcForm" class="p-fluid p-formgrid p-grid p-m-2">
+        <form ref="bcForm" class="p-fluid p-formgrid p-grid p-mt-4 p-mx-2">
             <div class="p-field p-col-12 p-md-6">
                 <span class="p-float-label">
-                    <InputText id="name" class="kn-material-input" v-model="tmpBusinessModel.name" />
+                    <InputText
+                        id="name"
+                        class="kn-material-input"
+                        v-model.trim="v$.tmpBusinessModel.name.$model"
+                        :class="{
+                            'p-invalid': v$.tmpBusinessModel.name.$invalid && v$.tmpBusinessModel.name.$dirty
+                        }"
+                        @blur="v$.tmpBusinessModel.name.$touch()"
+                        @change="$emit('touched')"
+                    />
                     <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} *</label>
                 </span>
+                <KnValidationMessages class="p-mt-1" :vComp="v$.tmpBusinessModel.name" :additionalTranslateParams="{ fieldName: $t('common.name') }" />
             </div>
             <div class="p-field p-col-12 p-md-6">
                 <span class="p-float-label">
                     <InputText id="desc" class="kn-material-input" v-model="tmpBusinessModel.description" />
-                    <label for="desc" class="kn-material-input-label"> {{ $t('common.description') }} *</label>
+                    <label for="desc" class="kn-material-input-label"> {{ $t('common.description') }}</label>
                 </span>
             </div>
             <div class="p-field p-col-12">
                 <span class="p-float-label ">
                     <Dropdown id="driver" class="kn-material-input" v-model="tmpBusinessModel.physicalModel" :options="physicalModels" optionLabel="name" />
-                    <label for="driver" class="kn-material-input-label"> {{ $t('metaweb.businessModel.physTable') }} *</label>
+                    <label for="driver" class="kn-material-input-label"> {{ $t('metaweb.businessModel.physTable') }}</label>
                 </span>
             </div>
         </form>
@@ -31,8 +41,7 @@
         <DataTable
             v-if="tmpBusinessModel.physicalModel"
             :value="tmpBusinessModel.physicalModel.columns"
-            class="p-datatable-sm kn-table p-ml-1"
-            style="75%"
+            class="p-datatable-sm kn-table p-ml-2"
             v-model:selection="tmpBusinessModel.selectedColumns"
             :scrollable="true"
             scrollHeight="100%"
@@ -51,13 +60,13 @@
                     </span>
                 </div>
             </template>
-            <Column selectionMode="multiple" headerStyle="width: 3em" />
-            <Column field="name" :header="$t('common.name')" />
+            <Column selectionMode="multiple" />
+            <Column field="name" :header="$t('common.name')" style="flex-basis:100%" />
         </DataTable>
 
         <template #footer>
             <Button class="p-button-text kn-button" :label="$t('common.cancel')" @click="onCancel" />
-            <Button class="kn-button kn-button--primary" :label="$t('common.save')" />
+            <Button class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="buttonDisabled" />
         </template>
     </Dialog>
 </template>
@@ -65,18 +74,27 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
+import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import useValidate from '@vuelidate/core'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import bsDescriptor from '../MetawebBusinessModelDescriptor.json'
 
 export default defineComponent({
     name: 'document-drivers',
-    components: { Dialog, Dropdown, DataTable, Column },
+    components: { Dialog, Dropdown, DataTable, Column, KnValidationMessages },
     emits: ['closeDialog'],
     props: { physicalModels: Array, showBusinessClassDialog: Boolean },
+    computed: {
+        buttonDisabled(): boolean {
+            if (this.v$.$invalid || this.tmpBusinessModel.selectedColumns.length === 0) {
+                return true
+            } else return false
+        }
+    },
     data() {
         return {
             bsDescriptor,
@@ -87,11 +105,19 @@ export default defineComponent({
             } as Object
         }
     },
-    watch: {
-        selectedDriver() {}
-    },
     created() {},
-    validations() {},
+    validations() {
+        const bmRequired = (value) => {
+            return !this.showBusinessClassDialog || value
+        }
+        const customValidators: ICustomValidatorMap = {
+            'bm-dialog-required': bmRequired
+        }
+        const validationObject = {
+            tmpBusinessModel: createValidations('tmpBusinessModel', bsDescriptor.validations.tmpBusinessModel, customValidators)
+        }
+        return validationObject
+    },
     methods: {
         resetPhModel() {
             this.tmpBusinessModel.selectedColumns = []
@@ -103,3 +129,10 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss">
+.bsdialog.p-dialog .p-dialog-header,
+.bsdialog.p-dialog .p-dialog-content {
+    padding: 0;
+    // margin: 0;
+}
+</style>

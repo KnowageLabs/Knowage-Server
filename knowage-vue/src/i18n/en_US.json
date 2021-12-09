@@ -1495,10 +1495,14 @@
             "businessView": "Business View",
             "newBusiness": "New Business Class",
             "newView": "New Business View",
-            "physicalColumn": "Physical Column",
-            "temporalHierarchy": "Manage temporal hierarchy",
             "physTable": "Physical Table",
+            "physicalColumn": "Physical Column",
             "physicalTable": "Physical Table",
+            "sourceAttr": "Source Attributes",
+            "sourceHint": "Select source table",
+            "sourceTable": "Source Table",
+            "summary": "Summary",
+            "summaryHint": "Link tables to see the summary",
             "tabView": {
                 "attributes": "Attributes",
                 "calcField": "Calculated Field",
@@ -1507,6 +1511,10 @@
                 "outbound": "Outbound",
                 "propertyTitle": "Property List"
             },
+            "targetAttr": "Target Attributes",
+            "targetHint": "Select target table",
+            "targetTable": "Target Table",
+            "temporalHierarchy": "Manage temporal hierarchy",
             "title": "Business Model"
         },
         "physicalModel": {
