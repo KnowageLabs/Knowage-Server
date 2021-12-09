@@ -16,7 +16,7 @@
         <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 p-d-flex p-flex-column">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
-                    {{ selectedItem?.name }}
+                    {{ selectedPhysicalModel?.name }}
                 </template>
             </Toolbar>
             <div class="metaweb-tab-container p-d-flex p-flex-column kn-flex">
@@ -25,11 +25,15 @@
                         <template #header>
                             <span>{{ $t('metaweb.physicalModel.propertyList') }}</span>
                         </template>
+
+                        <MetawebPropertyListTab :selectedPhysicalModel="selectedPhysicalModel"></MetawebPropertyListTab>
                     </TabPanel>
-                    <TabPanel>
+                    <TabPanel v-if="selectedPhysicalModel?.type === 'TABLE'">
                         <template #header>
                             <span>{{ $t('metaweb.physicalModel.foreignKey') }}</span>
                         </template>
+
+                        <MetawebForeignKeyTab class="p-m-2" :propForeignKeys="selectedPhysicalModel.foreignKeys"></MetawebForeignKeyTab>
                     </TabPanel>
                 </TabView>
             </div>
@@ -40,20 +44,22 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iColumn, iPhysicalModel } from '../Metaweb'
-import mock from './mock.json'
+import metawebMock from '../MetawebMock.json'
+import MetawebForeignKeyTab from './tabs/MetawebForeignKeyTab.vue'
 import MetawebPhysicalModelList from './metawebPhysicalModelList/MetawebPhysicalModelList.vue'
+import MetawebPropertyListTab from './tabs/MetawebPropertyListTab.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import physDescriptor from './PhysicalModelDescriptor.json'
 
 export default defineComponent({
     name: 'metaweb-physical-model',
-    components: { MetawebPhysicalModelList, TabView, TabPanel },
+    components: { MetawebForeignKeyTab, MetawebPhysicalModelList, MetawebPropertyListTab, TabView, TabPanel },
     data() {
         return {
             physDescriptor,
             meta: null as any,
-            selectedItem: null as iColumn | iPhysicalModel | null
+            selectedPhysicalModel: null as iColumn | iPhysicalModel | null
         }
     },
     created() {
@@ -61,12 +67,12 @@ export default defineComponent({
     },
     methods: {
         loadMeta() {
-            this.meta = mock
+            this.meta = metawebMock.metaSales
             console.log('LOADED META: ', this.meta)
         },
-        onSelectedItem(selectedItem: iColumn | iPhysicalModel) {
-            this.selectedItem = selectedItem
-            console.log('SELECTED ITEM: ', this.selectedItem)
+        onSelectedItem(selectedPhysicalModel: iColumn | iPhysicalModel) {
+            this.selectedPhysicalModel = selectedPhysicalModel
+            console.log('SELECTED ITEM: ', this.selectedPhysicalModel)
         }
     }
 })

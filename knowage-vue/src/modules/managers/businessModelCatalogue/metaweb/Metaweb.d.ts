@@ -4,7 +4,8 @@ export interface iPhysicalModel {
     comment: string,
     type: string,
     columns: iColumn[],
-    foreignKeys: any[]
+    foreignKeys: iForeignKey[],
+    type: string
 }
 
 export interface iColumn {
@@ -26,5 +27,20 @@ export interface iColumn {
     tableName: string,
     partOfCompositePrimaryKey: boolean,
     markedDeleted: boolean,
-    primaryKey: boolean
+    primaryKey: boolean,
+    type?: string,
+    foreignKeys?: iForeignKey[]
+}
+
+export interface iForeignKey {
+    description: string,
+    destinationColumns: iColumn[],
+    destinationName: string | null,
+    destinationTableName: string | null,
+    id: string | null,
+    name: string,
+    properties: any[],
+    sourceColumns: iColumn[],
+    sourceName: string,
+    uniqueName: string | null
 }
