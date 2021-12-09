@@ -3,17 +3,8 @@
         "style": {
             "display": "flex",
             "flex": 1,
-            "flex-direction": "column",
-            "height": "100vh",
-            "padding": "1rem"
+            "flex-direction": "column"
         }
     },
-    "globalFilterFields": ["value"],
-    "table": {
-        "checkboxColumn": {
-            "style": {
-                "width": "5%"
-            }
-        }
-    }
+    "globalFilterFields": ["value"]
 }

@@ -56,7 +56,7 @@ export default defineComponent({
 })
 </script>
 <style lang="scss">
-.right-border {
+.metaweb-right-border {
     border-right: 1px solid #ccc;
 }
 .metaweb-tabview .p-tabview-panels {
