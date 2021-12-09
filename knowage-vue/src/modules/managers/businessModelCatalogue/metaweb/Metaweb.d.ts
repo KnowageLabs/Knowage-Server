@@ -50,3 +50,43 @@ export interface iChangedData {
     missingTables: string[]
     removingItems: string[]
 }
+
+export interface iBusinessModel {
+    calculatedBusinessColumns: any[],
+    columns: any[],
+    name: string,
+    physicalTable: { physicalTableIndex: number },
+    properties: any[],
+    relationships: iRelationship[],
+    simpleBusinessColumns: iSimpleBusinessColumn[],
+    uniqueName: string,
+    physicalColumn?: any
+}
+
+export interface iSimpleBusinessColumn {
+    description: string | null,
+    filteredByProfileAttribute: boolean
+    filteredByRoleVisibility: boolean
+    id: number | null
+    identifier: boolean
+    name: string
+    partOfCompositeIdentifier: boolean
+    physicalColumn: iColumn,
+    properties: any[],
+    uniqueName: string
+}
+
+export interface iRelationship {
+    description: string | null
+    destinationColumns: iSimpleBusinessColumn[]
+    destinationSimpleBusinessColumns: iSimpleBusinessColumn[]
+    destinationTableName: string
+    id: number | null
+    name: string
+    physicalForeignKeyName: string
+    properties: any[]
+    sourceColumns: iSimpleBusinessColumn[]
+    sourceSimpleBusinessColumns: iSimpleBusinessColumn[]
+    sourceTableName: string
+    uniqueName: string
+}

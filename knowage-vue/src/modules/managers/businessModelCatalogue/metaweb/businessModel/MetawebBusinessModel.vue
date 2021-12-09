@@ -63,9 +63,8 @@
                         <template #header>
                             <span>{{ $t('metaweb.businessModel.tabView.propertyTitle') }}</span>
                         </template>
-                        <div :style="mainDescriptor.style.absoluteScroll">
-                            {{ mainDescriptor.test }}
-                        </div>
+
+                        <MetawebBusinessPropertyListTab></MetawebBusinessPropertyListTab>
                     </TabPanel>
                     <TabPanel>
                         <template #header>
@@ -125,11 +124,12 @@ import Listbox from 'primevue/listbox'
 import metaMock from '../MetawebMock.json'
 import bmDescriptor from './MetawebBusinessModelDescriptor.json'
 import Menu from 'primevue/contextmenu'
+import MetawebBusinessPropertyListTab from './tabs/MetawebBusinessPropertyListTab.vue'
 import BusinessClassDialog from './dialogs/MetawebBusinessClassDialog.vue'
 
 export default defineComponent({
     name: 'metaweb-business-model',
-    components: { BusinessClassDialog, KnFabButton, TabView, TabPanel, Listbox, Menu },
+    components: { BusinessClassDialog, KnFabButton, TabView, TabPanel, Listbox, Menu, MetawebBusinessPropertyListTab },
     props: {},
     computed: {},
     data() {

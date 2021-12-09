@@ -1495,7 +1495,10 @@
             "businessView": "Business View",
             "newBusiness": "New Business Class",
             "newView": "New Business View",
+            "physicalColumn": "Physical Column",
+            "temporalHierarchy": "Manage temporal hierarchy",
             "physTable": "Physical Table",
+            "physicalTable": "Physical Table",
             "tabView": {
                 "attributes": "Attributes",
                 "calcField": "Calculated Field",
