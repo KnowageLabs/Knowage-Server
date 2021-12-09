@@ -13,6 +13,7 @@
         <DataPreparationSimple v-if="localCopy.type === 'simple'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" />
         <DataPreparationCustom v-if="localCopy.type === 'custom'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" />
         <DataPreparationFilter v-if="localCopy.type === 'filter'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" />
+        <DataPreparationSplitColumn v-if="localCopy.type === 'split'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" />
 
         <template #footer>
             <Button class="p-button-text kn-button thirdButton" :label="$t('common.cancel')" @click="resetAndClose" />
@@ -34,6 +35,7 @@ import DataPreparationSimpleDescriptor from '@/modules/workspace/dataPreparation
 import DataPreparationCustom from './DataPreparationCustom/DataPreparationCustom.vue'
 import DataPreparationCustomDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationCustomDescriptor.json'
 import DataPreparationFilter from './DataPreparationCustom/DataPreparationFilterTransformation.vue'
+import DataPreparationSplitColumn from './DataPreparationCustom/DataPreparationSplitColumnTransformation.vue'
 
 export default defineComponent({
     name: 'data-preparation-detail-dialog',
@@ -42,7 +44,7 @@ export default defineComponent({
         columns: { type: Array as PropType<Array<IDataPreparationColumn>> },
         col: String
     },
-    components: { DataPreparationSimple, Dialog, Message, DataPreparationCustom, DataPreparationFilter },
+    components: { DataPreparationSimple, Dialog, Message, DataPreparationCustom, DataPreparationFilter, DataPreparationSplitColumn },
     data() {
         return { localCopy: {} as ITransformation<ITransformationParameter> | undefined, v$: useValidate() as any, validationDescriptor: DataPreparationValidationDescriptor, simpleDescriptor: DataPreparationSimpleDescriptor, customDescriptor: DataPreparationCustomDescriptor }
     },
@@ -66,6 +68,9 @@ export default defineComponent({
             let t = this.localCopy
             let transformation = { parameters: [] as Array<any>, type: t?.name }
 
+            if (t?.name === 'filter') return this.convertFilterTransformation(t, transformation)
+            if (t?.name === 'splitColumn') return this.convertSplitTransformation(t, transformation)
+
             let par = { columns: [] as Array<any> }
             t?.parameters?.forEach((p) => {
                 Object.keys(p).forEach((key) => {
@@ -77,6 +82,28 @@ export default defineComponent({
             })
             transformation.parameters.push(par)
 
+            return transformation
+        },
+
+        convertSplitTransformation(t, transformation) {
+            let p = t?.parameters
+            this.convertCustomTransformation(p, transformation)
+            return transformation
+        },
+
+        convertCustomTransformation(p, transformation) {
+            let par = { columns: [] as Array<any> }
+            Object.keys(p).forEach((key) => {
+                if (key === 'column') par.columns.push(p[key].header)
+                else par[key] = p[key]
+            })
+            transformation.parameters.push(par)
+        },
+
+        convertFilterTransformation(t, transformation) {
+            t?.parameters?.forEach((p) => {
+                this.convertCustomTransformation(p, transformation)
+            })
             return transformation
         },
 
@@ -116,8 +143,9 @@ export default defineComponent({
             this.closeDialog()
         },
 
-        updateLocalCopy(t: ITransformation<ITransformationParameter>): void {
-            this.localCopy = t
+        updateLocalCopy(t): void {
+            if (this.localCopy?.name === 'filter' || this.localCopy?.name === 'splitColumn') this.localCopy.parameters = t
+            else this.localCopy = t
         }
     },
     watch: {

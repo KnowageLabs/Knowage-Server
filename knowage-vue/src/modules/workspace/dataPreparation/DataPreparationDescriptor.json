@@ -214,7 +214,7 @@
             "name": "splitColumn",
             "position": 3,
             "toolbar": true,
-            "type": "custom"
+            "type": "split"
         },
         {
             "category": "filtering",

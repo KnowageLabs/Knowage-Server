@@ -1566,6 +1566,12 @@
                     },
                     "separator": "Separator",
                     "splitColumn": {
+                        "numOfChars": "Number of characters",
+                        "outputColumn": "Output Column",
+                        "outputType": "Output Type",
+                        "separator": "Separator",
+                        "useNumberOfChars": "Use number of characters",
+                        "useSeparator": "Use separator",
                         "description": "TODO",
                         "label": "Split column"
                     },

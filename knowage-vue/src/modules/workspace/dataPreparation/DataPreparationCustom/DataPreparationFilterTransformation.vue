@@ -17,15 +17,15 @@
             <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.endDate') }}</label>
         </span>
         <span v-if="showInputText(index)" class="p-float-label">
-            <InputText type="text" v-model="filter.endDate" class="kn-material-input" />
+            <InputText type="text" v-model="filter.text" class="kn-material-input" />
             <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.text') }}</label>
         </span>
         <span v-if="showInputNumber(index)" class="p-float-label">
-            <InputText type="number" v-model="filter.endDate" class="kn-material-input" />
+            <InputText type="number" v-model="filter.number" class="kn-material-input" />
             <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.number') }}</label>
         </span>
         <span v-if="showValuesList(index)" class="p-float-label">
-            <InputText type="text" display="chip" v-model="filter.valuesList" class="kn-material-input" />
+            <InputText type="text" v-model="filter.valuesList" class="kn-material-input" />
             <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.values') }}</label>
         </span>
         <span> <Button icon="pi pi-trash" :class="'p-button-text p-button-rounded p-button-plain'" @click="deleteRow(index)" v-if="localTransformation.length > 1"/></span>
@@ -71,7 +71,6 @@ export default defineComponent({
         getAvailableConditions(index) {
             let toReturn = this.availableConditions.filter((item) => {
                 let availableForTypes = item.availableForTypes.split('|')
-                this.getColType(this.localTransformation[index].column)
                 let type = this.getColType(this.localTransformation[index].column)
                 if (availableForTypes.includes(type)) {
                     return true
@@ -117,6 +116,16 @@ export default defineComponent({
             if (!this.localTransformation[index].column || !this.localTransformation[index].condition) return false
             if (allowedConditions.includes(this.localTransformation[index].condition)) return true
             else return false
+        }
+    },
+    watch: {
+        localTransformation: {
+            handler(newValue, oldValue) {
+                if (oldValue !== newValue) {
+                    this.$emit('update:transformation', newValue)
+                }
+            },
+            deep: true
         }
     }
 })

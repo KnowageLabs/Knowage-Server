@@ -1,0 +1,28 @@
+{
+    "availableOutputTypes": [
+        {
+            "code": "string",
+            "label": "String"
+        },
+        {
+            "code": "date",
+            "label": "Date"
+        },
+        {
+            "code": "number",
+            "label": "Number"
+        }
+    ],
+    "condition": {
+        "availableOptions": [
+            {
+                "code": "separator",
+                "label": "managers.workspaceManagement.dataPreparation.transformations.split.useSeparator"
+            },
+            {
+                "code": "numberOfChars",
+                "label": "managers.workspaceManagement.dataPreparation.transformations.split.useNumberOfChars"
+            }
+        ]
+    }
+}

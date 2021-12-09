@@ -37,3 +37,14 @@ export interface IFilterTransformationParameter {
     startDate?: Date
     endDate?: Date
 }
+
+export interface ISplitTransformationParameter {
+    column: IDataPreparationColumn
+    condition: string
+    numOfChars?: number
+    separator?: string
+    outputColumn1: string
+    outputType1: string
+    outputColumn2: string
+    outputType2: string
+}
