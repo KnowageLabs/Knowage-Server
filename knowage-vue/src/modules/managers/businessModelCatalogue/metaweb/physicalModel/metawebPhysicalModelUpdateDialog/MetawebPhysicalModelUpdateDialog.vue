@@ -23,6 +23,8 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
+import { AxiosResponse } from 'axios'
+
 import { iChangedData } from '../../Metaweb'
 import Dialog from 'primevue/dialog'
 import metawebPhysicalModelUpdateDialogDescriptor from './MetawebPhysicalModelUpdateDialogDescriptor.json'
@@ -33,7 +35,7 @@ export default defineComponent({
     name: 'metaweb-physical-model-update-dialog',
     components: { Dialog, MetawebUpdateChangedLists, MetawebUpdatePhysicalTablesSelect },
     props: { visible: { type: Boolean }, changedItem: { type: Object as PropType<iChangedData> } },
-    emits: ['close'],
+    emits: ['close', 'updated'],
     data() {
         return {
             metawebPhysicalModelUpdateDialogDescriptor,
@@ -75,12 +77,14 @@ export default defineComponent({
             // TODO Fix API Service
             await this.$http
                 .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/updatePhysicalModel`, { tables: this.tables })
-                .then(() => {
+                .then((response: AxiosResponse<any>) => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.updateSuccess')
                     })
-                    this.$emit('close')
+                    this.$emit('updated', response.data)
+                    this.tables = []
+                    this.step = 0
                 })
                 .catch((error: any) => console.log('ERROR: ', error))
 
