@@ -7,7 +7,7 @@
                 </template>
             </Toolbar>
         </template>
-        <form ref="bcForm" class="p-fluid p-formgrid p-grid p-mt-4 p-mx-2" style="flex:0">
+        <form ref="bcForm" class="p-fluid p-formgrid p-grid p-mt-4 p-mx-2 kn-flex-0">
             <div class="p-field p-col-12 p-md-6">
                 <span class="p-float-label">
                     <InputText
@@ -38,15 +38,15 @@
             </div>
         </form>
 
-        <div style="flex:1;position:relative">
-            <div style="position:absolute; width:100%;height:100%">
+        <div :style="bsDescriptor.style.relativeFlex">
+            <div class="kn-height-full kn-width-full" :style="bsDescriptor.style.absolute">
                 <DataTable
                     v-if="tmpBusinessModel.physicalModel"
                     :value="tmpBusinessModel.physicalModel.columns"
                     class="p-datatable-sm kn-table p-ml-2"
                     v-model:selection="tmpBusinessModel.selectedColumns"
                     :scrollable="true"
-                    scrollHeight="100%"
+                    :scrollHeight="bsDescriptor.style.mainList"
                     dataKey="position"
                     v-model:filters="filters"
                     :globalFilterFields="bsDescriptor.globalFilterFields"
@@ -63,7 +63,7 @@
                         </div>
                     </template>
                     <Column selectionMode="multiple" />
-                    <Column field="name" :header="$t('common.name')" style="flex-basis:100%" />
+                    <Column field="name" :header="$t('common.name')" :style="bsDescriptor.style.tableCell" />
                 </DataTable>
             </div>
         </div>
@@ -136,7 +136,6 @@ export default defineComponent({
 .bsdialog.p-dialog .p-dialog-header,
 .bsdialog.p-dialog .p-dialog-content {
     padding: 0;
-    // margin: 0;
 }
 .bsdialog.p-dialog .p-dialog-content {
     display: flex;

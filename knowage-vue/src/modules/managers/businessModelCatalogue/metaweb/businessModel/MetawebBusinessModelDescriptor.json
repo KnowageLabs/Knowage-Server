@@ -23,6 +23,35 @@
         "globalFilterFields": ["name"],
         "mainList": {
             "height": "100%"
+        },
+        "relativeFlex": {
+            "flex": "1",
+            "position": "relative"
+        },
+        "absolute": {
+            "position": "absolute"
+        },
+        "tableCell": {
+            "flex-basis": "100%"
+        },
+        "summaryItemWidth": {
+            "width": "50%"
+        },
+        "summaryItemFirst": {
+            "flex-grow": 1,
+            "flex-shrink": 1,
+            "flex-basis": "50%"
+        },
+        "summaryItemSecond": {
+            "flex-grow": 1,
+            "flex-shrink": 1,
+            "flex-basis": "50%",
+            "text-align": "end"
+        },
+        "summaryItemMiddle": {
+            "flex-grow": 1,
+            "flex-shrink": 1,
+            "flex-basis": "10%"
         }
     },
     "validations": {
