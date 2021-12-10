@@ -12,7 +12,7 @@
                     </template>
                 </Toolbar>
                 <div :style="bmDescriptor.style.businessClassListContainer" style="flex:1;position:relative">
-                    <Listbox v-if="!loading" class="kn-list--column" :style="bmDescriptor.style.mainList" style="height:100%;position:absolute;width:100%" :options="metaMock.metaSales.businessModels" optionLabel="name">
+                    <Listbox v-if="!loading" class="kn-list--column" :style="bmDescriptor.style.mainList" style="height:100%;position:absolute;width:100%" :options="metaMock.metaSales.businessModels" optionLabel="name" @change="selectBusinessModel">
                         <template #empty>{{ $t('common.info.noDataFound') }}</template>
                         <template #option="slotProps">
                             <div class="kn-list-item" data-test="list-item">
@@ -33,7 +33,7 @@
                     </template>
                 </Toolbar>
                 <div :style="bmDescriptor.style.businessViewListContainer">
-                    <Listbox v-if="!loading" class="kn-list--column" :style="bmDescriptor.style.mainList" :options="metaMock.metaSales.businessViews" optionLabel="name">
+                    <Listbox v-if="!loading" class="kn-list--column" :style="bmDescriptor.style.mainList" :options="metaMock.metaSales.businessViews" optionLabel="name" @change="selectBusinessModel">
                         <template #empty>{{ $t('common.info.noDataFound') }}</template>
                         <template #option="slotProps">
                             <div class="kn-list-item" data-test="list-item">
@@ -51,13 +51,10 @@
         <div id="CONTAINER ELEMENT DETAILS" class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 p-d-flex p-flex-column" :style="mainDescriptor.style.flex3">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
-                    test
-                </template>
-                <template #right>
-                    <Button label="Delete" class="p-button-text p-button-rounded p-button-plain" :style="mainDescriptor.style.white" />
+                    <span v-if="selectedBusinessModel">{{ selectedBusinessModel.name }}</span>
                 </template>
             </Toolbar>
-            <div class="metaweb-tab-container p-d-flex p-flex-column kn-flex">
+            <div v-if="Object.keys(selectedBusinessModel).length !== 0" class="metaweb-tab-container p-d-flex p-flex-column kn-flex">
                 <TabView class="metaweb-tabview p-d-flex p-flex-column kn-flex" scrollable>
                     <TabPanel>
                         <template #header>
@@ -65,7 +62,7 @@
                         </template>
 
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <MetawebBusinessPropertyListTab></MetawebBusinessPropertyListTab>
+                            <MetawebBusinessPropertyListTab :selectedBusinessModel="selectedBusinessModel"></MetawebBusinessPropertyListTab>
                         </div>
                     </TabPanel>
 
@@ -75,7 +72,7 @@
                         </template>
 
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <MetawebAttributesTab></MetawebAttributesTab>
+                            <MetawebAttributesTab :selectedBusinessModel="selectedBusinessModel"></MetawebAttributesTab>
                         </div>
                     </TabPanel>
 
@@ -122,6 +119,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { iBusinessModel } from '../Metaweb'
 import mainDescriptor from '../MetawebDescriptor.json'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import TabView from 'primevue/tabview'
@@ -149,7 +147,8 @@ export default defineComponent({
             meta: null as any,
             menuButtons: [] as any,
             showBusinessClassDialog: false,
-            showBusinessViewDialog: false
+            showBusinessViewDialog: false,
+            selectedBusinessModel: {} as iBusinessModel
         }
     },
     watch: {
@@ -175,8 +174,9 @@ export default defineComponent({
             this.meta = this.propMeta
             console.log('LOADED META BUSIENSS MODEL: ', this.meta)
         },
-        logEvent(event) {
-            console.log(event)
+        selectBusinessModel(event) {
+            console.log(event.value)
+            this.selectedBusinessModel = event.value as iBusinessModel
         },
         showBusinessClass() {
             this.showBusinessClassDialog = true

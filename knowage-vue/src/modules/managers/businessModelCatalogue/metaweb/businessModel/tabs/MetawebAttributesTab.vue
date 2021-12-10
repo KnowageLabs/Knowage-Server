@@ -66,7 +66,7 @@ export default defineComponent({
 
             // TODO REMOVE MOCK
             // console.log('MOCKED META: ', metaMock)
-            this.businessModel = metaMock.metaSales.businessModels[10] as iBusinessModel
+            this.businessModel = this.selectedBusinessModel as iBusinessModel
 
             if (this.businessModel) {
                 this.observer = observe(this.businessModel)
