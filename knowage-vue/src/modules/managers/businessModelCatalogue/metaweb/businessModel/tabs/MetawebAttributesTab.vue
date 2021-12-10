@@ -60,8 +60,8 @@ export default defineComponent({
             console.log('BUSINESS MODEL LOADED: ', this.businessModel)
         },
         formatBusinessModel() {
-
-        }
+            console.log('TEST')
+        },
         async onRowReorder(event: any) {
             console.log('EVENT: ', event)
             this.$emit('loading', true)
