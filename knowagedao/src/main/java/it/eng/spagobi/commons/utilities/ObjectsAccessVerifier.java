@@ -520,6 +520,9 @@ public class ObjectsAccessVerifier {
 			execRoleNames.add(role.getName());
 		}
 
+		logger.debug("Roles of the user [" + ((UserProfile) profile).getUserId() + "]: " + roles.toString());
+		logger.debug("Roles with execution privileges on folder [" + folder.getPath() + "]: " + execRoleNames.toString());
+
 		Iterator iterRoles = roles.iterator();
 		String roleName = "";
 		while (iterRoles.hasNext()) {
