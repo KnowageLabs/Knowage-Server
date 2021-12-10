@@ -11,8 +11,8 @@
                         <KnFabButton icon="fas fa-plus" @click="showMenu" />
                     </template>
                 </Toolbar>
-                <div :style="bmDescriptor.style.businessClassListContainer">
-                    <Listbox v-if="!loading" class="kn-list--column" :style="bmDescriptor.style.mainList" :options="metaMock.metaSales.businessModels" optionLabel="name">
+                <div :style="bmDescriptor.style.businessClassListContainer" style="flex:1;position:relative">
+                    <Listbox v-if="!loading" class="kn-list--column" :style="bmDescriptor.style.mainList" style="height:100%;position:absolute;width:100%" :options="metaMock.metaSales.businessModels" optionLabel="name">
                         <template #empty>{{ $t('common.info.noDataFound') }}</template>
                         <template #option="slotProps">
                             <div class="kn-list-item" data-test="list-item">

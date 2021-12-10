@@ -74,11 +74,10 @@
                     <Listbox class="kn-list data-condition-list" :options="sourceTable.columns">
                         <template #empty>{{ $t('metaweb.businessModel.sourceHint') }} </template>
                         <template #option="slotProps">
-                            <div class="kn-list-item">
+                            <div class="kn-list-item kn-draggable" draggable="true" @dragstart="onDragStart($event, slotProps.option)">
+                                <i class="pi pi-bars"></i>
                                 <div class="kn-list-item-text">
-                                    <span class="kn-truncated">
-                                        {{ slotProps.option.name }}
-                                    </span>
+                                    <span>{{ slotProps.option.name }}</span>
                                 </div>
                             </div>
                         </template>
@@ -93,7 +92,7 @@
                     <Listbox class="kn-list data-condition-list" :options="targetTable.columns">
                         <template #empty>{{ $t('metaweb.businessModel.targetHint') }} </template>
                         <template #option="slotProps">
-                            <div class="kn-list-item">
+                            <div class="kn-list-item" @drop="dropLog($event, slotProps.option)" @dragover.prevent @dragenter.prevent="beforeDrop($event, slotProps.option)">
                                 <div class="kn-list-item-text">
                                     <span class="kn-truncated">
                                         {{ slotProps.option.name }}
@@ -204,6 +203,41 @@ export default defineComponent({
         },
         previousStep() {
             this.wizardStep--
+        },
+        logEvent(event) {
+            console.log(event)
+        },
+        onDragStart(event, sourceAttr) {
+            event.dataTransfer.setData('text/plain', JSON.stringify(sourceAttr))
+            event.dataTransfer.dropEffect = 'move'
+            event.dataTransfer.effectAllowed = 'move'
+        },
+        beforeDrop: function(event, source, target) {
+            if (target.links) {
+                for (var i = 0; i < target.links.length; i++) {
+                    if (source.tableName === target.links[i].tableName) {
+                        return false
+                    }
+                }
+            }
+            return true
+        },
+        dropLog(event: any, targetAttr: any) {
+            console.log('DROP EVENT-------------------------', event)
+            console.log('DROP TARGET ATTR -------------------------', targetAttr)
+            const word = JSON.parse(event.dataTransfer.getData('text/plain'))
+            console.log('DROP SOURCE ATTR -------------------------', word)
+        },
+        updateSummary() {
+            this.summary = []
+            for (var i = 0; i < this.tmpBnssView.physicalModels.length; i++) {
+                for (var col = 0; col < this.tmpBnssView.physicalModels[i].columns.length; col++) {
+                    // eslint-disable-next-line no-prototype-builtins
+                    if (this.tmpBnssView.physicalModels[i].columns[col].hasOwnProperty('links') && this.tmpBnssView.physicalModels[i].columns[col].links.length > 0) {
+                        this.summary.push(this.tmpBnssView.physicalModels[i].columns[col])
+                    }
+                }
+            }
         }
     }
 })
@@ -212,7 +246,6 @@ export default defineComponent({
 .bsdialog.p-dialog .p-dialog-header,
 .bsdialog.p-dialog .p-dialog-content {
     padding: 0;
-    // margin: 0;
 }
 .data-condition-list {
     border: 1px solid $color-borders !important;
