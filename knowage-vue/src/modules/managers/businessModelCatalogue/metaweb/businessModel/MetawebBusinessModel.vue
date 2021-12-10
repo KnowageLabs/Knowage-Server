@@ -138,7 +138,7 @@ import MetawebAttributesTab from './tabs/MetawebAttributesTab.vue'
 export default defineComponent({
     name: 'metaweb-business-model',
     components: { BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Listbox, Menu, MetawebBusinessPropertyListTab, MetawebAttributesTab },
-    props: {},
+    props: { propMeta: { type: Object } },
     emits: ['loading'],
     computed: {},
     data() {
@@ -146,12 +146,19 @@ export default defineComponent({
             bmDescriptor,
             mainDescriptor,
             metaMock,
+            meta: null as any,
             menuButtons: [] as any,
             showBusinessClassDialog: false,
             showBusinessViewDialog: false
         }
     },
+    watch: {
+        propMeta() {
+            this.loadMeta()
+        }
+    },
     created() {
+        this.loadMeta()
         this.createMenuItems()
     },
     methods: {
@@ -163,6 +170,10 @@ export default defineComponent({
         createMenuItems() {
             this.menuButtons = []
             this.menuButtons.push({ key: '0', label: this.$t('metaweb.businessModel.newBusiness'), command: () => this.showBusinessClass() }, { key: '1', label: this.$t('metaweb.businessModel.newView'), command: () => this.showBusinessView() })
+        },
+        loadMeta() {
+            this.meta = this.propMeta
+            console.log('LOADED META BUSIENSS MODEL: ', this.meta)
         },
         logEvent(event) {
             console.log(event)

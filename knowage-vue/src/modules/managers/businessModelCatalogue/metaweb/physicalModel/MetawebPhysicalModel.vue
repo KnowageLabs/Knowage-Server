@@ -47,7 +47,7 @@
 import { defineComponent } from 'vue'
 // import { AxiosResponse } from 'axios'
 import { iChangedData, iColumn, iPhysicalModel } from '../Metaweb'
-import metawebMock from '../MetawebMock.json'
+// import metawebMock from '../MetawebMock.json'
 import MetawebForeignKeyTab from './tabs/MetawebForeignKeyTab.vue'
 import MetawebPhysicalModelList from './metawebPhysicalModelList/MetawebPhysicalModelList.vue'
 import MetawebPropertyListTab from './tabs/MetawebPropertyListTab.vue'
@@ -60,6 +60,7 @@ import updateMock from './updateMock.json'
 export default defineComponent({
     name: 'metaweb-physical-model',
     components: { MetawebForeignKeyTab, MetawebPhysicalModelList, MetawebPropertyListTab, MetawebPhysicalModelUpdateDialog, TabView, TabPanel },
+    props: { propMeta: { type: Object } },
     emits: ['loading'],
     data() {
         return {
@@ -70,12 +71,18 @@ export default defineComponent({
             changedItem: null as iChangedData | null
         }
     },
+    watch: {
+        propMeta() {
+            this.loadMeta()
+        }
+    },
     created() {
         this.loadMeta()
     },
     methods: {
         loadMeta() {
-            this.meta = metawebMock.metaSales
+            // this.meta = metawebMock.metaSales
+            this.meta = this.propMeta
             console.log('LOADED META: ', this.meta)
         },
         onSelectedItem(selectedPhysicalModel: iColumn | iPhysicalModel) {
