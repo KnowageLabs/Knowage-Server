@@ -11,7 +11,7 @@
                 </template>
             </Toolbar>
         </template>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="true" />
+        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
         <DataTable :value="rows" class="p-datatable-sm kn-table p-ml-1" :scrollable="true" scrollHeight="100%" v-model:filters="filters" :globalFilterFields="metawebSelectDialogDescriptor.globalFilterFields">
             <template #empty>

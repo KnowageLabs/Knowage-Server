@@ -1491,6 +1491,9 @@
     },
     "metaweb": {
         "businessModel": {
+            "attributesDetail": {
+                "title": "Attribute's Detail"
+            },
             "businessClass": "Business Class",
             "businessView": "Business View",
             "newBusiness": "New Business Class",

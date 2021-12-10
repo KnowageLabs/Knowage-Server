@@ -21,6 +21,9 @@
             "header": "common.description"
         }
     ],
+    "iconColumnStyle": {
+        "width": "5%"
+    },
     "reorderColumnStyle": {
         "width": "3rem"
     },

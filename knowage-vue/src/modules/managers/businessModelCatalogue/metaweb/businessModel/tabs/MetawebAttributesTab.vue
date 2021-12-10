@@ -1,27 +1,38 @@
 <template>
-    <DataTable v-if="businessModel" class="p-datatable-sm kn-table p-m-2" :value="businessModel.columns" :loading="loading" editMode="cell" responsiveLayout="stack" breakpoint="960px" @rowReorder="onRowReorder">
-        <Column :rowReorder="true" :headerStyle="metawebAttributesTabDescriptor.reorderColumnStyle" :reorderableColumn="false" />
-        <Column class="kn-truncated" v-for="(column, index) in metawebAttributesTabDescriptor.columns" :key="index" :field="column.field" :header="$t(column.header)">
-            <template #editor="slotProps">
-                <div class="p-d-flex p-flex-row">
-                    <InputText v-if="column.field === 'name' || column.field === 'description'" class="p-inputtext-sm kn-material-input" v-model="slotProps.data[slotProps.column.props.field]" @change="test" />
-                    <Checkbox v-else-if="column.field === 'identifier'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true"></Checkbox>
-                    <Checkbox v-else-if="column.field === 'visible'" v-model="columnsVisibility[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'visibility')"></Checkbox>
-                    <Dropdown v-else-if="column.field === 'type'" class="kn-material-input" v-model="columnsType[slotProps.data.uniqueName]" :options="metawebAttributesTabDescriptor.typeOptions" @change="onChange(slotProps.data, 'type')" />
-                    <i v-if="column.field !== 'identifier' && column.field !== 'visible'" class="pi pi-pencil edit-icon p-ml-2" />
-                </div>
-            </template>
-            <template #body="slotProps">
-                <div class="p-d-flex p-flex-row">
-                    <Checkbox v-if="column.field === 'identifier'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true"></Checkbox>
-                    <Checkbox v-else-if="column.field === 'visible'" v-model="columnsVisibility[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'visibility')"></Checkbox>
-                    <span v-else-if="column.field === 'type'">{{ columnsType[slotProps.data.uniqueName] }}</span>
-                    <span v-else>{{ slotProps.data[slotProps.column.props.field] }}</span>
-                    <i v-if="column.field !== 'identifier' && column.field !== 'visible'" class="pi pi-pencil edit-icon p-ml-2" />
-                </div>
-            </template>
-        </Column>
-    </DataTable>
+    <div>
+        <DataTable v-if="businessModel" class="p-datatable-sm kn-table p-m-2" :value="businessModel.columns" :loading="loading" editMode="cell" responsiveLayout="stack" breakpoint="960px" @rowReorder="onRowReorder">
+            <Column :rowReorder="true" :headerStyle="metawebAttributesTabDescriptor.reorderColumnStyle" :reorderableColumn="false" />
+            <Column class="kn-truncated" v-for="(column, index) in metawebAttributesTabDescriptor.columns" :key="index" :field="column.field" :header="$t(column.header)">
+                <template #editor="slotProps">
+                    <div class="p-d-flex p-flex-row">
+                        <InputText v-if="column.field === 'name' || column.field === 'description'" class="p-inputtext-sm kn-material-input" v-model="slotProps.data[slotProps.column.props.field]" v-tooltip.top="slotProps.data[slotProps.column.props.field]" />
+                        <Checkbox v-else-if="column.field === 'identifier'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true"></Checkbox>
+                        <Checkbox v-else-if="column.field === 'visible'" v-model="columnsVisibility[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'visibility')"></Checkbox>
+                        <Dropdown v-else-if="column.field === 'type'" class="kn-material-input" v-model="columnsType[slotProps.data.uniqueName]" :options="metawebAttributesTabDescriptor.typeOptions" @change="onChange(slotProps.data, 'type')" />
+                        <i v-if="column.field !== 'identifier' && column.field !== 'visible'" class="pi pi-pencil edit-icon p-ml-2" />
+                    </div>
+                </template>
+                <template #body="slotProps">
+                    <div class="p-d-flex p-flex-row">
+                        <Checkbox v-if="column.field === 'identifier'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true"></Checkbox>
+                        <Checkbox v-else-if="column.field === 'visible'" v-model="columnsVisibility[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'visibility')"></Checkbox>
+                        <span v-else-if="column.field === 'type'">{{ columnsType[slotProps.data.uniqueName] }}</span>
+                        <span v-else>{{ slotProps.data[slotProps.column.props.field] }}</span>
+                        <i v-if="column.field !== 'identifier' && column.field !== 'visible'" class="pi pi-pencil edit-icon p-ml-2" />
+                    </div>
+                </template>
+            </Column>
+            <Column :style="metawebAttributesTabDescriptor.iconColumnStyle">
+                <template #body="slotProps">
+                    <div class="p-d-flex p-flex-row p-jc-end">
+                        <Button icon="pi pi-ellipsis-v" class="p-button-link" @click="openAttributeDialog(slotProps.data)" />
+                    </div>
+                </template>
+            </Column>
+        </DataTable>
+
+        <MetawebAttributeDetailDialog :visible="attributeDetailDialogVisible" :selectedAttribute="selectedAttribute" @close="attributeDetailDialogVisible = false"></MetawebAttributeDetailDialog>
+    </div>
 </template>
 
 <script lang="ts">
@@ -32,13 +43,14 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dropdown from 'primevue/dropdown'
 import metawebAttributesTabDescriptor from './MetawebAttributesTabDescriptor.json'
+import MetawebAttributeDetailDialog from '../dialogs/metawebAttributeDetail/MetawebAttributeDetailDialog.vue'
 import metaMock from '../../MetawebMock.json'
 
 const { observe, generate } = require('fast-json-patch')
 
 export default defineComponent({
     name: 'metaweb-attributes-tab',
-    components: { Checkbox, Column, DataTable, Dropdown },
+    components: { Checkbox, Column, DataTable, Dropdown, MetawebAttributeDetailDialog },
     props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> } },
     emits: ['loading'],
     data() {
@@ -48,6 +60,8 @@ export default defineComponent({
             businessModel: null as iBusinessModel | null,
             columnsVisibility: {} as any,
             columnsType: {} as any,
+            attributeDetailDialogVisible: false,
+            selectedAttribute: null as iBusinessModelColumn | null,
             observer: null as any,
             loading: false
         }
@@ -130,6 +144,11 @@ export default defineComponent({
 
             // const patch = generate(this.observer)
             // console.log('PATCH: ', patch)
+        },
+        openAttributeDialog(attribute: iBusinessModelColumn) {
+            console.log('ATTRIBUTE DIALOG OPEN CLICKED!', attribute)
+            this.selectedAttribute = attribute
+            this.attributeDetailDialogVisible = true
         }
     }
 })
