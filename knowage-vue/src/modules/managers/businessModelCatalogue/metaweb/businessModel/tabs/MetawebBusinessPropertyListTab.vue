@@ -122,10 +122,10 @@ export default defineComponent({
             this.businessModel = this.selectedBusinessModel as any
 
             // TODO REMOVE MOCK
-            console.log('MOCKED META: ', metaMock)
+            // console.log('MOCKED META: ', metaMock)
             this.businessModel = metaMock.metaSales.businessModels[10] as iBusinessModel
 
-            console.log('BUSINESS MODEL LOADED: ', this.businessModel)
+            // console.log('BUSINESS MODEL LOADED: ', this.businessModel)
 
             this.loadCategories()
         },
@@ -135,7 +135,7 @@ export default defineComponent({
                 for (let i = 0; i < this.businessModel.properties.length; i++) {
                     const tempProperty = this.businessModel?.properties[i]
 
-                    console.log('TEMP PROPERTY: ', tempProperty)
+                    // console.log('TEMP PROPERTY: ', tempProperty)
 
                     const key = Object.keys(tempProperty)[0]
                     const newKey = key?.split('.')
@@ -144,7 +144,7 @@ export default defineComponent({
                         this.categories[newKey[0]] = []
                     }
 
-                    console.log('TEMP CATEGORY: ', { ...tempProperty[key], type: key })
+                    // console.log('TEMP CATEGORY: ', { ...tempProperty[key], type: key })
 
                     this.categories[newKey[0]].push({ ...tempProperty[key], type: key })
                 }

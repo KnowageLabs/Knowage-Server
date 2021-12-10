@@ -70,9 +70,8 @@
                         <template #header>
                             <span>{{ $t('metaweb.businessModel.tabView.attributes') }}</span>
                         </template>
-                        <div :style="mainDescriptor.style.absoluteScroll">
-                            {{ mainDescriptor.test }}
-                        </div>
+
+                        <MetawebAttributesTab @loading="$emit('loading', $event)"></MetawebAttributesTab>
                     </TabPanel>
                     <TabPanel>
                         <template #header>
@@ -128,11 +127,13 @@ import Menu from 'primevue/contextmenu'
 import MetawebBusinessPropertyListTab from './tabs/MetawebBusinessPropertyListTab.vue'
 import BusinessClassDialog from './dialogs/MetawebBusinessClassDialog.vue'
 import BusinessViewDialog from './dialogs/MetawebBusinessViewDialog.vue'
+import MetawebAttributesTab from './tabs/MetawebAttributesTab.vue'
 
 export default defineComponent({
     name: 'metaweb-business-model',
-    components: { BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Listbox, Menu, MetawebBusinessPropertyListTab },
+    components: { BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Listbox, Menu, MetawebBusinessPropertyListTab, MetawebAttributesTab },
     props: {},
+    emits: ['loading'],
     computed: {},
     data() {
         return {
