@@ -7,7 +7,7 @@
                 </template>
             </Toolbar>
         </template>
-        <form ref="bcForm" class="p-fluid p-formgrid p-grid p-mt-4 p-mx-2">
+        <form ref="bcForm" class="p-fluid p-formgrid p-grid p-mt-4 p-mx-2" style="flex:0">
             <div class="p-field p-col-12 p-md-6">
                 <span class="p-float-label">
                     <InputText
@@ -38,32 +38,35 @@
             </div>
         </form>
 
-        <DataTable
-            v-if="tmpBusinessModel.physicalModel"
-            :value="tmpBusinessModel.physicalModel.columns"
-            class="p-datatable-sm kn-table p-ml-2"
-            v-model:selection="tmpBusinessModel.selectedColumns"
-            :scrollable="true"
-            scrollHeight="100%"
-            dataKey="position"
-            v-model:filters="filters"
-            :globalFilterFields="bsDescriptor.globalFilterFields"
-        >
-            <template #empty>
-                {{ $t('common.info.noDataFound') }}
-            </template>
-            <template #header>
-                <div class="table-header p-d-flex">
-                    <span class="p-input-icon-left p-mr-3 p-col-12">
-                        <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
-                    </span>
-                </div>
-            </template>
-            <Column selectionMode="multiple" />
-            <Column field="name" :header="$t('common.name')" style="flex-basis:100%" />
-        </DataTable>
-
+        <div style="flex:1;position:relative">
+            <div style="position:absolute; width:100%;height:100%">
+                <DataTable
+                    v-if="tmpBusinessModel.physicalModel"
+                    :value="tmpBusinessModel.physicalModel.columns"
+                    class="p-datatable-sm kn-table p-ml-2"
+                    v-model:selection="tmpBusinessModel.selectedColumns"
+                    :scrollable="true"
+                    scrollHeight="100%"
+                    dataKey="position"
+                    v-model:filters="filters"
+                    :globalFilterFields="bsDescriptor.globalFilterFields"
+                >
+                    <template #empty>
+                        {{ $t('common.info.noDataFound') }}
+                    </template>
+                    <template #header>
+                        <div class="table-header p-d-flex">
+                            <span class="p-input-icon-left p-mr-3 p-col-12">
+                                <i class="pi pi-search" />
+                                <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
+                            </span>
+                        </div>
+                    </template>
+                    <Column selectionMode="multiple" />
+                    <Column field="name" :header="$t('common.name')" style="flex-basis:100%" />
+                </DataTable>
+            </div>
+        </div>
         <template #footer>
             <Button class="p-button-text kn-button" :label="$t('common.cancel')" @click="onCancel" />
             <Button class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="buttonDisabled" />
@@ -134,5 +137,10 @@ export default defineComponent({
 .bsdialog.p-dialog .p-dialog-content {
     padding: 0;
     // margin: 0;
+}
+.bsdialog.p-dialog .p-dialog-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 </style>

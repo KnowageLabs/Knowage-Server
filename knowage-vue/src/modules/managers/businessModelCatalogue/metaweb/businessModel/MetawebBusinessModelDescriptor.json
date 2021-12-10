@@ -2,6 +2,7 @@
     "filterFields": ["name"],
     "style": {
         "bsDialog": {
+            "height": "80%",
             "max-height": "80%",
             "min-width": "80%"
         },
