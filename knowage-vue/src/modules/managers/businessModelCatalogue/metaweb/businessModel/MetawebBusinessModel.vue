@@ -64,15 +64,21 @@
                             <span>{{ $t('metaweb.businessModel.tabView.propertyTitle') }}</span>
                         </template>
 
-                        <MetawebBusinessPropertyListTab></MetawebBusinessPropertyListTab>
+                        <div :style="mainDescriptor.style.absoluteScroll">
+                            <MetawebBusinessPropertyListTab></MetawebBusinessPropertyListTab>
+                        </div>
                     </TabPanel>
+
                     <TabPanel>
                         <template #header>
                             <span>{{ $t('metaweb.businessModel.tabView.attributes') }}</span>
                         </template>
 
-                        <MetawebAttributesTab @loading="$emit('loading', $event)"></MetawebAttributesTab>
+                        <div :style="mainDescriptor.style.absoluteScroll">
+                            <MetawebAttributesTab @loading="$emit('loading', $event)"></MetawebAttributesTab>
+                        </div>
                     </TabPanel>
+
                     <TabPanel>
                         <template #header>
                             <span>{{ $t('metaweb.businessModel.tabView.calcField') }}</span>

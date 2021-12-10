@@ -4,14 +4,17 @@
         <Column class="kn-truncated" v-for="(column, index) in metawebAttributesTabDescriptor.columns" :key="index" :field="column.field" :header="$t(column.header)">
             <template #editor="slotProps">
                 <div class="p-d-flex p-flex-row">
-                    <InputText v-if="column.field === 'name'" class="kn-material-input" v-model="slotProps.data[slotProps.column.props.field]" />
-                    <Checkbox v-if="column.field === 'identifier' || column.field === 'Visibility'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true"></Checkbox>
+                    <InputText v-if="column.field === 'name' || column.field === 'description'" class="p-inputtext-sm kn-material-input" v-model="slotProps.data[slotProps.column.props.field]" />
+                    <Checkbox v-else-if="column.field === 'identifier' || column.field === 'visible'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true"></Checkbox>
+                    <Dropdown class="kn-material-input" v-else-if="column.field === 'type'" v-model="slotProps.data[slotProps.column.props.field]" :options="metawebAttributesTabDescriptor.typeOptions" />
+                    <i v-if="column.field !== 'identifier' && column.field !== 'visible'" class="pi pi-pencil edit-icon p-ml-2" />
                 </div>
             </template>
             <template #body="slotProps">
                 <div class="p-d-flex p-flex-row">
-                    <Checkbox v-if="column.field === 'identifier' || column.field === 'Visibility'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true"></Checkbox>
+                    <Checkbox v-if="column.field === 'identifier' || column.field === 'visible'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true"></Checkbox>
                     <span v-else>{{ slotProps.data[slotProps.column.props.field] }}</span>
+                    <i v-if="column.field !== 'identifier' && column.field !== 'visible'" class="pi pi-pencil edit-icon p-ml-2" />
                 </div>
             </template>
         </Column>
@@ -24,12 +27,13 @@ import { iBusinessModel } from '../../Metaweb'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
+import Dropdown from 'primevue/dropdown'
 import metawebAttributesTabDescriptor from './MetawebAttributesTabDescriptor.json'
 import metaMock from '../../MetawebMock.json'
 
 export default defineComponent({
     name: 'metaweb-attributes-tab',
-    components: { Checkbox, Column, DataTable },
+    components: { Checkbox, Column, DataTable, Dropdown },
     props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> } },
     emits: ['loading'],
     data() {
@@ -60,7 +64,22 @@ export default defineComponent({
             console.log('BUSINESS MODEL LOADED: ', this.businessModel)
         },
         formatBusinessModel() {
-            console.log('TEST')
+            if (this.businessModel) {
+                this.businessModel.columns?.forEach((column: any) => {
+                    console.log('COLUMN: ', column)
+                    for (let i = 0; i < column.properties.length; i++) {
+                        const tempProperty = column.properties[i]
+                        // console.log('TEMP PROPERTY: ', tempProperty)
+                        const key = Object.keys(tempProperty)[0]
+                        if (key === 'structural.visible') {
+                            // console.log('FOUND: ', tempProperty[key])
+                            column.visible = tempProperty[key].value === 'true'
+                        } else if (key === 'structural.columntype') {
+                            column.type = tempProperty[key].value
+                        }
+                    }
+                })
+            }
         },
         async onRowReorder(event: any) {
             console.log('EVENT: ', event)
