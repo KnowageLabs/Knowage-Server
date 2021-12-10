@@ -1498,6 +1498,7 @@
             "physTable": "Physical Table",
             "physicalColumn": "Physical Column",
             "physicalTable": "Physical Table",
+            "primaryKey": "Primary Key",
             "sourceAttr": "Source Attributes",
             "sourceHint": "Select source table",
             "sourceTable": "Source Table",
