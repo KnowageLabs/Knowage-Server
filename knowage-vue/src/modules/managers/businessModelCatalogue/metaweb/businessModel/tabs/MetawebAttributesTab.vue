@@ -31,7 +31,7 @@
             </Column>
         </DataTable>
 
-        <MetawebAttributeDetailDialog :visible="attributeDetailDialogVisible" :selectedAttribute="selectedAttribute" @close="attributeDetailDialogVisible = false"></MetawebAttributeDetailDialog>
+        <MetawebAttributeDetailDialog :visible="attributeDetailDialogVisible" :selectedAttribute="selectedAttribute" @close="attributeDetailDialogVisible = false" @save="onAttributeSave"></MetawebAttributeDetailDialog>
     </div>
 </template>
 
@@ -149,6 +149,23 @@ export default defineComponent({
             console.log('ATTRIBUTE DIALOG OPEN CLICKED!', attribute)
             this.selectedAttribute = attribute
             this.attributeDetailDialogVisible = true
+        },
+        onAttributeSave(attribute: iBusinessModelColumn) {
+            console.log('ATTRIBUTE ON SAVE: ', attribute)
+            console.log('SELECTED ATTTRIBUTE AFTER SAVE: ', this.selectedAttribute)
+            this.selectedAttribute = attribute
+
+            if (this.businessModel) {
+                const index = this.businessModel.columns.findIndex((el: iBusinessModelColumn) => el.uniqueName === this.selectedAttribute?.uniqueName)
+                if (index !== -1) {
+                    this.businessModel.columns[index] = this.selectedAttribute
+                }
+            }
+
+            console.log('SELECTED BUSINESS MODEL AFTER SAVE: ', this.selectedBusinessModel)
+
+            const patch = generate(this.observer)
+            console.log('PATCH: ', patch)
         }
     }
 })

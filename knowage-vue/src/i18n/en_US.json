@@ -1492,6 +1492,7 @@
     "metaweb": {
         "businessModel": {
             "attributesDetail": {
+                "structural": "Structural",
                 "title": "Attribute's Detail"
             },
             "businessClass": "Business Class",
@@ -1500,6 +1501,7 @@
             "newView": "New Business View",
             "physTable": "Physical Table",
             "physicalColumn": "Physical Column",
+            "physicalColumnHint": "The original physical column of this column",
             "physicalTable": "Physical Table",
             "primaryKey": "Primary Key",
             "sourceAttr": "Source Attributes",
