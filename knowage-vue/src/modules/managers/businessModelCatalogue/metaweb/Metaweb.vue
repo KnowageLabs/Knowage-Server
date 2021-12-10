@@ -16,7 +16,7 @@
                     <template #header>
                         <span>{{ $t('metaweb.businessModel.title') }}</span>
                     </template>
-                    <BusinessModelTab @loading="setLoading" />
+                    <BusinessModelTab />
                 </TabPanel>
                 <TabPanel>
                     <template #header>

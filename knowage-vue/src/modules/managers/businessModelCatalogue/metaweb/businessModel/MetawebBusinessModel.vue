@@ -75,7 +75,7 @@
                         </template>
 
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <MetawebAttributesTab @loading="$emit('loading', $event)"></MetawebAttributesTab>
+                            <MetawebAttributesTab></MetawebAttributesTab>
                         </div>
                     </TabPanel>
 
