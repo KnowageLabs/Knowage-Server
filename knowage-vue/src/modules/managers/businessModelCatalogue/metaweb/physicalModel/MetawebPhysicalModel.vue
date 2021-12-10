@@ -39,7 +39,7 @@
             </div>
         </div>
 
-        <MetawebPhysicalModelUpdateDialog :visible="updateDialogVisible" :changedItem="changedItem" @close="updateDialogVisible = false"></MetawebPhysicalModelUpdateDialog>
+        <MetawebPhysicalModelUpdateDialog :visible="updateDialogVisible" :changedItem="changedItem" @close="updateDialogVisible = false" @updated="onPhysicalModelUpdate"></MetawebPhysicalModelUpdateDialog>
     </div>
 </template>
 
@@ -56,6 +56,8 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import physDescriptor from './PhysicalModelDescriptor.json'
 // import updateMock from './updateMock.json'
+
+const { applyPatch } = require('fast-json-patch')
 
 export default defineComponent({
     name: 'metaweb-physical-model',
@@ -96,6 +98,12 @@ export default defineComponent({
             this.updateDialogVisible = true
             this.$emit('loading', false)
             console.log('LOADED CHANGED DATA: ', this.changedItem)
+        },
+        onPhysicalModelUpdate(changes: any) {
+            console.log('CHANGES AFTER UPDATE: ', changes)
+            this.meta = applyPatch(this.meta, changes).newDocument
+            console.log('META AFTER UPDATE: ', this.meta)
+            this.updateDialogVisible = false
         }
     }
 })
