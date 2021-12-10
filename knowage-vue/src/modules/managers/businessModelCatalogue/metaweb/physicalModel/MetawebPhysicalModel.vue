@@ -45,7 +45,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-// import { AxiosResponse } from 'axios'
+import { AxiosResponse } from 'axios'
 import { iChangedData, iColumn, iPhysicalModel } from '../Metaweb'
 // import metawebMock from '../MetawebMock.json'
 import MetawebForeignKeyTab from './tabs/MetawebForeignKeyTab.vue'
@@ -55,7 +55,7 @@ import MetawebPhysicalModelUpdateDialog from './metawebPhysicalModelUpdateDialog
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import physDescriptor from './PhysicalModelDescriptor.json'
-import updateMock from './updateMock.json'
+// import updateMock from './updateMock.json'
 
 export default defineComponent({
     name: 'metaweb-physical-model',
@@ -91,9 +91,8 @@ export default defineComponent({
         },
         async openUpdateDialog() {
             this.$emit('loading', true)
-            // TODO Fix API Service
-            // await this.$http.get(process.env.VUE_APP_META_API_URL + `1.0/metaWeb/updatePhysicalModel`).then((response: AxiosResponse<any>) => (this.changedItem = response.data))
-            this.changedItem = updateMock
+            await this.$http.get(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/updatePhysicalModel`).then((response: AxiosResponse<any>) => (this.changedItem = response.data))
+            // this.changedItem = updateMock
             this.updateDialogVisible = true
             this.$emit('loading', false)
             console.log('LOADED CHANGED DATA: ', this.changedItem)

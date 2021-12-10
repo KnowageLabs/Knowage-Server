@@ -11,7 +11,7 @@
         </template>
         <div class="metaweb-tab-container p-d-flex p-flex-column kn-flex">
             <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
-            <TabView v-if="!loading" class="metaweb-tabview p-d-flex p-flex-column kn-flex">
+            <TabView class="metaweb-tabview p-d-flex p-flex-column kn-flex">
                 <TabPanel>
                     <template #header>
                         <span>{{ $t('metaweb.businessModel.title') }}</span>
