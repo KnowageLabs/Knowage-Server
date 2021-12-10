@@ -9,7 +9,7 @@
             "header": "metaweb.businessModel.primaryKey"
         },
         {
-            "field": "Visibility",
+            "field": "visible",
             "header": "common.visibility"
         },
         {
@@ -23,5 +23,6 @@
     ],
     "reorderColumnStyle": {
         "width": "3rem"
-    }
+    },
+    "typeOptions": ["attribute", "measure"]
 }

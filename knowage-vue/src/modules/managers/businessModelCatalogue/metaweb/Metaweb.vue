@@ -11,19 +11,19 @@
         </template>
         <div class="metaweb-tab-container p-d-flex p-flex-column kn-flex">
             <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
-            <TabView v-if="!loading" class="metaweb-tabview p-d-flex p-flex-column kn-flex">
+            <TabView class="metaweb-tabview p-d-flex p-flex-column kn-flex">
                 <TabPanel>
                     <template #header>
                         <span>{{ $t('metaweb.businessModel.title') }}</span>
                     </template>
-                    <BusinessModelTab @loading="setLoading" />
+                    <BusinessModelTab :propMeta="meta" />
                 </TabPanel>
                 <TabPanel>
                     <template #header>
                         <span>{{ $t('metaweb.physicalModel.title') }}</span>
                     </template>
 
-                    <MetawebPhysicalModel @loading="setLoading"></MetawebPhysicalModel>
+                    <MetawebPhysicalModel :propMeta="meta" @loading="setLoading"></MetawebPhysicalModel>
                 </TabPanel>
             </TabView>
         </div>
@@ -42,24 +42,38 @@ import MetawebPhysicalModel from './physicalModel/MetawebPhysicalModel.vue'
 export default defineComponent({
     name: 'metaweb',
     components: { BusinessModelTab, MetawebPhysicalModel, TabView, TabPanel, Dialog },
-    props: { visible: { type: Boolean } },
+    props: { visible: { type: Boolean }, propMeta: { type: Object } },
     emits: ['closeMetaweb'],
     data() {
         return {
             v$: useValidate() as any,
             mainDescriptor,
+            meta: null as any,
             loading: false
         }
     },
     computed: {},
-    created() {},
+    watch: {
+        propMeta() {
+            this.loadMeta()
+        }
+    },
+    created() {
+        this.loadMeta()
+    },
     methods: {
+        loadMeta() {
+            this.meta = this.propMeta
+
+            console.log('LOADED META: ', this.meta)
+        },
         setLoading(loading: boolean) {
             this.loading = loading
         }
     }
 })
 </script>
+
 <style lang="scss">
 .metaweb-right-border {
     border-right: 1px solid #ccc;

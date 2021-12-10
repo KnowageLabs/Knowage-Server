@@ -53,17 +53,17 @@ export interface iChangedData {
 
 export interface iBusinessModel {
     calculatedBusinessColumns: any[],
-    columns: any[],
+    columns: iBusinessModelColumn[],
     name: string,
     physicalTable: { physicalTableIndex: number },
     properties: any[],
     relationships: iRelationship[],
-    simpleBusinessColumns: iSimpleBusinessColumn[],
+    simpleBusinessColumns: iBusinessModelColumn[],
     uniqueName: string,
     physicalColumn?: any
 }
 
-export interface iSimpleBusinessColumn {
+export interface iBusinessModelColumn {
     description: string | null,
     filteredByProfileAttribute: boolean
     filteredByRoleVisibility: boolean
@@ -78,15 +78,15 @@ export interface iSimpleBusinessColumn {
 
 export interface iRelationship {
     description: string | null
-    destinationColumns: iSimpleBusinessColumn[]
-    destinationSimpleBusinessColumns: iSimpleBusinessColumn[]
+    destinationColumns: iBusinessModelColumn[]
+    destinationSimpleBusinessColumns: iBusinessModelColumn[]
     destinationTableName: string
     id: number | null
     name: string
     physicalForeignKeyName: string
     properties: any[]
-    sourceColumns: iSimpleBusinessColumn[]
-    sourceSimpleBusinessColumns: iSimpleBusinessColumn[]
+    sourceColumns: iBusinessModelColumn[]
+    sourceSimpleBusinessColumns: iBusinessModelColumn[]
     sourceTableName: string
     uniqueName: string
 }
