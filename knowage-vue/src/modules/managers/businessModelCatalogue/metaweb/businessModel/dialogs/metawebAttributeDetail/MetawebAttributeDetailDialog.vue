@@ -1,7 +1,7 @@
 <template>
-    <Dialog id="metaweb-attribute-detail-dialog" class="p-fluid kn-dialog--toolbar--primary" :contentStyle="metawebAttributeDetailDialogDescriptor.dialog.style" :visible="visible" :modal="false" :closable="false">
+    <Dialog id="metaweb-attribute-detail-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="metawebAttributeDetailDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
-            <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
+            <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-2 p-col-12">
                 <template #left>
                     {{ $t('metaweb.businessModel.attributesDetail.title') }}
                 </template>
@@ -9,39 +9,142 @@
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
-        <form v-if="attribute" class="p-fluid p-formgrid p-grid p-mt-4 p-mx-2 kn-flex-0">
-            <div class="p-field p-col-12 p-md-6">
-                <span class="p-float-label">
-                    <InputText id="name" class="kn-material-input" v-model.trim="attribute.name" />
-                    <label for="name" class="kn-material-input-label"> {{ $t('common.name') }}</label>
-                </span>
+        <div v-if="attribute" class="p-mt-4 p-mx-4 kn-flex-0">
+            <div class="p-fluid p-formgrid p-grid">
+                <div class="p-field p-col-12 p-md-12">
+                    <span class="p-float-label">
+                        <InputText id="name" class="kn-material-input" v-model.trim="attribute.name" />
+                        <label for="name" class="kn-material-input-label"> {{ $t('common.name') }}</label>
+                    </span>
+                </div>
+
+                <div class="p-field p-col-12 p-md-12">
+                    <span class="p-float-label">
+                        <InputText id="name" class="kn-material-input" v-model.trim="attribute.description" />
+                        <label for="name" class="kn-material-input-label"> {{ $t('common.description') }}</label>
+                    </span>
+                </div>
             </div>
 
-            <div class="p-field p-col-12 p-md-6">
-                <span class="p-float-label">
-                    <InputText id="name" class="kn-material-input" v-model.trim="attribute.description" />
-                    <label for="name" class="kn-material-input-label"> {{ $t('common.description') }}</label>
-                </span>
+            <label class="kn-material-input-label">{{ $t('metaweb.businessModel.attributesDetail.structural') }}</label>
+
+            <div class="p-fluid p-formgrid p-grid p-mt-4">
+                <div class="p-field p-col-12 p-md-6 p-mt-2">
+                    <span class="p-float-label">
+                        <Dropdown class="kn-material-input" v-model="properties['structural.aggtype'].value" :options="properties['structural.aggtype'].propertyType.admissibleValues" @change="updateAttribute('structural.aggtyp')" />
+                        <label class="kn-material-input-label"> {{ properties['structural.aggtype'].propertyType.name }}</label>
+                        <small>{{ properties['structural.aggtype'].propertyType.description }}</small>
+                    </span>
+                </div>
+
+                <div class="p-field p-col-12 p-md-6 p-mt-2">
+                    <span class="p-float-label">
+                        <Dropdown class="kn-material-input" v-model="properties['structural.datatype'].value" :options="properties['structural.datatype'].propertyType.admissibleValues" @change="updateAttribute('structural.datatype')" />
+                        <label class="kn-material-input-label"> {{ properties['structural.datatype'].propertyType.name }}</label>
+                        <small>{{ properties['structural.datatype'].propertyType.description }}</small>
+                    </span>
+                </div>
+
+                <!-- TODO ASK ABOUT ROLES -->
+                <div class="p-field p-col-12 p-md-6 p-mt-2">
+                    <span class="p-float-label">
+                        <Dropdown class="kn-material-input" v-model="properties['behavioural.notEnabledRoles'].value" :options="roles" @change="updateAttribute('behavioural.notEnabledRoles')" />
+                        <label class="kn-material-input-label"> {{ properties['behavioural.notEnabledRoles'].propertyType.name }}</label>
+                        <small>{{ properties['behavioural.notEnabledRoles'].propertyType.description }}</small>
+                    </span>
+                </div>
+
+                <!-- TODO ASK ABOUT PROFILE ATTRIBUTES -->
+                <div class="p-field p-col-12 p-md-6 p-mt-2">
+                    <span class="p-float-label">
+                        <Dropdown class="kn-material-input" v-model="properties['structural.attribute'].value" :options="profileAttributes" @change="updateAttribute('structural.attribute')" />
+                        <label class="kn-material-input-label"> {{ properties['structural.attribute'].propertyType.name }}</label>
+                        <small>{{ properties['structural.attribute'].propertyType.description }}</small>
+                    </span>
+                </div>
+
+                <div class="p-field p-col-12 p-md-6 p-mt-2">
+                    <span class="p-float-label">
+                        <InputText class="kn-material-input" v-model.trim="properties['physical.physicaltable'].value" :disabled="true" />
+                        <label class="kn-material-input-label"> {{ properties['physical.physicaltable'].propertyType.name }}</label>
+                        <small>{{ properties['physical.physicaltable'].propertyType.description }}</small>
+                    </span>
+                </div>
+
+                <div class="p-field p-col-12 p-md-6 p-mt-2">
+                    <span class="p-float-label">
+                        <InputText id="physicalColumn" class="kn-material-input" v-model.trim="attribute.physicalColumn.name" :disabled="true" />
+                        <label for="physicalColumn" class="kn-material-input-label">{{ $t('metaweb.businessModel.physicalColumn') }}</label>
+                        <small>{{ $t('metaweb.businessModel.physicalColumnHint') }}</small>
+                    </span>
+                </div>
+
+                <div class="p-field p-col-12 p-md-6 p-mt-2">
+                    <span class="p-float-label">
+                        <Dropdown class="kn-material-input" v-model="properties['structural.filtercondition'].value" :options="properties['structural.filtercondition'].propertyType.admissibleValues" @change="updateAttribute('structural.filtercondition')" />
+                        <label class="kn-material-input-label"> {{ properties['structural.filtercondition'].propertyType.name }}</label>
+                        <small>{{ properties['structural.filtercondition'].propertyType.description }}</small>
+                    </span>
+                </div>
+
+                <!-- TODO SEE ABOUT DATE FORMAT? -->
+                <div class="p-field p-col-12 p-md-6 p-mt-2" v-if="properties['structural.datatype'].value === 'DATE' || properties['structural.datatype'].value === 'TIMESTAMP' || properties['structural.datatype'].value === 'TIME'">
+                    <span class="p-float-label">
+                        <Dropdown class="kn-material-input" v-model="properties['structural.dateformat'].value" :options="properties['structural.dateformat'].propertyType.admissibleValues" @change="updateAttribute('structural.dateformat')">
+                            <template #option="slotProps">
+                                <span>{{ getFormattedDate(slotProps.option) }}</span>
+                            </template></Dropdown
+                        >
+                        <label class="kn-material-input-label"> {{ properties['structural.dateformat'].propertyType.name }}</label>
+                        <small>{{ properties['structural.datatype'].value === 'TIME' ? properties['structural.format'].propertyType.description : properties['structural.dateformat'].propertyType.description }}</small>
+                    </span>
+                </div>
+
+                <div class="p-field p-col-12 p-md-6 p-mt-2" v-if="['INTEGER', 'DOUBLE', 'DECIMAL', 'BIGINT', 'FLOAT'].indexOf(properties['structural.datatype'].value) !== -1">
+                    <span class="p-float-label">
+                        <Dropdown class="kn-material-input" v-model="properties['structural.format'].value" :options="properties['structural.format'].propertyType.admissibleValues" @change="updateAttribute('structural.format')" />
+                        <label class="kn-material-input-label"> {{ properties['structural.format'].propertyType.name }}</label>
+                        <small>{{ properties['structural.format'].propertyType.description }}</small>
+                    </span>
+                </div>
+
+                <div class="p-field p-col-12 p-md-6 p-mt-2">
+                    <span class="p-float-label">
+                        <InputText class="kn-material-input" v-model.trim="properties['structural.customFunction'].value" @change="updateAttribute('structural.customFunction')" />
+                        <label class="kn-material-input-label"> {{ properties['structural.customFunction'].propertyType.name }}</label>
+                        <small>{{ properties['structural.customFunction'].propertyType.description }}</small>
+                    </span>
+                </div>
             </div>
-        </form>
-        <h1>IT WORKS</h1>
+        </div>
+
+        <template #footer>
+            <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
+            <Button class="kn-button kn-button--primary" @click="saveAttribute"> {{ $t('common.save') }}</Button>
+        </template>
     </Dialog>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { iBusinessModelColumn } from '../../../Metaweb'
+import { formatDate } from '@/helpers/commons/localeHelper'
 import Dialog from 'primevue/dialog'
+import Dropdown from 'primevue/dropdown'
 import metawebAttributeDetailDialogDescriptor from './MetawebAttributeDetailDialogDescriptor.json'
 
 export default defineComponent({
     name: 'metaweb-attribute-detail-dialog',
-    components: { Dialog },
+    components: { Dialog, Dropdown },
     props: { visible: { type: Boolean }, selectedAttribute: { type: Object as PropType<iBusinessModelColumn> } },
+    emits: ['close', 'save'],
     data() {
         return {
             metawebAttributeDetailDialogDescriptor,
             attribute: null as iBusinessModelColumn | null,
+            properties: {} as any,
+            roles: [],
+            profileAttributes: [],
             loading: false
         }
     },
@@ -55,8 +158,64 @@ export default defineComponent({
     },
     methods: {
         loadAttribute() {
-            this.attribute = this.selectedAttribute as iBusinessModelColumn
+            if (this.selectedAttribute) {
+                this.attribute = { ...this.selectedAttribute, physicalColumn: { ...this.selectedAttribute.physicalColumn }, properties: this.getDeepCopyProperties(this.selectedAttribute.properties) } as iBusinessModelColumn
+            }
             console.log('LOADED ATTRIBUTE: ', this.attribute)
+            this.loadAttributeProperties()
+        },
+        getDeepCopyProperties(properties: any[]) {
+            const newProperties = [] as any[]
+            // console.log('PROPERTIES FOR DEEP COPY: ', properties)
+            properties.forEach((property: any) => {
+                // console.log('property: ', property)
+                const key = Object.keys(property)[0]
+                const tempProperty = {}
+                tempProperty[key] = { ...property[key] }
+                newProperties.push(tempProperty)
+            })
+
+            // console.log('NEW PROPERTIES: ', newProperties)
+            return newProperties
+        },
+        loadAttributeProperties() {
+            if (this.attribute) {
+                this.attribute.properties?.forEach((property: any) => {
+                    // console.log('TEMP PROPERTY: ', property)
+                    const key = Object.keys(property)[0]
+
+                    this.properties[key] = property[key]
+                })
+
+                console.log('PROPERTIES LOADED: ', this.properties)
+            }
+        },
+        getFormattedDate(date: any) {
+            return formatDate(date, 'YYYY-MM-DD HH:mm:ss')
+        },
+        updateAttribute(propertyKey: string) {
+            console.log('PROPERTY CHANGED: ', propertyKey)
+
+            if (this.attribute) {
+                for (let i = 0; i < this.attribute.properties.length; i++) {
+                    const property = this.attribute.properties[i]
+                    // console.log('TEMP PROPERTY: ', property)
+                    const key = Object.keys(property)[0]
+                    // console.log('KEY: ', key)
+                    if (key === propertyKey) {
+                        console.log('FOUND!', property)
+                        property[key].value = this.properties[key].value
+                        console.log('AFTER UPDATE!', property)
+                        break
+                    }
+                }
+            }
+        },
+        closeDialog() {
+            this.$emit('close')
+        },
+        saveAttribute() {
+            this.$emit('save', this.attribute)
         }
     }
 })
