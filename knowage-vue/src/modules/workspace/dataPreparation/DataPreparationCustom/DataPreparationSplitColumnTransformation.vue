@@ -18,26 +18,30 @@
                 <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.separator') }}</label>
             </span>
         </div>
-        <div class="p-d-flex">
-            <span class="p-float-label p-field p-ml-2 kn-flex">
-                <InputText type="text" v-model="localTransformation.outputColumn1" class="kn-material-input" />
-                <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.splitColumn.outputColumn') + ' 1' }}</label>
-            </span>
-            <span class="p-float-label p-field p-ml-2 kn-flex">
-                <Dropdown v-model="localTransformation.outputType1" :options="availableOutputTypes" optionLabel="label" optionValue="code" class="kn-material-input" />
-                <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.splitColumn.outputType') + ' 1' }}</label>
-            </span>
-        </div>
-        <div class="p-d-flex">
-            <span class="p-float-label p-field p-ml-2 kn-flex">
-                <InputText type="text" v-model="localTransformation.outputColumn2" class="kn-material-input" />
-                <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.splitColumn.outputColumn') + ' 2' }}</label>
-            </span>
-            <span class="p-float-label p-field p-ml-2 kn-flex">
-                <Dropdown v-model="localTransformation.outputType2" :options="availableOutputTypes" optionLabel="label" optionValue="code" class="kn-material-input" />
-                <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.splitColumn.outputType') + ' 2' }}</label>
-            </span>
-        </div>
+        <Fieldset :legend="$t('managers.workspaceManagement.dataPreparation.transformations.splitColumn.outputColumn') + ' 1'">
+            <div class="p-d-flex">
+                <span class="p-float-label p-field p-ml-2 kn-flex">
+                    <InputText type="text" v-model="localTransformation.outputColumn1" class="kn-material-input" />
+                    <label class="kn-material-input-label">{{ $t('common.name') }}</label>
+                </span>
+                <span class="p-float-label p-field p-ml-2 kn-flex">
+                    <Dropdown v-model="localTransformation.outputType1" :options="availableOutputTypes" optionLabel="label" optionValue="code" class="kn-material-input" />
+                    <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.splitColumn.outputType') }}</label>
+                </span>
+            </div>
+        </Fieldset>
+        <Fieldset :legend="$t('managers.workspaceManagement.dataPreparation.transformations.splitColumn.outputColumn') + ' 2'">
+            <div class="p-d-flex">
+                <span class="p-float-label p-field p-ml-2 kn-flex">
+                    <InputText type="text" v-model="localTransformation.outputColumn2" class="kn-material-input" />
+                    <label class="kn-material-input-label">{{ $t('common.name') }}</label>
+                </span>
+                <span class="p-float-label p-field p-ml-2 kn-flex">
+                    <Dropdown v-model="localTransformation.outputType2" :options="availableOutputTypes" optionLabel="label" optionValue="code" class="kn-material-input" />
+                    <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.splitColumn.outputType') }}</label>
+                </span>
+            </div>
+        </Fieldset>
     </div>
 </template>
 
@@ -47,13 +51,14 @@ import DataPreparationSplitColumnDescriptor from '@/modules/workspace/dataPrepar
 import { ISplitTransformationParameter } from '@/modules/workspace/dataPreparation/DataPreparation'
 import { IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
 import Dropdown from 'primevue/dropdown'
+import Fieldset from 'primevue/fieldset'
 
 export default defineComponent({
     name: 'data-preparation-split-transformation',
 
     props: { columns: { type: Array as PropType<Array<IDataPreparationColumn>> }, col: String },
 
-    components: { Dropdown },
+    components: { Dropdown, Fieldset },
     emits: ['update:transformation'],
     data() {
         return {
