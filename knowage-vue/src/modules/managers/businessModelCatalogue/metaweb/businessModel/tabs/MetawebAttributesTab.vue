@@ -23,15 +23,20 @@
                 </template>
             </Column>
             <Column :style="metawebAttributesTabDescriptor.iconColumnStyle">
+                <template #header>
+                    <Button class="kn-button kn-button--primary p-button-link" @click="openUnusedFieldsDialog"> {{ $t('common.add') }}</Button>
+                </template>
+
                 <template #body="slotProps">
                     <div class="p-d-flex p-flex-row p-jc-end">
-                        <Button icon="pi pi-ellipsis-v" class="p-button-link" @click="openAttributeDialog(slotProps.data)" />
+                        <Button icon="pi pi-pencil" class="p-button-link" @click="openAttributeDialog(slotProps.data)" />
                     </div>
                 </template>
             </Column>
         </DataTable>
 
         <MetawebAttributeDetailDialog :visible="attributeDetailDialogVisible" :selectedAttribute="selectedAttribute" @close="attributeDetailDialogVisible = false" @save="onAttributeSave"></MetawebAttributeDetailDialog>
+        <MetawebAttributeUnusedFieldDialog :visible="unusedFieldDialogVisible" :unusedFields="unusedFields" @close="unusedFieldDialogVisible = false"></MetawebAttributeUnusedFieldDialog>
     </div>
 </template>
 
@@ -44,14 +49,15 @@ import DataTable from 'primevue/datatable'
 import Dropdown from 'primevue/dropdown'
 import metawebAttributesTabDescriptor from './MetawebAttributesTabDescriptor.json'
 import MetawebAttributeDetailDialog from '../dialogs/metawebAttributeDetail/MetawebAttributeDetailDialog.vue'
+import MetawebAttributeUnusedFieldDialog from '../dialogs/metawebAttributeUnusedField/MetawebAttributeUnusedFieldDialog.vue'
 import metaMock from '../../MetawebMock.json'
 
 const { observe, generate } = require('fast-json-patch')
 
 export default defineComponent({
     name: 'metaweb-attributes-tab',
-    components: { Checkbox, Column, DataTable, Dropdown, MetawebAttributeDetailDialog },
-    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> } },
+    components: { Checkbox, Column, DataTable, Dropdown, MetawebAttributeDetailDialog, MetawebAttributeUnusedFieldDialog },
+    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> }, propMeta: { type: Object } },
     emits: ['loading'],
     data() {
         return {
@@ -63,6 +69,8 @@ export default defineComponent({
             attributeDetailDialogVisible: false,
             selectedAttribute: null as iBusinessModelColumn | null,
             observer: null as any,
+            unusedFieldDialogVisible: false,
+            unusedFields: [] as any[],
             loading: false
         }
     },
@@ -166,6 +174,59 @@ export default defineComponent({
 
             const patch = generate(this.observer)
             console.log('PATCH: ', patch)
+        },
+        deleteBusinessColumnConfirm(attribute: iBusinessModelColumn) {
+            this.$confirm.require({
+                message: this.$t('documentExecution.dossier.deleteConfirm'),
+                header: this.$t('documentExecution.dossier.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: async () => await this.deleteBusinessColumn(attribute)
+            })
+        },
+        async deleteBusinessColumn(attribute: iBusinessModelColumn) {
+            console.log('BUSINESS COLUMN FOR DELETE: ', attribute)
+            this.loading = true
+            const postData = { data: { businessColumnUniqueName: attribute.uniqueName, businessModelUniqueName: this.businessModel?.uniqueName } }
+            await this.$http
+                .post(process.env.VUE_APP_META_API_URL + `1.0/metaWeb/deleteBusinessColumn`, postData)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                })
+                .catch(() => {})
+            this.loading = false
+        },
+        openUnusedFieldsDialog() {
+            if (this.businessModel) {
+                console.log('BUSINES MODEL COLUMNS: ', this.businessModel?.physicalTable)
+                console.log('META: ', this.meta)
+                console.log('PHYSICAL TABLE: ', this.meta?.metaSales.physicalModels[this.businessModel?.physicalTable.physicalTableIndex])
+                this.unusedFields = []
+                const physicalTable = this.meta?.metaSales.physicalModels[this.businessModel?.physicalTable.physicalTableIndex]
+                const allColumns = [...physicalTable.columns]
+
+                for (let i = 0; i < allColumns.length; i++) {
+                    const tempColumn = allColumns[i]
+                    // console.log('TEMP COLUMN: ', tempColumn)
+
+                    if (tempColumn.markedDeleted) {
+                        continue
+                    } else {
+                        const index = this.businessModel.columns.findIndex((el: any) => {
+                            // console.log(el.uniqueName + ' === ' + tempColumn.name)
+                            return el.uniqueName === tempColumn.name
+                        })
+
+                        // console.log('INDEX: ', index)
+                        if (index === -1) this.unusedFields.push(tempColumn)
+                    }
+                }
+            }
+
+            // console.log('UNUSED FIELDS: ', this.unusedFields)
+            this.unusedFieldDialogVisible = true
         }
     }
 })
