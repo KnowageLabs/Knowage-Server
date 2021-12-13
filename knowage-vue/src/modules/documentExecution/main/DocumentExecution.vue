@@ -139,11 +139,18 @@ export default defineComponent({
     beforeUpdate() {
         console.log('>>>>>>> BEFORE UPDATE CALLED')
     },
-    activated() {
+    async activated() {
         console.log('>>>>>>> ACTIVATED')
+        if (this.mode === 'iframe') {
+            if (this.userRole) {
+                await this.loadPage()
+            } else {
+                this.parameterSidebarVisible = true
+            }
+        }
     },
     deactivated() {
-        console.log('>>>>>>> DEACTIVATED')
+        this.parameterSidebarVisible = false
     },
     mounted() {
         console.log('111 - MOUNTED: ', this.iframeMounted)

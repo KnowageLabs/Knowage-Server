@@ -129,7 +129,7 @@ export default defineComponent({
             this.getDossierActivities()
         }, 10000)
     },
-    unmounted() {
+    deactivated() {
         clearInterval(this.interval)
     },
     data() {
