@@ -516,7 +516,6 @@ export default defineComponent({
 
             Object.keys(this.filtersData.filterStatus).forEach((key: any) => {
                 const parameter = this.filtersData.filterStatus[key]
-                console.log('PARAMETER: ', parameter)
 
                 if (parameter.parameterValue) {
                     if (parameter.type === 'DATE') {
