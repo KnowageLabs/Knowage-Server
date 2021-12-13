@@ -516,6 +516,7 @@ export default defineComponent({
 
             Object.keys(this.filtersData.filterStatus).forEach((key: any) => {
                 const parameter = this.filtersData.filterStatus[key]
+                console.log('PARAMETER: ', parameter)
 
                 if (parameter.parameterValue) {
                     if (parameter.type === 'DATE') {
@@ -532,6 +533,9 @@ export default defineComponent({
                             tempString += i === parameter.parameterValue.length - 1 ? '' : ';'
                         }
                         parameters[parameter.urlName + '_field_visible_description'] = tempString
+                    } else {
+                        parameters[parameter.urlName] = parameter.parameterValue[0].value
+                        parameters[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].description
                     }
                 }
             })
@@ -560,6 +564,8 @@ export default defineComponent({
                             tempString += i === parameter.parameterValue.length - 1 ? '' : ','
                         }
                         parameters[parameter.urlName] = tempString
+                    } else {
+                        parameters[parameter.urlName] = parameter.parameterValue[0].value
                     }
                 }
             })
