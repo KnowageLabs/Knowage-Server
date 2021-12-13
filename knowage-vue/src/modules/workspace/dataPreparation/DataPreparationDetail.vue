@@ -29,7 +29,16 @@
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         <div class="kn-page-content p-grid p-m-0 managerDetail">
             <Sidebar v-model:visible="visibleRight" position="right" class="kn-data-preparation-sidenav">
-                <div>{{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}: {{ dataset.label }}</div>
+                <div class="info-container">
+                    <div class="original-dataset">
+                        <i class="fa fa-database"></i><span>{{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}</span
+                        >: {{ dataset.label }}
+                    </div>
+                    <div class="original-dataset" v-if="dataset.refreshRate">
+                        <i class="fas fa-stopwatch"></i><span>{{ $t('managers.workspaceManagement.dataPreparation.dataset.refreshRate.label') }}</span
+                        >: {{ dataset.refreshRate }}
+                    </div>
+                </div>
                 <Divider class="p-m-0 p-p-0 dividerCustomConfig" />
                 <div class="kn-truncated">{{ $t('managers.workspaceManagement.dataPreparation.transformations.label') }}</div>
 
@@ -386,6 +395,7 @@ export default defineComponent({
     .managerDetail {
         width: calc(100vw - $mainmenu-width);
     }
+
     .p-datatable.p-datatable-sm.data-prep-table {
         width: 100%;
         .p-datatable-thead {
@@ -408,6 +418,24 @@ export default defineComponent({
     }
 }
 .kn-data-preparation-sidenav {
+    .info-container {
+        border: 1px dashed $color-borders;
+        border-radius: 4px;
+        padding: 4px;
+        margin-bottom: 8px;
+        .original-dataset {
+            height: 32px;
+            justify-content: flex-start;
+            align-items: center;
+            display: flex;
+            span {
+                margin-left: 4px;
+                text-transform: uppercase;
+                font-size: 0.9rem;
+            }
+        }
+    }
+
     .sidenav-transformation {
         display: flex;
         width: 100%;

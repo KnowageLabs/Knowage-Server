@@ -1494,7 +1494,7 @@
                     "visibility": "Visibility"
                 },
                 "label": "Data preparation",
-                "originalDataset": "Original dataset",
+                "originalDataset": "Original",
                 "parametersConfiguration": "Parameters configuration",
                 "roles": {
                     "attribute": "ATTRIBUTE",
