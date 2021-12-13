@@ -90,13 +90,12 @@ export default defineComponent({
             let content = [] as any[]
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/admissibleValuesTree`, postData)
-                .then((response: AxiosResponse<any>) => console.log('RESPONSE DATA TREE: ', response.data))
-                .catch((response) => {
-                    console.log('FILTER VALUES: ', response.data.rows)
+                .then((response: AxiosResponse<any>) =>
                     response.data.rows.forEach((el: any) => {
                         content.push(this.createNode(el, parent))
                     })
-                })
+                )
+                .catch(() => {})
             content.forEach((el: any) => this.checkIfNodeIsSelected(el))
 
             this.attachContentToTree(parent, content)

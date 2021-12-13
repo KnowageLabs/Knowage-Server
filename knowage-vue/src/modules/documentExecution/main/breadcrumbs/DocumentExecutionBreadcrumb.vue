@@ -32,7 +32,6 @@ export default defineComponent({
     methods: {
         loadBreadcrumbs() {
             this.items = this.breadcrumbs as any[]
-            console.log('LOADED BREADCRUMB ITEMS: ', this.breadcrumbs)
         },
         selectBreadcrumb(event: any) {
             const index = this.items.findIndex((el: any) => el.label === event.target.textContent)

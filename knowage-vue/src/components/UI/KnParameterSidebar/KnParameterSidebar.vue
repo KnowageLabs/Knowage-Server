@@ -19,7 +19,6 @@
             </div>
 
             <div v-for="(parameter, index) in parameters.filterStatus" :key="index">
-                <!-- Manual Text/Number Input -->
                 <div class="p-field p-m-4" v-if="(parameter.type === 'STRING' || parameter.type === 'NUM') && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters }" :data-test="'parameter-input-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
@@ -37,7 +36,6 @@
                     />
                 </div>
 
-                <!-- Date -->
                 <div class="p-field p-m-4" v-if="parameter.type === 'DATE' && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters }" :data-test="'parameter-date-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
@@ -57,7 +55,6 @@
                     />
                 </div>
 
-                <!-- LOV list radio/multiple input -->
                 <div class="p-field p-m-4" v-if="parameter.selectionType === 'LIST' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label
@@ -80,7 +77,6 @@
                     </div>
                 </div>
 
-                <!-- LOV combobox single and multiple input -->
                 <div class="p-field p-m-4" v-if="parameter.selectionType === 'COMBOBOX' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label
@@ -97,7 +93,6 @@
                     <MultiSelect v-else v-model="parameter.parameterValue" :options="parameter.data" optionLabel="value" @change="updateVisualDependency(parameter)" />
                 </div>
 
-                <!-- POP UP -->
                 <div class="p-field p-m-4" v-if="parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label
@@ -118,7 +113,6 @@
                     </div>
                 </div>
 
-                <!-- Tree -->
                 <div class="p-field p-m-4" v-if="parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label

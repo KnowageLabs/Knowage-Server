@@ -80,10 +80,8 @@ export default defineComponent({
         },
         loadParameters() {
             this.linkParameters = this.parameters as any[]
-            console.log('LOADED LINK PARAMS: ', this.linkParameters)
         },
         getPublicUrl() {
-            console.log('STORE: ', (this.$store.state as any).user.organization)
             const tenet = (this.$store.state as any).user.organization
 
             if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER') {

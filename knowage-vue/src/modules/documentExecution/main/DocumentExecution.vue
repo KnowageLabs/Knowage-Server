@@ -20,8 +20,6 @@
     <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
     <DocumentExecutionBreadcrumb v-if="breadcrumbs.length > 1" :breadcrumbs="breadcrumbs" @breadcrumbClicked="onBreadcrumbClick"></DocumentExecutionBreadcrumb>
 
-    <!-- <button @click="test">TEST</button> -->
-
     <div ref="document-execution-view" id="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
         <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
 
@@ -30,7 +28,6 @@
             <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger"></Dossier>
         </template>
 
-        <!-- <iframe id="documentFrame" name="documentFrame" v-else-if="mode === 'iframe'" class="document-execution-iframe" :src="url"></iframe> -->
         <iframe
             v-for="(item, index) in breadcrumbs"
             :key="index"
@@ -131,16 +128,10 @@ export default defineComponent({
             linkParameters: [],
             embed: false,
             userRole: null,
-            loading: false,
-            iframeMounted: false,
-            iframe: null as any
+            loading: false
         }
     },
-    beforeUpdate() {
-        console.log('>>>>>>> BEFORE UPDATE CALLED')
-    },
     async activated() {
-        console.log('>>>>>>> ACTIVATED')
         if (this.mode === 'iframe') {
             if (this.userRole) {
                 await this.loadPage()
@@ -151,15 +142,6 @@ export default defineComponent({
     },
     deactivated() {
         this.parameterSidebarVisible = false
-    },
-    mounted() {
-        console.log('111 - MOUNTED: ', this.iframeMounted)
-        // console.log('111 - REFS: ', this.$refs)
-        if (!this.iframeMounted) {
-            this.iframe = this.$refs['documentFrame']
-            this.iframeMounted = true
-        }
-        console.log('111 - IFRAME: ', this.iframe)
     },
     computed: {
         sessionRole(): string {
@@ -178,25 +160,15 @@ export default defineComponent({
     },
     async created() {
         window.addEventListener('message', (event) => {
-            // console.log('EVENT: ', event)
             if (event.data.type === 'crossNavigation') {
                 this.executeCrossNavigation(event)
             }
         })
 
-        // console.log('DOCUMENT EXECUTION CREATED!!!!!!!!!1')
-
-        //console.log('CURRENT ROUTE: ', this.$route)
         this.user = (this.$store.state as any).user
         this.userRole = this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
 
         this.setMode()
-
-        // console.log('MODE: ', this.mode)
-
-        // console.log('ID: ', this.id)
-
-        console.log('LOADED USER: ', this.user)
 
         this.document = { label: this.id }
 
@@ -223,11 +195,8 @@ export default defineComponent({
         },
         async editCockpitDocument() {
             this.loading = true
-            console.log('TODO - EDIT COCKPIT DOCUMENT')
             this.documentMode = this.documentMode === 'EDIT' ? 'VIEW' : 'EDIT'
             this.hiddenFormData.set('documentMode', this.documentMode)
-            console.log('TEST', this.hiddenFormData)
-            // window.frames[0].postMessage({ type: 'changeMode', mode: this.documentMode }, '*')
             await this.loadURL()
             this.loading = false
         },
@@ -326,8 +295,6 @@ export default defineComponent({
         async copyLink(embedHTML: boolean) {
             this.loading = true
             this.linkParameters = this.getFormattedParameters()
-            console.log('link params: ', this.linkParameters)
-            //  if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER') {
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/canHavePublicExecutionUrl`, { label: this.document.label })
                 .then((response: AxiosResponse<any>) => {
@@ -336,9 +303,6 @@ export default defineComponent({
                     this.linkDialogVisible = true
                 })
                 .catch(() => {})
-            //  } else {
-            //   window.frames[0].postMessage({ type: 'htmlLink', embedHTML: embedHTML }, '*')
-            //}
             this.loading = false
         },
         closeDocument() {
@@ -383,11 +347,8 @@ export default defineComponent({
             } else {
                 this.breadcrumbs.push({ label: this.document.label, document: this.document })
             }
-            // console.log('LOADED DOCUMENT: ', this.document)
-            // console.log('BREADCRUMBS AFTER LOADED DOCUMENT: ', this.breadcrumbs)
         },
         async loadFilters() {
-            console.log(' >>>>>>>>>>>>>>>>>>>> LOADING FILTERS FOR DOCUMENT: ', this.document)
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, { label: this.document.label, role: this.userRole, parameters: this.document.navigationParams ?? {} })
                 .then((response: AxiosResponse<any>) => (this.filtersData = response.data))
@@ -421,12 +382,8 @@ export default defineComponent({
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) this.breadcrumbs[index].filtersData = this.filtersData
-            console.log('LOADED FILTERS DATA: ', this.filtersData)
-            // console.log('BREADCRUMBS AFTER LOADED FILTERS DATA: ', this.breadcrumbs)
         },
         async loadURL() {
-            console.log('LOADING URL FROM VUE APP!')
-
             const postData = { label: this.document.label, role: this.userRole, parameters: this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
 
             if (this.sbiExecutionId) {
@@ -439,22 +396,18 @@ export default defineComponent({
                     this.urlData = response.data
                     this.sbiExecutionId = this.urlData?.sbiExecutionId as string
                 })
-                .catch((error: string) => {
-                    console.log('ERROR: ', error)
-                })
+                .catch(() => {})
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) {
                 this.breadcrumbs[index].urlData = this.urlData
                 this.sbiExecutionId = this.urlData?.sbiExecutionId as string
             }
-            console.log('LOADED URL DATA: ', this.urlData)
-            // console.log('BREADCRUMBS AFTER LOADED URL DATA: ', this.breadcrumbs)
+
             await this.sendForm()
         },
         async loadExporters() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/exporters/${this.urlData?.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
-            // console.log('LOADED EXPORTERS: ', this.exporters)
         },
         async sendForm() {
             const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
@@ -478,23 +431,18 @@ export default defineComponent({
                 postForm.action = 'http://localhost:8080' + postObject.url
                 postForm.method = 'post'
                 postForm.target = 'documentFrame' + tempIndex
-                // postForm.target = 'documentFrame'
                 document.body.appendChild(postForm)
             }
 
             this.hiddenFormData = new URLSearchParams()
 
             for (let k in postObject.params) {
-                // console.log('>>>>> K: ', k)
                 const inputElement = document.getElementById('postForm_' + postObject.params.document + k) as any
                 if (inputElement) {
-                    //  console.log('>>>>> K FOUND: ', k)
                     inputElement.value = decodeURIComponent(postObject.params[k])
                     inputElement.value = inputElement.value.replace(/\+/g, ' ')
                     this.hiddenFormData.set(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
                 } else {
-                    //  console.log('>>>>> K NEW: ', k)
-
                     const element = document.createElement('input')
                     element.type = 'hidden'
                     element.id = 'postForm_' + postObject.params.document + k
@@ -506,7 +454,7 @@ export default defineComponent({
                     this.hiddenFormData.append(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
                 }
             }
-            // encodeURIComponent
+
             for (let i = postForm.elements.length - 1; i >= 0; i--) {
                 const postFormElement = postForm.elements[i].id.replace('postForm_', '')
 
@@ -517,8 +465,6 @@ export default defineComponent({
 
             this.hiddenFormData.append('documentMode', this.documentMode)
 
-            console.log('SENDING FORM FROM VUE!!!!!!!!!!!!!!!!!!!')
-
             if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER') {
                 await this.sendHiddenFormData()
             } else {
@@ -527,8 +473,6 @@ export default defineComponent({
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) this.breadcrumbs[index].hiddenFormData = this.hiddenFormData
-
-            // console.log('BREADCRUMBS AFTER HIDDEN FORM DATA: ', this.breadcrumbs)
         },
         async sendHiddenFormData() {
             await this.$http
@@ -538,10 +482,8 @@ export default defineComponent({
                         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
                     }
                 })
-                .then((response) => {
-                    console.log('HIDDEN FORM RESPONSE: ', response)
-                })
-                .catch((error: any) => console.log('ERROR: ', error))
+                .then(() => {})
+                .catch(() => {})
         },
         async onExecute() {
             this.loading = true
@@ -700,7 +642,6 @@ export default defineComponent({
                     this.mailDialogVisible = false
                 })
                 .catch((error: any) => {
-                    console.log('ERROR: ', error)
                     this.$store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: error
@@ -734,8 +675,6 @@ export default defineComponent({
             this.filtersData = item.filtersData
             this.urlData = item.urlData
             this.hiddenFormData = item.hiddenFormData
-
-            // this.loadPage()
         },
         async onRoleChange(role: string) {
             this.userRole = role as any
@@ -745,8 +684,6 @@ export default defineComponent({
             await this.loadPage()
         },
         async executeCrossNavigation(event: any) {
-            console.log('EVENT DATA: ', event.data)
-
             await this.loadCrossNavigationByDocument(event.data)
         },
         async loadCrossNavigationByDocument(angularData: any) {
@@ -756,18 +693,12 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
             this.loading = false
 
-            console.log('DATA FROM RESPONSE: ', temp)
-            console.log('DATA FROM ANGULAR: ', angularData)
-
             this.document = { ...temp[0].document, navigationParams: this.formatNavigationParams(angularData.otherOutputParameters, temp[0].navigationParams) }
-            console.log('NEW DOCUMENT: ', this.document)
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
-            // console.log('INDEX: ', index)
             if (index !== -1) {
                 this.breadcrumbs[index].document = this.document
             } else {
-                // console.log('CAAAAAAAAAAAAAAALED FOR ', this.document.label)
                 this.breadcrumbs.push({ label: this.document.label, document: this.document })
             }
 
@@ -776,27 +707,15 @@ export default defineComponent({
         formatNavigationParams(otherOutputParameters: any[], navigationParams: any) {
             let formatedParams = {} as any
 
-            console.log('OTHER OUTPUT PARAMETRS:', otherOutputParameters)
-            console.log('NAVIGATION PARAMETRS:', navigationParams)
-
             otherOutputParameters.forEach((el: any) => {
-                console.log('CURRENT EL: ', el)
-                console.log('CURRNET EL KEY: ', Object.keys(el)[0])
-
                 const index = Object.keys(navigationParams).findIndex((key: string) => key === Object.keys(el)[0])
-                console.log('INDEX', index)
                 if (index !== -1) {
-                    console.log('FOUND', el)
                     formatedParams[Object.keys(el)[0]] = el[Object.keys(el)[0]]
                     formatedParams[Object.keys(el)[0] + '_field_visible_description'] = el[Object.keys(el)[0]]
                 }
             })
 
-            console.log('FORMATED PARAMS AT END: ', formatedParams)
             return formatedParams
-        },
-        test() {
-            console.log('IFRAME: ', this.iframe)
         }
     }
 })

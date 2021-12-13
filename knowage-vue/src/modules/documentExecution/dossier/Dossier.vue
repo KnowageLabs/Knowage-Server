@@ -190,7 +190,6 @@ export default defineComponent({
         },
         async deleteDossier(selectedDossier) {
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedDossier.id}`
-            console.log(url)
 
             if (selectedDossier.status == 'DOWNLOAD' || selectedDossier.status == 'ERROR') {
                 await this.$http
