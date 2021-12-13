@@ -25,7 +25,8 @@
             <Column :style="metawebAttributesTabDescriptor.iconColumnStyle">
                 <template #body="slotProps">
                     <div class="p-d-flex p-flex-row p-jc-end">
-                        <Button icon="pi pi-ellipsis-v" class="p-button-link" @click="openAttributeDialog(slotProps.data)" />
+                        <Button icon="pi pi-pencil" class="p-button-link" @click="openAttributeDialog(slotProps.data)" />
+                        <Button icon="pi pi-trash" class="p-button-link" @click="deleteBusinessColumnConfirm(slotProps.data)" />
                     </div>
                 </template>
             </Column>
@@ -166,6 +167,29 @@ export default defineComponent({
 
             const patch = generate(this.observer)
             console.log('PATCH: ', patch)
+        },
+        deleteBusinessColumnConfirm(attribute: iBusinessModelColumn) {
+            this.$confirm.require({
+                message: this.$t('documentExecution.dossier.deleteConfirm'),
+                header: this.$t('documentExecution.dossier.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: async () => await this.deleteBusinessColumn(attribute)
+            })
+        },
+        async deleteBusinessColumn(attribute: iBusinessModelColumn) {
+            console.log('BUSINESS COLUMN FOR DELETE: ', attribute)
+            this.loading = true
+            const postData = { data: { businessColumnUniqueName: attribute.uniqueName, businessModelUniqueName: this.businessModel?.uniqueName }, diff: generate(this.observer) }
+            await this.$http
+                .post(process.env.VUE_APP_META_API_URL + `1.0/metaWeb/deleteBusinessColumn`, postData)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                })
+                .catch(() => {})
+            this.loading = false
         }
     }
 })
