@@ -241,7 +241,7 @@
 
             <MetawebSelectDialog :visible="metawebSelectDialogVisible" :selectedBusinessModel="selectedBusinessModel" @close="metawebSelectDialogVisible = false" @metaSelected="onMetaSelect"></MetawebSelectDialog>
 
-            <Metaweb :visible="metawebDialogVisible" :propMeta="meta" @closeMetaweb="metawebDialogVisible = false" />
+            <Metaweb :visible="metawebDialogVisible" :propMeta="meta" :businessModel="businessModel" @closeMetaweb="metawebDialogVisible = false" />
         </template>
     </Card>
 </template>

@@ -30,6 +30,7 @@
                 <template #body="slotProps">
                     <div class="p-d-flex p-flex-row p-jc-end">
                         <Button icon="far fa-edit" class="p-button-link" @click="openAttributeDialog(slotProps.data)" />
+                        <Button icon="pi pi-trash" class="p-button-link" @click="deleteBusinessColumnConfirm(slotProps.data)" />
                     </div>
                 </template>
             </Column>
@@ -42,6 +43,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
+import { AxiosResponse } from 'axios'
 import { iBusinessModel, iBusinessModelColumn } from '../../../Metaweb'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
@@ -50,9 +52,8 @@ import Dropdown from 'primevue/dropdown'
 import metawebAttributesTabDescriptor from './MetawebAttributesTabDescriptor.json'
 import MetawebAttributeDetailDialog from './dialogs/metawebAttributeDetail/MetawebAttributeDetailDialog.vue'
 import MetawebAttributeUnusedFieldDialog from './dialogs/metawebAttributeUnusedField/MetawebAttributeUnusedFieldDialog.vue'
-import metaMock from '../../../MetawebMock.json'
 
-const { generate } = require('fast-json-patch')
+const { generate, applyPatch } = require('fast-json-patch')
 
 export default defineComponent({
     name: 'metaweb-attributes-tab',
@@ -62,7 +63,7 @@ export default defineComponent({
     data() {
         return {
             metawebAttributesTabDescriptor,
-            meta: metaMock as any,
+            meta: null as any,
             businessModel: null as iBusinessModel | null,
             columnsVisibility: {} as any,
             columnsType: {} as any,
@@ -75,18 +76,22 @@ export default defineComponent({
     },
     watch: {
         selectedBusinessModel() {
+            this.loadMeta()
             this.loadBusinessModel()
         }
     },
     created() {
+        this.loadMeta()
         this.loadBusinessModel()
     },
     methods: {
+        loadMeta() {
+            this.meta = this.propMeta as any
+            // console.log('LOADED META IN METAWEB ATTRIBUTES TAB: ', this.meta)
+        },
         loadBusinessModel() {
             this.businessModel = this.selectedBusinessModel as iBusinessModel
 
-            // TODO REMOVE MOCK
-            // console.log('MOCKED META: ', metaMock)
             this.businessModel = this.selectedBusinessModel as iBusinessModel
 
             this.formatBusinessModel()
@@ -120,16 +125,12 @@ export default defineComponent({
             const postData = { data: { businessModelUniqueName: this.businessModel?.uniqueName, index: event.dragIndex, direction: event.dropIndex - event.dragIndex }, diff: generate(this.observer) }
             await this.$http
                 .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/moveBusinessColumn`, postData)
-                .then(() => {
-                    this.reorderArray(event.dragIndex, event.dropIndex)
+                .then((response: AxiosResponse<any>) => {
+                    this.meta = applyPatch(this.meta, response.data)
                 })
                 .catch(() => {})
+                .finally(() => generate(this.observer))
             this.loading = false
-        },
-        reorderArray(from: number, to: number) {
-            if (this.businessModel) {
-                this.businessModel.columns.splice(to, 0, this.businessModel.columns.splice(from, 1)[0])
-            }
         },
         onChange(column: iBusinessModelColumn, type: string) {
             // console.log('COLUMN CHANGED: ', column)
@@ -144,9 +145,6 @@ export default defineComponent({
                     tempProperty[key].value = this.columnsType[column.uniqueName]
                 }
             }
-
-            // const patch = generate(this.observer)
-            // console.log('PATCH: ', patch)
         },
         openAttributeDialog(attribute: iBusinessModelColumn) {
             console.log('ATTRIBUTE DIALOG OPEN CLICKED!', attribute)
@@ -154,8 +152,6 @@ export default defineComponent({
             this.attributeDetailDialogVisible = true
         },
         onAttributeSave(attribute: iBusinessModelColumn) {
-            console.log('ATTRIBUTE ON SAVE: ', attribute)
-            console.log('SELECTED ATTTRIBUTE AFTER SAVE: ', this.selectedAttribute)
             this.selectedAttribute = attribute
 
             if (this.businessModel) {
@@ -165,10 +161,7 @@ export default defineComponent({
                 }
             }
 
-            console.log('SELECTED BUSINESS MODEL AFTER SAVE: ', this.selectedBusinessModel)
-
-            const patch = generate(this.observer)
-            console.log('PATCH: ', patch)
+            this.attributeDetailDialogVisible = false
         },
         deleteBusinessColumnConfirm(attribute: iBusinessModelColumn) {
             this.$confirm.require({
@@ -179,16 +172,17 @@ export default defineComponent({
             })
         },
         async deleteBusinessColumn(attribute: iBusinessModelColumn) {
-            console.log('BUSINESS COLUMN FOR DELETE: ', attribute)
             this.loading = true
             const postData = { data: { businessColumnUniqueName: attribute.uniqueName, businessModelUniqueName: this.businessModel?.uniqueName } }
             await this.$http
-                .post(process.env.VUE_APP_META_API_URL + `1.0/metaWeb/deleteBusinessColumn`, postData)
-                .then(() => {
+                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/deleteBusinessColumn`, postData)
+                .then((response: AxiosResponse<any>) => {
+                    this.meta = applyPatch(this.meta, response.data)
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })
+                    generate(this.observer)
                 })
                 .catch(() => {})
             this.loading = false
@@ -197,30 +191,25 @@ export default defineComponent({
             if (this.businessModel) {
                 console.log('BUSINES MODEL COLUMNS: ', this.businessModel?.physicalTable)
                 console.log('META: ', this.meta)
-                console.log('PHYSICAL TABLE: ', this.meta?.metaSales.physicalModels[this.businessModel?.physicalTable.physicalTableIndex])
+                console.log('PHYSICAL TABLE: ', this.meta?.physicalModels[this.businessModel?.physicalTable.physicalTableIndex])
                 this.unusedFields = []
-                const physicalTable = this.meta?.metaSales.physicalModels[this.businessModel?.physicalTable.physicalTableIndex]
+                const physicalTable = this.meta?.physicalModels[this.businessModel?.physicalTable.physicalTableIndex]
                 const allColumns = [...physicalTable.columns]
 
                 for (let i = 0; i < allColumns.length; i++) {
                     const tempColumn = allColumns[i]
-                    // console.log('TEMP COLUMN: ', tempColumn)
 
                     if (tempColumn.markedDeleted) {
                         continue
                     } else {
-                        const index = this.businessModel.columns.findIndex((el: any) => {
-                            // console.log(el.uniqueName + ' === ' + tempColumn.name)
-                            return el.uniqueName === tempColumn.name
-                        })
+                        const index = this.businessModel.columns.findIndex((el: any) => el.uniqueName === tempColumn.name)
 
-                        // console.log('INDEX: ', index)
                         if (index === -1) this.unusedFields.push(tempColumn)
                     }
                 }
             }
 
-            // console.log('UNUSED FIELDS: ', this.unusedFields)
+            console.log('UNUSED FIELDS: ', this.unusedFields)
             this.unusedFieldDialogVisible = true
         }
     }

@@ -39,7 +39,7 @@
                 <div class="p-fluid" v-if="prop.propertyType.admissibleValues.length !== 0">
                     <div class="p-field">
                         <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
-                        <Dropdown class="kn-material-input" v-model="prop.value" :options="prop.propertyType.admissibleValues" />
+                        <Dropdown class="kn-material-input" v-model="prop.value" :options="prop.propertyType.admissibleValues" @change="updateCategoryValue(prop)" />
                     </div>
                 </div>
 
@@ -47,7 +47,7 @@
                 <div class="p-fluid" v-if="prop.propertyType.admissibleValues.length === 0 && prop.type !== 'structural.attribute' && prop.type !== 'structural.sqlFilter' && prop.type !== 'behavioural.notEnabledRoles'">
                     <div class="p-field">
                         <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
-                        <InputText class="kn-material-input" v-model="prop.value" :disabled="prop.type === 'physical.physicaltable'" />
+                        <InputText class="kn-material-input" v-model="prop.value" :disabled="prop.type === 'physical.physicaltable'" @change="updateCategoryValue(prop)" />
                     </div>
                 </div>
 
@@ -56,7 +56,7 @@
                 <div class="p-fluid" v-if="prop.type === 'structural.attribute'">
                     <div class="p-field">
                         <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
-                        <Dropdown class="kn-material-input" v-model="prop.value" :options="profileAttributes" />
+                        <Dropdown class="kn-material-input" v-model="prop.value" :options="profileAttributes" @change="updateCategoryValue(prop)" />
                     </div>
                 </div>
 
@@ -152,6 +152,24 @@ export default defineComponent({
         },
         editTemporalHierarchy() {
             console.log('editTemporalHierarchy clicked!')
+        },
+        updateCategoryValue(property: any) {
+            console.log('UPDATE CATEGORY VALUE BUSINESS MODEL: ', this.businessModel)
+            console.log('UPDATE CATEGORY VALUE CATEGORIES: ', this.categories)
+            console.log('PROPERTY TYPE: ', property.type)
+
+            this.businessModel?.properties?.forEach((el: any) => {
+                const key = Object.keys(el)[0]
+                console.log('KEY: ', key)
+                if (key === property.type) {
+                    console.log('FOUND!')
+                    console.log('PROPERTY!', property)
+                    console.log('EL!', el)
+                    el[key].value = property.value
+                }
+            })
+
+            console.log('UPDATED BM: ', this.businessModel)
         }
     }
 })
