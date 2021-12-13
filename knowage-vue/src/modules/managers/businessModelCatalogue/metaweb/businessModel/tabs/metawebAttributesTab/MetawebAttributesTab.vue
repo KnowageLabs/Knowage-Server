@@ -42,22 +42,22 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iBusinessModel, iBusinessModelColumn } from '../../Metaweb'
+import { iBusinessModel, iBusinessModelColumn } from '../../../Metaweb'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dropdown from 'primevue/dropdown'
 import metawebAttributesTabDescriptor from './MetawebAttributesTabDescriptor.json'
-import MetawebAttributeDetailDialog from '../dialogs/metawebAttributeDetail/MetawebAttributeDetailDialog.vue'
-import MetawebAttributeUnusedFieldDialog from '../dialogs/metawebAttributeUnusedField/MetawebAttributeUnusedFieldDialog.vue'
-import metaMock from '../../MetawebMock.json'
+import MetawebAttributeDetailDialog from './dialogs/metawebAttributeDetail/MetawebAttributeDetailDialog.vue'
+import MetawebAttributeUnusedFieldDialog from './dialogs/metawebAttributeUnusedField/MetawebAttributeUnusedFieldDialog.vue'
+import metaMock from '../../../MetawebMock.json'
 
-const { observe, generate } = require('fast-json-patch')
+const { generate } = require('fast-json-patch')
 
 export default defineComponent({
     name: 'metaweb-attributes-tab',
     components: { Checkbox, Column, DataTable, Dropdown, MetawebAttributeDetailDialog, MetawebAttributeUnusedFieldDialog },
-    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> }, propMeta: { type: Object } },
+    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> }, propMeta: { type: Object }, observer: { type: Object } },
     emits: ['loading'],
     data() {
         return {
@@ -68,7 +68,6 @@ export default defineComponent({
             columnsType: {} as any,
             attributeDetailDialogVisible: false,
             selectedAttribute: null as iBusinessModelColumn | null,
-            observer: null as any,
             unusedFieldDialogVisible: false,
             unusedFields: [] as any[],
             loading: false
@@ -89,10 +88,6 @@ export default defineComponent({
             // TODO REMOVE MOCK
             // console.log('MOCKED META: ', metaMock)
             this.businessModel = this.selectedBusinessModel as iBusinessModel
-
-            if (this.businessModel) {
-                this.observer = observe(this.businessModel)
-            }
 
             this.formatBusinessModel()
 

@@ -1,5 +1,5 @@
 <template>
-    <div class="p-grid p-m-0 kn-flex">
+    <div v-if="meta" class="p-grid p-m-0 kn-flex">
         <div id="CONTAINER ELEMENT LIST" class="p-col-4 p-sm-4 p-md-3 p-p-0 p-d-flex p-flex-column kn-flex">
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
             <div class="p-d-flex p-flex-column kn-flex">
@@ -12,7 +12,7 @@
                     </template>
                 </Toolbar>
                 <div class="kn-relative kn-flex">
-                    <Listbox v-if="!loading" class="kn-list--column kn-absolute kn-height-full kn-width-full" :options="metaMock.metaSales.businessModels" optionLabel="name" @change="selectBusinessModel">
+                    <Listbox v-if="!loading" class="kn-list--column kn-absolute kn-height-full kn-width-full" :options="meta.businessModels" optionLabel="name" @change="selectBusinessModel">
                         <template #empty>{{ $t('common.info.noDataFound') }}</template>
                         <template #option="slotProps">
                             <div class="kn-list-item" data-test="list-item">
@@ -33,7 +33,7 @@
                     </template>
                 </Toolbar>
                 <div class="kn-relative kn-flex">
-                    <Listbox v-if="!loading" class="kn-list--column kn-absolute kn-height-full kn-width-full" :options="metaMock.metaSales.businessViews" optionLabel="name" @change="selectBusinessModel">
+                    <Listbox v-if="!loading" class="kn-list--column kn-absolute kn-height-full kn-width-full" :options="meta.businessViews" optionLabel="name" @change="selectBusinessModel">
                         <template #empty>{{ $t('common.info.noDataFound') }}</template>
                         <template #option="slotProps">
                             <div class="kn-list-item" data-test="list-item">
@@ -72,7 +72,7 @@
                         </template>
 
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <MetawebAttributesTab :selectedBusinessModel="selectedBusinessModel" :propMeta="meta"></MetawebAttributesTab>
+                            <MetawebAttributesTab :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" :observer="observer"></MetawebAttributesTab>
                         </div>
                     </TabPanel>
 
@@ -89,7 +89,7 @@
                             <span>{{ $t('metaweb.businessModel.tabView.inbound') }}</span>
                         </template>
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <InboundRelationships :selectedBusinessModel="selectedBusinessModel" :businessModels="metaMock.metaSales.businessModels" :businessViews="metaMock.metaSales.businessViews" />
+                            <InboundRelationships :selectedBusinessModel="selectedBusinessModel" :businessModels="meta.businessModels" :businessViews="meta.businessViews" />
                         </div>
                         <!-- <div class="kn-relative kn-flex">
                             <div class="kn-height-full kn-width-full kn-absolute"> -->
@@ -117,8 +117,8 @@
         </div>
     </div>
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
-    <BusinessClassDialog v-if="showBusinessClassDialog" :physicalModels="metaMock.metaSales.physicalModels" :showBusinessClassDialog="showBusinessClassDialog" @closeDialog="showBusinessClassDialog = false" />
-    <BusinessViewDialog v-if="showBusinessViewDialog" :physicalModels="metaMock.metaSales.physicalModels" :showBusinessViewDialog="showBusinessViewDialog" @closeDialog="showBusinessViewDialog = false" />
+    <BusinessClassDialog v-if="showBusinessClassDialog" :physicalModels="meta.physicalModels" :showBusinessClassDialog="showBusinessClassDialog" @closeDialog="showBusinessClassDialog = false" />
+    <BusinessViewDialog v-if="showBusinessViewDialog" :physicalModels="meta.physicalModels" :showBusinessViewDialog="showBusinessViewDialog" @closeDialog="showBusinessViewDialog = false" />
 </template>
 
 <script lang="ts">
@@ -129,26 +129,24 @@ import KnFabButton from '@/components/UI/KnFabButton.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import Listbox from 'primevue/listbox'
-import metaMock from '../MetawebMock.json'
 import bmDescriptor from './MetawebBusinessModelDescriptor.json'
 import Menu from 'primevue/contextmenu'
 import MetawebBusinessPropertyListTab from './tabs/MetawebBusinessPropertyListTab.vue'
 import BusinessClassDialog from './dialogs/MetawebBusinessClassDialog.vue'
 import BusinessViewDialog from './dialogs/MetawebBusinessViewDialog.vue'
-import MetawebAttributesTab from './tabs/MetawebAttributesTab.vue'
+import MetawebAttributesTab from './tabs/metawebAttributesTab/MetawebAttributesTab.vue'
 import InboundRelationships from './tabs/inboundRelationships/MetawebInboundRelationships.vue'
 
 export default defineComponent({
     name: 'metaweb-business-model',
     components: { BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Listbox, Menu, MetawebBusinessPropertyListTab, MetawebAttributesTab, InboundRelationships },
-    props: { propMeta: { type: Object } },
+    props: { propMeta: { type: Object }, observer: { type: Object } },
     emits: ['loading'],
     computed: {},
     data() {
         return {
             bmDescriptor,
             mainDescriptor,
-            metaMock,
             meta: null as any,
             menuButtons: [] as any,
             showBusinessClassDialog: false,

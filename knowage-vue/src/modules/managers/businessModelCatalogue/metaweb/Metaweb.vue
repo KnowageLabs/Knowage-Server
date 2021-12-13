@@ -16,14 +16,14 @@
                     <template #header>
                         <span>{{ $t('metaweb.businessModel.title') }}</span>
                     </template>
-                    <BusinessModelTab :propMeta="meta" />
+                    <BusinessModelTab :propMeta="meta" :observer="observer" />
                 </TabPanel>
                 <TabPanel>
                     <template #header>
                         <span>{{ $t('metaweb.physicalModel.title') }}</span>
                     </template>
 
-                    <MetawebPhysicalModel :propMeta="meta" @loading="setLoading"></MetawebPhysicalModel>
+                    <MetawebPhysicalModel :propMeta="meta" :observer="observer" @loading="setLoading"></MetawebPhysicalModel>
                 </TabPanel>
             </TabView>
         </div>
@@ -39,6 +39,8 @@ import TabPanel from 'primevue/tabpanel'
 import BusinessModelTab from './businessModel/MetawebBusinessModel.vue'
 import MetawebPhysicalModel from './physicalModel/MetawebPhysicalModel.vue'
 
+const { observe } = require('fast-json-patch')
+
 export default defineComponent({
     name: 'metaweb',
     components: { BusinessModelTab, MetawebPhysicalModel, TabView, TabPanel, Dialog },
@@ -49,6 +51,7 @@ export default defineComponent({
             v$: useValidate() as any,
             mainDescriptor,
             meta: null as any,
+            observer: null as any,
             loading: false
         }
     },
@@ -65,6 +68,9 @@ export default defineComponent({
         loadMeta() {
             this.meta = this.propMeta
 
+            if (this.meta) {
+                this.observer = observe(this.meta)
+            }
             console.log('LOADED META: ', this.meta)
         },
         setLoading(loading: boolean) {
