@@ -1491,6 +1491,7 @@
     },
     "metaweb": {
         "businessModel": {
+            "addUnusedFields": "Add unused fields",
             "attributesDetail": {
                 "structural": "Structural",
                 "title": "Attribute's Detail"
@@ -1499,6 +1500,7 @@
             "businessView": "Business View",
             "newBusiness": "New Business Class",
             "newView": "New Business View",
+            "noUnusedFields": "No columns to add",
             "physTable": "Physical Table",
             "physicalColumn": "Physical Column",
             "physicalColumnHint": "The original physical column of this column",

@@ -72,7 +72,7 @@
                         </template>
 
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <MetawebAttributesTab :selectedBusinessModel="selectedBusinessModel"></MetawebAttributesTab>
+                            <MetawebAttributesTab :selectedBusinessModel="selectedBusinessModel" :propMeta="meta"></MetawebAttributesTab>
                         </div>
                     </TabPanel>
 
