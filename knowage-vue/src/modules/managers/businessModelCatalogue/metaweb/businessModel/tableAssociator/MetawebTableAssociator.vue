@@ -39,7 +39,7 @@
                             @dragenter.prevent="setDropzoneClass(true, 'target-' + slotProps.index)"
                             @dragleave.prevent="setDropzoneClass(false, 'target-' + slotProps.index)"
                         >
-                            <div class="p-d-flex p-flex-row p-ai-center kn-width-full">
+                            <div class="associator-block-hover p-d-flex p-flex-row p-ai-center kn-width-full">
                                 <span class="kn-truncated kn-flex-05">
                                     {{ slotProps.option.name }}
                                 </span>
@@ -49,10 +49,10 @@
                                         <span class="kn-truncated">
                                             {{ link.name }}
                                         </span>
-                                        <Button v-if="slotProps.option[associatedItem].length > 1" icon="fas fa-times" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteRelationship(slotProps.option, index)" />
+                                        <Button v-if="slotProps.option[associatedItem].length > 1" icon="fas fa-times" class="associator-enable-hover p-button-text p-button-rounded p-button-plain" @click.stop="deleteRelationship(slotProps.option, index)" />
                                     </span>
                                 </div>
-                                <Button icon="far fa-trash-alt kn-flex-0" class="p-button-text p-button-rounded p-button-plain" v-if="slotProps.option[associatedItem] && slotProps.option[associatedItem].length > 0" @click.stop="deleteRelationship(slotProps.option)" />
+                                <Button icon="far fa-trash-alt kn-flex-0" class="associator-enable-hover p-button-text p-button-rounded p-button-plain" v-if="slotProps.option[associatedItem] && slotProps.option[associatedItem].length > 0" @click.stop="deleteRelationship(slotProps.option)" />
                             </div>
                         </div>
                     </template>
@@ -175,6 +175,9 @@ export default defineComponent({
 }
 .associator-block-hover {
     pointer-events: none !important;
+}
+.associator-enable-hover {
+    pointer-events: auto !important;
 }
 .associator-target-list-item {
     display: flex;
