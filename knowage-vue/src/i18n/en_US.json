@@ -1528,7 +1528,7 @@
                     "destType": "Destination type",
                     "endDate": "End Date",
                     "filter": {
-                        "description": "TODO",
+                        "description": "Filter the dataset using the selected conditions. If more then one AND logical operator will be used",
                         "label": "Filter"
                     },
                     "format": {
@@ -1566,14 +1566,12 @@
                     },
                     "separator": "Separator",
                     "splitColumn": {
+                        "description": "Split the column content in two different columns. Choose the split type and define the two returning columns.",
+                        "label": "Split column",
                         "numOfChars": "Number of characters",
                         "outputColumn": "Output Column",
                         "outputType": "Output Type",
-                        "separator": "Separator",
-                        "useNumberOfChars": "Use number of characters",
-                        "useSeparator": "Use separator",
-                        "description": "TODO",
-                        "label": "Split column"
+                        "separator": "Separator"
                     },
                     "splitColumnMethod": "Split column method",
                     "startDate": "Start Date",

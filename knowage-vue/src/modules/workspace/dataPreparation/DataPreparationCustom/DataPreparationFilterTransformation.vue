@@ -1,38 +1,40 @@
 <template>
-    <div class="p-d-flex" v-for="(filter, index) in localTransformation" v-bind:key="index">
-        <span class="p-float-label p-field p-ml-2 kn-flex data-prep-simple-transformation">
-            <Dropdown v-model="filter.column" :options="columns" class="kn-material-input" optionLabel="fieldAlias" :filter="true" :disabled="col" />
-            <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.columns') }}</label>
+    <div class="data-prep-custom-transformation">
+        <div class="p-d-flex" v-for="(filter, index) in localTransformation" v-bind:key="index">
+            <span class="p-float-label p-field p-ml-2 kn-flex">
+                <Dropdown v-model="filter.column" :options="columns" class="kn-material-input" optionLabel="fieldAlias" :filter="true" :disabled="col" />
+                <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.column') }}</label>
+            </span>
+            <span v-if="filter.column" class="p-float-label p-field p-ml-2 kn-flex">
+                <Dropdown v-model="filter.condition" :options="getAvailableConditions(index)" optionLabel="label" optionValue="code" class="kn-material-input" />
+                <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.conditions') }}</label>
+            </span>
+            <span v-if="showStartDate(index)" class="p-float-label p-field p-ml-2 kn-flex">
+                <Calendar v-model="filter.startDate" class="kn-material-input" />
+                <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.startDate') }}</label>
+            </span>
+            <span v-if="showEndDate(index)" class="p-float-label p-field p-ml-2 kn-flex">
+                <Calendar v-model="filter.endDate" class="kn-material-input" />
+                <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.endDate') }}</label>
+            </span>
+            <span v-if="showInputText(index)" class="p-float-label p-field p-ml-2 kn-flex">
+                <InputText type="text" v-model="filter.text" class="kn-material-input" />
+                <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.text') }}</label>
+            </span>
+            <span v-if="showInputNumber(index)" class="p-float-label p-field p-ml-2 kn-flex">
+                <InputText type="number" v-model="filter.number" class="kn-material-input" />
+                <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.number') }}</label>
+            </span>
+            <span v-if="showValuesList(index)" class="p-float-label p-field p-ml-2 kn-flex">
+                <InputText type="text" v-model="filter.valuesList" class="kn-material-input" />
+                <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.values') }}</label>
+            </span>
+            <span> <Button icon="pi pi-trash" :class="'p-button-text p-button-rounded p-button-plain'" @click="deleteRow(index)" v-if="localTransformation.length > 1"/></span>
+        </div>
+        <span class="p-d-flex p-jc-center p-ai-center">
+            <Button icon="pi pi-plus" class="p-button-text p-button-rounded p-button-plain" @click="addNewRow()" />
         </span>
-        <span v-if="filter.column" class="p-float-label p-field p-ml-2 kn-flex data-prep-simple-transformation">
-            <Dropdown v-model="filter.condition" :options="getAvailableConditions(index)" optionLabel="label" optionValue="code" class="kn-material-input" />
-            <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.conditions') }}</label>
-        </span>
-        <span v-if="showStartDate(index)" class="p-float-label">
-            <Calendar v-model="filter.startDate" class="kn-material-input" />
-            <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.startDate') }}</label>
-        </span>
-        <span v-if="showEndDate(index)" class="p-float-label">
-            <Calendar v-model="filter.endDate" class="kn-material-input" />
-            <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.endDate') }}</label>
-        </span>
-        <span v-if="showInputText(index)" class="p-float-label">
-            <InputText type="text" v-model="filter.text" class="kn-material-input" />
-            <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.text') }}</label>
-        </span>
-        <span v-if="showInputNumber(index)" class="p-float-label">
-            <InputText type="number" v-model="filter.number" class="kn-material-input" />
-            <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.number') }}</label>
-        </span>
-        <span v-if="showValuesList(index)" class="p-float-label">
-            <InputText type="text" v-model="filter.valuesList" class="kn-material-input" />
-            <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.values') }}</label>
-        </span>
-        <span> <Button icon="pi pi-trash" :class="'p-button-text p-button-rounded p-button-plain'" @click="deleteRow(index)" v-if="localTransformation.length > 1"/></span>
     </div>
-    <span class="p-d-flex p-jc-center p-ai-center">
-        <Button icon="pi pi-plus" class="p-button-text p-button-rounded p-button-plain" @click="addNewRow()" />
-    </span>
 </template>
 
 <script lang="ts">
@@ -130,3 +132,12 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss">
+.data-prep-custom-transformation {
+    .p-multiselect,
+    .p-inputtext,
+    .p-dropdown {
+        width: 100%;
+    }
+}
+</style>

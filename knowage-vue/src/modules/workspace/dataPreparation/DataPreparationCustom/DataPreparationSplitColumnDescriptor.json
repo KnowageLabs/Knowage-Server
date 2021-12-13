@@ -17,11 +17,11 @@
         "availableOptions": [
             {
                 "code": "separator",
-                "label": "managers.workspaceManagement.dataPreparation.transformations.split.useSeparator"
+                "label": "managers.workspaceManagement.dataPreparation.transformations.useSeparator"
             },
             {
                 "code": "numberOfChars",
-                "label": "managers.workspaceManagement.dataPreparation.transformations.split.useNumberOfChars"
+                "label": "managers.workspaceManagement.dataPreparation.transformations.useNumberOfChars"
             }
         ]
     }
