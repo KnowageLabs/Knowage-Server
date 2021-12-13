@@ -204,7 +204,7 @@ const mockedDocument = {
     dataSetLabel: null,
     metamodelDrivers: null,
     visible: true,
-    typeCode: 'DOCUMENT_COMPOSITE',
+    typeCode: 'DATAMART',
     public: true,
     creationDate: '2021-11-19 14:25:37',
     engine: 'knowagecockpitengine',

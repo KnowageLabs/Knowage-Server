@@ -479,8 +479,6 @@ describe('Parameter Sidebar - Document has parameters', () => {
     it('should show a clear button if a parameter value is present', async () => {
         const wrapper = factory()
 
-        console.log(wrapper.html())
-
         expect(wrapper.vm.parameters.filterStatus[3].type).toBe('STRING')
         expect(wrapper.vm.parameters.filterStatus[3].parameterValue).toStrictEqual([{ value: 'Food', description: '0' }])
         expect(wrapper.find('[data-test="parameter-input-clear-7637"]').exists()).toBe(true)
