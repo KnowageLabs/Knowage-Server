@@ -548,6 +548,8 @@ export default defineComponent({
     position: absolute;
     top: 0;
     right: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .parameter-clear-icon {
@@ -562,5 +564,6 @@ export default defineComponent({
 
 .kn-parameter-sidebar-buttons {
     margin-top: auto;
+    margin-bottom: 20px;
 }
 </style>
