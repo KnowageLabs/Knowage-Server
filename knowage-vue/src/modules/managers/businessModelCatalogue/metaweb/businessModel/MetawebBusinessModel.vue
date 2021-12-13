@@ -101,7 +101,7 @@
                             <span>{{ $t('metaweb.businessModel.tabView.outbound') }}</span>
                         </template>
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            {{ mainDescriptor.test }}
+                            <OutboundRelationships :selectedBusinessModel="selectedBusinessModel" :businessModels="meta.businessModels" :businessViews="meta.businessViews" />
                         </div>
                     </TabPanel>
                     <TabPanel>
@@ -136,10 +136,11 @@ import BusinessClassDialog from './dialogs/MetawebBusinessClassDialog.vue'
 import BusinessViewDialog from './dialogs/MetawebBusinessViewDialog.vue'
 import MetawebAttributesTab from './tabs/metawebAttributesTab/MetawebAttributesTab.vue'
 import InboundRelationships from './tabs/inboundRelationships/MetawebInboundRelationships.vue'
+import OutboundRelationships from './tabs/outboundRelationships/MetawebOutboundRelationships.vue'
 
 export default defineComponent({
     name: 'metaweb-business-model',
-    components: { BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Listbox, Menu, MetawebBusinessPropertyListTab, MetawebAttributesTab, InboundRelationships },
+    components: { OutboundRelationships, BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Listbox, Menu, MetawebBusinessPropertyListTab, MetawebAttributesTab, InboundRelationships },
     props: { propMeta: { type: Object }, observer: { type: Object } },
     emits: ['loading'],
     computed: {},

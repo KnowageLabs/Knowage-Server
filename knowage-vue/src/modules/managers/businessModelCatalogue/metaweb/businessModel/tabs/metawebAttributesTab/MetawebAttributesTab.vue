@@ -29,7 +29,7 @@
 
                 <template #body="slotProps">
                     <div class="p-d-flex p-flex-row p-jc-end">
-                        <Button icon="pi pi-pencil" class="p-button-link" @click="openAttributeDialog(slotProps.data)" />
+                        <Button icon="far fa-edit" class="p-button-link" @click="openAttributeDialog(slotProps.data)" />
                     </div>
                 </template>
             </Column>

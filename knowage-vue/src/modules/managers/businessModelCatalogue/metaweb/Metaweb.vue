@@ -38,6 +38,7 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import BusinessModelTab from './businessModel/MetawebBusinessModel.vue'
 import MetawebPhysicalModel from './physicalModel/MetawebPhysicalModel.vue'
+import metaMock from './MetawebMock.json'
 
 const { observe } = require('fast-json-patch')
 
@@ -49,6 +50,7 @@ export default defineComponent({
     data() {
         return {
             v$: useValidate() as any,
+            metaMock,
             mainDescriptor,
             meta: null as any,
             observer: null as any,
@@ -66,6 +68,8 @@ export default defineComponent({
     },
     methods: {
         loadMeta() {
+            // this.meta = this.metaMock.metaSales
+
             this.meta = this.propMeta
 
             if (this.meta) {

@@ -1,5 +1,5 @@
 <template>
-    <DataTable :value="inboundRelationships" class="p-datatable-sm kn-table p-ml-2" responsiveLayout="stack" breakpoint="960px" v-model:filters="filters" :globalFilterFields="irDescriptor.globalFilterFields">
+    <DataTable :value="inboundRelationships" class="p-datatable-sm kn-table p-ml-2" responsiveLayout="stack" breakpoint="960px" v-model:filters="filters" :globalFilterFields="orDescriptor.globalFilterFields">
         <template #empty>
             {{ $t('common.info.noDataFound') }}
         </template>
@@ -13,7 +13,7 @@
         </template>
         <Column field="name" :header="$t('common.name')" :sortable="true" />
         <Column field="sourceTableName" :header="$t('metaweb.businessModel.sourceTable')" :sortable="true" />
-        <Column :header="$t('metaweb.physicalModel.sourceColumns')" :sortable="true">
+        <Column class="kn-truncated" :header="$t('metaweb.physicalModel.sourceColumns')" :sortable="true">
             <template #body="slotProps">
                 <span v-tooltip.top="createColumnString(slotProps.data.sourceColumns)">{{ createColumnString(slotProps.data.sourceColumns) }}</span>
             </template>
@@ -24,7 +24,7 @@
                 <span v-tooltip.top="createColumnString(slotProps.data.destinationColumns)">{{ createColumnString(slotProps.data.destinationColumns) }}</span>
             </template>
         </Column>
-        <Column :style="irDescriptor.style.iconColumnStyle" class="p-text-right">
+        <Column :style="orDescriptor.style.iconColumnStyle" class="p-text-right">
             <template #header>
                 <Button :label="$t('common.add')" class="p-button-link p-text-right" @click="inboundDialogVisible = true" />
             </template>
@@ -67,7 +67,7 @@
                         v-model="v$.dataSend.cardinality.$model"
                         optionLabel="name"
                         optionValue="value"
-                        :options="irDescriptor.cardinality"
+                        :options="orDescriptor.cardinality"
                         :class="{ 'p-invalid': v$.dataSend.cardinality.$invalid && v$.dataSend.cardinality.$dirty }"
                         @blur="v$.dataSend.cardinality.$touch()"
                     />
@@ -76,24 +76,24 @@
                 <KnValidationMessages class="p-mt-1" :vComp="v$.dataSend.cardinality" :additionalTranslateParams="{ fieldName: $t('kpi.kpiDefinition.cardinalityTtitle') }" />
             </div>
             <div class="p-field p-col-12 p-md-6">
-                <span class="p-float-label ">
-                    <Dropdown id="source" class="kn-material-input" v-model="rightElement" :options="sourceBusinessClassOptions" optionLabel="name" @change="alterTableToSimpleBound($event.value)" />
-                    <label for="source" class="kn-material-input-label"> {{ $t('metaweb.businessModel.inbound.sourceBc') }} </label>
-                </span>
-            </div>
-            <div class="p-field p-col-12 p-md-6">
                 <span class="p-float-label">
                     <InputText id="target" class="kn-material-input" v-model="businessModel.name" :disabled="true" />
                     <label for="target" class="kn-material-input-label"> {{ $t('metaweb.businessModel.inbound.targetBc') }} </label>
                 </span>
             </div>
+            <div class="p-field p-col-12 p-md-6">
+                <span class="p-float-label ">
+                    <Dropdown id="source" class="kn-material-input" v-model="rightElement" :options="sourceBusinessClassOptions" optionLabel="name" @change="alterTableToSimpleBound($event.value)" />
+                    <label for="source" class="kn-material-input-label"> {{ $t('metaweb.businessModel.inbound.sourceBc') }} </label>
+                </span>
+            </div>
         </form>
 
-        <TableAssociator class="kn-flex" :sourceArray="simpleRight" :targetArray="simpleLeft" :useMultipleTablesFromSameSource="false" @drop="onDrop" @relationshipDeleted="onDelete" />
+        <TableAssociator class="kn-flex" :sourceArray="simpleLeft" :targetArray="simpleRight" :useMultipleTablesFromSameSource="false" @drop="onDrop" @relationshipDeleted="onDelete" />
 
         <template #footer>
             <Button class="p-button-text kn-button" :label="$t('common.cancel')" @click="onCancel" />
-            <Button class="kn-button kn-button--primary" :label="$t('common.create')" :disabled="buttonDisabled" @click="createInbound" />
+            <Button class="kn-button kn-button--primary" :label="$t('common.create')" :disabled="buttonDisabled" @click="createOutbound" />
         </template>
     </Dialog>
 </template>
@@ -104,7 +104,7 @@ import { defineComponent, PropType } from 'vue'
 import { iBusinessModel } from '@/modules/managers/businessModelCatalogue/metaweb/Metaweb'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import useValidate from '@vuelidate/core'
-import irDescriptor from './MetawebInboundRelationshipsDescriptor.json'
+import orDescriptor from './MetawebOutboundRelationshipsDescriptor.json'
 import bsDescriptor from '@/modules/managers/businessModelCatalogue/metaweb/businessModel/MetawebBusinessModelDescriptor.json'
 import TableAssociator from '@/modules/managers/businessModelCatalogue/metaweb/businessModel/tableAssociator/MetawebTableAssociator.vue'
 import DataTable from 'primevue/datatable'
@@ -121,7 +121,7 @@ export default defineComponent({
     computed: {
         leftHasLinks(): boolean {
             var x = 0
-            this.simpleLeft.forEach((item) => {
+            this.simpleRight.forEach((item) => {
                 if (item.links.length > 0) x += 1
             })
             return x > 0 ? false : true
@@ -137,7 +137,7 @@ export default defineComponent({
             v$: useValidate() as any,
             businessModel: null as iBusinessModel | null,
             inboundRelationships: [] as any,
-            irDescriptor,
+            orDescriptor,
             bsDescriptor,
             inboundDialogVisible: false,
             sourceBusinessClassOptions: [] as any,
@@ -159,14 +159,14 @@ export default defineComponent({
         this.loadData()
     },
     validations() {
-        const inboundRequired = (value) => {
+        const outboundRequired = (value) => {
             return !this.inboundDialogVisible || value
         }
         const customValidators: ICustomValidatorMap = {
-            'inbound-dialog-required': inboundRequired
+            'outbound-dialog-required': outboundRequired
         }
         const validationObject = {
-            dataSend: createValidations('dataSend', irDescriptor.validations.dataSend, customValidators)
+            dataSend: createValidations('dataSend', orDescriptor.validations.dataSend, customValidators)
         }
         return validationObject
     },
@@ -178,12 +178,11 @@ export default defineComponent({
             this.populateSourceBusinessClassOptions()
         },
         populateInboundRelationships() {
-            this.inboundRelationships = this.selectedBusinessModel?.relationships.filter((relationship) => this.selectedBusinessModel?.uniqueName != relationship.sourceTableName)
+            this.inboundRelationships = this.selectedBusinessModel?.relationships.filter((relationship) => this.selectedBusinessModel?.uniqueName === relationship.sourceTableName)
         },
         populateSourceBusinessClassOptions() {
             this.businessModels.forEach((el) => this.sourceBusinessClassOptions.push(el))
             this.businessViews.forEach((el) => this.sourceBusinessClassOptions.push(el))
-            console.log('populating...', this.sourceBusinessClassOptions)
         },
         createColumnString(data) {
             var ret = [] as any
@@ -214,18 +213,20 @@ export default defineComponent({
             }
             return a
         },
-        createInbound() {
+        createOutbound() {
             this.dataSend.sourceColumns = []
             this.dataSend.destinationColumns = []
-            this.dataSend.sourceTableName = this.rightElement.uniqueName
-            this.dataSend.destinationTableName = this.businessModel?.uniqueName
-            this.simpleLeft.forEach((entry) => {
+            this.dataSend.sourceTableName = this.businessModel?.uniqueName
+            this.dataSend.destinationTableName = this.rightElement.uniqueName
+            this.simpleRight.forEach((entry) => {
                 if (entry.links.length > 0) {
                     this.dataSend.destinationColumns.push(entry.uname)
                     this.dataSend.sourceColumns.push(entry.links[0].uname)
                 }
             })
+
             console.log(this.dataSend)
+
             //dalje ide servis logika
         }
     }
