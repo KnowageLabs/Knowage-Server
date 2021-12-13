@@ -4,7 +4,7 @@
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #left> {{ $t('metaweb.title') }} : NAME HERE </template>
                 <template #right>
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" />
+                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="metadataSave" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('closeMetaweb')" />
                 </template>
             </Toolbar>
@@ -31,6 +31,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
 import useValidate from '@vuelidate/core'
 import mainDescriptor from './MetawebDescriptor.json'
 import Dialog from 'primevue/dialog'
@@ -39,12 +40,12 @@ import TabPanel from 'primevue/tabpanel'
 import BusinessModelTab from './businessModel/MetawebBusinessModel.vue'
 import MetawebPhysicalModel from './physicalModel/MetawebPhysicalModel.vue'
 
-const { observe } = require('fast-json-patch')
+const { observe, generate } = require('fast-json-patch')
 
 export default defineComponent({
     name: 'metaweb',
     components: { BusinessModelTab, MetawebPhysicalModel, TabView, TabPanel, Dialog },
-    props: { visible: { type: Boolean }, propMeta: { type: Object } },
+    props: { visible: { type: Boolean }, propMeta: { type: Object }, businessModel: { type: Object } },
     emits: ['closeMetaweb'],
     data() {
         return {
@@ -75,6 +76,39 @@ export default defineComponent({
         },
         setLoading(loading: boolean) {
             this.loading = loading
+        },
+        async metadataSave() {
+            let patch = generate(this.observer)
+            console.log('PATCH from MAIN SAVE ', patch)
+            await this.checkRelationships()
+        },
+        async checkRelationships() {
+            this.loading = true
+            console.log('BUSINESS MODEL: ', this.businessModel)
+            const postData = { data: { name: this.businessModel?.name, id: this.businessModel?.id }, diff: generate(this.observer) }
+            await this.$http
+                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/checkRelationships`, postData)
+                .then(async (response: AxiosResponse<any>) => {
+                    console.log('response, ', response)
+                    if (response.data.incorrectRelationships.length === 0) {
+                        await this.generateModel()
+                    }
+                })
+                .catch(() => {})
+            this.loading = false
+        },
+        async generateModel() {
+            const postData = { data: { name: this.businessModel?.name, id: this.businessModel?.id }, diff: generate(this.observer) }
+            await this.$http
+                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/generateModel`, postData)
+                .then(async (response: AxiosResponse<any>) => {
+                    console.log('response, ', response)
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.createTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                })
+                .catch(() => {})
         }
     }
 })
