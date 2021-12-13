@@ -69,7 +69,7 @@ import Listbox from 'primevue/listbox'
 
 export default defineComponent({
     components: { Listbox },
-    props: { sourceArray: { type: Array, required: true }, targetArray: { type: Array, required: true }, associationItem: String },
+    props: { sourceArray: { type: Array, required: true }, targetArray: { type: Array, required: true }, useMultipleTablesFromSameSource: Boolean },
     emits: ['dropEnd', 'relationshipDeleted'],
     data() {
         return {
@@ -82,6 +82,8 @@ export default defineComponent({
     },
     created() {
         this.setAssociatedItem()
+        this.targetModel = this.targetArray
+        this.sourceModel = this.sourceArray
     },
     watch: {
         targetArray() {
@@ -133,24 +135,24 @@ export default defineComponent({
             return true
         },
         onDrop(event, elementId, targetElement) {
-            // console.log('event: ', event, 'elId: ', elementId, 'tarEl: ', targetElement)
             // @ts-ignore
             this.$refs[`${elementId}`].classList.remove('associator-hover')
             var data = event.dataTransfer.getData('text')
-            // console.log('sourceElID: ', data)
             var executeDrop = true
-            executeDrop = this.beforeDrop(this.sourceModel[data], targetElement)
+            this.useMultipleTablesFromSameSource ? (executeDrop = this.beforeDrop(this.sourceModel[data], targetElement)) : ''
             if (executeDrop != false) {
                 if (targetElement[this.associatedItem] == undefined) {
                     targetElement[this.associatedItem] = []
                 }
                 if (targetElement[this.associatedItem].indexOf(this.sourceModel[data]) != -1) {
                     this.setDropErrorClass(elementId)
+                } else {
+                    targetElement[this.associatedItem].push(this.sourceModel[data])
+                    this.$emit('dropEnd', event, this.sourceModel[data], targetElement)
                 }
-                targetElement[this.associatedItem].push(this.sourceModel[data])
-                this.$emit('dropEnd', event, this.sourceModel[data], targetElement)
             } else {
                 this.setDropErrorClass(elementId)
+                console.log('executeDrop = FALSE')
             }
         },
         deleteRelationship(attribute, linkIndex?) {

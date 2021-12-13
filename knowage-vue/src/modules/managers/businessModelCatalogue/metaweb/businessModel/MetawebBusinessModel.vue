@@ -86,6 +86,18 @@
                     </TabPanel>
                     <TabPanel>
                         <template #header>
+                            <span>{{ $t('metaweb.businessModel.tabView.inbound') }}</span>
+                        </template>
+                        <div :style="mainDescriptor.style.absoluteScroll">
+                            <InboundRelationships :selectedBusinessModel="selectedBusinessModel" :businessModels="metaMock.metaSales.businessModels" :businessViews="metaMock.metaSales.businessViews" />
+                        </div>
+                        <!-- <div class="kn-relative kn-flex">
+                            <div class="kn-height-full kn-width-full kn-absolute"> -->
+                        <!-- </div>
+                        </div> -->
+                    </TabPanel>
+                    <TabPanel>
+                        <template #header>
                             <span>{{ $t('metaweb.businessModel.tabView.outbound') }}</span>
                         </template>
                         <div :style="mainDescriptor.style.absoluteScroll">
@@ -95,14 +107,6 @@
                     <TabPanel>
                         <template #header>
                             <span>{{ $t('metaweb.businessModel.tabView.filter') }}</span>
-                        </template>
-                        <div :style="mainDescriptor.style.absoluteScroll">
-                            {{ mainDescriptor.test }}
-                        </div>
-                    </TabPanel>
-                    <TabPanel>
-                        <template #header>
-                            <span>{{ $t('metaweb.businessModel.tabView.propertyTitle') }}</span>
                         </template>
                         <div :style="mainDescriptor.style.absoluteScroll">
                             {{ mainDescriptor.test }}
@@ -132,10 +136,11 @@ import MetawebBusinessPropertyListTab from './tabs/MetawebBusinessPropertyListTa
 import BusinessClassDialog from './dialogs/MetawebBusinessClassDialog.vue'
 import BusinessViewDialog from './dialogs/MetawebBusinessViewDialog.vue'
 import MetawebAttributesTab from './tabs/MetawebAttributesTab.vue'
+import InboundRelationships from './tabs/inboundRelationships/MetawebInboundRelationships.vue'
 
 export default defineComponent({
     name: 'metaweb-business-model',
-    components: { BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Listbox, Menu, MetawebBusinessPropertyListTab, MetawebAttributesTab },
+    components: { BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Listbox, Menu, MetawebBusinessPropertyListTab, MetawebAttributesTab, InboundRelationships },
     props: { propMeta: { type: Object } },
     emits: ['loading'],
     computed: {},

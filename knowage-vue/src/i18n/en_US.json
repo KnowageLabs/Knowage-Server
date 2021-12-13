@@ -21,6 +21,7 @@
         "comment": "Comment",
         "continue": "Continue",
         "copyOf": "Copy of",
+        "create": "Create",
         "creationDate": "Creation Date",
         "dataset": "Dataset",
         "default": "Default",
@@ -1497,6 +1498,11 @@
             },
             "businessClass": "Business Class",
             "businessView": "Business View",
+            "inbound": {
+                "name": "Insert a Business Relationship Name",
+                "sourceBc": "Source Business Class",
+                "targetBc": "Target Business Class"
+            },
             "newBusiness": "New Business Class",
             "newView": "New Business View",
             "physTable": "Physical Table",
@@ -1534,9 +1540,9 @@
             "position": "position",
             "propertyList": "Property list",
             "radix": "radix",
-            "sourceColumns": "Source columns",
+            "sourceColumns": "Source Columns",
             "tables": "Tables",
-            "targetColumns": "Target columns",
+            "targetColumns": "Target Columns",
             "title": "Physical Model",
             "typeName": "typeName",
             "updatePhysicalModel": "Update Physical Model"

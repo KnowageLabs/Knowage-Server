@@ -25,7 +25,7 @@
             </div>
         </form>
 
-        <TableAssociator class="kn-flex" v-if="wizardStep === 2" :sourceArray="sourceTable.columns" :targetArray="targetTable.columns" :associationItem="'link'" @drop="updateSummary" @relationshipDeleted="updateSummary" />
+        <TableAssociator class="kn-flex" v-if="wizardStep === 2" :sourceArray="sourceTable.columns" :targetArray="targetTable.columns" :useMultipleTablesFromSameSource="true" @drop="updateSummary" @relationshipDeleted="updateSummary" />
 
         <div v-if="wizardStep === 2" id="summary-container" class="p-m-3 p-d-flex p-flex-column kn-flex-05">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
@@ -61,7 +61,7 @@
 
         <template #footer>
             <Button class="p-button-text kn-button" :label="$t('common.cancel')" @click="onCancel" />
-            <Button v-if="wizardStep == 2" class="kn-button kn-button--secondary" :label="$t('common.back')" :disabled="buttonDisabled" @click="previousStep" />
+            <Button v-if="wizardStep == 2" class="kn-button kn-button--secondary" :label="$t('common.back')" :disabled="buttonDisabled || summary.length > 0" @click="previousStep" />
             <Button v-if="wizardStep == 1" class="kn-button kn-button--primary" :label="$t('common.next')" :disabled="buttonDisabled" @click="nextStep" />
             <Button v-if="wizardStep == 2" class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="buttonDisabled" />
         </template>
@@ -74,20 +74,12 @@ import useValidate from '@vuelidate/core'
 import Dialog from 'primevue/dialog'
 import bsDescriptor from '../MetawebBusinessModelDescriptor.json'
 import StepOne from './businessViewWizard/MetawebBusinessViewWizardStepOne.vue'
-// import StepTwo from './businessViewWizard/MetawebBusinessViewWizardStepTwo.vue'
 import TableAssociator from '@/modules/managers/businessModelCatalogue/metaweb/businessModel/tableAssociator/MetawebTableAssociator.vue'
 import Dropdown from 'primevue/dropdown'
 import Listbox from 'primevue/listbox'
 
 export default defineComponent({
-    components: {
-        Dialog,
-        StepOne,
-        //  StepTwo
-        TableAssociator,
-        Dropdown,
-        Listbox
-    },
+    components: { Dialog, StepOne, TableAssociator, Dropdown, Listbox },
     emits: ['closeDialog'],
     props: { physicalModels: Array, showBusinessViewDialog: Boolean },
     computed: {
