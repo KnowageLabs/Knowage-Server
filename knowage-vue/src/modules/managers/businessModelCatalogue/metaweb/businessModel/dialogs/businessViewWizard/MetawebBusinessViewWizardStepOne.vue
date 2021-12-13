@@ -23,7 +23,7 @@
             </span>
         </div>
     </form>
-    <div :style="bsDescriptor.style.relativeFlex">
+    <div class="kn-relative kn-flex">
         <div class="kn-height-full kn-width-full" :style="bsDescriptor.style.absolute">
             <DataTable class="p-datatable-sm kn-table p-ml-2" :value="physicalModels" v-model:selection="tmpBnssView.physicalModels" :scrollable="true" scrollHeight="100%" v-model:filters="filters" :globalFilterFields="bsDescriptor.globalFilterFields">
                 <template #empty>

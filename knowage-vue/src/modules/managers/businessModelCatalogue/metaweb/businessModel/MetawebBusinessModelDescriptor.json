@@ -1,57 +1,39 @@
 {
     "filterFields": ["name"],
     "style": {
+        "absolute": {
+            "position": "absolute"
+        },
         "bsDialog": {
             "height": "80%",
             "max-height": "80%",
             "min-width": "80%"
         },
-        "businessClassListContainer": {
-            "height": "calc(100% - 36px)",
-            "overflow-x": "hidden",
-            "overflow-y": "auto",
-            "position": "absolute",
-            "width": "100%"
-        },
-        "businessViewListContainer": {
-            "height": "calc(100% - 36px)",
-            "overflow-x": "hidden",
-            "overflow-y": "auto",
-            "position": "absolute",
-            "width": "100%"
-        },
         "globalFilterFields": ["name"],
         "mainList": {
             "height": "100%"
         },
-        "relativeFlex": {
-            "flex": "1",
-            "position": "relative"
+        "summaryItemFirst": {
+            "flex-basis": "50%",
+            "flex-grow": 1,
+            "flex-shrink": 1
         },
-        "absolute": {
-            "position": "absolute"
+        "summaryItemMiddle": {
+            "flex-basis": "10%",
+            "flex-grow": 1,
+            "flex-shrink": 1
         },
-        "tableCell": {
-            "flex-basis": "100%"
+        "summaryItemSecond": {
+            "flex-basis": "50%",
+            "flex-grow": 1,
+            "flex-shrink": 1,
+            "text-align": "end"
         },
         "summaryItemWidth": {
             "width": "50%"
         },
-        "summaryItemFirst": {
-            "flex-grow": 1,
-            "flex-shrink": 1,
-            "flex-basis": "50%"
-        },
-        "summaryItemSecond": {
-            "flex-grow": 1,
-            "flex-shrink": 1,
-            "flex-basis": "50%",
-            "text-align": "end"
-        },
-        "summaryItemMiddle": {
-            "flex-grow": 1,
-            "flex-shrink": 1,
-            "flex-basis": "10%"
+        "tableCell": {
+            "flex-basis": "100%"
         }
     },
     "validations": {

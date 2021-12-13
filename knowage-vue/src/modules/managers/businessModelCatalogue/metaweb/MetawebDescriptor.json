@@ -16,12 +16,6 @@
         },
         "flex3": {
             "flex": 3
-        },
-        "tableHeader": {
-            "width": "3em"
-        },
-        "white": {
-            "color": "white"
         }
     },
     "test": [

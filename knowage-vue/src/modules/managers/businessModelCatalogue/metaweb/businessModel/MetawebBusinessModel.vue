@@ -2,7 +2,7 @@
     <div class="p-grid p-m-0 kn-flex">
         <div id="CONTAINER ELEMENT LIST" class="p-col-4 p-sm-4 p-md-3 p-p-0 p-d-flex p-flex-column kn-flex">
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-            <div class="kn-flex kn-relative">
+            <div class="p-d-flex p-flex-column kn-flex">
                 <Toolbar class="kn-toolbar kn-toolbar--default">
                     <template #left>
                         <span>{{ $t('metaweb.businessModel.businessClass') }}</span>
@@ -11,8 +11,8 @@
                         <KnFabButton icon="fas fa-plus" @click="showMenu" />
                     </template>
                 </Toolbar>
-                <div :style="bmDescriptor.style.businessClassListContainer" style="flex:1;position:relative">
-                    <Listbox v-if="!loading" class="kn-list--column" :style="bmDescriptor.style.mainList" style="height:100%;position:absolute;width:100%" :options="metaMock.metaSales.businessModels" optionLabel="name" @change="selectBusinessModel">
+                <div class="kn-relative kn-flex">
+                    <Listbox v-if="!loading" class="kn-list--column kn-absolute kn-height-full kn-width-full" :options="metaMock.metaSales.businessModels" optionLabel="name" @change="selectBusinessModel">
                         <template #empty>{{ $t('common.info.noDataFound') }}</template>
                         <template #option="slotProps">
                             <div class="kn-list-item" data-test="list-item">
@@ -26,14 +26,14 @@
                     </Listbox>
                 </div>
             </div>
-            <div class="kn-flex kn-relative">
+            <div class="p-d-flex p-flex-column kn-flex">
                 <Toolbar class="kn-toolbar kn-toolbar--default">
                     <template #left>
                         <span>{{ $t('metaweb.businessModel.businessView') }}</span>
                     </template>
                 </Toolbar>
-                <div :style="bmDescriptor.style.businessViewListContainer">
-                    <Listbox v-if="!loading" class="kn-list--column" :style="bmDescriptor.style.mainList" :options="metaMock.metaSales.businessViews" optionLabel="name" @change="selectBusinessModel">
+                <div class="kn-relative kn-flex">
+                    <Listbox v-if="!loading" class="kn-list--column kn-absolute kn-height-full kn-width-full" :options="metaMock.metaSales.businessViews" optionLabel="name" @change="selectBusinessModel">
                         <template #empty>{{ $t('common.info.noDataFound') }}</template>
                         <template #option="slotProps">
                             <div class="kn-list-item" data-test="list-item">

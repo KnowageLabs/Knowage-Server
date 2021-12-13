@@ -38,7 +38,7 @@
             </div>
         </form>
 
-        <div :style="bsDescriptor.style.relativeFlex">
+        <div class="kn-relative kn-flex">
             <div class="kn-height-full kn-width-full" :style="bsDescriptor.style.absolute">
                 <DataTable
                     v-if="tmpBusinessModel.physicalModel"
