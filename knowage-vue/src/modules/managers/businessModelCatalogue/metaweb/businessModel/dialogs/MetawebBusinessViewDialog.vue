@@ -60,15 +60,16 @@
         </div>
 
         <template #footer>
-            <Button class="p-button-text kn-button" :label="$t('common.cancel')" @click="onCancel" />
+            <Button class="p-button-text kn-button" :label="$t('common.cancel')" @click="closeDialog" />
             <Button v-if="wizardStep == 2" class="kn-button kn-button--secondary" :label="$t('common.back')" :disabled="buttonDisabled || summary.length > 0" @click="previousStep" />
             <Button v-if="wizardStep == 1" class="kn-button kn-button--primary" :label="$t('common.next')" :disabled="buttonDisabled" @click="nextStep" />
-            <Button v-if="wizardStep == 2" class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="buttonDisabled" />
+            <Button v-if="wizardStep == 2" class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="buttonDisabled" @click="saveBusinessView" />
         </template>
     </Dialog>
 </template>
 
 <script lang="ts">
+import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import useValidate from '@vuelidate/core'
 import Dialog from 'primevue/dialog'
@@ -78,10 +79,12 @@ import TableAssociator from '@/modules/managers/businessModelCatalogue/metaweb/b
 import Dropdown from 'primevue/dropdown'
 import Listbox from 'primevue/listbox'
 
+const { observe, generate, applyPatch } = require('fast-json-patch')
+
 export default defineComponent({
     components: { Dialog, StepOne, TableAssociator, Dropdown, Listbox },
     emits: ['closeDialog'],
-    props: { physicalModels: Array, showBusinessViewDialog: Boolean },
+    props: { physicalModels: Array, showBusinessViewDialog: Boolean, meta: Object },
     computed: {
         buttonDisabled(): boolean {
             if (this.v$.$invalid || this.tmpBnssView.physicalModels.length < 2) {
@@ -94,6 +97,8 @@ export default defineComponent({
             bsDescriptor,
             v$: useValidate() as any,
             tmpBnssView: { physicalModels: [], name: '', description: '' } as any,
+            observer: null as any,
+            metaObserve: {} as any,
             wizardStep: 1,
             expandSummary: true,
             summary: [] as any,
@@ -101,11 +106,24 @@ export default defineComponent({
             targetTable: { columns: [] } as any
         }
     },
+    created() {
+        this.loadMeta()
+    },
+    watch: {
+        meta() {
+            console.log(this.meta)
+            this.loadMeta()
+        }
+    },
     methods: {
+        async loadMeta() {
+            this.meta ? (this.metaObserve = this.meta) : ''
+            this.meta ? (this.observer = observe(this.metaObserve.businessModels)) : ''
+        },
         resetPhModel() {
             this.tmpBnssView.physicalModels = []
         },
-        onCancel() {
+        closeDialog() {
             this.$emit('closeDialog')
             this.tmpBnssView = { physicalModels: [], name: '', description: '' } as any
         },
@@ -129,6 +147,54 @@ export default defineComponent({
         },
         logEvent(event) {
             console.log(event)
+        },
+        async saveBusinessView() {
+            var tmpData = {} as any
+            tmpData.name = this.tmpBnssView.name
+            tmpData.description = this.tmpBnssView.description
+            tmpData.sourceBusinessClass = this.tmpBnssView.sourceBusinessClass
+            tmpData.physicaltable = []
+            tmpData.relationships = {}
+
+            for (var i = 0; i < this.tmpBnssView.physicalModels.length; i++) {
+                var tmpDataObj = this.tmpBnssView.physicalModels[i]
+                tmpData.physicaltable.push(tmpDataObj.name)
+                for (var col = 0; col < this.tmpBnssView.physicalModels[i].columns.length; col++) {
+                    // eslint-disable-next-line no-prototype-builtins
+                    if (this.tmpBnssView.physicalModels[i].columns[col].hasOwnProperty('links') && this.tmpBnssView.physicalModels[i].columns[col].links.length > 0) {
+                        //check if the table is present in the relationships object
+                        // eslint-disable-next-line no-prototype-builtins
+                        if (!tmpData.relationships.hasOwnProperty(tmpDataObj.name)) {
+                            tmpData.relationships[tmpDataObj.name] = {}
+                        }
+                        var tabObj = tmpData.relationships[tmpDataObj.name]
+                        var tmpColObj = this.tmpBnssView.physicalModels[i].columns[col]
+                        //check if table has column object
+                        // eslint-disable-next-line no-prototype-builtins
+                        if (!tabObj.hasOwnProperty(tmpColObj.name)) {
+                            tabObj[tmpColObj.name] = {}
+                        }
+                        var colObj = tabObj[tmpColObj.name]
+                        for (var rel = 0; rel < tmpColObj.links.length; rel++) {
+                            //check if column  has has target table object
+                            // eslint-disable-next-line no-prototype-builtins
+                            if (!colObj.hasOwnProperty(tmpColObj.links[rel].tableName)) {
+                                colObj[tmpColObj.links[rel].tableName] = []
+                            }
+                            var targetTableObj = colObj[tmpColObj.links[rel].tableName]
+                            targetTableObj.push(tmpColObj.links[rel].name)
+                        }
+                    }
+                }
+            }
+            const postData = { data: tmpData, diff: generate(this.observer) }
+            await this.$http
+                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/addBusinessView`, postData)
+                .then(async (response: AxiosResponse<any>) => {
+                    this.metaObserve = applyPatch(this.metaObserve, response.data)
+                    this.closeDialog()
+                })
+                .catch(() => {})
         }
     }
 })
