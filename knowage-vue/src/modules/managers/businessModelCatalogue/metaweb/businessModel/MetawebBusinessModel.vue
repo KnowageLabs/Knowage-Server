@@ -112,6 +112,25 @@
                             {{ mainDescriptor.test }}
                         </div>
                     </TabPanel>
+
+                    <TabPanel>
+                        <template #header>
+                            <span>{{ $t('metaweb.businessModel.tabView.filter') }}</span>
+                        </template>
+                        <div :style="mainDescriptor.style.absoluteScroll">
+                            {{ mainDescriptor.test }}
+                        </div>
+                    </TabPanel>
+
+                    <TabPanel>
+                        <template #header>
+                            <span>{{ $t('metaweb.businessModel.physicalTable') }}</span>
+                        </template>
+
+                        <div :style="mainDescriptor.style.absoluteScroll">
+                            <MetawebPhysicalTableTab :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" :observer="observer"></MetawebPhysicalTableTab>
+                        </div>
+                    </TabPanel>
                 </TabView>
             </div>
         </div>
@@ -137,10 +156,11 @@ import BusinessViewDialog from './dialogs/MetawebBusinessViewDialog.vue'
 import MetawebAttributesTab from './tabs/metawebAttributesTab/MetawebAttributesTab.vue'
 import InboundRelationships from './tabs/inboundRelationships/MetawebInboundRelationships.vue'
 import OutboundRelationships from './tabs/outboundRelationships/MetawebOutboundRelationships.vue'
+import MetawebPhysicalTableTab from './tabs/physicalTable/MetawebPhysicalTableTab.vue'
 
 export default defineComponent({
     name: 'metaweb-business-model',
-    components: { OutboundRelationships, BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Listbox, Menu, MetawebBusinessPropertyListTab, MetawebAttributesTab, InboundRelationships },
+    components: { OutboundRelationships, BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Listbox, Menu, MetawebBusinessPropertyListTab, MetawebAttributesTab, InboundRelationships, MetawebPhysicalTableTab },
     props: { propMeta: { type: Object }, observer: { type: Object } },
     emits: ['loading'],
     computed: {},
