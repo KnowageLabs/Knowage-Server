@@ -1,0 +1,34 @@
+{
+    "knListSettings": {
+        "buttons": [
+            {
+                "emits": "delete",
+                "icon": "fas fa-trash-alt",
+                "label": "common.delete"
+            }
+        ],
+        "defaultSortField": "name",
+        "filterFields": ["name"],
+        "interaction": {
+            "type": "event"
+        },
+        "sortFields": ["name"],
+        "textField": false,
+        "titleField": "name"
+    },
+    "validations": {
+        "selectedParam": [
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "output-params-validator"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
