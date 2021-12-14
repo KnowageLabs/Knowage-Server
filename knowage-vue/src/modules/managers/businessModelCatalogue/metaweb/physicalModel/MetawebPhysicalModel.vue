@@ -57,12 +57,12 @@ import TabPanel from 'primevue/tabpanel'
 import physDescriptor from './PhysicalModelDescriptor.json'
 // import updateMock from './updateMock.json'
 
-const { applyPatch } = require('fast-json-patch')
+const { applyPatch, generate } = require('fast-json-patch')
 
 export default defineComponent({
     name: 'metaweb-physical-model',
     components: { MetawebForeignKeyTab, MetawebPhysicalModelList, MetawebPropertyListTab, MetawebPhysicalModelUpdateDialog, TabView, TabPanel },
-    props: { propMeta: { type: Object } },
+    props: { propMeta: { type: Object }, observer: { type: Object } },
     emits: ['loading'],
     data() {
         return {
@@ -102,6 +102,7 @@ export default defineComponent({
         onPhysicalModelUpdate(changes: any) {
             console.log('CHANGES AFTER UPDATE: ', changes)
             this.meta = applyPatch(this.meta, changes).newDocument
+            generate(this.observer)
             console.log('META AFTER UPDATE: ', this.meta)
             this.updateDialogVisible = false
         }
