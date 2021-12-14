@@ -1492,6 +1492,7 @@
     },
     "metaweb": {
         "businessModel": {
+            "addPhysicalTables": "Add physical tables",
             "addUnusedFields": "Add unused fields",
             "attributesDetail": {
                 "structural": "Structural",
