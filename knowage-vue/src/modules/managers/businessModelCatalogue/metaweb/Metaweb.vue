@@ -69,9 +69,9 @@ export default defineComponent({
     },
     methods: {
         loadMeta() {
-            this.meta = this.metaMock.metaSales
+            // this.meta = this.metaMock.metaSales
 
-            // this.meta = this.propMeta
+            this.meta = this.propMeta
 
             if (this.meta) {
                 this.observer = observe(this.meta)
