@@ -136,8 +136,8 @@
         </div>
     </div>
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
-    <BusinessClassDialog v-if="showBusinessClassDialog" :meta="meta" :physicalModels="meta.physicalModels" :showBusinessClassDialog="showBusinessClassDialog" @closeDialog="showBusinessClassDialog = false" />
-    <BusinessViewDialog v-if="showBusinessViewDialog" :meta="meta" :physicalModels="meta.physicalModels" :showBusinessViewDialog="showBusinessViewDialog" @closeDialog="showBusinessViewDialog = false" />
+    <BusinessClassDialog v-if="showBusinessClassDialog" :meta="meta" :observer="observer" :physicalModels="meta.physicalModels" :showBusinessClassDialog="showBusinessClassDialog" @closeDialog="showBusinessClassDialog = false" />
+    <BusinessViewDialog v-if="showBusinessViewDialog" :meta="meta" :observer="observer" :physicalModels="meta.physicalModels" :showBusinessViewDialog="showBusinessViewDialog" @closeDialog="showBusinessViewDialog = false" />
 </template>
 
 <script lang="ts">

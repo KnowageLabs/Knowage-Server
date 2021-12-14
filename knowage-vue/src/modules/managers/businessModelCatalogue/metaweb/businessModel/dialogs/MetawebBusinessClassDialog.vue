@@ -87,13 +87,13 @@ import Column from 'primevue/column'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import bsDescriptor from '../MetawebBusinessModelDescriptor.json'
 
-const { observe, generate, applyPatch } = require('fast-json-patch')
+const { generate, applyPatch } = require('fast-json-patch')
 
 export default defineComponent({
     name: 'document-drivers',
     components: { Dialog, Dropdown, DataTable, Column, KnValidationMessages },
     emits: ['closeDialog'],
-    props: { physicalModels: Array, showBusinessClassDialog: Boolean, meta: Object },
+    props: { physicalModels: Array, showBusinessClassDialog: Boolean, meta: Object, observer: { type: Object } },
     computed: {
         buttonDisabled(): boolean {
             if (this.v$.$invalid || this.tmpBusinessModel.selectedColumns.length === 0) {
@@ -105,7 +105,6 @@ export default defineComponent({
         return {
             bsDescriptor,
             v$: useValidate() as any,
-            observer: null as any,
             metaObserve: {} as any,
             tmpBusinessModel: { physicalModel: null, selectedColumns: [], name: '', description: '' } as any,
             filters: {
@@ -137,7 +136,6 @@ export default defineComponent({
     methods: {
         async loadMeta() {
             this.meta ? (this.metaObserve = this.meta) : ''
-            this.meta ? (this.observer = observe(this.metaObserve.businessModels)) : ''
         },
         resetPhModel() {
             this.tmpBusinessModel.selectedColumns = []
@@ -159,6 +157,7 @@ export default defineComponent({
                 .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/addBusinessClass`, postData)
                 .then(async (response: AxiosResponse<any>) => {
                     this.metaObserve = applyPatch(this.metaObserve, response.data)
+                    generate(this.observer)
                     this.closeDialog()
                 })
                 .catch(() => {})
