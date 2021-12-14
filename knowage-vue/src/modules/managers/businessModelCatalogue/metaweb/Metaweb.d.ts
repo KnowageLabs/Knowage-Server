@@ -60,7 +60,8 @@ export interface iBusinessModel {
     relationships: iRelationship[],
     simpleBusinessColumns: iBusinessModelColumn[],
     uniqueName: string,
-    physicalColumn?: any
+    physicalColumn?: any,
+    physicalTables?: any[]
 }
 
 export interface iBusinessModelColumn {

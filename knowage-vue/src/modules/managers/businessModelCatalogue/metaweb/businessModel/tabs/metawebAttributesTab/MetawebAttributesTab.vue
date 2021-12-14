@@ -92,8 +92,6 @@ export default defineComponent({
         loadBusinessModel() {
             this.businessModel = this.selectedBusinessModel as iBusinessModel
 
-            this.businessModel = this.selectedBusinessModel as iBusinessModel
-
             this.formatBusinessModel()
 
             // console.log('BUSINESS MODEL LOADED: ', this.businessModel)
