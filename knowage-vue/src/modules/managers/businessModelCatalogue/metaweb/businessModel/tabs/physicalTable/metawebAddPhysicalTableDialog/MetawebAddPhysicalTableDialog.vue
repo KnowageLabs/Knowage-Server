@@ -9,18 +9,7 @@
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
-        <DataTable
-            :value="rows"
-            class="p-datatable-sm kn-table"
-            v-model:selection="selectedTables"
-            dataKey="value"
-            v-model:filters="filters"
-            :globalFilterFields="metawebAddPhysicalTableDialogDescriptor.globalFilterFields"
-            @row-select="onTablesSelect"
-            @row-unselect="onTablesSelect"
-            @row-select-all="onTablesSelect"
-            @row-unselect-all="onTablesSelect"
-        >
+        <DataTable :value="rows" class="p-datatable-sm kn-table" v-model:selection="selectedTables" dataKey="name" v-model:filters="filters" :globalFilterFields="metawebAddPhysicalTableDialogDescriptor.globalFilterFields">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -38,7 +27,7 @@
 
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
-            <Button class="kn-button kn-button--primary" @click="addPhysicalTable"> {{ $t('common.save') }}</Button>
+            <Button class="kn-button kn-button--primary" @click="save"> {{ $t('common.save') }}</Button>
         </template>
     </Dialog>
 </template>
@@ -54,8 +43,8 @@ import metawebAddPhysicalTableDialogDescriptor from './MetawebAddPhysicalTableDi
 export default defineComponent({
     name: 'metaweb-add-physical-table-dialog',
     components: { Column, DataTable, Dialog },
-    props: { visible: { type: Boolean }, physicalTables: { type: Array } },
-    emits: ['close'],
+    props: { visible: { type: Boolean }, physicalTables: { type: Array }, propLoading: { type: Boolean } },
+    emits: ['close', 'save'],
     data() {
         return {
             metawebAddPhysicalTableDialogDescriptor,
@@ -70,24 +59,33 @@ export default defineComponent({
     watch: {
         physicalTables() {
             this.loadTables()
+        },
+        propLoading() {
+            this.setLoading()
         }
     },
     created() {
         this.loadTables()
+        this.setLoading()
     },
     methods: {
         loadTables() {
+            this.selectedTables = []
             this.rows = this.physicalTables as any[]
             console.log('LOADED TABLES: ', this.rows)
         },
+        setLoading() {
+            this.loading = this.propLoading
+        },
         closeDialog() {
+            this.selectedTables = []
             this.$emit('close')
         },
         addPhysicalTable() {
             console.log('addPhysicalTable CLICKED!')
         },
-        onTablesSelect() {
-            console.log('SELECTED TABLES: ', this.selectedTables)
+        save() {
+            this.$emit('save', [...this.selectedTables])
         }
     }
 })

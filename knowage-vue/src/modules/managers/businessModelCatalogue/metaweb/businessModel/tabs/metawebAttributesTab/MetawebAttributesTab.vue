@@ -171,7 +171,7 @@ export default defineComponent({
         },
         async deleteBusinessColumn(attribute: iBusinessModelColumn) {
             this.loading = true
-            const postData = { data: { businessColumnUniqueName: attribute.uniqueName, businessModelUniqueName: this.businessModel?.uniqueName } }
+            const postData = { data: { businessColumnUniqueName: attribute.uniqueName, businessModelUniqueName: this.businessModel?.uniqueName }, diff: generate(this.observer) }
             await this.$http
                 .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/deleteBusinessColumn`, postData)
                 .then((response: AxiosResponse<any>) => {
@@ -186,7 +186,8 @@ export default defineComponent({
             this.loading = false
         },
         openUnusedFieldsDialog() {
-            if (this.businessModel) {
+            if (this.businessModel && this.businessModel.physicalTable) {
+                console.log('BUSINES MODEL: ', this.businessModel)
                 console.log('BUSINES MODEL COLUMNS: ', this.businessModel?.physicalTable)
                 console.log('META: ', this.meta)
                 console.log('PHYSICAL TABLE: ', this.meta?.physicalModels[this.businessModel?.physicalTable.physicalTableIndex])

@@ -30,7 +30,7 @@
             </Column>
         </DataTable>
 
-        <MetawebAddPhysicalTableDialog :visible="addTableDialogVisible" :physicalTables="availablePhysicalTables" @close="addTableDialogVisible = false"></MetawebAddPhysicalTableDialog>
+        <MetawebAddPhysicalTableDialog :visible="addTableDialogVisible" :physicalTables="availablePhysicalTables" :propLoading="loading" @close="addTableDialogVisible = false" @save="addNewPhysicalTables"></MetawebAddPhysicalTableDialog>
     </div>
 </template>
 
@@ -102,8 +102,10 @@ export default defineComponent({
 
             console.log('INDEXES TO REMOVE: ', indexesToRemove)
 
-            for (let i = this.availablePhysicalTables.length - 1; i >= 0; i--) {
-                this.availablePhysicalTables.splice(i, 1)
+            if (indexesToRemove) {
+                for (let i = indexesToRemove.length - 1; i >= 0; i--) {
+                    this.availablePhysicalTables.splice(indexesToRemove[i], 1)
+                }
             }
 
             console.log('AVALIABLE PHYISACL TABLES: ', this.availablePhysicalTables)
@@ -137,6 +139,26 @@ export default defineComponent({
                 .catch((error: any) => {
                     console.log('ERROR: ', error)
                 })
+            this.loading = false
+        },
+        async addNewPhysicalTables(selectedTables: any[]) {
+            console.log('SELECTED TABLES: ', selectedTables)
+            this.loading = true
+            const postData = { data: { viewUniqueName: this.businessModel?.uniqueName, physicalTables: selectedTables.map((el: any) => el.name) }, diff: generate(this.observer) }
+            await this.$http
+                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/addPhysicalColumnToBusinessView`, postData)
+                .then((response: AxiosResponse<any>) => {
+                    this.meta = applyPatch(this.meta, response.data)
+                    this.loadData()
+
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.createTitle'),
+                        msg: this.$t('common.toast.createSuccess')
+                    })
+                    this.addTableDialogVisible = false
+                    generate(this.observer)
+                })
+                .catch(() => {})
             this.loading = false
         }
     }
