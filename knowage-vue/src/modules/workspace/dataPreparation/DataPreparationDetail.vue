@@ -359,14 +359,28 @@ export default defineComponent({
             this.showSaveDialog = true
         },
         async loadPreviewData() {
-            /* 				await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/dataset/preview', this.selectedTransformation).then((response: AxiosResponse<any>) => {
-            	console.log(response)
-            	this.selectedTransformation = null
-            }) */
+            this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datapreparation/' + this.id + '/preview', this.dataset).then((response: AxiosResponse<any>) => {
+                this.datasetData = []
 
-            console.log(this.dataset.config.transformations)
+                response.data.rows.forEach((element) => {
+                    let obj = {}
+                    const keys = Object.keys(element)
+                    keys.forEach((key) => {
+                        let index = parseInt(key.replace('column_', ''), 10) - 1
+                        if (index >= 0 && index < this.columns.length) {
+                            let v = this.columns[index] as IDataPreparationColumn
 
-            this.selectedTransformation = null
+                            if (v) obj[v.header] = element[key]
+                        }
+                    })
+                    this.datasetData.push(obj)
+
+                    this.loading = false
+                })
+                console.log(this.dataset.config.transformations)
+
+                this.selectedTransformation = null
+            })
         },
         translateRoles() {
             let translatedRoles = this.descriptor.roles

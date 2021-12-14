@@ -229,6 +229,11 @@
 			<version>${resteasy.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.livy</groupId>
+			<artifactId>livy-client-http</artifactId>
+			<version>0.7.1-incubating</version>
+		</dependency>
 	</dependencies>
 	
 </project>

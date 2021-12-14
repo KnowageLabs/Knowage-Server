@@ -17,6 +17,7 @@
 */
 package it.knowage.api.datapreparation;
 
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Locale.Builder;
@@ -36,6 +37,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.livy.LivyClient;
+import org.apache.livy.LivyClientBuilder;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,6 +64,12 @@ public class DataPreparationResource extends AbstractDataSetResource {
 
 	static protected Logger logger = Logger.getLogger(DataPreparationResource.class);
 	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
+
+	private static final String LIVY_URL = "http://localhost:8998";
+
+	private static final String DATASET_FILE_CSV = "/mnt/d/toy_dataset.csv";
+
+	private static LivyClient client;
 
 	@Context
 	protected HttpServletRequest request;
@@ -91,36 +100,28 @@ public class DataPreparationResource extends AbstractDataSetResource {
 		String toReturnString = null;
 		try {
 			JSONObject json = new JSONObject(body);
-			ManageDataSetsForDataPrep mdsfr = new ManageDataSetsForDataPrep();
-			JSONObject jsonResponse = mdsfr.previewDatasetForDataPreparation(json.toString(), getUserProfile());
-			JSONObject transformationsConfig = new JSONObject();
-			JSONArray configs = new JSONArray();
-			JSONObject transformationsMock = new JSONObject();
+			JSONObject jsonResponse = new JSONObject();
+			if (json.has("config")) {
+				JSONObject configs = json.getJSONObject("config");
+				JSONArray transformations = configs.getJSONArray("transformations");
 
-			JSONArray parameters = new JSONArray();
-			JSONObject change1 = new JSONObject();
+				JSONObject trasf1 = transformations.getJSONObject(0);
+				String type = trasf1.getString("type");
 
-			change1.put("column", "QUARTER");
-			change1.put("operator", "=");
-			change1.put("value", "Q1");
+				client = new LivyClientBuilder().setConf("livy.client.http.job.initial-poll-interval", "100ms")
+						.setConf("livy.client.http.job.max-poll-interval", "500ms").setURI(new URI(LIVY_URL)).build();
 
-			JSONObject change2 = new JSONObject();
+//				KnowageDataPreparationPreview job;
+//				ObjectNode ret;
+//
+//				job = new KnowageDataPreparationPreview(config, inputPath, isRest, pageSize, isLimit);
+//				ret = client.submit(job).get();
 
-			change2.put("column", "STORE_ID");
-			change2.put("operator", ">");
-			change2.put("value", "4");
-
-			parameters.put(change1);
-
-			parameters.put(change2);
-
-			transformationsConfig.put("parameters", parameters);
-			transformationsMock.put("config", transformationsConfig);
-
-			configs.put(transformationsMock);
-
-			jsonResponse.put("transformations", configs);
-
+				jsonResponse.put("transformations", transformations);
+			} else {
+				ManageDataSetsForDataPrep mdsfr = new ManageDataSetsForDataPrep();
+				jsonResponse = mdsfr.previewDatasetForDataPreparation(json.toString(), getUserProfile());
+			}
 			toReturnString = jsonResponse.toString();
 
 		} catch (JSONException e) {
@@ -157,6 +158,49 @@ public class DataPreparationResource extends AbstractDataSetResource {
 	/*
 	 * Utility methods
 	 */
+	private JSONArray createConfigForSqlDataset() {
+		JSONArray config = new JSONArray();
+		try {
+			replace(config, "M", "Male", "GENDER");
+		} catch (Exception e) {
+
+		}
+//		replace(config, "F", "Female", "GENDER");
+//		drop(config, "MI", "ADDRESS1", "ADDRESS2", "ADDRESS3", "ADDRESS4", "CITY", "STATE", "PROVINCE", "POSTAL_CODE", "COUNTRY", "CUSTOMER_REGION_ID",
+//				"PHONE1", "PHONE2", "BIRTHDATE", "MARITIAL_STATUS", "YEARLY_INCOME", "TOTAL_CHILDREN", "NUM_CHILDREN_AT_HOME", "EDUCATION", "DATE_ACCNT_OPENED",
+//				"MEMBER_CARD", "OCCUPATION", "HOUSEOWNER", "NUM_CARS_OWNED", "FULLNAME");
+
+		// padding(config, ">>>", "<<<", "email");
+		// padding(config, " ", null, "email");
+		// trim(config, "email");
+		// replace(config, ">>>", "", "email");
+		// replace(config, "<<<", "", "email");
+		// removeNull(config, "date_of_birth");
+
+		return config;
+	}
+
+	private void replace(JSONArray config, String a, String b, String... columns) throws JSONException {
+		JSONObject step = null;
+
+		step = new JSONObject();
+
+		JSONObject columnParam = new JSONObject();
+
+		for (String column : columns) {
+
+			columnParam.append("columns", column);
+
+		}
+		columnParam.put("oldChar", a);
+		columnParam.put("newChar", b);
+
+		step.append("parameters", columnParam);
+		step.put("type", "replace");
+
+		config.put(step);
+	}
+
 	private DataSetForWorkspaceDTO transform(SbiDataSet dataSet) {
 		DataSetForWorkspaceDTO dsToReturn = new DataSetForWorkspaceDTO(dataSet);
 		return dsToReturn;
