@@ -68,13 +68,14 @@
             </div>
         </div>
         <template #footer>
-            <Button class="p-button-text kn-button" :label="$t('common.cancel')" @click="onCancel" />
-            <Button class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="buttonDisabled" />
+            <Button class="p-button-text kn-button" :label="$t('common.cancel')" @click="closeDialog" />
+            <Button class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="buttonDisabled" @click="saveBusinessClass" />
         </template>
     </Dialog>
 </template>
 
 <script lang="ts">
+import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
@@ -86,11 +87,13 @@ import Column from 'primevue/column'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import bsDescriptor from '../MetawebBusinessModelDescriptor.json'
 
+const { observe, generate, applyPatch } = require('fast-json-patch')
+
 export default defineComponent({
     name: 'document-drivers',
     components: { Dialog, Dropdown, DataTable, Column, KnValidationMessages },
     emits: ['closeDialog'],
-    props: { physicalModels: Array, showBusinessClassDialog: Boolean },
+    props: { physicalModels: Array, showBusinessClassDialog: Boolean, meta: Object },
     computed: {
         buttonDisabled(): boolean {
             if (this.v$.$invalid || this.tmpBusinessModel.selectedColumns.length === 0) {
@@ -102,13 +105,23 @@ export default defineComponent({
         return {
             bsDescriptor,
             v$: useValidate() as any,
+            observer: null as any,
+            metaObserve: {} as any,
             tmpBusinessModel: { physicalModel: null, selectedColumns: [], name: '', description: '' } as any,
             filters: {
                 global: [filterDefault]
             } as Object
         }
     },
-    created() {},
+    created() {
+        this.loadMeta()
+    },
+    watch: {
+        meta() {
+            console.log(this.meta)
+            this.loadMeta()
+        }
+    },
     validations() {
         const bmRequired = (value) => {
             return !this.showBusinessClassDialog || value
@@ -122,12 +135,33 @@ export default defineComponent({
         return validationObject
     },
     methods: {
+        async loadMeta() {
+            this.meta ? (this.metaObserve = this.meta) : ''
+            this.meta ? (this.observer = observe(this.metaObserve.businessModels)) : ''
+        },
         resetPhModel() {
             this.tmpBusinessModel.selectedColumns = []
         },
-        onCancel() {
+        closeDialog() {
             this.$emit('closeDialog')
             this.tmpBusinessModel = { physicalModel: { columns: [] }, selectedColumns: [], name: '', description: '' } as any
+        },
+        async saveBusinessClass() {
+            let objToSend = { selectedColumns: [] } as any
+            objToSend.name = this.tmpBusinessModel.name
+            objToSend.description = this.tmpBusinessModel.description
+            objToSend.physicalModel = this.tmpBusinessModel.physicalModel.name
+            this.tmpBusinessModel.selectedColumns.forEach((element) => {
+                objToSend.selectedColumns.push(element.name)
+            })
+            const postData = { data: objToSend, diff: generate(this.observer) }
+            await this.$http
+                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/addBusinessClass`, postData)
+                .then(async (response: AxiosResponse<any>) => {
+                    this.metaObserve = applyPatch(this.metaObserve, response.data)
+                    this.closeDialog()
+                })
+                .catch(() => {})
         }
     }
 })
