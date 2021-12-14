@@ -92,13 +92,14 @@
         <TableAssociator class="kn-flex" :sourceArray="simpleLeft" :targetArray="simpleRight" :useMultipleTablesFromSameSource="false" @drop="onDrop" @relationshipDeleted="onDelete" />
 
         <template #footer>
-            <Button class="p-button-text kn-button" :label="$t('common.cancel')" @click="onCancel" />
+            <Button class="p-button-text kn-button" :label="$t('common.cancel')" @click="closeDialog" />
             <Button class="kn-button kn-button--primary" :label="$t('common.create')" :disabled="buttonDisabled" @click="createOutbound" />
         </template>
     </Dialog>
 </template>
 
 <script lang="ts">
+import { AxiosResponse } from 'axios'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import { defineComponent, PropType } from 'vue'
 import { iBusinessModel } from '@/modules/managers/businessModelCatalogue/metaweb/Metaweb'
@@ -113,10 +114,12 @@ import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 
+const { generate, applyPatch } = require('fast-json-patch')
+
 export default defineComponent({
     name: 'metaweb-attributes-tab',
     components: { TableAssociator, DataTable, Column, Dialog, Dropdown, KnValidationMessages },
-    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null>, required: true }, businessModels: { type: Array, required: true }, businessViews: { type: Array, required: true } },
+    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null>, required: true }, businessModels: { type: Array, required: true }, businessViews: { type: Array, required: true }, propMeta: { type: Object }, observer: { type: Object } },
     emits: ['loading'],
     computed: {
         leftHasLinks(): boolean {
@@ -136,6 +139,7 @@ export default defineComponent({
         return {
             v$: useValidate() as any,
             businessModel: null as iBusinessModel | null,
+            meta: null as any,
             inboundRelationships: [] as any,
             orDescriptor,
             bsDescriptor,
@@ -152,10 +156,12 @@ export default defineComponent({
     },
     watch: {
         selectedBusinessModel() {
+            this.loadMeta()
             this.loadData()
         }
     },
     created() {
+        this.loadMeta()
         this.loadData()
     },
     validations() {
@@ -171,6 +177,9 @@ export default defineComponent({
         return validationObject
     },
     methods: {
+        loadMeta() {
+            this.meta = this.propMeta as any
+        },
         loadData() {
             this.businessModel = this.selectedBusinessModel as iBusinessModel
             this.simpleLeft = this.tableToSimpleBound(this.businessModel)
@@ -191,7 +200,7 @@ export default defineComponent({
             }, this)
             return ret.join(', ')
         },
-        onCancel() {
+        closeDialog() {
             this.inboundDialogVisible = false
             this.dataSend = {}
             this.simpleLeft = this.tableToSimpleBound(this.businessModel)
@@ -213,7 +222,7 @@ export default defineComponent({
             }
             return a
         },
-        createOutbound() {
+        async createOutbound() {
             this.dataSend.sourceColumns = []
             this.dataSend.destinationColumns = []
             this.dataSend.sourceTableName = this.businessModel?.uniqueName
@@ -224,10 +233,16 @@ export default defineComponent({
                     this.dataSend.sourceColumns.push(entry.links[0].uname)
                 }
             })
-
-            console.log(this.dataSend)
-
-            //dalje ide servis logika
+            const postData = { data: this.dataSend, diff: generate(this.observer) }
+            await this.$http
+                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/addBusinessRelation`, postData)
+                .then((response: AxiosResponse<any>) => {
+                    this.meta = applyPatch(this.meta, response.data)
+                    this.closeDialog()
+                    this.populateInboundRelationships()
+                })
+                .catch(() => {})
+                .finally(() => generate(this.observer))
         }
     }
 })

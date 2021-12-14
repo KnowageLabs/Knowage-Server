@@ -89,7 +89,7 @@
                             <span>{{ $t('metaweb.businessModel.tabView.inbound') }}</span>
                         </template>
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <InboundRelationships :selectedBusinessModel="selectedBusinessModel" :businessModels="meta.businessModels" :businessViews="meta.businessViews" />
+                            <InboundRelationships :selectedBusinessModel="selectedBusinessModel" :businessModels="meta.businessModels" :propMeta="meta" :observer="observer" :businessViews="meta.businessViews" />
                         </div>
                         <!-- <div class="kn-relative kn-flex">
                             <div class="kn-height-full kn-width-full kn-absolute"> -->
@@ -101,7 +101,7 @@
                             <span>{{ $t('metaweb.businessModel.tabView.outbound') }}</span>
                         </template>
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <OutboundRelationships :selectedBusinessModel="selectedBusinessModel" :businessModels="meta.businessModels" :businessViews="meta.businessViews" />
+                            <OutboundRelationships :selectedBusinessModel="selectedBusinessModel" :businessModels="meta.businessModels" :propMeta="meta" :observer="observer" :businessViews="meta.businessViews" />
                         </div>
                     </TabPanel>
                     <TabPanel>
@@ -136,8 +136,8 @@
         </div>
     </div>
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
-    <BusinessClassDialog v-if="showBusinessClassDialog" :meta="meta" :physicalModels="meta.physicalModels" :showBusinessClassDialog="showBusinessClassDialog" @closeDialog="showBusinessClassDialog = false" />
-    <BusinessViewDialog v-if="showBusinessViewDialog" :meta="meta" :physicalModels="meta.physicalModels" :showBusinessViewDialog="showBusinessViewDialog" @closeDialog="showBusinessViewDialog = false" />
+    <BusinessClassDialog v-if="showBusinessClassDialog" :meta="meta" :observer="observer" :physicalModels="meta.physicalModels" :showBusinessClassDialog="showBusinessClassDialog" @closeDialog="showBusinessClassDialog = false" />
+    <BusinessViewDialog v-if="showBusinessViewDialog" :meta="meta" :observer="observer" :physicalModels="meta.physicalModels" :showBusinessViewDialog="showBusinessViewDialog" @closeDialog="showBusinessViewDialog = false" />
 </template>
 
 <script lang="ts">

@@ -79,12 +79,12 @@ import TableAssociator from '@/modules/managers/businessModelCatalogue/metaweb/b
 import Dropdown from 'primevue/dropdown'
 import Listbox from 'primevue/listbox'
 
-const { observe, generate, applyPatch } = require('fast-json-patch')
+const { generate, applyPatch } = require('fast-json-patch')
 
 export default defineComponent({
     components: { Dialog, StepOne, TableAssociator, Dropdown, Listbox },
     emits: ['closeDialog'],
-    props: { physicalModels: Array, showBusinessViewDialog: Boolean, meta: Object },
+    props: { physicalModels: Array, showBusinessViewDialog: Boolean, meta: Object, observer: { type: Object } },
     computed: {
         buttonDisabled(): boolean {
             if (this.v$.$invalid || this.tmpBnssView.physicalModels.length < 2) {
@@ -97,7 +97,6 @@ export default defineComponent({
             bsDescriptor,
             v$: useValidate() as any,
             tmpBnssView: { physicalModels: [], name: '', description: '' } as any,
-            observer: null as any,
             metaObserve: {} as any,
             wizardStep: 1,
             expandSummary: true,
@@ -118,7 +117,6 @@ export default defineComponent({
     methods: {
         async loadMeta() {
             this.meta ? (this.metaObserve = this.meta) : ''
-            this.meta ? (this.observer = observe(this.metaObserve.businessModels)) : ''
         },
         resetPhModel() {
             this.tmpBnssView.physicalModels = []
@@ -187,11 +185,12 @@ export default defineComponent({
                     }
                 }
             }
-            const postData = { data: tmpData, diff: generate(this.observer) }
+            const postData = { data: tmpData, diff: [] }
             await this.$http
                 .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/addBusinessView`, postData)
                 .then(async (response: AxiosResponse<any>) => {
                     this.metaObserve = applyPatch(this.metaObserve, response.data)
+                    generate(this.observer)
                     this.closeDialog()
                 })
                 .catch(() => {})
