@@ -1,62 +1,64 @@
 <template>
-    <Toolbar v-if="!embed" class="kn-toolbar kn-toolbar--primary p-col-12">
-        <template #left>
-            <span>{{ document?.label }}</span>
-        </template>
+    <div class="kn-height-full detail-page-container">
+        <Toolbar v-if="!embed" class="kn-toolbar kn-toolbar--primary p-col-12">
+            <template #left>
+                <span>{{ document?.label }}</span>
+            </template>
 
-        <template #right>
-            <div class="p-d-flex p-jc-around">
-                <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'VIEW'" class="pi pi-pencil kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocumentConfirm"></i>
-                <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'" class="fa fa-eye kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocumentConfirm"></i>
-                <i class="pi pi-book kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></i>
-                <i class="pi pi-refresh kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.refresh')" @click="refresh"></i>
-                <i v-if="filtersData?.filterStatus?.length > 0 || !sessionRole" class="fa fa-filter kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible" data-test="parameter-sidebar-icon"></i>
-                <i class="fa fa-ellipsis-v kn-cursor-pointer  p-mx-4" v-tooltip.left="$t('common.menu')" @click="toggle"></i>
-                <Menu ref="menu" :model="toolbarMenuItems" :popup="true" />
-                <i class="fa fa-times kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.close')" @click="closeDocument"></i>
-            </div>
-        </template>
-    </Toolbar>
-    <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
-    <DocumentExecutionBreadcrumb v-if="breadcrumbs.length > 1" :breadcrumbs="breadcrumbs" @breadcrumbClicked="onBreadcrumbClick"></DocumentExecutionBreadcrumb>
+            <template #right>
+                <div class="p-d-flex p-jc-around">
+                    <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'VIEW'" class="pi pi-pencil kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocumentConfirm"></i>
+                    <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'" class="fa fa-eye kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocumentConfirm"></i>
+                    <i class="pi pi-book kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></i>
+                    <i class="pi pi-refresh kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.refresh')" @click="refresh"></i>
+                    <i v-if="filtersData?.filterStatus?.length > 0 || !sessionRole" class="fa fa-filter kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible" data-test="parameter-sidebar-icon"></i>
+                    <i class="fa fa-ellipsis-v kn-cursor-pointer  p-mx-4" v-tooltip.left="$t('common.menu')" @click="toggle"></i>
+                    <Menu ref="menu" :model="toolbarMenuItems" :popup="true" />
+                    <i class="fa fa-times kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.close')" @click="closeDocument"></i>
+                </div>
+            </template>
+        </Toolbar>
+        <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
+        <DocumentExecutionBreadcrumb v-if="breadcrumbs.length > 1" :breadcrumbs="breadcrumbs" @breadcrumbClicked="onBreadcrumbClick"></DocumentExecutionBreadcrumb>
 
-    <div ref="document-execution-view" id="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
-        <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
+        <div ref="document-execution-view" id="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
+            <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
 
-        <template v-if="filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible">
-            <Registry v-if="mode === 'registry'" :id="urlData.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
-            <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger"></Dossier>
-        </template>
+            <template v-if="filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible">
+                <Registry v-if="mode === 'registry'" :id="urlData.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
+                <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger"></Dossier>
+            </template>
 
-        <iframe
-            v-for="(item, index) in breadcrumbs"
-            :key="index"
-            ref="documentFrame"
-            :name="'documentFrame' + index"
-            v-show="mode === 'iframe' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && item.label === document.label"
-            class="document-execution-iframe"
-        ></iframe>
+            <iframe
+                v-for="(item, index) in breadcrumbs"
+                :key="index"
+                ref="documentFrame"
+                :name="'documentFrame' + index"
+                v-show="mode === 'iframe' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && item.label === document.label"
+                class="document-execution-iframe"
+            ></iframe>
 
-        <DocumentExecutionSchedulationsTable id="document-execution-schedulations-table" v-if="schedulationsTableVisible" :propSchedulations="schedulations" @deleteSchedulation="onDeleteSchedulation" @close="schedulationsTableVisible = false"></DocumentExecutionSchedulationsTable>
+            <DocumentExecutionSchedulationsTable id="document-execution-schedulations-table" v-if="schedulationsTableVisible" :propSchedulations="schedulations" @deleteSchedulation="onDeleteSchedulation" @close="schedulationsTableVisible = false"></DocumentExecutionSchedulationsTable>
 
-        <KnParameterSidebar
-            class="document-execution-parameter-sidebar kn-overflow-y"
-            v-if="parameterSidebarVisible"
-            :filtersData="filtersData"
-            :propDocument="document"
-            :userRole="userRole"
-            @execute="onExecute"
-            @exportCSV="onExportCSV"
-            @roleChanged="onRoleChange"
-            data-test="parameter-sidebar"
-        ></KnParameterSidebar>
+            <KnParameterSidebar
+                class="document-execution-parameter-sidebar kn-overflow-y"
+                v-if="parameterSidebarVisible"
+                :filtersData="filtersData"
+                :propDocument="document"
+                :userRole="userRole"
+                @execute="onExecute"
+                @exportCSV="onExportCSV"
+                @roleChanged="onRoleChange"
+                data-test="parameter-sidebar"
+            ></KnParameterSidebar>
 
-        <DocumentExecutionHelpDialog :visible="helpDialogVisible" :propDocument="document" @close="helpDialogVisible = false"></DocumentExecutionHelpDialog>
-        <DocumentExecutionRankDialog :visible="rankDialogVisible" :propDocumentRank="documentRank" @close="rankDialogVisible = false" @saveRank="onSaveRank"></DocumentExecutionRankDialog>
-        <DocumentExecutionNotesDialog :visible="notesDialogVisible" :propDocument="document" @close="notesDialogVisible = false"></DocumentExecutionNotesDialog>
-        <DocumentExecutionMetadataDialog :visible="metadataDialogVisible" :propDocument="document" :propMetadata="metadata" :propLoading="loading" @close="metadataDialogVisible = false" @saveMetadata="onMetadataSave"></DocumentExecutionMetadataDialog>
-        <DocumentExecutionMailDialog :visible="mailDialogVisible" @close="mailDialogVisible = false" @sendMail="onMailSave"></DocumentExecutionMailDialog>
-        <DocumentExecutionLinkDialog :visible="linkDialogVisible" :linkInfo="linkInfo" :embedHTML="embedHTML" :propDocument="document" :parameters="linkParameters" @close="linkDialogVisible = false"></DocumentExecutionLinkDialog>
+            <DocumentExecutionHelpDialog :visible="helpDialogVisible" :propDocument="document" @close="helpDialogVisible = false"></DocumentExecutionHelpDialog>
+            <DocumentExecutionRankDialog :visible="rankDialogVisible" :propDocumentRank="documentRank" @close="rankDialogVisible = false" @saveRank="onSaveRank"></DocumentExecutionRankDialog>
+            <DocumentExecutionNotesDialog :visible="notesDialogVisible" :propDocument="document" @close="notesDialogVisible = false"></DocumentExecutionNotesDialog>
+            <DocumentExecutionMetadataDialog :visible="metadataDialogVisible" :propDocument="document" :propMetadata="metadata" :propLoading="loading" @close="metadataDialogVisible = false" @saveMetadata="onMetadataSave"></DocumentExecutionMetadataDialog>
+            <DocumentExecutionMailDialog :visible="mailDialogVisible" @close="mailDialogVisible = false" @sendMail="onMailSave"></DocumentExecutionMailDialog>
+            <DocumentExecutionLinkDialog :visible="linkDialogVisible" :linkInfo="linkInfo" :embedHTML="embedHTML" :propDocument="document" :parameters="linkParameters" @close="linkDialogVisible = false"></DocumentExecutionLinkDialog>
+        </div>
     </div>
 </template>
 
@@ -261,8 +263,9 @@ export default defineComponent({
             window.print()
         },
         export(type: string) {
+            const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             let tempFrame = window.frames
-            while (tempFrame && tempFrame.name !== 'documentFrame') {
+            while (tempFrame && tempFrame.name !== 'documentFrame' + tempIndex) {
                 tempFrame = tempFrame[0].frames
             }
             tempFrame.postMessage({ type: 'export', format: type.toLowerCase() }, '*')
@@ -371,17 +374,33 @@ export default defineComponent({
 
                 if (el.data) {
                     el.data = el.data.map((data: any) => {
-                        return { value: data._col0, description: data._col1 }
+                        return this.formatParameterDataOptions(el, data)
                     })
+
+                    if (el.data.length === 1) {
+                        el.parameterValue = [...el.data]
+                    }
                 }
 
                 if ((el.selectionType === 'COMBOBOX' || el.selectionType === 'LIST') && el.multivalue && el.mandatory && el.data.length === 1) {
                     el.showOnPanel = 'false'
                 }
+
+                if (el.parameterValue[0] && !el.parameterValue[0].description) {
+                    el.parameterValue[0].description = ''
+                }
             })
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) this.breadcrumbs[index].filtersData = this.filtersData
+        },
+        formatParameterDataOptions(parameter: iParameter, data: any) {
+            const valueColumn = parameter.metadata.valueColumn
+            const descriptionColumn = parameter.metadata.descriptionColumn
+            const valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
+            const descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
+
+            return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
         },
         async loadURL() {
             const postData = { label: this.document.label, role: this.userRole, parameters: this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
@@ -729,7 +748,7 @@ export default defineComponent({
 <style lang="scss">
 #document-execution-view {
     position: relative;
-    height: 100vh;
+    height: 100%;
     width: 100%;
 }
 
@@ -762,6 +781,14 @@ export default defineComponent({
     z-index: 100;
 }
 
+.document-execution-iframe {
+    border: 0;
+}
+
+.detail-page-container {
+    display: flex;
+    flex-direction: column;
+}
 @media print {
     body * {
         visibility: hidden;

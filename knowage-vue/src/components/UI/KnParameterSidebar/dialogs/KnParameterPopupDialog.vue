@@ -53,6 +53,7 @@ export default defineComponent({
         },
         parameterPopUpData() {
             this.loadPopupData()
+            this.loadParamaterData()
         }
     },
     created() {
@@ -64,20 +65,28 @@ export default defineComponent({
             this.loading = true
             this.loadParameter()
             this.loadPopupData()
+            if (this.multivalue) {
+                this.setMultipleSelectedRows()
+            }
             this.loading = false
         },
         loadParameter() {
             this.parameter = this.selectedParameter as iParameter
             this.multivalue = this.selectedParameter?.multivalue
-
-            if (this.multivalue) {
-                this.setMultipleSelectedRows()
-            }
         },
         setMultipleSelectedRows() {
+            const valueColumn = this.popupData?.result.metadata.valueColumn
+            const descriptionColumn = this.popupData?.result.metadata.descriptionColumn
+
+            const valueIndex = Object.keys(this.parameter?.metadata.colsMap).find((key: string) => this.parameter?.metadata.colsMap[key] === valueColumn)
+            const descriptionIndex = Object.keys(this.parameter?.metadata.colsMap).find((key: string) => this.parameter?.metadata.colsMap[key] === descriptionColumn)
+
             this.multipleSelectedRows = this.parameter?.parameterValue.map((el: any) => {
-                return { _col0: el.value, _col1: el.value }
-            }) as { _col0: string; _col1: string }[]
+                const tempObject = {}
+                if (valueIndex) tempObject[valueIndex] = el.value
+                if (descriptionIndex) tempObject[descriptionIndex] = el.description
+                return tempObject
+            }) as any[]
         },
         loadPopupData() {
             this.popupData = this.parameterPopUpData as iAdmissibleValues
@@ -102,13 +111,19 @@ export default defineComponent({
         save() {
             if (!this.parameter) return
 
+            const valueColumn = this.popupData?.result.metadata.valueColumn
+            const descriptionColumn = this.popupData?.result.metadata.descriptionColumn
+
+            const valueIndex = Object.keys(this.parameter.metadata.colsMap).find((key: string) => this.parameter?.metadata.colsMap[key] === valueColumn)
+            const descriptionIndex = Object.keys(this.parameter.metadata.colsMap).find((key: string) => this.parameter?.metadata.colsMap[key] === descriptionColumn)
+
             if (!this.multivalue) {
-                this.parameter.parameterValue = this.selectedRow ? [{ value: this.selectedRow._col0, description: this.selectedRow._col1 }] : []
+                this.parameter.parameterValue = this.selectedRow ? [{ value: valueIndex ? this.selectedRow[valueIndex] : '', description: descriptionIndex ? this.selectedRow[descriptionIndex] : '' }] : []
 
                 this.selectedRow = null
             } else {
                 this.parameter.parameterValue = []
-                this.multipleSelectedRows?.forEach((el: any) => this.parameter?.parameterValue.push({ value: el._col0, description: el._col1 }))
+                this.multipleSelectedRows?.forEach((el: any) => this.parameter?.parameterValue.push({ value: valueIndex ? el[valueIndex] : '', description: descriptionIndex ? el[descriptionIndex] : '' }))
             }
 
             this.popupData = null

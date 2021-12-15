@@ -31,7 +31,7 @@
                         :class="{
                             'p-invalid': parameter.mandatory && parameter.parameterValue && !parameter.parameterValue[0]?.value
                         }"
-                        @input="updateVisualDependency(parameter)"
+                        @input="updateDependency(parameter)"
                         :data-test="'parameter-input-' + parameter.id"
                     />
                 </div>
@@ -49,8 +49,8 @@
                         :class="{
                             'p-invalid': parameter.mandatory && parameter.parameterValue && !parameter.parameterValue[0]?.value
                         }"
-                        @change="updateVisualDependency(parameter)"
-                        @date-select="updateVisualDependency(parameter)"
+                        @change="updateDependency(parameter)"
+                        @date-select="updateDependency(parameter)"
                         :data-test="'parameter-date-input-' + parameter.id"
                     />
                 </div>
@@ -70,7 +70,7 @@
                     </div>
                     <div class="p-d-flex p-flex-column">
                         <div class="p-field-radiobutton" v-for="(option, index) in parameter.data" :key="index" :data-test="'parameter-list-' + parameter.id">
-                            <RadioButton v-if="!parameter.multivalue" :value="option.value" v-model="parameter.parameterValue[0].value" @change="updateVisualDependency(parameter)" />
+                            <RadioButton v-if="!parameter.multivalue" :value="option.value" v-model="parameter.parameterValue[0].value" @change="updateDependency(parameter)" />
                             <Checkbox v-if="parameter.multivalue" :value="option.value" v-model="selectedParameterCheckbox[parameter.id]" @change="setCheckboxValue(parameter)" />
                             <label>{{ option.value }}</label>
                         </div>
@@ -89,8 +89,8 @@
                         >
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)"></i>
                     </div>
-                    <Dropdown v-if="!parameter.multivalue" class="kn-material-input" v-model="parameter.parameterValue[0]" :options="parameter.data" optionLabel="value" @change="updateVisualDependency(parameter)" />
-                    <MultiSelect v-else v-model="parameter.parameterValue" :options="parameter.data" optionLabel="value" @change="updateVisualDependency(parameter)" />
+                    <Dropdown v-if="!parameter.multivalue" class="kn-material-input" v-model="parameter.parameterValue[0]" :options="parameter.data" optionLabel="value" @change="updateDependency(parameter)" />
+                    <MultiSelect v-else v-model="parameter.parameterValue" :options="parameter.data" optionLabel="value" @change="updateDependency(parameter)" />
                 </div>
 
                 <div class="p-field p-m-4" v-if="parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true'">
@@ -249,6 +249,7 @@ export default defineComponent({
             })
 
             this.parameters?.filterStatus.forEach((el: any) => this.setVisualDependency(el))
+            this.parameters?.filterStatus.forEach((el: any) => this.setDataDependency(el))
             this.parameters?.filterStatus.forEach((el: any) => this.updateVisualDependency(el))
         },
         setVisualDependency(parameter: iParameter) {
@@ -261,6 +262,20 @@ export default defineComponent({
                         const tempParameter = this.parameters.filterStatus[index]
                         parameter.dependsOnParameters ? parameter.dependsOnParameters.push(tempParameter) : (parameter.dependsOnParameters = [tempParameter])
                         tempParameter.dependentParameters ? tempParameter.dependentParameters.push(parameter) : (tempParameter.dependentParameters = [parameter])
+                    }
+                })
+            }
+        },
+        setDataDependency(parameter: iParameter) {
+            if (parameter.dependencies.data.length !== 0) {
+                parameter.dependencies.data.forEach((dependency: any) => {
+                    const index = this.parameters.filterStatus.findIndex((param: any) => {
+                        return param.urlName === dependency.parFatherUrlName
+                    })
+                    if (index !== -1) {
+                        const tempParameter = this.parameters.filterStatus[index]
+                        parameter.dataDependsOnParameters ? parameter.dataDependsOnParameters.push(tempParameter) : (parameter.dataDependsOnParameters = [tempParameter])
+                        tempParameter.dataDependentParameters ? tempParameter.dataDependentParameters.push(parameter) : (tempParameter.dataDependentParameters = [parameter])
                     }
                 })
             }
@@ -322,7 +337,7 @@ export default defineComponent({
             parameter.parameterValue = this.selectedParameterCheckbox[parameter.id].map((el: any) => {
                 return { value: el, description: el }
             })
-            this.updateVisualDependency(parameter)
+            this.updateDependency(parameter)
         },
         openPopupDialog(parameter: iParameter) {
             this.selectedParameter = parameter
@@ -387,15 +402,70 @@ export default defineComponent({
             return parameters
         },
         onPopupSave(parameter: iParameter) {
-            this.updateVisualDependency(parameter)
+            this.updateDependency(parameter)
             this.popupDialogVisible = false
         },
         onTreeSave(parameter: iParameter) {
             this.updateVisualDependency(parameter)
             this.treeDialogVisible = false
         },
+        updateDependency(parameter: iParameter) {
+            this.updateVisualDependency(parameter)
+            this.updateDataDependency(parameter)
+        },
         updateVisualDependency(parameter: iParameter) {
             parameter.dependentParameters?.forEach((dependentParameter: iParameter) => this.visualDependencyCheck(dependentParameter, parameter))
+        },
+        async updateDataDependency(parameter: iParameter) {
+            if (parameter && parameter.dataDependentParameters) {
+                for (let i = 0; i < parameter.dataDependentParameters.length; i++) {
+                    await this.dataDependencyCheck(parameter.dataDependentParameters[i])
+                }
+            }
+        },
+        async dataDependencyCheck(parameter: iParameter) {
+            this.loading = true
+            if (parameter.parameterValue[0]) {
+                parameter.parameterValue[0] = { value: '', description: '' }
+            } else {
+                parameter.parameterValue = [{ value: '', description: '' }]
+            }
+
+            const postData = { label: this.document?.label, parameters: this.getFormatedParameters(), paramId: parameter.urlName, role: this.sessionRole }
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentExeParameters/admissibleValues`, postData).then((response: AxiosResponse<any>) => {
+                parameter.data = response.data.result.data
+                parameter.metadata = response.data.result.metadata
+                this.formatParameterAfterDataDependencyCheck(parameter)
+            })
+            this.loading = false
+        },
+        formatParameterAfterDataDependencyCheck(parameter: any) {
+            parameter.parameterValue = parameter.multivalue ? [] : [{ value: '', description: '' }]
+            if (parameter.data) {
+                parameter.data = parameter.data.map((data: any) => {
+                    return this.formatParameterDataOptions(parameter, data)
+                })
+
+                if (parameter.data.length === 1) {
+                    parameter.parameterValue = [...parameter.data]
+                }
+            }
+
+            if ((parameter.selectionType === 'COMBOBOX' || parameter.selectionType === 'LIST') && parameter.multivalue && parameter.mandatory && parameter.data.length === 1) {
+                parameter.showOnPanel = 'false'
+            }
+
+            if (parameter.parameterValue[0] && !parameter.parameterValue[0].description) {
+                parameter.parameterValue[0].description = ''
+            }
+        },
+        formatParameterDataOptions(parameter: iParameter, data: any) {
+            const valueColumn = parameter.metadata.valueColumn
+            const descriptionColumn = parameter.metadata.descriptionColumn
+            const valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
+            const descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
+
+            return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
         },
         visualDependencyCheck(parameter: iParameter, changedParameter: any) {
             let showOnPanel = 'true'

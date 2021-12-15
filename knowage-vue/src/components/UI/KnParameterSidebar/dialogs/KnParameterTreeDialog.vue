@@ -166,12 +166,12 @@ export default defineComponent({
             if (!this.parameter) return
 
             if (!this.multivalue) {
-                this.parameter.parameterValue = this.selectedValue ? [{ value: this.selectedValue.value, description: this.selectedValue.description }] : []
+                this.parameter.parameterValue = this.selectedValue ? [{ value: this.selectedValue.value, description: this.selectedValue.description ?? '' }] : []
                 this.selectedValuesKeys = {}
                 this.selectedValue = null
             } else {
                 this.parameter.parameterValue = []
-                this.multipleSelectedValues?.forEach((el: any) => this.parameter?.parameterValue.push({ value: el.value, description: el.description }))
+                this.multipleSelectedValues?.forEach((el: any) => this.parameter?.parameterValue.push({ value: el.value, description: el.description ?? '' }))
                 this.multipleSelectedValues = []
             }
 
