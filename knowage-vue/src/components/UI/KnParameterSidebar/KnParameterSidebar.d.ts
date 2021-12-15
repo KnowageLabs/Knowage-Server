@@ -1,7 +1,9 @@
 export interface iParameter {
     urlName: string,
     metadata: {
-        colsMap: any
+        colsMap: any,
+        valueColumn: string,
+        descriptionColumn: string
     },
     data: any,
     visible: boolean,
@@ -26,6 +28,8 @@ export interface iParameter {
     parameterDescription: string[],
     dependentParameters?: iParameter[]
     dependsOnParameters?: iParameter[]
+    dataDependentParameters?: iParameter[]
+    dataDependsOnParameters?: iParameter[],
 }
 
 

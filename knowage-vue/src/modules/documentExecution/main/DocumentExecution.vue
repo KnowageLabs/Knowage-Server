@@ -371,17 +371,29 @@ export default defineComponent({
 
                 if (el.data) {
                     el.data = el.data.map((data: any) => {
-                        return { value: data._col0, description: data._col1 }
+                        return this.formatParameterDataOptions(el, data)
                     })
                 }
 
                 if ((el.selectionType === 'COMBOBOX' || el.selectionType === 'LIST') && el.multivalue && el.mandatory && el.data.length === 1) {
                     el.showOnPanel = 'false'
                 }
+
+                if (el.parameterValue[0] && !el.parameterValue[0].description) {
+                    el.parameterValue[0].description = ''
+                }
             })
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) this.breadcrumbs[index].filtersData = this.filtersData
+        },
+        formatParameterDataOptions(parameter: iParameter, data: any) {
+            const valueColumn = parameter.metadata.valueColumn
+            const descriptionColumn = parameter.metadata.descriptionColumn
+            const valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
+            const descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
+
+            return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
         },
         async loadURL() {
             const postData = { label: this.document.label, role: this.userRole, parameters: this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
@@ -760,6 +772,10 @@ export default defineComponent({
 #document-execution-schedulations-table {
     position: relative;
     z-index: 100;
+}
+
+.document-execution-iframe {
+    border: 0;
 }
 
 @media print {

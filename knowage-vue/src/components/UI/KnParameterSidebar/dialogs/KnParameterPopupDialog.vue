@@ -103,12 +103,12 @@ export default defineComponent({
             if (!this.parameter) return
 
             if (!this.multivalue) {
-                this.parameter.parameterValue = this.selectedRow ? [{ value: this.selectedRow._col0, description: this.selectedRow._col1 }] : []
+                this.parameter.parameterValue = this.selectedRow ? [{ value: this.selectedRow._col0, description: this.selectedRow._col1 ?? '' }] : []
 
                 this.selectedRow = null
             } else {
                 this.parameter.parameterValue = []
-                this.multipleSelectedRows?.forEach((el: any) => this.parameter?.parameterValue.push({ value: el._col0, description: el._col1 }))
+                this.multipleSelectedRows?.forEach((el: any) => this.parameter?.parameterValue.push({ value: el._col0, description: el._col1 ?? '' }))
             }
 
             this.popupData = null
