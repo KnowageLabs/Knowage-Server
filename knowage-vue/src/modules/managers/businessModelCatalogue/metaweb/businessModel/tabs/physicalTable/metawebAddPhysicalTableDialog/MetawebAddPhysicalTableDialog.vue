@@ -72,7 +72,7 @@ export default defineComponent({
         loadTables() {
             this.selectedTables = []
             this.rows = this.physicalTables as any[]
-            console.log('LOADED TABLES: ', this.rows)
+            // console.log('LOADED TABLES: ', this.rows)
         },
         setLoading() {
             this.loading = this.propLoading
