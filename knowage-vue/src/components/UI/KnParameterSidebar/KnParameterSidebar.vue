@@ -429,6 +429,7 @@ export default defineComponent({
             // await parameter.dataDependentParameters?.forEach((dependentParameter: iParameter) => this.dataDependencyCheck(dependentParameter, parameter))
         },
         async dataDependencyCheck(parameter: iParameter) {
+            this.loading = true
             console.log('PARAMETER: ', parameter)
             if (parameter.parameterValue[0]) {
                 console.log('ENTERED')
@@ -445,6 +446,7 @@ export default defineComponent({
                 this.formatParameterAfterDataDependencyCheck(parameter)
             })
             console.log('CHANGED PARAMETER: ', parameter)
+            this.loading = false
         },
         formatParameterAfterDataDependencyCheck(parameter: any) {
             parameter.parameterValue = parameter.multivalue ? [] : [{ value: '', description: '' }]

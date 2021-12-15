@@ -8,7 +8,6 @@
         :globalFilterFields="globalFilterFields"
         :paginator="rows.length > 20"
         :rows="20"
-        dataKey="_col0"
         responsiveLayout="stack"
         breakpoint="600px"
         :scrollable="true"
@@ -53,7 +52,7 @@ export default defineComponent({
     data() {
         return {
             knParameterPopupDialogDescriptor,
-            rows: [] as { _col0: string; _col1: string }[],
+            rows: [] as any[],
             columns: [] as { header: string; field: string }[],
             filters: { global: [filterDefault] } as Object,
             globalFilterFields: [] as string[],
@@ -82,6 +81,8 @@ export default defineComponent({
             if (this.multivalue) {
                 this.selectedRow = this.multipleSelectedRows
             }
+
+            console.log('SELECTED ROWS: ', this.multipleSelectedRows)
         }
     }
 })
