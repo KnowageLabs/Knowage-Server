@@ -16,7 +16,7 @@
                     <template #header>
                         <span>{{ $t('metaweb.businessModel.title') }}</span>
                     </template>
-                    <BusinessModelTab :propMeta="meta" :observer="observer" />
+                    <BusinessModelTab :propMeta="meta" :observer="observer" @metaUpdated="onMetaUpdated" />
                 </TabPanel>
                 <TabPanel>
                     <template #header>
@@ -82,11 +82,14 @@ export default defineComponent({
             this.loading = loading
         },
         async metadataSave() {
-            let patch = generate(this.observer)
-            console.log('PATCH from MAIN SAVE ', patch)
-            await this.checkRelationships()
+            // let patch = generate(this.observer)
+            // console.log('PATCH from MAIN SAVE ', patch)
+            await this.checkRelationships(true)
         },
-        async checkRelationships() {
+        onMetaUpdated() {
+            this.checkRelationships(false)
+        },
+        async checkRelationships(generateModel: boolean) {
             this.loading = true
             console.log('BUSINESS MODEL: ', this.businessModel)
             const postData = { data: { name: this.businessModel?.name, id: this.businessModel?.id }, diff: generate(this.observer) }
@@ -94,7 +97,7 @@ export default defineComponent({
                 .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/checkRelationships`, postData)
                 .then(async (response: AxiosResponse<any>) => {
                     console.log('response, ', response)
-                    if (response.data.incorrectRelationships.length === 0) {
+                    if (response.data.incorrectRelationships.length === 0 && generateModel) {
                         await this.generateModel()
                     }
                 })

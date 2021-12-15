@@ -62,7 +62,7 @@
                         </template>
 
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <MetawebBusinessPropertyListTab :selectedBusinessModel="selectedBusinessModel"></MetawebBusinessPropertyListTab>
+                            <MetawebBusinessPropertyListTab :selectedBusinessModel="selectedBusinessModel" @metaUpdated="$emit('metaUpdated')"></MetawebBusinessPropertyListTab>
                         </div>
                     </TabPanel>
 
@@ -150,7 +150,7 @@ import TabPanel from 'primevue/tabpanel'
 import Listbox from 'primevue/listbox'
 import bmDescriptor from './MetawebBusinessModelDescriptor.json'
 import Menu from 'primevue/contextmenu'
-import MetawebBusinessPropertyListTab from './tabs/MetawebBusinessPropertyListTab.vue'
+import MetawebBusinessPropertyListTab from './tabs/propertyListTab/MetawebBusinessPropertyListTab.vue'
 import BusinessClassDialog from './dialogs/MetawebBusinessClassDialog.vue'
 import BusinessViewDialog from './dialogs/MetawebBusinessViewDialog.vue'
 import MetawebAttributesTab from './tabs/metawebAttributesTab/MetawebAttributesTab.vue'
@@ -162,7 +162,7 @@ export default defineComponent({
     name: 'metaweb-business-model',
     components: { OutboundRelationships, BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Listbox, Menu, MetawebBusinessPropertyListTab, MetawebAttributesTab, InboundRelationships, MetawebPhysicalTableTab },
     props: { propMeta: { type: Object }, observer: { type: Object } },
-    emits: ['loading'],
+    emits: ['loading', 'metaUpdated'],
     computed: {},
     data() {
         return {

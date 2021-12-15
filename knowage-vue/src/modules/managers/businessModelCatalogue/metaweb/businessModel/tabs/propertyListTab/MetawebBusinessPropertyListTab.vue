@@ -87,17 +87,18 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iBusinessModel } from '../../Metaweb'
+import { iBusinessModel } from '../../../Metaweb'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import Dropdown from 'primevue/dropdown'
 import metawebBusinessPropertyListTabDescriptor from './MetawebBusinessPropertyListTabDescriptor.json'
-import metaMock from '../../MetawebMock.json'
+import metaMock from '../../../MetawebMock.json'
 
 export default defineComponent({
     name: 'metaweb-business-property-list-tab',
     components: { Accordion, AccordionTab, Dropdown },
     props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> } },
+    emits: ['metaUpdated'],
     data() {
         return {
             metawebBusinessPropertyListTabDescriptor,
@@ -170,6 +171,7 @@ export default defineComponent({
             })
 
             console.log('UPDATED BM: ', this.businessModel)
+            this.$emit('metaUpdated')
         }
     }
 })
