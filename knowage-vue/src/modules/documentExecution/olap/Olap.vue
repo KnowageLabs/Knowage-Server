@@ -14,6 +14,7 @@ export default defineComponent({
     data() {
         return {
             olapDescriptor,
+            olap: null as any,
             loading: false
         }
     },
@@ -31,17 +32,27 @@ export default defineComponent({
     methods: {
         async loadPage() {
             this.loading = true
+            await this.loadOlapModel()
             this.loading = false
         },
         async loadOlapModel() {
             this.loading = true
             await this.$http
-                .post(`/knowagewhatifengine/restful-services/1.0/model/?SBI_EXECUTION_ID=${this.id}`, {})
-                .then((response: AxiosResponse<any>) => {
-                    console.log('RESPONSE: ', response)
-                })
+                .post(
+                    process.env.VUE_APP_OLAP_PATH + `/1.0/model/?SBI_EXECUTION_ID=${this.id}`,
+                    {},
+                    {
+                        headers: {
+                            Accept: 'application/json, text/plain, */*',
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        }
+                    }
+                )
+                .then((response: AxiosResponse<any>) => (this.olap = response.data))
                 .catch(() => {})
             this.loading = false
+
+            console.log('LOADED OLAP: ', this.olap)
         }
     }
 })
