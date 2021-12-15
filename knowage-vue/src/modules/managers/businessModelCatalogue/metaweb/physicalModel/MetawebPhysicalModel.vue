@@ -57,12 +57,12 @@ import TabPanel from 'primevue/tabpanel'
 import physDescriptor from './PhysicalModelDescriptor.json'
 // import updateMock from './updateMock.json'
 
-const { applyPatch } = require('fast-json-patch')
+const { applyPatch, generate } = require('fast-json-patch')
 
 export default defineComponent({
     name: 'metaweb-physical-model',
     components: { MetawebForeignKeyTab, MetawebPhysicalModelList, MetawebPropertyListTab, MetawebPhysicalModelUpdateDialog, TabView, TabPanel },
-    props: { propMeta: { type: Object } },
+    props: { propMeta: { type: Object }, observer: { type: Object } },
     emits: ['loading'],
     data() {
         return {
@@ -83,26 +83,20 @@ export default defineComponent({
     },
     methods: {
         loadMeta() {
-            // this.meta = metawebMock.metaSales
             this.meta = this.propMeta
-            console.log('LOADED META: ', this.meta)
         },
         onSelectedItem(selectedPhysicalModel: iColumn | iPhysicalModel) {
             this.selectedPhysicalModel = selectedPhysicalModel
-            console.log('SELECTED ITEM: ', this.selectedPhysicalModel)
         },
         async openUpdateDialog() {
             this.$emit('loading', true)
             await this.$http.get(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/updatePhysicalModel`).then((response: AxiosResponse<any>) => (this.changedItem = response.data))
-            // this.changedItem = updateMock
             this.updateDialogVisible = true
             this.$emit('loading', false)
-            console.log('LOADED CHANGED DATA: ', this.changedItem)
         },
         onPhysicalModelUpdate(changes: any) {
-            console.log('CHANGES AFTER UPDATE: ', changes)
             this.meta = applyPatch(this.meta, changes).newDocument
-            console.log('META AFTER UPDATE: ', this.meta)
+            generate(this.observer)
             this.updateDialogVisible = false
         }
     }

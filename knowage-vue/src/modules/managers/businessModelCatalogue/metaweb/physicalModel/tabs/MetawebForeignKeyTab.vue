@@ -72,7 +72,6 @@ export default defineComponent({
     methods: {
         loadForeignKeys() {
             this.foreignKeys = this.propForeignKeys as iForeignKey[]
-            // console.log('LOADED FOREIGN KEYS: ', this.foreignKeys)
         },
         getColumns(foreignKey: iForeignKey, columnType: string) {
             const columns = [] as string[]

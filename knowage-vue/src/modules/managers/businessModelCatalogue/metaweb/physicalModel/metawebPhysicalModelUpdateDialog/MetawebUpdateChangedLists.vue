@@ -37,7 +37,6 @@ export default defineComponent({
     methods: {
         loadData() {
             this.data = this.changedItem as iChangedData
-            // console.log('>>> LOADED CHANGED ITEM IN LISTS: ', this.data)
         }
     }
 })

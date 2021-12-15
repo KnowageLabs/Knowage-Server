@@ -16,7 +16,7 @@
                     <template #header>
                         <span>{{ $t('metaweb.businessModel.title') }}</span>
                     </template>
-                    <BusinessModelTab :propMeta="meta" :observer="observer" />
+                    <BusinessModelTab :propMeta="meta" :observer="observer" :metaUpdated="metaUpdated" @metaUpdated="onMetaUpdated" />
                 </TabPanel>
                 <TabPanel>
                     <template #header>
@@ -41,7 +41,7 @@ import BusinessModelTab from './businessModel/MetawebBusinessModel.vue'
 import MetawebPhysicalModel from './physicalModel/MetawebPhysicalModel.vue'
 import metaMock from './MetawebMock.json'
 
-const { observe, generate } = require('fast-json-patch')
+const { observe, generate, applyPatch } = require('fast-json-patch')
 
 export default defineComponent({
     name: 'metaweb',
@@ -55,6 +55,7 @@ export default defineComponent({
             mainDescriptor,
             meta: null as any,
             observer: null as any,
+            metaUpdated: false,
             loading: false
         }
     },
@@ -69,9 +70,9 @@ export default defineComponent({
     },
     methods: {
         loadMeta() {
-            this.meta = this.metaMock.metaSales
+            // this.meta = this.metaMock.metaSales
 
-            // this.meta = this.propMeta
+            this.meta = this.propMeta
 
             if (this.meta) {
                 this.observer = observe(this.meta)
@@ -82,11 +83,14 @@ export default defineComponent({
             this.loading = loading
         },
         async metadataSave() {
-            let patch = generate(this.observer)
-            console.log('PATCH from MAIN SAVE ', patch)
-            await this.checkRelationships()
+            // let patch = generate(this.observer)
+            // console.log('PATCH from MAIN SAVE ', patch)
+            await this.checkRelationships(true)
         },
-        async checkRelationships() {
+        onMetaUpdated() {
+            this.checkRelationships(false)
+        },
+        async checkRelationships(generateModel: boolean) {
             this.loading = true
             console.log('BUSINESS MODEL: ', this.businessModel)
             const postData = { data: { name: this.businessModel?.name, id: this.businessModel?.id }, diff: generate(this.observer) }
@@ -94,7 +98,10 @@ export default defineComponent({
                 .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/checkRelationships`, postData)
                 .then(async (response: AxiosResponse<any>) => {
                     console.log('response, ', response)
-                    if (response.data.incorrectRelationships.length === 0) {
+                    this.observer = applyPatch(this.observer, response.data)
+                    this.observer = observe(this.meta)
+                    this.metaUpdated = !this.metaUpdated
+                    if (response.data.incorrectRelationships.length === 0 && generateModel) {
                         await this.generateModel()
                     }
                 })

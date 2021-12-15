@@ -49,7 +49,6 @@ export default defineComponent({
     methods: {
         loadMeta() {
             this.meta = this.propMeta as any
-            // console.log('LOADED META FOR PHYSICAL MODELS: ', this.propMeta)
         },
         emitSelectedItem() {
             this.$emit('selected', this.selectedPhysicalModel)

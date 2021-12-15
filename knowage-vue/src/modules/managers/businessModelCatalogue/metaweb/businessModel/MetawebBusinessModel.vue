@@ -62,7 +62,7 @@
                         </template>
 
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <MetawebBusinessPropertyListTab :selectedBusinessModel="selectedBusinessModel"></MetawebBusinessPropertyListTab>
+                            <MetawebBusinessPropertyListTab :selectedBusinessModel="selectedBusinessModel" @metaUpdated="$emit('metaUpdated')"></MetawebBusinessPropertyListTab>
                         </div>
                     </TabPanel>
 
@@ -72,7 +72,7 @@
                         </template>
 
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <MetawebAttributesTab :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" :observer="observer"></MetawebAttributesTab>
+                            <MetawebAttributesTab :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" :observer="observer" @metaUpdated="$emit('metaUpdated')"></MetawebAttributesTab>
                         </div>
                     </TabPanel>
 
@@ -150,7 +150,7 @@ import TabPanel from 'primevue/tabpanel'
 import Listbox from 'primevue/listbox'
 import bmDescriptor from './MetawebBusinessModelDescriptor.json'
 import Menu from 'primevue/contextmenu'
-import MetawebBusinessPropertyListTab from './tabs/MetawebBusinessPropertyListTab.vue'
+import MetawebBusinessPropertyListTab from './tabs/propertyListTab/MetawebBusinessPropertyListTab.vue'
 import BusinessClassDialog from './dialogs/MetawebBusinessClassDialog.vue'
 import BusinessViewDialog from './dialogs/MetawebBusinessViewDialog.vue'
 import MetawebAttributesTab from './tabs/metawebAttributesTab/MetawebAttributesTab.vue'
@@ -161,8 +161,8 @@ import MetawebPhysicalTableTab from './tabs/physicalTable/MetawebPhysicalTableTa
 export default defineComponent({
     name: 'metaweb-business-model',
     components: { OutboundRelationships, BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Listbox, Menu, MetawebBusinessPropertyListTab, MetawebAttributesTab, InboundRelationships, MetawebPhysicalTableTab },
-    props: { propMeta: { type: Object }, observer: { type: Object } },
-    emits: ['loading'],
+    props: { propMeta: { type: Object }, observer: { type: Object }, metaUpdated: { type: Boolean } },
+    emits: ['loading', 'metaUpdated'],
     computed: {},
     data() {
         return {
@@ -177,6 +177,9 @@ export default defineComponent({
     },
     watch: {
         propMeta() {
+            this.loadMeta()
+        },
+        metaUpdated() {
             this.loadMeta()
         }
     },
@@ -196,7 +199,7 @@ export default defineComponent({
         },
         loadMeta() {
             this.meta = this.propMeta
-            console.log('LOADED META BUSIENSS MODEL: ', this.meta)
+            // console.log('LOADED META BUSIENSS MODEL: ', this.meta)
         },
         selectBusinessModel(event) {
             console.log(event.value)

@@ -74,7 +74,6 @@ export default defineComponent({
         },
         async updatePhysicalModel() {
             this.loading = true
-            // TODO Fix API Service
             await this.$http
                 .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/updatePhysicalModel`, { tables: this.tables })
                 .then((response: AxiosResponse<any>) => {
