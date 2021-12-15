@@ -263,8 +263,9 @@ export default defineComponent({
             window.print()
         },
         export(type: string) {
+            const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             let tempFrame = window.frames
-            while (tempFrame && tempFrame.name !== 'documentFrame') {
+            while (tempFrame && tempFrame.name !== 'documentFrame' + tempIndex) {
                 tempFrame = tempFrame[0].frames
             }
             tempFrame.postMessage({ type: 'export', format: type.toLowerCase() }, '*')
