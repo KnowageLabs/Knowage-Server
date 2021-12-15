@@ -376,28 +376,33 @@ export default defineComponent({
                         return { value: defaultValue.value ?? defaultValue._col0, description: defaultValue.desc ?? defaultValue._col1 }
                     })
                 }
-
                 if (el.data) {
                     el.data = el.data.map((data: any) => {
-                        return this.formatParameterDataOptions(el, data)
+                        return { value: data._col0, description: data._col1 }
                     })
-
-                    if (el.data.length === 1) {
-                        el.parameterValue = [...el.data]
-                    }
                 }
-
                 if ((el.selectionType === 'COMBOBOX' || el.selectionType === 'LIST') && el.multivalue && el.mandatory && el.data.length === 1) {
                     el.showOnPanel = 'false'
                 }
-
-                if (el.parameterValue[0] && !el.parameterValue[0].description) {
-                    el.parameterValue[0].description = ''
-                }
             })
+
+            if (this.document.navigationParams) {
+                this.loadNavigationParamsInitialValue()
+            }
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) this.breadcrumbs[index].filtersData = this.filtersData
+        },
+        loadNavigationParamsInitialValue() {
+            Object.keys(this.document.navigationParams).forEach((key: string) => {
+                for (let i = 0; i < this.filtersData.filterStatus.length; i++) {
+                    const tempParam = this.filtersData.filterStatus[i]
+
+                    if (key === tempParam.urlName) {
+                        tempParam.parameterValue[0].value = this.document.navigationParams[key]
+                    }
+                }
+            })
         },
         formatParameterDataOptions(parameter: iParameter, data: any) {
             const valueColumn = parameter.metadata.valueColumn
