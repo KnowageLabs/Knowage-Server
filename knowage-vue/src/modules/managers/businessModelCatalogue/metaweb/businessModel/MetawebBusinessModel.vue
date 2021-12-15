@@ -115,7 +115,7 @@
 
                     <TabPanel>
                         <template #header>
-                            <span>{{ $t('metaweb.businessModel.tabView.filter') }}</span>
+                            <span>{{ $t('metaweb.businessModel.tabView.joinRelationships') }}</span>
                         </template>
                         <div :style="mainDescriptor.style.absoluteScroll">
                             {{ mainDescriptor.test }}
