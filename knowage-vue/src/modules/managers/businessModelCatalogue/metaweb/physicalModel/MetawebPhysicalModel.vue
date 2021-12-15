@@ -83,27 +83,20 @@ export default defineComponent({
     },
     methods: {
         loadMeta() {
-            // this.meta = metawebMock.metaSales
             this.meta = this.propMeta
-            console.log('LOADED META: ', this.meta)
         },
         onSelectedItem(selectedPhysicalModel: iColumn | iPhysicalModel) {
             this.selectedPhysicalModel = selectedPhysicalModel
-            console.log('SELECTED ITEM: ', this.selectedPhysicalModel)
         },
         async openUpdateDialog() {
             this.$emit('loading', true)
             await this.$http.get(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/updatePhysicalModel`).then((response: AxiosResponse<any>) => (this.changedItem = response.data))
-            // this.changedItem = updateMock
             this.updateDialogVisible = true
             this.$emit('loading', false)
-            console.log('LOADED CHANGED DATA: ', this.changedItem)
         },
         onPhysicalModelUpdate(changes: any) {
-            console.log('CHANGES AFTER UPDATE: ', changes)
             this.meta = applyPatch(this.meta, changes).newDocument
             generate(this.observer)
-            console.log('META AFTER UPDATE: ', this.meta)
             this.updateDialogVisible = false
         }
     }

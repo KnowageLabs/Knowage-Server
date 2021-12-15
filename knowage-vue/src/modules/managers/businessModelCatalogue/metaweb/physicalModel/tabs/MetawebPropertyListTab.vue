@@ -61,7 +61,6 @@ export default defineComponent({
     methods: {
         loadPhysicalModel() {
             this.physicalModel = this.selectedPhysicalModel as iColumn | iPhysicalModel
-            // console.log('PHYSICAL MODEL LOADED: ', this.physicalModel)
 
             this.loadCategories()
         },

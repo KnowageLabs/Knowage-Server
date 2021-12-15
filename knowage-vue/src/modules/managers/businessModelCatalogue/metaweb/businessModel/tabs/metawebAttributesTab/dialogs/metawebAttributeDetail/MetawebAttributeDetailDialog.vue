@@ -24,6 +24,13 @@
                         <label for="name" class="kn-material-input-label"> {{ $t('common.description') }}</label>
                     </span>
                 </div>
+
+                <div class="p-field p-col-12 p-md-12">
+                    <span class="p-float-label">
+                        <Dropdown class="kn-material-input" v-model="columnType" :options="metawebAttributeDetailDialogDescriptor.typeOptions" @change="onTypeChange(attribute)" />
+                        <label for="type" class="kn-material-input-label"> {{ $t('common.type') }}</label>
+                    </span>
+                </div>
             </div>
 
             <label class="kn-material-input-label">{{ $t('metaweb.businessModel.attributesDetail.structural') }}</label>
@@ -71,7 +78,7 @@
                     </span>
                 </div>
 
-                <div class="p-field p-col-12 p-md-6 p-mt-2">
+                <div v-if="attribute.physicalColumn" class="p-field p-col-12 p-md-6 p-mt-2">
                     <span class="p-float-label">
                         <InputText id="physicalColumn" class="kn-material-input" v-model.trim="attribute.physicalColumn.name" :disabled="true" />
                         <label for="physicalColumn" class="kn-material-input-label">{{ $t('metaweb.businessModel.physicalColumn') }}</label>
@@ -145,6 +152,7 @@ export default defineComponent({
             properties: {} as any,
             roles: [],
             profileAttributes: [],
+            columnType: '' as string,
             loading: false
         }
     },
@@ -161,51 +169,61 @@ export default defineComponent({
             if (this.selectedAttribute) {
                 this.attribute = { ...this.selectedAttribute, physicalColumn: { ...this.selectedAttribute.physicalColumn }, properties: this.getDeepCopyProperties(this.selectedAttribute.properties) } as iBusinessModelColumn
             }
-            console.log('LOADED ATTRIBUTE: ', this.attribute)
+
+            this.getAttributeType()
             this.loadAttributeProperties()
+        },
+        getAttributeType() {
+            if (this.attribute) {
+                for (let i = 0; i < this.attribute.properties.length; i++) {
+                    const tempProperty = this.attribute.properties[i]
+                    const key = Object.keys(tempProperty)[0]
+                    if (key === 'structural.columntype') {
+                        this.columnType = tempProperty[key].value
+                    }
+                }
+            }
         },
         getDeepCopyProperties(properties: any[]) {
             const newProperties = [] as any[]
-            // console.log('PROPERTIES FOR DEEP COPY: ', properties)
             properties.forEach((property: any) => {
-                // console.log('property: ', property)
                 const key = Object.keys(property)[0]
                 const tempProperty = {}
                 tempProperty[key] = { ...property[key] }
                 newProperties.push(tempProperty)
             })
 
-            // console.log('NEW PROPERTIES: ', newProperties)
             return newProperties
         },
         loadAttributeProperties() {
             if (this.attribute) {
                 this.attribute.properties?.forEach((property: any) => {
-                    // console.log('TEMP PROPERTY: ', property)
                     const key = Object.keys(property)[0]
-
                     this.properties[key] = property[key]
                 })
-
-                console.log('PROPERTIES LOADED: ', this.properties)
             }
         },
         getFormattedDate(date: any) {
             return formatDate(date, 'YYYY-MM-DD HH:mm:ss')
         },
+        onTypeChange() {
+            if (this.attribute) {
+                for (let i = 0; i < this.attribute.properties.length; i++) {
+                    const tempProperty = this.attribute.properties[i]
+                    const key = Object.keys(tempProperty)[0]
+                    if (key === 'structural.columntype') {
+                        tempProperty[key].value = this.columnType
+                    }
+                }
+            }
+        },
         updateAttribute(propertyKey: string) {
-            console.log('PROPERTY CHANGED: ', propertyKey)
-
             if (this.attribute) {
                 for (let i = 0; i < this.attribute.properties.length; i++) {
                     const property = this.attribute.properties[i]
-                    // console.log('TEMP PROPERTY: ', property)
                     const key = Object.keys(property)[0]
-                    // console.log('KEY: ', key)
                     if (key === propertyKey) {
-                        console.log('FOUND!', property)
                         property[key].value = this.properties[key].value
-                        console.log('AFTER UPDATE!', property)
                         break
                     }
                 }

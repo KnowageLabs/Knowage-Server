@@ -121,12 +121,7 @@ export default defineComponent({
     methods: {
         loadBusinessModel() {
             this.businessModel = this.selectedBusinessModel as any
-
-            // TODO REMOVE MOCK
-            // console.log('MOCKED META: ', metaMock)
             this.businessModel = this.selectedBusinessModel as iBusinessModel
-
-            // console.log('BUSINESS MODEL LOADED: ', this.businessModel)
 
             this.loadCategories()
         },
@@ -136,16 +131,12 @@ export default defineComponent({
                 for (let i = 0; i < this.businessModel.properties.length; i++) {
                     const tempProperty = this.businessModel?.properties[i]
 
-                    // console.log('TEMP PROPERTY: ', tempProperty)
-
                     const key = Object.keys(tempProperty)[0]
                     const newKey = key?.split('.')
 
                     if (!this.categories[newKey[0]]) {
                         this.categories[newKey[0]] = []
                     }
-
-                    // console.log('TEMP CATEGORY: ', { ...tempProperty[key], type: key })
 
                     this.categories[newKey[0]].push({ ...tempProperty[key], type: key })
                 }
@@ -155,22 +146,13 @@ export default defineComponent({
             console.log('editTemporalHierarchy clicked!')
         },
         updateCategoryValue(property: any) {
-            console.log('UPDATE CATEGORY VALUE BUSINESS MODEL: ', this.businessModel)
-            console.log('UPDATE CATEGORY VALUE CATEGORIES: ', this.categories)
-            console.log('PROPERTY TYPE: ', property.type)
-
             this.businessModel?.properties?.forEach((el: any) => {
                 const key = Object.keys(el)[0]
-                console.log('KEY: ', key)
                 if (key === property.type) {
-                    console.log('FOUND!')
-                    console.log('PROPERTY!', property)
-                    console.log('EL!', el)
                     el[key].value = property.value
                 }
             })
 
-            console.log('UPDATED BM: ', this.businessModel)
             this.$emit('metaUpdated')
         }
     }

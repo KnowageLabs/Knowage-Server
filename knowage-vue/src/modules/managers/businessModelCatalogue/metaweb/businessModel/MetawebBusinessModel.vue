@@ -72,7 +72,7 @@
                         </template>
 
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <MetawebAttributesTab :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" :observer="observer"></MetawebAttributesTab>
+                            <MetawebAttributesTab :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" :observer="observer" @metaUpdated="$emit('metaUpdated')"></MetawebAttributesTab>
                         </div>
                     </TabPanel>
 
@@ -161,7 +161,7 @@ import MetawebPhysicalTableTab from './tabs/physicalTable/MetawebPhysicalTableTa
 export default defineComponent({
     name: 'metaweb-business-model',
     components: { OutboundRelationships, BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Listbox, Menu, MetawebBusinessPropertyListTab, MetawebAttributesTab, InboundRelationships, MetawebPhysicalTableTab },
-    props: { propMeta: { type: Object }, observer: { type: Object } },
+    props: { propMeta: { type: Object }, observer: { type: Object }, metaUpdated: { type: Boolean } },
     emits: ['loading', 'metaUpdated'],
     computed: {},
     data() {
@@ -177,6 +177,9 @@ export default defineComponent({
     },
     watch: {
         propMeta() {
+            this.loadMeta()
+        },
+        metaUpdated() {
             this.loadMeta()
         }
     },
@@ -196,7 +199,7 @@ export default defineComponent({
         },
         loadMeta() {
             this.meta = this.propMeta
-            console.log('LOADED META BUSIENSS MODEL: ', this.meta)
+            // console.log('LOADED META BUSIENSS MODEL: ', this.meta)
         },
         selectBusinessModel(event) {
             console.log(event.value)

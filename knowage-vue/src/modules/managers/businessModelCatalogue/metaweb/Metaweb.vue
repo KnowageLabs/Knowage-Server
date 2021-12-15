@@ -16,7 +16,7 @@
                     <template #header>
                         <span>{{ $t('metaweb.businessModel.title') }}</span>
                     </template>
-                    <BusinessModelTab :propMeta="meta" :observer="observer" @metaUpdated="onMetaUpdated" />
+                    <BusinessModelTab :propMeta="meta" :observer="observer" :metaUpdated="metaUpdated" @metaUpdated="onMetaUpdated" />
                 </TabPanel>
                 <TabPanel>
                     <template #header>
@@ -41,7 +41,7 @@ import BusinessModelTab from './businessModel/MetawebBusinessModel.vue'
 import MetawebPhysicalModel from './physicalModel/MetawebPhysicalModel.vue'
 import metaMock from './MetawebMock.json'
 
-const { observe, generate } = require('fast-json-patch')
+const { observe, generate, applyPatch } = require('fast-json-patch')
 
 export default defineComponent({
     name: 'metaweb',
@@ -55,6 +55,7 @@ export default defineComponent({
             mainDescriptor,
             meta: null as any,
             observer: null as any,
+            metaUpdated: false,
             loading: false
         }
     },
@@ -97,6 +98,9 @@ export default defineComponent({
                 .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/checkRelationships`, postData)
                 .then(async (response: AxiosResponse<any>) => {
                     console.log('response, ', response)
+                    this.observer = applyPatch(this.observer, response.data)
+                    this.observer = observe(this.meta)
+                    this.metaUpdated = !this.metaUpdated
                     if (response.data.incorrectRelationships.length === 0 && generateModel) {
                         await this.generateModel()
                     }

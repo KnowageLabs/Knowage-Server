@@ -79,13 +79,9 @@ export default defineComponent({
         },
         loadMeta() {
             this.meta = this.propMeta as any
-            // console.log('LOADED META IN METAWEB ATTRIBUTES TAB: ', this.meta)
         },
         loadBusinessModel() {
             this.businessModel = this.selectedBusinessModel as iBusinessModel
-
-            console.log('BUSINESS MODEL LOADED PHYSICAL TABLE: ', this.businessModel)
-            console.log('BUSINESS MODEL LOADED META: ', this.meta)
             this.loadPhysicalTables()
         },
         loadPhysicalTables() {
@@ -93,14 +89,10 @@ export default defineComponent({
             if (this.businessModel) {
                 this.businessModel.physicalTables?.forEach((el: any) => this.physicalTables.push(this.meta.physicalModels[el.physicalTableIndex]))
             }
-            console.log('PHYSICAL TABLES LOADED: ', this.physicalTables)
         },
         openAddPhysicalTableDialog() {
-            console.log('ADD CLICKED!')
             this.availablePhysicalTables = [...this.meta.physicalModels]
             const indexesToRemove = this.businessModel?.physicalTables?.map((el: any) => el.physicalTableIndex).sort()
-
-            console.log('INDEXES TO REMOVE: ', indexesToRemove)
 
             if (indexesToRemove) {
                 for (let i = indexesToRemove.length - 1; i >= 0; i--) {
@@ -108,12 +100,9 @@ export default defineComponent({
                 }
             }
 
-            console.log('AVALIABLE PHYISACL TABLES: ', this.availablePhysicalTables)
-
             this.addTableDialogVisible = true
         },
         deletePhysicalTableConfirm(physicalTable: any) {
-            console.log('DELETE FOR PHYSICAL TABLE: ', physicalTable)
             this.$confirm.require({
                 message: this.$t('documentExecution.dossier.deleteConfirm'),
                 header: this.$t('documentExecution.dossier.deleteTitle'),
@@ -127,7 +116,7 @@ export default defineComponent({
             await this.$http
                 .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/deletePhysicalColumnfromBusinessView`, postData)
                 .then((response: AxiosResponse<any>) => {
-                    this.meta = applyPatch(this.meta, response.data)
+                    this.meta = applyPatch(this.meta, response.data).newDocument
                     this.loadData()
 
                     this.$store.commit('setInfo', {
@@ -142,13 +131,12 @@ export default defineComponent({
             this.loading = false
         },
         async addNewPhysicalTables(selectedTables: any[]) {
-            console.log('SELECTED TABLES: ', selectedTables)
             this.loading = true
             const postData = { data: { viewUniqueName: this.businessModel?.uniqueName, physicalTables: selectedTables.map((el: any) => el.name) }, diff: generate(this.observer) }
             await this.$http
                 .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/addPhysicalColumnToBusinessView`, postData)
                 .then((response: AxiosResponse<any>) => {
-                    this.meta = applyPatch(this.meta, response.data)
+                    this.meta = applyPatch(this.meta, response.data).newDocument
                     this.loadData()
 
                     this.$store.commit('setInfo', {
