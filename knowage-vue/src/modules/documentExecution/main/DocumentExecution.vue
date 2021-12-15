@@ -27,6 +27,7 @@
             <template v-if="filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible">
                 <Registry v-if="mode === 'registry'" :id="urlData.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
                 <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger"></Dossier>
+                <Olap v-else-if="mode === 'olap'" :id="urlData.sbiExecutionId" :reloadTrigger="reloadTrigger"></Olap>
             </template>
 
             <iframe
@@ -80,6 +81,7 @@ import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSi
 import Menu from 'primevue/menu'
 import Registry from '../registry/Registry.vue'
 import Dossier from '../dossier/Dossier.vue'
+import Olap from '../olap/Olap.vue'
 
 export default defineComponent({
     name: 'document-execution',
@@ -95,7 +97,8 @@ export default defineComponent({
         KnParameterSidebar,
         Menu,
         Registry,
-        Dossier
+        Dossier,
+        Olap
     },
     props: { id: { type: String } },
     emits: ['close'],
@@ -323,6 +326,8 @@ export default defineComponent({
                 this.mode = 'registry'
             } else if (this.$route.path.includes('dossier')) {
                 this.mode = 'dossier'
+            } else if (this.$route.path.includes('olap')) {
+                this.mode = 'olap'
             } else {
                 this.mode = 'iframe'
             }
