@@ -81,8 +81,6 @@ export default defineComponent({
             if (this.multivalue) {
                 this.selectedRow = this.multipleSelectedRows
             }
-
-            console.log('SELECTED ROWS: ', this.multipleSelectedRows)
         }
     }
 })

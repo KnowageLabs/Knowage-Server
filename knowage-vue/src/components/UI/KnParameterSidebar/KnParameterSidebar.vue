@@ -251,8 +251,6 @@ export default defineComponent({
             this.parameters?.filterStatus.forEach((el: any) => this.setVisualDependency(el))
             this.parameters?.filterStatus.forEach((el: any) => this.setDataDependency(el))
             this.parameters?.filterStatus.forEach((el: any) => this.updateVisualDependency(el))
-
-            console.log('LOADED PARAMETERS: ', this.parameters)
         },
         setVisualDependency(parameter: iParameter) {
             if (parameter.dependencies.visual.length !== 0) {
@@ -271,13 +269,11 @@ export default defineComponent({
         setDataDependency(parameter: iParameter) {
             if (parameter.dependencies.data.length !== 0) {
                 parameter.dependencies.data.forEach((dependency: any) => {
-                    console.log('DEPENDENCY: ', dependency)
                     const index = this.parameters.filterStatus.findIndex((param: any) => {
                         return param.urlName === dependency.parFatherUrlName
                     })
                     if (index !== -1) {
                         const tempParameter = this.parameters.filterStatus[index]
-                        console.log('FOUND!', tempParameter)
                         parameter.dataDependsOnParameters ? parameter.dataDependsOnParameters.push(tempParameter) : (parameter.dataDependsOnParameters = [tempParameter])
                         tempParameter.dataDependentParameters ? tempParameter.dataDependentParameters.push(parameter) : (tempParameter.dataDependentParameters = [parameter])
                     }
@@ -426,13 +422,10 @@ export default defineComponent({
                     await this.dataDependencyCheck(parameter.dataDependentParameters[i])
                 }
             }
-            // await parameter.dataDependentParameters?.forEach((dependentParameter: iParameter) => this.dataDependencyCheck(dependentParameter, parameter))
         },
         async dataDependencyCheck(parameter: iParameter) {
             this.loading = true
-            console.log('PARAMETER: ', parameter)
             if (parameter.parameterValue[0]) {
-                console.log('ENTERED')
                 parameter.parameterValue[0] = { value: '', description: '' }
             } else {
                 parameter.parameterValue = [{ value: '', description: '' }]
@@ -440,12 +433,10 @@ export default defineComponent({
 
             const postData = { label: this.document?.label, parameters: this.getFormatedParameters(), paramId: parameter.urlName, role: this.sessionRole }
             await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentExeParameters/admissibleValues`, postData).then((response: AxiosResponse<any>) => {
-                console.log('REPSONSE: ', response.data)
                 parameter.data = response.data.result.data
                 parameter.metadata = response.data.result.metadata
                 this.formatParameterAfterDataDependencyCheck(parameter)
             })
-            console.log('CHANGED PARAMETER: ', parameter)
             this.loading = false
         },
         formatParameterAfterDataDependencyCheck(parameter: any) {

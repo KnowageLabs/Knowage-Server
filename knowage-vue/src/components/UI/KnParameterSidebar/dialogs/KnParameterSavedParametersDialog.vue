@@ -72,7 +72,6 @@ export default defineComponent({
     methods: {
         loadViewpoints() {
             this.viewpoints = this.propViewpoints as any[]
-            console.log('LOADED VIEWPOINTS: ', this.viewpoints)
         },
         closeDialog() {
             this.$emit('close')

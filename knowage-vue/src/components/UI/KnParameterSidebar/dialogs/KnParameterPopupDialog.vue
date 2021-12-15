@@ -73,8 +73,6 @@ export default defineComponent({
         loadParameter() {
             this.parameter = this.selectedParameter as iParameter
             this.multivalue = this.selectedParameter?.multivalue
-
-            console.log('LOADED PARAMETER: ', this.parameter)
         },
         setMultipleSelectedRows() {
             const valueColumn = this.popupData?.result.metadata.valueColumn
@@ -82,11 +80,8 @@ export default defineComponent({
 
             const valueIndex = Object.keys(this.parameter?.metadata.colsMap).find((key: string) => this.parameter?.metadata.colsMap[key] === valueColumn)
             const descriptionIndex = Object.keys(this.parameter?.metadata.colsMap).find((key: string) => this.parameter?.metadata.colsMap[key] === descriptionColumn)
-            console.log('VALUE INDEX: ', valueIndex)
-            console.log('DESCRIPTION INDEX: ', descriptionIndex)
 
             this.multipleSelectedRows = this.parameter?.parameterValue.map((el: any) => {
-                console.log('EL FOR MAPING: ', el)
                 const tempObject = {}
                 if (valueIndex) tempObject[valueIndex] = el.value
                 if (descriptionIndex) tempObject[descriptionIndex] = el.description
@@ -95,8 +90,6 @@ export default defineComponent({
         },
         loadPopupData() {
             this.popupData = this.parameterPopUpData as iAdmissibleValues
-
-            console.log('LOADED POPUP DATA: ', this.popupData)
         },
 
         setLoading() {
