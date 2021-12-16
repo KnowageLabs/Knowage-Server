@@ -23,6 +23,9 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
+import it.eng.knowage.commons.multitenant.OrganizationImageManager;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -43,6 +46,7 @@ public class UserInformationDTO {
 	private String defaultRole = null;
 	private Map<String, Object> attributes;
 	private String organization;
+	private String organizationImageb64;
 	private String uniqueIdentifier;
 	private String emailAddress;
 	private Locale locale = null;
@@ -56,6 +60,7 @@ public class UserInformationDTO {
 		this.fullName = String.valueOf(user.getUserName());
 		this.isSuperadmin = user.getIsSuperadmin();
 		this.organization = TenantManager.getTenant().getName();
+		this.organizationImageb64 = OrganizationImageManager.getOrganizationB64Image(organization);
 		// TODO: Change when there will be user email address
 		this.emailAddress = null;
 		this.userUniqueIdentifier = user.getUserUniqueIdentifier();
@@ -127,6 +132,14 @@ public class UserInformationDTO {
 
 	public void setOrganization(String organization) {
 		this.organization = organization;
+	}
+
+	public String getOrganizationImageb64() {
+		return organizationImageb64;
+	}
+
+	public void setOrganizationImageb64(String organizationImageb64) {
+		this.organizationImageb64 = organizationImageb64;
 	}
 
 	public String getUniqueIdentifier() {
