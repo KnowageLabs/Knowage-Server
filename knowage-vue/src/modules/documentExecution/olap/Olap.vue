@@ -5,14 +5,17 @@
             <OlapSidebar v-if="olapSidebarVisible" class="olap-sidebar kn-overflow-y"></OlapSidebar>
 
             <!-- {{ customViewVisible }} -->
-            <div ref="olap-table" v-if="olap && olap.table" v-html="olap.table" @click="test"></div>
+            <div ref="olap-table" class="test-olap" v-if="olap && olap.table" v-html="olap.table" @click="test"></div>
+            <div>
+                <component :is="dynamicComponent"></component>
+            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import { AxiosResponse } from 'axios'
-import { defineComponent } from 'vue'
+import { defineComponent, h } from 'vue'
 import olapDescriptor from './OlapDescriptor.json'
 import OlapSidebar from './olapSidebar/OlapSidebar.vue'
 
@@ -27,11 +30,30 @@ export default defineComponent({
             olap: null as any,
             olapSidebarVisible: true,
             customViewVisible: false,
+            table: h('test', '<div v-if="customViewVisible"></div>') as any,
             loading: false
         }
     },
     async created() {
         await this.loadPage()
+    },
+    computed: {
+        dynamicComponent() {
+            return {
+                template: '<h1 v-drilldown>TEST</h1>',
+
+                // redirect every shared data here
+                data: () => {
+                    return {}
+                },
+
+                created() {
+                    console.log(' >>> CREATED INSIDE DYNAMIC!!!')
+                },
+                // redirect every shared methods here
+                methods: {}
+            }
+        }
     },
     watch: {
         async id() {
@@ -89,17 +111,24 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.olap = response.data))
                 .catch(() => {})
 
+            this.formatOlapTable()
+
             console.log('LOADED OLAP: ', this.olap)
+        },
+        formatOlapTable() {
+            this.olap.table = this.olap.table.replaceAll('</drillup>', ' <div class="drill-up"></div></drillup>')
+            this.olap.table = this.olap.table.replaceAll('</drilldown>', '<div class="drill-down"></div> </drilldown> ')
         },
         async drillDown(event: any) {
             this.loading = true
-            const axis = event.target.firstElementChild.getAttribute('axis')
-            const position = event.target.firstElementChild.getAttribute('position')
-            const member = event.target.firstElementChild.getAttribute('memberordinal')
+            console.log('EVENT INSIDE DRILL DOWN: ', event)
+            const axis = event.target.parentNode.getAttribute('axis')
+            const position = event.target.parentNode.getAttribute('position')
+            const member = event.target.parentNode.getAttribute('memberordinal')
 
             const postData = JSON.stringify({
-                memberUniqueName: event.target.firstElementChild.getAttribute('uniquename'),
-                positionUniqueName: event.target.firstElementChild.getAttribute('positionuniquename')
+                memberUniqueName: event.target.parentNode.getAttribute('uniquename'),
+                positionUniqueName: event.target.parentNode.getAttribute('positionuniquename')
             })
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/drilldown/${axis}/${position}/${member}/?SBI_EXECUTION_ID=${this.id}`, postData, {
@@ -110,12 +139,27 @@ export default defineComponent({
                 })
                 .then((response: AxiosResponse<any>) => (this.olap = response.data))
                 .catch(() => {})
+
+            this.formatOlapTable()
+
             this.loading = false
         },
         test(event: Event) {
+            console.log('>>> COMPONENT: ', this.dynamicComponent)
             console.log('EVENT: ', event)
-            console.log('REF: ', (this.$refs['olap-table'] as any).innerHTML)
-            // this.drillDown(event)
+
+            const eventTarget = event.target as any
+
+            if (eventTarget) {
+                switch (eventTarget.className) {
+                    case 'drill-up':
+                        console.log('TODO - DRILL UP!')
+                        break
+                    case 'drill-down':
+                        this.drillDown(event)
+                        break
+                }
+            }
         }
     }
 })
@@ -140,5 +184,17 @@ export default defineComponent({
 
 .olap-sidebar {
     margin-left: auto;
+}
+
+.drill-up {
+    background-image: url('C:\\Users\\bojan.sovtic\\Desktop\\Projekat\\Knowage-Server\\knowage-vue\\src\\modules\\documentExecution\\olap\\mdx.png');
+    height: 20px;
+    width: 20px;
+}
+
+.drill-down {
+    background-image: url('C:\\Users\\bojan.sovtic\\Desktop\\Projekat\\Knowage-Server\\knowage-vue\\src\\modules\\documentExecution\\olap\\cc.png');
+    height: 20px;
+    width: 20px;
 }
 </style>
