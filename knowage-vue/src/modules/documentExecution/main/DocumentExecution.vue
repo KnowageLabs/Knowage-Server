@@ -27,7 +27,7 @@
             <template v-if="filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible">
                 <Registry v-if="mode === 'registry'" :id="urlData.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
                 <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger"></Dossier>
-                <Olap v-else-if="mode === 'olap'" :id="urlData.sbiExecutionId" :reloadTrigger="reloadTrigger"></Olap>
+                <Olap v-else-if="mode === 'olap'" :id="urlData.sbiExecutionId" :reloadTrigger="reloadTrigger" :olapCustomViewVisible="olapCustomViewVisible"></Olap>
             </template>
 
             <iframe
@@ -132,6 +132,7 @@ export default defineComponent({
             breadcrumbs: [] as any[],
             linkParameters: [],
             embed: false,
+            olapCustomViewVisible: false,
             userRole: null,
             loading: false
         }
@@ -255,6 +256,10 @@ export default defineComponent({
 
             if (this.user.functionalities.includes('SeeSnapshotsFunctionality')) {
                 this.toolbarMenuItems[3].items.unshift({ icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() })
+            }
+
+            if (this.mode === 'olap') {
+                this.toolbarMenuItems[3].items.unshift({ icon: '', label: this.$t('documentExecution.main.showOLAPCustomView'), command: () => this.showOLAPCustomView() })
             }
 
             if (this.user.functionalities.includes('EnableToCopyAndEmbed')) {
@@ -750,6 +755,9 @@ export default defineComponent({
             })
 
             return formatedParams
+        },
+        showOLAPCustomView() {
+            this.olapCustomViewVisible = true
         }
     }
 })

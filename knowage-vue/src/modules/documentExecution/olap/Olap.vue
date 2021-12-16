@@ -4,7 +4,8 @@
             <div v-if="olapSidebarVisible" id="olap-backdrop" @click="olapSidebarVisible = false"></div>
             <OlapSidebar v-if="olapSidebarVisible" class="olap-sidebar kn-overflow-y"></OlapSidebar>
 
-            <div v-if="olap && olap.table" v-html="olap.table" @click="test"></div>
+            <!-- {{ customViewVisible }} -->
+            <div ref="olap-table" v-if="olap && olap.table" v-html="olap.table" @click="test"></div>
         </div>
     </div>
 </template>
@@ -18,13 +19,14 @@ import OlapSidebar from './olapSidebar/OlapSidebar.vue'
 export default defineComponent({
     name: 'olap',
     components: { OlapSidebar },
-    props: { id: { type: String }, reloadTrigger: { type: Boolean } },
+    props: { id: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
     data() {
         return {
             olapDescriptor,
             firstOlap: null as any,
             olap: null as any,
             olapSidebarVisible: true,
+            customViewVisible: false,
             loading: false
         }
     },
@@ -37,13 +39,20 @@ export default defineComponent({
         },
         async reloadTrigger() {
             await this.loadPage()
+        },
+        olapCustomViewVisible() {
+            this.loadCustomViewVisbility()
         }
     },
     methods: {
         async loadPage() {
             this.loading = true
             await this.loadOlapModel()
+            this.loadCustomViewVisbility()
             this.loading = false
+        },
+        loadCustomViewVisbility() {
+            this.customViewVisible = this.olapCustomViewVisible
         },
         async loadOlapModel() {
             this.loading = true
@@ -105,7 +114,8 @@ export default defineComponent({
         },
         test(event: Event) {
             console.log('EVENT: ', event)
-            this.drillDown(event)
+            console.log('REF: ', (this.$refs['olap-table'] as any).innerHTML)
+            // this.drillDown(event)
         }
     }
 })

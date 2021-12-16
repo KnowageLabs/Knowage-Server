@@ -6,8 +6,6 @@
             </template>
         </Toolbar>
 
-        <h1>IT WORKS</h1>
-
         <div class="p-d-flex p-flex-column p-m-2">
             <div class="p-m-2">
                 <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.drillOnDimension') }}</label>
