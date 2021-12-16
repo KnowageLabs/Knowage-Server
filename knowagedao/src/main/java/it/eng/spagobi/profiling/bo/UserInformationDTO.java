@@ -23,8 +23,6 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-
 import it.eng.knowage.commons.multitenant.OrganizationImageManager;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -59,6 +57,7 @@ public class UserInformationDTO {
 		this.userId = String.valueOf(user.getUserId());
 		this.fullName = String.valueOf(user.getUserName());
 		this.isSuperadmin = user.getIsSuperadmin();
+		this.attributes = user.getUserAttributes();
 		this.organization = TenantManager.getTenant().getName();
 		this.organizationImageb64 = OrganizationImageManager.getOrganizationB64Image(organization);
 		// TODO: Change when there will be user email address
