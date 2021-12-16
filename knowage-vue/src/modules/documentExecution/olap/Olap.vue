@@ -1,21 +1,30 @@
 <template>
-    <h1>IT WORKS. ID {{ id }}</h1>
+    <div class="kn-height-full olap-page-container">
+        <div class="p-d-flex p-flex-row">
+            <div v-if="olapSidebarVisible" id="olap-backdrop" @click="olapSidebarVisible = false"></div>
+            <OlapSidebar v-if="olapSidebarVisible" class="olap-sidebar kn-overflow-y"></OlapSidebar>
+
+            <div v-if="olap && olap.table" v-html="olap.table" @click="test"></div>
+        </div>
+    </div>
 </template>
 
 <script lang="ts">
 import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import olapDescriptor from './OlapDescriptor.json'
+import OlapSidebar from './olapSidebar/OlapSidebar.vue'
 
 export default defineComponent({
     name: 'olap',
-    components: {},
+    components: { OlapSidebar },
     props: { id: { type: String }, reloadTrigger: { type: Boolean } },
     data() {
         return {
             olapDescriptor,
             firstOlap: null as any,
             olap: null as any,
+            olapSidebarVisible: true,
             loading: false
         }
     },
@@ -72,7 +81,54 @@ export default defineComponent({
                 .catch(() => {})
 
             console.log('LOADED OLAP: ', this.olap)
+        },
+        async drillDown(event: any) {
+            this.loading = true
+            const axis = event.target.firstElementChild.getAttribute('axis')
+            const position = event.target.firstElementChild.getAttribute('position')
+            const member = event.target.firstElementChild.getAttribute('memberordinal')
+
+            const postData = JSON.stringify({
+                memberUniqueName: event.target.firstElementChild.getAttribute('uniquename'),
+                positionUniqueName: event.target.firstElementChild.getAttribute('positionuniquename')
+            })
+            await this.$http
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/drilldown/${axis}/${position}/${member}/?SBI_EXECUTION_ID=${this.id}`, postData, {
+                    headers: {
+                        Accept: 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    }
+                })
+                .then((response: AxiosResponse<any>) => (this.olap = response.data))
+                .catch(() => {})
+            this.loading = false
+        },
+        test(event: Event) {
+            console.log('EVENT: ', event)
+            this.drillDown(event)
         }
     }
 })
 </script>
+
+<style lang="scss">
+.olap-page-container {
+    display: flex;
+    flex-direction: column;
+}
+
+#olap-backdrop {
+    background-color: rgba(33, 33, 33, 1);
+    opacity: 0.48;
+    z-index: 50;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.olap-sidebar {
+    margin-left: auto;
+}
+</style>

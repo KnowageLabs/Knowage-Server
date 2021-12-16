@@ -122,6 +122,7 @@
         "sendMail": "Send Mail",
         "sendMailSuccess": "Email Sent",
         "set": "Set",
+        "settings": "Settings",
         "share": "Share",
         "shortcuts": "Shortcuts",
         "snapshot": "Snapshot",
@@ -279,6 +280,7 @@
             "currentRank": "Curent Rank is...",
             "customMetadata": "Custom Metadata",
             "editCockpit": "Edit cockpit document",
+            "editModeConfirm": "You are leaving edit mode. Continue?",
             "embedInHtml": "Embed in HTML",
             "exportInPDF": "Export in PDF",
             "exportInRTF": "Export in RTF",
@@ -297,8 +299,28 @@
             "showScheduledExecutions": "Show scheduled executions",
             "userRoleError": "User does not have valid roles for the execution of the selected document",
             "viewCockpit": "View cockpit document",
-            "yourRating": "Your rating",
-            "editModeConfirm": "You are leaving edit mode. Continue?"
+            "yourRating": "Your rating"
+        },
+        "olap": {
+            "sidebar": {
+                "calculatedFieldWizard": "Calculated field wizard",
+                "drillOnData": "Drill on data",
+                "drillOnDimension": "Drill on dimension",
+                "drillThrough": "Drill Through",
+                "hideSpans": "Hide spans",
+                "mdxQuery": "Mdx Query",
+                "member": "Member",
+                "olapFunctions": "OLAP functions",
+                "position": "Position",
+                "reloadSchema": "Reload schema",
+                "replace": "Replace",
+                "showCustomizedView": "Show customized view",
+                "showParentMembers": "Show parent members",
+                "showProperties": "Show properties",
+                "sortingSettings": "Sorting settings",
+                "suppressEmptyRowsColumns": "Suppress empty rows/columns",
+                "tableFunctions": "Table functions"
+            }
         },
         "registry": {
             "clearFilters": "Clear",
