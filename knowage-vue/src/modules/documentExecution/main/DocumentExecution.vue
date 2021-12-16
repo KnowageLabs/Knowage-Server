@@ -373,11 +373,15 @@ export default defineComponent({
                 }
                 if (el.data) {
                     el.data = el.data.map((data: any) => {
-                        return { value: data._col0, description: data._col1 }
+                        return this.formatParameterDataOptions(el, data)
                     })
                 }
                 if ((el.selectionType === 'COMBOBOX' || el.selectionType === 'LIST') && el.multivalue && el.mandatory && el.data.length === 1) {
                     el.showOnPanel = 'false'
+                }
+
+                if (el.parameterValue[0] && !el.parameterValue[0].description) {
+                    el.parameterValue[0].description = ''
                 }
             })
 
