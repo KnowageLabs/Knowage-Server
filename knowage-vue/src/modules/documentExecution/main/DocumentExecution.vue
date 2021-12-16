@@ -375,12 +375,20 @@ export default defineComponent({
                     el.data = el.data.map((data: any) => {
                         return this.formatParameterDataOptions(el, data)
                     })
+
+                    if (el.data.length === 1) {
+                        el.parameterValue = [...el.data]
+                    }
                 }
                 if ((el.selectionType === 'COMBOBOX' || el.selectionType === 'LIST') && el.multivalue && el.mandatory && el.data.length === 1) {
                     el.showOnPanel = 'false'
                 }
 
-                if (el.parameterValue[0] && !el.parameterValue[0].description) {
+                if (!el.parameterValue) {
+                    el.parameterValue = [{ value: '', description: '' }]
+                }
+
+                if (!el.parameterValue[0].description) {
                     el.parameterValue[0].description = ''
                 }
             })

@@ -25,6 +25,7 @@
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-input-clear-' + parameter.id"></i>
                     </div>
                     <InputText
+                        v-if="parameter.parameterValue"
                         class="kn-material-input p-inputtext-sm"
                         :type="parameter.type === 'NUM' ? 'number' : 'text'"
                         v-model="parameter.parameterValue[0].value"
@@ -42,6 +43,7 @@
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-date-clear-' + parameter.id"></i>
                     </div>
                     <Calendar
+                        v-if="parameter.parameterValue"
                         v-model="parameter.parameterValue[0].value"
                         :showButtonBar="true"
                         :showIcon="true"
@@ -60,7 +62,7 @@
                         <label
                             class="kn-material-input-label"
                             :class="{
-                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
+                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
                                 'p-text-italic': parameter.dependsOnParameters
                             }"
                             :data-test="'parameter-checkbox-label-' + parameter.id"
@@ -70,8 +72,8 @@
                     </div>
                     <div class="p-d-flex p-flex-column">
                         <div class="p-field-radiobutton" v-for="(option, index) in parameter.data" :key="index" :data-test="'parameter-list-' + parameter.id">
-                            <RadioButton v-if="!parameter.multivalue" :value="option.value" v-model="parameter.parameterValue[0].value" @change="updateDependency(parameter)" />
-                            <Checkbox v-if="parameter.multivalue" :value="option.value" v-model="selectedParameterCheckbox[parameter.id]" @change="setCheckboxValue(parameter)" />
+                            <RadioButton v-if="!parameter.multivalue && parameter.parameterValue" :value="option.value" v-model="parameter.parameterValue[0].value" @change="updateDependency(parameter)" />
+                            <Checkbox v-if="parameter.multivalue && parameter.parameterValue" :value="option.value" v-model="selectedParameterCheckbox[parameter.id]" @change="setCheckboxValue(parameter)" />
                             <label>{{ option.value }}</label>
                         </div>
                     </div>
@@ -82,14 +84,14 @@
                         <label
                             class="kn-material-input-label"
                             :class="{
-                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
+                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
                                 'p-text-italic': parameter.dependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
                         >
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)"></i>
                     </div>
-                    <Dropdown v-if="!parameter.multivalue" class="kn-material-input" v-model="parameter.parameterValue[0]" :options="parameter.data" optionLabel="value" @change="updateDependency(parameter)" />
+                    <Dropdown v-if="!parameter.multivalue && parameter.parameterValue" class="kn-material-input" v-model="parameter.parameterValue[0]" :options="parameter.data" optionLabel="value" @change="updateDependency(parameter)" />
                     <MultiSelect v-else v-model="parameter.parameterValue" :options="parameter.data" optionLabel="value" @change="updateDependency(parameter)" />
                 </div>
 
@@ -98,7 +100,7 @@
                         <label
                             class="kn-material-input-label"
                             :class="{
-                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
+                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
                                 'p-text-italic': parameter.dependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
@@ -118,7 +120,7 @@
                         <label
                             class="kn-material-input-label"
                             :class="{
-                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
+                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
                                 'p-text-italic': parameter.dependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
@@ -281,26 +283,52 @@ export default defineComponent({
             }
         },
         resetParameterValue(parameter: any) {
+            console.log('PARAMETER BEFORE RESET: ', parameter)
+
+            if (!parameter.driverDefaultValue) {
+                parameter.parameterValue[0] = { value: '', description: '' }
+                return
+            }
+
+            const valueColumn = parameter.metadata.valueColumn
+            const descriptionColumn = parameter.metadata.descriptionColumn
+            let valueIndex = null as any
+            if (parameter.metadata.colsMap) {
+                valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
+            }
+            let descriptionIndex = null as any
+            if (parameter.metadata.colsMap) {
+                descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
+            }
+
+            console.log('VALUE: ', valueIndex)
+            console.log('DESCRIPTION: ', descriptionIndex)
+
             if ((parameter.selectionType === 'LIST' || parameter.selectionType === 'COMBOBOX') && parameter.showOnPanel === 'true' && parameter.multivalue) {
                 parameter.parameterValue = [] as { value: string; description: string }[]
                 this.selectedParameterCheckbox[parameter.id] = []
                 for (let i = 0; i < parameter.driverDefaultValue.length; i++) {
                     const temp = parameter.driverDefaultValue[i]
-                    parameter.parameterValue.push({ value: temp._col0, description: temp._col1 })
-                    this.selectedParameterCheckbox[parameter.id].push(temp._col0)
+                    parameter.parameterValue.push({ value: valueIndex ? temp[valueIndex] : '', description: descriptionIndex ? temp[descriptionIndex] : '' })
+                    if (valueIndex) {
+                        this.selectedParameterCheckbox[parameter.id].push(temp[valueIndex])
+                    }
                 }
             } else if ((parameter.selectionType === 'COMBOBOX' || parameter.selectionType === 'TREE') && parameter.showOnPanel === 'true' && parameter.multivalue) {
                 parameter.parameterValue = [...parameter.driverDefaultValue]
             } else if (parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true' && parameter.multivalue) {
                 parameter.parameterValue = parameter.driverDefaultValue.map((el: any) => {
-                    return { value: el._col0, description: el._col1 }
+                    return { value: valueIndex ? el[valueIndex] : '', description: descriptionIndex ? el[descriptionIndex] : '' }
                 })
             } else {
+                console.log('ENTERED!')
                 if (!parameter.parameterValue[0]) {
-                    parameter.parameterValue[0] = { value: '', desc: '' }
+                    parameter.parameterValue[0] = { value: '', description: '' }
                 }
-                parameter.parameterValue[0].value = parameter.driverDefaultValue[0].value ?? parameter.driverDefaultValue[0]._col0
+                parameter.parameterValue[0].value = parameter.driverDefaultValue[0].value ?? parameter.driverDefaultValue[0][valueIndex]
             }
+
+            console.log('PARAMETER AFTER RESET: ', parameter)
         },
         resetAllParameters() {
             this.parameters.filterStatus.forEach((el: any) => this.resetParameterValue(el))
