@@ -1155,7 +1155,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 					originalColumnName = "";
 					if ($scope.ngModel.content.columnSelectedOfDataset){
 				        for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
-				        	if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow && $scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow.toUpperCase() === columnName.toUpperCase()){
+				        	if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow && columnName && $scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow.toUpperCase() === columnName.toUpperCase()){
 				        		originalColumnName = $scope.ngModel.content.columnSelectedOfDataset[i].alias;
 								break;
 				        	}
@@ -1163,7 +1163,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 						if(originalColumnName==undefined || originalColumnName==""){
 							for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
-								if($scope.ngModel.content.columnSelectedOfDataset[i].alias && $scope.ngModel.content.columnSelectedOfDataset[i].alias.toUpperCase() === columnName.toUpperCase()){
+								if($scope.ngModel.content.columnSelectedOfDataset[i].alias &&  columnName && $scope.ngModel.content.columnSelectedOfDataset[i].alias.toUpperCase() === columnName.toUpperCase()){
 									originalColumnName = columnName;
 									break;
 								}
