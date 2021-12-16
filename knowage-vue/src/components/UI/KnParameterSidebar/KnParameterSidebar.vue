@@ -283,8 +283,6 @@ export default defineComponent({
             }
         },
         resetParameterValue(parameter: any) {
-            console.log('PARAMETER BEFORE RESET: ', parameter)
-
             if (!parameter.driverDefaultValue) {
                 parameter.parameterValue[0] = { value: '', description: '' }
                 return
@@ -300,9 +298,6 @@ export default defineComponent({
             if (parameter.metadata.colsMap) {
                 descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
             }
-
-            console.log('VALUE: ', valueIndex)
-            console.log('DESCRIPTION: ', descriptionIndex)
 
             if ((parameter.selectionType === 'LIST' || parameter.selectionType === 'COMBOBOX') && parameter.showOnPanel === 'true' && parameter.multivalue) {
                 parameter.parameterValue = [] as { value: string; description: string }[]
@@ -321,14 +316,11 @@ export default defineComponent({
                     return { value: valueIndex ? el[valueIndex] : '', description: descriptionIndex ? el[descriptionIndex] : '' }
                 })
             } else {
-                console.log('ENTERED!')
                 if (!parameter.parameterValue[0]) {
                     parameter.parameterValue[0] = { value: '', description: '' }
                 }
                 parameter.parameterValue[0].value = parameter.driverDefaultValue[0].value ?? parameter.driverDefaultValue[0][valueIndex]
             }
-
-            console.log('PARAMETER AFTER RESET: ', parameter)
         },
         resetAllParameters() {
             this.parameters.filterStatus.forEach((el: any) => this.resetParameterValue(el))
