@@ -43,7 +43,7 @@ import metawebAddPhysicalTableDialogDescriptor from './MetawebAddPhysicalTableDi
 export default defineComponent({
     name: 'metaweb-add-physical-table-dialog',
     components: { Column, DataTable, Dialog },
-    props: { visible: { type: Boolean }, physicalTables: { type: Array }, propLoading: { type: Boolean } },
+    props: { visible: { type: Boolean }, physicalTables: { type: Array }, propLoading: { type: Boolean }, roles: { type: Array } },
     emits: ['close', 'save'],
     data() {
         return {

@@ -65,7 +65,7 @@
                 <div class="p-fluid" v-if="prop.type === 'behavioural.notEnabledRoles'">
                     <div class="p-field">
                         <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
-                        <Dropdown class="kn-material-input" v-model="roleVisibility" :options="roles" />
+                        <MultiSelect class="kn-material-input" v-model="prop.value" :options="roleOptions" @change="updateCategoryValue(prop)" />
                     </div>
                 </div>
 
@@ -93,11 +93,12 @@ import AccordionTab from 'primevue/accordiontab'
 import Dropdown from 'primevue/dropdown'
 import metawebBusinessPropertyListTabDescriptor from './MetawebBusinessPropertyListTabDescriptor.json'
 import metaMock from '../../../MetawebMock.json'
+import MultiSelect from 'primevue/multiselect'
 
 export default defineComponent({
     name: 'metaweb-business-property-list-tab',
-    components: { Accordion, AccordionTab, Dropdown },
-    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> } },
+    components: { Accordion, AccordionTab, Dropdown, MultiSelect },
+    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> }, roles: { type: Array } },
     emits: ['metaUpdated'],
     data() {
         return {
@@ -105,14 +106,20 @@ export default defineComponent({
             meta: metaMock as any,
             businessModel: null as iBusinessModel | null,
             categories: [] as any[],
-            roleVisibility: null as any, // TODO ASK ABOUT THIS
-            roles: [] as any[], // sbiModule_config.avaiableRoles TODO ASK ABOUT THIS
-            profileAttributes: [] as any[] // sbiModule_config.profileAttributes   TODO ASK ABOUT THIS
+            roleOptions: [] as any[]
+        }
+    },
+    computed: {
+        profileAttributes(): any[] {
+            return (this.$store.state as any).user.attributes ? Object.keys((this.$store.state as any).user.attributes) : []
         }
     },
     watch: {
         selectedBusinessModel() {
             this.loadBusinessModel()
+        },
+        roles() {
+            this.loadRoleOptions()
         }
     },
     created() {
@@ -124,6 +131,9 @@ export default defineComponent({
             this.businessModel = this.selectedBusinessModel as iBusinessModel
 
             this.loadCategories()
+        },
+        loadRoleOptions() {
+            this.roleOptions = this.roles as any[]
         },
         loadCategories() {
             this.categories = {} as any

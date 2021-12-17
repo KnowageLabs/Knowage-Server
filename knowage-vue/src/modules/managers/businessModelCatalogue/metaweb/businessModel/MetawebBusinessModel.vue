@@ -62,7 +62,7 @@
                         </template>
 
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <MetawebBusinessPropertyListTab :selectedBusinessModel="selectedBusinessModel" @metaUpdated="$emit('metaUpdated')"></MetawebBusinessPropertyListTab>
+                            <MetawebBusinessPropertyListTab :selectedBusinessModel="selectedBusinessModel" :roles="roles" @metaUpdated="$emit('metaUpdated')"></MetawebBusinessPropertyListTab>
                         </div>
                     </TabPanel>
 
@@ -72,7 +72,7 @@
                         </template>
 
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <MetawebAttributesTab :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" :observer="observer" @metaUpdated="$emit('metaUpdated')"></MetawebAttributesTab>
+                            <MetawebAttributesTab :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" :observer="observer" :roles="roles" @metaUpdated="$emit('metaUpdated')"></MetawebAttributesTab>
                         </div>
                     </TabPanel>
 
@@ -143,6 +143,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iBusinessModel } from '../Metaweb'
+import { AxiosResponse } from 'axios'
 import mainDescriptor from '../MetawebDescriptor.json'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import TabView from 'primevue/tabview'
@@ -172,7 +173,9 @@ export default defineComponent({
             menuButtons: [] as any,
             showBusinessClassDialog: false,
             showBusinessViewDialog: false,
-            selectedBusinessModel: {} as iBusinessModel
+            selectedBusinessModel: {} as iBusinessModel,
+            roles: [] as any[],
+            loading: false
         }
     },
     watch: {
@@ -186,6 +189,7 @@ export default defineComponent({
     created() {
         this.loadMeta()
         this.createMenuItems()
+        this.loadRoles()
     },
     methods: {
         showMenu(event) {
@@ -210,6 +214,11 @@ export default defineComponent({
         },
         showBusinessView() {
             this.showBusinessViewDialog = true
+        },
+        async loadRoles() {
+            this.loading = true
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles').then((response: AxiosResponse<any>) => (this.roles = response.data))
+            this.loading = false
         }
     }
 })

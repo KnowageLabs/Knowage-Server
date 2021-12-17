@@ -24,6 +24,7 @@
                 @fieldChanged="onFieldChange"
                 @fileUploaded="uploadedFile = $event"
                 @datamartGenerated="loadPage"
+                @modelGenerated="loadPage"
             ></BusinessModelDetailsCard>
         </TabPanel>
 

@@ -35,7 +35,7 @@
             </Column>
         </DataTable>
 
-        <MetawebAttributeDetailDialog :visible="attributeDetailDialogVisible" :selectedAttribute="selectedAttribute" @close="attributeDetailDialogVisible = false" @save="onAttributeSave"></MetawebAttributeDetailDialog>
+        <MetawebAttributeDetailDialog :visible="attributeDetailDialogVisible" :selectedAttribute="selectedAttribute" :roles="roles" @close="attributeDetailDialogVisible = false" @save="onAttributeSave"></MetawebAttributeDetailDialog>
         <MetawebAttributeUnusedFieldDialog :visible="unusedFieldDialogVisible" :unusedFields="unusedFields" @close="unusedFieldDialogVisible = false" @save="saveUnusedFields"></MetawebAttributeUnusedFieldDialog>
     </div>
 </template>
@@ -56,7 +56,7 @@ const { generate, applyPatch } = require('fast-json-patch')
 export default defineComponent({
     name: 'metaweb-attributes-tab',
     components: { Checkbox, Column, DataTable, MetawebAttributeDetailDialog, MetawebAttributeUnusedFieldDialog },
-    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> }, propMeta: { type: Object }, observer: { type: Object } },
+    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> }, propMeta: { type: Object }, observer: { type: Object }, roles: { type: Array } },
     emits: ['loading', 'metaUpdated'],
     data() {
         return {

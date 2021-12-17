@@ -232,15 +232,11 @@
                 </div>
             </form>
 
-            <Dialog :contentStyle="businessModelDetailsCardDescriptor.dialog.style" :visible="showMetaWeb" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
-                <iframe :style="businessModelDetailsCardDescriptor.iframe.style" :src="metaModelUrl"></iframe>
-            </Dialog>
-
             <GenerateDatamartCard v-if="generateDatamartVisible" :businessModel="selectedBusinessModel" :user="user" @close="generateDatamartVisible = false" @generated="onDatamartGenerated"></GenerateDatamartCard>
 
             <MetawebSelectDialog :visible="metawebSelectDialogVisible" :selectedBusinessModel="selectedBusinessModel" @close="metawebSelectDialogVisible = false" @metaSelected="onMetaSelect"></MetawebSelectDialog>
 
-            <Metaweb :visible="metawebDialogVisible" :propMeta="meta" :businessModel="businessModel" @closeMetaweb="metawebDialogVisible = false" />
+            <Metaweb :visible="metawebDialogVisible" :propMeta="meta" :businessModel="businessModel" @closeMetaweb="metawebDialogVisible = false" @modelGenerated="$emit('modelGenerated')" />
         </template>
     </Card>
 </template>
@@ -253,7 +249,6 @@ import { AxiosResponse } from 'axios'
 import businessModelDetailsCardDescriptor from './BusinessModelDetailsCardDescriptor.json'
 import businessModelDetailsCardValidation from './BusinessModelDetailsCardValidation.json'
 import Card from 'primevue/card'
-import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import GenerateDatamartCard from './GenerateDatamartCard.vue'
 import InputSwitch from 'primevue/inputswitch'
@@ -267,7 +262,6 @@ export default defineComponent({
     name: 'business-model-details-card',
     components: {
         Card,
-        Dialog,
         Dropdown,
         GenerateDatamartCard,
         InputSwitch,
@@ -303,7 +297,7 @@ export default defineComponent({
             type: Array
         }
     },
-    emits: ['fieldChanged', 'fileUploaded', 'datamartGenerated'],
+    emits: ['fieldChanged', 'fileUploaded', 'datamartGenerated', 'modelGenerated'],
     watch: {
         selectedBusinessModel() {
             this.v$.$reset()
@@ -322,23 +316,9 @@ export default defineComponent({
         }
     },
     created() {
-        window.addEventListener('message', (event: any) => {
-            if (event.action == 'closeDialog') {
-                this.showMetaWeb = false
-                this.loadBusinessModel()
-                this.loadCategories()
-            }
-        })
         this.loadBusinessModel()
         this.loadCategories()
         this.loadDatasources()
-    },
-    unmounted() {
-        window.removeEventListener('message', (event: any) => {
-            if (event.action == 'closeDialog') {
-                this.showMetaWeb = false
-            }
-        })
     },
     data() {
         return {
@@ -348,7 +328,6 @@ export default defineComponent({
             categories: [] as any[],
             datasources: [] as any[],
             metaWebVisible: false,
-            showMetaWeb: false,
             generateDatamartVisible: false,
             metawebSelectDialogVisible: false,
             metawebDialogVisible: false,

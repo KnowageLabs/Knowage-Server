@@ -27,7 +27,7 @@
 
                 <div class="p-field p-col-12 p-md-12">
                     <span class="p-float-label">
-                        <Dropdown class="kn-material-input" v-model="columnType" :options="metawebAttributeDetailDialogDescriptor.typeOptions" @change="onTypeChange(attribute)" />
+                        <Dropdown class="kn-material-input" v-model="columnType" :options="metawebAttributeDetailDialogDescriptor.typeOptions" @change="onTypeChange()" />
                         <label for="type" class="kn-material-input-label"> {{ $t('common.type') }}</label>
                     </span>
                 </div>
@@ -55,7 +55,7 @@
                 <!-- TODO ASK ABOUT ROLES -->
                 <div class="p-field p-col-12 p-md-6 p-mt-2">
                     <span class="p-float-label">
-                        <Dropdown class="kn-material-input" v-model="properties['behavioural.notEnabledRoles'].value" :options="roles" @change="updateAttribute('behavioural.notEnabledRoles')" />
+                        <MultiSelect class="kn-material-input" v-model="properties['behavioural.notEnabledRoles'].value" :options="roleOptions" optionLabel="name" optionValue="name" :filter="true" @change="updateAttribute('behavioural.notEnabledRoles')" />
                         <label class="kn-material-input-label"> {{ properties['behavioural.notEnabledRoles'].propertyType.name }}</label>
                         <small>{{ properties['behavioural.notEnabledRoles'].propertyType.description }}</small>
                     </span>
@@ -137,31 +137,40 @@ import { iBusinessModelColumn } from '../../../../../Metaweb'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
+import MultiSelect from 'primevue/multiselect'
 import metawebAttributeDetailDialogDescriptor from './MetawebAttributeDetailDialogDescriptor.json'
 
 export default defineComponent({
     name: 'metaweb-attribute-detail-dialog',
-    components: { Dialog, Dropdown },
-    props: { visible: { type: Boolean }, selectedAttribute: { type: Object as PropType<iBusinessModelColumn> } },
+    components: { Dialog, Dropdown, MultiSelect },
+    props: { visible: { type: Boolean }, selectedAttribute: { type: Object as PropType<iBusinessModelColumn> }, roles: { type: Array } },
     emits: ['close', 'save'],
     data() {
         return {
             metawebAttributeDetailDialogDescriptor,
             attribute: null as iBusinessModelColumn | null,
             properties: {} as any,
-            roles: [],
-            profileAttributes: [],
+            roleOptions: [] as any[],
             columnType: '' as string,
             loading: false
+        }
+    },
+    computed: {
+        profileAttributes(): any[] {
+            return (this.$store.state as any).user.attributes ? Object.keys((this.$store.state as any).user.attributes) : []
         }
     },
     watch: {
         selectedAttribute() {
             this.loadAttribute()
+        },
+        roles() {
+            this.loadRoleOptions()
         }
     },
     created() {
         this.loadAttribute()
+        this.loadRoleOptions()
     },
     methods: {
         loadAttribute() {
@@ -174,6 +183,10 @@ export default defineComponent({
 
             console.log(' >>> LOADED USER: ', (this.$store.state as any).user)
             console.log(' >>> LOADED STORE: ', this.$store.state as any)
+            console.log(' >>> LOADED ROLES: ', this.roles)
+        },
+        loadRoleOptions() {
+            this.roleOptions = this.roles as any[]
         },
         getAttributeType() {
             if (this.attribute) {
@@ -203,6 +216,13 @@ export default defineComponent({
                     const key = Object.keys(property)[0]
                     this.properties[key] = property[key]
                 })
+            }
+
+            if (this.properties['behavioural.notEnabledRoles']?.value && typeof this.properties['behavioural.notEnabledRoles'].value === 'string') {
+                this.properties['behavioural.notEnabledRoles'].value = this.properties['behavioural.notEnabledRoles'].value?.split(';')
+
+                console.log('>>> ROLES OPTIONS: ', this.roles)
+                console.log('>>> ROLES SELECTED: ', this.properties['behavioural.notEnabledRoles'].value)
             }
         },
         getFormattedDate(date: any) {

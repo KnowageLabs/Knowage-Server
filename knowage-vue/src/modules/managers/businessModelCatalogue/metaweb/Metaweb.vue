@@ -47,7 +47,7 @@ export default defineComponent({
     name: 'metaweb',
     components: { BusinessModelTab, MetawebPhysicalModel, TabView, TabPanel, Dialog },
     props: { visible: { type: Boolean }, propMeta: { type: Object }, businessModel: { type: Object } },
-    emits: ['closeMetaweb'],
+    emits: ['closeMetaweb', 'modelGenerated'],
     data() {
         return {
             v$: useValidate() as any,
@@ -118,6 +118,7 @@ export default defineComponent({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })
+                    this.$emit('modelGenerated')
                 })
                 .catch(() => {})
         }
