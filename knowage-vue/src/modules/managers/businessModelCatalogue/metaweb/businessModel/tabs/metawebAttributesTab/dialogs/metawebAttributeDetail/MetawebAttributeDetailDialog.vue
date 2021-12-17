@@ -94,7 +94,6 @@
                     </span>
                 </div>
 
-                <!-- TODO SEE ABOUT DATE FORMAT? -->
                 <div class="p-field p-col-12 p-md-6 p-mt-2" v-if="properties['structural.datatype'].value === 'DATE' || properties['structural.datatype'].value === 'TIMESTAMP' || properties['structural.datatype'].value === 'TIME'">
                     <span class="p-float-label">
                         <Dropdown class="kn-material-input" v-model="properties['structural.dateformat'].value" :options="properties['structural.dateformat'].propertyType.admissibleValues" @change="updateAttribute('structural.dateformat')">
@@ -172,6 +171,8 @@ export default defineComponent({
 
             this.getAttributeType()
             this.loadAttributeProperties()
+
+            console.log(' >>> LOADED USER: ', (this.$store.state as any).user)
         },
         getAttributeType() {
             if (this.attribute) {

@@ -70,7 +70,7 @@
                 </div>
 
                 <!-- edit temporal hierarchy button -->
-                <!-- TODO ASK ABOUT TEMPORAL -->
+                <!-- TODO CONTINUE AS DEPRECATED -->
                 <Button v-if="prop.value === 'temporal dimension' || prop.value === 'time dimension'" icon="fa fa-sitemap" v-tooltip.top="$t('metaweb.businessModel.temporalHierarchy')" class="p-button-text p-button-rounded p-button-plain" @click="editTemporalHierarchy" />
 
                 <!-- last input -->
