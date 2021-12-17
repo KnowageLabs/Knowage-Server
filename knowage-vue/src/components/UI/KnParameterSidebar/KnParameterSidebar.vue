@@ -154,6 +154,8 @@ import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import { iDocument, iParameter, iAdmissibleValues } from './KnParameterSidebar'
+import { setVisualDependency, updateVisualDependency } from './KnParameterSidebarVisualDependency'
+import { setDataDependency, updateDataDependency } from './KnParameterSidebarDataDependency'
 import Calendar from 'primevue/calendar'
 import Chip from 'primevue/chip'
 import Checkbox from 'primevue/checkbox'
@@ -168,19 +170,7 @@ import RadioButton from 'primevue/radiobutton'
 
 export default defineComponent({
     name: 'kn-parameter-sidebar',
-    components: {
-        Calendar,
-        Chip,
-        Checkbox,
-        Dropdown,
-        KnParameterPopupDialog,
-        KnParameterTreeDialog,
-        KnParameterSaveDialog,
-        KnParameterSavedParametersDialog,
-        Menu,
-        MultiSelect,
-        RadioButton
-    },
+    components: { Calendar, Chip, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton },
     props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String } },
     emits: ['execute', 'exportCSV', 'roleChanged'],
     data() {
@@ -199,7 +189,8 @@ export default defineComponent({
             viewpoints: [],
             user: null as any,
             role: null as string | null,
-            loading: false
+            loading: false,
+            updateVisualDependency
         }
     },
     watch: {
@@ -226,7 +217,6 @@ export default defineComponent({
     created() {
         this.user = (this.$store.state as any).user
         this.role = this.userRole as string
-
         this.loadDocument()
         this.loadParameters()
     },
@@ -241,7 +231,6 @@ export default defineComponent({
         loadParameters() {
             this.parameters.isReadyForExecution = this.filtersData?.isReadyForExecution
             this.parameters.filterStatus = []
-
             this.filtersData?.filterStatus?.forEach((el: iParameter) => {
                 if (el.selectionType == 'LIST' && el.showOnPanel == 'true' && el.multivalue) {
                     this.selectedParameterCheckbox[el.id] = el.parameterValue?.map((parameterValue: any) => parameterValue.value)
@@ -249,24 +238,9 @@ export default defineComponent({
 
                 this.parameters.filterStatus.push(el)
             })
-
-            this.parameters?.filterStatus.forEach((el: any) => this.setVisualDependency(el))
-            this.parameters?.filterStatus.forEach((el: any) => this.setDataDependency(el))
+            this.parameters?.filterStatus.forEach((el: any) => setVisualDependency(this.parameters, el))
+            this.parameters?.filterStatus.forEach((el: any) => setDataDependency(this.parameters, el))
             this.parameters?.filterStatus.forEach((el: any) => this.updateVisualDependency(el))
-        },
-        setVisualDependency(parameter: iParameter) {
-            if (parameter.dependencies.visual.length !== 0) {
-                parameter.dependencies.visual.forEach((dependency: any) => {
-                    const index = this.parameters.filterStatus.findIndex((param: any) => {
-                        return param.urlName === dependency.parFatherUrlName
-                    })
-                    if (index !== -1) {
-                        const tempParameter = this.parameters.filterStatus[index]
-                        parameter.dependsOnParameters ? parameter.dependsOnParameters.push(tempParameter) : (parameter.dependsOnParameters = [tempParameter])
-                        tempParameter.dependentParameters ? tempParameter.dependentParameters.push(parameter) : (tempParameter.dependentParameters = [parameter])
-                    }
-                })
-            }
         },
         setDataDependency(parameter: iParameter) {
             if (parameter.dependencies.data.length !== 0) {
@@ -298,7 +272,6 @@ export default defineComponent({
             if (parameter.metadata.colsMap) {
                 descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
             }
-
             if ((parameter.selectionType === 'LIST' || parameter.selectionType === 'COMBOBOX') && parameter.showOnPanel === 'true' && parameter.multivalue) {
                 parameter.parameterValue = [] as { value: string; description: string }[]
                 this.selectedParameterCheckbox[parameter.id] = []
@@ -337,7 +310,6 @@ export default defineComponent({
         requiredFiledMissing() {
             for (let i = 0; i < this.parameters.filterStatus.length; i++) {
                 const parameter = this.parameters.filterStatus[i]
-
                 if (parameter.mandatory && parameter.showOnPanel == 'true') {
                     if (!parameter.parameterValue || parameter.parameterValue.length === 0) {
                         return true
@@ -350,7 +322,6 @@ export default defineComponent({
                     }
                 }
             }
-
             return false
         },
         setCheckboxValue(parameter: iParameter) {
@@ -366,7 +337,7 @@ export default defineComponent({
         },
         openTreeDialog(parameter: iParameter) {
             this.selectedParameter = parameter
-            this.formatedParameterValues = this.getFormatedParameters()
+            this.formatedParameterValues = this.getFormattedParameters()
             this.treeDialogVisible = true
         },
         onTreeClose() {
@@ -376,14 +347,12 @@ export default defineComponent({
         },
         async getParameterPopupInfo(parameter: iParameter) {
             this.loading = true
-
-            const postData = { label: this.document?.label, parameters: this.getFormatedParameters(), paramId: parameter.urlName, role: this.sessionRole }
+            const postData = { label: this.document?.label, parameters: this.getFormattedParameters(), paramId: parameter.urlName, role: this.sessionRole }
             await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentExeParameters/admissibleValues`, postData).then((response: AxiosResponse<any>) => (this.parameterPopUpData = response.data))
             this.loading = false
         },
-        getFormatedParameters() {
+        getFormattedParameters() {
             let parameters = [] as any[]
-
             Object.keys(this.parameters.filterStatus).forEach((key: any) => {
                 const parameter = this.parameters.filterStatus[key]
 
@@ -393,15 +362,12 @@ export default defineComponent({
                     parameters.push({ label: parameter.label, value: parameter.parameterValue, description: parameter.parameterDescription })
                 }
             })
-
             return parameters
         },
         getParameterValues() {
             let parameters = {} as any
-
             Object.keys(this.parameters.filterStatus).forEach((key: any) => {
                 const parameter = this.parameters.filterStatus[key]
-
                 if (parameter.type === 'DATE') {
                     parameters[parameter.urlName] = parameter.parameterValue[0].value
                     parameters[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].value
@@ -418,7 +384,6 @@ export default defineComponent({
                     parameters[parameter.urlName + '_field_visible_description'] = tempString
                 }
             })
-
             return parameters
         },
         onPopupSave(parameter: iParameter) {
@@ -431,94 +396,7 @@ export default defineComponent({
         },
         updateDependency(parameter: iParameter) {
             this.updateVisualDependency(parameter)
-            this.updateDataDependency(parameter)
-        },
-        updateVisualDependency(parameter: iParameter) {
-            parameter.dependentParameters?.forEach((dependentParameter: iParameter) => this.visualDependencyCheck(dependentParameter, parameter))
-        },
-        async updateDataDependency(parameter: iParameter) {
-            if (parameter && parameter.dataDependentParameters) {
-                for (let i = 0; i < parameter.dataDependentParameters.length; i++) {
-                    await this.dataDependencyCheck(parameter.dataDependentParameters[i])
-                }
-            }
-        },
-        async dataDependencyCheck(parameter: iParameter) {
-            this.loading = true
-            if (parameter.parameterValue[0]) {
-                parameter.parameterValue[0] = { value: '', description: '' }
-            } else {
-                parameter.parameterValue = [{ value: '', description: '' }]
-            }
-
-            const postData = { label: this.document?.label, parameters: this.getFormatedParameters(), paramId: parameter.urlName, role: this.sessionRole }
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentExeParameters/admissibleValues`, postData).then((response: AxiosResponse<any>) => {
-                parameter.data = response.data.result.data
-                parameter.metadata = response.data.result.metadata
-                this.formatParameterAfterDataDependencyCheck(parameter)
-            })
-            this.loading = false
-        },
-        formatParameterAfterDataDependencyCheck(parameter: any) {
-            parameter.parameterValue = parameter.multivalue ? [] : [{ value: '', description: '' }]
-            if (parameter.data) {
-                parameter.data = parameter.data.map((data: any) => {
-                    return this.formatParameterDataOptions(parameter, data)
-                })
-
-                if (parameter.data.length === 1) {
-                    parameter.parameterValue = [...parameter.data]
-                }
-            }
-
-            if ((parameter.selectionType === 'COMBOBOX' || parameter.selectionType === 'LIST') && parameter.multivalue && parameter.mandatory && parameter.data.length === 1) {
-                parameter.showOnPanel = 'false'
-            }
-
-            if (parameter.parameterValue[0] && !parameter.parameterValue[0].description) {
-                parameter.parameterValue[0].description = ''
-            }
-        },
-        formatParameterDataOptions(parameter: iParameter, data: any) {
-            const valueColumn = parameter.metadata.valueColumn
-            const descriptionColumn = parameter.metadata.descriptionColumn
-            const valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
-            const descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
-
-            return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
-        },
-        visualDependencyCheck(parameter: iParameter, changedParameter: any) {
-            let showOnPanel = 'true'
-            for (let i = 0; i < parameter.dependencies.visual.length && showOnPanel === 'true'; i++) {
-                showOnPanel = 'false'
-                const visualDependency = parameter.dependencies.visual[i]
-
-                if (parameter.dependsOnParameters) {
-                    const index = parameter.dependsOnParameters.findIndex((el: any) => el.urlName === visualDependency.parFatherUrlName)
-                    const parentParameter = parameter.dependsOnParameters[index]
-
-                    for (let i = 0; i < parentParameter.parameterValue.length; i++) {
-                        if (parentParameter.parameterValue[i].value === visualDependency.compareValue) {
-                            if (changedParameter.urlName === visualDependency.parFatherUrlName) {
-                                parameter.label = visualDependency.viewLabel
-                            }
-                            showOnPanel = 'true'
-                            break
-                        }
-                    }
-
-                    if (visualDependency.operation === 'not contains') {
-                        if (showOnPanel == 'true') {
-                            showOnPanel = 'false'
-                            break
-                        } else {
-                            showOnPanel = 'true'
-                        }
-                    }
-                }
-
-                parameter.showOnPanel = showOnPanel
-            }
+            updateDataDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http)
         },
         openSaveParameterDialog() {
             this.parameterSaveDialogVisible = true
@@ -570,7 +448,6 @@ export default defineComponent({
                         }
                     }
                 }
-
                 this.savedParametersDialogVisible = false
             })
         },
@@ -579,7 +456,6 @@ export default defineComponent({
         },
         decodeViewpointPrameterValues(string: string) {
             const parametersJson = {}
-
             const parameterArray = string.split('%26')
             for (let i = 0; i < parameterArray.length; i++) {
                 const temp = parameterArray[i].split('%3D')
