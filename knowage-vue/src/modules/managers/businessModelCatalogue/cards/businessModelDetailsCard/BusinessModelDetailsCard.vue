@@ -250,6 +250,7 @@
 import { defineComponent } from 'vue'
 import { iBusinessModel } from '../../BusinessModelCatalogue'
 import { createValidations } from '@/helpers/commons/validationHelper'
+import { AxiosResponse } from 'axios'
 import businessModelDetailsCardDescriptor from './BusinessModelDetailsCardDescriptor.json'
 import businessModelDetailsCardValidation from './BusinessModelDetailsCardValidation.json'
 import Card from 'primevue/card'
@@ -381,7 +382,8 @@ export default defineComponent({
         onSmartViewChange() {
             this.$emit('fieldChanged', { fieldName: 'smartView', value: this.businessModel.smartView })
         },
-        goToMetaWeb() {
+        async goToMetaWeb() {
+            await this.loadModelFromSession()
             this.metawebSelectDialogVisible = true
         },
         openMetaWeb() {
@@ -395,6 +397,14 @@ export default defineComponent({
             this.meta = meta
             this.metawebSelectDialogVisible = false
             this.metawebDialogVisible = true
+        },
+        async loadModelFromSession() {
+            await this.$http
+                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/loadModelFromSession`, { datasourceId: this.businessModel?.dataSourceId, bmId: this.businessModel?.id, bmName: this.businessModel?.name, user_id: (this.$store.state as any).user.userUniqueIdentifier })
+                .then((response: AxiosResponse<any>) => {
+                    console.log('RESPONSE: ', response)
+                })
+                .catch(() => {})
         }
     }
 })
