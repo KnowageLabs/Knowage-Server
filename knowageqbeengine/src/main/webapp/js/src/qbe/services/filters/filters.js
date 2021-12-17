@@ -108,14 +108,19 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate,
 		if (expression
 				&& Object.keys(expression).length === 0
 				&& Object.getPrototypeOf(expression) === Object.prototype) {
-			newRoot = nodeConst;
+			newRoot = new Operand("NODE_OP", filters.booleanConnector || "AND");
+			newRoot.childNodes.push(newConst)
+			angular.copy(newRoot, expression);
+		} else if(expression.childNodes && expression.childNodes.length <= 1) {
+			newRoot = expression;
+			newRoot.childNodes.unshift(newConst);
 		} else {
 			newRoot = new Operand("NODE_OP", filters.booleanConnector || "AND");
 			newRoot.childNodes.push(newConst)
 			newRoot.childNodes.push(angular.copy(expression));
+			angular.copy(newRoot, expression);
 		}
 
-		angular.copy(newRoot, expression);
 	}
 
 	this.deleteFilter = function(filters,filter,expression,advancedFilters){

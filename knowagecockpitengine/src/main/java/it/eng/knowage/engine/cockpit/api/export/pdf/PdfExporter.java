@@ -80,7 +80,7 @@ public class PdfExporter extends AbstractFormatExporter {
 
 				templateString = new String(template.getContent());
 			} catch (EMFAbstractError e) {
-				throw new SpagoBIRuntimeException(message);
+				throw new SpagoBIRuntimeException(message, e);
 			}
 		}
 
@@ -225,7 +225,7 @@ public class PdfExporter extends AbstractFormatExporter {
 								valueStr = outputDateFormat.format(date);
 							} catch (Exception e) {
 								// value stays as it is
-								logger.error("Cannot format date {" + valueStr + "} according to format {" + columnDateFormats[c] + "}", e);
+								logger.warn("Cannot format date {" + valueStr + "} according to format {" + columnDateFormats[c] + "}", e);
 							}
 						}
 						Cell<PDPage> cell = row.createCell(columnPercentWidths[c], valueStr, HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
