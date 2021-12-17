@@ -23,6 +23,7 @@ import java.util.Locale;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import it.eng.knowage.boot.error.KnowageException;
 import it.eng.knowage.knowageapi.utils.messages.EngineMessageBundle;
 
 /**
