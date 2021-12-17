@@ -1523,6 +1523,7 @@
                 "calcField": "Calculated Field",
                 "filter": "Filter",
                 "inbound": "Inbound",
+                "joinRelationships": "Join Relationships",
                 "outbound": "Outbound",
                 "propertyTitle": "Property List"
             },
