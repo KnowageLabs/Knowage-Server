@@ -628,7 +628,6 @@ export default defineComponent({
     background-color: white;
     height: 100%;
     width: 350px;
-    // position: relative;
     position: absolute;
     top: 0;
     right: 0;
