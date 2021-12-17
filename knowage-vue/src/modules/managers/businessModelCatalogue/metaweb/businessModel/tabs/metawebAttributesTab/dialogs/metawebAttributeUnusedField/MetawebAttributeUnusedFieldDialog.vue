@@ -13,7 +13,14 @@
             {{ $t('metaweb.businessModel.noUnusedFields') }}
         </Message>
 
-        <Listbox v-else class="metaweb-unused-fields-listbox" v-model="selectedUnusedFields" :options="fields"></Listbox>
+        <Listbox v-else class="metaweb-unused-fields-listbox" :options="fields">
+            <template #option="slotProps">
+                <div>
+                    <Checkbox v-model="selectedUnusedFields" :value="slotProps.option"></Checkbox>
+                    <span>{{ slotProps.option.name }}</span>
+                </div>
+            </template>
+        </Listbox>
 
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
@@ -24,6 +31,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import Checkbox from 'primevue/checkbox'
 import Dialog from 'primevue/dialog'
 import Listbox from 'primevue/listbox'
 import Message from 'primevue/message'
@@ -31,7 +39,7 @@ import metawebAttributeUnusedFieldDialogDescriptor from './MetawebAttributeUnuse
 
 export default defineComponent({
     name: 'metaweb-attribute-detail-dialog',
-    components: { Dialog, Listbox, Message },
+    components: { Checkbox, Dialog, Listbox, Message },
     props: { visible: { type: Boolean }, unusedFields: { type: Object } },
     emits: ['close', 'save'],
     data() {
@@ -53,14 +61,13 @@ export default defineComponent({
     methods: {
         loadFields() {
             this.fields = this.unusedFields as any[]
-            console.log('LOADED FIELDS: ', this.fields)
         },
         closeDialog() {
             this.$emit('close')
             this.selectedUnusedFields = []
         },
         save() {
-            console.log('SAVE CLICKED!')
+            this.$emit('save', this.selectedUnusedFields)
         }
     }
 })

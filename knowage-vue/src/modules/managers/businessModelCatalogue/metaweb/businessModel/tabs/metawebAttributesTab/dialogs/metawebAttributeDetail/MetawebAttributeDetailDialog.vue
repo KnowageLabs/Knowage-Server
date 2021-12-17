@@ -173,6 +173,7 @@ export default defineComponent({
             this.loadAttributeProperties()
 
             console.log(' >>> LOADED USER: ', (this.$store.state as any).user)
+            console.log(' >>> LOADED STORE: ', this.$store.state as any)
         },
         getAttributeType() {
             if (this.attribute) {

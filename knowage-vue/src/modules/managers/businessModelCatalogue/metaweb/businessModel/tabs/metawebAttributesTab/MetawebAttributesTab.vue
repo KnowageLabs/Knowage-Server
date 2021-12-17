@@ -36,7 +36,7 @@
         </DataTable>
 
         <MetawebAttributeDetailDialog :visible="attributeDetailDialogVisible" :selectedAttribute="selectedAttribute" @close="attributeDetailDialogVisible = false" @save="onAttributeSave"></MetawebAttributeDetailDialog>
-        <MetawebAttributeUnusedFieldDialog :visible="unusedFieldDialogVisible" :unusedFields="unusedFields" @close="unusedFieldDialogVisible = false"></MetawebAttributeUnusedFieldDialog>
+        <MetawebAttributeUnusedFieldDialog :visible="unusedFieldDialogVisible" :unusedFields="unusedFields" @close="unusedFieldDialogVisible = false" @save="saveUnusedFields"></MetawebAttributeUnusedFieldDialog>
     </div>
 </template>
 
@@ -176,10 +176,16 @@ export default defineComponent({
             this.loading = false
         },
         openUnusedFieldsDialog() {
+            console.log('BUSINESS MODEL: ', this.businessModel)
+            console.log('META: ', this.meta)
+
             if (this.businessModel && this.businessModel.physicalTable) {
                 this.unusedFields = []
                 const physicalTable = this.meta?.physicalModels[this.businessModel?.physicalTable.physicalTableIndex]
                 const allColumns = [...physicalTable.columns]
+
+                console.log('PHYSICAL TABLE: ', physicalTable)
+                console.log('ALL COLUMNS: ', allColumns)
 
                 for (let i = 0; i < allColumns.length; i++) {
                     const tempColumn = allColumns[i]
@@ -195,6 +201,24 @@ export default defineComponent({
             }
 
             this.unusedFieldDialogVisible = true
+        },
+        async saveUnusedFields(unusedColumns: any[]) {
+            console.log('UNUSED COLUMNS ON SAVE: ', unusedColumns)
+
+            this.loading = true
+            const tempColumns = unusedColumns.map((el: any) => {
+                return { businessModelUniqueName: this.businessModel?.uniqueName, physicalColumnName: el.name, physicalTableName: el.tableName }
+            })
+            const postData = { data: { columns: tempColumns }, diff: generate(this.observer) }
+            await this.$http
+                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/createBusinessColumn`, postData)
+                .then((response: AxiosResponse<any>) => {
+                    this.meta = applyPatch(this.meta, response.data).newDocument
+                    this.unusedFieldDialogVisible = false
+                })
+                .catch(() => {})
+                .finally(() => generate(this.observer))
+            this.loading = false
         }
     }
 })
