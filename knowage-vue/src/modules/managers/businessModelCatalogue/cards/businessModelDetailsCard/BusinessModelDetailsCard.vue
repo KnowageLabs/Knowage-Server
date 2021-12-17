@@ -399,8 +399,21 @@ export default defineComponent({
             this.metawebDialogVisible = true
         },
         async loadModelFromSession() {
+            await this.callOldService()
             await this.$http
-                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/loadModelFromSession`, { datasourceId: this.businessModel?.dataSourceId, bmId: this.businessModel?.id, bmName: this.businessModel?.name, user_id: (this.$store.state as any).user.userUniqueIdentifier })
+                .get(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/loadModelFromSession`)
+                .then((response: AxiosResponse<any>) => {
+                    console.log('RESPONSE: ', response)
+                })
+                .catch(() => {})
+        },
+        async callOldService() {
+            await this.$http
+                .get(process.env.VUE_APP_META_API_URL + `/1.0/pages/edit?datasourceId=${this.businessModel?.dataSourceId}&user_id=${(this.$store.state as any).user.userUniqueIdentifier}&bmId=${this.businessModel?.id}&bmName=${this.businessModel?.name}`, {
+                    headers: {
+                        Accept: 'application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+                    }
+                })
                 .then((response: AxiosResponse<any>) => {
                     console.log('RESPONSE: ', response)
                 })
