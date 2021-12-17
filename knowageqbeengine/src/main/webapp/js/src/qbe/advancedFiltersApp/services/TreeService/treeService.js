@@ -172,8 +172,13 @@
 					} catch(err2) {}
 	
 				}
-	
-				replace(expression, siblings[0], parentOfCurrentNode);
+				
+				// If root nodes doesn't have children
+				if (expression.childNodes.length == 0) {
+					angular.copy({}, expression);
+				} else if (parentOfParent != null) {
+					replace(expression, siblings[0], parentOfCurrentNode);
+				}
 
 			} catch(err) {
 				// no siblings
