@@ -175,7 +175,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	}
 
 	@GET
-	@Path("/loadModelFromSession")
+	@Path("/model")
 	public Response loadModelFromSession(@Context HttpServletRequest req) {
 		try {
 			String translatedModel = (String) req.getSession().getAttribute("translatedModel");
