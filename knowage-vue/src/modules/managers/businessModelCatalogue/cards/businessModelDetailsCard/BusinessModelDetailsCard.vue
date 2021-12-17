@@ -140,7 +140,6 @@
                     <div class="input-container p-d-flex p-flex-row" v-else-if="metaWebVisible">
                         <div class="p-m-2">
                             <Button class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.metaWeb')" @click="goToMetaWeb" data-test="metaweb-button"></Button>
-                            <Button class="kn-button kn-button--primary" label="MainMetaweb" @click="openMetaWeb"></Button>
                         </div>
                         <div class="p-m-2" v-if="toGenerate">
                             <Button class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.generate')" @click="generateDatamartVisible = true"></Button>
@@ -299,6 +298,9 @@ export default defineComponent({
         },
         readonly: {
             type: Boolean
+        },
+        businessModelVersions: {
+            type: Array
         }
     },
     emits: ['fieldChanged', 'fileUploaded', 'datamartGenerated'],
@@ -383,40 +385,40 @@ export default defineComponent({
             this.$emit('fieldChanged', { fieldName: 'smartView', value: this.businessModel.smartView })
         },
         async goToMetaWeb() {
-            await this.loadModelFromSession()
-            this.metawebSelectDialogVisible = true
-        },
-        openMetaWeb() {
-            this.metawebDialogVisible = true
+            if (this.businessModelVersions?.length === 0) {
+                this.metawebSelectDialogVisible = true
+            } else {
+                await this.loadModelFromSession()
+            }
         },
         onDatamartGenerated() {
             this.$emit('datamartGenerated')
         },
         onMetaSelect(meta: any) {
-            console.log('META ON SELECT: ', meta)
             this.meta = meta
             this.metawebSelectDialogVisible = false
             this.metawebDialogVisible = true
         },
         async loadModelFromSession() {
-            await this.callOldService()
+            await this.createSession()
             await this.$http
                 .get(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/loadModelFromSession`)
                 .then((response: AxiosResponse<any>) => {
-                    console.log('RESPONSE: ', response)
+                    this.meta = response.data
+                    this.metawebDialogVisible = true
                 })
                 .catch(() => {})
+
+            // console.log('LOADED META FROM RESPONSE: ', this.meta)
         },
-        async callOldService() {
+        async createSession() {
             await this.$http
                 .get(process.env.VUE_APP_META_API_URL + `/1.0/pages/edit?datasourceId=${this.businessModel?.dataSourceId}&user_id=${(this.$store.state as any).user.userUniqueIdentifier}&bmId=${this.businessModel?.id}&bmName=${this.businessModel?.name}`, {
                     headers: {
                         Accept: 'application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
                     }
                 })
-                .then((response: AxiosResponse<any>) => {
-                    console.log('RESPONSE: ', response)
-                })
+                .then(() => {})
                 .catch(() => {})
         }
     }
