@@ -6,10 +6,6 @@
 
             <!-- {{ customViewVisible }} -->
             <div ref="olap-table" class="test-olap" v-if="olap && olap.table" v-html="olap.table" @click="test"></div>
-            <div>
-                <component :is="dynamicComponent"></component>
-                <div is="vue:dynamicComponent"></div>
-            </div>
         </div>
     </div>
 </template>
