@@ -28,8 +28,8 @@
             <template #header>
                 <Button :label="$t('common.add')" class="p-button-link p-text-right" @click="inboundDialogVisible = true" />
             </template>
-            <template #body>
-                <Button icon="pi pi-trash" class="p-button-link" />
+            <template #body="slotProps">
+                <Button icon="pi pi-trash" class="p-button-link" @click="deleteInbound(slotProps.data)" />
             </template>
         </Column>
     </DataTable>
@@ -241,6 +241,18 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     this.meta = applyPatch(this.meta, response.data)
                     this.closeDialog()
+                    this.populateInboundRelationships()
+                })
+                .catch(() => {})
+                .finally(() => generate(this.observer))
+        },
+        async deleteInbound(item) {
+            console.log(item)
+            const postData = { data: item, diff: generate(this.observer) }
+            await this.$http
+                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/deleteBusinessRelation`, postData)
+                .then((response: AxiosResponse<any>) => {
+                    this.meta = applyPatch(this.meta, response.data)
                     this.populateInboundRelationships()
                 })
                 .catch(() => {})

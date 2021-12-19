@@ -1492,6 +1492,7 @@
     },
     "metaweb": {
         "businessModel": {
+            "editJoin": "Edit Join Relationship",
             "addPhysicalTables": "Add physical tables",
             "addUnusedFields": "Add unused fields",
             "attributesDetail": {

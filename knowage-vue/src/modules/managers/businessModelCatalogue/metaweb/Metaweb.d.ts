@@ -1,47 +1,47 @@
 export interface iPhysicalModel {
-    name: string,
-    properties: any[],
-    comment: string,
-    type: string,
-    columns: iColumn[],
-    foreignKeys: iForeignKey[],
+    name: string
+    properties: any[]
+    comment: string
+    type: string
+    columns: iColumn[]
+    foreignKeys: iForeignKey[]
     type: string
 }
 
 export interface iColumn {
-    id: number | null,
-    name: string,
-    uniqueName: string | null,
-    description: string | null,
-    properties: any[],
-    comment: string,
-    dataType: string,
-    typeName: string,
-    size: number,
-    octectLength: number,
-    decimalDigits: number,
-    radix: number,
-    defaultValue: string | null,
-    nullable: boolean,
-    position: number,
-    tableName: string,
-    partOfCompositePrimaryKey: boolean,
-    markedDeleted: boolean,
-    primaryKey: boolean,
-    type?: string,
+    id: number | null
+    name: string
+    uniqueName: string | null
+    description: string | null
+    properties: any[]
+    comment: string
+    dataType: string
+    typeName: string
+    size: number
+    octectLength: number
+    decimalDigits: number
+    radix: number
+    defaultValue: string | null
+    nullable: boolean
+    position: number
+    tableName: string
+    partOfCompositePrimaryKey: boolean
+    markedDeleted: boolean
+    primaryKey: boolean
+    type?: string
     foreignKeys?: iForeignKey[]
 }
 
 export interface iForeignKey {
-    description: string,
-    destinationColumns: iColumn[],
-    destinationName: string | null,
-    destinationTableName: string | null,
-    id: string | null,
-    name: string,
-    properties: any[],
-    sourceColumns: iColumn[],
-    sourceName: string,
+    description: string
+    destinationColumns: iColumn[]
+    destinationName: string | null
+    destinationTableName: string | null
+    id: string | null
+    name: string
+    properties: any[]
+    sourceColumns: iColumn[]
+    sourceName: string
     uniqueName: string | null
 }
 
@@ -52,28 +52,29 @@ export interface iChangedData {
 }
 
 export interface iBusinessModel {
-    calculatedBusinessColumns: any[],
-    columns: iBusinessModelColumn[],
-    name: string,
-    physicalTable: { physicalTableIndex: number },
-    properties: any[],
-    relationships: iRelationship[],
-    simpleBusinessColumns: iBusinessModelColumn[],
-    uniqueName: string,
-    physicalColumn?: any,
+    calculatedBusinessColumns: any[]
+    columns: iBusinessModelColumn[]
+    name: string
+    physicalTable: { physicalTableIndex: number }
+    properties: any[]
+    relationships: iRelationship[]
+    simpleBusinessColumns: iBusinessModelColumn[]
+    uniqueName: string
+    physicalColumn?: any
     physicalTables?: any[]
+    joinRelationships?: any[]
 }
 
 export interface iBusinessModelColumn {
-    description: string | null,
+    description: string | null
     filteredByProfileAttribute: boolean
     filteredByRoleVisibility: boolean
     id: number | null
     identifier: boolean
     name: string
     partOfCompositeIdentifier: boolean
-    physicalColumn: iColumn,
-    properties: any[],
+    physicalColumn: iColumn
+    properties: any[]
     uniqueName: string
 }
 

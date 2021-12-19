@@ -41,6 +41,7 @@
                 <Listbox v-show="expandSummary" class="kn-list data-condition-list kn-absolute kn-height-full kn-width-full kn-overflow" :options="summary">
                     <template #empty>{{ $t('metaweb.businessModel.summaryHint') }} </template>
                     <template #option="slotProps">
+                        <!-- PROBLEM SA DELETE U SUMMARY, NE MOZE DA RENDERUJE KADA SE BRISE IZ OVE LISTE -->
                         <div v-for="(rel, index) in slotProps.option.links" v-bind:key="index" class="associator-target-list-item">
                             <span class="p-d-flex p-flex-row kn-width-full">
                                 <span class="kn-truncated kn-flex-05">
@@ -50,9 +51,8 @@
                                 <span class="kn-truncated kn-flex">
                                     {{ slotProps.option.name }}
                                 </span>
-                                <Button icon="far fa-trash-alt kn-flex-0" class="p-button-text p-button-rounded p-button-plain" v-if="slotProps.option[associatedItem] && slotProps.option[associatedItem].length > 0" />
                             </span>
-                            <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteRelationship(slotProps.option)" />
+                            <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteRelationship(slotProps.option, rel)" />
                         </div>
                     </template>
                 </Listbox>
@@ -61,7 +61,7 @@
 
         <template #footer>
             <Button class="p-button-text kn-button" :label="$t('common.cancel')" @click="closeDialog" />
-            <Button v-if="wizardStep == 2" class="kn-button kn-button--secondary" :label="$t('common.back')" :disabled="buttonDisabled || summary.length > 0" @click="previousStep" />
+            <Button v-if="wizardStep == 2 && !editMode" class="kn-button kn-button--secondary" :label="$t('common.back')" :disabled="buttonDisabled || summary.length > 0" @click="previousStep" />
             <Button v-if="wizardStep == 1" class="kn-button kn-button--primary" :label="$t('common.next')" :disabled="buttonDisabled" @click="nextStep" />
             <Button v-if="wizardStep == 2" class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="buttonDisabled" @click="saveBusinessView" />
         </template>
@@ -84,7 +84,7 @@ const { generate, applyPatch } = require('fast-json-patch')
 export default defineComponent({
     components: { Dialog, StepOne, TableAssociator, Dropdown, Listbox },
     emits: ['closeDialog'],
-    props: { physicalModels: Array, showBusinessViewDialog: Boolean, meta: Object, observer: { type: Object } },
+    props: { physicalModels: Array as any, showBusinessViewDialog: Boolean, meta: Object, observer: { type: Object }, selectedBusinessModel: { type: Object, required: true }, editMode: Boolean },
     computed: {
         buttonDisabled(): boolean {
             if (this.v$.$invalid || this.tmpBnssView.physicalModels.length < 2) {
@@ -101,22 +101,26 @@ export default defineComponent({
             wizardStep: 1,
             expandSummary: true,
             summary: [] as any,
+            physicalModel: [] as any,
             sourceTable: { columns: [] } as any,
             targetTable: { columns: [] } as any
         }
     },
     created() {
         this.loadMeta()
+        this.setEditModeData()
     },
     watch: {
         meta() {
             console.log(this.meta)
             this.loadMeta()
+            this.setEditModeData()
         }
     },
     methods: {
         async loadMeta() {
             this.meta ? (this.metaObserve = this.meta) : ''
+            this.physicalModel = [...this.physicalModels]
         },
         resetPhModel() {
             this.tmpBnssView.physicalModels = []
@@ -131,6 +135,48 @@ export default defineComponent({
         previousStep() {
             this.wizardStep--
         },
+        getItemIndex(list, name) {
+            for (var i = 0; i < list.length; i++) {
+                if (list[i].name === name) {
+                    return i
+                }
+            }
+            return -1
+        },
+        setEditModeData() {
+            if (this.editMode == true) {
+                this.wizardStep = 2
+                //copy the physical tables
+                for (var pti = 0; pti < this.selectedBusinessModel.physicalTables.length; pti++) {
+                    var tmppt = {}
+                    tmppt = { ...this.physicalModels[this.selectedBusinessModel.physicalTables[pti].physicalTableIndex] }
+                    this.tmpBnssView.physicalModels.push(tmppt)
+                }
+
+                for (var x = 0; x < this.tmpBnssView.physicalModels.length; x++) {
+                    for (var y = 0; y < this.tmpBnssView.physicalModels[x].columns.length; y++) {
+                        this.tmpBnssView.physicalModels[x].columns[y].$parent = this.tmpBnssView.physicalModels[x]
+                    }
+                }
+
+                for (var i = 0; i < this.selectedBusinessModel.joinRelationships.length; i++) {
+                    var rel = this.selectedBusinessModel.joinRelationships[i]
+                    var destTab = this.tmpBnssView.physicalModels[this.getItemIndex(this.tmpBnssView.physicalModels, rel.destinationTable.name)]
+                    var sourceTab = this.tmpBnssView.physicalModels[this.getItemIndex(this.tmpBnssView.physicalModels, rel.sourceTable.name)]
+                    for (var dc = 0; dc < rel.destinationColumns.length; dc++) {
+                        var destCol = destTab.columns[this.getItemIndex(destTab.columns, rel.destinationColumns[dc].name)]
+                        var sourceCol = sourceTab.columns[this.getItemIndex(sourceTab.columns, rel.sourceColumns[dc].name)]
+                        // eslint-disable-next-line no-prototype-builtins
+                        if (!destCol.hasOwnProperty('links')) {
+                            destCol.links = []
+                        }
+                        destCol.links.push(sourceCol)
+                    }
+                }
+
+                this.updateSummary()
+            }
+        },
         updateSummary() {
             this.summary = []
             for (var i = 0; i < this.tmpBnssView.physicalModels.length; i++) {
@@ -143,20 +189,22 @@ export default defineComponent({
             }
             console.log(this.summary)
         },
-        logEvent(event) {
-            console.log(event)
-        },
         async saveBusinessView() {
             var tmpData = {} as any
-            tmpData.name = this.tmpBnssView.name
-            tmpData.description = this.tmpBnssView.description
-            tmpData.sourceBusinessClass = this.tmpBnssView.sourceBusinessClass
-            tmpData.physicaltable = []
+            if (this.editMode) {
+                tmpData.viewUniqueName = this.selectedBusinessModel.uniqueName
+            } else {
+                tmpData.name = this.tmpBnssView.name
+                tmpData.description = this.tmpBnssView.description
+                tmpData.sourceBusinessClass = this.tmpBnssView.sourceBusinessClass
+                tmpData.physicaltable = []
+            }
+
             tmpData.relationships = {}
 
             for (var i = 0; i < this.tmpBnssView.physicalModels.length; i++) {
                 var tmpDataObj = this.tmpBnssView.physicalModels[i]
-                tmpData.physicaltable.push(tmpDataObj.name)
+                this.editMode ? '' : tmpData.physicaltable.push(tmpDataObj.name)
                 for (var col = 0; col < this.tmpBnssView.physicalModels[i].columns.length; col++) {
                     // eslint-disable-next-line no-prototype-builtins
                     if (this.tmpBnssView.physicalModels[i].columns[col].hasOwnProperty('links') && this.tmpBnssView.physicalModels[i].columns[col].links.length > 0) {
@@ -191,9 +239,13 @@ export default defineComponent({
                 .then(async (response: AxiosResponse<any>) => {
                     this.metaObserve = applyPatch(this.metaObserve, response.data)
                     generate(this.observer)
-                    this.closeDialog()
                 })
                 .catch(() => {})
+                .finally(() => this.closeDialog())
+        },
+        deleteRelationship(item, rel?) {
+            rel == undefined ? (item.links = []) : item.links.splice(rel, 1)
+            this.updateSummary
         }
     }
 })

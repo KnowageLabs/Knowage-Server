@@ -118,7 +118,7 @@
                             <span>{{ $t('metaweb.businessModel.tabView.joinRelationships') }}</span>
                         </template>
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            {{ mainDescriptor.test }}
+                            <MetawebJoinRelationships :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" :observer="observer" />
                         </div>
                     </TabPanel>
 
@@ -158,10 +158,11 @@ import MetawebAttributesTab from './tabs/metawebAttributesTab/MetawebAttributesT
 import InboundRelationships from './tabs/inboundRelationships/MetawebInboundRelationships.vue'
 import OutboundRelationships from './tabs/outboundRelationships/MetawebOutboundRelationships.vue'
 import MetawebPhysicalTableTab from './tabs/physicalTable/MetawebPhysicalTableTab.vue'
+import MetawebJoinRelationships from './tabs/joinRelationships/MetawebJoinRelationships.vue'
 
 export default defineComponent({
     name: 'metaweb-business-model',
-    components: { OutboundRelationships, BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Listbox, Menu, MetawebBusinessPropertyListTab, MetawebAttributesTab, InboundRelationships, MetawebPhysicalTableTab },
+    components: { MetawebJoinRelationships, OutboundRelationships, BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Listbox, Menu, MetawebBusinessPropertyListTab, MetawebAttributesTab, InboundRelationships, MetawebPhysicalTableTab },
     props: { propMeta: { type: Object }, observer: { type: Object }, metaUpdated: { type: Boolean } },
     emits: ['loading', 'metaUpdated'],
     computed: {},

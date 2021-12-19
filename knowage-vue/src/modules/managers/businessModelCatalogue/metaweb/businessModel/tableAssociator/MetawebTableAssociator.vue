@@ -49,7 +49,7 @@
                                         <span class="kn-truncated">
                                             {{ link.name }}
                                         </span>
-                                        <Button v-if="slotProps.option[associatedItem].length > 1" icon="fas fa-times" class="associator-enable-hover p-button-text p-button-rounded p-button-plain" @click.stop="deleteRelationship(slotProps.option, index)" />
+                                        <Button v-if="slotProps.option[associatedItem].length > 1" icon="fas fa-times" class="associator-enable-hover p-button-text p-button-rounded p-button-plain" @click.stop="deleteRelationship(slotProps.option, link)" />
                                     </span>
                                 </div>
                                 <Button icon="far fa-trash-alt kn-flex-0" class="associator-enable-hover p-button-text p-button-rounded p-button-plain" v-if="slotProps.option[associatedItem] && slotProps.option[associatedItem].length > 0" @click.stop="deleteRelationship(slotProps.option)" />
@@ -155,8 +155,8 @@ export default defineComponent({
                 console.log('executeDrop = FALSE')
             }
         },
-        deleteRelationship(attribute, linkIndex?) {
-            linkIndex == undefined ? (attribute[this.associatedItem] = []) : attribute[this.associatedItem].splice(linkIndex, 1)
+        deleteRelationship(item, rel?) {
+            rel == undefined ? (item[this.associatedItem] = []) : item[this.associatedItem].splice(rel, 1)
             this.$emit('relationshipDeleted')
         }
     }
