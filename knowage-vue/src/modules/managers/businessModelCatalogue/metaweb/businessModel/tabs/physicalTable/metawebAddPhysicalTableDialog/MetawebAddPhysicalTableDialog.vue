@@ -9,7 +9,7 @@
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
-        <DataTable :value="rows" class="p-datatable-sm kn-table" v-model:selection="selectedTables" dataKey="name" v-model:filters="filters" :globalFilterFields="metawebAddPhysicalTableDialogDescriptor.globalFilterFields">
+        <DataTable :value="rows" class="p-datatable-sm kn-table p-m-2" v-model:selection="selectedTables" dataKey="name" v-model:filters="filters" :globalFilterFields="metawebAddPhysicalTableDialogDescriptor.globalFilterFields">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>

@@ -96,7 +96,7 @@ export default defineComponent({
             await this.$http
                 .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/checkRelationships`, postData)
                 .then(async (response: AxiosResponse<any>) => {
-                    this.observer = applyPatch(this.observer, response.data)
+                    this.observer = applyPatch(this.observer, response.data).newDocument
                     this.observer = observe(this.meta)
                     this.metaUpdated = !this.metaUpdated
                     if (generateModel)
