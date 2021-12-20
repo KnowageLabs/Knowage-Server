@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="metaweb-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="mainDescriptor.style.flex" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
+    <Dialog class="metaweb-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="mainDescriptor.style.flex" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #left> {{ $t('metaweb.title') }} : NAME HERE </template>
@@ -27,6 +27,8 @@
                 </TabPanel>
             </TabView>
         </div>
+
+        <MetawebInvalidRelationshipsDialog :visible="invalidRelationshipsDialogVisible" :propIncorrectRelationships="incorrectRelationships" @close="invalidRelationshipsDialogVisible = false" @save="generateModel"></MetawebInvalidRelationshipsDialog>
     </Dialog>
 </template>
 <script lang="ts">
@@ -40,12 +42,13 @@ import TabPanel from 'primevue/tabpanel'
 import BusinessModelTab from './businessModel/MetawebBusinessModel.vue'
 import MetawebPhysicalModel from './physicalModel/MetawebPhysicalModel.vue'
 import metaMock from './MetawebMock.json'
+import MetawebInvalidRelationshipsDialog from './invalidRelationshipsDialog/MetawebInvalidRelationshipsDialog.vue'
 
 const { observe, generate, applyPatch } = require('fast-json-patch')
 
 export default defineComponent({
     name: 'metaweb',
-    components: { BusinessModelTab, MetawebPhysicalModel, TabView, TabPanel, Dialog },
+    components: { BusinessModelTab, MetawebPhysicalModel, TabView, TabPanel, Dialog, MetawebInvalidRelationshipsDialog },
     props: { visible: { type: Boolean }, propMeta: { type: Object }, businessModel: { type: Object } },
     emits: ['closeMetaweb', 'modelGenerated'],
     data() {
@@ -56,6 +59,8 @@ export default defineComponent({
             meta: null as any,
             observer: null as any,
             metaUpdated: false,
+            invalidRelationshipsDialogVisible: false,
+            incorrectRelationships: [] as any[],
             loading: false
         }
     },
@@ -101,9 +106,13 @@ export default defineComponent({
                     this.observer = applyPatch(this.observer, response.data)
                     this.observer = observe(this.meta)
                     this.metaUpdated = !this.metaUpdated
-                    if (response.data.incorrectRelationships.length === 0 && generateModel) {
-                        await this.generateModel()
-                    }
+                    if (generateModel)
+                        if (response.data.incorrectRelationships.length === 0) {
+                            await this.generateModel()
+                        } else {
+                            this.invalidRelationshipsDialogVisible = true
+                            this.incorrectRelationships = response.data.incorrectRelationships
+                        }
                 })
                 .catch(() => {})
             this.loading = false
@@ -121,6 +130,7 @@ export default defineComponent({
                     this.$emit('modelGenerated')
                 })
                 .catch(() => {})
+                .finally(() => (this.invalidRelationshipsDialogVisible = false))
         }
     }
 })

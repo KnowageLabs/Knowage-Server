@@ -262,7 +262,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-#metaweb-attribute-detail-dialog #metaweb-attribute-detail-dialog .p-dialog-header,
+#metaweb-attribute-detail-dialog .p-dialog-header,
 #metaweb-attribute-detail-dialog .p-dialog-content {
     padding: 0;
 }

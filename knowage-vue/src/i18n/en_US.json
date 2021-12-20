@@ -144,6 +144,7 @@
         "version": "version",
         "visibility": "Visibility",
         "visible": "Visible",
+        "warning": "Warning",
         "yes": "Yes"
     },
     "cron": {
@@ -1492,7 +1493,6 @@
     },
     "metaweb": {
         "businessModel": {
-            "editJoin": "Edit Join Relationship",
             "addPhysicalTables": "Add physical tables",
             "addUnusedFields": "Add unused fields",
             "attributesDetail": {
@@ -1501,6 +1501,7 @@
             },
             "businessClass": "Business Class",
             "businessView": "Business View",
+            "editJoin": "Edit Join Relationship",
             "inbound": {
                 "name": "Insert a Business Relationship Name",
                 "sourceBc": "Source Business Class",
@@ -1533,6 +1534,15 @@
             "targetTable": "Target Table",
             "temporalHierarchy": "Manage temporal hierarchy",
             "title": "Business Model"
+        },
+        "incorrectRelationships": {
+            "requiredColumns": "Required number of source columns",
+            "title": "Incorrect relationships found",
+            "warningMessage": {
+                "partOne": "A correct relationship must have at least the same number of source columns as the columns set as identifiers in the target table.",
+                "partThree": "Press SAVE to continue anyway or press CANCEL to go back and correct.",
+                "partTwo": "Note that if a table doesn't have identifiers, all his columns will be set as identifier automatically."
+            }
         },
         "physicalModel": {
             "dataType": "dataType",
