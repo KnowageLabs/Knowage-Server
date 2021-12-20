@@ -82,6 +82,9 @@ export default defineComponent({
     watch: {
         async businessModel() {
             await this.loadData()
+        },
+        visible() {
+            this.loadRows()
         }
     },
     async created() {

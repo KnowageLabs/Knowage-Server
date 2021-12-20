@@ -1567,6 +1567,7 @@
             "tableName": "Table Name"
         },
         "title": "Metaweb",
+        "exitFromMeta": "Exit from meta?",
         "updatePhysicalModel": {
             "addNewColumns": "New columns that will be added",
             "deletedColumns": "Elements that will be marked as deleted",

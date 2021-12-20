@@ -364,6 +364,7 @@ export default defineComponent({
             this.$emit('fieldChanged', { fieldName: 'smartView', value: this.businessModel.smartView })
         },
         async goToMetaWeb() {
+            await this.createSession()
             if (this.businessModelVersions?.length === 0) {
                 this.metawebSelectDialogVisible = true
             } else {
@@ -379,7 +380,6 @@ export default defineComponent({
             this.metawebDialogVisible = true
         },
         async loadModelFromSession() {
-            await this.createSession()
             await this.$http
                 .get(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/loadModelFromSession`)
                 .then((response: AxiosResponse<any>) => {
@@ -387,8 +387,6 @@ export default defineComponent({
                     this.metawebDialogVisible = true
                 })
                 .catch(() => {})
-
-            // console.log('LOADED META FROM RESPONSE: ', this.meta)
         },
         async createSession() {
             await this.$http

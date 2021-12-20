@@ -5,7 +5,7 @@
                 <template #left> {{ $t('metaweb.title') }} : NAME HERE </template>
                 <template #right>
                     <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="metadataSave" />
-                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('closeMetaweb')" />
+                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeMetawebConfirm" />
                 </template>
             </Toolbar>
         </template>
@@ -131,6 +131,17 @@ export default defineComponent({
                 })
                 .catch(() => {})
                 .finally(() => (this.invalidRelationshipsDialogVisible = false))
+        },
+        closeMetawebConfirm() {
+            this.$confirm.require({
+                header: this.$t('metaweb.exitFromMeta'),
+                accept: () => {
+                    this.$emit('closeMetaweb')
+                    this.meta = null
+                    this.observer = null
+                    this.incorrectRelationships = []
+                }
+            })
         }
     }
 })
