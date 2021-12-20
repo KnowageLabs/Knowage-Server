@@ -52,7 +52,6 @@
                     </span>
                 </div>
 
-                <!-- TODO ASK ABOUT ROLES -->
                 <div class="p-field p-col-12 p-md-6 p-mt-2">
                     <span class="p-float-label">
                         <MultiSelect class="kn-material-input" v-model="properties['behavioural.notEnabledRoles'].value" :options="roleOptions" optionLabel="name" optionValue="name" :filter="true" @change="updateAttribute('behavioural.notEnabledRoles')" />
@@ -61,7 +60,6 @@
                     </span>
                 </div>
 
-                <!-- TODO ASK ABOUT PROFILE ATTRIBUTES -->
                 <div class="p-field p-col-12 p-md-6 p-mt-2">
                     <span class="p-float-label">
                         <Dropdown class="kn-material-input" v-model="properties['structural.attribute'].value" :options="profileAttributes" @change="updateAttribute('structural.attribute')" />
@@ -98,7 +96,7 @@
                     <span class="p-float-label">
                         <Dropdown class="kn-material-input" v-model="properties['structural.dateformat'].value" :options="properties['structural.dateformat'].propertyType.admissibleValues" @change="updateAttribute('structural.dateformat')">
                             <template #option="slotProps">
-                                <span>{{ getFormattedDate(slotProps.option) }}</span>
+                                <span>{{ slotProps.option }}</span>
                             </template></Dropdown
                         >
                         <label class="kn-material-input-label"> {{ properties['structural.dateformat'].propertyType.name }}</label>
@@ -134,7 +132,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { iBusinessModelColumn } from '../../../../../Metaweb'
-import { formatDate } from '@/helpers/commons/localeHelper'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import MultiSelect from 'primevue/multiselect'
@@ -165,6 +162,10 @@ export default defineComponent({
             this.loadAttribute()
         },
         roles() {
+            this.loadRoleOptions()
+        },
+        visible() {
+            this.loadAttribute()
             this.loadRoleOptions()
         }
     },
@@ -218,9 +219,6 @@ export default defineComponent({
                 this.properties['behavioural.notEnabledRoles'].value = this.properties['behavioural.notEnabledRoles'].value?.split(';')
             }
         },
-        getFormattedDate(date: any) {
-            return formatDate(date, 'YYYY-MM-DD HH:mm:ss')
-        },
         onTypeChange() {
             if (this.attribute) {
                 for (let i = 0; i < this.attribute.properties.length; i++) {
@@ -248,6 +246,17 @@ export default defineComponent({
             this.$emit('close')
         },
         saveAttribute() {
+            if (this.attribute) {
+                for (let i = 0; i < this.attribute.properties.length; i++) {
+                    const property = this.attribute.properties[i]
+                    const key = Object.keys(property)[0]
+                    if (key === 'behavioural.notEnabledRoles' && Array.isArray(property[key].value)) {
+                        property[key].value = property[key].value?.join(';')
+                        break
+                    }
+                }
+            }
+
             this.$emit('save', this.attribute)
         }
     }

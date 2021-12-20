@@ -13,10 +13,10 @@
             {{ $t('metaweb.businessModel.noUnusedFields') }}
         </Message>
 
-        <Listbox v-else class="metaweb-unused-fields-listbox" :options="fields">
+        <Listbox v-else class="metaweb-unused-fields-listbox p-m-4" :options="fields">
             <template #option="slotProps">
-                <div>
-                    <Checkbox v-model="selectedUnusedFields" :value="slotProps.option"></Checkbox>
+                <div class="p-m-2">
+                    <Checkbox class="p-mr-2" v-model="selectedUnusedFields" :value="slotProps.option"></Checkbox>
                     <span>{{ slotProps.option.name }}</span>
                 </div>
             </template>

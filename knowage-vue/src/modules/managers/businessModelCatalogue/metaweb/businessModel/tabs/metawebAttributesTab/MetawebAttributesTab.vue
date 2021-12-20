@@ -9,7 +9,6 @@
                         <Checkbox v-else-if="column.field === 'visible'" v-model="columnsVisibility[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'visibility')"></Checkbox>
                         <span v-else-if="column.field === 'type'">{{ columnsType[slotProps.data.uniqueName] }}</span>
                         <span v-else>{{ slotProps.data[slotProps.column.props.field] }}</span>
-                        <!-- <Dropdown v-else-if="column.field === 'type'" class="kn-material-input" v-model="columnsType[slotProps.data.uniqueName]" :options="metawebAttributesTabDescriptor.typeOptions" @change="onChange(slotProps.data, 'type')" /> -->
                     </div>
                 </template>
                 <template #body="slotProps">
@@ -23,7 +22,7 @@
             </Column>
             <Column :style="metawebAttributesTabDescriptor.iconColumnStyle">
                 <template #header>
-                    <Button class="kn-button kn-button--primary p-button-link" @click="openUnusedFieldsDialog"> {{ $t('common.add') }}</Button>
+                    <Button class="kn-button kn-button--primary p-button-link p-jc-center" @click="openUnusedFieldsDialog"> {{ $t('common.add') }}</Button>
                 </template>
 
                 <template #body="slotProps">
