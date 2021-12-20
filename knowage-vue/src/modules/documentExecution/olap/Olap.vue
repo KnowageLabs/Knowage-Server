@@ -207,14 +207,18 @@ export default defineComponent({
 }
 
 .drill-up {
-    background-image: url('C:\\Users\\bojan.sovtic\\Desktop\\Projekat\\Knowage-Server\\knowage-vue\\src\\modules\\documentExecution\\olap\\mdx.png');
-    height: 20px;
-    width: 20px;
+    background-image: url('../../../assets/images/olap/minus.gif');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 0.8rem;
+    width: 0.8rem;
 }
 
 .drill-down {
-    background-image: url('C:\\Users\\bojan.sovtic\\Desktop\\Projekat\\Knowage-Server\\knowage-vue\\src\\modules\\documentExecution\\olap\\cc.png');
-    height: 20px;
-    width: 20px;
+    background-image: url('../../../assets/images/olap/plus.gif');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 0.8rem;
+    width: 0.8rem;
 }
 </style>
