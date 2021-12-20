@@ -12,18 +12,23 @@
                     </template>
                 </Toolbar>
                 <div class="kn-relative kn-flex">
-                    <Listbox v-if="!loading" class="kn-list--column kn-absolute kn-height-full kn-width-full" :options="meta.businessModels" optionLabel="name" @change="selectBusinessModel">
-                        <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                        <template #option="slotProps">
-                            <div class="kn-list-item" data-test="list-item">
-                                <div class="kn-list-item-text">
-                                    <span>{{ slotProps.option.name }}</span>
-                                    <span class="kn-list-item-text-secondary">{{ slotProps.option.columns.length }} Attributes</span>
-                                </div>
-                                <Button icon="pi pi-trash" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteFromList(slotProps.option)" />
-                            </div>
-                        </template>
-                    </Listbox>
+                    <div class="kn-height-full kn-width-full kn-absolute">
+                        <DataTable class="p-datatable-sm kn-table metaweb-right-border" :loading="loading" :scrollable="true" scrollHeight="100%" :value="meta.businessModels" @row-click="selectBusinessModel" @rowReorder="onRowReorder">
+                            <Column :rowReorder="true" :reorderableColumn="false" />
+                            <Column :style="mainDescriptor.style.columnMain">
+                                <template #body="slotProps">
+                                    <span>{{ slotProps.data.name }}</span>
+                                    <Chip :label="slotProps.data.columns.length + ' ' + $t('metaweb.businessModel.tabView.attributes')" class="p-ml-2" :style="mainDescriptor.style.chip" />
+                                </template>
+                            </Column>
+
+                            <Column :style="mainDescriptor.style.columnTrash">
+                                <template #body="slotProps">
+                                    <Button icon="pi pi-trash" class="p-button-link" @click="deleteFromList(slotProps.data)" />
+                                </template>
+                            </Column>
+                        </DataTable>
+                    </div>
                 </div>
             </div>
             <div class="p-d-flex p-flex-column kn-flex">
@@ -33,18 +38,23 @@
                     </template>
                 </Toolbar>
                 <div class="kn-relative kn-flex">
-                    <Listbox v-if="!loading" class="kn-list--column kn-absolute kn-height-full kn-width-full" :options="meta.businessViews" optionLabel="name" @change="selectBusinessModel">
-                        <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                        <template #option="slotProps">
-                            <div class="kn-list-item" data-test="list-item">
-                                <div class="kn-list-item-text">
-                                    <span>{{ slotProps.option.name }}</span>
-                                    <span class="kn-list-item-text-secondary">{{ slotProps.option.columns.length }} Attributes</span>
-                                </div>
-                                <Button icon="pi pi-trash" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteFromList(slotProps.option)" />
-                            </div>
-                        </template>
-                    </Listbox>
+                    <div class="kn-height-full kn-width-full kn-absolute">
+                        <DataTable class="p-datatable-sm kn-table metaweb-right-border" :loading="loading" :scrollable="true" scrollHeight="100%" :value="meta.businessViews" @row-click="selectBusinessModel" @rowReorder="onRowReorder">
+                            <Column :rowReorder="true" :reorderableColumn="false" />
+                            <Column :style="mainDescriptor.style.columnMain">
+                                <template #body="slotProps">
+                                    <span>{{ slotProps.data.name }}</span>
+                                    <Chip :label="slotProps.data.columns.length + ' ' + $t('metaweb.businessModel.tabView.attributes')" class="p-ml-2" :style="mainDescriptor.style.chip" />
+                                </template>
+                            </Column>
+
+                            <Column :style="mainDescriptor.style.columnTrash">
+                                <template #body="slotProps">
+                                    <Button icon="pi pi-trash" class="p-button-link" @click="deleteFromList(slotProps.data)" />
+                                </template>
+                            </Column>
+                        </DataTable>
+                    </div>
                 </div>
             </div>
         </div>
@@ -142,7 +152,6 @@ import mainDescriptor from '../MetawebDescriptor.json'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
-import Listbox from 'primevue/listbox'
 import bmDescriptor from './MetawebBusinessModelDescriptor.json'
 import Menu from 'primevue/contextmenu'
 import MetawebBusinessPropertyListTab from './tabs/propertyListTab/MetawebBusinessPropertyListTab.vue'
@@ -154,12 +163,15 @@ import OutboundRelationships from './tabs/outboundRelationships/MetawebOutboundR
 import MetawebPhysicalTableTab from './tabs/physicalTable/MetawebPhysicalTableTab.vue'
 import MetawebJoinRelationships from './tabs/joinRelationships/MetawebJoinRelationships.vue'
 import MetawebFilterTab from './tabs/filterTab/MetawebFilterTab.vue'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
+import Chip from 'primevue/chip'
 
 const { generate, applyPatch } = require('fast-json-patch')
 
 export default defineComponent({
     name: 'metaweb-business-model',
-    components: { MetawebJoinRelationships, OutboundRelationships, BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Listbox, Menu, MetawebBusinessPropertyListTab, MetawebAttributesTab, InboundRelationships, MetawebPhysicalTableTab, MetawebFilterTab },
+    components: { Chip, Column, DataTable, MetawebJoinRelationships, OutboundRelationships, BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Menu, MetawebBusinessPropertyListTab, MetawebAttributesTab, InboundRelationships, MetawebPhysicalTableTab, MetawebFilterTab },
     props: { propMeta: { type: Object }, observer: { type: Object }, metaUpdated: { type: Boolean } },
     emits: ['loading', 'metaUpdated'],
     computed: {},
@@ -203,8 +215,8 @@ export default defineComponent({
             this.meta = this.propMeta
         },
         selectBusinessModel(event) {
-            console.log(event.value)
-            this.selectedBusinessModel = event.value as iBusinessModel
+            console.log(event.data)
+            this.selectedBusinessModel = event.data as iBusinessModel
         },
         showBusinessClass() {
             this.showBusinessClassDialog = true
@@ -233,6 +245,18 @@ export default defineComponent({
         async loadRoles() {
             this.loading = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles').then((response: AxiosResponse<any>) => (this.roles = response.data))
+            this.loading = false
+        },
+        async onRowReorder(event: any) {
+            this.loading = true
+            const postData = { data: { index: event.dragIndex, direction: event.dropIndex - event.dragIndex }, diff: generate(this.observer) }
+            await this.$http
+                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/moveBusinessClass`, postData)
+                .then((response: AxiosResponse<any>) => {
+                    this.meta = applyPatch(this.meta, response.data).newDocument
+                })
+                .catch(() => {})
+                .finally(() => generate(this.observer))
             this.loading = false
         }
     }
