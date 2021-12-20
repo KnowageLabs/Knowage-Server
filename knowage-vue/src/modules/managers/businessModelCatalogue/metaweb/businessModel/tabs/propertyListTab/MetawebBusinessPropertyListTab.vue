@@ -28,22 +28,12 @@
             </template>
 
             <div v-for="(prop, index) in categories[categoryKey]" :key="index">
-                <!-- <div class="p-fluid">
-                    <div class="p-field">
-                        <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
-                        <InputText class="kn-material-input" v-model="prop.value" :disabled="true" />
-                    </div>
-                </div> -->
-
-                <!-- first select -->
                 <div class="p-fluid" v-if="prop.propertyType.admissibleValues.length !== 0">
                     <div class="p-field">
                         <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
                         <Dropdown class="kn-material-input" v-model="prop.value" :options="prop.propertyType.admissibleValues" @change="updateCategoryValue(prop)" />
                     </div>
                 </div>
-
-                <!-- first input -->
                 <div class="p-fluid" v-if="prop.propertyType.admissibleValues.length === 0 && prop.type !== 'structural.attribute' && prop.type !== 'structural.sqlFilter' && prop.type !== 'behavioural.notEnabledRoles'">
                     <div class="p-field">
                         <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
@@ -51,8 +41,6 @@
                     </div>
                 </div>
 
-                <!--profile attributes visibility -->
-                <!-- TODO ASK ABOUT PROFILE ATTRIBUTES -->
                 <div class="p-fluid" v-if="prop.type === 'structural.attribute'">
                     <div class="p-field">
                         <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
@@ -60,8 +48,6 @@
                     </div>
                 </div>
 
-                <!--profile role visibility -->
-                <!-- TODO ASK ABOUT ROLES -->
                 <div class="p-fluid" v-if="prop.type === 'behavioural.notEnabledRoles'">
                     <div class="p-field">
                         <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
@@ -69,7 +55,6 @@
                     </div>
                 </div>
 
-                <!-- last input -->
                 <div class="p-fluid" v-if="businessModel.physicalColumn && categoryKey === 'physical'">
                     <div class="p-field">
                         <label class="kn-material-input-label"> {{ $t('metaweb.businessModel.physicalColumn') }} </label>

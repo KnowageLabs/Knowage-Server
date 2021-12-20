@@ -8,16 +8,18 @@
             </Toolbar>
         </template>
 
-        <div class="p-m-2">
+        <div class="p-m-4">
             <h3>{{ $t('metaweb.incorrectRelationships.title') }}</h3>
-            <p>{{ $t('metaweb.incorrectRelationships.warningMessage.partOne') + $t('metaweb.incorrectRelationships.warningMessage.partTwo') + $t('metaweb.incorrectRelationships.warningMessage.partThree') }}</p>
+            <p>{{ $t('metaweb.incorrectRelationships.warningMessage.partOne') }}</p>
+            <p>{{ $t('metaweb.incorrectRelationships.warningMessage.partTwo') }}</p>
+            <p>{{ $t('metaweb.incorrectRelationships.warningMessage.partThree') }}</p>
         </div>
 
         <div class="p-d-flex p-flex-column p-m-2">
-            <div v-for="(relation, index) in incorrectRelationships" :key="index">
+            <div v-for="(relation, index) in incorrectRelationships" :key="index" class="p-m-4">
                 <h2>{{ relation.businessRelationshipName }}</h2>
                 <div>{{ relation.sourceTableName }} <i class="fa fa-arrow-right" aria-hidden="true"></i> {{ relation.destinationTableName }}</div>
-                <Chip>{{ $t('metaweb.incorrectRelationships.requiredColumns') + ': ' + relation.requiredNumberOfColumns }}</Chip>
+                <Chip class="p-m-2">{{ $t('metaweb.incorrectRelationships.requiredColumns') + ': ' + relation.requiredNumberOfColumns }}</Chip>
             </div>
         </div>
 
