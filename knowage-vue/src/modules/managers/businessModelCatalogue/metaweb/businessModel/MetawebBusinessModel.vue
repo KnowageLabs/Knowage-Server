@@ -89,19 +89,15 @@
                             <span>{{ $t('metaweb.businessModel.tabView.inbound') }}</span>
                         </template>
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <InboundRelationships :selectedBusinessModel="selectedBusinessModel" :businessModels="meta.businessModels" :propMeta="meta" :observer="observer" :businessViews="meta.businessViews" />
+                            <InboundRelationships :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" :observer="observer" />
                         </div>
-                        <!-- <div class="kn-relative kn-flex">
-                            <div class="kn-height-full kn-width-full kn-absolute"> -->
-                        <!-- </div>
-                        </div> -->
                     </TabPanel>
                     <TabPanel>
                         <template #header>
                             <span>{{ $t('metaweb.businessModel.tabView.outbound') }}</span>
                         </template>
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <OutboundRelationships :selectedBusinessModel="selectedBusinessModel" :businessModels="meta.businessModels" :propMeta="meta" :observer="observer" :businessViews="meta.businessViews" />
+                            <OutboundRelationships :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" :observer="observer" />
                         </div>
                     </TabPanel>
                     <TabPanel>

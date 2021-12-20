@@ -38,7 +38,7 @@
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary kn-width-full">
                 <template #left>
-                    {{ $t('metaweb.businessModel.tabView.inbound') }}
+                    {{ $t('metaweb.businessModel.tabView.outbound') }}
                 </template>
             </Toolbar>
         </template>
@@ -119,7 +119,7 @@ const { generate, applyPatch } = require('fast-json-patch')
 export default defineComponent({
     name: 'metaweb-attributes-tab',
     components: { TableAssociator, DataTable, Column, Dialog, Dropdown, KnValidationMessages },
-    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null>, required: true }, businessModels: { type: Array, required: true }, businessViews: { type: Array, required: true }, propMeta: { type: Object }, observer: { type: Object } },
+    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null>, required: true }, propMeta: { type: Object, required: true }, observer: { type: Object, required: true } },
     emits: ['loading'],
     computed: {
         leftHasLinks(): boolean {
@@ -155,13 +155,14 @@ export default defineComponent({
         }
     },
     watch: {
-        selectedBusinessModel() {
-            this.loadMeta()
-            this.loadData()
+        selectedBusinessModel: {
+            handler() {
+                this.loadData()
+            },
+            deep: true
         }
     },
     created() {
-        this.loadMeta()
         this.loadData()
     },
     validations() {
@@ -177,10 +178,8 @@ export default defineComponent({
         return validationObject
     },
     methods: {
-        loadMeta() {
-            this.meta = this.propMeta as any
-        },
         loadData() {
+            this.meta = this.propMeta as any
             this.businessModel = this.selectedBusinessModel as iBusinessModel
             this.simpleLeft = this.tableToSimpleBound(this.businessModel)
             this.populateInboundRelationships()
@@ -190,8 +189,8 @@ export default defineComponent({
             this.inboundRelationships = this.selectedBusinessModel?.relationships.filter((relationship) => this.selectedBusinessModel?.uniqueName === relationship.sourceTableName)
         },
         populateSourceBusinessClassOptions() {
-            this.businessModels.forEach((el) => this.sourceBusinessClassOptions.push(el))
-            this.businessViews.forEach((el) => this.sourceBusinessClassOptions.push(el))
+            this.propMeta.businessModels.forEach((el) => this.sourceBusinessClassOptions.push(el))
+            this.propMeta.businessViews.forEach((el) => this.sourceBusinessClassOptions.push(el))
         },
         createColumnString(data) {
             var ret = [] as any
@@ -201,9 +200,11 @@ export default defineComponent({
             return ret.join(', ')
         },
         closeDialog() {
-            this.inboundDialogVisible = false
             this.dataSend = {}
+            this.rightElement = null
+            this.simpleRight = []
             this.simpleLeft = this.tableToSimpleBound(this.businessModel)
+            this.inboundDialogVisible = false
         },
         alterTableToSimpleBound(item) {
             this.simpleRight = this.tableToSimpleBound(item)
