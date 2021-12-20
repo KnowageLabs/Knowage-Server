@@ -7,26 +7,28 @@
                     <Button class="p-button-text p-button-rounded p-button-plain p-button-sm" @click="openUpdateDialog">{{ $t('metaweb.physicalModel.updatePhysicalModel') }}</Button>
                 </template>
             </Toolbar>
+
             <div class="kn-flex kn-relative">
                 <div class="metaweb-right-border" :style="physDescriptor.style.mainListContainer">
                     <MetawebPhysicalModelList :style="physDescriptor.style.mainList" :propMeta="meta" @selected="onSelectedItem"></MetawebPhysicalModelList>
                 </div>
             </div>
         </div>
+
         <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 p-d-flex p-flex-column">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
                     {{ selectedPhysicalModel?.name }}
                 </template>
             </Toolbar>
-            <div class="metaweb-tab-container p-d-flex p-flex-column kn-flex">
+            <div v-if="selectedPhysicalModel" class="metaweb-tab-container p-d-flex p-flex-column kn-flex">
                 <TabView class="metaweb-tabview p-d-flex p-flex-column kn-flex" scrollable>
                     <TabPanel>
                         <template #header>
                             <span>{{ $t('metaweb.physicalModel.propertyList') }}</span>
                         </template>
 
-                        <MetawebPropertyListTab :selectedPhysicalModel="selectedPhysicalModel"></MetawebPropertyListTab>
+                        <MetawebPropertyListTab class="p-m-2" :selectedPhysicalModel="selectedPhysicalModel"></MetawebPropertyListTab>
                     </TabPanel>
                     <TabPanel v-if="selectedPhysicalModel?.type === 'TABLE'">
                         <template #header>
@@ -47,7 +49,6 @@
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import { iChangedData, iColumn, iPhysicalModel } from '../Metaweb'
-// import metawebMock from '../MetawebMock.json'
 import MetawebForeignKeyTab from './tabs/MetawebForeignKeyTab.vue'
 import MetawebPhysicalModelList from './metawebPhysicalModelList/MetawebPhysicalModelList.vue'
 import MetawebPropertyListTab from './tabs/MetawebPropertyListTab.vue'
@@ -55,7 +56,6 @@ import MetawebPhysicalModelUpdateDialog from './metawebPhysicalModelUpdateDialog
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import physDescriptor from './PhysicalModelDescriptor.json'
-// import updateMock from './updateMock.json'
 
 const { applyPatch, generate } = require('fast-json-patch')
 

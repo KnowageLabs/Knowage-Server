@@ -100,6 +100,7 @@
         "size": "Size",
         "sort": "sort",
         "source": "Source",
+        "sqlExpression": "SQL expression",
         "state": "State",
         "status": "Status",
         "suspended": "Suspended",
@@ -1535,6 +1536,8 @@
             "temporalHierarchy": "Manage temporal hierarchy",
             "title": "Business Model"
         },
+        "exitFromMeta": "Exit from meta?",
+        "filterHelpMessage": "If your driver is multivalue, you should set filter to be for example: column_name in ($P{driverUrlName})",
         "incorrectRelationships": {
             "requiredColumns": "Required number of source columns",
             "title": "Incorrect relationships found",
@@ -1567,7 +1570,6 @@
             "tableName": "Table Name"
         },
         "title": "Metaweb",
-        "exitFromMeta": "Exit from meta?",
         "updatePhysicalModel": {
             "addNewColumns": "New columns that will be added",
             "deletedColumns": "Elements that will be marked as deleted",

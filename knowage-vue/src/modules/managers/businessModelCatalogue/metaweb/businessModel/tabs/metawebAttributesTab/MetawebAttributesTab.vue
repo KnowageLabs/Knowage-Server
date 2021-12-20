@@ -176,16 +176,10 @@ export default defineComponent({
             this.loading = false
         },
         openUnusedFieldsDialog() {
-            console.log('BUSINESS MODEL: ', this.businessModel)
-            console.log('META: ', this.meta)
-
             if (this.businessModel && this.businessModel.physicalTable) {
                 this.unusedFields = []
                 const physicalTable = this.meta?.physicalModels[this.businessModel?.physicalTable.physicalTableIndex]
                 const allColumns = [...physicalTable.columns]
-
-                console.log('PHYSICAL TABLE: ', physicalTable)
-                console.log('ALL COLUMNS: ', allColumns)
 
                 for (let i = 0; i < allColumns.length; i++) {
                     const tempColumn = allColumns[i]

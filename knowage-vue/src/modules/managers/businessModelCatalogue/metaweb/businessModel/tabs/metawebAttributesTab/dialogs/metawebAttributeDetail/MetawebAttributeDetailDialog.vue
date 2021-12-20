@@ -180,10 +180,6 @@ export default defineComponent({
 
             this.getAttributeType()
             this.loadAttributeProperties()
-
-            console.log(' >>> LOADED USER: ', (this.$store.state as any).user)
-            console.log(' >>> LOADED STORE: ', this.$store.state as any)
-            console.log(' >>> LOADED ROLES: ', this.roles)
         },
         loadRoleOptions() {
             this.roleOptions = this.roles as any[]
@@ -220,9 +216,6 @@ export default defineComponent({
 
             if (this.properties['behavioural.notEnabledRoles']?.value && typeof this.properties['behavioural.notEnabledRoles'].value === 'string') {
                 this.properties['behavioural.notEnabledRoles'].value = this.properties['behavioural.notEnabledRoles'].value?.split(';')
-
-                console.log('>>> ROLES OPTIONS: ', this.roles)
-                console.log('>>> ROLES SELECTED: ', this.properties['behavioural.notEnabledRoles'].value)
             }
         },
         getFormattedDate(date: any) {

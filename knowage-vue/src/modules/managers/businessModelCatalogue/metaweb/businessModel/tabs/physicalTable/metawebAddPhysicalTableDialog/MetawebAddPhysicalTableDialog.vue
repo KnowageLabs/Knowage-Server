@@ -72,7 +72,6 @@ export default defineComponent({
         loadTables() {
             this.selectedTables = []
             this.rows = this.physicalTables as any[]
-            // console.log('LOADED TABLES: ', this.rows)
         },
         setLoading() {
             this.loading = this.propLoading
@@ -80,9 +79,6 @@ export default defineComponent({
         closeDialog() {
             this.selectedTables = []
             this.$emit('close')
-        },
-        addPhysicalTable() {
-            console.log('addPhysicalTable CLICKED!')
         },
         save() {
             this.$emit('save', [...this.selectedTables])

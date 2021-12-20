@@ -17,7 +17,7 @@
             <div class="p-fluid" v-if="businessModel.physicalTable && meta">
                 <div class="p-field">
                     <label class="kn-material-input-label"> {{ $t('metaweb.businessModel.physicalTable') }} </label>
-                    <InputText class="kn-material-input" v-model="meta.metaSales.physicalModels[businessModel.physicalTable.physicalTableIndex].name" :disabled="true" />
+                    <InputText class="kn-material-input" v-model="meta.physicalModels[businessModel.physicalTable.physicalTableIndex].name" :disabled="true" />
                 </div>
             </div>
         </AccordionTab>
@@ -69,10 +69,6 @@
                     </div>
                 </div>
 
-                <!-- edit temporal hierarchy button -->
-                <!-- TODO CONTINUE AS DEPRECATED -->
-                <Button v-if="prop.value === 'temporal dimension' || prop.value === 'time dimension'" icon="fa fa-sitemap" v-tooltip.top="$t('metaweb.businessModel.temporalHierarchy')" class="p-button-text p-button-rounded p-button-plain" @click="editTemporalHierarchy" />
-
                 <!-- last input -->
                 <div class="p-fluid" v-if="businessModel.physicalColumn && categoryKey === 'physical'">
                     <div class="p-field">
@@ -92,18 +88,17 @@ import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import Dropdown from 'primevue/dropdown'
 import metawebBusinessPropertyListTabDescriptor from './MetawebBusinessPropertyListTabDescriptor.json'
-import metaMock from '../../../MetawebMock.json'
 import MultiSelect from 'primevue/multiselect'
 
 export default defineComponent({
     name: 'metaweb-business-property-list-tab',
     components: { Accordion, AccordionTab, Dropdown, MultiSelect },
-    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> }, roles: { type: Array } },
+    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> }, roles: { type: Array }, propMeta: { type: Object } },
     emits: ['metaUpdated'],
     data() {
         return {
             metawebBusinessPropertyListTabDescriptor,
-            meta: metaMock as any,
+            meta: null as any,
             businessModel: null as iBusinessModel | null,
             categories: [] as any[],
             roleOptions: [] as any[]
@@ -116,6 +111,7 @@ export default defineComponent({
     },
     watch: {
         selectedBusinessModel() {
+            this.loadMeta()
             this.loadBusinessModel()
         },
         roles() {
@@ -123,11 +119,14 @@ export default defineComponent({
         }
     },
     created() {
+        this.loadMeta()
         this.loadBusinessModel()
     },
     methods: {
+        loadMeta() {
+            this.meta = this.propMeta as any
+        },
         loadBusinessModel() {
-            this.businessModel = this.selectedBusinessModel as any
             this.businessModel = this.selectedBusinessModel as iBusinessModel
 
             this.loadCategories()
@@ -151,9 +150,6 @@ export default defineComponent({
                     this.categories[newKey[0]].push({ ...tempProperty[key], type: key })
                 }
             }
-        },
-        editTemporalHierarchy() {
-            console.log('editTemporalHierarchy clicked!')
         },
         updateCategoryValue(property: any) {
             this.businessModel?.properties?.forEach((el: any) => {
