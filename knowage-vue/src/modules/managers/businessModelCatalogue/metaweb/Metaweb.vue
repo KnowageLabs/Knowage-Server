@@ -75,21 +75,16 @@ export default defineComponent({
     },
     methods: {
         loadMeta() {
-            // this.meta = this.metaMock.metaSales
-
             this.meta = this.propMeta
 
             if (this.meta) {
                 this.observer = observe(this.meta)
             }
-            console.log('LOADED META: ', this.meta)
         },
         setLoading(loading: boolean) {
             this.loading = loading
         },
         async metadataSave() {
-            // let patch = generate(this.observer)
-            // console.log('PATCH from MAIN SAVE ', patch)
             await this.checkRelationships(true)
         },
         onMetaUpdated() {
@@ -97,12 +92,10 @@ export default defineComponent({
         },
         async checkRelationships(generateModel: boolean) {
             this.loading = true
-            console.log('BUSINESS MODEL: ', this.businessModel)
             const postData = { data: { name: this.businessModel?.name, id: this.businessModel?.id }, diff: generate(this.observer) }
             await this.$http
                 .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/checkRelationships`, postData)
                 .then(async (response: AxiosResponse<any>) => {
-                    console.log('response, ', response)
                     this.observer = applyPatch(this.observer, response.data)
                     this.observer = observe(this.meta)
                     this.metaUpdated = !this.metaUpdated
@@ -121,8 +114,7 @@ export default defineComponent({
             const postData = { data: { name: this.businessModel?.name, id: this.businessModel?.id }, diff: generate(this.observer) }
             await this.$http
                 .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/generateModel`, postData)
-                .then(async (response: AxiosResponse<any>) => {
-                    console.log('response, ', response)
+                .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')

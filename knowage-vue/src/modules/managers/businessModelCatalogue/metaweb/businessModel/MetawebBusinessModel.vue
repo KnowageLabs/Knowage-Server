@@ -62,7 +62,7 @@
                         </template>
 
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <MetawebBusinessPropertyListTab :selectedBusinessModel="selectedBusinessModel" :roles="roles" @metaUpdated="$emit('metaUpdated')"></MetawebBusinessPropertyListTab>
+                            <MetawebBusinessPropertyListTab :selectedBusinessModel="selectedBusinessModel" :roles="roles" :propMeta="meta" @metaUpdated="$emit('metaUpdated')"></MetawebBusinessPropertyListTab>
                         </div>
                     </TabPanel>
 
@@ -204,7 +204,6 @@ export default defineComponent({
         },
         loadMeta() {
             this.meta = this.propMeta
-            // console.log('LOADED META BUSIENSS MODEL: ', this.meta)
         },
         selectBusinessModel(event) {
             console.log(event.value)
