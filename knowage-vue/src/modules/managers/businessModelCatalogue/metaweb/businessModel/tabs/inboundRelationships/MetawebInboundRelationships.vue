@@ -119,7 +119,7 @@ const { generate, applyPatch } = require('fast-json-patch')
 export default defineComponent({
     name: 'metaweb-attributes-tab',
     components: { TableAssociator, DataTable, Column, Dialog, Dropdown, KnValidationMessages },
-    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null>, required: true }, businessModels: { type: Array, required: true }, businessViews: { type: Array, required: true }, propMeta: { type: Object }, observer: { type: Object } },
+    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null>, required: true }, propMeta: { type: Object, required: true }, observer: { type: Object, required: true } },
     emits: ['loading'],
     computed: {
         leftHasLinks(): boolean {
@@ -137,31 +137,30 @@ export default defineComponent({
     },
     data() {
         return {
-            v$: useValidate() as any,
-            businessModel: null as iBusinessModel | null,
-            meta: null as any,
-            inboundRelationships: [] as any,
-            irDescriptor,
             bsDescriptor,
-            inboundDialogVisible: false,
-            sourceBusinessClassOptions: [] as any,
+            irDescriptor,
+            meta: null as any,
             dataSend: {} as any,
             simpleLeft: [] as any,
             simpleRight: [] as any,
+            v$: useValidate() as any,
             rightElement: null as any,
-            filters: {
-                global: [filterDefault]
-            } as Object
+            inboundDialogVisible: false,
+            inboundRelationships: [] as any,
+            sourceBusinessClassOptions: [] as any,
+            businessModel: null as iBusinessModel | null,
+            filters: { global: [filterDefault] } as Object
         }
     },
     watch: {
-        selectedBusinessModel() {
-            this.loadMeta()
-            this.loadData()
+        selectedBusinessModel: {
+            handler() {
+                this.loadData()
+            },
+            deep: true
         }
     },
     created() {
-        this.loadMeta()
         this.loadData()
     },
     validations() {
@@ -177,10 +176,8 @@ export default defineComponent({
         return validationObject
     },
     methods: {
-        loadMeta() {
-            this.meta = this.propMeta as any
-        },
         loadData() {
+            this.meta = this.propMeta as any
             this.businessModel = this.selectedBusinessModel as iBusinessModel
             this.simpleLeft = this.tableToSimpleBound(this.businessModel)
             this.populateInboundRelationships()
@@ -190,9 +187,8 @@ export default defineComponent({
             this.inboundRelationships = this.selectedBusinessModel?.relationships.filter((relationship) => this.selectedBusinessModel?.uniqueName != relationship.sourceTableName)
         },
         populateSourceBusinessClassOptions() {
-            this.businessModels.forEach((el) => this.sourceBusinessClassOptions.push(el))
-            this.businessViews.forEach((el) => this.sourceBusinessClassOptions.push(el))
-            console.log('populating...', this.sourceBusinessClassOptions)
+            this.propMeta.businessModels.forEach((el) => this.sourceBusinessClassOptions.push(el))
+            this.propMeta.businessViews.forEach((el) => this.sourceBusinessClassOptions.push(el))
         },
         createColumnString(data) {
             var ret = [] as any
@@ -202,9 +198,11 @@ export default defineComponent({
             return ret.join(', ')
         },
         closeDialog() {
-            this.inboundDialogVisible = false
             this.dataSend = {}
+            this.rightElement = null
+            this.simpleRight = []
             this.simpleLeft = this.tableToSimpleBound(this.businessModel)
+            this.inboundDialogVisible = false
         },
         alterTableToSimpleBound(item) {
             this.simpleRight = this.tableToSimpleBound(item)
@@ -214,7 +212,6 @@ export default defineComponent({
             if (model) {
                 if (model.columns)
                     model.columns.forEach(function(item) {
-                        //add only the column ( not calculated field)
                         // eslint-disable-next-line no-prototype-builtins
                         if (!item.hasOwnProperty('referencedColumns')) {
                             a.push({ name: item.name, uname: item.uniqueName, links: [] })
@@ -234,12 +231,11 @@ export default defineComponent({
                     this.dataSend.sourceColumns.push(entry.links[0].uname)
                 }
             })
-            console.log(this.dataSend)
             const postData = { data: this.dataSend, diff: generate(this.observer) }
             await this.$http
                 .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/addBusinessRelation`, postData)
                 .then((response: AxiosResponse<any>) => {
-                    this.meta = applyPatch(this.meta, response.data)
+                    this.meta = applyPatch(this.meta, response.data).newDocument
                     this.closeDialog()
                     this.populateInboundRelationships()
                 })
@@ -247,12 +243,11 @@ export default defineComponent({
                 .finally(() => generate(this.observer))
         },
         async deleteInbound(item) {
-            console.log(item)
             const postData = { data: item, diff: generate(this.observer) }
             await this.$http
                 .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/deleteBusinessRelation`, postData)
                 .then((response: AxiosResponse<any>) => {
-                    this.meta = applyPatch(this.meta, response.data)
+                    this.meta = applyPatch(this.meta, response.data).newDocument
                     this.populateInboundRelationships()
                 })
                 .catch(() => {})
