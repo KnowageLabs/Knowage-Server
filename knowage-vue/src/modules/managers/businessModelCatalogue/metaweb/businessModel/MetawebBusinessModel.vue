@@ -108,9 +108,7 @@
                         <template #header>
                             <span>{{ $t('metaweb.businessModel.tabView.filter') }}</span>
                         </template>
-                        <div :style="mainDescriptor.style.absoluteScroll">
-                            {{ mainDescriptor.test }}
-                        </div>
+                        <div :style="mainDescriptor.style.absoluteScroll"><MetawebFilterTab :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" @metaUpdated="$emit('metaUpdated')"></MetawebFilterTab></div>
                     </TabPanel>
 
                     <TabPanel>
@@ -159,10 +157,11 @@ import InboundRelationships from './tabs/inboundRelationships/MetawebInboundRela
 import OutboundRelationships from './tabs/outboundRelationships/MetawebOutboundRelationships.vue'
 import MetawebPhysicalTableTab from './tabs/physicalTable/MetawebPhysicalTableTab.vue'
 import MetawebJoinRelationships from './tabs/joinRelationships/MetawebJoinRelationships.vue'
+import MetawebFilterTab from './tabs/filterTab/MetawebFilterTab.vue'
 
 export default defineComponent({
     name: 'metaweb-business-model',
-    components: { MetawebJoinRelationships, OutboundRelationships, BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Listbox, Menu, MetawebBusinessPropertyListTab, MetawebAttributesTab, InboundRelationships, MetawebPhysicalTableTab },
+    components: { MetawebJoinRelationships, OutboundRelationships, BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Listbox, Menu, MetawebBusinessPropertyListTab, MetawebAttributesTab, InboundRelationships, MetawebPhysicalTableTab, MetawebFilterTab },
     props: { propMeta: { type: Object }, observer: { type: Object }, metaUpdated: { type: Boolean } },
     emits: ['loading', 'metaUpdated'],
     computed: {},
