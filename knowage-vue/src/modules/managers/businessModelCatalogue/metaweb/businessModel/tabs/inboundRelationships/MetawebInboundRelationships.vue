@@ -187,6 +187,7 @@ export default defineComponent({
             this.inboundRelationships = this.selectedBusinessModel?.relationships.filter((relationship) => this.selectedBusinessModel?.uniqueName != relationship.sourceTableName)
         },
         populateSourceBusinessClassOptions() {
+            this.sourceBusinessClassOptions = []
             this.propMeta.businessModels.forEach((el) => this.sourceBusinessClassOptions.push(el))
             this.propMeta.businessViews.forEach((el) => this.sourceBusinessClassOptions.push(el))
         },
