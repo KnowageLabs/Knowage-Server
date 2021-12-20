@@ -107,7 +107,7 @@
                         <div :style="mainDescriptor.style.absoluteScroll"><MetawebFilterTab :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" @metaUpdated="$emit('metaUpdated')"></MetawebFilterTab></div>
                     </TabPanel>
 
-                    <TabPanel>
+                    <TabPanel v-if="selectedBusinessModel.joinRelationships != undefined">
                         <template #header>
                             <span>{{ $t('metaweb.businessModel.tabView.joinRelationships') }}</span>
                         </template>
@@ -116,7 +116,7 @@
                         </div>
                     </TabPanel>
 
-                    <TabPanel>
+                    <TabPanel v-if="selectedBusinessModel.joinRelationships != undefined">
                         <template #header>
                             <span>{{ $t('metaweb.businessModel.physicalTable') }}</span>
                         </template>
