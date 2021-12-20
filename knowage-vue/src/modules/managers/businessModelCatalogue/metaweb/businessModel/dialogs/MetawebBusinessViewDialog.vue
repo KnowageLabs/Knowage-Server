@@ -8,7 +8,7 @@
             </Toolbar>
         </template>
 
-        <StepOne v-if="wizardStep === 1" :physicalModels="physicalModels" :showBusinessViewDialog="showBusinessViewDialog" :bnssViewObject="tmpBnssView" />
+        <StepOne v-if="wizardStep === 1" :physicalModels="meta.physicalModels" :showBusinessViewDialog="showBusinessViewDialog" :bnssViewObject="tmpBnssView" />
 
         <form v-if="wizardStep === 2" ref="bvForm" class="p-fluid p-formgrid p-grid p-mt-4 p-mx-2 kn-flex-0">
             <div class="p-field p-col-12 p-md-6">
@@ -84,7 +84,7 @@ const { generate, applyPatch } = require('fast-json-patch')
 export default defineComponent({
     components: { Dialog, StepOne, TableAssociator, Dropdown, Listbox },
     emits: ['closeDialog'],
-    props: { physicalModels: Array as any, showBusinessViewDialog: Boolean, meta: Object, observer: { type: Object }, selectedBusinessModel: { type: Object, required: true }, editMode: Boolean },
+    props: { showBusinessViewDialog: Boolean, meta: { type: Object, required: true }, observer: { type: Object }, selectedBusinessModel: { type: Object, required: true }, editMode: Boolean },
     computed: {
         buttonDisabled(): boolean {
             if (this.v$.$invalid || this.tmpBnssView.physicalModels.length < 2) {
@@ -108,26 +108,24 @@ export default defineComponent({
     },
     created() {
         this.loadMeta()
-        this.setEditModeData()
+        // this.setEditModeData()
     },
     watch: {
         meta() {
-            console.log(this.meta)
             this.loadMeta()
-            this.setEditModeData()
+            // this.setEditModeData()
         }
     },
     methods: {
         async loadMeta() {
             this.meta ? (this.metaObserve = this.meta) : ''
-            this.physicalModel = [...this.physicalModels]
-        },
-        resetPhModel() {
-            this.tmpBnssView.physicalModels = []
+            this.physicalModel = [...this.meta.physicalModels]
         },
         closeDialog() {
+            this.tmpBnssView = null as any
+            this.targetTable = null
+            this.sourceTable = null
             this.$emit('closeDialog')
-            this.tmpBnssView = { physicalModels: [], name: '', description: '' } as any
         },
         nextStep() {
             this.wizardStep++
@@ -149,7 +147,7 @@ export default defineComponent({
                 //copy the physical tables
                 for (var pti = 0; pti < this.selectedBusinessModel.physicalTables.length; pti++) {
                     var tmppt = {}
-                    tmppt = { ...this.physicalModels[this.selectedBusinessModel.physicalTables[pti].physicalTableIndex] }
+                    tmppt = { ...this.meta.physicalModels[this.selectedBusinessModel.physicalTables[pti].physicalTableIndex] }
                     this.tmpBnssView.physicalModels.push(tmppt)
                 }
 
@@ -187,7 +185,7 @@ export default defineComponent({
                     }
                 }
             }
-            console.log(this.summary)
+            console.log('SUMMARY UPDATED: ', this.summary)
         },
         async saveBusinessView() {
             var tmpData = {} as any

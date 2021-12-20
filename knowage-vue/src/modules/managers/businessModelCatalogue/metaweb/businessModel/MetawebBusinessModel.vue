@@ -20,7 +20,7 @@
                                     <span>{{ slotProps.option.name }}</span>
                                     <span class="kn-list-item-text-secondary">{{ slotProps.option.columns.length }} Attributes</span>
                                 </div>
-                                <Button icon="pi pi-trash" class="p-button-text p-button-rounded p-button-plain" />
+                                <Button icon="pi pi-trash" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteFromList(slotProps.option)" />
                             </div>
                         </template>
                     </Listbox>
@@ -41,7 +41,7 @@
                                     <span>{{ slotProps.option.name }}</span>
                                     <span class="kn-list-item-text-secondary">{{ slotProps.option.columns.length }} Attributes</span>
                                 </div>
-                                <Button icon="pi pi-trash" class="p-button-text p-button-rounded p-button-plain" />
+                                <Button icon="pi pi-trash" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteFromList(slotProps.option)" />
                             </div>
                         </template>
                     </Listbox>
@@ -131,7 +131,7 @@
     </div>
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     <BusinessClassDialog v-if="showBusinessClassDialog" :meta="meta" :observer="observer" :physicalModels="meta.physicalModels" :showBusinessClassDialog="showBusinessClassDialog" @closeDialog="showBusinessClassDialog = false" />
-    <BusinessViewDialog v-if="showBusinessViewDialog" :meta="meta" :observer="observer" :physicalModels="meta.physicalModels" :showBusinessViewDialog="showBusinessViewDialog" @closeDialog="showBusinessViewDialog = false" />
+    <BusinessViewDialog v-if="showBusinessViewDialog" :meta="meta" :observer="observer" :showBusinessViewDialog="showBusinessViewDialog" @closeDialog="showBusinessViewDialog = false" />
 </template>
 
 <script lang="ts">
@@ -154,6 +154,8 @@ import OutboundRelationships from './tabs/outboundRelationships/MetawebOutboundR
 import MetawebPhysicalTableTab from './tabs/physicalTable/MetawebPhysicalTableTab.vue'
 import MetawebJoinRelationships from './tabs/joinRelationships/MetawebJoinRelationships.vue'
 import MetawebFilterTab from './tabs/filterTab/MetawebFilterTab.vue'
+
+const { generate, applyPatch } = require('fast-json-patch')
 
 export default defineComponent({
     name: 'metaweb-business-model',
@@ -209,6 +211,24 @@ export default defineComponent({
         },
         showBusinessView() {
             this.showBusinessViewDialog = true
+        },
+        async deleteFromList(itemForDeletion) {
+            console.log(itemForDeletion)
+            const postData = { data: { name: itemForDeletion.uniqueName }, diff: generate(this.observer) }
+            let url = ''
+            itemForDeletion.joinRelationships ? (url = process.env.VUE_APP_META_API_URL + '/1.0/metaWeb/deleteBusinessView') : (url = process.env.VUE_APP_META_API_URL + '/1.0/metaWeb/deleteBusinessClass')
+            await this.$http
+                .post(url, postData)
+                .then((response: AxiosResponse<any>) => {
+                    this.meta = applyPatch(this.meta, response.data).newDocument
+
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                    generate(this.observer)
+                })
+                .catch(() => {})
         },
         async loadRoles() {
             this.loading = true
