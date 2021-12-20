@@ -19,7 +19,7 @@
             </Column>
             <Column :style="metawebPhysicalTableTabDescriptor.iconColumnStyle">
                 <template #header>
-                    <Button class="kn-button kn-button--primary p-button-link" @click="openAddPhysicalTableDialog"> {{ $t('common.add') }}</Button>
+                    <Button class="kn-button kn-button--primary p-button-link p-jc-center" @click="openAddPhysicalTableDialog"> {{ $t('common.add') }}</Button>
                 </template>
 
                 <template #body="slotProps">
