@@ -27,7 +27,7 @@
             <template v-if="filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible">
                 <Registry v-if="mode === 'registry'" :id="urlData.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
                 <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger"></Dossier>
-                <Olap v-else-if="mode === 'olap'" :id="urlData.sbiExecutionId" :reloadTrigger="reloadTrigger" :olapCustomViewVisible="olapCustomViewVisible"></Olap>
+                <Olap v-else-if="mode === 'olap'" :id="urlData.sbiExecutionId" :olapId="document.id" :reloadTrigger="reloadTrigger" :olapCustomViewVisible="olapCustomViewVisible" @closeOlapCustomView="olapCustomViewVisible = false" @applyCustomView="executeOlapCustomView"></Olap>
             </template>
 
             <iframe
@@ -203,7 +203,7 @@ export default defineComponent({
             this.loading = true
             this.documentMode = this.documentMode === 'EDIT' ? 'VIEW' : 'EDIT'
             this.hiddenFormData.set('documentMode', this.documentMode)
-            await this.loadURL()
+            await this.loadURL(null)
             this.loading = false
         },
         openHelp() {
@@ -211,7 +211,7 @@ export default defineComponent({
         },
         async refresh() {
             this.parameterSidebarVisible = false
-            await this.loadURL()
+            await this.loadURL(null)
             this.reloadTrigger = !this.reloadTrigger
         },
         toggle(event: Event) {
@@ -342,7 +342,7 @@ export default defineComponent({
 
             await this.loadFilters()
             if (this.filtersData?.isReadyForExecution) {
-                await this.loadURL()
+                await this.loadURL(null)
                 await this.loadExporters()
             } else if (this.filtersData?.filterStatus) {
                 this.parameterSidebarVisible = true
@@ -417,8 +417,8 @@ export default defineComponent({
 
             return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
         },
-        async loadURL() {
-            const postData = { label: this.document.label, role: this.userRole, parameters: this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
+        async loadURL(olapParameters: any) {
+            const postData = { label: this.document.label, role: this.userRole, parameters: olapParameters ? olapParameters : this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
 
             if (this.sbiExecutionId) {
                 postData.SBI_EXECUTION_ID = this.sbiExecutionId
@@ -522,7 +522,7 @@ export default defineComponent({
         async onExecute() {
             this.loading = true
             this.filtersData.isReadyForExecution = true
-            await this.loadURL()
+            await this.loadURL(null)
             this.parameterSidebarVisible = false
             this.reloadTrigger = !this.reloadTrigger
             this.loading = false
@@ -758,6 +758,13 @@ export default defineComponent({
         },
         showOLAPCustomView() {
             this.olapCustomViewVisible = true
+        },
+        async executeOlapCustomView(payload: any) {
+            this.loading = true
+            this.olapCustomViewVisible = false
+            await this.loadURL(payload)
+            this.reloadTrigger = !this.reloadTrigger
+            this.loading = false
         }
     }
 })

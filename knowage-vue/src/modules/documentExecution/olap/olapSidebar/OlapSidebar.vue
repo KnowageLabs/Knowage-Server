@@ -52,7 +52,12 @@
                         <Button :style="{ 'background-image': 'url(' + require('@/assets/images/olap/empty_rows.png') + ')' }" class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"></Button>
                     </div>
                     <div class="p-col-4">
-                        <Button :style="{ 'background-image': 'url(' + require('@/assets/images/olap/savesuboject.png') + ')' }" class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"></Button>
+                        <Button
+                            :style="{ 'background-image': 'url(' + require('@/assets/images/olap/savesuboject.png') + ')' }"
+                            class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"
+                            v-tooltip.top="$t('documentExecution.olap.sidebar.showCustomizedView')"
+                            @click="$emit('openCustomViewDialog')"
+                        ></Button>
                     </div>
                 </div>
             </div>
@@ -68,6 +73,7 @@ import SelectButton from 'primevue/selectbutton'
 export default defineComponent({
     name: 'olap-sidebar',
     components: { SelectButton },
+    emits: ['openCustomViewDialog'],
     data() {
         return {
             olapSidebarDescriptor,
