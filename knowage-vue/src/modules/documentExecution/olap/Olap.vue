@@ -2,7 +2,17 @@
     <div class="kn-height-full kn-width-full olap-page-container">
         <div class="p-d-flex p-flex-column">
             <div v-if="olapSidebarVisible" id="olap-backdrop" @click="olapSidebarVisible = false"></div>
-            <OlapSidebar v-if="olapSidebarVisible" class="olap-sidebar kn-overflow-y" :olap="olap" @openCustomViewDialog="customViewSaveDialogVisible = true" @drillTypeChanged="onDrillTypeChanged"></OlapSidebar>
+            <OlapSidebar
+                v-if="olapSidebarVisible"
+                class="olap-sidebar kn-overflow-y"
+                :olap="olap"
+                @openCustomViewDialog="customViewSaveDialogVisible = true"
+                @drillTypeChanged="onDrillTypeChanged"
+                @showParentMemberChanged="onShowParentMemberChanged"
+                @hideSpansChanged="onHideSpansChanged"
+                @suppressEmptyChanged="onSuppressEmptyChanged"
+                @showPropertiesChanged="onShowPropertiesChanged"
+            ></OlapSidebar>
 
             <div ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
             <Button @click="olapSidebarVisible = true">OPEN SIDEBAR</Button>
@@ -190,6 +200,22 @@ export default defineComponent({
         },
         async onDrillTypeChanged(newDrillType: string) {
             this.olap.modelConfig.drillType = newDrillType
+            await this.loadModelConfig()
+        },
+        async onShowParentMemberChanged(showParantMembers: boolean) {
+            this.olap.modelConfig.showParentMembers = showParantMembers
+            await this.loadModelConfig()
+        },
+        async onHideSpansChanged(hideSpans: boolean) {
+            this.olap.modelConfig.hideSpans = hideSpans
+            await this.loadModelConfig()
+        },
+        async onSuppressEmptyChanged(suppressEmpty: boolean) {
+            this.olap.modelConfig.suppressEmpty = suppressEmpty
+            await this.loadModelConfig()
+        },
+        async onShowPropertiesChanged(showProperties: boolean) {
+            this.olap.modelConfig.showProperties = showProperties
             await this.loadModelConfig()
         },
         async handleTableClick(event: Event) {
