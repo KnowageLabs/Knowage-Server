@@ -18,7 +18,7 @@
 
             <div id="whitespace" :style="toolbarDescriptor.style.whitespace" />
 
-            <Button icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.sidebarButton" />
+            <Button icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.sidebarButton" @click="$emit('openSidebar')" />
         </span>
     </div>
 </template>
@@ -31,7 +31,7 @@ import toolbarDescriptor from './OlapFilterToolbarDescriptor.json'
 export default defineComponent({
     components: {},
     props: { olapProp: { type: Object, required: true } },
-    emits: [],
+    emits: ['openSidebar'],
     data() {
         return {
             toolbarDescriptor,
