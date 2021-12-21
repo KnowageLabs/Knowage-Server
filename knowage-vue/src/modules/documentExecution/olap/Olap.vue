@@ -1,7 +1,15 @@
 <template>
     <div class="kn-height-full kn-width-full olap-page-container">
         <div class="p-d-flex p-flex-column">
-            <div v-if="olapSidebarVisible" id="olap-backdrop" @click="olapSidebarVisible = false"></div>
+            <FilterPanel :olapProp="olap" />
+
+            <div ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
+            <Button @click="olapSidebarVisible = true">OPEN SIDEBAR</Button>
+
+            <OlapCustomViewTable v-if="customViewVisible" class="p-m-2" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)"></OlapCustomViewTable>
+
+            <!-- SIDEBAR -------------------------------------->
+            <div v-if="olapSidebarVisible" id="olap-backdrop" @click="olapSidebarVisible = false" />
             <OlapSidebar
                 v-if="olapSidebarVisible"
                 class="olap-sidebar kn-overflow-y"
@@ -38,10 +46,11 @@ import OlapSortingDialog from './sortingDialog/OlapSortingDialog.vue'
 import OlapCustomViewTable from './customView/OlapCustomViewTable.vue'
 import OlapCustomViewSaveDialog from './customViewSaveDialog/OlapCustomViewSaveDialog.vue'
 import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
+import FilterPanel from './filterPanel/OlapFilterPanel.vue'
 
 export default defineComponent({
     name: 'olap',
-    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog },
+    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel },
     props: { id: { type: String }, olapId: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
     emits: ['closeOlapCustomView', 'applyCustomView'],
     data() {
