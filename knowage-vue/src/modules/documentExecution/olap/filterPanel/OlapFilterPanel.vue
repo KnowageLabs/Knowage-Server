@@ -3,7 +3,7 @@
         <div v-if="filterCardList?.length == 0" class="p-d-flex p-flex-row kn-flex p-jc-center">
             <InlineMessage class="kn-flex p-m-1" :style="panelDescriptor.style.noFilters" severity="info" closable="false">{{ $t('documentExecution.olap.filterPanel.filterPanelEmpty') }}</InlineMessage>
         </div>
-        <FilterCard :filterCardList="filterCardList" />
+        <FilterCard v-else :filterCardList="filterCardList" />
     </div>
 </template>
 
