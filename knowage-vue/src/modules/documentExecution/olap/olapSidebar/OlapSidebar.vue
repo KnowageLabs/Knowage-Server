@@ -53,7 +53,12 @@
                         ></Button>
                     </div>
                     <div class="p-col-4">
-                        <Button :style="{ 'background-image': 'url(' + require('@/assets/images/olap/sorting-settings.png') + ')' }" class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.sortingSettings')"></Button>
+                        <Button
+                            :style="{ 'background-image': 'url(' + require('@/assets/images/olap/sorting-settings.png') + ')' }"
+                            class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"
+                            v-tooltip.top="$t('documentExecution.olap.sidebar.sortingSettings')"
+                            @click="$emit('openSortingDialog')"
+                        ></Button>
                     </div>
                     <div class="p-col-4">
                         <Button
@@ -94,7 +99,7 @@ export default defineComponent({
     name: 'olap-sidebar',
     components: { SelectButton },
     props: { olap: { type: Object } },
-    emits: ['openCustomViewDialog', 'drillTypeChanged', 'showParentMemberChanged', 'hideSpansChanged', 'suppressEmptyChanged', 'showPropertiesChanged'],
+    emits: ['openCustomViewDialog', 'drillTypeChanged', 'showParentMemberChanged', 'hideSpansChanged', 'suppressEmptyChanged', 'showPropertiesChanged', 'openSortingDialog'],
     data() {
         return {
             olapSidebarDescriptor,
