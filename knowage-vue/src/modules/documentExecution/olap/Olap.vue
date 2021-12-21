@@ -3,11 +3,6 @@
         <div class="p-d-flex p-flex-column">
             <FilterPanel :olapProp="olap" />
 
-            <div ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
-            <Button @click="olapSidebarVisible = true">OPEN SIDEBAR</Button>
-
-            <OlapCustomViewTable v-if="customViewVisible" class="p-m-2" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)"></OlapCustomViewTable>
-
             <!-- SIDEBAR -------------------------------------->
             <div v-if="olapSidebarVisible" id="olap-backdrop" @click="olapSidebarVisible = false" />
             <OlapSidebar
@@ -21,6 +16,7 @@
                 @suppressEmptyChanged="onSuppressEmptyChanged"
                 @showPropertiesChanged="onShowPropertiesChanged"
                 @openSortingDialog="sortingDialogVisible = true"
+                @openMdxQueryDialog="mdxQueryDialogVisible = true"
             ></OlapSidebar>
 
             <div ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
@@ -32,6 +28,7 @@
         <!-- DIALOGS ------------------------------------------->
         <OlapCustomViewSaveDialog :visible="customViewSaveDialogVisible" :sbiExecutionId="id" @close="customViewSaveDialogVisible = false"></OlapCustomViewSaveDialog>
         <OlapSortingDialog :visible="sortingDialogVisible" :olap="olap" @save="onSortingSelect"></OlapSortingDialog>
+        <OlapMDXQueryDialog :visible="mdxQueryDialogVisible" :mdxQuery="olap.MDXWITHOUTCF" @close="mdxQueryDialogVisible = false"></OlapMDXQueryDialog>
         <KnOverlaySpinnerPanel :visibility="loading" />
     </div>
 </template>
@@ -45,12 +42,13 @@ import OlapSidebar from './olapSidebar/OlapSidebar.vue'
 import OlapSortingDialog from './sortingDialog/OlapSortingDialog.vue'
 import OlapCustomViewTable from './customView/OlapCustomViewTable.vue'
 import OlapCustomViewSaveDialog from './customViewSaveDialog/OlapCustomViewSaveDialog.vue'
+import OlapMDXQueryDialog from './mdxQueryDialog/OlapMDXQueryDialog.vue'
 import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import FilterPanel from './filterPanel/OlapFilterPanel.vue'
 
 export default defineComponent({
     name: 'olap',
-    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel },
+    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, OlapMDXQueryDialog },
     props: { id: { type: String }, olapId: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
     emits: ['closeOlapCustomView', 'applyCustomView'],
     data() {
@@ -62,6 +60,7 @@ export default defineComponent({
             olapCustomViews: [] as iOlapCustomView[],
             customViewSaveDialogVisible: false,
             sortingDialogVisible: false,
+            mdxQueryDialogVisible: false,
             sort: null as any,
             loading: false
         }

@@ -21,7 +21,12 @@
                 <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.olapFunctions') }}</label>
                 <div class="p-grid">
                     <div class="p-col-4">
-                        <Button :style="{ 'background-image': 'url(' + require('@/assets/images/olap/mdx.png') + ')' }" class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.mdxQuery')"></Button>
+                        <Button
+                            :style="{ 'background-image': 'url(' + require('@/assets/images/olap/mdx.png') + ')' }"
+                            class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"
+                            v-tooltip.top="$t('documentExecution.olap.sidebar.mdxQuery')"
+                            @click="$emit('openMdxQueryDialog')"
+                        ></Button>
                     </div>
                     <div class="p-col-4">
                         <Button :style="{ 'background-image': 'url(' + require('@/assets/images/olap/reload16.png') + ')' }" class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.reloadSchema')"></Button>
@@ -99,7 +104,7 @@ export default defineComponent({
     name: 'olap-sidebar',
     components: { SelectButton },
     props: { olap: { type: Object } },
-    emits: ['openCustomViewDialog', 'drillTypeChanged', 'showParentMemberChanged', 'hideSpansChanged', 'suppressEmptyChanged', 'showPropertiesChanged', 'openSortingDialog'],
+    emits: ['openCustomViewDialog', 'drillTypeChanged', 'showParentMemberChanged', 'hideSpansChanged', 'suppressEmptyChanged', 'showPropertiesChanged', 'openSortingDialog', 'openMdxQueryDialog'],
     data() {
         return {
             olapSidebarDescriptor,

@@ -308,6 +308,7 @@
                 "title": "Olap custom view List"
             },
             "savingCustomizedView": "Saving customized view",
+            "showMdxQuery": "Show MDX Query",
             "sidebar": {
                 "calculatedFieldWizard": "Calculated field wizard",
                 "drillOnData": "Drill on data",
