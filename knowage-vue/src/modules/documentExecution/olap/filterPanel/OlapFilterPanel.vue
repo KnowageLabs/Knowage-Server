@@ -24,9 +24,15 @@ export default defineComponent({
             filterCardList: [] as iOlapFilter[]
         }
     },
+    watch: {
+        olapProp() {
+            this.loadData()
+        }
+    },
     created() {
         this.loadData()
     },
+
     methods: {
         loadData() {
             this.filterCardList = this.olapProp?.filters as iOlapFilter[]
