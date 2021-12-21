@@ -5,7 +5,7 @@
             <OlapSidebar v-if="olapSidebarVisible" class="olap-sidebar kn-overflow-y" @openCustomViewDialog="customViewSaveDialogVisible = true"></OlapSidebar>
 
             <!-- {{ customViewVisible }} -->
-            <div ref="olap-table" class="test-olap" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="test"></div>
+            <div ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
             <Button @click="olapSidebarVisible = true">OPEN SIDEBAR</Button>
 
             <OlapCustomViewTable v-if="customViewVisible" class="p-m-2" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)"></OlapCustomViewTable>
@@ -167,7 +167,32 @@ export default defineComponent({
 
             this.loading = false
         },
-        test(event: Event) {
+        async drillUp(event: any) {
+            this.loading = true
+            console.log('EVENT INSIDE DRILL UP: ', event)
+
+            const postData = JSON.stringify({
+                axis: event.target.parentNode.getAttribute('axis'),
+                memberPosition: event.target.parentNode.getAttribute('memberordinal'),
+                memberUniqueName: event.target.parentNode.getAttribute('uniquename'),
+                position: event.target.parentNode.getAttribute('position'),
+                positionUniqueName: event.target.parentNode.getAttribute('positionuniquename')
+            })
+            await this.$http
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/drillup?SBI_EXECUTION_ID=${this.id}`, postData, {
+                    headers: {
+                        Accept: 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    }
+                })
+                .then((response: AxiosResponse<any>) => (this.olap = response.data))
+                .catch(() => {})
+
+            this.formatOlapTable()
+
+            this.loading = false
+        },
+        async handleTableClick(event: Event) {
             console.log('>>> COMPONENT: ', this.dynamicComponent)
             console.log('EVENT: ', event)
 
@@ -176,10 +201,10 @@ export default defineComponent({
             if (eventTarget) {
                 switch (eventTarget.className) {
                     case 'drill-up':
-                        console.log('TODO - DRILL UP!')
+                        await this.drillUp(event)
                         break
                     case 'drill-down':
-                        this.drillDown(event)
+                        await this.drillDown(event)
                         break
                 }
             }
