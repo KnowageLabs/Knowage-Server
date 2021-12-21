@@ -2,7 +2,7 @@
     <Dialog class="metaweb-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="mainDescriptor.style.flex" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left> {{ $t('metaweb.title') }} : NAME HERE </template>
+                <template #left> {{ $t('metaweb.title') }} </template>
                 <template #right>
                     <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="metadataSave" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeMetawebConfirm" />
@@ -156,6 +156,7 @@ export default defineComponent({
 .remove-padding.p-dialog .p-dialog-content {
     padding: 0;
     margin: 0;
+    overflow-x: hidden;
 }
 .metaweb-tab-container .p-tabview .p-tabview-panel,
 .metaweb-tab-container .p-tabview .p-tabview-panels {
