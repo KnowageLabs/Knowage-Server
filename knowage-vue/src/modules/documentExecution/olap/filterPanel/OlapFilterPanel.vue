@@ -1,9 +1,9 @@
 <template>
     <div id="filterPanel" class="p-d-flex filterPanel p-ai-center">
-        <div v-if="filterCardList.length == 0" class="p-d-flex p-flex-row kn-flex p-jc-center">
+        <div v-if="filterCardList?.length == 0" class="p-d-flex p-flex-row kn-flex p-jc-center">
             <InlineMessage class="kn-flex p-m-1" :style="panelDescriptor.style.noFilters" severity="info" closable="false">{{ $t('documentExecution.olap.filterPanel.filterPanelEmpty') }}</InlineMessage>
         </div>
-        <FilterCard :filterCardList="filterCardList" />
+        <FilterCard v-else :filterCardList="filterCardList" />
     </div>
 </template>
 
@@ -29,7 +29,7 @@ export default defineComponent({
     },
     methods: {
         loadData() {
-            this.filterCardList = this.olapProp.filters as iOlapFilter[]
+            this.filterCardList = this.olapProp?.filters as iOlapFilter[]
         }
     }
 })

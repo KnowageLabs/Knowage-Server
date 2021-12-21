@@ -8,7 +8,7 @@
             "color": "#3b678c",
             "cursor": "grab",
             "display": "flex",
-            "font-size": ".7rem",
+            "font-size": "0.8rem",
             "height": "27px",
             "line-height": "27px",
             "margin": "5px",

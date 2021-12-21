@@ -1,0 +1,33 @@
+{
+    "style": {
+        "filterCard": {
+            "align-items": "center",
+            "background-color": "#43749e",
+            "border": "1px solid #fff",
+            "border-radius": "2px",
+            "color": "#fff",
+            "cursor": "grab",
+            "display": "flex",
+            "font-size": "0.8rem",
+            "font-weight": "normal",
+            "line-height": "1.5",
+            "max-height": "28px"
+        },
+        "sidebarButton": {
+            "color": "white",
+            "width": "50px"
+        },
+        "toolbar": {
+            "background-color": "#43749e",
+            "color": "white"
+        },
+        "toolbarContainer": {
+            "min-height": "32px"
+        },
+        "whitespace": {
+            "background-color": "white",
+            "height": "100%",
+            "width": "2px"
+        }
+    }
+}

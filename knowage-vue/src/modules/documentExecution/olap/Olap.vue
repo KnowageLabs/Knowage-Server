@@ -2,6 +2,7 @@
     <div class="kn-height-full kn-width-full olap-page-container">
         <div class="p-d-flex p-flex-column">
             <FilterPanel :olapProp="olap" />
+            <FilterTopToolbar :olapProp="olap" />
 
             <!-- SIDEBAR -------------------------------------->
             <div v-if="olapSidebarVisible" id="olap-backdrop" @click="olapSidebarVisible = false" />
@@ -46,10 +47,11 @@ import OlapCustomViewSaveDialog from './customViewSaveDialog/OlapCustomViewSaveD
 import OlapMDXQueryDialog from './mdxQueryDialog/OlapMDXQueryDialog.vue'
 import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import FilterPanel from './filterPanel/OlapFilterPanel.vue'
+import FilterTopToolbar from './filterToolbar/OlapTopFilterToolbar.vue'
 
 export default defineComponent({
     name: 'olap',
-    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, OlapMDXQueryDialog },
+    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, FilterTopToolbar, OlapMDXQueryDialog },
     props: { id: { type: String }, olapId: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
     emits: ['closeOlapCustomView', 'applyCustomView'],
     data() {
