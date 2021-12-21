@@ -1,6 +1,6 @@
 <template>
-    <div class="kn-height-full olap-page-container">
-        <div class="p-d-flex p-flex-row">
+    <div class="kn-height-full kn-width-full olap-page-container">
+        <div class="p-d-flex p-flex-column">
             <div v-if="olapSidebarVisible" id="olap-backdrop" @click="olapSidebarVisible = false"></div>
             <OlapSidebar v-if="olapSidebarVisible" class="olap-sidebar kn-overflow-y" @openCustomViewDialog="customViewSaveDialogVisible = true"></OlapSidebar>
 
@@ -11,8 +11,8 @@
             <OlapCustomViewTable v-if="customViewVisible" class="p-m-2" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)"></OlapCustomViewTable>
         </div>
 
+        <!-- DIALOGS ------------------------------------------->
         <OlapCustomViewSaveDialog :visible="customViewSaveDialogVisible" :sbiExecutionId="id" @close="customViewSaveDialogVisible = false"></OlapCustomViewSaveDialog>
-
         <KnOverlaySpinnerPanel :visibility="loading" />
     </div>
 </template>
