@@ -301,6 +301,9 @@ export default defineComponent({
             this.formatOlapTable()
             this.loading = false
         },
+        async executeCrossNavigationFromCell(event: any) {
+            console.log('EVENT IN EXEC FROM CELL: ', event)
+        },
         async handleTableClick(event: Event) {
             console.log('EVENT: ', event)
 
@@ -323,7 +326,10 @@ export default defineComponent({
                         await this.sortOlap(event)
                         break
                     case 'external-cross-navigation':
-                        await this.execExternalCrossNavigation(event)
+                        this.execExternalCrossNavigation(event)
+                        break
+                    case 'cell-cross-navigation':
+                        await this.executeCrossNavigationFromCell(event)
                         break
                 }
             }
