@@ -36,6 +36,14 @@
                             @click="$emit('reloadSchema')"
                         ></Button>
                     </div>
+                    <div class="p-col-4">
+                        <Button
+                            :style="{ 'background-image': 'url(' + require('@/assets/images/olap/cross-navigation.png') + ')' }"
+                            class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"
+                            v-tooltip.top="$t('documentExecution.olap.sidebar.enableCrossNavigation')"
+                            @click="onEnableCrossNavigationClick"
+                        ></Button>
+                    </div>
                     <div class="p-col-4"></div>
                 </div>
             </div>
@@ -109,7 +117,7 @@ export default defineComponent({
     name: 'olap-sidebar',
     components: { SelectButton },
     props: { olap: { type: Object } },
-    emits: ['openCustomViewDialog', 'drillTypeChanged', 'showParentMemberChanged', 'hideSpansChanged', 'suppressEmptyChanged', 'showPropertiesChanged', 'openSortingDialog', 'openMdxQueryDialog', 'reloadSchema'],
+    emits: ['openCustomViewDialog', 'drillTypeChanged', 'showParentMemberChanged', 'hideSpansChanged', 'suppressEmptyChanged', 'showPropertiesChanged', 'openSortingDialog', 'openMdxQueryDialog', 'reloadSchema', 'enableCrossNavigation'],
     data() {
         return {
             olapSidebarDescriptor,
@@ -117,7 +125,8 @@ export default defineComponent({
             showParentMembers: false,
             hideSpans: false,
             suppressEmpty: false,
-            showProperties: false
+            showProperties: false,
+            crossNavigation: false
         }
     },
     watch: {
@@ -136,6 +145,7 @@ export default defineComponent({
                 this.hideSpans = this.olap.modelConfig.hideSpans
                 this.suppressEmpty = this.olap.modelConfig.suppressEmpty
                 this.showProperties = this.olap.modelConfig.showProperties
+                this.crossNavigation = this.olap.modelConfig.crossNavigation.buttonClicked
             }
         },
         onShowParentMemberClick() {
@@ -153,6 +163,10 @@ export default defineComponent({
         onShowPropertiesClick() {
             this.showProperties = !this.showProperties
             this.$emit('showPropertiesChanged', this.showProperties)
+        },
+        onEnableCrossNavigationClick() {
+            this.crossNavigation = !this.crossNavigation
+            this.$emit('enableCrossNavigation', this.crossNavigation)
         }
     }
 })
