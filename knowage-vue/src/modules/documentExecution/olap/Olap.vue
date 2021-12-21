@@ -2,9 +2,18 @@
     <div class="kn-height-full kn-width-full olap-page-container">
         <div class="p-d-flex p-flex-column">
             <div v-if="olapSidebarVisible" id="olap-backdrop" @click="olapSidebarVisible = false"></div>
-            <OlapSidebar v-if="olapSidebarVisible" class="olap-sidebar kn-overflow-y" @openCustomViewDialog="customViewSaveDialogVisible = true"></OlapSidebar>
+            <OlapSidebar
+                v-if="olapSidebarVisible"
+                class="olap-sidebar kn-overflow-y"
+                :olap="olap"
+                @openCustomViewDialog="customViewSaveDialogVisible = true"
+                @drillTypeChanged="onDrillTypeChanged"
+                @showParentMemberChanged="onShowParentMemberChanged"
+                @hideSpansChanged="onHideSpansChanged"
+                @suppressEmptyChanged="onSuppressEmptyChanged"
+                @showPropertiesChanged="onShowPropertiesChanged"
+            ></OlapSidebar>
 
-            <!-- {{ customViewVisible }} -->
             <div ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
             <Button @click="olapSidebarVisible = true">OPEN SIDEBAR</Button>
 
@@ -35,7 +44,6 @@ export default defineComponent({
     data() {
         return {
             olapDescriptor,
-            firstOlap: null as any,
             olap: null as any,
             olapSidebarVisible: false,
             customViewVisible: false,
@@ -47,24 +55,7 @@ export default defineComponent({
     async created() {
         await this.loadPage()
     },
-    computed: {
-        dynamicComponent() {
-            return {
-                template: '<h1 v-drilldown>TEST</h1>',
-
-                // redirect every shared data here
-                data: () => {
-                    return {}
-                },
-
-                created() {
-                    console.log(' >>> CREATED INSIDE DYNAMIC!!!')
-                },
-                // redirect every shared methods here
-                methods: {}
-            }
-        }
-    },
+    computed: {},
     watch: {
         async id() {
             await this.loadPage()
@@ -113,10 +104,10 @@ export default defineComponent({
                     }
                 )
                 .then(async (response: AxiosResponse<any>) => {
-                    this.firstOlap = response.data
+                    this.olap = response.data
 
-                    console.log('LOADED FIRST OLAP: ', this.firstOlap)
-                    console.log('MODEL CONFIG: ', this.firstOlap.modelConfig)
+                    console.log('LOADED FIRST OLAP: ', this.olap)
+                    console.log('MODEL CONFIG: ', this.olap.modelConfig)
 
                     await this.loadModelConfig()
                 })
@@ -124,8 +115,9 @@ export default defineComponent({
             this.loading = false
         },
         async loadModelConfig() {
+            this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_OLAP_PATH + `1.0/modelconfig?SBI_EXECUTION_ID=${this.id}&NOLOADING=undefined`, this.firstOlap.modelConfig, {
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/modelconfig?SBI_EXECUTION_ID=${this.id}&NOLOADING=undefined`, this.olap.modelConfig, {
                     headers: {
                         Accept: 'application/json, text/plain, */*',
                         'Content-Type': 'application/json;charset=UTF-8'
@@ -135,12 +127,15 @@ export default defineComponent({
                 .catch(() => {})
 
             this.formatOlapTable()
+            this.loading = false
 
             console.log('LOADED OLAP: ', this.olap)
         },
         formatOlapTable() {
-            this.olap.table = this.olap.table.replaceAll('</drillup>', ' <div class="drill-up"></div></drillup>')
+            this.olap.table = this.olap.table.replaceAll('</drillup>', ' <div class="drill-up"></div></drillup> ')
             this.olap.table = this.olap.table.replaceAll('</drilldown>', '<div class="drill-down"></div> </drilldown> ')
+            this.olap.table = this.olap.table.replaceAll('../../../../knowage/themes/commons/img/olap/nodrill.png', '')
+            this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/arrow-up.png"', ' <div class="drill-up-replace"></div ')
         },
         async drillDown(event: any) {
             this.loading = true
@@ -167,19 +162,12 @@ export default defineComponent({
 
             this.loading = false
         },
-        async drillUp(event: any) {
+        async drillUp(event: any, replace: boolean) {
             this.loading = true
             console.log('EVENT INSIDE DRILL UP: ', event)
 
-            const postData = JSON.stringify({
-                axis: event.target.parentNode.getAttribute('axis'),
-                memberPosition: event.target.parentNode.getAttribute('memberordinal'),
-                memberUniqueName: event.target.parentNode.getAttribute('uniquename'),
-                position: event.target.parentNode.getAttribute('position'),
-                positionUniqueName: event.target.parentNode.getAttribute('positionuniquename')
-            })
             await this.$http
-                .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/drillup?SBI_EXECUTION_ID=${this.id}`, postData, {
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/drillup?SBI_EXECUTION_ID=${this.id}`, this.formatDrillUpPostData(event, replace), {
                     headers: {
                         Accept: 'application/json, text/plain, */*',
                         'Content-Type': 'application/json;charset=UTF-8'
@@ -192,8 +180,45 @@ export default defineComponent({
 
             this.loading = false
         },
+        formatDrillUpPostData(event: any, replace: boolean) {
+            let tempArray = [] as any[]
+            if (replace) {
+                const temp = event.target.attributes[0].textContent
+                const tempString = temp.substring(temp.indexOf('(') + 1, temp.lastIndexOf(')'))
+                tempArray = tempString?.split(',')
+            }
+
+            const postData = JSON.stringify({
+                axis: replace ? +tempArray[0] : event.target.parentNode.getAttribute('axis'),
+                memberPosition: replace ? +tempArray[2] : event.target.parentNode.getAttribute('memberordinal'),
+                memberUniqueName: replace ? tempArray[3].trim().substring(1, tempArray[3].length - 1) : event.target.parentNode.getAttribute('uniquename'),
+                position: replace ? +tempArray[1] : event.target.parentNode.getAttribute('position'),
+                positionUniqueName: replace ? tempArray[4].trim().substring(1, tempArray[4].length - 2) : event.target.parentNode.getAttribute('positionuniquename')
+            })
+
+            return postData
+        },
+        async onDrillTypeChanged(newDrillType: string) {
+            this.olap.modelConfig.drillType = newDrillType
+            await this.loadModelConfig()
+        },
+        async onShowParentMemberChanged(showParantMembers: boolean) {
+            this.olap.modelConfig.showParentMembers = showParantMembers
+            await this.loadModelConfig()
+        },
+        async onHideSpansChanged(hideSpans: boolean) {
+            this.olap.modelConfig.hideSpans = hideSpans
+            await this.loadModelConfig()
+        },
+        async onSuppressEmptyChanged(suppressEmpty: boolean) {
+            this.olap.modelConfig.suppressEmpty = suppressEmpty
+            await this.loadModelConfig()
+        },
+        async onShowPropertiesChanged(showProperties: boolean) {
+            this.olap.modelConfig.showProperties = showProperties
+            await this.loadModelConfig()
+        },
         async handleTableClick(event: Event) {
-            console.log('>>> COMPONENT: ', this.dynamicComponent)
             console.log('EVENT: ', event)
 
             const eventTarget = event.target as any
@@ -201,10 +226,13 @@ export default defineComponent({
             if (eventTarget) {
                 switch (eventTarget.className) {
                     case 'drill-up':
-                        await this.drillUp(event)
+                        await this.drillUp(event, false)
                         break
                     case 'drill-down':
                         await this.drillDown(event)
+                        break
+                    case 'drill-up-replace':
+                        await this.drillUp(event, true)
                         break
                 }
             }
@@ -244,6 +272,14 @@ export default defineComponent({
 
 .drill-down {
     background-image: url('../../../assets/images/olap/plus.gif');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 0.8rem;
+    width: 0.8rem;
+}
+
+.drill-up-replace {
+    background-image: url('../../../assets/images/olap/arrow-up.png');
     background-position: center;
     background-repeat: no-repeat;
     height: 0.8rem;

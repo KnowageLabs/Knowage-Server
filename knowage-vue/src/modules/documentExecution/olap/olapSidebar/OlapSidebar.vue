@@ -6,10 +6,10 @@
             </template>
         </Toolbar>
 
-        <div class="p-d-flex p-flex-column p-m-2">
+        <div v-if="olap" class="p-d-flex p-flex-column p-m-2">
             <div class="p-m-2">
                 <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.drillOnDimension') }}</label>
-                <SelectButton v-model="drillOn" :options="olapSidebarDescriptor.drillOnOptions"></SelectButton>
+                <SelectButton v-model="drillOn" :options="olapSidebarDescriptor.drillOnOptions" @click="$emit('drillTypeChanged', drillOn)"></SelectButton>
             </div>
 
             <div class="p-d-flex p-flex-column p-m-2">
@@ -21,10 +21,10 @@
                 <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.olapFunctions') }}</label>
                 <div class="p-grid">
                     <div class="p-col-4">
-                        <Button :style="{ 'background-image': 'url(' + require('@/assets/images/olap/mdx.png') + ')' }" class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"></Button>
+                        <Button :style="{ 'background-image': 'url(' + require('@/assets/images/olap/mdx.png') + ')' }" class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.mdxQuery')"></Button>
                     </div>
                     <div class="p-col-4">
-                        <Button :style="{ 'background-image': 'url(' + require('@/assets/images/olap/reload16.png') + ')' }" class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"></Button>
+                        <Button :style="{ 'background-image': 'url(' + require('@/assets/images/olap/reload16.png') + ')' }" class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.reloadSchema')"></Button>
                     </div>
                     <div class="p-col-4"></div>
                 </div>
@@ -34,22 +34,42 @@
                 <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.tableFunctions') }}</label>
                 <div class="p-grid">
                     <div class="p-col-4">
-                        <Button :style="{ 'background-image': 'url(' + require('@/assets/images/olap/show_parent_members.png') + ')' }" class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"></Button>
+                        <Button
+                            :style="{ 'background-image': 'url(' + require('@/assets/images/olap/show_parent_members.png') + ')' }"
+                            class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"
+                            v-tooltip.top="$t('documentExecution.olap.sidebar.showParentMembers')"
+                            @click="onShowParentMemberClick"
+                        ></Button>
                     </div>
                     <div class="p-col-4">
-                        <Button :style="{ 'background-image': 'url(' + require('@/assets/images/olap/cc.png') + ')' }" class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"></Button>
+                        <Button :style="{ 'background-image': 'url(' + require('@/assets/images/olap/cc.png') + ')' }" class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.calculatedFieldWizard')"></Button>
                     </div>
                     <div class="p-col-4">
-                        <Button :style="{ 'background-image': 'url(' + require('@/assets/images/olap/hide_spans.png') + ')' }" class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"></Button>
+                        <Button
+                            :style="{ 'background-image': 'url(' + require('@/assets/images/olap/hide_spans.png') + ')' }"
+                            class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"
+                            v-tooltip.top="$t('documentExecution.olap.sidebar.hideSpans')"
+                            @click="onHideSpansClick"
+                        ></Button>
                     </div>
                     <div class="p-col-4">
-                        <Button :style="{ 'background-image': 'url(' + require('@/assets/images/olap/sorting-settings.png') + ')' }" class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"></Button>
+                        <Button :style="{ 'background-image': 'url(' + require('@/assets/images/olap/sorting-settings.png') + ')' }" class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.sortingSettings')"></Button>
                     </div>
                     <div class="p-col-4">
-                        <Button :style="{ 'background-image': 'url(' + require('@/assets/images/olap/show_props.png') + ')' }" class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"></Button>
+                        <Button
+                            :style="{ 'background-image': 'url(' + require('@/assets/images/olap/show_props.png') + ')' }"
+                            class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"
+                            v-tooltip.top="$t('documentExecution.olap.sidebar.showProperties')"
+                            @click="onShowPropertiesClick"
+                        ></Button>
                     </div>
                     <div class="p-col-4">
-                        <Button :style="{ 'background-image': 'url(' + require('@/assets/images/olap/empty_rows.png') + ')' }" class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"></Button>
+                        <Button
+                            :style="{ 'background-image': 'url(' + require('@/assets/images/olap/empty_rows.png') + ')' }"
+                            class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"
+                            v-tooltip.top="$t('documentExecution.olap.sidebar.suppressEmptyRowsColumns')"
+                            @click="onSuppressRowsColumnsClick"
+                        ></Button>
                     </div>
                     <div class="p-col-4">
                         <Button
@@ -73,15 +93,53 @@ import SelectButton from 'primevue/selectbutton'
 export default defineComponent({
     name: 'olap-sidebar',
     components: { SelectButton },
-    emits: ['openCustomViewDialog'],
+    props: { olap: { type: Object } },
+    emits: ['openCustomViewDialog', 'drillTypeChanged', 'showParentMemberChanged', 'hideSpansChanged', 'suppressEmptyChanged', 'showPropertiesChanged'],
     data() {
         return {
             olapSidebarDescriptor,
-            drillOn: 'Position'
+            drillOn: 'position',
+            showParentMembers: false,
+            hideSpans: false,
+            suppressEmpty: false,
+            showProperties: false
         }
     },
-    async created() {},
-    methods: {}
+    watch: {
+        olap() {
+            this.loadOlapModelConfigValues()
+        }
+    },
+    created() {
+        this.loadOlapModelConfigValues()
+    },
+    methods: {
+        loadOlapModelConfigValues() {
+            if (this.olap) {
+                this.drillOn = this.olap.modelConfig.drillType
+                this.showParentMembers = this.olap.modelConfig.showParentMembers
+                this.hideSpans = this.olap.modelConfig.hideSpans
+                this.suppressEmpty = this.olap.modelConfig.suppressEmpty
+                this.showProperties = this.olap.modelConfig.showProperties
+            }
+        },
+        onShowParentMemberClick() {
+            this.showParentMembers = !this.showParentMembers
+            this.$emit('showParentMemberChanged', this.showParentMembers)
+        },
+        onHideSpansClick() {
+            this.hideSpans = !this.hideSpans
+            this.$emit('hideSpansChanged', this.hideSpans)
+        },
+        onSuppressRowsColumnsClick() {
+            this.suppressEmpty = !this.suppressEmpty
+            this.$emit('suppressEmptyChanged', this.suppressEmpty)
+        },
+        onShowPropertiesClick() {
+            this.showProperties = !this.showProperties
+            this.$emit('showPropertiesChanged', this.showProperties)
+        }
+    }
 })
 </script>
 
