@@ -1,6 +1,6 @@
 <template>
-    <div class="kn-height-full olap-page-container">
-        <div class="p-d-flex p-flex-row">
+    <div class="kn-height-full kn-width-full olap-page-container">
+        <div class="p-d-flex p-flex-column">
             <div v-if="olapSidebarVisible" id="olap-backdrop" @click="olapSidebarVisible = false"></div>
             <OlapSidebar v-if="olapSidebarVisible" class="olap-sidebar kn-overflow-y" :olap="olap" @openCustomViewDialog="customViewSaveDialogVisible = true" @drillTypeChanged="onDrillTypeChanged"></OlapSidebar>
 
@@ -11,7 +11,9 @@
             <OlapCustomViewTable v-if="customViewVisible" class="p-m-2" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)"></OlapCustomViewTable>
         </div>
 
+        <!-- DIALOGS ------------------------------------------->
         <OlapCustomViewSaveDialog :visible="customViewSaveDialogVisible" :sbiExecutionId="id" @close="customViewSaveDialogVisible = false"></OlapCustomViewSaveDialog>
+        <KnOverlaySpinnerPanel :visibility="loading" />
     </div>
 </template>
 
@@ -23,10 +25,11 @@ import olapDescriptor from './OlapDescriptor.json'
 import OlapSidebar from './olapSidebar/OlapSidebar.vue'
 import OlapCustomViewTable from './customView/OlapCustomViewTable.vue'
 import OlapCustomViewSaveDialog from './customViewSaveDialog/OlapCustomViewSaveDialog.vue'
+import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 
 export default defineComponent({
     name: 'olap',
-    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog },
+    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel },
     props: { id: { type: String }, olapId: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
     emits: ['closeOlapCustomView', 'applyCustomView'],
     data() {
