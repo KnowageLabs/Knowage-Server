@@ -20,11 +20,18 @@
                 @hideSpansChanged="onHideSpansChanged"
                 @suppressEmptyChanged="onSuppressEmptyChanged"
                 @showPropertiesChanged="onShowPropertiesChanged"
-            />
+                @openSortingDialog="sortingDialogVisible = true"
+            ></OlapSidebar>
+
+            <div ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
+            <Button @click="olapSidebarVisible = true">OPEN SIDEBAR</Button>
+
+            <OlapCustomViewTable v-if="customViewVisible" class="p-m-2" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)"></OlapCustomViewTable>
         </div>
 
         <!-- DIALOGS ------------------------------------------->
         <OlapCustomViewSaveDialog :visible="customViewSaveDialogVisible" :sbiExecutionId="id" @close="customViewSaveDialogVisible = false"></OlapCustomViewSaveDialog>
+        <OlapSortingDialog :visible="sortingDialogVisible" :olap="olap" @save="onSortingSelect"></OlapSortingDialog>
         <KnOverlaySpinnerPanel :visibility="loading" />
     </div>
 </template>
@@ -35,6 +42,7 @@ import { defineComponent } from 'vue'
 import { iOlapCustomView } from './Olap'
 import olapDescriptor from './OlapDescriptor.json'
 import OlapSidebar from './olapSidebar/OlapSidebar.vue'
+import OlapSortingDialog from './sortingDialog/OlapSortingDialog.vue'
 import OlapCustomViewTable from './customView/OlapCustomViewTable.vue'
 import OlapCustomViewSaveDialog from './customViewSaveDialog/OlapCustomViewSaveDialog.vue'
 import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
@@ -42,7 +50,7 @@ import FilterPanel from './filterPanel/OlapFilterPanel.vue'
 
 export default defineComponent({
     name: 'olap',
-    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, FilterPanel },
+    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel },
     props: { id: { type: String }, olapId: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
     emits: ['closeOlapCustomView', 'applyCustomView'],
     data() {
@@ -53,6 +61,8 @@ export default defineComponent({
             customViewVisible: false,
             olapCustomViews: [] as iOlapCustomView[],
             customViewSaveDialogVisible: false,
+            sortingDialogVisible: false,
+            sort: null as any,
             loading: false
         }
     },
@@ -97,16 +107,12 @@ export default defineComponent({
         async loadOlapModel() {
             this.loading = true
             await this.$http
-                .post(
-                    process.env.VUE_APP_OLAP_PATH + `1.0/model/?SBI_EXECUTION_ID=${this.id}`,
-                    {},
-                    {
-                        headers: {
-                            Accept: 'application/json, text/plain, */*',
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        }
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/?SBI_EXECUTION_ID=${this.id}`, null, {
+                    headers: {
+                        Accept: 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json;charset=UTF-8'
                     }
-                )
+                })
                 .then(async (response: AxiosResponse<any>) => {
                     this.olap = response.data
 
@@ -140,6 +146,9 @@ export default defineComponent({
             this.olap.table = this.olap.table.replaceAll('</drilldown>', '<div class="drill-down"></div> </drilldown> ')
             this.olap.table = this.olap.table.replaceAll('../../../../knowage/themes/commons/img/olap/nodrill.png', '')
             this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/arrow-up.png"', ' <div class="drill-up-replace"></div ')
+            this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/noSortRows.png"', ' <div class="sort-basic"></div ')
+            this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/ASC-rows.png"', ' <div class="sort-asc"></div ')
+            this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/DESC-rows.png"', ' <div class="sort-desc"></div ')
         },
         async drillDown(event: any) {
             this.loading = true
@@ -222,6 +231,52 @@ export default defineComponent({
             this.olap.modelConfig.showProperties = showProperties
             await this.loadModelConfig()
         },
+        onSortingSelect(payload: { sortingMode: string; sortingCount: number }) {
+            this.sort = payload
+            console.log('SORTING: ', this.sort)
+
+            if ((this.sort.sortingMode === 'no sorting' && this.olap.modelConfig.sortingEnabled) || (this.sort.sortingMode !== 'no sorting' && !this.olap.modelConfig.sortingEnabled)) {
+                this.enableSorting()
+            }
+
+            this.sortingDialogVisible = false
+        },
+        async enableSorting() {
+            this.loading = true
+            await this.$http
+                .get(process.env.VUE_APP_OLAP_PATH + `1.0/member/sort/disable?SBI_EXECUTION_ID=${this.id}`, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .then((response: AxiosResponse<any>) => (this.olap = response.data))
+                .catch(() => {})
+
+            this.formatOlapTable()
+            this.loading = false
+        },
+        async sortOlap(event: any) {
+            console.log('EVENT ON SORT: ', event)
+            this.loading = true
+            const temp = event.target.attributes[0].textContent
+            const tempString = temp.substring(temp.indexOf('(') + 1, temp.indexOf(')'))
+            const tempArray = tempString?.split(',')
+            const tempPositionUniqueName = tempArray.splice(2).join(',')
+
+            const postData = {
+                axisToSort: +tempArray[0],
+                axis: +tempArray[1],
+                positionUniqueName: tempPositionUniqueName.substring(tempPositionUniqueName.indexOf("'") + 1, tempPositionUniqueName.lastIndexOf("'")),
+                sortMode: this.sort.sortingMode,
+                topBottomCount: this.sort.sortingCount
+            }
+
+            console.log('TEMP ARRAY: ', tempArray)
+            console.log('TEMP DATA: ', postData)
+
+            await this.$http
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/sort/?SBI_EXECUTION_ID=${this.id}`, postData)
+                .then((response: AxiosResponse<any>) => (this.olap = response.data))
+                .catch(() => {})
+            this.formatOlapTable()
+            this.loading = false
+        },
         async handleTableClick(event: Event) {
             console.log('EVENT: ', event)
 
@@ -237,6 +292,11 @@ export default defineComponent({
                         break
                     case 'drill-up-replace':
                         await this.drillUp(event, true)
+                        break
+                    case 'sort-basic':
+                    case 'sort-asc':
+                    case 'sort-desc':
+                        await this.sortOlap(event)
                         break
                 }
             }
@@ -284,6 +344,30 @@ export default defineComponent({
 
 .drill-up-replace {
     background-image: url('../../../assets/images/olap/arrow-up.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 0.8rem;
+    width: 0.8rem;
+}
+
+.sort-basic {
+    background-image: url('../../../assets/images/olap/noSortRows.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 0.8rem;
+    width: 0.8rem;
+}
+
+.sort-asc {
+    background-image: url('../../../assets/images/olap/ASC-rows.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 0.8rem;
+    width: 0.8rem;
+}
+
+.sort-desc {
+    background-image: url('../../../assets/images/olap/DESC-rows.png');
     background-position: center;
     background-repeat: no-repeat;
     height: 0.8rem;
