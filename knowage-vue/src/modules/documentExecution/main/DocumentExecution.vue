@@ -27,7 +27,16 @@
             <template v-if="filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible">
                 <Registry v-if="mode === 'registry'" :id="urlData.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
                 <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger"></Dossier>
-                <Olap v-else-if="mode === 'olap'" :id="urlData.sbiExecutionId" :olapId="document.id" :reloadTrigger="reloadTrigger" :olapCustomViewVisible="olapCustomViewVisible" @closeOlapCustomView="olapCustomViewVisible = false" @applyCustomView="executeOlapCustomView"></Olap>
+                <Olap
+                    v-else-if="mode === 'olap'"
+                    :id="urlData.sbiExecutionId"
+                    :olapId="document.id"
+                    :reloadTrigger="reloadTrigger"
+                    :olapCustomViewVisible="olapCustomViewVisible"
+                    @closeOlapCustomView="olapCustomViewVisible = false"
+                    @applyCustomView="executeOlapCustomView"
+                    @executeCrossNavigation="executeOLAPCrossNavigation"
+                ></Olap>
             </template>
 
             <iframe
@@ -348,7 +357,19 @@ export default defineComponent({
                 this.parameterSidebarVisible = true
             }
 
+            this.updateMode()
             this.loading = false
+        },
+        updateMode() {
+            if (this.document.typeCode === 'DATAMART') {
+                this.mode = 'registry'
+            } else if (this.document.typeCode === 'DOSSIER') {
+                this.mode = 'dossier'
+            } else if (this.document.typeCode === 'OLAP') {
+                this.mode = 'olap'
+            } else {
+                this.mode = 'iframe'
+            }
         },
         async loadDocument() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.document?.label}`).then((response: AxiosResponse<any>) => (this.document = response.data))
@@ -714,6 +735,7 @@ export default defineComponent({
             this.filtersData = item.filtersData
             this.urlData = item.urlData
             this.hiddenFormData = item.hiddenFormData
+            this.updateMode()
         },
         async onRoleChange(role: string) {
             this.userRole = role as any
@@ -765,6 +787,47 @@ export default defineComponent({
             await this.loadURL(payload)
             this.reloadTrigger = !this.reloadTrigger
             this.loading = false
+        },
+        async executeOLAPCrossNavigation(crossNavigationParams: any) {
+            console.log('CROSS NAVIGATION PARAMS: ', crossNavigationParams)
+            let temp = {} as any
+            this.loading = true
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
+            this.loading = false
+
+            console.log('TEMP: ', temp)
+
+            this.document = { ...temp[0].document, navigationParams: this.formatOLAPNavigationParams(crossNavigationParams, temp[0].navigationParams) }
+
+            console.log('DOCUMENT: ', this.document)
+
+            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+            if (index !== -1) {
+                this.breadcrumbs[index].document = this.document
+            } else {
+                this.breadcrumbs.push({ label: this.document.label, document: this.document })
+            }
+
+            await this.loadPage()
+            this.reloadTrigger = !this.reloadTrigger
+        },
+        formatOLAPNavigationParams(crossNavigationParams: any, navigationParams: any) {
+            console.log('>>>>>> TEST1: ', crossNavigationParams)
+            console.log('>>>>>> TEST2: ', navigationParams)
+
+            const crossNavigationParamKey = Object.keys(crossNavigationParams)[0]
+            let formatedParams = {} as any
+
+            console.log('CROSS NAVIGATION PARAM KEY: ', crossNavigationParamKey)
+
+            Object.keys(navigationParams).forEach((key: string) => {
+                if (navigationParams[key].value.label === crossNavigationParamKey) {
+                    console.log('KEY: ', key)
+                    formatedParams[key] = crossNavigationParams[crossNavigationParamKey]
+                }
+            })
+
+            return formatedParams
         }
     }
 })

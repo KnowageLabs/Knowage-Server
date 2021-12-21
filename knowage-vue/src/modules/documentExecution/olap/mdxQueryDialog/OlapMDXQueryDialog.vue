@@ -53,7 +53,7 @@ export default defineComponent({
     methods: {
         loadMdxQuery() {
             this.query = this.mdxQuery as string
-            console.log('LOADED MDX QUERY: ', this.query)
+            // console.log('LOADED MDX QUERY: ', this.query)
         },
         setupCodeMirror() {
             const interval = setInterval(() => {

@@ -1,5 +1,5 @@
 <template>
-    <div class="kn-height-full kn-width-full olap-page-container">
+    <div>
         <div class="p-d-flex p-flex-column">
             <FilterPanel :olapProp="olap" />
 
@@ -29,7 +29,7 @@
         <!-- DIALOGS ------------------------------------------->
         <OlapCustomViewSaveDialog :visible="customViewSaveDialogVisible" :sbiExecutionId="id" @close="customViewSaveDialogVisible = false"></OlapCustomViewSaveDialog>
         <OlapSortingDialog :visible="sortingDialogVisible" :olap="olap" @save="onSortingSelect"></OlapSortingDialog>
-        <OlapMDXQueryDialog :visible="mdxQueryDialogVisible" :mdxQuery="olap.MDXWITHOUTCF" @close="mdxQueryDialogVisible = false"></OlapMDXQueryDialog>
+        <OlapMDXQueryDialog :visible="mdxQueryDialogVisible" :mdxQuery="olap?.MDXWITHOUTCF" @close="mdxQueryDialogVisible = false"></OlapMDXQueryDialog>
         <KnOverlaySpinnerPanel :visibility="loading" />
     </div>
 </template>
@@ -51,7 +51,7 @@ export default defineComponent({
     name: 'olap',
     components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, OlapMDXQueryDialog },
     props: { id: { type: String }, olapId: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
-    emits: ['closeOlapCustomView', 'applyCustomView'],
+    emits: ['closeOlapCustomView', 'applyCustomView', 'executeCrossNavigation'],
     data() {
         return {
             olapDescriptor,
@@ -102,23 +102,14 @@ export default defineComponent({
                 .then(async (response: AxiosResponse<any>) => (this.olapCustomViews = response.data.results))
                 .catch(() => {})
             this.loading = false
-            console.log('LOADED OLAP CUSTOM VIEWS: ', this.olapCustomViews)
+            // console.log('LOADED OLAP CUSTOM VIEWS: ', this.olapCustomViews)
         },
         async loadOlapModel() {
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/?SBI_EXECUTION_ID=${this.id}`, null, {
-                    headers: {
-                        Accept: 'application/json, text/plain, */*',
-                        'Content-Type': 'application/json;charset=UTF-8'
-                    }
-                })
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then(async (response: AxiosResponse<any>) => {
                     this.olap = response.data
-
-                    console.log('LOADED FIRST OLAP: ', this.olap)
-                    console.log('MODEL CONFIG: ', this.olap.modelConfig)
-
                     await this.loadModelConfig()
                 })
                 .catch(() => {})
@@ -127,19 +118,14 @@ export default defineComponent({
         async loadModelConfig() {
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_OLAP_PATH + `1.0/modelconfig?SBI_EXECUTION_ID=${this.id}&NOLOADING=undefined`, this.olap.modelConfig, {
-                    headers: {
-                        Accept: 'application/json, text/plain, */*',
-                        'Content-Type': 'application/json;charset=UTF-8'
-                    }
-                })
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/modelconfig?SBI_EXECUTION_ID=${this.id}&NOLOADING=undefined`, this.olap.modelConfig, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => (this.olap = response.data))
                 .catch(() => {})
 
             this.formatOlapTable()
             this.loading = false
 
-            console.log('LOADED OLAP: ', this.olap)
+            // console.log('LOADED OLAP: ', this.olap)
         },
         formatOlapTable() {
             this.olap.table = this.olap.table.replaceAll('</drillup>', ' <div class="drill-up"></div></drillup> ')
@@ -149,10 +135,11 @@ export default defineComponent({
             this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/noSortRows.png"', ' <div class="sort-basic"></div ')
             this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/ASC-rows.png"', ' <div class="sort-asc"></div ')
             this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/DESC-rows.png"', ' <div class="sort-desc"></div ')
+            this.olap.table = this.olap.table.replaceAll('<a href="#" onClick="parent.execExternal', '<a href="#" class="external-cross-navigation" crossParams="parent.execExternal')
         },
         async drillDown(event: any) {
             this.loading = true
-            console.log('EVENT INSIDE DRILL DOWN: ', event)
+            // console.log('EVENT INSIDE DRILL DOWN: ', event)
             const axis = event.target.parentNode.getAttribute('axis')
             const position = event.target.parentNode.getAttribute('position')
             const member = event.target.parentNode.getAttribute('memberordinal')
@@ -177,7 +164,7 @@ export default defineComponent({
         },
         async drillUp(event: any, replace: boolean) {
             this.loading = true
-            console.log('EVENT INSIDE DRILL UP: ', event)
+            // console.log('EVENT INSIDE DRILL UP: ', event)
 
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/drillup?SBI_EXECUTION_ID=${this.id}`, this.formatDrillUpPostData(event, replace), {
@@ -233,7 +220,7 @@ export default defineComponent({
         },
         onSortingSelect(payload: { sortingMode: string; sortingCount: number }) {
             this.sort = payload
-            console.log('SORTING: ', this.sort)
+            // console.log('SORTING: ', this.sort)
 
             if ((this.sort.sortingMode === 'no sorting' && this.olap.modelConfig.sortingEnabled) || (this.sort.sortingMode !== 'no sorting' && !this.olap.modelConfig.sortingEnabled)) {
                 this.enableSorting()
@@ -252,7 +239,7 @@ export default defineComponent({
             this.loading = false
         },
         async sortOlap(event: any) {
-            console.log('EVENT ON SORT: ', event)
+            // console.log('EVENT ON SORT: ', event)
             this.loading = true
             const temp = event.target.attributes[0].textContent
             const tempString = temp.substring(temp.indexOf('(') + 1, temp.indexOf(')'))
@@ -267,8 +254,8 @@ export default defineComponent({
                 topBottomCount: this.sort.sortingCount
             }
 
-            console.log('TEMP ARRAY: ', tempArray)
-            console.log('TEMP DATA: ', postData)
+            // console.log('TEMP ARRAY: ', tempArray)
+            //  console.log('TEMP DATA: ', postData)
 
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/sort/?SBI_EXECUTION_ID=${this.id}`, postData)
@@ -285,6 +272,21 @@ export default defineComponent({
                 .catch(() => {})
             this.formatOlapTable()
             this.loading = false
+        },
+        execExternalCrossNavigation(event: any) {
+            // console.log('EVENT IN CROSS NAVIGATION: ', event)
+            const tempCrossNavigationParams = event.target.attributes[2].value
+
+            //  console.log('TEMP CROSS NAV PARAMS: ', tempCrossNavigationParams)
+            const tempFormatted = tempCrossNavigationParams.substring(tempCrossNavigationParams.indexOf('(') + 1, tempCrossNavigationParams.lastIndexOf(')'))
+            //   console.log('TEMP CROSS NAV PARAMS FROMATED: ', tempFormatted)
+
+            const object = {}
+            object[tempFormatted.substring(tempFormatted.indexOf('{') + 1, tempFormatted.indexOf(':'))] = tempFormatted.substring(tempFormatted.indexOf(':') + 2, tempFormatted.indexOf('}') - 1)
+
+            //  console.log('TEMP CROSS OBJECT: ', object)
+
+            this.$emit('executeCrossNavigation', object)
         },
         async handleTableClick(event: Event) {
             console.log('EVENT: ', event)
@@ -306,6 +308,9 @@ export default defineComponent({
                     case 'sort-asc':
                     case 'sort-desc':
                         await this.sortOlap(event)
+                        break
+                    case 'external-cross-navigation':
+                        await this.execExternalCrossNavigation(event)
                         break
                 }
             }
