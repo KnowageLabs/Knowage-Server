@@ -44,6 +44,11 @@ export default defineComponent({
             leftStart: 0
         }
     },
+    watch: {
+        olapProp() {
+            this.loadData()
+        }
+    },
     created() {
         this.loadData()
     },
