@@ -78,7 +78,7 @@ export default defineComponent({
             this.customViews = this.olapCustomViews as iOlapCustomView[]
         },
         applyCustomView(customView: iOlapCustomView) {
-            console.log('EXECUTE CUSTOM VIEW CLICKED!', customView)
+            // console.log('EXECUTE CUSTOM VIEW CLICKED!', customView)
             this.$emit('applyCustomView', { subobj_id: customView.id, subobj_name: customView.name, subobj_description: customView.description, subobj_visibility: customView.isPublic })
         },
         deleteCustomViewsConfirm(customView: iOlapCustomView) {

@@ -45,20 +45,8 @@ export default defineComponent({
             sortingCount: 10
         }
     },
-    watch: {
-        olap() {
-            this.loadOlapSorting()
-        }
-    },
-    created() {
-        this.loadOlapSorting()
-    },
+    created() {},
     methods: {
-        loadOlapSorting() {
-            if (this.olap) {
-                console.log('OLAP IN SORTING: ', this.olap)
-            }
-        },
         save() {
             if (this.sortingMode !== 'count' || this.sortingCount < 1) {
                 this.sortingCount = 10
