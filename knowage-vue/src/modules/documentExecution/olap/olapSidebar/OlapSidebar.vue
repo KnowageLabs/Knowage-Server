@@ -6,10 +6,10 @@
             </template>
         </Toolbar>
 
-        <div class="p-d-flex p-flex-column p-m-2">
+        <div v-if="olap" class="p-d-flex p-flex-column p-m-2">
             <div class="p-m-2">
                 <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.drillOnDimension') }}</label>
-                <SelectButton v-model="drillOn" :options="olapSidebarDescriptor.drillOnOptions"></SelectButton>
+                <SelectButton v-model="drillOn" :options="olapSidebarDescriptor.drillOnOptions" @click="$emit('drillTypeChanged', drillOn)"></SelectButton>
             </div>
 
             <div class="p-d-flex p-flex-column p-m-2">
@@ -73,15 +73,27 @@ import SelectButton from 'primevue/selectbutton'
 export default defineComponent({
     name: 'olap-sidebar',
     components: { SelectButton },
-    emits: ['openCustomViewDialog'],
+    props: { olap: { type: Object } },
+    emits: ['openCustomViewDialog', 'drillTypeChanged'],
     data() {
         return {
             olapSidebarDescriptor,
-            drillOn: 'Position'
+            drillOn: 'position'
         }
     },
-    async created() {},
-    methods: {}
+    watch: {
+        olap() {
+            this.loadDrillOn()
+        }
+    },
+    created() {
+        this.loadDrillOn()
+    },
+    methods: {
+        loadDrillOn() {
+            this.drillOn = this.olap?.modelConfig.drillType
+        }
+    }
 })
 </script>
 

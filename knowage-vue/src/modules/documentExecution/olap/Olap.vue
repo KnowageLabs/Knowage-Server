@@ -2,7 +2,7 @@
     <div class="kn-height-full olap-page-container">
         <div class="p-d-flex p-flex-row">
             <div v-if="olapSidebarVisible" id="olap-backdrop" @click="olapSidebarVisible = false"></div>
-            <OlapSidebar v-if="olapSidebarVisible" class="olap-sidebar kn-overflow-y" @openCustomViewDialog="customViewSaveDialogVisible = true"></OlapSidebar>
+            <OlapSidebar v-if="olapSidebarVisible" class="olap-sidebar kn-overflow-y" :olap="olap" @openCustomViewDialog="customViewSaveDialogVisible = true" @drillTypeChanged="onDrillTypeChanged"></OlapSidebar>
 
             <!-- {{ customViewVisible }} -->
             <div ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
@@ -32,7 +32,6 @@ export default defineComponent({
     data() {
         return {
             olapDescriptor,
-            firstOlap: null as any,
             olap: null as any,
             olapSidebarVisible: false,
             customViewVisible: false,
@@ -110,10 +109,10 @@ export default defineComponent({
                     }
                 )
                 .then(async (response: AxiosResponse<any>) => {
-                    this.firstOlap = response.data
+                    this.olap = response.data
 
-                    console.log('LOADED FIRST OLAP: ', this.firstOlap)
-                    console.log('MODEL CONFIG: ', this.firstOlap.modelConfig)
+                    console.log('LOADED FIRST OLAP: ', this.olap)
+                    console.log('MODEL CONFIG: ', this.olap.modelConfig)
 
                     await this.loadModelConfig()
                 })
@@ -121,8 +120,9 @@ export default defineComponent({
             this.loading = false
         },
         async loadModelConfig() {
+            this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_OLAP_PATH + `1.0/modelconfig?SBI_EXECUTION_ID=${this.id}&NOLOADING=undefined`, this.firstOlap.modelConfig, {
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/modelconfig?SBI_EXECUTION_ID=${this.id}&NOLOADING=undefined`, this.olap.modelConfig, {
                     headers: {
                         Accept: 'application/json, text/plain, */*',
                         'Content-Type': 'application/json;charset=UTF-8'
@@ -132,12 +132,14 @@ export default defineComponent({
                 .catch(() => {})
 
             this.formatOlapTable()
+            this.loading = false
 
             console.log('LOADED OLAP: ', this.olap)
         },
         formatOlapTable() {
             this.olap.table = this.olap.table.replaceAll('</drillup>', ' <div class="drill-up"></div></drillup>')
             this.olap.table = this.olap.table.replaceAll('</drilldown>', '<div class="drill-down"></div> </drilldown> ')
+            this.olap.table = this.olap.table.replaceAll('../../../../knowage/themes/commons/img/olap/nodrill.png', '')
         },
         async drillDown(event: any) {
             this.loading = true
@@ -188,6 +190,11 @@ export default defineComponent({
             this.formatOlapTable()
 
             this.loading = false
+        },
+        async onDrillTypeChanged(newDrillType: string) {
+            console.log('NEW DRILL TYPE: ', newDrillType)
+            this.olap.modelConfig.drillType = newDrillType
+            await this.loadModelConfig()
         },
         async handleTableClick(event: Event) {
             console.log('>>> COMPONENT: ', this.dynamicComponent)
