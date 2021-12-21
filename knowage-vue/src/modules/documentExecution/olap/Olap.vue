@@ -17,6 +17,7 @@
                 @showPropertiesChanged="onShowPropertiesChanged"
                 @openSortingDialog="sortingDialogVisible = true"
                 @openMdxQueryDialog="mdxQueryDialogVisible = true"
+                @reloadSchema="reloadOlap"
             ></OlapSidebar>
 
             <div ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
@@ -271,6 +272,15 @@ export default defineComponent({
 
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/sort/?SBI_EXECUTION_ID=${this.id}`, postData)
+                .then((response: AxiosResponse<any>) => (this.olap = response.data))
+                .catch(() => {})
+            this.formatOlapTable()
+            this.loading = false
+        },
+        async reloadOlap() {
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/cache/?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => (this.olap = response.data))
                 .catch(() => {})
             this.formatOlapTable()

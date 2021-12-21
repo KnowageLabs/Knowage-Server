@@ -29,7 +29,12 @@
                         ></Button>
                     </div>
                     <div class="p-col-4">
-                        <Button :style="{ 'background-image': 'url(' + require('@/assets/images/olap/reload16.png') + ')' }" class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.reloadSchema')"></Button>
+                        <Button
+                            :style="{ 'background-image': 'url(' + require('@/assets/images/olap/reload16.png') + ')' }"
+                            class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"
+                            v-tooltip.top="$t('documentExecution.olap.sidebar.reloadSchema')"
+                            @click="$emit('reloadSchema')"
+                        ></Button>
                     </div>
                     <div class="p-col-4"></div>
                 </div>
@@ -104,7 +109,7 @@ export default defineComponent({
     name: 'olap-sidebar',
     components: { SelectButton },
     props: { olap: { type: Object } },
-    emits: ['openCustomViewDialog', 'drillTypeChanged', 'showParentMemberChanged', 'hideSpansChanged', 'suppressEmptyChanged', 'showPropertiesChanged', 'openSortingDialog', 'openMdxQueryDialog'],
+    emits: ['openCustomViewDialog', 'drillTypeChanged', 'showParentMemberChanged', 'hideSpansChanged', 'suppressEmptyChanged', 'showPropertiesChanged', 'openSortingDialog', 'openMdxQueryDialog', 'reloadSchema'],
     data() {
         return {
             olapSidebarDescriptor,
