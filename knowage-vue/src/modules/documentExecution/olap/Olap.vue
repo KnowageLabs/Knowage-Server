@@ -1,35 +1,38 @@
 <template>
-    <div class="p-d-flex p-flex-column kn-flex">
-        <FilterPanel :olapProp="olap" />
-        <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" />
+    <div>
+        <div class="p-d-flex p-flex-column">
+            <FilterPanel :olapProp="olap" />
+            <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" />
 
-        <!-- SIDEBAR -------------------------------------->
-        <div v-if="olapSidebarVisible" id="olap-backdrop" @click="olapSidebarVisible = false" />
-        <OlapSidebar
-            v-if="olapSidebarVisible"
-            class="olap-sidebar kn-overflow-y"
-            :olap="olap"
-            @openCustomViewDialog="customViewSaveDialogVisible = true"
-            @drillTypeChanged="onDrillTypeChanged"
-            @showParentMemberChanged="onShowParentMemberChanged"
-            @hideSpansChanged="onHideSpansChanged"
-            @suppressEmptyChanged="onSuppressEmptyChanged"
-            @showPropertiesChanged="onShowPropertiesChanged"
-            @openSortingDialog="sortingDialogVisible = true"
-            @openMdxQueryDialog="mdxQueryDialogVisible = true"
-            @reloadSchema="reloadOlap"
-        ></OlapSidebar>
+            <!-- SIDEBAR -------------------------------------->
+            <div v-if="olapSidebarVisible" id="olap-backdrop" @click="olapSidebarVisible = false" />
+            <OlapSidebar
+                v-if="olapSidebarVisible"
+                class="olap-sidebar kn-overflow-y"
+                :olap="olap"
+                @openCustomViewDialog="customViewSaveDialogVisible = true"
+                @drillTypeChanged="onDrillTypeChanged"
+                @showParentMemberChanged="onShowParentMemberChanged"
+                @hideSpansChanged="onHideSpansChanged"
+                @suppressEmptyChanged="onSuppressEmptyChanged"
+                @showPropertiesChanged="onShowPropertiesChanged"
+                @openSortingDialog="sortingDialogVisible = true"
+                @openMdxQueryDialog="mdxQueryDialogVisible = true"
+                @reloadSchema="reloadOlap"
+                @enableCrossNavigation="enableCrossNaivigation"
+            ></OlapSidebar>
 
-        <div ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
+            <div ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
 
-        <OlapCustomViewTable v-if="customViewVisible" class="p-m-2" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)"></OlapCustomViewTable>
+            <OlapCustomViewTable v-if="customViewVisible" class="p-m-2" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)"></OlapCustomViewTable>
+        </div>
+
+        <!-- DIALOGS ------------------------------------------->
+        <OlapCustomViewSaveDialog :visible="customViewSaveDialogVisible" :sbiExecutionId="id" @close="customViewSaveDialogVisible = false"></OlapCustomViewSaveDialog>
+        <OlapSortingDialog :visible="sortingDialogVisible" :olap="olap" @save="onSortingSelect"></OlapSortingDialog>
+        <OlapMDXQueryDialog :visible="mdxQueryDialogVisible" :mdxQuery="olap?.MDXWITHOUTCF" @close="mdxQueryDialogVisible = false"></OlapMDXQueryDialog>
+        <KnOverlaySpinnerPanel :visibility="loading" />
     </div>
-
-    <!-- DIALOGS ------------------------------------------->
-    <OlapCustomViewSaveDialog :visible="customViewSaveDialogVisible" :sbiExecutionId="id" @close="customViewSaveDialogVisible = false"></OlapCustomViewSaveDialog>
-    <OlapSortingDialog :visible="sortingDialogVisible" :olap="olap" @save="onSortingSelect"></OlapSortingDialog>
-    <OlapMDXQueryDialog :visible="mdxQueryDialogVisible" :mdxQuery="olap?.MDXWITHOUTCF" @close="mdxQueryDialogVisible = false"></OlapMDXQueryDialog>
-    <KnOverlaySpinnerPanel :visibility="loading" />
 </template>
 
 <script lang="ts">
@@ -135,6 +138,7 @@ export default defineComponent({
             this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/ASC-rows.png"', ' <div class="sort-asc"></div ')
             this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/DESC-rows.png"', ' <div class="sort-desc"></div ')
             this.olap.table = this.olap.table.replaceAll('<a href="#" onClick="parent.execExternal', '<a href="#" class="external-cross-navigation" crossParams="parent.execExternal')
+            this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/cross-navigation.png"', ' <div class="cell-cross-navigation"></div ')
         },
         async drillDown(event: any) {
             this.loading = true
@@ -287,6 +291,16 @@ export default defineComponent({
 
             this.$emit('executeCrossNavigation', object)
         },
+        async enableCrossNaivigation(crossNavigation: boolean) {
+            this.loading = true
+            this.olap.modelConfig.crossNavigation.buttonClicked = crossNavigation
+            await this.$http
+                .get(process.env.VUE_APP_OLAP_PATH + `1.0/crossnavigation/initialize/?SBI_EXECUTION_ID=${this.id}`, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .then((response: AxiosResponse<any>) => (this.olap = response.data))
+                .catch(() => {})
+            this.formatOlapTable()
+            this.loading = false
+        },
         async handleTableClick(event: Event) {
             console.log('EVENT: ', event)
 
@@ -381,6 +395,14 @@ export default defineComponent({
 
 .sort-desc {
     background-image: url('../../../assets/images/olap/DESC-rows.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 0.8rem;
+    width: 0.8rem;
+}
+
+.cell-cross-navigation {
+    background-image: url('../../../assets/images/olap/cross-navigation.png');
     background-position: center;
     background-repeat: no-repeat;
     height: 0.8rem;
