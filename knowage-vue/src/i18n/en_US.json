@@ -326,6 +326,9 @@
                 "sortingSettings": "Sorting settings",
                 "suppressEmptyRowsColumns": "Suppress empty rows/columns",
                 "tableFunctions": "Table functions"
+            },
+            "filterPanel": {
+                "filterPanelEmpty": "Drag the member here if you want to use it as a slicer"
             }
         },
         "registry": {
