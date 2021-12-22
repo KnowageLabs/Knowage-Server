@@ -2,7 +2,7 @@
     <Dialog class="metaweb-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="mainDescriptor.style.flex" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left> {{ $t('metaweb.title') }} : NAME HERE </template>
+                <template #left> {{ $t('metaweb.title') }} </template>
                 <template #right>
                     <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="metadataSave" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeMetawebConfirm" />
@@ -41,7 +41,6 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import BusinessModelTab from './businessModel/MetawebBusinessModel.vue'
 import MetawebPhysicalModel from './physicalModel/MetawebPhysicalModel.vue'
-import metaMock from './MetawebMock.json'
 import MetawebInvalidRelationshipsDialog from './invalidRelationshipsDialog/MetawebInvalidRelationshipsDialog.vue'
 
 const { observe, generate, applyPatch } = require('fast-json-patch')
@@ -54,7 +53,6 @@ export default defineComponent({
     data() {
         return {
             v$: useValidate() as any,
-            metaMock,
             mainDescriptor,
             meta: null as any,
             observer: null as any,
@@ -156,6 +154,7 @@ export default defineComponent({
 .remove-padding.p-dialog .p-dialog-content {
     padding: 0;
     margin: 0;
+    overflow-x: hidden;
 }
 .metaweb-tab-container .p-tabview .p-tabview-panel,
 .metaweb-tab-container .p-tabview .p-tabview-panels {

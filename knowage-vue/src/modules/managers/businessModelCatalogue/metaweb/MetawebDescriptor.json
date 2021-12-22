@@ -9,6 +9,15 @@
             "top": 0,
             "width": "100%"
         },
+        "chip": {
+            "font-size": "0.8rem"
+        },
+        "columnMain": {
+            "flex": "10"
+        },
+        "columnTrash": {
+            "flex": "1"
+        },
         "flex": {
             "display": "flex",
             "flex": 1,

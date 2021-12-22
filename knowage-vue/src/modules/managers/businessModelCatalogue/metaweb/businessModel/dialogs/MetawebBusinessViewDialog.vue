@@ -41,18 +41,20 @@
                 <Listbox v-show="expandSummary" class="kn-list data-condition-list kn-absolute kn-height-full kn-width-full kn-overflow" :options="summary">
                     <template #empty>{{ $t('metaweb.businessModel.summaryHint') }} </template>
                     <template #option="slotProps">
-                        <!-- PROBLEM SA DELETE U SUMMARY, NE MOZE DA RENDERUJE KADA SE BRISE IZ OVE LISTE -->
-                        <div v-for="(rel, index) in slotProps.option.links" v-bind:key="index" class="associator-target-list-item">
-                            <span class="p-d-flex p-flex-row kn-width-full">
-                                <span class="kn-truncated kn-flex-05">
-                                    {{ rel.name }}
-                                </span>
-                                <i class="fas fa-link kn-flex-05" />
-                                <span class="kn-truncated kn-flex">
-                                    {{ slotProps.option.name }}
-                                </span>
+                        <div class="associator-block-hover p-d-flex p-flex-row p-ai-center kn-width-full">
+                            <span class="kn-truncated kn-flex-05 p-ml-2">
+                                {{ slotProps.option.name }}
                             </span>
-                            <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteRelationship(slotProps.option, rel)" />
+                            <i class="fas fa-link kn-flex-05" v-if="slotProps.option['links'] && slotProps.option['links'].length > 0" />
+                            <div class="p-d-flex p-flex-column kn-flex" v-bind:class="{ 'p-mb-1': slotProps.option['links'].length > 1 }" v-if="slotProps.option['links'] && slotProps.option['links'].length > 0">
+                                <span class="p-d-flex p-flex-row p-ai-center" v-for="(link, index) in slotProps.option['links']" v-bind:key="index">
+                                    <span class="kn-truncated">
+                                        {{ link.name }}
+                                    </span>
+                                    <Button v-if="slotProps.option['links'].length > 1" icon="fas fa-times" class="associator-enable-hover p-button-text p-button-rounded p-button-plain" @click.stop="deleteRelationship(slotProps.option, link)" />
+                                </span>
+                            </div>
+                            <Button icon="far fa-trash-alt kn-flex-0" class="associator-enable-hover p-button-text p-button-rounded p-button-plain" v-if="slotProps.option['links'] && slotProps.option['links'].length > 0" @click.stop="deleteRelationship(slotProps.option)" />
                         </div>
                     </template>
                 </Listbox>
@@ -84,7 +86,7 @@ const { generate, applyPatch } = require('fast-json-patch')
 export default defineComponent({
     components: { Dialog, StepOne, TableAssociator, Dropdown, Listbox },
     emits: ['closeDialog'],
-    props: { physicalModels: Array as any, showBusinessViewDialog: Boolean, meta: Object, observer: { type: Object }, selectedBusinessModel: { type: Object, required: true }, editMode: Boolean },
+    props: { showBusinessViewDialog: Boolean, meta: { type: Object, required: true }, observer: { type: Object }, selectedBusinessModel: { type: Object, required: true }, editMode: Boolean },
     computed: {
         buttonDisabled(): boolean {
             if (this.v$.$invalid || this.tmpBnssView.physicalModels.length < 2) {
@@ -101,9 +103,9 @@ export default defineComponent({
             wizardStep: 1,
             expandSummary: true,
             summary: [] as any,
-            physicalModel: [] as any,
             sourceTable: { columns: [] } as any,
-            targetTable: { columns: [] } as any
+            targetTable: { columns: [] } as any,
+            physicalModels: [] as any
         }
     },
     created() {
@@ -112,7 +114,6 @@ export default defineComponent({
     },
     watch: {
         meta() {
-            console.log(this.meta)
             this.loadMeta()
             this.setEditModeData()
         }
@@ -120,14 +121,13 @@ export default defineComponent({
     methods: {
         async loadMeta() {
             this.meta ? (this.metaObserve = this.meta) : ''
-            this.physicalModel = [...this.physicalModels]
-        },
-        resetPhModel() {
-            this.tmpBnssView.physicalModels = []
+            this.meta ? (this.physicalModels = JSON.parse(JSON.stringify(this.meta.physicalModels))) : ''
         },
         closeDialog() {
+            this.tmpBnssView = null as any
+            this.targetTable = null
+            this.sourceTable = null
             this.$emit('closeDialog')
-            this.tmpBnssView = { physicalModels: [], name: '', description: '' } as any
         },
         nextStep() {
             this.wizardStep++
@@ -149,7 +149,9 @@ export default defineComponent({
                 //copy the physical tables
                 for (var pti = 0; pti < this.selectedBusinessModel.physicalTables.length; pti++) {
                     var tmppt = {}
-                    tmppt = { ...this.physicalModels[this.selectedBusinessModel.physicalTables[pti].physicalTableIndex] }
+                    // tmppt = { ...this.meta.physicalModels[this.selectedBusinessModel.physicalTables[pti].physicalTableIndex] }
+                    tmppt = JSON.parse(JSON.stringify(this.meta.physicalModels[this.selectedBusinessModel.physicalTables[pti].physicalTableIndex]))
+                    console.log(tmppt)
                     this.tmpBnssView.physicalModels.push(tmppt)
                 }
 
@@ -184,10 +186,13 @@ export default defineComponent({
                     // eslint-disable-next-line no-prototype-builtins
                     if (this.tmpBnssView.physicalModels[i].columns[col].hasOwnProperty('links') && this.tmpBnssView.physicalModels[i].columns[col].links.length > 0) {
                         this.summary.push(this.tmpBnssView.physicalModels[i].columns[col])
+                        // eslint-disable-next-line no-prototype-builtins
+                    } else if (this.tmpBnssView.physicalModels[i].columns[col].hasOwnProperty('links') && this.tmpBnssView.physicalModels[i].columns[col].links.length > 0) {
+                        delete this.tmpBnssView.physicalModels[i].columns[col].links
                     }
                 }
             }
-            console.log(this.summary)
+            console.log('SUMMARY UPDATED: ', this.summary)
         },
         async saveBusinessView() {
             var tmpData = {} as any
@@ -245,7 +250,7 @@ export default defineComponent({
         },
         deleteRelationship(item, rel?) {
             rel == undefined ? (item.links = []) : item.links.splice(rel, 1)
-            this.updateSummary
+            this.updateSummary()
         }
     }
 })
