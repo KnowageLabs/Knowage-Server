@@ -126,7 +126,8 @@ export default defineComponent({
             hideSpans: false,
             suppressEmpty: false,
             showProperties: false,
-            crossNavigation: false
+            crossNavigation: false,
+            mode: 'designer'
         }
     },
     watch: {
@@ -145,7 +146,7 @@ export default defineComponent({
                 this.hideSpans = this.olap.modelConfig.hideSpans
                 this.suppressEmpty = this.olap.modelConfig.suppressEmpty
                 this.showProperties = this.olap.modelConfig.showProperties
-                this.crossNavigation = this.olap.modelConfig.crossNavigation.buttonClicked
+                this.crossNavigation = this.olap.modelConfig?.crossNavigation?.buttonClicked
             }
         },
         onShowParentMemberClick() {
