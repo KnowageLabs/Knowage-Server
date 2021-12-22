@@ -13,7 +13,7 @@
                 </Toolbar>
                 <div class="kn-relative kn-flex">
                     <div class="kn-height-full kn-width-full kn-absolute">
-                        <DataTable class="p-datatable-sm kn-table metaweb-right-border" :loading="loading" :scrollable="true" scrollHeight="100%" :value="meta.businessModels" @row-click="selectBusinessModel" @rowReorder="onRowReorder">
+                        <DataTable class="p-datatable-sm kn-table metaweb-right-border" :loading="loading" :scrollable="true" scrollHeight="100%" :value="meta.businessModels" @row-click="selectBusinessModel" @rowReorder="onRowReorder" data-test="bm-table">
                             <Column :rowReorder="true" :reorderableColumn="false" />
                             <Column :style="mainDescriptor.style.columnMain">
                                 <template #body="slotProps">

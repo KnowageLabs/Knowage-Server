@@ -41,7 +41,6 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import BusinessModelTab from './businessModel/MetawebBusinessModel.vue'
 import MetawebPhysicalModel from './physicalModel/MetawebPhysicalModel.vue'
-import metaMock from './MetawebMock.json'
 import MetawebInvalidRelationshipsDialog from './invalidRelationshipsDialog/MetawebInvalidRelationshipsDialog.vue'
 
 const { observe, generate, applyPatch } = require('fast-json-patch')
@@ -54,7 +53,6 @@ export default defineComponent({
     data() {
         return {
             v$: useValidate() as any,
-            metaMock,
             mainDescriptor,
             meta: null as any,
             observer: null as any,
