@@ -279,18 +279,14 @@ export default defineComponent({
             this.loading = false
         },
         execExternalCrossNavigation(event: any) {
-            // console.log('EVENT IN CROSS NAVIGATION: ', event)
             const tempCrossNavigationParams = event.target.attributes[2].value
+            const tempFormatted = tempCrossNavigationParams.substring(tempCrossNavigationParams.indexOf('(') + 2, tempCrossNavigationParams.lastIndexOf(')') - 1)
 
-            //  console.log('TEMP CROSS NAV PARAMS: ', tempCrossNavigationParams)
-            const tempFormatted = tempCrossNavigationParams.substring(tempCrossNavigationParams.indexOf('(') + 1, tempCrossNavigationParams.lastIndexOf(')'))
-            //   console.log('TEMP CROSS NAV PARAMS FROMATED: ', tempFormatted)
-
+            const tempArray = tempFormatted.split(',')
             const object = {}
-            object[tempFormatted.substring(tempFormatted.indexOf('{') + 1, tempFormatted.indexOf(':'))] = tempFormatted.substring(tempFormatted.indexOf(':') + 2, tempFormatted.indexOf('}') - 1)
-
-            //  console.log('TEMP CROSS OBJECT: ', object)
-
+            tempArray?.forEach((el: string) => {
+                object[el.substring(0, el.indexOf(':'))] = el.substring(el.indexOf(':') + 2, el.length - 1)
+            })
             this.$emit('executeCrossNavigation', object)
         },
         async enableCrossNaivigation(crossNavigation: boolean) {
@@ -305,11 +301,9 @@ export default defineComponent({
         },
         async getCrossNavigationURL(event: any) {
             this.loading = true
-            console.log('EVENT IN EXEC FROM CELL: ', event)
+
             const tempString = event.target.attributes[1].textContent
-            console.log('TEMP STRING: ', tempString)
             const tempParametersString = tempString.substring(tempString.indexOf('(') + 1, tempString.indexOf(')'))
-            console.log('TEMP PARAMETER STRING: ', tempParametersString)
             const temp = tempParametersString?.substring(1, tempParametersString.length - 1)?.split(',')
 
             let tempResponse = null
@@ -323,11 +317,15 @@ export default defineComponent({
             this.loading = false
         },
         async executeCrossnavigationFromCell(crossNavigationString: string | null) {
-            console.log('CROSS NAVIGATION STRING: ', crossNavigationString)
             const tempString = crossNavigationString?.substring(crossNavigationString.indexOf('{') + 1, crossNavigationString.indexOf('}'))
             const tempArray = tempString?.split(',')
 
-            console.log('TEMP ARRAY: ', tempArray)
+            const object = {}
+            tempArray?.forEach((el: string) => {
+                object[el.substring(0, el.indexOf(':'))] = el.substring(el.indexOf(':') + 2, el.length - 1)
+            })
+
+            this.$emit('executeCrossNavigation', object)
         },
         async handleTableClick(event: Event) {
             console.log('EVENT: ', event)
