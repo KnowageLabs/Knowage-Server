@@ -125,9 +125,7 @@ export default defineComponent({
                     })
                     generate(this.observer)
                 })
-                .catch((error: any) => {
-                    console.log('ERROR: ', error)
-                })
+                .catch(() => {})
             this.loading = false
         },
         async addNewPhysicalTables(selectedTables: any[]) {

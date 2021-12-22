@@ -229,7 +229,6 @@ describe('Metaweb Attributes Detail Dialog', () => {
     it('the detail field of a business model should show the name of the selected field', async () => {
         const wrapper = factory()
 
-        console.log(wrapper.html())
         expect(wrapper.vm.attribute).toStrictEqual(mockedAttribute)
         expect(wrapper.vm.attribute.name).toStrictEqual('Promotion id')
     })

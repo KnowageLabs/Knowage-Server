@@ -85,7 +85,7 @@ export default defineComponent({
                     this.tables = []
                     this.step = 0
                 })
-                .catch((error: any) => console.log('ERROR: ', error))
+                .catch(() => {})
 
             this.loading = false
         }

@@ -190,22 +190,6 @@ export default defineComponent({
             }
 
             return isSelected
-        },
-        async test() {
-            this.loading = true
-            const physicalModels = [] as string[]
-            const businessModels = [] as string[]
-
-            this.prepareDataForPost(physicalModels, businessModels)
-
-            await this.$http
-                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/loadModelFromSession`, { datasourceId: '' + this.businessModel?.dataSourceId, physicalModels: physicalModels, businessModels: businessModels, modelName: this.businessModel?.name })
-                .then((response: AxiosResponse<any>) => {
-                    console.log('RESPONSE: ', response)
-                })
-                .catch(() => {})
-
-            this.loading = false
         }
     }
 })
