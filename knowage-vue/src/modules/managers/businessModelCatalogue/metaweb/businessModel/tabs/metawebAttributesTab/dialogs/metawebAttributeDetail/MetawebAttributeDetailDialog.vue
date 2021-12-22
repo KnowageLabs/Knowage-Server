@@ -9,7 +9,7 @@
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
-        <div v-if="attribute" class="p-mt-4 p-mx-4 kn-flex-0">
+        <div v-if="attribute" ref="attribute-form" class="p-mt-4 p-mx-4 kn-flex-0">
             <div class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-12 p-md-12">
                     <span class="p-float-label">

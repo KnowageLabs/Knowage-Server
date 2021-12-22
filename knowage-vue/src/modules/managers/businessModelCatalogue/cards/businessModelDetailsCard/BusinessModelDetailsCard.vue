@@ -142,7 +142,7 @@
                             <Button class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.metaWeb')" @click="goToMetaWeb" data-test="metaweb-button"></Button>
                         </div>
                         <div class="p-m-2" v-if="toGenerate">
-                            <Button class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.generate')" @click="generateDatamartVisible = true"></Button>
+                            <Button class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.generate')" @click="generateDatamartVisible = true" data-test="generate-button"></Button>
                         </div>
                     </div>
 

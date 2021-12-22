@@ -18,11 +18,11 @@
         <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 p-d-flex p-flex-column">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
-                    {{ selectedPhysicalModel?.name }}
+                    <span data-test="physical-model-name">{{ selectedPhysicalModel?.name }}</span>
                 </template>
             </Toolbar>
             <div v-if="selectedPhysicalModel" class="metaweb-tab-container p-d-flex p-flex-column kn-flex">
-                <TabView class="metaweb-tabview p-d-flex p-flex-column kn-flex" scrollable>
+                <TabView class="metaweb-tabview p-d-flex p-flex-column kn-flex" scrollable data-test="tab-view">
                     <TabPanel>
                         <template #header>
                             <span>{{ $t('metaweb.physicalModel.propertyList') }}</span>

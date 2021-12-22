@@ -22,13 +22,13 @@
             </Column>
             <Column :style="metawebAttributesTabDescriptor.iconColumnStyle">
                 <template #header>
-                    <Button class="kn-button kn-button--primary p-button-link p-jc-center" @click="openUnusedFieldsDialog"> {{ $t('common.add') }}</Button>
+                    <Button class="kn-button kn-button--primary p-button-link p-jc-center" @click="openUnusedFieldsDialog" data-test="add-button"> {{ $t('common.add') }}</Button>
                 </template>
 
                 <template #body="slotProps">
                     <div class="p-d-flex p-flex-row p-jc-end">
-                        <Button icon="far fa-edit" class="p-button-link" @click="openAttributeDialog(slotProps.data)" />
-                        <Button icon="pi pi-trash" class="p-button-link" @click="deleteBusinessColumnConfirm(slotProps.data)" />
+                        <Button icon="far fa-edit" class="p-button-link" @click="openAttributeDialog(slotProps.data)" :data-test="'open-icon-' + slotProps.data.name" />
+                        <Button icon="pi pi-trash" class="p-button-link" @click="deleteBusinessColumnConfirm(slotProps.data)" :data-test="'delete-icon-' + slotProps.data.name" />
                     </div>
                 </template>
             </Column>
@@ -160,6 +160,7 @@ export default defineComponent({
         async deleteBusinessColumn(attribute: iBusinessModelColumn) {
             this.loading = true
             const postData = { data: { businessColumnUniqueName: attribute.uniqueName, businessModelUniqueName: this.businessModel?.uniqueName }, diff: generate(this.observer) }
+
             await this.$http
                 .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/deleteBusinessColumn`, postData)
                 .then((response: AxiosResponse<any>) => {
@@ -196,8 +197,6 @@ export default defineComponent({
             this.unusedFieldDialogVisible = true
         },
         async saveUnusedFields(unusedColumns: any[]) {
-            console.log('UNUSED COLUMNS ON SAVE: ', unusedColumns)
-
             this.loading = true
             const tempColumns = unusedColumns.map((el: any) => {
                 return { businessModelUniqueName: this.businessModel?.uniqueName, physicalColumnName: el.name, physicalTableName: el.tableName }

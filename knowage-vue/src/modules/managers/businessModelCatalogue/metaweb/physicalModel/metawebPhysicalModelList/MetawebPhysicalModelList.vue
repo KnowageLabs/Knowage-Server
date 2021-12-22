@@ -3,7 +3,7 @@
         <AccordionTab v-for="(physicalModel, index) in meta.physicalModels" :key="index">
             <template #header>
                 <div class="p-d-flex p-flex-row metaweb-physical-model-accordion-header">
-                    <span>{{ physicalModel.name }}</span>
+                    <span :data-test="'physical-model-tab-' + physicalModel.name ">{{ physicalModel.name }}</span>
                     <span class="p-ml-auto p-mr-2">{{ physicalModel.columns.length + ' ' + $t('common.properties') }}</span>
                 </div>
             </template>
@@ -12,7 +12,7 @@
                 <template #option="slotProps">
                     <div>
                         <i :class="slotProps.option.primaryKey ? 'fa fa-key gold-key' : 'fa fa-columns'" class="p-mr-2"></i>
-                        <span>{{ slotProps.option.name }}</span>
+                        <span >{{ slotProps.option.name }}</span>
                     </div>
                 </template>
             </Listbox>

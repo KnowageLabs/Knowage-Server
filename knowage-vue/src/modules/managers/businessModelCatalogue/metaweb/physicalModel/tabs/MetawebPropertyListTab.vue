@@ -9,7 +9,7 @@
                 <div class="p-fluid">
                     <div class="p-field">
                         <label :for="modelInfo.name" class="kn-material-input-label"> {{ $t(modelInfo.label) }} </label>
-                        <InputText class="kn-material-input" v-model="physicalModel[modelInfo.name]" :id="modelInfo.name" :disabled="true" />
+                        <InputText class="kn-material-input" v-model="physicalModel[modelInfo.name]" :id="modelInfo.name" :disabled="true" :data-test="'input-' + modelInfo.label" />
                     </div>
                 </div>
             </div>
@@ -24,7 +24,7 @@
                 <div class="p-fluid">
                     <div class="p-field">
                         <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
-                        <InputText class="kn-material-input" v-model="prop.value" :disabled="true" />
+                        <InputText class="kn-material-input" v-model="prop.value" :disabled="true" :data-test="'input-' + prop.propertyType.name" />
                     </div>
                 </div>
             </div>

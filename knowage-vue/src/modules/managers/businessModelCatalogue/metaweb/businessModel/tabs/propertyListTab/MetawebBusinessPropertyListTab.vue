@@ -9,7 +9,7 @@
                 <div class="p-fluid">
                     <div class="p-field">
                         <label :for="modelInfo.name" class="kn-material-input-label"> {{ $t(modelInfo.label) }} </label>
-                        <InputText class="kn-material-input" v-model="businessModel[modelInfo.name]" :id="modelInfo.name" :disabled="true" />
+                        <InputText class="kn-material-input" v-model="businessModel[modelInfo.name]" :id="modelInfo.name" :disabled="true" data-test="input-name" />
                     </div>
                 </div>
             </div>
