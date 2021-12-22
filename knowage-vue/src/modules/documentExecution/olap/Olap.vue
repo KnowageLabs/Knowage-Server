@@ -299,8 +299,31 @@ export default defineComponent({
             this.formatOlapTable()
             this.loading = false
         },
-        async executeCrossNavigationFromCell(event: any) {
+        async getCrossNavigationURL(event: any) {
+            this.loading = true
             console.log('EVENT IN EXEC FROM CELL: ', event)
+            const tempString = event.target.attributes[1].textContent
+            console.log('TEMP STRING: ', tempString)
+            const tempParametersString = tempString.substring(tempString.indexOf('(') + 1, tempString.indexOf(')'))
+            console.log('TEMP PARAMETER STRING: ', tempParametersString)
+            const temp = tempParametersString?.substring(1, tempParametersString.length - 1)?.split(',')
+
+            let tempResponse = null
+            await this.$http
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/crossnavigation/getCrossNavigationUrl/${temp[0]},${temp[1]}?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .then((response: AxiosResponse<any>) => (tempResponse = response.data))
+                .catch(() => {})
+            console.log('TEMP RESPONSE: ', tempResponse)
+            await this.executeCrossnavigationFromCell(tempResponse)
+
+            this.loading = false
+        },
+        async executeCrossnavigationFromCell(crossNavigationString: string | null) {
+            console.log('CROSS NAVIGATION STRING: ', crossNavigationString)
+            const tempString = crossNavigationString?.substring(crossNavigationString.indexOf('{') + 1, crossNavigationString.indexOf('}'))
+            const tempArray = tempString?.split(',')
+
+            console.log('TEMP ARRAY: ', tempArray)
         },
         async handleTableClick(event: Event) {
             console.log('EVENT: ', event)
@@ -327,7 +350,7 @@ export default defineComponent({
                         this.execExternalCrossNavigation(event)
                         break
                     case 'cell-cross-navigation':
-                        await this.executeCrossNavigationFromCell(event)
+                        await this.getCrossNavigationURL(event)
                         break
                 }
             }
