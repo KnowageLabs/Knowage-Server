@@ -104,6 +104,27 @@
                     </div>
                 </div>
             </div>
+
+            <div>
+                <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.templateEditing') }}</label>
+                <div class="p-grid">
+                    <div class="p-col-4">
+                        <Button icon="far fa-eye" v-tooltip.top="$t('documentExecution.olap.sidebar.mdxQuery')" @click="$emit('openMdxQueryDialog')"></Button>
+                    </div>
+                    <div class="p-col-4">
+                        <Button icon="pi pi-book" v-tooltip.top="$t('documentExecution.olap.sidebar.configureTablePagination')"></Button>
+                    </div>
+                    <div class="p-col-4">
+                        <Button icon="pi pi-arrow-circle-right" v-tooltip.top="$t('documentExecution.olap.sidebar.defineCrossNavigation')"></Button>
+                    </div>
+                    <div class="p-col-4">
+                        <Button icon="pi pi-check-square" v-tooltip.top="$t('documentExecution.olap.sidebar.configureButtonsVisiblity')"></Button>
+                    </div>
+                    <div class="p-col-4">
+                        <Button icon="fa fa-calculator" v-tooltip.top="$t('documentExecution.olap.sidebar.calculatedField')"></Button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>

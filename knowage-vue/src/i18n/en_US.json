@@ -414,7 +414,12 @@
                 "showProperties": "Show properties",
                 "sortingSettings": "Sorting settings",
                 "suppressEmptyRowsColumns": "Suppress empty rows/columns",
-                "tableFunctions": "Table functions"
+                "tableFunctions": "Table functions",
+                "templateEditing": "Template editing",
+                "configureTablePagination": "Configure table pagination",
+                "defineCrossNavigation": "Define cross navigation",
+                "calculatedField": "Calculated field",
+                "configureButtonsVisiblity": "Configure buttons visibility"
             },
             "userRoleError": "User does not have valid roles for the execution of the selected document",
             "viewCockpit": "View cockpit document",
