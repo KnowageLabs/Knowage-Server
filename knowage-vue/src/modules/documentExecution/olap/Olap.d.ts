@@ -22,3 +22,11 @@ export interface iOlapFilter {
     measure: number
     positionInAxis: number
 }
+
+export interface iOlapCrossNavigationParameter {
+    name: string,
+    dimension: string,
+    hierarchy: string,
+    level: string,
+    type: string
+}
