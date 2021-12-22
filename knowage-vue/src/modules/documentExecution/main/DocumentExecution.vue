@@ -815,19 +815,21 @@ export default defineComponent({
             console.log('>>>>>> TEST1: ', crossNavigationParams)
             console.log('>>>>>> TEST2: ', navigationParams)
 
-            const crossNavigationParamKey = Object.keys(crossNavigationParams)[0]
-            let formatedParams = {} as any
+            const crossNavigationParamKeys = Object.keys(crossNavigationParams)
+            let formattedParams = {} as any
 
-            console.log('CROSS NAVIGATION PARAM KEY: ', crossNavigationParamKey)
+            console.log('CROSS NAVIGATION PARAM KEYS: ', crossNavigationParamKeys)
 
             Object.keys(navigationParams).forEach((key: string) => {
-                if (navigationParams[key].value.label === crossNavigationParamKey) {
+                const index = crossNavigationParamKeys.findIndex((el: string) => el === navigationParams[key].value.label)
+                if (index !== -1) {
                     console.log('KEY: ', key)
-                    formatedParams[key] = crossNavigationParams[crossNavigationParamKey]
+                    formattedParams[key] = crossNavigationParams[crossNavigationParamKeys[index]]
                 }
             })
 
-            return formatedParams
+            console.log('FORMATTED PARAMS: ', formattedParams)
+            return formattedParams
         }
     }
 })
