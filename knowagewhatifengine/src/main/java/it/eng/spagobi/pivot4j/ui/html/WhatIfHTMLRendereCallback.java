@@ -108,14 +108,9 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 	@Override
 	protected Map<String, String> getCellAttributes(TableRenderContext context) {
-
 		StringWriter sw = new StringWriter();
 		CssWriter cssw = new CssWriter(sw);
 		Map<String, String> attributes = super.getCellAttributes(context);
-		// initializeInternal(context);
-		if (context.getCellType() == CellTypes.AGG_VALUE) {
-			// System.out.println(context.getCell());
-		}
 
 		if (context.getCellType() == CellTypes.VALUE && context.getCell() != null) {
 
@@ -128,14 +123,10 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			int rowId = context.getRowIndex();
 			int positionId = getOrdinalNoSubset(context.getCell().getOrdinal());
 			String value = context.getCell().getFormattedValue();
-			// String memberUniqueName = context.getMember().getUniqueName();
 			if (context.getCell().getValue() != null && context.getCell().getFormattedValue() != null) {
-				double dd = Double.parseDouble(context.getCell().getValue().toString());
 				String formatedValue = context.getCell().getFormattedValue();
-				// if (formatedValue.contains("style")) {
 				String style;
-				ArrayList<String> fv = trimStyle(formatedValue);// formatedValue.split("=*\\s*\"
-				// | =*\\s*\'");
+				ArrayList<String> fv = trimStyle(formatedValue);// formatedValue.split("=*\\s*\" | =*\\s*\'");
 
 				for (int i = 0; i < fv.size(); i++) {
 					String styles[] = fv.get(i).split("\\s*=\\s*");
@@ -148,20 +139,14 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				style = sw.toString();
 				attributes.put("style", style);
 			}
-			// }
 
 			String id = positionId + "!" + rowId + "!" + colId + "!" + System.currentTimeMillis() % 1000;
-			// attributes.put("ng-dblclick", "makeEditable('" + id + "','" +
-			// measureName + "')");
 			attributes.put("id", id);
 			attributes.put("measureName", measureName);
 			attributes.put("ordinal", String.valueOf(positionId));
 			attributes.put("value", value);
 			attributes.put("cell", null);
 		} else if (context.getCellType() == CellTypes.LABEL) {
-			NonInternalPropertyCollector np = new NonInternalPropertyCollector();
-			List<Property> properties = np.getProperties(context.getMember().getLevel());
-
 			String uniqueName = context.getMember().getUniqueName();
 			String level = context.getMember().getLevel().getUniqueName();
 			String dimensionType = null;
@@ -182,9 +167,6 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			}
 
 			int axisOrdinal = context.getAxis().axisOrdinal();
-			// attributes.put("ondblclick",
-			// "javascript:Sbi.olap.eventManager.setCalculatedFieldParent('" +
-			// uniqueName + "','" + axis + "')");
 
 			attributes.put("axisOrdinal", String.valueOf(axisOrdinal));
 			attributes.put("dimensionUniqueName", dimensionUniqueName);
@@ -242,24 +224,13 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 						String cmd = command.getName();
 						UICommandParameters commandParams = command.createParameters(context);
 
-						int colIdx = context.getColumnIndex();
-						int rowIdx = context.getRowIndex();
-
 						int axis = 0;
 						if (context.getAxis() != null) {
 							axis = context.getAxis().axisOrdinal();
 						}
 						int memb = 0;
 						if (context.getPosition() != null) {
-							// memb =
-							// context.getPosition().getMembers().indexOf(context.getMember());
 							memb = context.getAxis().axisOrdinal();
-						}
-						int pos = 0;
-						if (context.getAxis() == Axis.COLUMNS) {
-							pos = rowIdx;
-						} else {
-							pos = colIdx;
 						}
 
 						String uniqueName = context.getMember().getUniqueName();
@@ -332,8 +303,6 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 	@Override
 	public void renderContent(TableRenderContext context, String label, Double value) {
-
-		// super.renderContent(context, label, value);
 		if (label != null && label.contains("|")) {
 			label = formatValue(label, value);
 		}
@@ -355,9 +324,6 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					axis = context.getAxis().axisOrdinal();
 				}
 				int memb = 0;
-				/*
-				 * if (context.getPosition() != null) { memb = rowIdx;// context.getPosition().getOrdinal(); }
-				 */
 				if (context.getAxis() == Axis.COLUMNS) {
 					memb = rowIdx / 2;
 				} else {
@@ -387,12 +353,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					// For drill replace the context.getPosition() and
 					// context.getMember are empty.
 					String uniqueName = "x";
-					String positionUniqueName = "x";
 
 					if (context != null) {
-						if (context.getPosition() != null && context.getPosition() != null) {
-							positionUniqueName = context.getPosition().getMembers().toString();
-						}
 						if (context.getMember() != null) {
 							uniqueName = context.getMember().getUniqueName();
 						}
@@ -512,14 +474,12 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 		return false;
 	}
 
-	private String getMeasureName(TableRenderContext context) { // (RenderContext
-		// context)
+	private String getMeasureName(TableRenderContext context) {
 		int coordinate;
 		if (this.measureOnRows) {
-			coordinate = context.getRowIndex(); // coordinate =
-			// context.getRowIndex();
+			coordinate = context.getRowIndex();
 		} else {
-			coordinate = context.getColumnIndex(); // context.getColumnIndex()
+			coordinate = context.getColumnIndex();
 		}
 		String measureName = this.positionMeasureMap.get(coordinate);
 
@@ -587,8 +547,6 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 					attributes.put("ng-click",
 							"sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' ) ;$event.stopPropagation();");
-					// System.out.println(context.getMember() + " has sorting "
-					// + context.getModel().getSortCriteria());
 					startElement("img", attributes);
 					endElement("img");
 				} else if (context.getModel().getSortCriteria().equals(SortCriteria.DESC) || context.getModel().getSortCriteria().equals(SortCriteria.BDESC)
@@ -602,8 +560,6 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 					attributes.put("ng-click",
 							"sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' ) ;$event.stopPropagation();");
-					// System.out.println(context.getMember() + " has sorting "
-					// + context.getModel().getSortCriteria());
 					startElement("img", attributes);
 					endElement("img");
 				}
@@ -648,7 +604,6 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				NumberFormat nf = NumberFormat.getNumberInstance(Locale.getDefault());
 				DecimalFormat df = (DecimalFormat) nf;
 				df.applyPattern(pattern);
-				// System.out.println(df.format(value) + "-" + pattern);
 				return df.format(value);
 			}
 		}
