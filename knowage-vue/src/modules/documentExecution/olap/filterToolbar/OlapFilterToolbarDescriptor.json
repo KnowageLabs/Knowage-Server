@@ -13,6 +13,9 @@
             "line-height": "1.5",
             "max-height": "28px"
         },
+        "leftToolbarContainer": {
+            "width": "32px"
+        },
         "sidebarButton": {
             "color": "white",
             "width": "50px"
@@ -28,6 +31,11 @@
             "background-color": "white",
             "height": "100%",
             "width": "2px"
+        },
+        "whitespaceLeft": {
+            "background-color": "white",
+            "height": "2px",
+            "width": "100%"
         }
     }
 }

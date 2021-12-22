@@ -3,6 +3,11 @@
         <FilterPanel :olapProp="olap" />
         <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" />
 
+        <div id="left-and-table-container" class="p-d-flex p-flex-row kn-flex">
+            <FilterLeftToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" />
+            <div id="olap-table" class="kn-flex" ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
+        </div>
+
         <!-- SIDEBAR -------------------------------------->
         <div v-if="olapSidebarVisible" id="olap-backdrop" @click="olapSidebarVisible = false" />
         <OlapSidebar
@@ -19,9 +24,7 @@
             @openMdxQueryDialog="mdxQueryDialogVisible = true"
             @reloadSchema="reloadOlap"
             @enableCrossNavigation="enableCrossNaivigation"
-        ></OlapSidebar>
-
-        <div ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
+        />
 
         <OlapCustomViewTable v-if="customViewVisible" class="p-m-2" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)"></OlapCustomViewTable>
     </div>
@@ -46,10 +49,11 @@ import OlapMDXQueryDialog from './mdxQueryDialog/OlapMDXQueryDialog.vue'
 import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import FilterPanel from './filterPanel/OlapFilterPanel.vue'
 import FilterTopToolbar from './filterToolbar/OlapTopFilterToolbar.vue'
+import FilterLeftToolbar from './filterToolbar/OlapLeftFilterToolbar.vue'
 
 export default defineComponent({
     name: 'olap',
-    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, FilterTopToolbar, OlapMDXQueryDialog },
+    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, FilterTopToolbar, FilterLeftToolbar, OlapMDXQueryDialog },
     props: { id: { type: String }, olapId: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
     emits: ['closeOlapCustomView', 'applyCustomView', 'executeCrossNavigation'],
     data() {
