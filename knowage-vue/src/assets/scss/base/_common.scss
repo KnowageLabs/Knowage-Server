@@ -42,6 +42,14 @@
     flex: 1;
 }
 
+.kn-relative {
+    position: relative;
+}
+
+.kn-flex-0 {
+    flex: 0;
+}
+
 .kn-overflow-y {
     overflow-y: auto;
 }
@@ -52,6 +60,15 @@
 
 .kn-overflow {
     overflow: auto;
+}
+
+.kn-remove-card-padding {
+    :deep(.p-card-body) {
+        padding: 0;
+        .p-card-content {
+            padding: 0;
+        }
+    }
 }
 
 .kn-no-select {
@@ -105,4 +122,8 @@
 
 .kn-cursor-pointer {
     cursor: pointer;
+}
+
+.kn-white-color {
+    color: $button-text-color !important;
 }

@@ -14,15 +14,8 @@
                     <template #header>
                         <span>{{ tab.item?.name ? tab.item?.name : 'new dashboard' }}</span>
                     </template>
-
-                    <!-- <DocumentBrowserTab :item="tab.item" :mode="tab.mode" @close="closeDocument('current')"></DocumentBrowserTab> -->
                 </TabPanel>
             </TabView>
-
-            <!-- TODO -->
-            <!-- {{ selectedItem }} -->
-
-            <!-- {{ tabs }} -->
 
             <DocumentBrowserTab v-show="selectedItem" :item="selectedItem?.item" :mode="selectedItem?.mode" @close="closeDocument('current')"></DocumentBrowserTab>
             <div id="document-browser-tab-icon-container" v-if="activeIndex !== 0">
@@ -71,7 +64,6 @@ export default defineComponent({
 
             const id = this.tabs[this.activeIndex - 1].item ? this.tabs[this.activeIndex - 1].item.label : 'new-dashboard'
 
-            console.log('ITEM ON TAB CHANGE: ', this.tabs[this.activeIndex - 1].item)
             this.selectedItem = this.tabs[this.activeIndex - 1]
 
             let routeDocumentType = this.tabs[this.activeIndex - 1].item.mode ? this.tabs[this.activeIndex - 1].item.mode : this.getRouteDocumentType(this.tabs[this.activeIndex - 1].item)
@@ -84,12 +76,9 @@ export default defineComponent({
 
             this.tabs.push(tempItem)
 
-            console.log('TABS AFTER ITEM SELECT: ', this.tabs)
-
             this.selectedItem = tempItem
 
             const id = payload.item ? payload.item.label : 'new-dashboard'
-            console.log(' DOCUMENT BROWSER SELECTED ITEM: ', payload.item)
             let routeDocumentType = this.getRouteDocumentType(payload.item)
 
             this.$router.push(`/document-browser/${routeDocumentType}/` + id)

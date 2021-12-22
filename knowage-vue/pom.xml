@@ -87,6 +87,21 @@
 				<version>1.6.0</version>
 				<executions>
 					<execution>
+						<id>npm-set-version</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>process-resources</phase>
+						<configuration>
+							<executable>npm</executable>
+							<arguments>
+								<argument>version</argument>
+								<argument>--allow-same-version</argument>
+								<argument>${project.version}</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
 						<id>npm-install</id>
 						<goals>
 							<goal>exec</goal>

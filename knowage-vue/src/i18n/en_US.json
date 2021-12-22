@@ -77,6 +77,7 @@
         "lastChangeDate": "Last change date",
         "library": "Library",
         "load": "Load",
+        "locked": "Locked",
         "loggedUser": "logged user",
         "login": "Login",
         "menu": "Menu",
@@ -109,6 +110,7 @@
         "refresh": "Refresh",
         "released": "Released",
         "replyTo": "Reply To",
+        "required": "Required",
         "reused": "Reused",
         "role": "Role",
         "roles": "Roles",
@@ -141,6 +143,7 @@
         "tenant": "tenant",
         "test": "test",
         "time": "Time",
+        "title": "Title",
         "to": "To",
         "toast": {
             "cloneConfirmTitle": "Confirm item clone?",
@@ -257,6 +260,85 @@
         "title": "Document browser"
     },
     "documentExecution": {
+        "documentDetails": {
+            "dataLineage": {
+                "deleteError": "Error deleting table",
+                "deleteOk": "Table deleted",
+                "noDatasources": "No data source present, add some",
+                "noTables": "Data source has no tables",
+                "persistError": "Error persisting table",
+                "persistOk": "Table persisted",
+                "selectSource": "Select Source",
+                "title": "Data Lineage"
+            },
+            "drivers": {
+                "ad": "Driver AD",
+                "adDepends": "depends from the AD",
+                "conditionSavedMsg": "Data dependency is successfully created",
+                "conditionsTitle": "Driver data conditions",
+                "dataConditionsValue": "value of the parameter",
+                "dataHint": "Filter operator is used for comparing a column value of the AD",
+                "dataTitle": "Driver data conditions",
+                "deleteMessage": "Are You sure You want to delete this driver? It will not be deleted until the driver is saved!",
+                "detailsTitle": "Driver's details",
+                "dropdownSearchHint": "Search for Analytical Driver",
+                "noDataCond": "No data condition selected",
+                "noDriverSelected": "No Drivers Selected",
+                "noVisCond": "No visibility condition selected",
+                "paramValue": " value of the parameter ",
+                "parameterUrlName": "Url Name",
+                "persistError": "Error saving output param",
+                "priorityError": "Error updating priority",
+                "title": "Drivers",
+                "visibilityTitle": "Driver visibility conditions",
+                "visualizationHint": "Set driver visualization condition",
+                "visualizationTitle": "Driver Visualization"
+            },
+            "history": {
+                "activeButton": "Set active Template",
+                "activeError": "An error occured while setting active template",
+                "activeOk": "Active template changed",
+                "deleteButton": "Delete Template",
+                "downloadButton": "Download Template",
+                "listHint": "Upload new template here",
+                "listTitle": "Template History",
+                "template": "Template",
+                "templateHint": "Content of this file type cannot be shown",
+                "title": "History",
+                "uploadError": "An error occured while uploading template"
+            },
+            "info": {
+                "attribute": "Select Attribute",
+                "datasetDialogTitle": "Select Dataset",
+                "engine": "Engine",
+                "engineHint": "Select a type to unlock the available engines",
+                "imageError": "Error deleting image",
+                "imageUploadError": "Error uploading image",
+                "infoTitle": "Informations",
+                "positionTitle": "Position",
+                "previewImage": "Preview Image",
+                "profiledVisibility": "Defined Restrictions",
+                "refresh": "Refresh (seconds)",
+                "refreshHint": "Select the number of milliseconds after the document will refresh",
+                "restrictionValueHint": "Enter Value",
+                "restrictionsTitle": "Visibility Restrictions",
+                "uploadTemplate": "Upload template",
+                "visibilityLocationTitle": "Select the functionalities where the document will be visible"
+            },
+            "outputParams": {
+                "customValue": "Custom Value",
+                "noParamSelected": "No parameter selected",
+                "paramDetails": "Output parameter details",
+                "paramName": "Parameter Name",
+                "paramType": "Parameter Type",
+                "persistError": "Error saving output param",
+                "title": "Output Parameters"
+            },
+            "subreports": {
+                "title": "Subreports"
+            },
+            "title": "Document Details"
+        },
         "dossier": {
             "deleteConfirm": "Are you sure you want to delete the selected activity?",
             "deleteSuccess": "Successfully deleted selected activity.",
@@ -307,11 +389,13 @@
             "customView": {
                 "title": "Olap custom view List"
             },
+            "editModeConfirm": "You are leaving edit mode. Continue?",
             "filterPanel": {
                 "filterPanelEmpty": "Drag the member here if you want to use it as a slicer"
             },
             "savingCustomizedView": "Saving customized view",
             "showMdxQuery": "Show MDX Query",
+            "showScheduledExecutions": "Show scheduled executions",
             "sidebar": {
                 "calculatedFieldWizard": "Calculated field wizard",
                 "drillOnData": "Drill on data",
@@ -331,7 +415,10 @@
                 "sortingSettings": "Sorting settings",
                 "suppressEmptyRowsColumns": "Suppress empty rows/columns",
                 "tableFunctions": "Table functions"
-            }
+            },
+            "userRoleError": "User does not have valid roles for the execution of the selected document",
+            "viewCockpit": "View cockpit document",
+            "yourRating": "Your rating"
         },
         "registry": {
             "clearFilters": "Clear",

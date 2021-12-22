@@ -281,7 +281,7 @@ export default defineComponent({
         },
         export(type: string) {
             const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
-            let tempFrame = window.frames
+            let tempFrame = window.frames[tempIndex]
             while (tempFrame && tempFrame.name !== 'documentFrame' + tempIndex) {
                 tempFrame = tempFrame[0].frames
             }
@@ -404,11 +404,23 @@ export default defineComponent({
                 }
                 if (el.data) {
                     el.data = el.data.map((data: any) => {
-                        return { value: data._col0, description: data._col1 }
+                        return this.formatParameterDataOptions(el, data)
                     })
+
+                    if (el.data.length === 1) {
+                        el.parameterValue = [...el.data]
+                    }
                 }
                 if ((el.selectionType === 'COMBOBOX' || el.selectionType === 'LIST') && el.multivalue && el.mandatory && el.data.length === 1) {
                     el.showOnPanel = 'false'
+                }
+
+                if (!el.parameterValue) {
+                    el.parameterValue = [{ value: '', description: '' }]
+                }
+
+                if (!el.parameterValue[0].description) {
+                    el.parameterValue[0].description = ''
                 }
             })
 
