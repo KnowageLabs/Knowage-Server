@@ -11,9 +11,9 @@ const routes = [
                 props: true
             },
             {
-                path: 'document-execution/:id',
-                name: 'document-execution',
-                component: () => import('@/modules/documentBrowser/DocumentExecutionConatiner.vue'),
+                path: ':mode(registry|document-composite|report|office-doc|olap|map|report|kpi|dossier|etl)/:id',
+                name: 'document-browser-document-execution',
+                component: () => import('@/modules/documentExecution/main/DocumentExecution.vue'),
                 props: true
             }
         ]

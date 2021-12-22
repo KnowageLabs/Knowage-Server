@@ -10,7 +10,7 @@
             <div>
                 <div class="profile">
                     <button class="p-link" @click="toggleProfile" v-tooltip="user && user.fullName">
-                        <img alt="Profile" class="profile-image" :src="getGravatarSrc(user)" />
+                        <img alt="Profile" class="profile-image" :src="getProfileImage(user)" />
                         <span v-if="user" class="profile-name">{{ user.fullName }}</span>
                         <i class="pi pi-fw pi-chevron-down"></i>
                         <span class="profile-role">Marketing</span>
@@ -129,8 +129,9 @@
             toggleProfile() {
                 this.showProfileMenu = !this.showProfileMenu
             },
-            getGravatarSrc(user) {
-                if (user && user.attributes && user.attributes.email) return getGravatar(user.attributes.email)
+            getProfileImage(user) {
+                if (user && user.organizationImageb64) return user.organizationImageb64
+                else if (user && user.attributes && user.attributes.email) return getGravatar(user.attributes.email)
                 else return getGravatar('knowage@eng.it')
             },
             updateNewsAndDownload() {

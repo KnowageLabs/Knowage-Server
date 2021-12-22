@@ -45,6 +45,7 @@
                 @showMenu="sidebarVisible = true"
                 @reloadRepositoryMenu="getAllFolders"
                 @breadcrumbClicked="setSelectedBreadcrumb($event)"
+                @execute="executeDocument($event)"
             />
         </div>
     </div>
@@ -231,6 +232,48 @@ export default defineComponent({
                 })
             }
             this.menuItems.push({ icon: 'fas fa-filter', key: '6', label: 'workspace.menuLabels.advanced', value: 'advanced' })
+        },
+        executeDocument(document: any) {
+            const routeType = this.getRouteDocumentType(document)
+            const label = document.label ? document.label : document.documentLabel
+            this.$router.push(`/workspace/${routeType}/${label}`)
+        },
+        getRouteDocumentType(item: any) {
+            let routeDocumentType = ''
+
+            const type = item.typeCode ? item.typeCode : item.documentType
+
+            switch (type) {
+                case 'DATAMART':
+                    routeDocumentType = 'registry'
+                    break
+                case 'DOCUMENT_COMPOSITE':
+                    routeDocumentType = 'document-composite'
+                    break
+                case 'OFFICE_DOC':
+                    routeDocumentType = 'office-doc'
+                    break
+                case 'OLAP':
+                    routeDocumentType = 'olap'
+                    break
+                case 'MAP':
+                    routeDocumentType = 'map'
+                    break
+                case 'REPORT':
+                    routeDocumentType = 'report'
+                    break
+                case 'KPI':
+                    routeDocumentType = 'kpi'
+                    break
+                case 'DOSSIER':
+                    routeDocumentType = 'dossier'
+                    break
+                case 'ETL':
+                    routeDocumentType = 'etl'
+                    break
+            }
+
+            return routeDocumentType
         }
     }
 })

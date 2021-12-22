@@ -1,5 +1,5 @@
 <template>
-    <div class="kn-page">
+    <div class="kn-page--full">
         <Card class="p-m-3">
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
@@ -101,7 +101,7 @@ import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 export default defineComponent({
     name: 'dossier',
     components: { Card, Column, DataTable, KnHint, KnValidationMessages },
-    props: { id: { type: String, required: false } },
+    props: { id: { type: String, required: false }, reloadTrigger: { type: Boolean } },
     computed: {
         showHint() {
             if (this.dossierActivities.length != 0) {
@@ -113,6 +113,15 @@ export default defineComponent({
             return this.v$.$invalid
         }
     },
+    watch: {
+        async reloadTrigger() {
+            this.getDossierTemplate()
+            this.getDossierActivities()
+            this.interval = setInterval(() => {
+                this.getDossierActivities()
+            }, 10000)
+        }
+    },
     created() {
         this.getDossierTemplate()
         this.getDossierActivities()
@@ -120,7 +129,7 @@ export default defineComponent({
             this.getDossierActivities()
         }, 10000)
     },
-    unmounted() {
+    deactivated() {
         clearInterval(this.interval)
     },
     data() {
@@ -181,7 +190,6 @@ export default defineComponent({
         },
         async deleteDossier(selectedDossier) {
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedDossier.id}`
-            console.log(url)
 
             if (selectedDossier.status == 'DOWNLOAD' || selectedDossier.status == 'ERROR') {
                 await this.$http
