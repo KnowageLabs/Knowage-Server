@@ -351,7 +351,7 @@ export default defineComponent({
             console.log('EVENT FOR SELECT: ', event)
             const attributes = event.target.attributes
 
-            if (attributes[0].localName !== 'axisordinal' || attributes[0].value === '0') {
+            if (attributes[0].localName !== 'axisordinal') {
                 return
             }
 
@@ -364,19 +364,16 @@ export default defineComponent({
                 member: attributes[5].value,
                 parentmember: attributes[6].value,
                 position: attributes[7].value,
-                uniquename: attributes[9].value
+                uniquename: attributes[9]?.value
             } as any
 
-            if (this.selectedCell?.cell.uniquename !== cell.uniquename) {
-                if (this.selectedCell) {
-                    this.selectedCell.event.target.style.border = 'none'
-                }
-                this.selectedCell = { cell: cell, event: event }
-                event.target.style.border = '1px solid red'
-            } else {
-                this.selectedCell = null
-                event.target.style.border = 'none'
+            if (this.selectedCell) {
+                this.selectedCell.event.target.style.border = 'none'
             }
+
+            this.selectedCell = { cell: cell, event: event }
+            event.target.style.border = '1px solid red'
+
             console.log('SELECTED CELL: ', this.selectedCell)
         },
         cellSelected() {

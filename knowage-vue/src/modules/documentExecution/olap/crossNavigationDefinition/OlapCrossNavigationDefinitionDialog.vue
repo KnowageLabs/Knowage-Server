@@ -44,7 +44,7 @@ export default defineComponent({
                     dimension: 'Customers',
                     hierarchy: '[Customers.All Customers]',
                     level: '[Customers.All Customers].[Country]',
-                    type: 'From Cell'
+                    type: 'cell'
                 },
                 {
                     name: 'Test 2',

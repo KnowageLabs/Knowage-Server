@@ -1,6 +1,6 @@
 <template>
     <div class="p-m-4">
-        <Message v-if="selectedParameter.type === 'From Cell'" class="p-m-4" severity="info" :closable="false" :style="olapCrossNavigationDefinitionDialogDescriptor.styles.message">
+        <Message v-if="selectedParameter.type === 'cell'" class="p-m-4" severity="info" :closable="false" :style="olapCrossNavigationDefinitionDialogDescriptor.styles.message">
             {{ $t('documentExecution.olap.crossNavigationDefinition.hint') }}
         </Message>
 
@@ -77,7 +77,7 @@ export default defineComponent({
         loadValueFromCell() {
             console.log(' >>> LOAD VALUE FROM CELL CALLLLLLLED!')
             if (this.cell) {
-                this.value = this.cell.uniquename
+                this.value = this.selectedParameter.type === 'cell' ? `dimension=${this.cell.dimensionuniquename} hierarchy=${this.cell.hierarchyuniquename} level=${this.cell.level}` : this.cell.level
             }
         }
     }
