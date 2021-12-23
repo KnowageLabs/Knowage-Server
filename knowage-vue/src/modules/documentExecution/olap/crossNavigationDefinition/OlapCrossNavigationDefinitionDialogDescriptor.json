@@ -1,0 +1,44 @@
+{
+    "columns": [
+        {
+            "field": "name",
+            "label": "common.name"
+        },
+        {
+            "field": "type",
+            "label": "common.type"
+        }
+    ],
+    "dialog": {
+        "style": {
+            "height": "60%",
+            "max-height": "60%",
+            "max-width": "60%",
+            "min-width": "60%"
+        }
+    },
+    "iconColumn": {
+        "style": {
+            "text-align": "end",
+            "width": "10%"
+        }
+    },
+    "styles": {
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        }
+    },
+    "typeList": [
+        {
+            "label": "From Cell",
+            "value": "cell"
+        },
+        {
+            "label": "From Member",
+            "value": "member"
+        }
+    ]
+}

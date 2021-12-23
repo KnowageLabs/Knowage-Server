@@ -2,6 +2,7 @@
     "common": {
         "active": "Active",
         "add": "Add",
+        "addNew": "Add new",
         "apply": "Apply",
         "attachments": "Attachments",
         "author": "Author",
@@ -386,6 +387,13 @@
             "yourRating": "Your rating"
         },
         "olap": {
+            "crossNavigationDefinition": {
+                "crossNavigationType": "Select the type of cross navigation below",
+                "hint": "The parameters for cross navigation on cell required the name of the dimension, hierarchy and level. In order to select these values you should click on \"select from table\". Than on the table you should open the filter panel of the hierarchy you want to include in the parameter. Than on the filter panel you should select one member of the level you want to include in the cross navigation. For example: suppose you want to create a parameter on dimension=\"Product\" hierarchy=\"[Product]\" level=\"[Product].[Product Department]. You should select the hierarchy Product on dimension Product. Than you should open the filter panel and select a member of the level [Product].[Product Department] for example Food.Seafood",
+                "parameterName": "Parameter Name",
+                "selectFromTable": "Select from table",
+                "title": "Cross Navigation Definition"
+            },
             "customView": {
                 "title": "Olap custom view List"
             },
@@ -401,7 +409,11 @@
             "showMdxQuery": "Show MDX Query",
             "showScheduledExecutions": "Show scheduled executions",
             "sidebar": {
+                "calculatedField": "Calculated field",
                 "calculatedFieldWizard": "Calculated field wizard",
+                "configureButtonsVisiblity": "Configure buttons visibility",
+                "configureTablePagination": "Configure table pagination",
+                "defineCrossNavigation": "Define cross navigation",
                 "drillOnData": "Drill on data",
                 "drillOnDimension": "Drill on dimension",
                 "drillThrough": "Drill Through",
@@ -419,11 +431,7 @@
                 "sortingSettings": "Sorting settings",
                 "suppressEmptyRowsColumns": "Suppress empty rows/columns",
                 "tableFunctions": "Table functions",
-                "templateEditing": "Template editing",
-                "configureTablePagination": "Configure table pagination",
-                "defineCrossNavigation": "Define cross navigation",
-                "calculatedField": "Calculated field",
-                "configureButtonsVisiblity": "Configure buttons visibility"
+                "templateEditing": "Template editing"
             },
             "userRoleError": "User does not have valid roles for the execution of the selected document",
             "viewCockpit": "View cockpit document",

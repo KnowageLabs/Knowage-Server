@@ -24,6 +24,7 @@
             @openMdxQueryDialog="mdxQueryDialogVisible = true"
             @reloadSchema="reloadOlap"
             @enableCrossNavigation="enableCrossNaivigation"
+            @openCrossNavigationDefinitionDialog="crossNavigationDefinitionDialogVisible = true"
         />
 
         <OlapCustomViewTable v-if="customViewVisible" class="p-m-2" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)"></OlapCustomViewTable>
@@ -33,6 +34,7 @@
     <OlapCustomViewSaveDialog :visible="customViewSaveDialogVisible" :sbiExecutionId="id" @close="customViewSaveDialogVisible = false"></OlapCustomViewSaveDialog>
     <OlapSortingDialog :visible="sortingDialogVisible" :olap="olap" @save="onSortingSelect"></OlapSortingDialog>
     <OlapMDXQueryDialog :visible="mdxQueryDialogVisible" :mdxQuery="olap?.MDXWITHOUTCF" @close="mdxQueryDialogVisible = false"></OlapMDXQueryDialog>
+    <OlapCrossNavigationDefinitionDialog :visible="crossNavigationDefinitionDialogVisible" @close="crossNavigationDefinitionDialogVisible = false"></OlapCrossNavigationDefinitionDialog>
     <KnOverlaySpinnerPanel :visibility="loading" />
 </template>
 
@@ -50,10 +52,11 @@ import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import FilterPanel from './filterPanel/OlapFilterPanel.vue'
 import FilterTopToolbar from './filterToolbar/OlapTopFilterToolbar.vue'
 import FilterLeftToolbar from './filterToolbar/OlapLeftFilterToolbar.vue'
+import OlapCrossNavigationDefinitionDialog from './crossNavigationDefinition/OlapCrossNavigationDefinitionDialog.vue'
 
 export default defineComponent({
     name: 'olap',
-    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, FilterTopToolbar, FilterLeftToolbar, OlapMDXQueryDialog },
+    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, FilterTopToolbar, FilterLeftToolbar, OlapMDXQueryDialog, OlapCrossNavigationDefinitionDialog },
     props: { id: { type: String }, olapId: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
     emits: ['closeOlapCustomView', 'applyCustomView', 'executeCrossNavigation'],
     data() {
@@ -66,6 +69,7 @@ export default defineComponent({
             customViewSaveDialogVisible: false,
             sortingDialogVisible: false,
             mdxQueryDialogVisible: false,
+            crossNavigationDefinitionDialogVisible: false,
             sort: null as any,
             loading: false
         }

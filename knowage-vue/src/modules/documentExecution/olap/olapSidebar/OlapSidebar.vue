@@ -115,7 +115,7 @@
                         <Button icon="pi pi-book" v-tooltip.top="$t('documentExecution.olap.sidebar.configureTablePagination')"></Button>
                     </div>
                     <div class="p-col-4">
-                        <Button icon="pi pi-arrow-circle-right" v-tooltip.top="$t('documentExecution.olap.sidebar.defineCrossNavigation')"></Button>
+                        <Button icon="pi pi-arrow-circle-right" v-tooltip.top="$t('documentExecution.olap.sidebar.defineCrossNavigation')" @click="$emit('openCrossNavigationDefinitionDialog')"></Button>
                     </div>
                     <div class="p-col-4">
                         <Button icon="pi pi-check-square" v-tooltip.top="$t('documentExecution.olap.sidebar.configureButtonsVisiblity')"></Button>
@@ -138,7 +138,7 @@ export default defineComponent({
     name: 'olap-sidebar',
     components: { SelectButton },
     props: { olap: { type: Object } },
-    emits: ['openCustomViewDialog', 'drillTypeChanged', 'showParentMemberChanged', 'hideSpansChanged', 'suppressEmptyChanged', 'showPropertiesChanged', 'openSortingDialog', 'openMdxQueryDialog', 'reloadSchema', 'enableCrossNavigation'],
+    emits: ['openCustomViewDialog', 'drillTypeChanged', 'showParentMemberChanged', 'hideSpansChanged', 'suppressEmptyChanged', 'showPropertiesChanged', 'openSortingDialog', 'openMdxQueryDialog', 'reloadSchema', 'enableCrossNavigation', 'openCrossNavigationDefinitionDialog'],
     data() {
         return {
             olapSidebarDescriptor,
