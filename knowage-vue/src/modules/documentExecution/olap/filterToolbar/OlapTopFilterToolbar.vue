@@ -1,16 +1,16 @@
 <template>
     <div id="top-toolbar-container" class="p-d-flex" :style="toolbarDescriptor.style.toolbarContainer">
-        <span class="swapAxis" :style="toolbarDescriptor.style.toolbarMainColor"> &nbsp; </span>
+        <span class="swapAxis" :style="toolbarDescriptor.style.toolbarMainColor" @click="$emit('swapAxis')"> &nbsp; </span>
         <span id="topaxis" class="kn-flex p-d-flex" :style="toolbarDescriptor.style.toolbarMainColor" @drop="onDrop($event)" @dragover.prevent @dragenter="displayDropzone" @dragleave="hideDropzone">
             <div class="p-d-flex p-ai-center kn-flex p-flex-wrap">
                 <div v-for="(column, index) in columns" :key="index" class="p-d-flex">
                     <div :id="'top-' + column.name" :ref="'top-' + column.name" :style="toolbarDescriptor.style.topAxisCard" draggable="true" @dragstart="onDragStart($event, column, 'top-' + column.name)" @dragend="removeDragClass('top-' + column.name)">
-                        <Button icon="fas fa-sitemap" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.whiteColor" />
-                        <span class="kn-flex kn-truncated" v-tooltip.top="column.caption">{{ cutName(column.caption, 0, column.hierarchies.length > 1) }} </span>
+                        <Button v-if="column.hierarchies.length > 1" icon="fas fa-sitemap" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.whiteColor" @click="$emit('showMultiHierarchy', column)" />
+                        <span class="kn-flex kn-truncated" :class="{ 'p-ml-2': column.hierarchies.length == 1 }" v-tooltip.top="column.caption">{{ cutName(column.caption, 0, column.hierarchies.length > 1) }} </span>
                         <div id="whitespace" :style="toolbarDescriptor.style.whitespace" />
                         <Button icon="fas fa-filter" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.whiteColor" />
                     </div>
-                    <i v-if="column.positionInAxis < columns.length - 1" class="fas fa-arrows-alt-h p-as-center p-mx-2" />
+                    <i v-if="column.positionInAxis < columns.length - 1" class="fas fa-arrows-alt-h p-as-center p-mx-2" style="cursor:pointer" @click="$emit('switchPosition', column)" />
                 </div>
                 <div ref="axisDropzone" class="kn-flex kn-truncated p-mx-1" :style="toolbarDescriptor.style.topAxisDropzone">{{ $t('documentExecution.olap.filterToolbar.drop') }}</div>
             </div>
@@ -28,7 +28,7 @@ import toolbarDescriptor from './OlapFilterToolbarDescriptor.json'
 export default defineComponent({
     components: {},
     props: { olapProp: { type: Object, required: true } },
-    emits: ['openSidebar', 'putFilterOnAxis'],
+    emits: ['openSidebar', 'putFilterOnAxis', 'swapAxis', 'switchPosition', 'showMultiHierarchy'],
     data() {
         return {
             toolbarDescriptor,
