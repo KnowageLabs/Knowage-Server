@@ -1,18 +1,18 @@
 <template>
     <div id="top-toolbar-container" class="p-d-flex" :style="toolbarDescriptor.style.toolbarContainer">
-        <span class="olapToolbarColor swapAxis"> &nbsp; </span>
-        <span id="topaxis" class="olapToolbarColor kn-flex p-d-flex">
+        <span class="swapAxis" :style="toolbarDescriptor.style.toolbarMainColor"> &nbsp; </span>
+        <span id="topaxis" class="kn-flex p-d-flex" :style="toolbarDescriptor.style.toolbarMainColor" @drop="onDrop($event)" @dragover.prevent @dragenter="displayDropzone" @dragleave="hideDropzone">
             <div class="p-d-flex p-ai-center kn-flex p-flex-wrap">
                 <div v-for="(column, index) in columns" :key="index" class="p-d-flex">
-                    <div :id="'top-' + column.name" class="top-filter-item-container">
-                        <Button icon="fas fa-sitemap" class="p-button-text p-button-rounded p-button-plain toolbar-white-button" />
+                    <div :id="'top-' + column.name" :ref="'top-' + column.name" :style="toolbarDescriptor.style.topAxisCard" draggable="true" @dragstart="onDragStart($event, column, 'top-' + column.name)" @dragend="removeDragClass('top-' + column.name)">
+                        <Button icon="fas fa-sitemap" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.whiteColor" />
                         <span class="kn-flex kn-truncated" v-tooltip.top="column.caption">{{ cutName(column.caption, 0, column.hierarchies.length > 1) }} </span>
                         <div id="whitespace" :style="toolbarDescriptor.style.whitespace" />
-                        <Button icon="fas fa-filter" class="p-button-text p-button-rounded p-button-plain  toolbar-white-button" />
+                        <Button icon="fas fa-filter" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.whiteColor" />
                     </div>
-                    <i v-if="column.positionInAxis < rows.length - 1" class="fas fa-arrows-alt-h p-as-center p-mx-2" />
+                    <i v-if="column.positionInAxis < columns.length - 1" class="fas fa-arrows-alt-h p-as-center p-mx-2" />
                 </div>
-                <!-- <div flex class="axisDropzone">{{ 'sbi. olap.drop.dimension' }}</div> -->
+                <div ref="axisDropzone" class="kn-flex kn-truncated p-mx-1" :style="toolbarDescriptor.style.topAxisDropzone">{{ $t('documentExecution.olap.filterToolbar.drop') }}</div>
             </div>
             <div id="whitespace" :style="toolbarDescriptor.style.whitespace" />
             <Button icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.sidebarButton" @click="$emit('openSidebar')" />
@@ -34,11 +34,7 @@ export default defineComponent({
             toolbarDescriptor,
             columns: [] as iOlapFilter[],
             rows: [] as iOlapFilter[],
-            cutArray: [12, 11, 10, 9, 6],
-            maxRows: 3,
-            maxCols: 5,
-            topStart: 0,
-            leftStart: 0
+            cutArray: [12, 11, 10, 9, 6]
         }
     },
     watch: {
@@ -57,26 +53,43 @@ export default defineComponent({
         cutName(name, axis, multi) {
             var ind = axis
             if (multi) ind = ind + 2
-
             ind = ind + 1
-
             var cutProp = this.cutArray[ind]
-
             if (name == undefined) {
                 name = 'TODO: something '
             }
-
             if (name.length <= cutProp) return name
             else return name.substring(0, cutProp) + '...'
+        },
+        onDragStart(event, filter, filterId) {
+            event.dataTransfer.setData('text', JSON.stringify(filter))
+            event.dataTransfer.dropEffect = 'move'
+            event.dataTransfer.effectAllowed = 'move'
+            // @ts-ignore
+            this.$refs[`${filterId}`].classList.add('filter-dragging')
+        },
+        removeDragClass(filterId) {
+            // @ts-ignore
+            this.$refs[`${filterId}`].classList.remove('filter-dragging')
+        },
+        displayDropzone() {
+            // @ts-ignore
+            this.$refs.axisDropzone.classList.add('display-axis-dropzone')
+        },
+        hideDropzone() {
+            // @ts-ignore
+            this.$refs.axisDropzone.classList.remove('display-axis-dropzone')
+        },
+        onDrop(event) {
+            // @ts-ignore
+            this.$refs.axisDropzone.classList.remove('display-axis-dropzone')
+            var data = JSON.parse(event.dataTransfer.getData('text/plain'))
+            console.log('DROP TOP AXIS:', data)
         }
     }
 })
 </script>
 <style lang="scss" scoped>
-.olapToolbarColor {
-    background-color: #43749e !important;
-    color: white !important;
-}
 .swapAxis {
     cursor: pointer;
     width: 32px;
@@ -84,21 +97,10 @@ export default defineComponent({
     background-repeat: no-repeat;
     background-position: center center;
 }
-.toolbar-white-button {
-    color: white !important;
+.filter-dragging {
+    background-color: #bbd6ed !important;
 }
-.top-filter-item-container {
-    line-height: 1.5;
-    max-height: 28px;
-    width: 130px;
-    background-color: #43749e;
-    border-radius: 2px;
-    border: 1px solid #fff;
-    color: #fff;
-    cursor: grab;
-    font-weight: normal;
-    font-size: 0.7rem;
-    display: flex;
-    align-items: center;
+.display-axis-dropzone {
+    display: flex !important;
 }
 </style>
