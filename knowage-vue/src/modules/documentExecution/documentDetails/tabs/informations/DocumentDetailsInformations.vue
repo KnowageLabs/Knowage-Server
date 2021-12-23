@@ -5,6 +5,9 @@
                 <template #left>
                     {{ $t('documentExecution.documentDetails.info.infoTitle') }}
                 </template>
+                <template #right>
+                    <Button label="OPEN DESIGNER" class="p-button-text p-button-plain" @click="setUploadType" />
+                </template>
             </Toolbar>
             <div id="informations-content" class="kn-flex kn-relative">
                 <div :style="mainDescriptor.style.absoluteScroll">
