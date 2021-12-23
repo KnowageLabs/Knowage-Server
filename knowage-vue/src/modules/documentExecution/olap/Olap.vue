@@ -1,10 +1,10 @@
 <template>
     <div class="p-d-flex p-flex-column kn-flex">
-        <FilterPanel :olapProp="olap" />
-        <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" />
+        <FilterPanel :olapProp="olap" @putFilterOnAxis="putFilterOnAxis" />
+        <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" />
 
         <div id="left-and-table-container" class="p-d-flex p-flex-row kn-flex">
-            <FilterLeftToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" />
+            <FilterLeftToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" />
             <div id="olap-table" class="kn-flex" ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
         </div>
 
@@ -277,6 +277,17 @@ export default defineComponent({
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/cache/?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .then((response: AxiosResponse<any>) => (this.olap = response.data))
+                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.putFilterOnAxisError') }))
+            this.formatOlapTable()
+            this.loading = false
+        },
+        async putFilterOnAxis(fromAxis, filter) {
+            console.log('putFilterOnAxis ', fromAxis, filter)
+            var toSend = { fromAxis: fromAxis, hierarchy: filter.selectedHierarchyUniqueName, toAxis: filter.axis }
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/axis/moveDimensionToOtherAxis?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => (this.olap = response.data))
                 .catch(() => {})
             this.formatOlapTable()
