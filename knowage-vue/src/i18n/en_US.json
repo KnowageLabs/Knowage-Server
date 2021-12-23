@@ -413,6 +413,8 @@
                 "dragEmptyWarning": "There must be at least one dimension in the columns and in the rows",
                 "drop": "Drop here to use as a dimension",
                 "hierarchyMove": "An error occurred while moving hierarchy",
+                "hierarchyMoveError": "An error occurred while moving hierarchy",
+                "hierarchyUpdateError": "An error occurred while updating hierarchy.",
                 "noMeasure": "A measure can not be used as a filter",
                 "putFilterOnAxisError": "An error occurred while placing member on axis",
                 "swapAxisError": "An error occurred during swap axis functionality"

@@ -2,7 +2,7 @@
     <div id="leftaxis" class="p-d-flex p-flex-column p-ai-center" :style="toolbarDescriptor.style.leftToolbarContainer" @drop="onDrop($event)" @dragover.prevent @dragenter="displayDropzone" @dragleave="hideDropzone">
         <div v-for="(row, index) in rows" :key="index" class="p-d-flex p-flex-column p-ai-center">
             <div :id="'left-' + row.name" :ref="'left-' + row.name" class="p-d-flex p-flex-column p-ai-center" :style="toolbarDescriptor.style.leftAxisCard" draggable="true" @dragstart="onDragStart($event, row, 'left-' + row.name)" @dragend="removeDragClass('left-' + row.name)">
-                <Button v-if="row.hierarchies.length > 1" icon="fas fa-sitemap" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.whiteColor" />
+                <Button v-if="row.hierarchies.length > 1" icon="fas fa-sitemap" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.whiteColor" @click="$emit('showMultiHierarchy', row)" />
                 <div class="olap-rotate-text kn-flex kn-truncated" :class="{ 'p-mt-2': row.hierarchies.length == 1 }" v-tooltip.right="row.caption" flex>{{ cutName(row.caption, 0, row.hierarchies.length > 1) }}</div>
                 <div id="whitespace" class="p-mt-auto" :style="toolbarDescriptor.style.whitespaceLeft" />
                 <Button icon="fas fa-filter" class="p-button-text p-button-rounded p-button-plain p-mt-auto p-m-0" :style="toolbarDescriptor.style.whiteColor" />
@@ -21,7 +21,7 @@ import toolbarDescriptor from './OlapFilterToolbarDescriptor.json'
 export default defineComponent({
     components: {},
     props: { olapProp: { type: Object, required: true } },
-    emits: ['openSidebar', 'putFilterOnAxis', 'switchPosition'],
+    emits: ['openSidebar', 'putFilterOnAxis', 'switchPosition', 'showMultiHierarchy'],
     data() {
         return {
             toolbarDescriptor,
