@@ -43,14 +43,14 @@
     <OlapSortingDialog :visible="sortingDialogVisible" :olap="olap" @save="onSortingSelect"></OlapSortingDialog>
     <OlapMDXQueryDialog :visible="mdxQueryDialogVisible" :mdxQuery="olap?.MDXWITHOUTCF" @close="mdxQueryDialogVisible = false"></OlapMDXQueryDialog>
     <OlapCrossNavigationDefinitionDialog :visible="crossNavigationDefinitionDialogVisible" :selectedCell="selectedCell" @close="crossNavigationDefinitionDialogVisible = false" @selectFromTable="enterSelectMode($event)"></OlapCrossNavigationDefinitionDialog>
-    <OlapButtonWizardDialog :visible="buttonsWizardDialogVisible" @close="buttonsWizardDialogVisible = false"></OlapButtonWizardDialog>
+    <OlapButtonWizardDialog :visible="buttonsWizardDialogVisible" :propButtons="buttons" @close="buttonsWizardDialogVisible = false"></OlapButtonWizardDialog>
     <KnOverlaySpinnerPanel :visibility="loading" />
 </template>
 
 <script lang="ts">
 import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
-import { iOlapCustomView } from './Olap'
+import { iOlapCustomView, iButton } from './Olap'
 import Message from 'primevue/message'
 import olapDescriptor from './OlapDescriptor.json'
 import OlapSidebar from './olapSidebar/OlapSidebar.vue'
@@ -85,7 +85,7 @@ export default defineComponent({
             sort: null as any,
             mode: 'view',
             selectedCell: null as any,
-            buttons: [] as any[],
+            buttons: [] as iButton[],
             loading: false
         }
     },

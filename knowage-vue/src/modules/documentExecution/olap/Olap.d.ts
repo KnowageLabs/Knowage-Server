@@ -30,3 +30,11 @@ export interface iOlapCrossNavigationParameter {
     level: string,
     type: string
 }
+
+export interface iButton {
+    category: string
+    clickable: boolean
+    clicked: boolean
+    name: string
+    visible: boolean
+}

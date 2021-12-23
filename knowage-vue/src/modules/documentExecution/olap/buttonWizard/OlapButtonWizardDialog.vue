@@ -19,15 +19,15 @@
                     <Checkbox class="p-mr-2" v-model="allVisibleSelected" :binary="true" @change="setAllChecked('visible')" />
                 </template>
                 <template #body="slotProps">
-                    <Checkbox v-model="selected[slotProps.data.value].visible" :binary="true" @change="setChecked(slotProps.data, 'visible')" />
+                    <Checkbox v-model="slotProps.data.visible" :binary="true" @change="setChecked(slotProps.data, 'visible')" />
                 </template>
             </Column>
             <Column :header="$t('common.clicked')">
                 <template #header>
-                    <Checkbox class="p-mr-2" v-model="allClickedSelected" :binary="true" @change="setAllChecked('business')" />
+                    <Checkbox class="p-mr-2" v-model="allClickedSelected" :binary="true" @change="setAllChecked('clicked')" />
                 </template>
                 <template #body="slotProps">
-                    <Checkbox v-model="selected[slotProps.data.value].business" :binary="true" @change="setChecked(slotProps.data, 'business')" />
+                    <Checkbox v-model="slotProps.data.clicked" :binary="true" :disabled="!slotProps.data.clickable" @change="setChecked(slotProps.data, 'clicked')" />
                 </template>
             </Column>
         </DataTable>
@@ -40,7 +40,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
+import { iButton } from '../Olap'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -50,26 +51,37 @@ import olapButtonWizardDialogDescriptor from './OlapButtonWizardDialogDescriptor
 export default defineComponent({
     name: 'olap-button-wizard-dialog',
     components: { Checkbox, Column, DataTable, Dialog },
-    props: { sbiExecutionId: { type: String } },
+    props: { sbiExecutionId: { type: String }, propButtons: { type: Array as PropType<iButton[]> } },
     data() {
         return {
             olapButtonWizardDialogDescriptor,
-            buttons: [] as any[],
+            buttons: [] as iButton[],
             selected: {} as any,
             allVisibleSelected: false,
             allClickedSelected: false
         }
     },
-    created() {},
+    watch: {
+        propButtons() {
+            this.loadButtons()
+        }
+    },
+    created() {
+        this.loadButtons()
+    },
     methods: {
-        closeDialog() {
-            this.$emit('close')
+        loadButtons() {
+            this.buttons = this.propButtons as iButton[]
+            console.log('BUTTONS LOADED IN DIALOG: ', this.buttons)
         },
         setAllChecked(type: string) {
             console.log('SET ALL CHECKED: ', type)
         },
         setChecked(button: any, type: string) {
             console.log('SET CHECKED: ', button, type)
+        },
+        closeDialog() {
+            this.$emit('close')
         },
         save() {
             console.log('SAVE CLICKED!')
