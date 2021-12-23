@@ -1,4 +1,26 @@
 {
+    "buttonLabels": {
+        "BUTTON_ALGORITHMS": "documentExecution.olap.sidebar.selectAlgorithm",
+        "BUTTON_CC": "documentExecution.olap.sidebar.calculatedField",
+        "BUTTON_CROSSNAV_WIZARD": "documentExecution.olap.sidebar.defineCrossNavigation",
+        "BUTTON_DRILL_THROUGH": "documentExecution.olap.sidebar.drillThrough",
+        "BUTTON_EDITABLE_EXCEL_EXPORT": "documentExecution.olap.sidebar.exportExcel",
+        "BUTTON_EXPORT_OUTPUT": "documentExecution.olap.sidebar.exportOutput",
+        "BUTTON_FATHER_MEMBERS": "documentExecution.olap.sidebar.showParentMembers",
+        "BUTTON_FLUSH_CACHE": "documentExecution.olap.sidebar.reloadSchema",
+        "BUTTON_HIDE_EMPTY": "documentExecution.olap.sidebar.suppressEmptyRowsColumns",
+        "BUTTON_HIDE_SPANS": "documentExecution.olap.sidebar.hideSpans",
+        "BUTTON_MDX": "documentExecution.olap.sidebar.mdxQuery",
+        "BUTTON_PAGINATION_WIZARD": "documentExecution.olap.sidebar.configureTablePagination",
+        "BUTTON_SAVE_NEW": "documentExecution.olap.sidebar.saveNewVersion",
+        "BUTTON_SAVE_SUBOBJECT": "documentExecution.olap.sidebar.saveCustomizedView",
+        "BUTTON_SCENARIO_WIZARD": "documentExecution.olap.sidebar.configureScenario",
+        "BUTTON_SHOW_PROPERTIES": "documentExecution.olap.sidebar.showProperties",
+        "BUTTON_SORTING_SETTINGS": "documentExecution.olap.sidebar.sortingSettings",
+        "BUTTON_UNDO": "documentExecution.olap.sidebar.undo",
+        "BUTTON_VERSION_MANAGER": "documentExecution.olap.sidebar.manageVersions",
+        "BUTTON_WIZARD": "documentExecution.olap.sidebar.configureButtonsVisiblity"
+    },
     "dialog": {
         "style": {
             "height": "60%",
