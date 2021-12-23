@@ -97,11 +97,17 @@ export default defineComponent({
             selectedCell: null as any,
             buttons: [] as iButton[],
             olapDesigner: null as any,
+            olapDesignerMode: false,
             loading: false
         }
     },
     async created() {
+        console.log('ROUTER: ', this.$route.name)
+        if (this.$route.name === 'olap-designer') {
+            this.olapDesignerMode = true
+        }
         await this.loadPage()
+        console.log('DESIGNER MODE: ', this.olapDesignerMode)
     },
     computed: {},
     watch: {
