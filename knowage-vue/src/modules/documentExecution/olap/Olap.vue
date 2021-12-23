@@ -49,7 +49,7 @@
     <OlapSortingDialog :visible="sortingDialogVisible" :olap="olap" @save="onSortingSelect"></OlapSortingDialog>
     <OlapMDXQueryDialog :visible="mdxQueryDialogVisible" :mdxQuery="olap?.MDXWITHOUTCF" @close="mdxQueryDialogVisible = false"></OlapMDXQueryDialog>
     <OlapCrossNavigationDefinitionDialog :visible="crossNavigationDefinitionDialogVisible" :selectedCell="selectedCell" @close="crossNavigationDefinitionDialogVisible = false" @selectFromTable="enterSelectMode($event)"></OlapCrossNavigationDefinitionDialog>
-    <OlapButtonWizardDialog :visible="buttonsWizardDialogVisible" :propButtons="buttons" @close="buttonsWizardDialogVisible = false"></OlapButtonWizardDialog>
+    <OlapButtonWizardDialog :visible="buttonsWizardDialogVisible" :propButtons="buttons" :propOlapDesigner="olapDesigner" @close="buttonsWizardDialogVisible = false"></OlapButtonWizardDialog>
     <MultiHierarchyDialog :selectedFilter="multiHierFilter" :multiHierUN="selecetedMultiHierUN" :visible="multiHierarchyDialogVisible" @close="multiHierarchyDialogVisible = false" />
     <KnOverlaySpinnerPanel :visibility="loading" />
 </template>
@@ -96,6 +96,7 @@ export default defineComponent({
             mode: 'view',
             selectedCell: null as any,
             buttons: [] as iButton[],
+            olapDesigner: null as any,
             loading: false
         }
     },
@@ -120,6 +121,16 @@ export default defineComponent({
             await this.loadOlapModel()
             this.loadCustomView()
             this.loading = false
+
+            // TODO Add condition for designer mode
+            await this.loadOlapDesigner()
+        },
+        async loadOlapDesigner() {
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `olap/designer/${this.olapId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .then(async (response: AxiosResponse<any>) => (this.olapDesigner = response.data))
+                .catch(() => {})
+            console.log('LOADED OLAP DESIGNER: ', this.olapDesigner)
         },
         async loadCustomView() {
             this.customViewVisible = this.olapCustomViewVisible
