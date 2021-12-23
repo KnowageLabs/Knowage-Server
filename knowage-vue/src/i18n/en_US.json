@@ -415,7 +415,8 @@
                 "noMeasure": "A measure can not be used as a filter",
                 "putFilterOnAxisError": "An error occurred while placing member on axis",
                 "swapAxisError": "An error occurred during swap axis functionality",
-                "hierarchyMove": "An error occurred while moving hierarchy"
+                "hierarchyMoveError": "An error occurred while moving hierarchy",
+                "hierarchyUpdateError": "An error occurred while updating hierarchy."
             },
             "multiHierarchy": {
                 "detail1": "The selected hierarchy is ",

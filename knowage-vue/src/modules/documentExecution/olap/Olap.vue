@@ -4,7 +4,7 @@
         <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @swapAxis="swapAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" />
 
         <div id="left-and-table-container" class="p-d-flex p-flex-row kn-flex">
-            <FilterLeftToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @switchPosition="moveHierarchies" />
+            <FilterLeftToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" />
             <div id="olap-table" class="kn-flex" ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
         </div>
 
@@ -50,7 +50,7 @@
     <OlapMDXQueryDialog :visible="mdxQueryDialogVisible" :mdxQuery="olap?.MDXWITHOUTCF" @close="mdxQueryDialogVisible = false"></OlapMDXQueryDialog>
     <OlapCrossNavigationDefinitionDialog :visible="crossNavigationDefinitionDialogVisible" :selectedCell="selectedCell" @close="crossNavigationDefinitionDialogVisible = false" @selectFromTable="enterSelectMode($event)"></OlapCrossNavigationDefinitionDialog>
     <OlapButtonWizardDialog :visible="buttonsWizardDialogVisible" :propButtons="buttons" :propOlapDesigner="olapDesigner" @close="buttonsWizardDialogVisible = false"></OlapButtonWizardDialog>
-    <MultiHierarchyDialog :selectedFilter="multiHierFilter" :multiHierUN="selecetedMultiHierUN" :visible="multiHierarchyDialogVisible" @close="multiHierarchyDialogVisible = false" />
+    <MultiHierarchyDialog :selectedFilter="multiHierFilter" :multiHierUN="selecetedMultiHierUN" :visible="multiHierarchyDialogVisible" @setMultiHierUN="setMultiHierUN" @updateHierarchy="updateHierarchy" @close="multiHierarchyDialogVisible = false" />
     <KnOverlaySpinnerPanel :visibility="loading" />
 </template>
 
@@ -358,9 +358,34 @@ export default defineComponent({
                     this.olap = response.data
                     //TODO: OlapPanel.js linija 419, postoje 2 ifa koja izgleda nista ne rade, ispitati kasnije
                 })
-                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.hierarchyMove') }))
+                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.hierarchyMoveError') }))
             this.formatOlapTable()
             this.loading = false
+        },
+        setMultiHierUN(un) {
+            this.selecetedMultiHierUN = un
+        },
+        showMultiHierarchy(filter) {
+            this.multiHierFilter = filter
+            this.selecetedMultiHierUN = this.multiHierFilter.hierarchies[this.multiHierFilter.selectedHierarchyPosition].uniqueName
+            this.multiHierarchyDialogVisible = true
+        },
+        async updateHierarchy() {
+            var oldHier = this.multiHierFilter.hierarchies[this.multiHierFilter.selectedHierarchyPosition].uniqueName
+            var newHier = this.selecetedMultiHierUN
+            if (oldHier != newHier) {
+                var toSend = { axis: this.multiHierFilter.axis, oldHierarchyUniqueName: oldHier, newHierarchyUniqueName: newHier, hierarchyPosition: this.multiHierFilter.positionInAxis }
+                this.loading = true
+                await this.$http
+                    .post(process.env.VUE_APP_OLAP_PATH + `1.0/axis/updateHierarchyOnDimension?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                    .then((response: AxiosResponse<any>) => (this.olap = response.data))
+                    .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.hierarchyUpdateError') }))
+                    .finally(() => {
+                        this.formatOlapTable()
+                        this.loading = false
+                        this.multiHierarchyDialogVisible = false
+                    })
+            }
         },
         execExternalCrossNavigation(event: any) {
             const tempCrossNavigationParams = event.target.attributes[2].value
@@ -411,12 +436,7 @@ export default defineComponent({
 
             this.$emit('executeCrossNavigation', object)
         },
-        showMultiHierarchy(filter) {
-            this.multiHierFilter = filter
-            this.selecetedMultiHierUN = this.multiHierFilter.hierarchies[this.multiHierFilter.selectedHierarchyPosition].uniqueName
-            console.log('multiHierFilter: ', this.multiHierFilter, 'UN: ', this.selecetedMultiHierUN)
-            this.multiHierarchyDialogVisible = true
-        },
+
         enterSelectMode(mode: string) {
             console.log('MODE: ', mode)
             this.mode = mode
