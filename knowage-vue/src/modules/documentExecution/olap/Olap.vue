@@ -1,5 +1,12 @@
 <template>
     <div class="p-d-flex p-flex-column kn-flex">
+        <div v-if="mode === 'member' || mode === 'cell'" class="p-m-4">
+            <Message id="olap-select-message" class="p-d-flex p-flex-row p-ai-center" severity="info" :closable="false" :style="olapDescriptor.styles.message">
+                {{ $t('documentExecution.olap.crossNavigationDefinition.finishSelection') }}
+            </Message>
+            <Button id="olap-select-button" class="kn-button kn-button--primary" @click="cellSelected"> {{ $t('common.ok') }}</Button>
+        </div>
+
         <FilterPanel :olapProp="olap" @putFilterOnAxis="putFilterOnAxis" />
         <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" />
 
@@ -34,7 +41,7 @@
     <OlapCustomViewSaveDialog :visible="customViewSaveDialogVisible" :sbiExecutionId="id" @close="customViewSaveDialogVisible = false"></OlapCustomViewSaveDialog>
     <OlapSortingDialog :visible="sortingDialogVisible" :olap="olap" @save="onSortingSelect"></OlapSortingDialog>
     <OlapMDXQueryDialog :visible="mdxQueryDialogVisible" :mdxQuery="olap?.MDXWITHOUTCF" @close="mdxQueryDialogVisible = false"></OlapMDXQueryDialog>
-    <OlapCrossNavigationDefinitionDialog :visible="crossNavigationDefinitionDialogVisible" @close="crossNavigationDefinitionDialogVisible = false"></OlapCrossNavigationDefinitionDialog>
+    <OlapCrossNavigationDefinitionDialog :visible="crossNavigationDefinitionDialogVisible" :selectedCell="selectedCell" @close="crossNavigationDefinitionDialogVisible = false" @selectFromTable="enterSelectMode($event)"></OlapCrossNavigationDefinitionDialog>
     <KnOverlaySpinnerPanel :visibility="loading" />
 </template>
 
@@ -42,6 +49,7 @@
 import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import { iOlapCustomView } from './Olap'
+import Message from 'primevue/message'
 import olapDescriptor from './OlapDescriptor.json'
 import OlapSidebar from './olapSidebar/OlapSidebar.vue'
 import OlapSortingDialog from './sortingDialog/OlapSortingDialog.vue'
@@ -56,7 +64,7 @@ import OlapCrossNavigationDefinitionDialog from './crossNavigationDefinition/Ola
 
 export default defineComponent({
     name: 'olap',
-    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, FilterTopToolbar, FilterLeftToolbar, OlapMDXQueryDialog, OlapCrossNavigationDefinitionDialog },
+    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, FilterTopToolbar, FilterLeftToolbar, OlapMDXQueryDialog, OlapCrossNavigationDefinitionDialog, Message },
     props: { id: { type: String }, olapId: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
     emits: ['closeOlapCustomView', 'applyCustomView', 'executeCrossNavigation'],
     data() {
@@ -71,6 +79,8 @@ export default defineComponent({
             mdxQueryDialogVisible: false,
             crossNavigationDefinitionDialogVisible: false,
             sort: null as any,
+            mode: 'view',
+            selectedCell: null as any,
             loading: false
         }
     },
@@ -342,10 +352,61 @@ export default defineComponent({
 
             this.$emit('executeCrossNavigation', object)
         },
-        async handleTableClick(event: Event) {
+        enterSelectMode(mode: string) {
+            console.log('MODE: ', mode)
+            this.mode = mode
+            this.olapSidebarVisible = false
+            this.crossNavigationDefinitionDialogVisible = false
+        },
+        selectCell(event: any) {
+            console.log('EVENT FOR SELECT: ', event)
+            const attributes = event.target.attributes
+
+            if (attributes[0].localName !== 'axisordinal' || attributes[0].value === '0') {
+                return
+            }
+
+            const cell = {
+                axisordinal: attributes[0].value,
+                dimensiontype: attributes[1].value,
+                dimensionuniquename: attributes[2].value,
+                hierarchyuniquename: attributes[3].value,
+                level: attributes[4].value,
+                member: attributes[5].value,
+                parentmember: attributes[6].value,
+                position: attributes[7].value,
+                uniquename: attributes[9].value
+            } as any
+
+            if (this.selectedCell?.cell.uniquename !== cell.uniquename) {
+                if (this.selectedCell) {
+                    this.selectedCell.event.target.style.border = 'none'
+                }
+                this.selectedCell = { cell: cell, event: event }
+                event.target.style.border = '1px solid red'
+            } else {
+                this.selectedCell = null
+                event.target.style.border = 'none'
+            }
+            console.log('SELECTED CELL: ', this.selectedCell)
+        },
+        cellSelected() {
+            console.log('SELECTED CELLS: ', this.selectedCell)
+            this.olapSidebarVisible = true
+            this.crossNavigationDefinitionDialogVisible = true
+            this.mode = 'view'
+            this.selectedCell.event.target.style.border = 'none'
+        },
+
+        async handleTableClick(event: any) {
             console.log('EVENT: ', event)
 
             const eventTarget = event.target as any
+            console.log('event?.target.tagname', eventTarget.tagName)
+
+            if (this.mode !== 'view' && eventTarget.tagName === 'TH') {
+                this.selectCell(event)
+            }
 
             if (eventTarget) {
                 switch (eventTarget.className) {
@@ -391,6 +452,16 @@ export default defineComponent({
     height: 100%;
     top: 0;
     left: 0;
+}
+
+#olap-select-message {
+    flex: 0.7;
+}
+
+#olap-select-button {
+    max-width: 200px;
+    max-height: 40%;
+    flex: 0.3;
 }
 
 .olap-sidebar {
