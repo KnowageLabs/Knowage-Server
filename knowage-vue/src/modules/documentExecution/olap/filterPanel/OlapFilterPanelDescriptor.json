@@ -1,5 +1,16 @@
 {
     "style": {
+        "filterAxisDropzone": {
+            "align-items": "center",
+            "border": "2px dashed #43749e",
+            "color": "#43749e",
+            "display": "none",
+            "font-size": "0.8rem",
+            "height": "32px",
+            "justify-content": "center",
+            "pointer-events": "none",
+            "text-transform": "uppercase"
+        },
         "filterCard": {
             "align-items": "center",
             "background-color": "#fff",

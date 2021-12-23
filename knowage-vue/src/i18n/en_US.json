@@ -391,7 +391,11 @@
             },
             "editModeConfirm": "You are leaving edit mode. Continue?",
             "filterPanel": {
-                "filterPanelEmpty": "Drag the member here if you want to use it as a slicer"
+                "filterPanelEmpty": "Drag the member here if you want to use it as a slicer",
+                "drop": "Drop here to use as a slicer"
+            },
+            "filterToolbar": {
+                "drop": "Drop here to use as a dimension"
             },
             "savingCustomizedView": "Saving customized view",
             "showMdxQuery": "Show MDX Query",

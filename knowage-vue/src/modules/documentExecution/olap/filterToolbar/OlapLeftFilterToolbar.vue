@@ -1,14 +1,15 @@
 <template>
-    <div id="left-toolbar-container" class="olapToolbarColor p-d-flex p-flex-column p-ai-center" :style="toolbarDescriptor.style.leftToolbarContainer">
+    <div id="leftaxis" class="p-d-flex p-flex-column p-ai-center" :style="toolbarDescriptor.style.leftToolbarContainer" @drop="onDrop($event)" @dragover.prevent @dragenter="displayDropzone" @dragleave="hideDropzone">
         <div v-for="(row, index) in rows" :key="index" class="p-d-flex p-flex-column p-ai-center">
-            <div class="left-filter-item-container p-d-flex p-flex-column p-ai-center" :id="'left-' + row.name">
-                <Button icon="fas fa-sitemap" class="p-button-text p-button-rounded p-button-plain toolbar-white-button" />
+            <div :id="'left-' + row.name" :ref="'left-' + row.name" class="p-d-flex p-flex-column p-ai-center" :style="toolbarDescriptor.style.leftAxisCard" draggable="true" @dragstart="onDragStart($event, row, 'left-' + row.name)" @dragend="removeDragClass('left-' + row.name)">
+                <Button icon="fas fa-sitemap" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.whiteColor" />
                 <div class="olap-rotate-text kn-flex kn-truncated" v-tooltip.right="row.caption" flex>{{ cutName(row.caption, 0, row.hierarchies.length > 1) }}</div>
                 <div id="whitespace" class="p-mt-auto" :style="toolbarDescriptor.style.whitespaceLeft" />
-                <Button icon="fas fa-filter" class="p-button-text p-button-rounded p-button-plain toolbar-white-button p-mt-auto p-m-0" />
+                <Button icon="fas fa-filter" class="p-button-text p-button-rounded p-button-plain p-mt-auto p-m-0" :style="toolbarDescriptor.style.whiteColor" />
             </div>
             <i v-if="row.positionInAxis < rows.length - 1" class="fas fa-arrows-alt-v p-my-2" />
         </div>
+        <div ref="axisDropzone" class="kn-flex kn-truncated olap-rotate-text p-my-1" :style="toolbarDescriptor.style.leftAxisDropzone">{{ $t('documentExecution.olap.filterToolbar.drop') }}</div>
     </div>
 </template>
 
@@ -26,11 +27,7 @@ export default defineComponent({
             toolbarDescriptor,
             columns: [] as iOlapFilter[],
             rows: [] as iOlapFilter[],
-            cutArray: [12, 11, 10, 9, 6],
-            maxRows: 3,
-            maxCols: 5,
-            topStart: 0,
-            leftStart: 0
+            cutArray: [12, 11, 10, 9, 6]
         }
     },
     watch: {
@@ -49,39 +46,50 @@ export default defineComponent({
         cutName(name, axis, multi) {
             var ind = axis
             if (multi) ind = ind + 2
-
             ind = ind + 1
-
             var cutProp = this.cutArray[ind]
-
             if (name == undefined) {
                 name = 'TODO: something '
             }
-
             if (name.length <= cutProp) return name
             else return name.substring(0, cutProp) + '...'
+        },
+        onDragStart(event, filter, filterId) {
+            event.dataTransfer.setData('text', JSON.stringify(filter))
+            event.dataTransfer.dropEffect = 'move'
+            event.dataTransfer.effectAllowed = 'move'
+            // @ts-ignore
+            this.$refs[`${filterId}`].classList.add('filter-dragging')
+        },
+        removeDragClass(filterId) {
+            // @ts-ignore
+            this.$refs[`${filterId}`].classList.remove('filter-dragging')
+        },
+        displayDropzone() {
+            // @ts-ignore
+            this.$refs.axisDropzone.classList.add('display-axis-dropzone')
+        },
+        hideDropzone() {
+            // @ts-ignore
+            this.$refs.axisDropzone.classList.remove('display-axis-dropzone')
+        },
+        onDrop(event) {
+            // @ts-ignore
+            this.$refs.axisDropzone.classList.remove('display-axis-dropzone')
+            var data = JSON.parse(event.dataTransfer.getData('text/plain'))
+            console.log('DROP LEFT AXIS:', data)
         }
     }
 })
 </script>
 <style lang="scss" scoped>
-.olapToolbarColor {
-    background-color: #43749e !important;
-    color: white !important;
-}
-.toolbar-white-button {
-    color: white !important;
-}
 .olap-rotate-text {
     writing-mode: vertical-rl;
 }
-.left-filter-item-container {
-    height: 130px;
-    background-color: #43749e;
-    border-radius: 2px;
-    border: 1px solid #fff;
-    cursor: grab;
-    font-size: 0.7rem;
-    width: 28px;
+.filter-dragging {
+    background-color: #bbd6ed !important;
+}
+.display-axis-dropzone {
+    display: flex !important;
 }
 </style>
