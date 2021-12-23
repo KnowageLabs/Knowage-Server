@@ -198,7 +198,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					Map<String, String> attributes = new TreeMap<String, String>();
 					attributes.put("src", pathToImages + "ico_search.gif");
 					attributes.put("id", "drillt");
-					attributes.put("ng-click", "drillThrough(" + ordinal + ")");
+					attributes.put("drillThrough", "(" + ordinal + ")");
 					startElement("img", attributes);
 					endElement("img");
 				}
@@ -213,7 +213,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				if (properties != null && !properties.isEmpty()) {
 					Map<String, String> attributes1 = new TreeMap<String, String>();
 					attributes.put("src", pathToImages + "show_props.png");
-					attributes1.put("ng-click", "getProps('" + context.getMember().getUniqueName() + "') ;$event.stopPropagation();");
+					attributes1.put("getProps", "('" + context.getMember().getUniqueName() + "')");
 					startElement("img", attributes1);
 					endElement("img");
 
@@ -364,8 +364,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					if (d != 0) {
 						context.getMember();
 						attributes.put("src", pathToImages + "arrow-up.png");
-						attributes.put("ng-click",
-								"drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + context.getHierarchy().getUniqueName() + "' )");
+						attributes.put("drillUp",
+								"(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + context.getHierarchy().getUniqueName() + "' )");
 						startElement("img", attributes);
 						endElement("img");
 					}
@@ -388,7 +388,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					String id = positionId + "!" + rowId + "!" + colId + "!" + System.currentTimeMillis() % 1000;
 					attributes.put("src", pathToImages + "cross-navigation.png");
 					String coordinatesAsString = StringUtils.join(context.getCell().getCoordinateList(), ",");
-					attributes.put("ng-click", "cellClickCreateCrossNavigationMenu('" + coordinatesAsString + "');$event.stopPropagation();");
+					attributes.put("cellClickCreateCrossNavigationMenu", "('" + coordinatesAsString + "')");
 					attributes.put("id", id);
 					startElement("img", attributes);
 					endElement("img");
@@ -545,8 +545,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 						attributes.put("src", pathToImages + "DESC-columns.png");
 					}
 
-					attributes.put("ng-click",
-							"sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' ) ;$event.stopPropagation();");
+					attributes.put("sort", "(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' )");
 					startElement("img", attributes);
 					endElement("img");
 				} else if (context.getModel().getSortCriteria().equals(SortCriteria.DESC) || context.getModel().getSortCriteria().equals(SortCriteria.BDESC)
@@ -558,8 +557,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 						attributes.put("src", pathToImages + "ASC-columns.png");
 					}
 
-					attributes.put("ng-click",
-							"sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' ) ;$event.stopPropagation();");
+					attributes.put("sort", "(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' )");
 					startElement("img", attributes);
 					endElement("img");
 				}
@@ -571,8 +569,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					attributes.put("src", pathToImages + "noSortColumns.png");
 				}
 
-				attributes.put("ng-click",
-						"sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' ); $event.stopPropagation();");
+				attributes.put("sort", "(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' )");
 
 				startElement("img", attributes);
 				endElement("img");
