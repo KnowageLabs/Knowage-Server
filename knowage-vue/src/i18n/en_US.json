@@ -160,7 +160,8 @@
             "unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
             "updateSuccess": "Item was updated successfully",
             "updateTitle": "Updated",
-            "uploadSuccess": "Item was uploaded successfully"
+            "uploadSuccess": "Item was uploaded successfully",
+            "warning": "Warning"
         },
         "type": "type",
         "upload": "upload",
@@ -405,7 +406,10 @@
                 "drop": "Drop here to use as a slicer"
             },
             "filterToolbar": {
-                "drop": "Drop here to use as a dimension"
+                "drop": "Drop here to use as a dimension",
+                "dragEmptyWarning": "There must be at least one dimension in the columns and in the rows",
+                "putFilterOnAxisError": "An error occurred while placing member on axis",
+                "noMeasure": "A measure can not be used as a filter"
             },
             "savingCustomizedView": "Saving customized view",
             "showMdxQuery": "Show MDX Query",

@@ -21,7 +21,7 @@ import toolbarDescriptor from './OlapFilterToolbarDescriptor.json'
 export default defineComponent({
     components: {},
     props: { olapProp: { type: Object, required: true } },
-    emits: ['openSidebar'],
+    emits: ['openSidebar', 'putFilterOnAxis'],
     data() {
         return {
             toolbarDescriptor,
@@ -77,7 +77,29 @@ export default defineComponent({
             // @ts-ignore
             this.$refs.axisDropzone.classList.remove('display-axis-dropzone')
             var data = JSON.parse(event.dataTransfer.getData('text/plain'))
-            console.log('DROP LEFT AXIS:', data)
+
+            var leftLength = this.rows.length
+            var topLength = this.columns.length
+            var fromAxis
+            if (data != null) {
+                fromAxis = data.axis
+                if (fromAxis == -1) {
+                    //TODO: Ne znam cemu sluzi ostaviti za kasnije pa pogledati....FilterPanel.js linija 704 dropTop
+                    // this.filterSelected[data.positionInAxis].caption = '...'
+                    // this.filterSelected[data.positionInAxis].visible = false
+                }
+                if (fromAxis != 1) {
+                    if (data.axis === 0 && topLength == 1) {
+                        this.$store.commit('setInfo', { title: this.$t('common.toast.warning'), msg: this.$t('documentExecution.olap.filterToolbar.dragEmptyWarning') })
+                    } else {
+                        data.positionInAxis = leftLength
+                        data.axis = 1
+                        this.$emit('putFilterOnAxis', fromAxis, data)
+                    }
+                }
+            }
+            //TODO: Ne znam cemu sluzi ostaviti za kasnije pa pogledati....FilterPanel.js linija 164 clearLoadedData
+            // data != null ? this.clearLoadedData(data.uniqueName) : ''
         }
     }
 })

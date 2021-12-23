@@ -18,7 +18,7 @@ import FilterCard from './OlapFilterCard.vue'
 export default defineComponent({
     components: { InlineMessage, FilterCard },
     props: { olapProp: { type: Object, required: true } },
-    emits: [],
+    emits: ['putFilterOnAxis'],
     data() {
         return {
             panelDescriptor,
@@ -50,7 +50,28 @@ export default defineComponent({
             // @ts-ignore
             this.$refs.axisDropzone.classList.remove('display-axis-dropzone')
             var data = JSON.parse(event.dataTransfer.getData('text/plain'))
-            console.log('DROP MAIN FILTERS:', data)
+
+            var topLength = this.olapProp?.columns.length
+            var leftLength = this.olapProp?.rows.length
+            var fromAxis
+            if (data != null) {
+                fromAxis = data.axis
+                if (data.measure) {
+                    this.$store.commit('setInfo', { title: this.$t('common.toast.warning'), msg: this.$t('documentExecution.olap.filterToolbar.noMeasure') })
+                    return null
+                }
+                if (fromAxis != -1) {
+                    if ((fromAxis === 0 && topLength == 1) || (fromAxis === 1 && leftLength == 1)) {
+                        this.$store.commit('setInfo', { title: this.$t('common.toast.warning'), msg: this.$t('documentExecution.olap.filterToolbar.dragEmptyWarning') })
+                    } else {
+                        data.positionInAxis = this.filterCardList.length
+                        data.axis = -1
+                        this.$emit('putFilterOnAxis', fromAxis, data)
+                    }
+                }
+            }
+            //TODO: Ne znam cemu sluzi ostaviti za kasnije pa pogledati....FilterPanel.js linija 164 clearLoadedData
+            // data != null ? this.clearLoadedData(data.uniqueName) : ''
         }
     }
 })
