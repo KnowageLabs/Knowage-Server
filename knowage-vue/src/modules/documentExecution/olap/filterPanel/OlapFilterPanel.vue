@@ -3,7 +3,7 @@
         <div v-if="filterCardList?.length == 0" class="p-d-flex p-flex-row kn-flex p-jc-center">
             <InlineMessage class="kn-flex p-m-1" :style="panelDescriptor.style.noFilters" severity="info" closable="false">{{ $t('documentExecution.olap.filterPanel.filterPanelEmpty') }}</InlineMessage>
         </div>
-        <FilterCard v-else :filterCardList="filterCardList" />
+        <FilterCard v-else :filterCardList="filterCardList" @showMultiHierarchy="emitMultiHierarchy" />
         <div ref="axisDropzone" class="kn-flex kn-truncated p-mr-1" :style="panelDescriptor.style.filterAxisDropzone">{{ $t('documentExecution.olap.filterPanel.drop') }}</div>
     </div>
 </template>
@@ -18,7 +18,7 @@ import FilterCard from './OlapFilterCard.vue'
 export default defineComponent({
     components: { InlineMessage, FilterCard },
     props: { olapProp: { type: Object, required: true } },
-    emits: ['putFilterOnAxis'],
+    emits: ['putFilterOnAxis', 'showMultiHierarchy'],
     data() {
         return {
             panelDescriptor,
@@ -72,6 +72,9 @@ export default defineComponent({
             }
             //TODO: Ne znam cemu sluzi ostaviti za kasnije pa pogledati....FilterPanel.js linija 164 clearLoadedData
             // data != null ? this.clearLoadedData(data.uniqueName) : ''
+        },
+        emitMultiHierarchy(filter) {
+            this.$emit('showMultiHierarchy', filter)
         }
     }
 })
