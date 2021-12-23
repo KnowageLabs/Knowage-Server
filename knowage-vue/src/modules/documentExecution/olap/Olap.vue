@@ -49,7 +49,7 @@
     <OlapSortingDialog :visible="sortingDialogVisible" :olap="olap" @save="onSortingSelect"></OlapSortingDialog>
     <OlapMDXQueryDialog :visible="mdxQueryDialogVisible" :mdxQuery="olap?.MDXWITHOUTCF" @close="mdxQueryDialogVisible = false"></OlapMDXQueryDialog>
     <OlapCrossNavigationDefinitionDialog :visible="crossNavigationDefinitionDialogVisible" :selectedCell="selectedCell" @close="crossNavigationDefinitionDialogVisible = false" @selectFromTable="enterSelectMode($event)"></OlapCrossNavigationDefinitionDialog>
-    <OlapButtonWizardDialog :visible="buttonsWizardDialogVisible" :propButtons="buttons" :propTemplate="template" @close="buttonsWizardDialogVisible = false"></OlapButtonWizardDialog>
+    <OlapButtonWizardDialog :visible="buttonsWizardDialogVisible" :propButtons="buttons" :propOlapDesigner="olapDesigner" @close="buttonsWizardDialogVisible = false"></OlapButtonWizardDialog>
     <KnOverlaySpinnerPanel :visibility="loading" />
 </template>
 
@@ -69,7 +69,6 @@ import FilterTopToolbar from './filterToolbar/OlapTopFilterToolbar.vue'
 import FilterLeftToolbar from './filterToolbar/OlapLeftFilterToolbar.vue'
 import OlapCrossNavigationDefinitionDialog from './crossNavigationDefinition/OlapCrossNavigationDefinitionDialog.vue'
 import OlapButtonWizardDialog from './buttonWizard/OlapButtonWizardDialog.vue'
-import X2JS from 'x2js'
 
 export default defineComponent({
     name: 'olap',
@@ -92,9 +91,8 @@ export default defineComponent({
             mode: 'view',
             selectedCell: null as any,
             buttons: [] as iButton[],
-            template: null as any,
-            loading: false,
-            x2js: new X2JS()
+            olapDesigner: null as any,
+            loading: false
         }
     },
     async created() {
@@ -119,16 +117,15 @@ export default defineComponent({
             this.loadCustomView()
             this.loading = false
 
-            // TODO LOADING MOCKED TEMPLATE
-            await this.loadTemplate()
+            // TODO Add condition for designer mode
+            await this.loadOlapDesigner()
         },
-        async loadTemplate() {
+        async loadOlapDesigner() {
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/3328/templates/selected/8102`, { headers: { Accept: 'application/json, text/plain, */*' } })
-                .then(async (response: AxiosResponse<any>) => (this.template = this.x2js.xml2js(response.data)))
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `olap/designer/${this.olapId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .then(async (response: AxiosResponse<any>) => (this.olapDesigner = response.data))
                 .catch(() => {})
-            // console.log('LOADED TEMPLATE: ', this.template)
-            // console.log('LOADED TEMPLATE FORMATTED: ', this.x2js.xml2js(this.template))
+            console.log('LOADED OLAP DESIGNER: ', this.olapDesigner)
         },
         async loadCustomView() {
             this.customViewVisible = this.olapCustomViewVisible

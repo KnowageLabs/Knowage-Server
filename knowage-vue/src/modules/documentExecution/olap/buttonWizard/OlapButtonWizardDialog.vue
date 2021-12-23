@@ -51,7 +51,7 @@ import olapButtonWizardDialogDescriptor from './OlapButtonWizardDialogDescriptor
 export default defineComponent({
     name: 'olap-button-wizard-dialog',
     components: { Checkbox, Column, DataTable, Dialog },
-    props: { sbiExecutionId: { type: String }, propButtons: { type: Array as PropType<iButton[]> }, propTemplate: { type: Object } },
+    props: { sbiExecutionId: { type: String }, propButtons: { type: Array as PropType<iButton[]> }, propOlapDesigner: { type: Object } },
     data() {
         return {
             olapButtonWizardDialogDescriptor,
@@ -60,14 +60,14 @@ export default defineComponent({
             selected: {} as any,
             allVisibleSelected: false,
             allClickedSelected: false,
-            template: null as any
+            olapDesigner: null as any
         }
     },
     watch: {
         propButtons() {
             this.loadButtons()
         },
-        propTemplate() {
+        propOlapDesigner() {
             this.loadTemplate()
         }
     },
@@ -81,9 +81,9 @@ export default defineComponent({
             console.log('BUTTONS LOADED IN DIALOG: ', this.buttons)
         },
         loadTemplate() {
-            this.template = this.propTemplate as any
+            this.olapDesigner = this.propOlapDesigner as any
             //  console.log('TEMPLATE LOADED IN BUTTONS: ', this.template)
-            if (this.template) {
+            if (this.olapDesigner) {
                 this.loadWizardButtons()
             }
         },
@@ -95,7 +95,7 @@ export default defineComponent({
             this.wizardButtons = this.wizardButtons.filter((el: iButton) => el.category !== 'WHAT_IF')
             // }
 
-            const toolbarButtonKeys = Object.keys(this.template.olap.TOOLBAR)
+            const toolbarButtonKeys = Object.keys(this.olapDesigner.template.wrappedObject.olap.TOOLBAR)
 
             // console.log('TOOLBAR BUTTON KEYS: ', toolbarButtonKeys)
 
@@ -104,8 +104,8 @@ export default defineComponent({
                 if (index >= 0) {
                     // console.log('TEMP BUTTON: ', tempButton)
                     // console.log('TTOOL BUTTON: ', this.template.olap.TOOLBAR[toolbarButtonKeys[index]])
-                    tempButton.visible = this.template.olap.TOOLBAR[toolbarButtonKeys[index]]._visible
-                    tempButton.clicked = this.template.olap.TOOLBAR[toolbarButtonKeys[index]]._clicked === 'false' ? false : true
+                    tempButton.visible = this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].visible
+                    tempButton.clicked = this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].clicked
 
                     // console.log(' >>> >>> TEMP BUTTON VISIBLE', tempButton.clicked)
                 }
@@ -115,7 +115,7 @@ export default defineComponent({
             })
 
             this.checkIfAllSelected()
-            //console.log('TEMP BUTTONS: ', this.wizardButtons)
+            console.log('TEMP BUTTONS: ', this.wizardButtons)
         },
         checkIfColumnSelected(property: string) {
             let allChecked = true
