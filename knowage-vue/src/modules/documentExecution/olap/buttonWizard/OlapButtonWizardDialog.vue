@@ -8,12 +8,17 @@
             </Toolbar>
         </template>
 
-        <DataTable :value="wizardButtons" class="p-datatable-sm kn-table p-m-2" :scrollable="true" scrollHeight="100%">
+        <DataTable :value="wizardButtons" class="p-datatable-sm kn-table p-m-4" :scrollable="true" scrollHeight="100%">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
 
-            <Column field="name" :header="$t('common.name')"></Column>
+            <Column :header="$t('common.name')">
+                <template #body="slotProps">
+                    {{ $t(olapButtonWizardDialogDescriptor.buttonLabels[slotProps.data.name]) }}
+                    <!-- olapButtonWizardDialogDescriptor -->
+                </template>
+            </Column>
             <Column :header="$t('common.visible')">
                 <template #header>
                     <Checkbox class="p-mr-2" v-model="allVisibleSelected" :binary="true" @change="setAllChecked('visible')" />
@@ -51,7 +56,7 @@ import olapButtonWizardDialogDescriptor from './OlapButtonWizardDialogDescriptor
 export default defineComponent({
     name: 'olap-button-wizard-dialog',
     components: { Checkbox, Column, DataTable, Dialog },
-    props: { sbiExecutionId: { type: String }, propButtons: { type: Array as PropType<iButton[]> }, propOlapDesigner: { type: Object } },
+    props: { visible: { type: Boolean }, sbiExecutionId: { type: String }, propButtons: { type: Array as PropType<iButton[]> }, propOlapDesigner: { type: Object } },
     data() {
         return {
             olapButtonWizardDialogDescriptor,
@@ -68,19 +73,25 @@ export default defineComponent({
             this.loadButtons()
         },
         propOlapDesigner() {
-            this.loadTemplate()
+            this.loadDesigner()
+        },
+        visible(value: boolean) {
+            if (value) {
+                this.loadButtons()
+                this.loadDesigner()
+            }
         }
     },
     created() {
         this.loadButtons()
-        this.loadTemplate()
+        this.loadDesigner()
     },
     methods: {
         loadButtons() {
             this.buttons = this.propButtons as iButton[]
             console.log('BUTTONS LOADED IN DIALOG: ', this.buttons)
         },
-        loadTemplate() {
+        loadDesigner() {
             this.olapDesigner = this.propOlapDesigner as any
             //  console.log('TEMPLATE LOADED IN BUTTONS: ', this.template)
             if (this.olapDesigner) {
@@ -99,7 +110,7 @@ export default defineComponent({
 
             // console.log('TOOLBAR BUTTON KEYS: ', toolbarButtonKeys)
 
-            this.wizardButtons.map((tempButton: iButton) => {
+            this.wizardButtons.forEach((tempButton: iButton) => {
                 const index = toolbarButtonKeys.indexOf(tempButton.name)
                 if (index >= 0) {
                     // console.log('TEMP BUTTON: ', tempButton)
@@ -110,8 +121,6 @@ export default defineComponent({
                     // console.log(' >>> >>> TEMP BUTTON VISIBLE', tempButton.clicked)
                 }
                 // console.log('INDEX: ', index)
-
-                return tempButton
             })
 
             this.checkIfAllSelected()
@@ -164,9 +173,27 @@ export default defineComponent({
         },
         closeDialog() {
             this.$emit('close')
+            this.wizardButtons = []
         },
         save() {
-            console.log('SAVE CLICKED!')
+            console.log('>>> Save wizzard ', this.wizardButtons)
+            const tempOlapDesignerObject = this.olapDesigner.template.wrappedObject.olap
+            console.log('>>> Save template olap ', tempOlapDesignerObject)
+
+            const toolbarButtonKeys = Object.keys(this.olapDesigner.template.wrappedObject.olap.TOOLBAR)
+
+            // console.log('TOOLBAR BUTTON KEYS: ', toolbarButtonKeys)
+
+            this.wizardButtons.forEach((tempButton: iButton) => {
+                const index = toolbarButtonKeys.indexOf(tempButton.name)
+                if (index >= 0) {
+                    this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].visible = tempButton.visible
+                    this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].clicked = tempButton.clicked
+                }
+            })
+            this.$emit('close')
+
+            console.log('>>> Save template olap AFTER ', tempOlapDesignerObject)
         }
     }
 })
