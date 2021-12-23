@@ -1,18 +1,24 @@
 <template>
     <div class="p-d-flex p-flex-column kn-flex">
-        <div v-if="mode === 'member' || mode === 'cell'" class="p-m-4">
-            <Message id="olap-select-message" class="p-d-flex p-flex-row p-ai-center" severity="info" :closable="false" :style="olapDescriptor.styles.message">
-                {{ $t('documentExecution.olap.crossNavigationDefinition.finishSelection') }}
-            </Message>
-            <Button id="olap-select-button" class="kn-button kn-button--primary" @click="cellSelected"> {{ $t('common.ok') }}</Button>
-        </div>
-
         <FilterPanel :olapProp="olap" @putFilterOnAxis="putFilterOnAxis" />
         <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" />
 
         <div id="left-and-table-container" class="p-d-flex p-flex-row kn-flex">
             <FilterLeftToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" />
             <div id="olap-table" class="kn-flex" ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
+        </div>
+
+        <!-- SELECT TOAST CONFIRM  TODO:Premestiti stilove u deskriptor -------------------------------------->
+        <div v-if="mode === 'member' || mode === 'cell'" id="custom-toast" style="position:fixed;width:25rem;top:20px;right:20px;z-index:2000">
+            <div id="custom-toast-content" style="background: #B3E5FC; border:solid#B3E5FC; border-width:1px; color:#01579B;padding:1rem;box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 10%);border-radius: 4px;">
+                <div class="p-d-flex p-flex-column">
+                    <div class="p-text-center p-d-flex p-flex-row p-ai-center">
+                        <i class="pi pi-info-circle" style="font-size: 2rem"></i>
+                        <h4 class="p-ml-2">{{ $t('documentExecution.olap.crossNavigationDefinition.finishSelection') }}</h4>
+                        <Button class="p-jc-center" style="background-color:transparent;color:#01579B;width:5px;margin-left:auto" label="OK" @click="cellSelected" />
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- SIDEBAR -------------------------------------->
@@ -49,7 +55,6 @@
 import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import { iOlapCustomView } from './Olap'
-import Message from 'primevue/message'
 import olapDescriptor from './OlapDescriptor.json'
 import OlapSidebar from './olapSidebar/OlapSidebar.vue'
 import OlapSortingDialog from './sortingDialog/OlapSortingDialog.vue'
@@ -64,7 +69,7 @@ import OlapCrossNavigationDefinitionDialog from './crossNavigationDefinition/Ola
 
 export default defineComponent({
     name: 'olap',
-    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, FilterTopToolbar, FilterLeftToolbar, OlapMDXQueryDialog, OlapCrossNavigationDefinitionDialog, Message },
+    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, FilterTopToolbar, FilterLeftToolbar, OlapMDXQueryDialog, OlapCrossNavigationDefinitionDialog },
     props: { id: { type: String }, olapId: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
     emits: ['closeOlapCustomView', 'applyCustomView', 'executeCrossNavigation'],
     data() {
