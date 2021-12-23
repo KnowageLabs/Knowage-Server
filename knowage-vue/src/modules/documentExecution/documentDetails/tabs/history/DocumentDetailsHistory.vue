@@ -248,7 +248,7 @@ export default defineComponent({
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
         },
         openDesigner() {
-            this.$store.commit('setInfo', { title: 'TODO', msg: 'Functionality not in this sprint!!!' })
+            this.$router.push(`/olap-designer/${this.selectedDocument.id}`)
         }
     }
 })
