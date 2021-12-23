@@ -38,6 +38,7 @@
             @reloadSchema="reloadOlap"
             @enableCrossNavigation="enableCrossNaivigation"
             @openCrossNavigationDefinitionDialog="crossNavigationDefinitionDialogVisible = true"
+            @openButtonWizardDialog="buttonsWizardDialogVisible = true"
         />
 
         <OlapCustomViewTable v-if="customViewVisible" class="p-m-2" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)"></OlapCustomViewTable>
@@ -48,13 +49,14 @@
     <OlapSortingDialog :visible="sortingDialogVisible" :olap="olap" @save="onSortingSelect"></OlapSortingDialog>
     <OlapMDXQueryDialog :visible="mdxQueryDialogVisible" :mdxQuery="olap?.MDXWITHOUTCF" @close="mdxQueryDialogVisible = false"></OlapMDXQueryDialog>
     <OlapCrossNavigationDefinitionDialog :visible="crossNavigationDefinitionDialogVisible" :selectedCell="selectedCell" @close="crossNavigationDefinitionDialogVisible = false" @selectFromTable="enterSelectMode($event)"></OlapCrossNavigationDefinitionDialog>
+    <OlapButtonWizardDialog :visible="buttonsWizardDialogVisible" :propButtons="buttons" @close="buttonsWizardDialogVisible = false"></OlapButtonWizardDialog>
     <KnOverlaySpinnerPanel :visibility="loading" />
 </template>
 
 <script lang="ts">
 import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
-import { iOlapCustomView } from './Olap'
+import { iOlapCustomView, iButton } from './Olap'
 import olapDescriptor from './OlapDescriptor.json'
 import OlapSidebar from './olapSidebar/OlapSidebar.vue'
 import OlapSortingDialog from './sortingDialog/OlapSortingDialog.vue'
@@ -66,10 +68,11 @@ import FilterPanel from './filterPanel/OlapFilterPanel.vue'
 import FilterTopToolbar from './filterToolbar/OlapTopFilterToolbar.vue'
 import FilterLeftToolbar from './filterToolbar/OlapLeftFilterToolbar.vue'
 import OlapCrossNavigationDefinitionDialog from './crossNavigationDefinition/OlapCrossNavigationDefinitionDialog.vue'
+import OlapButtonWizardDialog from './buttonWizard/OlapButtonWizardDialog.vue'
 
 export default defineComponent({
     name: 'olap',
-    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, FilterTopToolbar, FilterLeftToolbar, OlapMDXQueryDialog, OlapCrossNavigationDefinitionDialog },
+    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, FilterTopToolbar, FilterLeftToolbar, OlapMDXQueryDialog, OlapCrossNavigationDefinitionDialog, OlapButtonWizardDialog },
     props: { id: { type: String }, olapId: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
     emits: ['closeOlapCustomView', 'applyCustomView', 'executeCrossNavigation'],
     data() {
@@ -83,9 +86,11 @@ export default defineComponent({
             sortingDialogVisible: false,
             mdxQueryDialogVisible: false,
             crossNavigationDefinitionDialogVisible: false,
+            buttonsWizardDialogVisible: false,
             sort: null as any,
             mode: 'view',
             selectedCell: null as any,
+            buttons: [] as iButton[],
             loading: false
         }
     },
@@ -127,12 +132,22 @@ export default defineComponent({
             this.loading = false
             // console.log('LOADED OLAP CUSTOM VIEWS: ', this.olapCustomViews)
         },
+        async loadOlapButtons() {
+            this.loading = true
+            await this.$http
+                .get(process.env.VUE_APP_OLAP_PATH + `1.0/buttons`)
+                .then(async (response: AxiosResponse<any>) => (this.buttons = response.data))
+                .catch(() => {})
+            this.loading = false
+            console.log('LOADED OLAP BUTTONS: ', this.buttons)
+        },
         async loadOlapModel() {
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then(async (response: AxiosResponse<any>) => {
                     this.olap = response.data
+                    await this.loadOlapButtons()
                     await this.loadModelConfig()
                 })
                 .catch(() => {})
