@@ -42,7 +42,8 @@ import olapCrossNavigationDefinitionDialogDescriptor from './OlapCrossNavigation
 export default defineComponent({
     name: 'olap-cross-navigation-step-two',
     components: { Message },
-    props: { propSelectedParameter: { type: Object as PropType<iOlapCrossNavigationParameter | null> } },
+    props: { propSelectedParameter: { type: Object as PropType<iOlapCrossNavigationParameter | null> }, cell: { type: Object } },
+    emits: ['selectFromTable'],
     data() {
         return {
             olapCrossNavigationDefinitionDialogDescriptor,
@@ -54,10 +55,14 @@ export default defineComponent({
     watch: {
         propSelectedParameter() {
             this.loadSelectedParameter()
+        },
+        cell() {
+            this.loadValueFromCell()
         }
     },
     created() {
         this.loadSelectedParameter()
+        this.loadValueFromCell()
     },
     methods: {
         loadSelectedParameter() {
@@ -67,6 +72,13 @@ export default defineComponent({
         },
         selectFromTable() {
             console.log('SELECT FROM TABLE CLICKED!')
+            this.$emit('selectFromTable')
+        },
+        loadValueFromCell() {
+            console.log(' >>> LOAD VALUE FROM CELL CALLLLLLLED!')
+            if (this.cell) {
+                this.value = this.cell.uniquename
+            }
         }
     }
 })

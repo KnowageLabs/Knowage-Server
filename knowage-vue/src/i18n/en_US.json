@@ -95,6 +95,7 @@
         "notes": "Notes",
         "notesList": "Notes list",
         "object": "Object",
+        "ok": "ok",
         "onlineHelp": "Help Online",
         "output": "Output",
         "owner": "Owner",
@@ -389,6 +390,7 @@
         "olap": {
             "crossNavigationDefinition": {
                 "crossNavigationType": "Select the type of cross navigation below",
+                "finishSelection": "Click ok to finish selection",
                 "hint": "The parameters for cross navigation on cell required the name of the dimension, hierarchy and level. In order to select these values you should click on \"select from table\". Than on the table you should open the filter panel of the hierarchy you want to include in the parameter. Than on the filter panel you should select one member of the level you want to include in the cross navigation. For example: suppose you want to create a parameter on dimension=\"Product\" hierarchy=\"[Product]\" level=\"[Product].[Product Department]. You should select the hierarchy Product on dimension Product. Than you should open the filter panel and select a member of the level [Product].[Product Department] for example Food.Seafood",
                 "parameterName": "Parameter Name",
                 "selectFromTable": "Select from table",

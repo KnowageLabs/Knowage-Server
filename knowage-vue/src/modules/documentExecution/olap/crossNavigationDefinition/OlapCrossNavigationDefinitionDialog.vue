@@ -12,7 +12,7 @@
         </template>
 
         <OlapCrossNavigationStepOne v-if="step === 0" :propParameters="parameters" :addNewParameterVisible="addNewParameterVisible" :propSelectedParameter="selectedParameter" @parameterSelected="onParameterSelect" @deleteParameter="deleteParameter"></OlapCrossNavigationStepOne>
-        <OlapCrossNavigationStepTwo v-else :propSelectedParameter="selectedParameter"></OlapCrossNavigationStepTwo>
+        <OlapCrossNavigationStepTwo v-else :propSelectedParameter="selectedParameter" :cell="cell" @selectFromTable="$emit('selectFromTable', selectedParameter?.type)"></OlapCrossNavigationStepTwo>
 
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
@@ -33,7 +33,8 @@ import OlapCrossNavigationStepTwo from './OlapCrossNavigationStepTwo.vue'
 export default defineComponent({
     name: 'olap-cross-naviagtion-definition-dialog',
     components: { Dialog, OlapCrossNavigationStepOne, OlapCrossNavigationStepTwo },
-    props: { sbiExecutionId: { type: String } },
+    props: { sbiExecutionId: { type: String }, selectedCell: { type: Object } },
+    emits: ['selectFromTable', 'close', 'save'],
     data() {
         return {
             olapCrossNavigationDefinitionDialogDescriptor,
@@ -53,11 +54,19 @@ export default defineComponent({
                 }
             ] as iOlapCrossNavigationParameter[],
             selectedParameter: null as iOlapCrossNavigationParameter | null,
+            cell: {} as any,
             step: 0,
             addNewParameterVisible: false
         }
     },
-    created() {},
+    watch: {
+        selectedCell() {
+            this.loadCell()
+        }
+    },
+    created() {
+        this.loadCell()
+    },
     methods: {
         addNewParameter() {
             this.selectedParameter = {} as iOlapCrossNavigationParameter
@@ -67,6 +76,10 @@ export default defineComponent({
             this.selectedParameter = parameter
             this.step = 1
             console.log('SELECTED PARAMETER: ', this.selectedParameter)
+        },
+        loadCell() {
+            this.cell = this.selectedCell?.cell as any
+            console.log(' >>> THIS SELECTED CELL: ', this.cell)
         },
         deleteParameter(parameter: iOlapCrossNavigationParameter) {
             console.log('PARAMETER FOR DELETE: ', parameter)
