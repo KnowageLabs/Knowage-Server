@@ -12,6 +12,7 @@
         "cc": "CC",
         "choose": "choose",
         "clean": "Clean",
+        "clicked": "Clicked",
         "clone": "Clone",
         "close": "close",
         "cockpit": "Cockpit",
@@ -389,6 +390,9 @@
             "yourRating": "Your rating"
         },
         "olap": {
+            "buttonsWizard": {
+                "title": "Buttons Wizard"
+            },
             "crossNavigationDefinition": {
                 "crossNavigationType": "Select the type of cross navigation below",
                 "finishSelection": "Click ok to finish selection",
@@ -402,14 +406,14 @@
             },
             "editModeConfirm": "You are leaving edit mode. Continue?",
             "filterPanel": {
-                "filterPanelEmpty": "Drag the member here if you want to use it as a slicer",
-                "drop": "Drop here to use as a slicer"
+                "drop": "Drop here to use as a slicer",
+                "filterPanelEmpty": "Drag the member here if you want to use it as a slicer"
             },
             "filterToolbar": {
-                "drop": "Drop here to use as a dimension",
                 "dragEmptyWarning": "There must be at least one dimension in the columns and in the rows",
-                "putFilterOnAxisError": "An error occurred while placing member on axis",
-                "noMeasure": "A measure can not be used as a filter"
+                "drop": "Drop here to use as a dimension",
+                "noMeasure": "A measure can not be used as a filter",
+                "putFilterOnAxisError": "An error occurred while placing member on axis"
             },
             "savingCustomizedView": "Saving customized view",
             "showMdxQuery": "Show MDX Query",
