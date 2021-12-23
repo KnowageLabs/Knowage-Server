@@ -11,13 +11,13 @@
             </Toolbar>
         </template>
 
-        <OlapCrossNavigationStepOne v-if="step === 0" :propParameters="parameters" :addNewParameterVisible="addNewParameterVisible" :propSelectedParameter="selectedParameter"></OlapCrossNavigationStepOne>
-        <OlapCrossNavigationStepTwo v-else></OlapCrossNavigationStepTwo>
+        <OlapCrossNavigationStepOne v-if="step === 0" :propParameters="parameters" :addNewParameterVisible="addNewParameterVisible" :propSelectedParameter="selectedParameter" @parameterSelected="onParameterSelect" @deleteParameter="deleteParameter"></OlapCrossNavigationStepOne>
+        <OlapCrossNavigationStepTwo v-else :propSelectedParameter="selectedParameter"></OlapCrossNavigationStepTwo>
 
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
             <Button v-if="step === 0" class="kn-button kn-button--primary" :disabled="!selectedParameter || !selectedParameter.type" @click="step = 1"> {{ $t('common.next') }}</Button>
-            <Button v-else class="kn-button kn-button--primary" @click="save"> {{ $t('common.save') }}</Button>
+            <Button v-else class="kn-button kn-button--primary" :disabled="!selectedParameter || !selectedParameter.name" @click="save"> {{ $t('common.save') }}</Button>
         </template>
     </Dialog>
 </template>
@@ -63,11 +63,24 @@ export default defineComponent({
             this.selectedParameter = {} as iOlapCrossNavigationParameter
             this.addNewParameterVisible = true
         },
+        onParameterSelect(parameter: iOlapCrossNavigationParameter) {
+            this.selectedParameter = parameter
+            this.step = 1
+            console.log('SELECTED PARAMETER: ', this.selectedParameter)
+        },
+        deleteParameter(parameter: iOlapCrossNavigationParameter) {
+            console.log('PARAMETER FOR DELETE: ', parameter)
+            const index = this.parameters.findIndex((el: iOlapCrossNavigationParameter) => el.name === parameter.name)
+            if (index !== -1) this.parameters.splice(index, 1)
+        },
         closeDialog() {
             this.$emit('close')
+            this.step = 0
+            this.selectedParameter = {} as iOlapCrossNavigationParameter
         },
         save() {
             console.log('SAVE CLICKED!')
+            this.step = 0
         }
     }
 })

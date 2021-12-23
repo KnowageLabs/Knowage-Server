@@ -1,6 +1,6 @@
 <template>
     <div class="p-m-4">
-        <DataTable :value="parameters" class="p-datatable-sm kn-table p-m-2" dataKey="name" responsiveLayout="stack" breakpoint="600px">
+        <DataTable :value="parameters" class="p-datatable-sm kn-table p-m-2" dataKey="name" responsiveLayout="stack" breakpoint="600px" @rowClick="$emit('parameterSelected', $event.data)">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -32,11 +32,12 @@ export default defineComponent({
     name: 'olap-cross-navigation-step-one',
     components: { Column, DataTable, Dropdown },
     props: { propParameters: { type: Array as PropType<iOlapCrossNavigationParameter[]> }, addNewParameterVisible: { type: Boolean }, propSelectedParameter: { type: Object as PropType<iOlapCrossNavigationParameter | null> } },
+    emits: ['parameterSelected', 'deleteParameter'],
     data() {
         return {
             olapCrossNavigationDefinitionDialogDescriptor,
             parameters: [] as iOlapCrossNavigationParameter[],
-            selectedParameter: {} as any
+            selectedParameter: {} as iOlapCrossNavigationParameter
         }
     },
     watch: {
@@ -57,11 +58,16 @@ export default defineComponent({
             console.log('LOADED PARAMETERS STEP ONE: ', this.parameters)
         },
         loadSelectedParameter() {
-            this.selectedParameter = this.propSelectedParameter
+            this.selectedParameter = this.propSelectedParameter as iOlapCrossNavigationParameter
             console.log('LOADED SELECTED PARAMETER: ', this.selectedParameter)
         },
         deleteParameterConfirm(parameter: iOlapCrossNavigationParameter) {
-            console.log('DELETE CLICKED FOR: ', parameter)
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteConfirmTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: async () => this.$emit('deleteParameter', parameter)
+            })
         }
     }
 })

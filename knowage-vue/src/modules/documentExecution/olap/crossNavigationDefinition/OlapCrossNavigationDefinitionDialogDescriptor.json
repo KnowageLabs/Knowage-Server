@@ -23,6 +23,14 @@
             "width": "10%"
         }
     },
+    "styles": {
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        }
+    },
     "typeList": [
         {
             "label": "From Cell",

@@ -93,7 +93,13 @@ export default defineComponent({
             this.loading = true
             await this.$http
                 .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `/1.0/olapsubobjects/removeOlapSubObject?idObj=${customView.id}`)
-                .then(() => this.removeCustomView(customView))
+                .then(() => {
+                    this.removeCustomView(customView)
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                })
                 .catch(() => {})
             this.loading = false
         },
