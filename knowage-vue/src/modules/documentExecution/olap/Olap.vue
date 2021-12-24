@@ -28,6 +28,7 @@
             class="olap-sidebar kn-overflow-y"
             :olap="olap"
             :olapDesignerMode="olapDesignerMode"
+            :propButtons="buttons"
             @openCustomViewDialog="customViewSaveDialogVisible = true"
             @drillTypeChanged="onDrillTypeChanged"
             @showParentMemberChanged="onShowParentMemberChanged"

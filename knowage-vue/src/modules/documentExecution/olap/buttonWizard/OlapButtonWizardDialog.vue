@@ -101,9 +101,9 @@ export default defineComponent({
 
             console.log('OLAP DESIGNER WIZARD BUTTONS: ', this.olapDesigner)
             // TODO HARDCODED UNTIL NEW WAR
-            // if (this.olapDocument?.engine === 'knowageolapengine') {
-            this.wizardButtons = this.wizardButtons.filter((el: iButton) => el.category !== 'WHAT_IF')
-            // }
+            if (this.olapDesigner?.ENGINE === 'knowageolapengine') {
+                this.wizardButtons = this.wizardButtons.filter((el: iButton) => el.category !== 'WHAT_IF')
+            }
 
             const toolbarButtonKeys = Object.keys(this.olapDesigner.template?.wrappedObject?.olap?.TOOLBAR)
 
