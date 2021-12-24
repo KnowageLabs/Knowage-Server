@@ -1,5 +1,5 @@
 <template>
-    <Dialog id="olap-custom-view-save-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="olapCustomViewSaveDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog id="olap-custom-view-save-dialog" class="p-fluid kn-dialog--toolbar--secondary" :style="olapCustomViewSaveDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-2 p-col-12">
                 <template #left>

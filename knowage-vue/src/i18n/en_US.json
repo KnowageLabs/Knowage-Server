@@ -393,6 +393,13 @@
             "buttonsWizard": {
                 "title": "Buttons Wizard"
             },
+            "drillTru": {
+                "title": "Drill Through",
+                "loadingTitle": "Loading",
+                "loadingMsg": "If the drill though is executed on a cell with an high level of aggregation, this operation can take long time.",
+                "drillTruError": "Error in drill through",
+                "drillLevelsError": "An error occurred while getting drill through levels"
+            },
             "crossNavigationDefinition": {
                 "crossNavigationType": "Select the type of cross navigation below",
                 "finishSelection": "Click ok to finish selection",

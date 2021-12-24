@@ -108,7 +108,7 @@
                 </div>
             </div>
 
-            <div class="p-fluid">
+            <div class="p-fluid" v-if="olapDesignerMode">
                 <Button :label="$t('documentExecution.olap.sidebar.closeDesigner')" class="p-button-plain kn-button--secondary" @click="closeOlapDesigner" />
                 <Button :label="$t('documentExecution.olap.sidebar.saveTemplate')" class="p-button-plain kn-button--primary p-mt-2" @click="$emit('saveOlapDesigner')" />
             </div>
