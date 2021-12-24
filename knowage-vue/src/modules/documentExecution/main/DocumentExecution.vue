@@ -31,6 +31,7 @@
                     v-else-if="mode === 'olap'"
                     :id="urlData.sbiExecutionId"
                     :olapId="document.id"
+                    :olapName="document.name"
                     :reloadTrigger="reloadTrigger"
                     :olapCustomViewVisible="olapCustomViewVisible"
                     @closeOlapCustomView="olapCustomViewVisible = false"

@@ -83,8 +83,8 @@
             </div>
 
             <div class="p-fluid">
-                <Button :label="$t('documentExecution.olap.sidebar.closeDesigner')" class="p-button-plain kn-button--secondary" />
-                <Button :label="$t('documentExecution.olap.sidebar.saveTemplate')" class="p-button-plain kn-button--primary p-mt-2" />
+                <Button :label="$t('documentExecution.olap.sidebar.closeDesigner')" class="p-button-plain kn-button--secondary" @click="closeOlapDesigner" />
+                <Button :label="$t('documentExecution.olap.sidebar.saveTemplate')" class="p-button-plain kn-button--primary p-mt-2" @click="$emit('saveOlapDesigner')" />
             </div>
         </div>
     </div>
@@ -112,7 +112,8 @@ export default defineComponent({
         'enableCrossNavigation',
         'openCrossNavigationDefinitionDialog',
         'openButtonWizardDialog',
-        'drillThroughChanged'
+        'drillThroughChanged',
+        'saveOlapDesigner'
     ],
     data() {
         return {
@@ -169,6 +170,9 @@ export default defineComponent({
         onEnableCrossNavigationClick() {
             this.crossNavigation = !this.crossNavigation
             this.$emit('enableCrossNavigation', this.crossNavigation)
+        },
+        closeOlapDesigner() {
+            console.log('CLOSE OLAP DESIGNER CLICKED!')
         }
     }
 })

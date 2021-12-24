@@ -97,8 +97,13 @@ export default defineComponent({
             }
         },
         loadWizardButtons() {
+            if (!this.olapDesigner.template) {
+                return
+            }
+
             this.wizardButtons = this.buttons.filter((el: iButton) => el.category !== 'OLAP_DESIGNER')
 
+            console.log('OLAP DESIGNER WIZARD BUTTONS: ', this.olapDesigner)
             // TODO HARDCODED UNTIL NEW WAR
             // if (this.olapDocument?.engine === 'knowageolapengine') {
             this.wizardButtons = this.wizardButtons.filter((el: iButton) => el.category !== 'WHAT_IF')
