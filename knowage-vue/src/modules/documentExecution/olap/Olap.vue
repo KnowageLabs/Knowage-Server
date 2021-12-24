@@ -1,5 +1,6 @@
 <template>
     <div class="p-d-flex p-flex-column kn-flex">
+        <OlapCustomViewTable v-if="customViewVisible" class="olap-overlay-dialog" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)" />
         <FilterPanel :olapProp="olap" @putFilterOnAxis="putFilterOnAxis" @showMultiHierarchy="showMultiHierarchy" />
         <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @swapAxis="swapAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" />
 
@@ -44,8 +45,6 @@
             @openButtonWizardDialog="buttonsWizardDialogVisible = true"
             @saveOlapDesigner="saveOlapDesigner"
         />
-
-        <OlapCustomViewTable v-if="customViewVisible" class="p-m-2" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)"></OlapCustomViewTable>
     </div>
 
     <!-- DIALOGS ------------------------------------------->
@@ -102,7 +101,12 @@ export default defineComponent({
             buttons: [] as iButton[],
             olapDesigner: null as any,
             olapDesignerMode: false,
-            loading: false
+            loading: false,
+            dtData: [] as any,
+            dtColumns: [] as any,
+            formattedColumns: [] as any,
+            dtAssociatedLevels: [] as any,
+            dtTree: [] as any
         }
     },
     async created() {
@@ -516,18 +520,54 @@ export default defineComponent({
             this.loading = false
         },
         async drillThrough(event: any) {
+            this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/drilltrough?SBI_EXECUTION_ID=${this.id}`, this.formatDrillThroughPostData(event), { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
-                .then((response: AxiosResponse<any>) => (this.olap = response.data))
-                .catch(() => {})
+                .then((response: AxiosResponse<any>) => {
+                    this.dtData = []
+                    this.dtColumns = []
 
-            this.formatOlapTable()
+                    this.dtData = response.data
+                    for (var key in response.data[0]) {
+                        this.dtColumns.push(key)
+                    }
+                    this.formattedColumns = this.formatColumns(this.dtColumns)
+                    this.getCollections()
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+                .finally(() => (this.loading = false))
         },
         formatDrillThroughPostData(event: any) {
             const drillThroughAttribute = event.target.attributes[1].textContent
 
             const postData = { ordinal: +drillThroughAttribute.substring(drillThroughAttribute.indexOf('(') + 1, drillThroughAttribute.indexOf(')')) }
             return postData
+        },
+        formatColumns(array) {
+            let arr = [] as any
+            for (var i = 0; i < array.length; i++) {
+                var obj = {} as any
+                obj.label = array[i].toUpperCase()
+                obj.name = array[i]
+                obj.size = '100px'
+                arr.push(obj)
+            }
+            console.log('formatColumns ARRAY', arr)
+            return arr
+        },
+        async getCollections() {
+            var toSend = {} as any
+            toSend.filters = JSON.stringify(this.olap.filters)
+
+            await this.$http
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/drilltrough/levels/?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .then((response: AxiosResponse<any>) => {
+                    this.dtTree = response.data
+                    console.log('getCollections TREE:', this.dtTree)
+                })
+                .catch(() => {})
         },
         async handleTableClick(event: any) {
             console.log('EVENT: ', event)
@@ -571,6 +611,12 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+.olap-overlay-dialog {
+    position: absolute;
+    z-index: 2000;
+    background-color: white;
+    height: 100%;
+}
 .olap-page-container {
     display: flex;
     flex-direction: column;

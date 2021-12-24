@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
+    <div class="p-d-flex p-flex-column">
+        <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12 kn-flex-0">
             <template #left>{{ $t('documentExecution.olap.customView.title') }} </template>
 
             <template #right>
