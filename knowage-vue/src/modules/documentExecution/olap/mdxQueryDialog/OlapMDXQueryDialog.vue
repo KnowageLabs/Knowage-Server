@@ -24,7 +24,10 @@ import { VCodeMirror } from 'vue3-code-mirror'
 
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
-    components: { Dialog, VCodeMirror },
+    components: {
+        Dialog,
+        VCodeMirror
+    },
     props: { mdxQuery: { type: Object as PropType<String | null> } },
     emits: ['close'],
     data() {

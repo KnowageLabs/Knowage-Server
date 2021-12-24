@@ -170,12 +170,11 @@ export default defineComponent({
     methods: {
         loadButtons() {
             this.buttons = this.propButtons as any[]
-            console.log('BUTTONS LOADED IN SIDEBAR: ', this.buttons)
         },
         isButtonVisible(buttonName: string) {
             let isVisible = false
-            const index = this.buttons.findIndex((el: any) => el.name === buttonName)
-            if (index !== -1) isVisible = this.buttons[index].visible
+            const index = this.olap?.modelConfig.toolbarVisibleButtons.findIndex((el: any) => el === buttonName)
+            if (index !== -1) isVisible = true
 
             return isVisible
         },

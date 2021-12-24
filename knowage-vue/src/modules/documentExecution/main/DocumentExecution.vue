@@ -25,11 +25,11 @@
             <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
 
             <template v-if="filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible">
-                <Registry v-if="mode === 'registry'" :id="urlData.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
+                <Registry v-if="mode === 'registry'" :id="urlData?.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
                 <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger"></Dossier>
                 <Olap
                     v-else-if="mode === 'olap'"
-                    :id="urlData.sbiExecutionId"
+                    :id="urlData?.sbiExecutionId"
                     :olapId="document.id"
                     :olapName="document.name"
                     :reloadTrigger="reloadTrigger"

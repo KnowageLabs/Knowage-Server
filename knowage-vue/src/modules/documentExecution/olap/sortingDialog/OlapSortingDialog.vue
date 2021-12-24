@@ -28,7 +28,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
+import { iOlap } from '../Olap'
 import Dialog from 'primevue/dialog'
 import olapSortingDialogDescriptor from './OlapSortingDialogDescriptor.json'
 import RadioButton from 'primevue/radiobutton'
@@ -36,7 +37,7 @@ import RadioButton from 'primevue/radiobutton'
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
     components: { Dialog, RadioButton },
-    props: { sbiExecutionId: { type: String }, olap: { type: Object } },
+    props: { sbiExecutionId: { type: String }, olap: { type: Object as PropType<iOlap> } },
     emits: ['save'],
     data() {
         return {
