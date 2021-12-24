@@ -41,6 +41,7 @@
             @enableCrossNavigation="enableCrossNaivigation"
             @openCrossNavigationDefinitionDialog="crossNavigationDefinitionDialogVisible = true"
             @openButtonWizardDialog="buttonsWizardDialogVisible = true"
+            @saveOlapDesigner="saveOlapDesigner"
         />
 
         <OlapCustomViewTable v-if="customViewVisible" class="p-m-2" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)"></OlapCustomViewTable>
@@ -77,7 +78,7 @@ import MultiHierarchyDialog from './multiHierarchyDialog/OlapMultiHierarchyDialo
 export default defineComponent({
     name: 'olap',
     components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, FilterTopToolbar, FilterLeftToolbar, OlapMDXQueryDialog, OlapCrossNavigationDefinitionDialog, OlapButtonWizardDialog, MultiHierarchyDialog },
-    props: { id: { type: String }, olapId: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
+    props: { id: { type: String }, olapId: { type: String }, olapName: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
     emits: ['closeOlapCustomView', 'applyCustomView', 'executeCrossNavigation'],
     data() {
         return {
@@ -469,7 +470,21 @@ export default defineComponent({
             this.mode = 'view'
             this.selectedCell.event.target.style.border = 'none'
         },
-
+        async saveOlapDesigner() {
+            console.log('OLAP DESIGNER FOR SAVE: ', this.olapDesigner.template.wrappedObject)
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${this.olapName}/saveOlapTemplate`, this.olapDesigner.template.wrappedObject, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .then(async () => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('common.toast.updateSuccess')
+                    })
+                    await this.loadOlapDesigner()
+                })
+                .catch(() => {})
+            this.loading = false
+        },
         async handleTableClick(event: any) {
             console.log('EVENT: ', event)
 
