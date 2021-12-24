@@ -7,12 +7,11 @@
         </Toolbar>
 
         <div v-if="olap" class="p-d-flex p-flex-column kn-flex p-m-3">
+            <div>
+                <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.drillOnDimension') }}</label>
+                <SelectButton class="p-mt-2" v-model="drillOn" :options="olapSidebarDescriptor.drillOnOptions" @click="$emit('drillTypeChanged', drillOn)"></SelectButton>
+            </div>
             <div v-if="!olapDesignerMode" class="kn-flex">
-                <div>
-                    <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.drillOnDimension') }}</label>
-                    <SelectButton class="p-mt-2" v-model="drillOn" :options="olapSidebarDescriptor.drillOnOptions" @click="$emit('drillTypeChanged', drillOn)"></SelectButton>
-                </div>
-
                 <div class="p-d-flex p-flex-column p-my-3">
                     <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.drillOnData') }}</label>
                     <Button class="p-button-sm kn-button kn-button--secondary p-as-center p-mt-2" :class="{ 'olap-sidebar-button-active': drillThrough }" :label="$t('documentExecution.olap.sidebar.drillThrough')" @click="onDrillThroughClick" />
@@ -61,23 +60,23 @@
                 </div>
             </div>
 
-            <div v-if="olapDesignerMode" class="kn-flex">
+            <div v-if="olapDesignerMode" class="kn-flex p-mt-3">
                 <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.templateEditing') }}</label>
                 <div class="p-grid p-mt-1">
                     <div class="p-col-4">
                         <Button icon="far fa-eye" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.mdxQuery')" @click="$emit('openMdxQueryDialog')" />
                     </div>
                     <div class="p-col-4">
-                        <Button icon="pi pi-book" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.configureTablePagination')" />
+                        <Button icon="fas fa-book-open" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.configureTablePagination')" />
                     </div>
                     <div class="p-col-4">
-                        <Button icon="pi pi-arrow-circle-right" class="p-button-plain kn-button--secondary" :class="{ 'olap-sidebar-button-active': crossNavigation }" v-tooltip.top="$t('documentExecution.olap.sidebar.defineCrossNavigation')" @click="$emit('openCrossNavigationDefinitionDialog')" />
+                        <Button icon="fas fa-arrow-right" class="p-button-plain kn-button--secondary" :class="{ 'olap-sidebar-button-active': crossNavigation }" v-tooltip.top="$t('documentExecution.olap.sidebar.defineCrossNavigation')" @click="$emit('openCrossNavigationDefinitionDialog')" />
                     </div>
                     <div class="p-col-4">
-                        <Button icon="pi pi-check-square" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.configureButtonsVisiblity')" @click="$emit('openButtonWizardDialog')" />
+                        <Button icon="far fa-check-square" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.configureButtonsVisiblity')" @click="$emit('openButtonWizardDialog')" />
                     </div>
                     <div class="p-col-4">
-                        <Button icon="fa fa-calculator" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.calculatedField')" />
+                        <Button icon="fas fa-calculator" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.calculatedField')" />
                     </div>
                 </div>
             </div>
