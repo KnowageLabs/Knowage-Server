@@ -193,6 +193,7 @@ export default defineComponent({
             this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/DESC-rows.png"', ' <div class="sort-desc"></div ')
             this.olap.table = this.olap.table.replaceAll('<a href="#" onClick="parent.execExternal', '<a href="#" class="external-cross-navigation" crossParams="parent.execExternal')
             this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/cross-navigation.png"', ' <div class="cell-cross-navigation"></div ')
+            this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/ico_search.gif"', ' <div class="drillthrough"></div ')
         },
         async drillDown(event: any) {
             this.loading = true
@@ -485,6 +486,20 @@ export default defineComponent({
                 .catch(() => {})
             this.loading = false
         },
+        async drillThrough(event: any) {
+            await this.$http
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/drilltrough?SBI_EXECUTION_ID=${this.id}`, this.formatDrillThroughPostData(event), { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .then((response: AxiosResponse<any>) => (this.olap = response.data))
+                .catch(() => {})
+
+            this.formatOlapTable()
+        },
+        formatDrillThroughPostData(event: any) {
+            const drillThroughAttribute = event.target.attributes[1].textContent
+
+            const postData = { ordinal: +drillThroughAttribute.substring(drillThroughAttribute.indexOf('(') + 1, drillThroughAttribute.indexOf(')')) }
+            return postData
+        },
         async handleTableClick(event: any) {
             console.log('EVENT: ', event)
 
@@ -515,6 +530,9 @@ export default defineComponent({
                         break
                     case 'cell-cross-navigation':
                         await this.getCrossNavigationURL(event)
+                        break
+                    case 'drillthrough':
+                        await this.drillThrough(event)
                         break
                 }
             }
@@ -604,6 +622,14 @@ export default defineComponent({
 
 .cell-cross-navigation {
     background-image: url('../../../assets/images/olap/cross-navigation.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 0.8rem;
+    width: 0.8rem;
+}
+
+.drillthrough {
+    background-image: url('../../../assets/images/olap/ico_search.gif');
     background-position: center;
     background-repeat: no-repeat;
     height: 0.8rem;
