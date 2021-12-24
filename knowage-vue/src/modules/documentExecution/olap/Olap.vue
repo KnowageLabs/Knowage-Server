@@ -198,6 +198,7 @@ export default defineComponent({
                         break
                     case 'BUTTON_HIDE_EMPTY':
                         this.olap.modelConfig.suppressEmpty = button.clicked
+                        break
                 }
             })
         },
