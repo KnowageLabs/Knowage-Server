@@ -34,6 +34,7 @@
                     :olapName="document.name"
                     :reloadTrigger="reloadTrigger"
                     :olapCustomViewVisible="olapCustomViewVisible"
+                    :olapCustomViewMode="olapCustomViewMode"
                     @closeOlapCustomView="olapCustomViewVisible = false"
                     @applyCustomView="executeOlapCustomView"
                     @executeCrossNavigation="executeOLAPCrossNavigation"
@@ -143,6 +144,7 @@ export default defineComponent({
             linkParameters: [],
             embed: false,
             olapCustomViewVisible: false,
+            olapCustomViewMode: false,
             userRole: null,
             loading: false
         }
@@ -797,6 +799,7 @@ export default defineComponent({
         async executeOlapCustomView(payload: any) {
             this.loading = true
             this.olapCustomViewVisible = false
+            this.olapCustomViewMode = true
             await this.loadURL(payload)
             this.reloadTrigger = !this.reloadTrigger
             this.loading = false

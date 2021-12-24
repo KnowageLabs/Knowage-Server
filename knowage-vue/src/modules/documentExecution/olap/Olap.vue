@@ -78,7 +78,7 @@ import MultiHierarchyDialog from './multiHierarchyDialog/OlapMultiHierarchyDialo
 export default defineComponent({
     name: 'olap',
     components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, FilterTopToolbar, FilterLeftToolbar, OlapMDXQueryDialog, OlapCrossNavigationDefinitionDialog, OlapButtonWizardDialog, MultiHierarchyDialog },
-    props: { id: { type: String }, olapId: { type: String }, olapName: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
+    props: { id: { type: String }, olapId: { type: String }, olapName: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean }, olapCustomViewMode: { type: Boolean } },
     emits: ['closeOlapCustomView', 'applyCustomView', 'executeCrossNavigation'],
     data() {
         return {
@@ -183,28 +183,32 @@ export default defineComponent({
                 const index = toolbarButtonKeys.indexOf(tempButton.name)
                 if (index >= 0) {
                     tempButton.visible = this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].visible
-                    tempButton.clicked = this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].clicked
+                    if (!this.olapCustomViewMode) {
+                        tempButton.clicked = this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].clicked
+                    }
                 }
             })
-            this.buttons.forEach((button: iButton) => {
-                switch (button.name) {
-                    case 'BUTTON_DRILL_THROUGH':
-                        this.olap.modelConfig.enableDrillThrough = button.clicked
-                        break
-                    case 'BUTTON_FATHER_MEMBERS':
-                        this.olap.modelConfig.showParentMembers = button.clicked
-                        break
-                    case 'BUTTON_HIDE_SPANS':
-                        this.olap.modelConfig.hideSpans = button.clicked
-                        break
-                    case 'BUTTON_SHOW_PROPERTIES':
-                        this.olap.modelConfig.showProperties = button.clicked
-                        break
-                    case 'BUTTON_HIDE_EMPTY':
-                        this.olap.modelConfig.suppressEmpty = button.clicked
-                        break
-                }
-            })
+            if (!this.olapCustomViewMode) {
+                this.buttons.forEach((button: iButton) => {
+                    switch (button.name) {
+                        case 'BUTTON_DRILL_THROUGH':
+                            this.olap.modelConfig.enableDrillThrough = button.clicked
+                            break
+                        case 'BUTTON_FATHER_MEMBERS':
+                            this.olap.modelConfig.showParentMembers = button.clicked
+                            break
+                        case 'BUTTON_HIDE_SPANS':
+                            this.olap.modelConfig.hideSpans = button.clicked
+                            break
+                        case 'BUTTON_SHOW_PROPERTIES':
+                            this.olap.modelConfig.showProperties = button.clicked
+                            break
+                        case 'BUTTON_HIDE_EMPTY':
+                            this.olap.modelConfig.suppressEmpty = button.clicked
+                            break
+                    }
+                })
+            }
         },
         async loadModelConfig() {
             this.loading = true
@@ -507,8 +511,14 @@ export default defineComponent({
         async saveOlapDesigner() {
             console.log('OLAP DESIGNER FOR SAVE: ', this.olapDesigner.template.wrappedObject)
             this.loading = true
+            console.log('TEST: ', JSON.stringify(this.olapDesigner.template.wrappedObject))
+
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${this.olapName}/saveOlapTemplate`, this.olapDesigner.template.wrappedObject, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .post(
+                    process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${this.olapName}/saveOlapTemplate`,
+                    { ...this.olapDesigner.template.wrappedObject, JSONTEMPLATE: { XML_TAG_TEXT_CONTENT: JSON.stringify(this.olapDesigner.template.wrappedObject) } },
+                    { headers: { Accept: 'application/json, text/plain, */*' } }
+                )
                 .then(async () => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
