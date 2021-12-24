@@ -1,6 +1,6 @@
 <template>
     <div class="p-d-flex p-flex-column kn-flex">
-        <FilterPanel :olapProp="olap" @putFilterOnAxis="putFilterOnAxis" />
+        <FilterPanel :olapProp="olap" @putFilterOnAxis="putFilterOnAxis" @showMultiHierarchy="showMultiHierarchy" />
         <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @swapAxis="swapAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" />
 
         <div id="left-and-table-container" class="p-d-flex p-flex-row kn-flex">
@@ -27,6 +27,7 @@
             v-if="olapSidebarVisible"
             class="olap-sidebar kn-overflow-y"
             :olap="olap"
+            :olapDesignerMode="olapDesignerMode"
             @openCustomViewDialog="customViewSaveDialogVisible = true"
             @drillTypeChanged="onDrillTypeChanged"
             @showParentMemberChanged="onShowParentMemberChanged"
