@@ -29,6 +29,7 @@
             class="olap-sidebar kn-overflow-y"
             :olap="olap"
             :olapDesignerMode="olapDesignerMode"
+            :propButtons="buttons"
             @openCustomViewDialog="customViewSaveDialogVisible = true"
             @drillTypeChanged="onDrillTypeChanged"
             @showParentMemberChanged="onShowParentMemberChanged"
@@ -132,9 +133,6 @@ export default defineComponent({
             await this.loadOlapModel()
             this.loadCustomView()
             this.loading = false
-
-            // TODO Add condition for designer mode
-            await this.loadOlapDesigner()
         },
         async loadOlapDesigner() {
             await this.$http
@@ -171,11 +169,41 @@ export default defineComponent({
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then(async (response: AxiosResponse<any>) => {
                     this.olap = response.data
+                    await this.loadOlapDesigner()
                     await this.loadOlapButtons()
+                    this.setClickedButtons()
                     await this.loadModelConfig()
                 })
                 .catch(() => {})
             this.loading = false
+        },
+        setClickedButtons() {
+            const toolbarButtonKeys = Object.keys(this.olapDesigner.template?.wrappedObject?.olap?.TOOLBAR)
+            this.buttons.forEach((tempButton: iButton) => {
+                const index = toolbarButtonKeys.indexOf(tempButton.name)
+                if (index >= 0) {
+                    tempButton.visible = this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].visible
+                    tempButton.clicked = this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].clicked
+                }
+            })
+            this.buttons.forEach((button: iButton) => {
+                switch (button.name) {
+                    case 'BUTTON_DRILL_THROUGH':
+                        this.olap.modelConfig.enableDrillThrough = button.clicked
+                        break
+                    case 'BUTTON_FATHER_MEMBERS':
+                        this.olap.modelConfig.showParentMembers = button.clicked
+                        break
+                    case 'BUTTON_HIDE_SPANS':
+                        this.olap.modelConfig.hideSpans = button.clicked
+                        break
+                    case 'BUTTON_SHOW_PROPERTIES':
+                        this.olap.modelConfig.showProperties = button.clicked
+                        break
+                    case 'BUTTON_HIDE_EMPTY':
+                        this.olap.modelConfig.suppressEmpty = button.clicked
+                }
+            })
         },
         async loadModelConfig() {
             this.loading = true
