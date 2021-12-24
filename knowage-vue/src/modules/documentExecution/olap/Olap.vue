@@ -268,8 +268,8 @@ export default defineComponent({
             this.olap.modelConfig.suppressEmpty = suppressEmpty
             await this.loadModelConfig()
         },
-        async onDrillThroughChanged(drillType: boolean) {
-            this.olap.modelConfig.drillType = drillType
+        async onDrillThroughChanged(enableDrillThrough: boolean) {
+            this.olap.modelConfig.enableDrillThrough = enableDrillThrough
             await this.loadModelConfig()
         },
         async onShowPropertiesChanged(showProperties: boolean) {

@@ -14,7 +14,7 @@
             <div v-if="!olapDesignerMode" class="kn-flex">
                 <div class="p-d-flex p-flex-column p-my-3">
                     <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.drillOnData') }}</label>
-                    <Button class="p-button-sm kn-button kn-button--secondary p-as-center p-mt-2" :class="{ 'olap-sidebar-button-active': drillThrough }" :label="$t('documentExecution.olap.sidebar.drillThrough')" @click="onDrillThroughClick" />
+                    <Button class="p-button-sm kn-button kn-button--secondary p-as-center p-mt-2" :class="{ 'olap-sidebar-button-active': enableDrillThrough }" :label="$t('documentExecution.olap.sidebar.drillThrough')" @click="onDrillThroughClick" />
                 </div>
 
                 <div>
@@ -118,7 +118,7 @@ export default defineComponent({
         return {
             olapSidebarDescriptor,
             drillOn: 'position',
-            drillThrough: false,
+            enableDrillThrough: false,
             showParentMembers: false,
             hideSpans: false,
             suppressEmpty: false,
@@ -139,6 +139,7 @@ export default defineComponent({
         loadOlapModelConfigValues() {
             if (this.olap) {
                 this.drillOn = this.olap.modelConfig.drillType
+                this.enableDrillThrough = this.olap.modelConfig.enableDrillThrough
                 this.showParentMembers = this.olap.modelConfig.showParentMembers
                 this.hideSpans = this.olap.modelConfig.hideSpans
                 this.suppressEmpty = this.olap.modelConfig.suppressEmpty
@@ -147,8 +148,8 @@ export default defineComponent({
             }
         },
         onDrillThroughClick() {
-            this.drillThrough = !this.drillThrough
-            this.$emit('drillThroughChanged', this.drillThrough)
+            this.enableDrillThrough = !this.enableDrillThrough
+            this.$emit('drillThroughChanged', this.enableDrillThrough)
         },
         onShowParentMemberClick() {
             this.showParentMembers = !this.showParentMembers
