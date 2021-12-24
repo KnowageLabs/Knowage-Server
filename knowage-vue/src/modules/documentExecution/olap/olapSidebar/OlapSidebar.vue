@@ -172,6 +172,7 @@ export default defineComponent({
         },
         closeOlapDesigner() {
             console.log('CLOSE OLAP DESIGNER CLICKED!')
+            this.$router.push('/document-browser')
         }
     }
 })

@@ -97,10 +97,6 @@ export default defineComponent({
             }
         },
         loadWizardButtons() {
-            if (!this.olapDesigner.template) {
-                return
-            }
-
             this.wizardButtons = this.buttons.filter((el: iButton) => el.category !== 'OLAP_DESIGNER')
 
             console.log('OLAP DESIGNER WIZARD BUTTONS: ', this.olapDesigner)
@@ -109,7 +105,7 @@ export default defineComponent({
             this.wizardButtons = this.wizardButtons.filter((el: iButton) => el.category !== 'WHAT_IF')
             // }
 
-            const toolbarButtonKeys = Object.keys(this.olapDesigner.template.wrappedObject.olap.TOOLBAR)
+            const toolbarButtonKeys = Object.keys(this.olapDesigner.template?.wrappedObject?.olap?.TOOLBAR)
 
             this.wizardButtons.forEach((tempButton: iButton) => {
                 const index = toolbarButtonKeys.indexOf(tempButton.name)
