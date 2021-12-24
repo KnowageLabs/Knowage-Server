@@ -27,6 +27,7 @@
             v-if="olapSidebarVisible"
             class="olap-sidebar kn-overflow-y"
             :olap="olap"
+            :olapDesignerMode="olapDesignerMode"
             @openCustomViewDialog="customViewSaveDialogVisible = true"
             @drillTypeChanged="onDrillTypeChanged"
             @showParentMemberChanged="onShowParentMemberChanged"

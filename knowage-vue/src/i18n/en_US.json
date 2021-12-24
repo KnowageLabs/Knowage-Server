@@ -458,7 +458,9 @@
                 "suppressEmptyRowsColumns": "Suppress empty rows/columns",
                 "tableFunctions": "Table functions",
                 "templateEditing": "Template editing",
-                "undo": "Undo"
+                "undo": "Undo",
+                "closeDesigner": "Close Designer",
+                "saveTemplate": "Save template"
             },
             "userRoleError": "User does not have valid roles for the execution of the selected document",
             "viewCockpit": "View cockpit document",

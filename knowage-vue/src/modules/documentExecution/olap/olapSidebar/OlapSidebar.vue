@@ -6,124 +6,85 @@
             </template>
         </Toolbar>
 
-        <div v-if="olap" class="p-d-flex p-flex-column p-m-2">
-            <div class="p-m-2">
-                <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.drillOnDimension') }}</label>
-                <SelectButton v-model="drillOn" :options="olapSidebarDescriptor.drillOnOptions" @click="$emit('drillTypeChanged', drillOn)"></SelectButton>
-            </div>
-
-            <div class="p-d-flex p-flex-column p-m-2">
-                <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.drillOnData') }}</label>
-                <Button id="drill-through-button" class="p-button-sm kn-button kn-button--secondary"> {{ $t('documentExecution.olap.sidebar.drillThrough') }}</Button>
-            </div>
-
-            <div>
-                <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.olapFunctions') }}</label>
-                <div class="p-grid">
-                    <div class="p-col-4">
-                        <Button
-                            :style="{ 'background-image': 'url(' + require('@/assets/images/olap/mdx.png') + ')' }"
-                            class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"
-                            v-tooltip.top="$t('documentExecution.olap.sidebar.mdxQuery')"
-                            @click="$emit('openMdxQueryDialog')"
-                        ></Button>
-                    </div>
-                    <div class="p-col-4">
-                        <Button
-                            :style="{ 'background-image': 'url(' + require('@/assets/images/olap/reload16.png') + ')' }"
-                            class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"
-                            v-tooltip.top="$t('documentExecution.olap.sidebar.reloadSchema')"
-                            @click="$emit('reloadSchema')"
-                        ></Button>
-                    </div>
-                    <div class="p-col-4">
-                        <Button
-                            :style="{ 'background-image': 'url(' + require('@/assets/images/olap/cross-navigation.png') + ')' }"
-                            class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"
-                            v-tooltip.top="$t('documentExecution.olap.sidebar.enableCrossNavigation')"
-                            @click="onEnableCrossNavigationClick"
-                        ></Button>
-                    </div>
-                    <div class="p-col-4"></div>
+        <div v-if="olap" class="p-d-flex p-flex-column kn-flex p-m-3">
+            <div v-if="!olapDesignerMode" class="kn-flex">
+                <div>
+                    <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.drillOnDimension') }}</label>
+                    <SelectButton class="p-mt-2" v-model="drillOn" :options="olapSidebarDescriptor.drillOnOptions" @click="$emit('drillTypeChanged', drillOn)"></SelectButton>
                 </div>
-            </div>
 
-            <div>
-                <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.tableFunctions') }}</label>
-                <div class="p-grid">
-                    <div class="p-col-4">
-                        <Button
-                            :style="{ 'background-image': 'url(' + require('@/assets/images/olap/show_parent_members.png') + ')' }"
-                            class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"
-                            v-tooltip.top="$t('documentExecution.olap.sidebar.showParentMembers')"
-                            @click="onShowParentMemberClick"
-                        ></Button>
+                <div class="p-d-flex p-flex-column p-my-3">
+                    <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.drillOnData') }}</label>
+                    <Button class="p-button-sm kn-button kn-button--secondary p-as-center p-mt-2" :class="{ 'olap-sidebar-button-active': drillThrough }" :label="$t('documentExecution.olap.sidebar.drillThrough')" @click="onDrillThroughClick" />
+                </div>
+
+                <div>
+                    <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.olapFunctions') }}</label>
+                    <div class="p-grid p-mt-1">
+                        <div class="p-col-4">
+                            <Button icon="far fa-eye" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.mdxQuery')" @click="$emit('openMdxQueryDialog')" />
+                        </div>
+                        <div class="p-col-4">
+                            <Button icon="fas fa-sync-alt" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.reloadSchema')" @click="$emit('reloadSchema')" />
+                        </div>
+                        <div class="p-col-4">
+                            <Button v-if="olap.modelConfig.crossNavigation" icon="fas fa-arrow-right" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.enableCrossNavigation')" @click="onEnableCrossNavigationClick" />
+                        </div>
                     </div>
-                    <div class="p-col-4">
-                        <Button :style="{ 'background-image': 'url(' + require('@/assets/images/olap/cc.png') + ')' }" class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.calculatedFieldWizard')"></Button>
-                    </div>
-                    <div class="p-col-4">
-                        <Button
-                            :style="{ 'background-image': 'url(' + require('@/assets/images/olap/hide_spans.png') + ')' }"
-                            class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"
-                            v-tooltip.top="$t('documentExecution.olap.sidebar.hideSpans')"
-                            @click="onHideSpansClick"
-                        ></Button>
-                    </div>
-                    <div class="p-col-4">
-                        <Button
-                            :style="{ 'background-image': 'url(' + require('@/assets/images/olap/sorting-settings.png') + ')' }"
-                            class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"
-                            v-tooltip.top="$t('documentExecution.olap.sidebar.sortingSettings')"
-                            @click="$emit('openSortingDialog')"
-                        ></Button>
-                    </div>
-                    <div class="p-col-4">
-                        <Button
-                            :style="{ 'background-image': 'url(' + require('@/assets/images/olap/show_props.png') + ')' }"
-                            class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"
-                            v-tooltip.top="$t('documentExecution.olap.sidebar.showProperties')"
-                            @click="onShowPropertiesClick"
-                        ></Button>
-                    </div>
-                    <div class="p-col-4">
-                        <Button
-                            :style="{ 'background-image': 'url(' + require('@/assets/images/olap/empty_rows.png') + ')' }"
-                            class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"
-                            v-tooltip.top="$t('documentExecution.olap.sidebar.suppressEmptyRowsColumns')"
-                            @click="onSuppressRowsColumnsClick"
-                        ></Button>
-                    </div>
-                    <div class="p-col-4">
-                        <Button
-                            :style="{ 'background-image': 'url(' + require('@/assets/images/olap/savesuboject.png') + ')' }"
-                            class="olap-sidebar-image-buttons p-button-sm kn-button kn-button--secondary"
-                            v-tooltip.top="$t('documentExecution.olap.sidebar.showCustomizedView')"
-                            @click="$emit('openCustomViewDialog')"
-                        ></Button>
+                </div>
+
+                <div class="p-my-3">
+                    <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.tableFunctions') }}</label>
+                    <div class="p-grid p-mt-1">
+                        <div class="p-col-4">
+                            <Button icon="far fa-caret-square-up" class="p-button-plain kn-button--secondary" :class="{ 'olap-sidebar-button-active': showParentMembers }" v-tooltip.top="$t('documentExecution.olap.sidebar.showParentMembers')" @click="onShowParentMemberClick" />
+                        </div>
+                        <div class="p-col-4">
+                            <Button icon="fas fa-calculator" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.calculatedFieldWizard')" />
+                        </div>
+                        <div class="p-col-4">
+                            <Button icon="fas fa-eye-slash" class="p-button-plain kn-button--secondary" :class="{ 'olap-sidebar-button-active': hideSpans }" v-tooltip.top="$t('documentExecution.olap.sidebar.hideSpans')" @click="onHideSpansClick" />
+                        </div>
+                        <div class="p-col-4">
+                            <Button icon="fas fa-sort-amount-down-alt" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.sortingSettings')" @click="$emit('openSortingDialog')" />
+                        </div>
+                        <div class="p-col-4">
+                            <Button icon="fas fa-cogs" class="p-button-plain kn-button--secondary" :class="{ 'olap-sidebar-button-active': showProperties }" v-tooltip.top="$t('documentExecution.olap.sidebar.showProperties')" @click="onShowPropertiesClick" />
+                        </div>
+                        <div class="p-col-4">
+                            <Button icon="fas fa-border-none" class="p-button-plain kn-button--secondary" :class="{ 'olap-sidebar-button-active': suppressEmpty }" v-tooltip.top="$t('documentExecution.olap.sidebar.suppressEmptyRowsColumns')" @click="onSuppressRowsColumnsClick" />
+                        </div>
+                        <div class="p-col-4">
+                            <Button icon="fas fa-save" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.showCustomizedView')" @click="$emit('openCustomViewDialog')" />
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div>
+            <div v-if="olapDesignerMode" class="kn-flex">
                 <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.templateEditing') }}</label>
-                <div class="p-grid">
+                <div class="p-grid p-mt-1">
                     <div class="p-col-4">
-                        <Button icon="far fa-eye" v-tooltip.top="$t('documentExecution.olap.sidebar.mdxQuery')" @click="$emit('openMdxQueryDialog')"></Button>
+                        <Button icon="far fa-eye" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.mdxQuery')" @click="$emit('openMdxQueryDialog')" />
                     </div>
                     <div class="p-col-4">
-                        <Button icon="pi pi-book" v-tooltip.top="$t('documentExecution.olap.sidebar.configureTablePagination')"></Button>
+                        <Button icon="pi pi-book" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.configureTablePagination')" />
                     </div>
                     <div class="p-col-4">
-                        <Button icon="pi pi-arrow-circle-right" v-tooltip.top="$t('documentExecution.olap.sidebar.defineCrossNavigation')" @click="$emit('openCrossNavigationDefinitionDialog')"></Button>
+                        <Button icon="pi pi-arrow-circle-right" class="p-button-plain kn-button--secondary" :class="{ 'olap-sidebar-button-active': crossNavigation }" v-tooltip.top="$t('documentExecution.olap.sidebar.defineCrossNavigation')" @click="$emit('openCrossNavigationDefinitionDialog')" />
                     </div>
                     <div class="p-col-4">
-                        <Button icon="pi pi-check-square" v-tooltip.top="$t('documentExecution.olap.sidebar.configureButtonsVisiblity')" @click="$emit('openButtonWizardDialog')"></Button>
+                        <Button icon="pi pi-check-square" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.configureButtonsVisiblity')" @click="$emit('openButtonWizardDialog')" />
                     </div>
                     <div class="p-col-4">
-                        <Button icon="fa fa-calculator" v-tooltip.top="$t('documentExecution.olap.sidebar.calculatedField')"></Button>
+                        <Button icon="fa fa-calculator" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.calculatedField')" />
                     </div>
                 </div>
+            </div>
+
+            <div class="p-fluid">
+                <Button :label="$t('documentExecution.olap.sidebar.closeDesigner')" class="p-button-plain kn-button--secondary" />
+                <Button :label="$t('documentExecution.olap.sidebar.saveTemplate')" class="p-button-plain kn-button--primary p-mt-2" />
             </div>
         </div>
     </div>
@@ -137,7 +98,7 @@ import SelectButton from 'primevue/selectbutton'
 export default defineComponent({
     name: 'olap-sidebar',
     components: { SelectButton },
-    props: { olap: { type: Object } },
+    props: { olap: { type: Object }, olapDesignerMode: { type: Boolean } },
     emits: [
         'openCustomViewDialog',
         'drillTypeChanged',
@@ -150,12 +111,14 @@ export default defineComponent({
         'reloadSchema',
         'enableCrossNavigation',
         'openCrossNavigationDefinitionDialog',
-        'openButtonWizardDialog'
+        'openButtonWizardDialog',
+        'drillThroughChanged'
     ],
     data() {
         return {
             olapSidebarDescriptor,
             drillOn: 'position',
+            drillThrough: false,
             showParentMembers: false,
             hideSpans: false,
             suppressEmpty: false,
@@ -182,6 +145,10 @@ export default defineComponent({
                 this.showProperties = this.olap.modelConfig.showProperties
                 this.crossNavigation = this.olap.modelConfig?.crossNavigation?.buttonClicked
             }
+        },
+        onDrillThroughClick() {
+            this.drillThrough = !this.drillThrough
+            this.$emit('drillThroughChanged', this.drillThrough)
         },
         onShowParentMemberClick() {
             this.showParentMembers = !this.showParentMembers
@@ -212,29 +179,14 @@ export default defineComponent({
     z-index: 100;
     background-color: white;
     height: 100%;
-    width: 350px;
+    width: 250px;
     position: absolute;
     top: 0;
     right: 0;
     display: flex;
     flex-direction: column;
 }
-
-#drill-through-button {
-    margin: auto;
-    max-width: 100px;
-    padding: 0.3rem;
-}
-
-.olap-sidebar-image-buttons {
-    background-repeat: no-repeat;
-    background-position: center;
-    background-color: white !important;
-}
-
-.olap-sidebar-image-buttons:hover {
-    background-repeat: no-repeat !important;
-    background-position: center !important;
-    background-color: white !important;
+.olap-sidebar-button-active {
+    background-color: #43749e !important;
 }
 </style>
