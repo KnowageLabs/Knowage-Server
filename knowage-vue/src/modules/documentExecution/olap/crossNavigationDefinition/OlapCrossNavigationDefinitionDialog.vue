@@ -73,7 +73,7 @@ export default defineComponent({
             }
         },
         loadCrossNavigationParameters() {
-            const fromCellParameters = this.olapDesigner.template.wrappedObject.olap.CROSS_NAVIGATION.PARAMETERS.PARAMETER
+            const fromCellParameters = this.olapDesigner?.template?.wrappedObject?.olap?.CROSS_NAVIGATION?.PARAMETERS.PARAMETER
             const fromMemberParameters = [] as iOlapCrossNavigationParameter[]
             this.olapDesigner.template.wrappedObject.olap.MDXQUERY.clickable?.forEach((el: any) => fromMemberParameters.push({ ...el, name: el.clickParameter.name, type: 'From Member' }))
 

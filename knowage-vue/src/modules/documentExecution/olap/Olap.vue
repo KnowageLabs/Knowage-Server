@@ -33,6 +33,7 @@
             @showParentMemberChanged="onShowParentMemberChanged"
             @hideSpansChanged="onHideSpansChanged"
             @suppressEmptyChanged="onSuppressEmptyChanged"
+            @drillThroughChanged="onDrillThroughChanged"
             @showPropertiesChanged="onShowPropertiesChanged"
             @openSortingDialog="sortingDialogVisible = true"
             @openMdxQueryDialog="mdxQueryDialogVisible = true"
@@ -264,6 +265,10 @@ export default defineComponent({
         },
         async onSuppressEmptyChanged(suppressEmpty: boolean) {
             this.olap.modelConfig.suppressEmpty = suppressEmpty
+            await this.loadModelConfig()
+        },
+        async onDrillThroughChanged(drillType: boolean) {
+            this.olap.modelConfig.drillType = drillType
             await this.loadModelConfig()
         },
         async onShowPropertiesChanged(showProperties: boolean) {
