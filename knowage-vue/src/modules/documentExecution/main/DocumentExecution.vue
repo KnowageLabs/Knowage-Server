@@ -801,17 +801,12 @@ export default defineComponent({
             this.loading = false
         },
         async executeOLAPCrossNavigation(crossNavigationParams: any) {
-            console.log('CROSS NAVIGATION PARAMS: ', crossNavigationParams)
             let temp = {} as any
             this.loading = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
             this.loading = false
 
-            console.log('TEMP: ', temp)
-
             this.document = { ...temp[0].document, navigationParams: this.formatOLAPNavigationParams(crossNavigationParams, temp[0].navigationParams) }
-
-            console.log('DOCUMENT: ', this.document)
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) {
@@ -824,23 +819,16 @@ export default defineComponent({
             this.reloadTrigger = !this.reloadTrigger
         },
         formatOLAPNavigationParams(crossNavigationParams: any, navigationParams: any) {
-            console.log('>>>>>> TEST1: ', crossNavigationParams)
-            console.log('>>>>>> TEST2: ', navigationParams)
-
             const crossNavigationParamKeys = Object.keys(crossNavigationParams)
             let formattedParams = {} as any
-
-            console.log('CROSS NAVIGATION PARAM KEYS: ', crossNavigationParamKeys)
 
             Object.keys(navigationParams).forEach((key: string) => {
                 const index = crossNavigationParamKeys.findIndex((el: string) => el === navigationParams[key].value.label)
                 if (index !== -1) {
-                    console.log('KEY: ', key)
                     formattedParams[key] = crossNavigationParams[crossNavigationParamKeys[index]]
                 }
             })
 
-            console.log('FORMATTED PARAMS: ', formattedParams)
             return formattedParams
         }
     }

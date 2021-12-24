@@ -9,7 +9,7 @@
         </div>
 
         <!-- SELECT TOAST CONFIRM  TODO:Premestiti stilove u deskriptor -------------------------------------->
-        <div v-if="mode === 'member' || mode === 'cell'" id="custom-toast" style="position:fixed;width:25rem;top:20px;right:20px;z-index:2000">
+        <div v-if="mode === 'From Cell' || mode === 'From Member'" id="custom-toast" style="position:fixed;width:25rem;top:20px;right:20px;z-index:2000">
             <div id="custom-toast-content" style="background: #B3E5FC; border:solid#B3E5FC; border-width:1px; color:#01579B;padding:1rem;box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 10%);border-radius: 4px;">
                 <div class="p-d-flex p-flex-column">
                     <div class="p-text-center p-d-flex p-flex-row p-ai-center">
@@ -48,7 +48,7 @@
     <OlapCustomViewSaveDialog :visible="customViewSaveDialogVisible" :sbiExecutionId="id" @close="customViewSaveDialogVisible = false"></OlapCustomViewSaveDialog>
     <OlapSortingDialog :visible="sortingDialogVisible" :olap="olap" @save="onSortingSelect"></OlapSortingDialog>
     <OlapMDXQueryDialog :visible="mdxQueryDialogVisible" :mdxQuery="olap?.MDXWITHOUTCF" @close="mdxQueryDialogVisible = false"></OlapMDXQueryDialog>
-    <OlapCrossNavigationDefinitionDialog :visible="crossNavigationDefinitionDialogVisible" :selectedCell="selectedCell" @close="crossNavigationDefinitionDialogVisible = false" @selectFromTable="enterSelectMode($event)"></OlapCrossNavigationDefinitionDialog>
+    <OlapCrossNavigationDefinitionDialog :visible="crossNavigationDefinitionDialogVisible" :propOlapDesigner="olapDesigner" :selectedCell="selectedCell" @close="crossNavigationDefinitionDialogVisible = false" @selectFromTable="enterSelectMode($event)"></OlapCrossNavigationDefinitionDialog>
     <OlapButtonWizardDialog :visible="buttonsWizardDialogVisible" :propButtons="buttons" :propOlapDesigner="olapDesigner" @close="buttonsWizardDialogVisible = false"></OlapButtonWizardDialog>
     <MultiHierarchyDialog :selectedFilter="multiHierFilter" :multiHierUN="selecetedMultiHierUN" :visible="multiHierarchyDialogVisible" @setMultiHierUN="setMultiHierUN" @updateHierarchy="updateHierarchy" @close="multiHierarchyDialogVisible = false" />
     <KnOverlaySpinnerPanel :visibility="loading" />
@@ -102,12 +102,10 @@ export default defineComponent({
         }
     },
     async created() {
-        console.log('ROUTER: ', this.$route.name)
         if (this.$route.name === 'olap-designer') {
             this.olapDesignerMode = true
         }
         await this.loadPage()
-        console.log('DESIGNER MODE: ', this.olapDesignerMode)
     },
     computed: {},
     watch: {
@@ -136,7 +134,6 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `olap/designer/${this.olapId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then(async (response: AxiosResponse<any>) => (this.olapDesigner = response.data))
                 .catch(() => {})
-            console.log('LOADED OLAP DESIGNER: ', this.olapDesigner)
         },
         async loadCustomView() {
             this.customViewVisible = this.olapCustomViewVisible
@@ -152,7 +149,6 @@ export default defineComponent({
                 .then(async (response: AxiosResponse<any>) => (this.olapCustomViews = response.data.results))
                 .catch(() => {})
             this.loading = false
-            // console.log('LOADED OLAP CUSTOM VIEWS: ', this.olapCustomViews)
         },
         async loadOlapButtons() {
             this.loading = true
@@ -161,7 +157,6 @@ export default defineComponent({
                 .then(async (response: AxiosResponse<any>) => (this.buttons = response.data))
                 .catch(() => {})
             this.loading = false
-            console.log('LOADED OLAP BUTTONS: ', this.buttons)
         },
         async loadOlapModel() {
             this.loading = true
@@ -184,8 +179,6 @@ export default defineComponent({
 
             this.formatOlapTable()
             this.loading = false
-
-            // console.log('LOADED OLAP: ', this.olap)
         },
         formatOlapTable() {
             this.olap.table = this.olap.table.replaceAll('</drillup>', ' <div class="drill-up"></div></drillup> ')
@@ -200,7 +193,6 @@ export default defineComponent({
         },
         async drillDown(event: any) {
             this.loading = true
-            // console.log('EVENT INSIDE DRILL DOWN: ', event)
             const axis = event.target.parentNode.getAttribute('axis')
             const position = event.target.parentNode.getAttribute('position')
             const member = event.target.parentNode.getAttribute('memberordinal')
@@ -225,8 +217,6 @@ export default defineComponent({
         },
         async drillUp(event: any, replace: boolean) {
             this.loading = true
-            // console.log('EVENT INSIDE DRILL UP: ', event)
-
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/drillup?SBI_EXECUTION_ID=${this.id}`, this.formatDrillUpPostData(event, replace), {
                     headers: {
@@ -281,7 +271,6 @@ export default defineComponent({
         },
         onSortingSelect(payload: { sortingMode: string; sortingCount: number }) {
             this.sort = payload
-            // console.log('SORTING: ', this.sort)
 
             if ((this.sort.sortingMode === 'no sorting' && this.olap.modelConfig.sortingEnabled) || (this.sort.sortingMode !== 'no sorting' && !this.olap.modelConfig.sortingEnabled)) {
                 this.enableSorting()
@@ -300,7 +289,6 @@ export default defineComponent({
             this.loading = false
         },
         async sortOlap(event: any) {
-            // console.log('EVENT ON SORT: ', event)
             this.loading = true
             const temp = event.target.attributes[0].textContent
             const tempString = temp.substring(temp.indexOf('(') + 1, temp.indexOf(')'))
@@ -314,9 +302,6 @@ export default defineComponent({
                 sortMode: this.sort.sortingMode,
                 topBottomCount: this.sort.sortingCount
             }
-
-            // console.log('TEMP ARRAY: ', tempArray)
-            //  console.log('TEMP DATA: ', postData)
 
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/sort/?SBI_EXECUTION_ID=${this.id}`, postData)
@@ -426,7 +411,6 @@ export default defineComponent({
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/crossnavigation/getCrossNavigationUrl/${temp[0]},${temp[1]}?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => (tempResponse = response.data))
                 .catch(() => {})
-            console.log('TEMP RESPONSE: ', tempResponse)
             await this.executeCrossnavigationFromCell(tempResponse)
 
             this.loading = false
@@ -442,15 +426,12 @@ export default defineComponent({
 
             this.$emit('executeCrossNavigation', object)
         },
-
         enterSelectMode(mode: string) {
-            console.log('MODE: ', mode)
             this.mode = mode
             this.olapSidebarVisible = false
             this.crossNavigationDefinitionDialogVisible = false
         },
         selectCell(event: any) {
-            console.log('EVENT FOR SELECT: ', event)
             const attributes = event.target.attributes
 
             if (attributes[0].localName !== 'axisordinal') {
@@ -475,11 +456,8 @@ export default defineComponent({
 
             this.selectedCell = { cell: cell, event: event }
             event.target.style.border = '1px solid red'
-
-            console.log('SELECTED CELL: ', this.selectedCell)
         },
         cellSelected() {
-            console.log('SELECTED CELLS: ', this.selectedCell)
             this.olapSidebarVisible = true
             this.crossNavigationDefinitionDialogVisible = true
             this.mode = 'view'
@@ -490,7 +468,6 @@ export default defineComponent({
             console.log('EVENT: ', event)
 
             const eventTarget = event.target as any
-            console.log('event?.target.tagname', eventTarget.tagName)
 
             if (this.mode !== 'view' && eventTarget.tagName === 'TH') {
                 this.selectCell(event)

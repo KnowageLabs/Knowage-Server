@@ -34,11 +34,11 @@
     "typeList": [
         {
             "label": "From Cell",
-            "value": "cell"
+            "value": "From Cell"
         },
         {
             "label": "From Member",
-            "value": "member"
+            "value": "From Member"
         }
     ]
 }

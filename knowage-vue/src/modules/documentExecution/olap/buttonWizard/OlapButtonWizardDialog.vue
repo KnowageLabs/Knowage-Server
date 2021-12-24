@@ -89,11 +89,9 @@ export default defineComponent({
     methods: {
         loadButtons() {
             this.buttons = this.propButtons as iButton[]
-            console.log('BUTTONS LOADED IN DIALOG: ', this.buttons)
         },
         loadDesigner() {
             this.olapDesigner = this.propOlapDesigner as any
-            //  console.log('TEMPLATE LOADED IN BUTTONS: ', this.template)
             if (this.olapDesigner) {
                 this.loadWizardButtons()
             }
@@ -108,23 +106,15 @@ export default defineComponent({
 
             const toolbarButtonKeys = Object.keys(this.olapDesigner.template.wrappedObject.olap.TOOLBAR)
 
-            // console.log('TOOLBAR BUTTON KEYS: ', toolbarButtonKeys)
-
             this.wizardButtons.forEach((tempButton: iButton) => {
                 const index = toolbarButtonKeys.indexOf(tempButton.name)
                 if (index >= 0) {
-                    // console.log('TEMP BUTTON: ', tempButton)
-                    // console.log('TTOOL BUTTON: ', this.template.olap.TOOLBAR[toolbarButtonKeys[index]])
                     tempButton.visible = this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].visible
                     tempButton.clicked = this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].clicked
-
-                    // console.log(' >>> >>> TEMP BUTTON VISIBLE', tempButton.clicked)
                 }
-                // console.log('INDEX: ', index)
             })
 
             this.checkIfAllSelected()
-            console.log('TEMP BUTTONS: ', this.wizardButtons)
         },
         checkIfColumnSelected(property: string) {
             let allChecked = true
@@ -141,30 +131,22 @@ export default defineComponent({
             this.allClickedSelected = this.checkIfColumnSelected('clicked')
         },
         setAllChecked(type: string) {
-            // console.log('SET ALL CHECKED: ', type)
-            // console.log('SET ALL CLICKED: ', this.allClickedSelected)
-            // console.log('SET ALL VISILBE: ', this.allVisibleSelected)
-
             this.wizardButtons.forEach((button: iButton) => {
                 if (type === 'clicked' && button.clickable) {
                     button.clicked = this.allClickedSelected
-                    console.log('ENTERED 1', button)
                 } else if (type === 'visible') {
-                    console.log('ENTERED 2', button)
                     button.visible = this.allVisibleSelected
                 }
                 this.changeCheckedValue(button, type)
             })
 
             this.checkIfAllSelected()
-            console.log('>>> TEEEEEST: ', this.wizardButtons)
         },
         setChecked(button: any, type: string) {
             this.changeCheckedValue(button, type)
             this.checkIfAllSelected()
         },
         changeCheckedValue(button: any, type: string) {
-            // console.log('SET CHECKED: ', button, type)
             if (type === 'clicked' && button.clicked) {
                 button.visible = true
             } else if (type === 'visible' && !button.visible) {
@@ -176,13 +158,7 @@ export default defineComponent({
             this.wizardButtons = []
         },
         save() {
-            console.log('>>> Save wizzard ', this.wizardButtons)
-            const tempOlapDesignerObject = this.olapDesigner.template.wrappedObject.olap
-            console.log('>>> Save template olap ', tempOlapDesignerObject)
-
             const toolbarButtonKeys = Object.keys(this.olapDesigner.template.wrappedObject.olap.TOOLBAR)
-
-            // console.log('TOOLBAR BUTTON KEYS: ', toolbarButtonKeys)
 
             this.wizardButtons.forEach((tempButton: iButton) => {
                 const index = toolbarButtonKeys.indexOf(tempButton.name)
@@ -192,8 +168,6 @@ export default defineComponent({
                 }
             })
             this.$emit('close')
-
-            console.log('>>> Save template olap AFTER ', tempOlapDesignerObject)
         }
     }
 })

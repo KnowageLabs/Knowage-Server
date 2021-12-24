@@ -25,10 +25,12 @@ export interface iOlapFilter {
 
 export interface iOlapCrossNavigationParameter {
     name: string,
-    dimension: string,
-    hierarchy: string,
-    level: string,
     type: string
+    dimension?: string,
+    hierarchy?: string,
+    level?: string,
+    uniqueName?: string,
+    value?: string
 }
 
 export interface iButton {

@@ -6,7 +6,7 @@
 
         <div class="p-fluid p-col-12 p-md-12 p-mt-4">
             <span class="p-float-label">
-                <InputText id="value" class="kn-material-input" v-model.trim="value" />
+                <InputText id="value" class="kn-material-input" v-model.trim="selectedParameter.value" />
                 <label for="value" class="kn-material-input-label">{{ $t('common.value') }}</label>
             </span>
         </div>
@@ -67,7 +67,11 @@ export default defineComponent({
     methods: {
         loadSelectedParameter() {
             this.selectedParameter = this.propSelectedParameter as iOlapCrossNavigationParameter
-            this.value = this.selectedParameter.name ? `dimension=${this.selectedParameter.dimension} hierarchy=${this.selectedParameter.hierarchy} level=${this.selectedParameter.level}` : ''
+            if (this.selectedParameter.name) {
+                this.selectedParameter.value = this.selectedParameter.type === 'From Cell' ? `dimension=${this.selectedParameter.dimension} hierarchy=${this.selectedParameter.hierarchy} level=${this.selectedParameter.level}` : (this.selectedParameter.uniqueName as string)
+            } else {
+                this.selectedParameter.value = ''
+            }
             console.log('LOADED SELECTED PARAMETER IN STEP TWO: ', this.selectedParameter)
         },
         selectFromTable() {
@@ -75,9 +79,9 @@ export default defineComponent({
             this.$emit('selectFromTable')
         },
         loadValueFromCell() {
-            console.log(' >>> LOAD VALUE FROM CELL CALLLLLLLED!')
+            console.log(' >>> LOAD VALUE FROM CELL CALLLLLLLED!', this.cell)
             if (this.cell) {
-                this.value = this.selectedParameter.type === 'cell' ? `dimension=${this.cell.dimensionuniquename} hierarchy=${this.cell.hierarchyuniquename} level=${this.cell.level}` : this.cell.level
+                this.selectedParameter.value = this.selectedParameter.type === 'From Cell' ? `dimension=${this.cell.dimensionuniquename} hierarchy=${this.cell.hierarchyuniquename} level=${this.cell.level}` : this.cell.level
             }
         }
     }
