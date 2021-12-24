@@ -25,16 +25,15 @@
             <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
 
             <template v-if="filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible">
-                <Registry v-if="mode === 'registry'" :id="urlData.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
+                <Registry v-if="mode === 'registry'" :id="urlData?.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
                 <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger"></Dossier>
                 <Olap
                     v-else-if="mode === 'olap'"
-                    :id="urlData.sbiExecutionId"
+                    :id="urlData?.sbiExecutionId"
                     :olapId="document.id"
                     :olapName="document.name"
                     :reloadTrigger="reloadTrigger"
                     :olapCustomViewVisible="olapCustomViewVisible"
-                    :olapCustomViewMode="olapCustomViewMode"
                     @closeOlapCustomView="olapCustomViewVisible = false"
                     @applyCustomView="executeOlapCustomView"
                     @executeCrossNavigation="executeOLAPCrossNavigation"
@@ -144,7 +143,6 @@ export default defineComponent({
             linkParameters: [],
             embed: false,
             olapCustomViewVisible: false,
-            olapCustomViewMode: false,
             userRole: null,
             loading: false
         }
@@ -799,7 +797,6 @@ export default defineComponent({
         async executeOlapCustomView(payload: any) {
             this.loading = true
             this.olapCustomViewVisible = false
-            this.olapCustomViewMode = true
             await this.loadURL(payload)
             this.reloadTrigger = !this.reloadTrigger
             this.loading = false

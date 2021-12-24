@@ -60,7 +60,7 @@
 <script lang="ts">
 import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
-import { iOlapCustomView, iButton, iOlapFilter } from './Olap'
+import { iOlapCustomView, iButton, iOlapFilter, iOlap } from './Olap'
 import olapDescriptor from './OlapDescriptor.json'
 import OlapSidebar from './olapSidebar/OlapSidebar.vue'
 import OlapSortingDialog from './sortingDialog/OlapSortingDialog.vue'
@@ -78,12 +78,12 @@ import MultiHierarchyDialog from './multiHierarchyDialog/OlapMultiHierarchyDialo
 export default defineComponent({
     name: 'olap',
     components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, FilterTopToolbar, FilterLeftToolbar, OlapMDXQueryDialog, OlapCrossNavigationDefinitionDialog, OlapButtonWizardDialog, MultiHierarchyDialog },
-    props: { id: { type: String }, olapId: { type: String }, olapName: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean }, olapCustomViewMode: { type: Boolean } },
+    props: { id: { type: String }, olapId: { type: String }, olapName: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
     emits: ['closeOlapCustomView', 'applyCustomView', 'executeCrossNavigation'],
     data() {
         return {
             olapDescriptor,
-            olap: null as any,
+            olap: {} as iOlap,
             olapSidebarVisible: false,
             customViewVisible: false,
             olapCustomViews: [] as iOlapCustomView[],
@@ -176,6 +176,7 @@ export default defineComponent({
                 })
                 .catch(() => {})
             this.loading = false
+            console.log('LOADED OLAP: ', this.olap)
         },
         setClickedButtons() {
             const toolbarButtonKeys = Object.keys(this.olapDesigner.template?.wrappedObject?.olap?.TOOLBAR)
@@ -183,32 +184,30 @@ export default defineComponent({
                 const index = toolbarButtonKeys.indexOf(tempButton.name)
                 if (index >= 0) {
                     tempButton.visible = this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].visible
-                    if (!this.olapCustomViewMode) {
-                        tempButton.clicked = this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].clicked
-                    }
+
+                    tempButton.clicked = this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].clicked
                 }
             })
-            if (!this.olapCustomViewMode) {
-                this.buttons.forEach((button: iButton) => {
-                    switch (button.name) {
-                        case 'BUTTON_DRILL_THROUGH':
-                            this.olap.modelConfig.enableDrillThrough = button.clicked
-                            break
-                        case 'BUTTON_FATHER_MEMBERS':
-                            this.olap.modelConfig.showParentMembers = button.clicked
-                            break
-                        case 'BUTTON_HIDE_SPANS':
-                            this.olap.modelConfig.hideSpans = button.clicked
-                            break
-                        case 'BUTTON_SHOW_PROPERTIES':
-                            this.olap.modelConfig.showProperties = button.clicked
-                            break
-                        case 'BUTTON_HIDE_EMPTY':
-                            this.olap.modelConfig.suppressEmpty = button.clicked
-                            break
-                    }
-                })
-            }
+
+            this.olap.modelConfig.toolbarClickedButtons?.forEach((button: string) => {
+                switch (button) {
+                    case 'BUTTON_DRILL_THROUGH':
+                        this.olap.modelConfig.enableDrillThrough = true
+                        break
+                    case 'BUTTON_FATHER_MEMBERS':
+                        this.olap.modelConfig.showParentMembers = true
+                        break
+                    case 'BUTTON_HIDE_SPANS':
+                        this.olap.modelConfig.hideSpans = true
+                        break
+                    case 'BUTTON_SHOW_PROPERTIES':
+                        this.olap.modelConfig.showProperties = true
+                        break
+                    case 'BUTTON_HIDE_EMPTY':
+                        this.olap.modelConfig.suppressEmpty = true
+                        break
+                }
+            })
         },
         async loadModelConfig() {
             this.loading = true
@@ -221,16 +220,18 @@ export default defineComponent({
             this.loading = false
         },
         formatOlapTable() {
-            this.olap.table = this.olap.table.replaceAll('</drillup>', ' <div class="drill-up"></div></drillup> ')
-            this.olap.table = this.olap.table.replaceAll('</drilldown>', '<div class="drill-down"></div> </drilldown> ')
-            this.olap.table = this.olap.table.replaceAll('../../../../knowage/themes/commons/img/olap/nodrill.png', '')
-            this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/arrow-up.png"', ' <div class="drill-up-replace"></div ')
-            this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/noSortRows.png"', ' <div class="sort-basic"></div ')
-            this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/ASC-rows.png"', ' <div class="sort-asc"></div ')
-            this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/DESC-rows.png"', ' <div class="sort-desc"></div ')
-            this.olap.table = this.olap.table.replaceAll('<a href="#" onClick="parent.execExternal', '<a href="#" class="external-cross-navigation" crossParams="parent.execExternal')
-            this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/cross-navigation.png"', ' <div class="cell-cross-navigation"></div ')
-            this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/ico_search.gif"', ' <div class="drillthrough"></div ')
+            if (this.olap) {
+                this.olap.table = this.olap.table.replaceAll('</drillup>', ' <div class="drill-up"></div></drillup> ')
+                this.olap.table = this.olap.table.replaceAll('</drilldown>', '<div class="drill-down"></div> </drilldown> ')
+                this.olap.table = this.olap.table.replaceAll('../../../../knowage/themes/commons/img/olap/nodrill.png', '')
+                this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/arrow-up.png"', ' <div class="drill-up-replace"></div ')
+                this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/noSortRows.png"', ' <div class="sort-basic"></div ')
+                this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/ASC-rows.png"', ' <div class="sort-asc"></div ')
+                this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/DESC-rows.png"', ' <div class="sort-desc"></div ')
+                this.olap.table = this.olap.table.replaceAll('<a href="#" onClick="parent.execExternal', '<a href="#" class="external-cross-navigation" crossParams="parent.execExternal')
+                this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/cross-navigation.png"', ' <div class="cell-cross-navigation"></div ')
+                this.olap.table = this.olap.table.replaceAll('src="../../../../knowage/themes/commons/img/olap/ico_search.gif"', ' <div class="drillthrough"></div ')
+            }
         },
         async drillDown(event: any) {
             this.loading = true
@@ -317,7 +318,7 @@ export default defineComponent({
         onSortingSelect(payload: { sortingMode: string; sortingCount: number }) {
             this.sort = payload
 
-            if ((this.sort.sortingMode === 'no sorting' && this.olap.modelConfig.sortingEnabled) || (this.sort.sortingMode !== 'no sorting' && !this.olap.modelConfig.sortingEnabled)) {
+            if ((this.sort.sortingMode === 'no sorting' && this.olap?.modelConfig.sortingEnabled) || (this.sort.sortingMode !== 'no sorting' && !this.olap.modelConfig.sortingEnabled)) {
                 this.enableSorting()
             }
 
