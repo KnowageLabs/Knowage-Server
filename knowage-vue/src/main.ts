@@ -58,30 +58,6 @@ createApp(App)
 
     .directive('badge', BadgeDirective)
     .directive('tooltip', Tooltip)
-    .directive('drilldown', {
-        beforeMount(el, binding, vnode) {
-            console.log("DRILLDOWN DIRECTIVE: ", el, binding, vnode)
-        },
-        updated() {
-            console.log("DRILLDOWN DIRECTIVE: ")
-        },
-    })
-    .directive('drillup', {
-        beforeMount(el, binding, vnode) {
-            console.log("DRILLUP DIRECTIVE: ", el, binding, vnode)
-        },
-        updated() {
-            console.log("DRILLDOWN DIRECTIVE: ")
-        },
-    })
-    // directive('dynamic', {
-    //     created(el, binding) {
-    //         console.log("BINDING: ", binding)
-    //         el.innerHTML = binding.newValue;
-    //         const 
-    //         this.vm.$compile(this.el);
-    //     }
-    // });
 
     .component('Button', Button)
     .component('Card', Card)

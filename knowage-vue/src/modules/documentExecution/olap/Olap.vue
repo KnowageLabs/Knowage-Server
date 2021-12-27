@@ -181,38 +181,39 @@ export default defineComponent({
                 })
                 .catch(() => {})
             this.loading = false
-            // console.log('LOADED OLAP: ', this.olap)
         },
         setClickedButtons() {
-            const toolbarButtonKeys = Object.keys(this.olapDesigner.template?.wrappedObject?.olap?.TOOLBAR)
-            this.buttons.forEach((tempButton: iButton) => {
-                const index = toolbarButtonKeys.indexOf(tempButton.name)
-                if (index >= 0) {
-                    tempButton.visible = this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].visible
+            if (this.olapDesigner.template?.wrappedObject?.olap?.TOOLBAR) {
+                const toolbarButtonKeys = Object.keys(this.olapDesigner.template?.wrappedObject?.olap?.TOOLBAR)
+                this.buttons.forEach((tempButton: iButton) => {
+                    const index = toolbarButtonKeys.indexOf(tempButton.name)
+                    if (index >= 0) {
+                        tempButton.visible = this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].visible
 
-                    tempButton.clicked = this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].clicked
-                }
-            })
+                        tempButton.clicked = this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].clicked
+                    }
+                })
 
-            this.olap.modelConfig.toolbarClickedButtons?.forEach((button: string) => {
-                switch (button) {
-                    case 'BUTTON_DRILL_THROUGH':
-                        this.olap.modelConfig.enableDrillThrough = true
-                        break
-                    case 'BUTTON_FATHER_MEMBERS':
-                        this.olap.modelConfig.showParentMembers = true
-                        break
-                    case 'BUTTON_HIDE_SPANS':
-                        this.olap.modelConfig.hideSpans = true
-                        break
-                    case 'BUTTON_SHOW_PROPERTIES':
-                        this.olap.modelConfig.showProperties = true
-                        break
-                    case 'BUTTON_HIDE_EMPTY':
-                        this.olap.modelConfig.suppressEmpty = true
-                        break
-                }
-            })
+                this.olap.modelConfig.toolbarClickedButtons?.forEach((button: string) => {
+                    switch (button) {
+                        case 'BUTTON_DRILL_THROUGH':
+                            this.olap.modelConfig.enableDrillThrough = true
+                            break
+                        case 'BUTTON_FATHER_MEMBERS':
+                            this.olap.modelConfig.showParentMembers = true
+                            break
+                        case 'BUTTON_HIDE_SPANS':
+                            this.olap.modelConfig.hideSpans = true
+                            break
+                        case 'BUTTON_SHOW_PROPERTIES':
+                            this.olap.modelConfig.showProperties = true
+                            break
+                        case 'BUTTON_HIDE_EMPTY':
+                            this.olap.modelConfig.suppressEmpty = true
+                            break
+                    }
+                })
+            }
         },
         async loadModelConfig() {
             this.loading = true
@@ -298,11 +299,9 @@ export default defineComponent({
         },
         async onDrillTypeChanged(newDrillType: string) {
             this.olap.modelConfig.drillType = newDrillType
-            console.log('DRILL TYPE: ', newDrillType)
             await this.loadModelConfig()
         },
         async onShowParentMemberChanged(showParentMembers: boolean) {
-            console.log("showParantMembers", showParentMembers)
             this.olap.modelConfig.showParentMembers = showParentMembers
             await this.loadModelConfig()
         },
@@ -515,9 +514,7 @@ export default defineComponent({
             this.selectedCell.event.target.style.border = 'none'
         },
         async saveOlapDesigner() {
-            console.log('OLAP DESIGNER FOR SAVE: ', this.olapDesigner.template.wrappedObject)
             this.loading = true
-            console.log('TEST: ', JSON.stringify(this.olapDesigner.template.wrappedObject))
 
             await this.$http
                 .post(
@@ -549,8 +546,7 @@ export default defineComponent({
                     this.getCollections()
                     this.drillTruDialogVisible = true
                 })
-                .catch((error) => {
-                    console.log(error)
+                .catch(() => {
                     this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.drillTruError') })
                 })
                 .finally(() => (this.loading = false))
@@ -570,7 +566,6 @@ export default defineComponent({
                 obj.size = '100px'
                 arr.push(obj)
             }
-            console.log('formatColumns ARRAY', arr)
             return arr
         },
         async getCollections() {
@@ -581,15 +576,12 @@ export default defineComponent({
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/drilltrough/levels/?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => {
                     this.dtTree = response.data
-                    console.log('getCollections TREE:', this.dtTree)
                 })
                 .catch(() => {
                     this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.drillLevelsError') })
                 })
         },
         async handleTableClick(event: any) {
-            console.log('EVENT: ', event)
-
             const eventTarget = event.target as any
 
             if (this.mode !== 'view' && eventTarget.tagName === 'TH') {
