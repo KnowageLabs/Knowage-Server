@@ -214,7 +214,6 @@ export default defineComponent({
             this.$emit('enableCrossNavigation', this.crossNavigation)
         },
         closeOlapDesigner() {
-            console.log('CLOSE OLAP DESIGNER CLICKED!')
             this.$router.push('/document-browser')
         }
     }

@@ -72,14 +72,11 @@ export default defineComponent({
             } else {
                 this.selectedParameter.value = ''
             }
-            console.log('LOADED SELECTED PARAMETER IN STEP TWO: ', this.selectedParameter)
         },
         selectFromTable() {
-            console.log('SELECT FROM TABLE CLICKED!')
             this.$emit('selectFromTable')
         },
         loadValueFromCell() {
-            console.log(' >>> LOAD VALUE FROM CELL CALLLLLLLED!', this.cell)
             if (this.cell) {
                 this.selectedParameter.value = this.selectedParameter.type === 'From Cell' ? `dimension=${this.cell.dimensionuniquename} hierarchy=${this.cell.hierarchyuniquename} level=${this.cell.level}` : this.cell.level
             }

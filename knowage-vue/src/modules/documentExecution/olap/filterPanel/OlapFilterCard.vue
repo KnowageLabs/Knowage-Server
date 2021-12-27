@@ -25,7 +25,6 @@ export default defineComponent({
     created() {},
     methods: {
         onDragStart(event, filter, filterId) {
-            console.log(event, filter)
             event.dataTransfer.setData('text', JSON.stringify(filter))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'

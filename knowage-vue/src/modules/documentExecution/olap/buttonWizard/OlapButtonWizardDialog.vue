@@ -99,7 +99,6 @@ export default defineComponent({
         loadWizardButtons() {
             this.wizardButtons = this.buttons.filter((el: iButton) => el.category !== 'OLAP_DESIGNER')
 
-            console.log('OLAP DESIGNER WIZARD BUTTONS: ', this.olapDesigner)
             if (this.olapDesigner?.ENGINE === 'knowageolapengine') {
                 this.wizardButtons = this.wizardButtons.filter((el: iButton) => el.category !== 'WHAT_IF')
             }

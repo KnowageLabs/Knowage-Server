@@ -28,7 +28,7 @@ export default defineComponent({
         Dialog,
         VCodeMirror
     },
-    props: { mdxQuery: { type: Object as PropType<String | null> } },
+    props: { mdxQuery: { type: String as PropType<String | null> } },
     emits: ['close'],
     data() {
         return {

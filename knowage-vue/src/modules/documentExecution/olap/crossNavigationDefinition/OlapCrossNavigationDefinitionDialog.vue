@@ -11,8 +11,6 @@
             </Toolbar>
         </template>
 
-        {{ selectedParameter }}
-
         <OlapCrossNavigationStepOne v-if="step === 0" :propParameters="parameters" :addNewParameterVisible="addNewParameterVisible" :propSelectedParameter="selectedParameter" @parameterSelected="onParameterSelect" @deleteParameter="deleteParameter"></OlapCrossNavigationStepOne>
         <OlapCrossNavigationStepTwo v-else :propSelectedParameter="selectedParameter" :cell="cell" @selectFromTable="$emit('selectFromTable', selectedParameter?.type)"></OlapCrossNavigationStepTwo>
 
@@ -73,8 +71,6 @@ export default defineComponent({
             }
         },
         loadCrossNavigationParameters() {
-            console.log('OLAP DESIGNER: ', this.olapDesigner)
-
             const fromCellParameters = this.olapDesigner.template?.wrappedObject?.olap?.CROSS_NAVIGATION?.PARAMETERS?.PARAMETER
             const fromMemberParameters = [] as iOlapCrossNavigationParameter[]
             this.olapDesigner?.template?.wrappedObject?.olap?.MDXQUERY?.clickable?.forEach((el: any) => fromMemberParameters.push({ ...el, name: el.clickParameter.name, type: 'From Member' }))

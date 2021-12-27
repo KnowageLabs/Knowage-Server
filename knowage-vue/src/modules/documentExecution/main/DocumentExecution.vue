@@ -807,6 +807,14 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
             this.loading = false
 
+            if (!temp || temp.length === 0) {
+                this.$store.commit('setError', {
+                    title: this.$t('common.error.generic'),
+                    msg: this.$t('documentExecution.main.crossNavigationNoTargetError')
+                })
+                return
+            }
+
             this.document = { ...temp[0].document, navigationParams: this.formatOLAPNavigationParams(crossNavigationParams, temp[0].navigationParams) }
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)

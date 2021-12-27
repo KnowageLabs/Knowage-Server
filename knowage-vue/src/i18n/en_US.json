@@ -364,6 +364,7 @@
         "main": {
             "copyLink": "Copy link",
             "copyLinkAndShare": "Copy link and share it",
+            "crossNavigationNoTargetError": "No cross navigation targets available",
             "currentRank": "Curent Rank is...",
             "customMetadata": "Custom Metadata",
             "editCockpit": "Edit cockpit document",
@@ -393,13 +394,6 @@
             "buttonsWizard": {
                 "title": "Buttons Wizard"
             },
-            "drillTru": {
-                "title": "Drill Through",
-                "loadingTitle": "Loading",
-                "loadingMsg": "If the drill though is executed on a cell with an high level of aggregation, this operation can take long time.",
-                "drillTruError": "Error in drill through",
-                "drillLevelsError": "An error occurred while getting drill through levels"
-            },
             "crossNavigationDefinition": {
                 "crossNavigationType": "Select the type of cross navigation below",
                 "finishSelection": "Click ok to finish selection",
@@ -410,6 +404,13 @@
             },
             "customView": {
                 "title": "Olap custom view List"
+            },
+            "drillTru": {
+                "drillLevelsError": "An error occurred while getting drill through levels",
+                "drillTruError": "Error in drill through",
+                "loadingMsg": "If the drill though is executed on a cell with an high level of aggregation, this operation can take long time.",
+                "loadingTitle": "Loading",
+                "title": "Drill Through"
             },
             "editModeConfirm": "You are leaving edit mode. Continue?",
             "filterPanel": {
@@ -437,6 +438,7 @@
             "sidebar": {
                 "calculatedField": "Calculated field",
                 "calculatedFieldWizard": "Calculated field wizard",
+                "closeDesigner": "Close Designer",
                 "configureButtonsVisiblity": "Configure buttons visibility",
                 "configureScenario": "Configure scenario",
                 "configureTablePagination": "Configure table pagination",
@@ -457,6 +459,7 @@
                 "replace": "Replace",
                 "saveCustomizedView": "Save customized view",
                 "saveNewVersion": "Save new version",
+                "saveTemplate": "Save template",
                 "selectAlgorithm": "Select algorithm",
                 "showCustomizedView": "Show customized view",
                 "showParentMembers": "Show parent members",
@@ -465,9 +468,7 @@
                 "suppressEmptyRowsColumns": "Suppress empty rows/columns",
                 "tableFunctions": "Table functions",
                 "templateEditing": "Template editing",
-                "undo": "Undo",
-                "closeDesigner": "Close Designer",
-                "saveTemplate": "Save template"
+                "undo": "Undo"
             },
             "userRoleError": "User does not have valid roles for the execution of the selected document",
             "viewCockpit": "View cockpit document",
