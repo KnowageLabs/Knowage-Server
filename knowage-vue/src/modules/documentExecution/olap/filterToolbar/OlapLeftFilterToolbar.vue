@@ -115,10 +115,8 @@ export default defineComponent({
         assignScrollValues() {
             // @ts-ignore
             this.scrollContainerHeight = this.$refs?.filterPanelContainer?.clientHeight
-            console.log(this.scrollContainerHeight)
             // @ts-ignore
             this.scrollContentHeight = this.$refs?.filterItemsContainer?.scrollHeight
-            console.log(this.scrollContentHeight)
         }
     }
 })
