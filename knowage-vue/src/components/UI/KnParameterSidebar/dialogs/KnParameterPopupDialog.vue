@@ -88,7 +88,6 @@ export default defineComponent({
 
             for (let i = 0; i < parameterValues.length; i++) {
                 const tempParameter = parameterValues[i]
-                console.log('CURRENT PARAMETER: ', tempParameter)
 
                 if (valueIndex && descriptionIndex) {
                     const selectedIndex = this.parameterPopUpData?.result.data.findIndex((el: any) => {
@@ -99,8 +98,6 @@ export default defineComponent({
                     }
                 }
             }
-
-            console.log('MULTIPLE SELECTED ROWS: ', this.multipleSelectedRows)
         },
         setSelectedRow() {
             const valueColumn = this.popupData?.result.metadata.valueColumn

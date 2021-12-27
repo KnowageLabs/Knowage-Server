@@ -111,7 +111,7 @@ export default defineComponent({
         Olap
     },
     props: { id: { type: String } },
-    emits: ['close'],
+    emits: ['close', 'updateDocumentName'],
     data() {
         return {
             document: null as any,
@@ -421,7 +421,7 @@ export default defineComponent({
                 }
 
                 if (el.parameterValue[0] && !el.parameterValue[0].description) {
-                    el.parameterValue[0].description = el.parameterDescription[0] ?? ''
+                    el.parameterValue[0].description = el.parameterDescription ? el.parameterDescription[0] : ''
                 }
             })
 
