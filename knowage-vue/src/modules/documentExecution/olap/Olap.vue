@@ -1,6 +1,9 @@
 <template>
     <div class="p-d-flex p-flex-column kn-flex">
         <OlapCustomViewTable v-if="customViewVisible" class="olap-overlay-dialog" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)" />
+
+        <DrillTruDialog v-if="drillTruDialogVisible" :drillData="dtData" :tableColumns="formattedColumns" :dtLevels="dtAssociatedLevels" :menuTree="dtTree" class="olap-overlay-dialog" @close="drillTruDialogVisible = false" />
+
         <FilterPanel :olapProp="olap" @putFilterOnAxis="putFilterOnAxis" @showMultiHierarchy="showMultiHierarchy" />
         <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @swapAxis="swapAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" />
 
@@ -74,10 +77,11 @@ import FilterLeftToolbar from './filterToolbar/OlapLeftFilterToolbar.vue'
 import OlapCrossNavigationDefinitionDialog from './crossNavigationDefinition/OlapCrossNavigationDefinitionDialog.vue'
 import OlapButtonWizardDialog from './buttonWizard/OlapButtonWizardDialog.vue'
 import MultiHierarchyDialog from './multiHierarchyDialog/OlapMultiHierarchyDialog.vue'
+import DrillTruDialog from './drillThroughDialog/OlapDrillThroughDialog.vue'
 
 export default defineComponent({
     name: 'olap',
-    components: { OlapSidebar, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, FilterTopToolbar, FilterLeftToolbar, OlapMDXQueryDialog, OlapCrossNavigationDefinitionDialog, OlapButtonWizardDialog, MultiHierarchyDialog },
+    components: { OlapSidebar, DrillTruDialog, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, FilterTopToolbar, FilterLeftToolbar, OlapMDXQueryDialog, OlapCrossNavigationDefinitionDialog, OlapButtonWizardDialog, MultiHierarchyDialog },
     props: { id: { type: String }, olapId: { type: String }, olapName: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
     emits: ['closeOlapCustomView', 'applyCustomView', 'executeCrossNavigation'],
     data() {
@@ -93,6 +97,7 @@ export default defineComponent({
             crossNavigationDefinitionDialogVisible: false,
             buttonsWizardDialogVisible: false,
             multiHierarchyDialogVisible: false,
+            drillTruDialogVisible: false,
             multiHierFilter: {} as iOlapFilter,
             selecetedMultiHierUN: '',
             sort: null as any,
@@ -521,16 +526,14 @@ export default defineComponent({
                     { headers: { Accept: 'application/json, text/plain, */*' } }
                 )
                 .then(async () => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.updateTitle'),
-                        msg: this.$t('common.toast.updateSuccess')
-                    })
+                    this.$store.commit('setInfo', { title: this.$t('common.toast.updateTitle'), msg: this.$t('common.toast.updateSuccess') })
                     await this.loadOlapDesigner()
                 })
                 .catch(() => {})
             this.loading = false
         },
         async drillThrough(event: any) {
+            this.$store.commit('setInfo', { title: this.$t('documentExecution.olap.drillTru.loadingTitle'), msg: this.$t('documentExecution.olap.drillTru.loadingMsg') })
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/drilltrough?SBI_EXECUTION_ID=${this.id}`, this.formatDrillThroughPostData(event), { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
@@ -544,9 +547,11 @@ export default defineComponent({
                     }
                     this.formattedColumns = this.formatColumns(this.dtColumns)
                     this.getCollections()
+                    this.drillTruDialogVisible = true
                 })
                 .catch((error) => {
                     console.log(error)
+                    this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.drillTruError') })
                 })
                 .finally(() => (this.loading = false))
         },
@@ -578,7 +583,9 @@ export default defineComponent({
                     this.dtTree = response.data
                     console.log('getCollections TREE:', this.dtTree)
                 })
-                .catch(() => {})
+                .catch(() => {
+                    this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.drillLevelsError') })
+                })
         },
         async handleTableClick(event: any) {
             console.log('EVENT: ', event)
