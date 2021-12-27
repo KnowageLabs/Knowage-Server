@@ -1,17 +1,15 @@
 <template>
-    <!-- {{ $refs.filterPanelContainer?.clientWidth }}
-    {{ $refs.filterItemsContainer?.scrollWidth }} -->
     <div id="filterPanelContainer" ref="filterPanelContainer" :style="panelDescriptor.style.filterPanelContainer">
-        <div id="filterPanel" ref="filterPanel" class="p-d-flex filterPanel p-ai-center" :style="panelDescriptor.style.filterPanel" @drop="onDrop($event)" @dragover.prevent @dragenter="displayDropzone" @dragleave="hideDropzone">
-            <Button icon="fas fa-arrow-circle-left" class="p-button-text p-button-rounded p-button-plain p-ml-1" @click="scrollLeft" />
-            <div ref="filterItemsContainer" :style="panelDescriptor.style.containerScroll">
-                <div v-if="filterCardList?.length == 0" class="p-d-flex p-flex-row kn-flex p-jc-center">
+        <div id="filterPanel" ref="filterPanel" class="p-d-flex filterPanel p-ai-center" :style="panelDescriptor.style.filterPanel" @drop="onDrop($event)" @dragover.prevent @dragenter="displayDropzone">
+            <Button v-if="scrollContainerWidth < scrollContentWidth" icon="fas fa-arrow-circle-left" class="p-button-text p-button-rounded p-button-plain p-ml-1" @click="scrollLeft" />
+            <div ref="filterItemsContainer" class="p-d-flex p-ai-center kn-flex" :style="panelDescriptor.style.containerScroll" @dragover.prevent @dragenter.prevent @dragleave="hideDropzone">
+                <div v-if="filterCardList?.length == 0" class="p-d-flex p-flex-row p-jc-center kn-flex">
                     <InlineMessage class="kn-flex p-m-1" :style="panelDescriptor.style.noFilters" severity="info" closable="false">{{ $t('documentExecution.olap.filterPanel.filterPanelEmpty') }}</InlineMessage>
                 </div>
                 <FilterCard v-else :filterCardList="filterCardList" @showMultiHierarchy="emitMultiHierarchy" />
+                <div ref="axisDropzone" class="kn-flex kn-truncated p-mr-1" :style="panelDescriptor.style.filterAxisDropzone">{{ $t('documentExecution.olap.filterPanel.drop') }}</div>
             </div>
-            <div ref="axisDropzone" class="kn-flex kn-truncated p-mr-1" :style="panelDescriptor.style.filterAxisDropzone">{{ $t('documentExecution.olap.filterPanel.drop') }}</div>
-            <Button icon="fas fa-arrow-circle-right" class="p-button-text p-button-rounded p-button-plain p-mr-1" @click="scrollRight" />
+            <Button v-if="scrollContainerWidth < scrollContentWidth" icon="fas fa-arrow-circle-right" class="p-button-text p-button-rounded p-button-plain p-mr-1" @click="scrollRight" />
         </div>
     </div>
 </template>
@@ -30,7 +28,9 @@ export default defineComponent({
     data() {
         return {
             panelDescriptor,
-            filterCardList: [] as iOlapFilter[]
+            filterCardList: [] as iOlapFilter[],
+            scrollContainerWidth: 0,
+            scrollContentWidth: 0
         }
     },
     watch: {
@@ -45,6 +45,8 @@ export default defineComponent({
     methods: {
         loadData() {
             this.filterCardList = this.olapProp?.filters as iOlapFilter[]
+            window.addEventListener('resize', this.assignScrollValues)
+            this.assignScrollValues()
         },
         displayDropzone() {
             // @ts-ignore
@@ -84,14 +86,16 @@ export default defineComponent({
         scrollLeft() {
             // @ts-ignore
             this.$refs.filterItemsContainer.scrollLeft -= 50
-            // @ts-ignore
-            // console.log('container: ', this.$refs.filterPanelContainer.clientWidth)
-            // @ts-ignore
-            // console.log('filterItemsContainer: ', this.$refs.filterItemsContainer.scrollWidth)
         },
         scrollRight() {
             // @ts-ignore
             this.$refs.filterItemsContainer.scrollLeft += 50
+        },
+        assignScrollValues() {
+            // @ts-ignore
+            this.scrollContainerWidth = this.$refs?.filterPanelContainer?.clientWidth
+            // @ts-ignore
+            this.scrollContentWidth = this.$refs?.filterItemsContainer?.scrollWidth
         }
     }
 })

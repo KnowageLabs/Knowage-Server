@@ -12,7 +12,7 @@
             <div id="olap-table" class="kn-flex" ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
         </div>
 
-        <!-- SELECT TOAST CONFIRM  TODO:Premestiti stilove u deskriptor -------------------------------------->
+        <!-- SELECT TOAST CONFIRM -------------------------------------->
         <div v-if="mode === 'From Cell' || mode === 'From Member'" id="custom-toast" :style="olapDescriptor.style.customToastContainer">
             <div id="custom-toast-content" :style="olapDescriptor.style.customToastContent">
                 <div class="p-d-flex p-flex-column">
