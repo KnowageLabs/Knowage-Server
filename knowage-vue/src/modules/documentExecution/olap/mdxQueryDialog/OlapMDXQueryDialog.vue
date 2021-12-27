@@ -20,13 +20,13 @@
 import { defineComponent, PropType } from 'vue'
 import Dialog from 'primevue/dialog'
 import olapMDXQueryDialogDescriptor from './OlapMDXQueryDialogDescriptor.json'
-// import { VCodeMirror } from 'vue3-code-mirror'
+import { VCodeMirror } from 'vue3-code-mirror'
 
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
     components: {
-        Dialog
-        // VCodeMirror
+        Dialog,
+        VCodeMirror
     },
     props: { mdxQuery: { type: String as PropType<String | null> } },
     emits: ['close'],
