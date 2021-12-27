@@ -420,8 +420,8 @@ export default defineComponent({
                     el.parameterValue = [{ value: '', description: '' }]
                 }
 
-                if (!el.parameterValue[0].description) {
-                    el.parameterValue[0].description = ''
+                if (el.parameterValue[0] && !el.parameterValue[0].description) {
+                    el.parameterValue[0].description = el.parameterDescription[0] ?? ''
                 }
             })
 
