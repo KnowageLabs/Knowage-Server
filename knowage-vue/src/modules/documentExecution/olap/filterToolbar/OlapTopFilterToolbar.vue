@@ -1,8 +1,9 @@
 <template>
-    <div id="top-toolbar-container" class="p-d-flex" :style="toolbarDescriptor.style.toolbarContainer">
-        <span class="swapAxis" :style="toolbarDescriptor.style.toolbarMainColor" @click="$emit('swapAxis')"> &nbsp; </span>
-        <span id="topaxis" class="kn-flex p-d-flex" :style="toolbarDescriptor.style.toolbarMainColor" @drop="onDrop($event)" @dragover.prevent @dragenter="displayDropzone" @dragleave="hideDropzone">
-            <div class="p-d-flex p-ai-center kn-flex p-flex-wrap">
+    <div id="top-toolbar-container" class="p-d-flex" :style="toolbarDescriptor.style.topToolbarContainer">
+        <span id="topaxis" class="kn-flex p-d-flex" :style="toolbarDescriptor.style.topAxis" @drop="onDrop($event)" @dragover.prevent @dragenter="displayDropzone" @dragleave="hideDropzone">
+            <span class="swapAxis" :style="toolbarDescriptor.style.toolbarMainColor" @click="$emit('swapAxis')"> &nbsp; </span>
+            <Button i icon="fas fa-arrow-circle-left" class="p-button-text p-button-rounded p-button-plain p-ml-1 p-as-center" :style="toolbarDescriptor.style.whiteColor" @click="scrollLeft" />
+            <div ref="filterItemsContainer" class="p-d-flex p-ai-center kn-flex" :style="toolbarDescriptor.style.scroll">
                 <div v-for="(column, index) in columns" :key="index" class="p-d-flex">
                     <div :id="'top-' + column.name" :ref="'top-' + column.name" :style="toolbarDescriptor.style.topAxisCard" draggable="true" @dragstart="onDragStart($event, column, 'top-' + column.name)" @dragend="removeDragClass('top-' + column.name)">
                         <Button v-if="column.hierarchies.length > 1" icon="fas fa-sitemap" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.whiteColor" @click="$emit('showMultiHierarchy', column)" />
@@ -14,6 +15,7 @@
                 </div>
                 <div ref="axisDropzone" class="kn-flex kn-truncated p-mx-1" :style="toolbarDescriptor.style.topAxisDropzone">{{ $t('documentExecution.olap.filterToolbar.drop') }}</div>
             </div>
+            <Button icon="fas fa-arrow-circle-right" class="p-button-text p-button-rounded p-button-plain p-mr-1 p-as-center" :style="toolbarDescriptor.style.whiteColor" @click="scrollRight" />
             <div id="whitespace" :style="toolbarDescriptor.style.whitespace" />
             <Button icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.sidebarButton" @click="$emit('openSidebar')" />
         </span>
@@ -56,7 +58,7 @@ export default defineComponent({
             ind = ind + 1
             var cutProp = this.cutArray[ind]
             if (name == undefined) {
-                name = 'TODO: something '
+                name = '...'
             }
             if (name.length <= cutProp) return name
             else return name.substring(0, cutProp) + '...'
@@ -90,11 +92,6 @@ export default defineComponent({
             var fromAxis
             if (data != null) {
                 fromAxis = data.axis
-                if (fromAxis == -1) {
-                    //TODO: Ne znam cemu sluzi ostaviti za kasnije pa pogledati....FilterPanel.js linija 704 dropTop
-                    // this.filterSelected[data.positionInAxis].caption = '...'
-                    // this.filterSelected[data.positionInAxis].visible = false
-                }
                 if (fromAxis != 0) {
                     if (data.axis === 1 && leftLength == 1) {
                         this.$store.commit('setInfo', { title: this.$t('common.toast.warning'), msg: this.$t('documentExecution.olap.filterToolbar.dragEmptyWarning') })
@@ -105,8 +102,15 @@ export default defineComponent({
                     }
                 }
             }
-            //TODO: Ne znam cemu sluzi ostaviti za kasnije pa pogledati....FilterPanel.js linija 164 clearLoadedData
-            // data != null ? this.clearLoadedData(data.uniqueName) : ''
+        },
+
+        scrollLeft() {
+            // @ts-ignore
+            this.$refs.filterItemsContainer.scrollLeft -= 50
+        },
+        scrollRight() {
+            // @ts-ignore
+            this.$refs.filterItemsContainer.scrollLeft += 50
         }
     }
 })

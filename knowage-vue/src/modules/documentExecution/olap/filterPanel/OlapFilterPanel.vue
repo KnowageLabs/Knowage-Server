@@ -1,10 +1,18 @@
 <template>
-    <div id="filterPanel" class="p-d-flex filterPanel p-ai-center p-flex-wrap" @drop="onDrop($event)" @dragover.prevent @dragenter="displayDropzone" @dragleave="hideDropzone">
-        <div v-if="filterCardList?.length == 0" class="p-d-flex p-flex-row kn-flex p-jc-center">
-            <InlineMessage class="kn-flex p-m-1" :style="panelDescriptor.style.noFilters" severity="info" closable="false">{{ $t('documentExecution.olap.filterPanel.filterPanelEmpty') }}</InlineMessage>
+    <!-- {{ $refs.filterPanelContainer?.clientWidth }}
+    {{ $refs.filterItemsContainer?.scrollWidth }} -->
+    <div id="filterPanelContainer" ref="filterPanelContainer" :style="panelDescriptor.style.filterPanelContainer">
+        <div id="filterPanel" ref="filterPanel" class="p-d-flex filterPanel p-ai-center" :style="panelDescriptor.style.filterPanel" @drop="onDrop($event)" @dragover.prevent @dragenter="displayDropzone" @dragleave="hideDropzone">
+            <Button icon="fas fa-arrow-circle-left" class="p-button-text p-button-rounded p-button-plain p-ml-1" @click="scrollLeft" />
+            <div ref="filterItemsContainer" :style="panelDescriptor.style.containerScroll">
+                <div v-if="filterCardList?.length == 0" class="p-d-flex p-flex-row kn-flex p-jc-center">
+                    <InlineMessage class="kn-flex p-m-1" :style="panelDescriptor.style.noFilters" severity="info" closable="false">{{ $t('documentExecution.olap.filterPanel.filterPanelEmpty') }}</InlineMessage>
+                </div>
+                <FilterCard v-else :filterCardList="filterCardList" @showMultiHierarchy="emitMultiHierarchy" />
+            </div>
+            <div ref="axisDropzone" class="kn-flex kn-truncated p-mr-1" :style="panelDescriptor.style.filterAxisDropzone">{{ $t('documentExecution.olap.filterPanel.drop') }}</div>
+            <Button icon="fas fa-arrow-circle-right" class="p-button-text p-button-rounded p-button-plain p-mr-1" @click="scrollRight" />
         </div>
-        <FilterCard v-else :filterCardList="filterCardList" @showMultiHierarchy="emitMultiHierarchy" />
-        <div ref="axisDropzone" class="kn-flex kn-truncated p-mr-1" :style="panelDescriptor.style.filterAxisDropzone">{{ $t('documentExecution.olap.filterPanel.drop') }}</div>
     </div>
 </template>
 
@@ -50,7 +58,6 @@ export default defineComponent({
             // @ts-ignore
             this.$refs.axisDropzone.classList.remove('display-axis-dropzone')
             var data = JSON.parse(event.dataTransfer.getData('text/plain'))
-
             var topLength = this.olapProp?.columns.length
             var leftLength = this.olapProp?.rows.length
             var fromAxis
@@ -70,11 +77,21 @@ export default defineComponent({
                     }
                 }
             }
-            //TODO: Ne znam cemu sluzi ostaviti za kasnije pa pogledati....FilterPanel.js linija 164 clearLoadedData
-            // data != null ? this.clearLoadedData(data.uniqueName) : ''
         },
         emitMultiHierarchy(filter) {
             this.$emit('showMultiHierarchy', filter)
+        },
+        scrollLeft() {
+            // @ts-ignore
+            this.$refs.filterItemsContainer.scrollLeft -= 50
+            // @ts-ignore
+            // console.log('container: ', this.$refs.filterPanelContainer.clientWidth)
+            // @ts-ignore
+            // console.log('filterItemsContainer: ', this.$refs.filterItemsContainer.scrollWidth)
+        },
+        scrollRight() {
+            // @ts-ignore
+            this.$refs.filterItemsContainer.scrollLeft += 50
         }
     }
 })

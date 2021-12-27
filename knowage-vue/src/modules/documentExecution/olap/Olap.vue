@@ -13,13 +13,13 @@
         </div>
 
         <!-- SELECT TOAST CONFIRM  TODO:Premestiti stilove u deskriptor -------------------------------------->
-        <div v-if="mode === 'From Cell' || mode === 'From Member'" id="custom-toast" style="position:fixed;width:25rem;top:20px;right:20px;z-index:2000">
-            <div id="custom-toast-content" style="background: #B3E5FC; border:solid#B3E5FC; border-width:1px; color:#01579B;padding:1rem;box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 10%);border-radius: 4px;">
+        <div v-if="mode === 'From Cell' || mode === 'From Member'" id="custom-toast" :style="olapDescriptor.style.customToastContainer">
+            <div id="custom-toast-content" :style="olapDescriptor.style.customToastContent">
                 <div class="p-d-flex p-flex-column">
                     <div class="p-text-center p-d-flex p-flex-row p-ai-center">
-                        <i class="pi pi-info-circle" style="font-size: 2rem"></i>
+                        <i class="pi pi-info-circle p-ml-2" :style="olapDescriptor.style.toastIcon"></i>
                         <h4 class="p-ml-2">{{ $t('documentExecution.olap.crossNavigationDefinition.finishSelection') }}</h4>
-                        <Button class="p-jc-center" style="background-color:transparent;color:#01579B;width:5px;margin-left:auto" label="OK" @click="cellSelected" />
+                        <Button class="p-jc-center" :style="olapDescriptor.style.toastButton" label="OK" @click="cellSelected" />
                     </div>
                 </div>
             </div>
@@ -398,7 +398,6 @@ export default defineComponent({
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/axis/moveHierarchy?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => {
                     this.olap = response.data
-                    //TODO: OlapPanel.js linija 419, postoje 2 ifa koja izgleda nista ne rade, ispitati kasnije
                 })
                 .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.hierarchyMoveError') }))
             this.formatOlapTable()
