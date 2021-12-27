@@ -67,10 +67,6 @@ export default defineComponent({
     methods: {
         loadData() {
             this.businessModel = this.selectedBusinessModel as iBusinessModel
-            console.log(this.businessModel)
-        },
-        logEvent() {
-            console.log('emit')
         }
     }
 })

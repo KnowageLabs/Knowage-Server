@@ -117,7 +117,6 @@ export default defineComponent({
     },
     watch: {
         meta() {
-            console.log(this.meta)
             this.loadMeta()
         }
     },

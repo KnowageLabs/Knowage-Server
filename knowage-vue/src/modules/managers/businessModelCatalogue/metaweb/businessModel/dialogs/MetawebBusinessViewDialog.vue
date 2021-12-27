@@ -146,12 +146,9 @@ export default defineComponent({
         setEditModeData() {
             if (this.editMode == true) {
                 this.wizardStep = 2
-                //copy the physical tables
                 for (var pti = 0; pti < this.selectedBusinessModel.physicalTables.length; pti++) {
                     var tmppt = {}
-                    // tmppt = { ...this.meta.physicalModels[this.selectedBusinessModel.physicalTables[pti].physicalTableIndex] }
                     tmppt = JSON.parse(JSON.stringify(this.meta.physicalModels[this.selectedBusinessModel.physicalTables[pti].physicalTableIndex]))
-                    console.log(tmppt)
                     this.tmpBnssView.physicalModels.push(tmppt)
                 }
 
@@ -192,7 +189,6 @@ export default defineComponent({
                     }
                 }
             }
-            console.log('SUMMARY UPDATED: ', this.summary)
         },
         async saveBusinessView() {
             var tmpData = {} as any
@@ -213,21 +209,18 @@ export default defineComponent({
                 for (var col = 0; col < this.tmpBnssView.physicalModels[i].columns.length; col++) {
                     // eslint-disable-next-line no-prototype-builtins
                     if (this.tmpBnssView.physicalModels[i].columns[col].hasOwnProperty('links') && this.tmpBnssView.physicalModels[i].columns[col].links.length > 0) {
-                        //check if the table is present in the relationships object
                         // eslint-disable-next-line no-prototype-builtins
                         if (!tmpData.relationships.hasOwnProperty(tmpDataObj.name)) {
                             tmpData.relationships[tmpDataObj.name] = {}
                         }
                         var tabObj = tmpData.relationships[tmpDataObj.name]
                         var tmpColObj = this.tmpBnssView.physicalModels[i].columns[col]
-                        //check if table has column object
                         // eslint-disable-next-line no-prototype-builtins
                         if (!tabObj.hasOwnProperty(tmpColObj.name)) {
                             tabObj[tmpColObj.name] = {}
                         }
                         var colObj = tabObj[tmpColObj.name]
                         for (var rel = 0; rel < tmpColObj.links.length; rel++) {
-                            //check if column  has has target table object
                             // eslint-disable-next-line no-prototype-builtins
                             if (!colObj.hasOwnProperty(tmpColObj.links[rel].tableName)) {
                                 colObj[tmpColObj.links[rel].tableName] = []
