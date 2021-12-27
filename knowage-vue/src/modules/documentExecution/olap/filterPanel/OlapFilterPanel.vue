@@ -9,15 +9,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iOlapFilter } from '@/modules/documentExecution/olap/Olap'
+import { defineComponent, PropType } from 'vue'
+import { iOlapFilter, iOlap } from '@/modules/documentExecution/olap/Olap'
 import panelDescriptor from './OlapFilterPanelDescriptor.json'
 import InlineMessage from 'primevue/inlinemessage'
 import FilterCard from './OlapFilterCard.vue'
 
 export default defineComponent({
     components: { InlineMessage, FilterCard },
-    props: { olapProp: { type: Object, required: true } },
+    props: { olapProp: { type: Object as PropType<iOlap | null>, required: true } },
     emits: ['putFilterOnAxis', 'showMultiHierarchy'],
     data() {
         return {

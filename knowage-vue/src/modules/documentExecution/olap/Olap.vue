@@ -176,7 +176,7 @@ export default defineComponent({
                 })
                 .catch(() => {})
             this.loading = false
-            console.log('LOADED OLAP: ', this.olap)
+            // console.log('LOADED OLAP: ', this.olap)
         },
         setClickedButtons() {
             const toolbarButtonKeys = Object.keys(this.olapDesigner.template?.wrappedObject?.olap?.TOOLBAR)
@@ -220,7 +220,7 @@ export default defineComponent({
             this.loading = false
         },
         formatOlapTable() {
-            if (this.olap) {
+            if (this.olap?.table) {
                 this.olap.table = this.olap.table.replaceAll('</drillup>', ' <div class="drill-up"></div></drillup> ')
                 this.olap.table = this.olap.table.replaceAll('</drilldown>', '<div class="drill-down"></div> </drilldown> ')
                 this.olap.table = this.olap.table.replaceAll('../../../../knowage/themes/commons/img/olap/nodrill.png', '')
@@ -293,10 +293,12 @@ export default defineComponent({
         },
         async onDrillTypeChanged(newDrillType: string) {
             this.olap.modelConfig.drillType = newDrillType
+            console.log('DRILL TYPE: ', newDrillType)
             await this.loadModelConfig()
         },
-        async onShowParentMemberChanged(showParantMembers: boolean) {
-            this.olap.modelConfig.showParentMembers = showParantMembers
+        async onShowParentMemberChanged(showParentMembers: boolean) {
+            console.log("showParantMembers", showParentMembers)
+            this.olap.modelConfig.showParentMembers = showParentMembers
             await this.loadModelConfig()
         },
         async onHideSpansChanged(hideSpans: boolean) {
@@ -366,7 +368,6 @@ export default defineComponent({
             this.loading = false
         },
         async putFilterOnAxis(fromAxis, filter) {
-            console.log('putFilterOnAxis ', fromAxis, filter)
             var toSend = { fromAxis: fromAxis, hierarchy: filter.selectedHierarchyUniqueName, toAxis: filter.axis }
             this.loading = true
             await this.$http
@@ -386,7 +387,6 @@ export default defineComponent({
             this.loading = false
         },
         async moveHierarchies(data) {
-            console.log('OLAP SWITCH POS', data)
             var toSend = { axis: data.axis, hierarchy: data.selectedHierarchyUniqueName, newPosition: data.positionInAxis + 1, direction: 1 }
             this.loading = true
             await this.$http
