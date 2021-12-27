@@ -78,9 +78,8 @@ export default defineComponent({
 
             this.columns.forEach((el: any) => this.globalFilterFields.push(el.field))
 
-            if (this.multivalue) {
-                this.selectedRow = this.multipleSelectedRows
-            }
+            this.selectedRow = this.multipleSelectedRows
+            console.log('LOADED SELECTED ROW: ', this.selectedRow)
         }
     }
 })

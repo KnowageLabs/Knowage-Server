@@ -67,6 +67,8 @@ export default defineComponent({
             this.loadPopupData()
             if (this.multivalue) {
                 this.setMultipleSelectedRows()
+            } else {
+                this.setSelectedRow()
             }
             this.loading = false
         },
@@ -88,6 +90,28 @@ export default defineComponent({
                 return tempObject
             }) as any[]
         },
+        setSelectedRow() {
+            const valueColumn = this.popupData?.result.metadata.valueColumn
+            const descriptionColumn = this.popupData?.result.metadata.descriptionColumn
+
+            if (this.parameter?.metadata.colsMap) {
+                const valueIndex = Object.keys(this.parameter?.metadata.colsMap).find((key: string) => this.parameter?.metadata.colsMap[key] === valueColumn)
+                const descriptionIndex = Object.keys(this.parameter?.metadata.colsMap).find((key: string) => this.parameter?.metadata.colsMap[key] === descriptionColumn)
+
+                if (valueIndex && descriptionIndex) {
+                    const selectedIndex = this.parameterPopUpData?.result.data.findIndex((el: any) => {
+                        console.log(el[valueIndex] + ' === ' + this.parameter?.parameterValue[0].value)
+                        console.log(el[descriptionIndex] + ' === ' + this.parameter?.parameterValue[0].description)
+                        return el[valueIndex] === this.parameter?.parameterValue[0].value && el[descriptionIndex] === this.parameter?.parameterValue[0].description
+                    }) as any
+                    if (selectedIndex) {
+                        this.multipleSelectedRows = [this.parameterPopUpData?.result.data[selectedIndex]]
+                        this.parameterPopUpData?.result.data.filter((el: any) => el[valueIndex] !== this.multipleSelectedRows[valueIndex] && el[descriptionIndex] !== this.multipleSelectedRows[descriptionIndex])
+                        this.parameterPopUpData?.result.data.unshift(this.multipleSelectedRows[0])
+                    }
+                }
+            }
+        },
         loadPopupData() {
             this.popupData = this.parameterPopUpData as iAdmissibleValues
         },
@@ -96,6 +120,7 @@ export default defineComponent({
             this.loading = this.propLoading
         },
         closeDialog() {
+            console.log('SELECTED ROW: ', this.selectedRow)
             this.$emit('close')
             this.loadParameter()
             this.popupData = null
