@@ -79,7 +79,6 @@ export default defineComponent({
             this.columns.forEach((el: any) => this.globalFilterFields.push(el.field))
 
             this.selectedRow = this.multipleSelectedRows
-            console.log('LOADED SELECTED ROW: ', this.selectedRow)
         }
     }
 })

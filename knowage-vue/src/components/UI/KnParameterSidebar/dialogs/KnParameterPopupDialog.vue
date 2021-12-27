@@ -100,8 +100,6 @@ export default defineComponent({
 
                 if (valueIndex && descriptionIndex) {
                     const selectedIndex = this.parameterPopUpData?.result.data.findIndex((el: any) => {
-                        console.log(el[valueIndex] + ' === ' + this.parameter?.parameterValue[0].value)
-                        console.log(el[descriptionIndex] + ' === ' + this.parameter?.parameterValue[0].description)
                         return el[valueIndex] === this.parameter?.parameterValue[0].value && el[descriptionIndex] === this.parameter?.parameterValue[0].description
                     }) as any
                     if (selectedIndex) {
@@ -120,7 +118,6 @@ export default defineComponent({
             this.loading = this.propLoading
         },
         closeDialog() {
-            console.log('SELECTED ROW: ', this.selectedRow)
             this.$emit('close')
             this.loadParameter()
             this.popupData = null
