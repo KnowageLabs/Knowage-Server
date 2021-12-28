@@ -792,17 +792,6 @@ var execCrossNavigation=function(frameid, doclabel, params, subobjid, title, tar
 
 var execExternalCrossNavigation=function(outputParameters,inputParameters,targetCrossNavigation,docLabel,otherOutputParameters){
 	
-	// temporary section needed as a workaround to get vue instance
-	var hasVueParent = false
-	if(window.parent.__VUE__){
-		hasVueParent = window.parent
-	}else if(window.parent.parent.__VUE__){
-		hasVueParent = window.parent.parent
-	}
-	
-	if(hasVueParent){
-		hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameters,"inputParameters":inputParameters,"targetCrossNavigation":targetCrossNavigation,"docLabel":docLabel, "otherOutputParameters":otherOutputParameters}, '*')
-	}else{
 		var currentScope = angular.element(frameElement).scope();
 		while(currentScope != undefined){
 			if(currentScope.navigateTo != undefined){
@@ -813,9 +802,7 @@ var execExternalCrossNavigation=function(outputParameters,inputParameters,target
 		if(!currentScope){
 			currentScope = angular.element(document.querySelector('#documentFrame')).scope();
 		}
-		currentScope.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel,otherOutputParameters);
-	}
-	
+		currentScope.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel,otherOutputParameters);	
 	
 };
 

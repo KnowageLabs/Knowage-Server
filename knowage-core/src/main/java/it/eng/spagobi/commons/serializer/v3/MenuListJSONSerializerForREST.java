@@ -758,6 +758,11 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			}
 		}
 
+		String[] roleNames = new String[childElem.getRoles().length];
+		for (int i = 0; i < childElem.getRoles().length; i++) {
+			roleNames[i] = childElem.getRoles()[i].getName();
+		}
+		temp2.put("roles", roleNames);
 		tempMenuList.put(temp2);
 
 		return tempMenuList;
