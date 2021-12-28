@@ -406,11 +406,15 @@
                 "title": "Olap custom view List"
             },
             "drillTru": {
+                "clearAll": "Clear All",
                 "drillLevelsError": "An error occurred while getting drill through levels",
                 "drillTruError": "Error in drill through",
                 "loadingMsg": "If the drill though is executed on a cell with an high level of aggregation, this operation can take long time.",
                 "loadingTitle": "Loading",
-                "title": "Drill Through"
+                "title": "Drill Through",
+                "maxRows": "Maximum rows",
+                "selectLevels": "Select visible levels",
+                "invalidData": "Invalid data"
             },
             "editModeConfirm": "You are leaving edit mode. Continue?",
             "filterPanel": {

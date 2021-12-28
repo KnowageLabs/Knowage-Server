@@ -15,20 +15,23 @@
             "color": "#01579B",
             "padding": "1rem,box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 10%)"
         },
-        "toastIcon": {
-            "font-size": "2rem"
-        },
-        "toastButton": {
-            "background-color": "transparent",
-            "color": "#01579B",
-            "width": "5px",
-            "margin-left": "auto"
-        },
         "message": {
             "align-items": "center",
             "display": "flex",
             "justify-content": "center",
             "text-align": "center"
+        },
+        "tableContainer": {
+            "position": "relative"
+        },
+        "toastButton": {
+            "background-color": "transparent",
+            "color": "#01579B",
+            "margin-left": "auto",
+            "width": "5px"
+        },
+        "toastIcon": {
+            "font-size": "2rem"
         }
     }
 }
