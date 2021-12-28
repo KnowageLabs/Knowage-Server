@@ -56,7 +56,7 @@
 
 			<ITEM id="4001" label="menu.MetaModelsCatalogue"
 				requiredFunctionality="MetaModelsCatalogueManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=businessModelCatalogue" />
+				to="/business-model-catalogue" />
 			<ITEM id="4002" label="menu.MondrianCatalogue"
 				requiredFunctionality="ArtifactCatalogueManagement"
 				to="/mondrian-schemas-management" />
