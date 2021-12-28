@@ -126,7 +126,9 @@ const mockedResultList = {
 
 jest.mock('axios')
 
-axios.post.mockImplementation(() => Promise.resolve())
+const $http = {
+    post: axios.post.mockImplementation(() => Promise.resolve())
+}
 
 const $store = {
     commit: jest.fn()
@@ -151,7 +153,8 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $store,
-                $router
+                $router,
+                $http
             }
         },
         propsData: {
