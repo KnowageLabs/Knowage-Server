@@ -32,15 +32,17 @@ const mockedRoles = [
 ]
 jest.mock('axios')
 
-axios.get.mockImplementation((url) => {
-    switch (url) {
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news/1?isTechnical=true':
-            return Promise.resolve({ data: mockedNews })
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles':
-            return Promise.resolve({ data: mockedRoles })
-    }
-})
-axios.post.mockImplementation(() => Promise.resolve())
+const $http = {
+    get: axios.get.mockImplementation((url) => {
+        switch (url) {
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news/1?isTechnical=true':
+                return Promise.resolve({ data: mockedNews })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles':
+                return Promise.resolve({ data: mockedRoles })
+        }
+    }),
+    post: axios.post.mockImplementation(() => Promise.resolve())
+}
 
 const $store = {
     commit: jest.fn()
@@ -63,7 +65,8 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $store,
-                $router
+                $router,
+                $http
             }
         }
     })
