@@ -80,9 +80,14 @@ const router = createRouter({
 
 jest.mock('axios')
 
-axios.get.mockImplementation(() => Promise.resolve({ data: mockedNavigations }))
-
-axios.post.mockImplementation(() => Promise.resolve())
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: mockedNavigations
+        })
+    ),
+    post: axios.post.mockImplementation(() => Promise.resolve())
+}
 
 const $confirm = {
     require: jest.fn()
@@ -116,7 +121,8 @@ const factory = () => {
                 $t: (msg) => msg,
                 $store,
                 $confirm,
-                $router
+                $router,
+                $http
             }
         }
     })
