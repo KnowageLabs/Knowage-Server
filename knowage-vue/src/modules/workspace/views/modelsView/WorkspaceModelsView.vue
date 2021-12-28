@@ -7,7 +7,7 @@
         <template #right>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
             <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
-            <KnFabButton icon="fas fa-plus" @click="createNewFederation" />
+            <KnFabButton v-if="tableMode === 'Federated'" icon="fas fa-plus" @click="createNewFederation" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
