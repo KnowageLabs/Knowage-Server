@@ -29,16 +29,19 @@ const mockedDatasets = [
 
 jest.mock('axios')
 
-axios.get.mockImplementation((url) => {
-    switch (url) {
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee':
-            return Promise.resolve({ data: mockedCache })
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/?type=cache':
-            return Promise.resolve({ data: mockedDatasets })
-        default:
-            return Promise.resolve({ data: [] })
-    }
-})
+const $http = {
+    get: axios.get.mockImplementation((url) => {
+        switch (url) {
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee':
+                return Promise.resolve({ data: mockedCache })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/?type=cache':
+                return Promise.resolve({ data: mockedDatasets })
+            default:
+                return Promise.resolve({ data: [] })
+        }
+    })
+}
+
 afterEach(() => {
     jest.clearAllMocks()
 })
@@ -54,7 +57,8 @@ const factory = () => {
             stubs: { DatasetTableCard: true, GeneralSettingsCard: true, ProgressBar, RuntimeInformationCard: true, Toolbar },
             mocks: {
                 $t: (msg) => msg,
-                $store
+                $store,
+                $http
             }
         }
     })
