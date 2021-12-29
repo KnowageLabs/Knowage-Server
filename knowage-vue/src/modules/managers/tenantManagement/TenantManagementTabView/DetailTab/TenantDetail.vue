@@ -93,7 +93,7 @@ export default defineComponent({
             type: Object,
             required: false
         },
-        listOfThemes: [] as any
+        listOfThemes: Array
     },
     computed: {
         disableField() {
