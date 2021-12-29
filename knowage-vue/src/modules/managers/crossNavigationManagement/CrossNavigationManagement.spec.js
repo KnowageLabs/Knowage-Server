@@ -149,8 +149,8 @@ describe('Cross-navigation Management', () => {
     it('shows a prompt when user click on a list item delete button to delete it', async () => {
         const wrapper = factory()
         await flushPromises()
-        console.log(wrapper.vm.navigations)
-        wrapper.vm.deleteTemplate({ item: { id: 655 } }, 655)
+
+        wrapper.vm.deleteTempateConfirm({ item: { id: 655 } }, 655)
         expect($confirm.require).toHaveBeenCalledTimes(1)
     })
     it('shows and empty detail when clicking on the add button', async () => {
