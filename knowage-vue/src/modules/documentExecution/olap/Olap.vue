@@ -445,6 +445,10 @@ export default defineComponent({
             }
         },
         execExternalCrossNavigation(event: any) {
+            if (this.olapDesignerMode) {
+                return
+            }
+
             const tempCrossNavigationParams = event.target.attributes[2].value
             const tempFormatted = tempCrossNavigationParams.substring(tempCrossNavigationParams.indexOf('(') + 2, tempCrossNavigationParams.lastIndexOf(')') - 1)
 
@@ -466,6 +470,10 @@ export default defineComponent({
             this.loading = false
         },
         async getCrossNavigationURL(event: any) {
+            if (this.olapDesignerMode) {
+                return
+            }
+
             this.loading = true
 
             const tempString = event.target.attributes[1].textContent
