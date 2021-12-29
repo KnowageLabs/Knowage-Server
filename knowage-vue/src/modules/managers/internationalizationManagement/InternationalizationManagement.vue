@@ -119,7 +119,7 @@
         async created() {
             await this.getLanguages()
             this.setDefaultLanguage()
-            // this.getMessages(this.defaultLanguage)
+            this.getMessages(this.defaultLanguage)
         },
 
         methods: {
