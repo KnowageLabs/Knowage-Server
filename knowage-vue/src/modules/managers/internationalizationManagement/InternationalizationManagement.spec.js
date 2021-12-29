@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import axios from 'axios'
 import Button from 'primevue/button'
 import InternationalizationManagement from './InternationalizationManagement.vue'
 import InputText from 'primevue/inputtext'
@@ -59,14 +60,33 @@ const mockedMessages = [
     }
 ]
 
+jest.mock('axios')
+
+const $http = {
+    get: axios.get.mockImplementation((url) => {
+        switch (url) {
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/internationalization/languages`:
+                return Promise.resolve({ data: { wrappedObject: mockedLanguages } })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/i18nMessages/internationalization/?currLanguage=en-US`:
+                return Promise.resolve({ data: mockedMessages })
+            default:
+                return Promise.resolve({ data: [] })
+        }
+    })
+}
+
 const factory = () => {
     return mount(InternationalizationManagement, {
         attachToDocument: true,
         global: {
+            directives: {
+                tooltip() {}
+            },
             plugins: [],
             stubs: { Button, InputText, ProgressBar, Toolbar, Message, Checkbox, DataTable, Column, TabPanel, TabView },
             mocks: {
-                $t: (msg) => msg
+                $t: (msg) => msg,
+                $http
             }
         }
     })
