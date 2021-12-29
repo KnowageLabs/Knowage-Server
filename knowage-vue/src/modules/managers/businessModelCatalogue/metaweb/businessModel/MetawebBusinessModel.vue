@@ -215,7 +215,6 @@ export default defineComponent({
             this.meta = this.propMeta
         },
         selectBusinessModel(event) {
-            console.log(event.data)
             this.selectedBusinessModel = event.data as iBusinessModel
         },
         showBusinessClass() {
@@ -225,7 +224,6 @@ export default defineComponent({
             this.showBusinessViewDialog = true
         },
         async deleteFromList(itemForDeletion) {
-            console.log(itemForDeletion)
             const postData = { data: { name: itemForDeletion.uniqueName }, diff: generate(this.observer) }
             let url = ''
             itemForDeletion.joinRelationships ? (url = process.env.VUE_APP_META_API_URL + '/1.0/metaWeb/deleteBusinessView') : (url = process.env.VUE_APP_META_API_URL + '/1.0/metaWeb/deleteBusinessClass')

@@ -215,7 +215,6 @@ export default defineComponent({
             if (model) {
                 if (model.columns)
                     model.columns.forEach(function(item) {
-                        //add only the column ( not calculated field)
                         // eslint-disable-next-line no-prototype-builtins
                         if (!item.hasOwnProperty('referencedColumns')) {
                             a.push({ name: item.name, uname: item.uniqueName, links: [] })
@@ -247,7 +246,6 @@ export default defineComponent({
                 .finally(() => generate(this.observer))
         },
         async deleteOutbound(item) {
-            console.log(item)
             const postData = { data: item, diff: generate(this.observer) }
             await this.$http
                 .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/deleteBusinessRelation`, postData)

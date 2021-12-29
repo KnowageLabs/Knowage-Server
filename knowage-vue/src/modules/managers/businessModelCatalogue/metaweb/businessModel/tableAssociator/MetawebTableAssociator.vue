@@ -88,11 +88,9 @@ export default defineComponent({
     watch: {
         targetArray() {
             this.targetModel = this.targetArray
-            console.log(this.targetModel)
         },
         sourceArray() {
             this.sourceModel = this.sourceArray
-            console.log(this.sourceModel)
         }
     },
     methods: {
@@ -152,7 +150,6 @@ export default defineComponent({
                 }
             } else {
                 this.setDropErrorClass(elementId)
-                console.log('executeDrop = FALSE')
             }
         },
         deleteRelationship(item, rel?) {
