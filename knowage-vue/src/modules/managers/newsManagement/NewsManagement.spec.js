@@ -103,7 +103,9 @@ describe('News Management', () => {
 
         expect($confirm.require).toHaveBeenCalledTimes(1)
 
-        await wrapper.vm.deleteNews(1)
+        await flushPromises()
+
+        await wrapper.vm.deleteNews(mockedNews[0])
         expect(axios.delete).toHaveBeenCalledTimes(1)
         expect(axios.delete).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news/' + 1)
     })
