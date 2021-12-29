@@ -237,6 +237,7 @@
             <MetawebSelectDialog :visible="metawebSelectDialogVisible" :selectedBusinessModel="selectedBusinessModel" @close="metawebSelectDialogVisible = false" @metaSelected="onMetaSelect"></MetawebSelectDialog>
 
             <Metaweb :visible="metawebDialogVisible" :propMeta="meta" :businessModel="businessModel" @closeMetaweb="metawebDialogVisible = false" @modelGenerated="$emit('modelGenerated')" />
+            <KnOverlaySpinnerPanel id="metaweb-spinner" :visibility="loading" />
         </template>
     </Card>
 </template>
@@ -254,6 +255,7 @@ import GenerateDatamartCard from './GenerateDatamartCard.vue'
 import InputSwitch from 'primevue/inputswitch'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import MetawebSelectDialog from '../../metaweb/metawebSelectDialog/MetawebSelectDialog.vue'
 import Metaweb from '@/modules/managers/businessModelCatalogue/metaweb/Metaweb.vue'
 import useValidate from '@vuelidate/core'
@@ -267,6 +269,7 @@ export default defineComponent({
         InputSwitch,
         KnInputFile,
         KnValidationMessages,
+        KnOverlaySpinnerPanel,
         MetawebSelectDialog,
         Metaweb
     },
@@ -333,7 +336,8 @@ export default defineComponent({
             metawebDialogVisible: false,
             meta: null as any,
             touched: false,
-            v$: useValidate() as any
+            v$: useValidate() as any,
+            loading: false
         }
     },
     validations() {
@@ -364,12 +368,14 @@ export default defineComponent({
             this.$emit('fieldChanged', { fieldName: 'smartView', value: this.businessModel.smartView })
         },
         async goToMetaWeb() {
+            this.loading = true
             await this.createSession()
             if (this.businessModelVersions?.length === 0) {
                 this.metawebSelectDialogVisible = true
             } else {
                 await this.loadModelFromSession()
             }
+            this.loading = false
         },
         onDatamartGenerated() {
             this.$emit('datamartGenerated')
@@ -389,8 +395,11 @@ export default defineComponent({
                 .catch(() => {})
         },
         async createSession() {
+            let url = `/1.0/pages/edit?datasourceId=${this.businessModel?.dataSourceId}&user_id=${(this.$store.state as any).user.userUniqueIdentifier}&bmId=${this.businessModel?.id}&bmName=${this.businessModel?.name}`
+            if (this.businessModel.tablePrefixLike) url += `&tablePrefixLike=${this.businessModel.tablePrefixLike}`
+            if (this.businessModel.tablePrefixNotLike) url += `&tablePrefixNotLike=${this.businessModel.tablePrefixNotLike}`
             await this.$http
-                .get(process.env.VUE_APP_META_API_URL + `/1.0/pages/edit?datasourceId=${this.businessModel?.dataSourceId}&user_id=${(this.$store.state as any).user.userUniqueIdentifier}&bmId=${this.businessModel?.id}&bmName=${this.businessModel?.name}`, {
+                .get(process.env.VUE_APP_META_API_URL + url, {
                     headers: {
                         Accept: 'application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
                     }
@@ -412,5 +421,11 @@ export default defineComponent({
 
 .pi-upload {
     display: none;
+}
+
+#metaweb-spinner {
+    position: fixed;
+    top: 0;
+    left: 0;
 }
 </style>

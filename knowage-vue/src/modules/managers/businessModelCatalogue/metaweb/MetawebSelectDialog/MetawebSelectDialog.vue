@@ -102,7 +102,11 @@ export default defineComponent({
         async loadDatasourceStructure() {
             this.loading = true
             if (this.businessModel?.dataSourceId) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources/structure/${this.businessModel.dataSourceId}`).then((response: AxiosResponse<any>) => (this.datasourceStructure = response.data))
+                let url = `2.0/datasources/structure/${this.businessModel.dataSourceId}?`
+                const urlParams = {} as any
+                if (this.businessModel.tablePrefixLike) urlParams.tablePrefixLike = this.businessModel.tablePrefixLike
+                if (this.businessModel.tablePrefixNotLike) urlParams.tablePrefixNotLike = this.businessModel.tablePrefixNotLike
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, { params: urlParams }).then((response: AxiosResponse<any>) => (this.datasourceStructure = response.data))
             }
             this.loading = false
         },
