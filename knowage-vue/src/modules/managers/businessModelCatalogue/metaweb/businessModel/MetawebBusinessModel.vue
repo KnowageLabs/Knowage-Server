@@ -91,7 +91,7 @@
                             <span>{{ $t('metaweb.businessModel.tabView.calcField') }}</span>
                         </template>
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            {{ mainDescriptor.test }}
+                            {{ 'TODO: Functionality not in this sprint.' }}
                         </div>
                     </TabPanel>
                     <TabPanel>
