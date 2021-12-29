@@ -31,7 +31,7 @@
                     </div>
                 </div>
             </div>
-            <div class="p-d-flex p-flex-column kn-flex">
+            <div v-if="meta.businessViews > !0" class="p-d-flex p-flex-column kn-flex">
                 <Toolbar class="kn-toolbar kn-toolbar--default">
                     <template #left>
                         <span>{{ $t('metaweb.businessModel.businessView') }}</span>
