@@ -496,7 +496,7 @@ export default defineComponent({
             if (!postForm) {
                 postForm = document.createElement('form')
                 postForm.id = 'postForm_' + postObject.params.document
-                postForm.action = 'http://localhost:8080' + postObject.url
+                postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
                 postForm.method = 'post'
                 postForm.target = 'documentFrame' + tempIndex
                 document.body.appendChild(postForm)
