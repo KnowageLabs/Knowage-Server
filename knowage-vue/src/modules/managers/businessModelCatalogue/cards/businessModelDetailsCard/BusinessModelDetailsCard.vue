@@ -133,16 +133,16 @@
                 </div>
 
                 <div class="p-d-flex p-flex-row">
-                    <div class="input-container" v-if="!metaWebVisible && !readonly">
+                    <div class="input-container" v-show="!metaWebVisible && !readonly">
                         <label for="upload" class="kn-material-input-label">{{ $t('managers.businessModelManager.uploadFile') }}:</label>
                         <KnInputFile :changeFunction="uploadFile" :visibility="true" />
                     </div>
-                    <div class="input-container p-d-flex p-flex-row" v-else-if="metaWebVisible">
+                    <div class="input-container p-d-flex p-flex-row">
                         <div class="p-m-2">
-                            <Button class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.metaWeb')" @click="goToMetaWeb" data-test="metaweb-button"></Button>
+                            <Button v-show="metaWebVisible" class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.metaWeb')" @click="goToMetaWeb" data-test="metaweb-button"></Button>
                         </div>
-                        <div class="p-m-2" v-if="toGenerate">
-                            <Button class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.generate')" @click="generateDatamartVisible = true" data-test="generate-button"></Button>
+                        <div class="p-m-2" v-show="toGenerate">
+                            <Button v-show="metaWebVisible" class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.generate')" @click="generateDatamartVisible = true" data-test="generate-button"></Button>
                         </div>
                     </div>
 
