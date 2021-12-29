@@ -34,20 +34,39 @@
             "width": "28px"
         },
         "leftToolbarContainer": {
-            "background-color": " #43749e !important",
-            "color": "white !important",
-            "width": "32px"
+            "width": "32px",
+            "flex-grow": 0,
+            "flex-shrink": 0,
+            "position": "relative"
+        },
+        "scroll": {
+            "overflow": "hidden"
         },
         "sidebarButton": {
             "color": "white",
             "width": "50px"
         },
-        "toolbarContainer": {
-            "min-height": "32px"
-        },
         "toolbarMainColor": {
             "background-color": " #43749e !important",
             "color": "white !important"
+        },
+        "topAxis": {
+            "background-color": " #43749e !important",
+            "color": "white !important",
+            "height": "100%",
+            "left": 0,
+            "position": "absolute",
+            "top": 0,
+            "width": "100%"
+        },
+        "leftAxis": {
+            "background-color": " #43749e !important",
+            "color": "white !important",
+            "height": "100%",
+            "left": 0,
+            "position": "absolute",
+            "top": 0,
+            "width": "100%"
         },
         "topAxisCard": {
             "align-items": "center",
@@ -70,6 +89,12 @@
             "justify-content": "center",
             "pointer-events": "none",
             "text-transform": "uppercase"
+        },
+        "topToolbarContainer": {
+            "flex-grow": 0,
+            "flex-shrink": 0,
+            "height": "32px",
+            "position": "relative"
         },
         "whiteColor": {
             "color": "white !important"

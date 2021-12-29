@@ -4,7 +4,7 @@
             <Button v-if="filter.hierarchies.length > 1" icon="fas fa-sitemap" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMultiHierarchy', filter)" />
             <span class="p-ml-1"> {{ filter.caption }} </span>
             <Button icon="fas fa-filter" class="p-button-text p-button-rounded p-button-plain p-ml-auto" />
-            <!-- TODO: Tooltip for selected filters when hovering on icon and knowage magenta button color if filter is selected -->
+            <!-- TODO Change Request for next sprint: Tooltip for selected filters when hovering on icon and knowage magenta button color if filter is selected -->
         </div>
     </div>
 </template>
