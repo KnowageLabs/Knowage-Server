@@ -409,14 +409,15 @@
                 "clearAll": "Clear All",
                 "drillLevelsError": "An error occurred while getting drill through levels",
                 "drillTruError": "Error in drill through",
+                "invalidData": "Invalid data",
                 "loadingMsg": "If the drill though is executed on a cell with an high level of aggregation, this operation can take long time.",
                 "loadingTitle": "Loading",
-                "title": "Drill Through",
                 "maxRows": "Maximum rows",
                 "selectLevels": "Select visible levels",
-                "invalidData": "Invalid data"
+                "title": "Drill Through"
             },
             "editModeConfirm": "You are leaving edit mode. Continue?",
+            "openDesigner": "Open Designer",
             "filterPanel": {
                 "drop": "Drop here to use as a slicer",
                 "filterPanelEmpty": "Drag the member here if you want to use it as a slicer"
@@ -436,6 +437,7 @@
                 "detail2": "You can change it acting on the form below.",
                 "dropdownLabel": "Available hierarchies"
             },
+            "openDesignerMsg": "By opening designer you will lose all unsaved changes, are you sure?",
             "savingCustomizedView": "Saving customized view",
             "showMdxQuery": "Show MDX Query",
             "showScheduledExecutions": "Show scheduled executions",
