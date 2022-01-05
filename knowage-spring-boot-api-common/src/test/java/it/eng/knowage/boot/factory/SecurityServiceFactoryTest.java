@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.knowage.knowageapi;
+package it.eng.knowage.boot.factory;
 
 import it.eng.knowage.boot.factory.SecurityServiceFactory;
 import it.eng.spagobi.services.security.SecurityServiceService;

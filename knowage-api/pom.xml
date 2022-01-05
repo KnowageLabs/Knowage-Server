@@ -207,6 +207,15 @@
 			                  __/ |                                       
 			                 |___/                                        
 		 -->
+
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-spring-boot-api-common</artifactId>
+			<version>${project.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter</artifactId>

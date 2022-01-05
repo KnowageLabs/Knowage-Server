@@ -33,7 +33,13 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 import it.eng.knowage.boot.error.KnowageRuntimeException;
 
+/**
+ * @deprecated This class is simply not right. We use @Component to let Spring instantiates it as a Singleton,
+ *  we inject values in the constructor and we use them to set static variables then we use static members of
+ *  this class. It's an horror class!
+ */
 @Component
+@Deprecated
 public class ContextPropertiesConfig {
 
 	private static String hmacKey;
