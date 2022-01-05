@@ -4,7 +4,7 @@
 <RollingFile
     name="FILE_AUDIT"
     fileName="${sys:catalina.base}/logs/knowageDatasetAudit.log"  append="False"  filePattern="${sys:catalina.base}/logs/knowageDatasetAudit.log"
-    ignoreExceptions="false">
+    ignoreExceptions="false" createOnDemand="true">
     <PatternLayout>
         <Pattern>[%t] %d{DATE} %5p %c.%M:%L - %m%n</Pattern>
     </PatternLayout>
@@ -16,7 +16,7 @@
 <RollingFile
     name="hierarchies"
     fileName="${sys:catalina.base}/logs/knowageHiearchies.log"  append="False"  filePattern="${sys:catalina.base}/logs/knowageHiearchies.log"
-    ignoreExceptions="false">
+    ignoreExceptions="false" createOnDemand="true">
     <PatternLayout>
         <Pattern>%d{DATE} %5p %c.%M:%L - %m%n</Pattern>
     </PatternLayout>
@@ -28,7 +28,7 @@
 <RollingFile
     name="knowage"
     fileName="${sys:catalina.base}/logs/knowage.log"  append="False"  filePattern="${sys:catalina.base}/logs/knowage.log"
-    ignoreExceptions="false">
+    ignoreExceptions="false" createOnDemand="true">
     <PatternLayout>
         <Pattern>[%t] %d{DATE} %5p %c.%M:%L - %m%n</Pattern>
     </PatternLayout>
@@ -40,7 +40,7 @@
 <RollingFile
     name="knowage_REFCP"
     fileName="${sys:catalina.base}/logs/ResourceExportFolderCleaningManager.log"  append="False"  filePattern="${sys:catalina.base}/logs/ResourceExportFolderCleaningManager.log"
-    ignoreExceptions="false">
+    ignoreExceptions="false" createOnDemand="true">
     <PatternLayout>
         <Pattern>%d{DATE} %5p %L - %m%n</Pattern>
     </PatternLayout>
@@ -52,7 +52,7 @@
 <RollingFile
     name="knowage_SM"
     fileName="${sys:catalina.base}/logs/knowageServerManager.log"  append="False"  filePattern="${sys:catalina.base}/logs/knowageServerManager.log"
-    ignoreExceptions="false">
+    ignoreExceptions="false" createOnDemand="true">
     <PatternLayout>
         <Pattern>%d{DATE} %5p %c.%M:%L - %m%n</Pattern>
     </PatternLayout>
@@ -64,7 +64,7 @@
 <RollingFile
     name="Quartz"
     fileName="${sys:catalina.base}/logs/Quartz.log"  append="False"  filePattern="${sys:catalina.base}/logs/Quartz.log"
-    ignoreExceptions="false">
+    ignoreExceptions="false" createOnDemand="true">
     <PatternLayout>
         <Pattern>[%t] %d{DATE} %5p %c.%M:%L - %m%n</Pattern>
     </PatternLayout>
@@ -76,7 +76,7 @@
 <RollingFile
     name="SpagoBI_Audit"
     fileName="${sys:catalina.base}/logs/knowage_[1]_OperatorTrace.log"  append="False"  filePattern="${sys:catalina.base}/logs/knowage_[1]_OperatorTrace.log"
-    ignoreExceptions="false">
+    ignoreExceptions="false" createOnDemand="true">
     <PatternLayout>
         <Pattern>%m%n</Pattern>
     </PatternLayout>

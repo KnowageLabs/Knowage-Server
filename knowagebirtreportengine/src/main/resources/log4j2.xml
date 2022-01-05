@@ -4,7 +4,7 @@
  <RollingFile
     name="SpagoBIBirtReportEngine"
     fileName="${sys:catalina.base}/logs/knowageBirtReportEngine.log"  append="False"  filePattern="${sys:catalina.base}/logs/knowageBirtReportEngine.log"
-    ignoreExceptions="false">
+    ignoreExceptions="false" createOnDemand="true">
     <PatternLayout>
         <Pattern>%d{DATE} %5p %c.%M:%L - %m%n</Pattern>
     </PatternLayout>

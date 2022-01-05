@@ -4,7 +4,7 @@
    <RollingFile
     name="FILE"
     fileName="${sys:catalina.base}/logs/knowageWhatIfEngine.log"  append="False"  filePattern="${sys:catalina.base}/logs/knowageWhatIfEngine.log"
-    ignoreExceptions="false">
+    ignoreExceptions="false" createOnDemand="true">
     <PatternLayout>
         <Pattern>%d{DATE} %5p %c.%M:%L - %m%n</Pattern>
     </PatternLayout>
@@ -16,7 +16,7 @@
     <RollingFile
     name="FILE_AUDIT"
     fileName="${sys:catalina.base}/logs/knowageWhatIfEngineStackAudit.log"  append="False"  filePattern="${sys:catalina.base}/logs/knowageWhatIfEngineStackAudit.log"
-    ignoreExceptions="false">
+    ignoreExceptions="false" createOnDemand="true">
     <PatternLayout>
         <Pattern>%d{DATE}: %m%n</Pattern>
     </PatternLayout>

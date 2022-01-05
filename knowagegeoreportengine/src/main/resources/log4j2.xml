@@ -7,7 +7,7 @@
  <RollingFile
     name="FILE"
     fileName="${sys:catalina.base}/logs/knowageGeoReportEngine.log"  append="False"  filePattern="${sys:catalina.base}/logs/knowageGeoReportEngine.log"
-    ignoreExceptions="false">
+    ignoreExceptions="false" createOnDemand="true">
     <PatternLayout>
         <Pattern>%d{DATE} %5p %c.%M:%L - %m%n</Pattern>
     </PatternLayout>
