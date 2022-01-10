@@ -79,7 +79,7 @@ export default defineComponent({
     },
     props: {
         id: {
-            type: String,
+            type: Number,
             required: false
         }
     },

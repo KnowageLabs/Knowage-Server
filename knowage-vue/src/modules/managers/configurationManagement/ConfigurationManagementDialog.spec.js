@@ -4,24 +4,27 @@ import Button from 'primevue/button'
 import ConfigurationManagementDialog from './ConfigurationManagementDialog.vue'
 import flushPromises from 'flush-promises'
 import InputText from 'primevue/inputtext'
+import PrimeVue from 'primevue/config'
 
-jest.mock('axios', () => ({
-    post: jest.fn(() => Promise.resolve()),
-    put: jest.fn(() => Promise.resolve())
-}))
+jest.mock('axios')
+
+const $http = {
+    post: axios.post.mockImplementation(() => Promise.resolve()),
+    put: axios.put.mockImplementation(() => Promise.resolve())
+}
 
 const $store = {
     commit: jest.fn()
 }
-
 const factory = () => {
     return mount(ConfigurationManagementDialog, {
         global: {
-            plugins: [],
+            plugins: [PrimeVue],
             stubs: { Button, InputText },
             mocks: {
                 $t: (msg) => msg,
-                $store
+                $store,
+                $http
             }
         }
     })

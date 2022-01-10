@@ -5,7 +5,7 @@
             <Button class="kn-button p-button-text p-button-rounded" icon="pi pi-times" @click="closeTemplate" />
         </template>
     </Toolbar>
-    <div class="p-grid p-m-0 p-fluid p-jc-center">
+    <div class="p-grid p-m-0 p-fluid p-jc-center" data-test="metadata-form">
         <div class="p-col-9">
             <Card>
                 <template #content>
