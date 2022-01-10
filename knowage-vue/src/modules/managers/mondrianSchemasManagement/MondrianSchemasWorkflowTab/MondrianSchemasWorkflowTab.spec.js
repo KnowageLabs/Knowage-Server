@@ -89,11 +89,9 @@ describe('Mondrian Schema Workflow Tab', () => {
         const wrapper = factory(mockedUsers)
         await wrapper.setData(mockedUsers)
 
-        console.log(wrapper.find('[data-test="userList2-item"]').html())
         const rightList = wrapper.find('[data-test="userList2-item"]')
         await rightList.trigger('click')
 
-        console.log(wrapper.find('[data-test="userList2-item"]').html())
         expect(wrapper.vm.availableUsersList[0].length).toBe(3)
         expect(wrapper.vm.availableUsersList[1].length).toBe(1)
     })

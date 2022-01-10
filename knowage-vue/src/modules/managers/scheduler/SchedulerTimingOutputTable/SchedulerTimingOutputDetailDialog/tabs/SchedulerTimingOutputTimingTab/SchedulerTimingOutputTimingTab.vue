@@ -229,11 +229,19 @@ export default defineComponent({
             this.trigger.startDateTiming.setHours(0)
             this.trigger.startDateTiming.setMinutes(0)
 
+            if (!this.trigger.zonedStartTime) {
+                this.trigger.zonedStartTime = this.trigger.startTimeTiming
+            }
+
             this.trigger.endDateTiming = this.trigger.zonedEndTime ? new Date(this.trigger.zonedEndTime) : null
             this.trigger.endTimeTiming = this.trigger.zonedEndTime ? new Date(this.trigger.zonedEndTime) : null
             if (this.trigger.endTimeTiming) {
                 this.trigger.endDateTiming.setHours(0)
                 this.trigger.endDateTiming.setMinutes(0)
+            }
+
+            if (!this.trigger.zonedEndTime) {
+                this.trigger.zonedEndTime = this.trigger.endTimeTiming
             }
         },
         setCronFrequency() {

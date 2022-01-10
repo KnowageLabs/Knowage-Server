@@ -26,7 +26,7 @@
                 <template #header> &ensp; </template>
                 <template #body="slotProps">
                     <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click.stop="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.documentName" />
-                    <Button icon="fas fa-play-circle" class="p-button-link" @click="executeRecent" />
+                    <Button icon="fas fa-play-circle" class="p-button-link" @click="executeRecent(slotProps.data)" />
                 </template>
             </Column>
         </DataTable>
@@ -55,7 +55,7 @@ import Column from 'primevue/column'
 
 export default defineComponent({
     components: { DataTable, Column, DetailSidebar, WorkspaceCard, Message },
-    emits: ['showMenu', 'toggleDisplayView'],
+    emits: ['showMenu', 'toggleDisplayView', 'execute'],
     props: { toggleCardDisplay: { type: Boolean } },
     data() {
         return {
@@ -86,8 +86,8 @@ export default defineComponent({
             let fDate = new Date(date)
             return fDate.toLocaleString()
         },
-        executeRecent() {
-            this.$store.commit('setInfo', { title: 'Todo', msg: 'Functionality not in this sprint' })
+        executeRecent(document: any) {
+            this.$emit('execute', document)
         },
         toggleDisplayView() {
             this.$emit('toggleDisplayView')
