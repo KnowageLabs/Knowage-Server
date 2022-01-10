@@ -42,6 +42,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 
 import it.eng.knowage.boot.context.BusinessRequestContext;
 import it.eng.knowage.boot.error.KnowageRuntimeException;
+import it.eng.knowage.boot.filter.bean.KnowageHttpServletRequestWrapper;
 import it.eng.knowage.boot.utils.ConfigSingleton;
 import it.eng.spagobi.services.security.SecurityServiceService;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
@@ -97,7 +98,9 @@ public class JWTSecurityFilter implements Filter {
 						RequestContextHolder.currentRequestAttributes().setAttribute("userProfile", profile, RequestAttributes.SCOPE_REQUEST);
 						RequestContextHolder.currentRequestAttributes().setAttribute("userToken", userToken, RequestAttributes.SCOPE_REQUEST);
 
-						chain.doFilter(request, response);
+						KnowageHttpServletRequestWrapper newRequest = new KnowageHttpServletRequestWrapper(httpRequest, profile);
+
+						chain.doFilter(newRequest, response);
 					} else {
 						httpResponse.setStatus(401);
 					}
