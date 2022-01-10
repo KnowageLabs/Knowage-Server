@@ -33,6 +33,17 @@
         "languageSelection": "Selezione Lingua",
         "pt_BR": "portoghese"
     },
+    "locale": {
+        "dateFormat": "dd/mm/yy",
+        "dayNames": ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
+        "dayNamesMin": ["Do", "Lu", "Ma", "Me", "Gi", "Ve", "Sa"],
+        "dayNamesShort": ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"],
+        "firstDayOfWeek": 1,
+        "monthNames": ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"],
+        "monthNamesShort": ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"],
+        "today": "Oggi",
+        "weekHeader": "Sett"
+    },
     "managers": {
         "widgetGallery": {
             "hint": "The templates allow you to access ready-made elements to proceed more quickly to the creation of dashboards. To view the details of a template, select one of those on the side, or press the \"+\" button to add or import one.",
