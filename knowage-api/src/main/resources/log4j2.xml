@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+ <Appenders>
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout pattern="%c.%M: %m%n" />
+        </Console>
+    <RollingFile
+    name="FILE"
+    fileName="${sys:catalina.base}/logs/knowageApi.log"  append="False"  filePattern="${sys:catalina.base}/logs/knowageApi.log"
+    ignoreExceptions="false" createOnDemand="true">
+    <PatternLayout>
+        <Pattern>%d{DATE} %5p %c.%M:%L - %m%n</Pattern>
+    </PatternLayout>
+    <Policies>
+        <SizeBasedTriggeringPolicy size="10000KB" />
+    </Policies>
+    <DefaultRolloverStrategy max="1" />
+</RollingFile>
+      </Appenders>
+    <Loggers>
+     <logger name="edu.yale" level = "error" additivity="false"> 
+        <AppenderRef ref="FILE"/>
+    </logger>
+    <logger name="it.eng.knowage.engine.cockpit.api.export" level = "error" additivity="false"> 
+        <AppenderRef ref="FILE"/>
+    </logger>
+    <logger name="it.eng.spagobi" level = "error" additivity="false"> 
+        <AppenderRef ref="FILE"/>
+    </logger>
+    <logger name="it.eng.spagobi.commons.utilities.messages" level = "error" additivity="false"> 
+        <AppenderRef ref="FILE"/>
+    </logger>
+    <logger name="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder" level = "error" additivity="false"> 
+        <AppenderRef ref="FILE"/>
+    </logger>
+        <Root level="error">
+            <AppenderRef ref="FILE"/>
+        </Root>
+    </Loggers>
+</Configuration>
