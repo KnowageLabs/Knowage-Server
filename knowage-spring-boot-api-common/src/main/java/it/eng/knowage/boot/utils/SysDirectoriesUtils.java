@@ -12,11 +12,12 @@ import org.springframework.stereotype.Component;
 
 import it.eng.knowage.boot.context.BusinessRequestContext;
 import it.eng.knowage.boot.error.KnowageRuntimeException;
+import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
 @Component
 public class SysDirectoriesUtils {
 
-	private static final String DATA_PREPARATION_SUB_DIR = "data-preparation";
+	private static final String DATA_PREPARATION_SUB_DIR = "dataPreparation";
 
 	private static final SysDirectoriesUtils INSTANCE = new SysDirectoriesUtils();
 
@@ -37,6 +38,34 @@ public class SysDirectoriesUtils {
 		super();
 	}
 
+	public String getDataPreparationPathAsString(BusinessRequestContext brc) {
+		return getDataPreparationPathAsString(getOrganizationFromBusinessContext(brc));
+	}
+
+	public File getDataPreparationPathAsFile(BusinessRequestContext brc) {
+		return getDataPreparationPathAsFile(getOrganizationFromBusinessContext(brc));
+	}
+
+	public Path getDataPreparationPath(BusinessRequestContext brc) {
+		return getDataPreparationPath(getOrganizationFromBusinessContext(brc));
+	}
+
+
+
+	public String getDataPreparationPathAsString(SpagoBIUserProfile up) {
+		return getDataPreparationPathAsString(getOrganizationFromUserProfile(up));
+	}
+
+	public File getDataPreparationPathAsFile(SpagoBIUserProfile up) {
+		return getDataPreparationPathAsFile(getOrganizationFromUserProfile(up));
+	}
+
+	public Path getDataPreparationPath(SpagoBIUserProfile up) {
+		return getDataPreparationPath(getOrganizationFromUserProfile(up));
+	}
+
+
+
 	public String getDataPreparationPathAsString(String tenantId) {
 		return getDataPreparationPathAsFile(tenantId).toString();
 	}
@@ -52,15 +81,15 @@ public class SysDirectoriesUtils {
 
 
 	public String getTenantPathAsString(BusinessRequestContext brc) {
-		return getTenantPathAsString(brc.getOrganization());
+		return getTenantPathAsString(getOrganizationFromBusinessContext(brc));
 	}
 
 	public File getTenantPathAsFile(BusinessRequestContext brc) {
-		return getTenantPathAsFile(brc.getOrganization());
+		return getTenantPathAsFile(getOrganizationFromBusinessContext(brc));
 	}
 
 	public Path getTenantPath(BusinessRequestContext brc) {
-		return getTenantPath(brc.getOrganization());
+		return getTenantPath(getOrganizationFromBusinessContext(brc));
 	}
 
 
@@ -95,6 +124,14 @@ public class SysDirectoriesUtils {
 			throw new KnowageRuntimeException("Cannot get resource path from JNDI name " + resourcePathKey, e);
 		}
 		return Paths.get(resourcePath);
+	}
+
+	private String getOrganizationFromBusinessContext(BusinessRequestContext brc) {
+		return brc.getOrganization();
+	}
+
+	private String getOrganizationFromUserProfile(SpagoBIUserProfile up) {
+		return up.getOrganization();
 	}
 
 }

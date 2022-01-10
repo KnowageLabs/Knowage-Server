@@ -30,7 +30,7 @@ class SysDirectoriesUtilsTest {
 
 		assertEquals(RESOURCE_PATH, sysDirectoriesUtils.getResourcePath().toString());
 		assertEquals(RESOURCE_PATH + File.separator + TENANT_NAME, sysDirectoriesUtils.getTenantPath(TENANT_NAME).toString());
-		assertEquals(RESOURCE_PATH + File.separator + TENANT_NAME + File.separator + "data-preparation", sysDirectoriesUtils.getDataPreparationPath(TENANT_NAME).toString());
+		assertEquals(RESOURCE_PATH + File.separator + TENANT_NAME + File.separator + "dataPreparation", sysDirectoriesUtils.getDataPreparationPath(TENANT_NAME).toString());
 
 	}
 }
