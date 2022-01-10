@@ -33,6 +33,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import it.eng.qbe.statement.hibernate.HQLStatement;
@@ -982,6 +983,37 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				if (aSession.isOpen())
 					aSession.close();
 			}
+		}
+
+	}
+
+	@Override
+	public boolean thereIsAnyUsers() {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+
+			disableTenantFilter(aSession);
+			tx = aSession.beginTransaction();
+
+			Number count = (Number) aSession.createCriteria(SbiUser.class)
+				.setProjection(Projections.rowCount())
+				.uniqueResult();
+
+			return count.longValue() > 0;
+
+		} finally {
+			if (tx != null) {
+				tx.rollback();
+			}
+			if (aSession != null) {
+				if (aSession.isOpen()) {
+					aSession.close();
+				}
+			}
+			logger.debug("OUT");
 		}
 
 	}
