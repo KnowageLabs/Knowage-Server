@@ -7,7 +7,7 @@
                 </span>
             </div>
             <!-- TODO: Change default image to your liking -->
-            <img v-if="viewType != 'businessModel'" class="p-mt-5" onerror="this.src='https://i.imgur.com/9N1aRkx.png'" :style="descriptor.style.sidebarImage" align="center" :src="documentImageSource" />
+            <img v-if="viewType != 'businessModel' || viewType != 'dataset'" class="p-mt-5" onerror="this.src='https://i.imgur.com/9N1aRkx.png'" :style="descriptor.style.sidebarImage" align="center" :src="documentImageSource" />
             <div class="p-m-5">
                 <div class="p-mb-5" v-for="(field, index) of documentFields" :key="index">
                     <h3 class="p-m-0">
