@@ -11,7 +11,7 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <KnListBox :options="lovsList" :settings="lovsManagementDescriptor.knListSettings" @delete="deleteLovConfirm($event)"></KnListBox>
+                <KnListBox :options="lovsList" :settings="lovsManagementDescriptor.knListSettings" @delete="deleteLovConfirm($event)" data-test="lovs-list"></KnListBox>
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">

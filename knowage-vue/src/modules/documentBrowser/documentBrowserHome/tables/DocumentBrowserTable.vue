@@ -135,7 +135,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 #documents-found-hint {
     flex: 0.5;
 }
@@ -149,10 +149,19 @@ export default defineComponent({
 }
 
 .table-container-box {
-    // min-height: -webkit-min-content;
     position: absolute;
     top: 0;
     left: 0;
     display: flex;
+}
+
+#documents-datatable .p-paginator {
+    position: fixed;
+    bottom: 0;
+    right: 20px;
+}
+
+#documents-datatable .p-datatable-wrapper {
+    margin-bottom: 50px;
 }
 </style>
