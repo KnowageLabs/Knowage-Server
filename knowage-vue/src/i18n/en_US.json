@@ -1641,6 +1641,15 @@
         "roleSelection": "Role Selection"
     },
     "workspace": {
+        "buttonsTooltips": {
+            "executeDoc": "Execute Document",
+            "moveDoc": "Move Document",
+            "editDoc": "Edit Document",
+            "deleteDoc": "Delete Document",
+            "help": "Help Online",
+            "other": "Other Options",
+            "previewDs": "Preview Dataset"
+        },
         "federationDefinition": {
             "associationsEditor": "Associations Editor",
             "associationsList": "Associations List",
@@ -1679,7 +1688,8 @@
                 "showDsDetails": "Show dataset details",
                 "unshare": "Unshare Document",
                 "upload": "Upload preview file"
-            }
+            },
+            "geoRef": "Geo-referenced analysis"
         },
         "myData": {
             "cloneDataset": "Clone Dataset",
