@@ -45,7 +45,7 @@
         created() {
             const primevue = usePrimeVue() as any
             // @ts-ignore
-            primevue.config.locale = { ...primevue.config.locale, ...this.$i18n.messages[this.$i18n.locale].locale }
+            primevue.config.locale = { ...primevue.config.locale, ...this.$i18n.messages[this.$i18n.locale.replaceAll('-', '_')].locale }
         },
         props: {
             visibility: Boolean
