@@ -86,8 +86,6 @@ export default defineComponent({
 
             this.$router.push(`/document-browser/${routeDocumentType}/` + id)
             this.activeIndex = this.tabs.length
-
-            console.log('TABS: ', this.tabs)
         },
         getRouteDocumentType(item: any) {
             let routeDocumentType = ''
