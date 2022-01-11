@@ -339,17 +339,21 @@ export default defineComponent({
         async getParameterPopupInfo(parameter: iParameter) {
             this.loading = true
             const postData = { label: this.document?.label, parameters: this.getFormattedParameters(), paramId: parameter.urlName, role: this.sessionRole }
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentExeParameters/admissibleValues`, postData).then((response: AxiosResponse<any>) => (this.parameterPopUpData = response.data))
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentExeParameters/admissibleValues`, postData)
+                .then((response: AxiosResponse<any>) => (this.parameterPopUpData = response.data))
+                .catch((error: any) => console.log('ERROR: ', error))
             this.loading = false
         },
         getFormattedParameters() {
             let parameters = [] as any[]
             Object.keys(this.parameters.filterStatus).forEach((key: any) => {
                 const parameter = this.parameters.filterStatus[key]
+                console.log('PARAMETER: ', parameter)
                 if (!parameter.multivalue) {
                     parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
                 } else {
-                    parameters.push({ label: parameter.label, value: parameter.parameterValue, description: parameter.parameterDescription })
+                    parameters.push({ label: parameter.label, value: parameter.parameterValue, description: parameter.parameterDescription ?? '' })
                 }
             })
             return parameters
