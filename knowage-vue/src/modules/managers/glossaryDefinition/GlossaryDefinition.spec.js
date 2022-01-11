@@ -29,14 +29,16 @@ const mockedWords = [
 
 jest.mock('axios')
 
-axios.get.mockImplementation((url) => {
-    switch (url) {
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listWords?Page=1&ItemPerPage=`:
-            return Promise.resolve({ data: mockedWords })
-        default:
-            return Promise.resolve({ data: [] })
-    }
-})
+const $http = {
+    get: axios.get.mockImplementation((url) => {
+        switch (url) {
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listWords?Page=1&ItemPerPage=`:
+                return Promise.resolve({ data: mockedWords })
+            default:
+                return Promise.resolve({ data: [] })
+        }
+    })
+}
 
 const $confirm = {
     require: jest.fn()
@@ -58,6 +60,8 @@ const factory = () => {
                 Card,
                 Dialog,
                 FabButton,
+                GlossaryDefinitionInfoDialog: true,
+                GlossaryDefinitionWordEdit: true,
                 InputText,
                 Listbox,
                 ProgressBar,
@@ -66,7 +70,8 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $confirm,
-                $store
+                $store,
+                $http
             }
         }
     })

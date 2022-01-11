@@ -6,6 +6,7 @@ import FabButton from '@/components/UI/KnFabButton.vue'
 import flushPromises from 'flush-promises'
 import InputText from 'primevue/inputtext'
 import KnHint from '@/components/UI/KnHint.vue'
+import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
 import MeasureDefinition from './MeasureDefinition.vue'
 import ProgressBar from 'primevue/progressbar'
@@ -49,8 +50,14 @@ const mockedMeasures = [
 
 jest.mock('axios')
 
-axios.get.mockImplementation(() => Promise.resolve({ data: mockedMeasures }))
-axios.delete.mockImplementation(() => Promise.resolve())
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: mockedMeasures
+        })
+    ),
+    delete: axios.delete.mockImplementation(() => Promise.resolve())
+}
 
 const $confirm = {
     require: jest.fn()
@@ -78,6 +85,7 @@ const factory = () => {
                 InputText,
                 Listbox,
                 KnHint,
+                KnFabButton,
                 ProgressBar,
                 Toolbar
             },
@@ -85,7 +93,8 @@ const factory = () => {
                 $t: (msg) => msg,
                 $store,
                 $confirm,
-                $router
+                $router,
+                $http
             }
         }
     })
@@ -132,6 +141,8 @@ describe('Measure Definition', () => {
     })
     it('calls the correct route when clicking on the add button', async () => {
         const wrapper = factory()
+
+        await flushPromises()
 
         await wrapper.find('[data-test="new-button"]').trigger('click')
 

@@ -54,6 +54,7 @@ const factory = (filters) => {
             stubs: {
                 Button,
                 InputText,
+                RegistryFilterCard: true,
                 Toolbar
             },
             mocks: {

@@ -122,10 +122,13 @@ angular.module('documentExecutionMasterModule',  [ 'ngMaterial', 'sbiModule','cr
 		}
 
 		//if document is open from documentViewer directive
-		var docViewScope=angular.element(window.frameElement.parentElement).scope();
-		 if(docViewScope!=undefined && docViewScope.closeDocument!=undefined){
-			 visible=true
-		 }
+		if(window.frameElement && window.frameElement.parentElement){
+			var docViewScope=angular.element(window.frameElement.parentElement).scope();
+			if(docViewScope!=undefined && docViewScope.closeDocument!=undefined){
+				visible=true
+			}
+		}
+		 
 		return visible;
 	}
 

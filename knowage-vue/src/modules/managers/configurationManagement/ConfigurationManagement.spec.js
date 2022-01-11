@@ -6,6 +6,7 @@ import ConfigurationManagement from './ConfigurationManagement.vue'
 import InputText from 'primevue/inputtext'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
+import PrimeVue from 'primevue/config'
 
 const mockedConfigurations = [
     {
@@ -31,15 +32,16 @@ const mockedConfigurations = [
     }
 ]
 
-jest.mock('axios', () => ({
-    get: jest.fn(() =>
+jest.mock('axios')
+
+const $http = {
+    get: axios.get.mockImplementation(() =>
         Promise.resolve({
             data: mockedConfigurations
         })
     ),
-    delete: jest.fn(() => Promise.resolve()),
-    post: jest.fn(() => Promise.resolve())
-}))
+    delete: axios.delete.mockImplementation(() => Promise.resolve())
+}
 
 const $confirm = {
     require: jest.fn()
@@ -52,12 +54,13 @@ const factory = () => {
     return mount(ConfigurationManagement, {
         attachToDocument: true,
         global: {
-            plugins: [],
+            plugins: [PrimeVue],
             stubs: { Button, InputText, ProgressBar, Toolbar },
             mocks: {
                 $t: (msg) => msg,
                 $store,
-                $confirm
+                $confirm,
+                $http
             }
         }
     })

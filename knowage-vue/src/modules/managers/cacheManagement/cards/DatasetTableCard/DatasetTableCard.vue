@@ -30,89 +30,88 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { iMeta } from '../../CacheManagement'
-    import Card from 'primevue/card'
-    import Column from 'primevue/column'
-    import DataTable from 'primevue/datatable'
-    import datasetTableCardDescriptor from './DatasetTableCardDescriptor.json'
+import { defineComponent } from 'vue'
+import { iMeta } from '../../CacheManagement'
+import Card from 'primevue/card'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
+import datasetTableCardDescriptor from './DatasetTableCardDescriptor.json'
 
-    export default defineComponent({
-        name: 'dataset-table-card',
-        components: {
-            Card,
-            Column,
-            DataTable
+export default defineComponent({
+    name: 'dataset-table-card',
+    components: {
+        Card,
+        Column,
+        DataTable
+    },
+    props: {
+        datasetMetadataList: {
+            type: Array,
+            required: true
         },
-        props: {
-            datasetMetadataList: {
-                type: Array,
-                required: true
-            },
-            loading: {
-                type: Boolean,
-                required: true
-            }
-        },
-        emits: ['deleted'],
-        data() {
-            return {
-                datasetTableCardDescriptor,
-                datasets: [] as iMeta[]
-            }
-        },
-        computed: {
-            cleanAllDisabled(): boolean {
-                return this.datasets.length === 0
-            }
-        },
-        watch: {
-            datasetMetadataList() {
-                this.loadDatasets()
-            }
-        },
-        created() {
-            this.loadDatasets()
-        },
-        methods: {
-            loadDatasets() {
-                this.datasets = this.datasetMetadataList as iMeta[]
-            },
-            cleanAllConfirm() {
-                this.$confirm.require({
-                    message: this.$t('managers.cacheManagement.cleanAllMessage'),
-                    header: this.$t('common.toast.deleteTitle'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.cleanAll()
-                })
-            },
-            async cleanAll() {
-                await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee').then(() => this.emitDeleteSuccess())
-            },
-            deleteDatasetConfirm(signature: string) {
-                this.$confirm.require({
-                    message: this.$t('common.toast.deleteMessage'),
-                    header: this.$t('common.toast.deleteTitle'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.deleteDataset(signature)
-                })
-            },
-            async deleteDataset(signature: string) {
-                await this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/deleteItems', { namesArray: [signature] }).then(() => this.emitDeleteSuccess())
-            },
-            emitDeleteSuccess() {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.deleteTitle'),
-                    msg: this.$t('common.toast.deleteSuccess')
-                })
-                this.$emit('deleted')
-            }
+        loading: {
+            type: Boolean
         }
-    })
+    },
+    emits: ['deleted'],
+    data() {
+        return {
+            datasetTableCardDescriptor,
+            datasets: [] as iMeta[]
+        }
+    },
+    computed: {
+        cleanAllDisabled(): boolean {
+            return this.datasets.length === 0
+        }
+    },
+    watch: {
+        datasetMetadataList() {
+            this.loadDatasets()
+        }
+    },
+    created() {
+        this.loadDatasets()
+    },
+    methods: {
+        loadDatasets() {
+            this.datasets = this.datasetMetadataList as iMeta[]
+        },
+        cleanAllConfirm() {
+            this.$confirm.require({
+                message: this.$t('managers.cacheManagement.cleanAllMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.cleanAll()
+            })
+        },
+        async cleanAll() {
+            await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee').then(() => this.emitDeleteSuccess())
+        },
+        deleteDatasetConfirm(signature: string) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteDataset(signature)
+            })
+        },
+        async deleteDataset(signature: string) {
+            await this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/deleteItems', { namesArray: [signature] }).then(() => this.emitDeleteSuccess())
+        },
+        emitDeleteSuccess() {
+            this.$store.commit('setInfo', {
+                title: this.$t('common.toast.deleteTitle'),
+                msg: this.$t('common.toast.deleteSuccess')
+            })
+            this.$emit('deleted')
+        }
+    }
+})
 </script>
 
 <style lang="scss" scoped>
-    ::v-deep(.p-toolbar-group-right) {
-        height: 100%;
-    }
+::v-deep(.p-toolbar-group-right) {
+    height: 100%;
+}
 </style>
