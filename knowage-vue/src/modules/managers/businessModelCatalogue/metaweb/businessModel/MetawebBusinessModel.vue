@@ -13,7 +13,7 @@
                 </Toolbar>
                 <div class="kn-relative kn-flex">
                     <div class="kn-height-full kn-width-full kn-absolute">
-                        <DataTable class="p-datatable-sm kn-table metaweb-right-border" :loading="loading" :scrollable="true" scrollHeight="100%" :value="meta.businessModels" @row-click="selectBusinessModel" @rowReorder="onRowReorder" data-test="bm-table">
+                        <DataTable class="p-datatable-sm metaweb-table kn-table metaweb-right-border" :loading="loading" :scrollable="true" scrollHeight="100%" :value="meta.businessModels" @row-click="selectBusinessModel" @rowReorder="onRowReorder" data-test="bm-table">
                             <Column :rowReorder="true" :reorderableColumn="false" />
                             <Column :style="mainDescriptor.style.columnMain">
                                 <template #body="slotProps">
@@ -31,7 +31,7 @@
                     </div>
                 </div>
             </div>
-            <div v-if="meta.businessViews > !0" class="p-d-flex p-flex-column kn-flex">
+            <div v-if="meta.businessViews.length > 0" class="p-d-flex p-flex-column kn-flex">
                 <Toolbar class="kn-toolbar kn-toolbar--default">
                     <template #left>
                         <span>{{ $t('metaweb.businessModel.businessView') }}</span>
@@ -39,7 +39,7 @@
                 </Toolbar>
                 <div class="kn-relative kn-flex">
                     <div class="kn-height-full kn-width-full kn-absolute">
-                        <DataTable class="p-datatable-sm kn-table metaweb-right-border" :loading="loading" :scrollable="true" scrollHeight="100%" :value="meta.businessViews" @row-click="selectBusinessModel" @rowReorder="onRowReorder">
+                        <DataTable class="p-datatable-sm metaweb-table kn-table metaweb-right-border" :loading="loading" :scrollable="true" scrollHeight="100%" :value="meta.businessViews" @row-click="selectBusinessModel" @rowReorder="onRowReorder">
                             <Column :rowReorder="true" :reorderableColumn="false" />
                             <Column :style="mainDescriptor.style.columnMain">
                                 <template #body="slotProps">
@@ -86,14 +86,14 @@
                         </div>
                     </TabPanel>
 
-                    <TabPanel>
+                    <!-- <TabPanel>
                         <template #header>
                             <span>{{ $t('metaweb.businessModel.tabView.calcField') }}</span>
                         </template>
                         <div :style="mainDescriptor.style.absoluteScroll">
                             {{ 'TODO: Functionality not in this sprint.' }}
                         </div>
-                    </TabPanel>
+                    </TabPanel> -->
                     <TabPanel>
                         <template #header>
                             <span>{{ $t('metaweb.businessModel.tabView.inbound') }}</span>
@@ -260,3 +260,8 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss">
+.metaweb-table .p-datatable-thead {
+    display: none !important;
+}
+</style>
