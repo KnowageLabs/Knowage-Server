@@ -96,9 +96,12 @@
                     <span class="p-float-label">
                         <Dropdown class="kn-material-input" v-model="properties['structural.dateformat'].value" :options="properties['structural.dateformat'].propertyType.admissibleValues" @change="updateAttribute('structural.dateformat')">
                             <template #option="slotProps">
-                                <span>{{ slotProps.option }}</span>
-                            </template></Dropdown
-                        >
+                                <span>{{ getFormattedDate(new Date(), slotProps.option) }}</span>
+                            </template>
+                            <template #value="slotProps">
+                                <span>{{ getFormattedDate(new Date(), slotProps.value) }}</span>
+                            </template>
+                        </Dropdown>
                         <label class="kn-material-input-label"> {{ properties['structural.dateformat'].propertyType.name }}</label>
                         <small>{{ properties['structural.datatype'].value === 'TIME' ? properties['structural.format'].propertyType.description : properties['structural.dateformat'].propertyType.description }}</small>
                     </span>
@@ -132,6 +135,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { iBusinessModelColumn } from '../../../../../Metaweb'
+import { formatDate } from '@/helpers/commons/localeHelper'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import MultiSelect from 'primevue/multiselect'
@@ -258,6 +262,10 @@ export default defineComponent({
             }
 
             this.$emit('save', this.attribute)
+        },
+        getFormattedDate(date: any, format: any) {
+            console.log('DATE: ', date, ', FORMAT: ', format)
+            return formatDate(date, format)
         }
     }
 })

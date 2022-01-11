@@ -5,19 +5,19 @@
                 <span>{{ $t('metaweb.physicalModel.misc') }}</span>
             </template>
 
-            <div v-for="(modelInfo, index) in metawebBusinessPropertyListTabDescriptor.businessModelInfo" :key="index">
-                <div class="p-fluid">
+            <div class="p-grid">
+                <div class="p-col-6" v-for="(modelInfo, index) in metawebBusinessPropertyListTabDescriptor.businessModelInfo" :key="index">
                     <div class="p-field">
                         <label :for="modelInfo.name" class="kn-material-input-label"> {{ $t(modelInfo.label) }} </label>
                         <InputText class="kn-material-input" v-model="businessModel[modelInfo.name]" :id="modelInfo.name" :disabled="true" data-test="input-name" />
                     </div>
                 </div>
-            </div>
 
-            <div class="p-fluid" v-if="businessModel.physicalTable && meta">
-                <div class="p-field">
-                    <label class="kn-material-input-label"> {{ $t('metaweb.businessModel.physicalTable') }} </label>
-                    <InputText class="kn-material-input" v-model="meta.physicalModels[businessModel.physicalTable.physicalTableIndex].name" :disabled="true" />
+                <div v-if="businessModel.physicalTable && meta" class="p-col-6">
+                    <div class="p-field">
+                        <label class="kn-material-input-label"> {{ $t('metaweb.businessModel.physicalTable') }} </label>
+                        <InputText class="kn-material-input" v-model="meta.physicalModels[businessModel.physicalTable.physicalTableIndex].name" :disabled="true" />
+                    </div>
                 </div>
             </div>
         </AccordionTab>
@@ -27,38 +27,40 @@
                 <span>{{ categoryKey }}</span>
             </template>
 
-            <div v-for="(prop, index) in categories[categoryKey]" :key="index">
-                <div class="p-fluid" v-if="prop.propertyType.admissibleValues.length !== 0">
-                    <div class="p-field">
-                        <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
-                        <Dropdown class="kn-material-input" v-model="prop.value" :options="prop.propertyType.admissibleValues" @change="updateCategoryValue(prop)" />
+            <div class="p-grid">
+                <div class="p-col-6" v-for="(prop, index) in categories[categoryKey]" :key="index">
+                    <div class="p-fluid" v-if="prop.propertyType.admissibleValues.length !== 0">
+                        <div class="p-field">
+                            <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
+                            <Dropdown class="kn-material-input" v-model="prop.value" :options="prop.propertyType.admissibleValues" @change="updateCategoryValue(prop)" />
+                        </div>
                     </div>
-                </div>
-                <div class="p-fluid" v-if="prop.propertyType.admissibleValues.length === 0 && prop.type !== 'structural.attribute' && prop.type !== 'structural.sqlFilter' && prop.type !== 'behavioural.notEnabledRoles'">
-                    <div class="p-field">
-                        <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
-                        <InputText class="kn-material-input" v-model="prop.value" :disabled="prop.type === 'physical.physicaltable'" @change="updateCategoryValue(prop)" />
+                    <div class="p-fluid" v-if="prop.propertyType.admissibleValues.length === 0 && prop.type !== 'structural.attribute' && prop.type !== 'structural.sqlFilter' && prop.type !== 'behavioural.notEnabledRoles'">
+                        <div class="p-field">
+                            <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
+                            <InputText class="kn-material-input" v-model="prop.value" :disabled="prop.type === 'physical.physicaltable'" @change="updateCategoryValue(prop)" />
+                        </div>
                     </div>
-                </div>
 
-                <div class="p-fluid" v-if="prop.type === 'structural.attribute'">
-                    <div class="p-field">
-                        <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
-                        <Dropdown class="kn-material-input" v-model="prop.value" :options="profileAttributes" @change="updateCategoryValue(prop)" />
+                    <div class="p-fluid" v-if="prop.type === 'structural.attribute'">
+                        <div class="p-field">
+                            <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
+                            <Dropdown class="kn-material-input" v-model="prop.value" :options="profileAttributes" @change="updateCategoryValue(prop)" />
+                        </div>
                     </div>
-                </div>
 
-                <div class="p-fluid" v-if="prop.type === 'behavioural.notEnabledRoles'">
-                    <div class="p-field">
-                        <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
-                        <MultiSelect class="kn-material-input" v-model="prop.value" :options="roleOptions" @change="updateCategoryValue(prop)" />
+                    <div class="p-fluid" v-if="prop.type === 'behavioural.notEnabledRoles'">
+                        <div class="p-field">
+                            <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
+                            <MultiSelect class="kn-material-input" v-model="prop.value" :options="roleOptions" @change="updateCategoryValue(prop)" />
+                        </div>
                     </div>
-                </div>
 
-                <div class="p-fluid" v-if="businessModel.physicalColumn && categoryKey === 'physical'">
-                    <div class="p-field">
-                        <label class="kn-material-input-label"> {{ $t('metaweb.businessModel.physicalColumn') }} </label>
-                        <InputText class="kn-material-input" v-model="businessModel.physicalColumn.name" :disabled="true" />
+                    <div class="p-fluid" v-if="businessModel.physicalColumn && categoryKey === 'physical'">
+                        <div class="p-field">
+                            <label class="kn-material-input-label"> {{ $t('metaweb.businessModel.physicalColumn') }} </label>
+                            <InputText class="kn-material-input" v-model="businessModel.physicalColumn.name" :disabled="true" />
+                        </div>
                     </div>
                 </div>
             </div>

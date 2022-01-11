@@ -6,8 +6,8 @@
                     {{ businessModel?.name }}
                 </template>
                 <template #right>
-                    <Button class="kn-button p-button-text p-m-2" :label="$t('common.close')" @click="closeDialog"></Button>
-                    <Button class="kn-button p-button-text" :label="$t('common.continue')" @click="onContinue"></Button>
+                    <Button class="metaweb-select-dialog-button kn-button p-button-text p-m-2" :label="$t('common.close')" @click="closeDialog"></Button>
+                    <Button class="metaweb-select-dialog-button kn-button p-button-text" :label="$t('common.continue')" @click="onContinue"></Button>
                 </template>
             </Toolbar>
         </template>
@@ -212,5 +212,9 @@ export default defineComponent({
 }
 #metaweb-select-dialog .p-toolbar-group-right {
     height: 100%;
+}
+
+.metaweb-select-dialog-button {
+    font-size: 0.8rem;
 }
 </style>
