@@ -83,78 +83,80 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 				return;
 			}
 
-			List<SbiAttribute> attributesList = initProfileAttributes(config);
-			List<Role> rolesList = initRoles(config);
-			initExtRolesCategory(config);
-			Map<String, Integer> usersLookupMap = initUsers(config);
-			initDefaultAuthorizations(config);
-			initDefaultAuthorizationsRoles(config);
-
 			ISbiUserDAO userDAO = DAOFactory.getSbiUserDAO();
 
-			// finally default users associations
-			List<SourceBean> defaultsUsers = config.getAttributeAsList("DEFAULT_USERS.USER");
-			for (SourceBean defaultUser : defaultsUsers) {
+			if (!userDAO.thereIsAnyUsers()) {
+				List<SbiAttribute> attributesList = initProfileAttributes(config);
+				List<Role> rolesList = initRoles(config);
+				initExtRolesCategory(config);
+				Map<String, Integer> usersLookupMap = initUsers(config);
+				initDefaultAuthorizations(config);
+				initDefaultAuthorizationsRoles(config);
 
-				String userId = (String) defaultUser.getAttribute("userId");
-				String organization = (String) defaultUser.getAttribute("organization");
-				userDAO.setTenant(organization);
-				List<SourceBean> attributes = defaultUser.getAttributeAsList("ATTRIBUTE");
-				if (attributes != null) {
-					for (int i = 0; i < attributes.size(); i++) {
-						SourceBean attribute = attributes.get(i);
-						String name = (String) attribute.getAttribute("name");
-						String value = (String) attribute.getAttribute("value");
-						logger.debug("Setting attribute [" + name + "] of user [" + userId + "] to value [" + value + "]");
-						if (usersLookupMap.get(userId) == null) {
-							logger.debug(
-									"User [" + userId + "] was already stored in the database. The value of attribute [" + name + "] will not be overwritten");
-							continue;
+				// finally default users associations
+				List<SourceBean> defaultsUsers = config.getAttributeAsList("DEFAULT_USERS.USER");
+				for (SourceBean defaultUser : defaultsUsers) {
+
+					String userId = (String) defaultUser.getAttribute("userId");
+					String organization = (String) defaultUser.getAttribute("organization");
+					userDAO.setTenant(organization);
+					List<SourceBean> attributes = defaultUser.getAttributeAsList("ATTRIBUTE");
+					if (attributes != null) {
+						for (int i = 0; i < attributes.size(); i++) {
+							SourceBean attribute = attributes.get(i);
+							String name = (String) attribute.getAttribute("name");
+							String value = (String) attribute.getAttribute("value");
+							logger.debug("Setting attribute [" + name + "] of user [" + userId + "] to value [" + value + "]");
+							if (usersLookupMap.get(userId) == null) {
+								logger.debug(
+										"User [" + userId + "] was already stored in the database. The value of attribute [" + name + "] will not be overwritten");
+								continue;
+							}
+
+							SbiUserAttributes sbiUserAttr = new SbiUserAttributes();
+							sbiUserAttr.setAttributeValue(value);
+
+							Integer attrID = findAttributeId(attributesList, name, organization);
+
+							SbiUserAttributesId sbiUserAttrID = new SbiUserAttributesId();
+							sbiUserAttrID.setId(usersLookupMap.get(userId));// user ID
+							sbiUserAttrID.setAttributeId(attrID.intValue());
+							sbiUserAttr.setId(sbiUserAttrID);
+
+							userDAO.updateSbiUserAttributes(sbiUserAttr);
+
+							logger.debug("Attribute [" + name + "] of user [" + userId + "] succesfully set to value [" + value + "]");
 						}
-
-						SbiUserAttributes sbiUserAttr = new SbiUserAttributes();
-						sbiUserAttr.setAttributeValue(value);
-
-						Integer attrID = findAttributeId(attributesList, name, organization);
-
-						SbiUserAttributesId sbiUserAttrID = new SbiUserAttributesId();
-						sbiUserAttrID.setId(usersLookupMap.get(userId));// user ID
-						sbiUserAttrID.setAttributeId(attrID.intValue());
-						sbiUserAttr.setId(sbiUserAttrID);
-
-						userDAO.updateSbiUserAttributes(sbiUserAttr);
-
-						logger.debug("Attribute [" + name + "] of user [" + userId + "] succesfully set to value [" + value + "]");
 					}
-				}
 
-				List<SourceBean> userroles = defaultUser.getAttributeAsList("ROLE");
-				if (userroles != null) {
-					for (int i = 0; i < userroles.size(); i++) {
-						SourceBean role = userroles.get(i);
-						String name = (String) role.getAttribute("name");
-						logger.debug("Creating association beetween user [" + userId + "] and role [" + name + "]");
-						if (usersLookupMap.get(userId) == null) {
-							logger.debug(
-									"User [" + userId + "] was already stored in the database. The associatino with role [" + name + "] will not be created");
-							continue;
+					List<SourceBean> userroles = defaultUser.getAttributeAsList("ROLE");
+					if (userroles != null) {
+						for (int i = 0; i < userroles.size(); i++) {
+							SourceBean role = userroles.get(i);
+							String name = (String) role.getAttribute("name");
+							logger.debug("Creating association beetween user [" + userId + "] and role [" + name + "]");
+							if (usersLookupMap.get(userId) == null) {
+								logger.debug(
+										"User [" + userId + "] was already stored in the database. The associatino with role [" + name + "] will not be created");
+								continue;
+							}
+
+							SbiExtUserRoles sbiExtUserRole = new SbiExtUserRoles();
+							SbiExtUserRolesId id = new SbiExtUserRolesId();
+
+							Integer extRoleId = findRoleId(rolesList, name, organization);
+
+							int userIdInt = usersLookupMap.get(userId).intValue();
+							id.setExtRoleId(extRoleId);// role Id
+							id.setId(userIdInt);// user ID
+							sbiExtUserRole.getCommonInfo().setOrganization(organization);
+							;
+							sbiExtUserRole.setId(id);
+
+							userDAO.updateSbiUserRoles(sbiExtUserRole);
+
+							logger.debug("Association beetween user [" + userId + "] and role [" + name + "] succesfully created");
 						}
-
-						SbiExtUserRoles sbiExtUserRole = new SbiExtUserRoles();
-						SbiExtUserRolesId id = new SbiExtUserRolesId();
-
-						Integer extRoleId = findRoleId(rolesList, name, organization);
-
-						int userIdInt = usersLookupMap.get(userId).intValue();
-						id.setExtRoleId(extRoleId);// role Id
-						id.setId(userIdInt);// user ID
-						sbiExtUserRole.getCommonInfo().setOrganization(organization);
-						;
-						sbiExtUserRole.setId(id);
-
-						userDAO.updateSbiUserRoles(sbiExtUserRole);
-
-						logger.debug("Association beetween user [" + userId + "] and role [" + name + "] succesfully created");
 					}
 				}
 			}

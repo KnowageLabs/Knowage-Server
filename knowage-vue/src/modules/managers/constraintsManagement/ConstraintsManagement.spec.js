@@ -80,16 +80,19 @@ const customMocks = [
 
 jest.mock('axios')
 
-axios.get.mockImplementation((url) => {
-    switch (url) {
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/predefinedChecks`:
-            return Promise.resolve({ data: predefinedMocks })
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/customChecks`:
-            return Promise.resolve({ data: customMocks })
-        default:
-            return Promise.resolve({ data: [] })
-    }
-})
+const $http = {
+    get: axios.get.mockImplementation((url) => {
+        switch (url) {
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/predefinedChecks`:
+                return Promise.resolve({ data: predefinedMocks })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/customChecks`:
+                return Promise.resolve({ data: customMocks })
+            default:
+                return Promise.resolve({ data: [] })
+        }
+    }),
+    post: axios.post.mockImplementation(() => Promise.resolve())
+}
 
 axios.post.mockImplementation(() => Promise.resolve())
 
@@ -119,7 +122,8 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $store,
-                $confirm
+                $confirm,
+                $http
             }
         }
     })

@@ -80,7 +80,13 @@ const mockedJobs = [
 
 jest.mock('axios')
 
-axios.get.mockImplementation(() => Promise.resolve({ data: { root: mockedJobs } }))
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: { root: mockedJobs }
+        })
+    )
+}
 
 const router = createRouter({
     history: createWebHistory(),
@@ -144,7 +150,8 @@ const factory = () => {
                 $store,
                 $confirm,
                 $router,
-                $route
+                $route,
+                $http
             }
         }
     })

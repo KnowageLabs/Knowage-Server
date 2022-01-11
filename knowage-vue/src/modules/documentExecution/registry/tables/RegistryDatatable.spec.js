@@ -9,6 +9,7 @@ import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import RegistryDatatable from './RegistryDatatable.vue'
+import Toolbar from 'primevue/toolbar'
 
 const mockedColumns = [
     {
@@ -202,7 +203,7 @@ const mockedRows = [
         florist: true,
         coffee_bar: false,
         video_store: false,
-        first_opened_date: '',
+        first_opened_date: '12-25-1995',
         store_sqft: 35345,
         sales_city: 'Colma'
     },
@@ -216,7 +217,7 @@ const mockedRows = [
         florist: true,
         coffee_bar: true,
         video_store: false,
-        first_opened_date: '',
+        first_opened_date: '12-25-1995',
         store_sqft: 241241,
         sales_city: 'Altadena'
     },
@@ -230,7 +231,7 @@ const mockedRows = [
         florist: false,
         coffee_bar: true,
         video_store: false,
-        first_opened_date: '',
+        first_opened_date: '12-25-1995',
         store_sqft: 20319,
         sales_city: 'Guadalajara'
     },
@@ -244,7 +245,7 @@ const mockedRows = [
         florist: true,
         coffee_bar: false,
         video_store: false,
-        first_opened_date: '2021-08-09 15:57:40.0',
+        first_opened_date: '12-25-1995',
         store_sqft: 30251,
         sales_city: 'Acapulco'
     },
@@ -258,7 +259,7 @@ const mockedRows = [
         florist: true,
         coffee_bar: true,
         video_store: true,
-        first_opened_date: '',
+        first_opened_date: '12-25-1995',
         store_sqft: 30584,
         sales_city: 'Hidalgo'
     }
@@ -305,7 +306,8 @@ const factory = (rows) => {
                 DataTable,
                 KnFabButton,
                 Dropdown,
-                InputText
+                InputText,
+                Toolbar
             },
             mocks: {
                 $t: (msg) => msg

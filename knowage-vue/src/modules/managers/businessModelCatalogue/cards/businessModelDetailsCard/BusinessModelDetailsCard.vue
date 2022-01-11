@@ -243,7 +243,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { iBusinessModel } from '../../BusinessModelCatalogue'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import { AxiosResponse } from 'axios'
@@ -287,8 +287,7 @@ export default defineComponent({
             required: true
         },
         user: {
-            type: Object,
-            required: true
+            type: Object as PropType<Object | null>
         },
         toGenerate: {
             type: Boolean
@@ -315,7 +314,7 @@ export default defineComponent({
     },
     computed: {
         metaModelUrl(): any {
-            return `/knowagemeta/restful-services/1.0/pages/edit?datasourceId=${this.businessModel.dataSourceId}&user_id=${this.user.userUniqueIdentifier}&bmId=${this.businessModel.id}&bmName=${this.businessModel.name}`
+            return `/knowagemeta/restful-services/1.0/pages/edit?datasourceId=${this.businessModel.dataSourceId}&user_id=${(this.user as any)?.userUniqueIdentifier}&bmId=${this.businessModel.id}&bmName=${this.businessModel.name}`
         }
     },
     created() {

@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import axios from 'axios'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import Card from 'primevue/card'
@@ -129,12 +130,27 @@ const mockedSelectedDatasetVersions = [
     }
 ]
 
+jest.mock('axios')
+
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: []
+        })
+    ),
+    delete: axios.delete.mockImplementation(() => Promise.resolve())
+}
+
+const $confirm = {
+    require: jest.fn()
+}
+
 const $store = {
     commit: jest.fn()
 }
 
 const $router = {
-    replace: jest.fn()
+    push: jest.fn()
 }
 
 const factory = (scopeTypes, categoryTypes, selectedDataset, selectedDatasetVersions, loading) => {
@@ -162,7 +178,9 @@ const factory = (scopeTypes, categoryTypes, selectedDataset, selectedDatasetVers
             mocks: {
                 $t: (msg) => msg,
                 $store,
-                $router
+                $confirm,
+                $router,
+                $http
             }
         }
     })
