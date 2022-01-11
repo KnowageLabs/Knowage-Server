@@ -24,7 +24,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.plugins.providers.html.View;
@@ -56,14 +55,14 @@ public class WhatIfEditStartAction extends WhatIfEngineAbstractStartAction {
 
 	@GET
 	@Path("/edit")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces("text/html")
 	public View startActionGet() {
 		return startAction();
 	}
 
 	@POST
 	@Path("/edit")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces("text/html")
 	public View startActionPost() {
 		return startAction();
 	}

@@ -108,26 +108,27 @@ const mockedRole = {
 
 jest.mock('axios')
 
-axios.get.mockImplementation((url) => {
-    switch (url) {
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=BM_CATEGORY`:
-            return Promise.resolve({ data: mockedBuissnesModelList })
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=CATEGORY_TYPE`:
-            return Promise.resolve({ data: mockedDataSetList })
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=KPI_KPI_CATEGORY`:
-            return Promise.resolve({ data: mockedKpiCategoriesList })
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=ROLE_TYPE`:
-            return Promise.resolve({ data: mockedRoleTypes })
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles/categories/1`:
-            return Promise.resolve({ data: mockedRoleCategories })
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'authorizations':
-            return Promise.resolve({ data: { root: mockedAuthorizations } })
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles/1`:
-            return Promise.resolve({ data: mockedRole })
-    }
-})
-
-axios.post.mockImplementation(() => Promise.resolve())
+const $http = {
+    get: axios.get.mockImplementation((url) => {
+        switch (url) {
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=BM_CATEGORY`:
+                return Promise.resolve({ data: mockedBuissnesModelList })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=CATEGORY_TYPE`:
+                return Promise.resolve({ data: mockedDataSetList })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=KPI_KPI_CATEGORY`:
+                return Promise.resolve({ data: mockedKpiCategoriesList })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=ROLE_TYPE`:
+                return Promise.resolve({ data: mockedRoleTypes })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles/categories/1`:
+                return Promise.resolve({ data: mockedRoleCategories })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'authorizations':
+                return Promise.resolve({ data: { root: mockedAuthorizations } })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles/1`:
+                return Promise.resolve({ data: mockedRole })
+        }
+    }),
+    post: axios.post.mockImplementation(() => Promise.resolve())
+}
 
 const $store = {
     commit: jest.fn()
@@ -157,7 +158,8 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $store,
-                $router
+                $router,
+                $http
             }
         }
     })
@@ -250,7 +252,7 @@ describe('Roles Management Tab View', () => {
         expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/1', { ...mockedRole, roleMetaModelCategories: [{ categoryId: 172 }, { categoryId: 152 }, { categoryId: 256 }] })
         expect($store.commit).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('inserted')
-        expect($router.replace).toHaveBeenCalledWith('/roles')
+        expect($router.replace).toHaveBeenCalledWith('/roles-management')
     })
 
     it('shows success info if new data is saved', async () => {
@@ -269,6 +271,6 @@ describe('Roles Management Tab View', () => {
         expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/', { ...mockedRole, roleMetaModelCategories: [{ categoryId: 172 }, { categoryId: 152 }, { categoryId: 256 }] })
         expect($store.commit).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('inserted')
-        expect($router.replace).toHaveBeenCalledWith('/roles')
+        expect($router.replace).toHaveBeenCalledWith('/roles-management')
     })
 })

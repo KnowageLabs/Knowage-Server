@@ -103,6 +103,7 @@
 					WEB_SOCKET.send(JSON.stringify(this.selectedNews))
 					this.$router.replace('/news-management')
 				})
+				.catch(() => {})
 			},
 			setDirty() {
 				this.touched = true

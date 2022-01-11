@@ -62,7 +62,7 @@ export default defineComponent({
             return true
         },
         buttonDisabled(): any {
-            if (this.selectedAlert.jsonOptions?.actions.length === 0 || !this.selectedAlert.name || !this.selectedAlert.alertListener) return true
+            if (this.selectedAlert.jsonOptions?.actions?.length === 0 || !this.selectedAlert.name || !this.selectedAlert.alertListener) return true
             return false
         }
     },
@@ -124,7 +124,7 @@ export default defineComponent({
                     }
 
                     if (this.selectedAlert.jsonOptions) {
-                        this.selectedAlert.jsonOptions.actions = this.selectedAlert.jsonOptions.actions.map((action: any) => {
+                        this.selectedAlert.jsonOptions.actions = this.selectedAlert.jsonOptions.actions?.map((action: any) => {
                             return {
                                 jsonActionParameters: JSON.parse(action.jsonActionParameters),
                                 idAction: action.idAction,

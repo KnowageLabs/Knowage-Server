@@ -18,6 +18,4 @@ jobs:
           days-before-close: 5
           # Exclude dependabot PRs
           exempt-pr-labels: 'dependencies'
-          # 
-          # operations-per-run: 30
-          operations-per-run: 60
+          operations-per-run: 30
