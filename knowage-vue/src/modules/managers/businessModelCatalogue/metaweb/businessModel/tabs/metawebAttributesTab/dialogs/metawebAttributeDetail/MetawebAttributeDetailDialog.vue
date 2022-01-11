@@ -264,7 +264,6 @@ export default defineComponent({
             this.$emit('save', this.attribute)
         },
         getFormattedDate(date: any, format: any) {
-            console.log('DATE: ', date, ', FORMAT: ', format)
             return formatDate(date, format)
         }
     }
