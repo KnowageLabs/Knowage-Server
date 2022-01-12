@@ -27,12 +27,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BigIntegerNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.DecimalNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.LongNode;
@@ -47,6 +48,8 @@ import com.fasterxml.jackson.databind.node.TextNode;
 public class JSONObject extends AbstractJSONObject implements ICommonObject, Serializable {
 
 	private static final long serialVersionUID = -6237508419256769078L;
+
+	private static Logger logger = Logger.getLogger(JSONObject.class);
 
 	private ObjectNode rootNode;
 
@@ -129,6 +132,21 @@ public class JSONObject extends AbstractJSONObject implements ICommonObject, Ser
 		Set keys = map.keySet();
 		for (Object key : keys) {
 			this.put((String) key, map.get(key));
+		}
+	}
+
+	/**
+	 * This method is used if you want to keep null-valued properties in the JSONObject
+	 *
+	 * @param map
+	 * @param keepNullValues
+	 * @throws JSONException
+	 */
+	public JSONObject(Map map, boolean keepNullValues) throws JSONException {
+		this();
+		Set keys = map.keySet();
+		for (Object key : keys) {
+			this.put((String) key, map.get(key), keepNullValues);
 		}
 	}
 
@@ -392,10 +410,8 @@ public class JSONObject extends AbstractJSONObject implements ICommonObject, Ser
 				} else if (node instanceof ObjectNode) {
 					ObjectNode v = ((ObjectNode) node);
 					value = new JSONObject(v);
-				} else if (node instanceof DecimalNode) {
-					value = ((DecimalNode) node).decimalValue();
 				} else {
-					System.out.println(node.getClass().getName());
+					logger.debug(node.getClass().getName());
 				}
 			}
 		} catch (Throwable t) {
@@ -484,7 +500,7 @@ public class JSONObject extends AbstractJSONObject implements ICommonObject, Ser
 	}
 
 	/**
-	 * Put a key/value pair in the JSONObject. If the value is null, then the key will NOT be removed from the JSONObject if it is present.
+	 * Put a key/value pair in the JSONObject. If the value is null, then the key will be removed from the JSONObject if it is present.
 	 *
 	 * @param key   A key string.
 	 * @param value An object which is the value. It should be of one of these types: Boolean, Double, Integer, JSONArray, JSONObject, Long, String, or the
@@ -496,38 +512,99 @@ public class JSONObject extends AbstractJSONObject implements ICommonObject, Ser
 		if (key == null) {
 			throw new JSONException("Null key");
 		}
+		if (value != null) {
+			Object wrappedValue = JacksonWrapper.wrap(value);
+			if (wrappedValue instanceof Byte) {
+				rootNode.put(key, (Byte) wrappedValue);
+			} else if (wrappedValue instanceof Character) {
+				rootNode.put(key, (Character) wrappedValue);
+			} else if (wrappedValue instanceof Short) {
+				rootNode.put(key, (Short) wrappedValue);
+			} else if (wrappedValue instanceof Integer) {
+				rootNode.put(key, (Integer) wrappedValue);
+			} else if (wrappedValue instanceof Long) {
+				rootNode.put(key, (Long) wrappedValue);
+			} else if (wrappedValue instanceof Boolean) {
+				rootNode.put(key, (Boolean) wrappedValue);
+			} else if (wrappedValue instanceof Float) {
+				rootNode.put(key, (Float) wrappedValue);
+			} else if (wrappedValue instanceof Double) {
+				rootNode.put(key, (Double) wrappedValue);
+			} else if (wrappedValue instanceof BigDecimal) {
+				rootNode.put(key, (BigDecimal) wrappedValue);
+			} else if (wrappedValue instanceof BigInteger) {
+				rootNode.put(key, (BigInteger) wrappedValue);
+			} else if (wrappedValue instanceof String) {
+				rootNode.put(key, (String) wrappedValue);
+			} else if (wrappedValue instanceof JSONObject) {
+				ObjectNode node = ((JSONObject) wrappedValue).getWrappedObject();
+				rootNode.put(key, node);
+			} else if (wrappedValue instanceof JSONArray) {
+				ArrayNode node = ((JSONArray) wrappedValue).getWrappedObject();
+				rootNode.put(key, node);
+			} else if (wrappedValue == NullNode.instance) {
+				rootNode.put(key, NullNode.instance);
+			}
+		} else {
+			this.remove(key);
+		}
 
-		Object wrappedValue = JacksonWrapper.wrap(value);
-		if (wrappedValue instanceof Byte) {
-			rootNode.put(key, (Byte) wrappedValue);
-		} else if (wrappedValue instanceof Character) {
-			rootNode.put(key, (Character) wrappedValue);
-		} else if (wrappedValue instanceof Short) {
-			rootNode.put(key, (Short) wrappedValue);
-		} else if (wrappedValue instanceof Integer) {
-			rootNode.put(key, (Integer) wrappedValue);
-		} else if (wrappedValue instanceof Long) {
-			rootNode.put(key, (Long) wrappedValue);
-		} else if (wrappedValue instanceof Boolean) {
-			rootNode.put(key, (Boolean) wrappedValue);
-		} else if (wrappedValue instanceof Float) {
-			rootNode.put(key, (Float) wrappedValue);
-		} else if (wrappedValue instanceof Double) {
-			rootNode.put(key, (Double) wrappedValue);
-		} else if (wrappedValue instanceof BigDecimal) {
-			rootNode.put(key, (BigDecimal) wrappedValue);
-		} else if (wrappedValue instanceof BigInteger) {
-			rootNode.put(key, (BigInteger) wrappedValue);
-		} else if (wrappedValue instanceof String) {
-			rootNode.put(key, (String) wrappedValue);
-		} else if (wrappedValue instanceof JSONObject) {
-			ObjectNode node = ((JSONObject) wrappedValue).getWrappedObject();
-			rootNode.put(key, node);
-		} else if (wrappedValue instanceof JSONArray) {
-			ArrayNode node = ((JSONArray) wrappedValue).getWrappedObject();
-			rootNode.put(key, node);
-		} else if (wrappedValue == NullNode.instance) {
-			rootNode.put(key, NullNode.instance);
+		return this;
+	}
+
+	/**
+	 * This method is used if you want to keep null-valued properties in the JSONObject
+	 *
+	 * @param key
+	 * @param value
+	 * @param keepNullValues
+	 * @return
+	 * @throws JSONException
+	 */
+
+	public JSONObject put(String key, Object value, boolean keepNullValues) throws JSONException {
+		if (key == null) {
+			throw new JSONException("Null key");
+		}
+		if (value != null) {
+			Object wrappedValue = JacksonWrapper.wrap(value, keepNullValues);
+			if (wrappedValue instanceof Byte) {
+				rootNode.put(key, (Byte) wrappedValue);
+			} else if (wrappedValue instanceof Character) {
+				rootNode.put(key, (Character) wrappedValue);
+			} else if (wrappedValue instanceof Short) {
+				rootNode.put(key, (Short) wrappedValue);
+			} else if (wrappedValue instanceof Integer) {
+				rootNode.put(key, (Integer) wrappedValue);
+			} else if (wrappedValue instanceof Long) {
+				rootNode.put(key, (Long) wrappedValue);
+			} else if (wrappedValue instanceof Boolean) {
+				rootNode.put(key, (Boolean) wrappedValue);
+			} else if (wrappedValue instanceof Float) {
+				rootNode.put(key, (Float) wrappedValue);
+			} else if (wrappedValue instanceof Double) {
+				rootNode.put(key, (Double) wrappedValue);
+			} else if (wrappedValue instanceof BigDecimal) {
+				rootNode.put(key, (BigDecimal) wrappedValue);
+			} else if (wrappedValue instanceof BigInteger) {
+				rootNode.put(key, (BigInteger) wrappedValue);
+			} else if (wrappedValue instanceof String) {
+				rootNode.put(key, (String) wrappedValue);
+			} else if (wrappedValue instanceof JSONObject) {
+				ObjectNode node = ((JSONObject) wrappedValue).getWrappedObject();
+				rootNode.put(key, node);
+			} else if (wrappedValue instanceof JSONArray) {
+				ArrayNode node = ((JSONArray) wrappedValue).getWrappedObject();
+				rootNode.put(key, node);
+			} else if (wrappedValue == NullNode.instance) {
+				rootNode.put(key, NullNode.instance);
+			}
+		} else {
+			if (keepNullValues) {
+				rootNode.put(key, NullNode.instance);
+			} else {
+				this.remove(key);
+			}
 		}
 
 		return this;
