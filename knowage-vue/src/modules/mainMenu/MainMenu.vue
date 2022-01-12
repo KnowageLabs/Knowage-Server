@@ -149,6 +149,7 @@ export default defineComponent({
             if (item.to && event.navigate) {
                 event.navigate(event.originalEvent)
             }
+            if (this.adminMenuOpened) this.adminMenuOpened = false
         },
         toggleProfile() {
             this.showProfileMenu = !this.showProfileMenu
