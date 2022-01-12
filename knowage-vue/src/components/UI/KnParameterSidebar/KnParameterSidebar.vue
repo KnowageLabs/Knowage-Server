@@ -106,7 +106,7 @@
                     <div class="p-d-flex p-flex-row">
                         <i class="pi pi-external-link kn-cursor-pointer p-mr-2" @click="openPopupDialog(parameter)"></i>
                         <div>
-                            <Chip v-for="(parameterValue, index) in parameter.parameterValue" :key="index">{{ parameterValue.value }}</Chip>
+                            <Chip v-for="(parameterValue, index) in parameter.parameterValue" :key="index">{{ parameterValue.description }}</Chip>
                         </div>
                     </div>
                 </div>
@@ -125,7 +125,7 @@
                     <div class="p-d-flex p-flex-row">
                         <i class="pi pi-external-link kn-cursor-pointer p-mr-2" @click="openTreeDialog(parameter)"></i>
                         <div>
-                            <Chip v-for="(parameterValue, index) in parameter.parameterValue" :key="index">{{ parameterValue.value }}</Chip>
+                            <Chip v-for="(parameterValue, index) in parameter.parameterValue" :key="index">{{ parameterValue.description }}</Chip>
                         </div>
                     </div>
                 </div>
