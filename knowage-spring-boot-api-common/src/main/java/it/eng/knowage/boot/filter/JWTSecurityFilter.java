@@ -72,11 +72,14 @@ public class JWTSecurityFilter implements Filter {
 			String userToken = "";
 			String authorizationHeaderName = ConfigSingleton.getInstance().getAuthorizationHeaderName();
 
-			try {
-				userToken = httpRequest.getHeader(authorizationHeaderName);
-			} catch (Exception e) {
-				LOGGER.error("Impossible to get Header Authentication " + authorizationHeaderName);
-				throw new KnowageRuntimeException("Impossible to get Header Authentication " + authorizationHeaderName, e);
+			LOGGER.info("Looking for HTTP header with name " + authorizationHeaderName);
+			userToken = httpRequest.getHeader(authorizationHeaderName);
+
+			// Fallback to a query parameter with the same name of the HTTP header
+			if (userToken == null) {
+				LOGGER.warn("Looking for user to token on query parameter");
+				LOGGER.info("Looking for query parameter with name " + authorizationHeaderName);
+				userToken = httpRequest.getParameter(authorizationHeaderName);
 			}
 
 			if (userToken == null) {
