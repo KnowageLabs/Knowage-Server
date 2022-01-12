@@ -617,6 +617,11 @@
 		description="Time period of validity of records into SBI_WS_EVENT in seconds"
 		isActive="true" valueCheck="31536000" valueType="NUM"
 		category="GENERIC_CONFIGURATION" />
-	
+
+	<CONFIG label="KNOWAGE.DATAPREP.LIVY_URL" name="KNOWAGE.DATAPREP.LIVY_HOST"
+		description="The URL where Apache Livy is listening"
+		isActive="true" valueCheck="http://localhost:8998" valueType="STRING"
+		category="DATA_PREPARATION" />
+
 </CONFIGS>
 

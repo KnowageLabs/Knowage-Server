@@ -25,7 +25,8 @@ import java.nio.file.Paths;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
-import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
+import it.eng.knowage.boot.error.KnowageRuntimeException;
+import it.eng.knowage.boot.utils.ContextPropertiesConfig;
 import it.eng.knowage.knowageapi.error.PathTraversalAttackException;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
 

@@ -61,6 +61,13 @@
 	</dependencyManagement>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-spring-boot-api-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web-services</artifactId>
@@ -69,6 +76,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-json</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-classic</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -138,12 +151,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.auth0</groupId>
-			<artifactId>java-jwt</artifactId>
-			<version>3.3.0</version>
-		</dependency>
-
-		<dependency>
 			<groupId>commons-validator</groupId>
 			<artifactId>commons-validator</artifactId>
 			<version>1.1.4</version>
@@ -185,6 +192,17 @@
 			<version>4.6.0.Final</version>
 		</dependency>
 		
+		<!--
+			Fixes:
+				SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+				SLF4J: Defaulting to no-operation (NOP) logger implementation
+				SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+		 -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+		</dependency>
+
 		<!-- 
 			   ____        _          __             _            _       
 			  / __ \      | |        / _|           | |          | |      
@@ -195,6 +213,15 @@
 			                  __/ |                                       
 			                 |___/                                        
 		 -->
+
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-spring-boot-api-common</artifactId>
+			<version>${project.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter</artifactId>

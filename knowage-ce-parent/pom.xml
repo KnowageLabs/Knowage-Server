@@ -120,6 +120,7 @@
 		<module>../knowagedatabasescripts</module>
 		<module>../knowage-api</module>
 		<module>../knowage-vue</module>
+		<module>../knowage-spring-boot-api-common</module>
 	</modules>
 
 	<build>

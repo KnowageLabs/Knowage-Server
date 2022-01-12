@@ -17,7 +17,6 @@
  */
 package it.eng.knowage.knowageapi;
 
-import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -30,7 +29,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.transaction.ChainedTransactionManager;
@@ -39,7 +37,7 @@ import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-import it.eng.knowage.knowageapi.context.BusinessRequestContext;
+import it.eng.knowage.boot.context.BusinessRequestContext;
 import it.eng.knowage.knowageapi.service.FunctionCatalogAPI;
 import it.eng.knowage.knowageapi.service.impl.FunctionCatalogAPIImplTest;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
@@ -137,12 +135,6 @@ public class KnowageApiConfigurationTest {
 	@Bean
 	public FunctionCatalogAPI functionCatalogAPI() {
 		return new FunctionCatalogAPIImplTest();
-	}
-
-	@Lazy
-	@Bean
-	public SecurityServiceFactory securityService() throws NamingException, MalformedURLException {
-		return new SecurityServiceFactoryTest();
 	}
 
 	@Bean(name = "multipartResolver")

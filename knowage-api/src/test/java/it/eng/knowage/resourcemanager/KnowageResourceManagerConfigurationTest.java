@@ -17,9 +17,9 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import it.eng.knowage.knowageapi.SecurityServiceFactory;
-import it.eng.knowage.knowageapi.SecurityServiceFactoryTest;
-import it.eng.knowage.knowageapi.context.BusinessRequestContext;
+import it.eng.knowage.boot.context.BusinessRequestContext;
+import it.eng.knowage.boot.factory.SecurityServiceFactory;
+import it.eng.knowage.boot.factory.SecurityServiceFactoryTest;
 import it.eng.knowage.knowageapi.service.FunctionCatalogAPI;
 import it.eng.knowage.knowageapi.service.impl.FunctionCatalogAPIImplTest;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
