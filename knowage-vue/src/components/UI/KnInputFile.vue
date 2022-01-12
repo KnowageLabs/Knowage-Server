@@ -1,7 +1,7 @@
 <template>
     <div :class="getVisibility">
         <span :v-if="label"> {{ label }} </span>
-        <input ref="inputFile" id="inputFile" type="file" @change="changeFunction" :accept="accept" />
+        <input ref="inputFile" :id="id" type="file" @change="changeFunction" :accept="accept" />
         <label for="inputFile">
             <i class="pi pi-upload" />
         </label>
@@ -18,7 +18,8 @@ export default defineComponent({
         changeFunction: { type: Function },
         label: String,
         visibility: Boolean,
-        triggerInput: Boolean
+        triggerInput: Boolean,
+        id: String
     },
     computed: {
         getVisibility(): String {
@@ -35,6 +36,12 @@ export default defineComponent({
                     elem.dispatchEvent(evt)
                 }
             }
+        }
+    },
+    methods: {
+        resetInput() {
+            const temp = this.$refs['inputFile'] as any
+            temp.value = ''
         }
     }
 })

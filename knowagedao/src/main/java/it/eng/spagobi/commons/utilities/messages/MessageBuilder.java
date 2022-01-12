@@ -175,7 +175,10 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 				HttpServletRequest request = (HttpServletRequest) obj;
 				Locale reqLocale = request.getLocale();
 				String language = reqLocale.getLanguage();
-				String country = GeneralUtilities.getCountry(language);
+				String country = reqLocale.getCountry();
+				if (StringUtils.isBlank(country)) {
+					country = GeneralUtilities.getCountry(language);
+				}
 				browserLocale = new Locale(language, country);
 
 			}

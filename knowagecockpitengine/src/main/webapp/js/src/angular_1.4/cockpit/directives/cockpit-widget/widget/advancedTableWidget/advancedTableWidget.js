@@ -192,7 +192,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								if(variableUsage.action == 'hide' && eval(escapeIfString(variableValue) + variableUsage.condition + escapeIfString(variableUsage.value))) tempCol.hide = true;
 								if(variableUsage.action == 'header' && variableValue) {
 									tempCol.headerName = variableValue;
-									tempCol.headerTooltip = tempCol.headerName;
+									if(!tempCol.headerTooltip) tempCol.headerTooltip = tempCol.headerName;
 								}
 							}
 						}

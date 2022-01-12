@@ -10,7 +10,7 @@
             <div>
                 <div class="profile">
                     <button class="p-link" @click="toggleProfile" v-tooltip="user && user.fullName">
-                        <img alt="Profile" class="profile-image" :src="getGravatarSrc(user)" />
+                        <img alt="Profile" class="profile-image" :src="getProfileImage(user)" />
                         <span v-if="user" class="profile-name">{{ user.fullName }}</span>
                         <i class="pi pi-fw pi-chevron-down"></i>
                         <span class="profile-role">Marketing</span>
@@ -56,7 +56,6 @@
     import { AxiosResponse } from 'axios'
     import DownloadsDialog from '@/modules/mainMenu/dialogs/DownloadsDialog/DownloadsDialog.vue'
     import { IMenuItem } from '@/modules/mainMenu/MainMenu'
-
     export default defineComponent({
         name: 'Knmenu',
         components: {
@@ -101,11 +100,8 @@
             isItemToDisplay(item) {
                 if (item.conditionedView) {
                     if (item.conditionedView === 'downloads' && this.downloads && this.downloads.count.total > 0) return true
-
                     if (item.conditionedView === 'news' && this.news && this.news.count.total > 0) return true
-
                     if (item.conditionedView === 'roleSelection' && this.user && this.user.roles.length > 1) return true
-
                     return false
                 } else {
                     return true
@@ -133,8 +129,9 @@
             toggleProfile() {
                 this.showProfileMenu = !this.showProfileMenu
             },
-            getGravatarSrc(user) {
-                if (user && user.attributes && user.attributes.email) return getGravatar(user.attributes.email)
+            getProfileImage(user) {
+                if (user && user.organizationImageb64) return user.organizationImageb64
+                else if (user && user.attributes && user.attributes.email) return getGravatar(user.attributes.email)
                 else return getGravatar('knowage@eng.it')
             },
             updateNewsAndDownload() {
@@ -146,7 +143,6 @@
                         } else if (menu.conditionedView === 'news') {
                             menu.visible = this.news.count.total > 0
                         }
-
                         menu.badge = this.getBadgeValue(menu)
                     }
                 }
@@ -161,13 +157,18 @@
             },
             findHomePage(dynMenu) {
                 let toRet = undefined
-
                 for (var idx in dynMenu) {
                     let menu = dynMenu[idx]
-
-                    if (menu.to || menu.url) return menu
+                    if (this.user.sessionRole && menu.roles.includes(this.user.sessionRole) && (menu.to || menu.url)) return menu
+                    if (!this.user.sessionRole) {
+                        for (var i = 0; i < this.user.roles.length; i++) {
+                            let element = this.user.roles[i]
+                            if (menu.roles.includes(element) && (menu.to || menu.url)) {
+                                return menu
+                            }
+                        }
+                    }
                 }
-
                 return toRet
             }
         },
@@ -178,15 +179,12 @@
             if (localStorage.getItem('locale')) {
                 localObject = { locale: localStorage.getItem('locale') || this.$i18n.fallbackLocale.toString() }
             }
-
             localObject.locale = localObject.locale.replaceAll('_', '-')
-
             // script handling
             let splittedLocale = localObject.locale.split('-')
             if (splittedLocale.length > 2) {
                 localObject.locale = splittedLocale[0] + '-' + splittedLocale[2].replaceAll('#', '') + '-' + splittedLocale[1]
             }
-
             await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale))
                 .then((response: AxiosResponse<any>) => {
@@ -197,27 +195,21 @@
                         })
                         return childItems.length > 0
                     })
-
                     let responseCommonUserFunctionalities = response.data.commonUserFunctionalities
                     for (var index in responseCommonUserFunctionalities) {
                         let item = responseCommonUserFunctionalities[index]
                         item.visible = this.isItemToDisplay(item)
-
                         this.commonUserFunctionalities.push(item)
                     }
-
                     let responseAllowedUserFunctionalities = response.data.allowedUserFunctionalities
                     for (var idx in responseAllowedUserFunctionalities) {
                         let item = responseAllowedUserFunctionalities[idx]
                         item.visible = this.isItemToDisplay(item)
-
                         this.allowedUserFunctionalities.push(item)
                     }
-
                     this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities.sort((el1, el2) => {
                         return el1.prog - el2.prog
                     })
-
                     if (this.dynamicUserFunctionalities.length > 0) {
                         let homePage = this.findHomePage(this.dynamicUserFunctionalities) || {}
                         if (homePage && Object.keys(homePage).length !== 0) {
@@ -243,10 +235,16 @@
             })
         },
         watch: {
-            downloads() {
+            downloads(newDownload, oldDownload) {
+                if (oldDownload != this.downloads) {
+                    this.downloads = newDownload
+                }
                 this.updateNewsAndDownload()
             },
-            news() {
+            news(newNews, oldNews) {
+                if (oldNews != this.news) {
+                    this.news = newNews
+                }
                 this.updateNewsAndDownload()
             }
         }
@@ -260,7 +258,6 @@
         transition: max-height 1s ease-in-out;
         max-height: 500px;
     }
-
     .slide-down-enter-from,
     .slide-down-leave-to {
         max-height: 0;
@@ -300,7 +297,6 @@
         .profile-menu {
             border-bottom: 1px solid lighten($mainmenu-background-color, 10%);
         }
-
         .layout-menu {
             margin: 0;
             padding: 0;

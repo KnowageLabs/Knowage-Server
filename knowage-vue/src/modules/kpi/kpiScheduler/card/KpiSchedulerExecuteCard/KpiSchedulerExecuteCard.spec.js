@@ -44,7 +44,13 @@ const mockedExecutionList = [
 
 jest.mock('axios')
 
-axios.get.mockImplementation(() => Promise.resolve({ data: mockedExecutionList }))
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: mockedExecutionList
+        })
+    )
+}
 
 const factory = () => {
     return mount(KpiSchedulerExecuteCard, {
@@ -62,7 +68,8 @@ const factory = () => {
                 Toolbar
             },
             mocks: {
-                $t: (msg) => msg
+                $t: (msg) => msg,
+                $http
             }
         }
     })

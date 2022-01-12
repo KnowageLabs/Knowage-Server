@@ -45,6 +45,7 @@
                 @showMenu="sidebarVisible = true"
                 @reloadRepositoryMenu="getAllFolders"
                 @breadcrumbClicked="setSelectedBreadcrumb($event)"
+                @execute="executeDocument($event)"
             />
         </div>
     </div>
@@ -100,7 +101,7 @@ export default defineComponent({
     components: { Sidebar, Listbox, Accordion, AccordionTab, WorkspaceDocumentTree, WorkspaceNewFolderDialog },
     computed: {
         showRepository(): any {
-            return !(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.indexOf('SaveIntoFolderFunctionality')
+            return !(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.includes('SaveIntoFolderFunctionality')
         }
     },
     data() {
@@ -215,14 +216,14 @@ export default defineComponent({
         createMenuItems() {
             this.menuItems = []
             this.menuItems.push({ icon: 'fas fa-history', key: '0', label: 'workspace.menuLabels.recent', value: 'recent' }, { icon: 'fas fa-folder', key: '1', label: 'workspace.menuLabels.myRepository', value: 'repository' })
-            if (!(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.indexOf('SeeMyData')) {
+            if (!(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.includes('SeeMyData')) {
                 this.menuItems.push({ icon: 'fas fa-database', key: '2', label: 'workspace.menuLabels.myData', value: 'data' })
             }
             this.menuItems.push({ icon: 'fas fa-table', key: '3', label: 'workspace.menuLabels.myModels', value: 'models' })
-            if ((this.$store.state as any).user.functionalities.indexOf('CreateDocument')) {
+            if ((this.$store.state as any).user.functionalities.includes('CreateDocument')) {
                 this.menuItems.push({ icon: 'fas fa-th-large', key: '4', label: 'workspace.menuLabels.myAnalysis', value: 'analysis' })
             }
-            if (!(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.indexOf('SeeSnapshotsFunctionality') && (this.$store.state as any).user.functionalities.indexOf('ViewScheduledWorkspace')) {
+            if (!(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.includes('SeeSnapshotsFunctionality') && (this.$store.state as any).user.functionalities.includes('ViewScheduledWorkspace')) {
                 this.menuItems.push({
                     icon: 'fas fa-stopwatch',
                     key: '5',
@@ -231,6 +232,48 @@ export default defineComponent({
                 })
             }
             this.menuItems.push({ icon: 'fas fa-filter', key: '6', label: 'workspace.menuLabels.advanced', value: 'advanced' })
+        },
+        executeDocument(document: any) {
+            const routeType = this.getRouteDocumentType(document)
+            const label = document.label ? document.label : document.documentLabel
+            this.$router.push(`/workspace/${routeType}/${label}`)
+        },
+        getRouteDocumentType(item: any) {
+            let routeDocumentType = ''
+
+            const type = item.typeCode ? item.typeCode : item.documentType
+
+            switch (type) {
+                case 'DATAMART':
+                    routeDocumentType = 'registry'
+                    break
+                case 'DOCUMENT_COMPOSITE':
+                    routeDocumentType = 'document-composite'
+                    break
+                case 'OFFICE_DOC':
+                    routeDocumentType = 'office-doc'
+                    break
+                case 'OLAP':
+                    routeDocumentType = 'olap'
+                    break
+                case 'MAP':
+                    routeDocumentType = 'map'
+                    break
+                case 'REPORT':
+                    routeDocumentType = 'report'
+                    break
+                case 'KPI':
+                    routeDocumentType = 'kpi'
+                    break
+                case 'DOSSIER':
+                    routeDocumentType = 'dossier'
+                    break
+                case 'ETL':
+                    routeDocumentType = 'etl'
+                    break
+            }
+
+            return routeDocumentType
         }
     }
 })

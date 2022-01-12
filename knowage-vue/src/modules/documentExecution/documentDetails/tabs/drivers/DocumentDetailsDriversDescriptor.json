@@ -1,0 +1,140 @@
+{
+    "availableOperators": ["contains", "not contains"],
+    "connectingOperators": ["AND", "OR"],
+    "dataOperators": ["equal", "greater", "greaterequal", "less", "lessequal", "contains", "not contains", "starts with", "ends with"],
+    "knListSettings": {
+        "buttons": [
+            {
+                "emits": "delete",
+                "icon": "fas fa-trash-alt",
+                "label": "common.delete"
+            },
+            {
+                "emits": "moveUp",
+                "icon": "fas fa-arrow-up",
+                "label": "moveUp"
+            },
+            {
+                "emits": "moveDown",
+                "icon": "fas fa-arrow-down",
+                "label": "moveDown"
+            }
+        ],
+        "defaultSortField": "priority",
+        "interaction": {
+            "type": "event"
+        },
+        "textField": "priority",
+        "titleField": "label"
+    },
+    "style": {
+        "conditionDialog": {
+            "max-width": "60%",
+            "min-width": "60%"
+        },
+        "modalityCheckbox": {
+            "align-self": "center"
+        }
+    },
+    "validations": {
+        "driver": [
+            {
+                "fieldName": "label",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "drivers-validator"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "parameterUrlName",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "drivers-validator"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "alphanumericNoSpaces"
+                        }
+                    },
+                    {
+                        "key": "custom_unique",
+                        "validator": {
+                            "type": "custom-unique"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "parameter",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "drivers-validator"
+                        }
+                    }
+                ]
+            }
+        ],
+        "selectedCondition": [
+            {
+                "fieldName": "viewLabel",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "visibility-validator"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "compareValue",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "visibility-validator"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "parFatherId",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "visibility-validator"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "operation",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "visibility-validator"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
