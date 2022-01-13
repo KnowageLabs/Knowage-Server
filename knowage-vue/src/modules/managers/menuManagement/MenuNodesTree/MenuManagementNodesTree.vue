@@ -11,7 +11,7 @@
         @node-select="onNodeSelect"
         @nodeUnselect="onNodeUnselect"
         data-test="menu-nodes-tree"
-        class="kn-tree kn-flex"
+        class="kn-tree kn-flex toolbar-height"
         scrollHeight="flex"
     >
         <template #empty>{{ $t('common.info.noDataFound') }}</template>
@@ -139,5 +139,8 @@ export default defineComponent({
     &:deep(.p-treenode-content) {
         padding: 0 !important;
     }
+}
+.toolbar-height {
+    padding-bottom: $toolbar-height;
 }
 </style>
