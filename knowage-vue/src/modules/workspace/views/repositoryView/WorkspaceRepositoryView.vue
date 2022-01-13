@@ -26,7 +26,7 @@
                 <template #body="slotProps">
                     <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="showMenu($event, slotProps.data)" />
                     <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.documentName" />
-                    <Button icon="fas fa-play-circle" class="p-button-link" @click="executeDocumentFromOrganizer" />
+                    <Button icon="fas fa-play-circle" class="p-button-link" @click="executeDocumentFromOrganizer(slotProps.data)" />
                 </template>
             </Column>
         </DataTable>
@@ -82,7 +82,7 @@ import { AxiosResponse } from 'axios'
 
 export default defineComponent({
     components: { DataTable, Column, DetailSidebar, WorkspaceCard, Menu, Message, WorkspaceRepositoryMoveDialog, WorkspaceWarningDialog, WorkspaceRepositoryBreadcrumb },
-    emits: ['showMenu', 'reloadRepositoryMenu', 'toggleDisplayView', 'breadcrumbClicked'],
+    emits: ['showMenu', 'reloadRepositoryMenu', 'toggleDisplayView', 'breadcrumbClicked', 'execute'],
     props: { selectedFolder: { type: Object }, id: { type: String, required: false }, toggleCardDisplay: { type: Boolean }, breadcrumbs: { type: Array }, allFolders: { type: Array } },
     data() {
         return {
@@ -153,11 +153,8 @@ export default defineComponent({
         toggleDisplayView() {
             this.$emit('toggleDisplayView')
         },
-        executeDocumentFromOrganizer() {
-            this.$store.commit('setInfo', {
-                title: 'Todo',
-                msg: 'Functionality not in this sprint'
-            })
+        executeDocumentFromOrganizer(document: IDocument) {
+            this.$emit('execute', document)
         },
         moveDocumentToFolder(document: IDocument) {
             this.selectedDocument = document

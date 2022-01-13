@@ -143,7 +143,7 @@ public final class Tuple {
 			if (values.size() != other.values.size())
 				return false;
 			for (int i = 0; i < values.size(); i++) {
-				if (!values.get(i).equals(other.values.get(i)))
+				if (values.get(i) == null || !values.get(i).equals(other.values.get(i)))
 					return false;
 			}
 		}

@@ -38,10 +38,13 @@
                 @documentCloned="loadDocuments"
                 @documentStateChanged="loadDocuments"
                 @itemSelected="$emit('itemSelected', $event)"
+                @showDocumentDetails="showDocumentDetailsDialog"
             ></DocumentBrowserDetail>
             <DocumentBrowserHint v-else data-test="document-browser-hint"></DocumentBrowserHint>
         </div>
     </div>
+
+    <DocumentDetails v-if="showDocumentDetails" :docId="documentId" :selectedDocument="selectedDocument" :selectedFolder="selectedFolder" :visible="showDocumentDetails" @closeDetails="showDocumentDetails = false" @reloadDocument="getSelectedDocument" />
 </template>
 
 <script lang="ts">
@@ -50,12 +53,13 @@ import { AxiosResponse } from 'axios'
 import DocumentBrowserHint from './DocumentBrowserHint.vue'
 import DocumentBrowserTree from './DocumentBrowserTree.vue'
 import DocumentBrowserDetail from './DocumentBrowserDetail.vue'
+import DocumentDetails from '@/modules/documentExecution/documentDetails/DocumentDetails.vue'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Menu from 'primevue/menu'
 
 export default defineComponent({
     name: 'document-browser-home',
-    components: { DocumentBrowserHint, DocumentBrowserTree, DocumentBrowserDetail, KnFabButton, Menu },
+    components: { DocumentBrowserHint, DocumentBrowserTree, DocumentBrowserDetail, KnFabButton, Menu, DocumentDetails },
     emits: ['itemSelected'],
     data() {
         return {
@@ -71,7 +75,10 @@ export default defineComponent({
             user: null as any,
             sidebarVisible: false,
             windowWidth: window.innerWidth,
-            loading: false
+            loading: false,
+            showDocumentDetails: false,
+            selectedDocument: null as any,
+            documentId: null as any
         }
     },
     computed: {
@@ -162,7 +169,12 @@ export default defineComponent({
             }
         },
         createNewDocument() {
-            this.$router.push('/documentBrowser/newDocument')
+            this.documentId = null
+            this.showDocumentDetails = true
+        },
+        async showDocumentDetailsDialog(event) {
+            this.documentId = event.id
+            this.showDocumentDetails = true
         },
         createNewCockpit() {
             this.$emit('itemSelected', { item: null, mode: 'createCockpit' })

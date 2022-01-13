@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+<Appenders>
+<RollingFile
+    name="SpagoBITalendEngine"
+    fileName="${sys:catalina.base}/logs/knowageTalendEngine.log"  append="False"  filePattern="${sys:catalina.base}/logs/knowageTalendEngine.log"
+    ignoreExceptions="false" createOnDemand="true">
+    <PatternLayout>
+        <Pattern>%d{DATE} %5p %c.%M:%L - %m%n</Pattern>
+    </PatternLayout>
+    <Policies>
+        <SizeBasedTriggeringPolicy size="10000KB" />
+    </Policies>
+    <DefaultRolloverStrategy max="1" />
+</RollingFile>
+        </Appenders>
+    <Loggers>
+    <logger name="edu.yale" level="ERROR">
+        <AppenderRef ref="SpagoBITalendEngine"/>
+    </logger>
+    <logger name="it.eng.spagobi" level="ERROR">
+        <AppenderRef ref="SpagoBITalendEngine"/>
+    </logger>
+    <logger name="it.eng.spagobi.commons.utilities.messages" level="ERROR">
+        <AppenderRef ref="SpagoBITalendEngine"/>
+    </logger>
+    <logger name="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder" level="ERROR">
+        <AppenderRef ref="SpagoBITalendEngine"/>
+    </logger>
+    <root>
+        <level value="ERROR"/>
+        <AppenderRef ref="SpagoBITalendEngine"/>
+    </root>
+  <Root level="ERROR">
+            <AppenderRef ref="SpagoBITalendEngine"/>
+        </Root>
+    </Loggers>
+</Configuration>
