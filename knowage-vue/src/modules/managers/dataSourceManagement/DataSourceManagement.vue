@@ -27,11 +27,11 @@
                 <template #option="slotProps">
                     <div class="kn-list-item" data-test="list-item">
                         <Avatar
-                            :icon="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName].dbIcon"
+                            :icon="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName]?.dbIcon"
                             shape="circle"
                             size="medium"
-                            :style="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName].style"
-                            v-tooltip="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName].tooltip"
+                            :style="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName]?.style"
+                            v-tooltip="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName]?.tooltip"
                         />
                         <div class="kn-list-item-text">
                             <span>{{ slotProps.option.label }}</span>

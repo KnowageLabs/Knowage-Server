@@ -135,6 +135,11 @@
 		<dispatcher>FORWARD</dispatcher>
 		<url-pattern>/restful-services/*</url-pattern>
 	</filter-mapping>
+	<filter-mapping>
+		<filter-name>SpagoBIAccessFilter</filter-name>
+		<dispatcher>FORWARD</dispatcher>
+		<url-pattern>/WEB-INF/jsp/*</url-pattern>
+	</filter-mapping>
 
 	<servlet>
 		<servlet-name>ConfigServlet</servlet-name>

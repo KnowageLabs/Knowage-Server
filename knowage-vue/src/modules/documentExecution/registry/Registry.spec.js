@@ -84,14 +84,16 @@ const mockedRegistry = {
 
 jest.mock('axios')
 
-axios.post.mockImplementation((url) => {
-    switch (url) {
-        case `/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=1`:
-            return Promise.resolve({ data: mockedRegistry })
-        default:
-            return Promise.resolve({ data: [] })
-    }
-})
+const $http = {
+    post: axios.post.mockImplementation((url) => {
+        switch (url) {
+            case `/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=1`:
+                return Promise.resolve({ data: mockedRegistry })
+            default:
+                return Promise.resolve({ data: [] })
+        }
+    })
+}
 
 const $confirm = {
     require: jest.fn()
@@ -118,7 +120,8 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $confirm,
-                $store
+                $store,
+                $http
             }
         }
     })

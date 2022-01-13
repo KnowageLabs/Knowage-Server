@@ -23,7 +23,8 @@ const store = createStore({
                 hosts: [],
                 licenses: {},
                 cpuNumber: -1
-            }
+            },
+            documentExecution: {}
         }
     },
     actions: {
@@ -87,6 +88,9 @@ const store = createStore({
         },
         setEnterprise(state, enterprise) {
             state.isEnterprise = enterprise
+        },
+        setDocumentExecutionEmbed(state) {
+            state.documentExecution.embed = true
         }
     }
 })

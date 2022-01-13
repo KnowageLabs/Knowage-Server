@@ -8,7 +8,14 @@
             </div>
         </div>
         <div v-if="selectedDocument" id="document-browser-sidebar-container" data-test="document-browser-sidebar">
-            <DocumentBrowserSidebar :selectedDocument="selectedDocument" @documentCloneClick="cloneDocument" @documentDeleteClick="deleteDocument" @itemSelected="$emit('itemSelected', $event)" @documentChangeStateClicked="changeDocumentState"></DocumentBrowserSidebar>
+            <DocumentBrowserSidebar
+                :selectedDocument="selectedDocument"
+                @documentCloneClick="cloneDocument"
+                @documentDeleteClick="deleteDocument"
+                @itemSelected="$emit('itemSelected', $event)"
+                @documentChangeStateClicked="changeDocumentState"
+                @showDocumentDetails="$emit('showDocumentDetails', $event)"
+            ></DocumentBrowserSidebar>
         </div>
     </div>
 </template>
@@ -23,7 +30,7 @@ export default defineComponent({
     name: 'document-browser-detail',
     components: { DocumentBrowserBreadcrumb, DocumentBrowserTable, DocumentBrowserSidebar },
     props: { propDocuments: { type: Array }, breadcrumbs: { type: Array }, searchMode: { type: Boolean } },
-    emits: ['breadcrumbClicked', 'loading', 'documentCloned', 'itemSelected', 'documentStateChanged'],
+    emits: ['breadcrumbClicked', 'loading', 'documentCloned', 'itemSelected', 'documentStateChanged', 'showDocumentDetails'],
     data() {
         return {
             documents: [] as any[],

@@ -14,10 +14,10 @@
                     <template #header>
                         <span>{{ tab.item?.name ? tab.item?.name : 'new dashboard' }}</span>
                     </template>
-
-                    <DocumentBrowserTab :item="tab.item" :mode="tab.mode"></DocumentBrowserTab>
                 </TabPanel>
             </TabView>
+
+            <DocumentBrowserTab v-show="selectedItem" :item="selectedItem?.item" :mode="selectedItem?.mode" @close="closeDocument('current')"></DocumentBrowserTab>
             <div id="document-browser-tab-icon-container" v-if="activeIndex !== 0">
                 <i id="document-browser-tab-icon" class="fa fa-times-circle" @click="toggle($event)"></i>
                 <Menu ref="menu" :model="menuItems" :popup="true" />
@@ -41,13 +41,18 @@ export default defineComponent({
         return {
             tabs: [] as any[],
             activeIndex: 0,
-            menuItems: [] as any[]
+            menuItems: [] as any[],
+            selectedItem: null as any,
+            id: 0
         }
     },
     created() {
-        if (this.$route.name === 'document-execution' && this.$route.params.id) {
-            this.tabs.push({ item: null, mode: 'execute' })
+        if (this.$route.params.id && this.$route.name === 'document-browser-document-execution') {
+            const tempItem = { item: { name: this.$route.params.id, label: this.$route.params.id, mode: this.$route.params.mode, routerId: this.id++ }, mode: 'execute' }
+            this.tabs.push(tempItem)
+
             this.activeIndex = 1
+            this.selectedItem = tempItem
         }
     },
     methods: {
@@ -57,14 +62,62 @@ export default defineComponent({
                 return
             }
 
-            const id = this.tabs[this.activeIndex - 1].item ? this.tabs[this.activeIndex - 1].item.id : 'new-dashboard'
-            this.$router.push('/document-browser/document-execution/' + id)
+            const id = this.tabs[this.activeIndex - 1].item ? this.tabs[this.activeIndex - 1].item.label : 'new-dashboard'
+
+            this.selectedItem = this.tabs[this.activeIndex - 1]
+
+            let routeDocumentType = this.tabs[this.activeIndex - 1].item.mode ? this.tabs[this.activeIndex - 1].item.mode : this.getRouteDocumentType(this.tabs[this.activeIndex - 1].item)
+            this.$router.push(`/document-browser/${routeDocumentType}/` + id)
         },
         onItemSelect(payload: any) {
-            this.tabs.push(payload)
-            const id = payload.item ? payload.item.id : 'new-dashboard'
-            this.$router.push('/document-browser/document-execution/' + id)
+            payload.item.routerId = this.id++
+
+            const tempItem = { ...payload, item: { ...payload.item } }
+
+            this.tabs.push(tempItem)
+
+            this.selectedItem = tempItem
+
+            const id = payload.item ? payload.item.label : 'new-dashboard'
+            let routeDocumentType = this.getRouteDocumentType(payload.item)
+
+            this.$router.push(`/document-browser/${routeDocumentType}/` + id)
             this.activeIndex = this.tabs.length
+        },
+        getRouteDocumentType(item: any) {
+            let routeDocumentType = ''
+
+            switch (item.typeCode) {
+                case 'DATAMART':
+                    routeDocumentType = 'registry'
+                    break
+                case 'DOCUMENT_COMPOSITE':
+                    routeDocumentType = 'document-composite'
+                    break
+                case 'OFFICE_DOC':
+                    routeDocumentType = 'office-doc'
+                    break
+                case 'OLAP':
+                    routeDocumentType = 'olap'
+                    break
+                case 'MAP':
+                    routeDocumentType = 'map'
+                    break
+                case 'REPORT':
+                    routeDocumentType = 'report'
+                    break
+                case 'KPI':
+                    routeDocumentType = 'kpi'
+                    break
+                case 'DOSSIER':
+                    routeDocumentType = 'dossier'
+                    break
+                case 'ETL':
+                    routeDocumentType = 'etl'
+                    break
+            }
+
+            return routeDocumentType
         },
         toggle(event: any) {
             this.createMenuItems()
@@ -136,6 +189,10 @@ export default defineComponent({
     font-size: 1.2rem;
     color: rgba(0, 0, 0, 0.6);
     cursor: pointer;
+}
+
+.document-browser-tab-container {
+    position: relative;
 }
 
 .document-browser-tab-container .p-tabview .p-tabview-panel,

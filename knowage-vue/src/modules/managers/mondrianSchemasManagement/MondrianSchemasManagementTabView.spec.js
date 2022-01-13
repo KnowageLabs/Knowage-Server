@@ -13,12 +13,26 @@ import TabPanel from 'primevue/tabpanel'
 import TabView from 'primevue/tabview'
 import Toolbar from 'primevue/toolbar'
 
+jest.mock('axios')
+
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: []
+        })
+    )
+}
+
+const $confirm = {
+    require: jest.fn()
+}
+
 const $store = {
     commit: jest.fn()
 }
 
 const $router = {
-    replace: jest.fn()
+    push: jest.fn()
 }
 
 const factory = () => {
@@ -34,12 +48,16 @@ const factory = () => {
                 ProgressBar,
                 TabPanel,
                 TabView,
-                Toolbar
+                Toolbar,
+                MondrianSchemasDetailTab: true,
+                MondrianSchemasWorkflowTab: true
             },
             mocks: {
                 $t: (msg) => msg,
                 $store,
-                $router
+                $confirm,
+                $router,
+                $http
             }
         }
     })
@@ -51,9 +69,6 @@ describe('Mondrian Schema Management Tab View', () => {
 
         await flushPromises()
         await wrapper.find('.p-tabview-nav li:nth-child(1)').trigger('click')
-
-        console.log(wrapper.find('.p-tabview-nav li:nth-child(1)').html())
-        console.log(wrapper.find('.p-tabview-nav li:nth-child(2)').html())
 
         expect(wrapper.find('.p-tabview-nav li:nth-child(1)').html()).toContain('aria-selected="true"')
         expect(wrapper.find('.p-tabview-nav li:nth-child(2)').html()).toContain('aria-selected="false"')
