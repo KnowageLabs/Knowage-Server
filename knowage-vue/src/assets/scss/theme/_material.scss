@@ -9,3 +9,7 @@ label.kn-material-input-label {
     color: $color-primary !important;
     text-transform: capitalize;
 }
+
+label.kn-material-input-label.kn-required-alert {
+    color: red !important;
+}

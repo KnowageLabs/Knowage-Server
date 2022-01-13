@@ -30,7 +30,7 @@ angular.module('configuration-tab', [])
 
 });
 
-function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule_config,ChartDesignerData,$mdColorPalette,$mdColors, $mdColorUtil){
+function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule_config,ChartDesignerData,$mdColorPalette,cockpitModule_userPalette,$mdColors, $mdColorUtil){
  $scope.translate = sbiModule_translate;
  $scope.configurationForDisplay = [];
  $scope.selectedConfigurationButton = "";
@@ -62,7 +62,13 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 
  checkForCustomColors();
  //$scope.customColors=$scope.chartTemplate.CUSTOMCOLORS.COLOR
- $scope.presetColors = Object.keys($mdColorPalette);
+ if(cockpitModule_userPalette &&  cockpitModule_userPalette.colors && cockpitModule_userPalette.colors.length > 0) {
+	 $scope.presetColors = cockpitModule_userPalette.colors;
+}
+else {
+	 $scope.presetColors = Object.keys($mdColorPalette);
+}
+
  if($scope.chartTemplate != null && $scope.chartTemplate.COLORPALETTE != "" ){
 	 if($scope.chartTemplate.COLORPALETTE.COLOR.constructor === Array) {
 		 $scope.colors = $scope.chartTemplate.COLORPALETTE.COLOR;

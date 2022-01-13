@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import axios from 'axios'
 import AddActionDialog from './AlertDefinitionActionDialog.vue'
 import Toolbar from 'primevue/toolbar'
 import Button from 'primevue/button'
@@ -60,10 +61,16 @@ const mocedKpi = {
     }
 }
 
-jest.mock('axios', () => ({
-    get: jest.fn(() => Promise.resolve({ data: [] })),
-    delete: jest.fn(() => Promise.resolve())
-}))
+jest.mock('axios')
+
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: []
+        })
+    ),
+    delete: axios.delete.mockImplementation(() => Promise.resolve())
+}
 
 const factory = () => {
     return mount(AddActionDialog, {
@@ -90,24 +97,26 @@ const factory = () => {
                 SendMailCard: true
             },
             mocks: {
-                $t: (msg) => msg
+                $t: (msg) => msg,
+                $http
             }
         }
     })
 }
 describe('Alert Definition kpi action', () => {
-    it('shows a wysiwyg editor if send mail is selected', () => {
+    it('shows a wysiwyg editor if send mail is selected', async () => {
         const wrapper = factory()
+        await wrapper.setProps({ selectedAction: { className: 'it.eng.knowage.enterprise.tools.alert.action.SendMail', thresholdValues: [] } })
         expect(wrapper.vm.componentToShow).toBe('SendMailCard')
     })
     it('shows a form if context broker is selected', async () => {
         const wrapper = factory()
-        await wrapper.setProps({ selectedAction: { idAction: 86, thresholdValues: [] } })
+        await wrapper.setProps({ selectedAction: { className: 'it.eng.spagobi.tools.alert.action.NotifyContextBroker', thresholdValues: [] } })
         expect(wrapper.vm.componentToShow).toBe('ContextBrokerCard')
     })
     it('shows a selectable table if etl document is selected', async () => {
         const wrapper = factory()
-        await wrapper.setProps({ selectedAction: { idAction: 63, thresholdValues: [] } })
+        await wrapper.setProps({ selectedAction: { className: 'it.eng.knowage.enterprise.tools.alert.action.ExecuteETLDocument', thresholdValues: [] } })
         expect(wrapper.vm.componentToShow).toBe('ExectuteEtlCard')
     })
 })

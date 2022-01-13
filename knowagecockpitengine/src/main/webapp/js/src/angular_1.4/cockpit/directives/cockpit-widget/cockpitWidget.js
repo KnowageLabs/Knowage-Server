@@ -488,7 +488,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			$scope.scopeInit(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
 			break;
 		case "RESIZE" :
-			if($scope.ngModel.type=="chart" || $scope.ngModel.type=="map" || $scope.ngModel.type=="static-pivot-table") {
+			if($scope.ngModel.type=="chart" || $scope.ngModel.type=="map" || $scope.ngModel.type=="static-pivot-table" || $scope.ngModel.type=="customchart") {
 				$scope.refreshWidget(undefined, 'resize');
 			}
 			break;
@@ -1056,14 +1056,27 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 						}
 					}
 
-					// if destination document is specified don't ask
-					if(crossSettings.crossName != undefined){
-						parent.execExternalCrossNavigation(outputParameter,{},crossSettings.crossName,null,otherOutputParameters);
+					
+					// temporary section needed as a workaround to get vue instance
+					var hasVueParent = false
+					if(window.parent.__VUE__){
+						hasVueParent = window.parent
+					}else if(window.parent.parent.__VUE__){
+						hasVueParent = window.parent.parent
 					}
-					else{
-						parent.execExternalCrossNavigation(outputParameter,{},null,null,otherOutputParameters);
+					
+					if(!parent && hasVueParent){
+						hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameter,"inputParameters":{},"targetCrossNavigation":crossSettings,"docLabel":null, "otherOutputParameters":otherOutputParameters}, '*')
+					}else{
+						// if destination document is specified don't ask
+						if(crossSettings.crossName != undefined){
+							parent.execExternalCrossNavigation(outputParameter,{},crossSettings.crossName,null,otherOutputParameters);
+						}
+						else{
+							parent.execExternalCrossNavigation(outputParameter,{},null,null,otherOutputParameters);
+						}
+						return;
 					}
-					return;
 				}
 			}
 		}

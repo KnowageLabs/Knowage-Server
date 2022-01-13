@@ -23,10 +23,12 @@ const mockedDatasetMetadata = [
     }
 ]
 
-jest.mock('axios', () => ({
-    put: jest.fn(() => Promise.resolve()),
-    delete: jest.fn(() => Promise.resolve())
-}))
+jest.mock('axios')
+
+const $http = {
+    put: axios.put.mockImplementation(() => Promise.resolve()),
+    delete: axios.delete.mockImplementation(() => Promise.resolve())
+}
 
 const $store = {
     commit: jest.fn()
@@ -47,7 +49,8 @@ const factory = (datasetMetadataList) => {
             mocks: {
                 $t: (msg) => msg,
                 $store,
-                $confirm
+                $confirm,
+                $http
             }
         }
     })

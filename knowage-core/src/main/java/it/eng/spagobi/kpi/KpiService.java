@@ -18,6 +18,7 @@
 package it.eng.spagobi.kpi;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -543,7 +544,8 @@ public class KpiService {
 			for (int j = 0; j < distinctResultRows.length(); j++) {
 				Integer testingValue = null;
 				try {
-					testingValue = new Integer(distinctResultRows.getJSONObject(j).getString(columnName));
+					String value = distinctResultRows.getJSONObject(j).getString(columnName);
+					testingValue = new BigDecimal(value).toBigInteger().intValue();
 				} catch (NumberFormatException e) {
 					isValid = false;
 					break;

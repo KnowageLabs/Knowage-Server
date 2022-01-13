@@ -1,0 +1,76 @@
+{
+    "globalFilterFields": ["name", "label", "description", "author", "scope"],
+    "style": {
+        "center": {
+            "align-self": "center",
+            "text-align": "center"
+        }
+    },
+    "validations": {
+        "document": [
+            {
+                "fieldName": "label",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "description",
+                "validators": [
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "typeCode",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "engine",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "stateCode",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            }
+        ]
+    }
+}
