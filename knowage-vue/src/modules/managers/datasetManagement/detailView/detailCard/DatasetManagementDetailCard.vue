@@ -148,6 +148,7 @@ import Dropdown from 'primevue/dropdown'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import AutoComplete from 'primevue/autocomplete'
+import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
     components: { Card, Dropdown, KnValidationMessages, DataTable, Column, AutoComplete },
@@ -324,8 +325,7 @@ export default defineComponent({
         //#endregion ================================================================================================
 
         formatDate(date) {
-            let fDate = new Date(date)
-            return fDate.toLocaleString()
+            return formatDateWithLocale(date, { dateStyle: 'short', timeStyle: 'short' })
         },
         updateIdFromCd(optionsArray, fieldToUpdate, updatedField) {
             const selectedField = optionsArray.find((option) => option.VALUE_CD === updatedField)
