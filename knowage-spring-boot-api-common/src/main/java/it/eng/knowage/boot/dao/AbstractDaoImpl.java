@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.knowage.knowageapi.dao;
+package it.eng.knowage.boot.dao;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -23,12 +23,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.eng.knowage.boot.context.BusinessRequestContext;
-import it.eng.knowage.knowageapi.dao.dto.AbstractEntity;
+import it.eng.knowage.boot.dao.dto.AbstractEntity;
 
 /**
  * @author Marco Libanori
  */
-abstract class AbstractDaoImpl {
+public abstract class AbstractDaoImpl {
 
 	@Autowired
 	private BusinessRequestContext businessRequestContext;
