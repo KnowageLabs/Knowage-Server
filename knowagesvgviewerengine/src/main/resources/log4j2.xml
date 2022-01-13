@@ -2,8 +2,8 @@
 <Configuration status="INFO">
 <Appenders>
 <RollingFile
-    name="SpagoBITalendEngine"
-    fileName="${sys:catalina.base}/logs/knowageTalendEngine.log"  append="False"  filePattern="${sys:catalina.base}/logs/knowageTalendEngine.log"
+    name="SpagoBIProcessEngine"
+    fileName="${sys:catalina.base}/logs/KnowageSVGViewerEngine.log"  append="False"  filePattern="${sys:catalina.base}/logs/KnowageSVGViewerEngine.log"
     ignoreExceptions="false" createOnDemand="true">
     <PatternLayout>
         <Pattern>%d{DATE} %5p %c.%M:%L - %m%n</Pattern>
@@ -13,22 +13,23 @@
     </Policies>
     <DefaultRolloverStrategy max="1" />
 </RollingFile>
-        </Appenders>
+    </Appenders>
     <Loggers>
     <logger name="edu.yale" level="ERROR">
-        <AppenderRef ref="SpagoBITalendEngine"/>
+        <AppenderRef ref="SpagoBIProcessEngine"/>
     </logger>
     <logger name="it.eng.spagobi" level="ERROR">
-        <AppenderRef ref="SpagoBITalendEngine"/>
+        <AppenderRef ref="SpagoBIProcessEngine"/>
     </logger>
     <logger name="it.eng.spagobi.commons.utilities.messages" level="ERROR">
-        <AppenderRef ref="SpagoBITalendEngine"/>
+        <AppenderRef ref="SpagoBIProcessEngine"/>
     </logger>
     <logger name="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder" level="ERROR">
-        <AppenderRef ref="SpagoBITalendEngine"/>
+        <AppenderRef ref="SpagoBIProcessEngine"/>
     </logger>
-    <root level="ERROR">
-        <AppenderRef ref="SpagoBITalendEngine"/>
-    </root>
+
+  <Root level="DEBUG">
+            <AppenderRef ref="SpagoBIProcessEngine"/>
+        </Root>
     </Loggers>
 </Configuration>
