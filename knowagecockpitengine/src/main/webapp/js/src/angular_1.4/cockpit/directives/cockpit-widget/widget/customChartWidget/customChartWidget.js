@@ -102,11 +102,16 @@ function cockpitCustomChartControllerFunction(
 		function setJs(){
 			try {
 				var tempJS = $sce.trustAs($sce.JS, $scope.ngModel.js.code).$$unwrapTrustedValue();
-				if(!tempJS.match(/(\$scope|\$destroy|datastore\.setData)/g)) eval(tempJS);
+				if(!tempJS.match(/(\$scope|\$destroy|datastore\.setData)/g)) {
+					$timeout(function(){
+						eval(tempJS);
+						$scope.hideWidgetSpinner();
+					},500);
+				}
 				else {
 					$scope.jsError = $scope.translate.load('kn.cockpit.custom.code.unsafe');
+					$scope.hideWidgetSpinner();
 				}
-				$scope.hideWidgetSpinner();
 				if(nature == 'init'){
 					$timeout(function(){
 						$scope.widgetIsInit=true;
