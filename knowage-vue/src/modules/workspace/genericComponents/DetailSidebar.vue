@@ -39,16 +39,16 @@ export default defineComponent({
     props: { visible: Boolean, viewType: String, document: Object as any, datasetCategories: Array as any },
     computed: {
         isOwner(): any {
-            return (this.$store.state as any).user.fullName === this.document.creationUser
+            return (this.$store.state as any).user.userId === this.document.creationUser
         },
         isAnalysisShared(): any {
             return this.document.functionalities.length > 1
         },
         isDatasetOwner(): any {
-            return (this.$store.state as any).user.fullName === this.document.owner
+            return (this.$store.state as any).user.userId === this.document.owner
         },
         showQbeEditButton(): any {
-            return (this.$store.state as any).user.fullName === this.document.owner && (this.document.dsTypeCd == 'Federated' || this.document.dsTypeCd == 'Qbe')
+            return (this.$store.state as any).user.userId === this.document.owner && (this.document.dsTypeCd == 'Federated' || this.document.dsTypeCd == 'Qbe')
         },
         datasetHasDrivers(): any {
             return this.document.drivers && this.document.length > 0

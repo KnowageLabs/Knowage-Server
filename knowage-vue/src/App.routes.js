@@ -7,6 +7,7 @@ import documentExecutionRoutes from '@/modules/documentExecution/documentExecuti
 import documentBrowserRoutes from '@/modules/documentBrowser/DocumentBrowser.routes.js'
 import workspaceRoutes from '@/modules/workspace/workspace.routes.js'
 import overlayRoutes from '@/overlay/Overlay.routes.js'
+import authHelper from '@/helpers/commons/authHelper'
 
 const baseRoutes = [
     {
@@ -71,18 +72,15 @@ const router = createRouter({
     routes
 })
 
-/* router.beforeEach((to, from, next) => {
-	console.log(from)
+router.beforeEach((to, from, next) => {
+    const checkRequired = !('/' == to.fullPath && '/' == from.fullPath)
+    const loggedIn = localStorage.getItem('token')
 
-	if (to.name === 'home') {
-		if (store.state.homePage.to) {
-			next({ name: 'homeIFrame', params: { to: store.state.homePage.to } })
-		}
-		if (store.state.homePage.url) {
-			next({ name: 'homeIFrame', params: { url: store.state.homePage.url } })
-		}
-	}
-	next()
-}) */
+    if (checkRequired && !loggedIn) {
+        authHelper.logout()
+    } else {
+        next()
+    }
+})
 
 export default router

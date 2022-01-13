@@ -18,25 +18,20 @@
 </RollingFile>
   </Appenders>
     <Loggers>
-    <logger name="edu.yale" additivity="false">
-        <level value="ERROR"/>
-        <appender-ref ref="FILE"/>
+    <logger name="edu.yale" additivity="false" level="ERROR">
+        <AppenderRef ref="FILE"/>
     </logger>
-    <logger name="it.eng.spagobi" additivity="false">
-        <level value="ERROR"/>
-        <appender-ref ref="FILE"/>
+    <logger name="it.eng.spagobi" additivity="false" level="ERROR">
+        <AppenderRef ref="FILE"/>
     </logger>
-    <logger name="it.eng.spagobi.commons.utilities.messages" additivity="false">
-        <level value="ERROR"/>
-        <appender-ref ref="FILE"/>
+    <logger name="it.eng.spagobi.commons.utilities.messages" additivity="false" level="ERROR">
+        <AppenderRef ref="FILE"/>
     </logger>
-    <logger name="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder" additivity="false">
-        <level value="ERROR"/>
-        <appender-ref ref="FILE"/>
+    <logger name="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder" additivity="false" level="ERROR">
+        <AppenderRef ref="FILE"/>
     </logger>
-    <logger name="velocity" additivity="false">
-        <level value="ERROR"/>
-        <appender-ref ref="FILE"/>
+    <logger name="velocity" additivity="false" level="ERROR">
+        <AppenderRef ref="FILE"/>
     </logger>
   <Root level="ERROR">
             <AppenderRef ref="FILE"/>
