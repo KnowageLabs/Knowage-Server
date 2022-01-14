@@ -18,14 +18,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.support.SimpleThreadScope;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 
 import it.eng.knowage.boot.context.BusinessRequestContext;
 import it.eng.knowage.boot.factory.SecurityServiceFactory;
 import it.eng.knowage.boot.factory.SecurityServiceFactoryTest;
+import it.eng.spagobi.services.security.SpagoBIUserProfile;
+import it.eng.spagobi.services.security.SpagoBIUserProfile.Attributes.Entry;
 
 @Configuration
 @Profile("test")
@@ -59,12 +59,6 @@ public class MainConfigurationTest {
 	}
 
 	@Bean
-	@Scope(scopeName = "thread", proxyMode = ScopedProxyMode.TARGET_CLASS)
-	public BusinessRequestContext businessRequestContext(@Value("${application.version}") String version) {
-		return new BusinessRequestContext(version);
-	}
-
-	@Bean
 	public static BeanFactoryPostProcessor beanFactoryPostProcessor() {
 		return new BeanFactoryPostProcessor() {
 			@Override
@@ -85,6 +79,34 @@ public class MainConfigurationTest {
 		initialContext.bind("java:comp/env/resource_path", "D:/tmp/resources");
 
 		return initialContext;
+	}
+
+	@Bean
+	public BusinessRequestContext businessRequestContext(@Value("${application.version}") String version) {
+		Entry entry = new Entry();
+
+		entry.setKey("test");
+		entry.setValue("test");
+
+		SpagoBIUserProfile.Attributes attributes = new SpagoBIUserProfile.Attributes();
+
+		attributes.getEntry().add(entry);
+
+		SpagoBIUserProfile userProfile = new SpagoBIUserProfile();
+
+		userProfile.setAttributes(attributes);
+		userProfile.setIsSuperadmin(true);
+		userProfile.setOrganization("DEFAULT_TENANT");
+		userProfile.setUniqueIdentifier("biadmin");
+		userProfile.setUserId("biadmin");
+		userProfile.setUserName("biadmin");
+		userProfile.getFunctions().add("WidgetGalleryManagement");
+
+		BusinessRequestContext businessRequestContext = new BusinessRequestContext(version);
+		businessRequestContext.setUsername("biadmin");
+		businessRequestContext.setOrganization("DEFAULT_TENANT");
+		businessRequestContext.setUserProfile(userProfile);
+		return businessRequestContext;
 	}
 
 }

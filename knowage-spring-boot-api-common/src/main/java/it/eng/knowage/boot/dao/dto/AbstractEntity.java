@@ -28,33 +28,25 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public abstract class AbstractEntity {
 
-	@Column(name = "SBI_VERSION_IN", insertable = true, updatable = false)
 	private String sbiVersionIn;
 
-	@Column(name = "TIME_IN", insertable = true, updatable = false)
 	private Instant timeIn;
 
-	@Column(name = "USER_IN", insertable = true, updatable = false)
 	private String userIn;
 
-	@Column(name = "SBI_VERSION_UP", insertable = true, updatable = true)
 	private String sbiVersionUp;
 
-	@Column(name = "TIME_UP", insertable = true, updatable = true)
 	private Instant timeUp;
 
-	@Column(name = "USER_UP", insertable = true, updatable = true)
 	private String userUp;
 
-	@Column(name = "SBI_VERSION_DE", insertable = true, updatable = true)
 	private String sbiVersionDe;
 
-	@Column(name = "TIME_DE", insertable = true, updatable = true)
 	private Instant timeDe;
 
-	@Column(name = "USER_DE", insertable = true, updatable = true)
 	private String userDe;
 
+	@Column(name = "SBI_VERSION_DE", insertable = true, updatable = true)
 	public String getSbiVersionDe() {
 		return sbiVersionDe;
 	}
@@ -63,6 +55,7 @@ public abstract class AbstractEntity {
 		this.sbiVersionDe = sbiVersionDe;
 	}
 
+	@Column(name = "SBI_VERSION_IN", insertable = true, updatable = false)
 	public String getSbiVersionIn() {
 		return sbiVersionIn;
 	}
@@ -71,6 +64,7 @@ public abstract class AbstractEntity {
 		this.sbiVersionIn = sbiVersionIn;
 	}
 
+	@Column(name = "SBI_VERSION_UP", insertable = true, updatable = true)
 	public String getSbiVersionUp() {
 		return sbiVersionUp;
 	}
@@ -79,6 +73,7 @@ public abstract class AbstractEntity {
 		this.sbiVersionUp = sbiVersionUp;
 	}
 
+	@Column(name = "TIME_DE", insertable = true, updatable = true)
 	public Instant getTimeDe() {
 		return timeDe;
 	}
@@ -87,6 +82,7 @@ public abstract class AbstractEntity {
 		this.timeDe = timeDe;
 	}
 
+	@Column(name = "TIME_IN", insertable = true, updatable = false)
 	public Instant getTimeIn() {
 		return timeIn;
 	}
@@ -95,6 +91,7 @@ public abstract class AbstractEntity {
 		this.timeIn = timeIn;
 	}
 
+	@Column(name = "TIME_UP", insertable = true, updatable = true)
 	public Instant getTimeUp() {
 		return timeUp;
 	}
@@ -103,6 +100,7 @@ public abstract class AbstractEntity {
 		this.timeUp = timeUp;
 	}
 
+	@Column(name = "USER_DE", insertable = true, updatable = true)
 	public String getUserDe() {
 		return userDe;
 	}
@@ -111,6 +109,7 @@ public abstract class AbstractEntity {
 		this.userDe = userDe;
 	}
 
+	@Column(name = "USER_IN", insertable = true, updatable = false)
 	public String getUserIn() {
 		return userIn;
 	}
@@ -119,6 +118,7 @@ public abstract class AbstractEntity {
 		this.userIn = userIn;
 	}
 
+	@Column(name = "USER_UP", insertable = true, updatable = true)
 	public String getUserUp() {
 		return userUp;
 	}
