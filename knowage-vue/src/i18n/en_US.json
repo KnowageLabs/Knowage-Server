@@ -417,7 +417,6 @@
                 "title": "Drill Through"
             },
             "editModeConfirm": "You are leaving edit mode. Continue?",
-            "openDesigner": "Open Designer",
             "filterPanel": {
                 "drop": "Drop here to use as a slicer",
                 "filterPanelEmpty": "Drag the member here if you want to use it as a slicer"
@@ -437,6 +436,7 @@
                 "detail2": "You can change it acting on the form below.",
                 "dropdownLabel": "Available hierarchies"
             },
+            "openDesigner": "Open Designer",
             "openDesignerMsg": "By opening designer you will lose all unsaved changes, are you sure?",
             "savingCustomizedView": "Saving customized view",
             "showMdxQuery": "Show MDX Query",
@@ -1751,11 +1751,11 @@
     },
     "workspace": {
         "buttonsTooltips": {
-            "executeDoc": "Execute Document",
-            "moveDoc": "Move Document",
-            "editDoc": "Edit Document",
             "deleteDoc": "Delete Document",
+            "editDoc": "Edit Document",
+            "executeDoc": "Execute Document",
             "help": "Help Online",
+            "moveDoc": "Move Document",
             "other": "Other Options",
             "previewDs": "Preview Dataset"
         },
@@ -1789,6 +1789,7 @@
             "schedulation": "Schedulation"
         },
         "myAnalysis": {
+            "geoRef": "Geo-referenced analysis",
             "menuItems": {
                 "clone": "Clone Document",
                 "delete": "Delete Document",
@@ -1797,8 +1798,7 @@
                 "showDsDetails": "Show dataset details",
                 "unshare": "Unshare Document",
                 "upload": "Upload preview file"
-            },
-            "geoRef": "Geo-referenced analysis"
+            }
         },
         "myData": {
             "cloneDataset": "Clone Dataset",
