@@ -107,6 +107,16 @@ export default defineComponent({
             })
             return canBeMoved
         },
+        findNode(menuId: any, nodes: iMenuNode[]): iMenuNode | null {
+            for (let node of nodes) {
+                if (node.menuId === menuId) {
+                    return node
+                }
+                const foundNode = this.findNode(menuId, node.children)
+                if (foundNode) return foundNode
+            }
+            return null
+        },
         canBeDeleted(node: iMenuNode) {
             return !(node.children?.length > 0)
         },

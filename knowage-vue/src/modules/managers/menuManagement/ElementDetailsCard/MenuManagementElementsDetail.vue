@@ -155,7 +155,7 @@
             </Card>
         </div>
         <div class="p-col-12">
-            <RolesCard :hidden="hideForm" :rolesList="roles" :selected="selectedMenuNode.roles" @changed="setSelectedRoles($event)"></RolesCard>
+            <RolesCard :hidden="hideForm" :rolesList="roles" :parentNodeRoles="parentNodeRoles" :selected="selectedMenuNode.roles" @changed="setSelectedRoles($event)"></RolesCard>
         </div>
     </div>
 </template>
@@ -194,6 +194,9 @@ export default defineComponent({
         },
         menuNodes: {
             type: Array
+        },
+        parentNodeRoles: {
+            type: Array
         }
     },
     computed: {
@@ -205,6 +208,7 @@ export default defineComponent({
         selectedMenuNode: {
             handler: function(node) {
                 this.v$.$reset()
+                console.log('node', node)
                 this.loadNode(node)
             }
         },
@@ -426,7 +430,7 @@ export default defineComponent({
 
             for (let i = 0; i < this.nodes.length; i++) {
                 const tempNode = this.nodes[i] as iMenuNode
-                if (tempNode.parentId === menuItemForSave.parentId && tempNode.name === menuItemForSave.name) {
+                if (tempNode.menuId != menuItemForSave.menuId && tempNode.parentId === menuItemForSave.parentId && tempNode.name === menuItemForSave.name) {
                     exists = true
                     break
                 }
