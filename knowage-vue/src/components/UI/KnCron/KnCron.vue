@@ -71,9 +71,24 @@
             <div class="p-d-flex p-flex-row">
                 <div class="p-d-flex p-flex-row p-mt-5">
                     <div class="p-d-flex p-flex-row p-mr-4">
-                        <label for="endDate" class="kn-material-input-label p-m-2"> {{ $t('cron.repeatInterval') + ':' }}</label>
+                        <label class="kn-material-input-label p-m-2"> {{ $t('cron.repeatInterval') + ':' }} *</label>
                         <span>
-                            <Dropdown id="repeatInterval" class="kn-material-input" :style="knCronDescriptor.style.intervalInput" optionLabel="name" optionValue="value" v-model="repeatInterval" :options="knCronDescriptor.intervals" @change="updateCronInterval" />
+                            <Dropdown
+                                id="repeatInterval"
+                                class="kn-material-input"
+                                :class="{ 'p-error': !validInterval }"
+                                :style="knCronDescriptor.style.intervalInput"
+                                optionLabel="name"
+                                optionValue="value"
+                                v-model="repeatInterval"
+                                :options="knCronDescriptor.intervals"
+                                @change="updateCronInterval"
+                            />
+                            <div v-show="!validInterval" class="p-error">
+                                <small class="p-col-12">
+                                    {{ $t('cron.repeatInterval') + ' is required!' }}
+                                </small>
+                            </div>
                         </span>
                     </div>
 
@@ -197,11 +212,16 @@ export default defineComponent({
                 valid = false
             }
 
-            if (endDate && endDate.valueOf() < startDate.valueOf()) {
+            if (endDate && startDate && endDate.valueOf() < startDate.valueOf()) {
                 valid = false
             }
 
-            this.$emit('cronValid', valid)
+            this.$emit('cronValid', valid && this.validInterval)
+            return valid
+        },
+        validInterval(): boolean {
+            const valid = this.repeatInterval ? true : false
+            this.$emit('cronValid', valid && this.validDates)
             return valid
         }
     },
