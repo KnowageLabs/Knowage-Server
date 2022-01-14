@@ -36,7 +36,6 @@
                         :data-test="'parameter-input-' + parameter.id"
                     />
                 </div>
-
                 <div class="p-field p-m-4" v-if="parameter.type === 'DATE' && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters }" :data-test="'parameter-date-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
@@ -56,7 +55,6 @@
                         :data-test="'parameter-date-input-' + parameter.id"
                     />
                 </div>
-
                 <div class="p-field p-m-4" v-if="parameter.selectionType === 'LIST' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label
@@ -78,7 +76,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="p-field p-m-4" v-if="parameter.selectionType === 'COMBOBOX' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label
@@ -94,7 +91,6 @@
                     <Dropdown v-if="!parameter.multivalue && parameter.parameterValue" class="kn-material-input" v-model="parameter.parameterValue[0]" :options="parameter.data" optionLabel="value" @change="updateDependency(parameter)" />
                     <MultiSelect v-else v-model="parameter.parameterValue" :options="parameter.data" optionLabel="value" @change="updateDependency(parameter)" />
                 </div>
-
                 <div class="p-field p-m-4" v-if="parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label
@@ -114,7 +110,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="p-field p-m-4" v-if="parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label
@@ -141,14 +136,12 @@
             <Button class="kn-button kn-button--primary p-ml-1" icon="fa fa-chevron-down" :disabled="buttonsDisabled" @click="toggle($event)" />
             <Menu ref="executeButtonMenu" :model="executeMenuItems" :popup="true" />
         </div>
-
         <KnParameterPopupDialog :visible="popupDialogVisible" :selectedParameter="selectedParameter" :propLoading="loading" :parameterPopUpData="parameterPopUpData" @close="popupDialogVisible = false" @save="onPopupSave"></KnParameterPopupDialog>
         <KnParameterTreeDialog :visible="treeDialogVisible" :selectedParameter="selectedParameter" :formatedParameterValues="formatedParameterValues" :document="document" @close="onTreeClose" @save="onTreeSave"></KnParameterTreeDialog>
         <KnParameterSaveDialog :visible="parameterSaveDialogVisible" :propLoading="loading" @close="parameterSaveDialogVisible = false" @saveViewpoint="saveViewpoint"></KnParameterSaveDialog>
         <KnParameterSavedParametersDialog :visible="savedParametersDialogVisible" :propViewpoints="viewpoints" @close="savedParametersDialogVisible = false" @fillForm="fillParameterForm" @executeViewpoint="executeViewpoint" @deleteViewpoint="deleteViewpoint"></KnParameterSavedParametersDialog>
     </div>
 </template>
-
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
@@ -235,7 +228,6 @@ export default defineComponent({
                 if (el.selectionType == 'LIST' && el.showOnPanel == 'true' && el.multivalue) {
                     this.selectedParameterCheckbox[el.id] = el.parameterValue?.map((parameterValue: any) => parameterValue.value)
                 }
-
                 this.parameters.filterStatus.push(el)
             })
             this.parameters?.filterStatus.forEach((el: any) => setVisualDependency(this.parameters, el))
@@ -261,7 +253,6 @@ export default defineComponent({
                 parameter.parameterValue[0] = { value: '', description: '' }
                 return
             }
-
             const valueColumn = parameter.metadata.valueColumn
             const descriptionColumn = parameter.metadata.descriptionColumn
             let valueIndex = null as any
@@ -348,7 +339,10 @@ export default defineComponent({
         async getParameterPopupInfo(parameter: iParameter) {
             this.loading = true
             const postData = { label: this.document?.label, parameters: this.getFormattedParameters(), paramId: parameter.urlName, role: this.sessionRole }
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentExeParameters/admissibleValues`, postData).then((response: AxiosResponse<any>) => (this.parameterPopUpData = response.data))
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentExeParameters/admissibleValues`, postData)
+                .then((response: AxiosResponse<any>) => (this.parameterPopUpData = response.data))
+                .catch((error: any) => console.log('ERROR: ', error))
             this.loading = false
         },
         getFormattedParameters() {
@@ -359,7 +353,7 @@ export default defineComponent({
                 if (!parameter.multivalue) {
                     parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
                 } else {
-                    parameters.push({ label: parameter.label, value: parameter.parameterValue, description: parameter.parameterDescription })
+                    parameters.push({ label: parameter.label, value: parameter.parameterValue, description: parameter.parameterDescription ?? '' })
                 }
             })
             return parameters
@@ -442,7 +436,6 @@ export default defineComponent({
                         for (let i = 0; i < tempArrayValues.length; i++) {
                             parameter.parameterValue[i] = { value: tempArrayValues[i], description: tempArrayDescriptions[i] ?? '' }
                         }
-
                         if (parameter.selectionType === 'LIST') {
                             this.selectedParameterCheckbox[parameter.id] = parameter.parameterValue?.map((parameterValue: any) => parameterValue.value)
                         }
@@ -489,16 +482,13 @@ export default defineComponent({
     }
 })
 </script>
-
 <style lang="scss">
 #kn-parameter-sidebar-toolbar .p-toolbar-group-left {
     width: 100%;
 }
-
 #kn-parameter-sidebar-toolbar-icons-container {
     width: 100%;
 }
-
 #kn-parameter-sidebar {
     z-index: 100;
     background-color: white;
@@ -510,17 +500,14 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
 }
-
 .parameter-clear-icon {
     margin-left: auto;
 }
-
 .kn-parameter-sidebar-content {
     height: 80vh;
     overflow: auto;
     position: relative;
 }
-
 .kn-parameter-sidebar-buttons {
     margin-top: auto;
     margin-bottom: 20px;

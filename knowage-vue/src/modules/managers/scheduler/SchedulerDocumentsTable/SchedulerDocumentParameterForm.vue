@@ -134,6 +134,7 @@ export default defineComponent({
         },
         async onParameterTypeChange() {
             this.parameter.value = ''
+            this.parameter.selectedValues = []
             if (this.parameter.type === 'fixed') {
                 await this.loadParameterValues()
             }

@@ -79,6 +79,7 @@ import WorkspaceRepositoryMoveDialog from './dialogs/WorkspaceRepositoryMoveDial
 import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDialog.vue'
 import WorkspaceRepositoryBreadcrumb from './breadcrumbs/WorkspaceRepositoryBreadcrumb.vue'
 import { AxiosResponse } from 'axios'
+import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
     components: { DataTable, Column, DetailSidebar, WorkspaceCard, Menu, Message, WorkspaceRepositoryMoveDialog, WorkspaceWarningDialog, WorkspaceRepositoryBreadcrumb },
@@ -128,8 +129,7 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         formatDate(date) {
-            let fDate = new Date(date)
-            return fDate.toLocaleString()
+            return formatDateWithLocale(date, { dateStyle: 'short', timeStyle: 'short' })
         },
         showSidebar(clickedDocument) {
             this.selectedDocument = clickedDocument

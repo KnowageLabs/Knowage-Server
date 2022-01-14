@@ -125,13 +125,13 @@ export default defineComponent({
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
         isDatasetOwner(): any {
-            return (this.$store.state as any).user.fullName === this.selectedDataset.owner
+            return (this.$store.state as any).user.userId === this.selectedDataset.owner
         },
         showCkanIntegration(): any {
             return (this.$store.state as any).user.functionalities.indexOf('CkanIntegrationFunctionality') > -1
         },
         showQbeEditButton(): any {
-            return (this.$store.state as any).user.fullName === this.selectedDataset.owner && (this.selectedDataset.dsTypeCd == 'Federated' || this.selectedDataset.dsTypeCd == 'Qbe')
+            return (this.$store.state as any).user.userId === this.selectedDataset.owner && (this.selectedDataset.dsTypeCd == 'Federated' || this.selectedDataset.dsTypeCd == 'Qbe')
         },
         datasetHasDrivers(): any {
             return this.selectedDataset.drivers && this.selectedDataset.length > 0
