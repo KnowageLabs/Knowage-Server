@@ -13,6 +13,15 @@
             "line-height": "1.5",
             "max-height": "28px"
         },
+        "leftAxis": {
+            "background-color": " #43749e !important",
+            "color": "white !important",
+            "height": "100%",
+            "left": 0,
+            "position": "absolute",
+            "top": 0,
+            "width": "100%"
+        },
         "leftAxisCard": {
             "background-color": "#43749e",
             "border": "1px solid #fff",
@@ -34,10 +43,10 @@
             "width": "28px"
         },
         "leftToolbarContainer": {
-            "width": "32px",
             "flex-grow": 0,
             "flex-shrink": 0,
-            "position": "relative"
+            "position": "relative",
+            "width": "32px"
         },
         "scroll": {
             "overflow": "hidden"
@@ -51,15 +60,6 @@
             "color": "white !important"
         },
         "topAxis": {
-            "background-color": " #43749e !important",
-            "color": "white !important",
-            "height": "100%",
-            "left": 0,
-            "position": "absolute",
-            "top": 0,
-            "width": "100%"
-        },
-        "leftAxis": {
             "background-color": " #43749e !important",
             "color": "white !important",
             "height": "100%",
