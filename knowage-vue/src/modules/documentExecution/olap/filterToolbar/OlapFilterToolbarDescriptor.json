@@ -1,0 +1,113 @@
+{
+    "style": {
+        "filterCard": {
+            "align-items": "center",
+            "background-color": "#43749e",
+            "border": "1px solid #fff",
+            "border-radius": "2px",
+            "color": "#fff",
+            "cursor": "grab",
+            "display": "flex",
+            "font-size": "0.8rem",
+            "font-weight": "normal",
+            "line-height": "1.5",
+            "max-height": "28px"
+        },
+        "leftAxisCard": {
+            "background-color": "#43749e",
+            "border": "1px solid #fff",
+            "border-radius": " 2px",
+            "cursor": "grab",
+            "font-size": "0.7rem",
+            "height": "130px",
+            "width": "28px"
+        },
+        "leftAxisDropzone": {
+            "align-items": "center",
+            "border": "2px dashed white",
+            "color": "white",
+            "display": "none",
+            "font-size": "0.8rem",
+            "justify-content": "center",
+            "pointer-events": "none",
+            "text-transform": "uppercase",
+            "width": "28px"
+        },
+        "leftToolbarContainer": {
+            "width": "32px",
+            "flex-grow": 0,
+            "flex-shrink": 0,
+            "position": "relative"
+        },
+        "scroll": {
+            "overflow": "hidden"
+        },
+        "sidebarButton": {
+            "color": "white",
+            "width": "50px"
+        },
+        "toolbarMainColor": {
+            "background-color": " #43749e !important",
+            "color": "white !important"
+        },
+        "topAxis": {
+            "background-color": " #43749e !important",
+            "color": "white !important",
+            "height": "100%",
+            "left": 0,
+            "position": "absolute",
+            "top": 0,
+            "width": "100%"
+        },
+        "leftAxis": {
+            "background-color": " #43749e !important",
+            "color": "white !important",
+            "height": "100%",
+            "left": 0,
+            "position": "absolute",
+            "top": 0,
+            "width": "100%"
+        },
+        "topAxisCard": {
+            "align-items": "center",
+            "border": "1px solid #fff",
+            "border-radius": "2px",
+            "color": "#fff",
+            "cursor": "grab",
+            "display": "flex",
+            "font-size": "0.7rem",
+            "max-height": "28px",
+            "width": "130px"
+        },
+        "topAxisDropzone": {
+            "align-items": "center",
+            "border": "2px dashed white",
+            "color": "white",
+            "display": "none",
+            "font-size": "0.8rem",
+            "height": "28px",
+            "justify-content": "center",
+            "pointer-events": "none",
+            "text-transform": "uppercase"
+        },
+        "topToolbarContainer": {
+            "flex-grow": 0,
+            "flex-shrink": 0,
+            "height": "32px",
+            "position": "relative"
+        },
+        "whiteColor": {
+            "color": "white !important"
+        },
+        "whitespace": {
+            "background-color": "white",
+            "height": "100%",
+            "width": "2px"
+        },
+        "whitespaceLeft": {
+            "background-color": "white",
+            "height": "2px",
+            "width": "100%"
+        }
+    }
+}

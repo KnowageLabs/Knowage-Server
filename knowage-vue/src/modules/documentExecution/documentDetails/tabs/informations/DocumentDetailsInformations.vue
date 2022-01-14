@@ -5,6 +5,9 @@
                 <template #left>
                     {{ $t('documentExecution.documentDetails.info.infoTitle') }}
                 </template>
+                <template #right>
+                    <Button :label="$t('documentExecution.olap.openDesigner')" class="p-button-text p-button-plain" @click="openDesignerConfirm" />
+                </template>
             </Toolbar>
             <div id="informations-content" class="kn-flex kn-relative">
                 <div :style="mainDescriptor.style.absoluteScroll">
@@ -405,6 +408,18 @@ export default defineComponent({
         },
         setFunctionality(event) {
             this.document.functionalities = event
+        },
+
+        openDesignerConfirm() {
+            this.$confirm.require({
+                header: this.$t('common.toast.warning'),
+                message: this.$t('documentExecution.olap.openDesignerMsg'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.openDesigner()
+            })
+        },
+        openDesigner() {
+            this.$router.push(`/olap-designer/${this.document.id}`)
         }
     }
 })
