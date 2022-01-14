@@ -349,7 +349,6 @@ export default defineComponent({
             let parameters = [] as any[]
             Object.keys(this.parameters.filterStatus).forEach((key: any) => {
                 const parameter = this.parameters.filterStatus[key]
-                console.log('PARAMETER: ', parameter)
                 if (!parameter.multivalue) {
                     parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
                 } else {
