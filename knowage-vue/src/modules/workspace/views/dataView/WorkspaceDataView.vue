@@ -7,7 +7,7 @@
         <template #right>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
             <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
-            <KnFabButton icon="fas fa-plus" data-test="new-folder-button" @click="showCreationMenu" />
+            <KnFabButton v-if="tableMode === 'My Datasets'" icon="fas fa-plus" data-test="new-folder-button" @click="showCreationMenu" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
@@ -125,13 +125,13 @@ export default defineComponent({
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
         isDatasetOwner(): any {
-            return (this.$store.state as any).user.fullName === this.selectedDataset.owner
+            return (this.$store.state as any).user.userId === this.selectedDataset.owner
         },
         showCkanIntegration(): any {
             return (this.$store.state as any).user.functionalities.indexOf('CkanIntegrationFunctionality') > -1
         },
         showQbeEditButton(): any {
-            return (this.$store.state as any).user.fullName === this.selectedDataset.owner && (this.selectedDataset.dsTypeCd == 'Federated' || this.selectedDataset.dsTypeCd == 'Qbe')
+            return (this.$store.state as any).user.userId === this.selectedDataset.owner && (this.selectedDataset.dsTypeCd == 'Federated' || this.selectedDataset.dsTypeCd == 'Qbe')
         },
         datasetHasDrivers(): any {
             return this.selectedDataset.drivers && this.selectedDataset.length > 0

@@ -2,24 +2,39 @@
     <div class="p-d-flex p-flex-column kn-flex">
         <OlapCustomViewTable v-if="customViewVisible" class="olap-overlay-dialog" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)" />
 
-        <DrillTruDialog v-if="drillTruDialogVisible" :drillData="dtData" :tableColumns="formattedColumns" :dtLevels="dtAssociatedLevels" :menuTree="dtTree" class="olap-overlay-dialog" @close="drillTruDialogVisible = false" />
+        <DrillTruDialog
+            v-if="drillTruDialogVisible"
+            :drillData="dtData"
+            :tableColumns="formattedColumns"
+            :dtLevels="dtAssociatedLevels"
+            :menuTree="dtTree"
+            :dtMaxRows="dtMaxRows"
+            class="olap-overlay-dialog"
+            @close="closeDrillTruDialog"
+            @checkCheckboxes="checkCheckboxes"
+            @clearLevels="dtAssociatedLevels.length = 0"
+            @rowsChanged="dtMaxRows = $event"
+            @drill="drillThrough"
+        />
 
         <FilterPanel :olapProp="olap" @putFilterOnAxis="putFilterOnAxis" @showMultiHierarchy="showMultiHierarchy" />
         <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @swapAxis="swapAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" />
 
         <div id="left-and-table-container" class="p-d-flex p-flex-row kn-flex">
             <FilterLeftToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" />
-            <div id="olap-table" class="kn-flex" ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
+            <div id="table-container" class="kn-flex" :style="olapDescriptor.style.tableContainer">
+                <div id="olap-table" class="kn-flex kn-olap-table" ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
+            </div>
         </div>
 
-        <!-- SELECT TOAST CONFIRM  TODO:Premestiti stilove u deskriptor -------------------------------------->
-        <div v-if="mode === 'From Cell' || mode === 'From Member'" id="custom-toast" style="position:fixed;width:25rem;top:20px;right:20px;z-index:2000">
-            <div id="custom-toast-content" style="background: #B3E5FC; border:solid#B3E5FC; border-width:1px; color:#01579B;padding:1rem;box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 10%);border-radius: 4px;">
+        <!-- SELECT TOAST CONFIRM -------------------------------------->
+        <div v-if="mode === 'From Cell' || mode === 'From Member'" id="custom-toast" :style="olapDescriptor.style.customToastContainer">
+            <div id="custom-toast-content" :style="olapDescriptor.style.customToastContent">
                 <div class="p-d-flex p-flex-column">
                     <div class="p-text-center p-d-flex p-flex-row p-ai-center">
-                        <i class="pi pi-info-circle" style="font-size: 2rem"></i>
+                        <i class="pi pi-info-circle p-ml-2" :style="olapDescriptor.style.toastIcon"></i>
                         <h4 class="p-ml-2">{{ $t('documentExecution.olap.crossNavigationDefinition.finishSelection') }}</h4>
-                        <Button class="p-jc-center" style="background-color:transparent;color:#01579B;width:5px;margin-left:auto" label="OK" @click="cellSelected" />
+                        <Button class="p-jc-center" :style="olapDescriptor.style.toastButton" label="OK" @click="cellSelected" />
                     </div>
                 </div>
             </div>
@@ -111,7 +126,9 @@ export default defineComponent({
             dtColumns: [] as any,
             formattedColumns: [] as any,
             dtAssociatedLevels: [] as any,
-            dtTree: [] as any
+            dtTree: [] as any,
+            dtMaxRows: 0,
+            usedOrdinal: 0 as Number
         }
     },
     async created() {
@@ -397,7 +414,6 @@ export default defineComponent({
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/axis/moveHierarchy?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => {
                     this.olap = response.data
-                    //TODO: OlapPanel.js linija 419, postoje 2 ifa koja izgleda nista ne rade, ispitati kasnije
                 })
                 .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.hierarchyMoveError') }))
             this.formatOlapTable()
@@ -429,6 +445,10 @@ export default defineComponent({
             }
         },
         execExternalCrossNavigation(event: any) {
+            if (this.olapDesignerMode) {
+                return
+            }
+
             const tempCrossNavigationParams = event.target.attributes[2].value
             const tempFormatted = tempCrossNavigationParams.substring(tempCrossNavigationParams.indexOf('(') + 2, tempCrossNavigationParams.lastIndexOf(')') - 1)
 
@@ -450,6 +470,10 @@ export default defineComponent({
             this.loading = false
         },
         async getCrossNavigationURL(event: any) {
+            if (this.olapDesignerMode) {
+                return
+            }
+
             this.loading = true
 
             const tempString = event.target.attributes[1].textContent
@@ -529,33 +553,67 @@ export default defineComponent({
                 .catch(() => {})
             this.loading = false
         },
-        async drillThrough(event: any) {
+        closeDrillTruDialog() {
+            this.drillTruDialogVisible = false
+            this.dtData = []
+            this.dtColumns = []
+            this.dtTree = []
+            this.dtAssociatedLevels = []
+        },
+        async drillThrough(ordinal?: any) {
+            ordinal ? (this.usedOrdinal = this.getOrdinalFromEvent(ordinal)) : ''
             this.$store.commit('setInfo', { title: this.$t('documentExecution.olap.drillTru.loadingTitle'), msg: this.$t('documentExecution.olap.drillTru.loadingMsg') })
             this.loading = true
-            await this.$http
-                .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/drilltrough?SBI_EXECUTION_ID=${this.id}`, this.formatDrillThroughPostData(event), { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
-                .then((response: AxiosResponse<any>) => {
-                    this.dtData = []
-                    this.dtColumns = []
+            if (this.dtAssociatedLevels.length == 0 && this.dtMaxRows == 0) {
+                let toSend = {} as any
+                toSend.ordinal = this.usedOrdinal
+                await this.$http
+                    .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/drilltrough?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                    .then((response: AxiosResponse<any>) => {
+                        this.dtData = []
+                        this.dtColumns = []
 
-                    this.dtData = response.data
-                    for (var key in response.data[0]) {
-                        this.dtColumns.push(key)
-                    }
-                    this.formattedColumns = this.formatColumns(this.dtColumns)
-                    this.getCollections()
-                    this.drillTruDialogVisible = true
-                })
-                .catch(() => {
-                    this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.drillTruError') })
-                })
-                .finally(() => (this.loading = false))
+                        this.dtData = response.data
+                        for (var key in response.data[0]) {
+                            this.dtColumns.push(key)
+                        }
+                        this.formattedColumns = this.formatColumns(this.dtColumns)
+                        this.getCollections()
+                        this.drillTruDialogVisible = true
+                    })
+                    .catch(() => {
+                        this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.drillTruError') })
+                        this.loading = false
+                    })
+                    .finally(() => (this.loading = false))
+            } else {
+                let toSend = {} as any
+                toSend.ordinal = this.usedOrdinal
+                toSend.levels = JSON.stringify(this.dtAssociatedLevels)
+                toSend.max = this.dtMaxRows
+                await this.$http
+                    .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/drilltrough/full?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                    .then((response: AxiosResponse<any>) => {
+                        this.dtData = []
+                        this.dtColumns = []
+                        this.dtData = response.data
+                        for (var key in response.data[0]) {
+                            this.dtColumns.push(key)
+                        }
+                        this.formattedColumns = this.formatColumns(this.dtColumns)
+                    })
+                    .catch(() => {
+                        this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.drillTruError') })
+                        this.loading = false
+                    })
+                    .finally(() => (this.loading = false))
+            }
         },
-        formatDrillThroughPostData(event: any) {
+        getOrdinalFromEvent(event: any) {
             const drillThroughAttribute = event.target.attributes[1].textContent
 
-            const postData = { ordinal: +drillThroughAttribute.substring(drillThroughAttribute.indexOf('(') + 1, drillThroughAttribute.indexOf(')')) }
-            return postData
+            const ordinal = parseInt(drillThroughAttribute.substring(drillThroughAttribute.indexOf('(') + 1, drillThroughAttribute.indexOf(')')))
+            return ordinal
         },
         formatColumns(array) {
             let arr = [] as any
@@ -576,11 +634,65 @@ export default defineComponent({
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/drilltrough/levels/?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => {
                     this.dtTree = response.data
+                    setTimeout(() => {
+                        this.checkDtLevels()
+                    }, 500)
                 })
                 .catch(() => {
                     this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.drillLevelsError') })
                 })
         },
+
+        checkDtLevels() {
+            var tempArr = [] as any
+            if (this.dtTree != null && this.formattedColumns != null) {
+                for (var i = 0; i < this.dtTree.length; i++) {
+                    for (var j = 0; j < this.dtTree[i].children.length; j++) {
+                        for (var k = 0; k < this.formattedColumns.length; k++) {
+                            if (this.formattedColumns[k].label == this.dtTree[i].children[j].caption.toUpperCase()) {
+                                this.dtTree[i].children[j].checked = true
+                                tempArr.push(this.dtTree[i].children[j])
+                            } else {
+                                this.dtTree[i].children[j].checked = false
+                            }
+                        }
+                    }
+                }
+            } else {
+                this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.checkingLevelsError') })
+            }
+
+            for (i = 0; i < tempArr.length; i++) {
+                this.checkCheckboxes(tempArr[i], this.dtAssociatedLevels)
+            }
+        },
+
+        checkCheckboxes(item, list) {
+            // eslint-disable-next-line no-prototype-builtins
+            if (item.hasOwnProperty('caption')) {
+                var index = this.indexInList(item, list)
+
+                if (index != -1) {
+                    this.dtAssociatedLevels.splice(index, 1)
+                } else {
+                    this.dtAssociatedLevels.push(item)
+                }
+            }
+        },
+
+        indexInList(item, list) {
+            // eslint-disable-next-line no-prototype-builtins
+            if (item.hasOwnProperty('caption')) {
+                for (var i = 0; i < list.length; i++) {
+                    var object = list[i]
+                    if (object.caption == item.caption) {
+                        return i
+                    }
+                }
+            }
+            return -1
+        },
+
         async handleTableClick(event: any) {
             const eventTarget = event.target as any
 
@@ -623,7 +735,7 @@ export default defineComponent({
 <style lang="scss">
 .olap-overlay-dialog {
     position: absolute;
-    z-index: 2000;
+    z-index: 300;
     background-color: white;
     height: 100%;
 }
@@ -719,5 +831,56 @@ export default defineComponent({
     background-repeat: no-repeat;
     height: 0.8rem;
     width: 0.8rem;
+}
+
+.kn-olap-table {
+    position: absolute;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+    text-align: left;
+    table-layout: fixed;
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 12px;
+    border-collapse: collapse;
+    thead {
+        border-bottom: 1px solid #ccc;
+        overflow: auto;
+        th {
+            position: relative !important;
+            border-right: 1px solid #ccc;
+            border-left: 1px solid #ccc;
+            padding: 5px;
+            background: #f5f5f5;
+            white-space: nowrap;
+            text-align: left;
+        }
+        td {
+            border-top-width: 1px !important;
+            border-right-width: 1px !important;
+            text-align: right;
+            vertical-align: middle;
+            border-bottom: 1px solid #3b678c;
+            border-right: 1px solid #3b678c;
+            max-height: 43px !important;
+        }
+    }
+    tbody {
+        th {
+            border-right: 1px solid #ccc;
+            padding-right: 5px;
+        }
+        td[measurename] {
+            text-align: right;
+        }
+    }
+    tr {
+        &:nth-child(even) {
+            background-color: #eceff1;
+        }
+        &:nth-child(odd) {
+            background-color: white;
+        }
+    }
 }
 </style>

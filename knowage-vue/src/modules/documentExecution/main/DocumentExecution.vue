@@ -1,6 +1,6 @@
 <template>
     <div class="kn-height-full detail-page-container">
-        <Toolbar v-if="!embed" class="kn-toolbar kn-toolbar--primary p-col-12">
+        <Toolbar v-if="!embed && !olapDesignerMode" class="kn-toolbar kn-toolbar--primary p-col-12">
             <template #left>
                 <span>{{ document?.label }}</span>
             </template>
@@ -144,7 +144,8 @@ export default defineComponent({
             embed: false,
             olapCustomViewVisible: false,
             userRole: null,
-            loading: false
+            loading: false,
+            olapDesignerMode: false
         }
     },
     async activated() {
@@ -184,6 +185,7 @@ export default defineComponent({
         this.user = (this.$store.state as any).user
         this.userRole = this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
 
+        this.isOlapDesignerMode()
         this.setMode()
 
         this.document = { label: this.id }
@@ -839,6 +841,11 @@ export default defineComponent({
             })
 
             return formattedParams
+        },
+        isOlapDesignerMode() {
+            if (this.$route.name === 'olap-designer') {
+                this.olapDesignerMode = true
+            }
         }
     }
 })

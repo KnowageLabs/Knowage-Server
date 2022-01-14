@@ -1,15 +1,21 @@
 <template>
-    <div id="leftaxis" class="p-d-flex p-flex-column p-ai-center" :style="toolbarDescriptor.style.leftToolbarContainer" @drop="onDrop($event)" @dragover.prevent @dragenter="displayDropzone" @dragleave="hideDropzone">
-        <div v-for="(row, index) in rows" :key="index" class="p-d-flex p-flex-column p-ai-center">
-            <div :id="'left-' + row.name" :ref="'left-' + row.name" class="p-d-flex p-flex-column p-ai-center" :style="toolbarDescriptor.style.leftAxisCard" draggable="true" @dragstart="onDragStart($event, row, 'left-' + row.name)" @dragend="removeDragClass('left-' + row.name)">
-                <Button v-if="row.hierarchies.length > 1" icon="fas fa-sitemap" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.whiteColor" @click="$emit('showMultiHierarchy', row)" />
-                <div class="olap-rotate-text kn-flex kn-truncated" :class="{ 'p-mt-2': row.hierarchies.length == 1 }" v-tooltip.right="row.caption" flex>{{ cutName(row.caption, 0, row.hierarchies.length > 1) }}</div>
-                <div id="whitespace" class="p-mt-auto" :style="toolbarDescriptor.style.whitespaceLeft" />
-                <Button icon="fas fa-filter" class="p-button-text p-button-rounded p-button-plain p-mt-auto p-m-0" :style="toolbarDescriptor.style.whiteColor" />
+    <div id="filterPanelContainer" :style="toolbarDescriptor.style.leftToolbarContainer">
+        <div id="leftaxis" ref="filterPanelContainer" class="p-d-flex p-flex-column p-ai-center" :style="toolbarDescriptor.style.topAxis" @drop="onDrop($event)" @dragover.prevent @dragenter="displayDropzone">
+            <Button v-if="scrollContainerHeight < scrollContentHeight" icon="fas fa-arrow-circle-up" class="p-button-text p-button-rounded p-button-plain p-mb-1" :style="toolbarDescriptor.style.whiteColor" @click="scrollUp" />
+            <div ref="filterItemsContainer" class="p-d-flex p-flex-column p-ai-center kn-flex" :style="toolbarDescriptor.style.scroll" @dragover.prevent @dragenter.prevent @dragleave="hideDropzone">
+                <div v-for="(row, index) in rows" :key="index" class="p-d-flex p-flex-column p-ai-center">
+                    <div :id="'left-' + row.name" :ref="'left-' + row.name" class="p-d-flex p-flex-column p-ai-center" :style="toolbarDescriptor.style.leftAxisCard" draggable="true" @dragstart="onDragStart($event, row, 'left-' + row.name)" @dragend="removeDragClass('left-' + row.name)">
+                        <Button v-if="row.hierarchies.length > 1" icon="fas fa-sitemap" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.whiteColor" @click="$emit('showMultiHierarchy', row)" />
+                        <div class="olap-rotate-text kn-flex kn-truncated" :class="{ 'p-mt-2': row.hierarchies.length == 1 }" v-tooltip.right="row.caption" flex>{{ cutName(row.caption, 0, row.hierarchies.length > 1) }}</div>
+                        <div id="whitespace" class="p-mt-auto" :style="toolbarDescriptor.style.whitespaceLeft" />
+                        <Button icon="fas fa-filter" class="p-button-text p-button-rounded p-button-plain p-mt-auto p-m-0" :style="toolbarDescriptor.style.whiteColor" :disabled="true" />
+                    </div>
+                    <i v-if="row.positionInAxis < rows.length - 1" class="fas fa-arrows-alt-v p-my-2" style="cursor:pointer" @click="$emit('switchPosition', row)" />
+                </div>
+                <div ref="axisDropzone" class="kn-flex kn-truncated olap-rotate-text p-my-1" :style="toolbarDescriptor.style.leftAxisDropzone">{{ $t('documentExecution.olap.filterToolbar.drop') }}</div>
             </div>
-            <i v-if="row.positionInAxis < rows.length - 1" class="fas fa-arrows-alt-v p-my-2" style="cursor:pointer" @click="$emit('switchPosition', row)" />
+            <Button v-if="scrollContainerHeight < scrollContentHeight" icon="fas fa-arrow-circle-down" class="p-button-text p-button-rounded p-button-plain p-mt-1" :style="toolbarDescriptor.style.whiteColor" @click="scrollDown" />
         </div>
-        <div ref="axisDropzone" class="kn-flex kn-truncated olap-rotate-text p-my-1" :style="toolbarDescriptor.style.leftAxisDropzone">{{ $t('documentExecution.olap.filterToolbar.drop') }}</div>
     </div>
 </template>
 
@@ -27,7 +33,9 @@ export default defineComponent({
             toolbarDescriptor,
             columns: [] as iOlapFilter[],
             rows: [] as iOlapFilter[],
-            cutArray: [12, 11, 10, 9, 6]
+            cutArray: [12, 11, 10, 9, 6],
+            scrollContainerHeight: 0,
+            scrollContentHeight: 0
         }
     },
     watch: {
@@ -37,6 +45,8 @@ export default defineComponent({
     },
     created() {
         this.loadData()
+        window.addEventListener('resize', this.assignScrollValues)
+        this.assignScrollValues()
     },
     methods: {
         loadData() {
@@ -49,7 +59,7 @@ export default defineComponent({
             ind = ind + 1
             var cutProp = this.cutArray[ind]
             if (name == undefined) {
-                name = 'TODO: something '
+                name = '...'
             }
             if (name.length <= cutProp) return name
             else return name.substring(0, cutProp) + '...'
@@ -83,11 +93,6 @@ export default defineComponent({
             var fromAxis
             if (data != null) {
                 fromAxis = data.axis
-                if (fromAxis == -1) {
-                    //TODO: Ne znam cemu sluzi ostaviti za kasnije pa pogledati....FilterPanel.js linija 704 dropTop
-                    // this.filterSelected[data.positionInAxis].caption = '...'
-                    // this.filterSelected[data.positionInAxis].visible = false
-                }
                 if (fromAxis != 1) {
                     if (data.axis === 0 && topLength == 1) {
                         this.$store.commit('setInfo', { title: this.$t('common.toast.warning'), msg: this.$t('documentExecution.olap.filterToolbar.dragEmptyWarning') })
@@ -98,8 +103,20 @@ export default defineComponent({
                     }
                 }
             }
-            //TODO: Ne znam cemu sluzi ostaviti za kasnije pa pogledati....FilterPanel.js linija 164 clearLoadedData
-            // data != null ? this.clearLoadedData(data.uniqueName) : ''
+        },
+        scrollUp() {
+            // @ts-ignore
+            this.$refs.filterItemsContainer.scrollTop -= 50
+        },
+        scrollDown() {
+            // @ts-ignore
+            this.$refs.filterItemsContainer.scrollTop += 50
+        },
+        assignScrollValues() {
+            // @ts-ignore
+            this.scrollContainerHeight = this.$refs?.filterPanelContainer?.clientHeight
+            // @ts-ignore
+            this.scrollContentHeight = this.$refs?.filterItemsContainer?.scrollHeight
         }
     }
 })

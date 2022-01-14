@@ -35,7 +35,8 @@ def python_widget_execute(output_type):
         dataset_name, datastore = utils.get_dataset(request_body)
         drivers = utils.get_analytical_drivers(request_body)
     except Exception as e:
-        return raise_error("Error during request decoding: {}".format(e), e)
+        logging.exception("Error during request decoding")
+        return str(e), 500
 
     if not isAuthenticated:
         logging.error("Unauthorized access")
@@ -54,14 +55,16 @@ def python_widget_execute(output_type):
         if datastore != None:
             df = utils.datastore_to_dataframe(datastore['metaData']['fields'], datastore['rows'])
     except Exception as e:
-        return raise_error("Error during dataframe conversion: {}".format(e), e)
+        logging.exception("Error during dataframe conversion")
+        return str(e), 500
 
     # execute script
     try:
         namespace = {"df_": df, "drivers_": drivers}
         exec(script, namespace)
     except Exception as e:
-        return raise_error("Error during script execution: {}".format(e), e)
+        logging.exception("Error during script execution")
+        return str(e), 500
 
     # collect script result
     with open(output_file, "rb") as f:
@@ -79,10 +82,6 @@ def python_widget_execute(output_type):
         to_return = output_file_content
 
     return to_return, 200
-
-def raise_error(message, exception):
-    logging.error(message)
-    return str(exception), 400
 
 @widget.route('/libraries', methods = ['GET'])
 def python_libraries():

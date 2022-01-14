@@ -57,7 +57,7 @@ export default defineComponent({
         if (this.alert.jsonOptions) {
             await this.loadKpi(this.alert.jsonOptions.kpiId, this.alert.jsonOptions.kpiVersion)
             this.alert.jsonOptions.actions = this.alert.jsonOptions.actions.map((action) => {
-                const option = { ...action, data: this.actionList.find((ac) => action.idAction == ac.id) }
+                const option = { ...action, data: this.actionList?.find((ac) => action.idAction == ac.id) }
                 option['thresholdData'] = option.thresholdValues.map((thresholdId) => {
                     return this.kpi.threshold.thresholdValues.find((threshold) => threshold.id == thresholdId)
                 })

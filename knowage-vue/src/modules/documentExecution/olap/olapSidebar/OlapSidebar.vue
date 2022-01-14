@@ -51,9 +51,9 @@
                                 @click="onShowParentMemberClick"
                             />
                         </div>
-                        <div class="p-col-4">
+                        <!-- <div class="p-col-4">
                             <Button icon="fas fa-calculator" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.calculatedFieldWizard')" :disabled="!isButtonVisible('BUTTON_CC')" />
-                        </div>
+                        </div> -->
                         <div class="p-col-4">
                             <Button icon="fas fa-eye-slash" class="p-button-plain kn-button--secondary" :class="{ 'olap-sidebar-button-active': hideSpans }" v-tooltip.top="$t('documentExecution.olap.sidebar.hideSpans')" :disabled="!isButtonVisible('BUTTON_HIDE_SPANS')" @click="onHideSpansClick" />
                         </div>
@@ -93,18 +93,18 @@
                     <div class="p-col-4">
                         <Button icon="far fa-eye" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.mdxQuery')" @click="$emit('openMdxQueryDialog')" />
                     </div>
-                    <div class="p-col-4">
+                    <!-- <div class="p-col-4">
                         <Button icon="fas fa-book-open" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.configureTablePagination')" />
-                    </div>
+                    </div> -->
                     <div class="p-col-4">
                         <Button icon="fas fa-arrow-right" class="p-button-plain kn-button--secondary" :class="{ 'olap-sidebar-button-active': crossNavigation }" v-tooltip.top="$t('documentExecution.olap.sidebar.defineCrossNavigation')" @click="$emit('openCrossNavigationDefinitionDialog')" />
                     </div>
                     <div class="p-col-4">
                         <Button icon="far fa-check-square" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.configureButtonsVisiblity')" @click="$emit('openButtonWizardDialog')" />
                     </div>
-                    <div class="p-col-4">
+                    <!-- <div class="p-col-4">
                         <Button icon="fas fa-calculator" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.calculatedField')" />
-                    </div>
+                    </div> -->
                 </div>
             </div>
 

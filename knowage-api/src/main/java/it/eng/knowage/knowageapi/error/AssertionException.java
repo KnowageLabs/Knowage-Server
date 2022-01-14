@@ -15,33 +15,29 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.commons.bo;
-
-import java.sql.Connection;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.jdbc.JDBCAppender;
-
+package it.eng.knowage.knowageapi.error;
 
 /**
- * 
- * 
- * @author Chiara Chiarelli
+ * @author Andrea Gioia (andrea.gioia@eng.it)
+ *
  */
-
-
-public class CustomJDBCAppender extends JDBCAppender {  
+public class AssertionException extends RuntimeException {
+	/**
+	 * Builds a <code>EngineException</code>.
+	 * 
+	 * @param message Text of the exception
+	 */
+    public AssertionException(String message) {
+    	super(message);
+    }
 	
-	private static Logger logger = Logger.getLogger("CustomJDBCAppender");  
-
-	     public CustomJDBCAppender(Connection con) {
-			super();
-			super.connection = con;
-		}
-
-
-		public Connection getConnection(){
-	    	 return super.connection;
-	     }
-
-	 }  
+    /**
+     * Builds a <code>EngineException</code>.
+     * 
+     * @param message Text of the exception
+     * @param ex previous Throwable object
+     */
+    public AssertionException(String message, Throwable ex) {
+    	super(message, ex);
+    }
+}

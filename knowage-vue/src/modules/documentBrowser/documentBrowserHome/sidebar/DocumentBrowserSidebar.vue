@@ -4,7 +4,7 @@
             <template #left>
                 <div id="document-icons-container" class="p-d-flex p-flex-row p-jc-around ">
                     <i class="fa fa-play-circle document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.executeDocument')" @click="executeDocument" />
-                    <template v-if="isSuperAdmin">
+                    <template v-if="isSuperAdmin || user.userId === selectedDocument?.creationUser">
                         <i class="pi pi-pencil document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.editDocument')" @click="$emit('showDocumentDetails', document)" />
                         <i class="far fa-copy document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.cloneDocument')" @click="cloneDocumentConfirm" />
                         <i class="far fa-trash-alt document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.deleteDocument')" @click="deleteDocumentConfirm" />
