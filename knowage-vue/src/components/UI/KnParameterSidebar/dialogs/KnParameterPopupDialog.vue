@@ -7,7 +7,7 @@
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
-        <KnParameterPopupTable v-if="parameterPopUpData && !loading" :parameterPopUpData="parameterPopUpData" :multivalue="multivalue" :multipleSelectedRows="multipleSelectedRows" @selected="onRowSelected"></KnParameterPopupTable>
+        <KnParameterPopupTable v-if="parameterPopUpData && !loading" :parameterPopUpData="popupData" :multivalue="multivalue" :multipleSelectedRows="multipleSelectedRows" @selected="onRowSelected"></KnParameterPopupTable>
 
         <template #footer>
             <div class="p-d-flex p-flex-row p-jc-end">
@@ -35,8 +35,8 @@ export default defineComponent({
             knParameterPopupDialogDescriptor,
             parameter: null as iParameter | null,
             popupData: null as iAdmissibleValues | null,
-            selectedRow: null as { _col0: string; _col1: string } | null,
-            multipleSelectedRows: [] as { _col0: string; _col1: string }[],
+            selectedRow: null as any,
+            multipleSelectedRows: [] as any[],
             multivalue: false,
             loading: false
         }
@@ -67,6 +67,8 @@ export default defineComponent({
             this.loadPopupData()
             if (this.multivalue) {
                 this.setMultipleSelectedRows()
+            } else {
+                this.setSelectedRow()
             }
             this.loading = false
         },
@@ -75,18 +77,50 @@ export default defineComponent({
             this.multivalue = this.selectedParameter?.multivalue
         },
         setMultipleSelectedRows() {
+            this.multipleSelectedRows = []
             const valueColumn = this.popupData?.result.metadata.valueColumn
             const descriptionColumn = this.popupData?.result.metadata.descriptionColumn
 
             const valueIndex = Object.keys(this.parameter?.metadata.colsMap).find((key: string) => this.parameter?.metadata.colsMap[key] === valueColumn)
             const descriptionIndex = Object.keys(this.parameter?.metadata.colsMap).find((key: string) => this.parameter?.metadata.colsMap[key] === descriptionColumn)
 
-            this.multipleSelectedRows = this.parameter?.parameterValue.map((el: any) => {
-                const tempObject = {}
-                if (valueIndex) tempObject[valueIndex] = el.value
-                if (descriptionIndex) tempObject[descriptionIndex] = el.description
-                return tempObject
-            }) as any[]
+            const parameterValues = this.parameter?.parameterValue as any
+
+            for (let i = 0; i < parameterValues.length; i++) {
+                const tempParameter = parameterValues[i]
+
+                if (valueIndex && descriptionIndex) {
+                    const selectedIndex = this.parameterPopUpData?.result.data.findIndex((el: any) => {
+                        return el[valueIndex] === tempParameter.value && el[descriptionIndex] === tempParameter.description
+                    }) as any
+                    if (selectedIndex !== -1) {
+                        this.multipleSelectedRows.push(this.parameterPopUpData?.result.data[selectedIndex])
+                    }
+                }
+            }
+        },
+        setSelectedRow() {
+            const valueColumn = this.popupData?.result.metadata.valueColumn
+            const descriptionColumn = this.popupData?.result.metadata.descriptionColumn
+
+            if (this.parameter?.metadata.colsMap) {
+                const valueIndex = Object.keys(this.parameter?.metadata.colsMap).find((key: string) => this.parameter?.metadata.colsMap[key] === valueColumn)
+                const descriptionIndex = Object.keys(this.parameter?.metadata.colsMap).find((key: string) => this.parameter?.metadata.colsMap[key] === descriptionColumn)
+
+                if (valueIndex && descriptionIndex) {
+                    const selectedIndex = this.parameterPopUpData?.result.data.findIndex((el: any) => {
+                        return el[valueIndex] === this.parameter?.parameterValue[0].value && el[descriptionIndex] === this.parameter?.parameterValue[0].description
+                    }) as any
+                    if (selectedIndex !== -1 && this.popupData) {
+                        this.multipleSelectedRows = [this.popupData?.result.data[selectedIndex]]
+                        this.popupData.result.data = this.popupData?.result.data.filter((el: any) => {
+                            return el[valueIndex] !== this.multipleSelectedRows[0][valueIndex] || el[descriptionIndex] !== this.multipleSelectedRows[0][descriptionIndex]
+                        })
+                        this.popupData?.result.data.unshift(this.multipleSelectedRows[0])
+                        this.selectedRow = this.multipleSelectedRows[0]
+                    }
+                }
+            }
         },
         loadPopupData() {
             this.popupData = this.parameterPopUpData as iAdmissibleValues

@@ -95,7 +95,7 @@ export default defineComponent({
                         content.push(this.createNode(el, parent))
                     })
                 )
-                .catch(() => {})
+                .catch((error: any) => console.log('ERROR: ', error))
             content.forEach((el: any) => this.checkIfNodeIsSelected(el))
 
             this.attachContentToTree(parent, content)
