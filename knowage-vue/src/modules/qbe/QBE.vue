@@ -42,7 +42,7 @@
                     </div>
                 </div>
             </div>
-            <div class="detail-view p-m-1">
+            <div class="detail-view p-m-1" v-if="qbe">
                 <Toolbar class="kn-toolbar kn-toolbar--primary kn-width-full">
                     <template #left>
                         <!-- todo: translation -->
@@ -50,18 +50,16 @@
                         <Button v-else icon="pi pi-chevron-right" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('qbe.detailView.showList')" @click="toggleEntitiesLists" />
                     </template>
                     <template #right>
-                        <InputSwitch class="p-mr-2" v-model="simpleTable" />
+                        <InputSwitch class="p-mr-2" v-model="smartView" />
                         <span>Smart View</span>
                         <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" />
                     </template>
                 </Toolbar>
                 <div>
-                    Detail Container
+                    <QBESimpleTable v-if="!smartView" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]"></QBESimpleTable>
                 </div>
             </div>
         </div>
-
-        <QBESimpleTable v-if="qbe" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]"></QBESimpleTable>
     </Dialog>
 </template>
 
@@ -88,16 +86,16 @@ export default defineComponent({
             queryResult: {} as iQueryResult,
             loading: false,
             showEntitiesLists: true,
-            simpleTable: false
+            smartView: false
         }
     },
     watch: {
         async id() {
-            // await this.loadPage()
+            await this.loadPage()
         }
     },
     async created() {
-        // await this.loadPage()
+        await this.loadPage()
     },
     methods: {
         async loadPage() {
@@ -127,7 +125,7 @@ export default defineComponent({
         },
         async loadEntities() {
             // HARDCODED SBI_EXECUTION_ID
-            await this.$http.get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=bbb69a67777811ecb185855116b7fb4d&datamartName=null`).then((response: AxiosResponse<any>) => (this.entities = response.data))
+            await this.$http.get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.id}&datamartName=null`).then((response: AxiosResponse<any>) => (this.entities = response.data))
             console.log('LOADED ENTITIES: ', this.entities)
         },
         async executeQBEQuery() {
@@ -136,7 +134,7 @@ export default defineComponent({
 
             const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: [], qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
-                .post(process.env.VUE_APP_QBE_PATH + `qbequery/executeQuery/?SBI_EXECUTION_ID=bbb69a67777811ecb185855116b7fb4d&currentQueryId=q1&start=0&limit=25`, postData)
+                .post(process.env.VUE_APP_QBE_PATH + `qbequery/executeQuery/?SBI_EXECUTION_ID=${this.id}&currentQueryId=q1&start=0&limit=25`, postData)
                 .then((response: AxiosResponse<any>) => (this.queryResult = response.data))
                 .catch(() => {})
             console.log('QUERY RESULT : ', this.queryResult)
