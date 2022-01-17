@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="full-screen-dialog" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
+    <Dialog class="full-screen-dialog" :visible="true" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
                 <template #left>
@@ -19,7 +19,7 @@
 <script lang="ts">
 import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
-import { iQBE } from './QBE'
+import { iQBE, iQuery, iField, iQueryResult } from './QBE'
 import Dialog from 'primevue/dialog'
 
 export default defineComponent({
@@ -32,7 +32,7 @@ export default defineComponent({
             customizedDatasetFunctions: {} as any,
             exportLimit: null as number | null,
             entities: [] as any[],
-            //qbe: {} as any,
+            queryResult: {} as iQueryResult,
             loading: false
         }
     },
@@ -76,12 +76,25 @@ export default defineComponent({
             console.log('LOADED ENTITIES: ', this.entities)
         },
         async executeQBEQuery() {
-            // HARDCODED
-            const postData = { catalogue: [], meta: this.formatQbeMeta(), pars: [], qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `qbequery/executeQuery/?SBI_EXECUTION_ID=bbb69a67777811ecb185855116b7fb4d&currentQueryId=q1&start=0&limit=25`, postData).then((response: AxiosResponse<any>) => (this.qbe = response.data))
-            console.log('LOADED QBE: ', this.qbe)
+            // HARDCODED a lot
+            if (!this.qbe) return
+
+            const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: [], qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
+            await this.$http
+                .post(process.env.VUE_APP_QBE_PATH + `qbequery/executeQuery/?SBI_EXECUTION_ID=bbb69a67777811ecb185855116b7fb4d&currentQueryId=q1&start=0&limit=25`, postData)
+                .then((response: AxiosResponse<any>) => (this.queryResult = response.data))
+                .catch(() => {})
+            console.log('QUERY RESULT : ', this.queryResult)
         },
-        formatQbeMeta() {}
+        formatQbeMeta() {
+            const meta = [] as any[]
+            this.qbe?.qbeJSONQuery.catalogue.queries?.forEach((query: iQuery) => {
+                query.fields?.forEach((field: iField) => {
+                    meta.push({ dataType: field.dataType, displayedName: field.alias, fieldType: field.fieldType.toUpperCase(), format: field.format, name: field.alias, type: field.type })
+                })
+            })
+            return meta
+        }
     }
 })
 </script>

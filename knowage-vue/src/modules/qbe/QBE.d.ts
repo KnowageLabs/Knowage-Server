@@ -38,3 +38,61 @@ export interface iQBE {
     userIn: string,
     versNum: number
 }
+
+export interface iQuery {
+    calendar: any,
+    distinct: boolean,
+    expression: any,
+    fields: iField[],
+    filters: any[],
+    graph: any[],
+    havings: any[],
+    id: string,
+    isNestedExpression: boolean,
+    name: string,
+    relationRoles: any[],
+    subqueries: any[]
+}
+
+export interface iField {
+    alias: string
+    color: string
+    dataType: string
+    distinct: boolean
+    entity: string
+    field: string
+    fieldType: string
+    format: string
+    funct: string
+    group: boolean
+    iconCls: string
+    id: string
+    inUse: boolean
+    include: boolean
+    leaf: boolean
+    longDescription: string
+    order: string
+    type: string
+    visible: boolean
+}
+
+export interface iQueryResult {
+    metadata: {
+        totalProperty: string,
+        root: string,
+        id: string,
+        fields: string | iQueryFiled[],
+        results: number,
+        rows: any[]
+    }
+}
+
+export interface iQueryFiled {
+    name: string,
+    header: string,
+    dataIndex: string,
+    type: string,
+    precision?: number,
+    scale?: number,
+    multiValue: boolean
+}
