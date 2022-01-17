@@ -8,7 +8,9 @@
             <Button v-else icon="pi pi-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="entity.expanded = true" />
         </h4>
         <ul v-show="entity.expanded">
-            test
+            <div v-for="(child, index) in entity.children" :key="index">
+                <span>{{ child.text }}</span>
+            </div>
         </ul>
     </div>
 </template>
