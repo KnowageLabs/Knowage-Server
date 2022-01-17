@@ -84,7 +84,9 @@
                   <td class="recNo"> <span ng-if="!col.editable">{{$index+1}}</span> </td>
                   <td ng-repeat="col in columns | orderBy: 'position' track by $index " ng-if="col.visible"  ng-class='checkIfSelected(row)' ng-style="{'background-color':col.color, 'width':col.size + 'px'}">
                      <div>
-                        <span ng-if="!col.editable && col.dataType !== 'boolean'">{{row[col.field] }}</span>                               
+                        <span ng-if="!col.editable && col.dataType !== 'boolean' && col.dataType !== 'date'">{{row[col.field] }}</span>
+                        <span ng-if="!col.editable && col.dataType === 'date' && col.subType !== 'timestamp'">{{row[col.field] }}</span>
+                        <span ng-if="!col.editable && col.dataType === 'date' && col.subType === 'timestamp'">{{row[col.field] | momentDateAndTime:currLanguage}}</span>                                
                         <input type="checkbox" ng-model="row[col.field]" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (!col.editable)" ng-checked="{{row[col.field]}}" disabled ng-click="setSelected(row)" >
                         <input type="checkbox" ng-model="row[col.field]" aria-label="data change" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (col.editable)" ng-checked="{{row[col.field]}}" ng-click="setSelected(row)">                                                            
                         <md-menu ng-if="col.editable && col.dataType !== 'boolean'" ng-click="setSelected(row)">
@@ -148,7 +150,9 @@
                <tr ng-repeat="(indexF, row) in data" ng-class="setSummaryRowColor(data,indexF,columns)">
                   <td ng-repeat="col in columns | orderBy: 'position' track by $index" rowspan="{{setRowspan(data,indexF,$index,columns)}}"  ng-if="compareRowsForRowspanPrint(data,indexF,$index,columns)" ng-class="checkIfSelected(row)">
                      <div>
-                        <span ng-if="!col.editable && col.dataType !== 'boolean' ">{{row[col.field] }}</span>  
+ 	                    <span ng-if="!col.editable && col.dataType !== 'boolean' && col.dataType !== 'date'">{{row[col.field] }}</span>
+                        <span ng-if="!col.editable && col.dataType === 'date' && col.subType !== 'timestamp'">{{row[col.field] }}</span>
+                        <span ng-if="!col.editable && col.dataType === 'date' && col.subType === 'timestamp'">{{row[col.field] | momentDateAndTime:currLanguage}}</span>
                         <span ng-if= "isItSummaryRow(data,indexF,$index,columns)">{{row[col.field] | number:getDecimalPlaces(col.field) }}</span>                   
                         <input type="checkbox" ng-model="row[col.field]" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean' ) && (!col.editable) && row[col.field] !== '      '" ng-checked="{{row[col.field]}}" disabled >
                         <input type="checkbox" ng-model="row[col.field]" aria-label="data change" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (col.editable) && row[col.field] !== '      '" ng-checked="{{row[col.field]}}" ng-click="setSelected(row)">                                                            

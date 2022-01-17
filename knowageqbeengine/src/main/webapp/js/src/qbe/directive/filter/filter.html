@@ -35,7 +35,11 @@
 							<label class="filterLabel">{{translate.load("kn.qbe.filters.condition")}}</label>
 							<md-select ng-model="filter.operator">
 								<md-tooltip md-direction="bottom">{{translate.load("kn.qbe.filters.tootip")}}</md-tooltip>
-								<md-option ng-repeat="operator in getConditionOptionsbyField(field.name)" value="{{operator.value}}" >{{operator.name}}</md-option> 
+								<md-option ng-repeat="operator in getConditionOptionsbyField(field.name)"
+										value="{{operator.value}}"
+										ng-click="changeCondition(operator.value,filter)">
+									{{operator.name}}
+								</md-option> 
 							</md-select>
 						</md-input-container>
 						

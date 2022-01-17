@@ -1298,6 +1298,7 @@
                 "createTitle": "Create menu item",
                 "deleteMessage": "Menu item deleted",
                 "deleteTitle": "Delete menu item",
+                "duplicateErrorMessage": "You cannot save menu bacues there is another menu in the same level with the same name",
                 "errorMessage": "Error saving menu item",
                 "errorTitle": "Error",
                 "saveMessage": "Menu item saved",
