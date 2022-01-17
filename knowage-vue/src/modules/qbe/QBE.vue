@@ -50,14 +50,17 @@
                         <Button v-else icon="pi pi-chevron-right" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('qbe.detailView.showList')" @click="toggleEntitiesLists" />
                     </template>
                     <template #right>
+                        <i v-if="qbe.qbeJSONQuery.catalogue.queries[0].fields.length > 0" class="fas fa-eraser kn-cursor-pointer p-mx-2" v-tooltip.top="$t('qbe.viewToolbar.deleteAllSelectedFields')" @click="deleteAllSelectedFields"></i>
+                        <i v-if="hiddenColumnsExist" class="pi pi-eye kn-cursor-pointer p-mx-2" v-tooltip.top="$t('qbe.viewToolbar.showHiddenColumns')" @click="showHiddenColumns"></i>
                         <InputSwitch class="p-mr-2" v-model="smartView" />
-                        <span>Smart View</span>
+                        <span>{{ $t('qbe.viewToolbar.smartView') }}</span>
                         <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" />
                     </template>
                 </Toolbar>
-                <div class="kn-flex kn-overflow-y">
+                <div>
+                    {{ hiddenColumnsExist }}
                     {{ qbe.qbeJSONQuery?.catalogue?.queries[0] }}
-                    <QBESimpleTable v-if="!smartView" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]"></QBESimpleTable>
+                    <QBESimpleTable v-if="!smartView" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]" @columnVisibilityChanged="checkIfHiddenColumnsExist"></QBESimpleTable>
                 </div>
             </div>
         </div>
@@ -88,7 +91,8 @@ export default defineComponent({
             queryResult: {} as iQueryResult,
             loading: false,
             showEntitiesLists: true,
-            smartView: false
+            smartView: false,
+            hiddenColumnsExist: false
         }
     },
     watch: {
@@ -153,6 +157,27 @@ export default defineComponent({
         },
         toggleEntitiesLists() {
             this.showEntitiesLists = !this.showEntitiesLists
+        },
+        deleteAllSelectedFields() {
+            if (this.qbe) this.qbe.qbeJSONQuery.catalogue.queries[0].fields = []
+        },
+        checkIfHiddenColumnsExist() {
+            if (this.qbe) {
+                this.hiddenColumnsExist = false
+                for (let i = 0; i < this.qbe.qbeJSONQuery.catalogue.queries[0].fields.length; i++) {
+                    console.log(' >>> FIELD: ', this.qbe.qbeJSONQuery.catalogue.queries[0].fields[i])
+                    if (!this.qbe.qbeJSONQuery.catalogue.queries[0].fields[i].visible) {
+                        this.hiddenColumnsExist = true
+                        break
+                    }
+                }
+            }
+        },
+        showHiddenColumns() {
+            if (this.qbe) {
+                this.qbe.qbeJSONQuery.catalogue.queries[0].fields.forEach((field: iField) => (field.visible = true))
+                this.hiddenColumnsExist = false
+            }
         }
     }
 })
