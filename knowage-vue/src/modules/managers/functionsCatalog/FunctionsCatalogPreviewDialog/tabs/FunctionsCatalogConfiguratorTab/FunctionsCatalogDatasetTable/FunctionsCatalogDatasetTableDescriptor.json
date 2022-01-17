@@ -1,0 +1,18 @@
+{
+    "breakpoint": "960px",
+    "columns": [
+        {
+            "field": "label",
+            "header": "common.dataset",
+            "style": {}
+        },
+        {
+            "field": "dsType",
+            "header": "common.type",
+            "style": {}
+        }
+    ],
+    "globalFilterFields": ["label", "dsType"],
+    "responsiveLayout": "stack",
+    "scrollHeight": "40vh"
+}

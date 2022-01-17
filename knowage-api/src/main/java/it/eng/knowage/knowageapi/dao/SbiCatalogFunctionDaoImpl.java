@@ -117,6 +117,10 @@ public class SbiCatalogFunctionDaoImpl extends AbstractDaoImpl implements SbiCat
 		function.getId().setOrganization(businessRequestContext.getOrganization());
 
 		preUpdate(function);
+		function.getInputColumns().forEach(this::preInsert);
+		function.getInputVariables().forEach(this::preInsert);
+		function.getOutputColumns().forEach(this::preInsert);
+
 		function.getInputColumns().forEach(this::preUpdate);
 		function.getInputVariables().forEach(this::preUpdate);
 		function.getOutputColumns().forEach(this::preUpdate);

@@ -54,7 +54,7 @@ import it.eng.knowage.knowageapi.error.ImpossibleToReadFilesListException;
 import it.eng.knowage.knowageapi.error.ImpossibleToReadFolderListException;
 import it.eng.knowage.knowageapi.error.KnowageBusinessException;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
-import it.eng.knowage.knowageapi.error.TenantRepositoryMissingException;
+import it.eng.knowage.knowageapi.utils.PathTraversalChecker;
 import it.eng.knowage.resourcemanager.resource.dto.DownloadFilesDTO;
 import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
 import it.eng.knowage.resourcemanager.resource.dto.MetadataDTO;
@@ -112,6 +112,7 @@ public class FilesResource {
 		List<String> listOfPaths = new ArrayList<String>();
 		String folderPath = resourceManagerAPIservice.getFolderByKey(dto.getKey(), profile);
 		for (String name : dto.getSelectedFilesNames()) {
+			PathTraversalChecker.preventPathTraversalAttack(Paths.get(folderPath).resolve(name), Paths.get(folderPath), profile);
 			listOfPaths.add(Paths.get(folderPath).resolve(name).toString());
 		}
 		try {

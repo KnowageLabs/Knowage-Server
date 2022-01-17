@@ -42,7 +42,7 @@ public class WidgetExporterFactory {
 			// table widget supports pagination
 			return new TableExporter(exporter, widgetType, templateString, widgetId, wb, options);
 		} else {
-			return new GenericExporter(exporter, widgetType, templateString, widgetId, wb, options);
+			return new GenericWidgetExporter(exporter, widgetType, templateString, widgetId, wb, options);
 		}
 	}
 

@@ -1,0 +1,9 @@
+{
+    "dialog": {
+        "style": {
+            "padding": 0,
+            "width": "80vw"
+        }
+    },
+    "dropdownOptions": ["Public", "Private"]
+}

@@ -26,6 +26,10 @@
             "640px": "100vw",
             "960px": "85vw"
         },
+        "contentStyle": {
+            "height": "80vh"
+        },
+        "scrollHeight": "80vh",
         "style": {
             "width": "70vw"
         }

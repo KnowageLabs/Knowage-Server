@@ -147,7 +147,7 @@
                         </div>
 
                         <div class="p-field p-mb-5" :hidden="documentTreeHidden">
-                            <p>Open document browser on</p>
+                            <p>Open document browser on {{ v$.menuNode.initialPath.$model }}</p>
                             <DocumentBrowserTree :selected="v$.menuNode.initialPath.$model" @selectedDocumentNode="onSelectedDocumentNode" :loading="loading"></DocumentBrowserTree>
                         </div>
                     </form>
@@ -155,14 +155,14 @@
             </Card>
         </div>
         <div class="p-col-12">
-            <RolesCard :hidden="hideForm" :rolesList="roles" :selected="selectedMenuNode.roles" @changed="setSelectedRoles($event)"></RolesCard>
+            <RolesCard :hidden="hideForm" :rolesList="roles" :parentNodeRoles="parentNodeRoles" :selected="selectedMenuNode.roles" @changed="setSelectedRoles($event)"></RolesCard>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import axios, { AxiosResponse } from 'axios'
+import { AxiosResponse } from 'axios'
 import { iMenuNode } from '../MenuManagement'
 import { iRole } from '../../usersManagement/UsersManagement'
 import useValidate from '@vuelidate/core'
@@ -177,6 +177,7 @@ import FontAwesomePicker from '../IconPicker/IconPicker.vue'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import MenuConfigurationDescriptor from '../MenuManagementDescriptor.json'
 import MenuConfigurationValidationDescriptor from './MenuManagementValidationDescriptor.json'
+import MenuManagementElementDetailDescriptor from './MenuManagementElementDetailDescriptor.json'
 export default defineComponent({
     name: 'profile-attributes-detail',
     components: { Dropdown, DocumentBrowserTree, RelatedDocumentList, KnValidationMessages, Dialog, FontAwesomePicker, RolesCard },
@@ -190,6 +191,12 @@ export default defineComponent({
         },
         selectedRoles: {
             type: Array
+        },
+        menuNodes: {
+            type: Array
+        },
+        parentNodeRoles: {
+            type: Array
         }
     },
     computed: {
@@ -201,6 +208,7 @@ export default defineComponent({
         selectedMenuNode: {
             handler: function(node) {
                 this.v$.$reset()
+                console.log('node', node)
                 this.loadNode(node)
             }
         },
@@ -208,6 +216,9 @@ export default defineComponent({
             handler: function(roles) {
                 this.menuNode.roles = roles
             }
+        },
+        menuNodes() {
+            this.loadNodes()
         }
     },
     emits: ['refreshRecordSet', 'closesForm', 'dataChanged'],
@@ -234,7 +245,9 @@ export default defineComponent({
             menuNodeContent: MenuConfigurationDescriptor.menuNodeContent,
             workspaceOptions: MenuConfigurationDescriptor.workspaceOptions,
             staticPageOptions: MenuConfigurationDescriptor.staticPageOptions,
-            menuNodeContentFunctionalies: MenuConfigurationDescriptor.menuNodeContentFunctionalies
+            menuNodeContentFunctionalies: MenuConfigurationDescriptor.menuNodeContentFunctionalies,
+            menuManagementElementDetailDescriptor: MenuManagementElementDetailDescriptor.importantfields,
+            nodes: [] as iMenuNode[]
         }
     },
     validations() {
@@ -243,11 +256,15 @@ export default defineComponent({
         }
     },
     async created() {
+        this.loadNodes()
         if (this.selectedMenuNode) {
             this.loadNode(this.selectedMenuNode)
         }
     },
     methods: {
+        loadNodes() {
+            this.nodes = this.menuNodes as iMenuNode[]
+        },
         resetForm() {
             Object.keys(this.menuNode).forEach((k) => delete this.menuNode[k])
         },
@@ -343,7 +360,6 @@ export default defineComponent({
             this.chooseIconModalShown = false
         },
         setBase64Image(base64image) {
-            console.log(base64image)
             this.menuNode.icon = null
             this.menuNode.custIcon = {
                 id: null,
@@ -383,13 +399,19 @@ export default defineComponent({
             this.closeRelatedDocumentModal()
         },
         async save() {
-            let response: AxiosResponse
+            if (this.checkIfNodeExists()) {
+                this.$store.commit('setError', { title: this.$t('managers.menuManagement.info.errorTitle'), msg: this.$t('managers.menuManagement.info.duplicateErrorMessage') })
+                return
+            }
+
+            let response: AxiosResponse<any>
 
             if (this.menuNode.menuId != null) {
-                response = await axios.put(this.apiUrl + 'menu/' + this.menuNode.menuId, this.menuNode, MenuConfigurationDescriptor.headers)
+                response = await this.$http.put(this.apiUrl + 'menu/' + this.menuNode.menuId, this.getMenuDataForSave())
             } else {
-                response = await axios.post(this.apiUrl + 'menu/', this.menuNode, MenuConfigurationDescriptor.headers)
+                response = await this.$http.post(this.apiUrl + 'menu/', this.getMenuDataForSave())
             }
+
             if (response.status == 200) {
                 if (response.data.errors) {
                     this.$store.commit('setError', { title: this.$t('managers.menuManagement.info.errorTitle'), msg: this.$t('managers.menuManagement.info.errorMessage') })
@@ -399,6 +421,22 @@ export default defineComponent({
             }
             this.$emit('refreshRecordSet')
             this.resetForm()
+        },
+        checkIfNodeExists() {
+            let exists = false
+            const menuItemForSave = this.getMenuDataForSave()
+
+            if (!menuItemForSave.parentId) menuItemForSave.parentId = null
+
+            for (let i = 0; i < this.nodes.length; i++) {
+                const tempNode = this.nodes[i] as iMenuNode
+                if (tempNode.menuId != menuItemForSave.menuId && tempNode.parentId === menuItemForSave.parentId && tempNode.name === menuItemForSave.name) {
+                    exists = true
+                    break
+                }
+            }
+
+            return exists
         },
         closeForm() {
             this.$emit('closesForm')
@@ -438,8 +476,22 @@ export default defineComponent({
                 this.toggleEmpty()
             }
         },
+        getMenuDataForSave() {
+            const menuNodeForSave = { ...this.menuNode }
+
+            const fieldsList: string[] = this.menuManagementElementDetailDescriptor.fieldsList
+            const fieldToSave: any = this.menuManagementElementDetailDescriptor.filedsToSave[menuNodeForSave.menuNodeContent]
+
+            fieldsList.forEach((field) => !fieldToSave.fields.includes(field) && (menuNodeForSave[field] = null))
+
+            delete menuNodeForSave.menuNodeContent
+
+            if (!menuNodeForSave.parentId) menuNodeForSave.parentId = null
+
+            return menuNodeForSave
+        },
         async getDocumentNameByID(id: any) {
-            await axios.get(this.apiUrl + 'documents/' + id).then((response) => {
+            await this.$http.get(this.apiUrl + 'documents/' + id).then((response: AxiosResponse<any>) => {
                 this.menuNode.document = response.data.name
             })
         },

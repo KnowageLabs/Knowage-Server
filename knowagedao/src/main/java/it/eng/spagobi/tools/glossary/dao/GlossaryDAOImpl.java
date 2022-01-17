@@ -48,6 +48,7 @@ import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByName;
+import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByNameAndID;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByParent;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchGlossaryByName;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchGlossaryStructureWithWordLike;
@@ -1260,7 +1261,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 						tmpPage = elem.getJSONObject("bness_cls").getInt("page");
 						tmp_item_count = elem.getJSONObject("bness_cls").getInt("item_number");
 						if (sizeW > 0) {
-							hql = "" + " SELECT " + "		smbc.bcId as bcId, " + "		smbc.sbiMetaModel as sbiMetaModel" + " FROM "
+							hql = "" + " SELECT " + "		smbc.bcId as bcId, smbc.name as name ," + "		smbc.sbiMetaModel as sbiMetaModel" + " FROM "
 									+ "		SbiMetaBc smbc " + " WHERE " + "		smbc.bcId in ( " + "			SELECT  "
 									+ "				distinct dw.bness_cls.bcId " + "			FROM " + " 			SbiGlBnessClsWlist dw " + "			WHERE "
 									+ "				dw.id.wordId IN (" + listid + ") "
@@ -1531,6 +1532,11 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 	public List<SbiGlGlossary> listGlossaryByNm(Integer page, Integer itemsPerPage, String glossary) {
 
 		return list(new SearchGlossaryByName(page, itemsPerPage, glossary));
+	}
+
+	@Override
+	public List<SbiGlContents> loadContentsByNameGlossaryId(String contentNM, Integer glossaryId) {
+		return list(new SearchContentsByNameAndID(contentNM, glossaryId));
 	}
 
 }

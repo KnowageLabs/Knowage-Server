@@ -1,7 +1,9 @@
 
-var filters = angular.module('filters',['sbiModule']);
+var filters = angular.module('filters',['sbiModule','advancedFiltersApp']);
 
-filters.service('filters_service',function(sbiModule_action,sbiModule_translate){
+filters.service('filters_service',function(sbiModule_action,sbiModule_translate,$injector){
+	this.treeService = $injector.get('treeService');
+
 	this.getFieldsValue= function(entity){
 		var queryParam = {};
 		var formParam = {};
@@ -86,6 +88,40 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 		{name:sbiModule_translate.load("kn.qbe.filters.spatial.operators.inside"),value:"SPATIAL_INSIDE"}];
 
 	this.booleanConnectors= ["AND","OR"];
+	
+	this.refresh = function(filters, expression) {
+		for (filter of filters) {
+			var newConst = new Const("NODE_CONST", filter)
+			var oldConst = this.treeService.findByName(expression, newConst.value);
+			
+			this.treeService.replace(expression, newConst, oldConst);
+		}
+	}
+	
+	this.push = function(expression, filter) {
+		var newConst = new Const("NODE_CONST", filter)
+
+		var newRoot = null;
+
+		var nodeConst = newConst;
+
+		if (expression
+				&& Object.keys(expression).length === 0
+				&& Object.getPrototypeOf(expression) === Object.prototype) {
+			newRoot = new Operand("NODE_OP", filters.booleanConnector || "AND");
+			newRoot.childNodes.push(newConst)
+			angular.copy(newRoot, expression);
+		} else if(expression.childNodes && expression.childNodes.length <= 1) {
+			newRoot = expression;
+			newRoot.childNodes.unshift(newConst);
+		} else {
+			newRoot = new Operand("NODE_OP", filters.booleanConnector || "AND");
+			newRoot.childNodes.push(newConst)
+			newRoot.childNodes.push(angular.copy(expression));
+			angular.copy(newRoot, expression);
+		}
+
+	}
 
 	this.deleteFilter = function(filters,filter,expression,advancedFilters){
 
@@ -98,7 +134,7 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 			if(filters[i][propertyName]!=undefined && filters[i][propertyName]==propertyValue) {
 
 				filters.splice(i, 1);
-				this.generateExpressions (filters, expression, advancedFilters);
+				this.treeService.removeInPlace(expression, "$F{" + propertyValue + "}");
 				i--;
 			}
 

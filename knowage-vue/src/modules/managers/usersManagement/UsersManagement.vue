@@ -62,7 +62,7 @@ import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import { iUser, iRole, iAttribute } from './UsersManagement'
 import useValidate from '@vuelidate/core'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
@@ -118,27 +118,27 @@ export default defineComponent({
     methods: {
         async loadAllUsers() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(this.apiUrl + 'users')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.users = response.data
                 })
                 .finally(() => (this.loading = false))
         },
         async loadAllRoles() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(this.apiUrl + 'roles')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.roles = response.data
                 })
                 .finally(() => (this.loading = false))
         },
         async loadAllAttributes() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(this.apiUrl + 'attributes')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.attributes = response.data
                 })
                 .finally(() => (this.loading = false))
@@ -182,8 +182,8 @@ export default defineComponent({
             this.dirty = true
         },
         saveOrUpdateUser(user: iUser) {
-            const endpointPath = `${process.env.VUE_APP_RESTFUL_SERVICES_PATH}/2.0/users`
-            return this.userDetailsForm.id ? axios.put<any>(`${endpointPath}/${user.id}`, user) : axios.post<any>(endpointPath, user)
+            const endpointPath = `${process.env.VUE_APP_RESTFUL_SERVICES_PATH}2.0/users`
+            return this.userDetailsForm.id ? this.$http.put<any>(`${endpointPath}/${user.id}`, user) : this.$http.post<any>(endpointPath, user)
         },
         async saveUser() {
             this.loading = true
@@ -202,7 +202,7 @@ export default defineComponent({
             } else {
                 const userToSave = this.formatUserObject()
                 this.saveOrUpdateUser(userToSave)
-                    .then((response) => {
+                    .then((response: AxiosResponse<any>) => {
                         this.afterSaveOrUpdate(response)
                     })
                     .catch((error) => {
@@ -216,7 +216,7 @@ export default defineComponent({
                     })
             }
         },
-        async afterSaveOrUpdate(response) {
+        async afterSaveOrUpdate(response: AxiosResponse<any>) {
             this.dirty = false
             await this.loadAllUsers()
             this.formInsert = false
@@ -234,8 +234,8 @@ export default defineComponent({
         },
         onUserDelete(id: number) {
             this.loading = true
-            axios
-                .delete(`${process.env.VUE_APP_RESTFUL_SERVICES_PATH}/2.0/users/${id}`)
+            this.$http
+                .delete(`${process.env.VUE_APP_RESTFUL_SERVICES_PATH}2.0/users/${id}`)
                 .then(() => {
                     this.loadAllUsers()
                     this.$store.commit('setInfo', {

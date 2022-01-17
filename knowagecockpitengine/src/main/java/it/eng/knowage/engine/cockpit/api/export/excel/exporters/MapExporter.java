@@ -23,7 +23,7 @@ import org.json.JSONObject;
 import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-public class MapExporter extends GenericExporter implements IWidgetExporter {
+public class MapExporter extends GenericWidgetExporter implements IWidgetExporter {
 
 	public static transient Logger logger = Logger.getLogger(MapExporter.class);
 

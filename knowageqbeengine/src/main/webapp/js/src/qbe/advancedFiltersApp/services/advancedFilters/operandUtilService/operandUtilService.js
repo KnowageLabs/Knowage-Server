@@ -110,8 +110,12 @@
 
 					if (!isInSimpleExpression(filterTree, operand)) {
 
-						operatorUtilService.swapOperators(filterTree,
-								getNextOperand(filterTree, operand), operand);
+						var nextOperand = getNextOperand(filterTree, operand);
+						
+						if (nextOperand && nextOperand.value != "PAR") {
+							operatorUtilService.swapOperators(filterTree,
+									nextOperand, operand);
+						}
 					}
 
 					treeService.replace(filterTree,

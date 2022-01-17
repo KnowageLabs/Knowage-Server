@@ -1,42 +1,58 @@
 <template>
-    <div class="layout-menu-container">
+    <div class="layout-menu-container" id="kn-main-menu" ref="mainMenu">
         <InfoDialog v-model:visibility="display"></InfoDialog>
         <LanguageDialog v-model:visibility="languageDisplay"></LanguageDialog>
         <RoleDialog v-model:visibility="roleDisplay"></RoleDialog>
         <DownloadsDialog v-model:visibility="downloadsDisplay"></DownloadsDialog>
         <NewsDialog v-model:visibility="newsDisplay"></NewsDialog>
-        <LicenseDialog v-model:visibility="licenseDisplay" v-if="user && user.isSuperadmin"></LicenseDialog>
+        <LicenseDialog v-model:visibility="licenseDisplay" v-if="user && user.isSuperadmin && isEnterprise"></LicenseDialog>
+        <MainMenuAdmin :openedPanelEvent="adminMenuOpened" :model="technicalUserFunctionalities" v-if="technicalUserFunctionalities && technicalUserFunctionalities.length > 0" @click="itemClick"></MainMenuAdmin>
+        <TieredMenu class="kn-tieredMenu" ref="menu" :model="selectedCustomMenu" :popup="true" @blur="hideItemMenu">
+            <template #item="{item}">
+                <router-link class="p-menuitem-link" v-if="item.to" :to="item.to" exact>
+                    <span v-if="item.descr" class="p-menuitem-text">{{ $internationalization($t(item.descr)) }}</span>
+                    <span v-else class="p-menuitem-text">{{ $internationalization($t(item.label)) }}</span>
+                    <span v-if="item.items" class="p-submenu-icon pi pi-angle-right"></span>
+                </router-link>
+                <a v-else class="p-menuitem-link" :href="item.url" :target="item.target" role="menuitem" :tabindex="item.disabled ? null : '0'">
+                    <span v-if="item.descr" class="p-menuitem-text">{{ $internationalization($t(item.descr)) }}</span>
+                    <span v-else class="p-menuitem-text">{{ $internationalization($t(item.label)) }}</span>
+                    <span v-if="item.items" class="p-submenu-icon pi pi-angle-right"></span>
+                </a>
+            </template>
+        </TieredMenu>
+
         <div class="menu-scroll-content">
-            <div>
-                <div class="profile">
-                    <button class="p-link" @click="toggleProfile" v-tooltip="user && user.fullName">
-                        <img alt="Profile" class="profile-image" :src="getGravatarSrc(user)" />
-                        <span v-if="user" class="profile-name">{{ user.fullName }}</span>
-                        <i class="pi pi-fw pi-chevron-down"></i>
-                        <span class="profile-role">Marketing</span>
-                    </button>
-                </div>
-                <transition name="slide-down">
-                    <ul class="layout-menu profile-menu" v-show="showProfileMenu">
-                        <template v-for="(item, i) of commonUserFunctionalities" :key="i">
-                            <template v-if="item">
-                                <MainMenuItem :item="item" @click="itemClick"></MainMenuItem>
-                            </template>
-                        </template>
-                    </ul>
-                </transition>
+            <div class="profile" ref="menuProfile">
+                <button class="p-link" @click="toggleProfile" v-tooltip="user && user.fullName">
+                    <img alt="Profile" class="profile-image" :src="getProfileImage(user)" />
+                    <span v-if="user" class="profile-name">{{ user.fullName }}</span>
+                    <i class="pi pi-fw pi-chevron-down"></i>
+                    <span class="profile-role">Marketing</span>
+                </button>
             </div>
-            <div>
-                <ul class="layout-menu">
-                    <MainMenuAdmin :model="technicalUserFunctionalities" v-if="technicalUserFunctionalities && technicalUserFunctionalities.length > 0" @click="itemClick"></MainMenuAdmin>
-                    <template v-for="(item, i) of allowedUserFunctionalities" :key="i">
-                        <MainMenuItem :item="item" @click="itemClick" :badge="getBadgeValue(item)"></MainMenuItem>
-                    </template>
-                    <template v-for="(item, i) of dynamicUserFunctionalities" :key="i">
-                        <MainMenuItem :item="item" @click="itemClick"></MainMenuItem>
+            <transition name="slide-down">
+                <ul class="layout-menu profile-menu" v-show="showProfileMenu" ref="menuProfileSlide">
+                    <template v-for="(item, i) of commonUserFunctionalities" :key="i">
+                        <template v-if="item">
+                            <MainMenuItem :item="item" @click="itemClick"></MainMenuItem>
+                        </template>
                     </template>
                 </ul>
-            </div>
+            </transition>
+            <ScrollPanel :style="{ height: menuDimensions }">
+                <ul class="layout-menu">
+                    <li role="menu" @click="toggleAdminMenu" v-if="technicalUserFunctionalities && technicalUserFunctionalities.length > 0">
+                        <span :class="['p-menuitem-icon', 'fas fa-cog']"></span>
+                    </li>
+                    <template v-for="(item, i) of allowedUserFunctionalities" :key="i">
+                        <MainMenuItem :item="item" @click="itemClick" :badge="getBadgeValue(item)" @mouseover="toggleMenu($event, item)"></MainMenuItem>
+                    </template>
+                    <template v-for="(item, i) of dynamicUserFunctionalities" :key="i">
+                        <MainMenuItem :item="item" @click="itemClick" @mouseover="toggleMenu($event, item)"></MainMenuItem>
+                    </template>
+                </ul>
+            </ScrollPanel>
         </div>
     </div>
 </template>
@@ -53,9 +69,11 @@ import RoleDialog from '@/modules/mainMenu/dialogs/RoleDialog.vue'
 import { getGravatar } from '@/helpers/commons/gravatarHelper'
 import { mapState } from 'vuex'
 import auth from '@/helpers/commons/authHelper'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import DownloadsDialog from '@/modules/mainMenu/dialogs/DownloadsDialog/DownloadsDialog.vue'
 import { IMenuItem } from '@/modules/mainMenu/MainMenu'
+import TieredMenu from 'primevue/tieredmenu'
+import ScrollPanel from 'primevue/scrollpanel'
 
 export default defineComponent({
     name: 'Knmenu',
@@ -67,10 +85,14 @@ export default defineComponent({
         LicenseDialog,
         NewsDialog,
         RoleDialog,
-        DownloadsDialog
+        DownloadsDialog,
+        TieredMenu,
+        ScrollPanel
     },
     data() {
         return {
+            adminMenuOpened: false,
+            menuDimensions: 0,
             showProfileMenu: false,
             dynamicUserFunctionalities: new Array<IMenuItem>(),
             allowedUserFunctionalities: new Array<IMenuItem>(),
@@ -81,7 +103,8 @@ export default defineComponent({
             roleDisplay: false,
             downloadsDisplay: false,
             newsDisplay: false,
-            licenseDisplay: false
+            licenseDisplay: false,
+            selectedCustomMenu: {}
         }
     },
     emits: ['update:visibility'],
@@ -101,11 +124,8 @@ export default defineComponent({
         isItemToDisplay(item) {
             if (item.conditionedView) {
                 if (item.conditionedView === 'downloads' && this.downloads && this.downloads.count.total > 0) return true
-
                 if (item.conditionedView === 'news' && this.news && this.news.count.total > 0) return true
-
-                if (item.conditionedView === 'roleSelection' && this.user.roles.length > 1) return true
-
+                if (item.conditionedView === 'roleSelection' && this.user && this.user.roles.length > 1) return true
                 return false
             } else {
                 return true
@@ -129,12 +149,17 @@ export default defineComponent({
             if (item.to && event.navigate) {
                 event.navigate(event.originalEvent)
             }
+            if (this.adminMenuOpened) this.adminMenuOpened = false
         },
         toggleProfile() {
             this.showProfileMenu = !this.showProfileMenu
         },
-        getGravatarSrc(user) {
-            if (user && user.attributes && user.attributes.email) return getGravatar(user.attributes.email)
+        toggleAdminMenu(event) {
+            this.adminMenuOpened = this.adminMenuOpened === false ? event : false
+        },
+        getProfileImage(user) {
+            if (user && user.organizationImageb64) return user.organizationImageb64
+            else if (user && user.attributes && user.attributes.email) return getGravatar(user.attributes.email)
             else return getGravatar('knowage@eng.it')
         },
         updateNewsAndDownload() {
@@ -146,7 +171,6 @@ export default defineComponent({
                     } else if (menu.conditionedView === 'news') {
                         menu.visible = this.news.count.total > 0
                     }
-
                     menu.badge = this.getBadgeValue(menu)
                 }
             }
@@ -163,52 +187,77 @@ export default defineComponent({
             let toRet = undefined
             for (var idx in dynMenu) {
                 let menu = dynMenu[idx]
-
-                if (menu.to || menu.url) return menu
+                if (this.user.sessionRole && menu.roles.includes(this.user.sessionRole) && (menu.to || menu.url)) return menu
+                if (!this.user.sessionRole) {
+                    for (var i = 0; i < this.user.roles.length; i++) {
+                        let element = this.user.roles[i]
+                        if (menu.roles.includes(element) && (menu.to || menu.url)) {
+                            return menu
+                        }
+                    }
+                }
             }
-
             return toRet
+        },
+        toggleMenu(event, item) {
+            if (item.items) {
+                this.selectedCustomMenu = item.items
+                // @ts-ignore
+                this.$refs.menu.show(event)
+            } else {
+                // @ts-ignore
+                this.$refs.menu.hide()
+            }
+        },
+        hideItemMenu() {
+            // @ts-ignore
+            this.$refs.menu.hide()
+        },
+        getDimensions() {
+            if (this.$refs && this.$refs.mainMenu)
+                //@ts-ignore
+                this.menuDimensions = this.$refs.mainMenu.getBoundingClientRect().height - this.$refs.menuProfile.getBoundingClientRect().height - this.$refs.menuProfileSlide.getBoundingClientRect().height + 'px'
         }
     },
-    mounted() {
+    async mounted() {
+        window.addEventListener('resize', this.getDimensions)
         this.$store.commit('setLoading', true)
         let localObject = { locale: this.$i18n.fallbackLocale.toString() }
         if (Object.keys(this.locale).length !== 0) localObject = { locale: this.locale }
         if (localStorage.getItem('locale')) {
             localObject = { locale: localStorage.getItem('locale') || this.$i18n.fallbackLocale.toString() }
         }
-
         localObject.locale = localObject.locale.replaceAll('_', '-')
-
         // script handling
         let splittedLocale = localObject.locale.split('-')
         if (splittedLocale.length > 2) {
             localObject.locale = splittedLocale[0] + '-' + splittedLocale[2].replaceAll('#', '') + '-' + splittedLocale[1]
         }
-
-        axios
+        await this.$http
             .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale))
-            .then((response) => {
-                this.technicalUserFunctionalities = response.data.technicalUserFunctionalities
-
+            .then((response: AxiosResponse<any>) => {
+                this.technicalUserFunctionalities = response.data.technicalUserFunctionalities.filter((groupItem: any) => {
+                    let childItems = groupItem.items.filter((x) => {
+                        let currentHostName = this.licenses.hosts[0] ? this.licenses.hosts[0].hostName : undefined
+                        return x.toBeLicensed && currentHostName && this.licenses[currentHostName] ? this.licenses.licenses[currentHostName].filter((lic) => lic.product === x.toBeLicensed).length == 1 : true
+                    })
+                    return childItems.length > 0
+                })
                 let responseCommonUserFunctionalities = response.data.commonUserFunctionalities
                 for (var index in responseCommonUserFunctionalities) {
                     let item = responseCommonUserFunctionalities[index]
                     item.visible = this.isItemToDisplay(item)
-
                     this.commonUserFunctionalities.push(item)
                 }
-
                 let responseAllowedUserFunctionalities = response.data.allowedUserFunctionalities
                 for (var idx in responseAllowedUserFunctionalities) {
                     let item = responseAllowedUserFunctionalities[idx]
                     item.visible = this.isItemToDisplay(item)
-
                     this.allowedUserFunctionalities.push(item)
                 }
-
-                this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities
-
+                this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities.sort((el1, el2) => {
+                    return el1.prog - el2.prog
+                })
                 if (this.dynamicUserFunctionalities.length > 0) {
                     let homePage = this.findHomePage(this.dynamicUserFunctionalities) || {}
                     if (homePage && Object.keys(homePage).length !== 0) {
@@ -220,7 +269,13 @@ export default defineComponent({
                 this.updateNewsAndDownload()
             })
             .catch((error) => console.error(error))
-            .finally(() => this.$store.commit('setLoading', false))
+            .finally(() => {
+                this.$store.commit('setLoading', false)
+                this.getDimensions()
+            })
+    },
+    unmounted() {
+        window.removeEventListener('resize', this.getDimensions)
     },
     computed: {
         ...mapState({
@@ -228,16 +283,22 @@ export default defineComponent({
             downloads: 'downloads',
             locale: 'locale',
             news: 'news',
-            stateHomePage: 'homePage'
+            stateHomePage: 'homePage',
+            isEnterprise: 'isEnterprise',
+            licenses: 'licenses'
         })
     },
     watch: {
-        download(newDownload, oldDownload) {
-            if (oldDownload != this.downloads) this.downloads = newDownload
+        downloads(newDownload, oldDownload) {
+            if (oldDownload != this.downloads) {
+                this.downloads = newDownload
+            }
             this.updateNewsAndDownload()
         },
         news(newNews, oldNews) {
-            if (oldNews != this.news) this.news = newNews
+            if (oldNews != this.news) {
+                this.news = newNews
+            }
             this.updateNewsAndDownload()
         }
     }
@@ -251,11 +312,15 @@ export default defineComponent({
     transition: max-height 1s ease-in-out;
     max-height: 500px;
 }
-
 .slide-down-enter-from,
 .slide-down-leave-to {
     max-height: 0;
 }
+
+.p-scrollpanel:deep(.p-scrollpanel-content) {
+    padding: 0 0 18px 0;
+}
+
 .layout-menu-container {
     z-index: 100;
     width: $mainmenu-width;
@@ -263,6 +328,12 @@ export default defineComponent({
     background-color: $mainmenu-background-color;
     height: 100%;
     position: fixed;
+
+    .menu-scroll-content {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
     .profile {
         height: 60px;
         padding: 8px;
@@ -291,7 +362,6 @@ export default defineComponent({
     .profile-menu {
         border-bottom: 1px solid lighten($mainmenu-background-color, 10%);
     }
-
     .layout-menu {
         margin: 0;
         padding: 0;
@@ -322,6 +392,31 @@ export default defineComponent({
                     background-color: lighten($mainmenu-background-color, 10%);
                 }
             }
+            & > span {
+                text-decoration: none;
+                text-align: center;
+                padding: 15px;
+                padding-left: 12px;
+                color: $mainmenu-icon-color;
+                display: block;
+                width: 100%;
+                transition: background-color 0.3s, border-left-color 0.3s;
+                overflow: hidden;
+                border-left: 4px solid transparent;
+                outline: none;
+                cursor: pointer;
+                user-select: none;
+                &:hover {
+                    background-color: lighten($mainmenu-background-color, 10%);
+                }
+                &.router-link-active {
+                    border-left: 3px solid $mainmenu-highlight-color;
+                }
+            }
+        }
+        &.scrollable {
+            overflow-y: auto;
+            overflow-x: hidden;
         }
     }
 }

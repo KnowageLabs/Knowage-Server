@@ -27,19 +27,35 @@ package it.eng.knowage.websocket.bo;
  */
 public class WSNewsBO {
 
-	private WSNewsCountBO count;
-
-	public WSNewsBO(WSNewsCountBO count) {
-		super();
-		this.count = count;
-	}
+	private final WSNewsCountBO count = new WSNewsCountBO();
 
 	public WSNewsCountBO getCount() {
 		return count;
 	}
 
-	public void setCount(WSNewsCountBO count) {
-		this.count = count;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((count == null) ? 0 : count.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WSNewsBO other = (WSNewsBO) obj;
+		if (count == null) {
+			if (other.count != null)
+				return false;
+		} else if (!count.equals(other.count))
+			return false;
+		return true;
 	}
 
 }

@@ -89,7 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.limitRegex = /<[\s\w\=\"\'\-\[\]]*(?!limit=)"([\-\d]+)"[\s\w\=\"\'\-\[\]]*>/g;
 		$scope.aggregationsRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-\s]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/g;
 		$scope.aggregationRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-\s]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/;
-		$scope.paramsRegex = /(?:\[kn-parameter=[\'\"]{1}([a-zA-Z0-9\_\-\s]+)[\'\"]{1}\])/g;
+		$scope.paramsRegex = /(?:\[kn-parameter=[\'\"]{1}([a-zA-Z0-9\_\-\s]+)[\'\"]{1}(\s+value)?\])/g;
 		$scope.calcRegex = /(?:\[kn-calc=\(([\[\]\w\s\-\=\>\<\"\'\!\+\*\/\%\&\,\.\|]*)\)(?:\s+min=\'(\d*)\')?(?:\s+max=\'(\d*)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\])/g;
 		$scope.advancedCalcRegex = /(?:\[kn-calc=\{([\(\)\[\]\w\s\-\=\>\<\"\'\!\+\*\/\%\&\,\.\|]*)\}(?:\s+min=\'(\d*)\')?(?:\s+max=\'(\d*)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\])/g;
 		$scope.repeatIndexRegex = /\[kn-repeat-index\]/g;
@@ -441,9 +441,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return (precision && !isNaN(p1))? parseFloat(p1).toFixed(precision) : p1;
 		}
 
-		$scope.ifConditionParamsReplacer = function(match, p1){
-			var paramLabel = cockpitModule_analyticalDrivers[p1+'_description'] ? p1+'_description' : p1;
-			var textToReturn = cockpitModule_analyticalDrivers[paramLabel] || null;
+		$scope.ifConditionParamsReplacer = function(match, p1, p2){
+			var textToReturn = cockpitModule_analyticalDrivers[p2 ? p1 + '_description' : p1] || null;
 			if(typeof(textToReturn) == 'string'){
 				textToReturn = '\''+$scope.addslashes(textToReturn)+'\''
 			}
@@ -467,9 +466,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return p1;
 
 		}
-		$scope.paramsReplacer = function(match, p1){
-			var paramLabel = cockpitModule_analyticalDrivers[p1+'_description'] ? p1+'_description' : p1;
-			p1 = cockpitModule_analyticalDrivers[paramLabel] || null;
+		$scope.paramsReplacer = function(match, p1, p2){
+			p1 = cockpitModule_analyticalDrivers[p2 ? p1 + '_description' : p1] || null;
 			return $scope.addslashes(p1);
 		}
 

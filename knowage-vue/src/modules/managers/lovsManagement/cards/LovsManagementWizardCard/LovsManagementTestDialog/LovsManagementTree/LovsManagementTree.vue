@@ -46,7 +46,7 @@
                         <i class="pi pi-pencil edit-icon" />
                     </template>
                 </Column>
-                <Column class="kn-truncated p-mr-2" field="description" :header="$t('managers.lovsManagement.value')">
+                <Column class="kn-truncated p-mr-2" field="description" :header="$t('managers.lovsManagement.description')">
                     <template #editor="slotProps">
                         <Dropdown class="p-mr-2" v-model.trim="slotProps.data[slotProps.column.props.field]" optionLabel="name" optionValue="name" :options="options" />
                         <i class="pi pi-pencil edit-icon" />
@@ -116,6 +116,14 @@ export default defineComponent({
         },
         loadModel() {
             this.selectedValues = this.treeModel as any[]
+
+            this.removeUnusedSelectedValues()
+        },
+        removeUnusedSelectedValues() {
+            for (let i = 0; i < this.selectedValues.length; i++) {
+                const index = this.data.findIndex((el: any) => el.name === this.selectedValues[i].value)
+                if (index === -1) this.selectedValues.splice(i, 1)
+            }
         },
         setSelectedValue(value: any) {
             const index = this.selectedValues.findIndex((el: any) => el.level === value.name)

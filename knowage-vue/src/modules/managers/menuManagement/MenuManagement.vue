@@ -16,7 +16,18 @@
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
                 <KnHint :title="'managers.menuManagement.title'" :hint="'managers.menuManagement.hint'" v-if="hideForm"></KnHint>
-                <MenuElementsDetail v-if="!hideForm" :selectedRoles="selectedMenuNode.roles" :roles="roles" :selectedMenuNode="selectedMenuNode" @refreshRecordSet="loadMenuNodes" @closesForm="closeForm" @dataChanged="dirty = true" :hidden="hideForm"></MenuElementsDetail>
+                <MenuElementsDetail
+                    v-if="!hideForm"
+                    :selectedRoles="selectedMenuNode.roles"
+                    :parentNodeRoles="parentNodeRoles"
+                    :roles="roles"
+                    :selectedMenuNode="selectedMenuNode"
+                    :menuNodes="menuNodes"
+                    @refreshRecordSet="loadMenuNodes"
+                    @closesForm="closeForm"
+                    @dataChanged="dirty = true"
+                    :hidden="hideForm"
+                ></MenuElementsDetail>
             </div>
         </div>
     </div>
@@ -24,7 +35,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import KnHint from '@/components/UI/KnHint.vue'
 import { iMenuNode } from './MenuManagement'
@@ -44,6 +55,7 @@ export default defineComponent({
             apiUrl: process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/',
             menuNodes: [] as iMenuNode[],
             selectedMenuNode: {} as any,
+            parentNodeRoles: [] as iRole[] | null,
             loading: false as Boolean,
             hideForm: true as Boolean,
             dirty: false as Boolean,
@@ -58,9 +70,9 @@ export default defineComponent({
         async loadRoles() {
             this.loading = this.hideForm = true
             this.dirty = false
-            await axios
+            await this.$http
                 .get(this.apiUrl + 'roles')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.roles = response.data
                 })
                 .finally(() => (this.loading = false))
@@ -91,9 +103,9 @@ export default defineComponent({
             this.loading = true
             this.hideForm = true
             this.dirty = false
-            await axios
+            await this.$http
                 .get(this.apiUrl + 'menu')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.menuNodes = response.data
                 })
                 .finally(() => (this.loading = false))
@@ -191,6 +203,13 @@ export default defineComponent({
                 this.hideForm = false
             }
             this.selectedMenuNode = { ...menuNode }
+            this.parentNodeRoles = null
+            if (menuNode.parentId) {
+                const parentNode = this.menuNodes.find((node) => node.menuId === menuNode.parentId)
+                if (parentNode) {
+                    this.parentNodeRoles = parentNode.roles
+                }
+            }
         }
     }
 })

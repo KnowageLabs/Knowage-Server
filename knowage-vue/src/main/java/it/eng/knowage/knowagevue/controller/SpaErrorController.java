@@ -40,8 +40,4 @@ public class SpaErrorController implements ErrorController {
 		}
 	}
 
-	@Override
-	public String getErrorPath() {
-		return "/error";
-	}
 }

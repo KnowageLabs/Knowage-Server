@@ -117,7 +117,7 @@ import { createValidations } from '@/helpers/commons/validationHelper'
 import { iSchema, iVersion } from '../MondrianSchemas'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import moment from 'moment'
 import useValidate from '@vuelidate/core'
 import tabViewDescriptor from '../MondrianSchemasTabViewDescriptor.json'
@@ -127,6 +127,7 @@ import KnInputFile from '@/components/UI/KnInputFile.vue'
 import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
     name: 'detail-tab',
@@ -203,9 +204,9 @@ export default defineComponent({
                 return
             }
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.schema.id}` + '/versions')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.versions = response.data
                     setTimeout(() => (this.selectedVersion = this.versions ? this.versions.find((version) => version.active) : null), 200)
                     this.$emit('versionsReloaded')
@@ -213,22 +214,26 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         async downloadVersion(versionId) {
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.schema.id}` + `/versions/${versionId}` + `/file`, {
                     headers: {
                         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
                     }
                 })
                 .then(
-                    (response) => {
+                    (response: AxiosResponse<any>) => {
                         if (response.data.errors) {
                             this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
                         } else {
                             this.$store.commit('setInfo', { title: this.$t('managers.mondrianSchemasManagement.toast.downloadFile.downloaded'), msg: this.$t('managers.mondrianSchemasManagement.toast.downloadFile.ok') })
                             var contentDisposition = response.headers['content-disposition']
-                            var fileAndExtension = contentDisposition.match(/(?!([\b attachment;filename= \b])).*(?=)/g)[0]
-                            var completeFileName = fileAndExtension.replaceAll('"', '')
-                            downloadDirect(response.data, completeFileName, 'application/zip; charset=utf-8')
+
+                            var contentDispositionMatches = contentDisposition.match(/(?!([\b attachment;filename= \b])).*(?=)/g)
+                            if (contentDispositionMatches && contentDispositionMatches.length > 0) {
+                                var fileAndExtension = contentDispositionMatches[0]
+                                var completeFileName = fileAndExtension.replaceAll('"', '')
+                                downloadDirect(response.data, completeFileName, 'application/zip; charset=utf-8')
+                            }
                         }
                     },
                     (error) => this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t(error) })
@@ -243,7 +248,7 @@ export default defineComponent({
             })
         },
         async deleteVersion(versionId: number) {
-            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.schema.id}` + '/versions/' + versionId).then(() => {
+            await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.schema.id}` + '/versions/' + versionId).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
@@ -252,8 +257,7 @@ export default defineComponent({
             })
         },
         formatDate(date) {
-            let fDate = new Date(date)
-            return fDate.toLocaleString()
+            return formatDateWithLocale(date, { dateStyle: 'short', timeStyle: 'short' })
         }
     }
 })

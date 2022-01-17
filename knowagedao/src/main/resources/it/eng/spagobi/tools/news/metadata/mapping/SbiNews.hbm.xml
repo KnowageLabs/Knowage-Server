@@ -68,7 +68,7 @@
 		
 		</set>
 		
-		<set name="read" table="SBI_NEWS_READ" inverse="true" cascade="save-update">
+		<set name="read" table="SBI_NEWS_READ" inverse="true" lazy="false" cascade="save-update">
 			<key>
 				<column name="NEWS_ID" not-null="true"></column>
 			</key>

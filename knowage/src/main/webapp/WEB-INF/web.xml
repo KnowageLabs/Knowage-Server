@@ -22,8 +22,11 @@
 
 	<filter-mapping>
 		<filter-name>EncodingFilter</filter-name>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/WEB-INF/jsp/*</url-pattern>
 	</filter-mapping>
 
 	<filter>
@@ -108,6 +111,7 @@
 
 	<filter-mapping>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
+		<dispatcher>REQUEST</dispatcher>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/restful-services/publish</url-pattern>
@@ -150,19 +154,30 @@
 			<param-value>hmac_user_name</param-value>
 		</init-param>
 	</filter>
+
 	<filter-mapping>
 		<filter-name>HmacLoginFilter</filter-name>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
 		<url-pattern>/restful-services/publish</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>
 		<filter-name>ProfileFilter</filter-name>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/restful-services/publish</url-pattern>
 		<url-pattern>/public/restful-services/publish</url-pattern>
 		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
-
+	
+	<filter-mapping>
+		<filter-name>ProfileFilter</filter-name>
+		<dispatcher>FORWARD</dispatcher>
+		<url-pattern>/WEB-INF/jsp/*</url-pattern>
+	</filter-mapping>
+	
 	<filter-mapping>
 		<filter-name>AntiInjectionFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
@@ -182,6 +197,8 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>HMACFilter</filter-name>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
 		<url-pattern>/restful-services/1.0/datasets/list/persist</url-pattern>
 		<url-pattern>/restful-services/federateddataset/federation</url-pattern>
 		<url-pattern>/restful-services/federateddataset/insertNoDup</url-pattern>
@@ -538,5 +555,15 @@
 		<res-sharing-scope>Shareable</res-sharing-scope>
 	</resource-ref>
 	<!-- END TOMCAT RES -->
+
+	<!-- 
+		This servlet comes from resteasy-jaxrs and is enabled by default mapped to "" URL. The empty string has
+		greater priority than "/": that is a big problem for us because our WARs have mixed resources, REST
+		services, JSPs, HTMLs, etc... The following disables this servlet.
+	 -->
+	<servlet-mapping>
+		<servlet-name>org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher</servlet-name>
+		<url-pattern>/restful-services-default</url-pattern>
+	</servlet-mapping>
 
 </web-app>

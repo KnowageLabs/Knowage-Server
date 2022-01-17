@@ -86,6 +86,8 @@
 			"description": "importExport.catalogFunction.description",
 			"icon": "fa fa-cubes",
 			"label": "importExport.catalogFunction.label",
+			"requiredLicense": "KnowagePA",
+			"requiredFunctionality": "FunctionsCatalogManagement",
 			"route": "/import-export/catalogfunction",
 			"type": "catalogFunction"
 		}

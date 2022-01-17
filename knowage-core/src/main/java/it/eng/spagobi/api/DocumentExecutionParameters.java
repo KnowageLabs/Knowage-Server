@@ -42,6 +42,7 @@ import it.eng.spagobi.analiticalmodel.document.handlers.DriversRuntimeLoaderFact
 import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
 import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
+import it.eng.spagobi.api.v2.DocumentExecutionParametersResource;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIMetaModelParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.MetaModelParuse;
@@ -74,8 +75,12 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
+/**
+ * @deprecated Replaced by {@link DocumentExecutionParametersResource}
+ */
 @Path("/1.0/documentExeParameters")
 @ManageAuthorization
+@Deprecated
 public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 
 	public static final String SERVICE_NAME = "GET DOCUMENT PARAMETERS ";
@@ -569,7 +574,7 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 				} else {
 					parameterAsMap.put("defaultValues", new ArrayList<>());
 				}
-				parameterAsMap.put("defaultValuesMeta", objParameter.getLovColumnsNames());
+				parameterAsMap.put("defaultValuesMeta", objParameter.getLovVisibleColumnsNames());
 				parameterAsMap.put(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA, objParameter.getLovValueColumnName());
 				parameterAsMap.put(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA, objParameter.getLovDescriptionColumnName());
 
