@@ -13,6 +13,53 @@
             </Toolbar>
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
+        <div class="p-d-flex p-flex-row kn-height-full">
+            <div v-show="showEntitiesLists" class="entities-lists">
+                <div class="main-entities kn-flex">
+                    <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                        <template #left>
+                            <span>Entities</span>
+                        </template>
+                        <template #right>
+                            <Chip> .no </Chip>
+                        </template>
+                    </Toolbar>
+                    <div>
+                        Main List Test
+                    </div>
+                </div>
+                <div class="derived-entities">
+                    <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                        <template #left>
+                            <span>Derived Entities</span>
+                        </template>
+                        <template #right>
+                            <Chip> .no </Chip>
+                        </template>
+                    </Toolbar>
+                    <div>
+                        Derived List Test
+                    </div>
+                </div>
+            </div>
+            <div class="detail-view p-m-1">
+                <Toolbar class="kn-toolbar kn-toolbar--primary kn-width-full">
+                    <template #left>
+                        <!-- todo: translation -->
+                        <Button v-if="showEntitiesLists" icon="pi pi-chevron-left" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('qbe.detailView.hideList')" @click="toggleEntitiesLists" />
+                        <Button v-else icon="pi pi-chevron-right" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('qbe.detailView.showList')" @click="toggleEntitiesLists" />
+                    </template>
+                    <template #right>
+                        <InputSwitch class="p-mr-2" v-model="simpleTable" />
+                        <span>Smart View</span>
+                        <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" />
+                    </template>
+                </Toolbar>
+                <div>
+                    Detail Container
+                </div>
+            </div>
+        </div>
     </Dialog>
 </template>
 
@@ -21,11 +68,14 @@ import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import { iQBE, iQuery, iField, iQueryResult } from './QBE'
 import Dialog from 'primevue/dialog'
+import Chip from 'primevue/chip'
+import InputSwitch from 'primevue/inputswitch'
 
 export default defineComponent({
     name: 'qbe',
-    components: { Dialog },
+    components: { Dialog, Chip, InputSwitch },
     props: { id: { type: String }, visible: { type: Boolean } },
+    emits: ['close'],
     data() {
         return {
             qbe: null as iQBE | null,
@@ -33,16 +83,18 @@ export default defineComponent({
             exportLimit: null as number | null,
             entities: [] as any[],
             queryResult: {} as iQueryResult,
-            loading: false
+            loading: false,
+            showEntitiesLists: true,
+            simpleTable: false
         }
     },
     watch: {
         async id() {
-            await this.loadPage()
+            // await this.loadPage()
         }
     },
     async created() {
-        await this.loadPage()
+        // await this.loadPage()
     },
     methods: {
         async loadPage() {
@@ -94,6 +146,9 @@ export default defineComponent({
                 })
             })
             return meta
+        },
+        toggleEntitiesLists() {
+            this.showEntitiesLists = !this.showEntitiesLists
         }
     }
 })
@@ -114,5 +169,23 @@ export default defineComponent({
 
 .full-screen-dialog.p-dialog .p-dialog-content {
     flex: 1;
+}
+
+.entities-lists {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    border-right: 1px solid #ccc;
+    height: 100%;
+}
+
+.detail-view {
+    display: flex;
+    flex-direction: column;
+    flex: 3;
+}
+
+.derived-entities {
+    min-height: 25%;
 }
 </style>

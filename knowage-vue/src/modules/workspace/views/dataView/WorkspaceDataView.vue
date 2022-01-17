@@ -98,7 +98,7 @@
     <WorkspaceDataPreviewDialog :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false"></WorkspaceDataPreviewDialog>
     <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.myData.title')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
 
-    <QBE :visible="qbeVisible" @close="qbeVisible = false" />
+    <QBE :visible="qbeVisible" @close="closeQbe" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -272,6 +272,9 @@ export default defineComponent({
         },
         openDatasetInQBE() {
             this.qbeVisible = true
+        },
+        closeQbe() {
+            this.qbeVisible = false
         },
         async exportDataset(dataset: any, format: string) {
             this.loading = true
