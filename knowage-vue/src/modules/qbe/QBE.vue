@@ -60,6 +60,8 @@
                 </div>
             </div>
         </div>
+
+        <QBESimpleTable v-if="qbe" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]"></QBESimpleTable>
     </Dialog>
 </template>
 
@@ -70,10 +72,11 @@ import { iQBE, iQuery, iField, iQueryResult } from './QBE'
 import Dialog from 'primevue/dialog'
 import Chip from 'primevue/chip'
 import InputSwitch from 'primevue/inputswitch'
+import QBESimpleTable from './qbeTables/qbeSimpleTable/QBESimpleTable.vue'
 
 export default defineComponent({
     name: 'qbe',
-    components: { Dialog, Chip, InputSwitch },
+    components: { Dialog, Chip, InputSwitch, QBESimpleTable },
     props: { id: { type: String }, visible: { type: Boolean } },
     emits: ['close'],
     data() {
