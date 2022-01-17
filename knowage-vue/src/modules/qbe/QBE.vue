@@ -55,7 +55,7 @@
                         <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" />
                     </template>
                 </Toolbar>
-                <div>
+                <div class="kn-flex kn-overflow-y">
                     {{ qbe.qbeJSONQuery?.catalogue?.queries[0] }}
                     <QBESimpleTable v-if="!smartView" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]"></QBESimpleTable>
                 </div>
@@ -111,6 +111,7 @@ export default defineComponent({
         async loadDataset() {
             // HARDCODED Dataset label/name
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan%20QBE%20TEST`).then((response: AxiosResponse<any>) => {
+                // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
                 if (this.qbe) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
