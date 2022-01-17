@@ -13,7 +13,7 @@
             </Toolbar>
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
-        <div class="p-d-flex p-flex-row kn-height-full">
+        <div v-if="!loading" class="p-d-flex p-flex-row kn-height-full">
             <div v-show="showEntitiesLists" class="entities-lists">
                 <div class="main-entities kn-flex">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary">
@@ -21,11 +21,11 @@
                             <span>Entities</span>
                         </template>
                         <template #right>
-                            <Chip> .no </Chip>
+                            <Chip style="background-color:white"> {{ entities.entities.length }} </Chip>
                         </template>
                     </Toolbar>
                     <div>
-                        Main List Test
+                        <ExpandableEntity :availableEntities="entities.entities" />
                     </div>
                 </div>
                 <div class="derived-entities">
@@ -72,10 +72,11 @@ import Dialog from 'primevue/dialog'
 import Chip from 'primevue/chip'
 import InputSwitch from 'primevue/inputswitch'
 import QBESimpleTable from './qbeTables/qbeSimpleTable/QBESimpleTable.vue'
+import ExpandableEntity from '@/modules/qbe/qbeComponents/expandableEntity.vue'
 
 export default defineComponent({
     name: 'qbe',
-    components: { Dialog, Chip, InputSwitch, QBESimpleTable },
+    components: { Dialog, Chip, InputSwitch, QBESimpleTable, ExpandableEntity },
     props: { id: { type: String }, visible: { type: Boolean } },
     emits: ['close'],
     data() {
@@ -110,8 +111,8 @@ export default defineComponent({
         },
         async loadDataset() {
             // HARDCODED Dataset label/name
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan%20QBE%20TEST`).then((response: AxiosResponse<any>) => {
-                // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
+            // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan%20QBE%20TEST`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
                 if (this.qbe) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
