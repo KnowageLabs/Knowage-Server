@@ -1,0 +1,44 @@
+{
+    "columns": [
+        {
+            "field": "entity",
+            "header": "qbe.simpleTable.entity",
+            "style": "width: 10%"
+        },
+        {
+            "field": "name",
+            "header": "common.field",
+            "style": "width: 33%"
+        },
+        {
+            "field": "alias",
+            "header": "common.alias",
+            "style": "width: 16%"
+        },
+        {
+            "field": "group",
+            "header": "common.group",
+            "style": "width: 8%"
+        },
+        {
+            "field": "ordering",
+            "header": "common.order",
+            "style": "width: 9%"
+        },
+        {
+            "field": "description",
+            "header": "qbe.simpleTable.aggregation",
+            "style": "width: 9%"
+        },
+        {
+            "field": "visible",
+            "header": "common.show",
+            "style": "width: 9%"
+        },
+        {
+            "field": "inUse",
+            "header": "common.inUse",
+            "style": "width: 9%"
+        }
+    ]
+}

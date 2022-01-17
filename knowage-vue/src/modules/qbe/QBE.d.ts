@@ -77,17 +77,17 @@ export interface iField {
 }
 
 export interface iQueryResult {
-    metadata: {
+    metaData: {
         totalProperty: string,
         root: string,
         id: string,
-        fields: string | iQueryFiled[],
-        results: number,
-        rows: any[]
-    }
+        fields: string | iQueryField[]
+    },
+    results: number,
+    rows: any[]
 }
 
-export interface iQueryFiled {
+export interface iQueryField {
     name: string,
     header: string,
     dataIndex: string,

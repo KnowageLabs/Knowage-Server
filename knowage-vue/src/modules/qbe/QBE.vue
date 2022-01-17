@@ -13,6 +13,8 @@
             </Toolbar>
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
+
+        <QBESimpleTable v-if="qbe" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]"></QBESimpleTable>
     </Dialog>
 </template>
 
@@ -21,10 +23,11 @@ import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import { iQBE, iQuery, iField, iQueryResult } from './QBE'
 import Dialog from 'primevue/dialog'
+import QBESimpleTable from './qbeTables/qbeSimpleTable/QBESimpleTable.vue'
 
 export default defineComponent({
     name: 'qbe',
-    components: { Dialog },
+    components: { Dialog, QBESimpleTable },
     props: { id: { type: String }, visible: { type: Boolean } },
     data() {
         return {
