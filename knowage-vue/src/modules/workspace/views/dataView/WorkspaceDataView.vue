@@ -97,6 +97,8 @@
     <WorkspaceDataShareDialog :visible="shareDialogVisible" :propDataset="selectedDataset" :datasetCategories="datasetCategories" @close="shareDialogVisible = false" @share="handleDatasetShare"></WorkspaceDataShareDialog>
     <WorkspaceDataPreviewDialog :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false"></WorkspaceDataPreviewDialog>
     <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.myData.title')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
+
+    <QBE :visible="qbeVisible" @close="qbeVisible = false" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -118,9 +120,10 @@ import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDial
 import { AxiosResponse } from 'axios'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
 import SelectButton from 'primevue/selectbutton'
+import QBE from '@/modules/qbe/QBE.vue'
 
 export default defineComponent({
-    components: { DataTable, Column, Chip, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog, WorkspaceDataPreviewDialog, SelectButton, Message },
+    components: { QBE, DataTable, Column, Chip, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog, WorkspaceDataPreviewDialog, SelectButton, Message },
     emits: ['toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
@@ -179,7 +182,8 @@ export default defineComponent({
             warningMessage: '',
             tableMode: 'My Datasets',
             selectButtonOptions: ['My Datasets', 'Enterprise', 'Shared', 'All Datasets'],
-            searchWord: '' as string
+            searchWord: '' as string,
+            qbeVisible: false
         }
     },
     created() {
@@ -267,10 +271,7 @@ export default defineComponent({
             this.showDatasetDialog = true
         },
         openDatasetInQBE() {
-            this.$store.commit('setInfo', {
-                title: 'Todo',
-                msg: 'Functionality not in this sprint'
-            })
+            this.qbeVisible = true
         },
         async exportDataset(dataset: any, format: string) {
             this.loading = true
