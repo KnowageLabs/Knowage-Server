@@ -155,7 +155,7 @@
             </Card>
         </div>
         <div class="p-col-12">
-            <RolesCard :hidden="hideForm" :rolesList="roles" :selected="selectedMenuNode.roles" @changed="setSelectedRoles($event)"></RolesCard>
+            <RolesCard :hidden="hideForm" :rolesList="roles" :parentNodeRoles="parentNodeRoles" :selected="selectedMenuNode.roles" @changed="setSelectedRoles($event)"></RolesCard>
         </div>
     </div>
 </template>
@@ -191,6 +191,12 @@ export default defineComponent({
         },
         selectedRoles: {
             type: Array
+        },
+        menuNodes: {
+            type: Array
+        },
+        parentNodeRoles: {
+            type: Array
         }
     },
     computed: {
@@ -202,6 +208,7 @@ export default defineComponent({
         selectedMenuNode: {
             handler: function(node) {
                 this.v$.$reset()
+                console.log('node', node)
                 this.loadNode(node)
             }
         },
@@ -209,6 +216,9 @@ export default defineComponent({
             handler: function(roles) {
                 this.menuNode.roles = roles
             }
+        },
+        menuNodes() {
+            this.loadNodes()
         }
     },
     emits: ['refreshRecordSet', 'closesForm', 'dataChanged'],
@@ -236,7 +246,8 @@ export default defineComponent({
             workspaceOptions: MenuConfigurationDescriptor.workspaceOptions,
             staticPageOptions: MenuConfigurationDescriptor.staticPageOptions,
             menuNodeContentFunctionalies: MenuConfigurationDescriptor.menuNodeContentFunctionalies,
-            menuManagementElementDetailDescriptor: MenuManagementElementDetailDescriptor.importantfields
+            menuManagementElementDetailDescriptor: MenuManagementElementDetailDescriptor.importantfields,
+            nodes: [] as iMenuNode[]
         }
     },
     validations() {
@@ -245,11 +256,15 @@ export default defineComponent({
         }
     },
     async created() {
+        this.loadNodes()
         if (this.selectedMenuNode) {
             this.loadNode(this.selectedMenuNode)
         }
     },
     methods: {
+        loadNodes() {
+            this.nodes = this.menuNodes as iMenuNode[]
+        },
         resetForm() {
             Object.keys(this.menuNode).forEach((k) => delete this.menuNode[k])
         },
@@ -345,7 +360,6 @@ export default defineComponent({
             this.chooseIconModalShown = false
         },
         setBase64Image(base64image) {
-            console.log(base64image)
             this.menuNode.icon = null
             this.menuNode.custIcon = {
                 id: null,
@@ -385,13 +399,19 @@ export default defineComponent({
             this.closeRelatedDocumentModal()
         },
         async save() {
+            if (this.checkIfNodeExists()) {
+                this.$store.commit('setError', { title: this.$t('managers.menuManagement.info.errorTitle'), msg: this.$t('managers.menuManagement.info.duplicateErrorMessage') })
+                return
+            }
+
             let response: AxiosResponse<any>
 
             if (this.menuNode.menuId != null) {
-                response = await this.$http.put(this.apiUrl + 'menu/' + this.menuNode.menuId, this.getMenuDataForSave(), MenuConfigurationDescriptor.headers)
+                response = await this.$http.put(this.apiUrl + 'menu/' + this.menuNode.menuId, this.getMenuDataForSave())
             } else {
-                response = await this.$http.post(this.apiUrl + 'menu/', this.getMenuDataForSave(), MenuConfigurationDescriptor.headers)
+                response = await this.$http.post(this.apiUrl + 'menu/', this.getMenuDataForSave())
             }
+
             if (response.status == 200) {
                 if (response.data.errors) {
                     this.$store.commit('setError', { title: this.$t('managers.menuManagement.info.errorTitle'), msg: this.$t('managers.menuManagement.info.errorMessage') })
@@ -401,6 +421,22 @@ export default defineComponent({
             }
             this.$emit('refreshRecordSet')
             this.resetForm()
+        },
+        checkIfNodeExists() {
+            let exists = false
+            const menuItemForSave = this.getMenuDataForSave()
+
+            if (!menuItemForSave.parentId) menuItemForSave.parentId = null
+
+            for (let i = 0; i < this.nodes.length; i++) {
+                const tempNode = this.nodes[i] as iMenuNode
+                if (tempNode.menuId != menuItemForSave.menuId && tempNode.parentId === menuItemForSave.parentId && tempNode.name === menuItemForSave.name) {
+                    exists = true
+                    break
+                }
+            }
+
+            return exists
         },
         closeForm() {
             this.$emit('closesForm')
@@ -449,6 +485,9 @@ export default defineComponent({
             fieldsList.forEach((field) => !fieldToSave.fields.includes(field) && (menuNodeForSave[field] = null))
 
             delete menuNodeForSave.menuNodeContent
+
+            if (!menuNodeForSave.parentId) menuNodeForSave.parentId = null
+
             return menuNodeForSave
         },
         async getDocumentNameByID(id: any) {

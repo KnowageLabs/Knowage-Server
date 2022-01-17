@@ -16,7 +16,18 @@
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
                 <KnHint :title="'managers.menuManagement.title'" :hint="'managers.menuManagement.hint'" v-if="hideForm"></KnHint>
-                <MenuElementsDetail v-if="!hideForm" :selectedRoles="selectedMenuNode.roles" :roles="roles" :selectedMenuNode="selectedMenuNode" @refreshRecordSet="loadMenuNodes" @closesForm="closeForm" @dataChanged="dirty = true" :hidden="hideForm"></MenuElementsDetail>
+                <MenuElementsDetail
+                    v-if="!hideForm"
+                    :selectedRoles="selectedMenuNode.roles"
+                    :parentNodeRoles="parentNodeRoles"
+                    :roles="roles"
+                    :selectedMenuNode="selectedMenuNode"
+                    :menuNodes="menuNodes"
+                    @refreshRecordSet="loadMenuNodes"
+                    @closesForm="closeForm"
+                    @dataChanged="dirty = true"
+                    :hidden="hideForm"
+                ></MenuElementsDetail>
             </div>
         </div>
     </div>
@@ -44,6 +55,7 @@ export default defineComponent({
             apiUrl: process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/',
             menuNodes: [] as iMenuNode[],
             selectedMenuNode: {} as any,
+            parentNodeRoles: [] as iRole[] | null,
             loading: false as Boolean,
             hideForm: true as Boolean,
             dirty: false as Boolean,
@@ -191,6 +203,13 @@ export default defineComponent({
                 this.hideForm = false
             }
             this.selectedMenuNode = { ...menuNode }
+            this.parentNodeRoles = null
+            if (menuNode.parentId) {
+                const parentNode = this.menuNodes.find((node) => node.menuId === menuNode.parentId)
+                if (parentNode) {
+                    this.parentNodeRoles = parentNode.roles
+                }
+            }
         }
     }
 })
