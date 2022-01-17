@@ -29,7 +29,7 @@
         },
         {
             "field": "funct",
-            "header": "qbe.simpleTable.aggregation",
+            "header": "qbe.simpleTable.aggregationShort",
             "style": "width: 9%"
         },
         {

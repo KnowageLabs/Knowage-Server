@@ -1,24 +1,41 @@
 <template>
-    <DataTable class="p-datatable-sm kn-table p-m-2" :value="rows" editMode="cell" responsiveLayout="stack" breakpoint="960px">
-        <Column v-for="column in QBESimpleTableDescriptor.columns" :key="column.header" :header="$t(column.header)" :field="column.field">
+    <DataTable class="p-datatable-sm kn-table p-m-2" :value="rows" editMode="cell" responsiveLayout="stack" breakpoint="960px" @rowReorder="onRowReorder">
+        <Column :rowReorder="true" headerStyle="width: 3rem" />
+        <Column v-for="column in QBESimpleTableDescriptor.columns" :key="column.header" :field="column.field" :style="column.style">
+            <template #header>
+                <span v-tooltip.top="getHeaderTooltip(column)">{{ $t(column.header) }}</span>
+            </template>
             <template #editor="slotProps">
-                <div class="p-d-flex p-flex-row">
+                <div class="p-d-flex p-flex-row p-ai-center">
                     <InputText v-if="column.field === 'alias'" class="kn-material-input p-inputtext-sm" v-model="slotProps.data[slotProps.column.props.field]"></InputText>
-                    <Checkbox v-else-if="['visible', 'inUse'].includes(column.field)" v-model="slotProps.data[slotProps.column.props.field]" :binary="true"></Checkbox>
+
                     <Checkbox v-else-if="column.field === 'group'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="slotProps.data['funct'] = 'NONE'"></Checkbox>
                     <Dropdown v-else-if="column.field === 'order'" v-model="slotProps.data[slotProps.column.props.field]" :options="QBESimpleTableDescriptor.orderingOptions" />
                     <Dropdown v-else-if="column.field === 'funct'" v-model="slotProps.data[slotProps.column.props.field]" :options="getAttributeOptions(slotProps.data)" :disabled="slotProps.data['group']" />
-                    <span v-else>{{ slotProps.data[slotProps.column.props.field] }}</span>
+                    <Checkbox v-else-if="column.field === 'visible'" class="p-ml-2" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('columnVisibilityChanged')"></Checkbox>
+                    <Checkbox v-else-if="column.field === 'inUse'" class="p-ml-2" v-model="slotProps.data[slotProps.column.props.field]" :binary="true"></Checkbox>
+                    <span v-else v-tooltip.top="slotProps.data[slotProps.column.props.field]">{{ slotProps.data[slotProps.column.props.field] }}</span>
                     <i v-if="['alias', 'order', 'funct'].includes(column.field)" class="pi pi-pencil p-ml-2" />
                 </div>
             </template>
             <template #body="slotProps">
-                <div class="p-d-flex p-flex-row">
-                    <Checkbox v-if="['visible', 'inUse'].includes(column.field)" v-model="slotProps.data[slotProps.column.props.field]" :binary="true"></Checkbox>
-                    <Checkbox v-else-if="column.field === 'group'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="slotProps.data['funct'] = 'NONE'"></Checkbox>
+                <div class="p-d-flex p-flex-row p-ai-center">
+                    <Checkbox v-if="column.field === 'group'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="slotProps.data['funct'] = 'NONE'"></Checkbox>
                     <Dropdown v-else-if="column.field === 'funct'" v-model="slotProps.data[slotProps.column.props.field]" :options="getAttributeOptions(slotProps.data)" :disabled="slotProps.data['group']" />
-                    <span v-else>{{ slotProps.data[slotProps.column.props.field] }}</span>
+                    <Checkbox v-else-if="column.field === 'visible'" class="p-ml-2" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('columnVisibilityChanged')"></Checkbox>
+                    <Checkbox v-else-if="column.field === 'inUse'" class="p-ml-2" v-model="slotProps.data[slotProps.column.props.field]" :binary="true"></Checkbox>
+                    <span v-else v-tooltip.top="slotProps.data[slotProps.column.props.field]">{{ slotProps.data[slotProps.column.props.field] }}</span>
                     <i v-if="['alias', 'order', 'funct'].includes(column.field)" class="pi pi-pencil p-ml-2" />
+                </div>
+            </template>
+        </Column>
+        <Column>
+            <template #body="slotProps">
+                <div class="p-d-flex p-flex-row p-jc-end">
+                    <div class="p-d-flex p-flex-row">
+                        <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="toggle($event, slotProps.data, slotProps.index)" />
+                        <Menu ref="menu" :model="menuItems" :popup="true" />
+                    </div>
                 </div>
             </template>
         </Column>
@@ -32,20 +49,29 @@ import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dropdown from 'primevue/dropdown'
+import Menu from 'primevue/menu'
 import QBESimpleTableDescriptor from './QBESimpleTableDescriptor.json'
 
 export default defineComponent({
     name: 'qbe-simple-table',
     props: { query: { type: Object as PropType<iQuery> } },
-    components: { Checkbox, Column, DataTable, Dropdown },
+    components: { Checkbox, Column, DataTable, Dropdown, Menu },
+    emits: ['columnVisibilityChanged'],
     data() {
         return {
             QBESimpleTableDescriptor,
-            rows: [] as iField[]
+            selectedQuery: {} as iQuery,
+            rows: [] as iField[],
+            menuItems: [] as any[]
+        }
+    },
+    computed: {
+        queryFields(): iField[] {
+            return this.query ? this.query.fields : []
         }
     },
     watch: {
-        queryResult() {
+        queryFields() {
             this.loadData()
         }
     },
@@ -57,11 +83,45 @@ export default defineComponent({
             console.log('QBE  QUERY INSIDE TABLE: ', this.query)
             if (!this.query) return
 
-            this.rows = this.query.fields as iField[]
+            this.selectedQuery = this.query
+            this.rows = this.selectedQuery.fields as iField[]
             console.log('LOADED ROWS: ', this.rows)
         },
         getAttributeOptions(row: iField) {
             return row.fieldType === 'attribute' ? this.QBESimpleTableDescriptor.attributeAggregationOptions : this.QBESimpleTableDescriptor.aggregationOptions
+        },
+        getHeaderTooltip(column: { field: string; header: string; style: string }) {
+            switch (column.field) {
+                case 'funct':
+                    return this.$t('qbe.simpleTable.aggregation')
+                case 'visible':
+                    return this.$t('qbe.simpleTable.showField')
+                default:
+                    return this.$t(column.header)
+            }
+        },
+        toggle(event: any, field: iField, index: number) {
+            this.createMenuItems(field, index)
+            const menu = this.$refs.menu as any
+            menu.toggle(event)
+        },
+        createMenuItems(field: iField, index: number) {
+            this.menuItems = []
+            this.menuItems.push({ icon: 'pi pi-filter', label: this.$t('common.filters'), command: () => this.openFiltersDialog(field) })
+            if (field.funct && field.funct !== 'NONE') {
+                this.menuItems.push({ icon: 'pi pi-filter', label: this.$t('qbe.simpleTable.havings'), command: () => this.openHavingsDialog(field) })
+            }
+            this.menuItems.push({ icon: 'pi pi-trash', label: this.$t('common.delete'), command: () => this.rows.splice(index, 1) })
+        },
+        onRowReorder(event: any) {
+            this.rows = event.value
+            this.selectedQuery.fields = this.rows
+        },
+        openFiltersDialog(field: iField) {
+            console.log('TODO - Open filter dialog for field: ', field)
+        },
+        openHavingsDialog(field: iField) {
+            console.log('TODO - Open havings dialog for field: ', field)
         }
     }
 })

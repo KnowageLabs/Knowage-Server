@@ -62,6 +62,7 @@
         "field": "Field",
         "file": "File",
         "fileName": "File Name",
+        "filters": "Filters",
         "general": "General",
         "group": "Group",
         "image": "image",
@@ -1760,9 +1761,16 @@
         "simpleTable": {
             "aggregation": "Aggregation",
             "aggregationShort": "Aggr.",
-            "entity": "Entity"
+            "entity": "Entity",
+            "havings": "Havings",
+            "showField": "Show field"
         },
-        "title": "QBE"
+        "title": "QBE",
+        "viewToolbar": {
+            "deleteAllSelectedFields": "Delete all selected fields",
+            "showHiddenColumns": "Show hidden columns",
+            "smartView": "Smart View"
+        }
     },
     "role": {
         "defaultRolePlaceholder": "No default role selected",
