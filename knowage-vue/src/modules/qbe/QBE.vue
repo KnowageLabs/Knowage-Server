@@ -60,10 +60,12 @@
                 <div>
                     {{ hiddenColumnsExist }}
                     {{ qbe.qbeJSONQuery?.catalogue?.queries[0] }}
-                    <QBESimpleTable v-if="!smartView" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]" @columnVisibilityChanged="checkIfHiddenColumnsExist"></QBESimpleTable>
+                    <QBESimpleTable v-if="!smartView" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]" @columnVisibilityChanged="checkIfHiddenColumnsExist" @openFilterDialog="openFilterDialog"></QBESimpleTable>
                 </div>
             </div>
         </div>
+
+        <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" @close="filterDialogVisible = false"></QBEFilterDialog>
     </Dialog>
 </template>
 
@@ -74,11 +76,12 @@ import { iQBE, iQuery, iField, iQueryResult } from './QBE'
 import Dialog from 'primevue/dialog'
 import Chip from 'primevue/chip'
 import InputSwitch from 'primevue/inputswitch'
+import QBEFilterDialog from './qbeDialogs/qbeFilterDialog/QBEFilterDialog.vue'
 import QBESimpleTable from './qbeTables/qbeSimpleTable/QBESimpleTable.vue'
 
 export default defineComponent({
     name: 'qbe',
-    components: { Dialog, Chip, InputSwitch, QBESimpleTable },
+    components: { Dialog, Chip, InputSwitch, QBEFilterDialog, QBESimpleTable },
     props: { id: { type: String }, visible: { type: Boolean } },
     emits: ['close'],
     data() {
@@ -91,7 +94,9 @@ export default defineComponent({
             loading: false,
             showEntitiesLists: true,
             smartView: false,
-            hiddenColumnsExist: false
+            hiddenColumnsExist: false,
+            filterDialogVisible: false,
+            filterDialogData: {} as { field: iField; query: iQuery }
         }
     },
     watch: {
@@ -177,6 +182,11 @@ export default defineComponent({
                 this.qbe.qbeJSONQuery.catalogue.queries[0].fields.forEach((field: iField) => (field.visible = true))
                 this.hiddenColumnsExist = false
             }
+        },
+        openFilterDialog(payload: { field: iField; query: iQuery }) {
+            console.log('PAYLOAD FOR OPEN FILTER: ', payload)
+            this.filterDialogData = payload
+            this.filterDialogVisible = true
         }
     }
 })

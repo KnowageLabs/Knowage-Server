@@ -44,7 +44,7 @@ export interface iQuery {
     distinct: boolean,
     expression: any,
     fields: iField[],
-    filters: any[],
+    filters: iFilter[],
     graph: any[],
     havings: any[],
     id: string,
@@ -95,4 +95,33 @@ export interface iQueryField {
     precision?: number,
     scale?: number,
     multiValue: boolean
+}
+
+export interface iFilter {
+    booleanConnector: string,
+    color: string
+    deleteButton: boolean,
+    entity: string,
+    filterDescripion: string,
+    filterId: string,
+    filterInd: number,
+    leftOperandAlias: string,
+    leftOperandDataType: string,
+    leftOperandDefaultValue: any,
+    leftOperandDescription: string,
+    leftOperandLastValue: any,
+    leftOperandLongDescription: string,
+    leftOperandType: string,
+    leftOperandValue: string,
+    operator: string,
+    promptable: boolean,
+    rightOperandAlias: any,
+    rightOperandDataType: string,
+    rightOperandDefaultValue: any[],
+    rightOperandDescription: string,
+    rightOperandLastValue: string[],
+    rightOperandLongDescription: string,
+    rightOperandType: string,
+    rightOperandValue: string[],
+    rightType: string
 }
