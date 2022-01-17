@@ -56,6 +56,7 @@
                     </template>
                 </Toolbar>
                 <div>
+                    {{ qbe.qbeJSONQuery?.catalogue?.queries[0] }}
                     <QBESimpleTable v-if="!smartView" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]"></QBESimpleTable>
                 </div>
             </div>
@@ -117,11 +118,11 @@ export default defineComponent({
         },
         async loadCustomizedDatasetFunctions() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${this.qbe?.qbeDataSourceId}`).then((response: AxiosResponse<any>) => (this.customizedDatasetFunctions = response.data))
-            console.log('LOADED CUSTOMIZED DATASET FUNCTIONS: ', this.customizedDatasetFunctions)
+            // console.log('LOADED CUSTOMIZED DATASET FUNCTIONS: ', this.customizedDatasetFunctions)
         },
         async loadExportLimit() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/EXPORT.LIMITATION`).then((response: AxiosResponse<any>) => (this.exportLimit = response.data))
-            console.log('LOADED EXPORT LIMIT: ', this.exportLimit)
+            // console.log('LOADED EXPORT LIMIT: ', this.exportLimit)
         },
         async loadEntities() {
             // HARDCODED SBI_EXECUTION_ID
@@ -137,7 +138,7 @@ export default defineComponent({
                 .post(process.env.VUE_APP_QBE_PATH + `qbequery/executeQuery/?SBI_EXECUTION_ID=${this.id}&currentQueryId=q1&start=0&limit=25`, postData)
                 .then((response: AxiosResponse<any>) => (this.queryResult = response.data))
                 .catch(() => {})
-            console.log('QUERY RESULT : ', this.queryResult)
+            // console.log('QUERY RESULT : ', this.queryResult)
         },
         formatQbeMeta() {
             const meta = [] as any[]
