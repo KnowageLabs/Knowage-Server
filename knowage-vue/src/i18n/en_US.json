@@ -1757,7 +1757,9 @@
             "hideList": "Hide List",
             "showList": "Show List"
         },
-        "entities": {},
+        "entities": {
+            "relations": "Relations"
+        },
         "simpleTable": {
             "aggregation": "Aggregation",
             "aggregationShort": "Aggr.",
