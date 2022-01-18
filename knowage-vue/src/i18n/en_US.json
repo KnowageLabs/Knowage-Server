@@ -1758,7 +1758,15 @@
             "showList": "Show List"
         },
         "entities": {
-            "relations": "Relations"
+            "relations": "Relations",
+            "types": {
+                "cube": "Cube",
+                "measure": "Measure",
+                "calculation": "Calculation",
+                "dimension": "Dimension",
+                "attribute": "Attribute",
+                "generic": "Generic"
+            }
         },
         "simpleTable": {
             "aggregation": "Aggregation",

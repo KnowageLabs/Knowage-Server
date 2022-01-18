@@ -62,6 +62,10 @@
     overflow: auto;
 }
 
+.kn-overflow-hidden {
+    overflow: hidden;
+}
+
 .kn-remove-card-padding {
     :deep(.p-card-body) {
         padding: 0;
