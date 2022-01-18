@@ -65,7 +65,7 @@
             </div>
         </div>
 
-        <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" @close="filterDialogVisible = false"></QBEFilterDialog>
+        <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="id" @close="filterDialogVisible = false"></QBEFilterDialog>
     </Dialog>
 </template>
 
@@ -120,8 +120,8 @@ export default defineComponent({
         },
         async loadDataset() {
             // HARDCODED Dataset label/name
-            // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan%20QBE%20TEST`).then((response: AxiosResponse<any>) => {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan%20QBE%20TEST`).then((response: AxiosResponse<any>) => {
+                // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
                 if (this.qbe) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })

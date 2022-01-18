@@ -1,5 +1,5 @@
 <template>
-    <Dialog id="qbe-filter-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="QBEFilterDialogDescription.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog id="qbe-filter-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="QBEFilterDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-2 p-col-12">
                 <template #left>
@@ -8,11 +8,11 @@
             </Toolbar>
         </template>
 
-        <Message v-if="filters.length === 0" class="p-m-2" severity="info" :closable="false" :style="QBEFilterDialogDescription.styles.message">
+        <Message v-if="filters.length === 0" class="p-m-4" severity="info" :closable="false" :style="QBEFilterDialogDescriptor.styles.message">
             {{ $t('common.info.noDataFound') }}
         </Message>
         <div v-else>
-            <QbeFilterCard v-for="filter in filters" :key="filter.filterId" :propFilter="filter"></QbeFilterCard>
+            <QbeFilterCard v-for="filter in filters" :key="filter.filterId" :propFilter="filter" :id="id" @removeFilter="removeFilter"></QbeFilterCard>
         </div>
 
         <template #footer>
@@ -26,16 +26,17 @@
 import { defineComponent, PropType } from 'vue'
 import { iField, iQuery, iFilter } from '../../QBE'
 import Dialog from 'primevue/dialog'
+import Message from 'primevue/message'
 import QbeFilterCard from './QbeFilterCard.vue'
-import QBEFilterDialogDescription from './QBEFilterDialogDescription.json'
+import QBEFilterDialogDescriptor from './QBEFilterDialogDescriptor.json'
 
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
-    components: { Dialog, QbeFilterCard },
-    props: { visible: { type: Boolean }, filterDialogData: { type: Object as PropType<{ field: iField; query: iQuery }> } },
+    components: { Dialog, Message, QbeFilterCard },
+    props: { visible: { type: Boolean }, filterDialogData: { type: Object as PropType<{ field: iField; query: iQuery }> }, id: { type: String } },
     data() {
         return {
-            QBEFilterDialogDescription,
+            QBEFilterDialogDescriptor,
             filters: [] as any[]
         }
     },
@@ -59,6 +60,11 @@ export default defineComponent({
                     this.filters.push({ ...filter })
                 }
             })
+        },
+        removeFilter(filter: iFilter) {
+            console.log('FILTER TO REMOVE: ', filter)
+            const index = this.filters.findIndex((el: iFilter) => el.filterId === filter.filterId)
+            if (index !== -1) this.filters.splice(index, 1)
         },
         closeDialog() {
             this.$emit('close')

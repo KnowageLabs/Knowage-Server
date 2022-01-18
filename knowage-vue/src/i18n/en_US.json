@@ -1760,6 +1760,37 @@
         "entities": {
             "relations": "Relations"
         },
+        "filters": {
+            "condition": "Condition",
+            "conditionTooltip": "For not/between and not/in operator use \" ---- \" as separator.",
+            "operators": {
+                "between": "Between",
+                "contains": "Contains",
+                "endsWith": "Ends with",
+                "equalsOrGreaterThan": "Equals or greater than",
+                "equalsOrLessThan": "Equals or less than",
+                "equalsTo": "Equals to",
+                "greaterThan": "Greater than",
+                "in": "In",
+                "isNull": "Is null",
+                "lessThan": "Less than",
+                "notBetween": "Not between",
+                "notContains": "Not contains",
+                "notEndsWith": "Not ends with",
+                "notEqualsTo": "Not equals to",
+                "notIn": "Not in",
+                "notNull": "Not null",
+                "notStartsWith": "Not starts with",
+                "startsWith": "Starts with"
+            },
+            "target": "Target",
+            "targetType": "Target type",
+            "targets": {
+                "entity": "Another entity",
+                "manual": "Manual set value",
+                "value": "Value of the field"
+            }
+        },
         "simpleTable": {
             "aggregation": "Aggregation",
             "aggregationShort": "Aggr.",
