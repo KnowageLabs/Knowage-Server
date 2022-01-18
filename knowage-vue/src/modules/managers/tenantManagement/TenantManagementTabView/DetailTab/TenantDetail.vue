@@ -93,7 +93,7 @@ export default defineComponent({
             type: Object,
             required: false
         },
-        listOfThemes: [] as any
+        listOfThemes: Array
     },
     computed: {
         disableField() {
@@ -123,7 +123,7 @@ export default defineComponent({
             this.tenant = {} as iMultitenant
             this.tenant.MULTITENANT_THEME = 'sbi_default'
         }
-        this.themes = [...this.listOfThemes] as any
+        if (this.listOfThemes) this.themes = [...this.listOfThemes] as any
     },
     watch: {
         async selectedTenant() {
@@ -134,7 +134,7 @@ export default defineComponent({
             })
         },
         listOfThemes() {
-            this.themes = [...this.listOfThemes] as any
+            this.themes = [...(this.listOfThemes as any[])]
         }
     },
     methods: {
@@ -142,65 +142,64 @@ export default defineComponent({
             this.$emit('fieldChanged', { fieldName, value })
         },
         uploadFile(event): void {
-                const reader = new FileReader()
-                reader.addEventListener(
-                    'load',
-                    () => {
-                        this.tenant.MULTITENANT_IMAGE = reader.result || ''
-                        this.onFieldChange('MULTITENANT_IMAGE', this.tenant.MULTITENANT_IMAGE)
-                    },
-                    false
-                )
-                if (event.srcElement.files[0] && event.srcElement.files[0].size < process.env.VUE_APP_MAX_UPLOAD_IMAGE_SIZE) {
-                    reader.readAsDataURL(event.srcElement.files[0])
-                    this.v$.$touch()
-                } else this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
-            },
+            const reader = new FileReader()
+            reader.addEventListener(
+                'load',
+                () => {
+                    this.tenant.MULTITENANT_IMAGE = reader.result || ''
+                    this.onFieldChange('MULTITENANT_IMAGE', this.tenant.MULTITENANT_IMAGE)
+                },
+                false
+            )
+            if (event.srcElement.files[0] && event.srcElement.files[0].size < process.env.VUE_APP_MAX_UPLOAD_IMAGE_SIZE) {
+                reader.readAsDataURL(event.srcElement.files[0])
+                this.v$.$touch()
+            } else this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
+        }
     }
 })
 </script>
 
 <style lang="scss" scoped>
-
-        #organizationImage {
-            display: none;
+#organizationImage {
+    display: none;
+}
+label[for='organizationImage'] {
+    float: right;
+    transition: background-color 0.3s linear;
+    border-radius: 50%;
+    width: 2.25rem;
+    line-height: 1rem;
+    top: -5px;
+    height: 2.25rem;
+    padding: 0.571rem;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    &:hover {
+        background-color: $color-secondary;
+    }
+}
+.imageUploader {
+    .p-fileupload {
+        display: inline-block;
+        float: right;
+        .p-button {
+            background-color: transparent;
+            color: black;
         }
-        label[for='organizationImage'] {
-            float: right;
-            transition: background-color 0.3s linear;
-            border-radius: 50%;
-            width: 2.25rem;
-            line-height: 1rem;
-            top: -5px;
-            height: 2.25rem;
-            padding: 0.571rem;
-            position: relative;
-            cursor: pointer;
-            user-select: none;
-            &:hover {
-                background-color: $color-secondary;
-            }
-        }
-        .imageUploader {
-            .p-fileupload {
-                display: inline-block;
-                float: right;
-                .p-button {
-                    background-color: transparent;
-                    color: black;
-                }
-            }
-        }
-        .imageContainer {
-            height: 100%;
-            .icon {
-                color: $color-secondary;
-            }
-            img {
-                height: auto;
-                max-height: 80px;
-                max-width: 80px;
-                border-radius: 50%;
-            }
-        }
+    }
+}
+.imageContainer {
+    height: 100%;
+    .icon {
+        color: $color-secondary;
+    }
+    img {
+        height: auto;
+        max-height: 80px;
+        max-width: 80px;
+        border-radius: 50%;
+    }
+}
 </style>

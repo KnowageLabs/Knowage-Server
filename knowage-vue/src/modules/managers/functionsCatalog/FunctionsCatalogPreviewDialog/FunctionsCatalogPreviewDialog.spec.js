@@ -171,7 +171,9 @@ const mockedDataset = {
 
 jest.mock('axios')
 
-axios.post.mockImplementation(() => Promise.reject())
+const $http = {
+    post: axios.post.mockImplementation(() => Promise.reject({ message: '100' }))
+}
 
 const $store = {
     commit: jest.fn()
@@ -199,7 +201,8 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store
+                $store,
+                $http
             }
         }
     })

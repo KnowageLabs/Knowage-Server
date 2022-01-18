@@ -15,9 +15,11 @@ const mockedMetadata = {
     dataType: 'SHORT_TEXT'
 }
 
-jest.mock('axios', () => ({
-    post: jest.fn(() => Promise.resolve())
-}))
+jest.mock('axios')
+
+const $http = {
+    post: axios.post.mockImplementation(() => Promise.resolve())
+}
 
 const $store = {
     commit: jest.fn()
@@ -35,7 +37,8 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store
+                $store,
+                $http
             }
         }
     })

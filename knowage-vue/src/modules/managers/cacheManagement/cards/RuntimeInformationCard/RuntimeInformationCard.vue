@@ -13,7 +13,6 @@
         <template #content>
             <div class="p-d-flex p-flex-column">
                 <div class="kn-flex">
-                    dfssdfdfssdfsdfsddfsfd
                     <p>{{ $t('managers.cacheManagement.cacheEnabled') }}: {{ cache.cleaningEnabled }}</p>
                     <p>{{ $t('managers.cacheManagement.totalMemory') }}: {{ totalMemory }}</p>
                     <p>{{ $t('managers.cacheManagement.availableMemory') }}: {{ availableMemory }}</p>
