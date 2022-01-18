@@ -36,7 +36,17 @@
                         <Chip v-for="(selectedValue, index) in selectedValues" :key="index" class="p-mr-1">{{ selectedValue }}</Chip>
                     </div>
 
-                    <CascadeSelect v-if="filter.rightType === 'anotherEntity'" class="kn-flex" v-model="selectedEntity"></CascadeSelect>
+                    <CascadeSelect
+                        v-if="filter.rightType === 'anotherEntity'"
+                        class="kn-flex"
+                        v-model="filter.rightOperandDescription"
+                        :options="entities"
+                        optionLabel="attributes.longDescription"
+                        optionValue="attributes.longDescription"
+                        optionGroupLabel="text"
+                        :optionGroupChildren="['children']"
+                        @change="onEntityTypeChanged"
+                    ></CascadeSelect>
 
                     <i v-if="filter.rightType === 'valueOfField'" class="fa fa-check kn-cursor-pointer p-ml-2" @click="loadFilterValues"></i>
                     <i class="fa fa-eraser kn-cursor-pointer p-ml-2" @click="$emit('removeFilter', filter)"></i>
@@ -83,7 +93,6 @@ export default defineComponent({
             selectedValues: [] as string[],
             filterValuesData: null,
             anotherEntityValue: '',
-            selectedEntity: null,
             entities: [] as any[],
             loading: false
         }
@@ -154,6 +163,11 @@ export default defineComponent({
                 this.filter.rightOperandValue = selected
                 this.filter.rightOperandDescription = selected.join(' ---- ')
                 this.filter.rightOperandLongDescription = selected.join(' ---- ')
+            }
+        },
+        onEntityTypeChanged() {
+            if (this.filter) {
+                console.log('FILTER CHANGED: ', this.filter)
             }
         }
     }
