@@ -7,7 +7,7 @@
         <template #right>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="$emit('toggleDisplayView')" />
             <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="$emit('toggleDisplayView')" />
-            <KnFabButton icon="fas fa-plus" data-test="new-folder-button" @click="executeAnalysisDocument" />
+            <KnFabButton icon="fas fa-plus" data-test="new-folder-button" @click="showCreationMenu" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
@@ -72,6 +72,7 @@
         data-test="detail-sidebar"
     />
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
+    <Menu id="creationMenu" ref="creationMenu" :model="creationMenuButtons" />
 
     <WorkspaceAnalysisViewShareDialog :visible="shareDialogVisible" :propFolders="folders" @close="shareDialogVisible = false" @share="handleAnalysShared($event, false)"></WorkspaceAnalysisViewShareDialog>
     <WorkspaceAnalysisViewEditDialog :visible="editDialogVisible" :propAnalysis="selectedAnalysis" @close="editDialogVisible = false" @save="handleEditAnalysis"></WorkspaceAnalysisViewEditDialog>
@@ -94,6 +95,7 @@ import WorkspaceAnalysisViewEditDialog from './dialogs/WorkspaceAnalysisViewEdit
 import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDialog.vue'
 import WorkspaceAnalysisViewShareDialog from './dialogs/WorkspaceAnalysisViewShareDialog.vue'
 import { AxiosResponse } from 'axios'
+import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
     name: 'workspace-analysis-view',
@@ -124,7 +126,8 @@ export default defineComponent({
             warningMessage: '',
             triggerUpload: false,
             uploading: false,
-            shareDialogVisible: false
+            shareDialogVisible: false,
+            creationMenuButtons: [] as any
         }
     },
     created() {
@@ -142,8 +145,7 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         formatDate(date) {
-            let fDate = new Date(date)
-            return fDate.toLocaleString()
+            return formatDateWithLocale(date, { dateStyle: 'short', timeStyle: 'short' })
         },
         showSidebar(clickedDocument) {
             this.selectedAnalysis = clickedDocument
@@ -333,6 +335,26 @@ export default defineComponent({
                     })
                 }
             }, 250)
+        },
+        showCreationMenu(event) {
+            this.createCreationMenuButtons()
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs.creationMenu.toggle(event)
+        },
+        createCreationMenuButtons() {
+            this.creationMenuButtons = []
+            this.creationMenuButtons.push(
+                { key: '0', label: this.$t('common.cockpit'), command: this.todoToast, visible: true },
+                { key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: this.todoToast, visible: true },
+                { key: '2', label: this.$t('common.kpi'), command: this.todoToast, visible: true }
+            )
+        },
+        todoToast() {
+            this.$store.commit('setInfo', {
+                title: 'TODO',
+                msg: 'Functionality not in this sprint'
+            })
         }
     }
 })

@@ -1,6 +1,6 @@
 <template>
     <div class="kn-height-full detail-page-container">
-        <Toolbar v-if="!embed" class="kn-toolbar kn-toolbar--primary p-col-12">
+        <Toolbar v-if="!embed && !olapDesignerMode" class="kn-toolbar kn-toolbar--primary p-col-12">
             <template #left>
                 <span>{{ document?.label }}</span>
             </template>
@@ -25,8 +25,19 @@
             <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
 
             <template v-if="filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible">
-                <Registry v-if="mode === 'registry'" :id="urlData.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
+                <Registry v-if="mode === 'registry'" :id="urlData?.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
                 <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger"></Dossier>
+                <Olap
+                    v-else-if="mode === 'olap'"
+                    :id="urlData?.sbiExecutionId"
+                    :olapId="document.id"
+                    :olapName="document.name"
+                    :reloadTrigger="reloadTrigger"
+                    :olapCustomViewVisible="olapCustomViewVisible"
+                    @closeOlapCustomView="olapCustomViewVisible = false"
+                    @applyCustomView="executeOlapCustomView"
+                    @executeCrossNavigation="executeOLAPCrossNavigation"
+                ></Olap>
             </template>
 
             <iframe
@@ -80,6 +91,7 @@ import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSi
 import Menu from 'primevue/menu'
 import Registry from '../registry/Registry.vue'
 import Dossier from '../dossier/Dossier.vue'
+import Olap from '../olap/Olap.vue'
 
 export default defineComponent({
     name: 'document-execution',
@@ -95,10 +107,11 @@ export default defineComponent({
         KnParameterSidebar,
         Menu,
         Registry,
-        Dossier
+        Dossier,
+        Olap
     },
     props: { id: { type: String } },
-    emits: ['close'],
+    emits: ['close', 'updateDocumentName'],
     data() {
         return {
             document: null as any,
@@ -129,8 +142,10 @@ export default defineComponent({
             breadcrumbs: [] as any[],
             linkParameters: [],
             embed: false,
+            olapCustomViewVisible: false,
             userRole: null,
-            loading: false
+            loading: false,
+            olapDesignerMode: false
         }
     },
     async activated() {
@@ -170,6 +185,7 @@ export default defineComponent({
         this.user = (this.$store.state as any).user
         this.userRole = this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
 
+        this.isOlapDesignerMode()
         this.setMode()
 
         this.document = { label: this.id }
@@ -199,7 +215,7 @@ export default defineComponent({
             this.loading = true
             this.documentMode = this.documentMode === 'EDIT' ? 'VIEW' : 'EDIT'
             this.hiddenFormData.set('documentMode', this.documentMode)
-            await this.loadURL()
+            await this.loadURL(null)
             this.loading = false
         },
         openHelp() {
@@ -207,7 +223,7 @@ export default defineComponent({
         },
         async refresh() {
             this.parameterSidebarVisible = false
-            await this.loadURL()
+            await this.loadURL(null)
             this.reloadTrigger = !this.reloadTrigger
         },
         toggle(event: Event) {
@@ -252,6 +268,10 @@ export default defineComponent({
 
             if (this.user.functionalities.includes('SeeSnapshotsFunctionality')) {
                 this.toolbarMenuItems[3].items.unshift({ icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() })
+            }
+
+            if (this.mode === 'olap') {
+                this.toolbarMenuItems[3].items.unshift({ icon: '', label: this.$t('documentExecution.main.showOLAPCustomView'), command: () => this.showOLAPCustomView() })
             }
 
             if (this.user.functionalities.includes('EnableToCopyAndEmbed')) {
@@ -323,6 +343,8 @@ export default defineComponent({
                 this.mode = 'registry'
             } else if (this.$route.path.includes('dossier')) {
                 this.mode = 'dossier'
+            } else if (this.$route.path.includes('olap')) {
+                this.mode = 'olap'
             } else {
                 this.mode = 'iframe'
             }
@@ -332,13 +354,25 @@ export default defineComponent({
 
             await this.loadFilters()
             if (this.filtersData?.isReadyForExecution) {
-                await this.loadURL()
+                await this.loadURL(null)
                 await this.loadExporters()
             } else if (this.filtersData?.filterStatus) {
                 this.parameterSidebarVisible = true
             }
 
+            this.updateMode()
             this.loading = false
+        },
+        updateMode() {
+            if (this.document.typeCode === 'DATAMART') {
+                this.mode = 'registry'
+            } else if (this.document.typeCode === 'DOSSIER') {
+                this.mode = 'dossier'
+            } else if (this.document.typeCode === 'OLAP') {
+                this.mode = 'olap'
+            } else {
+                this.mode = 'iframe'
+            }
         },
         async loadDocument() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.document?.label}`).then((response: AxiosResponse<any>) => (this.document = response.data))
@@ -388,8 +422,8 @@ export default defineComponent({
                     el.parameterValue = [{ value: '', description: '' }]
                 }
 
-                if (!el.parameterValue[0].description) {
-                    el.parameterValue[0].description = ''
+                if (el.parameterValue[0] && !el.parameterValue[0].description) {
+                    el.parameterValue[0].description = el.parameterDescription ? el.parameterDescription[0] : ''
                 }
             })
 
@@ -419,8 +453,8 @@ export default defineComponent({
 
             return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
         },
-        async loadURL() {
-            const postData = { label: this.document.label, role: this.userRole, parameters: this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
+        async loadURL(olapParameters: any) {
+            const postData = { label: this.document.label, role: this.userRole, parameters: olapParameters ? olapParameters : this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
 
             if (this.sbiExecutionId) {
                 postData.SBI_EXECUTION_ID = this.sbiExecutionId
@@ -464,7 +498,7 @@ export default defineComponent({
             if (!postForm) {
                 postForm = document.createElement('form')
                 postForm.id = 'postForm_' + postObject.params.document
-                postForm.action = 'http://localhost:8080' + postObject.url
+                postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
                 postForm.method = 'post'
                 postForm.target = 'documentFrame' + tempIndex
                 document.body.appendChild(postForm)
@@ -501,7 +535,7 @@ export default defineComponent({
 
             this.hiddenFormData.append('documentMode', this.documentMode)
 
-            if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER') {
+            if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP') {
                 await this.sendHiddenFormData()
             } else {
                 postForm.submit()
@@ -524,7 +558,7 @@ export default defineComponent({
         async onExecute() {
             this.loading = true
             this.filtersData.isReadyForExecution = true
-            await this.loadURL()
+            await this.loadURL(null)
             this.parameterSidebarVisible = false
             this.reloadTrigger = !this.reloadTrigger
             this.loading = false
@@ -716,6 +750,7 @@ export default defineComponent({
             this.filtersData = item.filtersData
             this.urlData = item.urlData
             this.hiddenFormData = item.hiddenFormData
+            this.updateMode()
         },
         async onRoleChange(role: string) {
             this.userRole = role as any
@@ -757,6 +792,60 @@ export default defineComponent({
             })
 
             return formatedParams
+        },
+        showOLAPCustomView() {
+            this.olapCustomViewVisible = true
+        },
+        async executeOlapCustomView(payload: any) {
+            this.loading = true
+            this.olapCustomViewVisible = false
+            await this.loadURL(payload)
+            this.reloadTrigger = !this.reloadTrigger
+            this.loading = false
+        },
+        async executeOLAPCrossNavigation(crossNavigationParams: any) {
+            let temp = {} as any
+            this.loading = true
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
+            this.loading = false
+
+            if (!temp || temp.length === 0) {
+                this.$store.commit('setError', {
+                    title: this.$t('common.error.generic'),
+                    msg: this.$t('documentExecution.main.crossNavigationNoTargetError')
+                })
+                return
+            }
+
+            this.document = { ...temp[0].document, navigationParams: this.formatOLAPNavigationParams(crossNavigationParams, temp[0].navigationParams) }
+
+            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+            if (index !== -1) {
+                this.breadcrumbs[index].document = this.document
+            } else {
+                this.breadcrumbs.push({ label: this.document.label, document: this.document })
+            }
+
+            await this.loadPage()
+            this.reloadTrigger = !this.reloadTrigger
+        },
+        formatOLAPNavigationParams(crossNavigationParams: any, navigationParams: any) {
+            const crossNavigationParamKeys = Object.keys(crossNavigationParams)
+            let formattedParams = {} as any
+
+            Object.keys(navigationParams).forEach((key: string) => {
+                const index = crossNavigationParamKeys.findIndex((el: string) => el === navigationParams[key].value.label)
+                if (index !== -1) {
+                    formattedParams[key] = crossNavigationParams[crossNavigationParamKeys[index]]
+                }
+            })
+
+            return formattedParams
+        },
+        isOlapDesignerMode() {
+            if (this.$route.name === 'olap-designer') {
+                this.olapDesignerMode = true
+            }
         }
     }
 })

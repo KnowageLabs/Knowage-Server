@@ -43,7 +43,7 @@
                             class="kn-material-input"
                             v-model="v$.driver.type.$model"
                             :options="types"
-                            optionValue="VALUE_NM"
+                            optionValue="VALUE_CD"
                             optionLabel="VALUE_NM"
                             :class="{
                                 'p-invalid': v$.driver.type.$invalid && v$.driver.type.$dirty

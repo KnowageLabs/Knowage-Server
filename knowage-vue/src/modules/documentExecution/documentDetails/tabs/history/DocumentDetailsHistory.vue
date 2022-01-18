@@ -32,7 +32,7 @@
                     {{ $t('documentExecution.documentDetails.history.template') }}
                 </template>
                 <template #right>
-                    <Button label="Open Designer" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="openDesigner" />
+                    <Button :label="$t('documentExecution.olap.openDesigner')" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="openDesignerConfirm" />
                 </template>
             </Toolbar>
             <div id="driver-details-container" class="kn-flex kn-relative">
@@ -247,8 +247,16 @@ export default defineComponent({
                 })
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
         },
+        openDesignerConfirm() {
+            this.$confirm.require({
+                header: this.$t('common.toast.warning'),
+                message: this.$t('documentExecution.olap.openDesignerMsg'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.openDesigner()
+            })
+        },
         openDesigner() {
-            this.$store.commit('setInfo', { title: 'TODO', msg: 'Functionality not in this sprint!!!' })
+            this.$router.push(`/olap-designer/${this.selectedDocument.id}`)
         }
     }
 })

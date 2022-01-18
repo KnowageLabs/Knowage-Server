@@ -3,11 +3,11 @@
         <div id="sidebarItemsContainer" :style="descriptor.style.sidebarContainer">
             <div class="kn-toolbar kn-toolbar--default" :style="descriptor.style.sidebarToolbar">
                 <span v-for="(button, index) of documentButtons" :key="index">
-                    <Button v-if="button.visible" :icon="button.icon" :class="button.class" @click="button.command" />
+                    <Button v-if="button.visible" :icon="button.icon" :class="button.class" @click="button.command" v-tooltip.top="button.tooltip" />
                 </span>
             </div>
             <!-- TODO: Change default image to your liking -->
-            <img class="p-mt-5" onerror="this.src='https://i.imgur.com/9N1aRkx.png'" :style="descriptor.style.sidebarImage" align="center" :src="documentImageSource" />
+            <img v-if="viewType != 'businessModel' && viewType != 'analysis'" class="p-mt-5" onerror="this.src='https://i.imgur.com/9N1aRkx.png'" :style="descriptor.style.sidebarImage" align="center" :src="documentImageSource" />
             <div class="p-m-5">
                 <div class="p-mb-5" v-for="(field, index) of documentFields" :key="index">
                     <h3 class="p-m-0">
@@ -39,16 +39,16 @@ export default defineComponent({
     props: { visible: Boolean, viewType: String, document: Object as any, datasetCategories: Array as any },
     computed: {
         isOwner(): any {
-            return (this.$store.state as any).user.fullName === this.document.creationUser
+            return (this.$store.state as any).user.userId === this.document.creationUser
         },
         isAnalysisShared(): any {
             return this.document.functionalities.length > 1
         },
         isDatasetOwner(): any {
-            return (this.$store.state as any).user.fullName === this.document.owner
+            return (this.$store.state as any).user.userId === this.document.owner
         },
         showQbeEditButton(): any {
-            return (this.$store.state as any).user.fullName === this.document.owner && (this.document.dsTypeCd == 'Federated' || this.document.dsTypeCd == 'Qbe')
+            return (this.$store.state as any).user.userId === this.document.owner && (this.document.dsTypeCd == 'Federated' || this.document.dsTypeCd == 'Qbe')
         },
         datasetHasDrivers(): any {
             return this.document.drivers && this.document.length > 0
@@ -110,27 +110,27 @@ export default defineComponent({
         documentButtons(): any {
             switch (this.viewType) {
                 case 'recent':
-                    return [{ icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeRecent') }]
+                    return [{ icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', tooltip: this.$t('workspace.buttonsTooltips.executeDoc'), visible: true, command: this.emitEvent('executeRecent') }]
                 case 'repository':
                     return [
-                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('executeDocumentFromOrganizer') },
-                        { icon: 'fas fa-share', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('moveDocumentToFolder') },
-                        { icon: 'fas fa-trash', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('deleteDocumentFromOrganizer') }
+                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.executeDoc'), visible: true, command: this.emitEvent('executeDocumentFromOrganizer') },
+                        { icon: 'fas fa-share', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.moveDoc'), visible: true, command: this.emitEvent('moveDocumentToFolder') },
+                        { icon: 'fas fa-trash', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.deleteDoc'), visible: true, command: this.emitEvent('deleteDocumentFromOrganizer') }
                     ]
                 case 'dataset':
                     return [
-                        { icon: 'fas fa-eye', class: 'p-button-text p-button-rounded p-button-plain', visible: this.canLoadData, command: this.emitEvent('previewDataset') },
-                        { icon: 'fas fa-question-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('getHelp') },
-                        { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu }
+                        { icon: 'fas fa-eye', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.previewDs'), visible: this.canLoadData, command: this.emitEvent('previewDataset') },
+                        { icon: 'fas fa-question-circle', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.help'), visible: true, command: this.emitEvent('getHelp') },
+                        { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.other'), visible: true, command: this.showMenu }
                     ]
                 case 'analysis':
                     return [
-                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('executeAnalysisDocument') },
-                        { icon: 'fas fa-edit', class: 'p-button-text p-button-rounded p-button-plain', visible: this.isOwner, command: this.emitEvent('editAnalysisDocument') },
-                        { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu }
+                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.executeDoc'), visible: true, command: this.emitEvent('executeAnalysisDocument') },
+                        { icon: 'fas fa-edit', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.editDoc'), visible: this.isOwner, command: this.emitEvent('editAnalysisDocument') },
+                        { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.other'), visible: true, command: this.showMenu }
                     ]
                 case 'businessModel':
-                    return [{ icon: 'fa fa-search', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openDatasetInQBE') }]
+                    return [{ icon: 'fa fa-search', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.myModels.openInQBE'), visible: true, command: this.emitEvent('openDatasetInQBE') }]
                 case 'federationDataset':
                     return [
                         { icon: 'fa fa-search', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openDatasetInQBE') },
@@ -169,7 +169,6 @@ export default defineComponent({
             this.menuButtons = []
             if (this.viewType == 'analysis') {
                 this.menuButtons.push(
-                    { key: '0', label: this.$t('workspace.myAnalysis.menuItems.edit'), icon: 'fas fa-edit', command: this.emitEvent('editAnalysisDocument'), visible: this.isOwner },
                     { key: '1', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share-alt', command: this.emitEvent('shareAnalysisDocument'), visible: !this.isAnalysisShared },
                     { key: '2', label: this.$t('workspace.myAnalysis.menuItems.unshare'), icon: 'fas fa-times-circle', command: this.emitEvent('shareAnalysisDocument'), visible: this.isAnalysisShared },
                     { key: '3', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: this.emitEvent('cloneAnalysisDocument') },

@@ -255,7 +255,6 @@ export default defineComponent({
                 .finally(() => (this.touchedForTest = false))
 
             if (listOfEmptyDependencies.length > 0 && !this.dependenciesReady) {
-                console.log('LIST OF EMPTY FIRST IF: ', listOfEmptyDependencies)
                 this.dependenciesList = []
                 for (let i = 0; i < listOfEmptyDependencies.length; i++) {
                     this.dependenciesList.push({
@@ -265,11 +264,9 @@ export default defineComponent({
                 }
                 this.paramsDialogVisible = true
             } else {
-                console.log('LIST OF EMPTY SECOND IF: ', listOfEmptyDependencies)
                 await this.previewLov(this.pagination, false, showPreview)
                 this.buildTestTable()
             }
-            console.log('LIST OF DEPENDENCIES: ', this.dependenciesList)
         },
         async previewLov(value: any, hasDependencies: boolean, showPreview: boolean) {
             this.pagination = value
