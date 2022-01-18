@@ -38,7 +38,7 @@
             </div>
             <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0">
                 <KnHint :title="'managers.metadata.title'" :hint="'managers.metadata.hint'" v-if="!formVisible"></KnHint>
-                <MetadataManagementDetail :model="selectedMetadata" @close="closeForm" @saved="reloadMetadata" @touched="touched = true" v-if="formVisible" data-test="metadata-form"></MetadataManagementDetail>
+                <MetadataManagementDetail :model="selectedMetadata" @close="closeForm" @saved="reloadMetadata" @touched="touched = true" v-if="formVisible"></MetadataManagementDetail>
             </div>
         </div>
     </div>

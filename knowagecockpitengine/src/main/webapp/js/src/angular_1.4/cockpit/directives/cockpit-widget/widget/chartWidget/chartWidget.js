@@ -107,7 +107,8 @@ function cockpitChartWidgetControllerFunction(
 		cockpitModule_properties,
 		cockpitModule_template,
 		sbiModule_util,
-		$mdDialog){
+		$mdDialog,
+		$mdColorPalette){
 	$scope.property={style:{}};
 	$scope.selectedTab = {'tab' : 0};
 	$scope.cockpitModule_widgetSelection = cockpitModule_widgetSelection;
@@ -1466,7 +1467,7 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 					obj['formula'] = wconf.columnSelectedOfDatasetAggregations[index].formula;
 					obj['datasetOrTableFlag'] = wconf.columnSelectedOfDatasetAggregations[index].datasetOrTableFlag;
 				}
-				if(wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
+				if(wconf.columnSelectedOfDatasetAggregations && wconf.columnSelectedOfDatasetAggregations[index] && wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
 					obj.boundFunction = wconf.columnSelectedOfDatasetAggregations[index].boundFunction; 
 				}
 				aggregations.push(obj);
@@ -1488,7 +1489,7 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 					obj['fieldType'] = "ATTRIBUTE";
 					obj['orderType'] = chartCategory[i].orderType;
 					obj['orderColumn'] = chartCategory[i].orderColumn;
-					if(wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
+					if(wconf.columnSelectedOfDatasetAggregations && wconf.columnSelectedOfDatasetAggregations[index] && wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
 						obj.boundFunction = wconf.columnSelectedOfDatasetAggregations[index].boundFunction; 
 					}
 					aggregations.push(obj);
@@ -1505,7 +1506,7 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 				obj['orderType'] = chartCategory.drillOrder && chartCategory.drillOrder[chartCategory.column] ? chartCategory.drillOrder[chartCategory.column].orderType : chartCategory.orderType ;
 				obj['orderColumn'] =  chartCategory.drillOrder && chartCategory.drillOrder[chartCategory.column] ? chartCategory.drillOrder[chartCategory.column].orderColumn : chartCategory.orderColumn ;
 				obj['fieldType'] = "ATTRIBUTE";
-				if(wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
+				if(wconf.columnSelectedOfDatasetAggregations && wconf.columnSelectedOfDatasetAggregations[index] && wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
 					obj.boundFunction = wconf.columnSelectedOfDatasetAggregations[index].boundFunction;
 				}
 				aggregations.push(obj);

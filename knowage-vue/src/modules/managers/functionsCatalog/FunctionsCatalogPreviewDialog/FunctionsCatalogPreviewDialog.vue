@@ -136,10 +136,10 @@ export default defineComponent({
                     this.setPreviewColumns(response.data)
                     this.previewRows = response.data.rows
                 })
-                .catch(() => {
+                .catch((response: any) => {
                     this.warningVisible = true
                     this.warningTitle = this.$t('managers.functionsCatalog.dataServiceErrorTitle')
-                    this.warningMessage = this.$t('managers.functionsCatalog.dataServiceErrorMessage')
+                    this.warningMessage = response.message === '100' ? this.$t('managers.functionsCatalog.dataServiceErrorMessage') : response.message
                 })
             this.loading = false
         },

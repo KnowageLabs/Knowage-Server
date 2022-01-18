@@ -2418,6 +2418,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			if ("TEMPORAL_ATTRIBUTE".equals(ruleOutput.getType().getValueCd())) {
 				String attributeName = ruleOutput.getAlias();
 				String attributeTemporalType = ruleOutput.getHierarchy().getValueCd(); // YEAR, QUARTER, MONTH, WEEK, DAY
+				logger.debug("Adding attribute temporal type key={" + attributeName + "} value={" + attributeTemporalType + "}");
 				attributesTemporalTypes.put(attributeName, attributeTemporalType);
 			}
 		}
@@ -2487,6 +2488,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				} else {
 					criteria.addOrder(Order.asc("timeRun")).addOrder(Order.asc("kpiId")).addOrder(Order.asc("kpiVersion"));
 				}
+				logger.debug("Evaluated Kpi criteria: " + criteria);
 				return criteria;
 			}
 		});

@@ -40,7 +40,7 @@ def python_function_execute():
         input_variables = input_values['inputVariables']
         output_columns = input_values['outputColumns']
     except Exception as e:
-        logging.error("Error parsing catalog function request: {}".format(e))
+        logging.exception("Error parsing catalog function request")
         return str(e), 400
 
     if not isAuthenticated:
@@ -58,7 +58,7 @@ def python_function_execute():
         for output_col in output_columns:
             script = script.replace("${" + output_col + "}", "outdf_." + output_col)
     except Exception as e:
-        logging.error("Error resolving input references inside script: {}".format(e))
+        logging.exception("Error resolving input references inside script")
         return str(e), 500
 
     # init empty dataframe that will contain new columns
@@ -72,14 +72,14 @@ def python_function_execute():
         namespace = {"df_": datastore_df, "outdf_": out_df, "variables_": input_variables_runtime}
         exec (script, namespace)
     except Exception as e:
-        logging.error("Error during script execution: {}".format(e))
+        logging.exception("Error during script execution")
         return str(e), 500
 
     # convert dataframe to knowage json format
     try:
         knowage_json = utils.dataframe_to_datastore(namespace["outdf_"])
     except Exception as e:
-        logging.error("Error converting dataframe to knowage format: {}".format(e))
+        logging.exception("Error converting dataframe to knowage format")
         return str(e), 500
 
     return str(knowage_json).replace('\'', "\""), 200

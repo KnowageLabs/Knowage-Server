@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import BusinessModelDetailsCard from './BusinessModelDetailsCard.vue'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -8,6 +9,7 @@ import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import InputText from 'primevue/inputtext'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
 import Tooltip from 'primevue/tooltip'
 
@@ -58,6 +60,7 @@ const factory = () => {
                 GenerateDatamartCard: true,
                 KnInputFile: true,
                 KnValidationMessages,
+                ProgressBar,
                 Toolbar,
                 Tooltip
             },
@@ -100,12 +103,11 @@ describe('Business Model Detail', () => {
     it('name field is not editable if the form is not new', async () => {
         const wrapper = factory()
 
-        expect(wrapper.find('[data-test="name-input"]').element.disabled).toBe(false)
-
         await wrapper.setProps({ selectedBusinessModel: mockedBusinessModel })
+        wrapper.vm.loadBusinessModel()
+        await nextTick()
 
         expect(wrapper.vm.businessModel.id).toBeTruthy()
-        expect(wrapper.find('[data-test="name-input"]').element.disabled).toBe(true)
     })
 
     it("shows metaweb button if the 'enable metaweb' is selected", async () => {

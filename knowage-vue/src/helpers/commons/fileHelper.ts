@@ -29,6 +29,7 @@ export function downloadDirectFromResponseWithCustomName(response, customFilenam
 }
 
 export function downloadDirect(jsonData, filename, contentType) {
+	console.log("CONTENT TYPE: ", contentType)
 	let blob = new Blob([jsonData], { type: contentType })
 	if (navigator.msSaveBlob) {
 		// IE 10+

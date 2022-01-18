@@ -37,6 +37,14 @@ module.exports = {
             '^/knowage/servlet': {
                 target: process.env.VUE_APP_HOST_URL,
                 changeOrigin: true
+            },
+            '^/knowagecockpitengine/': {
+                target: process.env.VUE_APP_HOST_URL,
+                changeOrigin: true
+            },
+            '^/knowagewhatifengine/': {
+                target: process.env.VUE_APP_HOST_URL,
+                changeOrigin: true
             }
         }
     },

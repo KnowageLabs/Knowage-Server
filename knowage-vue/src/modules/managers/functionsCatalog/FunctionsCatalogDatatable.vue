@@ -5,7 +5,7 @@
         :paginator="true"
         :rows="functionsCatalogDatatableDescriptor.rows"
         :loading="loading"
-        class="p-datatable-sm kn-table"
+        class="p-datatable-sm kn-table kn-page-content"
         dataKey="id"
         :responsiveLayout="functionsCatalogDatatableDescriptor.responsiveLayout"
         :breakpoint="functionsCatalogDatatableDescriptor.breakpoint"

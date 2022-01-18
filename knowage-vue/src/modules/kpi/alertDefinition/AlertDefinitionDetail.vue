@@ -11,7 +11,9 @@
             {{ $t('kpi.alert.expiredWarning') }}
         </Message>
         <NameCard :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.selectedAlert" />
-        <KnCron class="p-m-2" v-if="selectedAlert?.frequency" :frequency="selectedAlert.frequency" @touched="touched = true" />
+
+        {{ validCron }}
+        <KnCron class="p-m-2" v-if="selectedAlert?.frequency" :frequency="selectedAlert.frequency" @touched="touched = true" @cronValid="setCronValid($event)" />
         <EventsCard :selectedAlert="selectedAlert" @valueChanged="updateAlert" />
         <KpiCard v-if="isListenerSelected && actionList?.length > 0" :selectedAlert="selectedAlert" :kpiList="kpiList" :actionList="actionList" @showDialog="onShowActionDialog($event)" @kpiLoaded="updateKpi" @touched="touched = true" />
     </div>
@@ -62,7 +64,7 @@ export default defineComponent({
             return true
         },
         buttonDisabled(): any {
-            if (this.selectedAlert.jsonOptions?.actions.length === 0 || !this.selectedAlert.name || !this.selectedAlert.alertListener) return true
+            if (this.selectedAlert.jsonOptions?.actions?.length === 0 || !this.selectedAlert.name || !this.selectedAlert.alertListener || this.validCron == false) return true
             return false
         }
     },
@@ -104,7 +106,8 @@ export default defineComponent({
             isActionDialogVisible: false,
             expiredCard: false,
             touched: false,
-            actionIndexToEdit: -1
+            actionIndexToEdit: -1,
+            validCron: true
         }
     },
     validations() {
@@ -121,10 +124,11 @@ export default defineComponent({
                     this.selectedAlert.jsonOptions = JSON.parse(this.selectedAlert.jsonOptions ? this.selectedAlert.jsonOptions : '{}')
                     if (this.selectedAlert.frequency) {
                         this.selectedAlert.frequency.cron = JSON.parse(this.selectedAlert.frequency.cron ? this.selectedAlert.frequency.cron : '{}')
+                        this.selectedAlert.frequency.startDate = this.selectedAlert.frequency.startDate ?? new Date()
                     }
 
                     if (this.selectedAlert.jsonOptions) {
-                        this.selectedAlert.jsonOptions.actions = this.selectedAlert.jsonOptions.actions.map((action: any) => {
+                        this.selectedAlert.jsonOptions.actions = this.selectedAlert.jsonOptions.actions?.map((action: any) => {
                             return {
                                 jsonActionParameters: JSON.parse(action.jsonActionParameters),
                                 idAction: action.idAction,
@@ -247,6 +251,9 @@ export default defineComponent({
             this.selectedAction = payload && payload.action ? { ...payload.action, idAction: +payload.action.idAction, className: payload.action.data.className } : { jsonActionParameters: {} }
             this.actionIndexToEdit = payload ? payload.index : -1
             this.isActionDialogVisible = true
+        },
+        setCronValid(value: boolean) {
+            this.validCron = value
         }
     }
 })
