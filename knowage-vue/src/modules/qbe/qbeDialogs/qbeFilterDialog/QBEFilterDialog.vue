@@ -12,7 +12,7 @@
             {{ $t('common.info.noDataFound') }}
         </Message>
         <div v-else>
-            <QbeFilterCard v-for="filter in filters" :key="filter.filterId" :propFilter="filter" :id="id" @removeFilter="removeFilter"></QbeFilterCard>
+            <QbeFilterCard v-for="filter in filters" :key="filter.filterId" :propFilter="filter" :id="id" :propEntities="entities" @removeFilter="removeFilter"></QbeFilterCard>
         </div>
 
         <template #footer>
@@ -33,7 +33,7 @@ import QBEFilterDialogDescriptor from './QBEFilterDialogDescriptor.json'
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
     components: { Dialog, Message, QbeFilterCard },
-    props: { visible: { type: Boolean }, filterDialogData: { type: Object as PropType<{ field: iField; query: iQuery }> }, id: { type: String } },
+    props: { visible: { type: Boolean }, filterDialogData: { type: Object as PropType<{ field: iField; query: iQuery }> }, id: { type: String }, entities: { type: Array } },
     data() {
         return {
             QBEFilterDialogDescriptor,
@@ -62,7 +62,7 @@ export default defineComponent({
             })
         },
         removeFilter(filter: iFilter) {
-            console.log('FILTER TO REMOVE: ', filter)
+            // console.log('FILTER TO REMOVE: ', filter)
             const index = this.filters.findIndex((el: iFilter) => el.filterId === filter.filterId)
             if (index !== -1) this.filters.splice(index, 1)
         },

@@ -64,7 +64,7 @@
             </div>
         </div>
 
-        <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="id" @close="filterDialogVisible = false"></QBEFilterDialog>
+        <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="id" :entities="entities?.entities" @close="filterDialogVisible = false"></QBEFilterDialog>
     </Dialog>
 </template>
 
@@ -89,7 +89,7 @@ export default defineComponent({
             qbe: null as iQBE | null,
             customizedDatasetFunctions: {} as any,
             exportLimit: null as number | null,
-            entities: [] as any[],
+            entities: {} as any,
             queryResult: {} as iQueryResult,
             loading: false,
             showEntitiesLists: true,

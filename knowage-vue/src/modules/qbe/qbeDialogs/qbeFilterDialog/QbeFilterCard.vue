@@ -32,28 +32,11 @@
                 <label class="kn-material-input-label"> {{ $t('qbe.filters.target') }} </label>
                 <div class="p-d-flex p-flex-row p-ai-center">
                     <InputText v-if="filter.rightType === 'manual'" class="kn-material-input" v-model="filter.rightOperandDescription" @input="onManualValueChange" />
-                    <div class="qbe-filter-chip-container p-d-flex p-flex-row p-ai-center p-flex-wrap kn-flex" v-if="filter.rightType === 'valueOfField'">
+                    <div class="qbe-filter-chip-container p-d-flex p-flex-row p-ai-center p-flex-wrap kn-flex" v-else-if="filter.rightType === 'valueOfField'">
                         <Chip v-for="(selectedValue, index) in selectedValues" :key="index" class="p-mr-1">{{ selectedValue }}</Chip>
                     </div>
 
-                    <Dropdown class="kn-material-input" v-if="filter.rightType === 'anotherEntity'" v-model="anotherEntityValue" :options="targetValues" optionValue="value" optionLabel="label">
-                        <template #value="slotProps">
-                            <div v-if="slotProps.value">
-                                <span>{{ slotProps.value }}</span>
-                            </div>
-                        </template>
-                        <template #option="slotProps">
-                            <div class="dropdown">
-                                <span>{{ $t(slotProps.option.label) }}</span>
-                                <div class="dropdown-icon-container">
-                                    <i class="pi pi-filter-icon pi-filter p-ml-5" @mouseover="hoverVisible = !hoverVisible" />
-                                    <div class="dropdown-content" v-if="hoverVisible">
-                                        <span>TEEEEEEEST</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
-                    </Dropdown>
+                    <CascadeSelect v-if="filter.rightType === 'anotherEntity'" class="kn-flex" v-model="selectedEntity"></CascadeSelect>
 
                     <i v-if="filter.rightType === 'valueOfField'" class="fa fa-check kn-cursor-pointer p-ml-2" @click="loadFilterValues"></i>
                     <i class="fa fa-eraser kn-cursor-pointer p-ml-2" @click="$emit('removeFilter', filter)"></i>
@@ -66,17 +49,18 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
+import { AxiosResponse } from 'axios'
 import { iFilter } from '../../QBE'
+import CascadeSelect from 'primevue/cascadeselect'
 import Chip from 'primevue/chip'
 import Dropdown from 'primevue/dropdown'
 import QBEFilterDialogDescriptor from './QBEFilterDialogDescriptor.json'
 import QbeFilterValuesTable from './QbeFilterValuesTable.vue'
-import { AxiosResponse } from 'axios'
 
 export default defineComponent({
     name: 'qbe-filter-card',
-    components: { Chip, Dropdown, QbeFilterValuesTable },
-    props: { propFilter: { type: Object as PropType<iFilter> }, id: { type: String } },
+    components: { CascadeSelect, Chip, Dropdown, QbeFilterValuesTable },
+    props: { propFilter: { type: Object as PropType<iFilter> }, id: { type: String }, propEntities: { type: Array } },
     emits: ['removeFilter'],
     data() {
         return {
@@ -99,22 +83,31 @@ export default defineComponent({
             selectedValues: [] as string[],
             filterValuesData: null,
             anotherEntityValue: '',
-            loading: false,
-            hoverVisible: false
+            selectedEntity: null,
+            entities: [] as any[],
+            loading: false
         }
     },
     watch: {
         propFilter() {
             this.loadFilter()
+        },
+        propEntities() {
+            this.loadEntities()
         }
     },
     created() {
         this.loadFilter()
+        this.loadEntities()
     },
     methods: {
         loadFilter() {
             this.filter = this.propFilter as iFilter
             this.setFilterRightOperandType()
+        },
+        loadEntities() {
+            this.entities = this.propEntities ? [...this.propEntities] : []
+            console.log(' >>> LOADED ENTITIES: ', this.entities)
         },
         async setFilterRightOperandType() {
             switch (this.filter?.rightType) {
@@ -175,25 +168,5 @@ export default defineComponent({
 .qbe-filter-chip-container {
     border-bottom: 1px solid #c2c2c2;
     min-height: 2.775rem;
-}
-
-.dropdown {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
-.dropdown-icon-container {
-    position: relative;
-}
-.dropdown-content {
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 50px;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-    z-index: 5000;
 }
 </style>
