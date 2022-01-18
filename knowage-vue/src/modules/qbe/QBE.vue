@@ -15,8 +15,8 @@
         <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
         <div v-if="!loading" class="p-d-flex p-flex-row kn-height-full">
             <div v-show="showEntitiesLists" class="entities-lists">
-                <div class="main-entities kn-flex">
-                    <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                <div class="main-entities p-d-flex p-flex-column kn-flex kn-overflow-hidden">
+                    <Toolbar class="kn-toolbar kn-toolbar--secondary kn-flex-0">
                         <template #left>
                             <span>Entities</span>
                         </template>
@@ -24,12 +24,12 @@
                             <Chip style="background-color:white"> {{ entities.entities.length }} </Chip>
                         </template>
                     </Toolbar>
-                    <div>
+                    <div class="kn-flex kn-overflow-y">
                         <ExpandableEntity :availableEntities="entities.entities" />
                     </div>
                 </div>
-                <div class="derived-entities">
-                    <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                <div :class="{ 'derived-entities-toggle': showDerivedList }">
+                    <Toolbar class="kn-toolbar kn-toolbar--secondary" @click="collapseDerivedList">
                         <template #left>
                             <span>Derived Entities</span>
                         </template>
@@ -37,7 +37,7 @@
                             <Chip> .no </Chip>
                         </template>
                     </Toolbar>
-                    <div>
+                    <div v-show="showDerivedList">
                         Derived List Test
                     </div>
                 </div>
@@ -45,7 +45,6 @@
             <div class="detail-view p-m-1" v-if="qbe">
                 <Toolbar class="kn-toolbar kn-toolbar--primary kn-width-full">
                     <template #left>
-                        <!-- todo: translation -->
                         <Button v-if="showEntitiesLists" icon="pi pi-chevron-left" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('qbe.detailView.hideList')" @click="toggleEntitiesLists" />
                         <Button v-else icon="pi pi-chevron-right" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('qbe.detailView.showList')" @click="toggleEntitiesLists" />
                     </template>
@@ -57,7 +56,7 @@
                         <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" />
                     </template>
                 </Toolbar>
-                <div>
+                <div class="kn-flex kn-overflow-y">
                     {{ hiddenColumnsExist }}
                     {{ qbe.qbeJSONQuery?.catalogue?.queries[0] }}
                     <QBESimpleTable v-if="!smartView" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]" @columnVisibilityChanged="checkIfHiddenColumnsExist" @openFilterDialog="openFilterDialog"></QBESimpleTable>
@@ -97,7 +96,8 @@ export default defineComponent({
             smartView: false,
             hiddenColumnsExist: false,
             filterDialogVisible: false,
-            filterDialogData: {} as { field: iField; query: iQuery }
+            filterDialogData: {} as { field: iField; query: iQuery },
+            showDerivedList: true
         }
     },
     watch: {
@@ -163,6 +163,9 @@ export default defineComponent({
         toggleEntitiesLists() {
             this.showEntitiesLists = !this.showEntitiesLists
         },
+        collapseDerivedList() {
+            this.showDerivedList = !this.showDerivedList
+        },
         deleteAllSelectedFields() {
             if (this.qbe) this.qbe.qbeJSONQuery.catalogue.queries[0].fields = []
         },
@@ -224,7 +227,7 @@ export default defineComponent({
     flex: 3;
 }
 
-.derived-entities {
+.derived-entities-toggle {
     min-height: 25%;
 }
 </style>

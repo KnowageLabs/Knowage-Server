@@ -1,14 +1,18 @@
 <template>
-    <div class="expandableEntities" v-for="(entity, index) in entities" :key="index">
-        <h4 class="entity-item-container" :style="{ 'border-left': `10px solid ${entity.color}` }">
-            <i :class="getIconCls(entity.attributes.iconCls)" class="p-mx-2" v-tooltip.bottom="$t(`qbe.entities.${entity.attributes.iconCls}`)" />
+    <div class="expandable-entities" v-for="(entity, index) in entities" :key="index">
+        <h4 class="entity-item-container" :style="{ 'border-left': `10px solid ${entity.color}` }" draggable="true" @dragstart="onDragStart($event, entity)">
+            <i :class="getIconCls(entity.attributes.iconCls)" class="p-mx-2" v-tooltip.top="$t(`qbe.entities.types.${entity.attributes.iconCls}`)" />
             <span>{{ entity.text }}</span>
-            <Button icon="fas fa-info" class="p-button-text p-button-rounded p-button-plain p-ml-auto" v-tooltip.bottom="$t('qbe.entities.relations')" @click="showRelationDialogue" />
+            <Button icon="fas fa-info" class="p-button-text p-button-rounded p-button-plain p-ml-auto" v-tooltip.top="$t('qbe.entities.relations')" @click="showRelationDialogue" />
             <Button v-if="entity.expanded" icon="pi pi-chevron-up" class="p-button-text p-button-rounded p-button-plain" @click="entity.expanded = false" />
             <Button v-else icon="pi pi-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="entity.expanded = true" />
         </h4>
         <ul v-show="entity.expanded">
-            test
+            <li :style="{ 'border-left': `5px solid ${child.color}` }" v-for="(child, index) in entity.children" :key="index" draggable="true" @dragstart="onDragStart($event, child)">
+                <i :class="getIconCls(child.attributes.iconCls)" class="p-mx-2" v-tooltip.top="$t(`qbe.entities.types.${child.attributes.iconCls}`)" />
+                <span>{{ child.text }}</span>
+                <Button icon="fas fa-filter" class="p-button-text p-button-rounded p-button-plain p-ml-auto" />
+            </li>
         </ul>
     </div>
 </template>
@@ -17,7 +21,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-    name: 'qbe',
+    name: 'expandable-entity',
     components: {},
     props: { availableEntities: { type: Array } },
     emits: ['close'],
@@ -76,24 +80,70 @@ export default defineComponent({
                 default:
                     return 'fas fa-cube'
             }
+        },
+        onDragStart(event, entity) {
+            console.log('DRAG EVENT: ', event, 'DRAG ENTITY: ', entity)
         }
     }
 })
 </script>
 <style lang="scss">
-.entity-item-container {
-    display: flex;
-    background-color: #fff;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    height: 24px;
-    line-height: 24px;
-    margin: 0;
-    padding: 4px 8px 4px 8px;
-    font-size: 0.8rem;
-    border-bottom: 1px solid #ccc;
-    outline: none;
-    cursor: pointer;
+.expandable-entities {
+    ul {
+        background-color: #eceff1;
+        margin: 0;
+        list-style: none;
+        padding-left: 0;
+        cursor: pointer;
+        li {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 4px 0px 4px 20px;
+            font-size: 0.8rem;
+            border-bottom: 1px solid $color-borders;
+            height: 24px;
+            cursor: grab;
+            button {
+                margin: 0;
+                padding: 0;
+                width: 32px;
+            }
+            &:hover {
+                background-color: darken(#eceff1, 10%);
+            }
+            i {
+                cursor: help;
+            }
+            span {
+                padding-left: 5px;
+            }
+        }
+    }
+    h4 {
+        display: flex;
+        background-color: #fff;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        height: 24px;
+        line-height: 24px;
+        margin: 0;
+        padding: 4px 8px 4px 8px;
+        font-size: 0.8rem;
+        border-bottom: 1px solid #ccc;
+        outline: none;
+        cursor: grab;
+        &:hover {
+            background-color: darken(#ffffff, 15%);
+        }
+        button {
+            cursor: pointer;
+        }
+        i {
+            cursor: help;
+        }
+    }
 }
 </style>
