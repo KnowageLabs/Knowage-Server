@@ -23,6 +23,7 @@
                     :roles="roles"
                     :selectedMenuNode="selectedMenuNode"
                     :menuNodes="menuNodes"
+                    :staticPagesList="staticPagesList"
                     @refreshRecordSet="loadMenuNodes"
                     @closesForm="closeForm"
                     @dataChanged="dirty = true"
@@ -41,7 +42,7 @@ import KnHint from '@/components/UI/KnHint.vue'
 import { iMenuNode } from './MenuManagement'
 import MenuNodesTree from './MenuNodesTree/MenuManagementNodesTree.vue'
 import MenuElementsDetail from './ElementDetailsCard/MenuManagementElementsDetail.vue'
-import { iRole } from '../usersManagement/UsersManagement'
+import { iRole, iStaticPage } from '../usersManagement/UsersManagement'
 export default defineComponent({
     name: 'menu-management',
     components: {
@@ -54,6 +55,7 @@ export default defineComponent({
         return {
             apiUrl: process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/',
             menuNodes: [] as iMenuNode[],
+            staticPagesList: [] as iStaticPage[],
             selectedMenuNode: {} as any,
             parentNodeRoles: [] as iRole[] | null,
             loading: false as Boolean,
@@ -65,6 +67,7 @@ export default defineComponent({
     async created() {
         await this.loadMenuNodes()
         await this.loadRoles()
+        await this.loadStaticPages()
     },
     methods: {
         async loadRoles() {
@@ -107,6 +110,17 @@ export default defineComponent({
                 .get(this.apiUrl + 'menu')
                 .then((response: AxiosResponse<any>) => {
                     this.menuNodes = response.data
+                })
+                .finally(() => (this.loading = false))
+        },
+        async loadStaticPages() {
+            this.loading = true
+            this.hideForm = true
+            this.dirty = false
+            await this.$http
+                .get(this.apiUrl + 'menu/htmls')
+                .then((response: AxiosResponse<any>) => {
+                    this.staticPagesList = response.data
                 })
                 .finally(() => (this.loading = false))
         },
@@ -206,7 +220,7 @@ export default defineComponent({
             if (this.hideForm) {
                 this.hideForm = false
             }
-            this.selectedMenuNode = { ...menuNode }
+            this.selectedMenuNode = { ...menuNode, staticPage: Number(menuNode.staticPage) }
             this.parentNodeRoles = null
             if (menuNode.parentId) {
                 const parentNode = this.menuNodes.find((node) => node.menuId === menuNode.parentId)
