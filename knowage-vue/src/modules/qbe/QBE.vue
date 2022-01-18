@@ -57,7 +57,7 @@
                         <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" />
                     </template>
                 </Toolbar>
-                <div>
+                <div class="kn-flex kn-overflow-y">
                     {{ hiddenColumnsExist }}
                     {{ qbe.qbeJSONQuery?.catalogue?.queries[0] }}
                     <QBESimpleTable v-if="!smartView" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]" @columnVisibilityChanged="checkIfHiddenColumnsExist" @openFilterDialog="openFilterDialog"></QBESimpleTable>
