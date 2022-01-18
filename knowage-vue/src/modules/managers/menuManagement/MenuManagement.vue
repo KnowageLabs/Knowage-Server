@@ -123,8 +123,12 @@ export default defineComponent({
                     }
                 })
             } else {
-                if (menuNode) this.prepareFormData(menuNode)
-                else this.hideForm = true
+                if (menuNode && menuNode.menuId) this.prepareFormData(menuNode)
+                else {
+                    this.selectedMenuNode = { ...menuNode }
+                    this.parentNodeRoles = null
+                    this.hideForm = true
+                }
             }
         },
         onNodeUnselect() {
