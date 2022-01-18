@@ -11,13 +11,7 @@
         class="p-datatable-sm kn-table kn-flex"
         v-model:filters="filters"
         filterDisplay="menu"
-        :currentPageReportTemplate="
-            $t('common.table.footer.paginated', {
-                first: '{first}',
-                last: '{last}',
-                totalRecords: '{totalRecords}'
-            })
-        "
+        :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
         stripedRows
         responsiveLayout="stack"
         breakpoint="960px"
@@ -29,7 +23,7 @@
                 {{ $t('common.info.noDataFound') }}
             </div>
         </template>
-        <Column :style="datasetPreviewTableDescriptor.columnStyle" v-for="col of columns" :field="col.field" :key="col.field" :sortable="true">
+        <Column class="kn-truncated" :style="datasetPreviewTableDescriptor.columnStyle" v-for="col of columns" :field="col.field" :key="col.field" :sortable="true">
             <template #header>
                 <div class="dropdown">
                     <div clas="p-d-flex p-flex-column">
@@ -43,6 +37,9 @@
                         </div>
                     </div>
                 </div>
+            </template>
+            <template #body="slotProps">
+                <span v-tooltip.top="slotProps.data[col.field]">{{ slotProps.data[col.field] }}</span>
             </template>
         </Column>
     </DataTable>
