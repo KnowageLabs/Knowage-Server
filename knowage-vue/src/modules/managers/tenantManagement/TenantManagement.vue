@@ -38,7 +38,7 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <router-view :selectedTenant="selTenant" :licenses="listOfavailableLicenses" @touched="touched = true" @closed="onFormClose" @inserted="pageReload" @showDialog="displayInfoDialog" />
+                <router-view :selectedTenant="selTenant" :licenses="listOfavailableLicenses" @touched="touched = true" @closed="onFormClose" @inserted="pageReload" />
                 <KnHint :title="'managers.tenantManagement.hintTitle'" :hint="'managers.tenantManagement.hint'" v-if="hintVisible" />
             </div>
         </div>

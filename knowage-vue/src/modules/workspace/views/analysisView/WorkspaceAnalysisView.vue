@@ -7,7 +7,7 @@
         <template #right>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="$emit('toggleDisplayView')" />
             <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="$emit('toggleDisplayView')" />
-            <KnFabButton icon="fas fa-plus" data-test="new-folder-button" @click="executeAnalysisDocument" />
+            <KnFabButton icon="fas fa-plus" data-test="new-folder-button" @click="showCreationMenu" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
@@ -33,7 +33,7 @@
                 <template #body="slotProps">
                     <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="showMenu($event, slotProps.data)" />
                     <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.name" />
-                    <Button icon="fas fa-play-circle" class="p-button-link" @click="executeAnalysisDocument" />
+                    <Button icon="fas fa-play-circle" class="p-button-link" @click="executeAnalysisDocument(slotProps.data)" />
                 </template>
             </Column>
         </DataTable>
@@ -72,6 +72,7 @@
         data-test="detail-sidebar"
     />
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
+    <Menu id="creationMenu" ref="creationMenu" :model="creationMenuButtons" />
 
     <WorkspaceAnalysisViewShareDialog :visible="shareDialogVisible" :propFolders="folders" @close="shareDialogVisible = false" @share="handleAnalysShared($event, false)"></WorkspaceAnalysisViewShareDialog>
     <WorkspaceAnalysisViewEditDialog :visible="editDialogVisible" :propAnalysis="selectedAnalysis" @close="editDialogVisible = false" @save="handleEditAnalysis"></WorkspaceAnalysisViewEditDialog>
@@ -98,7 +99,7 @@ import { AxiosResponse } from 'axios'
 export default defineComponent({
     name: 'workspace-analysis-view',
     components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu, Message, KnInputFile, WorkspaceAnalysisViewEditDialog, WorkspaceWarningDialog, WorkspaceAnalysisViewShareDialog },
-    emits: ['showMenu', 'toggleDisplayView'],
+    emits: ['showMenu', 'toggleDisplayView', 'execute'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
         isOwner(): any {
@@ -124,7 +125,8 @@ export default defineComponent({
             warningMessage: '',
             triggerUpload: false,
             uploading: false,
-            shareDialogVisible: false
+            shareDialogVisible: false,
+            creationMenuButtons: [] as any
         }
     },
     created() {
@@ -168,11 +170,8 @@ export default defineComponent({
                 { key: '4', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-upload', command: () => { this.uploadAnalysisPreviewFile(this.selectedAnalysis) }}
             )
         },
-        executeAnalysisDocument() {
-            this.$store.commit('setInfo', {
-                title: 'Todo',
-                msg: 'Functionality not in this sprint'
-            })
+        executeAnalysisDocument(document: any) {
+            this.$emit('execute', document)
         },
         editAnalysisDocument(analysis: any) {
             this.selectedAnalysis = analysis
@@ -336,6 +335,26 @@ export default defineComponent({
                     })
                 }
             }, 250)
+        },
+        showCreationMenu(event) {
+            this.createCreationMenuButtons()
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs.creationMenu.toggle(event)
+        },
+        createCreationMenuButtons() {
+            this.creationMenuButtons = []
+            this.creationMenuButtons.push(
+                { key: '0', label: this.$t('common.cockpit'), command: this.todoToast, visible: true },
+                { key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: this.todoToast, visible: true },
+                { key: '2', label: this.$t('common.kpi'), command: this.todoToast, visible: true }
+            )
+        },
+        todoToast() {
+            this.$store.commit('setInfo', {
+                title: 'TODO',
+                msg: 'Functionality not in this sprint'
+            })
         }
     }
 })

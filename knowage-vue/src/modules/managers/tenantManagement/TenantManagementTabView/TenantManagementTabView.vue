@@ -185,6 +185,7 @@ export default defineComponent({
             tenantToSave.MULTITENANT_ID = this.tenant.MULTITENANT_ID ? '' + this.tenant.MULTITENANT_ID : ''
             tenantToSave.MULTITENANT_NAME = this.tenant.MULTITENANT_NAME
             tenantToSave.MULTITENANT_THEME = this.tenant.MULTITENANT_THEME
+            tenantToSave.MULTITENANT_IMAGE = this.tenant.MULTITENANT_IMAGE
             tenantToSave.DS_LIST = this.listOfSelectedDataSources.map((dataSource) => {
                 delete dataSource.CHECKED
                 return dataSource

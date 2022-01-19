@@ -115,7 +115,7 @@ describe('Scheduler detail', () => {
         expect(wrapper.vm.job).toStrictEqual(mockedJob)
         expect(wrapper.vm.job.edit).toBe(true)
 
-        expect(wrapper.find('[data-test="name-input"]').isDisabled()).toBe(true)
+        expect(wrapper.find('[data-test="name-input"]').element.disabled).toBe(true)
     })
     it('should disable the save button if no document or timing has been set', async () => {
         const wrapper = factory()
@@ -126,6 +126,6 @@ describe('Scheduler detail', () => {
         await nextTick()
 
         expect(wrapper.vm.saveDisabled).toBe(true)
-        expect(wrapper.find('[data-test="save-button"]').isDisabled()).toBe(true)
+        expect(wrapper.find('[data-test="save-button"]').element.disabled).toBe(true)
     })
 })

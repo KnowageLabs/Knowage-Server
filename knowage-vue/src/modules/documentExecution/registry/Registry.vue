@@ -1,6 +1,6 @@
 <template>
     <div class="kn-page--full">
-        <Toolbar class="kn-toolbar kn-toolbar--primary">
+        <Toolbar class="kn-toolbar kn-toolbar--secondary">
             <template #left>
                 {{ $t('documentExecution.registry.title') }}
             </template>
@@ -65,7 +65,7 @@ export default defineComponent({
         RegistryPivotDatatable,
         RegistryFiltersCard
     },
-    props: { id: { type: String } },
+    props: { id: { type: String }, reloadTrigger: { type: Boolean } },
     data() {
         return {
             registryDescriptor,
@@ -86,6 +86,10 @@ export default defineComponent({
     },
     watch: {
         async id() {
+            await this.loadPage()
+            this.stopWarningsState = []
+        },
+        async reloadTrigger() {
             await this.loadPage()
             this.stopWarningsState = []
         }
@@ -125,21 +129,18 @@ export default defineComponent({
                     this.pagination.size = response.data.results
                     this.registry = response.data
                 })
-                .catch((response: AxiosResponse<any>) => {
-                    this.$store.commit('setError', {
-                        title: this.$t('common.error.generic'),
-                        msg: response
-                    })
-                })
+                .catch(() => {})
         },
         loadRegistryData() {
-            this.loadConfiguration()
-            this.loadEntity()
-            this.loadColumns()
-            this.loadColumnMap()
-            this.loadColumnsInfo()
-            this.loadRows()
-            this.getFilters()
+            if (this.registry) {
+                this.loadConfiguration()
+                this.loadEntity()
+                this.loadColumns()
+                this.loadColumnMap()
+                this.loadColumnsInfo()
+                this.loadRows()
+                this.getFilters()
+            }
         },
         loadColumns() {
             this.columns = []
