@@ -5,6 +5,10 @@
                 <template #left>
                     {{ $t('common.filters') }}
                 </template>
+
+                <template #right>
+                    <KnFabButton icon="fas fa-plus" @click="addNewFilter"></KnFabButton>
+                </template>
             </Toolbar>
         </template>
 
@@ -26,18 +30,21 @@
 import { defineComponent, PropType } from 'vue'
 import { iField, iQuery, iFilter } from '../../QBE'
 import Dialog from 'primevue/dialog'
+import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Message from 'primevue/message'
 import QbeFilterCard from './QbeFilterCard.vue'
 import QBEFilterDialogDescriptor from './QBEFilterDialogDescriptor.json'
 
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
-    components: { Dialog, Message, QbeFilterCard },
+    components: { Dialog, KnFabButton, Message, QbeFilterCard },
     props: { visible: { type: Boolean }, filterDialogData: { type: Object as PropType<{ field: iField; query: iQuery }> }, id: { type: String }, entities: { type: Array } },
+    emits: ['save', 'close'],
     data() {
         return {
             QBEFilterDialogDescriptor,
-            filters: [] as any[]
+            filters: [] as iFilter[],
+            nextFilterIndex: -1
         }
     },
     watch: {
@@ -60,17 +67,54 @@ export default defineComponent({
                     this.filters.push({ ...filter })
                 }
             })
+            this.nextFilterIndex = this.filterDialogData.query.filters.length + 1
         },
         removeFilter(filter: iFilter) {
             // console.log('FILTER TO REMOVE: ', filter)
             const index = this.filters.findIndex((el: iFilter) => el.filterId === filter.filterId)
             if (index !== -1) this.filters.splice(index, 1)
         },
+        addNewFilter() {
+            const field = this.filterDialogData?.field
+            console.log('FIELD: ', field)
+            if (field) {
+                this.filters.push({
+                    filterId: 'Filter' + this.nextFilterIndex,
+                    filterDescripion: 'Filter' + this.nextFilterIndex,
+                    filterInd: this.nextFilterIndex,
+                    promptable: false,
+                    leftOperandValue: field.id,
+                    leftOperandDescription: field.longDescription,
+                    leftOperandLongDescription: field.longDescription,
+                    leftOperandType: 'Field Content',
+                    leftOperandDefaultValue: null,
+                    leftOperandLastValue: null,
+                    leftOperandAlias: field.alias,
+                    leftOperandDataType: '',
+                    operator: 'EQUALS TO',
+                    rightOperandDescription: '',
+                    rightOperandLongDescription: '',
+                    rightOperandValue: [''],
+                    rightOperandType: 'Static Content',
+                    rightType: 'manual',
+                    rightOperandDefaultValue: [''],
+                    rightOperandLastValue: [''],
+                    rightOperandAlias: '',
+                    rightOperandDataType: '',
+                    booleanConnector: 'AND',
+                    deleteButton: false,
+                    color: '',
+                    entity: field.entity
+                })
+                this.nextFilterIndex++
+            }
+        },
         closeDialog() {
             this.$emit('close')
+            this.nextFilterIndex = -1
         },
         save() {
-            console.log('SAVE CLICKED!')
+            this.$emit('save', this.filters)
         }
     }
 })

@@ -68,14 +68,14 @@
             </div>
         </div>
 
-        <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="id" :entities="entities?.entities" @close="filterDialogVisible = false"></QBEFilterDialog>
+        <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="id" :entities="entities?.entities" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
     </Dialog>
 </template>
 
 <script lang="ts">
 import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
-import { iQBE, iQuery, iField, iQueryResult } from './QBE'
+import { iQBE, iQuery, iField, iQueryResult, iFilter } from './QBE'
 import Dialog from 'primevue/dialog'
 import Chip from 'primevue/chip'
 import InputSwitch from 'primevue/inputswitch'
@@ -126,7 +126,7 @@ export default defineComponent({
         },
         async loadDataset() {
             // HARDCODED Dataset label/name
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan%20QBE%20TEST`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
                 // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
                 if (this.qbe) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
@@ -198,6 +198,49 @@ export default defineComponent({
             console.log('PAYLOAD FOR OPEN FILTER: ', payload)
             this.filterDialogData = payload
             this.filterDialogVisible = true
+        },
+        onFiltersSave(filters: iFilter[]) {
+            console.log('QBE QUERY BEFORE FILTERS SAVED: ', this.qbe?.qbeJSONQuery.catalogue.queries[0])
+            if (!this.qbe) return
+
+            for (let i = 0; i < filters.length; i++) {
+                const tempFilter = filters[i]
+                const index = this.qbe.qbeJSONQuery.catalogue.queries[0].filters.findIndex((el: iFilter) => el.filterId === tempFilter.filterId)
+                console.log('INDEX: ', index)
+                if (index !== -1) {
+                    this.qbe.qbeJSONQuery.catalogue.queries[0].filters[index] = tempFilter
+                } else {
+                    this.qbe.qbeJSONQuery.catalogue.queries[0].filters.push(tempFilter)
+                }
+            }
+
+            console.log('QBE QUERY AFTER FILTERS SAVED: ', this.qbe?.qbeJSONQuery.catalogue.queries[0])
+
+            // this.qbe.qbeJSONQuery.catalogue.queries[0].expression = this.createExpression(filters)
+            console.log('ON FILTERS SAVE: ', filters)
+        },
+        createExpression(filters: iFilter[]) {
+            const filtersLength = filters.length
+
+            let expression = {}
+            if (filtersLength === 0) {
+                return expression
+            } else if (filters.length === 1) {
+                const tempFilter = filters[0]
+                expression = {
+                    type: 'NODE_CONST',
+                    childNodes: [],
+                    value: '$F{' + tempFilter.filterId + '}',
+                    details: {
+                        leftOperandAlias: tempFilter.leftOperandAlias,
+                        operator: tempFilter.operator,
+                        entity: tempFilter.entity,
+                        rightOperandValue: tempFilter.rightOperandValue[0]
+                    }
+                }
+            }
+
+            return expression
         }
     }
 })
