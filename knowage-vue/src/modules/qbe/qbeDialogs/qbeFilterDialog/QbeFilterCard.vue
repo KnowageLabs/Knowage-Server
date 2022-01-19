@@ -143,6 +143,7 @@ export default defineComponent({
                 this.filter.rightOperandDescription = ''
                 this.filter.rightOperandLongDescription = ''
                 this.filter.rightOperandValue = ['']
+                this.filter.rightOperandAlias = ''
                 this.selectedValues = []
                 this.filterValuesData = null
                 this.setFilterRightOperandType()
@@ -169,8 +170,28 @@ export default defineComponent({
         onEntityTypeChanged() {
             if (this.filter) {
                 console.log('FILTER CHANGED: ', this.filter)
-                // this.filter.rightOperandValue = []
+                const selectedField = this.findSelectedField(this.filter.rightOperandDescription) as any
+
+                console.log('SELECETED FIELD: ', selectedField)
+
+                this.filter.rightOperandValue = [selectedField?.id]
+                this.filter.rightOperandLongDescription = this.filter.rightOperandDescription
+                this.filter.rightOperandAlias = selectedField.text
             }
+        },
+        findSelectedField(fieldDescription: string) {
+            let tempField = null
+
+            for (let i = 0; i < this.entities.length && !tempField; i++) {
+                for (let j = 0; j < this.entities[i].children.length; j++) {
+                    if (this.entities[i].children[j].attributes.longDescription === fieldDescription) {
+                        tempField = this.entities[i].children[j]
+                        break
+                    }
+                }
+            }
+
+            return tempField
         }
     }
 })
