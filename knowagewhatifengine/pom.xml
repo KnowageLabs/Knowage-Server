@@ -133,11 +133,18 @@
 			</exclusions>
 		</dependency>
 
-		<!-- pivot4j-0.9 is not compatible with managed poi (from knowage-ce-parent/pom.xml), therefore we override dependency towards poi-3.10-beta2 -->
+		<!-- pivot4j-0.9 is not compatible with managed poi (from knowage-ce-parent/pom.xml), 
+			therefore we override dependency towards poi-3.10-beta2 -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 			<version>3.10-beta2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-web</artifactId>
+			<version>2.17.1</version>
 		</dependency>
 
 		<dependency>
@@ -192,17 +199,17 @@
 			<scope>compile</scope>
 		</dependency>
 
-  		<dependency>
-    		<groupId>org.apache.logging.log4j</groupId>
-    		<artifactId>log4j-1.2-api</artifactId>
-    		<version>2.17.1</version>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-1.2-api</artifactId>
+			<version>2.17.1</version>
 			<scope>compile</scope>
 		</dependency>
-		
-  		<dependency>
-    		<groupId>org.apache.logging.log4j</groupId>
-    		<artifactId>log4j-core</artifactId>
-    		<version>2.17.1</version>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.17.1</version>
 			<scope>runtime</scope>
 		</dependency>
 
@@ -213,7 +220,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-web</artifactId>
+			<version>2.17.1</version>
+		</dependency>
+
 	</dependencies>
-	
+
 	<name>knowagewhatifengine</name>
 </project>

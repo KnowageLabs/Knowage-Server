@@ -30,7 +30,7 @@ export default defineComponent({
     },
     computed: {
         buttonDisabled(): any {
-            return !this.driver.label || !this.driver.name || !this.driver.typeId || this.invalidUseModes > 0 || this.noRoleSelected > 0
+            return !this.driver.label || !this.driver.name || !this.driver.type || this.invalidUseModes > 0 || this.noRoleSelected > 0
         },
         invalidUseModes(): any {
             return this.modes.filter((mode: any) => mode.numberOfErrors > 0).length
@@ -118,9 +118,10 @@ export default defineComponent({
         formatDriver() {
             this.driver.length = 0
             let selectedType = this.types.filter((val) => {
-                return val.VALUE_ID === this.driver.typeId
+                return val.VALUE_CD === this.driver.type
             })
             this.driver.type = selectedType[0].VALUE_CD
+            this.driver.typeId = selectedType[0].VALUE_ID
         },
         formatUseMode() {
             let tmp = this.modes.filter((mode) => mode.edited)
