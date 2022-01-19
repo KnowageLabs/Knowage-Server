@@ -1760,17 +1760,20 @@
         "entities": {
             "relations": "Relations",
             "types": {
-                "cube": "Cube",
-                "measure": "Measure",
-                "calculation": "Calculation",
-                "dimension": "Dimension",
                 "attribute": "Attribute",
-                "generic": "Generic"
+                "calculation": "Calculation",
+                "cube": "Cube",
+                "dimension": "Dimension",
+                "generic": "Generic",
+                "measure": "Measure"
             }
         },
         "filters": {
+            "and": "And",
             "condition": "Condition",
             "conditionTooltip": "For not/between and not/in operator use \" ---- \" as separator.",
+            "highLimit": "High limit",
+            "lowLimit": "Low limit",
             "operators": {
                 "between": "Between",
                 "contains": "Contains",

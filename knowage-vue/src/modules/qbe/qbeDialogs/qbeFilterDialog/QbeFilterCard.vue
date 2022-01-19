@@ -29,10 +29,18 @@
             </div>
 
             <div class="p-col-4">
-                <label class="kn-material-input-label"> {{ $t('qbe.filters.target') }} </label>
+                <label class="kn-material-input-label" v-show="!(filter.rightType === 'manual' && ['BETWEEN', 'NOT BETWEEN', 'IN', 'NOT IN'].includes(filter.operator))"> {{ $t('qbe.filters.target') }} </label>
                 <div class="p-d-flex p-flex-row p-ai-center">
-                    <div v-if="filter.rightType === 'manual' && ['BETWEEN', 'NOT BETWEEN'].includes(filter.operator)">
-                        MULTI!
+                    <div v-if="filter.rightType === 'manual' && ['BETWEEN', 'NOT BETWEEN'].includes(filter.operator)" class="p-d-flex p-flex-row p-ai-center p-mt-3">
+                        <div class="p-float-label">
+                            <InputText class="kn-material-input" v-model="firstOperand" @input="onManualBetweenChange" />
+                            <label class="kn-material-input-label"> {{ $t('qbe.filters.lowLimit') }} </label>
+                        </div>
+                        <span class="p-mx-2">{{ $t('qbe.filters.and') }}</span>
+                        <div class="p-float-label">
+                            <InputText class="kn-material-input" v-model="secondOperand" @input="onManualBetweenChange" />
+                            <label class="kn-material-input-label"> {{ $t('qbe.filters.highLimit') }} </label>
+                        </div>
                     </div>
                     <div v-else-if="filter.rightType === 'manual' && ['IN', 'NOT IN'].includes(filter.operator)">
                         IN CHIPS!
@@ -121,16 +129,22 @@ export default defineComponent({
     methods: {
         loadFilter() {
             this.filter = this.propFilter as iFilter
-            this.setFilterRightOperandType()
+            this.formatFilter()
         },
         loadEntities() {
             this.entities = this.propEntities ? [...this.propEntities] : []
             console.log(' >>> LOADED ENTITIES: ', this.entities)
         },
-        async setFilterRightOperandType() {
+        async formatFilter() {
             switch (this.filter?.rightType) {
                 case 'manual':
                     this.filter.rightOperandType = 'Static Content'
+
+                    if (['BETWEEN', 'NOT BETWEEN'].includes(this.filter.operator)) {
+                        this.firstOperand = this.filter.rightOperandValue[0]
+                        this.secondOperand = this.filter.rightOperandValue[1]
+                    }
+
                     break
                 case 'valueOfField':
                     this.filter.rightOperandType = 'Static Content'
@@ -162,6 +176,12 @@ export default defineComponent({
                 this.filter.rightOperandValue = [this.filter.rightOperandDescription]
             }
         },
+        onManualBetweenChange() {
+            if (this.filter) {
+                this.filter.rightOperandValue = [this.firstOperand, this.secondOperand]
+                this.filter.rightOperandDescription = this.firstOperand + ' ---- ' + this.secondOperand
+            }
+        },
         async onFilterTypeChange() {
             if (this.filter) {
                 this.filter.rightOperandDescription = ''
@@ -172,7 +192,7 @@ export default defineComponent({
                 this.filterValuesData = null
                 this.firstOperand = ''
                 this.secondOperand = ''
-                this.setFilterRightOperandType()
+                this.formatFilter()
 
                 if (this.filter.rightType === 'valueOfField') {
                     await this.loadFilterValues()
