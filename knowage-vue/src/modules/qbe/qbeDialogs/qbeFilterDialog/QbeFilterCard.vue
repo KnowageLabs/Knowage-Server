@@ -9,7 +9,7 @@
 
             <div class="p-col-2">
                 <label class="kn-material-input-label" v-tooltip.top="$t('qbe.filters.conditionTooltip')"> {{ $t('qbe.filters.condition') }} </label>
-                <Dropdown class="kn-material-input" v-model="filter.operator" :options="QBEFilterDialogDescriptor.operatorValues" optionValue="value">
+                <Dropdown class="kn-material-input" v-model="filter.operator" :options="QBEFilterDialogDescriptor.operatorValues" optionValue="value" @click="onFiletrOperatorChange">
                     <template #value="slotProps">
                         <div v-if="slotProps.value">
                             <span class="qbe-filter-option-value">{{ slotProps.value.toLowerCase() }}</span>
@@ -31,7 +31,14 @@
             <div class="p-col-4">
                 <label class="kn-material-input-label"> {{ $t('qbe.filters.target') }} </label>
                 <div class="p-d-flex p-flex-row p-ai-center">
-                    <InputText v-if="filter.rightType === 'manual'" class="kn-material-input" v-model="filter.rightOperandDescription" @input="onManualValueChange" />
+                    <div v-if="filter.rightType === 'manual' && ['BETWEEN', 'NOT BETWEEN'].includes(filter.operator)">
+                        MULTI!
+                    </div>
+                    <div v-else-if="filter.rightType === 'manual' && ['IN', 'NOT IN'].includes(filter.operator)">
+                        IN CHIPS!
+                    </div>
+                    <InputText v-else-if="filter.rightType === 'manual'" class="kn-material-input" v-model="filter.rightOperandDescription" @input="onManualValueChange" />
+
                     <div class="qbe-filter-chip-container p-d-flex p-flex-row p-ai-center p-flex-wrap kn-flex" v-else-if="filter.rightType === 'valueOfField'">
                         <Chip v-for="(selectedValue, index) in selectedValues" :key="index" class="p-mr-1">{{ selectedValue }}</Chip>
                     </div>
@@ -94,6 +101,8 @@ export default defineComponent({
             filterValuesData: null,
             anotherEntityValue: '',
             entities: [] as any[],
+            firstOperand: '',
+            secondOperand: '',
             loading: false
         }
     },
@@ -133,6 +142,21 @@ export default defineComponent({
                     break
             }
         },
+        onFiletrOperatorChange() {
+            if (this.filter && this.filter.rightType === 'manual') {
+                switch (this.filter.operator) {
+                    case 'BETWEEN':
+                    case 'NOT BETWEEN':
+                    case 'IN':
+                    case 'NOT IN':
+                        this.filter.rightOperandDescription = ''
+                        break
+                    default:
+                        this.firstOperand = ''
+                        this.secondOperand = ''
+                }
+            }
+        },
         onManualValueChange() {
             if (this.filter) {
                 this.filter.rightOperandValue = [this.filter.rightOperandDescription]
@@ -143,8 +167,11 @@ export default defineComponent({
                 this.filter.rightOperandDescription = ''
                 this.filter.rightOperandLongDescription = ''
                 this.filter.rightOperandValue = ['']
+                this.filter.rightOperandAlias = ''
                 this.selectedValues = []
                 this.filterValuesData = null
+                this.firstOperand = ''
+                this.secondOperand = ''
                 this.setFilterRightOperandType()
 
                 if (this.filter.rightType === 'valueOfField') {
@@ -169,8 +196,28 @@ export default defineComponent({
         onEntityTypeChanged() {
             if (this.filter) {
                 console.log('FILTER CHANGED: ', this.filter)
-                // this.filter.rightOperandValue = []
+                const selectedField = this.findSelectedField(this.filter.rightOperandDescription) as any
+
+                console.log('SELECETED FIELD: ', selectedField)
+
+                this.filter.rightOperandValue = [selectedField?.id]
+                this.filter.rightOperandLongDescription = this.filter.rightOperandDescription
+                this.filter.rightOperandAlias = selectedField.text
             }
+        },
+        findSelectedField(fieldDescription: string) {
+            let tempField = null
+
+            for (let i = 0; i < this.entities.length && !tempField; i++) {
+                for (let j = 0; j < this.entities[i].children.length; j++) {
+                    if (this.entities[i].children[j].attributes.longDescription === fieldDescription) {
+                        tempField = this.entities[i].children[j]
+                        break
+                    }
+                }
+            }
+
+            return tempField
         }
     }
 })
