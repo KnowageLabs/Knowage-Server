@@ -127,6 +127,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-web</artifactId>
+			<version>2.17.1</version>
+		</dependency>
+
+		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
 			<version>8.0</version>
@@ -242,12 +248,6 @@
 			<artifactId>ojdbc8</artifactId>
 			<version>18.3.0.0</version>
 			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-web</artifactId>
-			<version>2.17.1</version>
 		</dependency>
 
 	</dependencies>
