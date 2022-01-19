@@ -775,6 +775,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				});
 			}
 
+			$scope.map.on("moveend", function(e) {
+				$scope.ngModel.content.currentView.center = e.target.getView().getCenter();
+			});
+
+			$scope.map.on("zoomend", function(e) {
+				$scope.ngModel.content.currentView.zoom = e.target.getView().getZoom();
+			});
+
 			$scope.map.on('singleclick', function(evt) {
 
 				locateClickedLayer(evt);
