@@ -5,7 +5,7 @@
             <span>{{ searchMode ? $t('documentBrowser.documentsSearch') : $t('documentBrowser.title') }}</span>
             <span v-if="searchMode" class="p-mx-4">
                 <i class="fa fa-arrow-left search-pointer p-mx-4" @click="exitSearchMode" />
-                <InputText id="document-search" class="kn-material-input p-inputtext-sm p-mx-2" v-model="searchWord" :placeholder="$t('common.search')" />
+                <InputText id="document-search" class="kn-material-input p-inputtext-sm p-mx-2" @keyup.enter="loadDocuments" v-model="searchWord" :placeholder="$t('common.search')" />
                 <i class="fa fa-times search-pointer p-mx-4" @click="searchWord = ''" />
                 <i class="pi pi-search search-pointer p-mx-4" @click="loadDocuments" />
             </span>
