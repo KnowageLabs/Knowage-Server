@@ -9,7 +9,7 @@
 
             <div class="p-col-2">
                 <label class="kn-material-input-label" v-tooltip.top="$t('qbe.filters.conditionTooltip')"> {{ $t('qbe.filters.condition') }} </label>
-                <Dropdown class="kn-material-input" v-model="filter.operator" :options="QBEFilterDialogDescriptor.operatorValues" optionValue="value" @click="onFiletrOperatorChange">
+                <Dropdown class="kn-material-input" v-model="filter.operator" :options="QBEFilterDialogDescriptor.operatorValues" optionValue="value" @click="onFilterOperatorChange">
                     <template #value="slotProps">
                         <div v-if="slotProps.value">
                             <span class="qbe-filter-option-value">{{ slotProps.value.toLowerCase() }}</span>
@@ -42,8 +42,9 @@
                             <label class="kn-material-input-label"> {{ $t('qbe.filters.highLimit') }} </label>
                         </div>
                     </div>
-                    <div v-else-if="filter.rightType === 'manual' && ['IN', 'NOT IN'].includes(filter.operator)">
-                        IN CHIPS!
+                    <div v-else-if="filter.rightType === 'manual' && ['IN', 'NOT IN'].includes(filter.operator)" class="kn-width-full">
+                        <label class="kn-material-input-label"> {{ $t('qbe.filters.enterValue') }} </label>
+                        <Chips v-model="multiManualValues" @add="onManualMultivalueChanged" @remove="onManualMultivalueChanged" />
                     </div>
                     <InputText v-else-if="filter.rightType === 'manual'" class="kn-material-input" v-model="filter.rightOperandDescription" @input="onManualValueChange" />
 
@@ -78,13 +79,14 @@ import { AxiosResponse } from 'axios'
 import { iFilter } from '../../QBE'
 import CascadeSelect from 'primevue/cascadeselect'
 import Chip from 'primevue/chip'
+import Chips from 'primevue/chips'
 import Dropdown from 'primevue/dropdown'
 import QBEFilterDialogDescriptor from './QBEFilterDialogDescriptor.json'
 import QbeFilterValuesTable from './QbeFilterValuesTable.vue'
 
 export default defineComponent({
     name: 'qbe-filter-card',
-    components: { CascadeSelect, Chip, Dropdown, QbeFilterValuesTable },
+    components: { CascadeSelect, Chip, Chips, Dropdown, QbeFilterValuesTable },
     props: { propFilter: { type: Object as PropType<iFilter> }, id: { type: String }, propEntities: { type: Array } },
     emits: ['removeFilter'],
     data() {
@@ -111,6 +113,7 @@ export default defineComponent({
             entities: [] as any[],
             firstOperand: '',
             secondOperand: '',
+            multiManualValues: [] as string[],
             loading: false
         }
     },
@@ -143,6 +146,8 @@ export default defineComponent({
                     if (['BETWEEN', 'NOT BETWEEN'].includes(this.filter.operator)) {
                         this.firstOperand = this.filter.rightOperandValue[0]
                         this.secondOperand = this.filter.rightOperandValue[1]
+                    } else if (['IN', 'NOT IN'].includes(this.filter.operator)) {
+                        this.multiManualValues = [...this.filter.rightOperandValue]
                     }
 
                     break
@@ -156,16 +161,24 @@ export default defineComponent({
                     break
             }
         },
-        onFiletrOperatorChange() {
+        onFilterOperatorChange() {
             if (this.filter && this.filter.rightType === 'manual') {
                 switch (this.filter.operator) {
                     case 'BETWEEN':
                     case 'NOT BETWEEN':
+                        this.filter.rightOperandDescription = ''
+                        this.multiManualValues = []
+                        this.resetFilterRightOperandValues()
+                        break
                     case 'IN':
                     case 'NOT IN':
                         this.filter.rightOperandDescription = ''
+                        this.firstOperand = ''
+                        this.secondOperand = ''
+                        this.resetFilterRightOperandValues()
                         break
                     default:
+                        this.multiManualValues = []
                         this.firstOperand = ''
                         this.secondOperand = ''
                 }
@@ -182,21 +195,33 @@ export default defineComponent({
                 this.filter.rightOperandDescription = this.firstOperand + ' ---- ' + this.secondOperand
             }
         },
+        onManualMultivalueChanged() {
+            if (this.filter) {
+                this.filter.rightOperandValue = [...this.multiManualValues]
+                this.filter.rightOperandDescription = this.multiManualValues.join(' ---- ')
+            }
+        },
         async onFilterTypeChange() {
             if (this.filter) {
-                this.filter.rightOperandDescription = ''
-                this.filter.rightOperandLongDescription = ''
-                this.filter.rightOperandValue = ['']
-                this.filter.rightOperandAlias = ''
+                this.resetFilterRightOperandValues()
                 this.selectedValues = []
                 this.filterValuesData = null
                 this.firstOperand = ''
                 this.secondOperand = ''
+                this.multiManualValues = []
                 this.formatFilter()
 
                 if (this.filter.rightType === 'valueOfField') {
                     await this.loadFilterValues()
                 }
+            }
+        },
+        resetFilterRightOperandValues() {
+            if (this.filter) {
+                this.filter.rightOperandDescription = ''
+                this.filter.rightOperandLongDescription = ''
+                this.filter.rightOperandValue = ['']
+                this.filter.rightOperandAlias = ''
             }
         },
         async loadFilterValues() {

@@ -1772,6 +1772,7 @@
             "and": "And",
             "condition": "Condition",
             "conditionTooltip": "For not/between and not/in operator use \" ---- \" as separator.",
+            "enterValue": "Enter a value...",
             "highLimit": "High limit",
             "lowLimit": "Low limit",
             "operators": {
