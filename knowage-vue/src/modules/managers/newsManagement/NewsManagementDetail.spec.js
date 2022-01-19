@@ -32,15 +32,17 @@ const mockedRoles = [
 ]
 jest.mock('axios')
 
-axios.get.mockImplementation((url) => {
-    switch (url) {
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news/1?isTechnical=true':
-            return Promise.resolve({ data: mockedNews })
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles':
-            return Promise.resolve({ data: mockedRoles })
-    }
-})
-axios.post.mockImplementation(() => Promise.resolve())
+const $http = {
+    get: axios.get.mockImplementation((url) => {
+        switch (url) {
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news/1?isTechnical=true':
+                return Promise.resolve({ data: mockedNews })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles':
+                return Promise.resolve({ data: mockedRoles })
+        }
+    }),
+    post: axios.post.mockImplementation(() => Promise.resolve())
+}
 
 const $store = {
     commit: jest.fn()
@@ -63,7 +65,8 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $store,
-                $router
+                $router,
+                $http
             }
         }
     })
@@ -94,35 +97,25 @@ describe('News Management Detail', () => {
 
         wrapper.vm.handleSubmit()
 
-        await flushPromises()
-
         expect(axios.post).toHaveBeenCalledTimes(1)
         expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news', { ...mockedNews, expirationDate: new Date(mockedNews.expirationDate).valueOf() })
-        expect($store.commit).toHaveBeenCalledTimes(1)
-        expect(wrapper.emitted()).toHaveProperty('inserted')
-        expect($router.replace).toHaveBeenCalledWith('/news-management')
     })
 
     it('shows success info if new data is saved', async () => {
         const wrapper = factory()
+
         wrapper.vm.selectedNews = mockedNews
         delete wrapper.vm.selectedNews.id
 
         wrapper.vm.handleSubmit()
 
-        await flushPromises()
-
         expect(axios.post).toHaveBeenCalledTimes(1)
         expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news', { ...mockedNews, expirationDate: new Date(mockedNews.expirationDate).valueOf() })
-        expect($store.commit).toHaveBeenCalledTimes(1)
-        expect(wrapper.emitted()).toHaveProperty('inserted')
-        expect($router.replace).toHaveBeenCalledWith('/news-management')
     })
     it('close button (X) closes the detail without saving data', async () => {
         const wrapper = factory()
         wrapper.setProps({ id: '1' })
 
-        await flushPromises()
         await wrapper.find('[data-test="close-button"]').trigger('click')
 
         expect(axios.post).toHaveBeenCalledTimes(0)

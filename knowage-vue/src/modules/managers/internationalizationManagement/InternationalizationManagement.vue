@@ -1,5 +1,6 @@
 <template>
     <div class="kn-page">
+        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
         <TabView @tab-click="switchTabConfirm($event.index)" v-model:activeIndex="activeTab" lazy data-test="tab-view" class="internationalization-management kn-tab kn-page-content">
             <TabPanel v-for="language in languages" :key="language">
                 <template #header>
@@ -7,7 +8,6 @@
                     <span v-if="language.defaultLanguage">{{ $t('managers.internationalizationManagement.defaultLanguage') }}</span>
                 </template>
 
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
                 <DataTable v-if="!loading" editMode="cell" :value="messages" :loading="loading" class="p-datatable kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" v-model:filters="filters" data-test="messages-table">
                     <template #header>
                         <div class="table-header p-d-flex">
@@ -67,7 +67,7 @@ import { defineComponent } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { iLanguage, iMessage } from './InternationalizationManagement'
 import intDescriptor from './InternationalizationManagementDescriptor.json'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import Column from 'primevue/column'
@@ -191,7 +191,7 @@ export default defineComponent({
                 this.filterEmptyMessages()
             }
         },
-        async setDataForDefaultLanguage(response) {
+        async setDataForDefaultLanguage(response: AxiosResponse<any>) {
             if (response.data.length == 0) {
                 this.addEmptyLabel()
             } else {
@@ -199,7 +199,7 @@ export default defineComponent({
                 this.initCheck()
             }
         },
-        async setDefaultLanguageValues(response) {
+        async setDefaultLanguageValues(response: AxiosResponse<any>) {
             this.defaultLangMessages = response.data
             this.messages = response.data
         },
@@ -247,9 +247,9 @@ export default defineComponent({
         getMessages(selectedTab) {
             this.messages = []
             this.loading = true
-            return axios
+            return this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization/?currLanguage=' + selectedTab.languageTag)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     if (selectedTab.defaultLanguage) {
                         this.setDataForDefaultLanguage(response)
                     } else {
@@ -262,11 +262,9 @@ export default defineComponent({
 
         async getLanguages() {
             this.loading = true
-            return axios
+            return this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/internationalization/languages')
-                .then((response) => {
-                    console.log('REQUEST', response.data.wrappedObject)
-                    console.log('DESCRIPTRO', this.languages)
+                .then((response: AxiosResponse<any>) => {
                     this.languages = response.data.wrappedObject
                 })
                 .finally(() => (this.loading = false))
@@ -276,11 +274,11 @@ export default defineComponent({
             if (toSave.id) {
                 delete toSave.defaultMessageCode
 
-                return axios.put(url, toSave)
+                return this.$http.put(url, toSave)
             } else {
                 if (toSave.defaultMessageCode) delete toSave.defaultMessageCode
                 toSave.language = langObj.languageTag
-                return axios.post(url, toSave)
+                return this.$http.post(url, toSave)
             }
         },
 
@@ -288,7 +286,7 @@ export default defineComponent({
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages'
             var toSave = { ...message } as iMessage
             delete toSave.dirty
-            this.saveOrUpdateMessage(url, toSave, langObj).then((response) => {
+            this.saveOrUpdateMessage(url, toSave, langObj).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
                     this.$store.commit('setError', { msg: response.data.errors })
                 } else {
@@ -304,8 +302,6 @@ export default defineComponent({
         deleteLabelConfirm(langObj, message, isDefault) {
             let msgToDelete = message.data
             let index = message.index
-            console.log('langOBJECT', langObj)
-            console.log('message', message)
             if (msgToDelete.id) {
                 let url = ''
                 if (msgToDelete.defaultMessageCode) {
@@ -332,7 +328,7 @@ export default defineComponent({
         },
 
         async deleteLabel(url, id, langObj) {
-            await axios.delete(url + id).then((response) => {
+            await this.$http.delete(url + id).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
                     this.$store.commit('setError', { title: 'Error', msg: response.data.errors })
                 } else {

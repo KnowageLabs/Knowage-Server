@@ -51,6 +51,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.CellType;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.MeasureInfo;
@@ -74,7 +77,7 @@ import it.eng.spagobi.utilities.messages.EngineMessageBundle;
  *
  * @author Alberto Ghedin (alberto.ghedin@eng.it), Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public class CrossTabExporter extends GenericExporter implements IWidgetExporter {
+public class CrossTabExporter extends GenericWidgetExporter implements IWidgetExporter {
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(CrossTabExporter.class);
@@ -153,7 +156,6 @@ public class CrossTabExporter extends GenericExporter implements IWidgetExporter
 		int columnsDepth = cs.getColumnsRoot().getSubTreeDepth();
 		int rowsDepth = cs.getRowsRoot().getSubTreeDepth();
 
-		MeasureFormatter measureFormatter = new MeasureFormatter(cs);
 		// + 1 because there may be also the bottom row with the totals
 		int totalRowsNumber = cs.getTotalNumberOfRows();
 
@@ -165,13 +167,24 @@ public class CrossTabExporter extends GenericExporter implements IWidgetExporter
 		CellStyle dimensionCellStyle = this.buildDimensionCellStyle(sheet);
 
 		// build headers for column first ...
+		Monitor buildColumnsHeaderMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.buildColumnsHeaderMonitor");
 		buildColumnsHeader(sheet, cs, cs.getColumnsRoot().getChildren(), startRow, rowsDepth - 1, createHelper, locale, memberCellStyle, dimensionCellStyle, 0);
-		// ... then build headers for rows ....
-		buildRowsHeaders(sheet, cs, cs.getRowsRoot().getChildren(), columnsDepth - 1 + startRow, 0, createHelper, locale, memberCellStyle);
-		// then put the matrix data
-		buildDataMatrix(sheet, cs, columnsDepth + startRow - 1, rowsDepth - 1, createHelper, measureFormatter);
+		buildColumnsHeaderMonitor.stop();
 
+		// ... then build headers for rows ....
+		Monitor buildRowsHeaderMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.buildRowsHeaderMonitor");
+		buildRowsHeaders(sheet, cs, cs.getRowsRoot().getChildren(), columnsDepth - 1 + startRow, 0, createHelper, locale, memberCellStyle);
+		buildRowsHeaderMonitor.stop();
+
+		// then put the matrix data
+		Monitor buildDataMatrixMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.buildDataMatrixMonitor");
+		buildDataMatrix(sheet, cs, columnsDepth + startRow - 1, rowsDepth - 1, createHelper);
+		buildDataMatrixMonitor.stop();
+
+		// finally add row titles
+		Monitor buildRowHeaderTitleMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.buildRowHeaderTitleMonitor");
 		buildRowHeaderTitle(sheet, cs, columnsDepth - 2, 0, startRow, createHelper, locale, dimensionCellStyle);
+		buildRowHeaderTitleMonitor.stop();
 
 		return startRow + totalRowsNumber;
 	}
@@ -195,44 +208,48 @@ public class CrossTabExporter extends GenericExporter implements IWidgetExporter
 		return totalRowsNumber + 4;
 	}
 
-	protected int buildDataMatrix(Sheet sheet, CrossTab cs, int rowOffset, int columnOffset, CreationHelper createHelper, MeasureFormatter measureFormatter)
-			throws JSONException {
-
+	protected int buildDataMatrix(Sheet sheet, CrossTab cs, int rowOffset, int columnOffset, CreationHelper createHelper) throws JSONException {
+		MeasureFormatter measureFormatter = new MeasureFormatter(cs);
+		String[][] dataMatrix = cs.getDataMatrix();
 		CellStyle cellStyleForNA = buildNACellStyle(sheet);
+		int rowNum = 0;
+		int numOfMeasures = cs.getMeasures().size();
 
-		Map<Integer, CellStyle> decimalFormats = new HashMap<Integer, CellStyle>();
-		int endRowNum = 0;
-		for (int i = 0; i < cs.getDataMatrix().length; i++) {
-			for (int j = 0; j < cs.getDataMatrix()[0].length; j++) {
-				String text = cs.getDataMatrix()[i][j];
-				int rowNum = rowOffset + i;
+		for (int i = 0; i < dataMatrix.length; i++) {
+			rowNum = rowOffset + i;
+			Row row = sheet.getRow(rowNum);
+			if (row == null) {
+				row = sheet.createRow(rowNum);
+			}
+			for (int j = 0; j < dataMatrix[0].length; j++) {
+				String text = dataMatrix[i][j];
 				int columnNum = columnOffset + j;
-				Row row = sheet.getRow(rowNum);
-				if (row == null) {
-					row = sheet.createRow(rowNum);
-				}
-				endRowNum = rowNum;
 				Cell cell = row.createCell(columnNum);
 				try {
+					Monitor valueFormattedMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.buildDataMatrix.valueFormattedMonitor");
 					double value = Double.parseDouble(text);
-					int decimals = measureFormatter.getFormatXLS(i, j);
 					Double valueFormatted = measureFormatter.applyScaleFactor(value, i, j);
+					valueFormattedMonitor.stop();
+					Monitor cellStyleMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.buildDataMatrix.cellStyleMonitor");
+					int measureIdx = j % numOfMeasures;
+					String measureId = getMeasureId(cs, measureIdx);
+					int decimals = measureFormatter.getFormatXLS(i, j);
+					CellStyle style = getStyle(decimals, sheet, createHelper, cs.getCellType(i, j), measureId, value);
+					cellStyleMonitor.stop();
+					Monitor buildCellMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.buildDataMatrix.buildCellMonitor");
 					cell.setCellValue(valueFormatted);
 					cell.setCellType(this.getCellTypeNumeric());
-					int measureIdx = j % cs.getMeasures().size();
-					String measureId = getMeasureId(cs, measureIdx);
-					CellStyle style = getStyle(decimals, sheet, createHelper, cs.getCellType(i, j), measureId, value);
 					cell.setCellStyle(style);
+					buildCellMonitor.stop();
 				} catch (NumberFormatException e) {
 					logger.debug("Text " + text + " is not recognized as a number");
 					cell.setCellValue(createHelper.createRichTextString(text));
 					cell.setCellType(this.getCellTypeString());
 					cell.setCellStyle(cellStyleForNA);
 				}
-
 			}
 		}
-		return endRowNum;
+		return rowNum;
 	}
 
 	private String getMeasureId(CrossTab cs, int index) {

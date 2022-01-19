@@ -33,10 +33,16 @@ const mockedMetadata = [
     }
 ]
 
-jest.mock('axios', () => ({
-    get: jest.fn(() => Promise.resolve({ data: mockedMetadata })),
-    delete: jest.fn(() => Promise.resolve())
-}))
+jest.mock('axios')
+
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: mockedMetadata
+        })
+    ),
+    delete: axios.delete.mockImplementation(() => Promise.resolve())
+}
 
 const $confirm = {
     require: jest.fn()
@@ -61,7 +67,8 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $store,
-                $confirm
+                $confirm,
+                $http
             }
         }
     })
