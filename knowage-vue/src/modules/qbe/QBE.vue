@@ -69,6 +69,7 @@
         </div>
 
         <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="id" :entities="entities?.entities" @close="filterDialogVisible = false"></QBEFilterDialog>
+        <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     </Dialog>
 </template>
@@ -82,6 +83,7 @@ import Chip from 'primevue/chip'
 import InputSwitch from 'primevue/inputswitch'
 import QBEFilterDialog from './qbeDialogs/qbeFilterDialog/QBEFilterDialog.vue'
 import QBESimpleTable from './qbeTables/qbeSimpleTable/QBESimpleTable.vue'
+import QBESqlDialog from './qbeDialogs/QBESqlDialog.vue'
 import ExpandableEntity from '@/modules/qbe/qbeComponents/expandableEntity.vue'
 import SubqueryEntity from '@/modules/qbe/qbeComponents/subqueryEntity.vue'
 import ScrollPanel from 'primevue/scrollpanel'
@@ -89,7 +91,7 @@ import Menu from 'primevue/contextmenu'
 
 export default defineComponent({
     name: 'qbe',
-    components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESimpleTable, ExpandableEntity, SubqueryEntity },
+    components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESqlDialog, QBESimpleTable, ExpandableEntity, SubqueryEntity },
     props: { id: { type: String }, visible: { type: Boolean } },
     emits: ['close'],
     data() {
@@ -104,8 +106,10 @@ export default defineComponent({
             smartView: false,
             hiddenColumnsExist: false,
             filterDialogVisible: false,
+            sqlDialogVisible: false,
             filterDialogData: {} as { field: iField; query: iQuery },
             showDerivedList: true,
+            sqlData: {} as any,
             menuButtons: [] as any
         }
     },
@@ -212,6 +216,8 @@ export default defineComponent({
             this.menuButtons = []
             this.menuButtons.push({ key: '1', label: this.$t('qbe.detailView.toolbarMenu.sql'), command: () => this.showSQLQuery() })
         },
+
+        //#region ===================== TODO: sve sto se tice ovoga mora da se uradi bolje ====================================================
         async showSQLQuery() {
             //TODO: moramo da njih pitamo sta i cemu sluzi ovo je odvratno
             var item = {} as any
@@ -222,23 +228,50 @@ export default defineComponent({
             item.pars = '[]' //hardcoded, ovo su dataset parametri VALJDA neam pojma
 
             let conf = {} as any
-            ;(conf.headers = { 'Content-Type': 'application/x-www-form-urlencoded' }),
-                (conf.transformRequest = function(obj) {
-                    var str = [] as any
-
-                    for (var p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
-
-                    return str.join('&')
-                })
-            console.log(conf)
+            conf.headers = { 'Content-Type': 'application/x-www-form-urlencoded' } as any
+            conf.transformRequest = function(obj) {
+                //ne znam sta radi ovo niti cemu sluzi, pitati voju
+                var str = [] as any
+                for (var p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
+                return str.join('&')
+            }
 
             await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=SET_CATALOGUE_ACTION&SBI_EXECUTION_ID=${this.id}`, item, conf)
-                .then((response: AxiosResponse<any>) => console.log(response.data))
+                .then((response: AxiosResponse<any>) => {
+                    console.log('SET CATALOGUE ACTION - showSQLQuery', response.data)
+                    this.getSQL()
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+        },
+        async getSQL() {
+            var item = {} as any
+            item.replaceParametersWithQuestion = true
+            item.queryId = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]?.id
+
+            let conf = {} as any
+            conf.headers = { 'Content-Type': 'application/x-www-form-urlencoded' } as any
+            conf.transformRequest = function(obj) {
+                //ne znam sta radi ovo niti cemu sluzi, pitati voju
+                var str = [] as any
+                for (var p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
+                return str.join('&')
+            }
+
+            await this.$http
+                .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_SQL_QUERY_ACTION&SBI_EXECUTION_ID=${this.id}`, item, conf)
+                .then((response: AxiosResponse<any>) => {
+                    console.log('GET_SQL_QUERY_ACTION - getSQL', response.data)
+                    this.sqlData = response.data
+                    this.sqlDialogVisible = true
+                })
                 .catch((error) => {
                     console.log(error)
                 })
         }
+        //#endregion ===============================================================================================
     }
 })
 </script>
