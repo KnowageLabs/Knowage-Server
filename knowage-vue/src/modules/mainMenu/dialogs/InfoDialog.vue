@@ -25,54 +25,41 @@
 </template>
 
 <script lang="ts">
-<<<<<<< HEAD
 import { defineComponent } from 'vue'
 import Dialog from 'primevue/dialog'
 import { mapState } from 'vuex'
 import moment from 'moment'
-=======
-    import { defineComponent } from 'vue'
-    import Dialog from 'primevue/dialog'
-    import { mapState } from 'vuex'
-    import moment from 'moment'
->>>>>>> 30f1a4c322... [KNOWAGE-6558] - Fixed wrong label name
 
-    export default defineComponent({
-        name: 'InfoDialog',
-        components: {
-            Dialog
-        },
-        props: {
-            visibility: Boolean
-        },
-        emits: ['update:visibility'],
-        data() {
-            return {
-                currentYear: moment().year(),
-                currentVersion: process.env.VUE_APP_VERSION
-            }
-        },
-        methods: {
-            closeDialog() {
-                this.$emit('update:visibility', false)
-            }
-        },
-        computed: {
-            ...mapState({
-                user: 'user'
-            })
+export default defineComponent({
+    name: 'InfoDialog',
+    components: {
+        Dialog
+    },
+    props: {
+        visibility: Boolean
+    },
+    emits: ['update:visibility'],
+    data() {
+        return {
+            currentYear: moment().year(),
+            currentVersion: process.env.VUE_APP_VERSION
         }
-    })
+    },
+    methods: {
+        closeDialog() {
+            this.$emit('update:visibility', false)
+        }
+    },
+    computed: {
+        ...mapState({
+            user: 'user'
+        })
+    }
+})
 </script>
 
 <style scoped lang="scss">
-<<<<<<< HEAD
 p {
     text-transform: capitalize;
 }
-=======
-    p {
-        text-transform: capitalize;
-    }
->>>>>>> 30f1a4c322... [KNOWAGE-6558] - Fixed wrong label name
 </style>
