@@ -37,7 +37,7 @@
                     <span v-if="settings.titleField !== false">{{ slotProps.option[settings.titleField || 'label'] }}</span>
                     <span v-if="settings.textField !== false" class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option[settings.textField || 'name'] }}</span>
                 </div>
-                <Badge v-if="settings.badgeField" :value="slotProps.option[settings.badgeField]" :severity="settings.badgeSeverity || 'info'"></Badge>
+                <Badge v-if="settings.badgeField && slotProps.option[settings.badgeField]" :value="slotProps.option[settings.badgeField]" :severity="settings.badgeSeverity || 'info'"></Badge>
                 <KnListButtonRenderer :buttons="settings.buttons" @click="clickedButton($event, slotProps.option)" />
             </div>
         </template>

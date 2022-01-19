@@ -55,23 +55,15 @@
 		
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxrs</artifactId>
-			<version>3.1.2.Final</version>
+			<artifactId>resteasy-servlet-initializer</artifactId>
+			<version>${resteasy.version}</version>
 			<scope>runtime</scope>
-        </dependency>
-
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-legacy</artifactId>
-			<version>3.1.2.Final</version>
-			<scope>runtime</scope>
-        </dependency>
+		</dependency>
 		
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-servlet-initializer</artifactId>
-			<version>3.1.2.Final</version>
-			<scope>runtime</scope>
+			<artifactId>resteasy-html</artifactId>
+			<version>${resteasy.version}</version>
 		</dependency>
 		
 		<dependency>

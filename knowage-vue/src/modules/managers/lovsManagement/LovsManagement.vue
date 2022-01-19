@@ -11,7 +11,7 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <KnListBox :options="lovsList" :settings="lovsManagementDescriptor.knListSettings" @delete="deleteLovConfirm($event)"></KnListBox>
+                <KnListBox :options="lovsList" :settings="lovsManagementDescriptor.knListSettings" @delete="deleteLovConfirm($event)" data-test="lovs-list"></KnListBox>
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
@@ -24,7 +24,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iLov } from './LovsManagement'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import lovsManagementDescriptor from './LovsManagementDescriptor.json'
@@ -47,9 +47,9 @@ export default defineComponent({
         async loadLovs() {
             this.touched = false
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.lovsList = response.data
                     this.lovsList.sort((a: iLov, b: iLov) => (a.label.toUpperCase() > b.label.toUpperCase() ? 1 : -1))
                 })
@@ -83,7 +83,7 @@ export default defineComponent({
             })
         },
         async deleteLov(lovId: number) {
-            await axios
+            await this.$http
                 .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/lovs/delete/${lovId}`)
                 .then(() => {
                     this.$store.commit('setInfo', {

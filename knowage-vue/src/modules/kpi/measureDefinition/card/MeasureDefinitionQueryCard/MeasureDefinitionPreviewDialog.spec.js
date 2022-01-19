@@ -64,7 +64,7 @@ const factory = () => {
             currentRule: mockedRule,
             placeholders: [],
             columns: mockedColumns,
-            rows: mockedRows
+            propRows: mockedRows
         },
         global: {
             stubs: {

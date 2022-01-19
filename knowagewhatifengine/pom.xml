@@ -95,32 +95,24 @@
 		
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxrs</artifactId>
-			<version>3.1.2.Final</version>
+			<artifactId>resteasy-servlet-initializer</artifactId>
+			<version>${resteasy.version}</version>
 			<scope>runtime</scope>
-        </dependency>
-        
-        <dependency>
-		    <groupId>com.fasterxml.jackson.jaxrs</groupId>
-		    <artifactId>jackson-jaxrs-json-provider</artifactId>
-		    <version>2.9.2</version>
-		    <scope>runtime</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-html</artifactId>
+			<version>${resteasy.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.fasterxml.jackson.jaxrs</groupId>
+			<artifactId>jackson-jaxrs-json-provider</artifactId>
+			<version>2.9.2</version>
+			<scope>runtime</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-legacy</artifactId>
-			<version>3.1.2.Final</version>
-			<scope>runtime</scope>
-        </dependency>
-		
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-servlet-initializer</artifactId>
-			<version>3.1.2.Final</version>
-			<scope>runtime</scope>
-		</dependency>
-		
 		<dependency>
 			<groupId>org.olap4j</groupId>
 			<artifactId>olap4j</artifactId>
@@ -186,6 +178,10 @@
 					<groupId>xalan</groupId>
 					<artifactId>xalan</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		
@@ -195,7 +191,21 @@
 			<version>3.6.2.Final</version>
 			<scope>compile</scope>
 		</dependency>
+
+  		<dependency>
+    		<groupId>org.apache.logging.log4j</groupId>
+    		<artifactId>log4j-1.2-api</artifactId>
+    		<version>2.17.1</version>
+			<scope>compile</scope>
+		</dependency>
 		
+  		<dependency>
+    		<groupId>org.apache.logging.log4j</groupId>
+    		<artifactId>log4j-core</artifactId>
+    		<version>2.17.1</version>
+			<scope>runtime</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>

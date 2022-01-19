@@ -49,26 +49,18 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 	private static Logger logger = Logger.getLogger(SbiNewsDAOImpl.class);
 
 	@Override
-	public List<BasicNews> getAllNews() {
+	public List<SbiNews> getAllSbiNews() {
 
 		logger.debug("IN");
-		List<BasicNews> listOfNews = new ArrayList<>();
 		Session session = null;
+		List<SbiNews> hibList = null;
 
 		try {
 			session = getSession();
 			String hql = " from SbiNews s";
 			Query query = session.createQuery(hql);
 
-			List hibList = query.list();
-			Iterator iterator = hibList.iterator();
-			while (iterator.hasNext()) {
-				SbiNews hibNews = (SbiNews) iterator.next();
-				if (hibNews != null) {
-					BasicNews news = new BasicNews(hibNews.getId(), hibNews.getName(), hibNews.getDescription(), hibNews.getCategoryId());
-					listOfNews.add(news);
-				}
-			}
+			hibList = query.list();
 
 		} catch (HibernateException e) {
 			logException(e);
@@ -77,6 +69,26 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 		} finally {
 			if (session != null && session.isOpen())
 				session.close();
+		}
+
+		logger.debug("OUT");
+		return hibList;
+	}
+
+	@Override
+	public List<BasicNews> getAllNews() {
+
+		logger.debug("IN");
+		List<BasicNews> listOfNews = new ArrayList<>();
+
+		List<SbiNews> hibList = getAllSbiNews();
+		Iterator<SbiNews> iterator = hibList.iterator();
+		while (iterator.hasNext()) {
+			SbiNews hibNews = iterator.next();
+			if (hibNews != null) {
+				BasicNews news = new BasicNews(hibNews.getId(), hibNews.getName(), hibNews.getDescription(), hibNews.getCategoryId());
+				listOfNews.add(news);
+			}
 		}
 
 		logger.debug("OUT");

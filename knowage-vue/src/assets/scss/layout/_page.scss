@@ -1,3 +1,17 @@
+.layout-wrapper-content {
+    &.layout-wrapper-content-embed {
+        .layout-menu-container {
+            display: none;
+        }
+        .layout-main {
+            margin-left: 0;
+        }
+        .kn-page--full {
+            width: 100vw;
+        }
+    }
+}
+
 .kn-page {
     display: flex;
     flex-direction: column;

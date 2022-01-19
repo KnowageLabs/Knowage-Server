@@ -1,0 +1,20 @@
+{
+    "style": {
+        "filterInput": {
+            "width": "25%"
+        },
+        "iconColumn": {
+            "text-align": "end",
+            "width": "15%"
+        },
+        "maxWidth": {
+            "width": "100%"
+        },
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        }
+    }
+}
