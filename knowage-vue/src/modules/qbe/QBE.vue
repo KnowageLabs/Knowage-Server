@@ -57,7 +57,7 @@
                         <i v-if="hiddenColumnsExist" class="pi pi-eye kn-cursor-pointer p-mx-2" v-tooltip.top="$t('qbe.viewToolbar.showHiddenColumns')" @click="showHiddenColumns"></i>
                         <InputSwitch class="p-mr-2" v-model="smartView" />
                         <span>{{ $t('qbe.viewToolbar.smartView') }}</span>
-                        <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" />
+                        <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" @click="showMenu" />
                     </template>
                 </Toolbar>
                 <div class="kn-flex kn-overflow-y">
@@ -69,6 +69,7 @@
         </div>
 
         <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="id" :entities="entities?.entities" @close="filterDialogVisible = false"></QBEFilterDialog>
+        <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     </Dialog>
 </template>
 
@@ -84,10 +85,11 @@ import QBESimpleTable from './qbeTables/qbeSimpleTable/QBESimpleTable.vue'
 import ExpandableEntity from '@/modules/qbe/qbeComponents/expandableEntity.vue'
 import SubqueryEntity from '@/modules/qbe/qbeComponents/subqueryEntity.vue'
 import ScrollPanel from 'primevue/scrollpanel'
+import Menu from 'primevue/contextmenu'
 
 export default defineComponent({
     name: 'qbe',
-    components: { Dialog, Chip, InputSwitch, ScrollPanel, QBEFilterDialog, QBESimpleTable, ExpandableEntity, SubqueryEntity },
+    components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESimpleTable, ExpandableEntity, SubqueryEntity },
     props: { id: { type: String }, visible: { type: Boolean } },
     emits: ['close'],
     data() {
@@ -103,7 +105,8 @@ export default defineComponent({
             hiddenColumnsExist: false,
             filterDialogVisible: false,
             filterDialogData: {} as { field: iField; query: iQuery },
-            showDerivedList: true
+            showDerivedList: true,
+            menuButtons: [] as any
         }
     },
     watch: {
@@ -126,8 +129,8 @@ export default defineComponent({
         },
         async loadDataset() {
             // HARDCODED Dataset label/name
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan%20QBE%20TEST`).then((response: AxiosResponse<any>) => {
-                // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
+            // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan%20QBE%20TEST`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
                 if (this.qbe) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
@@ -198,6 +201,43 @@ export default defineComponent({
             console.log('PAYLOAD FOR OPEN FILTER: ', payload)
             this.filterDialogData = payload
             this.filterDialogVisible = true
+        },
+        showMenu(event) {
+            this.createMenuItems()
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs.optionsMenu.toggle(event)
+        },
+        createMenuItems() {
+            this.menuButtons = []
+            this.menuButtons.push({ key: '1', label: this.$t('qbe.detailView.toolbarMenu.sql'), command: () => this.showSQLQuery() })
+        },
+        async showSQLQuery() {
+            //TODO: moramo da njih pitamo sta i cemu sluzi ovo je odvratno
+            var item = {} as any
+            item.catalogue = JSON.stringify(this.qbe?.qbeJSONQuery?.catalogue?.queries)
+            item.currentQueryId = 'q1' //hardkoded i kod njih u source dode
+            item.ambiguousFieldsPaths = [] //hardkoded i kod njih u source dode
+            item.ambiguousRoles = [] //hardkoded i kod njih u source dode
+            item.pars = '[]' //hardcoded, ovo su dataset parametri VALJDA neam pojma
+
+            let conf = {} as any
+            ;(conf.headers = { 'Content-Type': 'application/x-www-form-urlencoded' }),
+                (conf.transformRequest = function(obj) {
+                    var str = [] as any
+
+                    for (var p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
+
+                    return str.join('&')
+                })
+            console.log(conf)
+
+            await this.$http
+                .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=SET_CATALOGUE_ACTION&SBI_EXECUTION_ID=${this.id}`, item, conf)
+                .then((response: AxiosResponse<any>) => console.log(response.data))
+                .catch((error) => {
+                    console.log(error)
+                })
         }
     }
 })
