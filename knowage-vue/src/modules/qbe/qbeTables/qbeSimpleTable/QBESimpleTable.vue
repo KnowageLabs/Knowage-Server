@@ -1,5 +1,5 @@
 <template>
-    <DataTable class="p-datatable-sm kn-table p-m-2" :value="rows" editMode="cell" responsiveLayout="stack" breakpoint="960px" @rowReorder="onRowReorder">
+    <DataTable class="p-datatable-sm kn-table p-m-2" :value="rows" editMode="cell" responsiveLayout="stack" breakpoint="960px" @rowReorder="onRowReorder" @drop="onDrop($event)" @dragover.prevent @dragenter="displayDropzone">
         <Column :rowReorder="true" headerStyle="width: 3rem" />
         <Column v-for="column in QBESimpleTableDescriptor.columns" :key="column.header" :field="column.field" :style="column.style">
             <template #header>
@@ -122,6 +122,12 @@ export default defineComponent({
         },
         openHavingsDialog(field: iField) {
             console.log('TODO - Open havings dialog for field: ', field)
+        },
+        onDrop(event) {
+            var data = JSON.parse(event.dataTransfer.getData('text/plain'))
+            console.log('dropped: ', data)
+
+            //TODO: Data se passuje OK, treba da se doda u tabelu
         }
     }
 })
