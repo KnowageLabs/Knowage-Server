@@ -141,6 +141,7 @@ export default defineComponent({
         async onFilterTypeChange() {
             if (this.filter) {
                 this.filter.rightOperandDescription = ''
+                this.filter.rightOperandLongDescription = ''
                 this.filter.rightOperandValue = ['']
                 this.selectedValues = []
                 this.filterValuesData = null
@@ -155,7 +156,7 @@ export default defineComponent({
             this.loading = true
             await this.$http.get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_VALUES_FOR_QBE_FILTER_LOOKUP_ACTION&ENTITY_ID=${this.filter?.leftOperandValue}&SBI_EXECUTION_ID=${this.id}`).then((response: AxiosResponse<any>) => (this.filterValuesData = response.data))
             this.loading = false
-            console.log('LOADED FILTER VALUES DATA: ', this.filterValuesData)
+            // console.log('LOADED FILTER VALUES DATA: ', this.filterValuesData)
         },
         setSelectedValues(selected: string[]) {
             this.selectedValues = selected
@@ -168,6 +169,7 @@ export default defineComponent({
         onEntityTypeChanged() {
             if (this.filter) {
                 console.log('FILTER CHANGED: ', this.filter)
+                // this.filter.rightOperandValue = []
             }
         }
     }
