@@ -1755,7 +1755,10 @@
     "qbe": {
         "detailView": {
             "hideList": "Hide List",
-            "showList": "Show List"
+            "showList": "Show List",
+            "toolbarMenu": {
+                "sql": "SQL Query"
+            }
         },
         "entities": {
             "relations": "Relations",
