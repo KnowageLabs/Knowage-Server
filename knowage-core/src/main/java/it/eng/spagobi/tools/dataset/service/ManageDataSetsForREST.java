@@ -1409,12 +1409,6 @@ public class ManageDataSetsForREST {
 		for (String sa : PythonDataSetConstants.PYTHON_STRING_ATTRIBUTES) {
 			config.put(sa, json.optString(sa));
 		}
-		for (String ja : PythonDataSetConstants.REST_JSON_OBJECT_ATTRIBUTES) {
-			config.put(ja, new JSONObject(json.getString(ja)));
-		}
-		for (String ja : PythonDataSetConstants.REST_JSON_ARRAY_ATTRIBUTES) {
-			config.put(ja, new JSONArray(json.getString(ja)));
-		}
 		config.put(DataSetConstants.DATA_SET_TYPE, DataSetConstants.DS_PYTHON_TYPE);
 		PythonDataSet res = new PythonDataSet(config);
 		res.setLabel(json.optString(DataSetConstants.LABEL));

@@ -68,10 +68,10 @@
                                         <Dropdown
                                             id="staticPage"
                                             v-model="v$.menuNode.staticPage.$model"
-                                            :options="staticPageOptions"
+                                            :options="staticPagesList"
                                             @change="onStaticPageSelect(v$.menuNode.staticPage)"
                                             optionLabel="name"
-                                            optionValue="value"
+                                            optionValue="id"
                                             class="p-dropdown p-component p-inputwrapper p-inputwrapper-filled kn-material-input"
                                         />
                                         <label for="staticPage">{{ $t('managers.menuManagement.form.staticPage') }} *</label>
@@ -192,6 +192,9 @@ export default defineComponent({
         selectedRoles: {
             type: Array
         },
+        staticPagesList: {
+            type: Array
+        },
         menuNodes: {
             type: Array
         },
@@ -244,7 +247,6 @@ export default defineComponent({
             selectedFunctionality: {},
             menuNodeContent: MenuConfigurationDescriptor.menuNodeContent,
             workspaceOptions: MenuConfigurationDescriptor.workspaceOptions,
-            staticPageOptions: MenuConfigurationDescriptor.staticPageOptions,
             menuNodeContentFunctionalies: MenuConfigurationDescriptor.menuNodeContentFunctionalies,
             menuManagementElementDetailDescriptor: MenuManagementElementDetailDescriptor.importantfields,
             nodes: [] as iMenuNode[]
