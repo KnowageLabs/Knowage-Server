@@ -157,7 +157,7 @@ export default defineComponent({
     validations() {
         const customValidators: ICustomValidatorMap = {
             'range-check': () => {
-                return (this.constraint && this.constraint.firstValue && this.constraint.secondValue && this.constraint.firstValue < this.constraint.secondValue) || this.constraint.valueTypeCd != 'RANGE'
+                return this.rangeCheck || this.constraint.valueTypeCd != 'RANGE'
             }
         }
         return {
@@ -173,6 +173,10 @@ export default defineComponent({
         },
         numberType(): any {
             return this.constraint.valueTypeCd == 'MAXLENGTH' || this.constraint.valueTypeCd == 'RANGE' || this.constraint.valueTypeCd == 'DECIMALS' || this.constraint.valueTypeCd == 'MINLENGTH'
+        },
+        rangeCheck(): any {
+            let test = this.constraint.firstValue < this.constraint.secondValue
+            return test
         }
     },
     watch: {
