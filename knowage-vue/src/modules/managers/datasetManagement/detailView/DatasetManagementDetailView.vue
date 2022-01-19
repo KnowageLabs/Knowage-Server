@@ -67,7 +67,7 @@
             </TabPanel>
         </TabView>
 
-        <WorkspaceDataPreviewDialog :visible="showPreviewDialog" :propDataset="selectedDataset" @close="showPreviewDialog = false"></WorkspaceDataPreviewDialog>
+        <WorkspaceDataPreviewDialog :visible="showPreviewDialog" :propDataset="selectedDataset" @close="showPreviewDialog = false" previewType="dataset"></WorkspaceDataPreviewDialog>
     </div>
 </template>
 
