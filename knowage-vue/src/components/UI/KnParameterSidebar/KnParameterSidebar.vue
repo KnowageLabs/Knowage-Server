@@ -233,6 +233,8 @@ export default defineComponent({
             this.parameters?.filterStatus.forEach((el: any) => setVisualDependency(this.parameters, el))
             this.parameters?.filterStatus.forEach((el: any) => setDataDependency(this.parameters, el))
             this.parameters?.filterStatus.forEach((el: any) => this.updateVisualDependency(el))
+
+            console.log('LOADED PARAMETERS: ', this.parameters)
         },
         setDataDependency(parameter: iParameter) {
             if (parameter.dependencies.data.length !== 0) {
@@ -253,6 +255,8 @@ export default defineComponent({
                 parameter.parameterValue[0] = { value: '', description: '' }
                 return
             }
+
+            console.log('PARAMETER VALUE: ', parameter)
             const valueColumn = parameter.metadata.valueColumn
             const descriptionColumn = parameter.metadata.descriptionColumn
             let valueIndex = null as any
@@ -264,6 +268,7 @@ export default defineComponent({
                 descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
             }
             if ((parameter.selectionType === 'LIST' || parameter.selectionType === 'COMBOBOX') && parameter.showOnPanel === 'true' && parameter.multivalue) {
+                console.log(' >>> 1: ', parameter)
                 parameter.parameterValue = [] as { value: string; description: string }[]
                 this.selectedParameterCheckbox[parameter.id] = []
                 for (let i = 0; i < parameter.driverDefaultValue.length; i++) {
@@ -273,12 +278,17 @@ export default defineComponent({
                         this.selectedParameterCheckbox[parameter.id].push(temp[valueIndex])
                     }
                 }
-            } else if ((parameter.selectionType === 'COMBOBOX' || parameter.selectionType === 'TREE') && parameter.showOnPanel === 'true' && parameter.multivalue) {
+            } else if (parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true' && parameter.multivalue) {
+                console.log(' >>> 2: ', parameter)
                 parameter.parameterValue = [...parameter.driverDefaultValue]
             } else if (parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true' && parameter.multivalue) {
+                console.log(' >>> 3: ', parameter)
                 parameter.parameterValue = parameter.driverDefaultValue.map((el: any) => {
                     return { value: valueIndex ? el[valueIndex] : '', description: descriptionIndex ? el[descriptionIndex] : '' }
                 })
+            } else if (parameter.selectionType === 'COMBOBOX' && parameter.showOnPanel === 'true' && !parameter.multivalue) {
+                console.log(' >>> 4: ', parameter)
+                parameter.parameterValue[0] = {value:  parameter.driverDefaultValue[0][valueIndex], description: parameter.driverDefaultValue[0][descriptionIndex]}
             } else {
                 if (!parameter.parameterValue[0]) {
                     parameter.parameterValue[0] = { value: '', description: '' }
