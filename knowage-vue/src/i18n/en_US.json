@@ -61,6 +61,7 @@
         "file": "File",
         "fileName": "File Name",
         "general": "General",
+        "home": "Home",
         "image": "image",
         "import": "import",
         "inactive": "Inactive",
@@ -694,13 +695,15 @@
         }
     },
     "language": {
+        "de_DE": "German",
         "en_GB": "english (GB)",
         "en_US": "english (US)",
         "es_ES": "espanol",
         "fr_FR": "french",
         "it_IT": "italian",
         "languageSelection": "Language Selection",
-        "pt_BR": "portuguese"
+        "pt_BR": "portuguese",
+        "zh_CN_#Hans": "Chinese (simplified)"
     },
     "licenseDialog": {
         "changeLicense": "Change License",
@@ -1298,6 +1301,7 @@
                 "createTitle": "Create menu item",
                 "deleteMessage": "Menu item deleted",
                 "deleteTitle": "Delete menu item",
+                "duplicateErrorMessage": "You cannot save menu bacues there is another menu in the same level with the same name",
                 "errorMessage": "Error saving menu item",
                 "errorTitle": "Error",
                 "saveMessage": "Menu item saved",

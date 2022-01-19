@@ -1,0 +1,8 @@
+.p-message {
+    .p-message-wrapper {
+        .p-message-text {
+            font-size: $message-font-size !important;
+        }
+        padding: $message-padding !important;
+    }
+}
