@@ -1152,7 +1152,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	var layerID = $scope.ngModel.id + "|" + config.name;
 	    	var elem = null;
 
-			if (measure == null) {
+			if (measure != null) {
 				elem = cockpitModule_mapServices.getColumnConfigByProp(configColumns, 'aliasToShow', measure);
 			} else {
 				var activeIndicator = cockpitModule_mapThematizerServices.getActiveIndicator();
