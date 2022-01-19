@@ -4,7 +4,7 @@
             "field": "name",
             "header": "managers.cacheManagement.name",
             "style": {
-                "width": "35%"
+                "width": "30%"
             }
         },
         {
@@ -24,7 +24,9 @@
         {
             "field": "dimension",
             "header": "managers.cacheManagement.dimension",
-            "style": {}
+            "style": {
+                "width": "140px"
+            }
         }
     ],
     "table": {

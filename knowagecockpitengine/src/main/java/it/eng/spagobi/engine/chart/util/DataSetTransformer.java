@@ -1372,32 +1372,34 @@ public class DataSetTransformer {
 
 		ArrayList<String> listColumns = new ArrayList<>();
 
+		Map<String, Object> columnsIndex = new HashMap<String, Object>();
+
 		HashMap<Integer, HashMap> firstresult = new HashMap<>();
 
-		for (int i = 0; i < columns.size(); i++) {
-
-			Object cndata = columns.get(i);
-
-			if (mapper.get(cndata) != null)
+		for (Map.Entry<String, String> entry : columns.entrySet()) {
+			Object cndata = entry.getValue();
+			if (mapper.get(cndata) != null) {
 				listColumns.add(mapper.get(cndata).toString());
-
-		}
-
-		for (int i = 0; i < dataRows.size(); i++) {
-			Map<String, Object> row = (Map<String, Object>) dataRows.get(i);
-			HashMap<String, Object> record = new HashMap<>();
-
-			/* For every record take these columns */
-			for (int j = 0; j < listColumns.size(); j++) {
-				Object x = row.get(listColumns.get(j));
-				record.put(columns.get(j).toString(), x);
+				columnsIndex.put(mapper.get(cndata).toString(), entry.getKey());
 			}
-
-			record.put(serie.toString(), row.get(serieRawColumn));
-
-			firstresult.put(new Integer(i), record);
 		}
 
+		if (dataRows != null) {
+			for (int i = 0; i < dataRows.size(); i++) {
+				Map<String, Object> row = (Map<String, Object>) dataRows.get(i);
+				HashMap<String, Object> record = new HashMap<>();
+
+				/* For every record take these columns */
+				for (String column : listColumns) {
+					Object x = row.get(column);
+					record.put(columns.get(columnsIndex.get(column)).toString(), x);
+				}
+
+				record.put(serie.toString(), row.get(serieRawColumn));
+
+				firstresult.put(new Integer(i), record);
+			}
+		}
 		return firstresult;
 
 	}
@@ -1542,9 +1544,15 @@ public class DataSetTransformer {
 						jo.put(columns.get(0).toString(), value);
 					}
 
-					String value = (String) firstresult.get(i).get(columns.get(1).toString());
+					if (firstresult.get(i).get(columns.get(1).toString()) != null && firstresult.get(i).get(columns.get(1).toString()) instanceof Integer) {
+						Integer value = (Integer) firstresult.get(i).get(columns.get(1).toString());
 
-					jo.put(columns.get(1).toString(), value);
+						jo.put(columns.get(1).toString(), value);
+					} else {
+						String value = (String) firstresult.get(i).get(columns.get(1).toString());
+
+						jo.put(columns.get(1).toString(), value);
+					}
 
 				}
 
