@@ -16,6 +16,7 @@
 			['$scope', '$http', '$mdSidenav', '$mdDialog', '$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_user',
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
 			 'documentExecuteServices', 'docExecute_urlViewPointService', 'docExecute_paramRolePanelService', 'infoMetadataService', 'sbiModule_download', '$crossNavigationScope',
+			 
 			 '$timeout', '$interval', 'docExecute_exportService', '$filter', 'sbiModule_dateServices', 'cockpitEditing', '$window', '$httpParamSerializer', '$mdMenu','sbiModule_i18n','sbiModule_device',
 			 'driversExecutionService','driversDependencyService', 'datasetPreview_service' ,documentExecutionControllerFn]);
 
@@ -35,7 +36,9 @@
 		$scope.browser = sbiModule_device.browser;
 
 		$interval(function(){
-			$scope.menuElementLength = angular.element( document.querySelector( '#menu md-menu-content' ) )[0].children.length;
+			let el = angular.element( document.querySelector( '#menu md-menu-content' ) )
+			if(Array.isArray(el)) $scope.menuElementLength = el[0].children.length;
+			else $scope.menuElementLength = el.children.length;
 		},1000)
 		
 		

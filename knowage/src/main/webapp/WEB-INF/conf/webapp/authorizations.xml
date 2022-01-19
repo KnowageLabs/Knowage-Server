@@ -9,8 +9,8 @@
 			<ATTRIBUTE name="country"  />
 		</ATTRIBUTES>	
 		<USERS>
-			<USER userID="biadmin" password="biadmin" month="03" name="SpagoAdmin" email="bernabei@eng.it" country="USA" family="Food" />
-			<USER userID="biuser" password="biuser" month="04" name="SpagoUser" email="bernabei@eng.it"/>
+			<USER userID="biadmin" password="biadmin" month="03" name="SpagoAdmin" email="email@domain.com" country="USA" family="Food" />
+			<USER userID="biuser" password="biuser" month="04" name="SpagoUser" email="email@domain.com"/>
 			<USER userID="bidev" password="bidev" />
 			<USER userID="bitest" password="bitest" />
 			<USER userID="bimodeladmin" password="bimodeladmin" />

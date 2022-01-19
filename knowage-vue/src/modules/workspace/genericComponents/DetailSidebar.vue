@@ -7,7 +7,7 @@
                 </span>
             </div>
             <!-- TODO: Change default image to your liking -->
-            <img v-if="viewType != 'businessModel'" class="p-mt-5" onerror="this.src='https://i.imgur.com/9N1aRkx.png'" :style="descriptor.style.sidebarImage" align="center" :src="documentImageSource" />
+            <img v-if="viewType != 'businessModel' && viewType != 'analysis'" class="p-mt-5" onerror="this.src='https://i.imgur.com/9N1aRkx.png'" :style="descriptor.style.sidebarImage" align="center" :src="documentImageSource" />
             <div class="p-m-5">
                 <div class="p-mb-5" v-for="(field, index) of documentFields" :key="index">
                     <h3 class="p-m-0">
@@ -39,16 +39,16 @@ export default defineComponent({
     props: { visible: Boolean, viewType: String, document: Object as any, datasetCategories: Array as any },
     computed: {
         isOwner(): any {
-            return (this.$store.state as any).user.fullName === this.document.creationUser
+            return (this.$store.state as any).user.userId === this.document.creationUser
         },
         isAnalysisShared(): any {
             return this.document.functionalities.length > 1
         },
         isDatasetOwner(): any {
-            return (this.$store.state as any).user.fullName === this.document.owner
+            return (this.$store.state as any).user.userId === this.document.owner
         },
         showQbeEditButton(): any {
-            return (this.$store.state as any).user.fullName === this.document.owner && (this.document.dsTypeCd == 'Federated' || this.document.dsTypeCd == 'Qbe')
+            return (this.$store.state as any).user.userId === this.document.owner && (this.document.dsTypeCd == 'Federated' || this.document.dsTypeCd == 'Qbe')
         },
         datasetHasDrivers(): any {
             return this.document.drivers && this.document.length > 0

@@ -2,6 +2,7 @@
     "common": {
         "active": "Active",
         "add": "Add",
+        "addNew": "Add new",
         "apply": "Apply",
         "attachments": "Attachments",
         "author": "Author",
@@ -11,6 +12,7 @@
         "cc": "CC",
         "choose": "choose",
         "clean": "Clean",
+        "clicked": "Clicked",
         "clone": "Clone",
         "close": "close",
         "cockpit": "Cockpit",
@@ -59,6 +61,7 @@
         "file": "File",
         "fileName": "File Name",
         "general": "General",
+        "home": "Home",
         "image": "image",
         "import": "import",
         "inactive": "Inactive",
@@ -94,6 +97,7 @@
         "notes": "Notes",
         "notesList": "Notes list",
         "object": "Object",
+        "ok": "ok",
         "onlineHelp": "Help Online",
         "output": "Output",
         "owner": "Owner",
@@ -105,6 +109,7 @@
         "paused": "Paused",
         "preview": "Preview",
         "print": "Print",
+        "public": "Public",
         "rank": "Rank",
         "refresh": "Refresh",
         "released": "Released",
@@ -124,6 +129,7 @@
         "sendMail": "Send Mail",
         "sendMailSuccess": "Email Sent",
         "set": "Set",
+        "settings": "Settings",
         "share": "Share",
         "shortcuts": "Shortcuts",
         "snapshot": "Snapshot",
@@ -141,8 +147,8 @@
         "tenant": "tenant",
         "test": "test",
         "time": "Time",
-        "to": "To",
         "title": "Title",
+        "to": "To",
         "toast": {
             "cloneConfirmTitle": "Confirm item clone?",
             "createTitle": "Created",
@@ -156,7 +162,8 @@
             "unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
             "updateSuccess": "Item was updated successfully",
             "updateTitle": "Updated",
-            "uploadSuccess": "Item was uploaded successfully"
+            "uploadSuccess": "Item was uploaded successfully",
+            "warning": "Warning"
         },
         "type": "type",
         "upload": "upload",
@@ -358,9 +365,11 @@
         "main": {
             "copyLink": "Copy link",
             "copyLinkAndShare": "Copy link and share it",
+            "crossNavigationNoTargetError": "No cross navigation targets available",
             "currentRank": "Curent Rank is...",
             "customMetadata": "Custom Metadata",
             "editCockpit": "Edit cockpit document",
+            "editModeConfirm": "You are leaving edit mode. Continue?",
             "embedInHtml": "Embed in HTML",
             "exportInPDF": "Export in PDF",
             "exportInRTF": "Export in RTF",
@@ -376,11 +385,101 @@
             "savedParametersTooltip": "Open saved parameters window",
             "scheduledExecutions": "Scheduled executions",
             "selectFileError": "Select a file to Upload!",
+            "showOLAPCustomView": "Show OLAP Custom View",
             "showScheduledExecutions": "Show scheduled executions",
             "userRoleError": "User does not have valid roles for the execution of the selected document",
             "viewCockpit": "View cockpit document",
-            "yourRating": "Your rating",
-            "editModeConfirm": "You are leaving edit mode. Continue?"
+            "yourRating": "Your rating"
+        },
+        "olap": {
+            "buttonsWizard": {
+                "title": "Buttons Wizard"
+            },
+            "crossNavigationDefinition": {
+                "crossNavigationType": "Select the type of cross navigation below",
+                "finishSelection": "Click ok to finish selection",
+                "hint": "The parameters for cross navigation on cell required the name of the dimension, hierarchy and level. In order to select these values you should click on \"select from table\". Than on the table you should open the filter panel of the hierarchy you want to include in the parameter. Than on the filter panel you should select one member of the level you want to include in the cross navigation. For example: suppose you want to create a parameter on dimension=\"Product\" hierarchy=\"[Product]\" level=\"[Product].[Product Department]. You should select the hierarchy Product on dimension Product. Than you should open the filter panel and select a member of the level [Product].[Product Department] for example Food.Seafood",
+                "parameterName": "Parameter Name",
+                "selectFromTable": "Select from table",
+                "title": "Cross Navigation Definition"
+            },
+            "customView": {
+                "title": "Olap custom view List"
+            },
+            "drillTru": {
+                "clearAll": "Clear All",
+                "drillLevelsError": "An error occurred while getting drill through levels",
+                "drillTruError": "Error in drill through",
+                "invalidData": "Invalid data",
+                "loadingMsg": "If the drill though is executed on a cell with an high level of aggregation, this operation can take long time.",
+                "loadingTitle": "Loading",
+                "maxRows": "Maximum rows",
+                "selectLevels": "Select visible levels",
+                "title": "Drill Through"
+            },
+            "editModeConfirm": "You are leaving edit mode. Continue?",
+            "filterPanel": {
+                "drop": "Drop here to use as a slicer",
+                "filterPanelEmpty": "Drag the member here if you want to use it as a slicer"
+            },
+            "filterToolbar": {
+                "dragEmptyWarning": "There must be at least one dimension in the columns and in the rows",
+                "drop": "Drop here to use as a dimension",
+                "hierarchyMove": "An error occurred while moving hierarchy",
+                "hierarchyMoveError": "An error occurred while moving hierarchy",
+                "hierarchyUpdateError": "An error occurred while updating hierarchy.",
+                "noMeasure": "A measure can not be used as a filter",
+                "putFilterOnAxisError": "An error occurred while placing member on axis",
+                "swapAxisError": "An error occurred during swap axis functionality"
+            },
+            "multiHierarchy": {
+                "detail1": "The selected hierarchy is ",
+                "detail2": "You can change it acting on the form below.",
+                "dropdownLabel": "Available hierarchies"
+            },
+            "openDesigner": "Open Designer",
+            "openDesignerMsg": "By opening designer you will lose all unsaved changes, are you sure?",
+            "savingCustomizedView": "Saving customized view",
+            "showMdxQuery": "Show MDX Query",
+            "showScheduledExecutions": "Show scheduled executions",
+            "sidebar": {
+                "calculatedField": "Calculated field",
+                "calculatedFieldWizard": "Calculated field wizard",
+                "closeDesigner": "Close Designer",
+                "configureButtonsVisiblity": "Configure buttons visibility",
+                "configureScenario": "Configure scenario",
+                "configureTablePagination": "Configure table pagination",
+                "defineCrossNavigation": "Define cross navigation",
+                "drillOnData": "Drill on data",
+                "drillOnDimension": "Drill on dimension",
+                "drillThrough": "Drill Through",
+                "enableCrossNavigation": "Enable crossnavigation",
+                "exportExcel": "Export excel for edit",
+                "exportOutput": "Export output",
+                "hideSpans": "Hide spans",
+                "manageVersions": "Manage versions",
+                "mdxQuery": "Mdx Query",
+                "member": "Member",
+                "olapFunctions": "OLAP functions",
+                "position": "Position",
+                "reloadSchema": "Reload schema",
+                "replace": "Replace",
+                "saveCustomizedView": "Save customized view",
+                "saveNewVersion": "Save new version",
+                "saveTemplate": "Save template",
+                "selectAlgorithm": "Select algorithm",
+                "showCustomizedView": "Show customized view",
+                "showParentMembers": "Show parent members",
+                "showProperties": "Show properties",
+                "sortingSettings": "Sorting settings",
+                "suppressEmptyRowsColumns": "Suppress empty rows/columns",
+                "tableFunctions": "Table functions",
+                "templateEditing": "Template editing",
+                "undo": "Undo"
+            },
+            "userRoleError": "User does not have valid roles for the execution of the selected document",
+            "viewCockpit": "View cockpit document",
+            "yourRating": "Your rating"
         },
         "registry": {
             "clearFilters": "Clear",
@@ -596,13 +695,15 @@
         }
     },
     "language": {
+        "de_DE": "German",
         "en_GB": "english (GB)",
         "en_US": "english (US)",
         "es_ES": "espanol",
         "fr_FR": "french",
         "it_IT": "italian",
         "languageSelection": "Language Selection",
-        "pt_BR": "portuguese"
+        "pt_BR": "portuguese",
+        "zh_CN_#Hans": "Chinese (simplified)"
     },
     "licenseDialog": {
         "changeLicense": "Change License",
@@ -623,6 +724,17 @@
         "validLicense": "Valid License",
         "warningBeforeDelete": "You are attempting to remove {0} license. This operation cannot be undone. After deletion, you will have to log in again.",
         "wrongType": "You have chosen wrong type of license"
+    },
+    "locale": {
+        "dateFormat": "mm/dd/yy",
+        "dayNames": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        "dayNamesMin": ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+        "dayNamesShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        "firstDayOfWeek": 0,
+        "monthNames": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        "monthNamesShort": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        "today": "Today",
+        "weekHeader": "Wk"
     },
     "managers": {
         "businessModelManager": {
@@ -1189,6 +1301,7 @@
                 "createTitle": "Create menu item",
                 "deleteMessage": "Menu item deleted",
                 "deleteTitle": "Delete menu item",
+                "duplicateErrorMessage": "You cannot save menu bacues there is another menu in the same level with the same name",
                 "errorMessage": "Error saving menu item",
                 "errorTitle": "Error",
                 "saveMessage": "Menu item saved",
@@ -1642,11 +1755,11 @@
     },
     "workspace": {
         "buttonsTooltips": {
-            "executeDoc": "Execute Document",
-            "moveDoc": "Move Document",
-            "editDoc": "Edit Document",
             "deleteDoc": "Delete Document",
+            "editDoc": "Edit Document",
+            "executeDoc": "Execute Document",
             "help": "Help Online",
+            "moveDoc": "Move Document",
             "other": "Other Options",
             "previewDs": "Preview Dataset"
         },
@@ -1680,6 +1793,7 @@
             "schedulation": "Schedulation"
         },
         "myAnalysis": {
+            "geoRef": "Geo-referenced analysis",
             "menuItems": {
                 "clone": "Clone Document",
                 "delete": "Delete Document",
@@ -1688,8 +1802,7 @@
                 "showDsDetails": "Show dataset details",
                 "unshare": "Unshare Document",
                 "upload": "Upload preview file"
-            },
-            "geoRef": "Geo-referenced analysis"
+            }
         },
         "myData": {
             "cloneDataset": "Clone Dataset",

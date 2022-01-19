@@ -97,6 +97,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import KnHint from '@/components/UI/KnHint.vue'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
     name: 'dossier',
@@ -154,8 +155,7 @@ export default defineComponent({
     },
     methods: {
         formatDate(date) {
-            let fDate = new Date(date)
-            return fDate.toLocaleString()
+            return formatDateWithLocale(date, { dateStyle: 'short', timeStyle: 'short' })
         },
         async getDossierActivities() {
             this.loading = true

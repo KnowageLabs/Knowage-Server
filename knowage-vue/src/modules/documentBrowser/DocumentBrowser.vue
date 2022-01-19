@@ -28,6 +28,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
 import DocumentBrowserHome from './documentBrowserHome/DocumentBrowserHome.vue'
 import DocumentBrowserTab from './DocumentBrowserTab.vue'
 import Menu from 'primevue/menu'
@@ -46,9 +47,11 @@ export default defineComponent({
             id: 0
         }
     },
-    created() {
+    async created() {
         if (this.$route.params.id && this.$route.name === 'document-browser-document-execution') {
-            const tempItem = { item: { name: this.$route.params.id, label: this.$route.params.id, mode: this.$route.params.mode, routerId: this.id++ }, mode: 'execute' }
+            let tempDocument = {} as any
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.$route.params.id}`).then((response: AxiosResponse<any>) => (tempDocument = response.data))
+            const tempItem = { item: { name: tempDocument.name, label: this.$route.params.id, mode: this.$route.params.mode, routerId: this.id++ }, mode: 'execute' }
             this.tabs.push(tempItem)
 
             this.activeIndex = 1
