@@ -1,4 +1,4 @@
-z<template>
+<template>
     <div class="p-d-flex p-flex-column kn-width-full">
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-col-12 kn-flex-0">
             <template #left>{{ $t('documentExecution.olap.drillTru.title') }} </template>
