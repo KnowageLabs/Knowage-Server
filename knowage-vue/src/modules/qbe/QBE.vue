@@ -15,7 +15,7 @@
         <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
         <div v-if="!loading" class="p-d-flex p-flex-row kn-height-full">
             <div v-show="showEntitiesLists" class="entities-lists">
-                <div class="main-entities p-d-flex p-flex-column kn-flex kn-overflow-hidden">
+                <div class="p-d-flex p-flex-column kn-flex kn-overflow-hidden">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary kn-flex-0">
                         <template #left>
                             <span>Entities</span>
@@ -24,21 +24,25 @@
                             <Chip style="background-color:white"> {{ entities.entities.length }} </Chip>
                         </template>
                     </Toolbar>
-                    <div class="kn-flex kn-overflow-y">
-                        <ExpandableEntity :availableEntities="entities.entities" />
+                    <div class="kn-flex kn-overflow-hidden">
+                        <ScrollPanel class="kn-height-full olap-scroll-panel">
+                            <ExpandableEntity :availableEntities="entities.entities" />
+                        </ScrollPanel>
                     </div>
                 </div>
-                <div :class="{ 'derived-entities-toggle': showDerivedList }">
-                    <Toolbar class="kn-toolbar kn-toolbar--secondary" @click="collapseDerivedList">
+                <div class="p-d-flex p-flex-column kn-overflow-hidden" :class="{ 'derived-entities-toggle': showDerivedList }">
+                    <Toolbar class="kn-toolbar kn-toolbar--secondary kn-flex-0" @click="collapseDerivedList">
                         <template #left>
                             <span>Derived Entities</span>
                         </template>
                         <template #right>
-                            <Chip> .no </Chip>
+                            <Chip style="background-color:white"> {{ qbe.qbeJSONQuery?.catalogue?.queries[0].subqueries.length }} </Chip>
                         </template>
                     </Toolbar>
-                    <div v-show="showDerivedList">
-                        Derived List Test
+                    <div v-show="showDerivedList" class="kn-flex kn-overflow-hidden">
+                        <ScrollPanel class="kn-height-full olap-scroll-panel">
+                            <SubqueryEntity :availableEntities="qbe.qbeJSONQuery?.catalogue?.queries[0].subqueries" />
+                        </ScrollPanel>
                     </div>
                 </div>
             </div>
@@ -78,10 +82,12 @@ import InputSwitch from 'primevue/inputswitch'
 import QBEFilterDialog from './qbeDialogs/qbeFilterDialog/QBEFilterDialog.vue'
 import QBESimpleTable from './qbeTables/qbeSimpleTable/QBESimpleTable.vue'
 import ExpandableEntity from '@/modules/qbe/qbeComponents/expandableEntity.vue'
+import SubqueryEntity from '@/modules/qbe/qbeComponents/subqueryEntity.vue'
+import ScrollPanel from 'primevue/scrollpanel'
 
 export default defineComponent({
     name: 'qbe',
-    components: { Dialog, Chip, InputSwitch, QBEFilterDialog, QBESimpleTable, ExpandableEntity },
+    components: { Dialog, Chip, InputSwitch, ScrollPanel, QBEFilterDialog, QBESimpleTable, ExpandableEntity, SubqueryEntity },
     props: { id: { type: String }, visible: { type: Boolean } },
     emits: ['close'],
     data() {
@@ -120,12 +126,13 @@ export default defineComponent({
         },
         async loadDataset() {
             // HARDCODED Dataset label/name
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan%20QBE%20TEST`).then((response: AxiosResponse<any>) => {
-                // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
+            // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan%20QBE%20TEST`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
                 if (this.qbe) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
             console.log('LOADED QBE: ', this.qbe)
+            console.log('SUBQUERY : ', this.qbe?.qbeJSONQuery?.catalogue?.queries[0].subqueries)
         },
         async loadCustomizedDatasetFunctions() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${this.qbe?.qbeDataSourceId}`).then((response: AxiosResponse<any>) => (this.customizedDatasetFunctions = response.data))
@@ -228,6 +235,14 @@ export default defineComponent({
 }
 
 .derived-entities-toggle {
-    min-height: 25%;
+    height: 25%;
+}
+
+.olap-scroll-panel .p-scrollpanel-content {
+    padding: 0 !important;
+}
+.olap-scroll-panel .p-scrollpanel-bar {
+    background-color: #43749eb6;
+    width: 5px;
 }
 </style>
