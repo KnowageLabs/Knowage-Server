@@ -252,61 +252,10 @@
                             tempParameter.dataDependentParameters ? tempParameter.dataDependentParameters.push(parameter) : (tempParameter.dataDependentParameters = [parameter])
                         }
                     })
-<<<<<<< Upstream, based on branch 'master' of https://github.com/KnowageLabs/Knowage-Server.git
-                    if (index !== -1) {
-                        const tempParameter = this.parameters.filterStatus[index]
-                        parameter.dataDependsOnParameters ? parameter.dataDependsOnParameters.push(tempParameter) : (parameter.dataDependsOnParameters = [tempParameter])
-                        tempParameter.dataDependentParameters ? tempParameter.dataDependentParameters.push(parameter) : (tempParameter.dataDependentParameters = [parameter])
-                    }
-                })
-            }
-        },
-        resetParameterValue(parameter: any) {
-            if (!parameter.driverDefaultValue) {
-                parameter.parameterValue[0] = { value: '', description: '' }
-                return
-            }
-
-            const valueColumn = parameter.metadata.valueColumn
-            const descriptionColumn = parameter.metadata.descriptionColumn
-            let valueIndex = null as any
-            if (parameter.metadata.colsMap) {
-                valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
-            }
-            let descriptionIndex = null as any
-            if (parameter.metadata.colsMap) {
-                descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
-            }
-            if ((parameter.selectionType === 'LIST' || parameter.selectionType === 'COMBOBOX') && parameter.showOnPanel === 'true' && parameter.multivalue) {
-                parameter.parameterValue = [] as { value: string; description: string }[]
-                this.selectedParameterCheckbox[parameter.id] = []
-                for (let i = 0; i < parameter.driverDefaultValue.length; i++) {
-                    const temp = parameter.driverDefaultValue[i]
-                    parameter.parameterValue.push({ value: valueIndex ? temp[valueIndex] : '', description: descriptionIndex ? temp[descriptionIndex] : '' })
-                    if (valueIndex) {
-                        this.selectedParameterCheckbox[parameter.id].push(temp[valueIndex])
-                    }
-=======
->>>>>>> e2a14f0 [KNOWAGE-6515] - Added customization of the CSS fields
                 }
-<<<<<<< Upstream, based on branch 'master' of https://github.com/KnowageLabs/Knowage-Server.git
-            } else if (parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true' && parameter.multivalue) {
-                parameter.parameterValue = [...parameter.driverDefaultValue]
-            } else if (parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true' && parameter.multivalue) {
-                parameter.parameterValue = parameter.driverDefaultValue.map((el: any) => {
-                    return { value: valueIndex ? el[valueIndex] : '', description: descriptionIndex ? el[descriptionIndex] : '' }
-                })
-            } else if ((parameter.selectionType === 'COMBOBOX' || parameter.selectionType === 'LOOKUP') && parameter.showOnPanel === 'true' && !parameter.multivalue) {
-                parameter.parameterValue[0] = { value: parameter.driverDefaultValue[0][valueIndex], description: parameter.driverDefaultValue[0][descriptionIndex] }
-            } else if (parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true' && !parameter.multivalue) {
-                parameter.parameterValue[0] = { value: parameter.driverDefaultValue[0][valueIndex], description: parameter.driverDefaultValue[0][descriptionIndex] }
-            } else {
-                if (!parameter.parameterValue[0]) {
-=======
             },
             resetParameterValue(parameter: any) {
                 if (!parameter.driverDefaultValue) {
->>>>>>> e2a14f0 [KNOWAGE-6515] - Added customization of the CSS fields
                     parameter.parameterValue[0] = { value: '', description: '' }
                     return
                 }
