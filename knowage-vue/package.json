@@ -20,6 +20,7 @@
         "codemirror": "5.59.4",
         "core-js": "^3.9.1",
         "crypto-js": "^4.0.0",
+        "fast-json-patch": "^3.1.0",
         "js-base64": "3.6.1",
         "mitt": "^2.1.0",
         "moment": "2.29.1",

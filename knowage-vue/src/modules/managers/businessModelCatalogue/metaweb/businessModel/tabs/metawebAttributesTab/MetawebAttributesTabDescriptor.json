@@ -1,0 +1,31 @@
+{
+    "columns": [
+        {
+            "field": "name",
+            "header": "common.name"
+        },
+        {
+            "field": "identifier",
+            "header": "metaweb.businessModel.primaryKey"
+        },
+        {
+            "field": "visible",
+            "header": "common.visibility"
+        },
+        {
+            "field": "type",
+            "header": "common.type"
+        },
+        {
+            "field": "description",
+            "header": "common.description"
+        }
+    ],
+    "iconColumnStyle": {
+        "width": "10%"
+    },
+    "reorderColumnStyle": {
+        "width": "3rem"
+    },
+    "typeOptions": ["attribute", "measure"]
+}
