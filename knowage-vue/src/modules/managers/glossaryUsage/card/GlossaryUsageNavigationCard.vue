@@ -64,7 +64,8 @@ export default defineComponent({
     components: { Card, Column, DataTable },
     props: {
         items: { type: Object },
-        type: { type: String }
+        type: { type: String },
+        glossaryChanged: { type: Boolean }
     },
     emits: ['infoClicked', 'linkClicked', 'selected'],
     data() {
@@ -73,6 +74,11 @@ export default defineComponent({
             filters: { global: [filterDefault] } as Object,
             selectedItems: [],
             user: {} as any
+        }
+    },
+    watch: {
+        glossaryChanged() {
+            this.selectedItems = []
         }
     },
     computed: {
