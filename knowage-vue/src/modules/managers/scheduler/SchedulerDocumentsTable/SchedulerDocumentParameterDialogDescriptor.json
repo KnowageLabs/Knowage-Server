@@ -1,10 +1,11 @@
 {
     "dialog": {
         "style": {
+            "padding": "0",
             "width": "60vw"
         }
     },
-      "styles": {
+    "styles": {
         "message": {
             "align-items": "center",
             "display": "flex",

@@ -67,15 +67,7 @@
             </TabPanel>
         </TabView>
 
-        <Dialog v-model:visible="showPreviewDialog" class="kn-dialog--toolbar--primary" :style="detailViewDescriptor.style.previewDialog" :maximizable="true" :draggable="false">
-            <template #header>
-                <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-                    <template #left><i class="fas fa-database" /> dataset: {{ selectedDataset.label }}</template>
-                </Toolbar>
-            </template>
-
-            <PreviewTable :selectedDataset="selectedDataset" @close="showPreviewDialog = false" />
-        </Dialog>
+        <WorkspaceDataPreviewDialog :visible="showPreviewDialog" :propDataset="selectedDataset" @close="showPreviewDialog = false" previewType="dataset"></WorkspaceDataPreviewDialog>
     </div>
 </template>
 
@@ -89,13 +81,12 @@ import TypeCard from './typeCard/DatasetManagementTypeCard.vue'
 import AdvancedCard from './advancedCard/DatasetManagementAdvancedCard.vue'
 import LinkCard from './linkCard/DatasetManagementLinkCard.vue'
 import MetadataCard from './metadataCard/DatasetManagementMetadataCard.vue'
-import PreviewTable from './previewTable/DatasetManagementPreviewTable.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
-import Dialog from 'primevue/dialog'
+import WorkspaceDataPreviewDialog from '@/modules/workspace/views/dataView/dialogs/WorkspaceDataPreviewDialog.vue'
 
 export default defineComponent({
-    components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard, TypeCard, MetadataCard, Dialog, PreviewTable },
+    components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard, TypeCard, MetadataCard, WorkspaceDataPreviewDialog },
     props: {
         id: { type: String, required: false },
         scopeTypes: { type: Array as any, required: true },
@@ -175,6 +166,7 @@ export default defineComponent({
                 await this.getSelectedDatasetVersions()
             } else {
                 this.selectedDataset = { ...detailViewDescriptor.newDataset }
+                this.selectedDatasetVersions = []
             }
         },
         //#endregion ===============================================================================================
@@ -227,25 +219,41 @@ export default defineComponent({
                     }
                 })
                 .then((response: AxiosResponse<any>) => {
-                    this.saveTags(dsToSave)
                     this.touched = false
                     this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
                     this.selectedDataset.id ? this.$emit('updated') : this.$emit('created', response)
+                    this.saveTags(dsToSave, response.data.id)
+                    this.saveSchedulation(dsToSave, response.data.id)
                 })
                 .catch()
         },
-        async saveTags(dsToSave) {
+        async saveTags(dsToSave, id) {
             let tags = {} as any
             tags.versNum = dsToSave.versNum + 1
             tags.tagsToAdd = dsToSave.tags
+
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${dsToSave.id}/dstags/`, tags, {
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${id}/dstags/`, tags, {
                     headers: {
                         Accept: 'application/json, text/plain, */*',
                         'Content-Type': 'application/json;charset=UTF-8'
                     }
                 })
                 .catch()
+        },
+        async saveSchedulation(dsToSave, id) {
+            if (dsToSave.isScheduled) {
+                await this.$http
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/persistence/dataset/id/${id}`, dsToSave, {
+                        headers: {
+                            Accept: 'application/json, text/plain, */*',
+                            'Content-Type': 'application/json;charset=UTF-8'
+                        }
+                    })
+                    .catch()
+            } else {
+                await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/persistence/dataset/label/${dsToSave.label}`).catch()
+            }
         },
         async manageDatasetFieldMetadata(fieldsColumns) {
             //Temporary workaround because fieldsColumns is now an object with a new structure after changing DataSetJSONSerializer
@@ -311,9 +319,9 @@ export default defineComponent({
                 var secondsForCron = 0
                 var minutesForCron = this.stringifySchedulingValues(this.scheduling.minutesSelected && this.scheduling.minutesSelected.length != 0, 'minutesSelected')
                 var hoursForCron = this.stringifySchedulingValues(repeatInterval != 'minute' && this.scheduling.hoursSelected && this.scheduling.hoursSelected.length != 0, 'hoursSelected')
-                var daysForCron = this.stringifySchedulingValues((repeatInterval === 'day' || repeatInterval === 'month') && this.scheduling.daysSelected.length != 0, 'daysSelected')
-                var monthsForCron = this.stringifySchedulingValues(repeatInterval === 'month' && this.scheduling.monthsSelected.length != 0, 'monthsSelected')
-                var weekdaysForCron = this.stringifySchedulingValues(repeatInterval === 'week' && this.scheduling.weekdaysSelected.length != 0, 'weekdaysSelected')
+                var daysForCron = this.stringifySchedulingValues((repeatInterval === 'day' || repeatInterval === 'month') && this.scheduling.daysSelected && this.scheduling.daysSelected.length != 0, 'daysSelected')
+                var monthsForCron = this.stringifySchedulingValues(repeatInterval === 'month' && this.scheduling.monthsSelected && this.scheduling.monthsSelected.length != 0, 'monthsSelected')
+                var weekdaysForCron = this.stringifySchedulingValues(repeatInterval === 'week' && this.scheduling.weekdaysSelected && this.scheduling.weekdaysSelected.length != 0, 'weekdaysSelected')
 
                 if (daysForCron == '*' && weekdaysForCron != '*') {
                     daysForCron = '?'

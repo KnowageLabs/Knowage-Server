@@ -18,17 +18,31 @@ const mockedBusinessModel = {
 
 jest.mock('axios')
 
-axios.get.mockImplementation((url) => {
-    switch (url) {
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/1`:
-            return Promise.resolve({ data: mockedBusinessModel })
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/1/versions/`:
-            return Promise.resolve({ data: { versions: [] } })
-        default:
-            return Promise.resolve({ data: [] })
-    }
-})
-axios.post.mockImplementation(() => Promise.resolve())
+const $http = {
+    get: axios.get.mockImplementation((url) => {
+        switch (url) {
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/1`:
+                return Promise.resolve({ data: mockedBusinessModel })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/1/versions/`:
+                return Promise.resolve({ data: { versions: [] } })
+            default:
+                return Promise.resolve({ data: [] })
+        }
+    }),
+    post: axios.post.mockImplementation(() => Promise.resolve())
+}
+
+// axios.get.mockImplementation((url) => {
+//     switch (url) {
+//         case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/1`:
+//             return Promise.resolve({ data: mockedBusinessModel })
+//         case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/1/versions/`:
+//             return Promise.resolve({ data: { versions: [] } })
+//         default:
+//             return Promise.resolve({ data: [] })
+//     }
+// })
+// axios.post.mockImplementation(() => Promise.resolve())
 
 const $store = {
     commit: jest.fn()
@@ -58,7 +72,8 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $store,
-                $router
+                $router,
+                $http
             }
         }
     })

@@ -73,8 +73,18 @@ const mockedRoles = [
 
 jest.mock('axios')
 
-axios.get.mockImplementation(() => Promise.resolve({ data: mockedParentFunctionality }))
-axios.put.mockImplementation(() => Promise.resolve({ data: mockedFunctionality }))
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: mockedParentFunctionality
+        })
+    ),
+    put: axios.put.mockImplementation(() =>
+        Promise.resolve({
+            data: mockedFunctionality
+        })
+    )
+}
 
 const $store = {
     commit: jest.fn()
@@ -91,7 +101,8 @@ const factory = () => {
             stubs: { Button, Card, Checkbox, Column, DataTable, InputText, KnValidationMessages, Toolbar },
             mocks: {
                 $t: (msg) => msg,
-                $store
+                $store,
+                $http
             }
         }
     })

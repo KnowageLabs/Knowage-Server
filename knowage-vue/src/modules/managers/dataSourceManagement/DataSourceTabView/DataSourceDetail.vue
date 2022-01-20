@@ -129,10 +129,10 @@
                             }"
                             @blur="v$.datasource.jndi.$touch()"
                             @input="onFieldChange"
-                            v-tooltip.top="$t('managers.dataSourceManagement.form.jndiInfo')"
                             :disabled="readOnly"
                         />
                         <label for="jndi" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.jndi') }} * </label>
+                        <small id="jndi-help">{{ $t('managers.dataSourceManagement.form.jndiInfo') }}</small>
                     </span>
                     <KnValidationMessages :vComp="v$.datasource.jndi" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.jndi') }" />
                 </div>

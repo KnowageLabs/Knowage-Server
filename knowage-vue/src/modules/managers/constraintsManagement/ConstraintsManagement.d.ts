@@ -5,7 +5,7 @@ export interface iConstraint {
     label?: string
     description?: string
     valueTypeCd?: string
-    firstValue?: string | null
-    secondValue?: string | null
+    firstValue?: any
+    secondValue?: any
     predifined?: boolean
 }

@@ -14,10 +14,11 @@
                                 'p-invalid': !validDates
                             }"
                             :showIcon="true"
-                            :manualInput="false"
+                            :manualInput="true"
+                            @change="setDate('startDate')"
                             @date-select="setDate('startDate')"
                         />
-                        <div v-if="!validDates" class="p-error p-grid">
+                        <div v-show="!validDates" class="p-error p-grid">
                             <small class="p-col-12">
                                 {{ $t('kpi.kpiScheduler.dateError') }}
                             </small>
@@ -28,7 +29,7 @@
                 <div class="p-col-4 p-d-flex p-ai-center">
                     <label for="startTime" class="kn-material-input-label p-m-2"> {{ $t('cron.startTime') + ':' }}</label>
                     <span>
-                        <Calendar id="startTime" :style="knCronDescriptor.style.timePicker" class="kn-material-input custom-timepicker" v-model="startTime" :manualInput="false" :timeOnly="true" hourFormat="24" :inline="true" @date-select="setDate('startDate')" />
+                        <Calendar id="startTime" :style="knCronDescriptor.style.timePicker" class="kn-material-input custom-timepicker" v-model="startTime" :manualInput="true" :timeOnly="true" hourFormat="24" @change="setDate('startDate')" @date-select="setDate('startDate')" />
                     </span>
                 </div>
             </div>
@@ -46,12 +47,13 @@
                                 'p-invalid': !validDates
                             }"
                             :showIcon="true"
-                            :manualInput="false"
+                            :manualInput="true"
                             :showButtonBar="true"
+                            @change="setDate('endDate')"
                             @date-select="setDate('endDate')"
                             @clear-click="clearEndDate"
                         />
-                        <div v-if="!validDates" class="p-error p-grid">
+                        <div v-show="!validDates" class="p-error p-grid">
                             <small class="p-col-12">
                                 {{ $t('kpi.kpiScheduler.dateError') }}
                             </small>
@@ -62,16 +64,31 @@
                 <div v-if="endDate" class="p-col-6 p-d-flex p-ai-center">
                     <label for="endTime" class="kn-material-input-label p-m-2"> {{ $t('cron.endTime') + ':' }}</label>
                     <span>
-                        <Calendar id="endTime" :style="knCronDescriptor.style.timePicker" class="kn-material-input p-ml-2 custom-timepicker" v-model="endTime" :manualInput="false" :timeOnly="true" hourFormat="24" :inline="true" @date-select="setDate('endDate')" />
+                        <Calendar id="endTime" :style="knCronDescriptor.style.timePicker" class="kn-material-input p-ml-2 custom-timepicker" v-model="endTime" :manualInput="true" :timeOnly="true" hourFormat="24" @change="setDate('endDate')" @date-select="setDate('endDate')" />
                     </span>
                 </div>
             </div>
             <div class="p-d-flex p-flex-row">
                 <div class="p-d-flex p-flex-row p-mt-5">
                     <div class="p-d-flex p-flex-row p-mr-4">
-                        <label for="endDate" class="kn-material-input-label p-m-2"> {{ $t('cron.repeatInterval') + ':' }}</label>
+                        <label class="kn-material-input-label p-m-2"> {{ $t('cron.repeatInterval') + ':' }} *</label>
                         <span>
-                            <Dropdown id="repeatInterval" class="kn-material-input" :style="knCronDescriptor.style.intervalInput" optionLabel="name" optionValue="value" v-model="repeatInterval" :options="knCronDescriptor.intervals" @change="updateCronInterval" />
+                            <Dropdown
+                                id="repeatInterval"
+                                class="kn-material-input"
+                                :class="{ 'p-error': !validInterval }"
+                                :style="knCronDescriptor.style.intervalInput"
+                                optionLabel="name"
+                                optionValue="value"
+                                v-model="repeatInterval"
+                                :options="knCronDescriptor.intervals"
+                                @change="updateCronInterval"
+                            />
+                            <div v-show="!validInterval" class="p-error">
+                                <small class="p-col-12">
+                                    {{ $t('cron.repeatInterval') + ' is required!' }}
+                                </small>
+                            </div>
                         </span>
                     </div>
 
@@ -195,11 +212,16 @@ export default defineComponent({
                 valid = false
             }
 
-            if (endDate && endDate.valueOf() < startDate.valueOf()) {
+            if (endDate && startDate && endDate.valueOf() < startDate.valueOf()) {
                 valid = false
             }
 
-            this.$emit('cronValid', valid)
+            this.$emit('cronValid', valid && this.validInterval)
+            return valid
+        },
+        validInterval(): boolean {
+            const valid = this.repeatInterval ? true : false
+            this.$emit('cronValid', valid && this.validDates)
             return valid
         }
     },
@@ -395,7 +417,7 @@ export default defineComponent({
             const tempTime = type === 'startDate' ? this.startTime : this.endTime
 
             let time = 0
-            if (tempTime) {
+            if (tempTime && tempTime instanceof Date) {
                 time = tempTime.getHours() * 60 * 60 * 1000 + tempTime.getMinutes() * 60 * 1000
             }
 

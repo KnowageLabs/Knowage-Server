@@ -255,7 +255,6 @@ export default defineComponent({
                 .finally(() => (this.touchedForTest = false))
 
             if (listOfEmptyDependencies.length > 0 && !this.dependenciesReady) {
-                console.log('LIST OF EMPTY FIRST IF: ', listOfEmptyDependencies)
                 this.dependenciesList = []
                 for (let i = 0; i < listOfEmptyDependencies.length; i++) {
                     this.dependenciesList.push({
@@ -265,11 +264,9 @@ export default defineComponent({
                 }
                 this.paramsDialogVisible = true
             } else {
-                console.log('LIST OF EMPTY SECOND IF: ', listOfEmptyDependencies)
                 await this.previewLov(this.pagination, false, showPreview)
                 this.buildTestTable()
             }
-            console.log('LIST OF DEPENDENCIES: ', this.dependenciesList)
         },
         async previewLov(value: any, hasDependencies: boolean, showPreview: boolean) {
             this.pagination = value
@@ -473,7 +470,8 @@ export default defineComponent({
             tempObj['DESCRIPTION-COLUMN'] = this.treeListTypeModel['DESCRIPTION-COLUMN']
             tempObj['VALUE-COLUMN'] = this.treeListTypeModel['VALUE-COLUMN']
             tempObj['VISIBLE-COLUMNS'] = this.treeListTypeModel['VISIBLE-COLUMNS']
-            for (var i = 0; i < this.testLovModel.length; i++) {
+
+            for (let i = 0; i < this.testLovModel.length; i++) {
                 if (this.treeListTypeModel['VISIBLE-COLUMNS'].indexOf(this.testLovModel[i].name) === -1) {
                     this.formatedInvisibleValues.push(this.testLovModel[i].name)
                 }
@@ -499,6 +497,8 @@ export default defineComponent({
                 }
             }
             tempObj['INVISIBLE-COLUMNS'] = this.formatedInvisibleValues.join()
+
+            tempObj['VISIBLE-COLUMNS'] = this.treeListTypeModel['VISIBLE-COLUMNS']
         },
         setLovInputTypeId(inputType: string) {
             switch (inputType) {
@@ -575,6 +575,13 @@ export default defineComponent({
             this.treeListTypeModel = payload.treeListTypeModel
             this.testLovModel = payload.model
             this.testLovTreeModel = payload.treeModel
+
+            this.treeListTypeModel['VISIBLE-COLUMNS'] = ''
+            for (let i = 0; i < this.testLovModel.length; i++) {
+                this.treeListTypeModel['VISIBLE-COLUMNS'] += this.testLovModel[i].name
+                this.treeListTypeModel['VISIBLE-COLUMNS'] += i === this.testLovModel.length - 1 ? '' : ','
+            }
+
             this.handleSubmit(this.sendSave)
             this.testDialogVisible = false
         },

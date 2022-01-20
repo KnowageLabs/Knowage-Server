@@ -6,7 +6,7 @@
     </Toolbar>
     <Card>
         <template #content>
-            <DataTable v-if="dataset.meta" class="p-datatable-sm kn-table" :scrollable="true" scrollHeight="750px" :value="fieldsMetadata" responsiveLayout="stack" breakpoint="960px">
+            <DataTable v-if="dataset.meta" class="p-datatable-sm kn-table kn-table-small-input" :scrollable="true" scrollHeight="750px" :value="fieldsMetadata" responsiveLayout="stack" breakpoint="960px">
                 <Column field="fieldAlias" :header="$t('managers.datasetManagement.fieldAlias')" :sortable="true">
                     <template #body="{data}"> {{ data.fieldAlias }} </template>
                 </Column>

@@ -261,8 +261,7 @@ export default defineComponent({
             required: true
         },
         formVisible: {
-            type: Boolean,
-            required: true
+            type: Boolean
         },
         driverOptions: {
             type: Array,

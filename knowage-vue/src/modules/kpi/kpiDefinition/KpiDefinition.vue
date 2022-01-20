@@ -27,7 +27,7 @@
             </div>
 
             <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <router-view :cloneKpiId="cloneKpiId" :cloneKpiVersion="cloneKpiVersion" :showGuide="showGuide" @touched="touched = true" @closed="onFormClose" @kpiUpdated="reloadAndReroute" @kpiCreated="reloadAndReroute" @showDialog="displayInfoDialog" @onGuideClose="showGuide = false" />
+                <router-view :cloneKpiId="cloneKpiId" :cloneKpiVersion="cloneKpiVersion" @touched="touched = true" @closed="onFormClose" @kpiUpdated="reloadAndReroute" @kpiCreated="reloadAndReroute" @showDialog="displayInfoDialog" @onGuideClose="showGuide = false" />
             </div>
         </div>
     </div>
@@ -38,6 +38,8 @@ import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
+import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
+
 export default defineComponent({
     name: 'tenant-management',
     components: {
@@ -51,7 +53,6 @@ export default defineComponent({
             displayModal: false,
             hintVisible: true,
             cloneKpi: false,
-            showGuide: true,
             kpiList: [] as any,
             kpiToClone: {} as any,
             cloneKpiId: Number,
@@ -116,8 +117,7 @@ export default defineComponent({
             this.hintVisible = true
         },
         formatDate(date) {
-            let fDate = new Date(date)
-            return fDate.toLocaleString()
+            return formatDateWithLocale(date, { dateStyle: 'short', timeStyle: 'short' })
         },
         async reloadAndReroute(event) {
             await this.getKpiList()

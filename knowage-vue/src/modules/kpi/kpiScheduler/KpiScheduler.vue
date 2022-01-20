@@ -136,7 +136,7 @@ export default defineComponent({
             }
             const query = '?jobGroup=KPI_SCHEDULER_GROUP&triggerGroup=KPI_SCHEDULER_GROUP&jobName=' + schedule.id + '&triggerName=' + schedule.id
             const action = schedule.jobStatus?.toUpperCase() === 'SUSPENDED' ? 'resumeTrigger' : 'pauseTrigger'
-            this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '/scheduler/' + action + query).then((response: AxiosResponse<any>) => {
+            this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'scheduler/' + action + query).then((response: AxiosResponse<any>) => {
                 if (response.data.resp === 'ok') {
                     schedule.jobStatus = schedule.jobStatus === 'SUSPENDED' ? 'ACTIVE' : 'SUSPENDED'
                 }
