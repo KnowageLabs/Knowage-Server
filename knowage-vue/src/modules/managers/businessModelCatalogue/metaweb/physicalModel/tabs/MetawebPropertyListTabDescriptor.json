@@ -1,0 +1,56 @@
+{
+    "physicalModelInfo": [
+        {
+            "label": "common.name",
+            "name": "name"
+        },
+        {
+            "label": "common.description",
+            "name": "description"
+        },
+        {
+            "label": "common.comment",
+            "name": "comment"
+        },
+        {
+            "label": "metaweb.physicalModel.dataType",
+            "name": "dataType"
+        },
+        {
+            "label": "metaweb.physicalModel.decimalDigits",
+            "name": "decimalDigits"
+        },
+        {
+            "label": "metaweb.physicalModel.typeName",
+            "name": "typeName"
+        },
+        {
+            "label": "common.size",
+            "name": "size"
+        },
+        {
+            "label": "metaweb.physicalModel.octectLength",
+            "name": "octectLength"
+        },
+        {
+            "label": "metaweb.physicalModel.radix",
+            "name": "radix"
+        },
+        {
+            "label": "metaweb.physicalModel.defaultValue",
+            "name": "defaultValue"
+        },
+        {
+            "label": "metaweb.physicalModel.nullable",
+            "name": "nullable"
+        },
+        {
+            "label": "metaweb.physicalModel.position",
+            "name": "position"
+        },
+        {
+            "label": "common.table.table",
+            "name": "table"
+        }
+    ]
+}
