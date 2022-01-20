@@ -38,6 +38,8 @@ import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
+import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
+
 export default defineComponent({
     name: 'tenant-management',
     components: {
@@ -115,8 +117,7 @@ export default defineComponent({
             this.hintVisible = true
         },
         formatDate(date) {
-            let fDate = new Date(date)
-            return fDate.toLocaleString()
+            return formatDateWithLocale(date, { dateStyle: 'short', timeStyle: 'short' })
         },
         async reloadAndReroute(event) {
             await this.getKpiList()

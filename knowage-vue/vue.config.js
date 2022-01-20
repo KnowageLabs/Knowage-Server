@@ -45,6 +45,10 @@ module.exports = {
             '^/knowagecockpitengine/': {
                 target: process.env.VUE_APP_HOST_URL,
                 changeOrigin: true
+            },
+            '^/knowagewhatifengine/': {
+                target: process.env.VUE_APP_HOST_URL,
+                changeOrigin: true
             }
         }
     },

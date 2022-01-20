@@ -28,6 +28,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
 import DocumentBrowserHome from './documentBrowserHome/DocumentBrowserHome.vue'
 import DocumentBrowserTab from './DocumentBrowserTab.vue'
 import Menu from 'primevue/menu'
@@ -46,9 +47,11 @@ export default defineComponent({
             id: 0
         }
     },
-    created() {
+    async created() {
         if (this.$route.params.id && this.$route.name === 'document-browser-document-execution') {
-            const tempItem = { item: { name: this.$route.params.id, label: this.$route.params.id, mode: this.$route.params.mode, routerId: this.id++ }, mode: 'execute' }
+            let tempDocument = {} as any
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.$route.params.id}`).then((response: AxiosResponse<any>) => (tempDocument = response.data))
+            const tempItem = { item: { name: tempDocument.name, label: this.$route.params.id, mode: this.$route.params.mode, routerId: this.id++ }, mode: 'execute' }
             this.tabs.push(tempItem)
 
             this.activeIndex = 1
@@ -67,10 +70,12 @@ export default defineComponent({
             this.selectedItem = this.tabs[this.activeIndex - 1]
 
             let routeDocumentType = this.tabs[this.activeIndex - 1].item.mode ? this.tabs[this.activeIndex - 1].item.mode : this.getRouteDocumentType(this.tabs[this.activeIndex - 1].item)
-            this.$router.push(`/document-browser/${routeDocumentType}/` + id)
+            routeDocumentType ? this.$router.push(`/document-browser/${routeDocumentType}/` + id) : this.$router.push('/document-browser/new-dashboard')
         },
         onItemSelect(payload: any) {
-            payload.item.routerId = this.id++
+            if (payload.item) {
+                payload.item.routerId = this.id++
+            }
 
             const tempItem = { ...payload, item: { ...payload.item } }
 
@@ -79,9 +84,13 @@ export default defineComponent({
             this.selectedItem = tempItem
 
             const id = payload.item ? payload.item.label : 'new-dashboard'
-            let routeDocumentType = this.getRouteDocumentType(payload.item)
+            if (payload.item) {
+                let routeDocumentType = this.getRouteDocumentType(payload.item)
+                this.$router.push(`/document-browser/${routeDocumentType}/` + id)
+            } else {
+                this.$router.push(`/document-browser/new-dashboard`)
+            }
 
-            this.$router.push(`/document-browser/${routeDocumentType}/` + id)
             this.activeIndex = this.tabs.length
         },
         getRouteDocumentType(item: any) {

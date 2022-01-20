@@ -15,23 +15,25 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package it.eng.spagobi.services.validation;
 
-package it.eng.knowage.functionscatalog.utils;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.apache.log4j.Logger;
+import javax.validation.Constraint;
+import javax.validation.Payload;
 
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.bo.UserProfile;
+@Documented
+@Constraint(validatedBy = FilesValidator.class)
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
+@Retention(value = RetentionPolicy.RUNTIME)
+public @interface FilesCheck {
+	String message() default "Value not valid";
 
-public class UserProfileResource extends AbstractSpagoBIResource {
+	Class<?>[] groups() default {};
 
-	static protected Logger logger = Logger.getLogger(UserProfileResource.class);
-
-	protected UserProfileResource() {
-		super();
-	}
-
-	protected UserProfile getUserProfileForFunctionsCatalog() {
-		return getUserProfile();
-	}
+	Class<? extends Payload>[] payload() default {};
 }

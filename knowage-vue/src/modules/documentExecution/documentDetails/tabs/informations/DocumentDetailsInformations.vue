@@ -5,6 +5,9 @@
                 <template #left>
                     {{ $t('documentExecution.documentDetails.info.infoTitle') }}
                 </template>
+                <template #right>
+                    <Button :label="$t('documentExecution.olap.openDesigner')" class="p-button-text p-button-plain" @click="openDesignerConfirm" />
+                </template>
             </Toolbar>
             <div id="informations-content" class="kn-flex kn-relative">
                 <div :style="mainDescriptor.style.absoluteScroll">
@@ -108,7 +111,7 @@
                                                 'p-invalid': v$.document.typeCode.$invalid && v$.document.typeCode.$dirty
                                             }"
                                             @blur="v$.document.typeCode.$touch()"
-                                            @change="$emit('touched')"
+                                            @change="onTypeChange"
                                         />
                                         <label for="type" class="kn-material-input-label"> {{ $t('importExport.catalogFunction.column.type') }} *</label>
                                     </span>
@@ -281,7 +284,7 @@ export default defineComponent({
         availableTemplates: { type: Array as PropType<iTemplate[]> },
         availableAttributes: { type: Array as PropType<iAttribute[]> }
     },
-    emits: ['setTemplateForUpload', 'setImageForUpload', 'deleteImage'],
+    emits: ['setTemplateForUpload', 'setImageForUpload', 'deleteImage', 'touched'],
     computed: {
         filteredEngines(): any {
             if (this.document.typeCode) {
@@ -405,6 +408,21 @@ export default defineComponent({
         },
         setFunctionality(event) {
             this.document.functionalities = event
+        },
+        onTypeChange() {
+            this.$emit('touched')
+            this.document.engine = ''
+        },
+        openDesignerConfirm() {
+            this.$confirm.require({
+                header: this.$t('common.toast.warning'),
+                message: this.$t('documentExecution.olap.openDesignerMsg'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.openDesigner()
+            })
+        },
+        openDesigner() {
+            this.$router.push(`/olap-designer/${this.document.id}`)
         }
     }
 })
