@@ -64,6 +64,8 @@
                         @change="onEntityTypeChanged"
                     ></CascadeSelect>
 
+                    <Dropdown class="kn-material-input kn-flex" v-if="filter.rightType === 'subquery'" v-model="filter.rightOperandDescription" :options="subqueries" optionValue="name" optionLabel="name" @change="onSubqeryTargetChange" />
+
                     <i v-if="filter.rightType === 'valueOfField'" class="fa fa-check kn-cursor-pointer p-ml-2" @click="loadFilterValues"></i>
                     <i class="fa fa-eraser kn-cursor-pointer p-ml-2" @click="$emit('removeFilter', filter)"></i>
                 </div>
@@ -87,7 +89,7 @@ import QbeFilterValuesTable from './QbeFilterValuesTable.vue'
 export default defineComponent({
     name: 'qbe-filter-card',
     components: { CascadeSelect, Chip, Chips, Dropdown, QbeFilterValuesTable },
-    props: { propFilter: { type: Object as PropType<iFilter> }, id: { type: String }, propEntities: { type: Array } },
+    props: { propFilter: { type: Object as PropType<iFilter> }, id: { type: String }, propEntities: { type: Array }, subqueries: { type: Array } },
     emits: ['removeFilter'],
     data() {
         return {
@@ -132,10 +134,10 @@ export default defineComponent({
     methods: {
         loadFilter() {
             this.filter = this.propFilter as iFilter
-            if (this.filter.rightType === 'subquery') {
+            if (this.subqueries?.length > 0) {
                 this.targetValues.push({
-                    label: this.$t('qbe.filters.targets.manual'),
-                    value: 'manual'
+                    label: this.$t('qbe.filters.targets.subquery'),
+                    value: 'subquery'
                 })
             }
             this.formatFilter()
@@ -164,6 +166,9 @@ export default defineComponent({
                     break
                 case 'anotherEntity':
                     this.filter.rightOperandType = 'Field Content'
+                    break
+                case 'subquery':
+                    this.filter.rightOperandType = 'Subquery'
                     break
             }
         },
@@ -269,6 +274,18 @@ export default defineComponent({
             }
 
             return tempField
+        },
+        onSubqeryTargetChange() {
+            console.log(' >>> FILTER SUB ID: ', this.filter?.rightOperandDescription)
+            if (!this.filter || !this.subqueries) return
+
+            const index = this.subqueries.findIndex((subquery: any) => subquery.name === this.filter?.rightOperandDescription)
+            console.log('INDEX: ', index)
+            if (index !== -1) {
+                const subquery = this.subqueries[index] as any
+                this.filter.rightOperandValue = [subquery.id]
+                this.filter.rightOperandLongDescription = 'Subquery ' + subquery.name
+            }
         }
     }
 })
