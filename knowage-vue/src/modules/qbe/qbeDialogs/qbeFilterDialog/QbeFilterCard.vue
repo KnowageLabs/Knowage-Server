@@ -31,7 +31,7 @@
             <div class="p-col-4">
                 <label class="kn-material-input-label" v-show="!(filter.rightType === 'manual' && ['BETWEEN', 'NOT BETWEEN', 'IN', 'NOT IN'].includes(filter.operator))"> {{ $t('qbe.filters.target') }} </label>
                 <div class="p-d-flex p-flex-row p-ai-center">
-                    <div v-if="filter.rightType === 'manual' && ['BETWEEN', 'NOT BETWEEN'].includes(filter.operator)" class="p-d-flex p-flex-row p-ai-center p-mt-3">
+                    <div v-if="filter.rightType === 'manual' && ['BETWEEN', 'NOT BETWEEN'].includes(filter.operator) && field.dataType !== 'java.sql.Timestamp'" class="p-d-flex p-flex-row p-ai-center p-mt-3">
                         <div class="p-float-label">
                             <InputText class="kn-material-input" v-model="firstOperand" @input="onManualBetweenChange" />
                             <label class="kn-material-input-label"> {{ $t('qbe.filters.lowLimit') }} </label>
@@ -42,11 +42,13 @@
                             <label class="kn-material-input-label"> {{ $t('qbe.filters.highLimit') }} </label>
                         </div>
                     </div>
-                    <div v-else-if="filter.rightType === 'manual' && ['IN', 'NOT IN'].includes(filter.operator)" class="kn-width-full">
+                    <div v-else-if="filter.rightType === 'manual' && ['IN', 'NOT IN'].includes(filter.operator) && field.dataType !== 'java.sql.Timestamp'" class="kn-width-full">
                         <label class="kn-material-input-label"> {{ $t('qbe.filters.enterValue') }} </label>
                         <Chips v-model="multiManualValues" @add="onManualMultivalueChanged" @remove="onManualMultivalueChanged" />
                     </div>
-                    <InputText v-else-if="filter.rightType === 'manual'" class="kn-material-input" v-model="filter.rightOperandDescription" @input="onManualValueChange" />
+                    <InputText v-else-if="filter.rightType === 'manual' && field.dataType !== 'java.sql.Timestamp'" class="kn-material-input" v-model="filter.rightOperandDescription" @input="onManualValueChange" />
+
+                    <Calendar v-else-if="filter.rightType === 'manual' && field.dataType === 'java.sql.Timestamp'" class="kn-flex" v-model="targetDate" @input="onManualTimestampChange" @dateSelect="onManualTimestampChange"></Calendar>
 
                     <div class="qbe-filter-chip-container p-d-flex p-flex-row p-ai-center p-flex-wrap kn-flex" v-else-if="filter.rightType === 'valueOfField'">
                         <Chip v-for="(selectedValue, index) in selectedValues" :key="index" class="p-mr-1">{{ selectedValue }}</Chip>
@@ -79,17 +81,19 @@
 import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { iFilter } from '../../QBE'
+import Calendar from 'primevue/calendar'
 import CascadeSelect from 'primevue/cascadeselect'
 import Chip from 'primevue/chip'
 import Chips from 'primevue/chips'
 import Dropdown from 'primevue/dropdown'
 import QBEFilterDialogDescriptor from './QBEFilterDialogDescriptor.json'
 import QbeFilterValuesTable from './QbeFilterValuesTable.vue'
+import moment from 'moment'
 
 export default defineComponent({
     name: 'qbe-filter-card',
-    components: { CascadeSelect, Chip, Chips, Dropdown, QbeFilterValuesTable },
-    props: { propFilter: { type: Object as PropType<iFilter> }, id: { type: String }, propEntities: { type: Array }, subqueries: { type: Array } },
+    components: { Calendar, CascadeSelect, Chip, Chips, Dropdown, QbeFilterValuesTable },
+    props: { propFilter: { type: Object as PropType<iFilter> }, id: { type: String }, propEntities: { type: Array }, subqueries: { type: Array, required: true }, field: { type: Object, required: true } },
     emits: ['removeFilter'],
     data() {
         return {
@@ -116,6 +120,7 @@ export default defineComponent({
             firstOperand: '',
             secondOperand: '',
             multiManualValues: [] as string[],
+            targetDate: null as Date | null,
             loading: false
         }
     },
@@ -144,18 +149,23 @@ export default defineComponent({
         },
         loadEntities() {
             this.entities = this.propEntities ? [...this.propEntities] : []
-            console.log(' >>> LOADED ENTITIES: ', this.entities)
+            // console.log(' >>> LOADED ENTITIES: ', this.entities)
         },
         async formatFilter() {
             switch (this.filter?.rightType) {
                 case 'manual':
                     this.filter.rightOperandType = 'Static Content'
 
-                    if (['BETWEEN', 'NOT BETWEEN'].includes(this.filter.operator)) {
-                        this.firstOperand = this.filter.rightOperandValue[0]
-                        this.secondOperand = this.filter.rightOperandValue[1]
-                    } else if (['IN', 'NOT IN'].includes(this.filter.operator)) {
-                        this.multiManualValues = [...this.filter.rightOperandValue]
+                    if (['java.sql.Timestamp'].includes(this.field.dataType)) {
+                        this.targetDate = this.filter.rightOperandValue[0] ? moment(this.filter.rightOperandValue[0], 'DD/MM/YYYY hh:mm').toDate() : new Date()
+                        this.onManualTimestampChange()
+                    } else {
+                        if (['BETWEEN', 'NOT BETWEEN'].includes(this.filter.operator)) {
+                            this.firstOperand = this.filter.rightOperandValue[0]
+                            this.secondOperand = this.filter.rightOperandValue[1]
+                        } else if (['IN', 'NOT IN'].includes(this.filter.operator)) {
+                            this.multiManualValues = [...this.filter.rightOperandValue]
+                        }
                     }
 
                     break
@@ -179,6 +189,7 @@ export default defineComponent({
                     case 'NOT BETWEEN':
                         this.filter.rightOperandDescription = ''
                         this.multiManualValues = []
+                        this.targetDate = null
                         this.resetFilterRightOperandValues()
                         break
                     case 'IN':
@@ -186,6 +197,7 @@ export default defineComponent({
                         this.filter.rightOperandDescription = ''
                         this.firstOperand = ''
                         this.secondOperand = ''
+                        this.targetDate = null
                         this.resetFilterRightOperandValues()
                         break
                     default:
@@ -276,15 +288,22 @@ export default defineComponent({
             return tempField
         },
         onSubqeryTargetChange() {
-            console.log(' >>> FILTER SUB ID: ', this.filter?.rightOperandDescription)
+            // console.log(' >>> FILTER SUB ID: ', this.filter?.rightOperandDescription)
             if (!this.filter || !this.subqueries) return
 
             const index = this.subqueries.findIndex((subquery: any) => subquery.name === this.filter?.rightOperandDescription)
-            console.log('INDEX: ', index)
+            // console.log('INDEX: ', index)
             if (index !== -1) {
                 const subquery = this.subqueries[index] as any
                 this.filter.rightOperandValue = [subquery.id]
                 this.filter.rightOperandLongDescription = 'Subquery ' + subquery.name
+            }
+        },
+        onManualTimestampChange() {
+            console.log('TIME CHANGED!: ', this.targetDate)
+            if (this.filter) {
+                this.filter.rightOperandDescription = this.targetDate instanceof Date ? moment(this.targetDate).format('DD/MM/YYYY hh:mm') : ''
+                this.filter.rightOperandValue[0] = this.targetDate instanceof Date ? moment(this.targetDate).format('DD/MM/YYYY hh:mm') : ''
             }
         }
     }

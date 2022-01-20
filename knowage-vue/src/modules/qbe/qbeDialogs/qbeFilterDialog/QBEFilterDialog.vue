@@ -16,7 +16,7 @@
             {{ $t('common.info.noDataFound') }}
         </Message>
         <div v-else>
-            <QbeFilterCard v-for="filter in filters" :key="filter.filterId" :propFilter="filter" :id="id" :propEntities="entities" :subqueries="filterDialogData?.query.subqueries" @removeFilter="removeFilter"></QbeFilterCard>
+            <QbeFilterCard v-for="filter in filters" :key="filter.filterId" :propFilter="filter" :id="id" :propEntities="entities" :subqueries="filterDialogData?.query.subqueries" :field="filterDialogData?.field" @removeFilter="removeFilter"></QbeFilterCard>
         </div>
 
         <template #footer>
