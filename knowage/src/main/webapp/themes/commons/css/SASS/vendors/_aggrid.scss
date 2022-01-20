@@ -85,6 +85,7 @@ $aggrid-border-color: #d9dcde;
 		}
 	}
 	.ag-center-cols-viewport {
+		overflow-x: hidden;
 		.md-button {
 			height: 24px;
 			width: 24px;
@@ -339,7 +340,7 @@ $aggrid-border-color: #d9dcde;
 	    		}
 			}
 			&.cell-span {
-				background-color: $lightTextColor !important;
+				background-color: $lightTextColor;
 				border-bottom: 1px solid $aggrid-border-color !important;
 			}
 		}
@@ -409,6 +410,12 @@ $aggrid-border-color: #d9dcde;
 	}
 	.ag-header-cell::after, .ag-header-group-cell::after, .ag-header-cell-resize::after {
 		height: 60% !important;
+	}
+	.ag-row {
+		&.disabled {
+			background-color: lighten($ternaryColor,10%) !important;
+			color: darken($ternaryColor,20%);
+		}
 	}
 }
 
