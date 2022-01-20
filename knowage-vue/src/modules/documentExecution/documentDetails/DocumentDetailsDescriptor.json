@@ -112,6 +112,9 @@
         }
     ],
     "style": {
+        "spinnerStyle": {
+            "z-index": "9999"
+        },
         "absoluteScroll": {
             "height": "100%",
             "left": 0,
