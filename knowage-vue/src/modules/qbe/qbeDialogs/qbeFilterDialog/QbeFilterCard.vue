@@ -31,6 +31,7 @@
             <div class="p-col-4">
                 <label class="kn-material-input-label" v-show="!(filter.rightType === 'manual' && ['BETWEEN', 'NOT BETWEEN', 'IN', 'NOT IN'].includes(filter.operator))"> {{ $t('qbe.filters.target') }} </label>
                 <div class="p-d-flex p-flex-row p-ai-center">
+                    <!-- MANUAL BETWEEN-->
                     <div v-if="filter.rightType === 'manual' && ['BETWEEN', 'NOT BETWEEN'].includes(filter.operator) && field.dataType !== 'java.sql.Timestamp'" class="p-d-flex p-flex-row p-ai-center p-mt-3">
                         <div class="p-float-label">
                             <InputText class="kn-material-input" v-model="firstOperand" @input="onManualBetweenChange" />
@@ -42,15 +43,26 @@
                             <label class="kn-material-input-label"> {{ $t('qbe.filters.highLimit') }} </label>
                         </div>
                     </div>
+                    <!-- MANUAL IN-->
                     <div v-else-if="filter.rightType === 'manual' && ['IN', 'NOT IN'].includes(filter.operator) && field.dataType !== 'java.sql.Timestamp'" class="kn-width-full">
                         <label class="kn-material-input-label"> {{ $t('qbe.filters.enterValue') }} </label>
                         <Chips v-model="multiManualValues" @add="onManualMultivalueChanged" @remove="onManualMultivalueChanged" />
                     </div>
+                    <!-- MANUAL REGULAR-->
                     <InputText v-else-if="filter.rightType === 'manual' && field.dataType !== 'java.sql.Timestamp'" class="kn-material-input" v-model="filter.rightOperandDescription" @input="onManualValueChange" />
 
-                    <div v-else-if="filter.rightType === 'manual' && field.dataType === 'java.sql.Timestamp'" class="kn-flex p-d-flex p-flex-row">
-                        <Calendar class="kn-flex p-mr-2" v-model="targetDate" @input="onManualTimestampChange" @dateSelect="onManualTimestampChange"></Calendar>
-                        <Calendar class="qbe-filter-time-input" v-model="targetDate" :manualInput="true" :timeOnly="true" hourFormat="24" @input="onManualTimestampChange" @dateSelect="onManualTimestampChange" />
+                    <!-- TIMESTAMP -->
+                    <div v-else-if="filter.rightType === 'manual' && field.dataType === 'java.sql.Timestamp'">
+                        <!-- TIMESTAMP REGULAR-->
+                        <div class="kn-flex p-d-flex p-flex-row p-m-1">
+                            <Calendar class="kn-flex p-mr-2" v-model="targetDate" @input="onManualTimestampChange" @dateSelect="onManualTimestampChange"></Calendar>
+                            <Calendar class="qbe-filter-time-input" v-model="targetDate" :manualInput="true" :timeOnly="true" hourFormat="24" @input="onManualTimestampChange" @dateSelect="onManualTimestampChange" />
+                        </div>
+                        <!-- TIMESTAMP BETWEEN-->
+                        <div v-if="['BETWEEN', 'NOT BETWEEN'].includes(filter.operator)" class="kn-flex p-d-flex p-flex-row p-m-1">
+                            <Calendar class="kn-flex p-mr-2" v-model="targetEndDate" @input="onManualTimestampChange" @dateSelect="onManualTimestampEndDateChange"></Calendar>
+                            <Calendar class="qbe-filter-time-input" v-model="targetEndDate" :manualInput="true" :timeOnly="true" hourFormat="24" @input="onManualTimestampEndDateChange" @dateSelect="onManualTimestampChange" />
+                        </div>
                     </div>
 
                     <div class="qbe-filter-chip-container p-d-flex p-flex-row p-ai-center p-flex-wrap kn-flex" v-else-if="filter.rightType === 'valueOfField'">
@@ -124,6 +136,7 @@ export default defineComponent({
             secondOperand: '',
             multiManualValues: [] as string[],
             targetDate: null as Date | null,
+            targetEndDate: null as Date | null,
             loading: false
         }
     },
@@ -162,6 +175,9 @@ export default defineComponent({
                     if (['java.sql.Timestamp'].includes(this.field.dataType)) {
                         this.targetDate = this.filter.rightOperandValue[0] ? moment(this.filter.rightOperandValue[0], 'DD/MM/YYYY hh:mm').toDate() : new Date()
                         this.onManualTimestampChange()
+                        if (['BETWEEN', 'NOT BETWEEN'].includes(this.filter.operator)) {
+                            this.targetEndDate = this.filter.rightOperandValue[1] ? moment(this.filter.rightOperandValue[1], 'DD/MM/YYYY hh:mm').toDate() : new Date()
+                        }
                     } else {
                         if (['BETWEEN', 'NOT BETWEEN'].includes(this.filter.operator)) {
                             this.firstOperand = this.filter.rightOperandValue[0]
@@ -201,12 +217,14 @@ export default defineComponent({
                         this.firstOperand = ''
                         this.secondOperand = ''
                         this.targetDate = null
+                        this.targetEndDate = null
                         this.resetFilterRightOperandValues()
                         break
                     default:
                         this.multiManualValues = []
                         this.firstOperand = ''
                         this.secondOperand = ''
+                        this.targetEndDate = null
                 }
             }
         },
@@ -307,6 +325,12 @@ export default defineComponent({
             if (this.filter) {
                 this.filter.rightOperandDescription = this.targetDate instanceof Date ? moment(this.targetDate).format('DD/MM/YYYY hh:mm') : ''
                 this.filter.rightOperandValue[0] = this.targetDate instanceof Date ? moment(this.targetDate).format('DD/MM/YYYY hh:mm') : ''
+            }
+        },
+        onManualTimestampEndDateChange() {
+            console.log('TIME CHANGED!: ', this.targetEndDate)
+            if (this.filter) {
+                this.filter.rightOperandValue[1] = this.targetDate instanceof Date ? moment(this.targetEndDate).format('DD/MM/YYYY hh:mm') : ''
             }
         }
     }
