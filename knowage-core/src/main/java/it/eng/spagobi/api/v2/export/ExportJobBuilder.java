@@ -47,7 +47,7 @@ public class ExportJobBuilder {
 	private static final Logger logger = Logger.getLogger(ExportJobBuilder.class);
 
 	private static final String EXPORT_TYPE_XLSX = "xlsx";
-
+	private static final String EXPORT_TYPE_AVRO = "avro";
 	private static final String EXPORT_TYPE_CSV = "csv";
 
 	/**
@@ -157,6 +157,9 @@ public class ExportJobBuilder {
 		case EXPORT_TYPE_XLSX:
 			job = new JobDetail(jobName, EXPORT_GROUP, ExcelExportJob.class);
 			break;
+		case EXPORT_TYPE_AVRO:
+			job = new JobDetail(jobName, EXPORT_GROUP, AvroExportJob.class);
+			break;
 
 		default:
 			String msg = String.format("Export job type %s not supported", type);
@@ -205,6 +208,16 @@ public class ExportJobBuilder {
 	 */
 	public ExportJobBuilder withTypeOfCsv() {
 		type = EXPORT_TYPE_CSV;
+		return this;
+	}
+
+	/**
+	 * Specify Avro output.
+	 *
+	 * @return Current builder
+	 */
+	public ExportJobBuilder withTypeOfAvro() {
+		type = EXPORT_TYPE_AVRO;
 		return this;
 	}
 
