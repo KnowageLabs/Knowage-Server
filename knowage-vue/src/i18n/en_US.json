@@ -1803,6 +1803,7 @@
             "targets": {
                 "entity": "Another entity",
                 "manual": "Manual set value",
+                "subquery": "Subquery",
                 "value": "Value of the field"
             }
         },
