@@ -24,9 +24,9 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.plugins.providers.html.View;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -55,22 +55,23 @@ public class WhatIfEditStartAction extends WhatIfEngineAbstractStartAction {
 
 	@GET
 	@Path("/edit")
-	@Produces(MediaType.APPLICATION_JSON)
-	public void startActionGet() {
-		startAction();
+	@Produces("text/html")
+	public View startActionGet() {
+		return startAction();
 	}
 
 	@POST
 	@Path("/edit")
-	@Produces(MediaType.APPLICATION_JSON)
-	public void startActionPost() {
-		startAction();
+	@Produces("text/html")
+	public View startActionPost() {
+		return startAction();
 	}
 
 	/**
+	 * @return
 	 *
 	 */
-	private void startAction() {
+	private View startAction() {
 		logger.debug("IN");
 
 		try {
@@ -116,17 +117,16 @@ public class WhatIfEditStartAction extends WhatIfEngineAbstractStartAction {
 					url = SUCCESS_REQUEST_DISPATCHER_URL_NEW;
 				}
 				getExecutionSession().setAttributeInSession(ENGINE_INSTANCE, whatIfEngineInstance);
-				request.getRequestDispatcher(url).forward(request, response);
+				return new View(url);
 
 			} catch (Exception e) {
 				logger.error("Error starting the What-If engine: error while forwarding the execution to the jsp " + url, e);
 				throw new SpagoBIEngineRuntimeException("Error starting the What-If engine: error while forwarding the execution to the jsp " + url, e);
+			} finally {
+				if (getAuditServiceProxy() != null) {
+					getAuditServiceProxy().notifyServiceEndEvent();
+				}
 			}
-
-			if (getAuditServiceProxy() != null) {
-				getAuditServiceProxy().notifyServiceEndEvent();
-			}
-
 		} catch (Exception e) {
 			logger.error("Error starting the What-If engine", e);
 			if (getAuditServiceProxy() != null) {
@@ -137,7 +137,7 @@ public class WhatIfEditStartAction extends WhatIfEngineAbstractStartAction {
 
 			getExecutionSession().setAttributeInSession(STARTUP_ERROR, serviceException);
 			try {
-				request.getRequestDispatcher(FAILURE_REQUEST_DISPATCHER_URL).forward(request, response);
+				return new View(FAILURE_REQUEST_DISPATCHER_URL);
 			} catch (Exception ex) {
 				logger.error("Error starting the What-If engine: error while forwarding the execution to the jsp " + FAILURE_REQUEST_DISPATCHER_URL, ex);
 				throw new SpagoBIEngineRuntimeException(

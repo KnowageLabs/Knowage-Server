@@ -5,6 +5,9 @@
                 <template #left>
                     {{ $t('managers.cacheManagement.runtimeInformationTitle') }}
                 </template>
+                <template #right>
+                    <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain" @click="refresh" />
+                </template>
             </Toolbar>
         </template>
         <template #content>
@@ -46,6 +49,7 @@ export default defineComponent({
             required: true
         }
     },
+    emits: ['refresh'],
     data() {
         return {
             cache: {} as iCache,
@@ -85,6 +89,9 @@ export default defineComponent({
                     }
                 ]
             }
+        },
+        refresh() {
+            this.$emit('refresh')
         }
     }
 })

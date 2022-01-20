@@ -11,7 +11,7 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <KnListBox :options="navigations" :settings="crossNavigationDescriptor.knListSettings" @click="selected($event, item)" @delete.prevent="deleteTemplate($event, item)"></KnListBox>
+                <KnListBox :options="navigations" :settings="crossNavigationDescriptor.knListSettings" @click="selected($event, item)" @delete.stop="deleteTempateConfirm($event, item)"></KnListBox>
             </div>
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
                 <router-view @close="closeForm" @touched="touched = true" @saved="reload" />
@@ -22,7 +22,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iNavigation } from './CrossNavigationManagement'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import crossNavigationDescriptor from './CrossNavigationManagementDescriptor.json'
@@ -44,37 +44,39 @@ export default defineComponent({
     methods: {
         async loadAll() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/listNavigation/')
-                .then((response) => (this.navigations = response.data))
+                .then((response: AxiosResponse<any>) => (this.navigations = response.data))
                 .finally(() => (this.loading = false))
         },
         selected(e, itemId) {
             if (e.item && e.item.id) itemId = e.item.id
             this.showForm(itemId)
         },
-        deleteTemplate(e, itemId): void {
-            if (e.item && e.item.id) itemId = e.item.id
+        deleteTempateConfirm(event: any): void {
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
                 header: this.$t('common.toast.deleteTitle'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => {
-                    this.axios
-                        .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/remove', "{'id':" + itemId + '}')
-                        .then(() => {
-                            this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
-                            this.loadAll()
-                            if (itemId == this.$route.params.id) this.$router.push('/cross-navigation-management')
-                        })
-                        .catch((error) =>
-                            this.$store.commit('setError', {
-                                title: this.$t('common.error.generic'),
-                                msg: error.message
-                            })
-                        )
-                }
+                accept: async () => await this.deleteTemplate(event.item.id)
             })
+        },
+        async deleteTemplate(itemId: string) {
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/remove', "{'id':" + itemId + '}')
+                .then(async () => {
+                    this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                    await this.loadAll()
+                    if (itemId == this.$route.params.id) this.$router.push('/cross-navigation-management')
+                })
+                .catch((error) =>
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: error.message
+                    })
+                )
+            this.loading = false
         },
         showForm(id: number) {
             const path = id !== -1 ? '/cross-navigation-management/' + id : '/cross-navigation-management/new-navigation'

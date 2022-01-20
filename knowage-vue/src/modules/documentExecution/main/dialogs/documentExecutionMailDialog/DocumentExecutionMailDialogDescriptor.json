@@ -1,0 +1,14 @@
+{
+    "ccMaxLength": 160,
+    "dialog": {
+        "style": {
+            "width": "60vw"
+        }
+    },
+    "editor": {
+        "style": {
+            "height": "260px"
+        }
+    },
+    "objectMaxLength": 160
+}

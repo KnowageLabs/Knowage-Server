@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import Button from 'primevue/button'
 import Card from 'primevue/card'
 import RuntimeInformationCard from './RuntimeInformationCard.vue'
 import Toolbar from 'primevue/toolbar'
@@ -13,7 +14,7 @@ const factory = (item, chartData) => {
             chartData
         },
         global: {
-            stubs: { Card, Chart: true, Toolbar },
+            stubs: { Button, Card, Chart: true, Toolbar },
             mocks: {
                 $t: (msg) => msg
             }

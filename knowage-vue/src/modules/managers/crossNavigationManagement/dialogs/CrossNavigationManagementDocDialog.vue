@@ -1,5 +1,14 @@
 <template>
-    <Dialog :header="$t('managers.crossNavigationManagement.selectDocument')" :breakpoints="dialogDescriptor.dialog.breakpoints" :style="dialogDescriptor.dialog.style" :visible="dialogVisible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
+    <Dialog
+        :header="$t('managers.crossNavigationManagement.selectDocument')"
+        :breakpoints="dialogDescriptor.dialog.breakpoints"
+        :style="dialogDescriptor.dialog.style"
+        :contentStyle="dialogDescriptor.dialog.contentStyle"
+        :visible="dialogVisible"
+        :modal="true"
+        :closable="false"
+        class="p-fluid kn-dialog--toolbar--primary"
+    >
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #left>
@@ -24,6 +33,8 @@
             @row-select="hadleSelect"
             v-model:filters="filters"
             filterDisplay="menu"
+            :scrollable="true"
+            :scrollHeight="dialogDescriptor.dialog.scrollHeight"
             :globalFilterFields="dialogDescriptor.globalFilterFields"
         >
             <template #header>
@@ -51,7 +62,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
@@ -107,9 +118,9 @@ export default defineComponent({
         },
         async loadAllDoc() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/listDocument')
-                .then((response) => (this.documents = response.data))
+                .then((response: AxiosResponse<any>) => (this.documents = response.data))
                 .finally(() => (this.loading = false))
         },
         hadleSelect() {

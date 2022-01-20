@@ -1,0 +1,52 @@
+{
+    "fieldsMetadataTypes": [
+        {
+            "name": "ATTRIBUTE",
+            "value": "ATTRIBUTE"
+        },
+        {
+            "name": "SPATIAL ATTRIBUTE",
+            "value": "SPATIAL_ATTRIBUTE"
+        },
+        {
+            "name": "MEASURE",
+            "value": "MEASURE"
+        }
+    ],
+    "style": {
+        "maxwidth": {
+            "border-bottom": "none",
+            "width": "100%"
+        }
+    },
+    "valueTypes": [
+        {
+            "name": "java.lang.String",
+            "value": "String"
+        },
+        {
+            "name": "java.lang.Double",
+            "value": "Double"
+        },
+        {
+            "name": "java.lang.Integer",
+            "value": "Integer"
+        },
+        {
+            "name": "java.lang.Long",
+            "value": "Long"
+        },
+        {
+            "name": "java.util.Date",
+            "value": "Date"
+        },
+        {
+            "name": "java.sql.Timestamp",
+            "value": "Timestamp"
+        },
+        {
+            "name": "java.math.BigDecimal",
+            "value": "Float"
+        }
+    ]
+}

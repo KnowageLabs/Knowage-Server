@@ -30,8 +30,14 @@ const mockedKpi = [
 
 jest.mock('axios')
 
-axios.get.mockImplementation(() => Promise.resolve({ data: mockedKpi }))
-axios.delete.mockImplementation(() => Promise.resolve())
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: mockedKpi
+        })
+    ),
+    delete: axios.delete.mockImplementation(() => Promise.resolve())
+}
 
 const $confirm = {
     require: jest.fn()
@@ -59,7 +65,8 @@ const factory = () => {
                 $t: (msg) => msg,
                 $store,
                 $confirm,
-                $router
+                $router,
+                $http
             }
         }
     })
@@ -90,7 +97,7 @@ describe('Kpi Definition loading', () => {
 describe('KPI Definition List', () => {
     it('shows an hint if no item is selected from the list', () => {
         const wrapper = factory()
-        expect(wrapper.html()).toContain('kpi.kpiDefinition.hintTitle')
+        expect(wrapper.vm.hintVisible).toBe(true)
     })
     it('deletes KPI when clicking on delete icon', async () => {
         const wrapper = factory()

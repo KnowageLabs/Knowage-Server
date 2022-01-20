@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import axios from 'axios'
 import TargetDefinitionDetail from './TargetDefinitionDetail.vue'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -24,6 +25,17 @@ const $store = {
     commit: jest.fn()
 }
 
+jest.mock('axios')
+
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: []
+        })
+    ),
+    delete: axios.delete.mockImplementation(() => Promise.resolve())
+}
+
 const factory = () => {
     return mount(TargetDefinitionDetail, {
         global: {
@@ -43,7 +55,8 @@ const factory = () => {
                 $store,
                 $confirm,
                 $route,
-                $router
+                $router,
+                $http
             }
         }
     })
