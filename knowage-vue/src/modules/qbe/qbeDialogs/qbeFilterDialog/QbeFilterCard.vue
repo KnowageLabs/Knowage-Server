@@ -48,7 +48,10 @@
                     </div>
                     <InputText v-else-if="filter.rightType === 'manual' && field.dataType !== 'java.sql.Timestamp'" class="kn-material-input" v-model="filter.rightOperandDescription" @input="onManualValueChange" />
 
-                    <Calendar v-else-if="filter.rightType === 'manual' && field.dataType === 'java.sql.Timestamp'" class="kn-flex" v-model="targetDate" @input="onManualTimestampChange" @dateSelect="onManualTimestampChange"></Calendar>
+                    <div v-else-if="filter.rightType === 'manual' && field.dataType === 'java.sql.Timestamp'" class="kn-flex p-d-flex p-flex-row">
+                        <Calendar class="kn-flex p-mr-2" v-model="targetDate" @input="onManualTimestampChange" @dateSelect="onManualTimestampChange"></Calendar>
+                        <Calendar class="qbe-filter-time-input" v-model="targetDate" :manualInput="true" :timeOnly="true" hourFormat="24" @input="onManualTimestampChange" @dateSelect="onManualTimestampChange" />
+                    </div>
 
                     <div class="qbe-filter-chip-container p-d-flex p-flex-row p-ai-center p-flex-wrap kn-flex" v-else-if="filter.rightType === 'valueOfField'">
                         <Chip v-for="(selectedValue, index) in selectedValues" :key="index" class="p-mr-1">{{ selectedValue }}</Chip>
@@ -318,5 +321,9 @@ export default defineComponent({
 .qbe-filter-chip-container {
     border-bottom: 1px solid #c2c2c2;
     min-height: 2.775rem;
+}
+
+.qbe-filter-time-input {
+    flex: 0.3;
 }
 </style>
