@@ -5,7 +5,7 @@
             <span>{{ searchMode ? $t('documentBrowser.documentsSearch') : $t('documentBrowser.title') }}</span>
             <span v-if="searchMode" class="p-mx-4">
                 <i class="fa fa-arrow-left search-pointer p-mx-4" @click="exitSearchMode" />
-                <InputText id="document-search" class="kn-material-input p-inputtext-sm p-mx-2" v-model="searchWord" :placeholder="$t('common.search')" />
+                <InputText id="document-search" class="kn-material-input p-inputtext-sm p-mx-2" @keyup.enter="loadDocuments" v-model="searchWord" :placeholder="$t('common.search')" />
                 <i class="fa fa-times search-pointer p-mx-4" @click="searchWord = ''" />
                 <i class="pi pi-search search-pointer p-mx-4" @click="loadDocuments" />
             </span>
@@ -15,7 +15,7 @@
             <span v-if="!searchMode" class="p-mx-4">
                 <i class="pi pi-search search-pointer" @click="searchMode = true" />
             </span>
-            <KnFabButton v-if="isSuperAdmin && selectedFolder && selectedFolder.parentId" icon="fas fa-plus" @click="toggle($event)" aria-haspopup="true" aria-controls="overlay_menu"></KnFabButton>
+            <KnFabButton v-if="(isSuperAdmin || canAddNewDocument) && selectedFolder && selectedFolder.parentId" icon="fas fa-plus" @click="toggle($event)" aria-haspopup="true" aria-controls="overlay_menu"></KnFabButton>
             <Menu ref="menu" :model="items" :popup="true" />
         </template>
     </Toolbar>
@@ -84,6 +84,9 @@ export default defineComponent({
     computed: {
         isSuperAdmin(): boolean {
             return this.user?.isSuperadmin
+        },
+        canAddNewDocument(): boolean {
+            return this.user?.functionalities.includes('DocumentManagement')
         },
         hasCreateCockpitFunctionality(): boolean {
             return this.user.functionalities.includes('CreateCockpitFunctionality')
