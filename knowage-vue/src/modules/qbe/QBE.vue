@@ -26,7 +26,7 @@
                     </Toolbar>
                     <div class="kn-flex kn-overflow-hidden">
                         <ScrollPanel class="kn-height-full olap-scroll-panel">
-                            <ExpandableEntity :availableEntities="entities.entities" />
+                            <ExpandableEntity :availableEntities="entities.entities" @showRelationDialog="showRelationDialog" />
                         </ScrollPanel>
                     </div>
                 </div>
@@ -70,6 +70,7 @@
 
         <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="id" :entities="entities?.entities" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
+        <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     </Dialog>
 </template>
@@ -84,6 +85,7 @@ import InputSwitch from 'primevue/inputswitch'
 import QBEFilterDialog from './qbeDialogs/qbeFilterDialog/QBEFilterDialog.vue'
 import QBESimpleTable from './qbeTables/qbeSimpleTable/QBESimpleTable.vue'
 import QBESqlDialog from './qbeDialogs/QBESqlDialog.vue'
+import QBERelationDialog from './qbeDialogs/QBEEntityRelationDialog.vue'
 import ExpandableEntity from '@/modules/qbe/qbeComponents/expandableEntity.vue'
 import SubqueryEntity from '@/modules/qbe/qbeComponents/subqueryEntity.vue'
 import ScrollPanel from 'primevue/scrollpanel'
@@ -91,7 +93,7 @@ import Menu from 'primevue/contextmenu'
 
 export default defineComponent({
     name: 'qbe',
-    components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESqlDialog, QBESimpleTable, ExpandableEntity, SubqueryEntity },
+    components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESqlDialog, QBESimpleTable, QBERelationDialog, ExpandableEntity, SubqueryEntity },
     props: { id: { type: String }, visible: { type: Boolean } },
     emits: ['close'],
     data() {
@@ -107,10 +109,12 @@ export default defineComponent({
             hiddenColumnsExist: false,
             filterDialogVisible: false,
             sqlDialogVisible: false,
+            relationDialogVisible: false,
             filterDialogData: {} as { field: iField; query: iQuery },
             showDerivedList: true,
             sqlData: {} as any,
-            menuButtons: [] as any
+            menuButtons: [] as any,
+            relationEntity: {} as any
         }
     },
     watch: {
@@ -133,8 +137,8 @@ export default defineComponent({
         },
         async loadDataset() {
             // HARDCODED Dataset label/name
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
-                // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
+            // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
                 if (this.qbe) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
@@ -271,6 +275,11 @@ export default defineComponent({
             // eslint-disable-next-line
             // @ts-ignore
             this.$refs.optionsMenu.toggle(event)
+        },
+        showRelationDialog(entity) {
+            console.log(entity)
+            this.relationEntity = entity
+            this.relationDialogVisible = true
         },
         createMenuItems() {
             this.menuButtons = []
