@@ -223,10 +223,27 @@ export default defineComponent({
 
             console.log('QBE QUERY AFTER FILTERS SAVED: ', this.qbe?.qbeJSONQuery.catalogue.queries[0])
 
-            // this.qbe.qbeJSONQuery.catalogue.queries[0].expression = this.createExpression(filters)
+            this.createExpression()
             console.log('ON FILTERS SAVE: ', filters)
         },
-        createExpression(filters: iFilter[]) {
+        createExpression() {
+            const formatedFilters = {}
+
+            this.qbe?.qbeJSONQuery.catalogue.queries[0].filters.forEach((filter: iFilter) => {
+                if (formatedFilters[filter.leftOperandValue]) {
+                    formatedFilters[filter.leftOperandValue].push(filter)
+                } else {
+                    formatedFilters[filter.leftOperandValue] = [filter]
+                }
+            })
+
+            console.log('FORMATED FILTERS: ', formatedFilters)
+
+            Object.keys(formatedFilters).forEach((key: string) => {
+                console.log('expression: ' + this.getExpression(formatedFilters[key]))
+            })
+        },
+        getExpression(filters: iFilter[]) {
             const filtersLength = filters.length
 
             let expression = {}

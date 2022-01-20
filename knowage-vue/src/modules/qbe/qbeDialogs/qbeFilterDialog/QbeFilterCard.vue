@@ -132,6 +132,12 @@ export default defineComponent({
     methods: {
         loadFilter() {
             this.filter = this.propFilter as iFilter
+            if (this.filter.rightType === 'subquery') {
+                this.targetValues.push({
+                    label: this.$t('qbe.filters.targets.manual'),
+                    value: 'manual'
+                })
+            }
             this.formatFilter()
         },
         loadEntities() {
