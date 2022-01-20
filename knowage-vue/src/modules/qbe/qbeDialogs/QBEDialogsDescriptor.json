@@ -1,0 +1,29 @@
+{
+    "entityRelation": {
+        "columns": [
+            {
+                "field": "relationName",
+                "header": "qbe.entities.relationDialog.relationName"
+            },
+            {
+                "field": "sourceFields",
+                "header": "qbe.entities.relationDialog.sourceFields"
+            },
+            {
+                "field": "targetEntityLabel",
+                "header": "qbe.entities.relationDialog.targetEntity"
+            },
+            {
+                "field": "targetFields",
+                "header": "qbe.entities.relationDialog.targetFields"
+            },
+            {
+                "field": "joinType",
+                "header": "qbe.entities.relationDialog.joinType"
+            }
+        ],
+        "style": {
+            "min-width": "60%"
+        }
+    }
+}
