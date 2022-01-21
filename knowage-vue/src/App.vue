@@ -25,6 +25,9 @@ export default defineComponent({
     components: { ConfirmDialog, KnOverlaySpinnerPanel, MainMenu, Toast },
 
     async beforeCreate() {
+        await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/user-configs').then((response) => {
+            store.commit('setConfigurations', response.data)
+        })
         await this.$http
             .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/currentuser')
             .then((response) => {
