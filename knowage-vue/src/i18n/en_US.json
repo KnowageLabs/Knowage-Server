@@ -1057,7 +1057,7 @@
             "valueName": "Value name"
         },
         "driversManagement": {
-            "partialSuccessMessage": "Some data is updated successfully.",
+            "partialSuccessMessage": "Not all data has been updated successfully. Check again for unsaved informations.",
             "add": "Add",
             "deleteError": "Error",
             "functional": "Functional",
