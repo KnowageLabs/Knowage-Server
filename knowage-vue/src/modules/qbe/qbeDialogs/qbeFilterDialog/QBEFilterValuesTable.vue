@@ -16,7 +16,7 @@
         @rowUnselectAll="onSelect"
     >
         <template #empty>
-            <div id="noFunctionsFound">
+            <div>
                 {{ $t('common.info.noDataFound') }}
             </div>
         </template>

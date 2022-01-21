@@ -65,10 +65,12 @@
                         </div>
                     </div>
 
+                    <!-- VALUE OF FIELD-->
                     <div class="qbe-filter-chip-container p-d-flex p-flex-row p-ai-center p-flex-wrap kn-flex" v-else-if="filter.rightType === 'valueOfField'">
                         <Chip v-for="(selectedValue, index) in selectedValues" :key="index" class="p-mr-1">{{ selectedValue }}</Chip>
                     </div>
 
+                    <!-- ANOTHER ENTITY -->
                     <CascadeSelect
                         v-if="filter.rightType === 'anotherEntity'"
                         class="kn-flex"
@@ -81,7 +83,11 @@
                         @change="onEntityTypeChanged"
                     ></CascadeSelect>
 
+                    <!-- SUBQUERY -->
                     <Dropdown class="kn-material-input kn-flex" v-if="filter.rightType === 'subquery'" v-model="filter.rightOperandDescription" :options="subqueries" optionValue="name" optionLabel="name" @change="onSubqeryTargetChange" />
+
+                    <!-- PARAMETER -->
+                    <Dropdown class="kn-material-input kn-flex" v-if="filter.rightType === 'parameter'" v-model="filter.rightOperandDescription" :options="parameters" optionValue="name" optionLabel="name" @change="onSubqeryTargetChange" />
 
                     <i v-if="filter.rightType === 'valueOfField'" class="fa fa-check kn-cursor-pointer p-ml-2" @click="loadFilterValues"></i>
                     <i class="fa fa-eraser kn-cursor-pointer p-ml-2" @click="$emit('removeFilter', filter)"></i>
@@ -108,7 +114,7 @@ import moment from 'moment'
 export default defineComponent({
     name: 'qbe-filter-card',
     components: { Calendar, CascadeSelect, Chip, Chips, Dropdown, QBEFilterValuesTable },
-    props: { propFilter: { type: Object as PropType<iFilter> }, id: { type: String }, propEntities: { type: Array }, subqueries: { type: Array, required: true }, field: { type: Object, required: true } },
+    props: { propFilter: { type: Object as PropType<iFilter> }, id: { type: String }, propEntities: { type: Array }, subqueries: { type: Array, required: true }, field: { type: Object, required: true }, propParameters: { type: Array } },
     emits: ['removeFilter'],
     data() {
         return {
@@ -137,6 +143,7 @@ export default defineComponent({
             multiManualValues: [] as string[],
             targetDate: null as Date | null,
             targetEndDate: null as Date | null,
+            parameters: [] as any[],
             loading: false
         }
     },
@@ -146,11 +153,15 @@ export default defineComponent({
         },
         propEntities() {
             this.loadEntities()
+        },
+        propParameters() {
+            this.loadParameters()
         }
     },
     created() {
         this.loadFilter()
         this.loadEntities()
+        this.loadParameters()
     },
     methods: {
         loadFilter() {
@@ -161,11 +172,21 @@ export default defineComponent({
                     value: 'subquery'
                 })
             }
+
             this.formatFilter()
         },
         loadEntities() {
             this.entities = this.propEntities ? [...this.propEntities] : []
             // console.log(' >>> LOADED ENTITIES: ', this.entities)
+        },
+        loadParameters() {
+            this.parameters = this.propParameters as any[]
+            if (this.parameters.length > 0) {
+                this.targetValues.push({
+                    label: this.$t('common.parameter'),
+                    value: 'parameter'
+                })
+            }
         },
         async formatFilter() {
             switch (this.filter?.rightType) {

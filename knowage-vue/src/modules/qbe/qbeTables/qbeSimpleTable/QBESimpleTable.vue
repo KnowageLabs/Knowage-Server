@@ -1,6 +1,6 @@
 <template>
     <DataTable class="p-datatable-sm kn-table p-m-2" :value="rows" editMode="cell" responsiveLayout="stack" breakpoint="960px" @rowReorder="onRowReorder" @drop="onDrop($event)" @dragover.prevent @dragenter="displayDropzone">
-        <Column :rowReorder="true" headerStyle="width: 3rem" />
+        <Column :rowReorder="true" :headerStyle="QBESimpleTableDescriptor.headerStyle" />
         <Column v-for="column in QBESimpleTableDescriptor.columns" :key="column.header" :field="column.field" :style="column.style">
             <template #header>
                 <span v-tooltip.top="getHeaderTooltip(column)">{{ $t(column.header) }}</span>

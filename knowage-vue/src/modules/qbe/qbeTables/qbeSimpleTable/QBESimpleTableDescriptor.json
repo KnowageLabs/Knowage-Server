@@ -43,5 +43,6 @@
             "style": "width: 9%"
         }
     ],
+    "headerStyle": "width: 3rem",
     "orderingOptions": ["NONE", "ASC", "DESC"]
 }

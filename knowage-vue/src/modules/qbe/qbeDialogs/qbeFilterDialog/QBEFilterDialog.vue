@@ -13,16 +13,18 @@
             </Toolbar>
         </template>
 
-        <Message v-if="filters.length === 0" class="p-m-4" severity="info" :closable="false" :style="QBEFilterDialogDescriptor.styles.message">
+        <Message v-if="filters.length === 0 && !parameterTableVisible" class="p-m-4" severity="info" :closable="false" :style="QBEFilterDialogDescriptor.styles.message">
             {{ $t('common.info.noDataFound') }}
         </Message>
-        <div v-else>
-            <QBEFilterCard v-for="filter in filters" :key="filter.filterId" :propFilter="filter" :id="id" :propEntities="entities" :subqueries="filterDialogData?.query.subqueries" :field="filterDialogData?.field" @removeFilter="removeFilter"></QBEFilterCard>
+        <div v-else-if="!parameterTableVisible">
+            <QBEFilterCard v-for="filter in filters" :key="filter.filterId" :propFilter="filter" :id="id" :propEntities="entities" :subqueries="filterDialogData?.query.subqueries" :field="filterDialogData?.field" :propParameters="propParameters" @removeFilter="removeFilter"></QBEFilterCard>
         </div>
+
+        <QBEFilterParameters v-else-if="parameterTableVisible" :propParameters="propParameters"></QBEFilterParameters>
 
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
-            <Button class="kn-button kn-button--primary" @click="save"> {{ $t('common.save') }}</Button>
+            <Button class="kn-button kn-button--primary" @click="save"> {{ parameterTableVisible ? $t('qbe.filters.applyParameters') : $t('common.save') }}</Button>
         </template>
 
         <QBETemporalFilterDialog :visible="temporalFilterDialogVisible" :temporalFilters="temporalFilters" @close="temporalFilterDialogVisible = false" @save="addTemporalFilter"></QBETemporalFilterDialog>
@@ -31,6 +33,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
+import { AxiosResponse } from 'axios'
 import { iField, iQuery, iFilter } from '../../QBE'
 import Dialog from 'primevue/dialog'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
@@ -38,12 +41,12 @@ import Message from 'primevue/message'
 import QBEFilterCard from './QBEFilterCard.vue'
 import QBEFilterDialogDescriptor from './QBEFilterDialogDescriptor.json'
 import QBETemporalFilterDialog from './QBETemporalFilterDialog.vue'
-import { AxiosResponse } from 'axios'
+import QBEFilterParameters from './QBEFilterParameters.vue'
 
 export default defineComponent({
     name: 'qbe-filter-dialog',
-    components: { Dialog, KnFabButton, Message, QBEFilterCard, QBETemporalFilterDialog },
-    props: { visible: { type: Boolean }, filterDialogData: { type: Object as PropType<{ field: iField; query: iQuery }> }, id: { type: String }, entities: { type: Array } },
+    components: { Dialog, KnFabButton, Message, QBEFilterCard, QBETemporalFilterDialog, QBEFilterParameters },
+    props: { visible: { type: Boolean }, filterDialogData: { type: Object as PropType<{ field: iField; query: iQuery }> }, id: { type: String }, entities: { type: Array }, propParameters: { type: Array, required: true } },
     emits: ['save', 'close'],
     data() {
         return {
@@ -51,7 +54,8 @@ export default defineComponent({
             filters: [] as iFilter[],
             nextFilterIndex: -1,
             temporalFilters: [] as any[],
-            temporalFilterDialogVisible: false
+            temporalFilterDialogVisible: false,
+            parameterTableVisible: false
         }
     },
     watch: {
@@ -219,12 +223,17 @@ export default defineComponent({
             }
             return from + ' ---- ' + to
         },
+
         closeDialog() {
             this.$emit('close')
             this.nextFilterIndex = -1
         },
         save() {
-            this.$emit('save', this.filters, this.filterDialogData?.field)
+            if (this.propParameters.length > 0) {
+                this.parameterTableVisible = true
+            } else {
+                this.$emit('save', this.filters, this.filterDialogData?.field)
+            }
         }
     }
 })

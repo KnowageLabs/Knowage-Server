@@ -1782,6 +1782,7 @@
             }
         },
         "filters": {
+            "applyParameters": "Apply parameters",
             "temporalFilter": "Temporal filter",
             "and": "And",
             "condition": "Condition",
