@@ -23,7 +23,10 @@
             "python": "python"
         },
         "collapse": "collapse",
+        "comment": "Comment",
+        "continue": "Continue",
         "copyOf": "Copy of",
+        "create": "Create",
         "creationDate": "Creation Date",
         "dataset": "Dataset",
         "default": "Default",
@@ -109,6 +112,7 @@
         "paused": "Paused",
         "preview": "Preview",
         "print": "Print",
+        "properties": "properties",
         "public": "Public",
         "rank": "Rank",
         "refresh": "Refresh",
@@ -132,16 +136,19 @@
         "settings": "Settings",
         "share": "Share",
         "shortcuts": "Shortcuts",
+        "size": "Size",
         "snapshot": "Snapshot",
         "sort": "sort",
         "source": "Source",
+        "sqlExpression": "SQL expression",
         "state": "State",
         "status": "Status",
         "suspended": "Suspended",
         "table": {
             "footer": {
                 "paginated": "Showing {first} to {last} of {totalRecords}"
-            }
+            },
+            "table": "Table"
         },
         "tags": "tags",
         "tenant": "tenant",
@@ -183,6 +190,7 @@
         "version": "version",
         "visibility": "Visibility",
         "visible": "Visible",
+        "warning": "Warning",
         "yes": "Yes"
     },
     "cron": {
@@ -1057,6 +1065,7 @@
             "valueName": "Value name"
         },
         "driversManagement": {
+            "partialSuccessMessage": "Not all data has been updated successfully. Check again for unsaved informations.",
             "add": "Add",
             "deleteError": "Error",
             "functional": "Functional",
@@ -1740,6 +1749,94 @@
         "importExport": "Artifacts",
         "modelCatalogResourceManagement": "Models manager",
         "resourceManagement": "Resource manager"
+    },
+    "metaweb": {
+        "businessModel": {
+            "addPhysicalTables": "Add physical tables",
+            "addUnusedFields": "Add unused fields",
+            "attributesDetail": {
+                "structural": "Structural",
+                "title": "Attribute's Detail"
+            },
+            "businessClass": "Business Class",
+            "businessView": "Business View",
+            "editJoin": "Edit Join Relationship",
+            "inbound": {
+                "name": "Insert a Business Relationship Name",
+                "sourceBc": "Source Business Class",
+                "targetBc": "Target Business Class"
+            },
+            "newBusiness": "New Business Class",
+            "newView": "New Business View",
+            "noUnusedFields": "No columns to add",
+            "physTable": "Physical Table",
+            "physicalColumn": "Physical Column",
+            "physicalColumnHint": "The original physical column of this column",
+            "physicalTable": "Physical Table",
+            "primaryKey": "Primary Key",
+            "sourceAttr": "Source Attributes",
+            "sourceHint": "Select source table",
+            "sourceTable": "Source Table",
+            "summary": "Summary",
+            "summaryHint": "Link tables to see the summary",
+            "tabView": {
+                "attributes": "Attributes",
+                "calcField": "Calculated Field",
+                "filter": "Filter",
+                "inbound": "Inbound",
+                "joinRelationships": "Join Relationships",
+                "outbound": "Outbound",
+                "propertyTitle": "Property List"
+            },
+            "targetAttr": "Target Attributes",
+            "targetHint": "Select target table",
+            "targetTable": "Target Table",
+            "temporalHierarchy": "Manage temporal hierarchy",
+            "title": "Business Model"
+        },
+        "exitFromMeta": "Exit from meta?",
+        "filterHelpMessage": "If your driver is multivalue, you should set filter to be for example: column_name in ($P{driverUrlName})",
+        "incorrectRelationships": {
+            "requiredColumns": "Required number of source columns",
+            "title": "Incorrect relationships found",
+            "warningMessage": {
+                "partOne": "A correct relationship must have at least the same number of source columns as the columns set as identifiers in the target table.",
+                "partThree": "Press SAVE to continue anyway or press CANCEL to go back and correct.",
+                "partTwo": "Note that if a table doesn't have identifiers, all his columns will be set as identifier automatically."
+            }
+        },
+        "physicalModel": {
+            "dataType": "dataType",
+            "decimalDigits": "decimalDigits",
+            "defaultValue": "defaultValue",
+            "foreignKey": "Foreign Key",
+            "misc": "Misc",
+            "nullable": "nullable",
+            "octectLength": "octectLength",
+            "position": "position",
+            "propertyList": "Property list",
+            "radix": "radix",
+            "sourceColumns": "Source Columns",
+            "tables": "Tables",
+            "targetColumns": "Target Columns",
+            "title": "Physical Model",
+            "typeName": "typeName",
+            "updatePhysicalModel": "Update Physical Model"
+        },
+        "selectDialog": {
+            "noPhysicalModelsSelectedError": "Select at least one Physical Model",
+            "tableName": "Table Name"
+        },
+        "title": "Metaweb",
+        "updatePhysicalModel": {
+            "addNewColumns": "New columns that will be added",
+            "deletedColumns": "Elements that will be marked as deleted",
+            "newTables": "New Physical tables to import",
+            "noDeletedColumns": "No elements deleted",
+            "noNewColumns": "No elements added",
+            "noNewTables": "No new table to add",
+            "title": "Update physical model"
+        }
     },
     "newsDialog": {
         "description": "Description",

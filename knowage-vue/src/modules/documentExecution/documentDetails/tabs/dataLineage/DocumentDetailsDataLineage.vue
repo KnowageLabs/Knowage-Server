@@ -25,7 +25,7 @@
                                 <div v-if="metaSourceResource.length == 0">
                                     <InlineMessage severity="info">{{ $t('documentExecution.documentDetails.dataLineage.noDatasources') }}</InlineMessage>
                                 </div>
-                                <div v-if="dataSource && tablesList.length == 0">
+                                <div v-if="dataSource && tablesList.length == 0 && metaSourceResource.length != 0">
                                     <InlineMessage severity="info">{{ $t('documentExecution.documentDetails.dataLineage.noTables') }}</InlineMessage>
                                 </div>
                                 <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
@@ -75,7 +75,6 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/${this.dataSource.sourceId}/metatables`)
                 .then((response: AxiosResponse<any>) => {
                     this.tablesList = response.data as iTableSmall[]
-                    this.tablesList = mainDescriptor.tablesListFoodmart
                     this.setCheckedTables()
                 })
                 .finally(() => (this.loading = false))
