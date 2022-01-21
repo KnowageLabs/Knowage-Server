@@ -88,7 +88,7 @@
                 </div>
             </div>
         </div>
-        <QbeFilterValuesTable v-show="filter.rightType === 'valueOfField'" class="p-m-2" :filterValuesData="filterValuesData" :loadedSelectedValues="selectedValues" :loading="loading" @selected="setSelectedValues"></QbeFilterValuesTable>
+        <QBEFilterValuesTable v-show="filter.rightType === 'valueOfField'" class="p-m-2" :filterValuesData="filterValuesData" :loadedSelectedValues="selectedValues" :loading="loading" @selected="setSelectedValues"></QBEFilterValuesTable>
     </div>
 </template>
 
@@ -102,12 +102,12 @@ import Chip from 'primevue/chip'
 import Chips from 'primevue/chips'
 import Dropdown from 'primevue/dropdown'
 import QBEFilterDialogDescriptor from './QBEFilterDialogDescriptor.json'
-import QbeFilterValuesTable from './QbeFilterValuesTable.vue'
+import QBEFilterValuesTable from './QBEFilterValuesTable.vue'
 import moment from 'moment'
 
 export default defineComponent({
     name: 'qbe-filter-card',
-    components: { Calendar, CascadeSelect, Chip, Chips, Dropdown, QbeFilterValuesTable },
+    components: { Calendar, CascadeSelect, Chip, Chips, Dropdown, QBEFilterValuesTable },
     props: { propFilter: { type: Object as PropType<iFilter> }, id: { type: String }, propEntities: { type: Array }, subqueries: { type: Array, required: true }, field: { type: Object, required: true } },
     emits: ['removeFilter'],
     data() {

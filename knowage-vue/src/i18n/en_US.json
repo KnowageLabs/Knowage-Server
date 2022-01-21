@@ -1782,6 +1782,7 @@
             }
         },
         "filters": {
+            "temporalFilter": "Temporal filter",
             "and": "And",
             "condition": "Condition",
             "conditionTooltip": "For not/between and not/in operator use \" ---- \" as separator.",
