@@ -6,11 +6,13 @@
                     {{ $t('documentExecution.documentDetails.title') }}
                 </template>
                 <template #right>
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" :disabled="invalidDrivers > 0 || invalidOutputParams > 0 || v$.$invalid" />
+                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" :disabled="invalidDrivers > 0 || invalidOutputParams > 0 || v$.$invalid || savingLoad" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('closeDetails')" />
                 </template>
             </Toolbar>
         </template>
+        <KnOverlaySpinnerPanel :visibility="savingLoad" :style="mainDescriptor.style.spinnerStyle" />
+
         <div class="document-details-tab-container p-d-flex p-flex-column kn-flex">
             <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
             <TabView v-if="!loading" class="document-details-tabview p-d-flex p-flex-column kn-flex">
@@ -74,6 +76,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
+import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import useValidate from '@vuelidate/core'
 import mainDescriptor from './DocumentDetailsDescriptor.json'
 import InformationsTab from './tabs/informations/DocumentDetailsInformations.vue'
@@ -85,11 +88,11 @@ import Dialog from 'primevue/dialog'
 import TabView from 'primevue/tabview'
 import Badge from 'primevue/badge'
 import TabPanel from 'primevue/tabpanel'
-import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute, iParType, iDateFormat, iFolder, iTableSmall, iOutputParam } from '@/modules/documentExecution/documentDetails/DocumentDetails'
+import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute, iParType, iDateFormat, iFolder, iTableSmall, iOutputParam, iDocumentType } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 
 export default defineComponent({
     name: 'document-details',
-    components: { InformationsTab, DriversTab, OutputParamsTab, DataLineageTab, HistoryTab, TabView, TabPanel, Dialog, Badge },
+    components: { KnOverlaySpinnerPanel, InformationsTab, DriversTab, OutputParamsTab, DataLineageTab, HistoryTab, TabView, TabPanel, Dialog, Badge },
     props: { docId: { type: Number, required: true }, selectedFolder: { type: Object, required: true }, visible: { type: Boolean, required: false } },
     emits: ['closeDetails'],
     data() {
@@ -97,6 +100,7 @@ export default defineComponent({
             v$: useValidate() as any,
             mainDescriptor,
             loading: false,
+            savingLoad: false,
             templateToUpload: null as any,
             imageToUpload: null as any,
             selectedDataset: {} as any,
@@ -113,7 +117,7 @@ export default defineComponent({
             savedTables: [] as iTableSmall[],
             availableFolders: [] as iFolder[],
             states: mainDescriptor.states,
-            types: mainDescriptor.types
+            types: [] as iDocumentType[]
         }
     },
     computed: {
@@ -144,11 +148,12 @@ export default defineComponent({
                 this.getDatasources(),
                 this.getDocumentDrivers(),
                 this.getTemplates(),
+                this.getTypes(),
                 this.getEngines(),
                 this.getAttributes(),
                 this.getParTypes(),
                 this.getDateFormats(),
-                this.getTablesByDocumentID(),
+                this.getSavedTablesByDocumentID(),
                 this.getDataset(),
                 this.getDataSources()
             ])
@@ -180,8 +185,11 @@ export default defineComponent({
                 await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument?.id}/templates`).then((response: AxiosResponse<any>) => (this.templates = response.data))
             }
         },
+        async getTypes() {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/document-detail/types`).then((response: AxiosResponse<any>) => (this.types = response.data))
+        },
         async getEngines() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/engines`).then((response: AxiosResponse<any>) => (this.engines = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/document-detail/engines`).then((response: AxiosResponse<any>) => (this.engines = response.data))
         },
         async getAttributes() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/attributes`).then((response: AxiosResponse<any>) => (this.attributes = response.data))
@@ -193,11 +201,11 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/DATE_FORMAT`).then((response: AxiosResponse<any>) => (this.dateFormats = response.data))
         },
         async getDataSources() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`).then((response: AxiosResponse<any>) => ((this.metaSourceResource = response.data), (this.metaSourceResource = this.mainDescriptor.metaSourceResource)))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`).then((response: AxiosResponse<any>) => (this.metaSourceResource = response.data))
         },
-        async getTablesByDocumentID() {
+        async getSavedTablesByDocumentID() {
             if (this.selectedDocument.id) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/document/${this.selectedDocument.id}`).then((response: AxiosResponse<any>) => ((this.savedTables = response.data), (this.savedTables = this.mainDescriptor.savedTables)))
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/document/${this.selectedDocument.id}`).then((response: AxiosResponse<any>) => (this.savedTables = response.data))
             }
         },
         async getDataset() {
@@ -302,6 +310,7 @@ export default defineComponent({
             }
         },
         async saveDocument() {
+            this.savingLoad = true
             let docToSave = { ...this.selectedDocument }
             delete docToSave.drivers
             delete docToSave.outputParameters
@@ -319,6 +328,7 @@ export default defineComponent({
                     }, 200)
                 })
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
+                .finally(() => (this.savingLoad = false))
         }
     }
 })

@@ -85,6 +85,7 @@ $aggrid-border-color: #d9dcde;
 		}
 	}
 	.ag-center-cols-viewport {
+		overflow-x: hidden;
 		.md-button {
 			height: 24px;
 			width: 24px;

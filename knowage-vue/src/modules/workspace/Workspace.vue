@@ -7,7 +7,7 @@
                 </template>
             </Toolbar>
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-            <Listbox v-if="displayMenu" :options="menuItems" data-test="menu-list">
+            <Listbox v-if="displayMenu && storeFunctionalitiesExist" :options="menuItems" data-test="menu-list">
                 <template #option="slotProps">
                     <div v-if="slotProps.option.value !== 'repository'" class="kn-list-item" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
                         <i :class="slotProps.option.icon"></i>
@@ -102,6 +102,10 @@ export default defineComponent({
     computed: {
         showRepository(): any {
             return (this.$store.state as any).user.functionalities.includes('SaveIntoFolderFunctionality')
+        },
+        storeFunctionalitiesExist(): any {
+            this.createMenuItems()
+            return (this.$store.state as any).user.functionalities.length > 0
         }
     },
     data() {
@@ -124,6 +128,8 @@ export default defineComponent({
     },
     created() {
         this.getAllRepositoryData()
+    },
+    mounted() {
         this.createMenuItems()
     },
     methods: {
@@ -214,7 +220,7 @@ export default defineComponent({
             this.$router.push(`/workspace/repository/${this.selectedBreadcrumb.node.id}`)
         },
         createMenuItems() {
-            console.log('STORE: ', (this.$store.state as any).user)
+            console.log('STORE @MOUNTED: ', (this.$store.state as any).user)
             this.menuItems = []
             this.menuItems.push({ icon: 'fas fa-history', key: '0', label: 'workspace.menuLabels.recent', value: 'recent' }, { icon: 'fas fa-folder', key: '1', label: 'workspace.menuLabels.myRepository', value: 'repository' })
             if ((this.$store.state as any).user.functionalities.includes('SeeMyData')) {

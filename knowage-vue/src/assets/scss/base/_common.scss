@@ -4,7 +4,11 @@
 }
 
 .kn-height-full {
-    height: 100%;
+    height: 100% !important;
+}
+
+.kn-width-full {
+    width: 100%;
 }
 
 .kn-width-full {
@@ -50,8 +54,16 @@
     position: relative;
 }
 
+.kn-absolute {
+    position: absolute;
+}
+
 .kn-flex-0 {
     flex: 0;
+}
+
+.kn-flex-05 {
+    flex: 0.5;
 }
 
 .kn-overflow-y {
@@ -130,4 +142,12 @@
 
 .kn-white-color {
     color: $button-text-color !important;
+}
+
+.kn-alternated-rows {
+    & > div {
+        &:nth-child(even) {
+            background-color: $list-item-alternated-background-color;
+        }
+    }
 }
