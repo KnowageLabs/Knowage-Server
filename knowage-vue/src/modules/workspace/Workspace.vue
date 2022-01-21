@@ -7,7 +7,7 @@
                 </template>
             </Toolbar>
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-            <Listbox v-if="displayMenu" :options="menuItems" data-test="menu-list">
+            <Listbox v-if="displayMenu && storeFunctionalitiesExist" :options="menuItems" data-test="menu-list">
                 <template #option="slotProps">
                     <div v-if="slotProps.option.value !== 'repository'" class="kn-list-item" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
                         <i :class="slotProps.option.icon"></i>
@@ -102,6 +102,10 @@ export default defineComponent({
     computed: {
         showRepository(): any {
             return (this.$store.state as any).user.functionalities.includes('SaveIntoFolderFunctionality')
+        },
+        storeFunctionalitiesExist(): any {
+            this.createMenuItems()
+            return (this.$store.state as any).user.functionalities.length > 0
         }
     },
     data() {
