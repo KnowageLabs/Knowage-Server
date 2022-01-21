@@ -102,7 +102,7 @@ import Chip from 'primevue/chip'
 import Chips from 'primevue/chips'
 import Dropdown from 'primevue/dropdown'
 import QBEFilterDialogDescriptor from './QBEFilterDialogDescriptor.json'
-import QBEFilterValuesTable from './QBEFilterValuesTable1.vue'
+import QBEFilterValuesTable from './QBEFilterValuesTable.vue'
 import moment from 'moment'
 
 export default defineComponent({
