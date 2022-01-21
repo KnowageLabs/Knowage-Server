@@ -19,6 +19,7 @@ package it.eng.spagobi.api.v2.export;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -56,6 +57,10 @@ public class AvroExportJob extends AbstractExportJob {
 
 	private static final Logger logger = Logger.getLogger(AvroExportJob.class);
 
+	private static final String ready = "ready";
+	private static final String failed = "failed";
+	private static final String data = "data";
+
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
 	private static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.S";
 
@@ -75,7 +80,7 @@ public class AvroExportJob extends AbstractExportJob {
 			Schema schema = getSchema(dataSet);
 
 			try (OutputStream exportFileOS = getDataOutputStream()) {
-				clearReadyFile();
+				clearStatusFiles();
 				DatumWriter<GenericRecord> dout = new GenericDatumWriter<GenericRecord>();
 
 				try (DataFileWriter<GenericRecord> writer = new DataFileWriter<GenericRecord>(dout)) {
@@ -99,10 +104,11 @@ public class AvroExportJob extends AbstractExportJob {
 			}
 		} catch (Exception e) {
 			logger.error("Error during Avro file creation", e);
+			setStatusFailed(e);
 			throw new JobExecutionException(e);
 		}
 
-		writeReadyFile();
+		setStatusReady();
 		LogMF.info(logger, "Avro export completed for user {0}. DataSet is {1}. Final file: dimension (in bytes): {2,number}, path: [{3}], ",
 				this.getUserProfile().getUserId(), this.getDataSet().getLabel(), getDataFile().toFile().length(), getDataFile().toString());
 
@@ -132,19 +138,36 @@ public class AvroExportJob extends AbstractExportJob {
 		return value;
 	}
 
-	private void clearReadyFile() {
+	private void clearStatusFiles() {
 		try {
-			Files.deleteIfExists(avroExportFolder.resolve("ready"));
+			Files.deleteIfExists(avroExportFolder.resolve(ready));
+			Files.deleteIfExists(avroExportFolder.resolve(failed));
 		} catch (IOException e) {
-			logger.error("Cannot clear ready file", e);
+			logger.error("Error while clearing status files", e);
 		}
 	}
 
-	private void writeReadyFile() {
+	private void setStatusReady() {
 		try {
-			Files.createFile(avroExportFolder.resolve("ready"));
+			Files.createFile(avroExportFolder.resolve(ready));
 		} catch (IOException e) {
-			logger.error("Cannot create ready file", e);
+			logger.error("Cannot create ready status file", e);
+		}
+	}
+
+	private void setStatusFailed(Exception cause) {
+		Path failedStatusFilePath = avroExportFolder.resolve(failed);
+		try {
+			Files.createFile(failedStatusFilePath);
+		} catch (IOException e) {
+			logger.error("Cannot create failed status file");
+		}
+		try {
+			PrintWriter pw = new PrintWriter(failedStatusFilePath.toFile());
+			cause.printStackTrace(pw);
+			pw.close();
+		} catch (IOException e) {
+			logger.error("Error while logging exception inside failed status file");
 		}
 	}
 
@@ -189,7 +212,7 @@ public class AvroExportJob extends AbstractExportJob {
 		try {
 			avroExportFolder = Paths.get(resourcePathAsStr, "dataPreparation", (String) userProfile.getUserId(), dataSet.getLabel());
 			Files.createDirectories(avroExportFolder);
-			return Files.newOutputStream(avroExportFolder.resolve("data"));
+			return Files.newOutputStream(avroExportFolder.resolve(data));
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot create Avro file", e);
 		}
