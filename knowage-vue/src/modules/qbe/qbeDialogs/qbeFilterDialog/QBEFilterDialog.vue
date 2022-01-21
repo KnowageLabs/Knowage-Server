@@ -224,7 +224,7 @@ export default defineComponent({
             this.nextFilterIndex = -1
         },
         save() {
-            this.$emit('save', this.filters)
+            this.$emit('save', this.filters, this.filterDialogData?.field)
         }
     }
 })

@@ -214,8 +214,10 @@ export default defineComponent({
             this.filterDialogData = payload
             this.filterDialogVisible = true
         },
-        onFiltersSave(filters: iFilter[]) {
+        onFiltersSave(filters: iFilter[], field: iField) {
+            console.log('ON FILTERS SAVE: ', filters)
             console.log('QBE QUERY BEFORE FILTERS SAVED: ', this.qbe?.qbeJSONQuery.catalogue.queries[0])
+            console.log('FIELD ON FILTER SAVE: ', field)
             if (!this.qbe) return
 
             for (let i = 0; i < filters.length; i++) {
@@ -229,32 +231,61 @@ export default defineComponent({
                 }
             }
 
-            console.log('QBE QUERY AFTER FILTERS SAVED: ', this.qbe?.qbeJSONQuery.catalogue.queries[0])
+            this.removeDeletedFilters(filters, field)
 
-            this.createExpression()
-            console.log('ON FILTERS SAVE: ', filters)
+            this.qbe.qbeJSONQuery.catalogue.queries[0].expression = this.createExpression()
+            this.filterDialogVisible = false
+            console.log('QBE QUERY AFTER FILTERS SAVED: ', this.qbe?.qbeJSONQuery.catalogue.queries[0])
+        },
+        removeDeletedFilters(filters: iFilter[], field: iField) {
+            if (!this.qbe) return
+
+            // console.log(' >>> BLA: ', this.qbe.qbeJSONQuery.catalogue.queries[0].filters)
+
+            for (let i = this.qbe.qbeJSONQuery.catalogue.queries[0].filters.length - 1; i >= 0; i--) {
+                const tempFilter = this.qbe.qbeJSONQuery.catalogue.queries[0].filters[i]
+                // console.log(' >>> TEMP FILTER: ', tempFilter)
+                if (tempFilter.leftOperandValue === field.id) {
+                    // console.log(' >>> FILTER FOR DELETE CHECK: ', tempFilter)
+                    const index = filters.findIndex((el: iFilter) => el.filterId === tempFilter.filterId)
+                    if (index === -1) this.qbe.qbeJSONQuery.catalogue.queries[0].filters.splice(i, 1)
+                    // console.log('  >>> INDEX: ', index)
+                }
+            }
         },
         createExpression() {
-            const formatedFilters = {}
+            const formattedFilters = {}
 
             this.qbe?.qbeJSONQuery.catalogue.queries[0].filters.forEach((filter: iFilter) => {
-                if (formatedFilters[filter.leftOperandValue]) {
-                    formatedFilters[filter.leftOperandValue].push(filter)
+                if (formattedFilters[filter.leftOperandValue]) {
+                    formattedFilters[filter.leftOperandValue].push(filter)
                 } else {
-                    formatedFilters[filter.leftOperandValue] = [filter]
+                    formattedFilters[filter.leftOperandValue] = [filter]
                 }
             })
 
-            console.log('FORMATED FILTERS: ', formatedFilters)
+            console.log('createExpression - FORMATED FILTERS: ', formattedFilters)
 
-            Object.keys(formatedFilters).forEach((key: string) => {
-                console.log('expression: ' + this.getExpression(formatedFilters[key]))
+            let expression = { childNodes: [] } as any
+            Object.keys(formattedFilters).forEach((key: string) => {
+                console.log('createExpression - expression: ', this.getExpression(formattedFilters[key]))
+                expression.childNodes.push(this.getExpression(formattedFilters[key]))
             })
+
+            if (expression.childNodes.length === 0) {
+                expression = {}
+            } else if (expression.childNodes.length > 1) {
+                expression.value = 'AND'
+                expression.type = 'NODE_OP'
+            }
+            console.log('createExpression - FINAL EXPRESSION: ', expression)
+            return expression
         },
         getExpression(filters: iFilter[]) {
+            console.log('FILTERS FOR EXPRESISON: ', filters)
             const filtersLength = filters.length
 
-            let expression = {}
+            let expression = {} as any
             if (filtersLength === 0) {
                 return expression
             } else if (filters.length === 1) {
@@ -270,6 +301,21 @@ export default defineComponent({
                         rightOperandValue: tempFilter.rightOperandValue[0]
                     }
                 }
+            } else {
+                expression = { type: 'NODE_OP', childNodes: [], value: 'AND' }
+                filters.forEach((filter: iFilter) =>
+                    expression.childNodes.push({
+                        type: 'NODE_CONST',
+                        childNodes: [],
+                        value: '$F{' + filter.filterId + '}',
+                        details: {
+                            leftOperandAlias: filter.leftOperandAlias,
+                            operator: filter.operator,
+                            entity: filter.entity,
+                            rightOperandValue: filter.rightOperandValue[0]
+                        }
+                    })
+                )
             }
 
             return expression
@@ -316,6 +362,8 @@ export default defineComponent({
             item.ambiguousFieldsPaths = [] //hardkoded i kod njih u source dode
             item.ambiguousRoles = [] //hardkoded i kod njih u source dode
             item.pars = '[]' //hardcoded, ovo su dataset parametri VALJDA neam pojma
+
+            console.log('QUERY SEND DATA: ', this.qbe?.qbeJSONQuery?.catalogue?.queries)
 
             let conf = {} as any
             conf.headers = { 'Content-Type': 'application/x-www-form-urlencoded' } as any
