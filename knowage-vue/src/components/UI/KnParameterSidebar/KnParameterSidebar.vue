@@ -10,8 +10,8 @@
             </template>
         </Toolbar>
 
-        <div class="p-fluid kn-parameter-sidebar-content">
-            <div :class="applyFieldClass('p-field p-m-3')" v-if="user && (!sessionRole || sessionRole === 'No default role selected')">
+        <div class="p-fluid kn-parameter-sidebar-content kn-alternated-rows">
+            <div class="p-field p-m-1 p-p-2" v-if="user && (!sessionRole || sessionRole === 'No default role selected')">
                 <div class="p-d-flex">
                     <label class="kn-material-input-label">{{ $t('common.roles') }}</label>
                 </div>
@@ -19,7 +19,7 @@
             </div>
 
             <div v-for="(parameter, index) in parameters.filterStatus" :key="index">
-                <div :class="applyFieldClass('p-field p-m-3')" v-if="(parameter.type === 'STRING' || parameter.type === 'NUM') && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
+                <div class="p-field p-m-1 p-p-2" v-if="(parameter.type === 'STRING' || parameter.type === 'NUM') && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters }" :data-test="'parameter-input-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-input-clear-' + parameter.id"></i>
@@ -36,7 +36,7 @@
                         :data-test="'parameter-input-' + parameter.id"
                     />
                 </div>
-                <div :class="applyFieldClass('p-field p-m-3')" v-if="parameter.type === 'DATE' && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
+                <div class="p-field p-m-1 p-p-2" v-if="parameter.type === 'DATE' && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters }" :data-test="'parameter-date-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-date-clear-' + parameter.id"></i>
@@ -54,12 +54,12 @@
                         :data-test="'parameter-date-input-' + parameter.id"
                     />
                 </div>
-                <div :class="applyFieldClass('p-field p-m-3')" v-if="parameter.selectionType === 'LIST' && parameter.showOnPanel === 'true'">
+                <div class="p-field p-m-1 p-p-2" v-if="parameter.selectionType === 'LIST' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label
                             class="kn-material-input-label"
                             :class="{
-                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
+                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length === 0)),
                                 'p-text-italic': parameter.dependsOnParameters
                             }"
                             :data-test="'parameter-checkbox-label-' + parameter.id"
@@ -75,7 +75,7 @@
                         </div>
                     </div>
                 </div>
-                <div :class="applyFieldClass('p-field p-m-3')" v-if="parameter.selectionType === 'COMBOBOX' && parameter.showOnPanel === 'true'">
+                <div class="p-field p-m-1 p-p-2" v-if="parameter.selectionType === 'COMBOBOX' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label
                             class="kn-material-input-label"
@@ -90,7 +90,7 @@
                     <Dropdown v-if="!parameter.multivalue && parameter.parameterValue" class="kn-material-input" v-model="parameter.parameterValue[0]" :options="parameter.data" optionLabel="description" @change="updateDependency(parameter)" />
                     <MultiSelect v-else v-model="parameter.parameterValue" :options="parameter.data" optionLabel="description" @change="updateDependency(parameter)" />
                 </div>
-                <div :class="applyFieldClass('p-field p-m-3')" v-if="parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true'">
+                <div class="p-field p-m-1 p-p-2" v-if="parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label
                             class="kn-material-input-label"
@@ -109,7 +109,7 @@
                         </div>
                     </div>
                 </div>
-                <div :class="applyFieldClass('p-field p-m-3')" v-if="parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true'">
+                <div class="p-field p-m-1 p-p-2" v-if="parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label
                             class="kn-material-input-label"
@@ -545,6 +545,10 @@ export default defineComponent({
             .p-checkbox-icon {
                 width: 5px;
                 height: 5px;
+                &.pi-check::before {
+                    top: 4px;
+                    left: -1px;
+                }
             }
         }
     }
@@ -562,11 +566,5 @@ export default defineComponent({
 }
 .parameterValueChip {
     font-size: 0.9rem;
-}
-.fieldBackgroundColorPrimary {
-    background-color: #bbd6ed0d;
-}
-.fieldBackgroundColorSecondary {
-    background-color: #d8d8d80d;
 }
 </style>
