@@ -143,3 +143,11 @@
 .kn-white-color {
     color: $button-text-color !important;
 }
+
+.kn-alternated-rows {
+    & > div {
+        &:nth-child(even) {
+            background-color: $list-item-alternated-background-color;
+        }
+    }
+}
