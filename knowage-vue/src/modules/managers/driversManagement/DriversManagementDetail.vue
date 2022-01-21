@@ -188,19 +188,6 @@ export default defineComponent({
                 await this.sendUseModeRequest(url, mode).catch((error: any) => driverSavingErrors.push(error?.message))
                 this.getModes()
             }
-            // this.modesToSave.forEach(async (mode) => {
-            //     let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/modes/'
-            //     mode.id = this.driver.id
-            //     if (mode.useID != -1) {
-            //         this.useModeOperation = 'update'
-            //         url += mode.id
-            //     } else {
-            //         delete mode.useID
-            //         this.useModeOperation = 'insert'
-            //     }
-            //     await this.sendUseModeRequest(url, mode).catch((error: any) => console.log('ERROR: ', driverSavingErrors.push(error?.message)))
-            //     this.getModes()
-            // })
 
             if (driverSavedMessage === 'OK' && driverSavingErrors.length === 0) {
                 this.$store.commit('setInfo', {
