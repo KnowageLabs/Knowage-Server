@@ -213,11 +213,6 @@ export default defineComponent({
         this.loadParameters()
     },
     methods: {
-        applyFieldClass(cssClass: string): string {
-            let cssCompleteClass = this.primary ? cssClass + ' fieldBackgroundColorPrimary' : cssClass + ' fieldBackgroundColorSecondary'
-            this.primary = !this.primary
-            return cssCompleteClass
-        },
         setNewSessionRole() {
             this.$emit('roleChanged', this.role)
             this.parameters = { isReadyForExecution: false, filterStatus: [] }
