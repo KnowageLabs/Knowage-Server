@@ -1757,7 +1757,8 @@
             "hideList": "Hide List",
             "showList": "Show List",
             "toolbarMenu": {
-                "sql": "SQL Query"
+                "sql": "SQL Query",
+                "repetitions": "Discard Repetitions"
             }
         },
         "entities": {

@@ -112,6 +112,7 @@ export default defineComponent({
             relationDialogVisible: false,
             filterDialogData: {} as { field: iField; query: iQuery },
             showDerivedList: true,
+            discardRepetitions: false,
             sqlData: {} as any,
             menuButtons: [] as any,
             relationEntity: {} as any
@@ -283,7 +284,17 @@ export default defineComponent({
         },
         createMenuItems() {
             this.menuButtons = []
-            this.menuButtons.push({ key: '1', label: this.$t('qbe.detailView.toolbarMenu.sql'), command: () => this.showSQLQuery() })
+            let repetitionIcon = this.discardRepetitions ? 'fas fa-check' : 'fas fa-times'
+            this.menuButtons.push({ key: '1', label: this.$t('qbe.detailView.toolbarMenu.sql'), command: () => this.showSQLQuery() }, { key: '2', icon: repetitionIcon, label: this.$t('qbe.detailView.toolbarMenu.repetitions'), command: () => this.toggleDiscardRepetitions() })
+        },
+
+        toggleDiscardRepetitions() {
+            this.discardRepetitions = !this.discardRepetitions
+            this.qbe ? (this.qbe.qbeJSONQuery.catalogue.queries[0].distinct = this.discardRepetitions) : ''
+            if (this.smartView) {
+                // odmah pzovi servis i reloaduj prikaz, da bi radio kako treba currentQueryID unutar executeQBEQuery headera, ne sme da bude hardkodovan
+                this.executeQBEQuery()
+            }
         },
 
         //#region ===================== TODO: sve sto se tice ovoga mora da se uradi bolje ====================================================
