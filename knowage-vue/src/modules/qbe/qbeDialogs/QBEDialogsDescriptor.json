@@ -25,5 +25,23 @@
         "style": {
             "min-width": "60%"
         }
+    },
+    "paramDialog": {
+        "datasetParamTypes": [
+            {
+                "name": "String",
+                "value": "String"
+            },
+            {
+                "name": "Number",
+                "value": "Number"
+            }
+        ],
+        "newParam": {
+            "defaultValue": "",
+            "multiValue": false,
+            "name": "",
+            "type": ""
+        }
     }
 }

@@ -1,9 +1,9 @@
 <template>
-    <Dialog class="full-screen-dialog" :visible="true" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
+    <Dialog v-if="!loading" class="full-screen-dialog" :visible="true" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
                 <template #left>
-                    <span>ds name goes here</span>
+                    <span>{{ qbe.label }}</span>
                 </template>
                 <template #right>
                     <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" />
@@ -71,6 +71,7 @@
         <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="id" :entities="entities?.entities" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
+        <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" />
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     </Dialog>
 </template>
@@ -86,6 +87,7 @@ import QBEFilterDialog from './qbeDialogs/qbeFilterDialog/QBEFilterDialog.vue'
 import QBESimpleTable from './qbeTables/qbeSimpleTable/QBESimpleTable.vue'
 import QBESqlDialog from './qbeDialogs/QBESqlDialog.vue'
 import QBERelationDialog from './qbeDialogs/QBEEntityRelationDialog.vue'
+import QBEParamDialog from './qbeDialogs/QBEParameterDialog.vue'
 import ExpandableEntity from '@/modules/qbe/qbeComponents/expandableEntity.vue'
 import SubqueryEntity from '@/modules/qbe/qbeComponents/subqueryEntity.vue'
 import ScrollPanel from 'primevue/scrollpanel'
@@ -93,7 +95,7 @@ import Menu from 'primevue/contextmenu'
 
 export default defineComponent({
     name: 'qbe',
-    components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESqlDialog, QBESimpleTable, QBERelationDialog, ExpandableEntity, SubqueryEntity },
+    components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESqlDialog, QBESimpleTable, QBERelationDialog, QBEParamDialog, ExpandableEntity, SubqueryEntity },
     props: { id: { type: String }, visible: { type: Boolean } },
     emits: ['close'],
     data() {
@@ -109,6 +111,7 @@ export default defineComponent({
             hiddenColumnsExist: false,
             filterDialogVisible: false,
             sqlDialogVisible: false,
+            paramDialogVisible: false,
             relationDialogVisible: false,
             filterDialogData: {} as { field: iField; query: iQuery },
             showDerivedList: true,
@@ -282,10 +285,17 @@ export default defineComponent({
             this.relationEntity = entity
             this.relationDialogVisible = true
         },
+        showParamDialog() {
+            this.paramDialogVisible = true
+        },
         createMenuItems() {
             this.menuButtons = []
             let repetitionIcon = this.discardRepetitions ? 'fas fa-check' : 'fas fa-times'
-            this.menuButtons.push({ key: '1', label: this.$t('qbe.detailView.toolbarMenu.sql'), command: () => this.showSQLQuery() }, { key: '2', icon: repetitionIcon, label: this.$t('qbe.detailView.toolbarMenu.repetitions'), command: () => this.toggleDiscardRepetitions() })
+            this.menuButtons.push(
+                { key: '1', label: this.$t('qbe.detailView.toolbarMenu.sql'), command: () => this.showSQLQuery() },
+                { key: '2', icon: repetitionIcon, label: this.$t('qbe.detailView.toolbarMenu.repetitions'), command: () => this.toggleDiscardRepetitions() },
+                { key: '3', label: this.$t('common.parameters'), command: () => this.showParamDialog() }
+            )
         },
 
         toggleDiscardRepetitions() {

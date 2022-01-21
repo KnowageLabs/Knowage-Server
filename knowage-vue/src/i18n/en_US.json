@@ -1759,7 +1759,8 @@
             "toolbarMenu": {
                 "sql": "SQL Query",
                 "repetitions": "Discard Repetitions"
-            }
+            },
+            "parameterDuplicates": "There are parameters with a duplicate name!"
         },
         "entities": {
             "relationDialog": {
