@@ -1753,6 +1753,10 @@
         "warnings": "warnings"
     },
     "qbe": {
+        "advancedFilters": {
+            "title": "Advanced filter",
+            "advancedFilterVisualisation": "Advanced filter visualization"
+        },
         "detailView": {
             "hideList": "Hide List",
             "parameterDuplicates": "There are parameters with a duplicate name!",

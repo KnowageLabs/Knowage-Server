@@ -73,6 +73,7 @@
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
         <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" />
         <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" @close="havingDialogVisible = false" @save="onHavingsSave"></QBEHavingDialog>
+        <QBEAdvancedFilterDialog :visible="advancedFilterDialogVisible" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]" @close="advancedFilterDialogVisible = false"></QBEAdvancedFilterDialog>
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     </Dialog>
 </template>
@@ -84,6 +85,7 @@ import { iQBE, iQuery, iField, iQueryResult, iFilter } from './QBE'
 import Dialog from 'primevue/dialog'
 import Chip from 'primevue/chip'
 import InputSwitch from 'primevue/inputswitch'
+import QBEAdvancedFilterDialog from './qbeDialogs/qbeAdvancedFilterDialog/QBEAdvancedFilterDialog.vue'
 import QBEFilterDialog from './qbeDialogs/qbeFilterDialog/QBEFilterDialog.vue'
 import QBEHavingDialog from './qbeDialogs/qbeHavingDialog/QBEHavingDialog.vue'
 import QBESimpleTable from './qbeTables/qbeSimpleTable/QBESimpleTable.vue'
@@ -97,7 +99,7 @@ import Menu from 'primevue/contextmenu'
 
 export default defineComponent({
     name: 'qbe',
-    components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESqlDialog, QBESimpleTable, QBERelationDialog, QBEParamDialog, ExpandableEntity, SubqueryEntity, QBEHavingDialog },
+    components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESqlDialog, QBESimpleTable, QBERelationDialog, QBEParamDialog, ExpandableEntity, SubqueryEntity, QBEHavingDialog, QBEAdvancedFilterDialog },
     props: { id: { type: String }, visible: { type: Boolean } },
     emits: ['close'],
     data() {
@@ -122,7 +124,8 @@ export default defineComponent({
             menuButtons: [] as any,
             relationEntity: {} as any,
             havingDialogVisible: false,
-            havingDialogData: {} as { field: iField; query: iQuery }
+            havingDialogData: {} as { field: iField; query: iQuery },
+            advancedFilterDialogVisible: false
         }
     },
     watch: {
@@ -351,7 +354,8 @@ export default defineComponent({
             this.menuButtons.push(
                 { key: '1', label: this.$t('qbe.detailView.toolbarMenu.sql'), command: () => this.showSQLQuery() },
                 { key: '2', icon: repetitionIcon, label: this.$t('qbe.detailView.toolbarMenu.repetitions'), command: () => this.toggleDiscardRepetitions() },
-                { key: '3', label: this.$t('common.parameters'), command: () => this.showParamDialog() }
+                { key: '3', label: this.$t('common.parameters'), command: () => this.showParamDialog() },
+                { key: '4', label: this.$t('qbe.advancedFilters.advancedFilterVisualisation'), command: () => this.showAdvancedFilters() }
             )
         },
 
@@ -401,6 +405,11 @@ export default defineComponent({
                     console.log(' QBE - removeDeletedHavings() - Having delete index: ', index)
                 }
             }
+        },
+        // #endregion
+        // #region Advanced Filters
+        showAdvancedFilters() {
+            this.advancedFilterDialogVisible = true
         },
         // #endregion
         //#region ===================== TODO: sve sto se tice ovoga mora da se uradi bolje ====================================================

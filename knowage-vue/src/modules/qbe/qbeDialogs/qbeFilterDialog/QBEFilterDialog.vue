@@ -243,7 +243,7 @@ export default defineComponent({
             this.$emit('close')
             this.nextFilterIndex = -1
             this.parameters = []
-            this.parameterTableVisible = true
+            this.parameterTableVisible = false
         },
         save() {
             if (this.propParameters.length > 0 && !this.parameterTableVisible) {
