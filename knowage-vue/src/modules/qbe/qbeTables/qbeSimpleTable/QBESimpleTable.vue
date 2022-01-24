@@ -108,7 +108,7 @@ export default defineComponent({
         createMenuItems(field: iField, index: number) {
             this.menuItems = []
             this.menuItems.push({ icon: 'pi pi-filter', label: this.$t('common.filters'), command: () => this.openFiltersDialog(field) })
-            if (field.funct && field.funct !== 'NONE') {
+            if ((field.funct && field.funct !== 'NONE') || (field.type === 'inline.calculated.field' && field.fieldType === 'measure')) {
                 this.menuItems.push({ icon: 'pi pi-filter', label: this.$t('qbe.simpleTable.havings'), command: () => this.openHavingsDialog(field) })
             }
             this.menuItems.push({ icon: 'pi pi-trash', label: this.$t('common.delete'), command: () => this.rows.splice(index, 1) })

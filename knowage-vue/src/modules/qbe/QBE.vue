@@ -72,6 +72,7 @@
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
         <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" />
+        <QBEHavingDialog :visible="havingDialogVisible" :filterDialogData="filterDialogData" @close="havingDialogVisible = false"></QBEHavingDialog>
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     </Dialog>
 </template>
@@ -84,6 +85,7 @@ import Dialog from 'primevue/dialog'
 import Chip from 'primevue/chip'
 import InputSwitch from 'primevue/inputswitch'
 import QBEFilterDialog from './qbeDialogs/qbeFilterDialog/QBEFilterDialog.vue'
+import QBEHavingDialog from './qbeDialogs/qbeHavingDialog/QBEHavingDialog.vue'
 import QBESimpleTable from './qbeTables/qbeSimpleTable/QBESimpleTable.vue'
 import QBESqlDialog from './qbeDialogs/QBESqlDialog.vue'
 import QBERelationDialog from './qbeDialogs/QBEEntityRelationDialog.vue'
@@ -95,7 +97,7 @@ import Menu from 'primevue/contextmenu'
 
 export default defineComponent({
     name: 'qbe',
-    components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESqlDialog, QBESimpleTable, QBERelationDialog, QBEParamDialog, ExpandableEntity, SubqueryEntity },
+    components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESqlDialog, QBESimpleTable, QBERelationDialog, QBEParamDialog, ExpandableEntity, SubqueryEntity, QBEHavingDialog },
     props: { id: { type: String }, visible: { type: Boolean } },
     emits: ['close'],
     data() {
@@ -118,7 +120,8 @@ export default defineComponent({
             discardRepetitions: false,
             sqlData: {} as any,
             menuButtons: [] as any,
-            relationEntity: {} as any
+            relationEntity: {} as any,
+            havingDialogVisible: false
         }
     },
     watch: {

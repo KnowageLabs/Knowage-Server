@@ -1755,12 +1755,12 @@
     "qbe": {
         "detailView": {
             "hideList": "Hide List",
+            "parameterDuplicates": "There are parameters with a duplicate name!",
             "showList": "Show List",
             "toolbarMenu": {
-                "sql": "SQL Query",
-                "repetitions": "Discard Repetitions"
-            },
-            "parameterDuplicates": "There are parameters with a duplicate name!"
+                "repetitions": "Discard Repetitions",
+                "sql": "SQL Query"
+            }
         },
         "entities": {
             "relationDialog": {
@@ -1782,9 +1782,8 @@
             }
         },
         "filters": {
-            "applyParameters": "Apply parameters",
-            "temporalFilter": "Temporal filter",
             "and": "And",
+            "applyParameters": "Apply parameters",
             "condition": "Condition",
             "conditionTooltip": "For not/between and not/in operator use \" ---- \" as separator.",
             "enterValue": "Enter a value...",
@@ -1817,7 +1816,11 @@
                 "manual": "Manual set value",
                 "subquery": "Subquery",
                 "value": "Value of the field"
-            }
+            },
+            "temporalFilter": "Temporal filter"
+        },
+        "having": {
+            "title": "Filters on aggregations"
         },
         "simpleTable": {
             "aggregation": "Aggregation",
