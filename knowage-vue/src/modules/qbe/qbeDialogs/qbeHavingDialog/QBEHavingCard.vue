@@ -2,10 +2,11 @@
     {{ having }}
     <div v-if="having">
         <div class="p-grid p-m-2">
-            <div class="p-col-4">
+            <div class="p-col-3">
                 <label class="kn-material-input-label"> {{ $t('common.field') }} </label>
                 <InputText class="kn-material-input" v-model="having.leftOperandDescription" :disabled="true" />
             </div>
+
             <div class="p-col-2">
                 <label class="kn-material-input-label" v-tooltip.top="$t('qbe.filters.conditionTooltip')"> {{ $t('qbe.filters.condition') }} </label>
                 <Dropdown class="kn-material-input" v-model="having.operator" :options="QBEHavingDialogDescriptor.operatorValues" optionValue="value">
@@ -21,12 +22,13 @@
                     </template>
                 </Dropdown>
             </div>
+
             <div class="p-col-2">
                 <label class="kn-material-input-label"> {{ $t('qbe.filters.targetType') }} </label>
                 <Dropdown class="kn-material-input" v-model="having.rightType" :options="targetValues" optionValue="value" optionLabel="label" @change="onHavingTypeChange" />
             </div>
 
-            <div class="p-col-4">
+            <div class="p-col-3">
                 <label class="kn-material-input-label"> {{ $t('qbe.filters.target') }} </label>
                 <div class="p-d-flex p-flex-row p-ai-center">
                     <InputText v-if="having.rightType === 'manual'" class="kn-material-input" v-model="having.rightOperandDescription" @input="onManualValueChange" />
@@ -34,10 +36,11 @@
                 </div>
             </div>
 
-            <div class="p-col-4">
+            <div class="p-col-2">
                 <label class="kn-material-input-label"> {{ $t('qbe.filters.target') }} </label>
                 <div class="p-d-flex p-flex-row p-ai-center">
                     <Dropdown class="kn-material-input kn-flex" v-model="having.booleanConnector" :options="QBEHavingDialogDescriptor.booleanConnectors" @change="onEntityTypeChanged" />
+                    <i class="fa fa-eraser kn-cursor-pointer p-ml-2" @click="$emit('removeHaving', having)"></i>
                 </div>
             </div>
         </div>
@@ -54,7 +57,7 @@ export default defineComponent({
     name: 'qbe-filter-card',
     components: { Dropdown },
     props: { propHaving: { type: Object as PropType<iFilter> }, havings: { type: Array } },
-    emits: ['removeFilter'],
+    emits: ['removeHaving'],
     data() {
         return {
             QBEHavingDialogDescriptor,
@@ -86,10 +89,24 @@ export default defineComponent({
         onHavingTypeChange() {
             if (this.having) {
                 this.having.rightOperandDescription = ''
+                this.having.rightOperandLongDescription = ''
+                this.having.rightOperandAlias = ''
             }
         },
-        onManualValueChange() {},
-        onEntityTypeChanged() {}
+        onManualValueChange() {
+            if (this.having) {
+                this.having.rightOperandValue = [this.having.rightOperandDescription]
+                this.having.rightOperandType = 'Static Content'
+            }
+        },
+        onEntityTypeChanged() {
+            if (this.having) {
+                this.having.rightOperandValue = [this.having.rightOperandDescription]
+                this.having.rightOperandType = 'Field Content'
+                this.having.rightOperandLongDescription = this.having.rightOperandDescription
+                this.having.rightOperandAlias = this.having.rightOperandDescription
+            }
+        }
     }
 })
 </script>

@@ -12,15 +12,15 @@
             </Toolbar>
         </template>
 
-        <Message class="p-m-4" severity="info" :closable="false" :style="QBEHavingDialogDescriptor.styles.message">
+        <Message class="p-mx-4" severity="info" :closable="false" :style="QBEHavingDialogDescriptor.styles.message">
             {{ $t('qbe.having.infoMessage') }}
         </Message>
 
-        <Message v-if="havings.length === 0" class="p-m-4" severity="info" :closable="false" :style="QBEHavingDialogDescriptor.styles.message">
+        <Message v-if="havings.length === 0" class="p-mx-4 p-my-2" severity="info" :closable="false" :style="QBEHavingDialogDescriptor.styles.message">
             {{ $t('qbe.having.noHavings') }}
         </Message>
         <div>
-            <QBEHavingCard v-for="having in havings" :key="having.filterId" :propHaving="having" :havings="havingDialogData?.query.havings"></QBEHavingCard>
+            <QBEHavingCard v-for="having in havings" :key="having.filterId" :propHaving="having" :havings="havingDialogData?.query.havings" @removeHaving="removeHaving"></QBEHavingCard>
         </div>
 
         <template #footer>
@@ -65,8 +65,8 @@ export default defineComponent({
             if (!this.havingDialogData || !this.havingDialogData.field || !this.havingDialogData.query) return
 
             this.havings = []
-            this.havingDialogData.query.filters.forEach((filter: iFilter) => {
-                console.log(filter.leftOperandValue + ' === ' + this.havingDialogData?.field.id)
+            this.havingDialogData.query.havings.forEach((filter: iFilter) => {
+                console.log('Having Dialog - loadData() - COMPARE: ', filter.leftOperandValue, ' === ', this.havingDialogData?.field.id)
                 if (filter.leftOperandValue === this.havingDialogData?.field.id) {
                     this.havings.push({ ...filter })
                 }
@@ -82,18 +82,18 @@ export default defineComponent({
         },
         addNewHaving() {
             const field = this.havingDialogData?.field
-            console.log('FIELD: ', field)
+            console.log('Having Dialog - addNewHaving() - FIELD: ', field)
             if (field) {
                 this.havings.push({
                     filterId: 'having' + this.nextHavingIndex,
-                    filterDescripion: 'having1' + this.nextHavingIndex,
+                    filterDescripion: 'having' + this.nextHavingIndex,
                     filterInd: this.nextHavingIndex,
                     promptable: false,
                     leftOperandAggregator: field.funct,
                     leftOperandValue: field.id,
-                    leftOperandDescription: field.entity + ':' + field.funct + ' (' + field.alias + ')',
-                    leftOperandLongDescription: field.entity + ':' + field.funct + ' (' + field.alias + ')',
-                    leftOperandType: 'Field Content',
+                    leftOperandDescription: field.entity + ': ' + field.funct + ' (' + field.alias + ')',
+                    leftOperandLongDescription: field.entity + ': ' + field.funct + ' (' + field.alias + ')',
+                    leftOperandType: 'inline.calculated.field',
                     leftOperandDefaultValue: null,
                     leftOperandDataType: '',
                     leftOperandLastValue: null,
@@ -114,10 +114,18 @@ export default defineComponent({
                 this.nextHavingIndex++
             }
         },
+        removeHaving(having: iFilter) {
+            console.log('QBE Having Dialog - removeHaving() - HAVING TO REMOVE: ', having)
+            const index = this.havings.findIndex((el: iFilter) => el.filterId === having.filterId)
+            console.log('QBE Having Dialog - removeHaving() - INDEX: ', index)
+            if (index !== -1) this.havings.splice(index, 1)
+        },
         closeDialog() {
             this.$emit('close')
         },
-        save() {}
+        save() {
+            this.$emit('save', this.havings, this.havingDialogData?.field)
+        }
     }
 })
 </script>
