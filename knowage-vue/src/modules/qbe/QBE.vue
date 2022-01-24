@@ -7,7 +7,7 @@
                 </template>
                 <template #right>
                     <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" />
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" />
+                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="savingDialogVisible = true" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('close')" />
                 </template>
             </Toolbar>
@@ -73,6 +73,7 @@
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
         <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" />
         <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" @close="havingDialogVisible = false" @save="onHavingsSave"></QBEHavingDialog>
+        <QBESavingDialog v-if="savingDialogVisible" :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" />
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     </Dialog>
 </template>
@@ -91,6 +92,7 @@ import QBESimpleTable from './qbeTables/qbeSimpleTable/QBESimpleTable.vue'
 import QBESqlDialog from './qbeDialogs/QBESqlDialog.vue'
 import QBERelationDialog from './qbeDialogs/QBEEntityRelationDialog.vue'
 import QBEParamDialog from './qbeDialogs/QBEParameterDialog.vue'
+import QBESavingDialog from './qbeDialogs/qbeSavingDialog/QBESavingDialog.vue'
 import ExpandableEntity from '@/modules/qbe/qbeComponents/expandableEntity.vue'
 import SubqueryEntity from '@/modules/qbe/qbeComponents/subqueryEntity.vue'
 import ScrollPanel from 'primevue/scrollpanel'
@@ -98,7 +100,7 @@ import Menu from 'primevue/contextmenu'
 
 export default defineComponent({
     name: 'qbe',
-    components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESqlDialog, QBESimpleTable, QBERelationDialog, QBEParamDialog, ExpandableEntity, SubqueryEntity, QBEHavingDialog },
+    components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESavingDialog, QBESqlDialog, QBESimpleTable, QBERelationDialog, QBEParamDialog, ExpandableEntity, SubqueryEntity, QBEHavingDialog },
     props: { id: { type: String }, visible: { type: Boolean } },
     emits: ['close'],
     data() {
@@ -116,6 +118,7 @@ export default defineComponent({
             sqlDialogVisible: false,
             paramDialogVisible: false,
             relationDialogVisible: false,
+            savingDialogVisible: false,
             filterDialogData: {} as { field: iField; query: iQuery },
             showDerivedList: true,
             discardRepetitions: false,

@@ -1753,6 +1753,10 @@
         "warnings": "warnings"
     },
     "qbe": {
+        "savingDialog": {
+            "persistence": "Persistence",
+            "title": "Saving QBE Dataset"
+        },
         "detailView": {
             "hideList": "Hide List",
             "parameterDuplicates": "There are parameters with a duplicate name!",
