@@ -86,14 +86,14 @@ export default defineComponent({
             if (field) {
                 this.havings.push({
                     filterId: 'having' + this.nextHavingIndex,
-                    filterDescripion: 'having1' + this.nextHavingIndex,
+                    filterDescripion: 'having' + this.nextHavingIndex,
                     filterInd: this.nextHavingIndex,
                     promptable: false,
                     leftOperandAggregator: field.funct,
                     leftOperandValue: field.id,
-                    leftOperandDescription: field.entity + ':' + field.funct + ' (' + field.alias + ')',
-                    leftOperandLongDescription: field.entity + ':' + field.funct + ' (' + field.alias + ')',
-                    leftOperandType: 'Field Content',
+                    leftOperandDescription: field.entity + ': ' + field.funct + ' (' + field.alias + ')',
+                    leftOperandLongDescription: field.entity + ': ' + field.funct + ' (' + field.alias + ')',
+                    leftOperandType: 'inline.calculated.field',
                     leftOperandDefaultValue: null,
                     leftOperandDataType: '',
                     leftOperandLastValue: null,
