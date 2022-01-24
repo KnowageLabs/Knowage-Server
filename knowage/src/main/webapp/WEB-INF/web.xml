@@ -173,12 +173,6 @@
 	</filter-mapping>
 	
 	<filter-mapping>
-			<filter-name>ProfileFilter</filter-name>
-		<dispatcher>FORWARD</dispatcher>
-		<url-pattern>/WEB-INF/jsp/tools/*</url-pattern>
-	</filter-mapping>
-	
-	<filter-mapping>
 		<filter-name>AntiInjectionFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
