@@ -7,7 +7,7 @@
                 </template>
                 <template #right>
                     <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" />
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" />
+                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="savingDialogVisible = true" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('close')" />
                 </template>
             </Toolbar>
@@ -74,6 +74,7 @@
         <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" />
         <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" @close="havingDialogVisible = false" @save="onHavingsSave"></QBEHavingDialog>
         <QBEAdvancedFilterDialog :visible="advancedFilterDialogVisible" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]" @close="advancedFilterDialogVisible = false"></QBEAdvancedFilterDialog>
+        <QBESavingDialog v-if="savingDialogVisible" :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" />
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     </Dialog>
 </template>
@@ -81,6 +82,7 @@
 <script lang="ts">
 import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
+import { downloadDirect } from '@/helpers/commons/fileHelper'
 import { iQBE, iQuery, iField, iQueryResult, iFilter } from './QBE'
 import Dialog from 'primevue/dialog'
 import Chip from 'primevue/chip'
@@ -92,6 +94,7 @@ import QBESimpleTable from './qbeTables/qbeSimpleTable/QBESimpleTable.vue'
 import QBESqlDialog from './qbeDialogs/QBESqlDialog.vue'
 import QBERelationDialog from './qbeDialogs/QBEEntityRelationDialog.vue'
 import QBEParamDialog from './qbeDialogs/QBEParameterDialog.vue'
+import QBESavingDialog from './qbeDialogs/qbeSavingDialog/QBESavingDialog.vue'
 import ExpandableEntity from '@/modules/qbe/qbeComponents/expandableEntity.vue'
 import SubqueryEntity from '@/modules/qbe/qbeComponents/subqueryEntity.vue'
 import ScrollPanel from 'primevue/scrollpanel'
@@ -99,7 +102,7 @@ import Menu from 'primevue/contextmenu'
 
 export default defineComponent({
     name: 'qbe',
-    components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESqlDialog, QBESimpleTable, QBERelationDialog, QBEParamDialog, ExpandableEntity, SubqueryEntity, QBEHavingDialog, QBEAdvancedFilterDialog },
+    components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESavingDialog, QBESqlDialog, QBESimpleTable, QBERelationDialog, QBEParamDialog, ExpandableEntity, SubqueryEntity, QBEHavingDialog, QBEAdvancedFilterDialog },
     props: { id: { type: String }, visible: { type: Boolean } },
     emits: ['close'],
     data() {
@@ -117,6 +120,7 @@ export default defineComponent({
             sqlDialogVisible: false,
             paramDialogVisible: false,
             relationDialogVisible: false,
+            savingDialogVisible: false,
             filterDialogData: {} as { field: iField; query: iQuery },
             showDerivedList: true,
             discardRepetitions: false,
@@ -148,8 +152,8 @@ export default defineComponent({
         },
         async loadDataset() {
             // HARDCODED Dataset label/name
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
-                //  await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
+            // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
                 if (this.qbe) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
@@ -173,7 +177,7 @@ export default defineComponent({
             // HARDCODED a lot
             if (!this.qbe) return
 
-            const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: [], qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
+            const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
                 .post(process.env.VUE_APP_QBE_PATH + `qbequery/executeQuery/?SBI_EXECUTION_ID=${this.id}&currentQueryId=q1&start=0&limit=25`, postData)
                 .then((response: AxiosResponse<any>) => (this.queryResult = response.data))
@@ -355,10 +359,38 @@ export default defineComponent({
                 { key: '1', label: this.$t('qbe.detailView.toolbarMenu.sql'), command: () => this.showSQLQuery() },
                 { key: '2', icon: repetitionIcon, label: this.$t('qbe.detailView.toolbarMenu.repetitions'), command: () => this.toggleDiscardRepetitions() },
                 { key: '3', label: this.$t('common.parameters'), command: () => this.showParamDialog() },
-                { key: '4', label: this.$t('qbe.advancedFilters.advancedFilterVisualisation'), command: () => this.showAdvancedFilters() }
+                { key: '4', label: this.$t('qbe.advancedFilters.advancedFilterVisualisation'), command: () => this.showAdvancedFilters() },
+                {
+                    key: '5',
+                    label: this.$t('qbe.detailView.toolbarMenu.exportTo'),
+                    items: [
+                        { label: 'CSV', command: () => this.exportQueryResults('csv') },
+                        { label: 'XLSX', command: () => this.exportQueryResults('xlsx') }
+                    ]
+                }
             )
         },
+        async exportQueryResults(mimeType) {
+            var fileName = ''
+            var fileType = ''
 
+            if (mimeType == 'csv') {
+                fileName = 'report.csv'
+                fileType = 'text/csv'
+            } else if (mimeType == 'xlsx') {
+                fileName = 'report.xlsx'
+                fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            } else {
+                console.log('Unsupported mime type: ', mimeType, fileName, fileType)
+            }
+            const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
+            await this.$http
+                .post(process.env.VUE_APP_QBE_PATH + `qbequery/export/?SBI_EXECUTION_ID=${this.id}&currentQueryId=q2&outputType=${mimeType}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .then((response: AxiosResponse<any>) => {
+                    downloadDirect(response.data, fileName, fileType)
+                })
+                .catch(() => {})
+        },
         toggleDiscardRepetitions() {
             this.discardRepetitions = !this.discardRepetitions
             this.qbe ? (this.qbe.qbeJSONQuery.catalogue.queries[0].distinct = this.discardRepetitions) : ''
@@ -420,7 +452,7 @@ export default defineComponent({
             item.currentQueryId = 'q1' //hardkoded i kod njih u source dode
             item.ambiguousFieldsPaths = [] //hardkoded i kod njih u source dode
             item.ambiguousRoles = [] //hardkoded i kod njih u source dode
-            item.pars = '[]' //hardcoded, ovo su dataset parametri VALJDA neam pojma
+            item.pars = this.qbe?.pars //hardcoded, ovo su dataset parametri VALJDA neam pojma
 
             console.log('QUERY SEND DATA: ', this.qbe?.qbeJSONQuery?.catalogue?.queries)
 

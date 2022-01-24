@@ -1754,14 +1754,15 @@
     },
     "qbe": {
         "advancedFilters": {
-            "title": "Advanced filter",
-            "advancedFilterVisualisation": "Advanced filter visualization"
+            "advancedFilterVisualisation": "Advanced filter visualization",
+            "title": "Advanced filter"
         },
         "detailView": {
             "hideList": "Hide List",
             "parameterDuplicates": "There are parameters with a duplicate name!",
             "showList": "Show List",
             "toolbarMenu": {
+                "exportTo": "Export to",
                 "repetitions": "Discard Repetitions",
                 "sql": "SQL Query"
             }
@@ -1827,6 +1828,10 @@
             "infoMessage": "This page is containing HAVINGS, that are criterias to be applied on aggregated values",
             "noHavings": "No havings present, add one with the plus button on the right corner.",
             "title": "Filters on aggregations"
+        },
+        "savingDialog": {
+            "persistence": "Persistence",
+            "title": "Saving QBE Dataset"
         },
         "simpleTable": {
             "aggregation": "Aggregation",
