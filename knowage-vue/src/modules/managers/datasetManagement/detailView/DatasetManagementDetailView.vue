@@ -8,9 +8,6 @@
         </template>
     </Toolbar>
     <div class="datasetDetail">
-        add: {{ tablesToAdd }}
-        <br />
-        remove : {{ tablesToRemove }}
         <TabView class="tabview-custom" v-model:activeIndex="activeTab" data-test="tab-view">
             <TabPanel>
                 <template #header>
@@ -70,7 +67,7 @@
             </TabPanel>
         </TabView>
 
-        <WorkspaceDataPreviewDialog :visible="showPreviewDialog" :propDataset="selectedDataset" @close="showPreviewDialog = false"></WorkspaceDataPreviewDialog>
+        <WorkspaceDataPreviewDialog :visible="showPreviewDialog" :propDataset="selectedDataset" @close="showPreviewDialog = false" :previewType="'dataset'"></WorkspaceDataPreviewDialog>
     </div>
 </template>
 
