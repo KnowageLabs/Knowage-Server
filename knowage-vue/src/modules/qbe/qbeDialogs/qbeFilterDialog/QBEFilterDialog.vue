@@ -17,7 +17,7 @@
             {{ $t('common.info.noDataFound') }}
         </Message>
         <div v-else-if="!parameterTableVisible">
-            <QBEFilterCard v-for="filter in filters" :key="filter.filterId" :propFilter="filter" :id="id" :propEntities="entities" :subqueries="filterDialogData?.query.subqueries" :field="filterDialogData?.field" :propParameters="propParameters" @removeFilter="removeFilter"></QBEFilterCard>
+            <QBEFilterCard v-for="filter in filters" :key="filter.filterId" :propFilter="filter" :id="id" :propEntities="entities" :subqueries="filterDialogData?.query.subqueries" :field="filterDialogData?.field" :propParameters="parameters" @removeFilter="removeFilter"></QBEFilterCard>
         </div>
 
         <QBEFilterParameters v-else-if="parameterTableVisible" :propParameters="propParameters"></QBEFilterParameters>
@@ -55,16 +55,21 @@ export default defineComponent({
             nextFilterIndex: -1,
             temporalFilters: [] as any[],
             temporalFilterDialogVisible: false,
+            parameters: [] as any[],
             parameterTableVisible: false
         }
     },
     watch: {
         filterDialogData() {
             this.loadData()
+        },
+        propParameters() {
+            this.loadParameters()
         }
     },
     created() {
         this.loadData()
+        this.loadParameters()
     },
     methods: {
         loadData() {
@@ -78,7 +83,17 @@ export default defineComponent({
                     this.filters.push({ ...filter })
                 }
             })
-            this.nextFilterIndex = this.filterDialogData.query.filters.length + 1
+            this.nextFilterIndex = this.getFilterNextIndex()
+        },
+        getFilterNextIndex() {
+            let maxIndex = 1
+            this.filters.forEach((filter: iFilter) => {
+                if (filter.filterInd > 1) maxIndex = filter.filterInd
+            })
+            return maxIndex + 1
+        },
+        loadParameters() {
+            this.parameters = this.propParameters ? [...this.propParameters] : []
         },
         removeFilter(filter: iFilter) {
             // console.log('FILTER TO REMOVE: ', filter)
@@ -227,12 +242,15 @@ export default defineComponent({
         closeDialog() {
             this.$emit('close')
             this.nextFilterIndex = -1
+            this.parameters = []
+            this.parameterTableVisible = true
         },
         save() {
-            if (this.propParameters.length > 0) {
+            if (this.propParameters.length > 0 && !this.parameterTableVisible) {
                 this.parameterTableVisible = true
             } else {
-                this.$emit('save', this.filters, this.filterDialogData?.field)
+                this.$emit('save', this.filters, this.filterDialogData?.field, this.parameters)
+                this.parameterTableVisible = false
             }
         }
     }

@@ -6,7 +6,7 @@
             </div>
         </template>
         <Column :field="'name'" :header="$t('common.name')" :sortable="true"> </Column>
-        <Column :field="'defaultValue'" :header="$t('common.value')" :sortable="true">
+        <Column :field="'value'" :header="$t('common.value')" :sortable="true">
             <template #editor="slotProps">
                 <div class="p-d-flex p-flex-row p-ai-center">
                     <InputText class="kn-material-input p-inputtext-sm" v-model="slotProps.data[slotProps.column.props.field]"></InputText>
@@ -47,7 +47,11 @@ export default defineComponent({
     },
     methods: {
         loadParameters() {
-            this.parameters = this.propParameters as any[]
+            this.parameters = []
+            this.propParameters?.forEach((parameter: any) => {
+                parameter.value = parameter.defaultValue
+                this.parameters.push(parameter)
+            })
             console.log('PARAMETERS LOADED INSIDE TABLE :', this.parameters)
         }
     }

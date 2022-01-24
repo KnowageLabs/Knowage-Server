@@ -87,7 +87,7 @@
                     <Dropdown class="kn-material-input kn-flex" v-if="filter.rightType === 'subquery'" v-model="filter.rightOperandDescription" :options="subqueries" optionValue="name" optionLabel="name" @change="onSubqeryTargetChange" />
 
                     <!-- PARAMETER -->
-                    <Dropdown class="kn-material-input kn-flex" v-if="filter.rightType === 'parameter'" v-model="filter.rightOperandDescription" :options="parameters" optionValue="name" optionLabel="name" @change="onSubqeryTargetChange" />
+                    <Dropdown class="kn-material-input kn-flex" v-if="filter.rightType === 'parameter'" v-model="filter.rightOperandDescription" :options="parameters" optionValue="name" optionLabel="name" @change="onParameterTargetChange" />
 
                     <i v-if="filter.rightType === 'valueOfField'" class="fa fa-check kn-cursor-pointer p-ml-2" @click="loadFilterValues"></i>
                     <i class="fa fa-eraser kn-cursor-pointer p-ml-2" @click="$emit('removeFilter', filter)"></i>
@@ -208,17 +208,29 @@ export default defineComponent({
                         }
                     }
 
+                    this.filter.hasParam = false
+                    this.filter.paramName = ''
                     break
                 case 'valueOfField':
                     this.filter.rightOperandType = 'Static Content'
                     this.selectedValues = this.filter.rightOperandValue.filter((el: any) => el !== '')
                     await this.loadFilterValues()
+
+                    this.filter.hasParam = false
+                    this.filter.paramName = ''
                     break
                 case 'anotherEntity':
                     this.filter.rightOperandType = 'Field Content'
+                    this.filter.hasParam = false
+                    this.filter.paramName = ''
                     break
                 case 'subquery':
                     this.filter.rightOperandType = 'Subquery'
+                    this.filter.hasParam = false
+                    this.filter.paramName = ''
+                    break
+                case 'parameter':
+                    this.filter.rightOperandType = 'Static Content'
                     break
             }
         },
@@ -352,6 +364,14 @@ export default defineComponent({
             console.log('TIME CHANGED!: ', this.targetEndDate)
             if (this.filter) {
                 this.filter.rightOperandValue[1] = this.targetDate instanceof Date ? moment(this.targetEndDate).format('DD/MM/YYYY hh:mm') : ''
+            }
+        },
+        onParameterTargetChange() {
+            if (this.filter) {
+                this.filter.hasParam = true
+                this.filter.paramName = this.filter.rightOperandDescription
+                this.filter.rightOperandValue = ['$P{' + this.filter.rightOperandDescription + '}']
+                this.filter.rightOperandLongDescription = 'Static Content ' + '$P{' + this.filter.rightOperandDescription + '}'
             }
         }
     }

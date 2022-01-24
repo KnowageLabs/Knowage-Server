@@ -123,5 +123,7 @@ export interface iFilter {
     rightOperandLongDescription: string,
     rightOperandType: string,
     rightOperandValue: string[],
-    rightType: string
+    rightType: string,
+    hasParam?: boolean,
+    paramName?: string
 }

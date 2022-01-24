@@ -214,8 +214,9 @@ export default defineComponent({
             this.filterDialogData = payload
             this.filterDialogVisible = true
         },
-        onFiltersSave(filters: iFilter[], field: iField) {
+        onFiltersSave(filters: iFilter[], field: iField, parameters: any[]) {
             console.log('ON FILTERS SAVE: ', filters)
+            console.log('ON FILTERS SAVE PARAMETERS: ', parameters)
             console.log('QBE QUERY BEFORE FILTERS SAVED: ', this.qbe?.qbeJSONQuery.catalogue.queries[0])
             console.log('FIELD ON FILTER SAVE: ', field)
             if (!this.qbe) return
@@ -234,6 +235,7 @@ export default defineComponent({
             this.removeDeletedFilters(filters, field)
 
             this.qbe.qbeJSONQuery.catalogue.queries[0].expression = this.createExpression()
+            this.qbe.pars = parameters ? [...parameters] : []
             this.filterDialogVisible = false
             console.log('QBE QUERY AFTER FILTERS SAVED: ', this.qbe?.qbeJSONQuery.catalogue.queries[0])
         },
@@ -246,10 +248,10 @@ export default defineComponent({
                 const tempFilter = this.qbe.qbeJSONQuery.catalogue.queries[0].filters[i]
                 // console.log(' >>> TEMP FILTER: ', tempFilter)
                 if (tempFilter.leftOperandValue === field.id) {
-                    // console.log(' >>> FILTER FOR DELETE CHECK: ', tempFilter)
+                    console.log(' >>> FILTER FOR DELETE CHECK: ', tempFilter)
                     const index = filters.findIndex((el: iFilter) => el.filterId === tempFilter.filterId)
                     if (index === -1) this.qbe.qbeJSONQuery.catalogue.queries[0].filters.splice(i, 1)
-                    // console.log('  >>> INDEX: ', index)
+                    console.log('  >>> INDEX: ', index)
                 }
             }
         },
