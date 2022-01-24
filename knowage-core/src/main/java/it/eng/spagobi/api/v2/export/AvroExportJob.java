@@ -39,6 +39,8 @@ import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.DatumWriter;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
@@ -179,12 +181,15 @@ public class AvroExportJob extends AbstractExportJob {
 		return (Date.class.isAssignableFrom(fieldType) || fieldType.getName().equalsIgnoreCase("oracle.sql.date"));
 	}
 
-	private Schema getSchema(IDataSet dataSet) {
-		FieldAssembler<Schema> fieldAssembler = SchemaBuilder.record(dataSet.getLabel()).namespace("it.eng.spagobi.api.v2.export.AvroExportJob").fields();
+	private Schema getSchema(IDataSet dataSet) throws JSONException {
+		FieldAssembler<Schema> fieldAssembler = SchemaBuilder.record(dataSet.getLabel().replaceAll("[@!#$_]", ""))
+				.namespace("it.eng.spagobi.api.v2.export.AvroExportJob").fields();
 
 		for (int i = 0; i <= dsMeta.getFieldCount() - 1; i++) {
-			BaseFieldTypeBuilder<Schema> builder = fieldAssembler.name(dsMeta.getFieldName(i)).prop("knColumnAlias", dsMeta.getFieldAlias(i))
-					.prop("knJavaType", dsMeta.getFieldType(i).getName()).type().nullable();
+			JSONObject metadata = new JSONObject();
+			metadata.put("knColumnAlias", dsMeta.getFieldAlias(i));
+			metadata.put("knJavaType", dsMeta.getFieldType(i).getName());
+			BaseFieldTypeBuilder<Schema> builder = fieldAssembler.name(dsMeta.getFieldName(i)).prop("metadata", metadata.toString()).type().nullable();
 			fieldAssembler = setType(builder, dsMeta.getFieldType(i));
 		}
 
