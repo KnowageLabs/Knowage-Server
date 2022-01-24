@@ -1759,7 +1759,8 @@
             "showList": "Show List",
             "toolbarMenu": {
                 "repetitions": "Discard Repetitions",
-                "sql": "SQL Query"
+                "sql": "SQL Query",
+                "exportTo": "Export to"
             }
         },
         "entities": {
