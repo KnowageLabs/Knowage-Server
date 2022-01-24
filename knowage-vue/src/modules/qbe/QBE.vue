@@ -72,7 +72,7 @@
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
         <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" />
-        <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" @close="havingDialogVisible = false"></QBEHavingDialog>
+        <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" @close="havingDialogVisible = false" @save="onHavingsSave"></QBEHavingDialog>
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     </Dialog>
 </template>
@@ -363,7 +363,46 @@ export default defineComponent({
                 this.executeQBEQuery()
             }
         },
+        // #region Havings
+        onHavingsSave(havings: iFilter[], field: iField) {
+            console.log('QBE - onHavingsSave() - havings: ', havings)
+            console.log('QBE - onHavingsSave() - field: ', field)
+            console.log('QBE - onHavingsSave() - QBE before havings saved: ', this.qbe?.qbeJSONQuery.catalogue.queries[0])
 
+            if (!this.qbe) return
+
+            for (let i = 0; i < havings.length; i++) {
+                const tempFilter = havings[i]
+                const index = this.qbe.qbeJSONQuery.catalogue.queries[0].filters.findIndex((el: iFilter) => el.filterId === tempFilter.filterId)
+                console.log('QBE - onHavingsSave() - INDEX: ', index)
+                if (index !== -1) {
+                    this.qbe.qbeJSONQuery.catalogue.queries[0].havings[index] = tempFilter
+                } else {
+                    this.qbe.qbeJSONQuery.catalogue.queries[0].havings.push(tempFilter)
+                }
+            }
+
+            this.removeDeletedHavings(havings, field)
+            this.havingDialogVisible = false
+            console.log('QBE - onHavingsSave() - QBE after havings saved: ', this.qbe?.qbeJSONQuery.catalogue.queries[0])
+        },
+        removeDeletedHavings(havings: iFilter[], field: iField) {
+            if (!this.qbe) return
+
+            console.log(' QBE - removeDeletedHavings() - Query Havings: ', this.qbe.qbeJSONQuery.catalogue.queries[0].havings)
+
+            for (let i = this.qbe.qbeJSONQuery.catalogue.queries[0].havings.length - 1; i >= 0; i--) {
+                const tempHaving = this.qbe.qbeJSONQuery.catalogue.queries[0].filters[i]
+                console.log(' QBE - removeDeletedHavings() - tempHaving: ', tempHaving)
+                if (tempHaving.leftOperandValue === field.id) {
+                    console.log(' QBE - removeDeletedHavings() - Having for delete check: ', tempHaving)
+                    const index = havings.findIndex((el: iFilter) => el.filterId === tempHaving.filterId)
+                    if (index === -1) this.qbe.qbeJSONQuery.catalogue.queries[0].filters.splice(i, 1)
+                    console.log(' QBE - removeDeletedHavings() - Having delete index: ', index)
+                }
+            }
+        },
+        // #endregion
         //#region ===================== TODO: sve sto se tice ovoga mora da se uradi bolje ====================================================
         async showSQLQuery() {
             //TODO: moramo da njih pitamo sta i cemu sluzi ovo je odvratno
