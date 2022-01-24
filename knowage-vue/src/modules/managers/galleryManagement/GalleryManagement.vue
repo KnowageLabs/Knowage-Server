@@ -1,25 +1,25 @@
 <template>
-	<div class="kn-page">
-		<div class="kn-page-content p-grid p-m-0">
-			<div class="p-col-4 p-sm-4 p-md-3 p-p-0 kn-page">
-				<Toolbar class="kn-toolbar kn-toolbar--primary">
-					<template #left>
-						{{ $t('managers.widgetGallery.title') }}
-					</template>
-					<template #right>
-						<FabButton icon="fas fa-plus" @click="toggleAdd" />
-						<Menu ref="menu" :model="addMenuItems" popup="true" />
-					</template>
-				</Toolbar>
-				<KnInputFile label="" :changeFunction="uploadTemplate" accept="application/json,application/zip" :triggerInput="triggerInput" />
-				<ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-				<KnListBox :options="galleryTemplates" :settings="typeDescriptor.knListSettings" @delete="deleteTemplate($event, item)"></KnListBox>
-			</div>
-			<div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
-				<router-view @saved="savedElement" />
-			</div>
-		</div>
-	</div>
+    <div class="kn-page">
+        <div class="kn-page-content p-grid p-m-0">
+            <div class="p-col-4 p-sm-4 p-md-3 p-p-0 kn-page">
+                <Toolbar class="kn-toolbar kn-toolbar--primary">
+                    <template #left>
+                        {{ $t('managers.widgetGallery.title') }}
+                    </template>
+                    <template #right>
+                        <FabButton icon="fas fa-plus" @click="toggleAdd" />
+                        <Menu ref="menu" :model="addMenuItems" popup="true" />
+                    </template>
+                </Toolbar>
+                <KnInputFile label="" :changeFunction="uploadTemplate" accept="application/json,application/zip" :triggerInput="triggerInput" />
+                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+                <KnListBox :options="galleryTemplates" :settings="typeDescriptor.knListSettings" @delete="deleteTemplate($event, item)"></KnListBox>
+            </div>
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
+                <router-view @saved="savedElement" />
+            </div>
+        </div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -31,7 +31,7 @@
 	import Menu from 'primevue/menu'
 	import galleryDescriptor from './GalleryManagementDescriptor.json'
 
-	import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
+    import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 
 	export default defineComponent({
 		name: 'gallery-management',
@@ -122,31 +122,33 @@
 			onReaderLoad(event) {
 				let json = JSON.parse(event.target.result)
 
-				if (!json.id || json.id === '') {
-					this.$confirm.require({
-						message: this.$t('importExport.import.itemWithoutIdConfirm'),
-						header: this.$t('common.import'),
-						icon: 'pi pi-exclamation-triangle',
-						accept: () => {
-							json.id = ''
-							this.importWidget(json)
-						}
-					})
+                if (json.id) {
+                    this.importWidget(json)
+                } else {
+                    this.$confirm.require({
+                        message: this.$t('importExport.import.itemWithoutIdConfirm'),
+                        header: this.$t('common.import'),
+                        icon: 'pi pi-exclamation-triangle',
+                        accept: () => {
+                            json.id = ''
+                            this.importWidget(json)
+                        }
+                    })
 				}
 			},
 			importWidget(json: JSON) {
 				axios.post(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/import', json).then(() => {
 					this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.uploadTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullyUploaded') })
 
-					this.loadAllTemplates()
-				})
-			}
-		}
-	})
+                    this.loadAllTemplates()
+                })
+            }
+        }
+    })
 </script>
 
 <style lang="scss" scoped>
-	.kn-list-column {
-		border-right: 1px solid #ccc;
-	}
+    .kn-list-column {
+        border-right: 1px solid #ccc;
+    }
 </style>
