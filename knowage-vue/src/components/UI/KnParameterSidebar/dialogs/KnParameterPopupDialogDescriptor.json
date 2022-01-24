@@ -7,7 +7,7 @@
     },
     "styles": {
         "checkboxColumn": {
-            "width": "3em"
+            "width": "flex: 0 0 4rem;"
         },
         "message": {
             "align-items": "center",
