@@ -25,6 +25,10 @@
             "value": "String"
         },
         {
+            "name": "java.lang.Boolean",
+            "value": "Boolean"
+        },
+        {
             "name": "java.lang.Double",
             "value": "Double"
         },
