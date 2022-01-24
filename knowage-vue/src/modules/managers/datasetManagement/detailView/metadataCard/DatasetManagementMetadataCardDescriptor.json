@@ -25,6 +25,14 @@
             "value": "String"
         },
         {
+            "name": "net.minidev.json.JSONArray",
+            "value": "JSON"
+        },
+        {
+            "name": "java.util.LinkedHashMap",
+            "value": "Hash Map"
+        },
+        {
             "name": "java.lang.Boolean",
             "value": "Boolean"
         },
