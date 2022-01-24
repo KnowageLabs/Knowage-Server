@@ -1820,6 +1820,8 @@
             "temporalFilter": "Temporal filter"
         },
         "having": {
+            "infoMessage": "This page is containing HAVINGS, that are criterias to be applied on aggregated values",
+            "noHavings": "No havings present, add one with the plus button on the right corner.",
             "title": "Filters on aggregations"
         },
         "simpleTable": {

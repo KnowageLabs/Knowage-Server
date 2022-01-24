@@ -86,9 +86,9 @@ export default defineComponent({
             this.nextFilterIndex = this.getFilterNextIndex()
         },
         getFilterNextIndex() {
-            let maxIndex = 1
+            let maxIndex = 0
             this.filters.forEach((filter: iFilter) => {
-                if (filter.filterInd > 1) maxIndex = filter.filterInd
+                if (filter.filterInd > maxIndex) maxIndex = filter.filterInd
             })
             return maxIndex + 1
         },

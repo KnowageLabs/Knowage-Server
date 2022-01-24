@@ -63,7 +63,7 @@
                 <div class="kn-flex kn-overflow-y">
                     {{ hiddenColumnsExist }}
                     {{ qbe.qbeJSONQuery?.catalogue?.queries[0] }}
-                    <QBESimpleTable v-if="!smartView" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]" @columnVisibilityChanged="checkIfHiddenColumnsExist" @openFilterDialog="openFilterDialog"></QBESimpleTable>
+                    <QBESimpleTable v-if="!smartView" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]" @columnVisibilityChanged="checkIfHiddenColumnsExist" @openFilterDialog="openFilterDialog" @openHavingDialog="openHavingDialog"></QBESimpleTable>
                 </div>
             </div>
         </div>
@@ -72,7 +72,7 @@
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
         <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" />
-        <QBEHavingDialog :visible="havingDialogVisible" :filterDialogData="filterDialogData" @close="havingDialogVisible = false"></QBEHavingDialog>
+        <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" @close="havingDialogVisible = false"></QBEHavingDialog>
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     </Dialog>
 </template>
@@ -121,7 +121,8 @@ export default defineComponent({
             sqlData: {} as any,
             menuButtons: [] as any,
             relationEntity: {} as any,
-            havingDialogVisible: false
+            havingDialogVisible: false,
+            havingDialogData: {} as { field: iField; query: iQuery }
         }
     },
     watch: {
@@ -216,6 +217,11 @@ export default defineComponent({
             console.log('PAYLOAD FOR OPEN FILTER: ', payload)
             this.filterDialogData = payload
             this.filterDialogVisible = true
+        },
+        openHavingDialog(payload: { field: iField; query: iQuery }) {
+            console.log('QBE - PAYLOAD FOR OPEN HAVING DIALOG: ', payload)
+            this.havingDialogData = payload
+            this.havingDialogVisible = true
         },
         onFiltersSave(filters: iFilter[], field: iField, parameters: any[]) {
             console.log('ON FILTERS SAVE: ', filters)

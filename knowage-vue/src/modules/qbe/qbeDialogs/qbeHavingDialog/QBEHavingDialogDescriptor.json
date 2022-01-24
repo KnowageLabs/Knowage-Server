@@ -1,4 +1,5 @@
 {
+    "booleanConnectors": ["AND", "OR"],
     "dialog": {
         "style": {
             "height": "60%",
@@ -7,6 +8,28 @@
             "min-width": "80%"
         }
     },
+    "operatorValues": [
+        {
+            "label": "qbe.filters.operators.equalsTo",
+            "value": "EQUALS TO"
+        },
+        {
+            "label": "qbe.filters.operators.greaterThan",
+            "value": "GREATER THAN"
+        },
+        {
+            "label": "qbe.filters.operators.equalsOrGreaterThan",
+            "value": "EQUALS OR GREATER THAN"
+        },
+        {
+            "label": "qbe.filters.operators.lessThan",
+            "value": "LESS THAN"
+        },
+        {
+            "label": "qbe.filters.operators.equalsOrLessThan",
+            "value": "EQUALS OR LESS THAN"
+        }
+    ],
     "styles": {
         "message": {
             "align-items": "center",

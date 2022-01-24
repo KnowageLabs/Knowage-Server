@@ -56,7 +56,7 @@ export default defineComponent({
     name: 'qbe-simple-table',
     props: { query: { type: Object as PropType<iQuery> } },
     components: { Checkbox, Column, DataTable, Dropdown, Menu },
-    emits: ['columnVisibilityChanged', 'openFilterDialog'],
+    emits: ['columnVisibilityChanged', 'openFilterDialog', 'openHavingDialog'],
     data() {
         return {
             QBESimpleTableDescriptor,
@@ -121,7 +121,7 @@ export default defineComponent({
             this.$emit('openFilterDialog', { field: field, query: this.selectedQuery })
         },
         openHavingsDialog(field: iField) {
-            console.log('TODO - Open havings dialog for field: ', field)
+            this.$emit('openHavingDialog', { field: field, query: this.selectedQuery })
         },
         onDrop(event) {
             var data = JSON.parse(event.dataTransfer.getData('text/plain'))

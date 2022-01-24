@@ -105,7 +105,7 @@ export interface iFilter {
     filterDescripion: string,
     filterId: string,
     filterInd: number,
-    leftOperandAlias: string,
+    leftOperandAlias?: string,
     leftOperandDataType: string,
     leftOperandDefaultValue: any,
     leftOperandDescription: string,
@@ -115,7 +115,7 @@ export interface iFilter {
     leftOperandValue: string,
     operator: string,
     promptable: boolean,
-    rightOperandAlias: any,
+    rightOperandAlias?: any,
     rightOperandDataType: string,
     rightOperandDefaultValue: any[],
     rightOperandDescription: string,
@@ -125,5 +125,7 @@ export interface iFilter {
     rightOperandValue: string[],
     rightType: string,
     hasParam?: boolean,
-    paramName?: string
+    paramName?: string,
+    leftOperandAggregator?: string,
+    rightOperandAggregator?: string
 }

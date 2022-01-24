@@ -7,14 +7,21 @@
                 </template>
 
                 <template #right>
-                    <KnFabButton icon="fas fa-plus" @click="addNewFilter"></KnFabButton>
+                    <KnFabButton icon="fas fa-plus" @click="addNewHaving"></KnFabButton>
                 </template>
             </Toolbar>
         </template>
 
-        <Message v-if="filters.length === 0" class="p-m-4" severity="info" :closable="false" :style="QBEHavingDialogDescriptor.styles.message">
-            {{ $t('common.info.noDataFound') }}
+        <Message class="p-m-4" severity="info" :closable="false" :style="QBEHavingDialogDescriptor.styles.message">
+            {{ $t('qbe.having.infoMessage') }}
         </Message>
+
+        <Message v-if="havings.length === 0" class="p-m-4" severity="info" :closable="false" :style="QBEHavingDialogDescriptor.styles.message">
+            {{ $t('qbe.having.noHavings') }}
+        </Message>
+        <div>
+            <QBEHavingCard v-for="having in havings" :key="having.filterId" :propHaving="having" :havings="havingDialogData?.query.havings"></QBEHavingCard>
+        </div>
 
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
@@ -30,20 +37,22 @@ import Dialog from 'primevue/dialog'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Message from 'primevue/message'
 import QBEHavingDialogDescriptor from './QBEHavingDialogDescriptor.json'
+import QBEHavingCard from './QBEHavingCard.vue'
 
 export default defineComponent({
     name: 'qbe-having-dialog',
-    components: { Dialog, KnFabButton, Message },
-    props: { visible: { type: Boolean }, filterDialogData: { type: Object as PropType<{ field: iField; query: iQuery }> } },
+    components: { Dialog, KnFabButton, Message, QBEHavingCard },
+    props: { visible: { type: Boolean }, havingDialogData: { type: Object as PropType<{ field: iField; query: iQuery }> } },
     emits: ['save', 'close'],
     data() {
         return {
             QBEHavingDialogDescriptor,
-            filters: [] as iFilter[]
+            havings: [] as any[],
+            nextHavingIndex: -1
         }
     },
     watch: {
-        filterDialogData() {
+        havingDialogData() {
             this.loadData()
         }
     },
@@ -52,18 +61,59 @@ export default defineComponent({
     },
     methods: {
         loadData() {
-            console.log('Having Dialog - loadData() - FITLTER DIALOG DATA: ', this.filterDialogData)
-            if (!this.filterDialogData || !this.filterDialogData.field || !this.filterDialogData.query) return
+            console.log('Having Dialog - loadData() - HAVING DIALOG DATA: ', this.havingDialogData)
+            if (!this.havingDialogData || !this.havingDialogData.field || !this.havingDialogData.query) return
 
-            this.filters = []
-            this.filterDialogData.query.filters.forEach((filter: iFilter) => {
-                console.log(filter.leftOperandValue + ' === ' + this.filterDialogData?.field.id)
-                if (filter.leftOperandValue === this.filterDialogData?.field.id) {
-                    this.filters.push({ ...filter })
+            this.havings = []
+            this.havingDialogData.query.filters.forEach((filter: iFilter) => {
+                console.log(filter.leftOperandValue + ' === ' + this.havingDialogData?.field.id)
+                if (filter.leftOperandValue === this.havingDialogData?.field.id) {
+                    this.havings.push({ ...filter })
                 }
             })
+            this.nextHavingIndex = this.getHavingNextIndex()
         },
-        addNewFilter() {},
+        getHavingNextIndex() {
+            let maxIndex = 0
+            this.havings.forEach((having: iFilter) => {
+                if (having.filterInd > maxIndex) maxIndex = having.filterInd
+            })
+            return maxIndex + 1
+        },
+        addNewHaving() {
+            const field = this.havingDialogData?.field
+            console.log('FIELD: ', field)
+            if (field) {
+                this.havings.push({
+                    filterId: 'having' + this.nextHavingIndex,
+                    filterDescripion: 'having1' + this.nextHavingIndex,
+                    filterInd: this.nextHavingIndex,
+                    promptable: false,
+                    leftOperandAggregator: field.funct,
+                    leftOperandValue: field.id,
+                    leftOperandDescription: field.entity + ':' + field.funct + ' (' + field.alias + ')',
+                    leftOperandLongDescription: field.entity + ':' + field.funct + ' (' + field.alias + ')',
+                    leftOperandType: 'Field Content',
+                    leftOperandDefaultValue: null,
+                    leftOperandDataType: '',
+                    leftOperandLastValue: null,
+                    operator: 'EQUALS TO',
+                    rightOperandAggregator: '',
+                    rightOperandValue: [],
+                    rightOperandDescription: '',
+                    rightOperandLongDescription: '',
+                    rightOperandType: '',
+                    rightType: 'manual',
+                    rightOperandDefaultValue: [''],
+                    rightOperandLastValue: [''],
+                    booleanConnector: 'AND',
+                    deleteButton: false,
+                    color: '',
+                    entity: field.entity
+                })
+                this.nextHavingIndex++
+            }
+        },
         closeDialog() {
             this.$emit('close')
         },
