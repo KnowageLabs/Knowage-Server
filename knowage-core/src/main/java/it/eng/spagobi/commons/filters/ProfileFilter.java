@@ -162,8 +162,14 @@ public class ProfileFilter implements Filter {
 					manageTenant(profile);
 					UserProfileManager.setProfile((UserProfile) profile);
 				} else {
-					String contextName = ChannelUtilities.getSpagoBIContextName(httpRequest);
-					if (!requestIsForHomePage(httpRequest) && !requestIsForLoginByToken(httpRequest) && !requestIsForLoginByJavaScriptSDK(httpRequest)) {
+					// @formatter:off
+					if (!requestIsForHomePage(httpRequest) &&
+							!requestIsForLoginByToken(httpRequest) &&
+							!requestIsForLoginByJavaScriptSDK(httpRequest) &&
+							!requestIsForSessionExpired(httpRequest))
+					// @formatter:on
+					{
+						String contextName = ChannelUtilities.getSpagoBIContextName(httpRequest);
 						String targetService = httpRequest.getRequestURI() + "?" + httpRequest.getQueryString();
 						String redirectURL = contextName + "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&targetService="
 								+ URLEncoder.encode(targetService, "UTF-8");
@@ -201,6 +207,11 @@ public class ProfileFilter implements Filter {
 	private boolean requestIsForLoginByJavaScriptSDK(HttpServletRequest request) {
 		// returns true in case request has ACTION_NAME=LOGIN_ACTION_WEB parameter, false otherwise
 		return request.getParameter(Constants.ACTION_NAME) != null && request.getParameter(Constants.ACTION_NAME).equalsIgnoreCase(LoginActionWeb.SERVICE_NAME);
+	}
+
+	private boolean requestIsForSessionExpired(HttpServletRequest request) {
+		// returns true in case request contains the sessionExpiredURL read from Knowage configuration
+		return request.getRequestURI().contains(GeneralUtilities.getSessionExpiredURL());
 	}
 
 	private void storeProfileInSession(UserProfile userProfile, SessionContainer permanentContainer, HttpSession httpSession) {
