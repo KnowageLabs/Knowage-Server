@@ -8,6 +8,9 @@
         </template>
     </Toolbar>
     <div class="datasetDetail">
+        add: {{ tablesToAdd }}
+        <br />
+        remove : {{ tablesToRemove }}
         <TabView class="tabview-custom" v-model:activeIndex="activeTab" data-test="tab-view">
             <TabPanel>
                 <template #header>
@@ -67,7 +70,7 @@
             </TabPanel>
         </TabView>
 
-        <WorkspaceDataPreviewDialog :visible="showPreviewDialog" :propDataset="selectedDataset" @close="showPreviewDialog = false" previewType="dataset"></WorkspaceDataPreviewDialog>
+        <WorkspaceDataPreviewDialog :visible="showPreviewDialog" :propDataset="selectedDataset" @close="showPreviewDialog = false"></WorkspaceDataPreviewDialog>
     </div>
 </template>
 
@@ -224,6 +227,8 @@ export default defineComponent({
                     this.selectedDataset.id ? this.$emit('updated') : this.$emit('created', response)
                     this.saveTags(dsToSave, response.data.id)
                     this.saveSchedulation(dsToSave, response.data.id)
+                    this.saveLinks(response.data.id)
+                    this.removeLinks(response.data.id)
                 })
                 .catch()
         },
@@ -253,6 +258,33 @@ export default defineComponent({
                     .catch()
             } else {
                 await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/persistence/dataset/label/${dsToSave.label}`).catch()
+            }
+        },
+        async saveLinks(id) {
+            if (this.tablesToAdd.length > 0) {
+                this.tablesToAdd.forEach(async (link) => {
+                    if (link.added === true) {
+                        delete link.added
+                        await this.$http
+                            .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDsRelationResource/${id}`, link, {
+                                headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' }
+                            })
+                            .catch()
+                    }
+                })
+            }
+        },
+        async removeLinks(id) {
+            if (this.tablesToRemove.length > 0) {
+                this.tablesToRemove.forEach(async (link) => {
+                    if (link.deleted === true) {
+                        await this.$http
+                            .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDsRelationResource/${id}/${link.tableId}`, {
+                                headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' }
+                            })
+                            .catch()
+                    }
+                })
             }
         },
         async manageDatasetFieldMetadata(fieldsColumns) {
