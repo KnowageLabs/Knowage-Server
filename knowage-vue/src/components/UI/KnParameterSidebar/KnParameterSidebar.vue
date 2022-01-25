@@ -10,8 +10,8 @@
             </template>
         </Toolbar>
 
-        <div class="p-fluid kn-parameter-sidebar-content">
-            <div class="p-field p-m-4" v-if="user && (!sessionRole || sessionRole === 'No default role selected')">
+        <div class="p-fluid kn-parameter-sidebar-content kn-alternated-rows">
+            <div class="p-field p-m-1 p-p-2" v-if="user && (!sessionRole || sessionRole === 'No default role selected')">
                 <div class="p-d-flex">
                     <label class="kn-material-input-label">{{ $t('common.roles') }}</label>
                 </div>
@@ -19,7 +19,7 @@
             </div>
 
             <div v-for="(parameter, index) in parameters.filterStatus" :key="index">
-                <div class="p-field p-m-4" v-if="(parameter.type === 'STRING' || parameter.type === 'NUM') && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
+                <div class="p-field p-m-1 p-p-2" v-if="(parameter.type === 'STRING' || parameter.type === 'NUM') && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters }" :data-test="'parameter-input-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-input-clear-' + parameter.id"></i>
@@ -36,7 +36,7 @@
                         :data-test="'parameter-input-' + parameter.id"
                     />
                 </div>
-                <div class="p-field p-m-4" v-if="parameter.type === 'DATE' && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
+                <div class="p-field p-m-1 p-p-2" v-if="parameter.type === 'DATE' && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters }" :data-test="'parameter-date-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-date-clear-' + parameter.id"></i>
@@ -47,20 +47,19 @@
                         :showButtonBar="true"
                         :showIcon="true"
                         :manualInput="true"
-                        :class="{
-                            'p-invalid': parameter.mandatory && parameter.parameterValue && !parameter.parameterValue[0]?.value
-                        }"
+                        class="kn-material-input custom-timepicker"
+                        :class="{ 'p-invalid': parameter.mandatory && parameter.parameterValue && !parameter.parameterValue[0]?.value }"
                         @change="updateDependency(parameter)"
                         @date-select="updateDependency(parameter)"
                         :data-test="'parameter-date-input-' + parameter.id"
                     />
                 </div>
-                <div class="p-field p-m-4" v-if="parameter.selectionType === 'LIST' && parameter.showOnPanel === 'true'">
+                <div class="p-field p-m-1 p-p-2" v-if="parameter.selectionType === 'LIST' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label
                             class="kn-material-input-label"
                             :class="{
-                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
+                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length === 0)),
                                 'p-text-italic': parameter.dependsOnParameters
                             }"
                             :data-test="'parameter-checkbox-label-' + parameter.id"
@@ -72,11 +71,11 @@
                         <div class="p-field-radiobutton" v-for="(option, index) in parameter.data" :key="index" :data-test="'parameter-list-' + parameter.id">
                             <RadioButton v-if="!parameter.multivalue && parameter.parameterValue" :value="option.value" v-model="parameter.parameterValue[0].value" @change="updateDependency(parameter)" />
                             <Checkbox v-if="parameter.multivalue && parameter.parameterValue" :value="option.value" v-model="selectedParameterCheckbox[parameter.id]" @change="setCheckboxValue(parameter)" />
-                            <label>{{ option.value }}</label>
+                            <label>{{ option.description }}</label>
                         </div>
                     </div>
                 </div>
-                <div class="p-field p-m-4" v-if="parameter.selectionType === 'COMBOBOX' && parameter.showOnPanel === 'true'">
+                <div class="p-field p-m-1 p-p-2" v-if="parameter.selectionType === 'COMBOBOX' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label
                             class="kn-material-input-label"
@@ -88,10 +87,10 @@
                         >
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)"></i>
                     </div>
-                    <Dropdown v-if="!parameter.multivalue && parameter.parameterValue" class="kn-material-input" v-model="parameter.parameterValue[0]" :options="parameter.data" optionLabel="value" @change="updateDependency(parameter)" />
-                    <MultiSelect v-else v-model="parameter.parameterValue" :options="parameter.data" optionLabel="value" @change="updateDependency(parameter)" />
+                    <Dropdown v-if="!parameter.multivalue && parameter.parameterValue" class="kn-material-input" v-model="parameter.parameterValue[0]" :options="parameter.data" optionLabel="description" @change="updateDependency(parameter)" />
+                    <MultiSelect v-else v-model="parameter.parameterValue" :options="parameter.data" optionLabel="description" @change="updateDependency(parameter)" />
                 </div>
-                <div class="p-field p-m-4" v-if="parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true'">
+                <div class="p-field p-m-1 p-p-2" v-if="parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label
                             class="kn-material-input-label"
@@ -106,11 +105,11 @@
                     <div class="p-d-flex p-flex-row">
                         <i class="pi pi-external-link kn-cursor-pointer p-mr-2" @click="openPopupDialog(parameter)"></i>
                         <div>
-                            <Chip v-for="(parameterValue, index) in parameter.parameterValue" :key="index">{{ parameterValue.description }}</Chip>
+                            <Chip class="parameterValueChip" v-for="(parameterValue, index) in parameter.parameterValue" :key="index">{{ parameterValue.description }}</Chip>
                         </div>
                     </div>
                 </div>
-                <div class="p-field p-m-4" v-if="parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true'">
+                <div class="p-field p-m-1 p-p-2" v-if="parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
                         <label
                             class="kn-material-input-label"
@@ -160,7 +159,6 @@ import KnParameterSavedParametersDialog from './dialogs/KnParameterSavedParamete
 import Menu from 'primevue/menu'
 import MultiSelect from 'primevue/multiselect'
 import RadioButton from 'primevue/radiobutton'
-
 export default defineComponent({
     name: 'kn-parameter-sidebar',
     components: { Calendar, Chip, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton },
@@ -183,7 +181,8 @@ export default defineComponent({
             user: null as any,
             role: null as string | null,
             loading: false,
-            updateVisualDependency
+            updateVisualDependency,
+            primary: true
         }
     },
     watch: {
@@ -214,6 +213,11 @@ export default defineComponent({
         this.loadParameters()
     },
     methods: {
+        applyFieldClass(cssClass: string): string {
+            let cssCompleteClass = this.primary ? cssClass + ' fieldBackgroundColorPrimary' : cssClass + ' fieldBackgroundColorSecondary'
+            this.primary = !this.primary
+            return cssCompleteClass
+        },
         setNewSessionRole() {
             this.$emit('roleChanged', this.role)
             this.parameters = { isReadyForExecution: false, filterStatus: [] }
@@ -273,8 +277,10 @@ export default defineComponent({
                         this.selectedParameterCheckbox[parameter.id].push(temp[valueIndex])
                     }
                 }
-            } else if ((parameter.selectionType === 'COMBOBOX' || parameter.selectionType === 'TREE') && parameter.showOnPanel === 'true' && parameter.multivalue) {
+            } else if (parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true' && parameter.multivalue) {
                 parameter.parameterValue = [...parameter.driverDefaultValue]
+            } else if ((parameter.selectionType === 'COMBOBOX' || parameter.selectionType === 'LOOKUP') && parameter.showOnPanel === 'true' && !parameter.multivalue) {
+                parameter.parameterValue[0] = { value: parameter.driverDefaultValue[0][valueIndex], description: parameter.driverDefaultValue[0][descriptionIndex] }
             } else if (parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true' && parameter.multivalue) {
                 parameter.parameterValue = parameter.driverDefaultValue.map((el: any) => {
                     return { value: valueIndex ? el[valueIndex] : '', description: descriptionIndex ? el[descriptionIndex] : '' }
@@ -498,6 +504,7 @@ export default defineComponent({
     right: 0;
     display: flex;
     flex-direction: column;
+    font-size: 0.9rem;
 }
 .parameter-clear-icon {
     margin-left: auto;
@@ -509,6 +516,57 @@ export default defineComponent({
 }
 .kn-parameter-sidebar-buttons {
     margin-top: auto;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+}
+.p-calendar {
+    background-color: transparent;
+}
+.p-field-radiobutton {
+    font-size: 1rem;
+    margin: 0.1rem;
+    width: 15px;
+    height: 15px;
+    .p-radiobutton {
+        width: 15px;
+        height: 15px;
+        .p-radiobutton-box {
+            width: 15px;
+            height: 15px;
+            .p-radiobutton-icon {
+                width: 5px;
+                height: 5px;
+            }
+        }
+    }
+    .p-checkbox {
+        width: 15px;
+        height: 15px;
+        .p-checkbox-box {
+            width: 15px;
+            height: 15px;
+            .p-checkbox-icon {
+                width: 5px;
+                height: 5px;
+                &.pi-check::before {
+                    top: 4px;
+                    left: -1px;
+                }
+            }
+        }
+    }
+}
+.p-dropdown {
+    background-color: transparent;
+    font-size: 0.9rem;
+}
+.p-inputtext {
+    padding: 0.5rem 0.5rem;
+    background-color: transparent;
+    &.p-inputtext-sm {
+        padding: 0.5rem 0.5rem;
+    }
+}
+.parameterValueChip {
+    font-size: 0.9rem;
 }
 </style>

@@ -73,6 +73,9 @@ export default defineComponent({
                     console.log(error.response.headers)
                 }
             })
+        await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/user-configs').then((response) => {
+            store.commit('setConfigurations', response.data)
+        })
         if (this.isEnterprise) {
             this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license').then((response) => {
                 store.commit('setLicenses', response.data)

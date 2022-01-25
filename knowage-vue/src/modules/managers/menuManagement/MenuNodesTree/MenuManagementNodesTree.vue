@@ -59,7 +59,7 @@ export default defineComponent({
                     return item
                 })
 
-                this.menuElements = arrayToTree(element, { dataField: null, style: this.menuNodesTreeDescriptor['node-style'] })
+                this.menuElements = [{ label: this.$t('common.home'), name: this.$t('common.home'), menuId: null, children: arrayToTree(element, { dataField: null, style: this.menuNodesTreeDescriptor['node-style'] }) }]
                 this.expandAll()
             }
         },

@@ -18,7 +18,7 @@
             <Message v-if="errorMessageVisible" class="kn-flex p-m-2" severity="warn" :closable="false" :style="mainDescriptor.style.message">
                 {{ errorMessage }}
             </Message>
-            <DatasetPreviewTable v-else class="p-d-flex p-flex-column kn-flex p-m-2" :previewColumns="columns" :previewRows="rows" :pagination="pagination" @pageChanged="updatePagination($event)" @sort="onSort" @filter="onFilter"></DatasetPreviewTable>
+            <DatasetPreviewTable v-else class="p-d-flex p-flex-column kn-flex p-m-2" :previewColumns="columns" :previewRows="rows" :pagination="pagination" :previewType="previewType" @pageChanged="updatePagination($event)" @sort="onSort" @filter="onFilter"></DatasetPreviewTable>
         </div>
     </Dialog>
 </template>
@@ -35,7 +35,7 @@ import workspaceDataPreviewDialogDescriptor from './WorkspaceDataPreviewDialogDe
 export default defineComponent({
     name: 'kpi-scheduler-save-dialog',
     components: { Dialog, DatasetPreviewTable, Message },
-    props: { visible: { type: Boolean }, propDataset: { type: Object } },
+    props: { visible: { type: Boolean }, propDataset: { type: Object }, previewType: String },
     emits: ['close'],
     data() {
         return {
@@ -67,11 +67,27 @@ export default defineComponent({
         async loadPreview() {
             this.loadDataset()
             if (this.dataset.label && this.visible) {
-                await this.loadPreviewData()
+                this.previewType == 'dataset' ? await this.loadPreSavePreview() : await this.loadPreviewData()
             }
         },
         loadDataset() {
             this.dataset = this.propDataset as any
+        },
+        async loadPreSavePreview() {
+            this.loading = true
+            const postData = { ...this.dataset }
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, postData)
+                .then((response: AxiosResponse<any>) => {
+                    this.setPreviewColumns(response.data)
+                    this.rows = response.data.rows
+                    this.pagination.size = response.data.results
+                })
+                .catch((error) => {
+                    this.errorMessage = error.message
+                    this.errorMessageVisible = true
+                })
+            this.loading = false
         },
         async loadPreviewData() {
             this.loading = true

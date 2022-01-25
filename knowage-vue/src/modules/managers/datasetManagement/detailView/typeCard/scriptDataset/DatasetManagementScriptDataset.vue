@@ -88,6 +88,7 @@ export default defineComponent({
         loadDataset() {
             this.dataset = this.selectedDataset
             this.dataset.script ? '' : (this.dataset.script = '')
+            this.dataset.scriptLanguage ? '' : (this.dataset.scriptLanguage = 'ECMAScript')
         },
         setupCodeMirror() {
             const interval = setInterval(() => {

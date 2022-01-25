@@ -95,7 +95,7 @@
 
     <WorkspaceDataCloneDialog :visible="cloneDialogVisible" :propDataset="selectedDataset" @close="cloneDialogVisible = false" @clone="handleDatasetClone"></WorkspaceDataCloneDialog>
     <WorkspaceDataShareDialog :visible="shareDialogVisible" :propDataset="selectedDataset" :datasetCategories="datasetCategories" @close="shareDialogVisible = false" @share="handleDatasetShare"></WorkspaceDataShareDialog>
-    <WorkspaceDataPreviewDialog :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false"></WorkspaceDataPreviewDialog>
+    <WorkspaceDataPreviewDialog :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false" previewType="workspace"></WorkspaceDataPreviewDialog>
     <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.myData.title')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
 </template>
 <script lang="ts">

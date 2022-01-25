@@ -7,7 +7,7 @@
                 </template>
             </Toolbar>
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-            <Listbox v-if="displayMenu" :options="menuItems" data-test="menu-list">
+            <Listbox v-if="displayMenu && storeFunctionalitiesExist" :options="menuItems" data-test="menu-list">
                 <template #option="slotProps">
                     <div v-if="slotProps.option.value !== 'repository'" class="kn-list-item" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
                         <i :class="slotProps.option.icon"></i>
@@ -101,7 +101,11 @@ export default defineComponent({
     components: { Sidebar, Listbox, Accordion, AccordionTab, WorkspaceDocumentTree, WorkspaceNewFolderDialog },
     computed: {
         showRepository(): any {
-            return !(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.includes('SaveIntoFolderFunctionality')
+            return (this.$store.state as any).user.functionalities.includes('SaveIntoFolderFunctionality')
+        },
+        storeFunctionalitiesExist(): any {
+            this.createMenuItems()
+            return (this.$store.state as any).user.functionalities.length > 0
         }
     },
     data() {
@@ -124,6 +128,8 @@ export default defineComponent({
     },
     created() {
         this.getAllRepositoryData()
+    },
+    mounted() {
         this.createMenuItems()
     },
     methods: {
@@ -214,16 +220,17 @@ export default defineComponent({
             this.$router.push(`/workspace/repository/${this.selectedBreadcrumb.node.id}`)
         },
         createMenuItems() {
+            console.log('STORE @MOUNTED: ', (this.$store.state as any).user)
             this.menuItems = []
             this.menuItems.push({ icon: 'fas fa-history', key: '0', label: 'workspace.menuLabels.recent', value: 'recent' }, { icon: 'fas fa-folder', key: '1', label: 'workspace.menuLabels.myRepository', value: 'repository' })
-            if (!(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.includes('SeeMyData')) {
+            if ((this.$store.state as any).user.functionalities.includes('SeeMyData')) {
                 this.menuItems.push({ icon: 'fas fa-database', key: '2', label: 'workspace.menuLabels.myData', value: 'data' })
             }
             this.menuItems.push({ icon: 'fas fa-table', key: '3', label: 'workspace.menuLabels.myModels', value: 'models' })
             if ((this.$store.state as any).user.functionalities.includes('CreateDocument')) {
                 this.menuItems.push({ icon: 'fas fa-th-large', key: '4', label: 'workspace.menuLabels.myAnalysis', value: 'analysis' })
             }
-            if (!(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.includes('SeeSnapshotsFunctionality') && (this.$store.state as any).user.functionalities.includes('ViewScheduledWorkspace')) {
+            if ((this.$store.state as any).user.functionalities.includes('SeeSnapshotsFunctionality') && (this.$store.state as any).user.functionalities.includes('ViewScheduledWorkspace')) {
                 this.menuItems.push({
                     icon: 'fas fa-stopwatch',
                     key: '5',
