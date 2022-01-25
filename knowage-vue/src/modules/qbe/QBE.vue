@@ -26,7 +26,7 @@
                     </Toolbar>
                     <div class="kn-flex kn-overflow-hidden">
                         <ScrollPanel class="kn-height-full olap-scroll-panel">
-                            <ExpandableEntity :availableEntities="entities.entities" @showRelationDialog="showRelationDialog" />
+                            <ExpandableEntity :availableEntities="entities.entities" @showRelationDialog="showRelationDialog" @entityClicked="onDropComplete($event, false)" @entityChildClicked="onDropComplete($event, false)" />
                         </ScrollPanel>
                     </div>
                 </div>
@@ -63,7 +63,7 @@
                 <div class="kn-flex kn-overflow-y">
                     {{ hiddenColumnsExist }}
                     {{ qbe.qbeJSONQuery?.catalogue?.queries[0] }}
-                    <QBESimpleTable v-if="!smartView" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]" @columnVisibilityChanged="checkIfHiddenColumnsExist" @openFilterDialog="openFilterDialog" @openHavingDialog="openHavingDialog"></QBESimpleTable>
+                    <QBESimpleTable v-if="!smartView" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]" @columnVisibilityChanged="checkIfHiddenColumnsExist" @openFilterDialog="openFilterDialog" @openHavingDialog="openHavingDialog" @entityDropped="onDropComplete($event, false)"></QBESimpleTable>
                 </div>
             </div>
         </div>
@@ -112,6 +112,7 @@ export default defineComponent({
             exportLimit: null as number | null,
             entities: {} as any,
             queryResult: {} as iQueryResult,
+            selectedQuery: {} as any, //editQueryObj u njihovom appu
             loading: false,
             showEntitiesLists: true,
             smartView: false,
@@ -157,8 +158,10 @@ export default defineComponent({
                 this.qbe = response.data[0]
                 if (this.qbe) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
-            console.log('LOADED QBE: ', this.qbe)
-            console.log('SUBQUERY : ', this.qbe?.qbeJSONQuery?.catalogue?.queries[0].subqueries)
+            console.log('LOADED QBE Dataset: ', this.qbe)
+            console.log('MAIN QUERY q1 : ', this.qbe?.qbeJSONQuery?.catalogue?.queries[0])
+            console.log('SUBQUERIES of q1: ', this.qbe?.qbeJSONQuery?.catalogue?.queries[0].subqueries)
+            this.selectedQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
         },
         async loadCustomizedDatasetFunctions() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${this.qbe?.qbeDataSourceId}`).then((response: AxiosResponse<any>) => (this.customizedDatasetFunctions = response.data))
@@ -499,8 +502,97 @@ export default defineComponent({
                 .catch((error) => {
                     console.log(error)
                 })
-        }
+        },
         //#endregion ===============================================================================================
+
+        //#region ===================== Drag&Drop za entitete  ====================================================
+        onDropComplete(field) {
+            if (field.connector) return
+            if (field.children) {
+                for (var i in field.children) {
+                    this.addEntityToMainQuery(field.children[i])
+                }
+            } else {
+                this.addEntityToMainQuery(field)
+            }
+        },
+        addEntityToMainQuery(field, isCalcField?) {
+            //addField kod njih
+            let queryModel = this.selectedQuery.fields
+            let editQueryObj = this.selectedQuery
+            console.log('queryModel--------------', queryModel, 'editQueryObj--------------', editQueryObj)
+            for (var i = 0; i < queryModel.length; i++) {
+                if (queryModel != undefined && !this.smartView && queryModel.length > 0) {
+                    editQueryObj.fields[i].group = queryModel[i].group
+                    editQueryObj.fields[i].funct = queryModel[i].funct
+                    editQueryObj.fields[i].visible = queryModel[i].visible
+                    editQueryObj.fields[i].distinct = queryModel[i].distinct
+                    editQueryObj.fields[i].iconCls = queryModel[i].visible
+                    editQueryObj.fields[i].inUse = queryModel[i].inUse
+                }
+                editQueryObj.fields[i].alias = queryModel[i].alias
+            }
+
+            if (!isCalcField) {
+                var newField = {
+                    id: field.attributes.type === 'inLineCalculatedField' ? field.attributes.formState : field.id,
+                    alias: field.attributes.field,
+                    type: field.attributes.type === 'inLineCalculatedField' ? 'inline.calculated.field' : 'datamartField',
+                    fieldType: field.attributes.iconCls,
+                    entity: field.attributes.entity,
+                    field: field.attributes.field,
+                    funct: this.getFunct(field),
+                    color: field.color,
+                    group: this.getGroup(field),
+                    order: 'NONE',
+                    include: true,
+                    // eslint-disable-next-line no-prototype-builtins
+                    inUse: field.hasOwnProperty('inUse') ? field.inUse : true,
+                    visible: true,
+                    iconCls: field.iconCls,
+                    dataType: field.dataType,
+                    format: field.format,
+                    longDescription: field.attributes.longDescription,
+                    distinct: editQueryObj.distinct,
+                    leaf: field.leaf
+                } as any
+            }
+            // eslint-disable-next-line no-prototype-builtins
+            if (!field.hasOwnProperty('id')) {
+                newField.id = field.alias
+                newField.alias = field.text
+                newField.field = field.text
+                newField.temporal = field.temporal
+            }
+
+            if (!isCalcField) {
+                editQueryObj.fields.push(newField)
+            }
+        },
+        getFunct(field) {
+            if (this.isColumnType(field, 'measure') && field.aggtype) {
+                return field.aggtype
+            } else if (this.isColumnType(field, 'measure')) {
+                return 'SUM'
+            }
+            return 'NONE'
+        },
+        getGroup(field) {
+            return this.isColumnType(field, 'attribute') && !this.isDataType(field, 'com.vividsolutions.jts.geom.Geometry')
+        },
+        isDataType(field, dataType) {
+            return field.dataType == dataType
+        },
+        isColumnType(field, columnType) {
+            return field.iconCls == columnType || this.isCalculatedFieldColumnType(field, columnType)
+        },
+        isCalculatedFieldColumnType(inLineCalculatedField, columnType) {
+            return this.isInLineCalculatedField(inLineCalculatedField) && inLineCalculatedField.attributes.formState.nature === columnType
+        },
+        isInLineCalculatedField(field) {
+            return field.attributes.type === 'inLineCalculatedField'
+        }
+        // #endregion
     }
 })
 </script>
