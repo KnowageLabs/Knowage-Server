@@ -1,8 +1,21 @@
 const childProperty = 'childNodes';
 
-export const filterTree = {}
+const deepEqual = require('deep-equal')
+
+let filterTree = {}
+
+export function getFilterTree() {
+    console.log(' --- treeService - getFilterTree()')
+    return filterTree
+}
+
+export function setFilterTree(expression) {
+    console.log(' --- treeService - setFilterTree() - expression', expression)
+    filterTree = expression
+}
 
 export function contains(tree, nodeToFind) {
+    console.log(' --- treeService - contains() - tree', tree, ', nodeToFind ', nodeToFind)
     var contains = false;
     traverseDF(tree, function (node) {
 
@@ -15,11 +28,12 @@ export function contains(tree, nodeToFind) {
 }
 
 export function find(tree, toFind) {
+    console.log(' --- treeService - find() - tree', tree, ', toFind ', toFind)
     var equalNode;
     traverseDF(tree, function (node) {
         // TODO
-        console.log(node + ' === ' + toFind)
-        if (node === toFind) {
+        console.log(deepEqual(node, toFind))
+        if (deepEqual(node, toFind)) {
             equalNode = node;
         }
     })
@@ -27,15 +41,16 @@ export function find(tree, toFind) {
     return equalNode;
 }
 
-// TODO Ubagovan
+
 export function add(tree, node, parent) {
+    console.log(' --- treeService - add() - tree', tree, ', node ', node, ', parent ', parent)
     nodeExistingCheck(tree, parent);
-    //  parent[childProperty].unshift(node);
+    parent[childProperty].unshift(node);
 }
 
 
 export function move(tree, source, destination) {
-
+    console.log(' --- treeService - move() - tree', tree, ', source ', source, ', parent ', destination)
     nodeExistingCheck(tree, source);
     nodeExistingCheck(tree, destination);
 
@@ -44,6 +59,7 @@ export function move(tree, source, destination) {
 }
 
 export function swapNodes(node1, node2) {
+    console.log(' --- treeService - swapNodes() - node1', node1, ', node2 ', node2)
     var temp = { ...node1 }
     node1 = { ...node2 }
     node2 = { ...temp }
@@ -51,22 +67,25 @@ export function swapNodes(node1, node2) {
 }
 
 export function swapNodePropertyValues(node1, node2, properties) {
+    console.log(' --- treeService - swapNodePropertyValues() - node1', node1, ', source ', node2, ', properties ', properties)
     for (var i = 0; i < properties.length; i++) {
         var temp = node1[properties[i]];
         node1[properties[i]] = node2[properties[i]];
         node2[properties[i]] = temp;
 
     }
+    console.log('TREE AFTER SWAP: ', getFilterTree())
 }
 
 
 
 export function removeNode(tree, nodeToRemove) {
-
+    console.log(' --- treeService - removeNode() - tree', tree, ', nodeToRemove ', nodeToRemove)
     getSiblings(tree, nodeToRemove).splice(getNodeToRemoveIndex(tree, nodeToRemove), 1);
 }
 
 export function traverseDF(tree, callback) {
+
     (function recurse(currentNode) {
 
         callback(currentNode);
@@ -75,15 +94,18 @@ export function traverseDF(tree, callback) {
         }
 
     })(tree)
+    console.log(' --- treeService - traverseDF() - tree', tree, ', callback ', callback)
 }
 
 export function replace(tree, expression, node) {
+    console.log(' --- treeService - replace() - tree', tree, ', expression ', expression, ', node ', node)
     nodeExistingCheck(tree, node);
     // angular.copy(expression, node)
     node = { ...expression }
 }
 
 export function getParent(tree, child) {
+    console.log(' --- treeService - getParent() - tree', tree, ', child ', child)
     var parent;
 
     nodeExistingCheck(tree, child)
@@ -102,6 +124,7 @@ export function getParent(tree, child) {
 
 
 export function findElementIndex(array, element) {
+    console.log(' --- treeService - findElementIndex() - array', array, ', element ', element)
     for (var i = 0; i < array.length; i++) {
         if (element === array[i]) {
             return i;
@@ -111,15 +134,17 @@ export function findElementIndex(array, element) {
 }
 
 export function getNodeToRemoveIndex(tree, nodeToRemove) {
+    console.log(' --- treeService - findElementIndex() - tree', tree, ', nodeToRemove ', nodeToRemove)
     return findElementIndex(getSiblings(tree, nodeToRemove), nodeToRemove);
 }
 
 export function getSiblings(tree, node) {
+    console.log(' --- treeService - getSiblings() - tree', tree, ', node ', node)
     return getParent(tree, node)[childProperty];
 }
 
 export function nodeExistingCheck(tree, node) {
-
+    console.log(' --- treeService - nodeExistingCheck() - tree', tree, ', node ', node)
     if (!contains(tree, node)) {
 
         throw new Error('Node does not exist.');
@@ -127,6 +152,7 @@ export function nodeExistingCheck(tree, node) {
 }
 
 export function findByName(tree, filterName) {
+    console.log(' --- treeService - findByName() - tree', tree, ', filterName ', filterName)
     var equalNode;
     traverseDF(tree, function (node) {
 
@@ -139,6 +165,7 @@ export function findByName(tree, filterName) {
 }
 
 export function removeInPlace(expression, filterName) {
+    console.log(' --- treeService - removeInPlace() - expression', expression, ', filterName ', filterName)
     var currentNodeInExpression = findByName(expression, filterName);
     var parentOfCurrentNode = getParent(expression, currentNodeInExpression);
     var parentOfParent = null as any;

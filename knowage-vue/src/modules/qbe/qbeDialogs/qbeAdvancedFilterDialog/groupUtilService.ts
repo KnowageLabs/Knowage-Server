@@ -5,7 +5,7 @@ import { isOperator, getOperator, isOperatorFromSimple } from './operatorUtilSer
 const defaultOperator = operator('AND')
 
 export function createGroupChildExpression(filterTree, operands) {
-
+    console.log("groupUtilService - createGroupChildExpression() - filterTree ", filterTree, ', operands ', operands)
     var childExpression;
     var currentNode;
 
@@ -33,11 +33,13 @@ export function createGroupChildExpression(filterTree, operands) {
 }
 
 export function createGroupGroupUtilService(filterTree, operands) {
+    console.log("groupUtilService - createGroupGroupUtilService() - filterTree ", filterTree, ', operands ', operands)
     var childExpression = createGroupChildExpression(filterTree, operands)
     return group({ ...childExpression });
 }
 
 export function getLastOperand(group) {
+    console.log("groupUtilService - getLastOperand() - group ", group)
     var lastOperand;
     traverseDF(group, function (node) {
         if (!isOperator(node)
@@ -51,7 +53,7 @@ export function getLastOperand(group) {
 
 
 export function areInSameGroup(filterTree, operands) {
-
+    console.log("groupUtilService - areInSameGroup() - filterTree ", filterTree, ', operands ', operands)
     var firstOperandGroup = getGroupGroupUtilService(filterTree, operands[0])
 
     for (var i = 1; i < operands.length; i++) {
@@ -64,6 +66,7 @@ export function areInSameGroup(filterTree, operands) {
 }
 
 export function getGroupGroupUtilService(filterTree, operand) {
+    console.log("groupUtilService - getGroupGroupUtilService() - filterTree ", filterTree, ', operand ', operand)
     var group;
 
     group = getParent(filterTree, operand)
@@ -82,6 +85,7 @@ export function getGroupGroupUtilService(filterTree, operand) {
 }
 
 export function getGroupOperandsGroupUtilsService(group) {
+    console.log("groupUtilService - getGroupOperandsGroupUtilsService() - group ", group)
     var operands = [] as any[];
     if (!group) return;
     traverseDF(group, function (node) {
@@ -95,10 +99,12 @@ export function getGroupOperandsGroupUtilsService(group) {
 }
 
 export function getChildExpression(group) {
+    console.log("groupUtilService - getChildExpression() - group ", group)
     return group.childNodes[0];
 }
 
 export function hasSubGroup(group) {
+    console.log("groupUtilService - hasSubGroup() - group ", group)
     var hasGroup = false;
     for (var i = 0; i < group.childNodes.length; i++) {
 
@@ -112,21 +118,26 @@ export function hasSubGroup(group) {
 }
 
 export function isGroup(node) {
+    console.log("groupUtilService - isGroup() - node ", node)
     return node && node.value === 'PAR';
 }
 
 export function getLeftOperand(operands, index) {
+    console.log("groupUtilService - getLeftOperand() - operands ", operands, ', index ', index)
     return getPrevious(operands, index);
 }
 
 export function getPrevious(operands, index) {
+    console.log("groupUtilService - getPrevious() - operands ", operands, ', index ', index)
     return operands[index - 1];
 }
 export function getNext(operands, index) {
+    console.log("groupUtilService - getNext() - operands ", operands, ', index ', index)
     return operands[index + 1];
 }
 
 export function getOperatorGroupUtilService(filterTree, operand) {
+    console.log("groupUtilService - getOperatorGroupUtilService() - filterTree ", filterTree, ', operand ', operand)
     var operator = getOperator(filterTree, operand);
     if (!operator) {
         return defaultOperator;
@@ -135,6 +146,7 @@ export function getOperatorGroupUtilService(filterTree, operand) {
 }
 
 export function getRightOperand(filterTree, operands, index) {
+    console.log("groupUtilService - getRightOperand() - filterTree ", filterTree, ', operands ', operands, ', index ', index)
     var rightOperand;
     if (getNext(operands, index)) {
         rightOperand = getOperator(filterTree, getNext(operands, index))

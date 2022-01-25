@@ -1,4 +1,5 @@
 export function group(expression) {
+    console.log("filterTreeFactoryService - group() - expression ", expression)
     var group = {} as any;
     group.type = "NODE_OP";
     group.value = "PAR";
@@ -9,6 +10,7 @@ export function group(expression) {
 }
 
 export function createExpression(leftOperant, operator, rightOperand) {
+    console.log("filterTreeFactoryService - createExpression() - leftOperant ", leftOperant, ', operator ', operator, ', rightOperand', rightOperand)
     var expression = {} as any
     if (!leftOperant) throw new Error('leftOperant cannot be undefined.');
     if (!operator) throw new Error('operator cannot be undefined.');
@@ -23,6 +25,7 @@ export function createExpression(leftOperant, operator, rightOperand) {
 }
 
 export function operator(value) {
+    console.log("filterTreeFactoryService - operator() - value ", value)
     var operator = {} as any;
     operator.type = "NODE_OP";
     operator.value = value;
@@ -32,6 +35,7 @@ export function operator(value) {
 }
 
 export function filter(name) {
+    console.log("filterTreeFactoryService - filter() - name ", name)
     var filter = {} as any;
     filter.type = "NODE_CONST";
     filter.value = name;

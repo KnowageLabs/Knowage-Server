@@ -19,6 +19,8 @@ export default defineComponent({
         return {}
     },
     async created() {},
-    methods: {}
+    methods: {
+     
+    }
 })
 </script>

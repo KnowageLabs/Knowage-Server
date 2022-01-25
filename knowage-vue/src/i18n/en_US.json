@@ -1755,7 +1755,9 @@
     "qbe": {
         "advancedFilters": {
             "advancedFilterVisualisation": "Advanced filter visualization",
-            "title": "Advanced filter"
+            "group": "Group",
+            "title": "Advanced filter",
+            "ungroup": "Ungroup"
         },
         "detailView": {
             "hideList": "Hide List",
