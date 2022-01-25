@@ -56,7 +56,7 @@ export default defineComponent({
     name: 'qbe-simple-table',
     props: { query: { type: Object as PropType<iQuery> } },
     components: { Checkbox, Column, DataTable, Dropdown, Menu },
-    emits: ['columnVisibilityChanged', 'openFilterDialog', 'openHavingDialog'],
+    emits: ['columnVisibilityChanged', 'openFilterDialog', 'openHavingDialog', 'entityDropped'],
     data() {
         return {
             QBESimpleTableDescriptor,
@@ -126,6 +126,7 @@ export default defineComponent({
         onDrop(event) {
             var data = JSON.parse(event.dataTransfer.getData('text/plain'))
             console.log('dropped: ', data)
+            this.$emit('entityDropped', data)
 
             //TODO: Data se passuje OK, treba da se doda u tabelu
         }
