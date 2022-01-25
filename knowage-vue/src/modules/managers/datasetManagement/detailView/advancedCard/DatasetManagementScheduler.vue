@@ -172,8 +172,8 @@ export default defineComponent({
             this.dataset = this.selectedDataset
             this.scheduling = this.schedulingData
             this.nextSchedulation = this.selectedDataset.schedulingCronLine
-            this.startTemp = new Date(this.selectedDataset.startDate)
-            this.endTemp = new Date(this.selectedDataset.endDate)
+            this.startTemp = this.selectedDataset.startDate ? new Date(this.selectedDataset.startDate) : null
+            this.endTemp = this.selectedDataset.endDate ? new Date(this.selectedDataset.endDate) : null
         },
         deparseScheduling() {
             var cronNoSeconds = ''
@@ -257,7 +257,7 @@ export default defineComponent({
         setDate(event, type) {
             console.log(event, type)
             var date = moment(event)
-            type === 'startDate' ? (this.dataset.startDate = date.format()) : (this.dataset.endDate = date.format())
+            type === 'startDate' ? (this.dataset.startDate = date.format('YYYY-MM-DD[T]HH:mm:ss[Z]')) : (this.dataset.endDate = date.format('YYYY-MM-DD[T]HH:mm:ss[Z]'))
         }
     }
 })
