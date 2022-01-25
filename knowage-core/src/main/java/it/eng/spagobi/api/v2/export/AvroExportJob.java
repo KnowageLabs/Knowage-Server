@@ -123,19 +123,20 @@ public class AvroExportJob extends AbstractExportJob {
 		Object value = dataSetRecord.getFieldAt(i).getValue();
 		if (value == null)
 			return value;
-		// convert Date and Timestamp to String
+		// convert Date and Timestamp to String and numbers to Double
 		try {
-			if (isDate(dsMeta.getFieldType(i))) {
+			Class<?> type = dsMeta.getFieldType(i);
+			if (isDate(type)) {
 				value = dateFormatter.format(value);
-			} else if (isTimestamp(dsMeta.getFieldType(i))) {
+			} else if (isTimestamp(type)) {
 				value = timestampFormatter.format(value);
+			} else if (isNumber(type)) {
+				value = Double.valueOf(value.toString());
+			} else if (String.class.isAssignableFrom(type)) {
+				value = String.valueOf(value);
 			}
-		} catch (IllegalArgumentException e) {
+		} catch (Exception e) {
 			value = value.toString();
-		}
-		// Convert BigDecimal to Long
-		if (BigDecimal.class.isAssignableFrom(value.getClass())) {
-			value = ((BigDecimal) value).longValue();
 		}
 		return value;
 	}
@@ -173,23 +174,29 @@ public class AvroExportJob extends AbstractExportJob {
 		}
 	}
 
-	private boolean isTimestamp(Class fieldType) {
+	private boolean isTimestamp(Class<?> fieldType) {
 		return (Timestamp.class.isAssignableFrom(fieldType) || fieldType.getName().equalsIgnoreCase("oracle.sql.timestamp"));
 	}
 
-	private boolean isDate(Class fieldType) {
+	private boolean isDate(Class<?> fieldType) {
 		return (Date.class.isAssignableFrom(fieldType) || fieldType.getName().equalsIgnoreCase("oracle.sql.date"));
 	}
 
+	private boolean isNumber(Class<?> fieldType) {
+		return (Integer.class.isAssignableFrom(fieldType) || Double.class.isAssignableFrom(fieldType) || Float.class.isAssignableFrom(fieldType)
+				|| Long.class.isAssignableFrom(fieldType) || BigDecimal.class.isAssignableFrom(fieldType));
+	}
+
 	private Schema getSchema(IDataSet dataSet) throws JSONException {
-		FieldAssembler<Schema> fieldAssembler = SchemaBuilder.record(dataSet.getLabel().replaceAll("[@!#$_]", ""))
-				.namespace("it.eng.spagobi.api.v2.export.AvroExportJob").fields();
+		FieldAssembler<Schema> fieldAssembler = SchemaBuilder.record("DataSet").namespace("it.eng.spagobi.api.v2.export.AvroExportJob").fields();
 
 		for (int i = 0; i <= dsMeta.getFieldCount() - 1; i++) {
 			JSONObject metadata = new JSONObject();
 			metadata.put("knColumnAlias", dsMeta.getFieldAlias(i));
 			metadata.put("knJavaType", dsMeta.getFieldType(i).getName());
-			BaseFieldTypeBuilder<Schema> builder = fieldAssembler.name(dsMeta.getFieldName(i)).prop("metadata", metadata.toString()).type().nullable();
+			BaseFieldTypeBuilder<Schema> builder = fieldAssembler.name(dsMeta.getFieldName(i)).prop("knColumnAlias", dsMeta.getFieldAlias(i))
+					.prop("knJavaType", dsMeta.getFieldType(i).getName()).prop("knFieldType", dsMeta.getFieldMeta(i).getFieldType().toString()).type()
+					.nullable();
 			fieldAssembler = setType(builder, dsMeta.getFieldType(i));
 		}
 
@@ -198,13 +205,13 @@ public class AvroExportJob extends AbstractExportJob {
 
 	private FieldAssembler<Schema> setType(BaseFieldTypeBuilder<Schema> builder, Class<?> fieldType) {
 		if (Integer.class.isAssignableFrom(fieldType)) {
-			return builder.intType().noDefault();
+			return builder.doubleType().noDefault();
 		} else if (BigDecimal.class.isAssignableFrom(fieldType)) {
-			return builder.longType().noDefault();
+			return builder.doubleType().noDefault();
 		} else if (Float.class.isAssignableFrom(fieldType)) {
-			return builder.floatType().noDefault();
+			return builder.doubleType().noDefault();
 		} else if (Long.class.isAssignableFrom(fieldType)) {
-			return builder.longType().noDefault();
+			return builder.doubleType().noDefault();
 		} else if (Double.class.isAssignableFrom(fieldType)) {
 			return builder.doubleType().noDefault();
 		} else {
