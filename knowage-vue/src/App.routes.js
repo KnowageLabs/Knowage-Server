@@ -77,7 +77,7 @@ router.beforeEach((to, from, next) => {
     const loggedIn = localStorage.getItem('token')
 
     if (checkRequired && !loggedIn) {
-        authHelper.logout()
+        authHelper.handleUnauthorized()
     } else {
         next()
     }

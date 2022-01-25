@@ -13,6 +13,7 @@
 <%@page import="it.eng.spagobi.utilities.engines.rest.ExecutionSession"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
+<%@page import="it.eng.spagobi.commons.utilities.StringUtilities"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
