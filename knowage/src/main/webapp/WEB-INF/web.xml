@@ -173,9 +173,9 @@
 	</filter-mapping>
 	
 	<filter-mapping>
-			<filter-name>ProfileFilter</filter-name>
+		<filter-name>ProfileFilter</filter-name>
 		<dispatcher>FORWARD</dispatcher>
-		<url-pattern>/WEB-INF/jsp/tools/*</url-pattern>
+		<url-pattern>/WEB-INF/jsp/*</url-pattern>
 	</filter-mapping>
 	
 	<filter-mapping>
