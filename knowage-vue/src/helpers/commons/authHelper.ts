@@ -11,6 +11,6 @@ export default {
         localStorage.clear()
         store.commit('setUser', {})
         let url = window.location.origin
-        window.location.href = url + '/knowage'
+        window.location.href = url + '/knowage/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE'
     }
 }
