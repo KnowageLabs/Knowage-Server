@@ -8,11 +8,9 @@
             </Toolbar>
         </template>
 
-        <QBEAdvancedFilterNode :propExpression="expression"></QBEAdvancedFilterNode>
-
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
-            <Button class="kn-button kn-button--primary" @click="save"> {{ parameterTableVisible ? $t('qbe.filters.applyParameters') : $t('common.save') }}</Button>
+            <Button class="kn-button kn-button--primary" @click="save"> {{ $t('common.save') }}</Button>
         </template>
     </Dialog>
 </template>
@@ -22,11 +20,10 @@ import { defineComponent, PropType } from 'vue'
 import { iQuery, iFilter } from '../../QBE'
 import Dialog from 'primevue/dialog'
 import QBEAdvancedFilterDialogDescriptor from './QBEAdvancedFilterDialogDescriptor.json'
-import QBEAdvancedFilterNode from './QBEAdvancedFilterNode.vue'
 
 export default defineComponent({
     name: 'qbe-advanced-filter-dialog',
-    components: { Dialog, QBEAdvancedFilterNode },
+    components: { Dialog },
     props: { visible: { type: Boolean }, query: { type: Object as PropType<iQuery> } },
     emits: ['save', 'close'],
     data() {
