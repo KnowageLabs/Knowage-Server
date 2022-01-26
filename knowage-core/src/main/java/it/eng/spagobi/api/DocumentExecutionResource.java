@@ -1197,8 +1197,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			if (biObj != null) {
 				SpagoBIUserProfile publicProfile = PublicProfile.createPublicUserProfile(PublicProfile.PUBLIC_USER_PREFIX + tenant);
 
-				UserProfile publicUserProfile = new UserProfile(publicProfile);
-				if (publicUserProfile != null) {
+				if (publicProfile != null) {
+					UserProfile publicUserProfile = new UserProfile(publicProfile);
 					boolean canExec = ObjectsAccessVerifier.canExec(biObj, publicUserProfile);
 					toReturn = canExec;
 				}
