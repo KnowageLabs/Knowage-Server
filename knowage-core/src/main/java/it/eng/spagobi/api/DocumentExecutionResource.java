@@ -1170,7 +1170,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 
 		Boolean toReturn = false;
-		Boolean noPublicRoleError = false;
+
 		JSONObject results = new JSONObject();
 		try {
 			BIObject biObj;
@@ -1184,17 +1184,13 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			if (biObj != null) {
 				SpagoBIUserProfile publicProfile = PublicProfile.createPublicUserProfile(PublicProfile.PUBLIC_USER_PREFIX + tenant);
 
-				if (publicProfile == null) {
-					noPublicRoleError = true;
-					toReturn = false;
-				} else {
-					UserProfile publicUserProfile = new UserProfile(publicProfile);
+				UserProfile publicUserProfile = new UserProfile(publicProfile);
+				if (publicUserProfile != null) {
 					boolean canExec = ObjectsAccessVerifier.canExec(biObj, publicUserProfile);
 					toReturn = canExec;
 				}
 
 				results.put("isPublic", toReturn);
-				results.put("noPublicRoleError", noPublicRoleError);
 
 			} else {
 				logger.error("Object with label " + label + " not found");
