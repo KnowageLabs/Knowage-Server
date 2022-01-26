@@ -67,6 +67,7 @@ export default defineComponent({
     watch: {
         async visible(isVisible: boolean) {
             if (isVisible) {
+                this.loadQuery()
                 await this.loadEntityNames()
                 this.loadData()
             }
@@ -79,9 +80,9 @@ export default defineComponent({
         }
     },
     async created() {
+        this.loadQuery()
         await this.loadEntityNames()
         this.loadData()
-        this.loadQuery()
         this.loadEntities()
     },
     methods: {
@@ -121,6 +122,7 @@ export default defineComponent({
             // console.log('QBEJoinDefinitionDialog - getRelations() - relations: ', this.relations)
         },
         async loadEntityNames() {
+            console.log('QUUUUUUUUUUUUUUUUUUUUUUUERY! ', this.query)
             const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
                 .post(`/knowageqbeengine/restful-services/qbequery/queryEntities/?SBI_EXECUTION_ID=${this.id}&currentQueryId=${this.query?.id}`, postData)
