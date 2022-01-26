@@ -386,7 +386,7 @@ export default defineComponent({
         },
         async loadModelFromSession() {
             await this.$http
-                .get(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/loadModelFromSession`)
+                .get(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/model`)
                 .then((response: AxiosResponse<any>) => {
                     this.meta = response.data
                     this.metawebDialogVisible = true
