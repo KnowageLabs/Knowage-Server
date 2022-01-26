@@ -3,7 +3,7 @@
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
                 <template #left>
-                    <span>{{ qbe.label }}</span>
+                    <span>{{ qbe?.label }}</span>
                 </template>
                 <template #right>
                     <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" />
@@ -55,14 +55,16 @@
                     <template #right>
                         <i v-if="qbe.qbeJSONQuery.catalogue.queries[0].fields.length > 0" class="fas fa-eraser kn-cursor-pointer p-mx-2" v-tooltip.top="$t('qbe.viewToolbar.deleteAllSelectedFields')" @click="deleteAllSelectedFields"></i>
                         <i v-if="hiddenColumnsExist" class="pi pi-eye kn-cursor-pointer p-mx-2" v-tooltip.top="$t('qbe.viewToolbar.showHiddenColumns')" @click="showHiddenColumns"></i>
+                        <span v-if="qbe.qbeJSONQuery?.catalogue?.queries[0].filters.length > 0" class="fa-stack p-mx-2">
+                            <i class="fas fa-ban fa-stack-2x"></i>
+                            <i class="fas fa-filter fa-stack-1x kn-cursor-pointer" v-tooltip.top="$t('qbe.viewToolbar.deleteAllFilters')" @click="deleteAllFilters"></i>
+                        </span>
                         <InputSwitch class="p-mr-2" v-model="smartView" />
                         <span>{{ $t('qbe.viewToolbar.smartView') }}</span>
                         <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" @click="showMenu" />
                     </template>
                 </Toolbar>
                 <div class="kn-flex kn-overflow-y">
-                    {{ hiddenColumnsExist }}
-                    {{ qbe.qbeJSONQuery?.catalogue?.queries[0] }}
                     <QBESimpleTable v-if="!smartView" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]" @columnVisibilityChanged="checkIfHiddenColumnsExist" @openFilterDialog="openFilterDialog" @openHavingDialog="openHavingDialog" @entityDropped="onDropComplete($event, false)"></QBESimpleTable>
                 </div>
             </div>
@@ -456,6 +458,12 @@ export default defineComponent({
             this.joinDefinitionDialogVisible = true
         },
         // #endregion
+        deleteAllFilters() {
+            if (this.qbe) {
+                this.qbe.qbeJSONQuery.catalogue.queries[0].filters = []
+                this.qbe.qbeJSONQuery.catalogue.queries[0].expression = {}
+            }
+        },
         //#region ===================== TODO: sve sto se tice ovoga mora da se uradi bolje ====================================================
         async showSQLQuery() {
             //TODO: moramo da njih pitamo sta i cemu sluzi ovo je odvratno

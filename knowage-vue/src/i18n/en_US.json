@@ -1848,6 +1848,7 @@
         },
         "title": "QBE",
         "viewToolbar": {
+            "deleteAllFilters": "Delete all filters",
             "deleteAllSelectedFields": "Delete all selected fields",
             "showHiddenColumns": "Show hidden columns",
             "smartView": "Smart View"
