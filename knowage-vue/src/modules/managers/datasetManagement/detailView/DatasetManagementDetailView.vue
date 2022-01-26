@@ -3,7 +3,7 @@
         <template #left>{{ selectedDataset.label }}</template>
         <template #right>
             <Button :label="$t('managers.lovsManagement.preview')" class="p-button-text p-button-rounded p-button-plain" @click="showPreviewDialog = true" :disabled="buttonDisabled" />
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="saveDataset" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="checkFormulaForParams" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('close')" />
         </template>
     </Toolbar>
@@ -329,6 +329,11 @@ export default defineComponent({
                 return columnsArray
                 // end workaround ---------------------------------------------------
             }
+        },
+        checkFormulaForParams() {
+            if (this.selectedDataset?.query?.includes('${') && this.selectedDataset?.isPersisted) {
+                this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.datasetManagement.formulaParamError') })
+            } else this.saveDataset()
         },
         removeDuplicates(array) {
             var index = {}
