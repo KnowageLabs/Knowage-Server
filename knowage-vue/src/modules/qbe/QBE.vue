@@ -107,11 +107,12 @@ import QBEJoinDefinitionDialog from './qbeDialogs/qbeJoinDefinitionDialog/QBEJoi
 export default defineComponent({
     name: 'qbe',
     components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESavingDialog, QBESqlDialog, QBESimpleTable, QBERelationDialog, QBEParamDialog, ExpandableEntity, SubqueryEntity, QBEHavingDialog, QBEAdvancedFilterDialog, QBEJoinDefinitionDialog },
-    props: { id: { type: String }, visible: { type: Boolean } },
+    props: { visible: { type: Boolean }, id: { type: String } },
     emits: ['close'],
     data() {
         return {
             qbe: null as iQBE | null,
+            qbeId: '' as string,
             customizedDatasetFunctions: {} as any,
             exportLimit: null as number | null,
             entities: {} as any,
@@ -150,6 +151,7 @@ export default defineComponent({
         async loadPage() {
             this.loading = true
             await this.loadDataset()
+            await this.loadId()
             await this.loadCustomizedDatasetFunctions()
             await this.loadExportLimit()
             await this.loadEntities()
@@ -168,6 +170,12 @@ export default defineComponent({
             console.log('SUBQUERIES of q1: ', this.qbe?.qbeJSONQuery?.catalogue?.queries[0].subqueries)
             this.selectedQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
         },
+        async loadId() {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/qbe-execution-id`).then((response: AxiosResponse<any>) => {
+                this.qbeId = response.data
+            })
+            console.log('LOADED ID: ', this.id)
+        },
         async loadCustomizedDatasetFunctions() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${this.qbe?.qbeDataSourceId}`).then((response: AxiosResponse<any>) => (this.customizedDatasetFunctions = response.data))
             // console.log('LOADED CUSTOMIZED DATASET FUNCTIONS: ', this.customizedDatasetFunctions)
@@ -178,7 +186,11 @@ export default defineComponent({
         },
         async loadEntities() {
             // HARDCODED SBI_EXECUTION_ID
-            await this.$http.get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.id}&datamartName=null`).then((response: AxiosResponse<any>) => (this.entities = response.data))
+            await this.$http
+                .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.id}&datamartName=null`)
+                // .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.qbeId}&datamartName=null`)
+                .then((response: AxiosResponse<any>) => (this.entities = response.data))
+                .catch((error: any) => console.log('ERROR: ', error))
             console.log('LOADED ENTITIES: ', this.entities)
         },
         async executeQBEQuery() {
