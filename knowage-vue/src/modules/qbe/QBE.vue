@@ -26,7 +26,14 @@
                     </Toolbar>
                     <div class="kn-flex kn-overflow-hidden">
                         <ScrollPanel class="kn-height-full olap-scroll-panel">
-                            <ExpandableEntity :availableEntities="entities.entities" @showRelationDialog="showRelationDialog" @entityClicked="onDropComplete($event, false)" @entityChildClicked="onDropComplete($event, false)" />
+                            <ExpandableEntity
+                                :availableEntities="entities.entities"
+                                :query="qbe.qbeJSONQuery?.catalogue?.queries[0]"
+                                @showRelationDialog="showRelationDialog"
+                                @entityClicked="onDropComplete($event, false)"
+                                @entityChildClicked="onDropComplete($event, false)"
+                                @openFilterDialog="openFilterDialog"
+                            />
                         </ScrollPanel>
                     </div>
                 </div>
@@ -240,9 +247,9 @@ export default defineComponent({
                 this.hiddenColumnsExist = false
             }
         },
-        openFilterDialog(payload: { field: iField; query: iQuery }) {
-            console.log('PAYLOAD FOR OPEN FILTER: ', payload)
-            this.filterDialogData = payload
+        openFilterDialog(field: iField) {
+            console.log('PAYLOAD FOR OPEN FILTER: ', { field: field, query: this.qbe?.qbeJSONQuery.catalogue.queries[0] })
+            this.filterDialogData = { field: field, query: this.qbe?.qbeJSONQuery.catalogue.queries[0] }
             this.filterDialogVisible = true
         },
         openHavingDialog(payload: { field: iField; query: iQuery }) {

@@ -118,7 +118,7 @@ export default defineComponent({
             this.selectedQuery.fields = this.rows
         },
         openFiltersDialog(field: iField) {
-            this.$emit('openFilterDialog', { field: field, query: this.selectedQuery })
+            this.$emit('openFilterDialog', field)
         },
         openHavingsDialog(field: iField) {
             this.$emit('openHavingDialog', { field: field, query: this.selectedQuery })

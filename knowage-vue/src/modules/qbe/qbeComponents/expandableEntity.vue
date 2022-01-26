@@ -11,20 +11,21 @@
             <li :style="{ 'border-left': `5px solid ${child.color}` }" v-for="(child, index) in entity.children" :key="index" draggable="true" @dragstart="onDragStart($event, child)">
                 <i :class="getIconCls(child.attributes.iconCls)" class="p-mx-2" v-tooltip.top="$t(`qbe.entities.types.${child.attributes.iconCls}`)" />
                 <span @click="$emit('entityChildClicked', child)">{{ child.text }}</span>
-                <Button icon="fas fa-filter" class="p-button-text p-button-rounded p-button-plain p-ml-auto" />
+                <Button icon="fas fa-filter" :class="{ 'qbe-active-filter-icon': filedHasFilters(child) }" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click="openFiltersDialog(child)" />
             </li>
         </ul>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
+import { iQuery } from '../QBE'
 
 export default defineComponent({
     name: 'expandable-entity',
     components: {},
-    props: { availableEntities: { type: Array } },
-    emits: ['close', 'showRelationDialog'],
+    props: { availableEntities: { type: Array }, query: { type: Object as PropType<iQuery>, required: true } },
+    emits: ['close', 'showRelationDialog', 'openFilterDialog'],
     data() {
         return {
             entities: [] as any,
@@ -86,6 +87,19 @@ export default defineComponent({
             event.dataTransfer.setData('text', JSON.stringify(entity))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
+        },
+        openFiltersDialog(field: any) {
+            this.$emit('openFilterDialog', field)
+        },
+        filedHasFilters(field: any) {
+            for (let i = 0; i < this.query.filters.length; i++) {
+                const tempFilter = this.query.filters[i]
+                if (tempFilter.leftOperandValue === field.id) {
+                    return true
+                }
+            }
+
+            return false
         }
     }
 })
@@ -148,5 +162,9 @@ export default defineComponent({
             cursor: help;
         }
     }
+}
+
+.qbe-active-filter-icon {
+    color: red !important;
 }
 </style>
