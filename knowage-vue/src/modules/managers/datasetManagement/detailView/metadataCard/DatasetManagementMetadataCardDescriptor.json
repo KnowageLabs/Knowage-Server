@@ -25,6 +25,10 @@
             "value": "String"
         },
         {
+            "name": "java.sql.Date",
+            "value": "Date"
+        },
+        {
             "name": "net.minidev.json.JSONArray",
             "value": "JSON"
         },
