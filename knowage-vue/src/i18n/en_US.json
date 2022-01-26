@@ -1831,6 +1831,10 @@
             "noHavings": "No havings present, add one with the plus button on the right corner.",
             "title": "Filters on aggregations"
         },
+        "joinDefinitions": {
+            "dialogTitle": "Relations between entities",
+            "title": "Join Definitions"
+        },
         "savingDialog": {
             "persistence": "Persistence",
             "title": "Saving QBE Dataset"
