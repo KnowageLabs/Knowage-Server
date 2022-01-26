@@ -107,7 +107,7 @@ export default defineComponent({
             return this.v$.$invalid
         }
     },
-    emits: ['close', 'touched', 'loadingOlderVersion', 'olderVersionLoaded', 'updated', 'created'],
+    emits: ['close', 'touched', 'loadingOlderVersion', 'olderVersionLoaded', 'updated', 'created', 'showSavingSpinner', 'hideSavingSpinner'],
     data() {
         return {
             detailViewDescriptor,
@@ -195,6 +195,7 @@ export default defineComponent({
 
         //#region ===================== Save/Update Dataset & Tags =================================================
         async saveDataset() {
+            this.$emit('showSavingSpinner')
             let dsToSave = { ...this.selectedDataset } as any
             let restRequestHeadersTemp = {}
             if (dsToSave.dsTypeCd.toLowerCase() == 'rest' || dsToSave.dsTypeCd.toLowerCase() == 'solr') {
@@ -218,16 +219,18 @@ export default defineComponent({
                         'Content-Type': 'application/json;charset=UTF-8'
                     }
                 })
-                .then((response: AxiosResponse<any>) => {
+                .then(async (response: AxiosResponse<any>) => {
                     this.touched = false
                     this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
                     this.selectedDataset.id ? this.$emit('updated') : this.$emit('created', response)
-                    this.saveTags(dsToSave, response.data.id)
-                    this.saveSchedulation(dsToSave, response.data.id)
-                    this.saveLinks(response.data.id)
-                    this.removeLinks(response.data.id)
+                    await this.saveTags(dsToSave, response.data.id)
+                    await this.saveSchedulation(dsToSave, response.data.id)
+                    await this.saveLinks(response.data.id)
+                    await this.removeLinks(response.data.id)
+                    await this.getSelectedDataset()
                 })
                 .catch()
+                .finally(() => this.$emit('hideSavingSpinner'))
         },
         async saveTags(dsToSave, id) {
             let tags = {} as any
