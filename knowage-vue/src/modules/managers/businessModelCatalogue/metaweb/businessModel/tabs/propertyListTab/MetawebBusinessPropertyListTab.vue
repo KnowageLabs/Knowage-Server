@@ -16,7 +16,7 @@
                 <div v-if="businessModel.physicalTable && meta" class="p-col-6">
                     <div class="p-field">
                         <label class="kn-material-input-label"> {{ $t('metaweb.businessModel.physicalTable') }} </label>
-                        <InputText class="kn-material-input" v-model="meta.physicalModels[businessModel.physicalTable.physicalTableIndex].name" />
+                        <InputText class="kn-material-input" v-model="meta.physicalModels[businessModel.physicalTable.physicalTableIndex].name" :disabled="true" />
                     </div>
                 </div>
             </div>
