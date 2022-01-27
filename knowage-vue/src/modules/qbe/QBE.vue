@@ -68,7 +68,8 @@
                         </span>
                         <InputSwitch class="p-mr-2" v-model="smartView" />
                         <span>{{ $t('qbe.viewToolbar.smartView') }}</span>
-                        <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" @click="showMenu" />
+                        <i v-show="!smartView" class="fas fa-play p-m-2 kn-cursor-pointer" @click="openPreviewDialog"></i>
+                        <Button icon="fas fa-ellipsis-v kn-cursor-pointer" class="p-button-text p-button-rounded p-button-plain" @click="showMenu" />
                     </template>
                 </Toolbar>
                 <div class="kn-flex kn-overflow-y">
@@ -86,6 +87,7 @@
         <QBEAdvancedFilterDialog :visible="advancedFilterDialogVisible" :query="selectedQuery" @close="advancedFilterDialogVisible = false"></QBEAdvancedFilterDialog>
         <QBESavingDialog v-if="savingDialogVisible" :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" />
         <QBEJoinDefinitionDialog :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="id" :selectedQuery="selectedQuery" @close="joinDefinitionDialogVisible = false"></QBEJoinDefinitionDialog>
+        <QBEPreviewDialog :visible="qbePreviewDialogVisible" :id="id" @close="qbePreviewDialogVisible = false"></QBEPreviewDialog>
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     </Dialog>
 </template>
@@ -113,10 +115,30 @@ import ScrollPanel from 'primevue/scrollpanel'
 import Menu from 'primevue/contextmenu'
 import QBEJoinDefinitionDialog from './qbeDialogs/qbeJoinDefinitionDialog/QBEJoinDefinitionDialog.vue'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
+import QBEPreviewDialog from './qbeDialogs/qbePreviewDialog/QBEPreviewDialog.vue'
 
 export default defineComponent({
     name: 'qbe',
-    components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESavingDialog, QBESqlDialog, QBESimpleTable, QBERelationDialog, QBEParamDialog, ExpandableEntity, SubqueryEntity, QBEHavingDialog, QBEAdvancedFilterDialog, QBEJoinDefinitionDialog, KnParameterSidebar },
+    components: {
+        Dialog,
+        Chip,
+        InputSwitch,
+        ScrollPanel,
+        Menu,
+        QBEFilterDialog,
+        QBESavingDialog,
+        QBESqlDialog,
+        QBESimpleTable,
+        QBERelationDialog,
+        QBEParamDialog,
+        ExpandableEntity,
+        SubqueryEntity,
+        QBEHavingDialog,
+        QBEAdvancedFilterDialog,
+        QBEJoinDefinitionDialog,
+        KnParameterSidebar,
+        QBEPreviewDialog
+    },
     props: { visible: { type: Boolean }, id: { type: String }, datasetLabel: { type: String } },
     emits: ['close'],
     data() {
@@ -150,7 +172,8 @@ export default defineComponent({
             joinDefinitionDialogVisible: false,
             parameterSidebarVisible: false,
             user: null as any,
-            userRole: null
+            userRole: null,
+            qbePreviewDialogVisible: false
         }
     },
     watch: {
@@ -716,8 +739,11 @@ export default defineComponent({
         // #region Sidebar and parameter
         onExecute(qbeParameters: any[]) {
             console.log('QBE - onExecute() - qBE PAREMETERS: ', qbeParameters)
-        }
+        },
         // #endregion
+        openPreviewDialog() {
+            this.qbePreviewDialogVisible = true
+        }
     }
 })
 </script>
