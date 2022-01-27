@@ -26,30 +26,24 @@
                     </Toolbar>
                     <div class="kn-flex kn-overflow-hidden">
                         <ScrollPanel class="kn-height-full olap-scroll-panel">
-                            <ExpandableEntity
-                                :availableEntities="entities.entities"
-                                :query="qbe.qbeJSONQuery?.catalogue?.queries[0]"
-                                @showRelationDialog="showRelationDialog"
-                                @entityClicked="onDropComplete($event, false)"
-                                @entityChildClicked="onDropComplete($event, false)"
-                                @openFilterDialog="openFilterDialog"
-                            />
+                            <ExpandableEntity :availableEntities="entities.entities" :query="mainQuery" @showRelationDialog="showRelationDialog" @entityClicked="onDropComplete($event, false)" @entityChildClicked="onDropComplete($event, false)" @openFilterDialog="openFilterDialog" />
                         </ScrollPanel>
                     </div>
                 </div>
                 <div class="p-d-flex p-flex-column kn-overflow-hidden" :class="{ 'derived-entities-toggle': showDerivedList }">
-                    <Toolbar class="kn-toolbar kn-toolbar--secondary kn-flex-0" @click="collapseDerivedList">
+                    <Toolbar class="kn-toolbar kn-toolbar--secondary kn-flex-0">
                         <template #left>
                             <span>Derived Entities</span>
                         </template>
                         <template #right>
-                            <Chip style="background-color:white"> {{ qbe.qbeJSONQuery?.catalogue?.queries[0].subqueries.length }} </Chip>
+                            <Button v-if="showEntitiesLists" icon="fas fa-plus-circle" class="p-button-text p-button-rounded p-button-plain" v-tooltip.top="$t('common.add')" @click="createSubquery" />
+                            <Chip style="background-color:white"> {{ mainQuery.subqueries.length }} </Chip>
+                            <Button v-if="showDerivedList" icon="pi pi-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="collapseDerivedList" />
+                            <Button v-else icon="pi pi-chevron-up" class="p-button-text p-button-rounded p-button-plain" @click="collapseDerivedList" />
                         </template>
                     </Toolbar>
                     <div v-show="showDerivedList" class="kn-flex kn-overflow-hidden">
-                        <ScrollPanel class="kn-height-full olap-scroll-panel">
-                            <SubqueryEntity :availableEntities="qbe.qbeJSONQuery?.catalogue?.queries[0].subqueries" />
-                        </ScrollPanel>
+                        <ScrollPanel class="kn-height-full olap-scroll-panel"> <SubqueryEntity :availableEntities="mainQuery.subqueries" @editSubquery="selectSubquery" @deleteSubquery="deleteSubquery" /> </ScrollPanel>
                     </div>
                 </div>
             </div>
@@ -58,6 +52,11 @@
                     <template #left>
                         <Button v-if="showEntitiesLists" icon="pi pi-chevron-left" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('qbe.detailView.hideList')" @click="toggleEntitiesLists" />
                         <Button v-else icon="pi pi-chevron-right" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('qbe.detailView.showList')" @click="toggleEntitiesLists" />
+                        <span v-if="selectedQuery.id !== 'q1'">
+                            <Button label="MAIN" class="p-button-text p-button-plain kn-uppercase" @click="selectMainQuery" />
+                            <Button icon="pi pi-chevron-right" class="p-button-text p-button-plain" />
+                            <Button :label="selectedQuery?.name" class="p-button-text p-button-plain kn-uppercase" />
+                        </span>
                     </template>
                     <template #right>
                         <i v-if="qbe.qbeJSONQuery.catalogue.queries[0].fields.length > 0" class="fas fa-eraser kn-cursor-pointer p-mx-2" v-tooltip.top="$t('qbe.viewToolbar.deleteAllSelectedFields')" @click="deleteAllSelectedFields"></i>
@@ -72,7 +71,7 @@
                     </template>
                 </Toolbar>
                 <div class="kn-flex kn-overflow-y">
-                    <QBESimpleTable v-if="!smartView" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]" @columnVisibilityChanged="checkIfHiddenColumnsExist" @openFilterDialog="openFilterDialog" @openHavingDialog="openHavingDialog" @entityDropped="onDropComplete($event, false)"></QBESimpleTable>
+                    <QBESimpleTable v-if="!smartView" :query="selectedQuery" @columnVisibilityChanged="checkIfHiddenColumnsExist" @openFilterDialog="openFilterDialog" @openHavingDialog="openHavingDialog" @entityDropped="onDropComplete($event, false)"></QBESimpleTable>
                 </div>
             </div>
         </div>
@@ -135,6 +134,7 @@ export default defineComponent({
             entities: {} as any,
             queryResult: {} as iQueryResult,
             selectedQuery: {} as any, //editQueryObj u njihovom appu
+            mainQuery: {} as any, //scope.query u njihovom appu
             loading: false,
             showEntitiesLists: true,
             smartView: false,
@@ -177,14 +177,15 @@ export default defineComponent({
         },
         async loadDataset() {
             // HARDCODED Dataset label/name
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
-                // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
+            // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
                 if (this.qbe) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
             console.log('LOADED QBE Dataset: ', this.qbe)
             console.log('MAIN QUERY q1 : ', this.qbe?.qbeJSONQuery?.catalogue?.queries[0])
             console.log('SUBQUERIES of q1: ', this.qbe?.qbeJSONQuery?.catalogue?.queries[0].subqueries)
+            this.mainQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
             this.selectedQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
         },
         async loadId() {
@@ -659,6 +660,41 @@ export default defineComponent({
         },
         isInLineCalculatedField(field) {
             return field.attributes.type === 'inLineCalculatedField'
+        },
+        // #endregion
+
+        //#region ===================== Subquery logic  ====================================================
+        selectSubquery(subquery) {
+            this.selectedQuery = subquery
+        },
+        selectMainQuery() {
+            console.log(this.selectedQuery)
+            if (this.selectedQuery.fields.length < 1) {
+                this.$store.commit('setInfo', { title: this.$t('common.toast.error'), msg: 'Sub entities must have one and one only field' })
+            } else {
+                this.selectedQuery = this.mainQuery
+            }
+        },
+        deleteSubquery(index, subquery) {
+            console.log(index, subquery)
+            subquery.id === this.selectedQuery.id ? (this.selectedQuery = this.mainQuery) : ''
+            this.mainQuery.subqueries.splice(index, 1)
+        },
+        createSubquery() {
+            let newSubquery = { id: 'q' + this.createQueryName(), name: 'subentity-q' + this.createQueryName(), fields: [], distinct: false, filters: [], calendar: {}, expression: {}, isNestedExpression: false, havings: [], graph: [], relationRoles: [], subqueries: [] } as any
+            this.mainQuery.subqueries.push(newSubquery)
+            this.selectedQuery = newSubquery
+        },
+        createQueryName() {
+            var lastcount = 0
+            var lastIndex = this.mainQuery.subqueries.length - 1
+            if (lastIndex != -1) {
+                var lastQueryId = this.mainQuery.subqueries[lastIndex].id
+                lastcount = parseInt(lastQueryId.substr(1))
+            } else {
+                lastcount = 1
+            }
+            return lastcount + 1
         }
         // #endregion
     }

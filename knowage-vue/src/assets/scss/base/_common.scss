@@ -66,6 +66,10 @@
     overflow: hidden;
 }
 
+.kn-uppercase {
+    text-transform: uppercase;
+}
+
 .kn-remove-card-padding {
     :deep(.p-card-body) {
         padding: 0;
