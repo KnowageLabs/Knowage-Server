@@ -86,7 +86,7 @@ export function removeNode(tree, nodeToRemove) {
 export function traverseDF(tree, callback) {
 
     (function recurse(currentNode) {
-        console.log("CURRENT NODE: ", currentNode)
+        // console.log("CURRENT NODE: ", currentNode)
         callback(currentNode);
         for (var i = 0; i < currentNode[childProperty].length; i++) {
             recurse(currentNode[childProperty][i]);
@@ -122,7 +122,7 @@ export function getParent(tree, child) {
 
 
 export function findElementIndex(array, element) {
-    console.log(' --- treeService - findElementIndex() - array', array, ', element ', element)
+    // console.log(' --- treeService - findElementIndex() - array', array, ', element ', element)
     for (var i = 0; i < array.length; i++) {
         if (element === array[i]) {
             return i;
@@ -137,12 +137,12 @@ export function getNodeToRemoveIndex(tree, nodeToRemove) {
 }
 
 export function getSiblings(tree, node) {
-    console.log(' --- treeService - getSiblings() - tree', tree, ', node ', node)
+    // console.log(' --- treeService - getSiblings() - tree', tree, ', node ', node)
     return getParent(tree, node)[childProperty];
 }
 
 export function nodeExistingCheck(tree, node) {
-    console.log(' --- treeService - nodeExistingCheck() - tree', tree, ', node ', node)
+    // console.log(' --- treeService - nodeExistingCheck() - tree', tree, ', node ', node)
     if (!contains(tree, node)) {
 
         throw new Error('Node does not exist.');

@@ -314,26 +314,28 @@ export default defineComponent({
 
             for (let i = this.selectedQuery.filters.length - 1; i >= 0; i--) {
                 const tempFilter = this.selectedQuery.filters[i]
-                // console.log(' >>> TEMP FILTER: ', tempFilter)
+                console.log(' >>> TEMP FILTER: ', tempFilter)
                 if (tempFilter.leftOperandValue === field.id) {
                     console.log(' >>> FILTER FOR DELETE CHECK: ', tempFilter)
                     const index = filters.findIndex((el: iFilter) => el.filterId === tempFilter.filterId)
-                    if (index === -1) this.selectedQuery.filters.splice(i, 1)
-                    removeInPlace(expression, '$F{' + tempFilter.filterId + '}')
-                    // this.deleteFilterByProperty('filterId', tempFilter.filterId, this.selectedQuery.filters, expression)
                     console.log('  >>> INDEX: ', index)
+                    if (index === -1) {
+                        this.selectedQuery.filters.splice(i, 1)
+                        removeInPlace(expression, '$F{' + tempFilter.filterId + '}')
+                    }
+                    // this.deleteFilterByProperty('filterId', tempFilter.filterId, this.selectedQuery.filters, expression)
                 }
             }
         },
-        deleteFilterByProperty(propertyName: string, propertyValue: string, filters: iFilter[], expression: any) {
-            for (var i = 0; i < filters.length; i++) {
-                if (filters[i][propertyName] != undefined && filters[i][propertyName] == propertyValue) {
-                    filters.splice(i, 1)
-                    removeInPlace(expression, '$F{' + propertyValue + '}')
-                    i--
-                }
-            }
-        },
+        // deleteFilterByProperty(propertyName: string, propertyValue: string, filters: iFilter[], expression: any) {
+        //     for (var i = 0; i < filters.length; i++) {
+        //         if (filters[i][propertyName] != undefined && filters[i][propertyName] == propertyValue) {
+        //             filters.splice(i, 1)
+        //             removeInPlace(expression, '$F{' + propertyValue + '}')
+        //             i--
+        //         }
+        //     }
+        // },
         // createExpression() {
         //     const formattedFilters = {}
 
