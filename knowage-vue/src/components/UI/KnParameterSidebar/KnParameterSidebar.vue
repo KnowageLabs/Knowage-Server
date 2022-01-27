@@ -1,6 +1,6 @@
 <template>
     <div id="kn-parameter-sidebar">
-        <Toolbar id="kn-parameter-sidebar-toolbar" class="kn-toolbar kn-toolbar--secondary">
+        <Toolbar v-if="mode !== 'workspaceView'" id="kn-parameter-sidebar-toolbar" class="kn-toolbar kn-toolbar--secondary">
             <template #left>
                 <div id="kn-parameter-sidebar-toolbar-icons-container" class="p-d-flex p-flex-row p-jc-around">
                     <i class="fa fa-eraser kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.resetParametersTooltip')" @click="resetAllParameters"></i>
@@ -17,6 +17,18 @@
                 </div>
                 <Dropdown class="kn-material-input" v-model="role" :options="user.roles" @change="setNewSessionRole" />
             </div>
+
+            <template v-if="mode === 'qbeView' || mode === 'workspaceView'">
+                <div v-for="(qbeParameter, index) in qbeParameters" :key="index">
+                    <div class="p-field p-m-4">
+                        <div class="p-d-flex">
+                            <label class="kn-material-input-label">{{ qbeParameter.name }}</label>
+                            <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="qbeParameter.value = qbeParameter.defaultValue"></i>
+                        </div>
+                        <InputText v-if="qbeParameter.value" class="kn-material-input p-inputtext-sm" v-model="qbeParameter.value" />
+                    </div>
+                </div>
+            </template>
 
             <div v-for="(parameter, index) in parameters.filterStatus" :key="index">
                 <div class="p-field p-m-4" v-if="(parameter.type === 'STRING' || parameter.type === 'NUM') && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
@@ -131,9 +143,9 @@
                 </div>
             </div>
         </div>
-        <div v-if="parameters && parameters.filterStatus.length > 0" class="p-fluid p-d-flex p-flex-row p-mx-5 kn-parameter-sidebar-buttons">
-            <Button class="kn-button kn-button--primary" :disabled="buttonsDisabled" @click="$emit('execute')"> {{ $t('common.execute') }}</Button>
-            <Button class="kn-button kn-button--primary p-ml-1" icon="fa fa-chevron-down" :disabled="buttonsDisabled" @click="toggle($event)" />
+        <div v-if="(parameters && parameters.filterStatus.length > 0) || mode === 'qbeView' || mode === 'workspaceView'" class="p-fluid p-d-flex p-flex-row p-mx-5 kn-parameter-sidebar-buttons">
+            <Button class="kn-button kn-button--primary" :disabled="buttonsDisabled" @click="$emit('execute', qbeParameters)"> {{ $t('common.execute') }}</Button>
+            <Button v-if="mode !== 'qbeView' && mode !== 'workspaceView'" class="kn-button kn-button--primary p-ml-1" icon="fa fa-chevron-down" :disabled="buttonsDisabled" @click="toggle($event)" />
             <Menu ref="executeButtonMenu" :model="executeMenuItems" :popup="true" />
         </div>
         <KnParameterPopupDialog :visible="popupDialogVisible" :selectedParameter="selectedParameter" :propLoading="loading" :parameterPopUpData="parameterPopUpData" @close="popupDialogVisible = false" @save="onPopupSave"></KnParameterPopupDialog>
@@ -164,7 +176,7 @@ import RadioButton from 'primevue/radiobutton'
 export default defineComponent({
     name: 'kn-parameter-sidebar',
     components: { Calendar, Chip, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton },
-    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String } },
+    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String }, propMode: { type: String }, propQBEParameters: { type: Array } },
     emits: ['execute', 'exportCSV', 'roleChanged'],
     data() {
         return {
@@ -183,7 +195,9 @@ export default defineComponent({
             user: null as any,
             role: null as string | null,
             loading: false,
-            updateVisualDependency
+            updateVisualDependency,
+            mode: 'execution',
+            qbeParameters: [] as any
         }
     },
     watch: {
@@ -197,6 +211,12 @@ export default defineComponent({
         },
         userRole() {
             this.role = this.userRole as string
+        },
+        propMode() {
+            this.loadMode()
+        },
+        propQBEParameters() {
+            this.loadQBEParameters()
         }
     },
     computed: {
@@ -208,6 +228,9 @@ export default defineComponent({
         }
     },
     created() {
+        this.loadMode()
+        if (this.mode === 'qbeView' || this.mode === 'workspaceView') this.loadQBEParameters()
+
         this.user = (this.$store.state as any).user
         this.role = this.userRole as string
         this.loadDocument()
@@ -478,6 +501,18 @@ export default defineComponent({
         removeViewpoint(viewpoint: any) {
             const index = this.viewpoints.findIndex((el: any) => el.vpId === viewpoint.vpId)
             if (index !== -1) this.viewpoints.splice(index, 1)
+        },
+        loadMode() {
+            this.mode = this.propMode ? this.propMode : 'execution'
+            console.log('KnParameterSidebar - loadMode() - LOADED MODE: ', this.mode)
+        },
+        loadQBEParameters() {
+            this.qbeParameters = []
+            this.propQBEParameters?.forEach((parameter: any) => {
+                if (!parameter.value) parameter.value = parameter.defaultValue
+                this.qbeParameters.push(parameter)
+            })
+            console.log('KnParameterSidebar - loadMode() - LOADED QBE PARAMETERS: ', this.qbeParameters)
         }
     }
 })

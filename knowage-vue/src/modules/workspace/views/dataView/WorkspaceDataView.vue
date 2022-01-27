@@ -58,7 +58,7 @@
                     :document="dataset"
                     @previewDataset="previewDataset"
                     @editFileDataset="editFileDataset"
-                    @openDatasetInQBE="openDatasetInQBE"
+                    @openDatasetInQBE="openDatasetInQBE($event)"
                     @exportToXlsx="exportDataset($event, 'xls')"
                     @exportToCsv="exportDataset($event, 'csv')"
                     @downloadDatasetFile="downloadDatasetFile"
@@ -78,7 +78,7 @@
         :datasetCategories="datasetCategories"
         @previewDataset="previewDataset"
         @editFileDataset="editFileDataset"
-        @openDatasetInQBE="openDatasetInQBE"
+        @openDatasetInQBE="openDatasetInQBE($event)"
         @exportToXlsx="exportDataset($event, 'xls')"
         @exportToCsv="exportDataset($event, 'csv')"
         @downloadDatasetFile="downloadDatasetFile"
@@ -98,7 +98,7 @@
     <WorkspaceDataPreviewDialog :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false"></WorkspaceDataPreviewDialog>
     <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.myData.title')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
 
-    <QBE :visible="qbeVisible" @close="closeQbe" />
+    <QBE v-if="qbeVisible" :visible="qbeVisible" :datasetLabel="selectedQbeDataset?.label" @close="closeQbe" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -183,7 +183,8 @@ export default defineComponent({
             tableMode: 'My Datasets',
             selectButtonOptions: ['My Datasets', 'Enterprise', 'Shared', 'All Datasets'],
             searchWord: '' as string,
-            qbeVisible: false
+            qbeVisible: false,
+            selectedQbeDataset: null
         }
     },
     created() {
@@ -241,7 +242,7 @@ export default defineComponent({
             this.menuButtons = []
             this.menuButtons.push(
                 { key: '0', label: this.$t('workspace.myAnalysis.menuItems.showDsDetails'), icon: 'fas fa-pen', command: this.editFileDataset, visible: this.isDatasetOwner && this.selectedDataset.dsTypeCd == 'File' },
-                { key: '1', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: this.openDatasetInQBE, visible: this.showQbeEditButton },
+                { key: '1', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: this.openDatasetInQBE(clickedDocument), visible: this.showQbeEditButton },
                 { key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable },
                 { key: '3', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.exportDataset(clickedDocument, 'csv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' },
                 { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: () => this.downloadDatasetFile(clickedDocument), visible: this.selectedDataset.dsTypeCd == 'File' },
@@ -270,7 +271,9 @@ export default defineComponent({
         editFileDataset() {
             this.showDatasetDialog = true
         },
-        openDatasetInQBE() {
+        openDatasetInQBE(dataset: any) {
+            console.log('DATASET: ', dataset)
+            this.selectedQbeDataset = dataset
             this.qbeVisible = true
         },
         closeQbe() {
