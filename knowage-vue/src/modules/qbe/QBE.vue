@@ -59,9 +59,9 @@
                         </span>
                     </template>
                     <template #right>
-                        <i v-if="qbe.qbeJSONQuery.catalogue.queries[0].fields.length > 0" class="fas fa-eraser kn-cursor-pointer p-mx-2" v-tooltip.top="$t('qbe.viewToolbar.deleteAllSelectedFields')" @click="deleteAllSelectedFields"></i>
+                        <i v-if="selectedQuery.fields.length > 0" class="fas fa-eraser kn-cursor-pointer p-mx-2" v-tooltip.top="$t('qbe.viewToolbar.deleteAllSelectedFields')" @click="deleteAllSelectedFields"></i>
                         <i v-if="hiddenColumnsExist" class="pi pi-eye kn-cursor-pointer p-mx-2" v-tooltip.top="$t('qbe.viewToolbar.showHiddenColumns')" @click="showHiddenColumns"></i>
-                        <span v-if="qbe.qbeJSONQuery?.catalogue?.queries[0].filters.length > 0" class="fa-stack p-mx-2">
+                        <span v-if="selectedQuery.filters.length > 0" class="fa-stack p-mx-2">
                             <i class="fas fa-ban fa-stack-2x"></i>
                             <i class="fas fa-filter fa-stack-1x kn-cursor-pointer" v-tooltip.top="$t('qbe.viewToolbar.deleteAllFilters')" @click="deleteAllFilters"></i>
                         </span>
@@ -76,23 +76,14 @@
             </div>
         </div>
 
-        <QBEFilterDialog
-            :visible="filterDialogVisible"
-            :filterDialogData="filterDialogData"
-            :id="id"
-            :entities="entities?.entities"
-            :propParameters="qbe?.pars"
-            :propExpression="qbe?.qbeJSONQuery.catalogue.queries[0].expression"
-            @close="filterDialogVisible = false"
-            @save="onFiltersSave"
-        ></QBEFilterDialog>
+        <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="id" :entities="entities?.entities" :propParameters="qbe?.pars" :propExpression="selectedQuery.expression" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
         <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" />
         <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" @close="havingDialogVisible = false" @save="onHavingsSave"></QBEHavingDialog>
-        <QBEAdvancedFilterDialog :visible="advancedFilterDialogVisible" :query="qbe.qbeJSONQuery?.catalogue?.queries[0]" @close="advancedFilterDialogVisible = false"></QBEAdvancedFilterDialog>
+        <QBEAdvancedFilterDialog :visible="advancedFilterDialogVisible" :query="selectedQuery" @close="advancedFilterDialogVisible = false"></QBEAdvancedFilterDialog>
         <QBESavingDialog v-if="savingDialogVisible" :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" />
-        <QBEJoinDefinitionDialog :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="id" :selectedQuery="qbe.qbeJSONQuery?.catalogue?.queries[0]" @close="joinDefinitionDialogVisible = false"></QBEJoinDefinitionDialog>
+        <QBEJoinDefinitionDialog :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="id" :selectedQuery="selectedQuery" @close="joinDefinitionDialogVisible = false"></QBEJoinDefinitionDialog>
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     </Dialog>
 </template>
@@ -102,7 +93,7 @@ import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
 import { iQBE, iQuery, iField, iQueryResult, iFilter } from './QBE'
-import { findByName, replace } from './qbeDialogs/qbeAdvancedFilterDialog/treeService'
+import { findByName, replace, removeInPlace } from './qbeDialogs/qbeAdvancedFilterDialog/treeService'
 import Dialog from 'primevue/dialog'
 import Chip from 'primevue/chip'
 import InputSwitch from 'primevue/inputswitch'
@@ -177,8 +168,8 @@ export default defineComponent({
         },
         async loadDataset() {
             // HARDCODED Dataset label/name
-            // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
+                // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
                 if (this.qbe) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
@@ -238,14 +229,14 @@ export default defineComponent({
             this.showDerivedList = !this.showDerivedList
         },
         deleteAllSelectedFields() {
-            if (this.qbe) this.qbe.qbeJSONQuery.catalogue.queries[0].fields = []
+            this.selectedQuery.fields = []
         },
         checkIfHiddenColumnsExist() {
             if (this.qbe) {
                 this.hiddenColumnsExist = false
-                for (let i = 0; i < this.qbe.qbeJSONQuery.catalogue.queries[0].fields.length; i++) {
-                    console.log(' >>> FIELD: ', this.qbe.qbeJSONQuery.catalogue.queries[0].fields[i])
-                    if (!this.qbe.qbeJSONQuery.catalogue.queries[0].fields[i].visible) {
+                for (let i = 0; i < this.selectedQuery.fields.length; i++) {
+                    console.log(' >>> FIELD: ', this.selectedQuery.fields[i])
+                    if (!this.selectedQuery.fields[i].visible) {
                         this.hiddenColumnsExist = true
                         break
                     }
@@ -253,14 +244,12 @@ export default defineComponent({
             }
         },
         showHiddenColumns() {
-            if (this.qbe) {
-                this.qbe.qbeJSONQuery.catalogue.queries[0].fields.forEach((field: iField) => (field.visible = true))
-                this.hiddenColumnsExist = false
-            }
+            this.selectedQuery.fields.forEach((field: iField) => (field.visible = true))
+            this.hiddenColumnsExist = false
         },
         openFilterDialog(field: iField) {
-            console.log('PAYLOAD FOR OPEN FILTER: ', { field: field, query: this.qbe?.qbeJSONQuery.catalogue.queries[0] })
-            this.filterDialogData = { field: field, query: this.qbe?.qbeJSONQuery.catalogue.queries[0] }
+            console.log('PAYLOAD FOR OPEN FILTER: ', { field: field, query: this.selectedQuery })
+            this.filterDialogData = { field: field, query: this.selectedQuery }
             this.filterDialogVisible = true
         },
         openHavingDialog(payload: { field: iField; query: iQuery }) {
@@ -268,34 +257,36 @@ export default defineComponent({
             this.havingDialogData = payload
             this.havingDialogVisible = true
         },
-        onFiltersSave(filters: iFilter[], field: iField, parameters: any[]) {
+        onFiltersSave(filters: iFilter[], field: iField, parameters: any[], expression: any) {
             console.log('ON FILTERS SAVE: ', filters)
             console.log('ON FILTERS SAVE PARAMETERS: ', parameters)
-            console.log('QBE QUERY BEFORE FILTERS SAVED: ', this.qbe?.qbeJSONQuery.catalogue.queries[0])
+            console.log('QBE QUERY BEFORE FILTERS SAVED: ', this.selectedQuery)
             console.log('FIELD ON FILTER SAVE: ', field)
             if (!this.qbe) return
 
             for (let i = 0; i < filters.length; i++) {
                 const tempFilter = filters[i]
-                const index = this.qbe.qbeJSONQuery.catalogue.queries[0].filters.findIndex((el: iFilter) => el.filterId === tempFilter.filterId)
+                const index = this.selectedQuery.filters.findIndex((el: iFilter) => el.filterId === tempFilter.filterId)
                 console.log('INDEX: ', index)
                 if (index !== -1) {
-                    this.qbe.qbeJSONQuery.catalogue.queries[0].filters[index] = tempFilter
+                    this.selectedQuery.filters[index] = tempFilter
                 } else {
-                    this.qbe.qbeJSONQuery.catalogue.queries[0].filters.push(tempFilter)
+                    this.selectedQuery.filters.push(tempFilter)
                 }
             }
 
-            this.removeDeletedFilters(filters, field)
+            this.removeDeletedFilters(filters, field, expression)
 
-            // this.qbe.qbeJSONQuery.catalogue.queries[0].expression = this.createExpression()
-            this.refresh(this.qbe?.qbeJSONQuery.catalogue.queries[0].filters)
+            // this.selectedQuery.expression = this.createExpression()
+            this.refresh(this.selectedQuery.filters, expression)
             this.qbe.pars = parameters ? [...parameters] : []
             this.filterDialogVisible = false
-            console.log('QBE QUERY AFTER FILTERS SAVED: ', this.qbe?.qbeJSONQuery.catalogue.queries[0])
+            console.log('QBE QUERY AFTER FILTERS SAVED: ', this.selectedQuery)
         },
-        refresh(filters: iFilter[]) {
-            const expression = this.qbe?.qbeJSONQuery.catalogue.queries[0].expression
+        refresh(filters: iFilter[], expression: any) {
+            console.log('REFRESH FILTERS: ', filters)
+            console.log('REFRESH expression: ', expression)
+            if (!this.qbe) return
             for (let filter of filters) {
                 // var newConst = new Const('NODE_CONST', filter)
                 var newConst = {
@@ -312,53 +303,65 @@ export default defineComponent({
 
                 replace(expression, newConst, oldConst)
             }
-            console.log('AFTER NEW SAVE: ', this.qbe?.qbeJSONQuery.catalogue.queries[0])
+            this.selectedQuery.expression = expression
+            console.log('AFTER NEW SAVE: ', this.selectedQuery)
             this.filterDialogVisible = false
         },
-        removeDeletedFilters(filters: iFilter[], field: iField) {
+        removeDeletedFilters(filters: iFilter[], field: iField, expression: any) {
             if (!this.qbe) return
 
             // console.log(' >>> BLA: ', this.qbe.qbeJSONQuery.catalogue.queries[0].filters)
 
-            for (let i = this.qbe.qbeJSONQuery.catalogue.queries[0].filters.length - 1; i >= 0; i--) {
-                const tempFilter = this.qbe.qbeJSONQuery.catalogue.queries[0].filters[i]
+            for (let i = this.selectedQuery.filters.length - 1; i >= 0; i--) {
+                const tempFilter = this.selectedQuery.filters[i]
                 // console.log(' >>> TEMP FILTER: ', tempFilter)
                 if (tempFilter.leftOperandValue === field.id) {
                     console.log(' >>> FILTER FOR DELETE CHECK: ', tempFilter)
                     const index = filters.findIndex((el: iFilter) => el.filterId === tempFilter.filterId)
-                    if (index === -1) this.qbe.qbeJSONQuery.catalogue.queries[0].filters.splice(i, 1)
+                    if (index === -1) this.selectedQuery.filters.splice(i, 1)
+                    removeInPlace(expression, '$F{' + tempFilter.filterId + '}')
+                    // this.deleteFilterByProperty('filterId', tempFilter.filterId, this.selectedQuery.filters, expression)
                     console.log('  >>> INDEX: ', index)
                 }
             }
         },
-        createExpression() {
-            const formattedFilters = {}
-
-            this.qbe?.qbeJSONQuery.catalogue.queries[0].filters.forEach((filter: iFilter) => {
-                if (formattedFilters[filter.leftOperandValue]) {
-                    formattedFilters[filter.leftOperandValue].push(filter)
-                } else {
-                    formattedFilters[filter.leftOperandValue] = [filter]
+        deleteFilterByProperty(propertyName: string, propertyValue: string, filters: iFilter[], expression: any) {
+            for (var i = 0; i < filters.length; i++) {
+                if (filters[i][propertyName] != undefined && filters[i][propertyName] == propertyValue) {
+                    filters.splice(i, 1)
+                    removeInPlace(expression, '$F{' + propertyValue + '}')
+                    i--
                 }
-            })
-
-            console.log('createExpression - FORMATED FILTERS: ', formattedFilters)
-
-            let expression = { childNodes: [] } as any
-            Object.keys(formattedFilters).forEach((key: string) => {
-                console.log('createExpression - expression: ', this.getExpression(formattedFilters[key]))
-                expression.childNodes.push(this.getExpression(formattedFilters[key]))
-            })
-
-            if (expression.childNodes.length === 0) {
-                expression = {}
-            } else if (expression.childNodes.length > 1) {
-                expression.value = 'AND'
-                expression.type = 'NODE_OP'
             }
-            console.log('createExpression - FINAL EXPRESSION: ', expression)
-            return expression
         },
+        // createExpression() {
+        //     const formattedFilters = {}
+
+        //     this.qbe?.qbeJSONQuery.catalogue.queries[0].filters.forEach((filter: iFilter) => {
+        //         if (formattedFilters[filter.leftOperandValue]) {
+        //             formattedFilters[filter.leftOperandValue].push(filter)
+        //         } else {
+        //             formattedFilters[filter.leftOperandValue] = [filter]
+        //         }
+        //     })
+
+        //     console.log('createExpression - FORMATED FILTERS: ', formattedFilters)
+
+        //     let expression = { childNodes: [] } as any
+        //     Object.keys(formattedFilters).forEach((key: string) => {
+        //         console.log('createExpression - expression: ', this.getExpression(formattedFilters[key]))
+        //         expression.childNodes.push(this.getExpression(formattedFilters[key]))
+        //     })
+
+        //     if (expression.childNodes.length === 0) {
+        //         expression = {}
+        //     } else if (expression.childNodes.length > 1) {
+        //         expression.value = 'AND'
+        //         expression.type = 'NODE_OP'
+        //     }
+        //     console.log('createExpression - FINAL EXPRESSION: ', expression)
+        //     return expression
+        // },
         getExpression(filters: iFilter[]) {
             console.log('FILTERS FOR EXPRESISON: ', filters)
             const filtersLength = filters.length
@@ -464,7 +467,7 @@ export default defineComponent({
         onHavingsSave(havings: iFilter[], field: iField) {
             console.log('QBE - onHavingsSave() - havings: ', havings)
             console.log('QBE - onHavingsSave() - field: ', field)
-            console.log('QBE - onHavingsSave() - QBE before havings saved: ', this.qbe?.qbeJSONQuery.catalogue.queries[0])
+            console.log('QBE - onHavingsSave() - QBE before havings saved: ', this.selectedQuery)
 
             if (!this.qbe) return
 
@@ -481,7 +484,7 @@ export default defineComponent({
 
             this.removeDeletedHavings(havings, field)
             this.havingDialogVisible = false
-            console.log('QBE - onHavingsSave() - QBE after havings saved: ', this.qbe?.qbeJSONQuery.catalogue.queries[0])
+            console.log('QBE - onHavingsSave() - QBE after havings saved: ', this.selectedQuery)
         },
         removeDeletedHavings(havings: iFilter[], field: iField) {
             if (!this.qbe) return

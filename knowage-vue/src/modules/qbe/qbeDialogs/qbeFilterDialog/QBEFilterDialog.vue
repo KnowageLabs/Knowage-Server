@@ -303,7 +303,7 @@ export default defineComponent({
             if (this.propParameters.length > 0 && !this.parameterTableVisible) {
                 this.parameterTableVisible = true
             } else {
-                this.$emit('save', this.filters, this.filterDialogData?.field, this.parameters)
+                this.$emit('save', this.filters, this.filterDialogData?.field, this.parameters, this.expression)
                 this.parameterTableVisible = false
             }
         }
