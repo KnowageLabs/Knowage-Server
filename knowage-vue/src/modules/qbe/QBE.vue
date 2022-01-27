@@ -117,7 +117,7 @@ import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSi
 export default defineComponent({
     name: 'qbe',
     components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESavingDialog, QBESqlDialog, QBESimpleTable, QBERelationDialog, QBEParamDialog, ExpandableEntity, SubqueryEntity, QBEHavingDialog, QBEAdvancedFilterDialog, QBEJoinDefinitionDialog, KnParameterSidebar },
-    props: { visible: { type: Boolean }, id: { type: String } },
+    props: { visible: { type: Boolean }, id: { type: String }, datasetLabel: { type: String } },
     emits: ['close'],
     data() {
         return {
@@ -176,6 +176,7 @@ export default defineComponent({
         },
         async loadDataset() {
             // HARDCODED Dataset label/name
+            // console.log('datasetLabel', this.datasetLabel)
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
                 // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
