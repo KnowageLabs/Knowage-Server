@@ -6,14 +6,15 @@
                     <span>{{ qbe?.label }}</span>
                 </template>
                 <template #right>
-                    <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" />
+                    <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
                     <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="savingDialogVisible = true" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('close')" />
                 </template>
             </Toolbar>
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
-        <div v-if="!loading" class="p-d-flex p-flex-row kn-height-full">
+        <div v-if="!loading" class="qbe-view-container  p-d-flex p-flex-row kn-height-full">
+            <div v-if="parameterSidebarVisible" id="qbe-backdrop" @click="parameterSidebarVisible = false"></div>
             <div v-show="showEntitiesLists" class="entities-lists">
                 <div class="p-d-flex p-flex-column kn-flex kn-overflow-hidden">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary kn-flex-0">
@@ -74,6 +75,7 @@
                     <QBESimpleTable v-if="!smartView" :query="selectedQuery" @columnVisibilityChanged="checkIfHiddenColumnsExist" @openFilterDialog="openFilterDialog" @openHavingDialog="openHavingDialog" @entityDropped="onDropComplete($event, false)"></QBESimpleTable>
                 </div>
             </div>
+            <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="document" :userRole="userRole" :propMode="'qbeView'" :propQBEParameters="qbe.pars" @execute="onExecute"></KnParameterSidebar>
         </div>
 
         <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="id" :entities="entities?.entities" :propParameters="qbe?.pars" :propExpression="selectedQuery.expression" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
@@ -110,10 +112,11 @@ import SubqueryEntity from '@/modules/qbe/qbeComponents/subqueryEntity.vue'
 import ScrollPanel from 'primevue/scrollpanel'
 import Menu from 'primevue/contextmenu'
 import QBEJoinDefinitionDialog from './qbeDialogs/qbeJoinDefinitionDialog/QBEJoinDefinitionDialog.vue'
+import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 
 export default defineComponent({
     name: 'qbe',
-    components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESavingDialog, QBESqlDialog, QBESimpleTable, QBERelationDialog, QBEParamDialog, ExpandableEntity, SubqueryEntity, QBEHavingDialog, QBEAdvancedFilterDialog, QBEJoinDefinitionDialog },
+    components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESavingDialog, QBESqlDialog, QBESimpleTable, QBERelationDialog, QBEParamDialog, ExpandableEntity, SubqueryEntity, QBEHavingDialog, QBEAdvancedFilterDialog, QBEJoinDefinitionDialog, KnParameterSidebar },
     props: { visible: { type: Boolean }, id: { type: String } },
     emits: ['close'],
     data() {
@@ -144,7 +147,10 @@ export default defineComponent({
             havingDialogVisible: false,
             havingDialogData: {} as { field: iField; query: iQuery },
             advancedFilterDialogVisible: false,
-            joinDefinitionDialogVisible: false
+            joinDefinitionDialogVisible: false,
+            parameterSidebarVisible: false,
+            user: null as any,
+            userRole: null
         }
     },
     watch: {
@@ -153,6 +159,8 @@ export default defineComponent({
         }
     },
     async created() {
+        this.user = (this.$store.state as any).user
+        this.userRole = this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
         await this.loadPage()
     },
     methods: {
@@ -168,8 +176,8 @@ export default defineComponent({
         },
         async loadDataset() {
             // HARDCODED Dataset label/name
-            // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
+                // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
                 if (this.qbe) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
@@ -702,6 +710,11 @@ export default defineComponent({
                 lastcount = 1
             }
             return lastcount + 1
+        },
+        // #endregion
+        // #region Sidebar and parameter
+        onExecute(qbeParameters: any[]) {
+            console.log('QBE - onExecute() - qBE PAREMETERS: ', qbeParameters)
         }
         // #endregion
     }
@@ -749,5 +762,22 @@ export default defineComponent({
 .olap-scroll-panel .p-scrollpanel-bar {
     background-color: #43749eb6;
     width: 5px;
+}
+
+#qbe-backdrop {
+    background-color: rgba(33, 33, 33, 1);
+    opacity: 0.48;
+    z-index: 50;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.qbe-view-container {
+    position: relative;
+    height: 100%;
+    width: 100%;
 }
 </style>
