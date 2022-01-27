@@ -7,6 +7,7 @@
                     <span>{{ dataset.label }}</span>
                 </template>
                 <template #right>
+                    <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
                     <Button class="kn-button p-button-text p-button-rounded p-button-plain" :label="$t('common.close')" @click="closeDialog"></Button>
                 </template>
             </Toolbar>
@@ -19,6 +20,7 @@
                 {{ errorMessage }}
             </Message>
             <DatasetPreviewTable v-else class="p-d-flex p-flex-column kn-flex p-m-2" :previewColumns="columns" :previewRows="rows" :pagination="pagination" @pageChanged="updatePagination($event)" @sort="onSort" @filter="onFilter"></DatasetPreviewTable>
+            <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="dataset" :propMode="'workspaceView'" :propQBEParameters="dataset.pars" @execute="onExecute"></KnParameterSidebar>
         </div>
     </Dialog>
 </template>
@@ -31,10 +33,11 @@ import DatasetPreviewTable from '../tables/DatasetPreviewTable.vue'
 import Message from 'primevue/message'
 import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import workspaceDataPreviewDialogDescriptor from './WorkspaceDataPreviewDialogDescriptor.json'
+import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 
 export default defineComponent({
     name: 'kpi-scheduler-save-dialog',
-    components: { Dialog, DatasetPreviewTable, Message },
+    components: { Dialog, DatasetPreviewTable, Message, KnParameterSidebar },
     props: { visible: { type: Boolean }, propDataset: { type: Object } },
     emits: ['close'],
     data() {
@@ -49,7 +52,9 @@ export default defineComponent({
             filter: null as any,
             errorMessageVisible: false,
             errorMessage: '',
-            loading: false
+            parameterSidebarVisible: false,
+            loading: false,
+            filtersData: {}
         }
     },
     watch: {
@@ -66,8 +71,10 @@ export default defineComponent({
     methods: {
         async loadPreview() {
             this.loadDataset()
-            if (this.dataset.label && this.visible) {
+            if (this.dataset.label && this.visible && this.dataset.pars.length === 0) {
                 await this.loadPreviewData()
+            } else {
+                this.parameterSidebarVisible = true
             }
         },
         loadDataset() {
@@ -81,6 +88,9 @@ export default defineComponent({
             }
             if (this.filter) {
                 postData.filters = this.filter
+            }
+            if (this.dataset.pars.length > 0) {
+                postData.pars = [...this.dataset.pars]
             }
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${this.dataset.label}/preview`, postData)
@@ -124,6 +134,11 @@ export default defineComponent({
             this.errorMessageVisible = false
             this.errorMessage = ''
             this.$emit('close')
+        },
+        onExecute(datasetParameters: any[]) {
+            console.log('WorkspaceDataPreviewDialog - onExecute() - DATASET PARAMETERS: ', datasetParameters)
+            this.dataset.pars = datasetParameters
+            this.loadPreviewData()
         }
     }
 })
