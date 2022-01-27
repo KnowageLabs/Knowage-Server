@@ -3,8 +3,8 @@
         <h4 draggable="true" @dragstart="onDragStart($event, entity)">
             <i class="fas fa-cube p-mx-2" v-tooltip.top="$t(`qbe.entities.types.cube`)" />
             <span>{{ entity.name }}</span>
-            <Button icon="fas fa-edit" class="p-button-text p-button-rounded p-button-plain p-ml-auto" />
-            <Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain" />
+            <Button icon="fas fa-edit" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click="$emit('editSubquery', entity)" />
+            <Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain" @click="$emit('deleteSubquery', index, entity)" />
             <Button v-if="entity.expanded" icon="pi pi-chevron-up" class="p-button-text p-button-rounded p-button-plain" @click="entity.expanded = false" />
             <Button v-else icon="pi pi-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="entity.expanded = true" />
         </h4>
