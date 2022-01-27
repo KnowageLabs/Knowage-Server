@@ -43,7 +43,9 @@
                         </template>
                     </Toolbar>
                     <div v-show="showDerivedList" class="kn-flex kn-overflow-hidden">
-                        <ScrollPanel class="kn-height-full olap-scroll-panel"> <SubqueryEntity :availableEntities="mainQuery.subqueries" @editSubquery="selectSubquery" @deleteSubquery="deleteSubquery" /> </ScrollPanel>
+                        <ScrollPanel class="kn-height-full olap-scroll-panel">
+                            <SubqueryEntity :availableEntities="mainQuery.subqueries" @editSubquery="selectSubquery" @deleteSubquery="deleteSubquery" />
+                        </ScrollPanel>
                     </div>
                 </div>
             </div>
@@ -65,13 +67,14 @@
                             <i class="fas fa-ban fa-stack-2x"></i>
                             <i class="fas fa-filter fa-stack-1x kn-cursor-pointer" v-tooltip.top="$t('qbe.viewToolbar.deleteAllFilters')" @click="deleteAllFilters"></i>
                         </span>
-                        <InputSwitch class="p-mr-2" v-model="smartView" />
+                        <InputSwitch class="p-mr-2" v-model="smartView" @change="updateSmartView" />
                         <span>{{ $t('qbe.viewToolbar.smartView') }}</span>
                         <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" @click="showMenu" />
                     </template>
                 </Toolbar>
                 <div class="kn-flex kn-overflow-y">
                     <QBESimpleTable v-if="!smartView" :query="selectedQuery" @columnVisibilityChanged="checkIfHiddenColumnsExist" @openFilterDialog="openFilterDialog" @openHavingDialog="openHavingDialog" @entityDropped="onDropComplete($event, false)"></QBESimpleTable>
+                    <QBESmartTable v-else :previewData="queryPreviewData" />
                 </div>
             </div>
         </div>
@@ -105,6 +108,7 @@ import QBESqlDialog from './qbeDialogs/QBESqlDialog.vue'
 import QBERelationDialog from './qbeDialogs/QBEEntityRelationDialog.vue'
 import QBEParamDialog from './qbeDialogs/QBEParameterDialog.vue'
 import QBESavingDialog from './qbeDialogs/qbeSavingDialog/QBESavingDialog.vue'
+import QBESmartTable from './qbeTables/qbeSmartTable/QBESmartTable.vue'
 import ExpandableEntity from '@/modules/qbe/qbeComponents/expandableEntity.vue'
 import SubqueryEntity from '@/modules/qbe/qbeComponents/subqueryEntity.vue'
 import ScrollPanel from 'primevue/scrollpanel'
@@ -113,7 +117,7 @@ import QBEJoinDefinitionDialog from './qbeDialogs/qbeJoinDefinitionDialog/QBEJoi
 
 export default defineComponent({
     name: 'qbe',
-    components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBEFilterDialog, QBESavingDialog, QBESqlDialog, QBESimpleTable, QBERelationDialog, QBEParamDialog, ExpandableEntity, SubqueryEntity, QBEHavingDialog, QBEAdvancedFilterDialog, QBEJoinDefinitionDialog },
+    components: { Dialog, Chip, InputSwitch, ScrollPanel, Menu, QBESmartTable, QBEFilterDialog, QBESavingDialog, QBESqlDialog, QBESimpleTable, QBERelationDialog, QBEParamDialog, ExpandableEntity, SubqueryEntity, QBEHavingDialog, QBEAdvancedFilterDialog, QBEJoinDefinitionDialog },
     props: { visible: { type: Boolean }, id: { type: String } },
     emits: ['close'],
     data() {
@@ -123,7 +127,7 @@ export default defineComponent({
             customizedDatasetFunctions: {} as any,
             exportLimit: null as number | null,
             entities: {} as any,
-            queryResult: {} as iQueryResult,
+            queryPreviewData: {} as iQueryResult,
             selectedQuery: {} as any, //editQueryObj u njihovom appu
             mainQuery: {} as any, //scope.query u njihovom appu
             loading: false,
@@ -208,10 +212,10 @@ export default defineComponent({
 
             const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
-                .post(process.env.VUE_APP_QBE_PATH + `qbequery/executeQuery/?SBI_EXECUTION_ID=${this.id}&currentQueryId=q1&start=0&limit=25`, postData)
-                .then((response: AxiosResponse<any>) => (this.queryResult = response.data))
+                .post(process.env.VUE_APP_QBE_PATH + `qbequery/executeQuery/?SBI_EXECUTION_ID=${this.id}&currentQueryId=${this.selectedQuery.id}&start=0&limit=25`, postData)
+                .then((response: AxiosResponse<any>) => (this.queryPreviewData = response.data))
                 .catch(() => {})
-            // console.log('QUERY RESULT : ', this.queryResult)
+            // console.log('QUERY RESULT : ', this.queryPreviewData)
         },
         formatQbeMeta() {
             const meta = [] as any[]
@@ -591,6 +595,7 @@ export default defineComponent({
             } else {
                 this.addEntityToMainQuery(field)
             }
+            this.updateSmartView()
         },
         addEntityToMainQuery(field, isCalcField?) {
             //addField kod njih
@@ -673,6 +678,7 @@ export default defineComponent({
         //#region ===================== Subquery logic  ====================================================
         selectSubquery(subquery) {
             this.selectedQuery = subquery
+            this.updateSmartView()
         },
         selectMainQuery() {
             console.log(this.selectedQuery)
@@ -681,16 +687,19 @@ export default defineComponent({
             } else {
                 this.selectedQuery = this.mainQuery
             }
+            this.updateSmartView()
         },
         deleteSubquery(index, subquery) {
             console.log(index, subquery)
             subquery.id === this.selectedQuery.id ? (this.selectedQuery = this.mainQuery) : ''
             this.mainQuery.subqueries.splice(index, 1)
+            this.updateSmartView()
         },
         createSubquery() {
             let newSubquery = { id: 'q' + this.createQueryName(), name: 'subentity-q' + this.createQueryName(), fields: [], distinct: false, filters: [], calendar: {}, expression: {}, isNestedExpression: false, havings: [], graph: [], relationRoles: [], subqueries: [] } as any
             this.mainQuery.subqueries.push(newSubquery)
             this.selectedQuery = newSubquery
+            this.queryPreviewData = null as any
         },
         createQueryName() {
             var lastcount = 0
@@ -702,8 +711,11 @@ export default defineComponent({
                 lastcount = 1
             }
             return lastcount + 1
-        }
+        },
         // #endregion
+        updateSmartView() {
+            this.smartView ? this.executeQBEQuery() : ''
+        }
     }
 })
 </script>
