@@ -77,7 +77,16 @@
             </div>
         </div>
 
-        <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="id" :entities="entities?.entities" :propParameters="qbe?.pars" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
+        <QBEFilterDialog
+            :visible="filterDialogVisible"
+            :filterDialogData="filterDialogData"
+            :id="id"
+            :entities="entities?.entities"
+            :propParameters="qbe?.pars"
+            :propExpression="qbe?.qbeJSONQuery.catalogue.queries[0].expression"
+            @close="filterDialogVisible = false"
+            @save="onFiltersSave"
+        ></QBEFilterDialog>
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
         <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" />
@@ -94,6 +103,7 @@ import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
 import { iQBE, iQuery, iField, iQueryResult, iFilter } from './QBE'
+import { findByName, replace } from './qbeDialogs/qbeAdvancedFilterDialog/treeService'
 import Dialog from 'primevue/dialog'
 import Chip from 'primevue/chip'
 import InputSwitch from 'primevue/inputswitch'
@@ -277,10 +287,32 @@ export default defineComponent({
 
             this.removeDeletedFilters(filters, field)
 
-            this.qbe.qbeJSONQuery.catalogue.queries[0].expression = this.createExpression()
+            // this.qbe.qbeJSONQuery.catalogue.queries[0].expression = this.createExpression()
+            this.refresh(this.qbe?.qbeJSONQuery.catalogue.queries[0].filters)
             this.qbe.pars = parameters ? [...parameters] : []
             this.filterDialogVisible = false
             console.log('QBE QUERY AFTER FILTERS SAVED: ', this.qbe?.qbeJSONQuery.catalogue.queries[0])
+        },
+        refresh(filters: iFilter[]) {
+            const expression = this.qbe?.qbeJSONQuery.catalogue.queries[0].expression
+            for (let filter of filters) {
+                // var newConst = new Const('NODE_CONST', filter)
+                var newConst = {
+                    value: '$F{' + filter.filterId + '}',
+                    childNodes: [],
+                    details: {
+                        leftOperandAlias: filter.leftOperandAlias,
+                        operator: filter.operator,
+                        entity: filter.entity,
+                        rightOperandValue: filter.rightOperandValue.join(', ')
+                    }
+                }
+                var oldConst = findByName(expression, newConst.value)
+
+                replace(expression, newConst, oldConst)
+            }
+            console.log('AFTER NEW SAVE: ', this.qbe?.qbeJSONQuery.catalogue.queries[0])
+            this.filterDialogVisible = false
         },
         removeDeletedFilters(filters: iFilter[], field: iField) {
             if (!this.qbe) return

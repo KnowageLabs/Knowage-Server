@@ -31,7 +31,6 @@ export function find(tree, toFind) {
     console.log(' --- treeService - find() - tree', tree, ', toFind ', toFind)
     var equalNode;
     traverseDF(tree, function (node) {
-        // TODO
         console.log(deepEqual(node, toFind))
         if (deepEqual(node, toFind)) {
             equalNode = node;
@@ -55,14 +54,14 @@ export function move(tree, source, destination) {
     nodeExistingCheck(tree, destination);
 
     // angular.copy(source,destination)
-    source = { ...destination }
+    source = JSON.parse(JSON.stringify(destination))
 }
 
 export function swapNodes(node1, node2) {
     console.log(' --- treeService - swapNodes() - node1', node1, ', node2 ', node2)
-    var temp = { ...node1 }
-    node1 = { ...node2 }
-    node2 = { ...temp }
+    var temp = JSON.parse(JSON.stringify(node1))
+    node1 = JSON.parse(JSON.stringify(node2))
+    node2 = JSON.parse(JSON.stringify(temp))
 
 }
 
@@ -87,7 +86,7 @@ export function removeNode(tree, nodeToRemove) {
 export function traverseDF(tree, callback) {
 
     (function recurse(currentNode) {
-
+        console.log("CURRENT NODE: ", currentNode)
         callback(currentNode);
         for (var i = 0; i < currentNode[childProperty].length; i++) {
             recurse(currentNode[childProperty][i]);
@@ -101,7 +100,7 @@ export function replace(tree, expression, node) {
     console.log(' --- treeService - replace() - tree', tree, ', expression ', expression, ', node ', node)
     nodeExistingCheck(tree, node);
     // angular.copy(expression, node)
-    node = { ...expression }
+    node = JSON.parse(JSON.stringify(expression))
 }
 
 export function getParent(tree, child) {
@@ -110,7 +109,6 @@ export function getParent(tree, child) {
 
     nodeExistingCheck(tree, child)
 
-    // TODO
     traverseDF(tree, function (node) {
 
         if (findElementIndex(node[childProperty], child) > -1) parent = node;

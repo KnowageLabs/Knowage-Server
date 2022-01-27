@@ -46,7 +46,7 @@ import QBEFilterParameters from './QBEFilterParameters.vue'
 export default defineComponent({
     name: 'qbe-filter-dialog',
     components: { Dialog, KnFabButton, Message, QBEFilterCard, QBETemporalFilterDialog, QBEFilterParameters },
-    props: { visible: { type: Boolean }, filterDialogData: { type: Object as PropType<{ field: iField; query: iQuery }> }, id: { type: String }, entities: { type: Array }, propParameters: { type: Array, required: true } },
+    props: { visible: { type: Boolean }, filterDialogData: { type: Object as PropType<{ field: iField; query: iQuery }> }, id: { type: String }, entities: { type: Array }, propParameters: { type: Array, required: true }, propExpression: { type: Object } },
     emits: ['save', 'close'],
     data() {
         return {
@@ -56,7 +56,8 @@ export default defineComponent({
             temporalFilters: [] as any[],
             temporalFilterDialogVisible: false,
             parameters: [] as any[],
-            parameterTableVisible: false
+            parameterTableVisible: false,
+            expression: {} as any
         }
     },
     watch: {
@@ -65,11 +66,15 @@ export default defineComponent({
         },
         propParameters() {
             this.loadParameters()
+        },
+        propExpression() {
+            this.loadExpression()
         }
     },
     created() {
         this.loadData()
         this.loadParameters()
+        this.loadExpression()
     },
     methods: {
         loadData() {
@@ -95,45 +100,94 @@ export default defineComponent({
         loadParameters() {
             this.parameters = this.propParameters ? [...this.propParameters] : []
         },
+        loadExpression() {
+            this.expression = this.propExpression as any
+            console.log('LOADED EXPRESSION: ', this.expression)
+        },
         removeFilter(filter: iFilter) {
             // console.log('FILTER TO REMOVE: ', filter)
             const index = this.filters.findIndex((el: iFilter) => el.filterId === filter.filterId)
             if (index !== -1) this.filters.splice(index, 1)
         },
         addNewFilter() {
-            const field = this.filterDialogData?.field
+            const field = this.filterDialogData ? this.filterDialogData.field : ({} as any)
             console.log('FIELD: ', field)
+            const filter = {
+                filterId: 'Filter' + this.nextFilterIndex,
+                filterDescripion: 'Filter' + this.nextFilterIndex,
+                filterInd: this.nextFilterIndex,
+                promptable: false,
+                leftOperandValue: field.id,
+                leftOperandDescription: field.longDescription,
+                leftOperandLongDescription: field.longDescription,
+                leftOperandType: 'Field Content',
+                leftOperandDefaultValue: null,
+                leftOperandLastValue: null,
+                leftOperandAlias: field.alias,
+                leftOperandDataType: '',
+                operator: 'EQUALS TO',
+                rightOperandDescription: '',
+                rightOperandLongDescription: '',
+                rightOperandValue: [''],
+                rightOperandType: 'Static Content',
+                rightType: 'manual',
+                rightOperandDefaultValue: [''],
+                rightOperandLastValue: [''],
+                rightOperandAlias: '',
+                rightOperandDataType: '',
+                booleanConnector: 'AND',
+                deleteButton: false,
+                color: '',
+                entity: field.entity
+            }
             if (field) {
-                this.filters.push({
-                    filterId: 'Filter' + this.nextFilterIndex,
-                    filterDescripion: 'Filter' + this.nextFilterIndex,
-                    filterInd: this.nextFilterIndex,
-                    promptable: false,
-                    leftOperandValue: field.id,
-                    leftOperandDescription: field.longDescription,
-                    leftOperandLongDescription: field.longDescription,
-                    leftOperandType: 'Field Content',
-                    leftOperandDefaultValue: null,
-                    leftOperandLastValue: null,
-                    leftOperandAlias: field.alias,
-                    leftOperandDataType: '',
-                    operator: 'EQUALS TO',
-                    rightOperandDescription: '',
-                    rightOperandLongDescription: '',
-                    rightOperandValue: [''],
-                    rightOperandType: 'Static Content',
-                    rightType: 'manual',
-                    rightOperandDefaultValue: [''],
-                    rightOperandLastValue: [''],
-                    rightOperandAlias: '',
-                    rightOperandDataType: '',
-                    booleanConnector: 'AND',
-                    deleteButton: false,
-                    color: '',
-                    entity: field.entity
-                })
+                this.filters.push(filter)
                 this.nextFilterIndex++
             }
+            this.push(filter)
+        },
+        push(filter) {
+            console.log('CAAAAAAAAAAAAAAAAAAAAAALED PUSH!', this.expression)
+            var newConst = {
+                type: 'NODE_CONST',
+                value: '$F{' + filter.filterId + '}',
+                childNodes: [],
+                details: {
+                    leftOperandAlias: filter.leftOperandAlias,
+                    operator: filter.operator,
+                    entity: filter.entity,
+                    rightOperandValue: filter.rightOperandValue.join(', ')
+                }
+            }
+
+            let newRoot = {} as any
+
+            if (this.expression && Object.keys(this.expression).length === 0 && Object.getPrototypeOf(this.expression) === Object.prototype) {
+                // newRoot = new Operand('NODE_OP', filters.booleanConnector || 'AND')
+                newRoot = {
+                    type: 'NODE_OP',
+                    childNodes: [],
+                    value: filter.booleanConnector || 'AND'
+                }
+                newRoot.childNodes.push(newConst)
+                // angular.copy(newRoot, this.expression)
+                this.expression = JSON.parse(JSON.stringify(newRoot))
+            } else if (this.expression.childNodes && this.expression.childNodes.length <= 1) {
+                newRoot = this.expression
+                newRoot.childNodes.unshift(newConst)
+            } else {
+                // newRoot = new Operand('NODE_OP', filters.booleanConnector || 'AND')
+                newRoot = {
+                    type: 'NODE_OP',
+                    childNodes: [],
+                    value: filter.booleanConnector || 'AND'
+                }
+                newRoot.childNodes.push(newConst)
+                newRoot.childNodes.push(JSON.parse(JSON.stringify(this.expression)))
+                this.expression = JSON.parse(JSON.stringify(newRoot))
+            }
+
+            console.log('NEW EXPRESSION :', this.expression)
         },
         temporalFiltersEnabled() {
             return ((this.$store.state as any).user.functionalities.includes('Timespan') && this.filterDialogData?.field.dataType.toLowerCase() === 'java.sql.data') || this.filterDialogData?.field.dataType.toLowerCase() === 'java.sql.timestamp'

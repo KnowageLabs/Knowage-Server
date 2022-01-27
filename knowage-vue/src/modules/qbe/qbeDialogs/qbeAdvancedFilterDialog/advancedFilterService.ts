@@ -4,7 +4,7 @@ import { getOperator } from './operatorUtilService'
 import { operator } from './filterTreeFactoryService'
 import { createGroupGroupUtilService, getLastOperand, getChildExpression, areInSameGroup, getGroupGroupUtilService, getGroupOperandsGroupUtilsService, } from './groupUtilService'
 
-const assert = require('assert')
+const deepEqual = require('deep-equal')
 const defaultOperator = operator('AND')
 
 export function swap(filterTree, operand1, operand2) {
@@ -22,7 +22,7 @@ export function move(filterTree, operand1, operand2) {
     } else {
         var temp = find(filterTree, operand2Copy)
         traverseDF(filterTree, function (node) {
-            if (assert.deepEqual(operand1, node) && getNextOperand(filterTree, temp) !== node) {
+            if (deepEqual(operand1, node) && getNextOperand(filterTree, temp) !== node) {
                 remove(filterTree, node);
             }
         });
@@ -60,7 +60,7 @@ export function removeSelected(filterTree, operands, group) {
     console.log("advancedFilterService - removeSelected() - filterTree ", filterTree, ', operands ', operands, ', group ', group)
     for (var i = 0; i < operands.length - 1; i++) {
         traverseDF(filterTree, function (node) {
-            if (assert.deepEqual(operands[i], node) && !contains(find(filterTree, group), node)) {
+            if (deepEqual(operands[i], node) && !contains(find(filterTree, group), node)) {
                 remove(filterTree, node);
             }
         });

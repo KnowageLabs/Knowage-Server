@@ -37,7 +37,7 @@ export function insertAfter(filterTree, operand, operator,
     console.log("operandUtilService - insertAfter() - filterTree ", filterTree, ', operand ', operand, ', operator ', operator, ', beforeOperand ', beforeOperand)
     var beforeOperandCopy = { ...beforeOperand }
     replace(filterTree, createInsertExpression(
-        filterTree, { ...operand }, operator, beforeOperand),
+        filterTree, JSON.parse(JSON.stringify(operand)), operator, beforeOperand),
         getInsertPosition(filterTree, beforeOperand))
 
     return find(filterTree, beforeOperandCopy)
@@ -48,7 +48,7 @@ export function createInsertExpression(filterTree, operand,
     operator, beforeOperand) {
     console.log("operandUtilService - createInsertExpression() - filterTree ", filterTree, ', operand ', operand, ', operator ', operator, ', beforeOperand ', beforeOperand)
     return createExpression({ ...beforeOperand }, operator,
-        getInsertExpressionRightOperator(filterTree, { ...operand },
+        getInsertExpressionRightOperator(filterTree, JSON.parse(JSON.stringify(operand)),
             beforeOperand))
 }
 
@@ -56,7 +56,7 @@ export function getInsertExpressionRightOperator(filterTree,
     operand, beforeOperand) {
     console.log("operandUtilService - getInsertExpressionRightOperator() - filterTree ", filterTree, ', operand ', operand, ', beforeOperand ', beforeOperand)
     if (!isInSimpleExpression(filterTree, beforeOperand)) {
-        return subexpression(filterTree, { ...operand }, getNextOperand(
+        return subexpression(filterTree, JSON.parse(JSON.stringify(operand)), getNextOperand(
             filterTree, beforeOperand))
     }
 
