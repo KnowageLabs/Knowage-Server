@@ -168,8 +168,8 @@ export default defineComponent({
         },
         async loadDataset() {
             // HARDCODED Dataset label/name
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
-                // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
+            // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
                 if (this.qbe) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
@@ -547,7 +547,8 @@ export default defineComponent({
                     this.getSQL()
                 })
                 .catch((error) => {
-                    console.log(error)
+                    this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error.errors[0].message })
+                    console.log('showSQLQuery ---- ERROR', error)
                 })
         },
         async getSQL() {
@@ -572,7 +573,8 @@ export default defineComponent({
                     this.sqlDialogVisible = true
                 })
                 .catch((error) => {
-                    console.log(error)
+                    this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error.errors[0].message })
+                    console.log('getSQL ---- ERROR', error)
                 })
         },
         //#endregion ===============================================================================================
