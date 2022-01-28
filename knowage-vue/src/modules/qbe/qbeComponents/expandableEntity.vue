@@ -45,7 +45,7 @@ export default defineComponent({
     methods: {
         setupEntities() {
             let usedColorIndex = 0
-            this.entities.forEach((entity) => {
+            this.entities?.forEach((entity) => {
                 //set colors property
                 if (!this.colors[usedColorIndex]) usedColorIndex = 0
                 var color = this.colors[usedColorIndex]

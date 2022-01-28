@@ -1,5 +1,5 @@
 <template>
-    <Dialog v-if="!loading" class="full-screen-dialog" :visible="true" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
+    <Dialog class="full-screen-dialog" :visible="true" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
                 <template #left>
@@ -22,7 +22,7 @@
                             <span>Entities</span>
                         </template>
                         <template #right>
-                            <Chip style="background-color:white"> {{ entities.entities.length }} </Chip>
+                            <Chip style="background-color:white"> {{ entities?.entities?.length }} </Chip>
                         </template>
                     </Toolbar>
                     <div class="kn-flex kn-overflow-hidden">
@@ -38,7 +38,7 @@
                         </template>
                         <template #right>
                             <Button v-if="showEntitiesLists" icon="fas fa-plus-circle" class="p-button-text p-button-rounded p-button-plain" v-tooltip.top="$t('common.add')" @click="createSubquery" />
-                            <Chip style="background-color:white"> {{ mainQuery.subqueries.length }} </Chip>
+                            <Chip style="background-color:white"> {{ mainQuery.subqueries?.length }} </Chip>
                             <Button v-if="showDerivedList" icon="pi pi-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="collapseDerivedList" />
                             <Button v-else icon="pi pi-chevron-up" class="p-button-text p-button-rounded p-button-plain" @click="collapseDerivedList" />
                         </template>
@@ -84,13 +84,12 @@
             <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="document" :userRole="userRole" :propMode="'qbeView'" :propQBEParameters="qbe.pars" @execute="onExecute"></KnParameterSidebar>
         </div>
 
-        <QBEPreviewDialog v-else-if="!loading" :id="id" :queryPreviewData="queryPreviewData" :pagination="pagination" @close="closePreview" @pageChanged="updatePagination($event)"></QBEPreviewDialog>
-
+        <QBEPreviewDialog v-show="!loading && qbePreviewDialogVisible" :id="id" :queryPreviewData="queryPreviewData" :pagination="pagination" @close="closePreview" @pageChanged="updatePagination($event)"></QBEPreviewDialog>
         <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="id" :entities="entities?.entities" :propParameters="qbe?.pars" :propExpression="selectedQuery.expression" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
         <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" />
-        <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" @close="havingDialogVisible = false" @save="onHavingsSave"></QBEHavingDialog>
+        <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" :entities="selectedQuery?.fields" @close="havingDialogVisible = false" @save="onHavingsSave"></QBEHavingDialog>
         <QBEAdvancedFilterDialog :visible="advancedFilterDialogVisible" :query="selectedQuery" @close="advancedFilterDialogVisible = false"></QBEAdvancedFilterDialog>
         <QBESavingDialog v-if="savingDialogVisible" :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" />
         <QBEJoinDefinitionDialog :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="id" :selectedQuery="selectedQuery" @close="joinDefinitionDialogVisible = false"></QBEJoinDefinitionDialog>
@@ -124,6 +123,8 @@ import Menu from 'primevue/contextmenu'
 import QBEJoinDefinitionDialog from './qbeDialogs/qbeJoinDefinitionDialog/QBEJoinDefinitionDialog.vue'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 import QBEPreviewDialog from './qbeDialogs/qbePreviewDialog/QBEPreviewDialog.vue'
+
+const crypto = require('crypto')
 
 export default defineComponent({
     name: 'qbe',
@@ -162,7 +163,7 @@ export default defineComponent({
             mainQuery: {} as any, //scope.query u njihovom appu
             loading: false,
             showEntitiesLists: true,
-            smartView: false,
+            smartView: true, // Don't know how it is set initialy
             hiddenColumnsExist: false,
             filterDialogVisible: false,
             sqlDialogVisible: false,
@@ -183,7 +184,8 @@ export default defineComponent({
             user: null as any,
             userRole: null,
             qbePreviewDialogVisible: false,
-            pagination: { start: 0, limit: 25 } as any
+            pagination: { start: 0, limit: 25 } as any,
+            uniqueID: null
         }
     },
     watch: {
@@ -192,6 +194,7 @@ export default defineComponent({
         }
     },
     async created() {
+        this.uniqueID = crypto.randomBytes(16).toString('hex')
         this.user = (this.$store.state as any).user
         this.userRole = this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
         await this.loadPage()
@@ -200,7 +203,7 @@ export default defineComponent({
         async loadPage() {
             this.loading = true
             await this.loadDataset()
-            await this.loadId()
+            await this.initializeQBE()
             await this.loadCustomizedDatasetFunctions()
             await this.loadExportLimit()
             await this.loadEntities()
@@ -221,10 +224,10 @@ export default defineComponent({
             this.mainQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
             this.selectedQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
         },
-        async loadId() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/qbe-execution-id`).then((response: AxiosResponse<any>) => {
-                this.qbeId = response.data
-            })
+        async initializeQBE() {
+            // await this.$http.get(process.env.VUE_APP_QBE_PATH + `start-qbe`).then((response: AxiosResponse<any>) => {
+            //     this.qbeId = response.data
+            // })
             console.log('LOADED ID: ', this.id)
         },
         async loadCustomizedDatasetFunctions() {
@@ -519,40 +522,29 @@ export default defineComponent({
         },
         // #region Havings
         onHavingsSave(havings: iFilter[], field: iField) {
-            console.log('QBE - onHavingsSave() - havings: ', havings)
-            console.log('QBE - onHavingsSave() - field: ', field)
-            console.log('QBE - onHavingsSave() - QBE before havings saved: ', this.selectedQuery)
-
             if (!this.qbe) return
 
             for (let i = 0; i < havings.length; i++) {
                 const tempFilter = havings[i]
-                const index = this.qbe.qbeJSONQuery.catalogue.queries[0].filters.findIndex((el: iFilter) => el.filterId === tempFilter.filterId)
-                console.log('QBE - onHavingsSave() - INDEX: ', index)
+                const index = this.selectedQuery.havings.findIndex((el: iFilter) => el.filterId === tempFilter.filterId)
                 if (index !== -1) {
-                    this.qbe.qbeJSONQuery.catalogue.queries[0].havings[index] = tempFilter
+                    this.selectedQuery.havings[index] = tempFilter
                 } else {
-                    this.qbe.qbeJSONQuery.catalogue.queries[0].havings.push(tempFilter)
+                    this.selectedQuery.havings.push(tempFilter)
                 }
             }
 
             this.removeDeletedHavings(havings, field)
             this.havingDialogVisible = false
-            console.log('QBE - onHavingsSave() - QBE after havings saved: ', this.selectedQuery)
         },
         removeDeletedHavings(havings: iFilter[], field: iField) {
             if (!this.qbe) return
 
-            console.log(' QBE - removeDeletedHavings() - Query Havings: ', this.qbe.qbeJSONQuery.catalogue.queries[0].havings)
-
-            for (let i = this.qbe.qbeJSONQuery.catalogue.queries[0].havings.length - 1; i >= 0; i--) {
-                const tempHaving = this.qbe.qbeJSONQuery.catalogue.queries[0].filters[i]
-                console.log(' QBE - removeDeletedHavings() - tempHaving: ', tempHaving)
+            for (let i = this.selectedQuery.havings.length - 1; i >= 0; i--) {
+                const tempHaving = this.selectedQuery.havings[i]
                 if (tempHaving.leftOperandValue === field.id) {
-                    console.log(' QBE - removeDeletedHavings() - Having for delete check: ', tempHaving)
                     const index = havings.findIndex((el: iFilter) => el.filterId === tempHaving.filterId)
-                    if (index === -1) this.qbe.qbeJSONQuery.catalogue.queries[0].filters.splice(i, 1)
-                    console.log(' QBE - removeDeletedHavings() - Having delete index: ', index)
+                    if (index === -1) this.selectedQuery.havings.splice(i, 1)
                 }
             }
         },
@@ -751,7 +743,7 @@ export default defineComponent({
         },
         createQueryName() {
             var lastcount = 0
-            var lastIndex = this.mainQuery.subqueries.length - 1
+            var lastIndex = this.mainQuery.subqueries?.length - 1
             if (lastIndex != -1) {
                 var lastQueryId = this.mainQuery.subqueries[lastIndex].id
                 lastcount = parseInt(lastQueryId.substr(1))

@@ -1,5 +1,4 @@
 <template>
-    {{ having }}
     <div v-if="having">
         <div class="p-grid p-m-2">
             <div class="p-col-3">
@@ -31,15 +30,15 @@
             <div class="p-col-3">
                 <label class="kn-material-input-label"> {{ $t('qbe.filters.target') }} </label>
                 <div class="p-d-flex p-flex-row p-ai-center">
-                    <InputText v-if="having.rightType === 'manual'" class="kn-material-input" v-model="having.rightOperandDescription" @input="onManualValueChange" />
-                    <Dropdown class="kn-material-input kn-flex" v-else-if="having.rightType === 'anotherEntity'" v-model="having.rightOperandDescription" :options="havings" optionValue="name" optionLabel="name" @change="onEntityTypeChanged" />
+                    <InputText v-if="having.rightType === ''" class="kn-material-input" v-model="having.rightOperandDescription" @input="onManualValueChange" />
+                    <Dropdown class="kn-material-input kn-flex" v-else-if="having.rightType === 'anotherEntity'" v-model="having.rightOperandDescription" :options="entities" optionLabel="field" optionValue="field" @change="onEntityTypeChanged" />
                 </div>
             </div>
 
             <div class="p-col-2">
                 <label class="kn-material-input-label"> {{ $t('qbe.filters.target') }} </label>
                 <div class="p-d-flex p-flex-row p-ai-center">
-                    <Dropdown class="kn-material-input kn-flex" v-model="having.booleanConnector" :options="QBEHavingDialogDescriptor.booleanConnectors" @change="onEntityTypeChanged" />
+                    <Dropdown class="kn-material-input kn-flex" v-model="having.booleanConnector" :options="QBEHavingDialogDescriptor.booleanConnectors" />
                     <i class="fa fa-eraser kn-cursor-pointer p-ml-2" @click="$emit('removeHaving', having)"></i>
                 </div>
             </div>
@@ -56,7 +55,7 @@ import QBEHavingDialogDescriptor from './QBEHavingDialogDescriptor.json'
 export default defineComponent({
     name: 'qbe-filter-card',
     components: { Dropdown },
-    props: { propHaving: { type: Object as PropType<iFilter> }, havings: { type: Array } },
+    props: { propHaving: { type: Object as PropType<iFilter> }, entities: { type: Array } },
     emits: ['removeHaving'],
     data() {
         return {
@@ -65,7 +64,7 @@ export default defineComponent({
             targetValues: [
                 {
                     label: this.$t('qbe.filters.targets.manual'),
-                    value: 'manual'
+                    value: ''
                 },
                 {
                     label: this.$t('qbe.filters.targets.entity'),
@@ -90,25 +89,20 @@ export default defineComponent({
             if (this.having) {
                 this.having.rightOperandDescription = ''
                 this.having.rightOperandLongDescription = ''
-                this.having.rightOperandAlias = ''
+                this.having.rightOperandType = this.having.rightType === 'anotherEntity' ? 'Field Content' : 'Static Content'
             }
         },
         onManualValueChange() {
             if (this.having) {
                 this.having.rightOperandValue = [this.having.rightOperandDescription]
-                this.having.rightOperandType = 'Static Content'
             }
         },
         onEntityTypeChanged() {
             if (this.having) {
                 this.having.rightOperandValue = [this.having.rightOperandDescription]
-                this.having.rightOperandType = 'Field Content'
                 this.having.rightOperandLongDescription = this.having.rightOperandDescription
-                this.having.rightOperandAlias = this.having.rightOperandDescription
             }
         }
     }
 })
 </script>
-
-<style lang="scss"></style>
