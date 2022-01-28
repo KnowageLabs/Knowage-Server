@@ -1,49 +1,108 @@
 <template>
-    <Dialog id="qbe-preview-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="QBEPreviewDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
-        <template #header>
-            <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-2 p-col-12">
-                <template #left>
-                    {{ $t('common.preview') }}
-                </template>
-            </Toolbar>
-        </template>
+    <div id="qbe-preview-dialog" class="p-fluid kn-dialog--toolbar--primary">
+        <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0 p-col-12">
+            <template #left>
+                {{ $t('common.preview') }}
+            </template>
+            <template #right>
+                <i class="fa fa-times kn-cursor-pointer" @click="close"></i>
+            </template>
+        </Toolbar>
 
-        <div>
-            <h3>radi</h3>
-        </div>
-
-        <template #footer>
-            <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
-            <Button class="kn-button kn-button--primary" @click="save"> {{ $t('common.save') }}</Button>
-        </template>
-    </Dialog>
+        <DataTable
+            id="qbe-preview-datatable"
+            class="p-datatable-sm kn-table"
+            v-model:first="first"
+            :value="rows"
+            :paginator="true"
+            :lazy="true"
+            :rows="20"
+            :totalRecords="lazyParams.size"
+            :currentPageReportTemplate="
+                $t('common.table.footer.paginated', {
+                    first: '{first}',
+                    last: '{last}',
+                    totalRecords: '{totalRecords}'
+                })
+            "
+            responsiveLayout="stack"
+            breakpoint="960px"
+            :scrollable="true"
+            :scrollHeight="QBEPreviewDialogDescriptor.scrollHeight"
+            @page="onPage($event)"
+        >
+            <template #empty>
+                <div>
+                    {{ $t('common.info.noDataFound') }}
+                </div>
+            </template>
+            <Column class="kn-truncated" v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" :sortable="true"></Column>
+        </DataTable>
+    </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import Dialog from 'primevue/dialog'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
 import QBEPreviewDialogDescriptor from './QBEPreviewDialogDescriptor.json'
 
 export default defineComponent({
     name: 'qbe-preview-dialog',
-    components: { Dialog },
-    props: { visible: { type: Boolean }, id: { type: String } },
-    emits: ['close'],
+    components: { Column, DataTable },
+    props: { id: { type: String }, queryPreviewData: { type: Object }, pagination: { type: Object } },
+    emits: ['close', 'pageChanged'],
     data() {
         return {
             QBEPreviewDialogDescriptor,
+            columns: [] as any[],
+            rows: [] as any[],
+            lazyParams: {} as any,
+            first: 0,
             loading: false
         }
     },
-    watch: {},
-    async created() {},
-    methods: {
-        loadData() {},
-        closeDialog() {
-            this.$emit('close')
+    watch: {
+        queryPreviewData() {
+            this.loadData()
         },
-        save() {
+        pagination() {
+            this.loadPagination()
+        }
+    },
+    created() {
+        this.loadData()
+        this.loadPagination()
+    },
+    methods: {
+        loadData() {
+            console.log('QBEPreviewDialog - loadData() - QUERY PREVIEW DATA: ', this.queryPreviewData)
+            if (this.queryPreviewData) {
+                this.setPreviewColumns(this.queryPreviewData)
+                this.rows = this.queryPreviewData.rows
+            }
+            console.log('QBEPreviewDialog - loadData() - LOADED COLUMNS: ', this.columns)
+            console.log('QBEPreviewDialog - loadData() - LOADED ROWS: ', this.rows)
+        },
+        setPreviewColumns(data: any) {
+            this.columns = []
+            for (let i = 1; i < data.metaData.fields.length; i++) {
+                this.columns.push({ header: data.metaData.fields[i].header, field: data.metaData.fields[i].name })
+            }
+        },
+        loadPagination() {
+            this.lazyParams = this.pagination as any
+            this.first = this.pagination?.start
+            console.log('LAZY PARAMS: ', this.lazyParams)
+        },
+        onPage(event: any) {
+            this.lazyParams = { paginationStart: event.first, paginationLimit: event.rows, paginationEnd: event.first + event.rows, size: this.lazyParams.size }
+            this.$emit('pageChanged', this.lazyParams)
+        },
+        close() {
             this.$emit('close')
+            this.first = 0
+            this.lazyParams = {}
         }
     }
 })
@@ -53,7 +112,9 @@ export default defineComponent({
 #qbe-preview-dialog .p-dialog-header,
 #qbe-preview-dialog .p-dialog-content {
     padding: 0;
+    padding-bottom: 35px;
 }
+
 #qbe-preview-dialog .p-dialog-content {
     display: flex;
     flex-direction: column;

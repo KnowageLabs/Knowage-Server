@@ -13,7 +13,7 @@
             </Toolbar>
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
-        <div v-if="!loading" class="qbe-view-container  p-d-flex p-flex-row kn-height-full">
+        <div v-if="!loading && !qbePreviewDialogVisible" class="qbe-view-container  p-d-flex p-flex-row kn-height-full">
             <div v-if="parameterSidebarVisible" id="qbe-backdrop" @click="parameterSidebarVisible = false"></div>
             <div v-show="showEntitiesLists" class="entities-lists">
                 <div class="p-d-flex p-flex-column kn-flex kn-overflow-hidden">
@@ -82,6 +82,8 @@
             <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="document" :userRole="userRole" :propMode="'qbeView'" :propQBEParameters="qbe.pars" @execute="onExecute"></KnParameterSidebar>
         </div>
 
+        <QBEPreviewDialog v-else-if="!loading" :id="id" :queryPreviewData="queryPreviewData" :pagination="pagination" @close="closePreview" @pageChanged="updatePagination($event)"></QBEPreviewDialog>
+
         <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="id" :entities="entities?.entities" :propParameters="qbe?.pars" :propExpression="selectedQuery.expression" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
@@ -90,7 +92,7 @@
         <QBEAdvancedFilterDialog :visible="advancedFilterDialogVisible" :query="selectedQuery" @close="advancedFilterDialogVisible = false"></QBEAdvancedFilterDialog>
         <QBESavingDialog v-if="savingDialogVisible" :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" />
         <QBEJoinDefinitionDialog :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="id" :selectedQuery="selectedQuery" @close="joinDefinitionDialogVisible = false"></QBEJoinDefinitionDialog>
-        <QBEPreviewDialog :visible="qbePreviewDialogVisible" :id="id" @close="qbePreviewDialogVisible = false"></QBEPreviewDialog>
+
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     </Dialog>
 </template>
@@ -178,7 +180,8 @@ export default defineComponent({
             parameterSidebarVisible: false,
             user: null as any,
             userRole: null,
-            qbePreviewDialogVisible: false
+            qbePreviewDialogVisible: false,
+            pagination: { start: 0, limit: 25 } as any
         }
     },
     watch: {
@@ -240,15 +243,25 @@ export default defineComponent({
             console.log('LOADED ENTITIES: ', this.entities)
         },
         async executeQBEQuery() {
+            this.loading = true
             // HARDCODED a lot
             if (!this.qbe) return
 
             const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
-                .post(process.env.VUE_APP_QBE_PATH + `qbequery/executeQuery/?SBI_EXECUTION_ID=${this.id}&currentQueryId=${this.selectedQuery.id}&start=0&limit=25`, postData)
-                .then((response: AxiosResponse<any>) => (this.queryPreviewData = response.data))
+                .post(process.env.VUE_APP_QBE_PATH + `qbequery/executeQuery/?SBI_EXECUTION_ID=${this.id}&currentQueryId=${this.selectedQuery.id}&start=${this.pagination.start}&limit=${this.pagination.limit}`, postData)
+                .then((response: AxiosResponse<any>) => {
+                    this.queryPreviewData = response.data
+                    this.pagination.size = response.data.results
+                })
                 .catch(() => {})
             // console.log('QUERY RESULT : ', this.queryPreviewData)
+            this.loading = false
+        },
+        async updatePagination(lazyParams: any) {
+            this.pagination.start = lazyParams.paginationStart
+            this.pagination.limit = lazyParams.paginationLimit
+            await this.executeQBEQuery()
         },
         formatQbeMeta() {
             const meta = [] as any[]
@@ -752,11 +765,17 @@ export default defineComponent({
             console.log('QBE - onExecute() - qBE PAREMETERS: ', qbeParameters)
         },
         // #endregion
-        openPreviewDialog() {
+        async openPreviewDialog() {
+            this.pagination.limit = 20
+            await this.executeQBEQuery()
             this.qbePreviewDialogVisible = true
         },
         updateSmartView() {
             this.smartView ? this.executeQBEQuery() : ''
+        },
+        closePreview() {
+            this.qbePreviewDialogVisible = false
+            this.pagination = { start: 0, limit: 25 }
         }
     }
 })
