@@ -1,0 +1,19 @@
+{
+    "dialog": {
+        "scrollHeight": "50vh",
+        "style": {
+            "width": "80vw"
+        }
+    },
+    "styles": {
+        "checkboxColumn": {
+            "width": "flex: 0 0 4rem;"
+        },
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        }
+    }
+}

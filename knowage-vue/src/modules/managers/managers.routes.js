@@ -22,6 +22,10 @@ import constraintsManagementRoutes from '@/modules/managers/constraintsManagemen
 import lovsManagementRoutes from '@/modules/managers/lovsManagement/LovsManagement.routes.js'
 import glossaryDefinitionRoutes from '@/modules/managers/glossaryDefinition/GlossaryDefinition.routes.js'
 import glossaryUsageRoutes from '@/modules/managers/glossaryUsage/GlossaryUsage.routes.js'
+import functionsCatalogRoutes from '@/modules/managers/functionsCatalog/FunctionsCatalog.routes.js'
+import schedulerRoutes from '@/modules/managers/scheduler/Scheduler.routes.js'
+import schedulationAgendaRoutes from '@/modules/managers/schedulationAgendaManagement/SchedulationAgenda.routes.js'
+import datasetManagementRoutes from '@/modules/managers/datasetManagement/DatasetManagement.routes.js'
 
 const baseRoutes = []
 
@@ -50,5 +54,9 @@ const routes = baseRoutes
     .concat(lovsManagementRoutes)
     .concat(glossaryDefinitionRoutes)
     .concat(glossaryUsageRoutes)
+    .concat(functionsCatalogRoutes)
+    .concat(schedulerRoutes)
+    .concat(schedulationAgendaRoutes)
+    .concat(datasetManagementRoutes)
 
 export default routes

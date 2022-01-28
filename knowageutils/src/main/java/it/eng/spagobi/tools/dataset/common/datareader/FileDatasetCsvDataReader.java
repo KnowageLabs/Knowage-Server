@@ -284,13 +284,6 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 		return dataStore;
 	}
 
-	private Class getNewMetaType(Class oldType, Class newType) {
-		if (oldType == String.class)
-			return String.class;
-		else
-			return newType;
-	}
-
 	@Override
 	public boolean isOffsetSupported() {
 		return true;

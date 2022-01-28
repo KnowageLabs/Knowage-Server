@@ -508,7 +508,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		Boolean isLicensed = true;
 
 		String requiredLicensesString = (String) itemSB.getAttribute(TO_BE_LICENSED);
-		if (requiredLicensesString != null) {
+		if (isEnterpriseEdition() && requiredLicensesString != null) {
 			if (requiredLicensesString.isEmpty()) {
 				try {
 					Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
@@ -758,6 +758,11 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			}
 		}
 
+		String[] roleNames = new String[childElem.getRoles().length];
+		for (int i = 0; i < childElem.getRoles().length; i++) {
+			roleNames[i] = childElem.getRoles()[i].getName();
+		}
+		temp2.put("roles", roleNames);
 		tempMenuList.put(temp2);
 
 		return tempMenuList;

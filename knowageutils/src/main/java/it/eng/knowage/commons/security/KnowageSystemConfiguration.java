@@ -25,8 +25,13 @@ public class KnowageSystemConfiguration {
 
 			path = System.getProperty(KNOWAGE_CORE_FRONTEND_CONTEXT);
 			if (path == null) {
-				logger.debug(KNOWAGE_CORE_FRONTEND_CONTEXT + " not set, using the default value ");
-				path = KNOWAGE_CORE_FRONTEND_DEFAULT_CONTEXT;
+
+				path = System.getenv(KNOWAGE_CORE_FRONTEND_CONTEXT);
+
+				if (path == null) {
+					logger.debug(KNOWAGE_CORE_FRONTEND_CONTEXT + " not set, using the default value ");
+					path = KNOWAGE_CORE_FRONTEND_DEFAULT_CONTEXT;
+				}
 			}
 			logger.debug(KNOWAGE_CORE_FRONTEND_CONTEXT + ": " + path);
 		} catch (Exception e) {

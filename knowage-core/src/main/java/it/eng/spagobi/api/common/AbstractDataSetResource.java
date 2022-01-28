@@ -46,6 +46,7 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.knowage.functionscatalog.utils.CatalogFunctionException;
+import it.eng.knowage.functionscatalog.utils.CatalogFunctionRuntimeConfigDTO;
 import it.eng.knowage.functionscatalog.utils.CatalogFunctionTransformer;
 import it.eng.knowage.parsers.CaseChangingCharStream;
 import it.eng.knowage.parsers.SQLiteLexer;
@@ -273,8 +274,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			// if required apply function from catalog
 			String catalogFuncId = getCatalogFunctionUuid(projections);
 			if (catalogFuncId != null) {
-				JSONObject catalogFunctionConfig = getCatalogFunctionConfiguration(projections);
-				IDataStoreTransformer functionTransformer = new CatalogFunctionTransformer(catalogFuncId, catalogFunctionConfig);
+				CatalogFunctionRuntimeConfigDTO catalogFunctionConfig = getCatalogFunctionConfiguration(projections);
+				IDataStoreTransformer functionTransformer = new CatalogFunctionTransformer(getUserProfile(), catalogFuncId, catalogFunctionConfig);
 				functionTransformer.transform(dataStore);
 			}
 
@@ -313,11 +314,11 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return uuid;
 	}
 
-	private JSONObject getCatalogFunctionConfiguration(List<AbstractSelectionField> projections) {
+	private CatalogFunctionRuntimeConfigDTO getCatalogFunctionConfiguration(List<AbstractSelectionField> projections) {
 		for (AbstractSelectionField p : projections) {
 			if (p instanceof DataStoreCatalogFunctionField) {
 				// we can take the first configuration since all the other ones will be identical
-				return ((DataStoreCatalogFunctionField) p).getCatalogFunctionConfig();
+				return CatalogFunctionRuntimeConfigDTO.fromJSON(((DataStoreCatalogFunctionField) p).getCatalogFunctionConfig());
 			}
 		}
 		throw new SpagoBIRuntimeException("Couldn't retrieve function configuration");
@@ -741,12 +742,12 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				sorting = new Sorting(projection, isAscending);
 			} else {
 				Projection projection;
+				String alias = jsonObject.optString("alias");
 				if (orderColumn != null && !orderColumn.isEmpty() && !orderType.isEmpty()) {
-					String alias = jsonObject.optString("alias");
 					projection = new Projection(function, dataSet, orderColumn, alias);
 				} else {
 					String columnName = getColumnName(jsonObject, columnAliasToName);
-					projection = new Projection(function, dataSet, columnName, orderColumn);
+					projection = new Projection(function, dataSet, columnName, alias);
 				}
 
 				boolean isAscending = "ASC".equalsIgnoreCase(orderType);

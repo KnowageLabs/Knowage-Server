@@ -47,7 +47,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iRole } from './RolesManagement'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import rolesDecriptor from './RolesManagementDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
@@ -74,9 +74,9 @@ export default defineComponent({
     methods: {
         async loadAllRoles() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.roles = response.data
                 })
                 .finally(() => (this.loading = false))
@@ -107,8 +107,8 @@ export default defineComponent({
             })
         },
         async deleteRole(roleId: number) {
-            await axios
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/' + roleId, { headers: { 'X-Disable-Errors': true } })
+            await this.$http
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/' + roleId, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),

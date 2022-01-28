@@ -49,6 +49,9 @@
 							{{::translate.load('kn.table.rowspan')}}
 							<md-tooltip md-delay="1000">{{::translate.load('kn.table.rowspan.tooltip')}}</md-tooltip>
 						</md-switch>
+						<md-switch ng-model="selectedColumn.style.hideFromPdf" aria-label="Hide from PDF" flex>
+							{{::translate.load('kn.table.hidefrompdf')}}
+						</md-switch>
 					</div>
 			       
 			       <div ng-if="needsVisualization && (selectedColumn.fieldType=='MEASURE')">
