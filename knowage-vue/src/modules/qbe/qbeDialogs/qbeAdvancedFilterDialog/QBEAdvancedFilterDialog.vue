@@ -57,8 +57,8 @@ export default defineComponent({
     methods: {
         loadData() {
             if (this.query) {
-                this.expression = { ...this.query.expression }
-                this.filters = [...this.query.filters]
+                this.expression = this.query.expression ? { ...this.query.expression } : {}
+                this.filters = this.query.filters ? [...this.query.filters] : []
             }
 
             this.root = this.expression

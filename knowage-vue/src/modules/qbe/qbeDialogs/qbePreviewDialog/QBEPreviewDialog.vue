@@ -86,7 +86,7 @@ export default defineComponent({
         },
         setPreviewColumns(data: any) {
             this.columns = []
-            for (let i = 1; i < data.metaData.fields.length; i++) {
+            for (let i = 1; i < data.metaData?.fields?.length; i++) {
                 this.columns.push({ header: data.metaData.fields[i].header, field: data.metaData.fields[i].name })
             }
         },

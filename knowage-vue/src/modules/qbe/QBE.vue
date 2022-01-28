@@ -22,7 +22,7 @@
                             <span>Entities</span>
                         </template>
                         <template #right>
-                            <Chip style="background-color:white"> {{ entities.entities.length }} </Chip>
+                            <Chip style="background-color:white"> {{ entities?.entities?.length }} </Chip>
                         </template>
                     </Toolbar>
                     <div class="kn-flex kn-overflow-hidden">
@@ -38,7 +38,7 @@
                         </template>
                         <template #right>
                             <Button v-if="showEntitiesLists" icon="fas fa-plus-circle" class="p-button-text p-button-rounded p-button-plain" v-tooltip.top="$t('common.add')" @click="createSubquery" />
-                            <Chip style="background-color:white"> {{ mainQuery.subqueries.length }} </Chip>
+                            <Chip style="background-color:white"> {{ mainQuery.subqueries?.length }} </Chip>
                             <Button v-if="showDerivedList" icon="pi pi-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="collapseDerivedList" />
                             <Button v-else icon="pi pi-chevron-up" class="p-button-text p-button-rounded p-button-plain" @click="collapseDerivedList" />
                         </template>
@@ -82,7 +82,7 @@
             <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="document" :userRole="userRole" :propMode="'qbeView'" :propQBEParameters="qbe.pars" @execute="onExecute"></KnParameterSidebar>
         </div>
 
-        <QBEPreviewDialog v-else-if="!loading" :id="id" :queryPreviewData="queryPreviewData" :pagination="pagination" @close="closePreview" @pageChanged="updatePagination($event)"></QBEPreviewDialog>
+        <QBEPreviewDialog v-show="!loading && qbePreviewDialogVisible" :id="id" :queryPreviewData="queryPreviewData" :pagination="pagination" @close="closePreview" @pageChanged="updatePagination($event)"></QBEPreviewDialog>
 
         <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="id" :entities="entities?.entities" :propParameters="qbe?.pars" :propExpression="selectedQuery.expression" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
@@ -122,6 +122,8 @@ import Menu from 'primevue/contextmenu'
 import QBEJoinDefinitionDialog from './qbeDialogs/qbeJoinDefinitionDialog/QBEJoinDefinitionDialog.vue'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 import QBEPreviewDialog from './qbeDialogs/qbePreviewDialog/QBEPreviewDialog.vue'
+
+const crypto = require('crypto')
 
 export default defineComponent({
     name: 'qbe',
@@ -181,7 +183,8 @@ export default defineComponent({
             user: null as any,
             userRole: null,
             qbePreviewDialogVisible: false,
-            pagination: { start: 0, limit: 25 } as any
+            pagination: { start: 0, limit: 25 } as any,
+            uniqueID: null
         }
     },
     watch: {
@@ -190,6 +193,7 @@ export default defineComponent({
         }
     },
     async created() {
+        this.uniqueID = crypto.randomBytes(16).toString('hex')
         this.user = (this.$store.state as any).user
         this.userRole = this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
         await this.loadPage()
@@ -198,7 +202,7 @@ export default defineComponent({
         async loadPage() {
             this.loading = true
             await this.loadDataset()
-            await this.loadId()
+            await this.initializeQBE()
             await this.loadCustomizedDatasetFunctions()
             await this.loadExportLimit()
             await this.loadEntities()
@@ -219,10 +223,10 @@ export default defineComponent({
             this.mainQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
             this.selectedQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
         },
-        async loadId() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/qbe-execution-id`).then((response: AxiosResponse<any>) => {
-                this.qbeId = response.data
-            })
+        async initializeQBE() {
+            // await this.$http.get(process.env.VUE_APP_QBE_PATH + `start-qbe`).then((response: AxiosResponse<any>) => {
+            //     this.qbeId = response.data
+            // })
             console.log('LOADED ID: ', this.id)
         },
         async loadCustomizedDatasetFunctions() {
@@ -749,7 +753,7 @@ export default defineComponent({
         },
         createQueryName() {
             var lastcount = 0
-            var lastIndex = this.mainQuery.subqueries.length - 1
+            var lastIndex = this.mainQuery.subqueries?.length - 1
             if (lastIndex != -1) {
                 var lastQueryId = this.mainQuery.subqueries[lastIndex].id
                 lastcount = parseInt(lastQueryId.substr(1))
