@@ -80,12 +80,10 @@ export default defineComponent({
     },
     methods: {
         loadData() {
-            console.log('QBE  QUERY INSIDE TABLE: ', this.query)
             if (!this.query) return
 
             this.selectedQuery = this.query
             this.rows = this.selectedQuery.fields as iField[]
-            console.log('LOADED ROWS: ', this.rows)
         },
         getAttributeOptions(row: iField) {
             return row.fieldType === 'attribute' ? this.QBESimpleTableDescriptor.attributeAggregationOptions : this.QBESimpleTableDescriptor.aggregationOptions

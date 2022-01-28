@@ -88,19 +88,13 @@ export default defineComponent({
     methods: {
         loadData() {
             if (this.qbe && this.query && this.entities) {
-                // console.log('QBEJoinDefinitionDialog - loadData() - qbe: ', this.qbe)
-                // console.log('QBEJoinDefinitionDialog - loadData() - query: ', this.query)
-                // console.log('QBEJoinDefinitionDialog - loadData() - entities: ', this.entities)
-
                 this.usedEntities = []
                 this.entities?.forEach((entity: any) => {
-                    // console.log('ENTITY: ', entity)
                     if (this.entityNames.includes(entity.id)) {
                         this.usedEntities.push(entity)
                     }
                 })
 
-                // console.log('QBEJoinDefinitionDialog - loadData() - usedEntities: ', this.usedEntities)
                 this.getRelations()
             }
         },
@@ -119,10 +113,8 @@ export default defineComponent({
                 })
             })
             this.filteredRelations = [...this.relations]
-            // console.log('QBEJoinDefinitionDialog - getRelations() - relations: ', this.relations)
         },
         async loadEntityNames() {
-            console.log('QUUUUUUUUUUUUUUUUUUUUUUUERY! ', this.query)
             const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
                 .post(`/knowageqbeengine/restful-services/qbequery/queryEntities/?SBI_EXECUTION_ID=${this.id}&currentQueryId=${this.query?.id}`, postData)
@@ -130,7 +122,6 @@ export default defineComponent({
                 .catch((error) => {
                     console.log(error)
                 })
-            // console.log('QBEJoinDefinitionDialog - loadEntitieNames() - entityNames: ', this.entityNames)
         },
         formatQbeMeta() {
             const meta = [] as any[]
@@ -159,12 +150,10 @@ export default defineComponent({
             this.filteredRelations = [...this.relations]
         },
         moveUp(index: number) {
-            // console.log('RELATIONS BEFORE MOVE: ', this.relations)
             const temp = this.relations[index]
             this.relations[index] = this.relations[index - 1]
             this.relations[index - 1] = temp
             this.filteredRelations = [...this.relations]
-            // console.log('RELATIONS AFETR MOVE: ', this.relations)
         },
         closeDialog() {
             this.$emit('close')
@@ -172,17 +161,13 @@ export default defineComponent({
             this.filteredRelations = []
         },
         save() {
-            // console.log('QBEJoinDefinitionDialog - save() - relations on save: ', this.relations)
-            // console.log('QBEJoinDefinitionDialog - save() - query on save: ', this.query)
             this.query.graph = [...this.relations]
 
             this.relations.forEach((relation: any) => {
-                // console.log('CURRENT RELATION: ', relation)
                 this.entities?.forEach((entity: any) => {
                     for (let i = 0; i < entity.relation.length; i++) {
                         const tempRelation = entity.relation[i]
                         if (tempRelation.id === relation.id) {
-                            // console.log('RELATION FOUND!: ', relation)
                             entity.relation[i] = { ...relation }
                         }
                     }
