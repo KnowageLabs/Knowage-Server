@@ -137,6 +137,7 @@ export default defineComponent({
         handleTransformation(): void {
             let convertedTransformation = this.convertTransformation()
             this.$emit('send-transformation', convertedTransformation)
+            this.closeDialog()
         },
 
         resetAndClose(): void {

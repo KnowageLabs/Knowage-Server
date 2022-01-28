@@ -65,7 +65,11 @@ export default defineComponent({
     },
     methods: {
         addNewRow() {
-            this.localTransformation.push({} as IFilterTransformationParameter)
+            var newRow = {} as IFilterTransformationParameter
+            if (this.col && this.columns) {
+                newRow.column = this.columns.filter((item) => item.header === this.col)[0]
+            }
+            this.localTransformation.push(newRow)
         },
         deleteRow(index) {
             this.localTransformation.splice(index, 1)

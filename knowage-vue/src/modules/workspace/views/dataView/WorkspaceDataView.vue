@@ -270,7 +270,7 @@ export default defineComponent({
             this.showDatasetDialog = true
         },
         openDataPreparation(dataset: any) {
-            this.$router.push({ name: 'data-preparation', params: { id: dataset.id } })
+            this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
         },
         openDatasetInQBE() {
             this.$store.commit('setInfo', {
