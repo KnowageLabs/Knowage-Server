@@ -74,9 +74,11 @@
                         <Button icon="fas fa-ellipsis-v kn-cursor-pointer" class="p-button-text p-button-rounded p-button-plain" @click="showMenu" />
                     </template>
                 </Toolbar>
-                <div class="kn-flex kn-overflow-y">
-                    <QBESimpleTable v-if="!smartView" :query="selectedQuery" @columnVisibilityChanged="checkIfHiddenColumnsExist" @openFilterDialog="openFilterDialog" @openHavingDialog="openHavingDialog" @entityDropped="onDropComplete($event, false)"></QBESimpleTable>
-                    <QBESmartTable v-else :previewData="queryPreviewData" />
+                <div class="kn-relative kn-flex p-mt-2">
+                    <div class="kn-height-full kn-width-full kn-absolute">
+                        <QBESimpleTable v-if="!smartView" :query="selectedQuery" @columnVisibilityChanged="checkIfHiddenColumnsExist" @openFilterDialog="openFilterDialog" @openHavingDialog="openHavingDialog" @entityDropped="onDropComplete($event, false)"></QBESimpleTable>
+                        <QBESmartTable v-else :query="selectedQuery" :previewData="queryPreviewData" @removeFieldFromQuery="onQueryFieldRemoved" />
+                    </div>
                 </div>
             </div>
             <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="document" :userRole="userRole" :propMode="'qbeView'" :propQBEParameters="qbe.pars" @execute="onExecute"></KnParameterSidebar>
@@ -211,8 +213,8 @@ export default defineComponent({
         async loadDataset() {
             // HARDCODED Dataset label/name
             // console.log('datasetLabel', this.datasetLabel)
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
-                // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
+            // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
                 if (this.qbe) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
@@ -698,6 +700,16 @@ export default defineComponent({
         closePreview() {
             this.qbePreviewDialogVisible = false
             this.pagination = { start: 0, limit: 25 }
+        },
+        onQueryFieldRemoved(fieldId) {
+            this.selectedQuery.fields.splice(fieldId, 1)
+            // this.selectedQuery.fields.splice(
+            //     this.selectedQuery.fields.findIndex((i) => {
+            //         return i.id === fieldId
+            //     }),
+            //     1
+            // )
+            this.updateSmartView()
         }
     }
 })
@@ -718,6 +730,7 @@ export default defineComponent({
 
 .full-screen-dialog.p-dialog .p-dialog-content {
     flex: 1;
+    overflow: hidden;
 }
 
 .entities-lists {
