@@ -7,7 +7,7 @@
                 </template>
 
                 <template #right>
-                    <i v-show="temporalFiltersEnabled" class="fa fa-calendar kn-cursor-pointer p-mr-4" @click="openTemporalFilterDialog"></i>
+                    <i v-show="temporalFiltersEnabled()" class="fa fa-calendar kn-cursor-pointer p-mr-4" @click="openTemporalFilterDialog"></i>
                     <KnFabButton icon="fas fa-plus" @click="addNewFilter"></KnFabButton>
                 </template>
             </Toolbar>
@@ -190,7 +190,8 @@ export default defineComponent({
             console.log('NEW EXPRESSION :', this.expression)
         },
         temporalFiltersEnabled() {
-            return ((this.$store.state as any).user.functionalities.includes('Timespan') && this.filterDialogData?.field.dataType.toLowerCase() === 'java.sql.data') || this.filterDialogData?.field.dataType.toLowerCase() === 'java.sql.timestamp'
+            console.log('TEMPORAL ENABLED: ', this.filterDialogData?.field.dataType)
+            return (this.$store.state as any).user.functionalities.includes('Timespan') && (this.filterDialogData?.field.dataType.toLowerCase() === 'java.sql.date' || this.filterDialogData?.field.dataType.toLowerCase() === 'java.sql.timestamp')
         },
         async openTemporalFilterDialog() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/listTimespan/?types=DAY_OF_WEEK&types=DAY_OF_WEEK&types=DAY_OF_WEEK`).then((response: AxiosResponse<any>) => (this.temporalFilters = response.data.data))

@@ -332,6 +332,10 @@ export default defineComponent({
 
             // this.selectedQuery.expression = this.createExpression()
             this.refresh(this.selectedQuery.filters, expression)
+
+            if (this.selectedQuery.expression.childNodes?.length === 0) {
+                this.selectedQuery.expression = {}
+            }
             this.qbe.pars = parameters ? [...parameters] : []
             this.filterDialogVisible = false
             console.log('QBE QUERY AFTER FILTERS SAVED: ', this.selectedQuery)
@@ -379,82 +383,8 @@ export default defineComponent({
                     // this.deleteFilterByProperty('filterId', tempFilter.filterId, this.selectedQuery.filters, expression)
                 }
             }
-        },
-        // deleteFilterByProperty(propertyName: string, propertyValue: string, filters: iFilter[], expression: any) {
-        //     for (var i = 0; i < filters.length; i++) {
-        //         if (filters[i][propertyName] != undefined && filters[i][propertyName] == propertyValue) {
-        //             filters.splice(i, 1)
-        //             removeInPlace(expression, '$F{' + propertyValue + '}')
-        //             i--
-        //         }
-        //     }
-        // },
-        // createExpression() {
-        //     const formattedFilters = {}
 
-        //     this.qbe?.qbeJSONQuery.catalogue.queries[0].filters.forEach((filter: iFilter) => {
-        //         if (formattedFilters[filter.leftOperandValue]) {
-        //             formattedFilters[filter.leftOperandValue].push(filter)
-        //         } else {
-        //             formattedFilters[filter.leftOperandValue] = [filter]
-        //         }
-        //     })
-
-        //     console.log('createExpression - FORMATED FILTERS: ', formattedFilters)
-
-        //     let expression = { childNodes: [] } as any
-        //     Object.keys(formattedFilters).forEach((key: string) => {
-        //         console.log('createExpression - expression: ', this.getExpression(formattedFilters[key]))
-        //         expression.childNodes.push(this.getExpression(formattedFilters[key]))
-        //     })
-
-        //     if (expression.childNodes.length === 0) {
-        //         expression = {}
-        //     } else if (expression.childNodes.length > 1) {
-        //         expression.value = 'AND'
-        //         expression.type = 'NODE_OP'
-        //     }
-        //     console.log('createExpression - FINAL EXPRESSION: ', expression)
-        //     return expression
-        // },
-        getExpression(filters: iFilter[]) {
-            console.log('FILTERS FOR EXPRESISON: ', filters)
-            const filtersLength = filters.length
-
-            let expression = {} as any
-            if (filtersLength === 0) {
-                return expression
-            } else if (filters.length === 1) {
-                const tempFilter = filters[0]
-                expression = {
-                    type: 'NODE_CONST',
-                    childNodes: [],
-                    value: '$F{' + tempFilter.filterId + '}',
-                    details: {
-                        leftOperandAlias: tempFilter.leftOperandAlias,
-                        operator: tempFilter.operator,
-                        entity: tempFilter.entity,
-                        rightOperandValue: tempFilter.rightOperandValue[0]
-                    }
-                }
-            } else {
-                expression = { type: 'NODE_OP', childNodes: [], value: 'AND' }
-                filters.forEach((filter: iFilter) =>
-                    expression.childNodes.push({
-                        type: 'NODE_CONST',
-                        childNodes: [],
-                        value: '$F{' + filter.filterId + '}',
-                        details: {
-                            leftOperandAlias: filter.leftOperandAlias,
-                            operator: filter.operator,
-                            entity: filter.entity,
-                            rightOperandValue: filter.rightOperandValue[0]
-                        }
-                    })
-                )
-            }
-
-            return expression
+            console.log('SELECTED QUERY: ', this.selectedQuery)
         },
         showMenu(event) {
             this.createMenuItems()
