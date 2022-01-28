@@ -83,12 +83,11 @@
         </div>
 
         <QBEPreviewDialog v-show="!loading && qbePreviewDialogVisible" :id="id" :queryPreviewData="queryPreviewData" :pagination="pagination" @close="closePreview" @pageChanged="updatePagination($event)"></QBEPreviewDialog>
-
         <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="id" :entities="entities?.entities" :propParameters="qbe?.pars" :propExpression="selectedQuery.expression" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
         <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" />
-        <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" @close="havingDialogVisible = false" @save="onHavingsSave"></QBEHavingDialog>
+        <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" :entities="selectedQuery?.fields" @close="havingDialogVisible = false" @save="onHavingsSave"></QBEHavingDialog>
         <QBEAdvancedFilterDialog :visible="advancedFilterDialogVisible" :query="selectedQuery" @close="advancedFilterDialogVisible = false"></QBEAdvancedFilterDialog>
         <QBESavingDialog v-if="savingDialogVisible" :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" />
         <QBEJoinDefinitionDialog :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="id" :selectedQuery="selectedQuery" @close="joinDefinitionDialogVisible = false"></QBEJoinDefinitionDialog>
@@ -521,16 +520,11 @@ export default defineComponent({
         },
         // #region Havings
         onHavingsSave(havings: iFilter[], field: iField) {
-            console.log('QBE - onHavingsSave() - havings: ', havings)
-            console.log('QBE - onHavingsSave() - field: ', field)
-            console.log('QBE - onHavingsSave() - QBE before havings saved: ', this.selectedQuery)
-
             if (!this.qbe) return
 
             for (let i = 0; i < havings.length; i++) {
                 const tempFilter = havings[i]
                 const index = this.selectedQuery.havings.findIndex((el: iFilter) => el.filterId === tempFilter.filterId)
-                console.log('QBE - onHavingsSave() - INDEX: ', index)
                 if (index !== -1) {
                     this.selectedQuery.havings[index] = tempFilter
                 } else {
@@ -540,21 +534,15 @@ export default defineComponent({
 
             this.removeDeletedHavings(havings, field)
             this.havingDialogVisible = false
-            console.log('QBE - onHavingsSave() - QBE after havings saved: ', this.selectedQuery)
         },
         removeDeletedHavings(havings: iFilter[], field: iField) {
             if (!this.qbe) return
 
-            console.log(' QBE - removeDeletedHavings() - Query Havings: ', this.selectedQuery.havings)
-
             for (let i = this.selectedQuery.havings.length - 1; i >= 0; i--) {
                 const tempHaving = this.selectedQuery.havings[i]
-                console.log(' QBE - removeDeletedHavings() - tempHaving: ', tempHaving)
                 if (tempHaving.leftOperandValue === field.id) {
-                    console.log(' QBE - removeDeletedHavings() - Having for delete check: ', tempHaving)
                     const index = havings.findIndex((el: iFilter) => el.filterId === tempHaving.filterId)
                     if (index === -1) this.selectedQuery.havings.splice(i, 1)
-                    console.log(' QBE - removeDeletedHavings() - Having delete index: ', index)
                 }
             }
         },

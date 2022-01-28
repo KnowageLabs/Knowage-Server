@@ -1,5 +1,4 @@
 <template>
-    {{ having }}
     <div v-if="having">
         <div class="p-grid p-m-2">
             <div class="p-col-3">
@@ -32,7 +31,7 @@
                 <label class="kn-material-input-label"> {{ $t('qbe.filters.target') }} </label>
                 <div class="p-d-flex p-flex-row p-ai-center">
                     <InputText v-if="having.rightType === ''" class="kn-material-input" v-model="having.rightOperandDescription" @input="onManualValueChange" />
-                    <Dropdown class="kn-material-input kn-flex" v-else-if="having.rightType === 'anotherEntity'" v-model="having.rightOperandDescription" :options="havings" optionValue="name" optionLabel="name" @change="onEntityTypeChanged" />
+                    <Dropdown class="kn-material-input kn-flex" v-else-if="having.rightType === 'anotherEntity'" v-model="having.rightOperandDescription" :options="entities" optionLabel="field" optionValue="field" @change="onEntityTypeChanged" />
                 </div>
             </div>
 
@@ -56,7 +55,7 @@ import QBEHavingDialogDescriptor from './QBEHavingDialogDescriptor.json'
 export default defineComponent({
     name: 'qbe-filter-card',
     components: { Dropdown },
-    props: { propHaving: { type: Object as PropType<iFilter> }, havings: { type: Array } },
+    props: { propHaving: { type: Object as PropType<iFilter> }, entities: { type: Array } },
     emits: ['removeHaving'],
     data() {
         return {
