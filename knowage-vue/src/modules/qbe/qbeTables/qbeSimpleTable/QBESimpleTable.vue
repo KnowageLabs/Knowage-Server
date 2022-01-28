@@ -7,24 +7,24 @@
             </template>
             <template #editor="slotProps">
                 <div class="p-d-flex p-flex-row p-ai-center">
-                    <InputText v-if="column.field === 'alias'" class="kn-material-input p-inputtext-sm" v-model="slotProps.data[slotProps.column.props.field]"></InputText>
+                    <InputText v-if="column.field === 'alias'" class="kn-material-input p-inputtext-sm qbe-simple-table-input" v-model="slotProps.data[slotProps.column.props.field]"></InputText>
 
                     <Checkbox v-else-if="column.field === 'group'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="slotProps.data['funct'] = 'NONE'"></Checkbox>
                     <Dropdown v-else-if="column.field === 'order'" v-model="slotProps.data[slotProps.column.props.field]" :options="QBESimpleTableDescriptor.orderingOptions" />
-                    <Dropdown v-else-if="column.field === 'funct'" v-model="slotProps.data[slotProps.column.props.field]" :options="getAttributeOptions(slotProps.data)" :disabled="slotProps.data['group']" />
-                    <Checkbox v-else-if="column.field === 'visible'" class="p-ml-2" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('columnVisibilityChanged')"></Checkbox>
+                    <Dropdown v-else-if="column.field === 'funct'" class="qbe-simple-table-dropdown" v-model="slotProps.data[slotProps.column.props.field]" :options="getAttributeOptions(slotProps.data)" :disabled="slotProps.data['group']" />
+                    <Checkbox v-else-if="column.field === 'visible'" class="p-ml-3" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('columnVisibilityChanged')"></Checkbox>
                     <Checkbox v-else-if="column.field === 'inUse'" class="p-ml-2" v-model="slotProps.data[slotProps.column.props.field]" :binary="true"></Checkbox>
-                    <span v-else v-tooltip.top="slotProps.data[slotProps.column.props.field]">{{ slotProps.data[slotProps.column.props.field] }}</span>
+                    <span v-else v-tooltip.top="slotProps.data[slotProps.column.props.field]" class="kn-truncated">{{ slotProps.data[slotProps.column.props.field] }}</span>
                     <i v-if="['alias', 'order', 'funct'].includes(column.field)" class="pi pi-pencil p-ml-2" />
                 </div>
             </template>
             <template #body="slotProps">
                 <div class="p-d-flex p-flex-row p-ai-center">
                     <Checkbox v-if="column.field === 'group'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="slotProps.data['funct'] = 'NONE'"></Checkbox>
-                    <Dropdown v-else-if="column.field === 'funct'" v-model="slotProps.data[slotProps.column.props.field]" :options="getAttributeOptions(slotProps.data)" :disabled="slotProps.data['group']" />
-                    <Checkbox v-else-if="column.field === 'visible'" class="p-ml-2" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('columnVisibilityChanged')"></Checkbox>
+                    <Dropdown v-else-if="column.field === 'funct'" class="qbe-simple-table-dropdown" v-model="slotProps.data[slotProps.column.props.field]" :options="getAttributeOptions(slotProps.data)" :disabled="slotProps.data['group']" />
+                    <Checkbox v-else-if="column.field === 'visible'" class="p-ml-3" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('columnVisibilityChanged')"></Checkbox>
                     <Checkbox v-else-if="column.field === 'inUse'" class="p-ml-2" v-model="slotProps.data[slotProps.column.props.field]" :binary="true"></Checkbox>
-                    <span v-else v-tooltip.top="slotProps.data[slotProps.column.props.field]">{{ slotProps.data[slotProps.column.props.field] }}</span>
+                    <span v-else v-tooltip.top="slotProps.data[slotProps.column.props.field]" class="kn-truncated">{{ slotProps.data[slotProps.column.props.field] }}</span>
                     <i v-if="['alias', 'order', 'funct'].includes(column.field)" class="pi pi-pencil p-ml-2" />
                 </div>
             </template>
@@ -103,7 +103,7 @@ export default defineComponent({
         toggle(event: any, field: iField, index: number) {
             this.createMenuItems(field, index)
             const menu = this.$refs.menu as any
-            menu.toggle(event)
+            menu?.toggle(event)
         },
         createMenuItems(field: iField, index: number) {
             this.menuItems = []
@@ -133,3 +133,13 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss">
+.qbe-simple-table-input {
+    max-width: 100px;
+}
+
+.qbe-simple-table-dropdown {
+    max-width: 100px;
+}
+</style>

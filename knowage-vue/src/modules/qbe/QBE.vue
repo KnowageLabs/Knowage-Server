@@ -162,7 +162,7 @@ export default defineComponent({
             mainQuery: {} as any, //scope.query u njihovom appu
             loading: false,
             showEntitiesLists: true,
-            smartView: false,
+            smartView: true, // Don't know how it is set initialy
             hiddenColumnsExist: false,
             filterDialogVisible: false,
             sqlDialogVisible: false,
@@ -529,12 +529,12 @@ export default defineComponent({
 
             for (let i = 0; i < havings.length; i++) {
                 const tempFilter = havings[i]
-                const index = this.qbe.qbeJSONQuery.catalogue.queries[0].filters.findIndex((el: iFilter) => el.filterId === tempFilter.filterId)
+                const index = this.selectedQuery.havings.findIndex((el: iFilter) => el.filterId === tempFilter.filterId)
                 console.log('QBE - onHavingsSave() - INDEX: ', index)
                 if (index !== -1) {
-                    this.qbe.qbeJSONQuery.catalogue.queries[0].havings[index] = tempFilter
+                    this.selectedQuery.havings[index] = tempFilter
                 } else {
-                    this.qbe.qbeJSONQuery.catalogue.queries[0].havings.push(tempFilter)
+                    this.selectedQuery.havings.push(tempFilter)
                 }
             }
 
@@ -545,15 +545,15 @@ export default defineComponent({
         removeDeletedHavings(havings: iFilter[], field: iField) {
             if (!this.qbe) return
 
-            console.log(' QBE - removeDeletedHavings() - Query Havings: ', this.qbe.qbeJSONQuery.catalogue.queries[0].havings)
+            console.log(' QBE - removeDeletedHavings() - Query Havings: ', this.selectedQuery.havings)
 
-            for (let i = this.qbe.qbeJSONQuery.catalogue.queries[0].havings.length - 1; i >= 0; i--) {
-                const tempHaving = this.qbe.qbeJSONQuery.catalogue.queries[0].filters[i]
+            for (let i = this.selectedQuery.havings.length - 1; i >= 0; i--) {
+                const tempHaving = this.selectedQuery.havings[i]
                 console.log(' QBE - removeDeletedHavings() - tempHaving: ', tempHaving)
                 if (tempHaving.leftOperandValue === field.id) {
                     console.log(' QBE - removeDeletedHavings() - Having for delete check: ', tempHaving)
                     const index = havings.findIndex((el: iFilter) => el.filterId === tempHaving.filterId)
-                    if (index === -1) this.qbe.qbeJSONQuery.catalogue.queries[0].filters.splice(i, 1)
+                    if (index === -1) this.selectedQuery.havings.splice(i, 1)
                     console.log(' QBE - removeDeletedHavings() - Having delete index: ', index)
                 }
             }
