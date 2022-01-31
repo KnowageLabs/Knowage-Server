@@ -77,7 +77,19 @@
                 <div class="kn-relative kn-flex p-mt-2">
                     <div class="kn-height-full kn-width-full kn-absolute">
                         <QBESimpleTable v-if="!smartView" :query="selectedQuery" @columnVisibilityChanged="checkIfHiddenColumnsExist" @openFilterDialog="openFilterDialog" @openHavingDialog="openHavingDialog" @entityDropped="onDropComplete($event, false)"></QBESimpleTable>
-                        <QBESmartTable v-else :query="selectedQuery" :previewData="queryPreviewData" @removeFieldFromQuery="onQueryFieldRemoved" />
+                        <QBESmartTable
+                            v-else
+                            :query="selectedQuery"
+                            :previewData="queryPreviewData"
+                            @removeFieldFromQuery="onQueryFieldRemoved"
+                            @orderChanged="updateSmartView"
+                            @fieldHidden="smartViewFieldHidden"
+                            @fieldGrouped="updateSmartView"
+                            @fieldAggregated="updateSmartView"
+                            @aliasChanged="updateSmartView"
+                            @reordered="smartViewReorder"
+                            @entityDropped="onDropComplete($event, false)"
+                        />
                     </div>
                 </div>
             </div>
@@ -300,6 +312,9 @@ export default defineComponent({
         },
         showHiddenColumns() {
             this.selectedQuery.fields.forEach((field: iField) => (field.visible = true))
+            if (this.smartView) {
+                this.updateSmartView()
+            }
             this.hiddenColumnsExist = false
         },
         openFilterDialog(field: iField) {
@@ -697,18 +712,22 @@ export default defineComponent({
         updateSmartView() {
             this.smartView ? this.executeQBEQuery() : ''
         },
+        smartViewFieldHidden() {
+            this.checkIfHiddenColumnsExist()
+            this.updateSmartView()
+        },
+        smartViewReorder(event) {
+            var temp = this.selectedQuery.fields[event.dragIndex]
+            this.selectedQuery.fields[event.dragIndex] = this.selectedQuery.fields[event.dropIndex]
+            this.selectedQuery.fields[event.dropIndex] = temp
+            this.updateSmartView()
+        },
         closePreview() {
             this.qbePreviewDialogVisible = false
             this.pagination = { start: 0, limit: 25 }
         },
         onQueryFieldRemoved(fieldId) {
             this.selectedQuery.fields.splice(fieldId, 1)
-            // this.selectedQuery.fields.splice(
-            //     this.selectedQuery.fields.findIndex((i) => {
-            //         return i.id === fieldId
-            //     }),
-            //     1
-            // )
             this.updateSmartView()
         }
     }
