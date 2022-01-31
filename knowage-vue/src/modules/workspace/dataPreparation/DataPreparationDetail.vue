@@ -138,6 +138,9 @@ import { IDataPreparationColumn } from '@/modules/workspace/dataPreparation/Data
 import DataPreparationSimpleDescriptor from '@/modules/workspace/dataPreparation/DataPreparationSimple/DataPreparationSimpleDescriptor.json'
 import DataPreparationCustomDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationCustomDescriptor.json'
 
+
+import { Client } from '@stomp/stompjs';
+
 export default defineComponent({
     name: 'data-preparation-detail',
     props: {
@@ -161,7 +164,8 @@ export default defineComponent({
             descriptorTransformations: Array<any>(),
             dataset: {} as any,
             simpleDescriptor: DataPreparationSimpleDescriptor,
-            customDescriptor: DataPreparationCustomDescriptor
+            customDescriptor: DataPreparationCustomDescriptor,
+            client: {} as any
         }
     },
 
@@ -173,43 +177,69 @@ export default defineComponent({
             this.dataset = response.data[0]
         })
         if (this.dataset) {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datapreparation/' + this.id + '/datasetinfo').then((response: AxiosResponse<any>) => {
-                this.columns = []
-                let obj = {} as IDataPreparationColumn
-                var i = 0
-                for (var idx in response.data.meta.columns) {
-                    i++
-                    let column = response.data.meta.columns[idx]
-                    obj.header = column.column
-                    obj.disabled = false as boolean
-                    obj[column.pname] = column.pvalue
+            await this.initWebsocket()
 
-                    if (i % 3 == 0) {
-                        this.columns.push(obj)
-                        obj = {} as IDataPreparationColumn
-                    }
-                }
+            let father = this
+            this.client.onConnect = function (frame) {
+                // Do something, all subscribes must be done is this callback
+                // This is needed because this will be executed after a (re)connect
+                console.log(frame);
 
-                this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datapreparation/' + this.id + '/preview', this.dataset).then((response: AxiosResponse<any>) => {
-                    this.datasetData = []
-
-                    response.data.rows.forEach((element) => {
-                        let obj = {}
-                        const keys = Object.keys(element)
-                        keys.forEach((key) => {
-                            let index = parseInt(key.replace('column_', ''), 10) - 1
-                            if (index >= 0 && index < this.columns.length) {
-                                let v = this.columns[index] as IDataPreparationColumn
-
-                                if (v) obj[v.header] = element[key]
+                this.subscribe("/user/queue/preview", function(message) {
+                    // called when the client receives a STOMP message from the server
+                    if (message.body) {
+                        let response = JSON.parse(message.body);
+                        // set metadata
+                        let metadata = response.metadata.columns
+                        father.columns = []
+                        for (let i = 0; i < metadata.length; i++) {
+                            let obj = {} as IDataPreparationColumn
+                            obj.Type = metadata[i].type
+                            obj.disabled = false
+                            obj.fieldAlias = metadata[i].alias
+                            obj.fieldType = metadata[i].fieldType
+                            obj.header = metadata[i].name
+                            father.columns.push(obj)
+                        }
+                        //set data rows
+                        father.datasetData = []
+                        response.rows.forEach((row) => {
+                            let obj = {}
+                            for (let i = 0; i < row.length; i++) {
+                                let colHeader = father.getColHeader(metadata, i)
+                                obj[colHeader] = row[i];
                             }
+                            father.datasetData.push(obj)
+                            father.loading = false
                         })
-                        this.datasetData.push(obj)
+                    } else {
+                        console.log("got empty message");
+                    }
+                },
+                {
+                    "dsLabel": father.dataset.label
+                });
+                
+                this.subscribe("/user/queue/error", function(error) {
+                    // called when the client receives a STOMP message from the server
+                    if (error.body) {
+                        let message = JSON.parse(error.body)
+                        father.$store.commit('setError', { title: "Spark error", msg: message.message })
+                    } else {
+                        father.$store.commit('setError', { title: "Spark error"})
+                    }
+                });
+            };
 
-                        this.loading = false
-                    })
-                })
-            })
+            this.client.onStompError = function (frame) {
+                // Will be invoked in case of error encountered at Broker
+                // Bad login/passcode typically will cause an error
+                // Complaint brokers will set `message` header with a brief message. Body may contain details.
+                // Compliant brokers will terminate the connection after any error
+                console.log('Broker reported error: ' + frame.headers['message']);
+                console.log('Additional details: ' + frame.body);
+            };
+            this.client.activate();
         }
     },
     methods: {
@@ -258,6 +288,21 @@ export default defineComponent({
                     if (x.incompatibleDataTypes) return !x.incompatibleDataTypes?.includes(col.Type)
                     return true
                 })
+        },
+        initWebsocket(): void {
+            let url = process.env.VUE_APP_HOST_URL.replace('https://', 'wss://').replace('http://', 'ws://') + '/knowage-data-preparation/ws?' + process.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
+            this.client = new Client({
+                brokerURL: url,
+                connectHeaders: {
+                },
+                heartbeatIncoming: 4000,
+                heartbeatOutgoing: 4000,
+            });
+        },
+        getColHeader(metadata: Array<any>, idx: Number): string {
+            let columnMapping = 'Column_' + idx
+            let toReturn = metadata.filter((x) => x.mappedTo == columnMapping)[0].alias
+            return toReturn
         },
         callFunction(transformation: any, col): void {
             if (transformation.name === 'changeType' || transformation.name === 'splitColumn') {
@@ -309,11 +354,11 @@ export default defineComponent({
             }
 
             this.dataset.config.transformations.push(t)
-            this.loadPreviewData()
+            this.client.publish({ destination: "/app/preview", headers: {"dsLabel": this.dataset.label},body: this.dataset.config.transformations});
         },
         deleteTransformation(index: number): void {
             this.dataset.config.transformations.splice(index, 1)
-            this.loadPreviewData()
+            this.client.publish({ destination: "/app/preview", headers: {"dsLabel": this.dataset.label},body: this.dataset.config.transformations});
         },
         getCompatibilityType(col: IDataPreparationColumn): void {
             return this.descriptor.compatibilityMap[col.Type].values
@@ -357,30 +402,6 @@ export default defineComponent({
         },
         saveDataset(): void {
             this.showSaveDialog = true
-        },
-        async loadPreviewData() {
-            this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datapreparation/' + this.id + '/preview', this.dataset).then((response: AxiosResponse<any>) => {
-                this.datasetData = []
-
-                response.data.rows.forEach((element) => {
-                    let obj = {}
-                    const keys = Object.keys(element)
-                    keys.forEach((key) => {
-                        let index = parseInt(key.replace('column_', ''), 10) - 1
-                        if (index >= 0 && index < this.columns.length) {
-                            let v = this.columns[index] as IDataPreparationColumn
-
-                            if (v) obj[v.header] = element[key]
-                        }
-                    })
-                    this.datasetData.push(obj)
-
-                    this.loading = false
-                })
-                console.log(this.dataset.config.transformations)
-
-                this.selectedTransformation = null
-            })
         },
         translateRoles() {
             let translatedRoles = this.descriptor.roles

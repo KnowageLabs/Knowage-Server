@@ -39,46 +39,40 @@ public class SysDirectoriesUtils {
 	}
 
 	public String getDataPreparationPathAsString(BusinessRequestContext brc) {
-		return getDataPreparationPathAsString(getOrganizationFromBusinessContext(brc));
+		return getDataPreparationPathAsString(getOrganizationFromBusinessContext(brc), getUserIdFromBusinessContext(brc));
 	}
 
 	public File getDataPreparationPathAsFile(BusinessRequestContext brc) {
-		return getDataPreparationPathAsFile(getOrganizationFromBusinessContext(brc));
+		return getDataPreparationPathAsFile(getOrganizationFromBusinessContext(brc), getUserIdFromBusinessContext(brc));
 	}
 
 	public Path getDataPreparationPath(BusinessRequestContext brc) {
-		return getDataPreparationPath(getOrganizationFromBusinessContext(brc));
+		return getDataPreparationPath(getOrganizationFromBusinessContext(brc), getUserIdFromBusinessContext(brc));
 	}
 
-
-
 	public String getDataPreparationPathAsString(SpagoBIUserProfile up) {
-		return getDataPreparationPathAsString(getOrganizationFromUserProfile(up));
+		return getDataPreparationPathAsString(getOrganizationFromUserProfile(up), getUserIdFromUserProfile(up));
 	}
 
 	public File getDataPreparationPathAsFile(SpagoBIUserProfile up) {
-		return getDataPreparationPathAsFile(getOrganizationFromUserProfile(up));
+		return getDataPreparationPathAsFile(getOrganizationFromUserProfile(up), getUserIdFromUserProfile(up));
 	}
 
 	public Path getDataPreparationPath(SpagoBIUserProfile up) {
-		return getDataPreparationPath(getOrganizationFromUserProfile(up));
+		return getDataPreparationPath(getOrganizationFromUserProfile(up), getUserIdFromUserProfile(up));
 	}
 
-
-
-	public String getDataPreparationPathAsString(String tenantId) {
-		return getDataPreparationPathAsFile(tenantId).toString();
+	public String getDataPreparationPathAsString(String tenantId, String userName) {
+		return getDataPreparationPathAsFile(tenantId, userName).toString();
 	}
 
-	public File getDataPreparationPathAsFile(String tenantId) {
-		return getDataPreparationPath(tenantId).toFile();
+	public File getDataPreparationPathAsFile(String tenantId, String userName) {
+		return getDataPreparationPath(tenantId, userName).toFile();
 	}
 
-	public Path getDataPreparationPath(String tenantId) {
-		return getTenantPath(tenantId).resolve(DATA_PREPARATION_SUB_DIR);
+	public Path getDataPreparationPath(String tenantId, String userName) {
+		return getTenantPath(tenantId).resolve(DATA_PREPARATION_SUB_DIR).resolve(userName);
 	}
-
-
 
 	public String getTenantPathAsString(BusinessRequestContext brc) {
 		return getTenantPathAsString(getOrganizationFromBusinessContext(brc));
@@ -92,8 +86,6 @@ public class SysDirectoriesUtils {
 		return getTenantPath(getOrganizationFromBusinessContext(brc));
 	}
 
-
-
 	public String getTenantPathAsString(String tenantId) {
 		return getTenantPathAsFile(tenantId).toString();
 	}
@@ -105,8 +97,6 @@ public class SysDirectoriesUtils {
 	public Path getTenantPath(String tenantId) {
 		return getResourcePath().resolve(tenantId);
 	}
-
-
 
 	public String getResourcePathAsString() {
 		return getResourcePathAsFile().toString();
@@ -130,8 +120,16 @@ public class SysDirectoriesUtils {
 		return brc.getOrganization();
 	}
 
+	private String getUserIdFromBusinessContext(BusinessRequestContext brc) {
+		return brc.getUserProfile().getUserId();
+	}
+
 	private String getOrganizationFromUserProfile(SpagoBIUserProfile up) {
 		return up.getOrganization();
+	}
+
+	private String getUserIdFromUserProfile(SpagoBIUserProfile up) {
+		return up.getUserId();
 	}
 
 }

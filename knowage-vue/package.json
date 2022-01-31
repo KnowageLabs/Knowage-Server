@@ -13,6 +13,7 @@
     "main": "main.ts",
     "dependencies": {
         "@fortawesome/fontawesome-free": "^5.15.2",
+        "@stomp/stompjs": "^6.1.2",
         "@vuelidate/core": "^2.0.0-alpha.18",
         "@vuelidate/validators": "^2.0.0-alpha.15",
         "axios": "0.23.0",
@@ -42,6 +43,7 @@
     "devDependencies": {
         "@babel/plugin-transform-runtime": "^7.13.10",
         "@types/jest": "^24.0.19",
+        "@types/stompjs": "^2.3.5",
         "@typescript-eslint/eslint-plugin": "^2.33.0",
         "@typescript-eslint/parser": "^2.33.0",
         "@vue/cli-plugin-babel": "~4.5.0",
