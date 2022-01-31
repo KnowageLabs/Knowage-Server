@@ -43,6 +43,8 @@ import QBEFilterDialogDescriptor from './QBEFilterDialogDescriptor.json'
 import QBETemporalFilterDialog from './QBETemporalFilterDialog.vue'
 import QBEFilterParameters from './QBEFilterParameters.vue'
 
+const crypto = require('crypto')
+
 export default defineComponent({
     name: 'qbe-filter-dialog',
     components: { Dialog, KnFabButton, Message, QBEFilterCard, QBETemporalFilterDialog, QBEFilterParameters },
@@ -88,15 +90,15 @@ export default defineComponent({
                     this.filters.push({ ...filter })
                 }
             })
-            this.nextFilterIndex = this.getFilterNextIndex()
+            this.nextFilterIndex = crypto.randomBytes(16).toString('hex')
         },
-        getFilterNextIndex() {
-            let maxIndex = 0
-            this.filters.forEach((filter: iFilter) => {
-                if (filter.filterInd > maxIndex) maxIndex = filter.filterInd
-            })
-            return maxIndex + 1
-        },
+        // getFilterNextIndex() {
+        //     let maxIndex = 0
+        //     this.filters.forEach((filter: iFilter) => {
+        //         if (filter.filterInd > maxIndex) maxIndex = filter.filterInd
+        //     })
+        //     return maxIndex + 1
+        // },
         loadParameters() {
             this.parameters = this.propParameters ? [...this.propParameters] : []
         },

@@ -91,6 +91,7 @@
                             @reordered="smartViewReorder"
                             @entityDropped="onDropComplete($event, false)"
                             @pageChanged="updatePagination($event)"
+                            @openFilterDialog="openFilterDialog"
                         />
                     </div>
                 </div>
@@ -227,8 +228,8 @@ export default defineComponent({
         async loadDataset() {
             // HARDCODED Dataset label/name
             // console.log('datasetLabel', this.datasetLabel)
-            // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
+                // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
                 if (this.qbe) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
@@ -300,6 +301,7 @@ export default defineComponent({
         },
         deleteAllSelectedFields() {
             this.selectedQuery.fields = []
+            if (this.smartView) this.executeQBEQuery()
         },
         checkIfHiddenColumnsExist() {
             if (this.qbe) {
@@ -358,6 +360,10 @@ export default defineComponent({
             }
             this.qbe.pars = parameters ? [...parameters] : []
             this.filterDialogVisible = false
+
+            if (this.smartView) {
+                this.executeQBEQuery()
+            }
             console.log('QBE QUERY AFTER FILTERS SAVED: ', this.selectedQuery)
         },
         refresh(filters: iFilter[], expression: any) {
@@ -511,6 +517,7 @@ export default defineComponent({
             if (this.qbe) {
                 this.qbe.qbeJSONQuery.catalogue.queries[0].filters = []
                 this.qbe.qbeJSONQuery.catalogue.queries[0].expression = {}
+                if (this.smartView) this.executeQBEQuery()
             }
         },
         //#region ===================== TODO: sve sto se tice ovoga mora da se uradi bolje ====================================================

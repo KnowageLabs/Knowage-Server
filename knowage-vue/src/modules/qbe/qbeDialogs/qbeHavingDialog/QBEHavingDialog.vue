@@ -39,6 +39,8 @@ import Message from 'primevue/message'
 import QBEHavingDialogDescriptor from './QBEHavingDialogDescriptor.json'
 import QBEHavingCard from './QBEHavingCard.vue'
 
+const crypto = require('crypto')
+
 export default defineComponent({
     name: 'qbe-having-dialog',
     components: { Dialog, KnFabButton, Message, QBEHavingCard },
@@ -64,15 +66,15 @@ export default defineComponent({
             if (!this.havingDialogData || !this.havingDialogData.field || !this.havingDialogData.query) return
 
             this.havings = this.havingDialogData.query.havings ? [...this.havingDialogData.query.havings] : []
-            this.nextHavingIndex = this.getHavingNextIndex()
+            this.nextHavingIndex = crypto.randomBytes(16).toString('hex')
         },
-        getHavingNextIndex() {
-            let maxIndex = 0
-            this.havings.forEach((having: iFilter) => {
-                if (having.filterInd > maxIndex) maxIndex = having.filterInd
-            })
-            return maxIndex + 1
-        },
+        // getHavingNextIndex() {
+        //     let maxIndex = 0
+        //     this.havings.forEach((having: iFilter) => {
+        //         if (having.filterInd > maxIndex) maxIndex = having.filterInd
+        //     })
+        //     return maxIndex + 1
+        // },
         addNewHaving() {
             const field = this.havingDialogData?.field
             if (field) {
