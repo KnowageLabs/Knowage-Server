@@ -3,8 +3,8 @@
         <!-- <h4>QBE Operand</h4> -->
         <!-- {{ node }} -->
         <QBEOperator v-if="node?.type !== 'NODE_CONST' && node?.value !== 'PAR'" :propNode="node"></QBEOperator>
-        <QBEGroup v-else-if="node?.value === 'PAR'" :propNode="node"></QBEGroup>
-        <QBEFilter v-else-if="node?.type === 'NODE_CONST'" :propNode="node"></QBEFilter>
+        <QBEGroup v-else-if="node?.value === 'PAR'" :propNode="node" @selectedChanged="$emit('selectedChanged')"></QBEGroup>
+        <QBEFilter v-else-if="node?.type === 'NODE_CONST'" :propNode="node" @selectedChanged="$emit('selectedChanged')"></QBEFilter>
     </div>
 </template>
 
@@ -18,6 +18,7 @@ export default defineComponent({
     name: 'qbe-operand',
     components: { QBEGroup, QBEFilter },
     props: { propNode: { type: Object } },
+    emits: ['selectedChanged'],
     data() {
         return {
             QBEAdvancedFilterDialogDescriptor,

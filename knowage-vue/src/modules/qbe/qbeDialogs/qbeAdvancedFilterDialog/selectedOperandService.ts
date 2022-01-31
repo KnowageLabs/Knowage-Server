@@ -1,8 +1,9 @@
-import { getFilterTree } from './treeService'
-import { isSameGroup, getGroup, getFirstLevelOperandsAdvancedFilterService } from './advancedFilterService'
 
+const advancedFilterService = require('./advancedFilterService')
+const treeService = require('./treeService')
 const deepEqual = require('deep-equal')
-var selected = [] as any
+
+const selected = [] as any
 
 export function getSelected() {
     console.log("selectedOperandService - getSelected()")
@@ -17,11 +18,11 @@ export function add(operand) {
 export function contains(operand) {
     console.log("selectedOperandService - contains() - operand ", operand)
 
-    console.log("SELECETD AT THIS POINT: ", [...selected])
+    // console.log("SELECETD AT THIS POINT: ", [...selected])
     for (var i = 0; i < selected.length; i++) {
-        console.log("SELECTED I ", selected[i])
-        console.log("OPERAND: ", operand)
-        console.log("DEEP EQ: ", deepEqual(selected[i], operand))
+        // console.log("SELECTED I ", selected[i])
+        //console.log("OPERAND: ", operand)
+        // console.log("DEEP EQ: ", deepEqual(selected[i], operand))
         if (deepEqual(selected[i], operand)) {
             return true;
         }
@@ -62,8 +63,7 @@ export function isSingleGroupSelected() {
 
 export function isSelectable(operand) {
     console.log("selectedOperandService - isSelectable() - operand ", operand)
-    return isEmpty() || (!isEmpty() && isSameGroupAsSelected(operand)) &&
-        !allOtherGroupMembersAreSelected(operand) && !allOtherSameLevelMembersAreSelected(operand)
+    return isEmpty() || (!isEmpty() && isSameGroupAsSelected(operand)) && !allOtherGroupMembersAreSelected(operand) && !allOtherSameLevelMembersAreSelected(operand)
 }
 
 export function isEmpty() {
@@ -73,12 +73,12 @@ export function isEmpty() {
 
 export function isSameGroupAsSelected(operand) {
     console.log("selectedOperandService - isSameGroupAsSelected() - operand ", operand)
-    return isSameGroup(getFilterTree, [selected[0], operand])
+    return advancedFilterService.isSameGroup(treeService.getFilterTree(), [selected[0], operand])
 }
 
 export function getGroupOperands(groupOperand) {
     console.log("selectedOperandService - getGroupOperands() - groupOperand ", groupOperand)
-    return getGroupOperands(getGroup(getFilterTree, groupOperand))
+    return advancedFilterService.getGroupOperands(advancedFilterService.getGroup(treeService.getFilterTree(), groupOperand))
 }
 
 export function getGroupOperandsCount(groupOperand) {
@@ -101,7 +101,7 @@ export function allOtherSameLevelMembersAreSelected(operand) {
 
 export function getFirstLevelOperands() {
     console.log("selectedOperandService - getFirstLevelOperands()")
-    return getFirstLevelOperandsAdvancedFilterService(getFilterTree);
+    return advancedFilterService.getFirstLevelOperandsAdvancedFilterService(treeService.getFilterTree());
 }
 
 export function isFirstLevelOperand(operand) {

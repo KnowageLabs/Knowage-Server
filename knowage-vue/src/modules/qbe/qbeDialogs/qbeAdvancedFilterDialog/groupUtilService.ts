@@ -1,8 +1,9 @@
-import { createExpression, group, operator } from './filterTreeFactoryService'
-import { traverseDF, getParent } from './treeService'
-import { isOperator, getOperator, isOperatorFromSimple } from './operatorUtilService'
+const filterTreeFactoryService = require('./filterTreeFactoryService')
+const treeService = require('./treeService')
+const operatorUtilService = require('./operatorUtilService')
+const deepEqual = require('deep-equal')
 
-const defaultOperator = operator('AND')
+const defaultOperator = filterTreeFactoryService.operator('AND')
 
 export function createGroupChildExpression(filterTree, operands) {
     console.log("groupUtilService - createGroupChildExpression() - filterTree ", filterTree, ', operands ', operands)
@@ -15,14 +16,14 @@ export function createGroupChildExpression(filterTree, operands) {
         var operator = { ...(getOperator(filterTree, operands[i])) };
         var rightOperand = { ...(getRightOperand(filterTree, operands, i)) };
 
-        var expression = createExpression(leftOperand, operator, rightOperand);
+        var expression = filterTreeFactoryService.createExpression(leftOperand, operator, rightOperand);
 
         if (!childExpression) {
             childExpression = expression;
             currentNode = childExpression;
         } else {
             // angular.copy(expression,currentNode);
-            currentNode = { ...expression }
+            currentNode = JSON.parse(JSON.stringify(expression))
         }
         currentNode = currentNode.childNodes[1];
 
@@ -32,20 +33,17 @@ export function createGroupChildExpression(filterTree, operands) {
     return childExpression;
 }
 
-export function createGroupGroupUtilService(filterTree, operands) {
+export function createGroup(filterTree, operands) {
     console.log("groupUtilService - createGroupGroupUtilService() - filterTree ", filterTree, ', operands ', operands)
-    var childExpression = createGroupChildExpression(filterTree, operands)
-    return group({ ...childExpression });
+    const childExpression = createGroupChildExpression(filterTree, operands)
+    return filterTreeFactoryService.group(JSON.parse(JSON.stringify(childExpression)));
 }
 
 export function getLastOperand(group) {
     console.log("groupUtilService - getLastOperand() - group ", group)
-    var lastOperand;
-    traverseDF(group, function (node) {
-        if (!isOperator(node)
-            && node !== group
-            && getGroupGroupUtilService(group, node) === group
-        ) lastOperand = node;
+    let lastOperand;
+    treeService.traverseDF(group, function (node) {
+        if (!operatorUtilService.isOperator(node) && node !== group && deepEqual(getGroup(group, node), group)) lastOperand = node;
     })
 
     return lastOperand;
@@ -54,10 +52,10 @@ export function getLastOperand(group) {
 
 export function areInSameGroup(filterTree, operands) {
     console.log("groupUtilService - areInSameGroup() - filterTree ", filterTree, ', operands ', operands)
-    var firstOperandGroup = getGroupGroupUtilService(filterTree, operands[0])
+    var firstOperandGroup = getGroup(filterTree, operands[0])
 
     for (var i = 1; i < operands.length; i++) {
-        if (firstOperandGroup !== getGroupGroupUtilService(filterTree, operands[i])) {
+        if (firstOperandGroup !== getGroup(filterTree, operands[i])) {
             return false;
         }
     }
@@ -65,14 +63,14 @@ export function areInSameGroup(filterTree, operands) {
     return true;
 }
 
-export function getGroupGroupUtilService(filterTree, operand) {
+export function getGroup(filterTree, operand) {
     console.log("groupUtilService - getGroupGroupUtilService() - filterTree ", filterTree, ', operand ', operand)
     var group;
 
-    group = getParent(filterTree, operand)
+    group = treeService.getParent(filterTree, operand)
     while (!isGroup(group)) {
         try {
-            group = getParent(filterTree, group)
+            group = treeService.getParent(filterTree, group)
         } catch (err) {
             group = undefined;
             break;
@@ -84,14 +82,12 @@ export function getGroupGroupUtilService(filterTree, operand) {
     return group;
 }
 
-export function getGroupOperandsGroupUtilsService(group) {
+export function getGroupOperands(group) {
     console.log("groupUtilService - getGroupOperandsGroupUtilsService() - group ", group)
     var operands = [] as any[];
     if (!group) return;
-    traverseDF(group, function (node) {
-        if (node !== group
-            && !isOperator(node)
-            && getGroupGroupUtilService(group, node) === group) {
+    treeService.traverseDF(group, function (node) {
+        if (node !== group && !operatorUtilService.isOperator(node) && getGroup(group, node) === group) {
             operands.push(node)
         }
     })
@@ -108,7 +104,7 @@ export function hasSubGroup(group) {
     var hasGroup = false;
     for (var i = 0; i < group.childNodes.length; i++) {
 
-        traverseDF(group.childNodes[i], function (node) {
+        treeService.traverseDF(group.childNodes[i], function (node) {
             if (isGroup(node)) hasGroup = true;
 
         })
@@ -136,9 +132,9 @@ export function getNext(operands, index) {
     return operands[index + 1];
 }
 
-export function getOperatorGroupUtilService(filterTree, operand) {
+export function getOperator(filterTree, operand) {
     console.log("groupUtilService - getOperatorGroupUtilService() - filterTree ", filterTree, ', operand ', operand)
-    var operator = getOperator(filterTree, operand);
+    var operator = operatorUtilService.getOperator(filterTree, operand);
     if (!operator) {
         return defaultOperator;
     }
@@ -149,12 +145,12 @@ export function getRightOperand(filterTree, operands, index) {
     console.log("groupUtilService - getRightOperand() - filterTree ", filterTree, ', operands ', operands, ', index ', index)
     var rightOperand;
     if (getNext(operands, index)) {
-        rightOperand = getOperator(filterTree, getNext(operands, index))
+        rightOperand = operatorUtilService.getOperator(filterTree, getNext(operands, index))
         if (!rightOperand) {
             rightOperand = defaultOperator;
         }
-        if (!isOperatorFromSimple(filterTree, rightOperand)) {
-            rightOperand = operator(rightOperand.value)
+        if (!operatorUtilService.isOperatorFromSimple(filterTree, rightOperand)) {
+            rightOperand = filterTreeFactoryService.operator(rightOperand.value)
         }
 
 

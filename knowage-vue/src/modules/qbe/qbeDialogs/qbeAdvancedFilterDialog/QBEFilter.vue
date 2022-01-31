@@ -20,6 +20,7 @@ export default defineComponent({
     name: 'qbe-filter',
     components: { QBEFilterDetail },
     props: { propNode: { type: Object } },
+    emits: ['selectedChanged'],
     data() {
         return {
             node: {} as any,
@@ -51,6 +52,7 @@ export default defineComponent({
             console.log('SELECTED service: ', selectedOperandService)
             console.log('SELECTED: ', selectedOperandService.getSelected())
             this.selected = this.isSelected()
+            this.$emit('selectedChanged')
         },
         isSelected() {
             console.log('IS SELECTED: ', contains(this.node))

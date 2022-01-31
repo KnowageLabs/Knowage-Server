@@ -1,8 +1,7 @@
-const childProperty = 'childNodes';
-
 const deepEqual = require('deep-equal')
 
 let filterTree = {}
+const childProperty = 'childNodes';
 
 export function getFilterTree() {
     console.log(' --- treeService - getFilterTree()')
@@ -11,15 +10,14 @@ export function getFilterTree() {
 
 export function setFilterTree(expression) {
     console.log(' --- treeService - setFilterTree() - expression', expression)
-    filterTree = expression
+    filterTree = JSON.parse(JSON.stringify(expression))
 }
 
 export function contains(tree, nodeToFind) {
     console.log(' --- treeService - contains() - tree', tree, ', nodeToFind ', nodeToFind)
-    var contains = false;
+    let contains = false;
     traverseDF(tree, function (node) {
-
-        if (node === nodeToFind) {
+        if (deepEqual(node, nodeToFind)) {
             contains = true
         }
     })
@@ -31,7 +29,7 @@ export function find(tree, toFind) {
     console.log(' --- treeService - find() - tree', tree, ', toFind ', toFind)
     var equalNode;
     traverseDF(tree, function (node) {
-        console.log(deepEqual(node, toFind))
+        // console.log(deepEqual(node, toFind))
         if (deepEqual(node, toFind)) {
             equalNode = node;
         }
@@ -54,7 +52,7 @@ export function move(tree, source, destination) {
     nodeExistingCheck(tree, destination);
 
     // angular.copy(source,destination)
-    source = JSON.parse(JSON.stringify(destination))
+    destination = JSON.parse(JSON.stringify(source))
 }
 
 export function swapNodes(node1, node2) {
@@ -142,7 +140,7 @@ export function getSiblings(tree, node) {
 }
 
 export function nodeExistingCheck(tree, node) {
-    // console.log(' --- treeService - nodeExistingCheck() - tree', tree, ', node ', node)
+    console.log(' --- treeService - nodeExistingCheck() - tree', tree, ', node ', node)
     if (!contains(tree, node)) {
 
         throw new Error('Node does not exist.');
