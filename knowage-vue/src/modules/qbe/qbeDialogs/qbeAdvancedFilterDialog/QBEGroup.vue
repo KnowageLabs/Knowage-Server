@@ -4,7 +4,7 @@
     <div style="border: 1px solid green;">
         <div class="drop-zone" @drop.stop="onDropComplete($event)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
         <div class="kn-draggable" draggable="true" @dragstart="onDragStart">
-            <QBEOperator :propNode="node.childNodes[0]"></QBEOperator>
+            <QBEOperator :propNode="node.childNodes[0]" @selectedChanged="$emit('selectedChanged')"></QBEOperator>
         </div>
         <div class="drop-zone" @drop.stop="onDropMove($event)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
     </div>

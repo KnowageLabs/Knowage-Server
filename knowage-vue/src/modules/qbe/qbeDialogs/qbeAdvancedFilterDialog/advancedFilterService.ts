@@ -1,35 +1,35 @@
-import { find, traverseDF, contains, replace, getParent } from './treeService'
-import { swapOperands, insertAfter, remove, getNextOperand, getFirstLevelOperands, getSibilng } from './operandUtilService'
-import { getOperator } from './operatorUtilService'
-import { operator } from './filterTreeFactoryService'
-import { createGroupGroupUtilService, getLastOperand, getChildExpression, areInSameGroup, getGroupGroupUtilService, getGroupOperandsGroupUtilsService, } from './groupUtilService'
+const treeService = require('./treeService')
+const operandUtilService = require('./operandUtilService')
+const operatorUtilService = require('./operatorUtilService')
+const filterTreeFactoryService = require('./filterTreeFactoryService')
+const groupUtilService = require('./groupUtilService')
 
 const deepEqual = require('deep-equal')
-const defaultOperator = operator('AND')
+const defaultOperator = filterTreeFactoryService.operator('AND')
 
 export function swap(filterTree, operand1, operand2) {
     console.log("advancedFilterService - swap() - filterTree ", filterTree, ', operand1 ', operand1, ', operand2 ', operand2)
-    swapOperands(filterTree, find(filterTree, operand1), find(filterTree, operand2));
+    operandUtilService.swapOperands(filterTree, treeService.find(filterTree, operand1), treeService.find(filterTree, operand2));
 }
 
 export function move(filterTree, operand1, operand2) {
     console.log("advancedFilterService - move() - filterTree ", filterTree, ', operand1 ', operand1, ', operand2 ', operand2)
-    var operand2Copy = { ...operand2 }
-    insertAfter(filterTree, operand1, getOperandOrDefaultOperator(filterTree, find(filterTree, operand1)), find(filterTree, operand2Copy))
+    var operand2Copy = JSON.parse(JSON.stringify(operand2))
+    operandUtilService.insertAfter(filterTree, operand1, getOperandOrDefaultOperator(filterTree, treeService.find(filterTree, operand1)), treeService.find(filterTree, operand2Copy))
 
-    if (contains(filterTree, operand1)) {
-        remove(filterTree, operand1);
+    if (treeService.contains(filterTree, operand1)) {
+        operandUtilService.remove(filterTree, operand1);
     } else {
-        var temp = find(filterTree, operand2Copy)
-        traverseDF(filterTree, function (node) {
-            if (deepEqual(operand1, node) && getNextOperand(filterTree, temp) !== node) {
-                remove(filterTree, node);
+        var temp = treeService.find(filterTree, operand2Copy)
+        treeService.traverseDF(filterTree, function (node) {
+            if (deepEqual(operand1, node) && operandUtilService.getNextOperand(filterTree, temp) !== node) {
+                operandUtilService.remove(filterTree, node);
             }
         });
 
 
         // angular.copy(temp, operand2)
-        operand2 = { ...temp }
+        operand2 = JSON.parse(JSON.stringify(temp))
     }
 
 
@@ -38,7 +38,7 @@ export function move(filterTree, operand1, operand2) {
 
 export function getOperandOrDefaultOperator(filterTree, operand1) {
     console.log("advancedFilterService - getOperandOrDefaultOperator() - filterTree ", filterTree, ', operand1 ', operand1)
-    var operator = getOperator(filterTree, operand1);
+    var operator = operatorUtilService.getOperator(filterTree, operand1);
     if (!operator) {
         return defaultOperator;
     }
@@ -54,14 +54,16 @@ export function group(filterTree, operands) {
     adjoinOperands(filterTree, operands);
     insertGroup(filterTree, group, operands);
     removeSelected(filterTree, operands, group);
+    console.log("FOR BREAKPOIN");
 }
 
 export function removeSelected(filterTree, operands, group) {
     console.log("advancedFilterService - removeSelected() - filterTree ", filterTree, ', operands ', operands, ', group ', group)
     for (var i = 0; i < operands.length - 1; i++) {
-        traverseDF(filterTree, function (node) {
-            if (deepEqual(operands[i], node) && !contains(find(filterTree, group), node)) {
-                remove(filterTree, node);
+        treeService.traverseDF(filterTree, function (node) {
+            if (deepEqual(operands[i], node) && !treeService.contains(treeService.find(filterTree, group), node)) {
+                console.log(">>>>>>>>>>>>>>>>>>> ENTERED: tree - ", filterTree)
+                operandUtilService.remove(filterTree, node);
             }
         });
     }
@@ -69,33 +71,34 @@ export function removeSelected(filterTree, operands, group) {
 
 export function insertGroup(filterTree, group, operands) {
     console.log("advancedFilterService - insertGroup() - filterTree ", filterTree, ', group ', group, ', operands ', operands)
-    var operandsCopy = [...operands]
+    var operandsCopy = JSON.parse(JSON.stringify(operands))
 
     replaceElement(filterTree, group, operands[operands.length - 1])
 
     for (var i = 0; i < operandsCopy.length; i++) {
-        operands[i] = find(filterTree, operandsCopy[i]);
+        operands[i] = treeService.find(filterTree, operandsCopy[i]);
     }
 
-
+    console.log(" insertGroup - new tree: ", filterTree);
+    console.log(" operands ", operands)
 }
 
 export function createGroup(filterTree, operands) {
     console.log("advancedFilterService - createGroup() - filterTree ", filterTree, ', operands ', operands)
-    return createGroupGroupUtilService(filterTree, operands);
+    return groupUtilService.createGroup(filterTree, operands);
 }
 
 
 export function adjoinOperands(filterTree, operands) {
     console.log("advancedFilterService - adjoinOperands() - filterTree ", filterTree, ', operands ', operands)
-    var operandsCopy = [...operands]
+    var operandsCopy = JSON.parse(JSON.stringify(operands))
     for (var i = 1; i < operands.length; i++) {
-        move(filterTree, find(filterTree, operands[i]), find(filterTree, operands[i - 1]));
+        move(filterTree, treeService.find(filterTree, operands[i]), treeService.find(filterTree, operands[i - 1]));
 
     }
 
     for (var i = 0; i < operandsCopy.length; i++) {
-        operands[i] = find(filterTree, operandsCopy[i]);
+        operands[i] = treeService.find(filterTree, operandsCopy[i]);
     }
 
 
@@ -108,12 +111,12 @@ export function ungroup(filterTree, group) {
     console.log("advancedFilterService - ungroup() - filterTree ", filterTree, ', group ', group)
     var groupCopy = { ...group }
 
-    while (getLastOperand(groupCopy)) {
-        move(filterTree, getLastOperand(groupCopy), groupCopy)
+    while (groupUtilService.getLastOperand(groupCopy)) {
+        move(filterTree, groupUtilService.getLastOperand(groupCopy), groupCopy)
 
     }
 
-    remove(filterTree, find(filterTree, groupCopy))
+    operandUtilService.remove(filterTree, treeService.find(filterTree, groupCopy))
 
 
 }
@@ -121,46 +124,46 @@ export function ungroup(filterTree, group) {
 
 export function replaceElement(filterTree, source, destination) {
     console.log("advancedFilterService - replaceElement() - filterTree ", filterTree, ', source ', source, ', destination ', destination)
-    replace(filterTree, source, destination)
+    treeService.replace(filterTree, source, destination)
 }
 
 export function getGroupExpression(group) {
     console.log("advancedFilterService - getGroupExpression() - group ", group)
-    return getChildExpression(group);
+    return groupUtilService.getChildExpression(group);
 }
 
 export function getLastGroupOperand(group) {
     console.log("advancedFilterService - getLastGroupOperand() - group ", group)
-    return getLastOperand(group);
+    return groupUtilService.getLastOperand(group);
 }
 
 export function isSameGroup(filterTree, operands) {
     console.log("advancedFilterService - isSameGroup() - filterTree ", filterTree, ', operands ', operands)
-    return areInSameGroup(filterTree, operands)
+    return groupUtilService.areInSameGroup(filterTree, operands)
 }
 
 export function getGroup(tree, operand) {
     console.log("advancedFilterService - getGroup() - tree ", tree, ', operand ', operand)
-    return getGroupGroupUtilService(tree, operand);
+    return groupUtilService.getGroupGroupUtilService(tree, operand);
 }
 
 export function getGroupOperands(group) {
     console.log("advancedFilterService - getGroupOperands() - group ", group)
-    return getGroupOperandsGroupUtilsService(group)
+    return groupUtilService.getGroupOperands(group)
 }
 
 export function getGroupSibling(filterTree, group) {
     console.log("advancedFilterService - getGroupSibling() - filterTree ", filterTree, ', group ', group)
-    return getSibilng(filterTree, group);
+    return groupUtilService.getSibilng(filterTree, group);
 
 }
 
 export function getGroupSiblingExpressionOperator(filterTree, group) {
     console.log("advancedFilterService - getGroupSiblingExpressionOperator() - filterTree ", filterTree, ', group ', group)
-    return getParent(filterTree, getGroupSibling(filterTree, group))
+    return treeService.getParent(filterTree, getGroupSibling(filterTree, group))
 }
 
 export function getFirstLevelOperandsAdvancedFilterService(filterTree) {
     console.log("advancedFilterService - getFirstLevelOperandsAdvancedFilterService() - filterTree ", filterTree)
-    return getFirstLevelOperands(filterTree);
+    return operandUtilService.getFirstLevelOperands(filterTree);
 }

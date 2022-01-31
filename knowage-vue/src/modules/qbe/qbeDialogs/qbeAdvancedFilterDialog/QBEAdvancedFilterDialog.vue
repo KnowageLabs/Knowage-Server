@@ -9,11 +9,11 @@
         </template>
 
         <div class="p-d-flex p-flex-row">
-            <Button class="kn-button kn-button--primary qbe-advanced-filter-button p-m-2" :disabled="getSelectedCount() < 1" @click="group"> {{ $t('qbe.advancedFilters.group') }}</Button>
-            <Button class="kn-button kn-button--primary qbe-advanced-filter-button p-m-2" :disabled="!isSingleGroupSelected()" @click="ungroup"> {{ $t('qbe.advancedFilters.ungroup') }}</Button>
+            <Button class="kn-button kn-button--primary qbe-advanced-filter-button p-m-2" :disabled="selectedCount < 1" @click="group"> {{ $t('qbe.advancedFilters.group') }}</Button>
+            <Button class="kn-button kn-button--primary qbe-advanced-filter-button p-m-2" :disabled="!singleGroupSelected" @click="ungroup"> {{ $t('qbe.advancedFilters.ungroup') }}</Button>
         </div>
 
-        <QBEOperator :propNode="root"></QBEOperator>
+        <QBEOperator v-if="expression" :propNode="root?.childNodes[0]" @selectedChanged="onSelectedChanged"></QBEOperator>
 
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
@@ -26,7 +26,8 @@
 import { defineComponent, PropType } from 'vue'
 import { iQuery, iFilter } from '../../QBE'
 import { getFilterTree, setFilterTree } from './treeService'
-import { getSelectedCount, isSingleGroupSelected } from './selectedOperandService'
+import { getSelectedCount, isSingleGroupSelected, getSelected, unSelectAll } from './selectedOperandService'
+import { group } from './advancedFilterService'
 import Dialog from 'primevue/dialog'
 import QBEAdvancedFilterDialogDescriptor from './QBEAdvancedFilterDialogDescriptor.json'
 import QBEOperator from './QBEOperator.vue'
@@ -42,6 +43,8 @@ export default defineComponent({
             expression: null as any,
             filters: [] as iFilter[],
             root: {},
+            selectedCount: 0,
+            singleGroupSelected: false,
             getSelectedCount,
             isSingleGroupSelected
         }
@@ -70,7 +73,18 @@ export default defineComponent({
 
             console.log('QBEAdvancedFItlerDialog - loadData() - getSelectedCount(): ', this.getSelectedCount())
         },
-        group() {},
+        onSelectedChanged() {
+            console.log('ON SELECTEEEEEEEEEEEEEEEED CHANGEEEEEED!')
+            console.log('GET SELECTED COUNT: ', this.getSelectedCount())
+            console.log('IS SINGLE GROUP SELECTED: ', this.isSingleGroupSelected())
+            this.selectedCount = this.getSelectedCount()
+            this.singleGroupSelected = this.isSingleGroupSelected()
+        },
+        group() {
+            console.log('GROUP CALLED!')
+            group(getFilterTree(), getSelected())
+            unSelectAll()
+        },
         ungroup() {},
         closeDialog() {
             this.$emit('close')
