@@ -301,6 +301,7 @@ export default defineComponent({
         },
         deleteAllSelectedFields() {
             this.selectedQuery.fields = []
+            if (this.smartView) this.executeQBEQuery()
         },
         checkIfHiddenColumnsExist() {
             if (this.qbe) {
@@ -359,6 +360,10 @@ export default defineComponent({
             }
             this.qbe.pars = parameters ? [...parameters] : []
             this.filterDialogVisible = false
+
+            if (this.smartView) {
+                this.executeQBEQuery()
+            }
             console.log('QBE QUERY AFTER FILTERS SAVED: ', this.selectedQuery)
         },
         refresh(filters: iFilter[], expression: any) {
@@ -512,6 +517,7 @@ export default defineComponent({
             if (this.qbe) {
                 this.qbe.qbeJSONQuery.catalogue.queries[0].filters = []
                 this.qbe.qbeJSONQuery.catalogue.queries[0].expression = {}
+                if (this.smartView) this.executeQBEQuery()
             }
         },
         //#region ===================== TODO: sve sto se tice ovoga mora da se uradi bolje ====================================================
