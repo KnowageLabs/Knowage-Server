@@ -36,13 +36,19 @@
                     {{ $t('common.info.noDataFound') }}
                 </div>
             </template>
-            <Column class="kn-truncated" v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" :sortable="true"></Column>
+            <Column class="kn-truncated" v-for="col of columns" :field="col.dataIndex" :header="col.header" :key="col.field" :sortable="true">
+                <template #body="slotProps">
+                    {{ col.type === 'date' ? getFormattedDate(slotProps.data[col.dataIndex], col.dateFormat) : slotProps.data[col.dataIndex] }}
+                    {{ slotProps.data[col.dataIndex] }}
+                </template>
+            </Column>
         </DataTable>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { formatDate } from '@/helpers/commons/localeHelper'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import QBEPreviewDialogDescriptor from './QBEPreviewDialogDescriptor.json'
@@ -87,7 +93,8 @@ export default defineComponent({
         setPreviewColumns(data: any) {
             this.columns = []
             for (let i = 1; i < data.metaData?.fields?.length; i++) {
-                this.columns.push({ header: data.metaData.fields[i].header, field: data.metaData.fields[i].name })
+                console.log('COLUMN: ', data.metaData?.fields[i])
+                this.columns.push(data.metaData?.fields[i])
             }
         },
         loadPagination() {
@@ -103,6 +110,10 @@ export default defineComponent({
             this.$emit('close')
             this.first = 0
             this.lazyParams = {}
+        },
+        getFormattedDate(date: any, format: any) {
+            // console.log('DATE: ', date, ', FORMAT: ', format)
+            return formatDate(date, format)
         }
     }
 })
