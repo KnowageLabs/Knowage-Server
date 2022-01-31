@@ -34,7 +34,7 @@
 
         <template #footer>
             <Button class="kn-button kn-button--secondary" @click="$emit('close')"> {{ $t('common.cancel') }}</Button>
-            <Button class="kn-button kn-button--primary"> {{ $t('common.save') }}</Button>
+            <Button class="kn-button kn-button--primary" @click="saveDataset"> {{ $t('common.save') }}</Button>
         </template>
     </Dialog>
 </template>
@@ -58,6 +58,7 @@ export default defineComponent({
         return {
             descriptor,
             scopeTypes: [] as any,
+            selectedDataset: {} as any,
             categoryTypes: [] as any,
             scheduling: {
                 repeatInterval: null as String | null
@@ -66,6 +67,12 @@ export default defineComponent({
     },
     created() {
         this.getDomainData()
+        this.selectedDataset = this.propDataset
+    },
+    watch: {
+        propDataset() {
+            this.selectedDataset = this.propDataset
+        }
     },
     methods: {
         getDomainByType(type: string) {
@@ -74,48 +81,133 @@ export default defineComponent({
         async getDomainData() {
             this.getDomainByType('DS_SCOPE').then((response: AxiosResponse<any>) => (this.scopeTypes = response.data))
             this.getDomainByType('CATEGORY_TYPE').then((response: AxiosResponse<any>) => (this.categoryTypes = response.data))
-        }
+        },
         //#region TODO: Ove 2 metode su potrebne da bi se sacuvao scheduling, importovati dje god budemo cuvali dataset
-        //  async formatCronForSave() {
-        //     if (this.selectedDataset.isScheduled) {
-        //         if (this.selectedDataset.startDate == null) {
-        //             this.selectedDataset.startDate = new Date()
-        //         }
-        //         var repeatInterval = this.scheduling.repeatInterval
-        //         var finalCronString = ''
-        //         var secondsForCron = 0
-        //         var minutesForCron = this.stringifySchedulingValues(this.scheduling.minutesSelected && this.scheduling.minutesSelected.length != 0, 'minutesSelected')
-        //         var hoursForCron = this.stringifySchedulingValues(repeatInterval != 'minute' && this.scheduling.hoursSelected && this.scheduling.hoursSelected.length != 0, 'hoursSelected')
-        //         var daysForCron = this.stringifySchedulingValues((repeatInterval === 'day' || repeatInterval === 'month') && this.scheduling.daysSelected && this.scheduling.daysSelected.length != 0, 'daysSelected')
-        //         var monthsForCron = this.stringifySchedulingValues(repeatInterval === 'month' && this.scheduling.monthsSelected && this.scheduling.monthsSelected.length != 0, 'monthsSelected')
-        //         var weekdaysForCron = this.stringifySchedulingValues(repeatInterval === 'week' && this.scheduling.weekdaysSelected && this.scheduling.weekdaysSelected.length != 0, 'weekdaysSelected')
+        async saveDataset() {
+            let dsToSave = { ...this.selectedDataset } as any
+            let restRequestHeadersTemp = {}
+            if (dsToSave.dsTypeCd.toLowerCase() == 'rest' || dsToSave.dsTypeCd.toLowerCase() == 'solr') {
+                for (let i = 0; i < dsToSave.restRequestHeaders.length; i++) {
+                    restRequestHeadersTemp[dsToSave.restRequestHeaders[i]['name']] = dsToSave.restRequestHeaders[i]['value']
+                }
+            }
+            dsToSave['restRequestHeaders'] && dsToSave['restRequestHeaders'].length > 0 ? (dsToSave.restRequestHeaders = JSON.stringify(restRequestHeadersTemp)) : (dsToSave.restRequestHeaders = '')
+            dsToSave['restJsonPathAttributes'] && dsToSave['restJsonPathAttributes'].length > 0 ? (dsToSave.restJsonPathAttributes = JSON.stringify(dsToSave.restJsonPathAttributes)) : (dsToSave.restJsonPathAttributes = '')
+            dsToSave.pars ? '' : (dsToSave.pars = [])
+            dsToSave.pythonEnvironment ? (dsToSave.pythonEnvironment = JSON.stringify(dsToSave.pythonEnvironment)) : ''
+            dsToSave.meta ? (dsToSave.meta = await this.manageDatasetFieldMetadata(dsToSave.meta)) : (dsToSave.meta = [])
+            dsToSave.recalculateMetadata = true
 
-        //         if (daysForCron == '*' && weekdaysForCron != '*') {
-        //             daysForCron = '?'
-        //         } else {
-        //             weekdaysForCron = '?'
-        //         }
-        //         finalCronString = minutesForCron + ' ' + hoursForCron + ' ' + daysForCron + ' ' + monthsForCron + ' ' + weekdaysForCron
+            dsToSave.isScheduled ? (dsToSave.schedulingCronLine = await this.formatCronForSave()) : ''
 
-        //         return secondsForCron + ' ' + finalCronString
-        //     }
-        // },
-        // stringifySchedulingValues(condition, selectedValue) {
-        //     var stringValue = ''
-        //     if (condition) {
-        //         for (var i = 0; i < this.scheduling[selectedValue].length; i++) {
-        //             stringValue += '' + this.scheduling[selectedValue][i]
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/`, dsToSave, {
+                    headers: {
+                        Accept: 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    }
+                })
+                .then((response: AxiosResponse<any>) => {
+                    this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
+                    // TODO: dodati sta se radi nakon save-a
+                    this.selectedDataset.id ? this.$emit('updated') : this.$emit('created', response)
+                })
+                .catch()
+        },
+        async manageDatasetFieldMetadata(fieldsColumns) {
+            //Temporary workaround because fieldsColumns is now an object with a new structure after changing DataSetJSONSerializer
+            if (fieldsColumns.columns != undefined && fieldsColumns.columns != null) {
+                var columnsArray = new Array()
 
-        //             if (i < this.scheduling[selectedValue].length - 1) {
-        //                 stringValue += ','
-        //             }
-        //         }
-        //         return stringValue
-        //     } else {
-        //         stringValue = '*'
-        //         return stringValue
-        //     }
-        // },
+                var columnsNames = new Array()
+                //create columns list
+                for (var i = 0; i < fieldsColumns.columns.length; i++) {
+                    var element = fieldsColumns.columns[i]
+                    columnsNames.push(element.column)
+                }
+
+                columnsNames = this.removeDuplicates(columnsNames)
+
+                for (i = 0; i < columnsNames.length; i++) {
+                    var columnObject = { displayedName: '', name: '', fieldType: '', type: '' }
+                    var currentColumnName = columnsNames[i]
+                    //this will remove the part before the double dot if the column is in the format ex: it.eng.spagobi.Customer:customerId
+                    if (currentColumnName.indexOf(':') != -1) {
+                        var arr = currentColumnName.split(':')
+                        columnObject.displayedName = arr[1]
+                    } else {
+                        columnObject.displayedName = currentColumnName
+                    }
+
+                    columnObject.name = currentColumnName
+                    for (var j = 0; j < fieldsColumns.columns.length; j++) {
+                        element = fieldsColumns.columns[j]
+                        if (element.column == currentColumnName) {
+                            if (element.pname.toUpperCase() == 'type'.toUpperCase()) {
+                                columnObject.type = element.pvalue
+                            } else if (element.pname.toUpperCase() == 'fieldType'.toUpperCase()) {
+                                columnObject.fieldType = element.pvalue
+                            }
+                        }
+                    }
+                    columnsArray.push(columnObject)
+                }
+
+                return columnsArray
+                // end workaround ---------------------------------------------------
+            }
+        },
+        removeDuplicates(array) {
+            var index = {}
+            for (var i = array.length - 1; i >= 0; i--) {
+                if (array[i] in index) {
+                    array.splice(i, 1)
+                } else {
+                    index[array[i]] = true
+                }
+            }
+            return array
+        },
+        async formatCronForSave() {
+            if (this.selectedDataset.isScheduled) {
+                if (this.selectedDataset.startDate == null) {
+                    this.selectedDataset.startDate = new Date()
+                }
+                var repeatInterval = this.scheduling.repeatInterval
+                var finalCronString = ''
+                var secondsForCron = 0
+                var minutesForCron = this.stringifySchedulingValues(this.scheduling.minutesSelected && this.scheduling.minutesSelected.length != 0, 'minutesSelected')
+                var hoursForCron = this.stringifySchedulingValues(repeatInterval != 'minute' && this.scheduling.hoursSelected && this.scheduling.hoursSelected.length != 0, 'hoursSelected')
+                var daysForCron = this.stringifySchedulingValues((repeatInterval === 'day' || repeatInterval === 'month') && this.scheduling.daysSelected && this.scheduling.daysSelected.length != 0, 'daysSelected')
+                var monthsForCron = this.stringifySchedulingValues(repeatInterval === 'month' && this.scheduling.monthsSelected && this.scheduling.monthsSelected.length != 0, 'monthsSelected')
+                var weekdaysForCron = this.stringifySchedulingValues(repeatInterval === 'week' && this.scheduling.weekdaysSelected && this.scheduling.weekdaysSelected.length != 0, 'weekdaysSelected')
+
+                if (daysForCron == '*' && weekdaysForCron != '*') {
+                    daysForCron = '?'
+                } else {
+                    weekdaysForCron = '?'
+                }
+                finalCronString = minutesForCron + ' ' + hoursForCron + ' ' + daysForCron + ' ' + monthsForCron + ' ' + weekdaysForCron
+
+                return secondsForCron + ' ' + finalCronString
+            }
+        },
+        stringifySchedulingValues(condition, selectedValue) {
+            var stringValue = ''
+            if (condition) {
+                for (var i = 0; i < this.scheduling[selectedValue].length; i++) {
+                    stringValue += '' + this.scheduling[selectedValue][i]
+
+                    if (i < this.scheduling[selectedValue].length - 1) {
+                        stringValue += ','
+                    }
+                }
+                return stringValue
+            } else {
+                stringValue = '*'
+                return stringValue
+            }
+        }
         //#endregion ===============================================================================================
     }
 })
