@@ -21,6 +21,7 @@
     import { mapState } from 'vuex'
     import axios from 'axios'
     import WEB_SOCKET from '@/services/webSocket.js'
+    import authHelper from '@/helpers/commons/authHelper'
 
     export default defineComponent({
         components: { ConfirmDialog, KnOverlaySpinnerPanel, MainMenu, Toast },
@@ -81,6 +82,7 @@
             }
         },
         mounted() {
+            window.addEventListener('message', this.receiveMessage)
             this.onLoad()
         },
         methods: {
@@ -160,6 +162,11 @@
                             store.commit('setDownloads', json.downloads)
                         }
                     }
+                }
+            },
+            receiveMessage(event) {
+                if (event && event.data && event.data.status === 401) {
+                    authHelper.handleUnauthorized()
                 }
             }
         },
