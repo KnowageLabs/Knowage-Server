@@ -43,7 +43,7 @@
                         <i class="fas fa-sort p-ml-2" @click="changeOrder(col)" />
                         <span class="p-mx-2 kn-truncated">{{ col.alias }}</span>
                         <i class="fas fa-cog p-ml-auto" @click="showMenu($event, col)" />
-                        <i class="fas fa-filter p-mx-2" />
+                        <i class="fas fa-filter p-mx-2" :class="{ 'qbe-active-filter-icon': fieldHasFilters(query?.fields[index]) }" @click="openFiltersDialog(query?.fields[index])" />
                         <i class="fas fa-times p-mr-2" @click="$emit('removeFieldFromQuery', index)" />
                     </div>
                 </div>
@@ -52,7 +52,7 @@
     </DataTable>
     <span v-else>{{ $t('common.info.noDataFound') }}</span>
 
-    <Dialog v-if="aliasDialogVisible" class="alias-dialog" :visible="aliasDialogVisible" :modal="trrue" :closable="false" :baseZIndex="1" :autoZIndex="true">
+    <Dialog v-if="aliasDialogVisible" class="alias-dialog" :visible="aliasDialogVisible" :modal="true" :closable="false" :baseZIndex="1" :autoZIndex="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
                 <template #left>
@@ -87,7 +87,7 @@ export default defineComponent({
     name: 'qbe-simple-table',
     props: { previewData: { type: Object, required: true }, query: { type: Object, required: true }, pagination: { type: Object } },
     components: { Column, DataTable, Menu, Dialog },
-    emits: ['removeFieldFromQuery', 'orderChanged', 'fieldHidden', 'fieldGrouped', 'fieldAggregated', 'aliasChanged', 'entityDropped', 'reordered', 'pageChanged'],
+    emits: ['removeFieldFromQuery', 'orderChanged', 'fieldHidden', 'fieldGrouped', 'fieldAggregated', 'aliasChanged', 'entityDropped', 'reordered', 'pageChanged', 'openFilterDialog'],
     data() {
         return {
             QBESimpleTableDescriptor,
@@ -177,6 +177,19 @@ export default defineComponent({
         onPage(event: any) {
             this.lazyParams = { paginationStart: event.first, paginationLimit: event.rows, paginationEnd: event.first + event.rows, size: this.lazyParams.size }
             this.$emit('pageChanged', this.lazyParams)
+        },
+        fieldHasFilters(field: any) {
+            for (let i = 0; i < this.query.filters.length; i++) {
+                const tempFilter = this.query.filters[i]
+                if (tempFilter.leftOperandValue === field.id) {
+                    return true
+                }
+            }
+
+            return false
+        },
+        openFiltersDialog(field: any) {
+            this.$emit('openFilterDialog', field)
         }
     }
 })
@@ -225,5 +238,9 @@ export default defineComponent({
 .alias-dialog .p-dialog-content {
     padding: 0;
     margin: 0;
+}
+
+.qbe-active-filter-icon {
+    color: red !important;
 }
 </style>

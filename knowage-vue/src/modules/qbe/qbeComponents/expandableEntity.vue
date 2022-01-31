@@ -11,7 +11,7 @@
             <li :style="{ 'border-left': `5px solid ${child.color}` }" v-for="(child, index) in entity.children" :key="index" draggable="true" @dragstart="onDragStart($event, child)">
                 <i :class="getIconCls(child.attributes.iconCls)" class="p-mx-2" v-tooltip.top="$t(`qbe.entities.types.${child.attributes.iconCls}`)" />
                 <span @click="$emit('entityChildClicked', child)">{{ child.text }}</span>
-                <Button icon="fas fa-filter" :class="{ 'qbe-active-filter-icon': filedHasFilters(child) }" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click="openFiltersDialog(child)" />
+                <Button icon="fas fa-filter" :class="{ 'qbe-active-filter-icon': fieldHasFilters(child) }" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click="openFiltersDialog(child)" />
             </li>
         </ul>
     </div>
@@ -91,7 +91,7 @@ export default defineComponent({
         openFiltersDialog(field: any) {
             this.$emit('openFilterDialog', field)
         },
-        filedHasFilters(field: any) {
+        fieldHasFilters(field: any) {
             for (let i = 0; i < this.query.filters.length; i++) {
                 const tempFilter = this.query.filters[i]
                 if (tempFilter.leftOperandValue === field.id) {
