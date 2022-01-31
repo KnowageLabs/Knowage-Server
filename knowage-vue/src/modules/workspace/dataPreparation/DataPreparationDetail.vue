@@ -354,11 +354,11 @@ export default defineComponent({
             }
 
             this.dataset.config.transformations.push(t)
-            this.client.publish({ destination: "/app/preview", headers: {"dsLabel": this.dataset.label},body: this.dataset.config.transformations});
+            this.client.publish({ destination: "/app/preview", headers: {"dsLabel": this.dataset.label},body: JSON.stringify(this.dataset.config.transformations)});
         },
         deleteTransformation(index: number): void {
             this.dataset.config.transformations.splice(index, 1)
-            this.client.publish({ destination: "/app/preview", headers: {"dsLabel": this.dataset.label},body: this.dataset.config.transformations});
+            this.client.publish({ destination: "/app/preview", headers: {"dsLabel": this.dataset.label},body: JSON.stringify(this.dataset.config.transformations)});
         },
         getCompatibilityType(col: IDataPreparationColumn): void {
             return this.descriptor.compatibilityMap[col.Type].values
