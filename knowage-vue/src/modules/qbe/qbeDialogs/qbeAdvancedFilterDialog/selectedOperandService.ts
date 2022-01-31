@@ -1,7 +1,7 @@
 import { getFilterTree } from './treeService'
 import { isSameGroup, getGroup, getFirstLevelOperandsAdvancedFilterService } from './advancedFilterService'
 
-const assert = require('assert')
+const deepEqual = require('deep-equal')
 var selected = [] as any
 
 export function getSelected() {
@@ -16,8 +16,13 @@ export function add(operand) {
 
 export function contains(operand) {
     console.log("selectedOperandService - contains() - operand ", operand)
+
+    console.log("SELECETD AT THIS POINT: ", [...selected])
     for (var i = 0; i < selected.length; i++) {
-        if (assert.deepEqual(selected[i], operand)) {
+        console.log("SELECTED I ", selected[i])
+        console.log("OPERAND: ", operand)
+        console.log("DEEP EQ: ", deepEqual(selected[i], operand))
+        if (deepEqual(selected[i], operand)) {
             return true;
         }
     }
@@ -28,7 +33,7 @@ export function contains(operand) {
 export function remove(operand) {
     console.log("selectedOperandService - remove() - operand ", operand)
     for (var i = 0; i < selected.length; i++) {
-        if (assert.deepEqual(selected[i], operand)) {
+        if (deepEqual(selected[i], operand)) {
             selected.splice(i, 1)
         }
     }
@@ -102,7 +107,7 @@ export function getFirstLevelOperands() {
 export function isFirstLevelOperand(operand) {
     console.log("selectedOperandService - isFirstLevelOperand() - operand ", operand)
     for (var i = 0; i < getFirstLevelOperands().length; i++) {
-        if (assert.deepEqual(getFirstLevelOperands()[i], operand)) {
+        if (deepEqual(getFirstLevelOperands()[i], operand)) {
             return true;
         }
     }

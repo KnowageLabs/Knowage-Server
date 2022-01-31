@@ -2,7 +2,7 @@
     <div class="md-list-item-text">
         <h4>{{ details?.leftOperandAlias }}</h4>
         <p>
-            <span>{{ details?.operator.toLowerCase() }}</span
+            <span>{{ details?.operator.toLowerCase() + ' ' }}</span
             ><span>{{ details?.rightOperandValue.toLowerCase() }}</span>
         </p>
     </div>
@@ -19,8 +19,6 @@ export default defineComponent({
         return {}
     },
     async created() {},
-    methods: {
-     
-    }
+    methods: {}
 })
 </script>
