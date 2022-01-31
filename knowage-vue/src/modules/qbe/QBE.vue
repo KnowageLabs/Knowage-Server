@@ -81,6 +81,7 @@
                             v-else
                             :query="selectedQuery"
                             :previewData="queryPreviewData"
+                            :pagination="pagination"
                             @removeFieldFromQuery="onQueryFieldRemoved"
                             @orderChanged="updateSmartView"
                             @fieldHidden="smartViewFieldHidden"
@@ -89,6 +90,7 @@
                             @aliasChanged="updateSmartView"
                             @reordered="smartViewReorder"
                             @entityDropped="onDropComplete($event, false)"
+                            @pageChanged="updatePagination($event)"
                         />
                     </div>
                 </div>
@@ -225,8 +227,8 @@ export default defineComponent({
         async loadDataset() {
             // HARDCODED Dataset label/name
             // console.log('datasetLabel', this.datasetLabel)
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
-                // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
+            // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
                 if (this.qbe) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
@@ -276,6 +278,7 @@ export default defineComponent({
             this.loading = false
         },
         async updatePagination(lazyParams: any) {
+            console.log('pagination', lazyParams)
             this.pagination.start = lazyParams.paginationStart
             this.pagination.limit = lazyParams.paginationLimit
             await this.executeQBEQuery()

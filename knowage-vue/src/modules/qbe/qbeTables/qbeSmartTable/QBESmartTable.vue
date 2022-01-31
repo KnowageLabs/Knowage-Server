@@ -11,12 +11,24 @@
         :reorderableColumns="true"
         :rowHover="true"
         columnResizeMode="expand"
-        stripedRows
-        showGridlines
+        :paginator="true"
+        :lazy="true"
+        :rows="25"
+        :totalRecords="lazyParams.size"
+        :currentPageReportTemplate="
+            $t('common.table.footer.paginated', {
+                first: '{first}',
+                last: '{last}',
+                totalRecords: '{totalRecords}'
+            })
+        "
+        @page="onPage($event)"
         @column-reorder="$emit('reordered', $event)"
         @drop="onDrop($event)"
         @dragover.prevent
         @dragenter.prevent
+        stripedRows
+        showGridlines
     >
         <template #empty>
             <div id="noFunctionsFound">
@@ -73,23 +85,29 @@ import QBESimpleTableDescriptor from './QBESmartTableDescriptor.json'
 
 export default defineComponent({
     name: 'qbe-simple-table',
-    props: { previewData: { type: Object, required: true }, query: { type: Object, required: true } },
+    props: { previewData: { type: Object, required: true }, query: { type: Object, required: true }, pagination: { type: Object } },
     components: { Column, DataTable, Menu, Dialog },
-    emits: ['removeFieldFromQuery', 'orderChanged', 'fieldHidden', 'fieldGrouped', 'fieldAggregated', 'aliasChanged', 'entityDropped', 'reordered'],
+    emits: ['removeFieldFromQuery', 'orderChanged', 'fieldHidden', 'fieldGrouped', 'fieldAggregated', 'aliasChanged', 'entityDropped', 'reordered', 'pageChanged'],
     data() {
         return {
             QBESimpleTableDescriptor,
             aliasDialogVisible: false,
             alias: '',
             menuButtons: [] as any,
-            selectedField: {} as any
+            lazyParams: {} as any,
+            selectedField: {} as any,
+            first: 0
         }
     },
     computed: {},
     watch: {
-        previewData() {}
+        previewData() {
+            this.loadPagination()
+        }
     },
-    created() {},
+    created() {
+        this.loadPagination()
+    },
     methods: {
         showMenu(event, col) {
             this.createMenuItems(col)
@@ -150,6 +168,15 @@ export default defineComponent({
         onDrop(event) {
             var data = JSON.parse(event.dataTransfer.getData('text/plain'))
             this.$emit('entityDropped', data)
+        },
+        loadPagination() {
+            this.lazyParams = this.pagination as any
+            this.first = this.pagination?.start
+            console.log('LAZY PARAMS: ', this.lazyParams)
+        },
+        onPage(event: any) {
+            this.lazyParams = { paginationStart: event.first, paginationLimit: event.rows, paginationEnd: event.first + event.rows, size: this.lazyParams.size }
+            this.$emit('pageChanged', this.lazyParams)
         }
     }
 })
