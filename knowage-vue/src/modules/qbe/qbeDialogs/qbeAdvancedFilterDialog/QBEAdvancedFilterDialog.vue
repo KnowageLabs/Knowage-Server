@@ -60,11 +60,10 @@ export default defineComponent({
     methods: {
         loadData() {
             if (this.query) {
-                this.expression = this.query.expression ? { ...this.query.expression } : {}
+                this.expression = this.query.expression ? JSON.parse(JSON.stringify(this.query?.expression)) : {}
                 this.filters = this.query.filters ? [...this.query.filters] : []
             }
 
-            this.root = this.expression
             setFilterTree(this.expression)
             this.root = getFilterTree()
             console.log('LOADED FILTER TREE: ', getFilterTree())

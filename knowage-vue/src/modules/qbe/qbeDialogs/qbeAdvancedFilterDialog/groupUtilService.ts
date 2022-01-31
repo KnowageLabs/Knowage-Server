@@ -16,7 +16,7 @@ export function createGroupChildExpression(filterTree, operands) {
         var operator = { ...(getOperator(filterTree, operands[i])) };
         var rightOperand = { ...(getRightOperand(filterTree, operands, i)) };
 
-        var expression = filterTreeFactoryService.createExpression(leftOperand, operator, rightOperand);
+        var expression = filterTreeFactoryService.expression(leftOperand, operator, rightOperand);
 
         if (!childExpression) {
             childExpression = expression;
