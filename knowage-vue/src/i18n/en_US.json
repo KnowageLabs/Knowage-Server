@@ -1763,6 +1763,21 @@
             "hideList": "Hide List",
             "parameterDuplicates": "There are parameters with a duplicate name!",
             "showList": "Show List",
+            "noPreview": "Nothing to preview",
+            "smartViewMenu": {
+                "showField": "Show field",
+                "group": "Group",
+                "aggregation": {
+                    "title": "Aggregation",
+                    "sum": "Sum",
+                    "min": "Min",
+                    "max": "Max",
+                    "avg": "Avg",
+                    "count": "Count",
+                    "distinct": "Count disctinct"
+                },
+                "rename": "Rename Alias"
+            },
             "toolbarMenu": {
                 "exportTo": "Export to",
                 "repetitions": "Discard Repetitions",

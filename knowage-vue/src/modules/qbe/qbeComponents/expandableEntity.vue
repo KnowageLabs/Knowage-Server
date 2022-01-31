@@ -2,7 +2,7 @@
     <div class="expandable-entities" v-for="(entity, index) in entities" :key="index">
         <h4 class="entity-item-container" :style="{ 'border-left': `10px solid ${entity.color}` }" draggable="true" @dragstart="onDragStart($event, entity)">
             <i :class="getIconCls(entity.attributes.iconCls)" class="p-mx-2" v-tooltip.top="$t(`qbe.entities.types.${entity.attributes.iconCls}`)" />
-            <span @click="$emit('entityClicked', entity)">{{ entity.text }}</span>
+            <span>{{ entity.text }}</span>
             <Button icon="fas fa-info" class="p-button-text p-button-rounded p-button-plain p-ml-auto" v-tooltip.top="$t('qbe.entities.relations')" @click="$emit('showRelationDialog', entity)" />
             <Button v-if="entity.expanded" icon="pi pi-chevron-up" class="p-button-text p-button-rounded p-button-plain" @click="entity.expanded = false" />
             <Button v-else icon="pi pi-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="entity.expanded = true" />
