@@ -6,7 +6,6 @@
         :value="previewData.rows"
         :scrollable="true"
         scrollHeight="flex"
-        :loading="loading"
         scrollDirection="both"
         :resizableColumns="true"
         :reorderableColumns="true"
@@ -41,11 +40,11 @@
                 <div class="customHeader">
                     <div class="qbeCustomTopColor" :style="`background-color: ${col.color}`" :title="col.entity"></div>
                     <div class="qbeHeaderContainer">
-                        <i class="fas fa-sort p-ml-2" @click="changeOrder(col)" />
+                        <i class="fas fa-sort p-ml-2" @click="changeOrder(col)" :data-test="'change-order-' + col.alias" />
                         <span class="p-mx-2 kn-truncated">{{ col.alias }}</span>
                         <i class="fas fa-cog p-ml-auto" @click="showMenu($event, col)" />
                         <i class="fas fa-filter p-mx-2" :class="{ 'qbe-active-filter-icon': fieldHasFilters(col) }" @click="openFiltersDialog(col)" />
-                        <i class="fas fa-times p-mr-2" @click="$emit('removeFieldFromQuery', index)" />
+                        <i class="fas fa-times p-mr-2" @click="$emit('removeFieldFromQuery', index)" :data-test="'delete-column-' + col.alias" />
                     </div>
                 </div>
             </template>
@@ -114,6 +113,9 @@ export default defineComponent({
     },
     created() {
         this.loadPagination()
+        // console.log('QUERY ++++++++++', this.query)
+        // console.log('PREVIEW DATA ++++++++++', this.previewData)
+        // console.log('PAGINATION ++++++++++', this.pagination)
     },
     methods: {
         showMenu(event, col) {
@@ -146,7 +148,6 @@ export default defineComponent({
             )
         },
         changeOrder(field) {
-            console.log(field)
             field.order === 'ASC' ? (field.order = 'DESC') : (field.order = 'ASC')
             this.$emit('orderChanged')
         },
@@ -179,7 +180,6 @@ export default defineComponent({
         loadPagination() {
             this.lazyParams = this.pagination as any
             this.first = this.pagination?.start
-            console.log('LAZY PARAMS: ', this.lazyParams)
         },
         onPage(event: any) {
             this.lazyParams = { paginationStart: event.first, paginationLimit: event.rows, paginationEnd: event.first + event.rows, size: this.lazyParams.size }
