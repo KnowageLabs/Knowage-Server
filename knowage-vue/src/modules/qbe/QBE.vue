@@ -1,17 +1,16 @@
 <template>
-    <Dialog class="full-screen-dialog" :visible="true" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
-        <template #header>
-            <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
-                <template #left>
-                    <span>{{ qbe?.label }}</span>
-                </template>
-                <template #right>
-                    <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="savingDialogVisible = true" />
-                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('close')" />
-                </template>
-            </Toolbar>
-        </template>
+    <div class="full-screen-dialog" :visible="true" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
+        <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
+            <template #left>
+                <span>{{ qbe?.label }}</span>
+            </template>
+            <template #right>
+                <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
+                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="savingDialogVisible = true" />
+                <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('close')" />
+            </template>
+        </Toolbar>
+
         <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
         <div v-if="!loading && !qbePreviewDialogVisible" class="qbe-view-container  p-d-flex p-flex-row kn-height-full">
             <div v-if="parameterSidebarVisible" id="qbe-backdrop" @click="parameterSidebarVisible = false"></div>
@@ -76,7 +75,15 @@
                 </Toolbar>
                 <div class="kn-relative kn-flex p-mt-2">
                     <div class="kn-height-full kn-width-full kn-absolute">
-                        <QBESimpleTable v-if="!smartView" :query="selectedQuery" @columnVisibilityChanged="checkIfHiddenColumnsExist" @openFilterDialog="openFilterDialog" @openHavingDialog="openHavingDialog" @entityDropped="onDropComplete($event, false)"></QBESimpleTable>
+                        <QBESimpleTable
+                            v-if="!smartView"
+                            :query="selectedQuery"
+                            @columnVisibilityChanged="checkIfHiddenColumnsExist"
+                            @openFilterDialog="openFilterDialog"
+                            @openHavingDialog="openHavingDialog"
+                            @entityDropped="onDropComplete($event, false)"
+                            @groupingChanged="onGroupingChanged"
+                        ></QBESimpleTable>
                         <QBESmartTable
                             v-else
                             :query="selectedQuery"
@@ -107,10 +114,10 @@
         <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" :entities="selectedQuery?.fields" @close="havingDialogVisible = false" @save="onHavingsSave"></QBEHavingDialog>
         <QBEAdvancedFilterDialog :visible="advancedFilterDialogVisible" :query="selectedQuery" @close="advancedFilterDialogVisible = false"></QBEAdvancedFilterDialog>
         <QBESavingDialog v-if="savingDialogVisible" :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" />
-        <QBEJoinDefinitionDialog :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="id" :selectedQuery="selectedQuery" @close="joinDefinitionDialogVisible = false"></QBEJoinDefinitionDialog>
+        <QBEJoinDefinitionDialog :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="id" :selectedQuery="selectedQuery" @close="onJoinDefinitionDialogClose"></QBEJoinDefinitionDialog>
 
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
-    </Dialog>
+    </div>
 </template>
 
 <script lang="ts">
@@ -119,7 +126,7 @@ import { defineComponent } from 'vue'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
 import { iQBE, iQuery, iField, iQueryResult, iFilter } from './QBE'
 import { findByName, replace, removeInPlace } from './qbeDialogs/qbeAdvancedFilterDialog/treeService'
-import Dialog from 'primevue/dialog'
+// import Dialog from 'primevue/dialog'
 import Chip from 'primevue/chip'
 import InputSwitch from 'primevue/inputswitch'
 import QBEAdvancedFilterDialog from './qbeDialogs/qbeAdvancedFilterDialog/QBEAdvancedFilterDialog.vue'
@@ -144,7 +151,7 @@ const crypto = require('crypto')
 export default defineComponent({
     name: 'qbe',
     components: {
-        Dialog,
+        // Dialog,
         Chip,
         InputSwitch,
         ScrollPanel,
@@ -502,6 +509,12 @@ export default defineComponent({
                 }
             }
         },
+        onGroupingChanged(field: iField) {
+            console.log('ON GROUPING CHANGED: ', field)
+            if (field.group && this.selectedQuery) {
+                this.selectedQuery.havings = this.selectedQuery.havings.filter((having: any) => having.letOperandValue !== field.id)
+            }
+        },
         // #endregion
         // #region Advanced Filters
         showAdvancedFilters() {
@@ -511,6 +524,12 @@ export default defineComponent({
         // #region Join Definitions
         showJoinDefinitions() {
             this.joinDefinitionDialogVisible = true
+        },
+        onJoinDefinitionDialogClose() {
+            this.joinDefinitionDialogVisible = false
+            if (this.smartView) {
+                this.executeQBEQuery()
+            }
         },
         // #endregion
         deleteAllFilters() {

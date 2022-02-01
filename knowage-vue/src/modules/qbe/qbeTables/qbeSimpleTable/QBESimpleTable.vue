@@ -9,7 +9,7 @@
                 <div class="p-d-flex p-flex-row p-ai-center">
                     <InputText v-if="column.field === 'alias'" class="kn-material-input p-inputtext-sm qbe-simple-table-input" v-model="slotProps.data[slotProps.column.props.field]"></InputText>
 
-                    <Checkbox v-else-if="column.field === 'group'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="slotProps.data['funct'] = 'NONE'"></Checkbox>
+                    <Checkbox v-else-if="column.field === 'group'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="onGroupingChanged(slotProps.data)"></Checkbox>
                     <Dropdown v-else-if="column.field === 'order'" v-model="slotProps.data[slotProps.column.props.field]" :options="QBESimpleTableDescriptor.orderingOptions" />
                     <Dropdown v-else-if="column.field === 'funct'" class="qbe-simple-table-dropdown" v-model="slotProps.data[slotProps.column.props.field]" :options="getAttributeOptions(slotProps.data)" :disabled="slotProps.data['group']" />
                     <Checkbox v-else-if="column.field === 'visible'" class="p-ml-3" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('columnVisibilityChanged')"></Checkbox>
@@ -20,7 +20,7 @@
             </template>
             <template #body="slotProps">
                 <div class="p-d-flex p-flex-row p-ai-center">
-                    <Checkbox v-if="column.field === 'group'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="slotProps.data['funct'] = 'NONE'"></Checkbox>
+                    <Checkbox v-if="column.field === 'group'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="onGroupingChanged(slotProps.data)"></Checkbox>
                     <Dropdown v-else-if="column.field === 'funct'" class="qbe-simple-table-dropdown" v-model="slotProps.data[slotProps.column.props.field]" :options="getAttributeOptions(slotProps.data)" :disabled="slotProps.data['group']" />
                     <Checkbox v-else-if="column.field === 'visible'" class="p-ml-3" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('columnVisibilityChanged')"></Checkbox>
                     <Checkbox v-else-if="column.field === 'inUse'" class="p-ml-2" v-model="slotProps.data[slotProps.column.props.field]" :binary="true"></Checkbox>
@@ -56,7 +56,7 @@ export default defineComponent({
     name: 'qbe-simple-table',
     props: { query: { type: Object as PropType<iQuery> } },
     components: { Checkbox, Column, DataTable, Dropdown, Menu },
-    emits: ['columnVisibilityChanged', 'openFilterDialog', 'openHavingDialog', 'entityDropped'],
+    emits: ['columnVisibilityChanged', 'openFilterDialog', 'openHavingDialog', 'entityDropped', 'groupingChanged'],
     data() {
         return {
             QBESimpleTableDescriptor,
@@ -124,6 +124,11 @@ export default defineComponent({
         onDrop(event) {
             var data = JSON.parse(event.dataTransfer.getData('text/plain'))
             this.$emit('entityDropped', data)
+        },
+        onGroupingChanged(field: iField) {
+            console.log('TEMP: ', field)
+            field['funct'] = 'NONE'
+            this.$emit('groupingChanged', field)
         }
     }
 })
