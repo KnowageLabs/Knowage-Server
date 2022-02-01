@@ -2,6 +2,7 @@
     <DataTable
         class="qbe-smart-table"
         v-if="previewData != null"
+        :first="first"
         :value="previewData.rows"
         :scrollable="true"
         scrollHeight="flex"
@@ -35,7 +36,7 @@
                 {{ $t('common.info.noDataFound') }}
             </div>
         </template>
-        <Column v-for="(col, index) of query.fields" :hidden="!col.visible" :field="`column_${index + 1}`" :key="index" style="flex-grow:1; flex-basis:200px">
+        <Column v-for="(col, index) of filteredVisibleFields" :hidden="!col.visible" :field="`column_${index + 1}`" :key="index" style="flex-grow:1; flex-basis:200px">
             <template #header>
                 <div class="customHeader">
                     <div class="qbeCustomTopColor" :style="`background-color: ${col.color}`" :title="col.entity"></div>
@@ -43,14 +44,15 @@
                         <i class="fas fa-sort p-ml-2" @click="changeOrder(col)" />
                         <span class="p-mx-2 kn-truncated">{{ col.alias }}</span>
                         <i class="fas fa-cog p-ml-auto" @click="showMenu($event, col)" />
-                        <i class="fas fa-filter p-mx-2" :class="{ 'qbe-active-filter-icon': fieldHasFilters(query?.fields[index]) }" @click="openFiltersDialog(query?.fields[index])" />
+                        <i class="fas fa-filter p-mx-2" :class="{ 'qbe-active-filter-icon': fieldHasFilters(col) }" @click="openFiltersDialog(col)" />
                         <i class="fas fa-times p-mr-2" @click="$emit('removeFieldFromQuery', index)" />
                     </div>
                 </div>
             </template>
         </Column>
     </DataTable>
-    <span v-else>{{ $t('common.info.noDataFound') }}</span>
+
+    <div v-else class="kn-height-full kn-width-full" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>{{ $t('common.info.noDataFound') }}</div>
 
     <Dialog v-if="aliasDialogVisible" class="alias-dialog" :visible="aliasDialogVisible" :modal="true" :closable="false" :baseZIndex="1" :autoZIndex="true">
         <template #header>
@@ -99,7 +101,12 @@ export default defineComponent({
             first: 0
         }
     },
-    computed: {},
+    computed: {
+        filteredVisibleFields(): any {
+            var newArr = this.query.fields.filter((field) => field.visible === true)
+            return newArr
+        }
+    },
     watch: {
         previewData() {
             this.loadPagination()
