@@ -1,16 +1,17 @@
 <template>
-    <div class="full-screen-dialog" :visible="true" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
-        <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
-            <template #left>
-                <span>{{ qbe?.label }}</span>
-            </template>
-            <template #right>
-                <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
-                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="savingDialogVisible = true" />
-                <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('close')" />
-            </template>
-        </Toolbar>
-
+    <Dialog class="full-screen-dialog" :visible="true" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
+        <template #header>
+            <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
+                <template #left>
+                    <span>{{ qbe?.label }}</span>
+                </template>
+                <template #right>
+                    <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
+                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="savingDialogVisible = true" />
+                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('close')" />
+                </template>
+            </Toolbar>
+        </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
         <div v-if="!loading && !qbePreviewDialogVisible" class="qbe-view-container  p-d-flex p-flex-row kn-height-full">
             <div v-if="parameterSidebarVisible" id="qbe-backdrop" @click="parameterSidebarVisible = false"></div>
@@ -107,7 +108,7 @@
         </div>
 
         <QBEPreviewDialog v-show="!loading && qbePreviewDialogVisible" :id="id" :queryPreviewData="queryPreviewData" :pagination="pagination" @close="closePreview" @pageChanged="updatePagination($event)"></QBEPreviewDialog>
-        <QBEFilterDialog v-if="qbe" :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="id" :entities="entities?.entities" :propParameters="qbe?.pars" :propExpression="selectedQuery.expression" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
+        <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="id" :entities="entities?.entities" :propParameters="qbe?.pars" :propExpression="selectedQuery.expression" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
         <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" />
@@ -117,7 +118,7 @@
         <QBEJoinDefinitionDialog :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="id" :selectedQuery="selectedQuery" @close="onJoinDefinitionDialogClose"></QBEJoinDefinitionDialog>
 
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
-    </div>
+    </Dialog>
 </template>
 
 <script lang="ts">
@@ -126,7 +127,7 @@ import { defineComponent } from 'vue'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
 import { iQBE, iQuery, iField, iQueryResult, iFilter } from './QBE'
 import { findByName, replace, removeInPlace } from './qbeDialogs/qbeAdvancedFilterDialog/treeService'
-// import Dialog from 'primevue/dialog'
+import Dialog from 'primevue/dialog'
 import Chip from 'primevue/chip'
 import InputSwitch from 'primevue/inputswitch'
 import QBEAdvancedFilterDialog from './qbeDialogs/qbeAdvancedFilterDialog/QBEAdvancedFilterDialog.vue'
@@ -151,7 +152,7 @@ const crypto = require('crypto')
 export default defineComponent({
     name: 'qbe',
     components: {
-        // Dialog,
+        Dialog,
         Chip,
         InputSwitch,
         ScrollPanel,
@@ -219,7 +220,7 @@ export default defineComponent({
         this.uniqueID = crypto.randomBytes(16).toString('hex')
         this.user = (this.$store.state as any).user
         this.userRole = this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
-        // await this.loadPage()
+        await this.loadPage()
     },
     methods: {
         async loadPage() {
