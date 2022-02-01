@@ -460,4 +460,17 @@ describe('QBE', () => {
             visible: true
         })
     })
+
+    it('changes column position when dragging the column', async () => {
+        const wrapper = factory()
+
+        wrapper.vm.selectedQuery = JSON.parse(JSON.stringify(mockedQuery))
+
+        expect(wrapper.vm.selectedQuery.fields[0].id).toBe('it.eng.knowage.inventory.Product:brand_name')
+
+        wrapper.vm.smartViewReorder({ dragIndex: 0, dropIndex: 1 })
+
+        expect(wrapper.vm.selectedQuery.fields[0].id).not.toBe('it.eng.knowage.inventory.Product:brand_name')
+        expect(wrapper.vm.selectedQuery.fields[1].id).toBe('it.eng.knowage.inventory.Product:brand_name')
+    })
 })
