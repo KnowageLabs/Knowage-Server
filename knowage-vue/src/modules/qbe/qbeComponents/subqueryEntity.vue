@@ -2,7 +2,7 @@
     <div class="expandable-entities" v-for="(entity, index) in entities" :key="index">
         <h4 draggable="true" @dragstart="onDragStart($event, entity)">
             <i class="fas fa-cube p-mx-2" v-tooltip.top="$t(`qbe.entities.types.cube`)" />
-            <span>{{ entity.name }}</span>
+            <span class="kn-flex" @click="expandEntity(entity)">{{ entity.name }}</span>
             <Button icon="fas fa-edit" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click="$emit('editSubquery', entity)" />
             <Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain" @click="$emit('deleteSubquery', index, entity)" />
             <Button v-if="entity.expanded" icon="pi pi-chevron-up" class="p-button-text p-button-rounded p-button-plain" @click="entity.expanded = false" />
@@ -40,6 +40,9 @@ export default defineComponent({
         this.entities = this.availableEntities
     },
     methods: {
+        expandEntity(entity) {
+            entity.expanded = !entity.expanded
+        },
         getIconCls(iconCls) {
             switch (iconCls) {
                 case 'measure':
