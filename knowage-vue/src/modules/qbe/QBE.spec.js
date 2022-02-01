@@ -294,8 +294,6 @@ describe('QBE', () => {
     it('removes all column when clicking on clear table', async () => {
         const wrapper = factory()
 
-        expect(wrapper.vm.loading).toBe(true)
-
         wrapper.vm.selectedQuery = JSON.parse(JSON.stringify(mockedQuery))
 
         expect(wrapper.vm.selectedQuery.fields.length).toBe(2)
@@ -303,5 +301,163 @@ describe('QBE', () => {
         wrapper.vm.deleteAllSelectedFields()
 
         expect(wrapper.vm.selectedQuery.fields.length).toBe(0)
+    })
+
+    it('adds a field to the list when dragging a field in the list', async () => {
+        const wrapper = factory()
+        const mockedField = {
+            id: 'it.eng.knowage.inventory.Product:gross_weight',
+            text: 'Gross weight',
+            iconCls: 'attribute',
+            dataType: 'java.lang.Double',
+            aggtype: 'SUM',
+            format: '#,###',
+            leaf: true,
+            qtip: 'Gross weight',
+            attributes: {
+                iconCls: 'attribute',
+                type: 'field',
+                entity: 'Product',
+                field: 'Gross weight',
+                longDescription: 'Product : Gross weight'
+            },
+            color: '#F46036'
+        }
+
+        wrapper.vm.selectedQuery = JSON.parse(JSON.stringify(mockedQuery))
+
+        expect(wrapper.vm.selectedQuery.fields.length).toBe(2)
+
+        wrapper.vm.onDropComplete(mockedField)
+
+        expect(wrapper.vm.selectedQuery.fields.length).toBe(3)
+        expect(wrapper.vm.selectedQuery.fields[wrapper.vm.selectedQuery.fields.length - 1]).toStrictEqual({
+            alias: 'Gross weight',
+            color: '#F46036',
+            dataType: 'java.lang.Double',
+            distinct: false,
+            entity: 'Product',
+            field: 'Gross weight',
+            fieldType: 'attribute',
+            format: '#,###',
+            funct: 'NONE',
+            group: true,
+            iconCls: 'attribute',
+            id: 'it.eng.knowage.inventory.Product:gross_weight',
+            inUse: true,
+            include: true,
+            leaf: true,
+            longDescription: 'Product : Gross weight',
+            order: 'NONE',
+            type: 'datamartField',
+            visible: true
+        })
+    })
+
+    it('adds all the entity columns to the list when clicking on an entity in the list', async () => {
+        const wrapper = factory()
+        const mockedFieldWithChildren = {
+            id: 'it.eng.knowage.inventory.Warehouse_class::Warehouse_class',
+            text: 'Warehouse class',
+            iconCls: 'dimension',
+            qtip: 'Warehouse class',
+            attributes: {
+                iconCls: 'dimension',
+                type: 'entity',
+                londDescription: 'Warehouse class',
+                linkedToWords: false
+            },
+            children: [
+                {
+                    id: 'it.eng.knowage.inventory.Warehouse_class:warehouse_class_id',
+                    text: 'Warehouse class id',
+                    iconCls: 'attribute',
+                    dataType: 'java.lang.Integer',
+                    aggtype: 'SUM',
+                    format: '#,###',
+                    leaf: true,
+                    qtip: 'Warehouse class id',
+                    attributes: {
+                        iconCls: 'attribute',
+                        type: 'field',
+                        entity: 'Warehouse class',
+                        field: 'Warehouse class id',
+                        longDescription: 'Warehouse class : Warehouse class id'
+                    },
+                    color: '#009688'
+                },
+                {
+                    id: 'it.eng.knowage.inventory.Warehouse_class:description',
+                    text: 'Description',
+                    iconCls: 'attribute',
+                    dataType: 'java.lang.String',
+                    aggtype: 'SUM',
+                    format: '#,###',
+                    leaf: true,
+                    qtip: 'Description',
+                    attributes: {
+                        iconCls: 'attribute',
+                        type: 'field',
+                        entity: 'Warehouse class',
+                        field: 'Description',
+                        longDescription: 'Warehouse class : Description'
+                    },
+                    color: '#009688'
+                }
+            ],
+            relation: [],
+            color: '#009688',
+            expanded: true
+        }
+
+        wrapper.vm.selectedQuery = JSON.parse(JSON.stringify(mockedQuery))
+
+        expect(wrapper.vm.selectedQuery.fields.length).toBe(2)
+
+        wrapper.vm.onDropComplete(mockedFieldWithChildren)
+
+        expect(wrapper.vm.selectedQuery.fields.length).toBe(4)
+        expect(wrapper.vm.selectedQuery.fields[wrapper.vm.selectedQuery.fields.length - 2]).toStrictEqual({
+            alias: 'Warehouse class id',
+            color: '#009688',
+            dataType: 'java.lang.Integer',
+            distinct: false,
+            entity: 'Warehouse class',
+            field: 'Warehouse class id',
+            fieldType: 'attribute',
+            format: '#,###',
+            funct: 'NONE',
+            group: true,
+            iconCls: 'attribute',
+            id: 'it.eng.knowage.inventory.Warehouse_class:warehouse_class_id',
+            inUse: true,
+            include: true,
+            leaf: true,
+            longDescription: 'Warehouse class : Warehouse class id',
+            order: 'NONE',
+            type: 'datamartField',
+            visible: true
+        })
+        expect(wrapper.vm.selectedQuery.fields[wrapper.vm.selectedQuery.fields.length - 1]).toStrictEqual({
+            alias: 'Description',
+            color: '#009688',
+            dataType: 'java.lang.String',
+            distinct: false,
+            entity: 'Warehouse class',
+            field: 'Description',
+            fieldType: 'attribute',
+            format: '#,###',
+            funct: 'NONE',
+            group: true,
+            iconCls: 'attribute',
+            id: 'it.eng.knowage.inventory.Warehouse_class:description',
+            inUse: true,
+            include: true,
+            leaf: true,
+            longDescription: 'Warehouse class : Description',
+            order: 'NONE',
+            type: 'datamartField',
+            visible: true
+        })
     })
 })
