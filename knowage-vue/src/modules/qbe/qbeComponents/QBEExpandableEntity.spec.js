@@ -696,4 +696,14 @@ describe('QBE Expandable Entity', () => {
 
         expect(wrapper.find('[data-test="child-it.eng.knowage.inventory.Product:brand_name"]').html()).toContain('qbe-active-filter-icon')
     })
+
+    it('expands parent entity on clicking', async () => {
+        const wrapper = factory(mockedQuery, mockedEntities)
+
+        await wrapper.find('[data-test="expand-it.eng.knowage.inventory.Product_class::Product_class"]').trigger('click')
+        expect(mockedEntities[1].expanded).toBe(true)
+
+        await wrapper.find('[data-test="expand-it.eng.knowage.inventory.Product_class::Product_class"]').trigger('click')
+        expect(mockedEntities[1].expanded).toBe(false)
+    })
 })
