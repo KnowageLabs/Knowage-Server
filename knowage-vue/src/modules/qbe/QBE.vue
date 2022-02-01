@@ -468,7 +468,7 @@ export default defineComponent({
             }
             const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
-                .post(process.env.VUE_APP_QBE_PATH + `qbequery/export/?SBI_EXECUTION_ID=${this.id}&currentQueryId=q2&outputType=${mimeType}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .post(process.env.VUE_APP_QBE_PATH + `qbequery/export/?SBI_EXECUTION_ID=${this.id}&currentQueryId=${this.selectedQuery.id}&outputType=${mimeType}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then((response: AxiosResponse<any>) => {
                     downloadDirect(response.data, fileName, fileType)
                 })
@@ -478,7 +478,6 @@ export default defineComponent({
             this.discardRepetitions = !this.discardRepetitions
             this.qbe ? (this.qbe.qbeJSONQuery.catalogue.queries[0].distinct = this.discardRepetitions) : ''
             if (this.smartView) {
-                // odmah pzovi servis i reloaduj prikaz, da bi radio kako treba currentQueryID unutar executeQBEQuery headera, ne sme da bude hardkodovan
                 this.executeQBEQuery()
             }
         },
@@ -575,7 +574,7 @@ export default defineComponent({
         async getSQL() {
             var item = {} as any
             item.replaceParametersWithQuestion = true
-            item.queryId = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]?.id
+            item.queryId = this.selectedQuery.id
 
             let conf = {} as any
             conf.headers = { 'Content-Type': 'application/x-www-form-urlencoded' } as any
@@ -613,10 +612,8 @@ export default defineComponent({
             this.updateSmartView()
         },
         addEntityToMainQuery(field, isCalcField?) {
-            //addField kod njih
             let queryModel = this.selectedQuery.fields
             let editQueryObj = this.selectedQuery
-            console.log('queryModel--------------', queryModel, 'editQueryObj--------------', editQueryObj)
             for (var i = 0; i < queryModel.length; i++) {
                 if (queryModel != undefined && !this.smartView && queryModel.length > 0) {
                     editQueryObj.fields[i].group = queryModel[i].group
