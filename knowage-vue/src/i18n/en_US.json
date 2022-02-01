@@ -1769,6 +1769,9 @@
         "roleSelection": "Role Selection"
     },
     "workspace": {
+        "advancedData" : {
+            "title": "Advanced Data"
+        },
         "buttonsTooltips": {
             "executeDoc": "Execute Document",
             "moveDoc": "Move Document",

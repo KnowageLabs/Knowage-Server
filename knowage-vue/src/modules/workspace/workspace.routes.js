@@ -45,7 +45,7 @@ let routes = [
                 component: () => import('@/modules/workspace/views/schedulationView/WorkspaceSchedulationView.vue')
             },
             {
-                path: 'advanced-data',
+                path: 'advanced',
                 component: () => import('@/modules/workspace/views/advancedData/WorkspaceAdvancedDataView.vue')
             }
         ]

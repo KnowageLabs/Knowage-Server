@@ -290,7 +290,7 @@ export default defineComponent({
                 })
         },
         initWebsocket(): void {
-            let url = process.env.VUE_APP_HOST_URL.replace('https://', 'wss://').replace('http://', 'ws://') + '/knowage-data-preparation/ws?' + process.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
+            let url = process.env.VUE_APP_HOST_URL.replace('http', 'ws') + '/knowage-data-preparation/ws?' + process.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
             this.client = new Client({
                 brokerURL: url,
                 connectHeaders: {

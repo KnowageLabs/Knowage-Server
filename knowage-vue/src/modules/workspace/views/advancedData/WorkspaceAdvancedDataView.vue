@@ -19,17 +19,11 @@
             </template>
             <Column field="label" :header="$t('importExport.catalogFunction.column.label')" class="kn-truncated" :sortable="true" />
             <Column field="name" :header="$t('importExport.gallery.column.name')" class="kn-truncated" :sortable="true" />
-            <Column field="dsTypeCd" :header="$t('importExport.gallery.column.type')" :sortable="true" />
             <Column field="tags" :header="$t('importExport.gallery.column.tags')" :sortable="true">
                 <template #body="slotProps">
                     <span v-if="slotProps.data.tags.length > 0">
                         <Chip v-for="(tag, index) of slotProps.data.tags" :key="index"> {{ tag.name }} </Chip>
                     </span>
-                </template>
-            </Column>
-            <Column :header="$t('workspace.myData.parametrical')">
-                <template #body="slotProps">
-                    <i v-if="slotProps.data.pars.length > 0 || slotProps.data.drivers.length > 0" class="fas fa-check p-button-link" />
                 </template>
             </Column>
             <Column :style="mainDescriptor.style.iconColumn">
@@ -88,7 +82,7 @@
 
     <WorkspaceDataCloneDialog :visible="cloneDialogVisible" :propDataset="selectedDataset" @close="cloneDialogVisible = false" @clone="handleDatasetClone"></WorkspaceDataCloneDialog>
     <WorkspaceDataPreviewDialog :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false"></WorkspaceDataPreviewDialog>
-    <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.myData.title')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
+    <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.advancedData.title')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -100,15 +94,15 @@ import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.v
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Chip from 'primevue/chip'
+import { IDataset } from '@/modules/workspace/Workspace'
 import Message from 'primevue/message'
-import WorkspaceDataCloneDialog from './dialogs/WorkspaceDataCloneDialog.vue'
-import WorkspaceDataPreviewDialog from './dialogs/WorkspaceDataPreviewDialog.vue'
-import WorkspaceDataShareDialog from './dialogs/WorkspaceDataShareDialog.vue'
-import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDialog.vue'
+import WorkspaceDataCloneDialog from '@/modules/workspace/views/dataView/dialogs/WorkspaceDataCloneDialog.vue'
+import WorkspaceDataPreviewDialog from '@/modules/workspace/views/dataView/dialogs/WorkspaceDataPreviewDialog.vue'
+import WorkspaceWarningDialog from '@/modules/workspace/genericComponents/WorkspaceWarningDialog.vue'
 import { AxiosResponse } from 'axios'
 
 export default defineComponent({
-    components: { DataTable, Column, Chip, DetailSidebar, WorkspaceCard, KnFabButton, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog, WorkspaceDataPreviewDialog, Message },
+    components: { DataTable, Column, Chip, DetailSidebar, WorkspaceCard, KnFabButton, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataPreviewDialog, Message },
     emits: ['toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
@@ -172,14 +166,14 @@ export default defineComponent({
             this.showDetailSidebar = true
         },
         showCreationMenu(event) {
-            this.createCreationMenuButtons()
+            //this.createCreationMenuButtons()
             // eslint-disable-next-line
             // @ts-ignore
             this.$refs.creationMenu.toggle(event)
         },
         showMenu(event, clickedDocument) {
             this.selectedDataset = clickedDocument
-            this.createMenuItems(clickedDocument)
+            //this.createMenuItems(clickedDocument)
             // eslint-disable-next-line
             // @ts-ignore
             this.$refs.optionsMenu.toggle(event)
@@ -272,7 +266,7 @@ export default defineComponent({
                     })
                     this.showDetailSidebar = false
                     this.shareDialogVisible = false
-                    this.getDatasetsByFilter()
+                    this.getDatasets()
                 })
                 .catch(() => {})
             this.loading = false
@@ -291,7 +285,7 @@ export default defineComponent({
                     })
                     this.showDetailSidebar = false
                     this.cloneDialogVisible = false
-                    this.getDatasetsByFilter()
+                    this.getDatasets()
                 })
                 .catch((response: any) => {
                     this.warningDialogVisbile = true
@@ -320,7 +314,7 @@ export default defineComponent({
                         msg: this.$t('common.toast.success')
                     })
                     this.showDetailSidebar = false
-                    this.getDatasetsByFilter()
+                    this.getDatasets()
                 })
                 .catch(() => {})
             this.loading = false
@@ -332,7 +326,7 @@ export default defineComponent({
         async getDatasets() {
             this.loading = true
             this.searchWord = ''
-            this.datasetList = this.$http
+            this.preparedDatasets = this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/mydata/`)
                 .then((response: AxiosResponse<any>) => {
                     this.datasetList = [...response.data.root]
