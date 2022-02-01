@@ -66,8 +66,11 @@ export default defineComponent({
         filterDialogData() {
             this.loadData()
         },
-        propParameters() {
-            this.loadParameters()
+        propParameters: {
+            handler() {
+                this.loadParameters()
+            },
+            deep: true
         },
         propExpression() {
             this.loadExpression()

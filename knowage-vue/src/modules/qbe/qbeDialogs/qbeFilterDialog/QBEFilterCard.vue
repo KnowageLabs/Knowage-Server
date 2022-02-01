@@ -10,7 +10,7 @@
 
             <div class="p-col-2">
                 <label class="kn-material-input-label" v-tooltip.top="$t('qbe.filters.conditionTooltip')"> {{ $t('qbe.filters.condition') }} </label>
-                <Dropdown class="kn-material-input" v-model="filter.operator" :options="QBEFilterDialogDescriptor.operatorValues" optionValue="value" @click="onFilterOperatorChange">
+                <Dropdown class="kn-material-input" v-model="filter.operator" :options="QBEFilterDialogDescriptor.operatorValues" optionValue="value" @change="onFilterOperatorChange">
                     <template #value="slotProps">
                         <div v-if="slotProps.value">
                             <span class="qbe-filter-option-value">{{ slotProps.value.toLowerCase() }}</span>
@@ -243,29 +243,13 @@ export default defineComponent({
         },
         onFilterOperatorChange() {
             if (this.filter && this.filter.rightType === 'manual') {
-                switch (this.filter.operator) {
-                    case 'BETWEEN':
-                    case 'NOT BETWEEN':
-                        this.filter.rightOperandDescription = ''
-                        this.multiManualValues = []
-                        this.targetDate = null
-                        this.resetFilterRightOperandValues()
-                        break
-                    case 'IN':
-                    case 'NOT IN':
-                        this.filter.rightOperandDescription = ''
-                        this.firstOperand = ''
-                        this.secondOperand = ''
-                        this.targetDate = null
-                        this.targetEndDate = null
-                        this.resetFilterRightOperandValues()
-                        break
-                    default:
-                        this.multiManualValues = []
-                        this.firstOperand = ''
-                        this.secondOperand = ''
-                        this.targetEndDate = null
-                }
+                this.filter.rightOperandDescription = ''
+                this.multiManualValues = []
+                this.firstOperand = ''
+                this.secondOperand = ''
+                this.targetDate = null
+                this.targetEndDate = null
+                this.resetFilterRightOperandValues()
             }
         },
         onManualValueChange() {

@@ -76,7 +76,15 @@
                 </Toolbar>
                 <div class="kn-relative kn-flex p-mt-2">
                     <div class="kn-height-full kn-width-full kn-absolute">
-                        <QBESimpleTable v-if="!smartView" :query="selectedQuery" @columnVisibilityChanged="checkIfHiddenColumnsExist" @openFilterDialog="openFilterDialog" @openHavingDialog="openHavingDialog" @entityDropped="onDropComplete($event, false)"></QBESimpleTable>
+                        <QBESimpleTable
+                            v-if="!smartView"
+                            :query="selectedQuery"
+                            @columnVisibilityChanged="checkIfHiddenColumnsExist"
+                            @openFilterDialog="openFilterDialog"
+                            @openHavingDialog="openHavingDialog"
+                            @entityDropped="onDropComplete($event, false)"
+                            @groupingChanged="onGroupingChanged"
+                        ></QBESimpleTable>
                         <QBESmartTable
                             v-else
                             :query="selectedQuery"
@@ -500,6 +508,12 @@ export default defineComponent({
                     const index = havings.findIndex((el: iFilter) => el.filterId === tempHaving.filterId)
                     if (index === -1) this.selectedQuery.havings.splice(i, 1)
                 }
+            }
+        },
+        onGroupingChanged(field: iField) {
+            console.log('ON GROUPING CHANGED: ', field)
+            if (field.group && this.selectedQuery) {
+                this.selectedQuery.havings = this.selectedQuery.havings.filter((having: any) => having.letOperandValue !== field.id)
             }
         },
         // #endregion
