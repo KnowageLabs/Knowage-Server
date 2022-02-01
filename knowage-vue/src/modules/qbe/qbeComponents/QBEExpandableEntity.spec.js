@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Menu from 'primevue/menu'
-import expandableEntity from './expandableEntity.vue'
+import QBEExpandableEntity from './QBEExpandableEntity.vue'
 import PrimeVue from 'primevue/config'
 import Tooltip from 'primevue/tooltip'
 
@@ -641,7 +641,7 @@ const mockedEntities = [
 ]
 
 const factory = (query, entities) => {
-    return mount(expandableEntity, {
+    return mount(QBEExpandableEntity, {
         props: {
             query: query,
             availableEntities: entities
@@ -689,5 +689,11 @@ describe('QBE Expandable Entity', () => {
             },
             color: '#F46036'
         })
+    })
+
+    it('shows a filter icon if one of the fields from the list has a filter', async () => {
+        const wrapper = factory(mockedQuery, mockedEntities)
+
+        expect(wrapper.find('[data-test="child-it.eng.knowage.inventory.Product:brand_name"]').html()).toContain('qbe-active-filter-icon')
     })
 })
