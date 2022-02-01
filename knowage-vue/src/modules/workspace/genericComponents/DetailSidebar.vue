@@ -13,7 +13,7 @@
                     <h3 class="p-m-0">
                         <b>{{ $t(field.translation) }}</b>
                     </h3>
-                    <p class="p-m-0" v-if="field.type === 'category'">
+                    <p class="p-m-0" v-if="field.type === 'category' && datasetCategory">
                         {{ datasetCategory }}
                     </p>
                     <p class="p-m-0" v-if="field.type === 'date'">{{ getFormattedDate(document[field.value], 'MM/DD/YYYY hh:mm:ss') }}</p>
@@ -75,11 +75,13 @@ export default defineComponent({
         },
         datasetCategory(): any {
             let category = ''
-            this.datasetCategories.find((cat) => {
-                if (cat.VALUE_ID === this.document.catTypeId) {
-                    category = cat.VALUE_CD
-                }
-            })
+            if (this.datasetCategories) {
+                this.datasetCategories.find((cat) => {
+                    if (cat.VALUE_ID === this.document.catTypeId) {
+                        category = cat.VALUE_CD
+                    }
+                })
+            }
             return category
         },
         documentImageSource(): any {
