@@ -1,6 +1,6 @@
 <template>
     <div class="expandable-entities" v-for="(entity, index) in entities" :key="index">
-        <h4 class="entity-item-container" :style="{ 'border-left': `10px solid ${entity.color}` }" draggable="true" @dragstart="onDragStart($event, entity)">
+        <h4 class="entity-item-container" :style="{ 'border-left': `10px solid ${entity.color}` }" draggable="true" @dragstart="onDragStart($event, entity)" :data-test="'entity-container-' + entity.id">
             <i :class="getIconCls(entity.attributes.iconCls)" class="p-mx-2" v-tooltip.top="$t(`qbe.entities.types.${entity.attributes.iconCls}`)" />
             <span class="kn-flex" @click="expandEntity(entity)">{{ entity.text }}</span>
             <Button icon="fas fa-info" class="p-button-text p-button-rounded p-button-plain " v-tooltip.top="$t('qbe.entities.relations')" @click="$emit('showRelationDialog', entity)" />
@@ -11,7 +11,7 @@
             <li :style="{ 'border-left': `5px solid ${child.color}` }" v-for="(child, index) in entity.children" :key="index" draggable="true" @dragstart="onDragStart($event, child)">
                 <i :class="getIconCls(child.attributes.iconCls)" class="p-mx-2" v-tooltip.top="$t(`qbe.entities.types.${child.attributes.iconCls}`)" />
                 <span @click="$emit('entityChildClicked', child)" :data-test="'entity-' + entity.id">{{ child.text }}</span>
-                <Button icon="fas fa-filter" :class="{ 'qbe-active-filter-icon': fieldHasFilters(child) }" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click="openFiltersDialog(child)" />
+                <Button icon="fas fa-filter" :class="{ 'qbe-active-filter-icon': fieldHasFilters(child) }" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click="openFiltersDialog(child)" :data-test="'child-' + child.id"/>
             </li>
         </ul>
     </div>

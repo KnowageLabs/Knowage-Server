@@ -305,6 +305,6 @@ describe('QBE Simple Table', () => {
 
         wrapper.vm.onRowReorder({ value: reorderedArray })
 
-        expect(wrapper.vm.selectedQuery.fields[0].id).toStrictEqual('it.eng.knowage.inventory.Product:product_name')
+        expect(wrapper.vm.selectedQuery.fields[0].id).toBe('it.eng.knowage.inventory.Product:product_name')
     })
 })
