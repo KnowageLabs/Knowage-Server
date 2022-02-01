@@ -123,6 +123,7 @@ export default defineComponent({
         },
         onDrop(event) {
             var data = JSON.parse(event.dataTransfer.getData('text/plain'))
+            console.log('EVENT DATA TRANSFER:  ', event.dataTransfer)
             this.$emit('entityDropped', data)
         },
         onGroupingChanged(field: iField) {
