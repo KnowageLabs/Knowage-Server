@@ -1,5 +1,5 @@
 <template>
-    <DataTable class="p-datatable-sm kn-table p-m-2 kn-height-full" :value="rows" editMode="cell" responsiveLayout="stack" breakpoint="960px" :scrollable="true" @rowReorder="onRowReorder" @drop="onDrop($event)" @dragover.prevent @dragenter="displayDropzone">
+    <DataTable class="p-datatable-sm kn-table p-m-2 kn-height-full" :value="rows" editMode="cell" responsiveLayout="stack" breakpoint="960px" :scrollable="true" @rowReorder="onRowReorder" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
         <Column :rowReorder="true" :headerStyle="QBESimpleTableDescriptor.headerStyle" />
         <Column v-for="column in QBESimpleTableDescriptor.columns" :key="column.header" :field="column.field" :style="column.style">
             <template #header>
@@ -33,7 +33,7 @@
             <template #body="slotProps">
                 <div class="p-d-flex p-flex-row p-jc-end">
                     <div class="p-d-flex p-flex-row">
-                        <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="toggle($event, slotProps.data, slotProps.index)" />
+                        <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="toggle($event, slotProps.data, slotProps.index)" data-test="menu-toggle" />
                         <Menu ref="menu" :model="menuItems" :popup="true" />
                     </div>
                 </div>
@@ -109,7 +109,7 @@ export default defineComponent({
             if ((field.funct && field.funct !== 'NONE') || (field.type === 'inline.calculated.field' && field.fieldType === 'measure')) {
                 this.menuItems.push({ icon: 'pi pi-filter', label: this.$t('qbe.simpleTable.havings'), command: () => this.openHavingsDialog(field) })
             }
-            this.menuItems.push({ icon: 'pi pi-trash', label: this.$t('common.delete'), command: () => this.rows.splice(index, 1) })
+            this.menuItems.push({ icon: 'pi pi-trash', label: this.$t('common.delete'), command: () => this.deleteColumn(index) })
         },
         onRowReorder(event: any) {
             this.rows = event.value
@@ -129,6 +129,9 @@ export default defineComponent({
             console.log('TEMP: ', field)
             field['funct'] = 'NONE'
             this.$emit('groupingChanged', field)
+        },
+        deleteColumn(index: number) {
+            this.rows.splice(index, 1)
         }
     }
 })

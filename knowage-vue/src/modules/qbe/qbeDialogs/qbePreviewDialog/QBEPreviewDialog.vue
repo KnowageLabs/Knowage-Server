@@ -82,25 +82,20 @@ export default defineComponent({
     },
     methods: {
         loadData() {
-            console.log('QBEPreviewDialog - loadData() - QUERY PREVIEW DATA: ', this.queryPreviewData)
             if (this.queryPreviewData) {
                 this.setPreviewColumns(this.queryPreviewData)
                 this.rows = this.queryPreviewData.rows
             }
-            console.log('QBEPreviewDialog - loadData() - LOADED COLUMNS: ', this.columns)
-            console.log('QBEPreviewDialog - loadData() - LOADED ROWS: ', this.rows)
         },
         setPreviewColumns(data: any) {
             this.columns = []
             for (let i = 1; i < data.metaData?.fields?.length; i++) {
-                console.log('COLUMN: ', data.metaData?.fields[i])
                 this.columns.push(data.metaData?.fields[i])
             }
         },
         loadPagination() {
             this.lazyParams = this.pagination as any
             this.first = this.pagination?.start
-            console.log('LAZY PARAMS: ', this.lazyParams)
         },
         onPage(event: any) {
             this.lazyParams = { paginationStart: event.first, paginationLimit: event.rows, paginationEnd: event.first + event.rows, size: this.lazyParams.size }
@@ -112,7 +107,6 @@ export default defineComponent({
             this.lazyParams = {}
         },
         getFormattedDate(date: any, format: any) {
-            // console.log('DATE: ', date, ', FORMAT: ', format)
             return formatDate(date, format)
         }
     }
