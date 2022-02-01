@@ -21,6 +21,7 @@ class SysDirectoriesUtilsTest {
 
 	private static final String RESOURCE_PATH = "D:\\tmp\\resources";
 	private static final String TENANT_NAME = "DEFAULT_TENANT";
+	private static final String USER_ID = "biadmin";
 
 	@Autowired
 	private SysDirectoriesUtils sysDirectoriesUtils;
@@ -30,7 +31,8 @@ class SysDirectoriesUtilsTest {
 
 		assertEquals(RESOURCE_PATH, sysDirectoriesUtils.getResourcePath().toString());
 		assertEquals(RESOURCE_PATH + File.separator + TENANT_NAME, sysDirectoriesUtils.getTenantPath(TENANT_NAME).toString());
-		assertEquals(RESOURCE_PATH + File.separator + TENANT_NAME + File.separator + "dataPreparation", sysDirectoriesUtils.getDataPreparationPath(TENANT_NAME).toString());
+		assertEquals(RESOURCE_PATH + File.separator + TENANT_NAME + File.separator + "dataPreparation",
+				sysDirectoriesUtils.getDataPreparationPath(TENANT_NAME, USER_ID).toString());
 
 	}
 }
