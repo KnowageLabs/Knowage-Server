@@ -54,12 +54,10 @@ if (header != null && header.equals("Ext")) {
 	
 <script>
 	var sessionExpiredSpagoBIJSFound = false;
-	debugger;
 	try {
 		var currentWindow = window;
 		var parentWindow = parent;
 		function setParentUrl(currentWindow, parentWindow){
-			debugger;
 			if(parentWindow == currentWindow){
 				parentWindow.parent.postMessage({
 					'status': 401
