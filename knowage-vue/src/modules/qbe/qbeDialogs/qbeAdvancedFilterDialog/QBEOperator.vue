@@ -5,7 +5,7 @@
         <div class="p-d-flex p-flex-row">
             <QBEOperand :propNode="node?.childNodes[0]" @selectedChanged="$emit('selectedChanged')"></QBEOperand>
             <div v-if="node">
-                <Dropdown class="kn-material-input" :style="{ maxWidth: '200px' }" v-model="node.value" :options="QBEAdvancedFilterDialogDescriptor.operatorOptions" />
+                <Dropdown class="kn-material-input p-mx-2" :style="{ maxWidth: '200px' }" v-model="node.value" :options="QBEAdvancedFilterDialogDescriptor.operatorOptions" />
             </div>
             <QBEOperand :propNode="node?.childNodes[1]" @selectedChanged="$emit('selectedChanged')"></QBEOperand>
         </div>

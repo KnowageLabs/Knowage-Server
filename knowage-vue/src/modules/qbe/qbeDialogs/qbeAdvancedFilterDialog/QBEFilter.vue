@@ -1,11 +1,11 @@
 <template>
     <!-- <h4>QBE Filter</h4> -->
-    <div class="qbe-filter">
-        <div class="drop-zone" @drop.stop="onDropComplete()" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
+    <div class="qbe-filter" :class="{ 'qbe-filter-detail-selected': selected }">
+        <div class="filter-dropzone" @drop.stop="onDropComplete()" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
         <div class="kn-draggable" draggable="true" @dragstart="onDragStart">
-            <QBEFilterDetail :details="node?.details" @click="select(node)" :class="{ 'qbe-filter-detail-selected': selected }"></QBEFilterDetail>
+            <QBEFilterDetail :details="node?.details" @click="select(node)"></QBEFilterDetail>
         </div>
-        <div class="drop-zone" @drop.stop="onDropMove()" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
+        <div class="filter-dropzone" @drop.stop="onDropMove()" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
     </div>
 </template>
 
@@ -81,14 +81,21 @@ export default defineComponent({
 
 <style lang="scss">
 .qbe-filter {
-    background-color: #c2c2c2;
+    background-color: #d9d9d9;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 2px 1px -1px rgb(0 0 0 / 12%);
+    display: flex;
+    flex-direction: row;
+    &:hover {
+        background-color: #b6d2ec;
+    }
 }
 
-.qbe-filter:hover {
-    background-color: #879ed1;
+.filter-dropzone {
+    width: 25px;
+    background-color: #aec8e0;
 }
 
 .qbe-filter-detail-selected {
-    background-color: green;
+    background-color: #aec8e0;
 }
 </style>

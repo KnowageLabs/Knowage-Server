@@ -1,7 +1,7 @@
 <template>
     <!-- <h4>QBE Group</h4> -->
     <!-- {{ node }} -->
-    <div style="border: 1px solid green;">
+    <div class="filter-group-container">
         <div class="drop-zone" @drop.stop="onDropComplete($event)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
         <div class="kn-draggable" draggable="true" @dragstart="onDragStart">
             <QBEOperator :propNode="node.childNodes[0]" @selectedChanged="$emit('selectedChanged')"></QBEOperator>
@@ -79,9 +79,8 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
-.drop-zone {
-    height: 25px;
-    background-color: purple;
+<style lang="scss" scoped>
+.filter-group-container {
+    border: 1px solid #a9c3db;
 }
 </style>
