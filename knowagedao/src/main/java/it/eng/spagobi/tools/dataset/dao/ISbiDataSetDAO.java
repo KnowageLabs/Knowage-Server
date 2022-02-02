@@ -61,34 +61,30 @@ public interface ISbiDataSetDAO extends ISpagoBIDao {
 		return list(offset, fetchSize, null, null, false, Collections.EMPTY_LIST, null);
 	}
 
-	public List<SbiDataSet> list(int offset, int fetchSize, String owner, String sortByColumn, boolean reverse, List<Integer> tagIds,
-			List<SbiDataSetFilter> filter);
+	public List<SbiDataSet> list(int offset, int fetchSize, String owner, String sortByColumn, boolean reverse, List<Integer> tagIds, List<SbiDataSetFilter> filter);
 
-	public List<SbiDataSet> workspaceList(int offset, int fetchSize, String owner, boolean includeOwned, boolean includePublic, String scope, String type,
-			Set<Domain> categoryList, String implementation, boolean showDerivedDatasets);
+	public List<SbiDataSet> workspaceList(int offset, int fetchSize, String owner, boolean includeOwned, boolean includePublic, String scope, String type, Set<Domain> categoryList, String implementation, boolean showDerivedDatasets);
 
 	public default List<SbiDataSet> workspaceList(int offset, int fetchSize) {
 		return workspaceList(offset, fetchSize, null, false, false, null, null, null, null, true);
 	}
 
 	public default List<SbiDataSet> loadCkanDataSets(int offset, int fetchSize, UserProfile user) {
-		return workspaceList(offset, fetchSize, user.getUserId().toString(), true, false, null, "USER", UserUtilities.getDataSetCategoriesByUser(user),
-				"SbiCkanDataSet", false);
+		return workspaceList(offset, fetchSize, user.getUserId().toString(), true, false, null, "USER", UserUtilities.getDataSetCategoriesByUser(user), "SbiCkanDataSet", false);
 	}
 
 	public default List<SbiDataSet> loadDataSetsOwnedByUser(int offset, int fetchSize, UserProfile user, boolean showDerivedDatasets) {
 		return loadDataSetsByOwner(offset, fetchSize, user, true, false, showDerivedDatasets);
 	}
 
-	public default List<SbiDataSet> loadDataSetsByOwner(int offset, int fetchSize, UserProfile user, boolean includeOwned, boolean includePublic,
-			boolean showDerivedDatasets) {
-		return workspaceList(offset, fetchSize, user.getUserId().toString(), includeOwned, includePublic, null, null,
-				UserUtilities.getDataSetCategoriesByUser(user), null, showDerivedDatasets);
+	public default List<SbiDataSet> loadDataSetsByOwner(int offset, int fetchSize, UserProfile user, boolean includeOwned, boolean includePublic, boolean showDerivedDatasets) {
+		return workspaceList(offset, fetchSize, user.getUserId().toString(), includeOwned, includePublic, null, null, UserUtilities.getDataSetCategoriesByUser(user), null,
+				showDerivedDatasets);
 	}
 
 	public default List<SbiDataSet> loadDatasetsSharedWithUser(int offset, int fetchSize, UserProfile profile, boolean showDerivedDataset) {
-		return workspaceList(offset, fetchSize, profile.getUserId().toString(), false, false, "PUBLIC", "USER",
-				UserUtilities.getDataSetCategoriesByUser(profile), null, showDerivedDataset);
+		return workspaceList(offset, fetchSize, profile.getUserId().toString(), false, false, "PUBLIC", "USER", UserUtilities.getDataSetCategoriesByUser(profile), null,
+				showDerivedDataset);
 	}
 
 	public default List<SbiDataSet> loadEnterpriseDataSets(int offset, int fetchSize, UserProfile profile) {
@@ -107,8 +103,6 @@ public interface ISbiDataSetDAO extends ISpagoBIDao {
 	}
 
 	public List<SbiDataSet> loadMyDataSets(int offset, int fetchSize, UserProfile userProfile);
-
-	public SbiDataSet loadMyDataSetByLabel(int offset, int fetchSize, UserProfile userProfile, String label);
 
 	public static SbiDataSetFilter createFilter(String columnFilter, String typeFilter, String valueFilter) {
 		SbiDataSetFilter daoFilter = new SbiDataSetFilter();

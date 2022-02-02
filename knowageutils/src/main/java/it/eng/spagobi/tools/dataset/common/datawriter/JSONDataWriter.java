@@ -142,21 +142,6 @@ public class JSONDataWriter implements IDataWriter {
 		}
 	}
 
-	public Object write(IDataStore dataStore, boolean dataprep) throws RuntimeException {
-		if (writeDataOnly) {
-			return writeOnlyData(dataStore);
-		} else {
-			if (dataStore instanceof SolrDataStore) {
-				return write((SolrDataStore) dataStore);
-			} else {
-				if (dataprep)
-					return writeDataAndMetaDataPrep(dataStore);
-				else
-					return writeDataAndMeta(dataStore);
-			}
-		}
-	}
-
 	private Object write(SolrDataStore dataStore) throws RuntimeException {
 		JSONObject result;
 		try {
@@ -333,114 +318,6 @@ public class JSONDataWriter implements IDataWriter {
 			}
 
 			result.put(METADATA, metadata);
-
-			propertyRawValue = dataStore.getMetaData().getProperty("resultNumber");
-			if (propertyRawValue == null) {
-				propertyRawValue = new Integer(1);
-			}
-			Assert.assertNotNull(propertyRawValue, "DataStore property [resultNumber] cannot be null");
-			Assert.assertTrue(propertyRawValue instanceof Integer, "DataStore property [resultNumber] must be of type [Integer]");
-			resultNumber = ((Integer) propertyRawValue).intValue();
-			Assert.assertTrue(resultNumber >= 0,
-					"DataStore property [resultNumber] cannot be equal to [" + resultNumber + "]. It must be greater or equal to zero");
-			result.put(TOTAL_PROPERTY, resultNumber);
-
-			recordsJSON = new JSONArray();
-			result.put(ROOT, recordsJSON);
-
-			// records
-			recNo = 0;
-			Iterator records = dataStore.iterator();
-			while (records.hasNext()) {
-				int recordSize = -1;
-				record = (IRecord) records.next();
-				recordJSON = new JSONObject();
-				if (this.putIDs) {
-					recordJSON.put("id", ++recNo);
-				}
-
-				if (dataStore.getMetaData().getProperty("isSparse") != null) {
-					recordSize = record.getFields().size();
-				}
-
-				for (int i = 0, j = 0; i < dataStore.getMetaData().getFieldCount(); i++) {
-					IFieldMetaData fieldMetaData = dataStore.getMetaData().getFieldMeta(i);
-
-					propertyRawValue = fieldMetaData.getProperty("visible");
-					if (propertyRawValue != null && (propertyRawValue instanceof Boolean) && ((Boolean) propertyRawValue).booleanValue() == false) {
-						continue;
-					}
-
-					String fieldHeader = this.getFieldHeader(fieldMetaData);
-					if ("sbicache_row_id".equalsIgnoreCase(fieldHeader)) {
-						continue;
-					}
-
-					int fieldPosition = i;
-					if (recordSize < 0 || fieldPosition < recordSize) {
-						field = record.getFieldAt(fieldPosition);
-					} else {
-						field = new Field("");
-					}
-
-					String fieldName = adjust ? fieldMetaData.getName() : getFieldName(fieldMetaData, j++);
-					Object fieldValue = getFieldValue(field, fieldMetaData);
-
-					try {
-						if (oracle.jdbc.OracleClob.class.isAssignableFrom(fieldMetaData.getType())
-								|| oracle.sql.CLOB.class.isAssignableFrom(fieldMetaData.getType())) { // Can we add a limit?
-							if (field.getValue() != null) {
-								Reader r = ((Clob) field.getValue()).getCharacterStream();
-								StringBuffer buffer = new StringBuffer();
-								int ch;
-								while ((ch = r.read()) != -1) {
-									buffer.append("" + (char) ch);
-								}
-								fieldValue = buffer.toString();
-							}
-						} // provided
-					} catch (NoClassDefFoundError t) {
-						logger.debug("Class not found error", t);
-					} catch (Exception e) {
-						logger.error("An unpredicted error occurred at recno [" + recNo + "] while serializing dataStore", e);
-						throw new SpagoBIRuntimeException("An unpredicted error occurred at recno [" + recNo + "] while serializing dataStore", e);
-					}
-
-					if (fieldValue == null) {
-						recordJSON.put(fieldName, "");
-					} else {
-						recordJSON.put(fieldName, fieldValue);
-					}
-				}
-
-				recordsJSON.put(recordJSON);
-
-			}
-
-		} catch (Throwable t) {
-			throw new RuntimeException("An unpredicted error occurred at recno [" + recNo + "] while serializing dataStore", t);
-		} finally {
-
-		}
-
-		return result;
-	}
-
-	public JSONObject writeDataAndMetaDataPrep(IDataStore dataStore) throws RuntimeException {
-		JSONObject result = null;
-		JSONObject metadata;
-		IField field;
-		IRecord record;
-		JSONObject recordJSON;
-		int recNo = 0;
-		JSONArray recordsJSON;
-		int resultNumber;
-		Object propertyRawValue;
-
-		Assert.assertNotNull(dataStore, "Object to be serialized cannot be null");
-
-		try {
-			result = new JSONObject();
 
 			propertyRawValue = dataStore.getMetaData().getProperty("resultNumber");
 			if (propertyRawValue == null) {

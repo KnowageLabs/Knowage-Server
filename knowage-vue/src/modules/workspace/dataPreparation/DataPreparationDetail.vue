@@ -87,7 +87,7 @@
 
                 <Column v-for="(col, colIndex) in columns" :field="col.header" :key="colIndex" :style="{ width: '200px' }">
                     <template #header>
-                        <Button :class="descriptor.css.buttonClassHeader" @click="toggle($event, 'opType-' + colIndex)">
+                        <Button v-if="col.fieldType" :class="descriptor.css.buttonClassHeader" @click="toggle($event, 'opType-' + colIndex)">
                             <i :class="descriptor.roles.filter((x) => x.code === col.fieldType)[0].icon"></i>
                         </Button>
                         <OverlayPanel :ref="'opType-' + colIndex" :popup="true">
@@ -180,38 +180,15 @@ export default defineComponent({
             await this.initWebsocket()
 
             let father = this
-            this.client.onConnect = function (frame) {
+            this.client.onConnect = (frame)=> {
                 // Do something, all subscribes must be done is this callback
                 // This is needed because this will be executed after a (re)connect
                 console.log(frame);
 
-                this.subscribe("/user/queue/preview", function(message) {
+                this.client.subscribe("/user/queue/preview",(message)=> {
                     // called when the client receives a STOMP message from the server
                     if (message.body) {
-                        let response = JSON.parse(message.body);
-                        // set metadata
-                        let metadata = response.metadata.columns
-                        father.columns = []
-                        for (let i = 0; i < metadata.length; i++) {
-                            let obj = {} as IDataPreparationColumn
-                            obj.Type = metadata[i].type
-                            obj.disabled = false
-                            obj.fieldAlias = metadata[i].alias
-                            obj.fieldType = metadata[i].fieldType
-                            obj.header = metadata[i].name
-                            father.columns.push(obj)
-                        }
-                        //set data rows
-                        father.datasetData = []
-                        response.rows.forEach((row) => {
-                            let obj = {}
-                            for (let i = 0; i < row.length; i++) {
-                                let colHeader = father.getColHeader(metadata, i)
-                                obj[colHeader] = row[i];
-                            }
-                            father.datasetData.push(obj)
-                            father.loading = false
-                        })
+                     this.updateTable(message.body)
                     } else {
                         console.log("got empty message");
                     }
@@ -220,7 +197,7 @@ export default defineComponent({
                     "dsLabel": father.dataset.label
                 });
                 
-                this.subscribe("/user/queue/error", function(error) {
+                this.client.subscribe("/user/queue/error", function(error) {
                     // called when the client receives a STOMP message from the server
                     if (error.body) {
                         let message = JSON.parse(error.body)
@@ -410,6 +387,32 @@ export default defineComponent({
         },
         switchEditMode(col) {
             col.edit = !col.edit
+        },
+        updateTable(message) {
+               let response = JSON.parse(message);
+                        // set metadata
+                        let metadata = response.metadata.columns
+                        this.columns = []
+                        for (let i = 0; i < metadata.length; i++) {
+                            let obj = {} as IDataPreparationColumn
+                            obj.Type = metadata[i].type
+                            obj.disabled = false
+                            obj.fieldAlias = metadata[i].alias
+                            obj.fieldType = metadata[i].fieldType
+                            obj.header = metadata[i].name
+                            this.columns.push(obj)
+                        }
+                        //set data rows
+                        this.datasetData = []
+                        response.rows.forEach((row) => {
+                            let obj = {}
+                            for (let i = 0; i < row.length; i++) {
+                                let colHeader = this.getColHeader(metadata, i)
+                                obj[colHeader] = row[i];
+                            }
+                            this.datasetData.push(obj)
+                            this.loading = false
+                        })
         }
     }
 })

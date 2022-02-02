@@ -1876,7 +1876,7 @@ public class ManageDataSetsForREST {
 
 			try {
 				JSONDataWriter dataSetWriter = new JSONDataWriter();
-				dataSetJSON = (JSONObject) dataSetWriter.write(dataStore, false);
+				dataSetJSON = (JSONObject) dataSetWriter.write(dataStore);
 				if (dataSetJSON == null) {
 					throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to read serialized resultset");
 				}
