@@ -101,16 +101,11 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 	}
 
 	public SourceBean getTemplateAsSourceBean() {
-		String modelName = getAttributeAsString(EngineConstants.MODEL_NAME);
 		try {
 			SourceBean qbeSB = new SourceBean("QBE");
-			SourceBean datamartSB = new SourceBean("DATAMART");
-			datamartSB.setAttribute("name", modelName);
-			qbeSB.setAttribute(datamartSB);
 			return qbeSB;
 		} catch (SourceBeanException e) {
-			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(ENGINE_NAME,
-					"Impossible to create a new template for the model " + modelName, e);
+			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(ENGINE_NAME, "Impossible to create a new empty template", e);
 			engineException.setDescription("Impossible to parse template's content:  " + e.getMessage());
 			engineException.addHint("Check if the document's template is a well formed xml file");
 			throw engineException;
