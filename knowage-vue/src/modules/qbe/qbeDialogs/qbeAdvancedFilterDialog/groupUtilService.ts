@@ -1,7 +1,8 @@
 const filterTreeFactoryService = require('./filterTreeFactoryService')
 const treeService = require('./treeService')
 const operatorUtilService = require('./operatorUtilService')
-const deepEqual = require('deep-equal')
+// const deepEqual = require('deep-equal')
+const deepcopy = require('deepcopy');
 
 const defaultOperator = filterTreeFactoryService.operator('AND')
 
@@ -12,9 +13,9 @@ export function createGroupChildExpression(filterTree, operands) {
 
     for (var i = 1; i < operands.length; i++) {
 
-        var leftOperand = { ...getLeftOperand(operands, i) };
-        var operator = { ...(getOperator(filterTree, operands[i])) };
-        var rightOperand = { ...(getRightOperand(filterTree, operands, i)) };
+        var leftOperand = deepcopy(getLeftOperand(operands, i));
+        var operator = deepcopy(getOperator(filterTree, operands[i]));
+        var rightOperand = deepcopy(getRightOperand(filterTree, operands, i));
 
         var expression = filterTreeFactoryService.expression(leftOperand, operator, rightOperand);
 
@@ -23,7 +24,16 @@ export function createGroupChildExpression(filterTree, operands) {
             currentNode = childExpression;
         } else {
             // angular.copy(expression,currentNode);
-            currentNode = JSON.parse(JSON.stringify(expression))
+            // currentNode = deepcopy(expression)
+
+            // MY CODE BEGIN
+            currentNode.childNodes = expression.childNodes
+            currentNode.value = expression.value
+            currentNode.type = expression.type
+
+            if (!expression.details) delete currentNode.details
+            else currentNode.details = expression.details
+            // MY CODE END
         }
         currentNode = currentNode.childNodes[1];
 
@@ -36,14 +46,14 @@ export function createGroupChildExpression(filterTree, operands) {
 export function createGroup(filterTree, operands) {
     console.log("groupUtilService - createGroupGroupUtilService() - filterTree ", filterTree, ', operands ', operands)
     const childExpression = createGroupChildExpression(filterTree, operands)
-    return filterTreeFactoryService.group(JSON.parse(JSON.stringify(childExpression)));
+    return filterTreeFactoryService.group(deepcopy(childExpression));
 }
 
 export function getLastOperand(group) {
     console.log("groupUtilService - getLastOperand() - group ", group)
     let lastOperand;
     treeService.traverseDF(group, function (node) {
-        if (!operatorUtilService.isOperator(node) && node !== group && deepEqual(getGroup(group, node), group)) lastOperand = node;
+        if (!operatorUtilService.isOperator(node) && node !== group && getGroup(group, node) === group) lastOperand = node;
     })
 
     return lastOperand;

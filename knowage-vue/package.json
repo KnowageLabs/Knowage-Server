@@ -22,6 +22,7 @@
         "crypto": "^1.0.1",
         "crypto-js": "^4.0.0",
         "deep-equal": "^2.0.5",
+        "deepcopy": "^2.1.0",
         "js-base64": "3.6.1",
         "mitt": "^2.1.0",
         "moment": "2.29.1",

@@ -307,47 +307,4 @@ describe('QBE Simple Table', () => {
 
         expect(wrapper.vm.selectedQuery.fields[0].id).toBe('it.eng.knowage.inventory.Product:product_name')
     })
-
-    it('adds a field to the list when dragging a field in the list', () => {
-        const wrapper = factory(JSON.parse(JSON.stringify(mockedQuery)))
-        const event = {
-            dataTransfer: {
-                data: {},
-                setData(tempData) {
-                    this.data = tempData
-                },
-                getData() {
-                    return this.data
-                }
-            }
-        }
-        event.dataTransfer.setData(
-            'text',
-            JSON.stringify({
-                id: 'it.eng.knowage.inventory.Product:brand_name',
-                alias: 'Brand name',
-                type: 'datamartField',
-                fieldType: 'attribute',
-                entity: 'Product',
-                field: 'Brand name',
-                funct: 'NONE',
-                color: '#F46036',
-                group: true,
-                order: 'NONE',
-                include: true,
-                inUse: true,
-                visible: true,
-                iconCls: 'attribute',
-                dataType: 'java.lang.String',
-                format: '#,###',
-                longDescription: 'Product : Brand name',
-                distinct: false,
-                leaf: true
-            })
-        )
-        wrapper.vm.onDrop(event)
-
-        expect(wrapper.emitted()).toHaveProperty('entityDropped')
-        expect(wrapper.emitted()['entityDropped'][0][0]).toStrictEqual({})
-    })
 })

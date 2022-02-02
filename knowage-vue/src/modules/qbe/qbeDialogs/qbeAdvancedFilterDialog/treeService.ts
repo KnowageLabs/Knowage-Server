@@ -2,6 +2,7 @@ const deepEqual = require('deep-equal')
 
 let filterTree = {}
 const childProperty = 'childNodes';
+const deepcopy = require('deepcopy');
 
 export function getFilterTree() {
     console.log(' --- treeService - getFilterTree()')
@@ -10,14 +11,14 @@ export function getFilterTree() {
 
 export function setFilterTree(expression) {
     console.log(' --- treeService - setFilterTree() - expression', expression)
-    filterTree = JSON.parse(JSON.stringify(expression))
+    filterTree = deepcopy(expression)
 }
 
 export function contains(tree, nodeToFind) {
     console.log(' --- treeService - contains() - tree', tree, ', nodeToFind ', nodeToFind)
     let contains = false;
     traverseDF(tree, function (node) {
-        if (deepEqual(node, nodeToFind)) {
+        if (node === nodeToFind) {
             contains = true
         }
     })
@@ -52,14 +53,14 @@ export function move(tree, source, destination) {
     nodeExistingCheck(tree, destination);
 
     // angular.copy(source,destination)
-    destination = JSON.parse(JSON.stringify(source))
+    destination = deepcopy(source)
 }
 
 export function swapNodes(node1, node2) {
     console.log(' --- treeService - swapNodes() - node1', node1, ', node2 ', node2)
-    var temp = JSON.parse(JSON.stringify(node1))
-    node1 = JSON.parse(JSON.stringify(node2))
-    node2 = JSON.parse(JSON.stringify(temp))
+    var temp = deepcopy(node1)
+    node1 = deepcopy(node2)
+    node2 = deepcopy(temp)
 
 }
 
@@ -84,7 +85,7 @@ export function removeNode(tree, nodeToRemove) {
 export function traverseDF(tree, callback) {
 
     (function recurse(currentNode) {
-        // console.log("CURRENT NODE: ", currentNode)
+        console.log(" bbb - CURRENT NODE: ", currentNode)
         callback(currentNode);
         for (var i = 0; i < currentNode[childProperty].length; i++) {
             recurse(currentNode[childProperty][i]);
@@ -97,8 +98,26 @@ export function traverseDF(tree, callback) {
 export function replace(tree, expression, node) {
     console.log(' --- treeService - replace() - tree', tree, ', expression ', expression, ', node ', node)
     nodeExistingCheck(tree, node);
+
+    // MY START
+    const tempNode = find(tree, node)
+    console.log(' aaa - FOUND NODE: ', tempNode)
+    console.log(' aaa - experssion: ', expression)
+    tempNode.childNodes = expression.childNodes
+    tempNode.value = expression.value
+    tempNode.type = expression.type
+
+    if (!expression.details) delete tempNode.details
+    else tempNode.details = expression.details
+
+
+    // if (expression.details) {
+    //     tempNode.details = expression.details
+    // }
+    // MY END
+
     // angular.copy(expression, node)
-    node = JSON.parse(JSON.stringify(expression))
+    // node = deepcopy(expression)
 }
 
 export function getParent(tree, child) {

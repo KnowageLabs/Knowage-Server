@@ -6,6 +6,7 @@ const groupUtilService = require('./groupUtilService')
 
 const deepEqual = require('deep-equal')
 const defaultOperator = filterTreeFactoryService.operator('AND')
+const deepcopy = require('deepcopy');
 
 export function swap(filterTree, operand1, operand2) {
     console.log("advancedFilterService - swap() - filterTree ", filterTree, ', operand1 ', operand1, ', operand2 ', operand2)
@@ -14,7 +15,7 @@ export function swap(filterTree, operand1, operand2) {
 
 export function move(filterTree, operand1, operand2) {
     console.log("advancedFilterService - move() - filterTree ", filterTree, ', operand1 ', operand1, ', operand2 ', operand2)
-    var operand2Copy = JSON.parse(JSON.stringify(operand2))
+    var operand2Copy = deepcopy(operand2)
     operandUtilService.insertAfter(filterTree, operand1, getOperandOrDefaultOperator(filterTree, treeService.find(filterTree, operand1)), treeService.find(filterTree, operand2Copy))
 
     if (treeService.contains(filterTree, operand1)) {
@@ -29,7 +30,7 @@ export function move(filterTree, operand1, operand2) {
 
 
         // angular.copy(temp, operand2)
-        operand2 = JSON.parse(JSON.stringify(temp))
+        operand2 = deepcopy(temp)
     }
 
 
@@ -54,13 +55,16 @@ export function group(filterTree, operands) {
     adjoinOperands(filterTree, operands);
     insertGroup(filterTree, group, operands);
     removeSelected(filterTree, operands, group);
-    console.log("FOR BREAKPOIN");
+    console.log("FOR BREAKPOIN", filterTree);
+    treeService.setFilterTree(filterTree)
 }
 
 export function removeSelected(filterTree, operands, group) {
     console.log("advancedFilterService - removeSelected() - filterTree ", filterTree, ', operands ', operands, ', group ', group)
     for (var i = 0; i < operands.length - 1; i++) {
         treeService.traverseDF(filterTree, function (node) {
+            console.log(" aaa - test 1 ", deepEqual(operands[i], node))
+            console.log(" aaa - test 2 ", !treeService.contains(treeService.find(filterTree, group), node))
             if (deepEqual(operands[i], node) && !treeService.contains(treeService.find(filterTree, group), node)) {
                 console.log(">>>>>>>>>>>>>>>>>>> ENTERED: tree - ", filterTree)
                 operandUtilService.remove(filterTree, node);
@@ -71,7 +75,7 @@ export function removeSelected(filterTree, operands, group) {
 
 export function insertGroup(filterTree, group, operands) {
     console.log("advancedFilterService - insertGroup() - filterTree ", filterTree, ', group ', group, ', operands ', operands)
-    var operandsCopy = JSON.parse(JSON.stringify(operands))
+    var operandsCopy = deepcopy(operands)
 
     replaceElement(filterTree, group, operands[operands.length - 1])
 
@@ -91,7 +95,8 @@ export function createGroup(filterTree, operands) {
 
 export function adjoinOperands(filterTree, operands) {
     console.log("advancedFilterService - adjoinOperands() - filterTree ", filterTree, ', operands ', operands)
-    var operandsCopy = JSON.parse(JSON.stringify(operands))
+    var operandsCopy = deepcopy(operands)
+    // console.log(' aaa - Operands copy', operandsCopy)
     for (var i = 1; i < operands.length; i++) {
         move(filterTree, treeService.find(filterTree, operands[i]), treeService.find(filterTree, operands[i - 1]));
 
@@ -109,7 +114,7 @@ export function adjoinOperands(filterTree, operands) {
 
 export function ungroup(filterTree, group) {
     console.log("advancedFilterService - ungroup() - filterTree ", filterTree, ', group ', group)
-    var groupCopy = { ...group }
+    var groupCopy = deepcopy(group)
 
     while (groupUtilService.getLastOperand(groupCopy)) {
         move(filterTree, groupUtilService.getLastOperand(groupCopy), groupCopy)
