@@ -109,6 +109,22 @@
                 }
             ]
         },
+        "java.sql.Timestamp": {
+            "values": [
+                {
+                    "code": "string",
+                    "label": "java.lang.String"
+                }
+            ]
+        },
+        "oracle.sql.TIMESTAMP": {
+            "values": [
+                {
+                    "code": "string",
+                    "label": "java.lang.String"
+                }
+            ]
+        },
         "java.util.String": {
             "icon": "far fa-calendar-alt",
             "values": [
