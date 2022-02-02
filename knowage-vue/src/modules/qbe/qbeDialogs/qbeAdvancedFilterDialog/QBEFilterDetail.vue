@@ -1,9 +1,9 @@
 <template>
-    <div class="md-list-item-text">
-        <h4>{{ details?.leftOperandAlias }}</h4>
-        <p>
-            <span>{{ details?.operator.toLowerCase() + ' ' }}</span
-            ><span>{{ details?.rightOperandValue.toLowerCase() }}</span>
+    <div class="filter-content p-m-2">
+        <b class="kn-truncated" v-tooltip.bottom="details?.leftOperandAlias">{{ details?.leftOperandAlias }}</b>
+        <p class="kn-truncated" v-tooltip.bottom="details?.rightOperandValue">
+            <b>{{ details?.operator.toLowerCase() + ' ' }}</b>
+            <small>{{ details?.rightOperandValue.toLowerCase() }}</small>
         </p>
     </div>
 </template>
@@ -22,3 +22,11 @@ export default defineComponent({
     methods: {}
 })
 </script>
+
+<style lang="scss">
+.filter-content {
+    max-width: 200px;
+    min-width: 100px;
+    height: 50px;
+}
+</style>

@@ -1,11 +1,11 @@
 <template>
-    <div>
+    <div class="p-m-2">
         <!-- <h4>QBE Operator</h4> -->
         <!-- <operand node="node.childNodes[0]" layout="row" layout-align="center center"></operand> -->
-        <div class="p-d-flex p-flex-row">
+        <div class="p-d-flex p-flex-row p-ai-center">
             <QBEOperand :propNode="node?.childNodes[0]" @selectedChanged="$emit('selectedChanged')" @treeUpdated="$emit('treeUpdated')"></QBEOperand>
             <div v-if="node">
-                <Dropdown class="kn-material-input" :style="{ maxWidth: '200px' }" v-model="node.value" :options="QBEAdvancedFilterDialogDescriptor.operatorOptions" />
+                <Dropdown class="kn-material-input p-mx-2" :style="{ maxWidth: '200px' }" v-model="node.value" :options="QBEAdvancedFilterDialogDescriptor.operatorOptions" />
             </div>
             <QBEOperand :propNode="node?.childNodes[1]" @selectedChanged="$emit('selectedChanged')" @treeUpdated="$emit('treeUpdated')"></QBEOperand>
         </div>
