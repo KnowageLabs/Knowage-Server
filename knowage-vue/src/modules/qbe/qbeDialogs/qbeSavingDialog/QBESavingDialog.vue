@@ -111,6 +111,7 @@ export default defineComponent({
                     this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
                     // TODO: dodati sta se radi nakon save-a
                     this.selectedDataset.id ? this.$emit('updated') : this.$emit('created', response)
+                    this.$emit('close')
                 })
                 .catch()
         },
