@@ -106,7 +106,11 @@ export function replace(tree, expression, node) {
     tempNode.childNodes = expression.childNodes
     tempNode.value = expression.value
     tempNode.type = expression.type
+
     if (!expression.details) delete tempNode.details
+    else tempNode.details = expression.details
+
+
     // if (expression.details) {
     //     tempNode.details = expression.details
     // }

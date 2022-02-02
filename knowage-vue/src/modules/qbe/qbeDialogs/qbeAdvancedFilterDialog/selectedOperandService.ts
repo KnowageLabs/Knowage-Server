@@ -13,6 +13,7 @@ export function getSelected() {
 export function add(operand) {
     console.log("selectedOperandService - add() - operand ", operand)
     selected.push(operand)
+    console.log("SELECTED CHANGED: ", selected)
 }
 
 export function contains(operand) {
@@ -38,6 +39,7 @@ export function remove(operand) {
             selected.splice(i, 1)
         }
     }
+    console.log("SELECTED CHANGED: ", selected)
 }
 
 export function addOrRemove(operand) {
@@ -54,6 +56,7 @@ export function addOrRemove(operand) {
 export function unSelectAll() {
     console.log("selectedOperandService - unSelectAll()")
     selected.length = 0;
+    console.log("SELECTED CHANGED: ", selected)
 }
 
 export function isSingleGroupSelected() {
