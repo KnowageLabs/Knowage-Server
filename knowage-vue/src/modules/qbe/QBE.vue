@@ -236,8 +236,8 @@ export default defineComponent({
         async loadDataset() {
             // HARDCODED Dataset label/name
             // console.log('datasetLabel', this.datasetLabel)
-            // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
+                // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
                 if (this.qbe && this.qbe.qbeJSONQuery) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
@@ -248,9 +248,15 @@ export default defineComponent({
             this.selectedQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
         },
         async initializeQBE() {
-            // await this.$http.get(process.env.VUE_APP_QBE_PATH + `start-qbe`).then((response: AxiosResponse<any>) => {
-            //     this.qbeId = response.data
-            // })
+            // await this.$http
+            //     .get(process.env.VUE_APP_QBE_PATH + `start-qbe`, {
+            //         headers: {
+            //             Authorization: 'Direct eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGVtb191c2VyIiwiZXhwIjoxNjQzODQzMDg0fQ.JDSoutSGxqgkviTwSfe9aZ2TMFaefNbrjAIpmoqZhMo'
+            //         }
+            //     })
+            //     .then((response: AxiosResponse<any>) => {
+            //         this.qbeId = response.data
+            //     })
             console.log('LOADED ID: ', this.id)
         },
         async loadCustomizedDatasetFunctions() {

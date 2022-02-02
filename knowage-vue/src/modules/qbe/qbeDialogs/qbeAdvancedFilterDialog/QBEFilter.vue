@@ -28,8 +28,11 @@ export default defineComponent({
         }
     },
     watch: {
-        propNode() {
-            this.loadNode()
+        propNode: {
+            handler() {
+                this.loadNode()
+            },
+            deep: true
         }
     },
     async created() {

@@ -22,14 +22,18 @@ export default defineComponent({
     name: 'qbe-group',
     components: {},
     props: { propNode: { type: Object } },
+    emits: ['selectedChanged', 'treeUpdated'],
     data() {
         return {
             node: {} as any
         }
     },
     watch: {
-        propNode() {
-            this.loadNode()
+        propNode: {
+            handler() {
+                this.loadNode()
+            },
+            deep: true
         }
     },
     async created() {
@@ -50,6 +54,7 @@ export default defineComponent({
         select(node) {
             console.log('GROUP CLICKED!')
             addOrRemove(node)
+            this.$emit('selectedChanged')
         },
         isSelected() {
             return contains(this.node)
@@ -67,12 +72,16 @@ export default defineComponent({
                 console.log('SELECTED NODE: ', this.node)
                 console.log('FILTER TREE: ', getFilterTree())
                 swap(getFilterTree(), eventData, this.node)
+                this.$emit('treeUpdated')
+                console.log('TREE AFTER SWAP: ', getFilterTree())
             }
         },
         onDropMove(event) {
             if (isMovable(event.dataTransfer.getData('text/plain'))) {
                 if (!deepEqual(event.dataTransfer.getData('text/plain'), this.node)) {
                     move(getFilterTree(), event.dataTransfer.getData('text/plain'), this.node)
+                    this.$emit('treeUpdated')
+                    console.log('TREE AFTER MOVE: ', getFilterTree())
                 }
             }
         }

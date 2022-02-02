@@ -11,6 +11,7 @@ const deepcopy = require('deepcopy');
 export function swap(filterTree, operand1, operand2) {
     console.log("advancedFilterService - swap() - filterTree ", filterTree, ', operand1 ', operand1, ', operand2 ', operand2)
     operandUtilService.swapOperands(filterTree, treeService.find(filterTree, operand1), treeService.find(filterTree, operand2));
+    treeService.setFilterTree(filterTree)
 }
 
 export function move(filterTree, operand1, operand2) {
@@ -30,10 +31,16 @@ export function move(filterTree, operand1, operand2) {
 
 
         // angular.copy(temp, operand2)
-        operand2 = deepcopy(temp)
+        // operand2 = deepcopy(temp)
+        operand2.childNodes = temp.childNodes
+        operand2.value = temp.value
+        operand2.type = temp.type
+
+        if (!temp.details) delete operand2.details
+        else operand2.details = temp.details
     }
 
-
+    treeService.setFilterTree(filterTree)
 
 }
 
@@ -122,7 +129,7 @@ export function ungroup(filterTree, group) {
     }
 
     operandUtilService.remove(filterTree, treeService.find(filterTree, groupCopy))
-
+    treeService.setFilterTree(filterTree)
 
 }
 

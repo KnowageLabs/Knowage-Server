@@ -14,8 +14,10 @@
         </div>
 
         {{ sel() }}
+        <hr />
+        {{ root }}
 
-        <QBEOperator v-if="expression" :propNode="root" @selectedChanged="onSelectedChanged"></QBEOperator>
+        <QBEOperator v-if="expression" :propNode="root" @selectedChanged="onSelectedChanged" @treeUpdated="onTreeUpdated"></QBEOperator>
 
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
@@ -27,8 +29,8 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { iQuery, iFilter } from '../../QBE'
-import { getFilterTree, setFilterTree } from './treeService'
-import { getSelectedCount, isSingleGroupSelected, getSelected, unSelectAll } from './selectedOperandService'
+import * as treeService from './treeService'
+import * as selectedOperandService from './selectedOperandService'
 import * as advancedFilterservice from './advancedFilterService'
 import Dialog from 'primevue/dialog'
 import QBEAdvancedFilterDialogDescriptor from './QBEAdvancedFilterDialogDescriptor.json'
@@ -47,9 +49,9 @@ export default defineComponent({
             root: {},
             selectedCount: 0,
             singleGroupSelected: false,
-            getSelectedCount,
-            isSingleGroupSelected,
-            sel: getSelected
+            getSelectedCount: selectedOperandService.getSelectedCount,
+            isSingleGroupSelected: selectedOperandService.isSingleGroupSelected,
+            sel: selectedOperandService.getSelected
         }
     },
     watch: {
@@ -67,9 +69,9 @@ export default defineComponent({
                 this.filters = this.query.filters ? [...this.query.filters] : []
             }
 
-            setFilterTree(this.expression)
-            this.root = getFilterTree()
-            console.log('LOADED FILTER TREE: ', getFilterTree())
+            treeService.setFilterTree(this.expression)
+            this.root = treeService.getFilterTree()
+            console.log('LOADED FILTER TREE: ', treeService.getFilterTree())
             console.log('QBEAdvancedFItlerDialog - loadData() - Loaded expression: ', this.expression)
             console.log('QBEAdvancedFItlerDialog - loadData() - Loaded filters: ', this.filters)
 
@@ -84,14 +86,19 @@ export default defineComponent({
         },
         group() {
             console.log('GROUP CALLED!')
-            advancedFilterservice.group(getFilterTree(), getSelected())
-            unSelectAll()
-            console.log('NEW FILTER TREE!', getFilterTree())
-            this.root = getFilterTree()
+            advancedFilterservice.group(treeService.getFilterTree(), selectedOperandService.getSelected())
+            selectedOperandService.unSelectAll()
+            console.log('NEW FILTER TREE!', treeService.getFilterTree())
+            this.root = treeService.getFilterTree()
         },
         ungroup() {
-            advancedFilterservice.ungroup(getFilterTree(), getSelected()[0])
-            this.root = getFilterTree()
+            advancedFilterservice.ungroup(treeService.getFilterTree(), selectedOperandService.getSelected()[0])
+            console.log('NEW FILTER TREE!', treeService.getFilterTree())
+            selectedOperandService.unSelectAll()
+            this.root = treeService.getFilterTree()
+        },
+        onTreeUpdated() {
+            this.root = treeService.getFilterTree()
         },
         closeDialog() {
             this.$emit('close')

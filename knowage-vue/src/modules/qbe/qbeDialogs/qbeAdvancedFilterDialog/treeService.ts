@@ -53,15 +53,36 @@ export function move(tree, source, destination) {
     nodeExistingCheck(tree, destination);
 
     // angular.copy(source,destination)
-    destination = deepcopy(source)
+    // destination = deepcopy(source)
+
+    // MY START
+    const tempNode = find(tree, destination)
+    tempNode.childNodes = source.childNodes
+    tempNode.value = source.value
+    tempNode.type = source.type
+
+    if (!source.details) delete tempNode.details
+    else tempNode.details = source.details
+    // MY END
 }
 
 export function swapNodes(node1, node2) {
     console.log(' --- treeService - swapNodes() - node1', node1, ', node2 ', node2)
-    var temp = deepcopy(node1)
-    node1 = deepcopy(node2)
-    node2 = deepcopy(temp)
+    // var temp = deepcopy(node1)
+    // node1 = deepcopy(node2)
+    // node2 = deepcopy(temp)
+    var temp = { childNodes: node1.childNodes, value: node1.value, type: node1.type, details: node1.details }
+    node1.childNodes = node2.childNodes
+    node1.value = node2.value
+    node1.type = node2.type
+    node1.details = node2.details
+    node2.childNodes = temp.childNodes
+    node2.value = temp.value
+    node2.type = temp.type
+    node2.details = temp.details
 
+    if (!node1.details) delete node1.details
+    if (!node2.details) delete node2.details
 }
 
 export function swapNodePropertyValues(node1, node2, properties) {
@@ -72,7 +93,7 @@ export function swapNodePropertyValues(node1, node2, properties) {
         node2[properties[i]] = temp;
 
     }
-    console.log('TREE AFTER SWAP: ', getFilterTree())
+
 }
 
 

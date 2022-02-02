@@ -91,7 +91,7 @@ export function subexpression(filterTree, operand, nextOperand) {
 export function remove(filterTree, operand) {
     console.log("operandUtilService - remove() - filterTree ", filterTree, ', operand ', operand)
     if (!getSibilng(filterTree, operand)) {
-        treeService.remove(filterTree, operand)
+        treeService.removeNode(filterTree, operand)
         return;
     }
 
