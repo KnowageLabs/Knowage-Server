@@ -13,6 +13,8 @@
             <Button class="kn-button kn-button--primary qbe-advanced-filter-button p-m-2" :disabled="!singleGroupSelected" @click="ungroup"> {{ $t('qbe.advancedFilters.ungroup') }}</Button>
         </div>
 
+        {{ sel() }}
+
         <QBEOperator v-if="expression" :propNode="root" @selectedChanged="onSelectedChanged"></QBEOperator>
 
         <template #footer>
@@ -46,7 +48,8 @@ export default defineComponent({
             selectedCount: 0,
             singleGroupSelected: false,
             getSelectedCount,
-            isSingleGroupSelected
+            isSingleGroupSelected,
+            sel: getSelected
         }
     },
     watch: {
@@ -83,6 +86,8 @@ export default defineComponent({
             console.log('GROUP CALLED!')
             group(getFilterTree(), getSelected())
             unSelectAll()
+            console.log('NEW FILTER TREE!', getFilterTree())
+            this.root = getFilterTree()
         },
         ungroup() {},
         closeDialog() {

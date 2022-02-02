@@ -3,6 +3,7 @@ const treeService = require('./treeService')
 const filterTreeFactoryService = require('./filterTreeFactoryService')
 const groupUtilService = require('./groupUtilService')
 const deepEqual = require('deep-equal')
+const deepcopy = require('deepcopy');
 
 export function getSibilng(filterTree, operand) {
     console.log("operandUtilService - getSibling() - filterTree ", filterTree, ', operand ', operand)
@@ -34,10 +35,10 @@ export function getNextOperand(filterTree, operand) {
 
 export function insertAfter(filterTree, operand, operator, beforeOperand) {
     console.log("operandUtilService - insertAfter() - filterTree ", filterTree, ', operand ', operand, ', operator ', operator, ', beforeOperand ', beforeOperand)
-    var beforeOperandCopy = JSON.parse(JSON.stringify(beforeOperand))
+    var beforeOperandCopy = deepcopy(beforeOperand)
     treeService.replace(
         filterTree,
-        createInsertExpression(filterTree, JSON.parse(JSON.stringify(operand)), operator, beforeOperand),
+        createInsertExpression(filterTree, deepcopy(operand), operator, beforeOperand),
         getInsertPosition(filterTree, beforeOperand)
     )
 
@@ -48,9 +49,9 @@ export function insertAfter(filterTree, operand, operator, beforeOperand) {
 export function createInsertExpression(filterTree, operand, operator, beforeOperand) {
     console.log("operandUtilService - createInsertExpression() - filterTree ", filterTree, ', operand ', operand, ', operator ', operator, ', beforeOperand ', beforeOperand)
     return filterTreeFactoryService.expression(
-        JSON.stringify(beforeOperand),
+        deepcopy(beforeOperand),
         operator,
-        getInsertExpressionRightOperator(filterTree, JSON.parse(JSON.stringify(operand)), beforeOperand)
+        getInsertExpressionRightOperator(filterTree, deepcopy(operand), beforeOperand)
     )
 }
 
@@ -60,7 +61,7 @@ export function getInsertExpressionRightOperator(filterTree,
     if (!isInSimpleExpression(filterTree, beforeOperand)) {
         return subexpression(
             filterTree,
-            JSON.parse(JSON.stringify(operand)),
+            deepcopy(operand),
             getNextOperand(filterTree, beforeOperand)
         )
     }
