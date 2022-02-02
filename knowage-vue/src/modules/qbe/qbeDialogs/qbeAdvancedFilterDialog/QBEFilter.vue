@@ -3,7 +3,7 @@
     <div class="qbe-filter" :class="{ 'qbe-filter-detail-selected': selected }">
         <div class="filter-dropzone" @drop.stop="onDropComplete()" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
         <div class="kn-draggable" draggable="true" @dragstart="onDragStart">
-            <QBEFilterDetail :details="node?.details" @click="select(node)"></QBEFilterDetail>
+            <QBEFilterDetail :details="node?.details" @click.stop="select(node)"></QBEFilterDetail>
         </div>
         <div class="filter-dropzone" @drop.stop="onDropMove()" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
     </div>

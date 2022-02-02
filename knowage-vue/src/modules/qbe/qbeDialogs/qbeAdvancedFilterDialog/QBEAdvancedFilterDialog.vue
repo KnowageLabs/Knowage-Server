@@ -29,7 +29,7 @@ import { defineComponent, PropType } from 'vue'
 import { iQuery, iFilter } from '../../QBE'
 import { getFilterTree, setFilterTree } from './treeService'
 import { getSelectedCount, isSingleGroupSelected, getSelected, unSelectAll } from './selectedOperandService'
-import { group } from './advancedFilterService'
+import * as advancedFilterservice from './advancedFilterService'
 import Dialog from 'primevue/dialog'
 import QBEAdvancedFilterDialogDescriptor from './QBEAdvancedFilterDialogDescriptor.json'
 import QBEOperator from './QBEOperator.vue'
@@ -84,12 +84,15 @@ export default defineComponent({
         },
         group() {
             console.log('GROUP CALLED!')
-            group(getFilterTree(), getSelected())
+            advancedFilterservice.group(getFilterTree(), getSelected())
             unSelectAll()
             console.log('NEW FILTER TREE!', getFilterTree())
             this.root = getFilterTree()
         },
-        ungroup() {},
+        ungroup() {
+            advancedFilterservice.ungroup(getFilterTree(), getSelected()[0])
+            this.root = getFilterTree()
+        },
         closeDialog() {
             this.$emit('close')
         },
