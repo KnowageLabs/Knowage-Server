@@ -57,6 +57,10 @@
             ]
         },
         "java.lang.Long": {
+            "icon": {
+                "class": "material-icons",
+                "name": "numbers"
+            },
             "values": [
                 {
                     "code": "string",
@@ -102,6 +106,7 @@
             ]
         },
         "java.sql.Date": {
+            "icon": "fas fa-quote-left",
             "values": [
                 {
                     "code": "string",
@@ -110,6 +115,7 @@
             ]
         },
         "java.sql.Timestamp": {
+            "icon": "fas fa-quote-left",
             "values": [
                 {
                     "code": "string",
@@ -118,6 +124,7 @@
             ]
         },
         "oracle.sql.TIMESTAMP": {
+            "icon": "fas fa-quote-left",
             "values": [
                 {
                     "code": "string",
