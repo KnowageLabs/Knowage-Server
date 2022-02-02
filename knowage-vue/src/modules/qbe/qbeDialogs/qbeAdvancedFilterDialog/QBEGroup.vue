@@ -2,11 +2,11 @@
     <!-- <h4>QBE Group</h4> -->
     <!-- {{ node }} -->
     <div class="filter-group-container" @click.stop="select(node)">
-        <div class="drop-zone" @drop.stop="onDropComplete($event)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
+        <div class="filter-dropzone" @drop.stop="onDropComplete($event)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
         <div class="kn-draggable" draggable="true" @dragstart="onDragStart">
             <QBEOperator :propNode="node.childNodes[0]" @selectedChanged="$emit('selectedChanged')"></QBEOperator>
         </div>
-        <div class="drop-zone" @drop.stop="onDropMove($event)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
+        <div class="filter-dropzone" @drop.stop="onDropMove($event)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
     </div>
 </template>
 
@@ -77,9 +77,10 @@ export default defineComponent({
             }
         },
         onDropMove(event) {
-            if (isMovable(event.dataTransfer.getData('text/plain'))) {
-                if (!deepEqual(event.dataTransfer.getData('text/plain'), this.node)) {
-                    move(getFilterTree(), event.dataTransfer.getData('text/plain'), this.node)
+            const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
+            if (isMovable(eventData)) {
+                if (!deepEqual(eventData, this.node)) {
+                    move(getFilterTree(), eventData, this.node.childNodes[0].childNodes[0])
                     this.$emit('treeUpdated')
                     console.log('TREE AFTER MOVE: ', getFilterTree())
                 }
@@ -92,5 +93,11 @@ export default defineComponent({
 <style lang="scss" scoped>
 .filter-group-container {
     border: 1px solid #a9c3db;
+}
+
+.filter-dropzone {
+    height: 25px;
+    width: 100%;
+    background-color: #aec8e0;
 }
 </style>

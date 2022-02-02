@@ -106,7 +106,7 @@ export function removeNode(tree, nodeToRemove) {
 export function traverseDF(tree, callback) {
 
     (function recurse(currentNode) {
-        console.log(" bbb - CURRENT NODE: ", currentNode)
+        // console.log(" bbb - CURRENT NODE: ", currentNode)
         callback(currentNode);
         for (var i = 0; i < currentNode[childProperty].length; i++) {
             recurse(currentNode[childProperty][i]);

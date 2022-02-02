@@ -156,7 +156,7 @@ export function isSameGroup(filterTree, operands) {
 
 export function getGroup(tree, operand) {
     console.log("advancedFilterService - getGroup() - tree ", tree, ', operand ', operand)
-    return groupUtilService.getGroupGroupUtilService(tree, operand);
+    return groupUtilService.getGroup(tree, operand);
 }
 
 export function getGroupOperands(group) {
