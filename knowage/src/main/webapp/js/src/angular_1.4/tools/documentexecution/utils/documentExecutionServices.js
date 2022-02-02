@@ -253,7 +253,8 @@
 
 			// memorize parameters in session
 			docExecute_sessionParameterService.saveParameters(dataPost.parameters, parametersDetail);
-			console.log('params', parametersDetail);
+			console.log('params', parametersDetail);	
+			dataPost.parameters = {};
 			sbiModule_restServices.alterContextPath( sbiModule_config.contextName);
 			console.log('dataPost', dataPost);
 			var postObject = {
