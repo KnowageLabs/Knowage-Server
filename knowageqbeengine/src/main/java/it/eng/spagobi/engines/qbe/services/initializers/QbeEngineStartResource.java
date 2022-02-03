@@ -21,6 +21,7 @@ package it.eng.spagobi.engines.qbe.services.initializers;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -42,14 +43,14 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response startQbe() {
+	public Response startQbe(@QueryParam("datamart") String datamart) {
 
 		QbeEngineInstance qbeEngineInstance = null;
 
 		logger.debug("IN");
 
 		try {
-			SourceBean templateBean = getTemplateAsSourceBean();
+			SourceBean templateBean = getTemplateAsSourceBean(datamart);
 			logger.debug("Template: " + templateBean);
 			logger.debug("Creating engine instance ...");
 			try {
@@ -100,12 +101,16 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 		return Response.ok().build();
 	}
 
-	public SourceBean getTemplateAsSourceBean() {
+	public SourceBean getTemplateAsSourceBean(String modelName) {
 		try {
 			SourceBean qbeSB = new SourceBean("QBE");
+			SourceBean datamartSB = new SourceBean("DATAMART");
+			datamartSB.setAttribute("name", modelName);
+			qbeSB.setAttribute(datamartSB);
 			return qbeSB;
 		} catch (SourceBeanException e) {
-			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(ENGINE_NAME, "Impossible to create a new empty template", e);
+			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(ENGINE_NAME,
+					"Impossible to create a new template for the model " + modelName, e);
 			engineException.setDescription("Impossible to parse template's content:  " + e.getMessage());
 			engineException.addHint("Check if the document's template is a well formed xml file");
 			throw engineException;
