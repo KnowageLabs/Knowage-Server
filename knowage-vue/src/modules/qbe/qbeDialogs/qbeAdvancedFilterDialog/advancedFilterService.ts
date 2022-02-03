@@ -18,7 +18,7 @@ export function move(filterTree, operand1, operand2) {
     console.log("advancedFilterService - move() - filterTree ", filterTree, ', operand1 ', operand1, ', operand2 ', operand2)
     const tempNode = treeService.find(filterTree, operand1) // MY CODE
     var operand2Copy = deepcopy(operand2)
-    operandUtilService.insertAfter(filterTree, operand1, getOperandOrDefaultOperator(filterTree, treeService.find(filterTree, operand1)), treeService.find(filterTree, operand2Copy))
+    operandUtilService.insertAfter(filterTree, tempNode, getOperandOrDefaultOperator(filterTree, treeService.find(filterTree, tempNode)), treeService.find(filterTree, operand2Copy))
 
     if (treeService.contains(filterTree, tempNode)) {
         operandUtilService.remove(filterTree, tempNode);
