@@ -45,9 +45,6 @@ import internationalizationPlugin from './plugins/internationalization.js'
 
 import i18n from '@/App.i18n'
 
-//eslint-disable-next-line
-const _KNOWAGE_VUE = true
-
 createApp(App)
     .use(VueAxios, interceptor)
     .use(store)
