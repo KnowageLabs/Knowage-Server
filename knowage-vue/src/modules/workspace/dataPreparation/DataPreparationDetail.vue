@@ -331,10 +331,12 @@ export default defineComponent({
             }
 
             this.dataset.config.transformations.push(t)
+            this.loading = true
             this.client.publish({ destination: "/app/preview", headers: {"dsLabel": this.dataset.label},body: JSON.stringify(this.dataset.config.transformations)});
         },
         deleteTransformation(index: number): void {
             this.dataset.config.transformations.splice(index, 1)
+            this.loading = true
             this.client.publish({ destination: "/app/preview", headers: {"dsLabel": this.dataset.label},body: JSON.stringify(this.dataset.config.transformations)});
         },
         getCompatibilityType(col: IDataPreparationColumn): void {
@@ -411,7 +413,6 @@ export default defineComponent({
                                 obj[colHeader] = row[i];
                             }
                             this.datasetData.push(obj)
-                            this.loading = false
                         })
         }
     }
