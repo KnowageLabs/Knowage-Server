@@ -18,7 +18,8 @@ export function contains(tree, nodeToFind) {
     console.log(' --- treeService - contains() - tree', tree, ', nodeToFind ', nodeToFind)
     let contains = false;
     traverseDF(tree, function (node) {
-        if (node === nodeToFind) {
+        // if (node === nodeToFind) {
+        if (deepEqual(node, nodeToFind)) {
             contains = true
         }
     })
@@ -32,6 +33,7 @@ export function find(tree, toFind) {
     traverseDF(tree, function (node) {
         // console.log(deepEqual(node, toFind))
         if (deepEqual(node, toFind)) {
+
             equalNode = node;
         }
     })
@@ -162,7 +164,11 @@ export function getParent(tree, child) {
 export function findElementIndex(array, element) {
     // console.log(' --- treeService - findElementIndex() - array', array, ', element ', element)
     for (var i = 0; i < array.length; i++) {
-        if (element === array[i]) {
+        // MY CHANGE node.value === nodeToFind.value
+        // console.log(' ccc - element: ', element, ', array[i]: ', array[i])
+        if (deepEqual(element, array[i])) {
+            // console.log(' FOUND !!! ccc - element: ', element, ', array[i]: ', array[i])
+            // if (element.value === array[i].value && element.details?.rightOperandValue === array[i].details?.rightOperandValue) {
             return i;
         }
     }

@@ -68,6 +68,7 @@ export default defineComponent({
             return isSelectable(this.node)
         },
         onDropComplete(event) {
+            console.log(' ccc - ON DROP COMPLETE CALLLED: ')
             const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
             console.log('QBEFilter - onDropComplete() - EVENT DATA: ', eventData)
             console.log('TEEEEEEEEEST: ', eventData)
@@ -77,10 +78,12 @@ export default defineComponent({
             }
         },
         onDropMove(event) {
+            console.log(' ccc - ON DROP MOVE CALLLED: ')
             const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
             if (isMovable(eventData)) {
                 if (!deepEqual(eventData, this.node)) {
                     move(getFilterTree(), eventData, this.node)
+                    console.log(' ccc - GOT HERE!')
                     this.$emit('treeUpdated')
                 }
             }

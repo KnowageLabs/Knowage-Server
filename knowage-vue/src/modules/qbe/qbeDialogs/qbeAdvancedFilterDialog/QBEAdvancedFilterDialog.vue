@@ -98,6 +98,7 @@ export default defineComponent({
             this.root = treeService.getFilterTree()
         },
         onTreeUpdated() {
+            console.log(' ccc - TREE UPDATE CALLED')
             this.root = treeService.getFilterTree()
         },
         closeDialog() {
