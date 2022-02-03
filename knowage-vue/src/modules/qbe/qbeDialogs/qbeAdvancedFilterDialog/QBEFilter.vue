@@ -1,26 +1,29 @@
 <template>
     <!-- <h4>QBE Filter</h4> -->
     <div class="qbe-filter p-m-2" :class="{ 'qbe-filter-detail-selected': selected }">
-        <div class="filter-dropzone" @drop.stop="onDropComplete()" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
+        <div class="filter-dropzone" @drop.stop="onDropComplete($event)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
         <div class="kn-draggable" draggable="true" @dragstart="onDragStart">
             <QBEFilterDetail :details="node?.details" @click.stop="select(node)"></QBEFilterDetail>
         </div>
-        <div class="filter-dropzone" @drop.stop="onDropMove()" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
+        <div class="filter-dropzone" @drop.stop="onDropMove($event)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { addOrRemove, contains, isSelectable } from './selectedOperandService'
+import { addOrRemove, contains, isSelectable, isMovable } from './selectedOperandService'
+import { swap, move } from './advancedFilterService'
+import { getFilterTree } from './treeService'
 import QBEFilterDetail from './QBEFilterDetail.vue'
 
+const deepEqual = require('deep-equal')
 const selectedOperandService = require('./selectedOperandService')
 
 export default defineComponent({
     name: 'qbe-filter',
     components: { QBEFilterDetail },
     props: { propNode: { type: Object } },
-    emits: ['selectedChanged'],
+    emits: ['selectedChanged', 'treeUpdated'],
     data() {
         return {
             node: {} as any,
@@ -64,19 +67,23 @@ export default defineComponent({
         isSelectable() {
             return isSelectable(this.node)
         },
-        onDropComplete() {
-            // console.log('QBEFilter - onDropComplete() - EVENT: ', event)
-            // console.log('TEEEEEEEEEST: ', event.dataTransfer.getData('text/plain'))
-            // if (!deepEqual(event.dataTransfer.getData('text/plain'), this.node)) {
-            //     swap(getFilterTree(), event.dataTransfer.getData('text/plain'), this.node)
-            // }
+        onDropComplete(event) {
+            const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
+            console.log('QBEFilter - onDropComplete() - EVENT DATA: ', eventData)
+            console.log('TEEEEEEEEEST: ', eventData)
+            if (!deepEqual(eventData, this.node)) {
+                swap(getFilterTree(), eventData, this.node)
+                this.$emit('treeUpdated')
+            }
         },
-        onDropMove() {
-            // if (isMovable(event.dataTransfer.getData('text/plain'))) {
-            //     if (!deepEqual(event.dataTransfer.getData('text/plain'), this.node)) {
-            //         move(getFilterTree(), event.dataTransfer.getData('text/plain'), this.node)
-            //     }
-            // }
+        onDropMove(event) {
+            const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
+            if (isMovable(eventData)) {
+                if (!deepEqual(eventData, this.node)) {
+                    move(getFilterTree(), eventData, this.node)
+                    this.$emit('treeUpdated')
+                }
+            }
         }
     }
 })

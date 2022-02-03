@@ -249,11 +249,13 @@ export default defineComponent({
         },
         async initializeQBE() {
             // await this.$http
-            //     .get(process.env.VUE_APP_QBE_PATH + `start-qbe`, {
+            //     .get(process.env.VUE_APP_QBE_PATH + `start-qbe`,
+            //      {
             //         headers: {
             //             Authorization: 'Direct eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGVtb191c2VyIiwiZXhwIjoxNjQzODQzMDg0fQ.JDSoutSGxqgkviTwSfe9aZ2TMFaefNbrjAIpmoqZhMo'
             //         }
-            //     })
+            //     }
+            //     )
             //     .then((response: AxiosResponse<any>) => {
             //         this.qbeId = response.data
             //     })

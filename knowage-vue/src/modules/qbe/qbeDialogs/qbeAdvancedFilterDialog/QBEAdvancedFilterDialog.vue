@@ -46,7 +46,7 @@ export default defineComponent({
             QBEAdvancedFilterDialogDescriptor,
             expression: null as any,
             filters: [] as iFilter[],
-            root: {},
+            root: {} as any,
             selectedCount: 0,
             singleGroupSelected: false,
             getSelectedCount: selectedOperandService.getSelectedCount,

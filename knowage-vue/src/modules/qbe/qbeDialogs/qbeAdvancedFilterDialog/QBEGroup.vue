@@ -3,7 +3,7 @@
     <!-- {{ node }} -->
     <div class="filter-group-container" @click.stop="select(node)">
         <div class="filter-dropzone" @drop.stop="onDropComplete($event)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
-        <div class="kn-draggable" draggable="true" @dragstart="onDragStart">
+        <div class="kn-draggable" draggable="false">
             <QBEOperator :propNode="node.childNodes[0]" @selectedChanged="$emit('selectedChanged')"></QBEOperator>
         </div>
         <div class="filter-dropzone" @drop.stop="onDropMove($event)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
@@ -80,7 +80,7 @@ export default defineComponent({
             const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
             if (isMovable(eventData)) {
                 if (!deepEqual(eventData, this.node)) {
-                    move(getFilterTree(), eventData, this.node.childNodes[0].childNodes[0])
+                    move(getFilterTree(), eventData, this.node)
                     this.$emit('treeUpdated')
                     console.log('TREE AFTER MOVE: ', getFilterTree())
                 }
