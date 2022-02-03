@@ -36,6 +36,8 @@ import Dialog from 'primevue/dialog'
 import QBEAdvancedFilterDialogDescriptor from './QBEAdvancedFilterDialogDescriptor.json'
 import QBEOperator from './QBEOperator.vue'
 
+const deepcopy = require('deepcopy')
+
 export default defineComponent({
     name: 'qbe-advanced-filter-dialog',
     components: { Dialog, QBEOperator },
@@ -60,6 +62,9 @@ export default defineComponent({
                 this.loadData()
             },
             deep: true
+        },
+        visible(value: boolean) {
+            if (value) this.loadData()
         }
     },
     created() {
@@ -69,11 +74,11 @@ export default defineComponent({
         loadData() {
             console.log('THIS QUERY: ', this.query?.expression)
             if (this.query) {
-                this.expression = this.query.expression ? JSON.parse(JSON.stringify(this.query?.expression)) : {}
+                this.expression = this.query.expression ? deepcopy(this.query?.expression) : {}
                 this.filters = this.query.filters ? [...this.query.filters] : []
             }
 
-            treeService.setFilterTree(this.expression)
+            treeService.setFilterTree(deepcopy(this.expression))
             this.root = treeService.getFilterTree()
             console.log('LOADED FILTER TREE: ', treeService.getFilterTree())
             console.log('QBEAdvancedFItlerDialog - loadData() - Loaded expression: ', this.expression)
@@ -108,7 +113,9 @@ export default defineComponent({
         closeDialog() {
             this.$emit('close')
         },
-        save() {}
+        save() {
+            this.$emit('save', deepcopy(this.root))
+        }
     }
 })
 </script>
