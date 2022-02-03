@@ -254,7 +254,7 @@
 			// memorize parameters in session
 			docExecute_sessionParameterService.saveParameters(dataPost.parameters, parametersDetail);
 			console.log('params', parametersDetail);	
-			dataPost.parameters = {};
+			if(!execProperties.executionInstance.isFromCross) dataPost.parameters = {};
 			sbiModule_restServices.alterContextPath( sbiModule_config.contextName);
 			console.log('dataPost', dataPost);
 			var postObject = {
