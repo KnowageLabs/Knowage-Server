@@ -2,7 +2,7 @@ const operatorUtilService = require('./operatorUtilService')
 const treeService = require('./treeService')
 const filterTreeFactoryService = require('./filterTreeFactoryService')
 const groupUtilService = require('./groupUtilService')
-const deepEqual = require('deep-equal')
+// const deepEqual = require('deep-equal')
 const deepcopy = require('deepcopy');
 
 export function getSibilng(filterTree, operand) {
@@ -25,7 +25,8 @@ export function getNextOperand(filterTree, operand) {
 
     treeService.traverseDF(filterTree,
         function (node) {
-            if (deepEqual(operatorUtilService.getOperator(filterTree, node), operator)) {
+            // if (deepEqual(operatorUtilService.getOperator(filterTree, node), operator)) {
+            if (operatorUtilService.getOperator(filterTree, node) === operator) {
                 nextOperand = node;
             }
         })

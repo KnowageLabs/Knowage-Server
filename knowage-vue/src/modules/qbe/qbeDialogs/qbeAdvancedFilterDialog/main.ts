@@ -1,9 +1,9 @@
-const deepEqual = require('deep-equal')
-
 let filterTree = {}
 const childProperty = 'childNodes';
 const deepcopy = require('deepcopy');
+const deepEqual = require('deep-equal')
 
+// #region treeService.ts
 export function getFilterTree() {
     console.log(' --- treeService - getFilterTree()')
     return filterTree
@@ -166,8 +166,7 @@ export function findElementIndex(array, element) {
     for (var i = 0; i < array.length; i++) {
         // MY CHANGE node.value === nodeToFind.value
         // console.log(' ccc - element: ', element, ', array[i]: ', array[i])
-        // if (deepEqual(element, array[i])) {
-        if (element === array[i]) {
+        if (deepEqual(element, array[i])) {
             // console.log(' FOUND !!! ccc - element: ', element, ', array[i]: ', array[i])
             // if (element.value === array[i].value && element.details?.rightOperandValue === array[i].details?.rightOperandValue) {
             return i;
@@ -250,3 +249,263 @@ export function removeInPlace(expression, filterName) {
     }
 
 }
+// #endregion
+
+
+// #region advancedFilterService.ts
+// #endregion
+
+
+// #region groupUtilsService.ts
+// #endregion
+
+// #region operandUtilService.ts
+export function getSibilng(filterTree, operand) {
+    console.log("operandUtilService - getSibling() - filterTree ", filterTree, ', operand ', operand)
+
+    const operator = getExpressionOperator(filterTree, operand)
+
+    if (getLeftOperand(operator) === operand) {
+        return getRightOperand(operator)
+    }
+
+    return getLeftOperand(operator);
+}
+
+export function getNextOperand(filterTree, operand) {
+    console.log("operandUtilService - getNextOperand() - filterTree ", filterTree, ', operand ', operand)
+
+    let nextOperand;
+    const operator = getParent(filterTree, operand)
+
+    traverseDF(filterTree,
+        function (node) {
+            if (deepEqual(getOperator(filterTree, node), operator)) {
+                nextOperand = node;
+            }
+        })
+
+    return nextOperand;
+}
+
+export function insertAfter(filterTree, operand, operator, beforeOperand) {
+    let beforeOperandCopy = deepcopy(beforeOperand)
+    replace(
+        filterTree,
+        createInsertExpression(filterTree, deepcopy(operand), operator, beforeOperand),
+        getInsertPosition(filterTree, beforeOperand)
+    )
+
+    return find(filterTree, beforeOperandCopy)
+
+}
+
+export function createInsertExpression(filterTree, operand, operator, beforeOperand) {
+
+    return expression(
+        deepcopy(beforeOperand),
+        operator,
+        getInsertExpressionRightOperator(filterTree, deepcopy(operand), beforeOperand)
+    )
+}
+
+export function getInsertExpressionRightOperator(filterTree, operand, beforeOperand) {
+    if (!isInSimpleExpression(filterTree, beforeOperand)) {
+        return subexpression(
+            filterTree,
+            deepcopy(operand),
+            getNextOperand(filterTree, beforeOperand)
+        )
+    }
+
+    return operand;
+}
+
+export function getInsertPosition(filterTree, beforeOperand) {
+    if (!isInSimpleExpression(filterTree, beforeOperand)) {
+        return getExpressionOperator(filterTree, beforeOperand);
+    }
+    return beforeOperand;
+}
+
+export function subexpression(filterTree, operand, nextOperand) {
+    const leftOperand = operand;
+    const tempOperator = operator(getOperator(filterTree, nextOperand).value);
+    let rightOperand = nextOperand;
+    if (!isInSimpleExpression(filterTree, rightOperand)) {
+        rightOperand = getExpressionOperator(filterTree, nextOperand)
+    }
+    return expression(leftOperand, tempOperator, rightOperand)
+}
+
+export function remove(filterTree, operand) {
+    console.log("operandUtilService - remove() - filterTree ", filterTree, ', operand ', operand)
+    if (!getSibilng(filterTree, operand)) {
+        removeNode(filterTree, operand)
+        return;
+    }
+
+    if (!isInSimpleExpression(filterTree, operand)) {
+        const nextOperand = getNextOperand(filterTree, operand);
+
+        if (nextOperand && nextOperand.value != "PAR") {
+            swapOperators(filterTree, nextOperand, operand);
+        }
+    }
+
+    replace(filterTree,
+        getSibilng(filterTree, operand), getExpressionOperator(filterTree, operand))
+}
+
+
+
+export function getExpressionOperator(filterTree, operand) {
+    return getParent(filterTree, operand)
+}
+
+export function swapOperands(filterTree, operand1, operand2) {
+    swapNodes(operand1, operand2);
+    swapOperators(filterTree, operand1, operand2);
+}
+
+export function isInSimpleExpression(filterTree, operand) {
+    return isOperatorFromSimple(getOperator(filterTree, operand), operand)
+}
+
+export function getFirstLevelOperands(filterTree) {
+    const operands = [] as any[];
+    traverseDF(filterTree, function (node) {
+        if (!getGroup(filterTree, node) && !isOperator(node)) {
+            operands.push(node)
+        }
+    })
+    return operands;
+}
+// #endregion
+
+
+
+
+// #region operatorService.ts
+export function getOperator(filterTree, operand) {
+    if (!filterTree) throw new Error('filterTree cannot be undefined.');
+    if (!operand) throw new Error('operand cannot be undefined.');
+
+    let operator;
+
+    traverseDF(filterTree, function (node) {
+        if (isOperator(node) && isOperatorFrom(node, operand)) {
+            operator = node;
+        }
+    })
+
+    return operator;
+}
+
+export function swapOperators(filterTree, operand1, operand2) {
+    let operator1 = getOperator(filterTree, operand1);
+    let operator2 = getOperator(filterTree, operand2);
+
+    if (!operator1) {
+        if (operator2) {
+            operator1 = operator(operator2.value)
+        } else {
+            operator1 = operator("AND");
+        }
+    }
+
+    if (!operator2) {
+        if (operator1) {
+            operator2 = operator(operator1.value)
+        } else {
+            operator2 = operator("AND");
+        }
+
+    }
+
+    swapNodePropertyValues(operator1, operator2, ["type", "value"])
+}
+
+export function isOperator(node) {
+    return isANDOperator(node) || isOROperator(node);
+}
+
+export function isOperatorFrom(operator, operand) {
+    return isOperatorFromSimple(operator, operand) || isOperatorFromComplex(operator, operand);
+}
+
+// ???
+export function isOperatorFromComplex(operator, operand) {
+    return !isSimpeExpressionOperator(operator) && getLeftOperand(getRightOperand(operator)) === operand; // ILLOGICAL PLACE
+}
+
+// ???
+export function isOperatorFromSimple(operator, operand) {
+    return isSimpeExpressionOperator(operator) && isRightOperand(operator, operand);
+}
+
+// ???
+export function isRightOperand(operator, operand) {
+    return getRightOperand(operator) === operand; // ILLOGICAL PLACE
+}
+
+
+export function isSimpeExpressionOperator(operator) {
+    return !isOperator(getLeftOperand(operator)) && !isOperator(getRightOperand(operator));
+}
+
+export function getLeftOperand(operator) {
+    if (isOperator(operator)) {
+        return operator.childNodes[0];
+    }
+}
+
+export function getRightOperand(operator) {
+    if (isOperator(operator)) {
+        return operator.childNodes[1];
+    }
+}
+
+export function hasChildren(node) {
+    return node.childNodes && node.childNodes.length > 0;
+}
+
+
+export function isANDOperator(node) {
+    return node && node.value && node.value === 'AND';
+}
+
+export function isOROperator(node) {
+    return node && node.value && node.value === 'OR';
+}
+
+export function isConst(node) {
+    return node && node.type && node.type === 'NODE_CONST';
+}
+
+export function isPar(node) {
+    return node && node.value === 'PAR';
+}
+// #endregion
+
+// #region filterTreeFactoryService.ts
+export function group(expression) {
+    return { type: "NODE_OP", value: "PAR", childNodes: [expression] };
+}
+
+export function expression(leftOperand, operator, rightOperand) {
+    if (!leftOperand) throw new Error('leftOperand cannot be undefined.');
+    if (!operator) throw new Error('operator cannot be undefined.');
+    if (!rightOperand) throw new Error('rightOperand cannot be undefined.');
+
+    return { type: operator.type, value: operator.value, childNodes: [leftOperand, rightOperand] };
+}
+
+export function operator(value) {
+    return { type: "NODE_OP", value: value, childNodes: [] };
+}
+
+export function filter(name) {
+    return { type: "NODE_CONST", value: name, childNodes: [] };
+}
+// #endregion
