@@ -396,7 +396,8 @@ export default defineComponent({
                         operator: filter.operator,
                         entity: filter.entity,
                         rightOperandValue: filter.rightOperandValue.join(', ')
-                    }
+                    },
+                    type: 'NODE_CONST'
                 }
                 var oldConst = findByName(expression, newConst.value)
 

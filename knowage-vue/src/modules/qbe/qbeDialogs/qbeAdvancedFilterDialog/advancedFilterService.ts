@@ -16,11 +16,12 @@ export function swap(filterTree, operand1, operand2) {
 
 export function move(filterTree, operand1, operand2) {
     console.log("advancedFilterService - move() - filterTree ", filterTree, ', operand1 ', operand1, ', operand2 ', operand2)
+    const tempNode = treeService.find(filterTree, operand1) // MY CODE
     var operand2Copy = deepcopy(operand2)
     operandUtilService.insertAfter(filterTree, operand1, getOperandOrDefaultOperator(filterTree, treeService.find(filterTree, operand1)), treeService.find(filterTree, operand2Copy))
 
-    if (treeService.contains(filterTree, operand1)) {
-        operandUtilService.remove(filterTree, operand1);
+    if (treeService.contains(filterTree, tempNode)) {
+        operandUtilService.remove(filterTree, tempNode);
     } else {
         var temp = treeService.find(filterTree, operand2Copy)
         treeService.traverseDF(filterTree, function (node) {

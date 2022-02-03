@@ -55,8 +55,11 @@ export default defineComponent({
         }
     },
     watch: {
-        query() {
-            this.loadData()
+        query: {
+            handler() {
+                this.loadData()
+            },
+            deep: true
         }
     },
     created() {
@@ -64,6 +67,7 @@ export default defineComponent({
     },
     methods: {
         loadData() {
+            console.log('THIS QUERY: ', this.query?.expression)
             if (this.query) {
                 this.expression = this.query.expression ? JSON.parse(JSON.stringify(this.query?.expression)) : {}
                 this.filters = this.query.filters ? [...this.query.filters] : []
