@@ -9,7 +9,7 @@
         </template>
 
         <div class="p-d-flex p-flex-row">
-            <Button class="kn-button kn-button--primary qbe-advanced-filter-button p-m-2" :disabled="selectedCount < 1" @click="group"> {{ $t('qbe.advancedFilters.group') }}</Button>
+            <Button class="kn-button kn-button--primary qbe-advanced-filter-button p-m-2" :disabled="selectedCount < 2" @click="group"> {{ $t('qbe.advancedFilters.group') }}</Button>
             <Button class="kn-button kn-button--primary qbe-advanced-filter-button p-m-2" :disabled="!singleGroupSelected" @click="ungroup"> {{ $t('qbe.advancedFilters.ungroup') }}</Button>
         </div>
 
@@ -111,10 +111,16 @@ export default defineComponent({
             this.root = treeService.getFilterTree()
         },
         closeDialog() {
+            selectedOperandService.unSelectAll()
+            this.selectedCount = this.getSelectedCount()
+            this.singleGroupSelected = this.isSingleGroupSelected()
             this.$emit('close')
         },
         save() {
             this.$emit('save', deepcopy(this.root))
+            selectedOperandService.unSelectAll()
+            this.selectedCount = this.getSelectedCount()
+            this.singleGroupSelected = this.isSingleGroupSelected()
         }
     }
 })

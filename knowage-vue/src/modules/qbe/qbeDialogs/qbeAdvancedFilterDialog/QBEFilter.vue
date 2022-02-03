@@ -2,7 +2,7 @@
     <!-- <h4>QBE Filter</h4> -->
     <div class="qbe-filter p-m-2" :class="{ 'qbe-filter-detail-selected': selected }">
         <div class="filter-dropzone" @drop.stop="onDropComplete($event)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
-        <div class="kn-draggable" draggable="true" @dragstart="onDragStart">
+        <div class="kn-draggable" draggable="true" @dragstart.stop="onDragStart">
             <QBEFilterDetail :details="node?.details" @click.stop="select(node)"></QBEFilterDetail>
         </div>
         <div class="filter-dropzone" @drop.stop="onDropMove($event)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>

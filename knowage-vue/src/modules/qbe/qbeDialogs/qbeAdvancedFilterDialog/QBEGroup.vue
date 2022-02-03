@@ -1,7 +1,7 @@
 <template>
     <!-- <h4>QBE Group</h4> -->
     <!-- {{ node }} -->
-    <div class="filter-group-container" @click.stop="select(node)">
+    <div class="filter-group-container" draggable="true" @dragstart="onDragStart" :class="{ 'qbe-group-selected': selected }" @click.stop="select(node)">
         <div class="filter-dropzone" @drop.stop="onDropComplete($event)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
         <div class="kn-draggable" draggable="false">
             <QBEOperator :propNode="node.childNodes[0]" @selectedChanged="$emit('selectedChanged')" @treeUpdated="$emit('treeUpdated')"></QBEOperator>
@@ -25,7 +25,8 @@ export default defineComponent({
     emits: ['selectedChanged', 'treeUpdated'],
     data() {
         return {
-            node: {} as any
+            node: {} as any,
+            selected: false
         }
     },
     watch: {
@@ -54,6 +55,7 @@ export default defineComponent({
         select(node) {
             console.log('GROUP CLICKED!')
             addOrRemove(node)
+            this.selected = this.isSelected()
             this.$emit('selectedChanged')
         },
         isSelected() {
@@ -99,5 +101,9 @@ export default defineComponent({
     height: 25px;
     width: 100%;
     background-color: #aec8e0;
+}
+
+.qbe-group-selected {
+    background-color: #a9c3db;
 }
 </style>
