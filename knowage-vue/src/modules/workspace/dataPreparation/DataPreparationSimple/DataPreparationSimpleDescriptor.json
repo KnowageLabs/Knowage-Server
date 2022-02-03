@@ -42,7 +42,7 @@
             }
         ]
     },
-    "deleteColumn": {
+    "drop": {
         "parameters": [
             {
                 "name": "columnName",
@@ -101,7 +101,7 @@
             {
                 "name": "prefix",
                 "type": "string",
-                "validationRules": "required|alpha_dash"
+                "validationRules": "alpha_dash"
             },
             {
                 "name": "columns",
@@ -113,7 +113,7 @@
             {
                 "name": "suffix",
                 "type": "string",
-                "validationRules": "required|alpha_dash"
+                "validationRules": "alpha_dash"
             }
         ],
         "validations": [
