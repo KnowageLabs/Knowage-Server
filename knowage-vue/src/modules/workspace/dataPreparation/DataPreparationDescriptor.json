@@ -202,11 +202,11 @@
         },
         {
             "category": "tableStructure",
-            "description": "managers.workspaceManagement.dataPreparation.transformations.deleteColumn.description",
+            "description": "managers.workspaceManagement.dataPreparation.transformations.drop.description",
             "editColumn": true,
             "icon": "pi pi-minus-circle",
-            "label": "managers.workspaceManagement.dataPreparation.transformations.deleteColumn.label",
-            "name": "deleteColumn",
+            "label": "managers.workspaceManagement.dataPreparation.transformations.drop.label",
+            "name": "drop",
             "position": 1,
             "toolbar": false,
             "type": "simple"

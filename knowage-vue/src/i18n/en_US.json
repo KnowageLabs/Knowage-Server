@@ -1676,9 +1676,9 @@
                     "columns": "Columns",
                     "condition": "Condition",
                     "conditions": "Conditions",
-                    "deleteColumn": {
+                    "drop": {
                         "description": "TODO",
-                        "label": "Delete column"
+                        "label": "Drop column"
                     },
                     "destType": "Destination type",
                     "endDate": "End Date",
@@ -1836,6 +1836,7 @@
             "parametrical": "Parametrical",
             "parseError": "Impossible to parse file. Check its content and upload it again",
             "prepareData": "Prepare Data",
+            "openDataPreparation": "Open Data Preparation",
             "shareDataset": "Share/Unshare Dataset",
             "shareDatasetHint": "By selecting a category from the combo box you are sharing the data set for all the users that are able to manage the specified data set category.",
             "tablePrefix": "Table Prefix",

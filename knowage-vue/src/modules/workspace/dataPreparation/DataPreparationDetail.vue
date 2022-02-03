@@ -179,7 +179,6 @@ export default defineComponent({
         if (this.dataset) {
             await this.initWebsocket()
 
-            let father = this
             this.client.onConnect = (frame)=> {
                 // Do something, all subscribes must be done is this callback
                 // This is needed because this will be executed after a (re)connect
@@ -192,19 +191,21 @@ export default defineComponent({
                     } else {
                         console.log("got empty message");
                     }
+                    this.loading = false
                 },
                 {
-                    "dsLabel": father.dataset.label
+                    "dsLabel": this.dataset.label
                 });
                 
-                this.client.subscribe("/user/queue/error", function(error) {
+                this.client.subscribe("/user/queue/error", (error) => {
                     // called when the client receives a STOMP message from the server
                     if (error.body) {
                         let message = JSON.parse(error.body)
-                        father.$store.commit('setError', { title: "Spark error", msg: message.message })
+                        this.$store.commit('setError', { title: "Error", msg: message.message })
                     } else {
-                        father.$store.commit('setError', { title: "Spark error"})
+                        this.$store.commit('setError', { title: "Error"})
                     }
+                    this.loading = false
                 });
             };
 
@@ -298,7 +299,7 @@ export default defineComponent({
                 /* this.handleTransformation(transformation) */
                 this.selectedTransformation = transformation
                 if (col) this.col = col.header
-            } else if (transformation.name === 'deleteColumn' && col) {
+            } else if (transformation.name === 'drop' && col) {
                 this.$confirm.require({
                     message: this.$t('common.toast.deleteMessage'),
                     header: this.$t('common.toast.deleteTitle'),
@@ -308,7 +309,7 @@ export default defineComponent({
                         par.value = col.header
                         transformation.parameters = []
                         transformation.parameters.push(par)
-                        let toReturn = { parameters: [] as Array<any>, type: 'deleteColumn' }
+                        let toReturn = { parameters: [] as Array<any>, type: 'drop' }
                         let obj = { columns: [] as Array<any> }
                         obj.columns.push(col.header)
 
@@ -392,7 +393,7 @@ export default defineComponent({
         },
         updateTable(message) {
                let response = JSON.parse(message);
-                        // set metadata
+                        // set headers
                         let metadata = response.metadata.columns
                         this.columns = []
                         for (let i = 0; i < metadata.length; i++) {
