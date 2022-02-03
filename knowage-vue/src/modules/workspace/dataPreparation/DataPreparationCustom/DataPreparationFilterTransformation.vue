@@ -25,9 +25,12 @@
                 <InputText type="number" v-model="filter.number" class="kn-material-input" />
                 <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.number') }}</label>
             </span>
-            <span v-if="showValuesList(index)" class="p-float-label p-field p-ml-2 kn-flex">
-                <InputText type="text" v-model="filter.valuesList" class="kn-material-input" />
-                <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.values') }}</label>
+            <span v-if="showValuesList(index)" class="p-field p-ml-2 kn-flex">
+                <span class="p-float-label kn-material-input">
+                    <Chips class="p-inputtext-sm"  :multiple="true" v-model="filter.valuesList" />
+                    <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.values') }}</label>
+                    <small id="username1-help">{{ $t('managers.workspaceManagement.dataPreparation.transformations.valuesHint') }}</small>
+                </span>
             </span>
             <span> <Button icon="pi pi-trash" :class="'p-button-text p-button-rounded p-button-plain'" @click="deleteRow(index)" v-if="localTransformation.length > 1"/></span>
         </div>
@@ -44,13 +47,14 @@ import { IFilterTransformationParameter } from '@/modules/workspace/dataPreparat
 import { IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
 import Dropdown from 'primevue/dropdown'
 import Calendar from 'primevue/calendar'
+import Chips from 'primevue/chips'
 
 export default defineComponent({
     name: 'data-preparation-filter-transformation',
 
     props: { columns: { type: Array as PropType<Array<IDataPreparationColumn>> }, col: String },
 
-    components: { Dropdown, Calendar },
+    components: { Dropdown, Calendar, Chips },
     emits: ['update:transformation'],
     data() {
         return {
