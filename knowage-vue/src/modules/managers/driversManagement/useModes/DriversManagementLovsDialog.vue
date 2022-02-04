@@ -2,7 +2,7 @@
     <Dialog :header="$t('managers.driversManagement.useModes.selectLov')" :breakpoints="useModeDescriptor.dialog.breakpoints" :style="useModeDescriptor.dialog.style" :visible="dialogVisible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left>
+                <template #start>
                     {{ $t('managers.driversManagement.useModes.selectLov') }}
                 </template>
             </Toolbar>

@@ -1,10 +1,10 @@
 <template>
     <div>
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
-            <template #left>
+            <template #start>
                 {{ $t('managers.scheduler.timingAndOutput') }}
             </template>
-            <template #right>
+            <template #end>
                 <Button class="kn-button p-button-text p-button-rounded" @click="showTriggerDetail(null)">{{ $t('common.add') }}</Button>
             </template>
         </Toolbar>

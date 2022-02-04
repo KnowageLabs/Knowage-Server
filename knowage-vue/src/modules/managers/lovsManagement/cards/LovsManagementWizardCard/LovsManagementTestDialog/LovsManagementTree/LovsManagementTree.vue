@@ -2,7 +2,7 @@
     <div class="p-d-flex p-flex-row">
         <div class="p-col-3">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.lovsManagement.fields') }}
                 </template>
             </Toolbar>
@@ -30,7 +30,7 @@
         </div>
         <div class="p-col-9">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.lovsManagement.definition') }}
                 </template>
             </Toolbar>

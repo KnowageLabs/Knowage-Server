@@ -16,8 +16,8 @@
     <Dialog contentStyle="height:100vh;width:100vw" :visible="showDatasetsDialog" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0 p-col">
-                <template #left>Select Dataset</template>
-                <template #right>
+                <template #start>Select Dataset</template>
+                <template #end>
                     <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="onSave" data-test="submit-button" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="showDatasetsDialog = false" data-test="close-button" />
                 </template>

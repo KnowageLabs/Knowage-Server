@@ -124,7 +124,7 @@
 
     <Sidebar class="mySidebar" v-model:visible="thresholdListVisible" :showCloseIcon="false" position="right">
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
-            <template #left>{{ $t('kpi.kpiDefinition.thresholdsListTitle') }}</template>
+            <template #start>{{ $t('kpi.kpiDefinition.thresholdsListTitle') }}</template>
         </Toolbar>
         <Listbox class="kn-list--column" :options="thresholdsList" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="tabViewDescriptor.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')" @change="confirmToLoadThreshold">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>

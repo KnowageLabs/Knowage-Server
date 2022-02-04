@@ -11,10 +11,10 @@
     >
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left>
+                <template #start>
                     {{ $t('kpi.targetDefinition.addKpiBtn') }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" @click="addKpi" />
                     <Button icon="pi pi-times" class="kn-button p-button-text p-button-rounded" @click="closeKpiDialog" />
                 </template>

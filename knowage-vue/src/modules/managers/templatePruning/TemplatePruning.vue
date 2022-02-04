@@ -2,7 +2,7 @@
     <div class="kn-page">
         <div class="kn-page-content p-m-0">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.templatePruning.title') }}
                 </template>
             </Toolbar>
@@ -15,7 +15,7 @@
                     <Card>
                         <template #header>
                             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                                <template #left>
+                                <template #start>
                                     {{ $t('managers.templatePruning.referenceDate') }}
                                 </template>
                             </Toolbar>
@@ -53,7 +53,7 @@
                     <Card data-test="document-selection-card">
                         <template #header>
                             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                                <template #left>
+                                <template #start>
                                     {{ $t('managers.templatePruning.documentSelection') }}
                                 </template>
                             </Toolbar>

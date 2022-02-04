@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--primary" :style="mainDescriptor.style.maxWidth">
-        <template #left> {{ $t('workspace.federationDefinition.title') }}</template>
-        <template #right>
+        <template #start> {{ $t('workspace.federationDefinition.title') }}</template>
+        <template #end>
             <Button class="kn-button p-button-text p-button-rounded" @click="closeFederationDefinition"> {{ $t('common.close') }}</Button></template
         >
     </Toolbar>

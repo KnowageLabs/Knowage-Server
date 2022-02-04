@@ -3,10 +3,10 @@
         <div class="kn-page-content p-grid p-m-0">
             <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
-                    <template #left>
+                    <template #start>
                         {{ $t('managers.usersManagement.title') }}
                     </template>
-                    <template #right>
+                    <template #end>
                         <KnFabButton icon="fas fa-plus" @click="showForm()" data-test="open-form-button"></KnFabButton>
                     </template>
                 </Toolbar>
@@ -19,10 +19,10 @@
             <KnHint :title="'managers.usersManagement.title'" :hint="'managers.usersManagement.hint'" v-if="hiddenForm"></KnHint>
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page" v-show="!hiddenForm">
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                    <template #left>
+                    <template #start>
                         {{ userDetailsForm.userId }}
                     </template>
-                    <template #right>
+                    <template #end>
                         <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="v$.userDetailsForm.$invalid" @click="saveUser" />
                         <Button class="p-button-text p-button-rounded p-button-plain" icon="pi pi-times" @click="closeForm" />
                     </template>

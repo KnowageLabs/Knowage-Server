@@ -2,7 +2,7 @@
     <Card class="domainCard" :style="domainCategoryTabDescriptor.card.style">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ title }}
                 </template>
             </Toolbar>

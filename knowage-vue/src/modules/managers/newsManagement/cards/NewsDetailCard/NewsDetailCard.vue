@@ -2,10 +2,10 @@
     <Card :style="newsDetailCardDescriptor.card.style">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.newsManagement.settings') }}
                 </template>
-                <template #right>
+                <template #end>
                     <InputSwitch id="active" v-model="news.active" @change="onActiveChange" data-test="active-input" />
                     <label for="active" class="kn-material-input-label p-ml-3"> {{ $t('managers.newsManagement.active') }}</label>
                 </template>

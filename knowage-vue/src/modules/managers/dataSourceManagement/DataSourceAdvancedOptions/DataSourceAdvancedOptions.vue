@@ -2,7 +2,7 @@
     <Card :style="dataSourceDescriptor.card.style">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left> {{ $t('managers.dataSourceManagement.form.advancedOptions.title') }} </template>
+                <template #start> {{ $t('managers.dataSourceManagement.form.advancedOptions.title') }} </template>
             </Toolbar>
         </template>
 

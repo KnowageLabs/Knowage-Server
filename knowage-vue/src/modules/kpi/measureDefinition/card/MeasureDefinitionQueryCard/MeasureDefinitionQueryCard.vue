@@ -9,7 +9,7 @@
             </div>
             <div v-if="selectedRule.dataSource">
                 <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-                    <template #right>
+                    <template #end>
                         <Button class="kn-button p-button-text p-button-rounded" @click="showPreview" :disabled="previewDisabled">{{ $t('kpi.measureDefinition.preview') }}</Button>
                     </template>
                 </Toolbar>

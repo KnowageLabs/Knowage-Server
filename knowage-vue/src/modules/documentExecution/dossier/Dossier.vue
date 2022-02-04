@@ -3,7 +3,7 @@
         <Card class="p-m-3">
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                    <template #left>
+                    <template #start>
                         {{ $t('managers.glossary.common.details') }}
                     </template>
                 </Toolbar>
@@ -43,7 +43,7 @@
         <Card class="p-m-3">
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                    <template #left>
+                    <template #start>
                         {{ $t('documentExecution.dossier.launchedActivities') }}
                     </template>
                 </Toolbar>

@@ -2,7 +2,7 @@
     <Card :style="rolesCardDescriptor.card.style">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.newsManagement.roles') }}
                 </template>
             </Toolbar>

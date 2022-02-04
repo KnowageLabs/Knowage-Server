@@ -2,10 +2,10 @@
     <Card>
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0 p-col-12">
-                <template #left>
+                <template #start>
                     {{ $t('managers.functionsCatalog.inputVariables') }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button v-if="!readonly" class="kn-button p-button-text" :label="$t('managers.functionsCatalog.addInputVariable')" @click="addInputVariable"></Button>
                 </template>
             </Toolbar>

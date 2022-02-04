@@ -1,8 +1,8 @@
 <template>
     <div class="kn-page">
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-            <template #left>{{ title }} </template>
-            <template #right>
+            <template #start>{{ title }} </template>
+            <template #end>
                 <Button class="p-button-text p-button-rounded kn-button" :label="$t('kpi.measureDefinition.alias')" @click="aliasesVisible = !aliasesVisible" data-test="submit-button" />
                 <Button class="p-button-text p-button-rounded kn-button" :label="$t('kpi.measureDefinition.placeholder')" @click="placeholderVisible = !placeholderVisible" data-test="submit-button" />
                 <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="metadataDisabled" @click="submitConfirm" data-test="submit-button" />

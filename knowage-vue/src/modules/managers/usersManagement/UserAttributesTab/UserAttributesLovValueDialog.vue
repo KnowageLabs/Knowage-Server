@@ -2,10 +2,10 @@
     <Dialog :visible="dialogVisible" :modal="true" class="kn-dialog--toolbar--primary" :closable="false" :style="userAttributesLovValueDialogDescriptor.style">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col">
-                <template #left>
+                <template #start>
                     {{ attribute.attributeName }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" data-test="submit-button" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeDialog" />
                 </template>

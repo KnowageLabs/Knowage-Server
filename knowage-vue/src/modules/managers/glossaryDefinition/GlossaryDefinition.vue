@@ -9,10 +9,10 @@
 
             <div class="kn-list--column kn-list-border-left p-col-4 p-sm-4 p-md-3 p-p-0">
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                    <template #left>
+                    <template #start>
                         {{ $t('managers.glossary.glossaryDefinition.wordsList') }}
                     </template>
-                    <template #right>
+                    <template #end>
                         <FabButton icon="fas fa-plus" @click.stop="editWord(-1)" data-test="new-button" />
                     </template>
                 </Toolbar>

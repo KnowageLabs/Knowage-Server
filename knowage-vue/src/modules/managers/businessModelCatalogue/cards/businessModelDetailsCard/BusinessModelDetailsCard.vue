@@ -2,7 +2,7 @@
     <Card>
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.businessModelManager.driversDetails') }}
                 </template>
             </Toolbar>
@@ -166,10 +166,10 @@
 
                 <div class="p-mt-5" v-if="metaWebVisible">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                        <template #left>
+                        <template #start>
                             {{ $t('managers.businessModelManager.configurationTablePrefixTitle') }}
                         </template>
-                        <template #right>
+                        <template #end>
                             <i class="fa fa-info-circle" v-tooltip.bottom="$t('managers.businessModelManager.prefixTooltip')"></i>
                         </template>
                     </Toolbar>

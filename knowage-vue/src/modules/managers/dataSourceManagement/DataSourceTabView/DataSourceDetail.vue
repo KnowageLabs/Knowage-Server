@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-        <template #left>{{ datasource.label }}</template>
-        <template #right>
+        <template #start>{{ datasource.label }}</template>
+        <template #end>
             <Button icon="pi pi-info" class="p-button-text p-button-rounded p-button-plain" :disabled="readOnly" @click="testDataSource" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="readOnly || buttonDisabled" @click="handleSubmit" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />

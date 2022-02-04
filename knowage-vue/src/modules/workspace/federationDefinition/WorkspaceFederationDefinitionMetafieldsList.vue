@@ -2,7 +2,7 @@
     <Card v-if="dataset">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ dataset.name }}
                 </template>
             </Toolbar>

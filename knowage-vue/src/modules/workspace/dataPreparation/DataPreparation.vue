@@ -1,8 +1,8 @@
 <template>
     <div class="kn-page">
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-            <template #left> Data preparation </template>
-            <template #right>
+            <template #start> Data preparation </template>
+            <template #end>
                 <KnFabButton icon="fas fa-plus" @click="showForm" data-test="open-form-button"></KnFabButton>
             </template>
         </Toolbar>

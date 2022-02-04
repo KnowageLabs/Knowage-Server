@@ -10,10 +10,10 @@
 
             <div v-if="rule.placeholders && rule.placeholders.length > 0" class="p-col-3">
                 <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-                    <template #left>
+                    <template #start>
                         {{ $t('kpi.measureDefinition.filters') }}
                     </template>
-                    <template #right>
+                    <template #end>
                         <Button class="kn-button p-button-text p-button-rounded" @click="loadPreview">{{ $t('common.run') }}</Button>
                     </template>
                 </Toolbar>

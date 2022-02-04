@@ -2,7 +2,7 @@
     <Card class="p-m-2">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('documentExecution.registry.filters') }}
                 </template>
             </Toolbar>

@@ -2,7 +2,7 @@
     <div class="kn-page p-d-flex p-flex-row custom-kn-page-width">
         <div id="sideMenu" class="kn-list--column" :style="workspaceDescriptor.style.menuWidth">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('workspace.menuLabels.menuTitle') }}
                 </template>
             </Toolbar>
@@ -52,7 +52,7 @@
 
     <Sidebar class="mySidebar" v-model:visible="sidebarVisible" :showCloseIcon="false">
         <Toolbar class="kn-toolbar kn-toolbar--primary">
-            <template #left>
+            <template #start>
                 {{ $t('workspace.menuLabels.menuTitle') }}
             </template>
         </Toolbar>

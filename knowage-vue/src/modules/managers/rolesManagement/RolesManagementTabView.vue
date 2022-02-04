@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-        <template #left>{{ selectedRole.name }} </template>
-        <template #right>
+        <template #start>{{ selectedRole.name }} </template>
+        <template #end>
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSubmit" :disabled="buttonDisabled" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" />
         </template>

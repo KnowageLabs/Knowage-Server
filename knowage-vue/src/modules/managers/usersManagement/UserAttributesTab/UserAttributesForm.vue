@@ -4,7 +4,7 @@
             <Card style="width: 100%; margin-bottom: 2em">
                 <template #header>
                     <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                        <template #left>
+                        <template #start>
                             {{ $t('managers.usersManagement.attributes') }}
                         </template>
                     </Toolbar>

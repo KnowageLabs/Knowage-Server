@@ -2,7 +2,7 @@
     <div>
         <div v-for="note in notes" :key="note.id">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left
+                <template #start
                     ><span>{{ $t('common.owner') + ' ' + document.owner }}</span>
                     <span>{{ $t('common.creationDate') + ' ' + note.creationDate }}</span>
                     <span>{{ $t('common.lastChangeDate') + ' ' + note.lastChangeDate }}</span>

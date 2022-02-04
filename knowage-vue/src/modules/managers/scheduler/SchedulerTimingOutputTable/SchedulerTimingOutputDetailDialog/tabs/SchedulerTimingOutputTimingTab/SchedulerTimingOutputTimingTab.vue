@@ -31,7 +31,7 @@
 
     <div class="p-mt-4">
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
-            <template #left>
+            <template #start>
                 {{ $t('managers.scheduler.timeWindow') }}
             </template>
         </Toolbar>
@@ -104,7 +104,7 @@
 
         <div v-if="triggerType === 'event'" class="p-my-4" data-test="event-trigger">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('common.details') }}
                 </template>
             </Toolbar>
@@ -118,7 +118,7 @@
 
             <div v-if="trigger.chrono.parameter && trigger.chrono.parameter.type === 'dataset'">
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                    <template #left>
+                    <template #start>
                         {{ $t('common.dataset') }}
                     </template>
                 </Toolbar>

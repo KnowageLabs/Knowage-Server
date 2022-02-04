@@ -26,7 +26,7 @@
                 />
             </div>
             <Toolbar class="kn-toolbar kn-toolbar--secondary ">
-                <template #left>
+                <template #start>
                     <Button v-if="!expandQueryCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandQueryCard = true" />
                     <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandQueryCard = false" />
                     {{ $t('managers.datasetManagement.editQuery') }}
@@ -39,7 +39,7 @@
             </Card>
 
             <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-2">
-                <template #left>
+                <template #start>
                     <Button v-if="!expandScriptCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandScriptCard = true" />
                     <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandScriptCard = false" />
                     {{ $t('managers.datasetManagement.editScript') }}

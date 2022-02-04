@@ -1,6 +1,6 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary">
-        <template #left>
+        <template #start>
             {{ $t('managers.datasetManagement.fieldsMetadata') }}
         </template>
     </Toolbar>

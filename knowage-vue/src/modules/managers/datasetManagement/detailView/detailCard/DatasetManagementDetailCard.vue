@@ -104,10 +104,10 @@
     <Card class="p-mt-3">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.datasetManagement.oldVersions') }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button icon="fas fa-eraser" class="p-button-text p-button-rounded p-button-plain" :disabled="noDatasetVersions" @click="deleteConfirm('deleteAll')" />
                 </template>
             </Toolbar>

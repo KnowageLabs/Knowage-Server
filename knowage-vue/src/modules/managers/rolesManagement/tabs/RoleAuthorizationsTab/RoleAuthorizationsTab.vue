@@ -4,7 +4,7 @@
             <div v-for="(category, index) of rolesManagementTabViewDescriptor.categories" :key="index">
                 <template v-if="authorizationCBs[category.categoryName] && authorizationCBs[category.categoryName].length">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                        <template #left>
+                        <template #start>
                             {{ $t(category.name) }}
                         </template>
                     </Toolbar>

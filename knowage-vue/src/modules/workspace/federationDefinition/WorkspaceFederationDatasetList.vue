@@ -1,7 +1,7 @@
 <template>
     <div class="p-col federation-listbox-container">
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
-            <template #left>
+            <template #start>
                 {{ mode === 'available' ? $t('workspace.federationDefinition.availableDatasets') : $t('workspace.federationDefinition.selectedDatasets') }}
             </template>
         </Toolbar>

@@ -2,7 +2,7 @@
     <div class="kn-page">
         <div class="kn-page-content custom-kn-page-width p-d-flex p-flex-column">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.schedulationAgendaManagement.title') }}
                 </template>
             </Toolbar>

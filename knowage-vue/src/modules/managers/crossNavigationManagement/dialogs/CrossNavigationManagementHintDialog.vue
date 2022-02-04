@@ -2,7 +2,7 @@
     <Dialog :header="title" :breakpoints="dialogDescriptor.dialog.breakpoints" :style="dialogDescriptor.dialog.style" :visible="dialogVisible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left>
+                <template #start>
                     {{ title }}
                 </template>
             </Toolbar>

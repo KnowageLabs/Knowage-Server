@@ -2,11 +2,11 @@
     <Dialog :style="workspaceDataPreviewDialogDescriptor.dialog.style" :contentStyle="workspaceDataPreviewDialogDescriptor.dialog.style" :visible="visible" :modal="true" class="workspace-full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12" :style="mainDescriptor.style.maxWidth">
-                <template #left>
+                <template #start>
                     <i class="fa fa-database p-mr-2"></i>
                     <span>{{ dataset.label }}</span>
                 </template>
-                <template #right>
+                <template #end>
                     <Button class="kn-button p-button-text p-button-rounded p-button-plain" :label="$t('common.close')" @click="closeDialog"></Button>
                 </template>
             </Toolbar>

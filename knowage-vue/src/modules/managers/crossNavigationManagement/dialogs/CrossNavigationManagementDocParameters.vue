@@ -1,7 +1,7 @@
 <template>
     <div class="p-field p-col-6 p-mb-3">
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
-            <template #left>
+            <template #start>
                 {{ $t('managers.crossNavigationManagement.availableIO') }}
             </template>
         </Toolbar>
@@ -25,7 +25,7 @@
     </div>
     <div class="p-field p-col-6 p-mb-3">
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
-            <template #left>
+            <template #start>
                 {{ $t('managers.crossNavigationManagement.availableInput') }}
             </template>
         </Toolbar>

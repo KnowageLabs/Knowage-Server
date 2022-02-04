@@ -2,10 +2,10 @@
     <Card class="p-m-2">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.cacheManagement.addRemoveDataset') }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button class="kn-button p-button-text p-button-rounded" :disabled="cleanAllDisabled" @click="cleanAllConfirm" data-test="clean-all-button">{{ $t('managers.cacheManagement.cleanAll') }}</Button>
                 </template>
             </Toolbar>

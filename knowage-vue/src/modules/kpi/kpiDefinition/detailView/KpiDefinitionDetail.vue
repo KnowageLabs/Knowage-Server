@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-        <template #left>{{ selectedKpi.name }}</template>
-        <template #right>
+        <template #start>{{ selectedKpi.name }}</template>
+        <template #end>
             <Button :label="$t('kpi.kpiDefinition.aliasToolbarTitle')" :style="tabViewDescriptor.style.aliasButton" class="p-button-text p-button-rounded p-button-plain" @click="toggleAlias" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="showSaveDialog = true" :disabled="buttonDisabled" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
@@ -54,7 +54,7 @@
 
         <div v-if="isAliasVisible">
             <Toolbar class="kn-toolbar kn-toolbar--secondary" :style="tabViewDescriptor.style.aliasList">
-                <template #left>{{ $t('kpi.kpiDefinition.aliasToolbarTitle') }}</template>
+                <template #start>{{ $t('kpi.kpiDefinition.aliasToolbarTitle') }}</template>
             </Toolbar>
             <Listbox
                 class="kn-list--column"
@@ -281,8 +281,6 @@ export default defineComponent({
                 icon: 'pi pi-exclamation-triangle',
                 message: this.$t('kpi.kpiDefinition.confirmClone'),
                 header: this.$t(' '),
-                kpiId,
-                kpiVersion,
                 accept: () => this.cloneKpi(kpiId, kpiVersion)
             })
         },

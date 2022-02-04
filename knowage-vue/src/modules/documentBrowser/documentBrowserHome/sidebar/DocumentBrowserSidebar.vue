@@ -1,7 +1,7 @@
 <template>
     <div id="document-browser-sidebar">
         <Toolbar id="document-detail-toolbar" class="kn-toolbar kn-toolbar--secondary">
-            <template #left>
+            <template #start>
                 <div id="document-icons-container" class="p-d-flex p-flex-row p-jc-around ">
                     <i class="fa fa-play-circle document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.executeDocument')" @click="executeDocument" />
                     <template v-if="isSuperAdmin || user.userId === selectedDocument?.creationUser">

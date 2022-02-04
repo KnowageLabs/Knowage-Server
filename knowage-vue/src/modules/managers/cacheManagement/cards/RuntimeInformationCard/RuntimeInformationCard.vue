@@ -2,26 +2,27 @@
     <Card class="p-m-2">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.cacheManagement.runtimeInformationTitle') }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain" @click="refresh" />
                 </template>
             </Toolbar>
         </template>
         <template #content>
             <div class="p-d-flex p-flex-column">
-                <div class="kn-flex">
-                    dfssdfdfssdfsdfsddfsfd
+                <div class="kn-flex">                    
                     <p>{{ $t('managers.cacheManagement.cacheEnabled') }}: {{ cache.cleaningEnabled }}</p>
                     <p>{{ $t('managers.cacheManagement.totalMemory') }}: {{ totalMemory }}</p>
                     <p>{{ $t('managers.cacheManagement.availableMemory') }}: {{ availableMemory }}</p>
                     <p>{{ $t('managers.cacheManagement.numberOfCachedObjects') }}: {{ cache.cachedObjectsCount }}</p>
                     <p>{{ $t('managers.cacheManagement.availableMemoryPercentage') }}: {{ cache.availableMemoryPercentage }}%</p>
                 </div>
-                <div class="kn-flex">
-                    <Chart type="pie" :data="cacheData" data-test="chart" />
+                <div class="kn-flex p-d-flex p-flex-row p-justify-center">
+                <div style="position: relative; height:20rem; width:20rem">
+                    <Chart type="pie"  :data="cacheData" data-test="chart" />
+                </div>
                 </div>
             </div>
         </template>

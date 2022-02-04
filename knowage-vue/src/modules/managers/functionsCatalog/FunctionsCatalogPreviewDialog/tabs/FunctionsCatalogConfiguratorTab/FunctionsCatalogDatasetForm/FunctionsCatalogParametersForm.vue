@@ -2,7 +2,7 @@
     <Card class="p-m-2">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0 p-col-12">
-                <template #left>
+                <template #start>
                     {{ $t('common.parameters') }}
                 </template>
             </Toolbar>

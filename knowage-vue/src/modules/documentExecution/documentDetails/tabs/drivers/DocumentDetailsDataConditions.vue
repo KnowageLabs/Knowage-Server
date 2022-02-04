@@ -1,10 +1,10 @@
 <template>
     <div v-if="!loading" class="kn-remove-card-padding p-col">
         <Toolbar class="kn-toolbar kn-toolbar--default">
-            <template #left>
+            <template #start>
                 {{ $t('documentExecution.documentDetails.drivers.conditionsTitle') }}
             </template>
-            <template #right>
+            <template #end>
                 <Button :label="$t('managers.businessModelManager.addCondition')" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="showForm" />
             </template>
         </Toolbar>
@@ -26,7 +26,7 @@
         <Dialog class="remove-padding" :style="driversDescriptor.style.conditionDialog" :visible="conditionFormVisible" :modal="true" :closable="false">
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--primary kn-width-full">
-                    <template #left>
+                    <template #start>
                         {{ $t('documentExecution.documentDetails.drivers.visualizationTitle') }}
                     </template>
                 </Toolbar>

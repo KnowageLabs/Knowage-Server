@@ -1,10 +1,10 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary">
-        <template #left>
+        <template #start>
             <Button id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
             {{ $t('workspace.menuLabels.recentDocuments') }}
         </template>
-        <template #right>
+        <template #end>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
             <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
         </template>

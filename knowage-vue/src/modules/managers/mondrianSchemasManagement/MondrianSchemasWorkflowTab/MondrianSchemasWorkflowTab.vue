@@ -3,7 +3,7 @@
         <div class="p-grid">
             <div class="p-col">
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                    <template #left>
+                    <template #start>
                         {{ $t('managers.mondrianSchemasManagement.workFlow.availableUsers') }}
                     </template>
                 </Toolbar>
@@ -31,10 +31,10 @@
             </div>
             <div class="p-col">
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                    <template #left>
+                    <template #start>
                         {{ $t('managers.mondrianSchemasManagement.workFlow.userWf') }}
                     </template>
-                    <template #right>
+                    <template #end>
                         <span v-tooltip.top="$t(tooltipValue)">
                             <Button :disabled="disableButton" icon="pi pi-play" class="p-button-rounded" @click="startWorkflow" />
                         </span>

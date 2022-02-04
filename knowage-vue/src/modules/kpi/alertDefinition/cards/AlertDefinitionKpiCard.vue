@@ -8,22 +8,22 @@
                 </span>
             </div>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     <span>{{ $t('kpi.alert.actionList') }}</span>
                 </template>
 
-                <template #right>
+                <template #end>
                     <Button :label="$t('kpi.alert.addAction')" class="p-button-text p-button-rounded p-button-plain" :disabled="disableActionButton" @click="$emit('showDialog')" data-test="add-action-button" />
                 </template>
             </Toolbar>
             <div class="p-grid p-mt-2">
                 <div class="p-m-2 p-shadow-2 action-box" v-for="(action, index) in alert.jsonOptions?.actions" :key="index">
                     <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
-                        <template #left>
+                        <template #start>
                             <span>{{ action.data?.name }}</span>
                         </template>
 
-                        <template #right>
+                        <template #end>
                             <Button class="p-button-link p-button-sm" :style="alertDescriptor.styles.menuButton" icon="fa fa-ellipsis-v" @click="toggleMenu($event, { action, index })" aria-haspopup="true" aria-controls="overlay_menu" data-test="menu-button" />
                             <Menu ref="menu" :model="items" :popup="true" data-test="menu" />
                         </template>

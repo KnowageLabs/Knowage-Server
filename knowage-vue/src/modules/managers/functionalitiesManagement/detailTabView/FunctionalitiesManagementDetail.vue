@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-        <template #left> {{ selectedFolder.name }} </template>
-        <template #right>
+        <template #start> {{ selectedFolder.name }} </template>
+        <template #end>
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" data-test="submit-button" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" />
         </template>
@@ -70,7 +70,7 @@
         <Card class="p-m-3">
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                    <template #left>
+                    <template #start>
                         {{ $t('managers.menuManagement.roles') }}
                     </template>
                 </Toolbar>

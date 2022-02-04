@@ -2,7 +2,7 @@
     <Card v-if="currentFilter">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ filter.placeholderName }}
                 </template>
             </Toolbar>

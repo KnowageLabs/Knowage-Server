@@ -2,10 +2,10 @@
     <div class="p-grid p-m-0 kn-flex">
         <div class="p-col-4 p-sm-4 p-md-3 p-p-0 p-d-flex p-flex-column kn-flex">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('documentExecution.documentDetails.outputParams.title') }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button :label="$t('common.add')" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="addParam" />
                 </template>
             </Toolbar>
@@ -17,7 +17,7 @@
         </div>
         <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0" :style="mainDescriptor.style.driverDetailsContainer">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('documentExecution.documentDetails.outputParams.paramDetails') }}
                 </template>
             </Toolbar>

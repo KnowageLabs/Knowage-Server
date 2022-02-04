@@ -2,7 +2,7 @@
     <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="workspaceRepositoryMoveDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left>
+                <template #start>
                     {{ $t('workspace.myRepository.destinationFolder') }}
                 </template>
             </Toolbar>

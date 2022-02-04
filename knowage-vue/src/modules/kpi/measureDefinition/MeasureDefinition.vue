@@ -1,10 +1,10 @@
 <template>
     <div class="kn-page">
         <Toolbar class="kn-toolbar kn-toolbar--primary">
-            <template #left>
+            <template #start>
                 {{ $t('kpi.measureDefinition.title') }}
             </template>
-            <template #right>
+            <template #end>
                 <KnFabButton icon="fas fa-plus" @click="showForm(null, false)" data-test="new-button" />
             </template>
         </Toolbar>

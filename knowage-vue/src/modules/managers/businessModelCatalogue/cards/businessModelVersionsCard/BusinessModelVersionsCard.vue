@@ -2,7 +2,7 @@
     <Card class="p-m-2">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.businessModelManager.savedVersions') }}
                 </template>
             </Toolbar>

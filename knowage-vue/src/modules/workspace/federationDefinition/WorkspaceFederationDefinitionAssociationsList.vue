@@ -2,10 +2,10 @@
     <Card>
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('workspace.federationDefinition.associationsList') }}
                 </template>
-                <template #right>
+                <template #end>
                     <KnFabButton icon="fas fa-plus" @click="createAssociation"></KnFabButton>
                 </template>
             </Toolbar>

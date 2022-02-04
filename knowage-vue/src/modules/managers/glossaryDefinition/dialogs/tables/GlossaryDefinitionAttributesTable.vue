@@ -2,10 +2,10 @@
     <Card style="width:100%">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     <span>{{ $t('managers.glossary.common.attributes') }}</span>
                 </template>
-                <template #right>
+                <template #end>
                     <Button :label="$t('managers.glossary.common.add')" class="p-button-text p-button-rounded p-button-plain" @click="showDialog" />
                 </template>
             </Toolbar>

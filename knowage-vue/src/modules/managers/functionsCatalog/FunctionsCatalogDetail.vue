@@ -2,10 +2,10 @@
     <Dialog id="function-catalog-detail-dialog" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :contentStyle="functionsCatalogDetailDescriptor.dialog.style" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left>
+                <template #start>
                     {{ selectedFunction.name }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button class="kn-button p-button-text p-m-2" :label="$t('common.close')" @click="closeFunctionDetail"></Button>
                     <Button class="kn-button p-button-text" :label="$t('common.save')" :disabled="readonly" @click="onSave"></Button>
                 </template>

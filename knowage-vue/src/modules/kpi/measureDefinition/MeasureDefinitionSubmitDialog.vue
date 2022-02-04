@@ -7,7 +7,7 @@
             </span>
         </div>
         <Toolbar v-if="newAlias.length > 0 || reusedAlias.length > 0" class="kn-toolbar kn-toolbar--primary">
-            <template #left>
+            <template #start>
                 {{ $t('kpi.measureDefinition.alias') }}
             </template>
         </Toolbar>
@@ -22,7 +22,7 @@
         </div>
 
         <Toolbar v-if="newPlaceholder.length > 0 || reusedPlaceholder.length > 0" class="kn-toolbar kn-toolbar--primary">
-            <template #left>
+            <template #start>
                 {{ $t('kpi.measureDefinition.placeholder') }}
             </template>
         </Toolbar>

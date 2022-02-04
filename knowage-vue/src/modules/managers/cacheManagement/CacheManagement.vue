@@ -1,7 +1,7 @@
 <template>
     <div class="cache-management kn-page">
         <Toolbar class="kn-toolbar kn-toolbar--primary">
-            <template #left>
+            <template #start>
                 {{ $t('managers.cacheManagement.title') }}
             </template>
         </Toolbar>

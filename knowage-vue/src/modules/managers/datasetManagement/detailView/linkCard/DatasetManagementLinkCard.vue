@@ -2,7 +2,7 @@
     <div class="p-grid p-mt-3 table-list-container">
         <div class="p-col-6">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.datasetManagement.availableTables') }}
                 </template>
             </Toolbar>
@@ -28,7 +28,7 @@
         </div>
         <div class="p-col-6">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.datasetManagement.selectedTables') }}
                 </template>
             </Toolbar>

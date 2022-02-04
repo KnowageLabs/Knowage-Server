@@ -1,6 +1,6 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--primary">
-        <template #left>
+        <template #start>
             <i class="fa fa-ellipsis-v p-mr-3" id="sidebar-button" @click="toggleSidebarView" />
             <span>{{ searchMode ? $t('documentBrowser.documentsSearch') : $t('documentBrowser.title') }}</span>
             <span v-if="searchMode" class="p-mx-4">
@@ -11,7 +11,7 @@
             </span>
         </template>
 
-        <template #right>
+        <template #end>
             <span v-if="!searchMode" class="p-mx-4">
                 <i class="pi pi-search search-pointer" @click="searchMode = true" />
             </span>

@@ -3,7 +3,7 @@
         <Card v-for="(kpiName, index) in kpiNames" :key="index" class="p-mt-2">
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
-                    <template #left>
+                    <template #start>
                         {{ kpiName }}
                     </template>
                 </Toolbar>

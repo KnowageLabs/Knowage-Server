@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-        <template #left>{{ selectedDataset.label }}</template>
-        <template #right>
+        <template #start>{{ selectedDataset.label }}</template>
+        <template #end>
             <Button :label="$t('managers.lovsManagement.preview')" class="p-button-text p-button-rounded p-button-plain" @click="showPreviewDialog = true" :disabled="buttonDisabled" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="saveDataset" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('close')" />
@@ -177,7 +177,6 @@ export default defineComponent({
                 icon: 'pi pi-exclamation-triangle',
                 message: this.$t('kpi.kpiDefinition.confirmClone'),
                 header: this.$t(' '),
-                datasetId,
                 accept: () => this.cloneDataset(datasetId)
             })
         },

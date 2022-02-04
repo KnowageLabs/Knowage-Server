@@ -3,13 +3,13 @@
         <DataPreparationDialog v-model:transformation="selectedTransformation" @send-transformation="handleTransformation" :columns="columns" v-model:col="col" />
         <DataPreparationSaveDialog v-model:visibility="showSaveDialog" v-model:dataset="dataset" />
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-            <template #left> {{ $t('managers.workspaceManagement.dataPreparation.label') }} ({{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}: {{ dataset.label }})</template>
-            <template #right>
+            <template #start> {{ $t('managers.workspaceManagement.dataPreparation.label') }} ({{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}: {{ dataset.label }})</template>
+            <template #end>
                 <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDataset" />
                 <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeTemplate()" /> </template
         ></Toolbar>
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0 toolbarCustomConfig">
-            <template #left>
+            <template #start>
                 <span v-for="(menu, index) in getMenuForToolbar()" v-bind:key="index">
                     <Button v-if="menu !== 'divider'" :class="descriptor.css.buttonClassHeader" v-tooltip.bottom="$t(menu.label)" @click="callFunction(menu)" :disabled="calculateDisabledProperty(menu)">
                         <span v-if="menu.icon.class" :class="menu.icon.class">{{ menu.icon.name }}</span>
@@ -18,7 +18,7 @@
                     <Divider v-else layout="vertical" />
                 </span>
             </template>
-            <template #right>
+            <template #end>
                 <div class="arrow-button-container">
                     <Button icon="pi pi-arrow-left" :class="descriptor.css.buttonClassHeader" style="overflow: visible" @click="visibleRight = true" />
                     <Badge class="arrow-badge" v-if="dataset.config && dataset.config.transformations && dataset.config.transformations.length > 0" :value="dataset.config && dataset.config.transformations && dataset.config.transformations.length"></Badge>

@@ -3,10 +3,10 @@ span<template>
         <Card class="p-col-6 p-p-0">
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
-                    <template #left>
+                    <template #start>
                         {{ $t('managers.businessModelManager.drivers') }}
                     </template>
-                    <template #right>
+                    <template #end>
                         <Button class="kn-button p-button-text" :disabled="readonly" @click="showForm">{{ $t('managers.businessModelManager.add') }}</Button>
                     </template>
                 </Toolbar>

@@ -2,7 +2,7 @@
     <Card>
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('kpi.targetDefinition.applyTargetonKPI') }}
                 </template>
             </Toolbar>

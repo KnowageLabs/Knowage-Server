@@ -3,10 +3,10 @@
         <div class="kn-page-content p-grid p-m-0">
             <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
-                    <template #left>
+                    <template #start>
                         {{ $t('kpi.targetDefinition.title') }}
                     </template>
-                    <template #right>
+                    <template #end>
                         <KnFabButton icon="fas fa-plus" @click="showForm(null, false)" data-test="open-form-button"></KnFabButton>
                     </template>
                 </Toolbar>

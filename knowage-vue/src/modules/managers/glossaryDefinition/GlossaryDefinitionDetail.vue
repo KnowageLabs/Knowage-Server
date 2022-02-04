@@ -1,9 +1,9 @@
 <template>
     <div class="kn-page-content p-m-0">
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-            <template #left>{{ $t('managers.glossary.glossaryDefinition.title') }}</template>
+            <template #start>{{ $t('managers.glossary.glossaryDefinition.title') }}</template>
 
-            <template #right>
+            <template #end>
                 <FabButton icon="fas fa-plus" class="fab-button" @click="addNewGlossary('Save')" />
             </template>
         </Toolbar>
@@ -11,10 +11,10 @@
         <Card class="p-m-3">
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                    <template #left>
+                    <template #start>
                         {{ $t('managers.glossary.glossaryDefinition.glossary') }}
                     </template>
-                    <template #right>
+                    <template #end>
                         <div class="p-d-flex p-flex-row">
                             <div v-if="selectedGlossary && selectedGlossaryId && selectedGlossaryId != -1">
                                 <Button class="kn-button p-button-text" @click="addNewGlossary('Clone')">{{ $t('common.clone') }}</Button>
@@ -61,10 +61,10 @@
                 </div>
                 <div v-if="selectedGlossary && showTree">
                     <Toolbar class="kn-toolbar kn-toolbar--default">
-                        <template #left>
+                        <template #start>
                             {{ $tc('managers.glossary.common.word', 2) }}
                         </template>
-                        <template #right>
+                        <template #end>
                             <Button v-if="selectedGlossary && selectedGlossaryId && selectedGlossaryId != -1" class="kn-button p-button-text" @click="showNodeDialog(null, 'new')">{{ $t('managers.glossary.glossaryDefinition.addNode') }}</Button>
                         </template>
                     </Toolbar>

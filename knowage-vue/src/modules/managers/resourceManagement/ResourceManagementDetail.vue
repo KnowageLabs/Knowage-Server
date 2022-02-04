@@ -1,11 +1,11 @@
 <template>
     <div class="kn-page">
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-            <template #left
+            <template #start
                 ><span class="cleanText">{{ folder.label }}</span></template
             >
 
-            <template #right>
+            <template #end>
                 <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeDetail()" />
             </template>
         </Toolbar>
@@ -13,8 +13,8 @@
         <Breadcrumb :home="home" :model="items"> </Breadcrumb>
         <div class="kn-page-content">
             <Toolbar v-if="selectedFiles.length > 0" class="kn-toolbar kn-toolbar--default p-m-0">
-                <template #left>{{ $tc('managers.resourceManagement.selectedFiles', selectedFiles.length, { num: selectedFiles.length }) }}</template>
-                <template #right>
+                <template #start>{{ $tc('managers.resourceManagement.selectedFiles', selectedFiles.length, { num: selectedFiles.length }) }}</template>
+                <template #end>
                     <Button icon="fas fa-download" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="downloadFiles" />
                     <Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="showDeleteDialog" />
                 </template>

@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--primary">
-        <template #left>{{ header }}</template>
-        <template #right>
+        <template #start>{{ header }}</template>
+        <template #end>
             <i :class="iconClass" @click="sortArray" data-test="sort-icon"></i>
         </template>
     </Toolbar>

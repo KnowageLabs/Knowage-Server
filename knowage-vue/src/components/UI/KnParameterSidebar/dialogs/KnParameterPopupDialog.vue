@@ -2,7 +2,7 @@
     <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="knParameterPopupDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left> {{ $t('common.parameter') + ': ' }} {{ popupData ? popupData.idParam : '' }} </template>
+                <template #start> {{ $t('common.parameter') + ': ' }} {{ popupData ? popupData.idParam : '' }} </template>
             </Toolbar>
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />

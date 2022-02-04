@@ -2,10 +2,10 @@
     <Card>
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ title }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button v-if="canSeeLinkTable" class="kn-button p-button-text" @click="$emit('linkClicked', type)">{{ $t('managers.glossary.glossaryUsage.link') }}</Button>
                 </template>
             </Toolbar>

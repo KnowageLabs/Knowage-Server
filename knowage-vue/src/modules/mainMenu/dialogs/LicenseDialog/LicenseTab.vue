@@ -12,7 +12,7 @@
         </div>
     </div>
     <Toolbar class="kn-toolbar--transparent p-mb-2">
-        <template #right>
+        <template #end>
             <FabButton icon="fas fa-plus" :style="licenseDialogDescriptor.fabButton.style" v-tooltip.top="$t('licenseDialog.dataRequired')" @click="setUploadType('', false)" data-test="new-button" />
             <KnInputFile label="" v-if="!uploading" :changeFunction="uploadLicense" accept=".lic" :triggerInput="triggerUpload" />
         </template>

@@ -27,10 +27,10 @@
             <Dialog :style="kpiCardDescriptor.dialog.style" :visible="addKpiAssociationVisible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
                 <template #header>
                     <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                        <template #left>
+                        <template #start>
                             {{ $t('kpi.kpiScheduler.saveKpiAssociation') }}
                         </template>
-                        <template #right>
+                        <template #end>
                             <Button class="kn-button p-button-text p-m-2" :label="$t('common.close')" @click="closeKpiAssociations"></Button>
                             <Button class="kn-button p-button-text" :label="$t('common.save')" @click="addKpiAssociations"></Button>
                         </template>

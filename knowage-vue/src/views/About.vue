@@ -1,11 +1,11 @@
 <template>
   <div class="about">
     <Toolbar>
-        <template #left>
+        <template #start>
             About
         </template>
 
-        <template #right>
+        <template #end>
             <Button icon="pi pi-search" class="p-mr-2" />
             <Button icon="pi pi-times" class="p-button-danger p-button-text" />
         </template>

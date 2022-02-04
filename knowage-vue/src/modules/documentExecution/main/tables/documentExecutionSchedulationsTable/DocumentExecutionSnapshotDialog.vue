@@ -2,10 +2,10 @@
     <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="documentExecutionSchedulationsTableDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left>
+                <template #start>
                     {{ $t('common.snapshot') }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button icon="pi pi-times" class="kn-button p-button-text p-button-rounded" @click="closeDialog" />
                 </template>
             </Toolbar>

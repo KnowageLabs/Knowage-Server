@@ -53,7 +53,7 @@
     <Card>
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.mondrianSchemasManagement.detail.savedVersions') }}
                 </template>
             </Toolbar>

@@ -1,9 +1,9 @@
 <template>
     <div class="p-grid p-m-0">
         <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
-            <template #left>{{ $t('documentExecution.main.scheduledExecutions') }} </template>
+            <template #start>{{ $t('documentExecution.main.scheduledExecutions') }} </template>
 
-            <template #right>
+            <template #end>
                 <Button id="document-execution-schedulations-close-button" class="kn-button kn-button--primary" @click="closeTable"> {{ $t('common.close') }}</Button>
             </template>
         </Toolbar>

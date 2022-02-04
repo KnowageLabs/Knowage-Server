@@ -1,7 +1,7 @@
 <template>
     <div class="kn-page">
         <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
-            <template #left>
+            <template #start>
                 {{ $t('managers.glossary.glossaryUsage.title') }}
             </template>
         </Toolbar>
