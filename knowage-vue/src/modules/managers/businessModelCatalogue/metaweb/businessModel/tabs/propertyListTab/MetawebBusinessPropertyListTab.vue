@@ -9,7 +9,7 @@
                 <div class="p-col-6" v-for="(modelInfo, index) in metawebBusinessPropertyListTabDescriptor.businessModelInfo" :key="index">
                     <div class="p-field">
                         <label :for="modelInfo.name" class="kn-material-input-label"> {{ $t(modelInfo.label) }} </label>
-                        <InputText class="kn-material-input" v-model="businessModel[modelInfo.name]" :id="modelInfo.name" :disabled="true" data-test="input-name" />
+                        <InputText class="kn-material-input" v-model="businessModel[modelInfo.name]" :id="modelInfo.name" data-test="input-name" />
                     </div>
                 </div>
 
