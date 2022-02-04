@@ -32,7 +32,7 @@ export default defineComponent({
     components: { Menu },
     //prettier-ignore
     emits: ['executeRecent','executeDocumentFromOrganizer','moveDocumentToFolder','deleteDocumentFromOrganizer','executeAnalysisDocument','editAnalysisDocument','shareAnalysisDocument','cloneAnalysisDocument','deleteAnalysisDocument','uploadAnalysisPreviewFile','openDatasetInQBE','editDataset','deleteDataset','previewDataset','deleteDataset','editFileDataset','exportToXlsx','exportToCsv','getHelp','downloadDatasetFile','shareDataset','openSidebar', 'cloneDataset', 'prepareData', 'openDataPreparation'],
-    props: { visible: Boolean, viewType: String, document: Object as any },
+    props: { visible: Boolean, viewType: String, document: Object as any, isPrepared: Boolean },
     computed: {
         isOwner(): any {
             return (this.$store.state as any).user.fullName === this.document.creationUser
@@ -180,8 +180,8 @@ export default defineComponent({
                     { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: this.emitEvent('downloadDatasetFile'), visible: this.document.dsTypeCd == 'File' },
                     { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: this.emitEvent('shareDataset'), visible: this.canLoadData && this.isDatasetOwner },
                     { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: this.emitEvent('cloneDataset'), visible: this.canLoadData && this.document.dsTypeCd == 'Qbe' },
-                    { key: '7', label: this.$t('workspace.myData.prepareData'), icon: 'fas fa-cogs', command: this.emitEvent('prepareData'), visible: !this.document.isAvroReady && this.canLoadData && this.document.dsTypeCd != 'Qbe' },
-                    { key: '8', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: this.emitEvent('openDataPreparation'), visible: this.document.isAvroReady && this.canLoadData && this.document.dsTypeCd != 'Qbe' },
+                    { key: '7', label: this.$t('workspace.myData.prepareData'), icon: 'fas fa-cogs', command: this.emitEvent('prepareData'), visible: !this.isPrepared && this.canLoadData && this.document.dsTypeCd != 'Qbe' },
+                    { key: '8', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: this.emitEvent('openDataPreparation'), visible: this.isPrepared && this.canLoadData && this.document.dsTypeCd != 'Qbe' },
                     { key: '9', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: this.emitEvent('deleteDataset'), visible: this.isDatasetOwner }
                 )
             } else if (this.viewType === 'federationDataset') {

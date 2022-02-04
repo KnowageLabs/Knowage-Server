@@ -56,6 +56,7 @@
                     :key="index"
                     :viewType="'dataset'"
                     :document="dataset"
+                    :isPrepared="isAvroReady(dataset)"
                     @previewDataset="previewDataset"
                     @editFileDataset="editFileDataset"
                     @openDatasetInQBE="openDatasetInQBE"
@@ -77,6 +78,7 @@
         :visible="showDetailSidebar"
         :viewType="'dataset'"
         :document="selectedDataset"
+        :isPrepared="isAvroReady(selectedDataset)"
         :datasetCategories="datasetCategories"
         @previewDataset="previewDataset"
         @editFileDataset="editFileDataset"
@@ -122,7 +124,7 @@ import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDial
 import { AxiosResponse } from 'axios'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
 import SelectButton from 'primevue/selectbutton'
-import { Client } from '@stomp/stompjs';
+import { Client } from '@stomp/stompjs'
 
 export default defineComponent({
     components: { DataTable, Column, Chip, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog, WorkspaceDataPreviewDialog, SelectButton, Message },
@@ -170,6 +172,7 @@ export default defineComponent({
             showDatasetDialog: false,
             datasetList: [] as any,
             filteredDatasets: [] as any,
+            preparedDatasets: [] as any,
             datasetCategories: [] as any,
             selectedDataset: {} as any,
             menuButtons: [] as any,
@@ -187,14 +190,23 @@ export default defineComponent({
             searchWord: '' as string
         }
     },
-    created() {
-        this.getAllData()
+    async created() {
+        await this.getAllData()
+        await this.getAllPreparedData()
     },
 
     methods: {
         getDatasets(filter: string) {
             this.loading = true
             return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${filter}/`)
+        },
+        async getAllPreparedData() {
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/prepared`)
+                .then((response: AxiosResponse<any>) => {
+                    this.preparedDatasets = response.data
+                })
+                .catch(() => {})
         },
         async getAllData() {
             await this.getDatasetsByFilter()
@@ -248,8 +260,8 @@ export default defineComponent({
                 { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: () => this.downloadDatasetFile(clickedDocument), visible: this.selectedDataset.dsTypeCd == 'File' },
                 { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.shareDataset(), visible: this.canLoadData && this.isDatasetOwner },
                 { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: () => this.cloneDataset(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' },
-                { key: '7', label: this.$t('workspace.myData.prepareData'), icon: 'fas fa-cogs', command: () => this.prepareData(clickedDocument), visible: !this.selectedDataset.isAvroReady && this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' },
-                { key: '8', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: this.selectedDataset.isAvroReady && this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' },
+                { key: '7', label: this.$t('workspace.myData.prepareData'), icon: 'fas fa-cogs', command: () => this.prepareData(clickedDocument), visible: !this.isAvroReady(this.selectedDataset) && this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' },
+                { key: '8', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: this.isAvroReady(this.selectedDataset) && this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' },
                 { key: '9', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
             )
 
@@ -272,6 +284,10 @@ export default defineComponent({
         },
         editFileDataset() {
             this.showDatasetDialog = true
+        },
+        isAvroReady(dataset: any) {
+            if (dataset && this.preparedDatasets.indexOf(dataset.label) > 0) return true
+            else return false
         },
         async prepareData(dataset: any) {
             if (dataset) {
@@ -299,47 +315,46 @@ export default defineComponent({
                 let url = process.env.VUE_APP_HOST_URL.replace('http', 'ws') + '/knowage-data-preparation/ws?' + process.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
                 let client = new Client({
                     brokerURL: url,
-                    connectHeaders: {
-                    },
+                    connectHeaders: {},
                     heartbeatIncoming: 4000,
-                    heartbeatOutgoing: 4000,
-                });
+                    heartbeatOutgoing: 4000
+                })
 
-                client.onConnect = (frame)=> {
+                client.onConnect = (frame) => {
                     // Do something, all subscribes must be done is this callback
                     // This is needed because this will be executed after a (re)connect
-                    console.log(frame);
+                    console.log(frame)
 
-                    client.subscribe("/user/queue/prepare",(message)=> {
-                        // called when the client receives a STOMP message from the server
-                        if (message.body) {
-                            let avroJobResponse = JSON.parse(message.body)
-                            if (avroJobResponse.statusOk)
-                                this.$store.commit('setInfo', { title: "Dataset " + avroJobResponse.dsLabel + " prepared successfully"})
-                            else
-                                this.$store.commit('setError', { title: "Cannot prepare dataset " + avroJobResponse.dsLabel, msg: avroJobResponse.errorMessage })
-                            
-                            dataset.isAvroReady = true
-                            client.deactivate();
-                        } else {
-                            this.$store.commit('setError', { title: "Websocket error", msg: "got empty message" })
+                    client.subscribe(
+                        '/user/queue/prepare',
+                        (message) => {
+                            // called when the client receives a STOMP message from the server
+                            if (message.body) {
+                                let avroJobResponse = JSON.parse(message.body)
+                                if (avroJobResponse.statusOk) this.$store.commit('setInfo', { title: 'Dataset ' + avroJobResponse.dsLabel + ' prepared successfully' })
+                                else this.$store.commit('setError', { title: 'Cannot prepare dataset ' + avroJobResponse.dsLabel, msg: avroJobResponse.errorMessage })
+
+                                this.preparedDatasets.push(avroJobResponse.dsLabel)
+                                client.deactivate()
+                            } else {
+                                this.$store.commit('setError', { title: 'Websocket error', msg: 'got empty message' })
+                            }
+                        },
+                        {
+                            dsLabel: dataset.label
                         }
-                    },
-                    {
-                        "dsLabel": dataset.label
-                    });
+                    )
+                }
 
-                };
-
-                client.onStompError = function (frame) {
+                client.onStompError = function(frame) {
                     // Will be invoked in case of error encountered at Broker
                     // Bad login/passcode typically will cause an error
                     // Complaint brokers will set `message` header with a brief message. Body may contain details.
                     // Compliant brokers will terminate the connection after any error
-                    console.log('Broker reported error: ' + frame.headers['message']);
-                    console.log('Additional details: ' + frame.body);
-                };
-                client.activate();
+                    console.log('Broker reported error: ' + frame.headers['message'])
+                    console.log('Additional details: ' + frame.body)
+                }
+                client.activate()
             }
         },
         openDataPreparation(dataset: any) {

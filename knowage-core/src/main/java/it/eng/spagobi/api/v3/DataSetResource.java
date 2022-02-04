@@ -20,6 +20,8 @@ package it.eng.spagobi.api.v3;
 
 import static java.util.stream.Collectors.toList;
 
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,6 +53,7 @@ import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
@@ -259,6 +262,30 @@ public class DataSetResource {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		}
 
+	}
+
+	@GET
+	@Path("/prepared")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public List<String> getPreparedDataSets() {
+		List<String> preparedDataSets = new ArrayList<String>();
+		try {
+			final UserProfile userProfile = getUserProfile();
+			java.nio.file.Path avroExportFolder = Paths.get(SpagoBIUtilities.getRootResourcePath(), userProfile.getOrganization(), "dataPreparation",
+					(String) userProfile.getUserId());
+			File[] datasets = avroExportFolder.toFile().listFiles(File::isDirectory);
+			for (int i = 0; i < datasets.length; i++) {
+				boolean avroReady = new File(datasets[i], "ready").exists();
+				if (avroReady) {
+					preparedDataSets.add(datasets[i].getName());
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Cannot get list of prepared datasets", e);
+			return new ArrayList<String>();
+		}
+		return preparedDataSets;
 	}
 
 	private DatasetManagementAPI getDatasetManagementAPI() {
