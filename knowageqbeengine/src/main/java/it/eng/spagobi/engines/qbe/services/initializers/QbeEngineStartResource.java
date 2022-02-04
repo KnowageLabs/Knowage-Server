@@ -19,6 +19,7 @@
 package it.eng.spagobi.engines.qbe.services.initializers;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.ws.rs.GET;
@@ -162,7 +163,7 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 		} catch (Throwable t) {
 			logger.warn("Impossible to instatiate the metamodel proxy", t);
 		}
-		env.put(EngineConstants.ENV_LOCALE, getLocale());
+		env.put(EngineConstants.ENV_LOCALE, Locale.getDefault());
 
 		if (dataSource == null || dataSource.checkIsReadOnly()) {
 			logger.debug("Getting datasource for writing, since the datasource is not defined or it is read-only");
@@ -248,4 +249,5 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 
 		return null;
 	}
+
 }
