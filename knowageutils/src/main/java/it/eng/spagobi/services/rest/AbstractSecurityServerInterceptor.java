@@ -37,6 +37,8 @@ import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.services.rest.annotations.CheckFunctionalitiesParser;
 import it.eng.spagobi.services.rest.annotations.PublicService;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -94,6 +96,7 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 			}
 			// Profile is not null
 			UserProfileManager.setProfile(profile);
+			manageTenant(profile);
 
 			// we put user profile in session only in case incoming request is NOT for a back-end service (because back-end services should be treated in a
 			// stateless fashion, otherwise number of HTTP sessions will increase with no control) and it is not already stored in session
@@ -125,6 +128,17 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("An unexpected error occured while preprocessing service request", e);
 		}
+	}
+
+	private void manageTenant(IEngUserProfile profile) {
+		UserProfile userProfile = (UserProfile) profile;
+		// retrieving tenant id
+		String tenantId = userProfile.getOrganization();
+		logger.debug("Retrieved tenantId from user profile object : [" + tenantId + "]");
+		// putting tenant id on thread local
+		Tenant tenant = new Tenant(tenantId);
+		TenantManager.setTenant(tenant);
+		logger.debug("Tenant [" + tenantId + "] set into TenantManager");
 	}
 
 	/**
