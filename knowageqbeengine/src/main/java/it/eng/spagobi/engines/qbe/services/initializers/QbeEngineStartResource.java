@@ -18,6 +18,9 @@
 
 package it.eng.spagobi.engines.qbe.services.initializers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -31,7 +34,14 @@ import it.eng.spagobi.engines.qbe.QbeEngine;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.api.AbstractQbeEngineResource;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
+import it.eng.spagobi.services.proxy.ContentServiceProxy;
+import it.eng.spagobi.services.proxy.DataSetServiceProxy;
+import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
+import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 
 @Path("/start-qbe")
@@ -39,6 +49,14 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 
 	public static final String ENGINE_NAME = "SpagoBIQbeEngine";
 	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
+
+	public static final String ENGINE_DATASOURCE_LABEL = "ENGINE_DATASOURCE_LABEL";
+	private static final String DATA_SOURCE_LABEL = "DATA_SOURCE_LABEL";
+
+	private DataSourceServiceProxy datasourceProxy;
+	private ContentServiceProxy contentProxy;
+	private DataSetServiceProxy datasetProxy;
+	private MetamodelServiceProxy metamodelProxy;
 
 	@GET
 	@Path("/")
@@ -118,4 +136,116 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 
 	}
 
+	@Override
+	public Map getEnv() {
+		Map env = new HashMap();
+
+		IDataSource dataSource = getDataSource();
+//		copyRequestParametersIntoEnv(env, getSpagoBIRequestContainer());
+		try {
+			env.put(EngineConstants.ENV_DATASOURCE, dataSource);
+		} catch (Exception e) {
+			logger.debug("Error loading the datasource in the getEnv", e);
+		}
+
+		// document id can be null (when using QbE for dataset definition)
+//		if (getDocumentId() != null) {
+//			env.put(EngineConstants.ENV_DOCUMENT_ID, getDocumentId());
+//		}
+		env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
+		env.put(EngineConstants.ENV_CONTENT_SERVICE_PROXY, getContentServiceProxy());
+//		env.put(EngineConstants.ENV_AUDIT_SERVICE_PROXY, getAuditServiceProxy());
+		env.put(EngineConstants.ENV_DATASET_PROXY, getDataSetServiceProxy());
+		env.put(EngineConstants.ENV_DATASOURCE_PROXY, getDataSourceServiceProxy());
+		try {
+			env.put(EngineConstants.ENV_METAMODEL_PROXY, getMetamodelServiceProxy());
+		} catch (Throwable t) {
+			logger.warn("Impossible to instatiate the metamodel proxy", t);
+		}
+		env.put(EngineConstants.ENV_LOCALE, getLocale());
+
+		if (dataSource == null || dataSource.checkIsReadOnly()) {
+			logger.debug("Getting datasource for writing, since the datasource is not defined or it is read-only");
+			IDataSource datasourceForWriting = this.getDataSourceForWriting();
+			env.put(EngineConstants.DATASOURCE_FOR_WRITING, datasourceForWriting);
+		} else {
+			env.put(EngineConstants.DATASOURCE_FOR_WRITING, dataSource);
+		}
+
+		return env;
+	}
+
+	public IDataSource getDataSource() {
+		IDataSource dataSource = null;
+		String dataSourceLabel = getAttributeAsString(DATA_SOURCE_LABEL);
+		if (dataSourceLabel == null) {
+			dataSourceLabel = this.getAttributeAsString(ENGINE_DATASOURCE_LABEL);
+		}
+		if (dataSourceLabel != null) {
+			dataSource = getDataSourceServiceProxy().getDataSourceByLabel(dataSourceLabel);
+		}
+		return dataSource;
+	}
+
+	public DataSourceServiceProxy getDataSourceServiceProxy() {
+		if (datasourceProxy == null) {
+			datasourceProxy = new DataSourceServiceProxy((String) getUserProfile().getUserUniqueIdentifier(), getHttpSession());
+		}
+
+		return datasourceProxy;
+	}
+
+	protected ContentServiceProxy getContentServiceProxy() {
+		if (contentProxy == null) {
+			contentProxy = new ContentServiceProxy((String) getUserProfile().getUserUniqueIdentifier(), getHttpSession());
+		}
+
+		return contentProxy;
+	}
+
+	public DataSetServiceProxy getDataSetServiceProxy() {
+		if (datasetProxy == null) {
+			datasetProxy = new DataSetServiceProxy((String) getUserProfile().getUserUniqueIdentifier(), getHttpSession());
+		}
+
+		return datasetProxy;
+	}
+
+	public MetamodelServiceProxy getMetamodelServiceProxy() {
+		if (metamodelProxy == null) {
+			metamodelProxy = new MetamodelServiceProxy((String) getUserProfile().getUserUniqueIdentifier(), getHttpSession());
+		}
+
+		return metamodelProxy;
+	}
+
+	public IDataSource getDataSourceForWriting() {
+		String schema = null;
+		String attrname = null;
+
+		String datasourceLabel = this.getAttributeAsString(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL);
+
+		if (datasourceLabel != null) {
+			IDataSource dataSource = getDataSourceServiceProxy().getDataSourceByLabel(datasourceLabel);
+			if (dataSource != null && dataSource.checkIsMultiSchema()) {
+				logger.debug("Datasource [" + dataSource.getLabel() + "] is defined on multi schema");
+				try {
+					logger.debug("Retriving target schema for datasource [" + dataSource.getLabel() + "]");
+					attrname = dataSource.getSchemaAttribute();
+					logger.debug("Datasource's schema attribute name is equals to [" + attrname + "]");
+					Assert.assertNotNull(attrname, "Datasource's schema attribute name cannot be null in order to retrive the target schema");
+					schema = (String) getUserProfile().getUserAttribute(attrname);
+					Assert.assertNotNull(schema, "Impossible to retrive the value of attribute [" + attrname + "] form user profile");
+					dataSource.setJndi(dataSource.getJndi() + schema);
+					logger.debug("Target schema for datasource  [" + dataSource.getLabel() + "] is [" + dataSource.getJndi() + "]");
+				} catch (Throwable t) {
+					throw new SpagoBIEngineRuntimeException("Impossible to retrive target schema for datasource [" + dataSource.getLabel() + "]", t);
+				}
+				logger.debug("Target schema for datasource  [" + dataSource.getLabel() + "] retrieved succesfully");
+			}
+			return dataSource;
+		}
+
+		return null;
+	}
 }
