@@ -205,6 +205,7 @@ export default defineComponent({
                     } else {
                         this.$store.commit('setError', { title: "Error"})
                     }
+                    this.dataset.config.transformations.splice(-1)
                     this.loading = false
                 });
             };
