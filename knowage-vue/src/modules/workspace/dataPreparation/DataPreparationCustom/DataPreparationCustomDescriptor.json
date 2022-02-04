@@ -139,7 +139,7 @@
             }
         ]
     },
-    "splitColumn": {
+    "split": {
         "parameters": [
             {
                 "name": "columns",
@@ -183,20 +183,20 @@
                         "label": "managers.workspaceManagement.dataPreparation.transformations.useNumberOfChars"
                     }
                 ],
-                "name": "splitColumnMethod",
+                "name": "splitMethod",
                 "placeholder": "managers.workspaceManagement.dataPreparation.transformations.condition",
                 "type": "dropdown",
                 "validationRules": "required|alpha_dash"
             },
             {
-                "dependsFromField": "splitColumnMethod",
+                "dependsFromField": "splitMethod",
                 "dependsFromOptions": "split_separator",
                 "name": "separator",
                 "type": "string",
                 "validationRules": "alpha"
             },
             {
-                "dependsFromField": "splitColumnMethod",
+                "dependsFromField": "splitMethod",
                 "dependsFromOptions": "split_numberOfChars",
                 "name": "numberOfChars",
                 "type": "string",

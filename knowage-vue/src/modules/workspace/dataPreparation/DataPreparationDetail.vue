@@ -138,8 +138,7 @@ import { IDataPreparationColumn } from '@/modules/workspace/dataPreparation/Data
 import DataPreparationSimpleDescriptor from '@/modules/workspace/dataPreparation/DataPreparationSimple/DataPreparationSimpleDescriptor.json'
 import DataPreparationCustomDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationCustomDescriptor.json'
 
-
-import { Client } from '@stomp/stompjs';
+import { Client } from '@stomp/stompjs'
 
 export default defineComponent({
     name: 'data-preparation-detail',
@@ -179,46 +178,49 @@ export default defineComponent({
         if (this.dataset) {
             await this.initWebsocket()
 
-            this.client.onConnect = (frame)=> {
+            this.client.onConnect = (frame) => {
                 // Do something, all subscribes must be done is this callback
                 // This is needed because this will be executed after a (re)connect
-                console.log(frame);
+                console.log(frame)
 
-                this.client.subscribe("/user/queue/preview",(message)=> {
-                    // called when the client receives a STOMP message from the server
-                    if (message.body) {
-                     this.updateTable(message.body)
-                    } else {
-                        console.log("got empty message");
+                this.client.subscribe(
+                    '/user/queue/preview',
+                    (message) => {
+                        // called when the client receives a STOMP message from the server
+                        if (message.body) {
+                            this.updateTable(message.body)
+                        } else {
+                            console.log('got empty message')
+                        }
+                        this.loading = false
+                    },
+                    {
+                        dsLabel: this.dataset.label
                     }
-                    this.loading = false
-                },
-                {
-                    "dsLabel": this.dataset.label
-                });
-                
-                this.client.subscribe("/user/queue/error", (error) => {
+                )
+
+                this.client.subscribe('/user/queue/error', (error) => {
                     // called when the client receives a STOMP message from the server
                     if (error.body) {
                         let message = JSON.parse(error.body)
-                        this.$store.commit('setError', { title: "Error", msg: message.message })
+                        this.$store.commit('setError', { title: 'Error', msg: message.message })
                     } else {
-                        this.$store.commit('setError', { title: "Error"})
+                        this.$store.commit('setError', { title: 'Error' })
                     }
                     this.dataset.config.transformations.splice(-1)
                     this.loading = false
-                });
-            };
+                })
+            }
 
-            this.client.onStompError = function (frame) {
+            this.client.onStompError = function(frame) {
                 // Will be invoked in case of error encountered at Broker
                 // Bad login/passcode typically will cause an error
                 // Complaint brokers will set `message` header with a brief message. Body may contain details.
                 // Compliant brokers will terminate the connection after any error
-                console.log('Broker reported error: ' + frame.headers['message']);
-                console.log('Additional details: ' + frame.body);
-            };
-            this.client.activate();
+                console.log('Broker reported error: ' + frame.headers['message'])
+                console.log('Additional details: ' + frame.body)
+            }
+            this.client.activate()
         }
     },
     methods: {
@@ -272,11 +274,10 @@ export default defineComponent({
             let url = process.env.VUE_APP_HOST_URL.replace('http', 'ws') + '/knowage-data-preparation/ws?' + process.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
             this.client = new Client({
                 brokerURL: url,
-                connectHeaders: {
-                },
+                connectHeaders: {},
                 heartbeatIncoming: 4000,
-                heartbeatOutgoing: 4000,
-            });
+                heartbeatOutgoing: 4000
+            })
         },
         getColHeader(metadata: Array<any>, idx: Number): string {
             let columnMapping = 'Column_' + idx
@@ -284,7 +285,7 @@ export default defineComponent({
             return toReturn
         },
         callFunction(transformation: any, col): void {
-            if (transformation.name === 'changeType' || transformation.name === 'splitColumn') {
+            if (transformation.name === 'changeType' || transformation.name === 'split') {
                 let parsArray = transformation.name === 'changeType' ? this.simpleDescriptor[transformation.name].parameters : this.customDescriptor[transformation.name].parameters
                 for (var i = 0; i < parsArray.length; i++) {
                     let element = parsArray[i]
@@ -334,12 +335,12 @@ export default defineComponent({
 
             this.dataset.config.transformations.push(t)
             this.loading = true
-            this.client.publish({ destination: "/app/preview", headers: {"dsLabel": this.dataset.label},body: JSON.stringify(this.dataset.config.transformations)});
+            this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
         },
         deleteTransformation(index: number): void {
             this.dataset.config.transformations.splice(index, 1)
             this.loading = true
-            this.client.publish({ destination: "/app/preview", headers: {"dsLabel": this.dataset.label},body: JSON.stringify(this.dataset.config.transformations)});
+            this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
         },
         getCompatibilityType(col: IDataPreparationColumn): void {
             return this.descriptor.compatibilityMap[col.Type].values
@@ -393,29 +394,29 @@ export default defineComponent({
             col.edit = !col.edit
         },
         updateTable(message) {
-               let response = JSON.parse(message);
-                        // set headers
-                        let metadata = response.metadata.columns
-                        this.columns = []
-                        for (let i = 0; i < metadata.length; i++) {
-                            let obj = {} as IDataPreparationColumn
-                            obj.Type = metadata[i].type
-                            obj.disabled = false
-                            obj.fieldAlias = metadata[i].alias
-                            obj.fieldType = metadata[i].fieldType
-                            obj.header = metadata[i].name
-                            this.columns.push(obj)
-                        }
-                        //set data rows
-                        this.datasetData = []
-                        response.rows.forEach((row) => {
-                            let obj = {}
-                            for (let i = 0; i < row.length; i++) {
-                                let colHeader = this.getColHeader(metadata, i)
-                                obj[colHeader] = row[i];
-                            }
-                            this.datasetData.push(obj)
-                        })
+            let response = JSON.parse(message)
+            // set headers
+            let metadata = response.metadata.columns
+            this.columns = []
+            for (let i = 0; i < metadata.length; i++) {
+                let obj = {} as IDataPreparationColumn
+                obj.Type = metadata[i].type
+                obj.disabled = false
+                obj.fieldAlias = metadata[i].alias
+                obj.fieldType = metadata[i].fieldType
+                obj.header = metadata[i].name
+                this.columns.push(obj)
+            }
+            //set data rows
+            this.datasetData = []
+            response.rows.forEach((row) => {
+                let obj = {}
+                for (let i = 0; i < row.length; i++) {
+                    let colHeader = this.getColHeader(metadata, i)
+                    obj[colHeader] = row[i]
+                }
+                this.datasetData.push(obj)
+            })
         }
     }
 })

@@ -18,7 +18,7 @@
                 <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.separator') }}</label>
             </span>
         </div>
-        <Fieldset :legend="$t('managers.workspaceManagement.dataPreparation.transformations.splitColumn.outputColumn') + ' 1'">
+        <Fieldset :legend="$t('managers.workspaceManagement.dataPreparation.transformations.split.outputColumn') + ' 1'">
             <div class="p-d-flex">
                 <span class="p-float-label p-field p-ml-2 kn-flex">
                     <InputText type="text" v-model="localTransformation.outputColumn1" class="kn-material-input" />
@@ -26,11 +26,11 @@
                 </span>
                 <span class="p-float-label p-field p-ml-2 kn-flex">
                     <Dropdown v-model="localTransformation.outputType1" :options="availableOutputTypes" optionLabel="label" optionValue="code" class="kn-material-input" />
-                    <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.splitColumn.outputType') }}</label>
+                    <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.split.outputType') }}</label>
                 </span>
             </div>
         </Fieldset>
-        <Fieldset :legend="$t('managers.workspaceManagement.dataPreparation.transformations.splitColumn.outputColumn') + ' 2'">
+        <Fieldset :legend="$t('managers.workspaceManagement.dataPreparation.transformations.split.outputColumn') + ' 2'">
             <div class="p-d-flex">
                 <span class="p-float-label p-field p-ml-2 kn-flex">
                     <InputText type="text" v-model="localTransformation.outputColumn2" class="kn-material-input" />
@@ -38,7 +38,7 @@
                 </span>
                 <span class="p-float-label p-field p-ml-2 kn-flex">
                     <Dropdown v-model="localTransformation.outputType2" :options="availableOutputTypes" optionLabel="label" optionValue="code" class="kn-material-input" />
-                    <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.splitColumn.outputType') }}</label>
+                    <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.split.outputType') }}</label>
                 </span>
             </div>
         </Fieldset>
@@ -47,7 +47,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import DataPreparationSplitColumnDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationSplitColumnDescriptor.json'
+import DataPreparationSplitDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationSplitDescriptor.json'
 import { ISplitTransformationParameter } from '@/modules/workspace/dataPreparation/DataPreparation'
 import { IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
 import Dropdown from 'primevue/dropdown'
@@ -62,9 +62,9 @@ export default defineComponent({
     emits: ['update:transformation'],
     data() {
         return {
-            availableConditions: DataPreparationSplitColumnDescriptor.condition.availableOptions as Array<any>,
-            availableOutputTypes: DataPreparationSplitColumnDescriptor.availableOutputTypes as Array<any>,
-            descriptor: DataPreparationSplitColumnDescriptor as any,
+            availableConditions: DataPreparationSplitDescriptor.condition.availableOptions as Array<any>,
+            availableOutputTypes: DataPreparationSplitDescriptor.availableOutputTypes as Array<any>,
+            descriptor: DataPreparationSplitDescriptor as any,
             localTransformation: {} as ISplitTransformationParameter
         }
     },

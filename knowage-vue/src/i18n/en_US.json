@@ -1720,7 +1720,7 @@
                         "label": "Replace"
                     },
                     "separator": "Separator",
-                    "splitColumn": {
+                    "split": {
                         "description": "Split the column content in two different columns. Choose the split type and define the two returning columns.",
                         "label": "Split column",
                         "numOfChars": "Number of characters",
@@ -1728,7 +1728,7 @@
                         "outputType": "Output Type",
                         "separator": "Separator"
                     },
-                    "splitColumnMethod": "Split column method",
+                    "splitMethod": "Split column method",
                     "startDate": "Start Date",
                     "statistics": {
                         "description": "TODO",

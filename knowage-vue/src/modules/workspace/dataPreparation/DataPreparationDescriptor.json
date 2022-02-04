@@ -227,14 +227,14 @@
         },
         {
             "category": "tableStructure",
-            "description": "managers.workspaceManagement.dataPreparation.transformations.splitColumn.description",
+            "description": "managers.workspaceManagement.dataPreparation.transformations.split.description",
             "editColumn": false,
             "icon": {
                 "class": "material-icons",
                 "name": "call_split"
             },
-            "label": "managers.workspaceManagement.dataPreparation.transformations.splitColumn.label",
-            "name": "splitColumn",
+            "label": "managers.workspaceManagement.dataPreparation.transformations.split.label",
+            "name": "split",
             "position": 3,
             "toolbar": true,
             "type": "split"
