@@ -178,6 +178,10 @@ public abstract class AbstractRestService {
 		return getExecutionSession().getAttribute(attrName);
 	}
 
+	public void setAttribute(String attrName, Object attrValue) {
+		getExecutionSession().setAttributeInSession(attrName, attrValue);
+	}
+
 	public String getAttributeAsString(String attrName) {
 		return getExecutionSession().getAttributeAsString(attrName);
 	}
