@@ -123,8 +123,8 @@
                 }
             ]
         },
-        "oracle.sql.TIMESTAMP": {
-            "icon": "fas fa-quote-left",
+        "java.util.String": {
+            "icon": "far fa-calendar-alt",
             "values": [
                 {
                     "code": "string",
@@ -132,8 +132,8 @@
                 }
             ]
         },
-        "java.util.String": {
-            "icon": "far fa-calendar-alt",
+        "oracle.sql.TIMESTAMP": {
+            "icon": "fas fa-quote-left",
             "values": [
                 {
                     "code": "string",
@@ -213,14 +213,14 @@
         },
         {
             "category": "tableStructure",
-            "description": "managers.workspaceManagement.dataPreparation.transformations.mergeColumns.description",
+            "description": "managers.workspaceManagement.dataPreparation.transformations.merge.description",
             "editColumn": false,
             "icon": {
                 "class": "material-icons",
                 "name": "merge_type"
             },
-            "label": "managers.workspaceManagement.dataPreparation.transformations.mergeColumns.label",
-            "name": "mergeColumns",
+            "label": "managers.workspaceManagement.dataPreparation.transformations.merge.label",
+            "name": "merge",
             "position": 2,
             "toolbar": true,
             "type": "simple"

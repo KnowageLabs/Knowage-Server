@@ -141,8 +141,8 @@
         "tenant": "tenant",
         "test": "test",
         "time": "Time",
-        "to": "To",
         "title": "Title",
+        "to": "To",
         "toast": {
             "cloneConfirmTitle": "Confirm item clone?",
             "createTitle": "Created",
@@ -361,6 +361,7 @@
             "currentRank": "Curent Rank is...",
             "customMetadata": "Custom Metadata",
             "editCockpit": "Edit cockpit document",
+            "editModeConfirm": "You are leaving edit mode. Continue?",
             "embedInHtml": "Embed in HTML",
             "exportInPDF": "Export in PDF",
             "exportInRTF": "Export in RTF",
@@ -379,8 +380,7 @@
             "showScheduledExecutions": "Show scheduled executions",
             "userRoleError": "User does not have valid roles for the execution of the selected document",
             "viewCockpit": "View cockpit document",
-            "yourRating": "Your rating",
-            "editModeConfirm": "You are leaving edit mode. Continue?"
+            "yourRating": "Your rating"
         },
         "registry": {
             "clearFilters": "Clear",
@@ -1676,11 +1676,11 @@
                     "columns": "Columns",
                     "condition": "Condition",
                     "conditions": "Conditions",
+                    "destType": "Destination type",
                     "drop": {
                         "description": "TODO",
                         "label": "Drop column"
                     },
-                    "destType": "Destination type",
                     "endDate": "End Date",
                     "filter": {
                         "description": "Filter the dataset using the selected conditions. If more then one AND logical operator will be used",
@@ -1693,7 +1693,7 @@
                     "formula": "Formula",
                     "label": "Transformations",
                     "logicOperator": "Logical operator",
-                    "mergeColumns": {
+                    "merge": {
                         "description": "The output type is always String",
                         "label": "Merge columns"
                     },
@@ -1769,15 +1769,15 @@
         "roleSelection": "Role Selection"
     },
     "workspace": {
-        "advancedData" : {
+        "advancedData": {
             "title": "Advanced Data"
         },
         "buttonsTooltips": {
-            "executeDoc": "Execute Document",
-            "moveDoc": "Move Document",
-            "editDoc": "Edit Document",
             "deleteDoc": "Delete Document",
+            "editDoc": "Edit Document",
+            "executeDoc": "Execute Document",
             "help": "Help Online",
+            "moveDoc": "Move Document",
             "other": "Other Options",
             "previewDs": "Preview Dataset"
         },
@@ -1811,6 +1811,7 @@
             "schedulation": "Schedulation"
         },
         "myAnalysis": {
+            "geoRef": "Geo-referenced analysis",
             "menuItems": {
                 "clone": "Clone Document",
                 "delete": "Delete Document",
@@ -1819,8 +1820,7 @@
                 "showDsDetails": "Show dataset details",
                 "unshare": "Unshare Document",
                 "upload": "Upload preview file"
-            },
-            "geoRef": "Geo-referenced analysis"
+            }
         },
         "myData": {
             "cloneDataset": "Clone Dataset",
@@ -1833,10 +1833,10 @@
             "fileDownload": "Download Dataset file",
             "modified": "Modified",
             "openData": "Import Open Data",
+            "openDataPreparation": "Open Data Preparation",
             "parametrical": "Parametrical",
             "parseError": "Impossible to parse file. Check its content and upload it again",
             "prepareData": "Prepare Data",
-            "openDataPreparation": "Open Data Preparation",
             "shareDataset": "Share/Unshare Dataset",
             "shareDatasetHint": "By selecting a category from the combo box you are sharing the data set for all the users that are able to manage the specified data set category.",
             "tablePrefix": "Table Prefix",
