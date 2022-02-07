@@ -330,6 +330,7 @@
             "category": "tableStructure",
             "description": "managers.workspaceManagement.dataPreparation.transformations.changeType.description",
             "editColumn": true,
+            "hidden": true,
             "icon": "fas fa-hashtag",
             "label": "managers.workspaceManagement.dataPreparation.transformations.changeType.label",
             "name": "changeType",

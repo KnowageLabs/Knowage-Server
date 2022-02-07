@@ -264,7 +264,7 @@ export default defineComponent({
 
         getTransformationsMenu(col: IDataPreparationColumn): Array<any> {
             return this.descriptorTransformations
-                .filter((x) => x.editColumn)
+                .filter((x) => x.editColumn && !x.hidden)
                 .filter((x) => {
                     if (x.incompatibleDataTypes) return !x.incompatibleDataTypes?.includes(col.Type)
                     return true
@@ -355,7 +355,7 @@ export default defineComponent({
         },
         getMenuForToolbar(): Array<any> {
             let tmp = this.descriptorTransformations
-                .filter((x) => x.toolbar)
+                .filter((x) => x.toolbar && !x.hidden)
                 .sort(function(a, b) {
                     if (a.position > b.position) return 1
                     if (a.position < b.position) return -1
