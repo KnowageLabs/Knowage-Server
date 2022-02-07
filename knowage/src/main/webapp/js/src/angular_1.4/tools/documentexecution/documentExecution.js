@@ -16,6 +16,7 @@
 			['$scope', '$http', '$mdSidenav', '$mdDialog', '$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_user',
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
 			 'documentExecuteServices', 'docExecute_urlViewPointService', 'docExecute_paramRolePanelService', 'infoMetadataService', 'sbiModule_download', '$crossNavigationScope',
+			 
 			 '$timeout', '$interval', 'docExecute_exportService', '$filter', 'sbiModule_dateServices', 'cockpitEditing', '$window', '$httpParamSerializer', '$mdMenu','sbiModule_i18n','sbiModule_device',
 			 'driversExecutionService','driversDependencyService', 'datasetPreview_service' ,documentExecutionControllerFn]);
 
@@ -35,7 +36,9 @@
 		$scope.browser = sbiModule_device.browser;
 
 		$interval(function(){
-			$scope.menuElementLength = angular.element( document.querySelector( '#menu md-menu-content' ) )[0].children.length;
+			let el = angular.element( document.querySelector( '#menu md-menu-content' ) )
+			if(Array.isArray(el)) $scope.menuElementLength = el[0].children.length;
+			else $scope.menuElementLength = el.children.length;
 		},1000)
 		
 		
@@ -123,6 +126,13 @@
 			docExecute_urlViewPointService.executionProcesRestV1(role, params);
 			docExecute_paramRolePanelService.toggleParametersPanel(false);
 		}
+
+		
+		window.addEventListener("message", (event) => {
+			if(event.data.type && event.data.type === 'htmlLink') {
+				$scope.copyLinkHTML(event.data.embedHTML); 
+			}
+		})
 
 
 		$scope.isOrganizerEnabled = function () {
@@ -366,12 +376,6 @@
 				console.log('getParametersForExecution response OK -> ', response);
 
 				var canExec = response.data.isPublic;
-				var noPublicRoleError = response.data.noPublicRoleError;
-
-				if(noPublicRoleError == true){
-					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.execution.noPublicRole"), sbiModule_translate.load('sbi.generic.error'));
-					return;
-				}
 
 				var publicStr = canExec == true ? "/public" : "";
 
@@ -785,17 +789,18 @@ var execCrossNavigation=function(frameid, doclabel, params, subobjid, title, tar
 
 var execExternalCrossNavigation=function(outputParameters,inputParameters,targetCrossNavigation,docLabel,otherOutputParameters){
 	
-	var currentScope = angular.element(frameElement).scope();
-	while(currentScope != undefined){
-		if(currentScope.navigateTo != undefined){
-			break;
+		var currentScope = angular.element(frameElement).scope();
+		while(currentScope != undefined){
+			if(currentScope.navigateTo != undefined){
+				break;
+			}
+			currentScope = currentScope.$parent;
 		}
-		currentScope = currentScope.$parent;
-	}
-	if(!currentScope){
-		currentScope = angular.element(document.querySelector('#documentFrame')).scope();
-	}
-	currentScope.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel,otherOutputParameters);
+		if(!currentScope){
+			currentScope = angular.element(document.querySelector('#documentFrame')).scope();
+		}
+		currentScope.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel,otherOutputParameters);	
+	
 };
 
 var execPreviewDataset = function(datasetLabel, parameters, directDownload) {

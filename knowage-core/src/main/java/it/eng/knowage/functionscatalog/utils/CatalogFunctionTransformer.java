@@ -58,79 +58,23 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 
 	private final String functionUuid;
 	private String script;
-	private final JSONObject functionConfiguration;
-	private Map<String, String> inputColumns;
-	private Map<String, InputVariable> inputVariables;
-	private Map<String, OutputColumnRuntime> outputColumns;
+	private final CatalogFunctionRuntimeConfigDTO cfg;
 	private UserProfile profile;
 	private CatalogFunctionDataProxy proxy;
 	private IDataStore newColumns;
 
 	private static transient Logger logger = Logger.getLogger(CatalogFunctionTransformer.class);
 
-	public CatalogFunctionTransformer(String functionUuid, JSONObject catalogFunctionConfig) {
+	public CatalogFunctionTransformer(UserProfile profile, String functionUuid, CatalogFunctionRuntimeConfigDTO configDTO) {
+		this.profile = profile;
 		this.functionUuid = functionUuid;
-		this.functionConfiguration = catalogFunctionConfig;
+		this.cfg = configDTO;
 		init();
 	}
 
 	private void init() {
-		profile = new UserProfileResource().getUserProfileForFunctionsCatalog();
-		initInputColumns();
-		initOutputColumns();
-		initInputVariables();
 		initFunction();
 		initProxy();
-	}
-
-	private void initInputColumns() {
-		inputColumns = new HashMap<String, String>();
-		JSONArray inCols = functionConfiguration.optJSONArray("inputColumns");
-		for (int i = 0; i < inCols.length(); i++) {
-			try {
-				String columnName = inCols.getJSONObject(i).getString("name");
-				String dsColumn = inCols.getJSONObject(i).getString("dsColumn");
-				inputColumns.put(columnName, dsColumn);
-			} catch (Exception e) {
-				logger.error("Error initializing input columns", e);
-				inputColumns = new HashMap<String, String>();
-			}
-		}
-	}
-
-	private void initInputVariables() {
-		inputVariables = new HashMap<String, InputVariable>();
-		JSONArray inVars = functionConfiguration.optJSONArray("inputVariables");
-		for (int i = 0; i < inVars.length(); i++) {
-			try {
-				String varName = inVars.getJSONObject(i).getString("name");
-				String type = inVars.getJSONObject(i).getString("type");
-				String value = inVars.getJSONObject(i).getString("value");
-				InputVariable inputVariable = new InputVariable(varName, type, value);
-				inputVariables.put(varName, inputVariable);
-			} catch (Exception e) {
-				logger.error("Error initializing input variables", e);
-				inputVariables = new HashMap<String, InputVariable>();
-			}
-		}
-	}
-
-	private void initOutputColumns() {
-		outputColumns = new HashMap<String, OutputColumnRuntime>();
-		JSONArray outCols = functionConfiguration.optJSONArray("outputColumns");
-		for (int i = 0; i < outCols.length(); i++) {
-			try {
-				String columnName = outCols.getJSONObject(i).getString("name");
-				String fieldType = outCols.getJSONObject(i).getString("fieldType");
-				String type = outCols.getJSONObject(i).getString("type");
-				String alias = outCols.getJSONObject(i).optString("alias");
-				OutputColumnRuntime outputColumn = new OutputColumnRuntime(columnName, fieldType, type, alias);
-				outputColumns.put(columnName, outputColumn);
-			} catch (Exception e) {
-				logger.error("Error initializing output columns", e);
-				outputColumns = new HashMap<String, OutputColumnRuntime>();
-			}
-		}
 	}
 
 	private void initFunction() {
@@ -155,7 +99,7 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 		String envLabel = null;
 		String address = null;
 		try {
-			envLabel = functionConfiguration.getString("environment");
+			envLabel = cfg.getEnvironment();
 			address = PythonUtils.getPythonAddress(envLabel);
 		} catch (Exception e) {
 			logger.error("Cannot retrieve environment <" + envLabel + "> address", e);
@@ -169,14 +113,14 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 		JSONObject inputs = new JSONObject();
 		try {
 			JSONArray inputColsArray = new JSONArray();
-			for (String colName : inputColumns.keySet()) {
-				String dsColumn = inputColumns.get(colName);
+			for (String colName : cfg.getInputColumns().keySet()) {
+				String dsColumn = cfg.getInputColumns().get(colName);
 				inputColsArray.put(dsColumn);
 			}
 
 			JSONObject inputVarsObj = new JSONObject();
-			for (String varName : inputVariables.keySet()) {
-				InputVariable var = inputVariables.get(varName);
+			for (String varName : cfg.getInputVariables().keySet()) {
+				InputVariable var = cfg.getInputVariables().get(varName);
 				JSONObject varObj = new JSONObject();
 				varObj.put("type", var.getType());
 				varObj.put("value", var.getValue());
@@ -184,8 +128,8 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 			}
 
 			JSONArray outputColsArray = new JSONArray();
-			for (String colName : outputColumns.keySet()) {
-				OutputColumnRuntime outCol = outputColumns.get(colName);
+			for (String colName : cfg.getOutputColumns().keySet()) {
+				OutputColumnRuntime outCol = cfg.getOutputColumns().get(colName);
 				outputColsArray.put(outCol.getName());
 			}
 
@@ -204,12 +148,12 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 
 	private String getScriptJwtToken() {
 		// replace keywords
-		for (String colName : inputColumns.keySet()) {
-			String dsColumn = inputColumns.get(colName);
+		for (String colName : cfg.getInputColumns().keySet()) {
+			String dsColumn = cfg.getInputColumns().get(colName);
 			script = script.replace("${" + colName + "}", "${" + dsColumn + "}");
 		}
-		for (String colName : outputColumns.keySet()) {
-			OutputColumnRuntime outCol = outputColumns.get(colName);
+		for (String colName : cfg.getOutputColumns().keySet()) {
+			OutputColumnRuntime outCol = cfg.getOutputColumns().get(colName);
 			script = script.replace("${" + outCol.getName() + "}", "${" + colName + "}");
 		}
 		// create token
@@ -279,8 +223,8 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 	}
 
 	private String getColumnAlias(String targetColName) {
-		for (String colName : outputColumns.keySet()) {
-			OutputColumnRuntime col = outputColumns.get(colName);
+		for (String colName : cfg.getOutputColumns().keySet()) {
+			OutputColumnRuntime col = cfg.getOutputColumns().get(colName);
 			if (targetColName.equals(col.getName()))
 				return col.getAlias();
 		}

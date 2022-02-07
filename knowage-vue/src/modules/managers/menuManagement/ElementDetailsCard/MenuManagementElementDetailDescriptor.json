@@ -1,0 +1,27 @@
+{
+    "importantfields": {
+        "fieldsList": ["functionality", "initialPath", "externalApplicationUrl", "staticPage", "document", "objId", "objParameters"],
+        "filedsToSave": [
+            {
+                "fields": [],
+                "menuNodeContent": 0
+            },
+            {
+                "fields": ["document", "objId", "objParameters"],
+                "menuNodeContent": 1
+            },
+            {
+                "fields": ["externalApplicationUrl"],
+                "menuNodeContent": 2
+            },
+            {
+                "fields": ["staticPage"],
+                "menuNodeContent": 3
+            },
+            {
+                "fields": ["functionality", "initialPath"],
+                "menuNodeContent": 4
+            }
+        ]
+    }
+}

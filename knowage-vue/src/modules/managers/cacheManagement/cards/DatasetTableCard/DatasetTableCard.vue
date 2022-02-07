@@ -32,7 +32,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iMeta } from '../../CacheManagement'
-import axios from 'axios'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -51,8 +50,7 @@ export default defineComponent({
             required: true
         },
         loading: {
-            type: Boolean,
-            required: true
+            type: Boolean
         }
     },
     emits: ['deleted'],
@@ -88,7 +86,7 @@ export default defineComponent({
             })
         },
         async cleanAll() {
-            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee').then(() => this.emitDeleteSuccess())
+            await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee').then(() => this.emitDeleteSuccess())
         },
         deleteDatasetConfirm(signature: string) {
             this.$confirm.require({
@@ -99,7 +97,7 @@ export default defineComponent({
             })
         },
         async deleteDataset(signature: string) {
-            await axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/deleteItems', { namesArray: [signature] }).then(() => this.emitDeleteSuccess())
+            await this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/deleteItems', { namesArray: [signature] }).then(() => this.emitDeleteSuccess())
         },
         emitDeleteSuccess() {
             this.$store.commit('setInfo', {

@@ -1,7 +1,9 @@
 <template>
     <Card :style="tabViewDescriptor.style.cardinalityCard">
         <template #content>
-            <div class="formula"></div>
+            <div class="CodeMirrorMathematica">
+                <div class="CodeMirror-code formula"></div>
+            </div>
         </template>
     </Card>
 
@@ -34,7 +36,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import tabViewDescriptor from '../KpiDefinitionDetailDescriptor.json'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -127,7 +129,7 @@ export default defineComponent({
                 definition[i] = meas
             }
 
-            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/buildCardinalityMatrix', definition).then((response) => {
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/buildCardinalityMatrix', definition).then((response: AxiosResponse<any>) => {
                 if (this.formulaChanged) {
                     this.kpi.cardinality.measureList = [...response.data]
                     this.formulaChanged = false

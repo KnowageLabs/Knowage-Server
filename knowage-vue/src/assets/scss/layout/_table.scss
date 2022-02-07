@@ -3,6 +3,12 @@
     display: flex;
     flex-direction: column;
 
+    &.kn-table-small-input {
+        .p-inputtext {
+            padding: 0;
+        }
+    }
+
     .p-datatable-wrapper {
         height: 100%;
         .p-paginator-bottom {

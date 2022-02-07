@@ -2,7 +2,7 @@
     <Toast></Toast>
     <ConfirmDialog></ConfirmDialog>
     <KnOverlaySpinnerPanel :visibility="loading" />
-    <div class="layout-wrapper-content">
+    <div class="layout-wrapper-content" :class="{ 'layout-wrapper-content-embed': documentExecution.embed }">
         <MainMenu></MainMenu>
 
         <div class="layout-main">
@@ -19,14 +19,13 @@ import Toast from 'primevue/toast'
 import { defineComponent } from 'vue'
 import store from '@/App.store'
 import { mapState } from 'vuex'
-import axios from 'axios'
 import WEB_SOCKET from '@/services/webSocket.js'
 
 export default defineComponent({
     components: { ConfirmDialog, KnOverlaySpinnerPanel, MainMenu, Toast },
 
     async beforeCreate() {
-        await axios
+        await this.$http
             .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/currentuser')
             .then((response) => {
                 let currentUser = response.data
@@ -57,7 +56,7 @@ export default defineComponent({
                 url += '&THEME_NAME=sbi_default'
 
                 this.$emit('update:loading', true)
-                axios.get(url).then(
+                this.$http.get(url).then(
                     () => {
                         store.commit('setLocale', language.locale)
                         localStorage.setItem('locale', language.locale)
@@ -74,8 +73,11 @@ export default defineComponent({
                     console.log(error.response.headers)
                 }
             })
+        await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/user-configs').then((response) => {
+            store.commit('setConfigurations', response.data)
+        })
         if (this.isEnterprise) {
-            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license').then((response) => {
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license').then((response) => {
                 store.commit('setLicenses', response.data)
             })
         }
@@ -83,12 +85,13 @@ export default defineComponent({
     mounted() {
         this.onLoad()
     },
+
     methods: {
         closeDialog() {
             this.$emit('update:visibility', false)
         },
         async onLoad() {
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export/dataset')
                 .then((response) => {
                     let totalDownloads = response.data.length
@@ -113,9 +116,16 @@ export default defineComponent({
         },
         async loadInternationalization() {
             let currentLocale = localStorage.getItem('locale') ? localStorage.getItem('locale') : store.state.locale
+            let currLanguage = ''
             if (currentLocale && Object.keys(currentLocale).length > 0) currentLocale = currentLocale.replaceAll('_', '-')
             else currentLocale = 'en-US'
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization?currLanguage=' + currentLocale).then((response) => store.commit('setInternationalization', response.data))
+
+            let splittedLanguage = currentLocale.split('-')
+            currLanguage += splittedLanguage[0] + '-'
+            if (splittedLanguage.length > 2) currLanguage += splittedLanguage[2].replaceAll('#', '') + '-'
+            currLanguage += splittedLanguage[1].toUpperCase()
+
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization?currLanguage=' + currLanguage).then((response) => store.commit('setInternationalization', response.data))
         },
         newsDownloadHandler() {
             console.log('Starting connection to WebSocket Server')
@@ -161,7 +171,8 @@ export default defineComponent({
             info: 'info',
             user: 'user',
             loading: 'loading',
-            isEnterprise: 'isEnterprise'
+            isEnterprise: 'isEnterprise',
+            documentExecution: 'documentExecution'
         })
     },
     watch: {

@@ -103,21 +103,7 @@ public class PythonDataSet extends ConfigurableDataSet {
 
 	public void initConf(JSONObject jsonConf) {
 		initDataProxy(jsonConf);
-		initDataReader(jsonConf);
-	}
-
-	private void initDataReader(JSONObject jsonConf) {
-		// json data reader attributes
-		String jsonPathItems = getProp(PythonDataSetConstants.REST_JSON_PATH_ITEMS, jsonConf, true);
-		List<JSONPathAttribute> jsonPathAttributes;
-		try {
-			jsonPathAttributes = getJsonPathAttributes(PythonDataSetConstants.REST_JSON_PATH_ATTRIBUTES, jsonConf);
-		} catch (JSONException e) {
-			throw new ConfigurationException("Problems in configuration of data reader", e);
-		}
-
-		String directlyAttributes = getProp(PythonDataSetConstants.REST_JSON_DIRECTLY_ATTRIBUTES, jsonConf, true);
-		setDataReader(new JSONPathDataReader(jsonPathItems, jsonPathAttributes, Boolean.parseBoolean(directlyAttributes), false));
+		setDataReader(new JSONPathDataReader("$[*]", new ArrayList<JSONPathAttribute>(), true, false));
 	}
 
 	private void initDataProxy(JSONObject jsonConf) {

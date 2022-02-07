@@ -44,7 +44,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 			break;
 		}
 	}
-	
+
 	$scope.isObject = function(item){
 		return typeof item == 'object';
 	}
@@ -276,6 +276,12 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 			disabled:($scope.newModel.style.th && $scope.newModel.style.th.enabled === false)
 	};
 
+	$scope.colorPickerPropertyEvenOddRows = {
+			format:'rgb',
+			placeholder:sbiModule_translate.load('sbi.cockpit.color.select'),
+			disabled:($scope.newModel.settings.alternateRows && $scope.newModel.settings.alternateRows.enabled === false)
+	};
+
 	$scope.colorPickerMultiselection = {
 			format:'rgb',
 			placeholder:sbiModule_translate.load('sbi.cockpit.color.select'),
@@ -318,6 +324,26 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 		});
 	}
 
+	if (!$scope.newModel.settings.exportpdf) $scope.newModel.settings.exportpdf = {};
+	if (!$scope.newModel.settings.exportpdf.custom) $scope.newModel.settings.exportpdf.custom = {}
+	if (!$scope.newModel.settings.exportpdf.custom.height) $scope.newModel.settings.exportpdf.custom.height = 210;
+	if (!$scope.newModel.settings.exportpdf.custom.width) $scope.newModel.settings.exportpdf.custom.width = 297;
+
+	$scope.setLandscape = function(){
+		$scope.newModel.settings.exportpdf.a4portrait = false;
+		$scope.newModel.settings.exportpdf.custom.enabled = false;
+	}
+
+	$scope.setPortrait = function(){
+		$scope.newModel.settings.exportpdf.a4landscape = false;
+		$scope.newModel.settings.exportpdf.custom.enabled = false;
+	}
+
+	$scope.setCustom = function(){
+		$scope.newModel.settings.exportpdf.a4landscape = false;
+		$scope.newModel.settings.exportpdf.a4portrait = false;
+	}
+
 	$scope.openColumnGroups = function(){
 		$mdDialog.show({
 			templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/cockpitColumnsGroup.html',
@@ -333,7 +359,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 			}, function() {
 			});
 	}
-	
+
 	$scope.setRowThresholdStyle = function(index){
 		$mdDialog.show({
 			templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/rowThresholdStyle.html',
@@ -348,12 +374,12 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 				scope.translate = sbiModule_translate;
 				scope.tempStyle = angular.copy(style);
 				scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
-				
+
 				scope.colorPickerOptions = {
 					placeholder:scope.translate.load('sbi.cockpit.color.select'),
 					format:'rgb'
 				}
-				
+
 				scope.cancel = function(){
 					$mdDialog.cancel();
 				}
@@ -373,7 +399,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 		if(typeof $scope.newModel.settings.rowThresholds.list[index].formula != "undefined") delete $scope.newModel.settings.rowThresholds.list[index].formula;
 		else $scope.newModel.settings.rowThresholds.list[index].formula = "";
 	}
-	
+
 	$scope.moveRowThreshold = function(index,direction){
 		var arr = $scope.newModel.settings.rowThresholds.list;
 		var new_index = direction == 'up' ? (index-1) : (index+1);
@@ -385,11 +411,11 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 	    }
 	    arr.splice(new_index, 0, arr.splice(index, 1)[0]);
 	}
-	
+
 	$scope.hasFormula = function(threshold){
 		return threshold.formula || threshold.formula == '';
 	}
-	
+
 	function columnsGroupController(scope,sbiModule_translate,cockpitModule_generalOptions,$mdDialog,model){
 		scope.translate=sbiModule_translate;
 		scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
@@ -588,11 +614,11 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 	$scope.removeSummaryRow = function(i){
 		$scope.newModel.settings.summary.list.splice(i,1);
 	}
-	
+
 	$scope.addRowThreshold = function(){
 		$scope.newModel.settings.rowThresholds.list.push({});
 	}
-	
+
 	$scope.removeRowThreshold = function(i){
 		$scope.newModel.settings.rowThresholds.list.splice(i,1);
 	}
@@ -612,7 +638,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 			if(!$scope.newModel.settings.summary.list) $scope.newModel.settings.summary.list = [{}];
 		}
 	})
-	
+
 	$scope.$watch('newModel.settings.rowThresholds.enabled',function(newValue,oldValue){
 		if(newValue){
 			if(!$scope.newModel.settings.rowThresholds.list) $scope.newModel.settings.rowThresholds.list = [];

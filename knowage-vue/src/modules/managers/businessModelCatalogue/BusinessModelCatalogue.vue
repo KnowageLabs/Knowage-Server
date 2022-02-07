@@ -50,7 +50,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iBusinessModel } from './BusinessModelCatalogue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import businessModelCatalogueDescriptor from './BusinessModelCatalogueDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnHint from '@/components/UI/KnHint.vue'
@@ -81,9 +81,9 @@ export default defineComponent({
     methods: {
         async loadAllCatalogues() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels')
-                .then((response) => (this.businessModelList = response.data))
+                .then((response: AxiosResponse<any>) => (this.businessModelList = response.data))
                 .finally(() => (this.loading = false))
         },
         showForm(event: any) {
@@ -115,7 +115,7 @@ export default defineComponent({
             })
         },
         async deleteBusinessModel(businessModelId: number) {
-            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/' + businessModelId).then(() => {
+            await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/' + businessModelId).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')

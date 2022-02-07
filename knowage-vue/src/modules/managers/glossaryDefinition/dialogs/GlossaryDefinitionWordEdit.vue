@@ -1,5 +1,5 @@
 <template>
-    <Dialog :header="$tc('managers.glossary.common.word',1)" :breakpoints="glossaryDefinitionDialogDescriptor.dialog.breakpoints" :style="glossaryDefinitionDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
+    <Dialog :header="$tc('managers.glossary.common.word', 1)" :breakpoints="glossaryDefinitionDialogDescriptor.dialog.breakpoints" :style="glossaryDefinitionDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
         <div class="p-mt-3">
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-4 p-mb-3">
@@ -15,9 +15,9 @@
                             }"
                             @blur="v$.word.WORD.$touch()"
                         />
-                        <label for="word" class="kn-material-input-label">{{ $tc('managers.glossary.common.word',1) }} * </label>
+                        <label for="word" class="kn-material-input-label">{{ $t('managers.glossary.common.word', 1) }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.word.WORD" :additionalTranslateParams="{ fieldName: $tc('managers.glossary.common.word',1) }"></KnValidationMessages>
+                    <KnValidationMessages class="p-mt-1" :vComp="v$.word.WORD" :additionalTranslateParams="{ fieldName: $tc('managers.glossary.common.word', 1) }"></KnValidationMessages>
                 </div>
                 <div class="p-field p-col-4">
                     <span class="p-float-label">
@@ -74,7 +74,7 @@
 import { defineComponent } from 'vue'
 import { iWord } from '../GlossaryDefinition'
 import { createValidations } from '@/helpers/commons/validationHelper'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import AutoComplete from 'primevue/autocomplete'
@@ -199,9 +199,9 @@ export default defineComponent({
                 this.word.SaveOrUpdate = 'Save'
             }
 
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/business/addWord', this.word)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.$emit('saved')
                     if (this.word.PARENT) {
                         this.saveContent(response.data.id)
@@ -222,15 +222,15 @@ export default defineComponent({
             this.$emit('close')
         },
         async loadWords(word: string) {
-            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listWords?WORD=` + word).then((response) => (this.filteredWords = response.data))
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listWords?WORD=` + word).then((response: AxiosResponse<any>) => (this.filteredWords = response.data))
         },
         searchWord(event) {
             this.loadWords(event.query)
         },
         async saveContent(wordId: number) {
-            await axios
+            await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/business/addContents', { GLOSSARY_ID: this.selectedGlossaryId, PARENT_ID: this.word.PARENT.CONTENT_ID, WORD_ID: wordId })
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     if (response.data.Status !== 'NON OK') {
                         this.$emit('reloadTree')
                     } else {
@@ -240,7 +240,7 @@ export default defineComponent({
                         })
                     }
                 })
-                .catch((response) => {
+                .catch((response: AxiosResponse<any>) => {
                     this.$store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: response
