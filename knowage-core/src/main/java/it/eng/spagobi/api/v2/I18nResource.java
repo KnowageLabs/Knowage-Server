@@ -70,9 +70,7 @@ public class I18nResource extends AbstractSpagoBIResource {
 		}
 		try {
 			Locale locale = null;
-			if (StringUtils.isNotBlank(currLanguage) && StringUtils.isNotBlank(currLanguage)) {
-
-//				locale = Locale.forLanguageTag(currLanguage);
+			if (currLanguage != null && !currLanguage.equals("null") && currCountry != null && !currCountry.equals("null")) {
 
 				Builder tmpLocale = new Locale.Builder().setLanguage(currLanguage).setRegion(currCountry);
 

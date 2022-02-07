@@ -1,6 +1,6 @@
 <template>
     <div class="kn-page">
-        <div class="document-browser-tab-container kn-page-content p-d-flex p-flex-column">
+        <div class="document-browser-tab-container kn-page-content">
             <TabView id="document-browser-tab-view" class="p-d-flex p-flex-column kn-flex" v-model:activeIndex="activeIndex" @tab-change="onTabChange">
                 <TabPanel>
                     <template #header>
@@ -202,6 +202,7 @@ export default defineComponent({
 
 .document-browser-tab-container {
     position: relative;
+    display: flex;
 }
 
 .document-browser-tab-container .p-tabview .p-tabview-panel,

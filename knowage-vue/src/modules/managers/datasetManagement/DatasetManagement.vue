@@ -34,6 +34,8 @@
                     @touched="touched = true"
                     @created="onCreate"
                     @updated="onUpdate"
+                    @showSavingSpinner="loadingVersion = true"
+                    @hideSavingSpinner="loadingVersion = false"
                     @close="closeDetailConfirm"
                 />
             </div>
