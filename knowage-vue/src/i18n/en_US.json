@@ -371,6 +371,8 @@
             "title": "Dossier"
         },
         "main": {
+            "addToWorkspace": "Add to my workspace",
+            "addToWorkspaceError": "This document cannot be added to Workspace. It already exists in the root folder of the Organizer",
             "copyLink": "Copy link",
             "copyLinkAndShare": "Copy link and share it",
             "crossNavigationNoTargetError": "No cross navigation targets available",
@@ -1532,6 +1534,8 @@
             "hint": "Roles allows you to specify different users properties and authorizations. It's possible to change the role name, the roles authorizations and dataset visibility. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "kpiCategories": "KPI Categories",
             "noResults": "No roles available for the selected filter",
+            "publicRoleWarning1": "If you continue saving the public role will be removed from ",
+            "publicRoleWarning2": " to the selected one. Are you sure?",
             "rolesDropdown": {
                 "ADMIN": "Administrator",
                 "DEV_ROLE": "Developer",
@@ -1539,9 +1543,7 @@
                 "TEST_ROLE": "Test User",
                 "USER": "User"
             },
-            "title": "Roles Management",
-            "publicRoleWarning1": "If you continue saving the public role will be removed from ",
-            "publicRoleWarning2": " to the selected one. Are you sure?"
+            "title": "Roles Management"
         },
         "schedulationAgendaManagement": {
             "detail": {
