@@ -2,7 +2,7 @@
     <div class="data-prep-custom-transformation">
         <div class="p-d-flex">
             <span class="p-float-label p-field p-ml-2 kn-flex">
-                <Dropdown v-model="localTransformation.column" :options="columns" class="kn-material-input" optionLabel="fieldAlias" :filter="true" :disabled="col" />
+                <Dropdown v-model="localTransformation.column" :options="getStringColumns(columns)" class="kn-material-input" optionLabel="fieldAlias" :filter="true" :disabled="col" />
                 <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.column') }}</label>
             </span>
             <span class="p-float-label p-field p-ml-2 kn-flex">
@@ -24,10 +24,10 @@
                     <InputText type="text" v-model="localTransformation.outputColumn1" class="kn-material-input" />
                     <label class="kn-material-input-label">{{ $t('common.name') }}</label>
                 </span>
-                <span class="p-float-label p-field p-ml-2 kn-flex">
+                <!-- <span class="p-float-label p-field p-ml-2 kn-flex">
                     <Dropdown v-model="localTransformation.outputType1" :options="availableOutputTypes" optionLabel="label" optionValue="code" class="kn-material-input" />
                     <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.split.outputType') }}</label>
-                </span>
+                </span> -->
             </div>
         </Fieldset>
         <Fieldset :legend="$t('managers.workspaceManagement.dataPreparation.transformations.split.outputColumn') + ' 2'">
@@ -36,10 +36,10 @@
                     <InputText type="text" v-model="localTransformation.outputColumn2" class="kn-material-input" />
                     <label class="kn-material-input-label">{{ $t('common.name') }}</label>
                 </span>
-                <span class="p-float-label p-field p-ml-2 kn-flex">
+                <!-- <span class="p-float-label p-field p-ml-2 kn-flex">
                     <Dropdown v-model="localTransformation.outputType2" :options="availableOutputTypes" optionLabel="label" optionValue="code" class="kn-material-input" />
                     <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.split.outputType') }}</label>
-                </span>
+                </span> -->
             </div>
         </Fieldset>
     </div>
@@ -72,6 +72,9 @@ export default defineComponent({
         this.localTransformation = {} as ISplitTransformationParameter
     },
     methods: {
+        getStringColumns(columns: Array<IDataPreparationColumn>): Array<IDataPreparationColumn> {
+            return columns.filter((x) => x.Type == 'java.lang.String')
+        },
         translatedLabel(item) {
             return this.$t(item.label)
         }
