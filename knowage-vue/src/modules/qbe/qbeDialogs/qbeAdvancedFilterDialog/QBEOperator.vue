@@ -5,7 +5,7 @@
         <div class="p-d-flex p-flex-row p-ai-center">
             <QBEOperand v-if="node?.childNodes" :propNode="node.childNodes[0]" @selectedChanged="$emit('selectedChanged')" @treeUpdated="$emit('treeUpdated')"></QBEOperand>
             <div v-if="node">
-                <Dropdown v-if="node?.childNodes && node.childNodes.length > 0" class="kn-material-input p-mx-2" :style="{ maxWidth: '200px' }" v-model="node.value" :options="QBEAdvancedFilterDialogDescriptor.operatorOptions" />
+                <Dropdown v-if="node?.childNodes && node.childNodes.length > 0" class="kn-material-input p-mx-2" :style="{ maxWidth: '200px' }" :class="{ 'dropdown-test': selected }" v-model="node.value" :options="QBEAdvancedFilterDialogDescriptor.operatorOptions" />
             </div>
             <QBEOperand v-if="node?.childNodes" :propNode="node?.childNodes[1]" @selectedChanged="$emit('selectedChanged')" @treeUpdated="$emit('treeUpdated')"></QBEOperand>
         </div>
@@ -22,7 +22,7 @@ import QBEOperand from './QBEOperand.vue'
 export default defineComponent({
     name: 'qbe-operator',
     components: { Dropdown, QBEOperand },
-    props: { propNode: { type: String } },
+    props: { propNode: { type: String }, selected: { type: Boolean } },
     emits: ['selectedChanged', 'treeUpdated'],
     data() {
         return {
@@ -49,3 +49,9 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss">
+.dropdown-test {
+    background-color: #a9c3db;
+}
+</style>
