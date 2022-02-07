@@ -8,13 +8,14 @@
                         <Calendar
                             id="startDate"
                             class="kn-material-input"
-                            v-model="dataset.startDate"
+                            v-model="startTemp"
                             style="width:20rem"
                             :class="{
                                 'p-invalid': !validDates
                             }"
                             :showIcon="true"
                             :manualInput="true"
+                            @date-select="setDate($event, 'startDate')"
                         />
                         <div v-if="!validDates" class="p-error p-grid p-mt-1">
                             <small class="p-col-12">
@@ -29,7 +30,7 @@
                         <Calendar
                             id="endDate"
                             class="kn-material-input"
-                            v-model="dataset.endDate"
+                            v-model="endTemp"
                             style="width:20rem"
                             :class="{
                                 'p-invalid': !validDates
@@ -37,6 +38,7 @@
                             :showIcon="true"
                             :manualInput="true"
                             :showButtonBar="true"
+                            @date-select="setDate($event, 'endDate')"
                         />
                         <div v-if="!validDates" class="p-error p-grid p-mt-1">
                             <small class="p-col-12">
@@ -87,6 +89,7 @@ import Calendar from 'primevue/calendar'
 import MultiSelect from 'primevue/multiselect'
 import knCronDescriptor from '@/components/UI/KnCron/KnCronDescriptor.json'
 import Dropdown from 'primevue/dropdown'
+import moment from 'moment'
 
 export default defineComponent({
     components: { Card, Calendar, MultiSelect, Dropdown },
@@ -116,11 +119,14 @@ export default defineComponent({
     emits: ['touched', 'cronValid'],
     data() {
         return {
+            moment,
             knCronDescriptor,
             advancedTabDescriptor,
             dataset: {} as any,
             scheduling: {} as any,
             nextSchedulation: null as any,
+            startTemp: null as any,
+            endTemp: null as any,
             minutes: Array.from(Array(60).keys()).map(String),
             hours: Array.from(Array(24).keys()).map(String),
             days: Array.from({ length: 31 }, (_, i) => i + 1).map(String),
@@ -165,6 +171,8 @@ export default defineComponent({
             this.dataset = this.selectedDataset
             this.scheduling = this.schedulingData
             this.nextSchedulation = this.selectedDataset.schedulingCronLine
+            this.startTemp = this.selectedDataset.startDate ? new Date(this.selectedDataset.startDate) : null
+            this.endTemp = this.selectedDataset.endDate ? new Date(this.selectedDataset.endDate) : null
         },
         deparseScheduling() {
             var cronNoSeconds = ''
@@ -244,6 +252,10 @@ export default defineComponent({
                 stringValue = '*'
                 return stringValue
             }
+        },
+        setDate(event, type) {
+            var date = moment(event)
+            type === 'startDate' ? (this.dataset.startDate = date.format('YYYY-MM-DD[T]HH:mm:ss[Z]')) : (this.dataset.endDate = date.format('YYYY-MM-DD[T]HH:mm:ss[Z]'))
         }
     }
 })
