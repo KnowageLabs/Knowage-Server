@@ -20,6 +20,7 @@ import { defineComponent } from 'vue'
 import store from '@/App.store'
 import { mapState } from 'vuex'
 import WEB_SOCKET from '@/services/webSocket.js'
+import themeHelper from '@/helpers/commons/themeHelper'
 
 export default defineComponent({
     components: { ConfirmDialog, KnOverlaySpinnerPanel, MainMenu, Toast },
@@ -76,10 +77,27 @@ export default defineComponent({
         await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/user-configs').then((response) => {
             store.commit('setConfigurations', response.data)
         })
+        if (Object.keys(this.theme).length === 0) {
+            this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement/theme/current`)
+                .then((response) => {
+                    store.commit('setTheme', response.data)
+                    themeHelper.setTheme(response.data)
+                })
+                .catch(() => {
+                    store.commit('setTheme', { '--kn-mainmenu-background-color': '#cb2162', '--kn-mainmenu-hover-background-color': '#92ceb3' })
+                    themeHelper.setTheme({ '--kn-mainmenu-background-color': '#cb2162', '--kn-mainmenu-hover-background-color': '#92ceb3' })
+                })
+        } else {
+            themeHelper.setTheme(this.theme)
+        }
         if (this.isEnterprise) {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license').then((response) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license').then((response) => {
                 store.commit('setLicenses', response.data)
             })
+            /* TODO 
+            /  Write the code here for enterprise only functionality
+            */
         }
     },
     mounted() {
@@ -172,7 +190,8 @@ export default defineComponent({
             user: 'user',
             loading: 'loading',
             isEnterprise: 'isEnterprise',
-            documentExecution: 'documentExecution'
+            documentExecution: 'documentExecution',
+            theme: 'theme'
         })
     },
     watch: {
