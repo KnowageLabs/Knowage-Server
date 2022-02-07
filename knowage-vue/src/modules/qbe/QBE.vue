@@ -208,7 +208,8 @@ export default defineComponent({
             userRole: null,
             qbePreviewDialogVisible: false,
             pagination: { start: 0, limit: 25 } as any,
-            uniqueID: null
+            uniqueID: null,
+            drivers: {} as any
         }
     },
     watch: {
@@ -226,6 +227,7 @@ export default defineComponent({
         async loadPage() {
             this.loading = true
             await this.loadDataset()
+            await this.loadDatasetDrivers()
             await this.initializeQBE()
             await this.loadCustomizedDatasetFunctions()
             await this.loadExportLimit()
@@ -246,6 +248,12 @@ export default defineComponent({
             console.log('SUBQUERIES of q1: ', this.qbe?.qbeJSONQuery?.catalogue?.queries[0].subqueries)
             this.mainQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
             this.selectedQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
+        },
+        async loadDatasetDrivers() {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/Bojan/filters `).then((response: AxiosResponse<any>) => {
+                this.drivers = response.data
+            })
+            console.log('LOADED DRIVERS: ', this.drivers)
         },
         async initializeQBE() {
             await this.$http
