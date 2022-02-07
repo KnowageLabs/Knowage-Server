@@ -83,7 +83,8 @@ export default defineComponent({
         async businessModel() {
             await this.loadData()
         },
-        visible() {
+        async visible() {
+            this.loadDatasourceStructure()
             this.loadRows()
         }
     },
