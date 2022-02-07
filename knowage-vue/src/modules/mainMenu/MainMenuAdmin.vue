@@ -124,7 +124,7 @@ export default defineComponent({
             cursor: pointer;
         }
         &:hover {
-            background-color: var(--kn-mainmenu-hover-background-color);
+            background-color: var(--kn-adminmenu-hover-background-color);
         }
         &.searched {
             background-color: yellow;
