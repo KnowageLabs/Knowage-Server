@@ -129,7 +129,7 @@ export default defineComponent({
     border-color: #c2c2c2;
     border-radius: 2px;
     background-color: #eaf0f6;
-    color: $color-primary;
+    color: var(--kn-color-primary);
     p {
         margin: 0.3rem;
     }

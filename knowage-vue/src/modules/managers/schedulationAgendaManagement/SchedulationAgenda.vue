@@ -273,6 +273,6 @@ export default defineComponent({
     flex-grow: 1;
 }
 .custom-kn-page-width {
-    width: calc(100vw - #{$mainmenu-width});
+    width: calc(100vw - var(--kn-mainmenu-width));
 }
 </style>

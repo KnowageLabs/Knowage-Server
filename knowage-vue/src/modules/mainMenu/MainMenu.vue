@@ -327,9 +327,9 @@ export default defineComponent({
 
 .layout-menu-container {
     z-index: 100;
-    width: $mainmenu-width;
+    width: var(--kn-mainmenu-width);
     top: 0;
-    background-color: $mainmenu-background-color;
+    background-color: var(--kn-mainmenu-background-color);
     height: 100%;
     position: fixed;
 
@@ -341,19 +341,19 @@ export default defineComponent({
     .profile {
         height: 60px;
         padding: 8px;
-        box-shadow: $mainmenu-profile-box-shadow;
+        box-shadow: var(--kn-mainmenu-profile-box-shadow);
         & > button {
             cursor: pointer;
             width: 100%;
             font-size: 14px;
-            font-family: $font-family;
+            font-family: var(--kn-font-family);
             .profile-image {
                 width: 45px;
                 height: 45px;
                 float: right;
                 margin-left: 4px;
                 border-radius: 50%;
-                border: 2px solid $mainmenu-highlight-color;
+                border: 2px solid var(--kn-mainmenu-highlight-color);
                 background-color: white;
             }
             .profile-name,
@@ -364,7 +364,7 @@ export default defineComponent({
         }
     }
     .profile-menu {
-        border-bottom: 1px solid lighten($mainmenu-background-color, 10%);
+        border-bottom: 1px solid var(--kn-mainmenu-hover-background-color);
     }
     .layout-menu {
         margin: 0;
@@ -380,7 +380,7 @@ export default defineComponent({
             & > a {
                 text-align: center;
                 padding: 15px;
-                color: $mainmenu-icon-color;
+                color: var(--kn-mainmenu-icon-color);
                 display: block;
                 width: 100%;
                 transition: background-color 0.3s, border-left-color 0.3s;
@@ -393,7 +393,7 @@ export default defineComponent({
                     display: none;
                 }
                 &:hover {
-                    background-color: lighten($mainmenu-background-color, 10%);
+                    background-color: var(--kn-mainmenu-hover-background-color);
                 }
             }
             & > span {
@@ -401,7 +401,7 @@ export default defineComponent({
                 text-align: center;
                 padding: 15px;
                 padding-left: 12px;
-                color: $mainmenu-icon-color;
+                color: var(--kn-mainmenu-icon-color);
                 display: block;
                 width: 100%;
                 transition: background-color 0.3s, border-left-color 0.3s;
@@ -411,10 +411,10 @@ export default defineComponent({
                 cursor: pointer;
                 user-select: none;
                 &:hover {
-                    background-color: lighten($mainmenu-background-color, 10%);
+                    background-color: var(--kn-mainmenu-hover-background-color);
                 }
                 &.router-link-active {
-                    border-left: 3px solid $mainmenu-highlight-color;
+                    border-left: 3px solid var(--kn-mainmenu-highlight-color);
                 }
             }
         }

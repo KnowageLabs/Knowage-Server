@@ -203,7 +203,7 @@ export default defineComponent({
 .full-screen-dialog.p-dialog {
     max-height: 100%;
     height: 100vh;
-    width: calc(100vw - #{$mainmenu-width});
+    width: calc(100vw - var(--kn-mainmenu-width));
     margin: 0;
 }
 .full-screen-dialog.p-dialog .p-dialog-content {

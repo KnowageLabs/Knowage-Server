@@ -189,7 +189,7 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .kn-remove-card-padding .data-condition-list {
-    border: 1px solid $color-borders;
+    border: 1px solid var(--kn-color-borders);
     border-top: none;
 }
 </style>

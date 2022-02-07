@@ -1,37 +1,37 @@
 .kn-dialog {
-	&--toolbar {
-		.p-dialog-header {
-			@extend .kn-toolbar;
-			border-top-right-radius: 0 !important;
-			border-top-left-radius: 0 !important;
-		}
+    &--toolbar {
+        .p-dialog-header {
+            @extend .kn-toolbar;
+            border-top-right-radius: 0 !important;
+            border-top-left-radius: 0 !important;
+        }
 
-		&--primary {
-			@extend .kn-dialog--toolbar;
+        &--primary {
+            @extend .kn-dialog--toolbar;
 
-			.p-dialog-header {
-				background-color: $toolbar-background-color-primary !important;
-				color: $toolbar-color-primary !important;
+            .p-dialog-header {
+                background-color: var(--kn-toolbar-background-color-primary) !important;
+                color: var(--kn-toolbar-color-primary) !important;
 
-				.p-dialog-title {
-					font-weight: $toolbar-font-weight !important;
-					font-size: $toolbar-font-size !important;
-				}
-			}
-		}
+                .p-dialog-title {
+                    font-weight: var(--kn-toolbar-font-weight) !important;
+                    font-size: var(--kn-toolbar-font-size) !important;
+                }
+            }
+        }
 
-		&--secondary {
-			@extend .kn-dialog--toolbar;
+        &--secondary {
+            @extend .kn-dialog--toolbar;
 
-			.p-dialog-header {
-				background-color: $toolbar-background-color-secondary !important;
-				color: $toolbar-color-secondary !important;
+            .p-dialog-header {
+                background-color: var(--kn-toolbar-background-color-secondary) !important;
+                color: var(--kn-toolbar-color-secondary) !important;
 
-				.p-dialog-title {
-					font-weight: $toolbar-font-weight !important;
-					font-size: $toolbar-font-size !important;
-				}
-			}
-		}
-	}
+                .p-dialog-title {
+                    font-weight: var(--kn-toolbar-font-weight) !important;
+                    font-size: var(--kn-toolbar-font-size) !important;
+                }
+            }
+        }
+    }
 }

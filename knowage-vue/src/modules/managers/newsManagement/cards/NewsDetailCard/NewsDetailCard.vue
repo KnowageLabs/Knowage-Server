@@ -219,6 +219,6 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 #calendar-label {
-    color: $color-primary;
+    color: var(--kn-color-primary);
 }
 </style>

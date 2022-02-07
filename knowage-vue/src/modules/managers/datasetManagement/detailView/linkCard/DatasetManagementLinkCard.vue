@@ -182,7 +182,7 @@ export default defineComponent({
         }
     }
     .link-list {
-        border: 1px solid $color-borders;
+        border: 1px solid var(--kn-color-borders);
         border-top: none;
     }
 }

@@ -70,7 +70,7 @@ export default defineComponent({
         }
     }
     .listbox-container {
-        border: 1px solid $color-borders;
+        border: 1px solid var(--kn-color-borders);
         border-top: none;
         border-radius: 0;
     }

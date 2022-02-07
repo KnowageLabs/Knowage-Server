@@ -290,7 +290,7 @@ export default defineComponent({
     width: 33.3333%;
 }
 .custom-kn-page-width {
-    width: calc(100vw - #{$mainmenu-width});
+    width: calc(100vw - var(--kn-mainmenu-width));
 }
 @media screen and (max-width: 1024px) {
     #sideMenu {

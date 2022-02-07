@@ -177,7 +177,7 @@ label[for='organizationImage'] {
     cursor: pointer;
     user-select: none;
     &:hover {
-        background-color: $color-secondary;
+        background-color: var(--kn-color-secondary);
     }
 }
 .imageUploader {
@@ -193,7 +193,7 @@ label[for='organizationImage'] {
 .imageContainer {
     height: 100%;
     .icon {
-        color: $color-secondary;
+        color: var(--kn-color-secondary);
     }
     img {
         height: auto;

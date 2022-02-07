@@ -16,7 +16,7 @@
 }
 
 .kn-width-full-with-menu {
-    width: calc(100vw - #{$mainmenu-width});
+    width: calc(100vw - var(kn-mainmenu-width));
 }
 
 .kn-detail {
@@ -125,15 +125,15 @@
 }
 
 .kn-text-success {
-    color: $color-success !important;
+    color: var(--kn-color-success) !important;
 }
 
 .kn-text-error {
-    color: $color-error !important;
+    color: var(--kn-color-error) !important;
 }
 
 .kn-warning-icon {
-    color: $color-warning;
+    color: var(--kn-color-warning);
 }
 
 .kn-cursor-pointer {
@@ -141,13 +141,13 @@
 }
 
 .kn-white-color {
-    color: $button-text-color !important;
+    color: var(--kn-button-text-color) !important;
 }
 
 .kn-alternated-rows {
     & > div {
         &:nth-child(even) {
-            background-color: $list-item-alternated-background-color;
+            background-color: var(--kn-list-item-alternated-background-color);
         }
     }
 }

@@ -250,7 +250,7 @@ export default defineComponent({
 </script>
 <style lang="scss">
 .data-condition-list {
-    border: 1px solid $color-borders !important;
+    border: 1px solid var(--kn-color-borders) !important;
     border-top: none;
 }
 </style>

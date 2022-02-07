@@ -344,7 +344,7 @@ export default defineComponent({
 .document-details-dialog.p-dialog {
     max-height: 100%;
     height: 100vh;
-    width: calc(100vw - #{$mainmenu-width});
+    width: calc(100vw - var(--kn-mainmenu-width));
     margin: 0;
 }
 

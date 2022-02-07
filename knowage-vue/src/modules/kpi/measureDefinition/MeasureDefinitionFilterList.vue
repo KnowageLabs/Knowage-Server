@@ -76,6 +76,6 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .kn-list {
-    border-left: 1px solid $color-borders !important;
+    border-left: 1px solid var(--kn-color-borders) !important;
 }
 </style>

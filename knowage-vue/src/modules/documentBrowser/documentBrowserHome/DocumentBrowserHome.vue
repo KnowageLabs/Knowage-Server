@@ -249,7 +249,7 @@ export default defineComponent({
 
 #document-search {
     min-width: 500px;
-    background-color: $color-primary;
+    background-color: var(--kn-color-primary);
     color: white;
     border-bottom-color: white;
 }

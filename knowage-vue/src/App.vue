@@ -208,7 +208,7 @@ export default defineComponent({
 body {
     padding: 0;
     margin: 0;
-    font-family: 'Roboto';
+    font-family: var(--kn-font-family);
 }
 .layout-wrapper-content {
     display: flex;
