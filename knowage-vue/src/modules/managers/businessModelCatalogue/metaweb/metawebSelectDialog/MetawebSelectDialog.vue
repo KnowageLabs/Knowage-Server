@@ -13,7 +13,7 @@
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
-        <DataTable :value="rows" class="p-datatable-sm kn-table p-ml-1" :scrollable="true" scrollHeight="100%" v-model:filters="filters" :globalFilterFields="metawebSelectDialogDescriptor.globalFilterFields">
+        <DataTable v-else :value="rows" class="p-datatable-sm kn-table p-ml-1" :scrollable="true" scrollHeight="100%" v-model:filters="filters" :globalFilterFields="metawebSelectDialogDescriptor.globalFilterFields">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -83,9 +83,13 @@ export default defineComponent({
         async businessModel() {
             await this.loadData()
         },
-        async visible() {
-            this.loadDatasourceStructure()
-            this.loadRows()
+        async visible(value: boolean) {
+            if (value) {
+                this.loading = true
+                await this.loadDatasourceStructure()
+                this.loadRows()
+                this.loading = false
+            }
         }
     },
     async created() {
@@ -93,15 +97,16 @@ export default defineComponent({
     },
     methods: {
         async loadData() {
+            this.loading = true
             this.loadBusinessModel()
             await this.loadDatasourceStructure()
             this.loadRows()
+            this.loading = false
         },
         loadBusinessModel() {
             this.businessModel = this.selectedBusinessModel as iBusinessModel
         },
         async loadDatasourceStructure() {
-            this.loading = true
             if (this.businessModel?.dataSourceId) {
                 let url = `2.0/datasources/structure/${this.businessModel.dataSourceId}?`
                 const urlParams = {} as any
@@ -109,7 +114,6 @@ export default defineComponent({
                 if (this.businessModel.tablePrefixNotLike) urlParams.tablePrefixNotLike = this.businessModel.tablePrefixNotLike
                 await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, { params: urlParams }).then((response: AxiosResponse<any>) => (this.datasourceStructure = response.data))
             }
-            this.loading = false
         },
         loadRows() {
             this.rows = []
