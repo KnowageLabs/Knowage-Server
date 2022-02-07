@@ -65,6 +65,7 @@
                     @shareDataset="shareDataset"
                     @cloneDataset="cloneDataset"
                     @deleteDataset="deleteDatasetConfirm"
+                    @openDataPreparation="openDataPreparation"
                     @openSidebar="showSidebar"
                 />
             </template>
@@ -85,6 +86,7 @@
         @shareDataset="shareDataset"
         @cloneDataset="cloneDataset"
         @deleteDataset="deleteDatasetConfirm"
+        @openDataPreparation="openDataPreparation"
         @close="showDetailSidebar = false"
         data-test="detail-sidebar"
     />
@@ -95,7 +97,7 @@
 
     <WorkspaceDataCloneDialog :visible="cloneDialogVisible" :propDataset="selectedDataset" @close="cloneDialogVisible = false" @clone="handleDatasetClone"></WorkspaceDataCloneDialog>
     <WorkspaceDataShareDialog :visible="shareDialogVisible" :propDataset="selectedDataset" :datasetCategories="datasetCategories" @close="shareDialogVisible = false" @share="handleDatasetShare"></WorkspaceDataShareDialog>
-    <WorkspaceDataPreviewDialog :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false"></WorkspaceDataPreviewDialog>
+    <WorkspaceDataPreviewDialog :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false" previewType="workspace"></WorkspaceDataPreviewDialog>
     <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.myData.title')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
 
     <QBE v-if="qbeVisible" :visible="qbeVisible" :datasetLabel="selectedQbeDataset?.label" @close="closeQbe" />
@@ -248,7 +250,8 @@ export default defineComponent({
                 { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: () => this.downloadDatasetFile(clickedDocument), visible: this.selectedDataset.dsTypeCd == 'File' },
                 { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.shareDataset(), visible: this.canLoadData && this.isDatasetOwner },
                 { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: () => this.cloneDataset(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' },
-                { key: '7', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
+                { key: '7', label: this.$t('workspace.myData.prepareData'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' },
+                { key: '8', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
             )
 
         },
@@ -271,13 +274,14 @@ export default defineComponent({
         editFileDataset() {
             this.showDatasetDialog = true
         },
-        openDatasetInQBE(dataset: any) {
-            console.log('DATASET: ', dataset)
-            this.selectedQbeDataset = dataset
-            this.qbeVisible = true
+        openDataPreparation(dataset: any) {
+            this.$router.push({ name: 'data-preparation', params: { id: dataset.id } })
         },
-        closeQbe() {
-            this.qbeVisible = false
+        openDatasetInQBE() {
+            this.$store.commit('setInfo', {
+                title: 'Todo',
+                msg: 'Functionality not in this sprint'
+            })
         },
         async exportDataset(dataset: any, format: string) {
             this.loading = true

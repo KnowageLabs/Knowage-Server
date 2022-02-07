@@ -36,7 +36,7 @@ $aggrid-border-color: #d9dcde;
 		overflow-x: auto;
 	}
 	.ag-floating-bottom {
-		overflow-y: hidden !important;
+		overflow-y: auto !important;
 		.ag-row {
 			.ag-cell{
 				padding: 0;
@@ -85,6 +85,7 @@ $aggrid-border-color: #d9dcde;
 		}
 	}
 	.ag-center-cols-viewport {
+		overflow-x: hidden;
 		.md-button {
 			height: 24px;
 			width: 24px;

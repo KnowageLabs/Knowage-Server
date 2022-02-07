@@ -11,7 +11,7 @@
                     <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'" class="fa fa-eye kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocumentConfirm"></i>
                     <i class="pi pi-book kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></i>
                     <i class="pi pi-refresh kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.refresh')" @click="refresh"></i>
-                    <i v-if="filtersData?.filterStatus?.length > 0 || !sessionRole" class="fa fa-filter kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible" data-test="parameter-sidebar-icon"></i>
+                    <i v-if="isParameterSidebarVisible" class="fa fa-filter kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible" data-test="parameter-sidebar-icon"></i>
                     <i class="fa fa-ellipsis-v kn-cursor-pointer  p-mx-4" v-tooltip.left="$t('common.menu')" @click="toggle"></i>
                     <Menu ref="menu" :model="toolbarMenuItems" :popup="true" />
                     <i class="fa fa-times kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.close')" @click="closeDocument"></i>
@@ -76,7 +76,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
-import { formatDate } from '@/helpers/commons/localeHelper'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
 import { iURLData, iExporter, iSchedulation } from './DocumentExecution'
 import DocumentExecutionBreadcrumb from './breadcrumbs/DocumentExecutionBreadcrumb.vue'
@@ -92,6 +91,7 @@ import Menu from 'primevue/menu'
 import Registry from '../registry/Registry.vue'
 import Dossier from '../dossier/Dossier.vue'
 import Olap from '../olap/Olap.vue'
+import moment from 'moment'
 
 export default defineComponent({
     name: 'document-execution',
@@ -173,6 +173,18 @@ export default defineComponent({
             } else {
                 return ''
             }
+        },
+        isParameterSidebarVisible(): boolean {
+            let parameterVisible = false
+            for (let i = 0; i < this.filtersData?.filterStatus?.length; i++) {
+                const tempFilter = this.filtersData.filterStatus[i]
+                if (tempFilter.showOnPanel === 'true') {
+                    parameterVisible = true
+                    break
+                }
+            }
+
+            return parameterVisible || !this.sessionRole
         }
     },
     async created() {
@@ -401,9 +413,20 @@ export default defineComponent({
             this.filtersData?.filterStatus?.forEach((el: iParameter) => {
                 el.parameterValue = el.multivalue ? [] : [{ value: '', description: '' }]
                 if (el.driverDefaultValue?.length > 0) {
+                    let valueIndex = '_col0'
+                    let descriptionIndex = 'col1'
+                    if (el.metadata?.colsMap) {
+                        valueIndex = Object.keys(el.metadata?.colsMap).find((key: string) => el.metadata.colsMap[key] === el.metadata.valueColumn) as any
+                        descriptionIndex = Object.keys(el.metadata?.colsMap).find((key: string) => el.metadata.colsMap[key] === el.metadata.descriptionColumn) as any
+                    }
+
                     el.parameterValue = el.driverDefaultValue.map((defaultValue: any) => {
-                        return { value: defaultValue.value ?? defaultValue._col0, description: defaultValue.desc ?? defaultValue._col1 }
+                        return { value: defaultValue.value ?? defaultValue[valueIndex], description: defaultValue.desc ?? defaultValue[descriptionIndex] }
                     })
+
+                    if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true') {
+                        el.parameterValue[0].value = moment(el.parameterValue[0].description?.split('#')[0]).toDate() as any
+                    }
                 }
                 if (el.data) {
                     el.data = el.data.map((data: any) => {
@@ -589,8 +612,8 @@ export default defineComponent({
 
                 if (parameter.parameterValue) {
                     if (parameter.type === 'DATE') {
-                        parameters[parameter.urlName] = this.getFormattedDate(parameter.parameterValue[0].value, 'MM/DD/YYYY')
-                        parameters[parameter.urlName + '_field_visible_description'] = this.getFormattedDate(parameter.parameterValue[0].value, 'MM/DD/YYYY')
+                        parameters[parameter.urlName] = this.getFormattedDate(parameter.parameterValue[0].value)
+                        parameters[parameter.urlName + '_field_visible_description'] = this.getFormattedDate(parameter.parameterValue[0].value)
                     } else if (parameter.valueSelection === 'man_in') {
                         parameters[parameter.urlName] = parameter.type === 'NUM' ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
                         parameters[parameter.urlName + '_field_visible_description'] = parameter.type === 'NUM' ? +parameter.parameterValue[0].description : parameter.parameterValue[0].description
@@ -623,7 +646,7 @@ export default defineComponent({
 
                 if (parameter.parameterValue) {
                     if (parameter.type === 'DATE') {
-                        parameters[parameter.urlName] = this.getFormattedDate(parameter.parameterValue[0].value, 'MM/DD/YYYY')
+                        parameters[parameter.urlName] = this.getFormattedDate(parameter.parameterValue[0].value)
                     } else if (parameter.valueSelection === 'man_in' && !parameter.multivalue) {
                         parameters[parameter.urlName] = parameter.type === 'NUM' ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
                     } else if (parameter.selectionType === 'TREE' || parameter.selectionType === 'LOOKUP' || parameter.multivalue) {
@@ -742,8 +765,8 @@ export default defineComponent({
             const index = this.schedulations.findIndex((el: any) => el.id === schedulation.id)
             if (index !== -1) this.schedulations.splice(index, 1)
         },
-        getFormattedDate(date: any, format: any) {
-            return formatDate(date, format)
+        getFormattedDate(date: any) {
+            return moment(date).format('DD/MM/YYYY')
         },
         onBreadcrumbClick(item: any) {
             this.document = item.document

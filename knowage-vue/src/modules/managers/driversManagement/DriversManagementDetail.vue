@@ -30,7 +30,7 @@ export default defineComponent({
     },
     computed: {
         buttonDisabled(): any {
-            return !this.driver.label || !this.driver.name || !this.driver.typeId || this.invalidUseModes > 0 || this.noRoleSelected > 0
+            return !this.driver.label || !this.driver.name || !this.driver.type || this.invalidUseModes > 0 || this.noRoleSelected > 0
         },
         invalidUseModes(): any {
             return this.modes.filter((mode: any) => mode.numberOfErrors > 0).length
@@ -118,9 +118,10 @@ export default defineComponent({
         formatDriver() {
             this.driver.length = 0
             let selectedType = this.types.filter((val) => {
-                return val.VALUE_ID === this.driver.typeId
+                return val.VALUE_CD === this.driver.type
             })
             this.driver.type = selectedType[0].VALUE_CD
+            this.driver.typeId = selectedType[0].VALUE_ID
         },
         formatUseMode() {
             let tmp = this.modes.filter((mode) => mode.edited)
@@ -159,24 +160,22 @@ export default defineComponent({
                 this.operation = 'insert'
             }
 
+            let driverSavedMessage = ''
+            const driverSavingErrors = [] as string[]
             await this.sendRequest(url)
                 .then((response: AxiosResponse<any>) => {
                     if (this.operation === 'insert') {
                         this.driver = response.data
                     }
                     this.$emit('created', this.driver)
-                    this.$store.commit('setInfo', {
-                        title: this.$t(this.driversManagemenDetailtDescriptor.operation[this.operation].toastTitle),
-                        msg: this.$t(this.driversManagemenDetailtDescriptor.operation.success)
-                    })
+                    driverSavedMessage = 'OK'
                 })
-                .catch((error) => {
-                    this.$store.commit('setError', {
-                        title: this.$t('managers.constraintManagment.saveError'),
-                        msg: error.message
-                    })
+                .catch((error: any) => {
+                    driverSavedMessage = error.message
                 })
-            this.modesToSave.forEach(async (mode) => {
+
+            for (let i = 0; i < this.modesToSave.length; i++) {
+                const mode = this.modesToSave[i]
                 let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/modes/'
                 mode.id = this.driver.id
                 if (mode.useID != -1) {
@@ -186,22 +185,40 @@ export default defineComponent({
                     delete mode.useID
                     this.useModeOperation = 'insert'
                 }
-                await this.sendUseModeRequest(url, mode)
+                await this.sendUseModeRequest(url, mode).catch((error: any) => driverSavingErrors.push(error?.message))
                 this.getModes()
-            })
+            }
+
+            if (driverSavedMessage === 'OK' && driverSavingErrors.length === 0) {
+                this.$store.commit('setInfo', {
+                    title: this.$t(this.driversManagemenDetailtDescriptor.operation[this.operation].toastTitle),
+                    msg: this.$t(this.driversManagemenDetailtDescriptor.operation.success)
+                })
+            } else if (driverSavingErrors.length > 0) {
+                const message = driverSavedMessage === 'OK' ? this.$t('managers.driversManagement.partialSuccessMessage') + '\n\n' : ''
+                this.$store.commit('setError', {
+                    title: this.$t('common.toast.errorTitle'),
+                    msg: message.concat(driverSavingErrors.join('\n\n'))
+                })
+            } else {
+                this.$store.commit('setError', {
+                    title: this.$t('common.toast.errorTitle'),
+                    msg: driverSavedMessage
+                })
+            }
         },
         sendRequest(url: string) {
             if (this.operation === 'insert') {
-                return this.$http.post(url, this.driver)
+                return this.$http.post(url, this.driver, { headers: { 'X-Disable-Errors': 'true' } })
             } else {
-                return this.$http.put(url, this.driver)
+                return this.$http.put(url, this.driver, { headers: { 'X-Disable-Errors': 'true' } })
             }
         },
         sendUseModeRequest(url: string, useMode: any) {
             if (this.useModeOperation === 'insert') {
-                return this.$http.post(url, useMode)
+                return this.$http.post(url, useMode, { headers: { 'X-Disable-Errors': 'true' } })
             } else {
-                return this.$http.put(url, useMode)
+                return this.$http.put(url, useMode, { headers: { 'X-Disable-Errors': 'true' } })
             }
         },
         setDirty(): void {

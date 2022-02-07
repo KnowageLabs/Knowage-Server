@@ -1,6 +1,6 @@
 <template>
     <div class="kn-page">
-        <div class="document-browser-tab-container kn-page-content p-d-flex p-flex-column">
+        <div class="document-browser-tab-container kn-page-content">
             <TabView id="document-browser-tab-view" class="p-d-flex p-flex-column kn-flex" v-model:activeIndex="activeIndex" @tab-change="onTabChange">
                 <TabPanel>
                     <template #header>
@@ -70,10 +70,12 @@ export default defineComponent({
             this.selectedItem = this.tabs[this.activeIndex - 1]
 
             let routeDocumentType = this.tabs[this.activeIndex - 1].item.mode ? this.tabs[this.activeIndex - 1].item.mode : this.getRouteDocumentType(this.tabs[this.activeIndex - 1].item)
-            this.$router.push(`/document-browser/${routeDocumentType}/` + id)
+            routeDocumentType ? this.$router.push(`/document-browser/${routeDocumentType}/` + id) : this.$router.push('/document-browser/new-dashboard')
         },
         onItemSelect(payload: any) {
-            payload.item.routerId = this.id++
+            if (payload.item) {
+                payload.item.routerId = this.id++
+            }
 
             const tempItem = { ...payload, item: { ...payload.item } }
 
@@ -82,9 +84,13 @@ export default defineComponent({
             this.selectedItem = tempItem
 
             const id = payload.item ? payload.item.label : 'new-dashboard'
-            let routeDocumentType = this.getRouteDocumentType(payload.item)
+            if (payload.item) {
+                let routeDocumentType = this.getRouteDocumentType(payload.item)
+                this.$router.push(`/document-browser/${routeDocumentType}/` + id)
+            } else {
+                this.$router.push(`/document-browser/new-dashboard`)
+            }
 
-            this.$router.push(`/document-browser/${routeDocumentType}/` + id)
             this.activeIndex = this.tabs.length
         },
         getRouteDocumentType(item: any) {
@@ -196,6 +202,7 @@ export default defineComponent({
 
 .document-browser-tab-container {
     position: relative;
+    display: flex;
 }
 
 .document-browser-tab-container .p-tabview .p-tabview-panel,

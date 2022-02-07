@@ -19,7 +19,7 @@
                     {
                         "key": "regex",
                         "validator": {
-                            "type": "extendedAlphanumericRegex"
+                            "type": "fullnameRegex"
                         }
                     }
                 ]
@@ -42,7 +42,7 @@
                     {
                         "key": "regex",
                         "validator": {
-                            "type": "extendedAlphanumericRegex"
+                            "type": "fullnameRegex"
                         }
                     }
                 ]

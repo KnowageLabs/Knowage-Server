@@ -24,7 +24,10 @@
             "python": "python"
         },
         "collapse": "collapse",
+        "comment": "Comment",
+        "continue": "Continue",
         "copyOf": "Copy of",
+        "create": "Create",
         "creationDate": "Creation Date",
         "dataset": "Dataset",
         "default": "Default",
@@ -65,6 +68,7 @@
         "filters": "Filters",
         "general": "General",
         "group": "Group",
+        "home": "Home",
         "image": "image",
         "import": "import",
         "inUse": "In use",
@@ -114,6 +118,7 @@
         "paused": "Paused",
         "preview": "Preview",
         "print": "Print",
+        "properties": "properties",
         "public": "Public",
         "rank": "Rank",
         "refresh": "Refresh",
@@ -138,16 +143,19 @@
         "share": "Share",
         "shortcuts": "Shortcuts",
         "show": "Show",
+        "size": "Size",
         "snapshot": "Snapshot",
         "sort": "sort",
         "source": "Source",
+        "sqlExpression": "SQL expression",
         "state": "State",
         "status": "Status",
         "suspended": "Suspended",
         "table": {
             "footer": {
                 "paginated": "Showing {first} to {last} of {totalRecords}"
-            }
+            },
+            "table": "Table"
         },
         "tags": "tags",
         "tenant": "tenant",
@@ -189,6 +197,7 @@
         "version": "version",
         "visibility": "Visibility",
         "visible": "Visible",
+        "warning": "Warning",
         "yes": "Yes"
     },
     "cron": {
@@ -701,13 +710,15 @@
         }
     },
     "language": {
+        "de_DE": "German",
         "en_GB": "english (GB)",
         "en_US": "english (US)",
         "es_ES": "espanol",
         "fr_FR": "french",
         "it_IT": "italian",
         "languageSelection": "Language Selection",
-        "pt_BR": "portuguese"
+        "pt_BR": "portuguese",
+        "zh_CN_#Hans": "Chinese (simplified)"
     },
     "licenseDialog": {
         "changeLicense": "Change License",
@@ -731,12 +742,62 @@
     },
     "locale": {
         "dateFormat": "mm/dd/yy",
-        "dayNames": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-        "dayNamesMin": ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
-        "dayNamesShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        "dayNames": [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+        ],
+        "dayNamesMin": [
+            "Su",
+            "Mo",
+            "Tu",
+            "We",
+            "Th",
+            "Fr",
+            "Sa"
+        ],
+        "dayNamesShort": [
+            "Sun",
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat"
+        ],
         "firstDayOfWeek": 0,
-        "monthNames": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-        "monthNamesShort": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        "monthNames": [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+        ],
+        "monthNamesShort": [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec"
+        ],
         "today": "Today",
         "weekHeader": "Wk"
     },
@@ -996,6 +1057,7 @@
             "fieldsMetadata": "Fields Metadata",
             "fileType": "File type",
             "flatTableName": "Table name",
+            "formulaParamError": "You cannot persist a dataset that uses profile attributes. Please verify your dataset configuration",
             "helpTitle": "Help",
             "hint": "Please change the hint to your desire in the i18n files.",
             "isPersisted": "Persist",
@@ -1066,6 +1128,7 @@
             "functional": "Functional",
             "hint": "Driver models a concept or a piece of data frequently used as a distinguishing criterion on the global data context.Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "options": "Options",
+            "partialSuccessMessage": "Not all data has been updated successfully. Check again for unsaved informations.",
             "temporal": "Temporal",
             "title": "Drivers management",
             "useModes": {
@@ -1305,6 +1368,7 @@
                 "createTitle": "Create menu item",
                 "deleteMessage": "Menu item deleted",
                 "deleteTitle": "Delete menu item",
+                "duplicateErrorMessage": "You cannot save menu bacues there is another menu in the same level with the same name",
                 "errorMessage": "Error saving menu item",
                 "errorTitle": "Error",
                 "saveMessage": "Menu item saved",
@@ -1525,6 +1589,8 @@
             "hint": "Roles allows you to specify different users properties and authorizations. It's possible to change the role name, the roles authorizations and dataset visibility. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "kpiCategories": "KPI Categories",
             "noResults": "No roles available for the selected filter",
+            "publicRoleWarning1": "If you continue saving the public role will be removed from ",
+            "publicRoleWarning2": " to the selected one. Are you sure?",
             "rolesDropdown": {
                 "ADMIN": "Administrator",
                 "DEV_ROLE": "Developer",
@@ -1744,6 +1810,94 @@
         "modelCatalogResourceManagement": "Models manager",
         "resourceManagement": "Resource manager"
     },
+    "metaweb": {
+        "businessModel": {
+            "addPhysicalTables": "Add physical tables",
+            "addUnusedFields": "Add unused fields",
+            "attributesDetail": {
+                "structural": "Structural",
+                "title": "Attribute's Detail"
+            },
+            "businessClass": "Business Class",
+            "businessView": "Business View",
+            "editJoin": "Edit Join Relationship",
+            "inbound": {
+                "name": "Insert a Business Relationship Name",
+                "sourceBc": "Source Business Class",
+                "targetBc": "Target Business Class"
+            },
+            "newBusiness": "New Business Class",
+            "newView": "New Business View",
+            "noUnusedFields": "No columns to add",
+            "physTable": "Physical Table",
+            "physicalColumn": "Physical Column",
+            "physicalColumnHint": "The original physical column of this column",
+            "physicalTable": "Physical Table",
+            "primaryKey": "Primary Key",
+            "sourceAttr": "Source Attributes",
+            "sourceHint": "Select source table",
+            "sourceTable": "Source Table",
+            "summary": "Summary",
+            "summaryHint": "Link tables to see the summary",
+            "tabView": {
+                "attributes": "Attributes",
+                "calcField": "Calculated Field",
+                "filter": "Filter",
+                "inbound": "Inbound",
+                "joinRelationships": "Join Relationships",
+                "outbound": "Outbound",
+                "propertyTitle": "Property List"
+            },
+            "targetAttr": "Target Attributes",
+            "targetHint": "Select target table",
+            "targetTable": "Target Table",
+            "temporalHierarchy": "Manage temporal hierarchy",
+            "title": "Business Model"
+        },
+        "exitFromMeta": "Exit from meta?",
+        "filterHelpMessage": "If your driver is multivalue, you should set filter to be for example: column_name in ($P{driverUrlName})",
+        "incorrectRelationships": {
+            "requiredColumns": "Required number of source columns",
+            "title": "Incorrect relationships found",
+            "warningMessage": {
+                "partOne": "A correct relationship must have at least the same number of source columns as the columns set as identifiers in the target table.",
+                "partThree": "Press SAVE to continue anyway or press CANCEL to go back and correct.",
+                "partTwo": "Note that if a table doesn't have identifiers, all his columns will be set as identifier automatically."
+            }
+        },
+        "physicalModel": {
+            "dataType": "dataType",
+            "decimalDigits": "decimalDigits",
+            "defaultValue": "defaultValue",
+            "foreignKey": "Foreign Key",
+            "misc": "Misc",
+            "nullable": "nullable",
+            "octectLength": "octectLength",
+            "position": "position",
+            "propertyList": "Property list",
+            "radix": "radix",
+            "sourceColumns": "Source Columns",
+            "tables": "Tables",
+            "targetColumns": "Target Columns",
+            "title": "Physical Model",
+            "typeName": "typeName",
+            "updatePhysicalModel": "Update Physical Model"
+        },
+        "selectDialog": {
+            "noPhysicalModelsSelectedError": "Select at least one Physical Model",
+            "tableName": "Table Name"
+        },
+        "title": "Metaweb",
+        "updatePhysicalModel": {
+            "addNewColumns": "New columns that will be added",
+            "deletedColumns": "Elements that will be marked as deleted",
+            "newTables": "New Physical tables to import",
+            "noDeletedColumns": "No elements deleted",
+            "noNewColumns": "No elements added",
+            "noNewTables": "No new table to add",
+            "title": "Update physical model"
+        }
+    },
     "newsDialog": {
         "description": "Description",
         "expirationDate": "Expiration date",
@@ -1761,22 +1915,22 @@
         },
         "detailView": {
             "hideList": "Hide List",
+            "noPreview": "Nothing to preview",
             "parameterDuplicates": "There are parameters with a duplicate name!",
             "showList": "Show List",
-            "noPreview": "Nothing to preview",
             "smartViewMenu": {
-                "showField": "Show field",
-                "group": "Group",
                 "aggregation": {
-                    "title": "Aggregation",
-                    "sum": "Sum",
-                    "min": "Min",
-                    "max": "Max",
                     "avg": "Avg",
                     "count": "Count",
-                    "distinct": "Count disctinct"
+                    "distinct": "Count disctinct",
+                    "max": "Max",
+                    "min": "Min",
+                    "sum": "Sum",
+                    "title": "Aggregation"
                 },
-                "rename": "Rename Alias"
+                "group": "Group",
+                "rename": "Rename Alias",
+                "showField": "Show field"
             },
             "toolbarMenu": {
                 "exportTo": "Export to",

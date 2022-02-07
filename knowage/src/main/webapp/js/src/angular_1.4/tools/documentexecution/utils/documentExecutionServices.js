@@ -253,7 +253,8 @@
 
 			// memorize parameters in session
 			docExecute_sessionParameterService.saveParameters(dataPost.parameters, parametersDetail);
-			console.log('params', parametersDetail);
+			console.log('params', parametersDetail);	
+			if(!execProperties.executionInstance.isFromCross) dataPost.parameters = {};
 			sbiModule_restServices.alterContextPath( sbiModule_config.contextName);
 			console.log('dataPost', dataPost);
 			var postObject = {
@@ -499,6 +500,7 @@
 
 								if(params[parameter.urlName+'_field_visible_description']!=undefined)
 								{
+									parameter.parameterDescription = {};
 									var ArrDesc = params[parameter.urlName+'_field_visible_description'].split(';');
 									for(var w=0; w<ArrValue.length; w++){
 										parameter.parameterDescription[ArrValue[w]] =ArrDesc[w];
