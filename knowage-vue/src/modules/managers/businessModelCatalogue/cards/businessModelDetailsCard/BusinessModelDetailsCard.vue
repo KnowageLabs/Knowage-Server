@@ -8,6 +8,7 @@
             </Toolbar>
         </template>
         <template #content>
+            {{ businessModel }}
             <form class="p-fluid p-m-5">
                 <div class="p-field">
                     <span class="p-float-label">
