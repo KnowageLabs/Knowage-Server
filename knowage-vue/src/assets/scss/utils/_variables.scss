@@ -11,6 +11,14 @@ $color-info: #329ef4;
 $color-warning: #fbc53d;
 $color-error: #d32f2f;
 
+:root {
+    --kn-color-default: #a7a7a7;
+    --kn-color-primary: #43749e;
+    --kn-color-secondary: #bbd6ed;
+    --kn-color-fab: #ce0651;
+    --kn-color-disabled: #a0a0a0;
+}
+
 // COMMON FONT
 $font-family: Roboto, 'Helvetica Neue', Arial, sans-serif;
 
