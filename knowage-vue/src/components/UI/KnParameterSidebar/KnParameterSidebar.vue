@@ -1,6 +1,6 @@
 <template>
     <div id="kn-parameter-sidebar">
-        <Toolbar v-if="mode !== 'workspaceView'" id="kn-parameter-sidebar-toolbar" class="kn-toolbar kn-toolbar--secondary">
+        <Toolbar v-if="mode !== 'workspaceView' && mode !== 'qbeView'" id="kn-parameter-sidebar-toolbar" class="kn-toolbar kn-toolbar--secondary">
             <template #left>
                 <div id="kn-parameter-sidebar-toolbar-icons-container" class="p-d-flex p-flex-row p-jc-around">
                     <i class="fa fa-eraser kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.resetParametersTooltip')" @click="resetAllParameters"></i>
