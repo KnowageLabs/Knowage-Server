@@ -203,6 +203,7 @@ export default defineComponent({
 .document-browser-tab-container {
     position: relative;
     display: flex;
+    flex-direction: column;
 }
 
 .document-browser-tab-container .p-tabview .p-tabview-panel,
