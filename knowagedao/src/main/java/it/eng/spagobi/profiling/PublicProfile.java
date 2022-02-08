@@ -19,8 +19,6 @@ package it.eng.spagobi.profiling;
  */
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletRequest;
@@ -87,11 +85,7 @@ public class PublicProfile {
 		int indexOfTreat = userId.indexOf("-");
 		String organization = userId.substring(indexOfTreat + 1);
 
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.HOUR, 10);
-		Date expiresAt = calendar.getTime();
-
-		String jwtToken = JWTSsoService.userId2jwtToken(userId, expiresAt);
+		String jwtToken = JWTSsoService.userId2jwtToken(userId);
 
 		logger.debug("JWT-TOKEN " + jwtToken);
 

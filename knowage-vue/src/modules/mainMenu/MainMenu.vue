@@ -7,7 +7,7 @@
         <NewsDialog v-model:visibility="newsDisplay"></NewsDialog>
         <LicenseDialog v-model:visibility="licenseDisplay" v-if="user && user.isSuperadmin && isEnterprise"></LicenseDialog>
         <MainMenuAdmin :openedPanelEvent="adminMenuOpened" :model="technicalUserFunctionalities" v-if="technicalUserFunctionalities && technicalUserFunctionalities.length > 0" @click="itemClick"></MainMenuAdmin>
-        <TieredMenu class="kn-tieredMenu" ref="menu" :model="selectedCustomMenu" :popup="true" @blur="hideItemMenu">
+        <TieredMenu :class="['kn-tieredMenu', tieredMenuClass]" ref="menu" :model="selectedCustomMenu" :popup="true" @blur="hideItemMenu">
             <template #item="{item}">
                 <router-link class="p-menuitem-link" v-if="item.to" :to="item.to" exact>
                     <span v-if="item.descr" class="p-menuitem-text">{{ $internationalization($t(item.descr)) }}</span>
@@ -98,6 +98,7 @@ export default defineComponent({
             allowedUserFunctionalities: new Array<IMenuItem>(),
             commonUserFunctionalities: new Array<IMenuItem>(),
             technicalUserFunctionalities: new Array<IMenuItem>(),
+            tieredMenuClass: 'largeScreen',
             display: false,
             languageDisplay: false,
             roleDisplay: false,
@@ -202,6 +203,9 @@ export default defineComponent({
         toggleMenu(event, item) {
             if (item.items) {
                 this.selectedCustomMenu = item.items
+                if (event.target.getBoundingClientRect().bottom + Object.keys(this.selectedCustomMenu).length * 40 > window.innerHeight) {
+                    this.tieredMenuClass = 'smallScreen'
+                } else this.tieredMenuClass = 'largeScreen'
                 // @ts-ignore
                 this.$refs.menu.show(event)
             } else {
@@ -309,7 +313,7 @@ export default defineComponent({
 .slide-down-enter-active,
 .slide-down-leave-active {
     overflow: hidden;
-    transition: max-height 1s ease-in-out;
+    transition: max-height 0.6s ease-in-out;
     max-height: 500px;
 }
 .slide-down-enter-from,

@@ -36,7 +36,7 @@ $aggrid-border-color: #d9dcde;
 		overflow-x: auto;
 	}
 	.ag-floating-bottom {
-		overflow-y: hidden !important;
+		overflow-y: auto !important;
 		.ag-row {
 			.ag-cell{
 				padding: 0;
