@@ -220,7 +220,6 @@ export default defineComponent({
             this.$router.push(`/workspace/repository/${this.selectedBreadcrumb.node.id}`)
         },
         createMenuItems() {
-            console.log('STORE @MOUNTED: ', (this.$store.state as any).user)
             this.menuItems = []
             this.menuItems.push({ icon: 'fas fa-history', key: '0', label: 'workspace.menuLabels.recent', value: 'recent' }, { icon: 'fas fa-folder', key: '1', label: 'workspace.menuLabels.myRepository', value: 'repository' })
             if ((this.$store.state as any).user.functionalities.includes('SeeMyData')) {

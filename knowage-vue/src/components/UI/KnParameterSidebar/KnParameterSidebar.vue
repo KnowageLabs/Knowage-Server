@@ -25,7 +25,7 @@
                             <label class="kn-material-input-label">{{ qbeParameter.name }}</label>
                             <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="qbeParameter.value = qbeParameter.defaultValue"></i>
                         </div>
-                        <InputText v-if="qbeParameter.value" class="kn-material-input p-inputtext-sm" v-model="qbeParameter.value" />
+                        <InputText class="kn-material-input p-inputtext-sm" v-model="qbeParameter.value" />
                     </div>
                 </div>
             </template>

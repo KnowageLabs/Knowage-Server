@@ -2,8 +2,8 @@ import { AxiosResponse } from 'axios'
 import { iParameter, } from './KnParameterSidebar'
 
 export function setDataDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter) {
-    if (parameter.dependencies.data.length !== 0) {
-        parameter.dependencies.data.forEach((dependency: any) => {
+    if (parameter.dependencies?.data.length !== 0) {
+        parameter.dependencies?.data.forEach((dependency: any) => {
             const index = loadedParameters.filterStatus.findIndex((param: any) => {
                 return param.urlName === dependency.parFatherUrlName
             })

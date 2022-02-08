@@ -277,7 +277,8 @@ export default defineComponent({
         openDataPreparation(dataset: any) {
             this.$router.push({ name: 'data-preparation', params: { id: dataset.id } })
         },
-        openDatasetInQBE() {
+        openDatasetInQBE(dataset: any) {
+            console.log('DATASET', dataset)
             this.$store.commit('setInfo', {
                 title: 'Todo',
                 msg: 'Functionality not in this sprint'

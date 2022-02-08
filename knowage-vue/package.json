@@ -19,7 +19,6 @@
         "chart.js": "2.9.4",
         "codemirror": "5.59.4",
         "core-js": "^3.9.1",
-        "crypto": "^1.0.1",
         "crypto-js": "^4.0.0",
         "deep-equal": "^2.0.5",
         "deepcopy": "^2.1.0",
