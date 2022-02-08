@@ -15,23 +15,23 @@
 
             <div v-if="dataset.fileType && dataset.fileType == 'CSV'" class="p-fluid p-formgrid p-grid p-mt-3">
                 <span class="p-field p-float-label p-col">
-                    <Dropdown id="csvDelimiter" class="kn-material-input" :options="dataViewDescriptor.csvDelimiterCharacterTypes" optionLabel="name" optionValue="value" v-model="dataset.csvDelimiter" />
+                    <Dropdown id="csvDelimiter" class="kn-material-input workspace-wizard-step-one-input" :options="dataViewDescriptor.csvDelimiterCharacterTypes" optionLabel="name" optionValue="value" v-model="dataset.csvDelimiter" />
                     <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanCsvDelimiter') }} </label>
                 </span>
                 <span class="p-field p-float-label p-col">
-                    <Dropdown id="csvQuote" class="kn-material-input" :options="dataViewDescriptor.csvQuoteCharacterTypes" optionLabel="name" optionValue="value" v-model="dataset.csvQuote" />
+                    <Dropdown id="csvQuote" class="kn-material-input workspace-wizard-step-one-input" :options="dataViewDescriptor.csvQuoteCharacterTypes" optionLabel="name" optionValue="value" v-model="dataset.csvQuote" />
                     <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanCsvQuote') }} </label>
                 </span>
                 <span class="p-field p-float-label p-col">
-                    <Dropdown id="csvEncoding" class="kn-material-input" :options="dataViewDescriptor.csvEncodingTypes" optionLabel="name" optionValue="value" v-model="dataset.csvEncoding" />
+                    <Dropdown id="csvEncoding" class="kn-material-input workspace-wizard-step-one-input" :options="dataViewDescriptor.csvEncodingTypes" optionLabel="name" optionValue="value" v-model="dataset.csvEncoding" />
                     <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanCsvEncoding') }} </label>
                 </span>
                 <span class="p-field p-float-label p-col">
-                    <Dropdown id="dateFormat" class="kn-material-input" :options="dataViewDescriptor.dateFormatTypes" optionLabel="name" optionValue="value" v-model="dataset.dateFormat" />
+                    <Dropdown id="dateFormat" class="kn-material-input workspace-wizard-step-one-input" :options="dataViewDescriptor.dateFormatTypes" optionLabel="name" optionValue="value" v-model="dataset.dateFormat" />
                     <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanDateFormat') }} </label>
                 </span>
                 <span class="p-field p-float-label p-col">
-                    <Dropdown id="timestampFormat" class="kn-material-input" :options="dataViewDescriptor.timestampFormatTypes" optionLabel="name" optionValue="value" v-model="dataset.timestampFormat" />
+                    <Dropdown id="timestampFormat" class="kn-material-input workspace-wizard-step-one-input" :options="dataViewDescriptor.timestampFormatTypes" optionLabel="name" optionValue="value" v-model="dataset.timestampFormat" />
                     <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.timestampFormat') }} </label>
                 </span>
             </div>
@@ -188,3 +188,9 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss">
+.workspace-wizard-step-one-input {
+    min-width: 100px;
+}
+</style>
