@@ -92,11 +92,6 @@ export default defineComponent({
     created() {
         this.selectedSort = this.settings.defaultSortField || 'label'
     },
-    computed: {
-        getTime(ms) {
-            return formatDateWithLocale(ms)
-        }
-    },
     methods: {
         clickedButton(e, item) {
             const emits = e.item && e.item.emits
@@ -107,6 +102,9 @@ export default defineComponent({
             if (this.settings.statusBorder) {
                 return 'kn-list-item-' + this.settings.statusBorder.values[item[this.settings.statusBorder.property]]
             } else return ''
+        },
+        getTime(ms) {
+            return formatDateWithLocale(ms)
         },
         toggleSort(e) {
             // eslint-disable-next-line
