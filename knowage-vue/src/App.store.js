@@ -8,6 +8,7 @@ const store = createStore({
     },
     state() {
         return {
+            configurations: {},
             user: {},
             error: {},
             info: {},
@@ -50,6 +51,9 @@ const store = createStore({
         }
     },
     mutations: {
+        setConfigurations(state, configs){
+            state.configurations = configs
+        },
         setUser(state, user) {
             state.user = user
         },

@@ -3,9 +3,9 @@
         <template #left>
             <i class="fa fa-ellipsis-v p-mr-3" id="sidebar-button" @click="toggleSidebarView" />
             <span>{{ searchMode ? $t('documentBrowser.documentsSearch') : $t('documentBrowser.title') }}</span>
-            <span v-if="searchMode" class="p-mx-4">
+            <span v-show="searchMode" class="p-mx-4">
                 <i class="fa fa-arrow-left search-pointer p-mx-4" @click="exitSearchMode" />
-                <InputText id="document-search" class="kn-material-input p-inputtext-sm p-mx-2" @keyup.enter="loadDocuments" v-model="searchWord" :placeholder="$t('common.search')" />
+                <InputText id="document-search" class="kn-material-input p-inputtext-sm p-mx-2" ref="searchBar" @keyup.enter="loadDocuments" v-model="searchWord" :placeholder="$t('common.search')" autofocus />
                 <i class="fa fa-times search-pointer p-mx-4" @click="searchWord = ''" />
                 <i class="pi pi-search search-pointer p-mx-4" @click="loadDocuments" />
             </span>
@@ -13,7 +13,7 @@
 
         <template #right>
             <span v-if="!searchMode" class="p-mx-4">
-                <i class="pi pi-search search-pointer" @click="searchMode = true" />
+                <i class="pi pi-search search-pointer" @click="openSearchBar()" />
             </span>
             <KnFabButton v-if="(isSuperAdmin || canAddNewDocument) && selectedFolder && selectedFolder.parentId" icon="fas fa-plus" @click="toggle($event)" aria-haspopup="true" aria-controls="overlay_menu"></KnFabButton>
             <Menu ref="menu" :model="items" :popup="true" />
@@ -184,6 +184,13 @@ export default defineComponent({
         },
         toggleSidebarView() {
             this.sidebarVisible = !this.sidebarVisible
+        },
+        openSearchBar() {
+            this.searchMode = true
+            setTimeout(() => {
+                // @ts-ignore
+                this.$refs.searchBar.$el.focus()
+            }, 0)
         }
     }
 })
@@ -197,7 +204,6 @@ export default defineComponent({
 
 .document-sidebar {
     border-right: 1px solid #c2c2c2;
-    height: 85vh;
 }
 
 .document-sidebar-absolute {
@@ -246,6 +252,10 @@ export default defineComponent({
     background-color: $color-primary;
     color: white;
     border-bottom-color: white;
+}
+
+#document-search::placeholder {
+    color: white;
 }
 
 .full-width {

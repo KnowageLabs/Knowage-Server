@@ -18,6 +18,7 @@
 package it.eng.spagobi.commons.services;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -378,7 +379,21 @@ public class LoginModule extends AbstractHttpModule {
 			}
 			// End writing log in the DB
 
-			redirectToKnowageVue();
+			String targetService = getHttpRequest().getParameter("targetService");
+
+			if (StringUtils.isNotBlank(targetService)) {
+
+				URI url = new URI(getHttpRequest().getParameter("targetService").toString());
+
+				if (!url.isAbsolute()) {
+					getHttpResponse().sendRedirect(targetService);
+				} else {
+					redirectToKnowageVue();
+				}
+			} else {
+				redirectToKnowageVue();
+			}
+//			redirectToKnowageVue();
 		} finally {
 			// since TenantManager uses a ThreadLocal, we must clean after request processed in each case
 			TenantManager.unset();

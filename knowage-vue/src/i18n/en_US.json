@@ -371,6 +371,8 @@
             "title": "Dossier"
         },
         "main": {
+            "addToWorkspace": "Add to my workspace",
+            "addToWorkspaceError": "This document cannot be added to Workspace. It already exists in the root folder of the Organizer",
             "copyLink": "Copy link",
             "copyLinkAndShare": "Copy link and share it",
             "crossNavigationNoTargetError": "No cross navigation targets available",
@@ -1000,6 +1002,7 @@
             "fieldsMetadata": "Fields Metadata",
             "fileType": "File type",
             "flatTableName": "Table name",
+            "formulaParamError": "You cannot persist a dataset that uses profile attributes. Please verify your dataset configuration",
             "helpTitle": "Help",
             "hint": "Please change the hint to your desire in the i18n files.",
             "isPersisted": "Persist",
@@ -1023,6 +1026,14 @@
             "pivotRowName": "Column not to be Pivoted",
             "pivotTransformer": "Pivot Transformer",
             "qbeDatamarts": "Datamart",
+            "queryHelpDialog": {
+                "paragraph1": "<hr>In a datasets the user can insert parameters or profile attributes, single or multi value.<br>The correct syntax to insert a parameter is <b>$P&#123;parameter_name&#125;</b>.<br>The correct syntax to insert a profile attribute is <b>$P&#123;attribute_name&#125;</b>.<br>Remember that for any parameter added to your dataset, you need to add this parameter in the parameters table.",
+                "paragraph2": "<hr><b>SCRIPTS:</b> Every script must be written using Groovy or Javascript languages. <br><br>The script must return an XML string containing a list of values with the syntax shown below.<i><br /> &lt;ROWS&gt;<br /> &nbsp;&nbsp;&lt;ROW value=&#34;value1&#34; ... /&gt;<br /> &nbsp;&nbsp;&lt;ROW value=&#34;value2&#34; ... /&gt;<br /> &nbsp;&nbsp;...<br /> &lt;/ROWS&gt;<br /> </i>",
+                "list1": "<hr /><b>Knowage already fournishes some Groovy and Javascript functions that return the value of a profile attribute:</b> <ul> <li> <b>returnValue(&#39;${attribute_name}&#39;)</b>: Returns the unique value of the profile attribute with name: attribute_name <br /> <b>Example:</b><i> returnValue(&#34;${single_value_attribute}&#34;)</i> <hr /> </li>",
+                "list2": "<ul><li>  <b>getListFromMultiValueProfileAttribute(&#39;${attribute_name}&#39;)</b>: Returns the list of values of a multi value profile attribute.<br />  <b>Example:</b><i> getListFromMultiValueProfileAttribute(&#34;${multi_value_attribute}&#34;)</i>  <hr /> </li>",
+                "list3": "<ul><li> <b>getMultiValueProfileAttribute(&#39;${attribute_name}&#39;, &#39;prefix&#39;, &#39;newSplitter&#39;, &#39;suffix&#39;) </b>: Returns list of values of a multi value profile attribute, preceded by a prefix, separated by the new splitter and followed by a suffix <br /> <i><b>Example:</b> getMultiValueProfileAttribute(&#39;${multi_value_attribute}&#39;, &#34;in (&#34; , &#34;,&#34; , &#34;)&#34; )</i> <hr /> </li>",
+                "list4": "<ul><li> <b>isValid(&#39;attribute_name&#39;) </b>: Returns true if the value of the attribute is not null or empty or equals to &#34;&#39;&#39;&#34;&#34; or equals to &#34;null&#34; or equals to &#34;%&#34; <br /> <i><b>Example:</b> isValid(&#39;multi_value_attribute&#39;)</i> <hr /> </li>"
+            },
             "queryParamTable": "Filter Query parameter",
             "requestHeaders": "Request Headers",
             "restAddress": "Address",
@@ -1070,6 +1081,7 @@
             "functional": "Functional",
             "hint": "Driver models a concept or a piece of data frequently used as a distinguishing criterion on the global data context.Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "options": "Options",
+            "partialSuccessMessage": "Not all data has been updated successfully. Check again for unsaved informations.",
             "temporal": "Temporal",
             "title": "Drivers management",
             "useModes": {
@@ -1530,6 +1542,8 @@
             "hint": "Roles allows you to specify different users properties and authorizations. It's possible to change the role name, the roles authorizations and dataset visibility. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "kpiCategories": "KPI Categories",
             "noResults": "No roles available for the selected filter",
+            "publicRoleWarning1": "If you continue saving the public role will be removed from ",
+            "publicRoleWarning2": " to the selected one. Are you sure?",
             "rolesDropdown": {
                 "ADMIN": "Administrator",
                 "DEV_ROLE": "Developer",

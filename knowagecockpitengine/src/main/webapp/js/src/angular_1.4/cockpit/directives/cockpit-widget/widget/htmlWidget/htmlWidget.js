@@ -414,7 +414,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		$scope.addslashes = function( str ) {
-		    return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+		    return (str + '').replace(/\"/g, '&quot;').replace(/\'/g, '&apos;').replace(/\u0000/g, '\\0');
 		}
 
 		$scope.calcReplacer = function(match,p1,min,max,precision,format){

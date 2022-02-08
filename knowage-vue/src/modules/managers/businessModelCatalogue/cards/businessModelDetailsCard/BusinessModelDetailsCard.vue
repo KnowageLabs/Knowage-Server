@@ -73,10 +73,12 @@
                             :options="categories"
                             :placeholder="$t('common.category')"
                             :disabled="readonly"
+                            optionLabel="VALUE_NM"
+                            optionValue="VALUE_ID"
                             @before-show="v$.businessModel.category.$touch()"
-                            @change="onFieldChange('category', $event.value.VALUE_ID)"
+                            @change="onFieldChange('category', $event.value)"
                         >
-                            <template #value="slotProps">
+                            <!-- <template #value="slotProps">
                                 <div v-if="slotProps.value">
                                     <span>{{ slotProps.value.VALUE_NM }}</span>
                                 </div>
@@ -85,7 +87,7 @@
                                 <div>
                                     <span>{{ slotProps.option.VALUE_NM }}</span>
                                 </div>
-                            </template>
+                            </template> -->
                         </Dropdown>
                     </span>
                     <KnValidationMessages
@@ -347,6 +349,7 @@ export default defineComponent({
     methods: {
         loadBusinessModel() {
             this.businessModel = { ...this.selectedBusinessModel } as iBusinessModel
+            if (this.businessModel.category?.VALUE_ID) this.businessModel.category = this.businessModel.category.VALUE_ID
         },
         loadCategories() {
             this.categories = this.domainCategories as any[]
@@ -386,7 +389,7 @@ export default defineComponent({
         },
         async loadModelFromSession() {
             await this.$http
-                .get(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/loadModelFromSession`)
+                .get(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/model`)
                 .then((response: AxiosResponse<any>) => {
                     this.meta = response.data
                     this.metawebDialogVisible = true
