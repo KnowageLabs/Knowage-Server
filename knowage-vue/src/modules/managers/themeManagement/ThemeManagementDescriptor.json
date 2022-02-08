@@ -9,8 +9,6 @@
                 "image": "bamboo-watch.jpg",
                 "inventoryStatus": "INSTOCK",
                 "name": "Bamboo Watch",
-                "price": 65,
-                "quantity": 24,
                 "rating": 5
             },
             {
@@ -21,8 +19,6 @@
                 "image": "black-watch.jpg",
                 "inventoryStatus": "INSTOCK",
                 "name": "Black Watch",
-                "price": 72,
-                "quantity": 61,
                 "rating": 4
             },
             {
@@ -33,8 +29,6 @@
                 "image": "blue-band.jpg",
                 "inventoryStatus": "LOWSTOCK",
                 "name": "Blue Band",
-                "price": 79,
-                "quantity": 2,
                 "rating": 3
             },
             {
@@ -45,8 +39,6 @@
                 "image": "blue-t-shirt.jpg",
                 "inventoryStatus": "INSTOCK",
                 "name": "Blue T-Shirt",
-                "price": 29,
-                "quantity": 25,
                 "rating": 5
             },
             {
@@ -57,8 +49,6 @@
                 "image": "bracelet.jpg",
                 "inventoryStatus": "INSTOCK",
                 "name": "Bracelet",
-                "price": 15,
-                "quantity": 73,
                 "rating": 4
             },
             {
@@ -69,8 +59,6 @@
                 "image": "brown-purse.jpg",
                 "inventoryStatus": "OUTOFSTOCK",
                 "name": "Brown Purse",
-                "price": 120,
-                "quantity": 0,
                 "rating": 4
             },
             {
@@ -81,8 +69,6 @@
                 "image": "chakra-bracelet.jpg",
                 "inventoryStatus": "LOWSTOCK",
                 "name": "Chakra Bracelet",
-                "price": 32,
-                "quantity": 5,
                 "rating": 3
             },
             {
@@ -93,8 +79,6 @@
                 "image": "galaxy-earrings.jpg",
                 "inventoryStatus": "INSTOCK",
                 "name": "Galaxy Earrings",
-                "price": 34,
-                "quantity": 23,
                 "rating": 5
             },
             {
@@ -105,20 +89,15 @@
                 "image": "game-controller.jpg",
                 "inventoryStatus": "LOWSTOCK",
                 "name": "Game Controller",
-                "price": 99,
-                "quantity": 2,
                 "rating": 4
             },
             {
                 "category": "Electronics",
                 "code": "cm230f032",
-                "description": "Product Description",
                 "id": "1009",
                 "image": "gaming-set.jpg",
                 "inventoryStatus": "INSTOCK",
                 "name": "Gaming Set",
-                "price": 299,
-                "quantity": 63,
                 "rating": 3
             }
         ],
@@ -127,6 +106,48 @@
             "invalid": "invalid",
             "number": 10,
             "text": "text"
+        }
+    },
+    "list": {
+        "colors": {
+            "label": "colors",
+            "properties": [
+                {
+                    "key": "--kn-color-default",
+                    "label": "Default Color",
+                    "type": "color",
+                    "value": "#a7a7a7"
+                },
+                {
+                    "key": "--kn-color-primary",
+                    "label": "Primary Color",
+                    "type": "color",
+                    "value": "#43749e"
+                },
+                {
+                    "key": "--kn-color-secondary",
+                    "label": "Secondary Color",
+                    "type": "color",
+                    "value": "#bbd6ed"
+                },
+                {
+                    "key": "--kn-color-fab",
+                    "label": "Fab/Accent Color",
+                    "type": "color",
+                    "value": "#ce0651"
+                }
+            ]
+        },
+        "typography": {
+            "label": "typography",
+            "properties": [
+                {
+                    "key": "--kn-font-family",
+                    "label": "Font Family",
+                    "type": "text",
+                    "value": "Roboto, 'Helvetica Neue', Arial, sans-serif"
+                }
+            ]
         }
     }
 }

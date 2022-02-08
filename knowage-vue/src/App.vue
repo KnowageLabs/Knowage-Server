@@ -81,8 +81,8 @@ export default defineComponent({
             this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement/current`)
                 .then((response) => {
-                    store.commit('setTheme', response.data)
-                    themeHelper.setTheme(response.data)
+                    store.commit('setTheme', response.data.config)
+                    themeHelper.setTheme(response.data.config)
                 })
                 .catch(() => {
                     store.commit('setTheme', { '--kn-mainmenu-background-color': '#cb2162', '--kn-mainmenu-hover-background-color': '#92ceb3' })

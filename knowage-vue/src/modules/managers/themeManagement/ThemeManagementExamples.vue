@@ -102,7 +102,7 @@
                     <Column field="code" header="Code" :sortable="true"></Column>
                     <Column field="name" header="Name" :sortable="true"></Column>
                     <Column field="category" header="Category" :sortable="true"></Column>
-                    <Column field="category" header="Icon" :sortable="true">
+                    <Column field="rating" header="Icon" :sortable="true">
                         <template #body="slotProps">
                             <i v-if="slotProps.data.rating < 4" class="fas fa-times-circle"></i>
                             <i v-else class="fas fa-check-circle"></i>
