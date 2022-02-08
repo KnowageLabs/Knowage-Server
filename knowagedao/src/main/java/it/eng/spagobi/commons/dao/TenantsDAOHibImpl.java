@@ -36,6 +36,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -58,6 +59,8 @@ import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
 import it.eng.spagobi.commons.metadata.SbiOrganizationProductType;
 import it.eng.spagobi.commons.metadata.SbiOrganizationProductTypeId;
+import it.eng.spagobi.commons.metadata.SbiOrganizationTheme;
+import it.eng.spagobi.commons.metadata.SbiOrganizationThemeId;
 import it.eng.spagobi.commons.metadata.SbiProductType;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
@@ -98,7 +101,8 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			Criteria criteria = tmpSession.createCriteria(SbiTenant.class);
 			criteria.add(labelCriterrion);
 			tenant = (SbiTenant) criteria.uniqueResult();
-
+			if (tenant != null)
+				Hibernate.initialize(tenant.getSbiOrganizationThemes());
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error("Error while loading the tenant with name " + name, he);
@@ -252,6 +256,40 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 	}
 
 	@Override
+	public Set loadThemesByTenantName(String name) throws EMFUserError {
+		logger.debug("IN");
+		SbiTenant tenant = null;
+		Session tmpSession = null;
+		Transaction tx = null;
+		Set themes = null;
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+			Criterion labelCriterrion = Expression.eq("name", name);
+			Criteria criteria = tmpSession.createCriteria(SbiTenant.class);
+			criteria.add(labelCriterrion);
+			tenant = (SbiTenant) criteria.uniqueResult();
+
+			tx.commit();
+
+			if (tenant != null)
+				themes = tenant.getSbiOrganizationThemes();
+		} catch (HibernateException he) {
+			logger.error("Error while loading the tenant with name " + name, he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return themes;
+	}
+
+	@Override
 	public void insertTenant(SbiTenant aTenant) throws EMFUserError {
 		logger.debug("insertTenant IN");
 		Session aSession = null;
@@ -298,6 +336,18 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				sbiOrganizationProductType.setCommonInfo(sbiCommoInfo);
 				updateSbiCommonInfo4Insert(sbiOrganizationProductType);
 				aSession.save(sbiOrganizationProductType);
+				aSession.flush();
+			}
+
+			Set<SbiOrganizationTheme> themes = aTenant.getSbiOrganizationThemes();
+			for (SbiOrganizationTheme theme : themes) {
+				SbiOrganizationTheme sbiOrganizationTheme = new SbiOrganizationTheme();
+				sbiOrganizationTheme.setId(new SbiOrganizationThemeId(theme.getId().getThemeName(), idTenant));
+				sbiOrganizationTheme.setConfig(theme.getConfig());
+				sbiOrganizationTheme.setActive(theme.isActive());
+				sbiOrganizationTheme.setCommonInfo(sbiCommoInfo);
+				updateSbiCommonInfo4Insert(sbiOrganizationTheme);
+				aSession.save(sbiOrganizationTheme);
 				aSession.flush();
 			}
 			tx.commit();
@@ -662,6 +712,18 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				sbiOrganizationProductType.setCommonInfo(sbiCommoInfo);
 				updateSbiCommonInfo4Insert(sbiOrganizationProductType);
 				aSession.save(sbiOrganizationProductType);
+				aSession.flush();
+			}
+
+			Set<SbiOrganizationTheme> themes = aTenant.getSbiOrganizationThemes();
+			for (SbiOrganizationTheme theme : themes) {
+				SbiOrganizationTheme sbiOrganizationTheme = new SbiOrganizationTheme();
+				sbiOrganizationTheme.setId(new SbiOrganizationThemeId(theme.getId().getThemeName(), aTenant.getId()));
+				sbiOrganizationTheme.setConfig(theme.getConfig());
+				sbiOrganizationTheme.setActive(theme.isActive());
+				sbiOrganizationTheme.setCommonInfo(sbiCommoInfo);
+				updateSbiCommonInfo4Insert(sbiOrganizationTheme);
+				aSession.saveOrUpdate(sbiOrganizationTheme);
 				aSession.flush();
 			}
 

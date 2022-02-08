@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 15-gen-2010 17.03.17 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.commons.metadata.SbiOrganizationTheme" table="SBI_ORGANIZATION_THEME" >
+        <composite-id name="id" class="it.eng.spagobi.commons.metadata.SbiOrganizationThemeId">
+            <key-property name="themeName" type="string">
+                <column name="THEME_NAME" length="200" />
+            </key-property>
+            <key-property name="organizationId" type="int">
+                <column name="ORGANIZATION_ID" />
+            </key-property>
+        </composite-id>
+        <property name="config" type="string">
+            <column name="CONFIG" not-null="false" />
+        </property>
+        <property name="active" type="boolean">
+            <column name="ACTIVE"/>
+        </property>
+    </class>
+</hibernate-mapping>
