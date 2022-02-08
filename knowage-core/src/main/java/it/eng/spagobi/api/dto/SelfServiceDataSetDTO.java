@@ -41,9 +41,6 @@ public class SelfServiceDataSetDTO {
 	@FormParam("id")
 	private String id;
 
-	@FormParam("dsDerivedId")
-	private String dsDerivedId;
-
 	@FormParam("type")
 	private String type;
 
@@ -347,14 +344,6 @@ public class SelfServiceDataSetDTO {
 
 	public void setDatasetMetadata(String datasetMetadata) {
 		this.datasetMetadata = datasetMetadata;
-	}
-
-	public String getDsDerivedId() {
-		return dsDerivedId;
-	}
-
-	public void setDsDerivedId(String dsDerivedId) {
-		this.dsDerivedId = dsDerivedId;
 	}
 
 	public String getConfig() {

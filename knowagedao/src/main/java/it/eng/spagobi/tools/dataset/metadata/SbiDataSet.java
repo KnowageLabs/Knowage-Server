@@ -62,8 +62,6 @@ public class SbiDataSet extends SbiHibernateModel {
 
 	private SbiDataSetId id;
 
-	private Integer dsDerivedId;
-
 	// @ExtendedAlphanumeric
 	// @Size(max = 50)
 	private String name = null;
@@ -654,14 +652,6 @@ public class SbiDataSet extends SbiHibernateModel {
 
 	public void setTags(Set<SbiTag> tags) {
 		this.tags = tags;
-	}
-
-	public Integer getDsDerivedId() {
-		return dsDerivedId;
-	}
-
-	public void setDsDerivedId(Integer dsDerivedId) {
-		this.dsDerivedId = dsDerivedId;
 	}
 
 }

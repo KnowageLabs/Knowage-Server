@@ -17,14 +17,145 @@
  */
 
 /**
- * 
+ *
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
+import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.json.JSONUtils;
+
 /**
- * @author albnale
- *
+ * @author Marco Libanori
  */
 public class PreparedDataset extends ConfigurableDataSet {
+
+	public static final String DS_TYPE = "SbiPreparedDataSet";
+
+	public static final String TABLE_NAME = "tableName";
+	public static final String DATA_SOURCE = "dataSource";
+	public static final String DATA_PREPARATION_INSTANCE = "dataPreparationInstance";
+
+	private static final Logger LOGGER = Logger.getLogger(PreparedDataset.class);
+
+	private String tableName = null;
+	private IDataSource dataSource = null;
+	private String dataPreparationInstance = null;
+	private IMetaData metadata;
+
+	public PreparedDataset() {
+		super();
+	}
+
+	public PreparedDataset(SpagoBiDataSet dataSetConfig) {
+		super(dataSetConfig);
+
+		LOGGER.debug("IN");
+
+		try {
+			this.setDataSource(DataSourceFactory.getDataSource(dataSetConfig.getDataSource()));
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error setting datasource", e);
+		}
+		try {
+			String config = JSONUtils.escapeJsonString(dataSetConfig.getConfiguration());
+			JSONObject jsonConf = ObjectUtils.toJSONObject(config);
+
+			this.setTableName(jsonConf.getString(TABLE_NAME));
+			this.setDataPreparationInstance(jsonConf.getString(DATA_PREPARATION_INSTANCE));
+		} catch (Exception e) {
+			LOGGER.error("Error while reading dataset configuration. Error:", e);
+			throw new SpagoBIRuntimeException("Error while reading dataset configuration", e);
+		}
+
+		LOGGER.debug("OUT");
+	}
+
+	public String getTableName() {
+		return tableName;
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+
+	@Override
+	public void setDataSource(IDataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+
+	@Override
+	public void setMetadata(IMetaData metadata) {
+		this.metadata = metadata;
+	}
+
+	@Override
+	public IMetaData getMetadata() {
+		return this.metadata;
+	}
+
+	@Override
+	public IDataSource getDataSource() {
+		return dataSource;
+	}
+
+	@Override
+	public SpagoBiDataSet toSpagoBiDataSet() {
+		SpagoBiDataSet toReturn;
+
+		toReturn = super.toSpagoBiDataSet();
+
+		toReturn.setType(DS_TYPE);
+
+		toReturn.setDataSource(this.getDataSource().toSpagoBiDataSource());
+
+		try {
+			JSONObject jsonConf = new JSONObject();
+			jsonConf.put(TABLE_NAME, (this.getTableName() == null) ? "" : this.getTableName());
+			jsonConf.put(DATA_SOURCE, (this.getDataSource() == null) ? "" : this.getDataSource().getLabel());
+			toReturn.setConfiguration(jsonConf.toString());
+		} catch (Exception e) {
+			LOGGER.error("Error while defining dataset configuration. Error:", e);
+			throw new SpagoBIRuntimeException("Error while defining dataset configuration. Error:", e);
+		}
+
+		return toReturn;
+	}
+
+	@Override
+	public String getDsType() {
+		return DS_TYPE;
+	}
+
+	@Override
+	public IDataSource getDataSourceForReading() {
+		return this.getDataSource();
+	}
+
+	@Override
+	public void setDataSourceForReading(IDataSource datasourceForReading) {
+		this.setDataSource(datasourceForReading);
+	}
+
+	/**
+	 * @return the dataPreparationInstance
+	 */
+	public String getDataPreparationInstance() {
+		return dataPreparationInstance;
+	}
+
+	/**
+	 * @param dataPreparationInstance the dataPreparationInstance to set
+	 */
+	public void setDataPreparationInstance(String dataPreparationInstance) {
+		this.dataPreparationInstance = dataPreparationInstance;
+	}
 
 }
