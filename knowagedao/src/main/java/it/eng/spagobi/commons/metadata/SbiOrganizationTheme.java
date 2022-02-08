@@ -56,6 +56,18 @@ public class SbiOrganizationTheme extends SbiHibernateModel {
 	 * @param id
 	 * @param config
 	 * @param active
+	 */
+	public SbiOrganizationTheme(SbiOrganizationThemeId id, String config, boolean active) {
+		super();
+		this.id = id;
+		this.config = config;
+		this.active = active;
+	}
+
+	/**
+	 * @param id
+	 * @param config
+	 * @param active
 	 * @param userIn
 	 * @param userUp
 	 * @param userDe
