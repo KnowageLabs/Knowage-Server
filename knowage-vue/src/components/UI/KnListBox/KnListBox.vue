@@ -92,12 +92,11 @@ export default defineComponent({
     created() {
         this.selectedSort = this.settings.defaultSortField || 'label'
     },
-    computed: {
+    computed: {},
+    methods: {
         getTime(ms) {
             return formatDateWithLocale(ms)
-        }
-    },
-    methods: {
+        },
         clickedButton(e, item) {
             const emits = e.item && e.item.emits
             e.item = item
