@@ -229,7 +229,7 @@ export default defineComponent({
         async loadPage() {
             this.loading = true
             console.log('LOADED PROP DATASET: ', this.dataset)
-            if (this.dataset && !this.dataset.datasourceId) {
+            if (this.dataset && !this.dataset.dataSourceId) {
                 await this.loadDataset()
             } else {
                 this.qbe = this.getQBEFromModel()
@@ -253,6 +253,7 @@ export default defineComponent({
         async loadDataset() {
             // HARDCODED Dataset label/name
             // console.log('datasetLabel', this.datasetLabel)
+            console.log('CAAAAAAAAAAAAAAALED')
             if (!this.dataset) {
                 return
             }
