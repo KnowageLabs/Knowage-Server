@@ -333,7 +333,6 @@ export default defineComponent({
             this.popupDialogVisible = true
         },
         openTreeDialog(parameter: iParameter) {
-            console.log('TREE DIALOG VISIBL! ')
             this.selectedParameter = parameter
             this.formatedParameterValues = this.getFormattedParameters()
             this.treeDialogVisible = true
