@@ -153,7 +153,6 @@ export default defineComponent({
         createDataToSend(): URLSearchParams {
             let ds = this.localDataset
             if (ds.config) ds.config = JSON.stringify(ds.config)
-            ds.dsDerivedId = this.localDataset.id
             ds.id = null
             ds.type = 'PreparedDataset'
 

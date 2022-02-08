@@ -1425,8 +1425,6 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 			if (selfServiceDataSetDTO.getConfig() != null)
 				toReturn.setConfiguration(selfServiceDataSetDTO.getConfig());
 
-			if (selfServiceDataSetDTO.getDsDerivedId() != null)
-				toReturn.setDsDerivedId(Integer.parseInt(selfServiceDataSetDTO.getDsDerivedId()));
 		}
 
 		return toReturn;
