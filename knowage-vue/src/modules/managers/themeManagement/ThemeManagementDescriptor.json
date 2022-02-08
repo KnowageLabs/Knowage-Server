@@ -1,0 +1,132 @@
+{
+    "examples": {
+        "dataTable": [
+            {
+                "category": "Accessories",
+                "code": "f230fh0g3",
+                "description": "Product Description",
+                "id": "1000",
+                "image": "bamboo-watch.jpg",
+                "inventoryStatus": "INSTOCK",
+                "name": "Bamboo Watch",
+                "price": 65,
+                "quantity": 24,
+                "rating": 5
+            },
+            {
+                "category": "Accessories",
+                "code": "nvklal433",
+                "description": "Product Description",
+                "id": "1001",
+                "image": "black-watch.jpg",
+                "inventoryStatus": "INSTOCK",
+                "name": "Black Watch",
+                "price": 72,
+                "quantity": 61,
+                "rating": 4
+            },
+            {
+                "category": "Fitness",
+                "code": "zz21cz3c1",
+                "description": "Product Description",
+                "id": "1002",
+                "image": "blue-band.jpg",
+                "inventoryStatus": "LOWSTOCK",
+                "name": "Blue Band",
+                "price": 79,
+                "quantity": 2,
+                "rating": 3
+            },
+            {
+                "category": "Clothing",
+                "code": "244wgerg2",
+                "description": "Product Description",
+                "id": "1003",
+                "image": "blue-t-shirt.jpg",
+                "inventoryStatus": "INSTOCK",
+                "name": "Blue T-Shirt",
+                "price": 29,
+                "quantity": 25,
+                "rating": 5
+            },
+            {
+                "category": "Accessories",
+                "code": "h456wer53",
+                "description": "Product Description",
+                "id": "1004",
+                "image": "bracelet.jpg",
+                "inventoryStatus": "INSTOCK",
+                "name": "Bracelet",
+                "price": 15,
+                "quantity": 73,
+                "rating": 4
+            },
+            {
+                "category": "Accessories",
+                "code": "av2231fwg",
+                "description": "Product Description",
+                "id": "1005",
+                "image": "brown-purse.jpg",
+                "inventoryStatus": "OUTOFSTOCK",
+                "name": "Brown Purse",
+                "price": 120,
+                "quantity": 0,
+                "rating": 4
+            },
+            {
+                "category": "Accessories",
+                "code": "bib36pfvm",
+                "description": "Product Description",
+                "id": "1006",
+                "image": "chakra-bracelet.jpg",
+                "inventoryStatus": "LOWSTOCK",
+                "name": "Chakra Bracelet",
+                "price": 32,
+                "quantity": 5,
+                "rating": 3
+            },
+            {
+                "category": "Accessories",
+                "code": "mbvjkgip5",
+                "description": "Product Description",
+                "id": "1007",
+                "image": "galaxy-earrings.jpg",
+                "inventoryStatus": "INSTOCK",
+                "name": "Galaxy Earrings",
+                "price": 34,
+                "quantity": 23,
+                "rating": 5
+            },
+            {
+                "category": "Electronics",
+                "code": "vbb124btr",
+                "description": "Product Description",
+                "id": "1008",
+                "image": "game-controller.jpg",
+                "inventoryStatus": "LOWSTOCK",
+                "name": "Game Controller",
+                "price": 99,
+                "quantity": 2,
+                "rating": 4
+            },
+            {
+                "category": "Electronics",
+                "code": "cm230f032",
+                "description": "Product Description",
+                "id": "1009",
+                "image": "gaming-set.jpg",
+                "inventoryStatus": "INSTOCK",
+                "name": "Gaming Set",
+                "price": 299,
+                "quantity": 63,
+                "rating": 3
+            }
+        ],
+        "input": {
+            "disabled": "disabled",
+            "invalid": "invalid",
+            "number": 10,
+            "text": "text"
+        }
+    }
+}

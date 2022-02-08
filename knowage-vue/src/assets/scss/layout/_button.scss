@@ -10,7 +10,7 @@
     }
     &--primary {
         @extend .kn-button;
-        background-color: var(--kn-color-primary);
+        background-color: var(--kn-button-primary-background-color);
         &:hover:enabled {
             color: var(--kn-button-text-color);
             background-color: var(--kn-button-primary-hover-background-color);
@@ -18,9 +18,17 @@
     }
     &--secondary {
         @extend .kn-button;
-        background-color: var(--kn-color-default);
+        background-color: var(--kn-button-secondary-background-color);
         &:hover:enabled {
             color: var(--kn-button-text-color);
+            background-color: var(--kn-button-secondary-hover-background-color);
+        }
+    }
+    &--warning {
+        @extend .kn-button;
+        background-color: var(--kn-button-fab-button-background-color);
+        &:hover:enabled {
+            color: var(--kn-button-fab-button-color);
             background-color: var(--kn-button-secondary-hover-background-color);
         }
     }

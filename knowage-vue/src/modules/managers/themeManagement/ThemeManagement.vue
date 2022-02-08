@@ -1,7 +1,7 @@
 <template>
     <div class="kn-page">
         <div class="kn-page-content p-grid p-m-0">
-            <div class="kn-list--column p-col-3 p-sm-3 p-md-3 p-p-0">
+            <div class="kn-list--column p-col-2 p-sm-2 p-md-2 p-p-0">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
                     <template #left>
                         {{ $t('managers.themeManagement.title') }}
@@ -12,10 +12,11 @@
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
                 <div class="p-p-2">
-                    <Dropdown v-model="selectedTheme" :options="availableThemes" placeholder="Select a theme" />
+                    <Message severity="info">Info Message Content</Message>
+                    <Dropdown v-model="selectedTheme" :options="availableThemes" placeholder="Select a theme" :editable="true" />
                 </div>
             </div>
-            <div class="p-col-9 p-sm-9 p-md-9 p-p-4">
+            <div class="p-col-10 p-sm-10 p-md-10 p-p-0 p-m-0 kn-page">
                 <ThemeManagementExamples></ThemeManagementExamples>
             </div>
         </div>
@@ -27,11 +28,13 @@ import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import ThemeManagementExamples from '@/modules/managers/themeManagement/ThemeManagementExamples.vue'
+import themeHelper from '@/helpers/commons/themeHelper'
 import Dropdown from 'primevue/dropdown'
+import Message from 'primevue/message'
 
 export default defineComponent({
     name: 'theme-management',
-    components: { Dropdown, FabButton, ThemeManagementExamples },
+    components: { Dropdown, FabButton, Message, ThemeManagementExamples },
     data() {
         return {
             selectedTheme: {} as any,
@@ -43,6 +46,11 @@ export default defineComponent({
             this.availableThemes = response.data.themes
         })
     },
-    methods: {}
+    methods: {
+        setActiveTheme() {
+            this.$store.commit('setTheme', this.selectedTheme)
+            themeHelper.setTheme(this.selectedTheme)
+        }
+    }
 })
 </script>

@@ -79,7 +79,7 @@ export default defineComponent({
         })
         if (Object.keys(this.theme).length === 0) {
             this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement/theme/current`)
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement/current`)
                 .then((response) => {
                     store.commit('setTheme', response.data)
                     themeHelper.setTheme(response.data)
