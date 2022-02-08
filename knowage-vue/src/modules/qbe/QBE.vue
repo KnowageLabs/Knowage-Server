@@ -15,7 +15,7 @@
         <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
         <div v-if="!loading && !qbePreviewDialogVisible" class="qbe-view-container  p-d-flex p-flex-row kn-height-full">
             <div v-if="parameterSidebarVisible" id="qbe-backdrop" @click="parameterSidebarVisible = false"></div>
-            <div v-show="showEntitiesLists" class="entities-lists">
+            <div v-show="showEntitiesLists && qbeLoaded" class="entities-lists">
                 <div class="p-d-flex p-flex-column kn-flex kn-overflow-hidden">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary kn-flex-0">
                         <template #left>
@@ -50,7 +50,7 @@
                     </div>
                 </div>
             </div>
-            <div class="detail-view p-m-1" v-if="qbe">
+            <div class="detail-view p-m-1" v-if="qbe && qbeLoaded">
                 <Toolbar class="kn-toolbar kn-toolbar--primary kn-width-full">
                     <template #left>
                         <Button v-if="showEntitiesLists" icon="pi pi-chevron-left" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('qbe.detailView.hideList')" @click="toggleEntitiesLists" />
@@ -107,15 +107,15 @@
             <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="document" :userRole="userRole" :propMode="'qbeView'" :propQBEParameters="qbe.pars" @execute="onExecute"></KnParameterSidebar>
         </div>
 
-        <QBEPreviewDialog v-show="!loading && qbePreviewDialogVisible" :id="id" :queryPreviewData="queryPreviewData" :pagination="pagination" @close="closePreview" @pageChanged="updatePagination($event)"></QBEPreviewDialog>
-        <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="id" :entities="entities?.entities" :propParameters="qbe?.pars" :propExpression="selectedQuery?.expression" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
+        <QBEPreviewDialog v-show="!loading && qbePreviewDialogVisible" :id="qbeId" :queryPreviewData="queryPreviewData" :pagination="pagination" @close="closePreview" @pageChanged="updatePagination($event)"></QBEPreviewDialog>
+        <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="qbeId" :entities="entities?.entities" :propParameters="qbe?.pars" :propExpression="selectedQuery?.expression" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
         <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" />
         <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" :entities="selectedQuery?.fields" @close="havingDialogVisible = false" @save="onHavingsSave"></QBEHavingDialog>
         <QBEAdvancedFilterDialog :visible="advancedFilterDialogVisible" :query="selectedQuery" @close="advancedFilterDialogVisible = false" @save="onAdvancedFiltersSave"></QBEAdvancedFilterDialog>
         <QBESavingDialog v-if="savingDialogVisible" :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" />
-        <QBEJoinDefinitionDialog :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="id" :selectedQuery="selectedQuery" @close="onJoinDefinitionDialogClose"></QBEJoinDefinitionDialog>
+        <QBEJoinDefinitionDialog :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="qbeId" :selectedQuery="selectedQuery" @close="onJoinDefinitionDialogClose"></QBEJoinDefinitionDialog>
 
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     </Dialog>
@@ -146,6 +146,7 @@ import Menu from 'primevue/contextmenu'
 import QBEJoinDefinitionDialog from './qbeDialogs/qbeJoinDefinitionDialog/QBEJoinDefinitionDialog.vue'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 import QBEPreviewDialog from './qbeDialogs/qbePreviewDialog/QBEPreviewDialog.vue'
+import moment from 'moment'
 
 const crypto = require('crypto')
 
@@ -172,7 +173,7 @@ export default defineComponent({
         QBEPreviewDialog,
         QBESmartTable
     },
-    props: { visible: { type: Boolean }, id: { type: String }, datasetLabel: { type: String } },
+    props: { visible: { type: Boolean }, dataset: { type: Object } },
     emits: ['close'],
     data() {
         return {
@@ -209,11 +210,12 @@ export default defineComponent({
             qbePreviewDialogVisible: false,
             pagination: { start: 0, limit: 25 } as any,
             uniqueID: null,
-            drivers: {} as any
+            filtersData: {} as any,
+            qbeLoaded: false
         }
     },
     watch: {
-        async id() {
+        async dataset() {
             await this.loadPage()
         }
     },
@@ -226,19 +228,36 @@ export default defineComponent({
     methods: {
         async loadPage() {
             this.loading = true
-            await this.loadDataset()
+            console.log('LOADED PROP DATASET: ', this.dataset)
+            if (this.dataset && !this.dataset.datasourceId) {
+                await this.loadDataset()
+            } else {
+                this.qbe = this.getQBEFromModel()
+            }
             await this.loadDatasetDrivers()
+            if (this.qbe?.pars.length === 0 && this.filtersData?.isReadyForExecution) {
+                await this.loadQBE()
+                this.qbeLoaded = true
+            } else {
+                this.parameterSidebarVisible = true
+            }
+            this.loading = false
+        },
+        async loadQBE() {
             await this.initializeQBE()
             await this.loadCustomizedDatasetFunctions()
             await this.loadExportLimit()
             await this.loadEntities()
             await this.executeQBEQuery()
-            this.loading = false
         },
         async loadDataset() {
             // HARDCODED Dataset label/name
             // console.log('datasetLabel', this.datasetLabel)
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`).then((response: AxiosResponse<any>) => {
+            if (!this.dataset) {
+                return
+            }
+
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.dataset.label}`).then((response: AxiosResponse<any>) => {
                 // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
                 if (this.qbe && this.qbe.qbeJSONQuery) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
@@ -249,11 +268,103 @@ export default defineComponent({
             this.mainQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
             this.selectedQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
         },
+        getQBEFromModel() {
+            if (!this.dataset) return {}
+
+            return {
+                dsTypeCd: 'Qbe',
+                qbeDatamarts: this.dataset.name,
+                qbeDataSource: this.dataset.dataSourceLabel,
+                qbeJSONQuery: {
+                    catalogue: {
+                        queries: [
+                            {
+                                id: 'q1',
+                                name: 'Main',
+                                fields: [],
+                                distinct: false,
+                                filters: [],
+                                calendar: {},
+                                expression: {},
+                                isNestedExpression: false,
+                                havings: [],
+                                graph: [],
+                                relationRoles: [],
+                                subqueries: []
+                            }
+                        ]
+                    }
+                },
+                meta: [],
+                pars: [],
+                scopeId: null,
+                scopeCd: '',
+                label: '',
+                name: ''
+            } as any
+        },
         async loadDatasetDrivers() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/Bojan/filters `).then((response: AxiosResponse<any>) => {
-                this.drivers = response.data
+            if (!this.qbe) return
+            const label = this.qbe.label ? this.qbe.label : this.qbe.qbeDatamarts
+
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${label}/filters`).then((response: AxiosResponse<any>) => {
+                this.filtersData = response.data
+                if (this.filtersData.filterStatus) {
+                    this.filtersData.filterStatus = this.filtersData.filterStatus.filter((filter: any) => filter.id)
+                }
             })
-            console.log('LOADED DRIVERS: ', this.drivers)
+            console.log('LOADED DRIVERS: ', this.filtersData)
+            this.formatDrivers()
+        },
+        formatDrivers() {
+            this.filtersData?.filterStatus?.forEach((el: any) => {
+                el.parameterValue = el.multivalue ? [] : [{ value: '', description: '' }]
+                if (el.driverDefaultValue?.length > 0) {
+                    let valueIndex = '_col0'
+                    let descriptionIndex = 'col1'
+                    if (el.metadata?.colsMap) {
+                        valueIndex = Object.keys(el.metadata?.colsMap).find((key: string) => el.metadata.colsMap[key] === el.metadata.valueColumn) as any
+                        descriptionIndex = Object.keys(el.metadata?.colsMap).find((key: string) => el.metadata.colsMap[key] === el.metadata.descriptionColumn) as any
+                    }
+
+                    el.parameterValue = el.driverDefaultValue.map((defaultValue: any) => {
+                        return { value: defaultValue.value ?? defaultValue[valueIndex], description: defaultValue.desc ?? defaultValue[descriptionIndex] }
+                    })
+
+                    if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true') {
+                        el.parameterValue[0].value = moment(el.parameterValue[0].description?.split('#')[0]).toDate() as any
+                    }
+                }
+                if (el.data) {
+                    el.data = el.data.map((data: any) => {
+                        return this.formatParameterDataOptions(el, data)
+                    })
+
+                    if (el.data.length === 1) {
+                        el.parameterValue = [...el.data]
+                    }
+                }
+                if ((el.selectionType === 'COMBOBOX' || el.selectionType === 'LIST') && el.multivalue && el.mandatory && el.data.length === 1) {
+                    el.showOnPanel = 'false'
+                }
+
+                if (!el.parameterValue) {
+                    el.parameterValue = [{ value: '', description: '' }]
+                }
+
+                if (el.parameterValue[0] && !el.parameterValue[0].description) {
+                    el.parameterValue[0].description = el.parameterDescription ? el.parameterDescription[0] : ''
+                }
+            })
+        },
+
+        formatParameterDataOptions(parameter: any, data: any) {
+            const valueColumn = parameter.metadata.valueColumn
+            const descriptionColumn = parameter.metadata.descriptionColumn
+            const valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
+            const descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
+
+            return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
         },
         async initializeQBE() {
             await this.$http
@@ -265,7 +376,7 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     this.qbeId = response.data
                 })
-            console.log('LOADED ID: ', this.id)
+            console.log('LOADED ID: ', this.qbeId)
         },
         async loadCustomizedDatasetFunctions() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${this.qbe?.qbeDataSourceId}`).then((response: AxiosResponse<any>) => (this.customizedDatasetFunctions = response.data))
@@ -278,7 +389,7 @@ export default defineComponent({
         async loadEntities() {
             // HARDCODED SBI_EXECUTION_ID
             await this.$http
-                .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.id}&datamartName=Inventory`)
+                .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.qbeId}&datamartName=Inventory`)
                 // .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.qbeId}&datamartName=null`)
                 .then((response: AxiosResponse<any>) => (this.entities = response.data))
                 .catch((error: any) => console.log('ERROR: ', error))
@@ -291,7 +402,7 @@ export default defineComponent({
 
             const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
-                .post(process.env.VUE_APP_QBE_PATH + `qbequery/executeQuery/?SBI_EXECUTION_ID=${this.id}&currentQueryId=${this.selectedQuery.id}&start=${this.pagination.start}&limit=${this.pagination.limit}`, postData)
+                .post(process.env.VUE_APP_QBE_PATH + `qbequery/executeQuery/?SBI_EXECUTION_ID=${this.qbeId}&currentQueryId=${this.selectedQuery.id}&start=${this.pagination.start}&limit=${this.pagination.limit}`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.queryPreviewData = response.data
                     this.pagination.size = response.data.results
@@ -488,7 +599,7 @@ export default defineComponent({
             }
             const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
-                .post(process.env.VUE_APP_QBE_PATH + `qbequery/export/?SBI_EXECUTION_ID=${this.id}&currentQueryId=${this.selectedQuery.id}&outputType=${mimeType}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .post(process.env.VUE_APP_QBE_PATH + `qbequery/export/?SBI_EXECUTION_ID=${this.qbeId}&currentQueryId=${this.selectedQuery.id}&outputType=${mimeType}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then((response: AxiosResponse<any>) => {
                     downloadDirect(response.data, fileName, fileType)
                 })
@@ -581,7 +692,7 @@ export default defineComponent({
             }
 
             await this.$http
-                .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=SET_CATALOGUE_ACTION&SBI_EXECUTION_ID=${this.id}`, item, conf)
+                .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=SET_CATALOGUE_ACTION&SBI_EXECUTION_ID=${this.qbeId}`, item, conf)
                 .then((response: AxiosResponse<any>) => {
                     console.log('SET CATALOGUE ACTION - showSQLQuery', response.data)
                     this.getSQL()
@@ -606,7 +717,7 @@ export default defineComponent({
             }
 
             await this.$http
-                .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_SQL_QUERY_ACTION&SBI_EXECUTION_ID=${this.id}`, item, conf)
+                .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_SQL_QUERY_ACTION&SBI_EXECUTION_ID=${this.qbeId}`, item, conf)
                 .then((response: AxiosResponse<any>) => {
                     console.log('GET_SQL_QUERY_ACTION - getSQL', response.data)
                     this.sqlData = response.data
@@ -747,8 +858,14 @@ export default defineComponent({
         // #endregion
 
         // #region Sidebar and parameter
-        onExecute(qbeParameters: any[]) {
+        async onExecute(qbeParameters: any[]) {
             console.log('QBE - onExecute() - qBE PAREMETERS: ', qbeParameters)
+            if (this.qbe) {
+                this.qbe.pars = [...qbeParameters]
+                await this.loadQBE()
+                this.qbeLoaded = true
+                this.parameterSidebarVisible = false
+            }
         },
         // #endregion
         async openPreviewDialog() {

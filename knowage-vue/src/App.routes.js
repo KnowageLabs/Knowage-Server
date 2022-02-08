@@ -8,7 +8,6 @@ import documentBrowserRoutes from '@/modules/documentBrowser/DocumentBrowser.rou
 import workspaceRoutes from '@/modules/workspace/workspace.routes.js'
 import overlayRoutes from '@/overlay/Overlay.routes.js'
 import authHelper from '@/helpers/commons/authHelper'
-import qbeRoutes from '@/modules/qbe/QBE.routes.js'
 
 const baseRoutes = [
     {
@@ -66,7 +65,6 @@ const routes = baseRoutes
     .concat(documentBrowserRoutes)
     .concat(workspaceRoutes)
     .concat(overlayRoutes)
-    .concat(qbeRoutes)
 
 const router = createRouter({
     base: process.env.VUE_APP_PUBLIC_PATH,
