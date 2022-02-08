@@ -756,19 +756,4 @@ public class VersionedDataSet implements IDataSet {
 		wrappedDataset.setTags(tags);
 	}
 
-	/*
-	 * TODO: check if this value should return a derived id
-	 */
-	@Override
-	public Integer getDsDerivedId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setDsDerivedId(Integer id) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

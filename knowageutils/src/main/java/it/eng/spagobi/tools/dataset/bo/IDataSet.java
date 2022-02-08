@@ -59,10 +59,6 @@ public interface IDataSet extends Iterable<IRecord> {
 
 	void setId(int id);
 
-	Integer getDsDerivedId();
-
-	void setDsDerivedId(Integer id);
-
 	String getName();
 
 	void setName(String name);

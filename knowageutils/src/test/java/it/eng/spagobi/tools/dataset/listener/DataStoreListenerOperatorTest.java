@@ -780,18 +780,6 @@ public class DataStoreListenerOperatorTest extends TestCase {
 
 		}
 
-		@Override
-		public Integer getDsDerivedId() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public void setDsDerivedId(Integer id) {
-			// TODO Auto-generated method stub
-
-		}
-
 	}
 
 }
