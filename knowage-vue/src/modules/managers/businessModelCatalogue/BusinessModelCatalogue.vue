@@ -11,8 +11,9 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <KnListBox :options="businessModelList" :settings="businessModelCatalogueDescriptor.knListSettings" @click="showForm" @delete.stop="deleteBusinessModelConfirm" />
 
-                <Listbox
+                <!--Listbox
                     v-if="!loading"
                     class="kn-list--column kn-page-content"
                     :options="businessModelList"
@@ -36,7 +37,7 @@
                             <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteBusinessModelConfirm(slotProps.option.id)" data-test="delete-button" />
                         </div>
                     </template>
-                </Listbox>
+                </!--Listbox-->
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
@@ -53,14 +54,14 @@ import { iBusinessModel } from './BusinessModelCatalogue'
 import { AxiosResponse } from 'axios'
 import businessModelCatalogueDescriptor from './BusinessModelCatalogueDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
+import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import KnHint from '@/components/UI/KnHint.vue'
-import Listbox from 'primevue/listbox'
 
 export default defineComponent({
     name: 'business-model-catalogue',
     components: {
         FabButton,
-        Listbox,
+        KnListBox,
         KnHint
     },
     data() {
@@ -88,7 +89,7 @@ export default defineComponent({
         },
         showForm(event: any) {
             this.showHint = false
-            const path = event.value ? `/business-model-catalogue/${event.value.id}` : '/business-model-catalogue/new-business-model'
+            const path = event.item ? `/business-model-catalogue/${event.item.id}` : '/business-model-catalogue/new-business-model'
             if (!this.touched) {
                 this.$router.push(path)
             } else {
@@ -103,14 +104,14 @@ export default defineComponent({
                 })
             }
         },
-        deleteBusinessModelConfirm(businessModelId: number) {
+        deleteBusinessModelConfirm(event: any) {
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
                 header: this.$t('common.toast.deleteTitle'),
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {
                     this.touched = false
-                    this.deleteBusinessModel(businessModelId)
+                    this.deleteBusinessModel(event.item.id)
                 }
             })
         },
