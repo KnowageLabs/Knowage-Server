@@ -1,4 +1,9 @@
 .p-message {
+    border-radius: var(--kn-message-border-radius);
+    &.p-message-success {
+        background-color: var(--kn-message-success-background-color);
+        color: var(--kn-message-success-color);
+    }
     .p-message-wrapper {
         .p-message-text {
             font-size: var(--kn-message-font-size) !important;

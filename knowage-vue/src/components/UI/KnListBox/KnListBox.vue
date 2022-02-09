@@ -32,6 +32,9 @@
                         <span class="kn-list-item-text-secondary kn-truncated" v-if="settings.textField !== false">{{ slotProps.option[settings.textField || 'name'] }}</span>
                     </div>
                     <Badge v-if="settings.badgeField" :value="slotProps.option[settings.badgeField]" :severity="settings.badgeSeverity || 'info'"></Badge>
+                    <Badge v-if="settings.badgeIcon && slotProps.option[settings.badgeIcon] === true" :severity="settings.badgeSeverity || 'info'">
+                        <i class="fas fa-check"></i>
+                    </Badge>
                     <KnListButtonRenderer :buttons="settings.buttons" @click="clickedButton($event, slotProps.option)" />
                 </div>
             </router-link>
@@ -50,6 +53,9 @@
                     <span v-if="settings.textField !== false && settings.textFieldType && settings.textFieldType === 'date'" class="kn-list-item-text-secondary kn-truncated">{{ getTime(slotProps.option[settings.textField || 'name']) }}</span>
                 </div>
                 <Badge v-if="settings.badgeField && slotProps.option[settings.badgeField]" :value="slotProps.option[settings.badgeField]" :severity="settings.badgeSeverity || 'info'"></Badge>
+                <Badge v-if="settings.badgeIcon && slotProps.option[settings.badgeIcon] === true" :severity="settings.badgeSeverity || 'info'">
+                    <i class="fas fa-check"></i>
+                </Badge>
                 <KnListButtonRenderer :buttons="settings.buttons" @click="clickedButton($event, slotProps.option)" />
             </div>
         </template>

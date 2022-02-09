@@ -1,28 +1,5 @@
 <template>
-    <div class="kn-page-content p-m-0 p-p-4">
-        <Toolbar class="kn-toolbar kn-toolbar--primary p-mb-1">
-            <template #left>
-                Example Primary toolbar
-            </template>
-            <template #right>
-                <Button icon="fas fa-bookmark" class="p-button-text p-button-rounded p-button-plain" />
-                <Button icon="pi pi-briefcase" class="p-button-text p-button-rounded p-button-plain" />
-                <Button icon="fas fa-box" class="p-button-text p-button-rounded p-button-plain" disabled />
-                <FabButton icon="fas fa-plus" />
-            </template>
-        </Toolbar>
-
-        <Toolbar class="kn-toolbar kn-toolbar--secondary">
-            <template #left>
-                Example Secondary toolbar
-            </template>
-            <template #right>
-                <Button icon="fas fa-bookmark" class="p-button-text p-button-rounded p-button-plain" />
-                <Button icon="pi pi-briefcase" class="p-button-text p-button-rounded p-button-plain" />
-                <Button icon="fas fa-box" class="p-button-text p-button-rounded p-button-plain" disabled />
-            </template>
-        </Toolbar>
-
+    <div class="kn-page-content p-m-0 p-p-4" ref="example">
         <Card class="p-mt-4">
             <template #content>
                 <form class="p-fluid p-m-5 p-grid">
@@ -53,6 +30,28 @@
                 </form>
             </template>
         </Card>
+        <Toolbar class="kn-toolbar kn-toolbar--primary p-mt-4">
+            <template #start>
+                Example Primary toolbar
+            </template>
+            <template #end>
+                <Button icon="fas fa-bookmark" class="p-button-text p-button-rounded p-button-plain" />
+                <Button icon="pi pi-briefcase" class="p-button-text p-button-rounded p-button-plain" />
+                <Button icon="fas fa-box" class="p-button-text p-button-rounded p-button-plain" disabled />
+                <FabButton icon="fas fa-plus" />
+            </template>
+        </Toolbar>
+
+        <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-4">
+            <template #start>
+                Example Secondary toolbar
+            </template>
+            <template #end>
+                <Button icon="fas fa-bookmark" class="p-button-text p-button-rounded p-button-plain" />
+                <Button icon="pi pi-briefcase" class="p-button-text p-button-rounded p-button-plain" />
+                <Button icon="fas fa-box" class="p-button-text p-button-rounded p-button-plain" disabled />
+            </template>
+        </Toolbar>
         <Card class="p-mt-4">
             <template #content>
                 <Button class="p-m-2 kn-button--primary">Primary</Button>
@@ -64,6 +63,7 @@
                 <Button class="p-m-2 p-button-text kn-button--primary" disabled>Flat disabled</Button>
             </template>
         </Card>
+
         <Card class="p-mt-4">
             <template #content>
                 <Message severity="success">Success Message Content</Message>
@@ -118,6 +118,7 @@
             </template>
         </Card>
     </div>
+    <div class="hiddenProperties">{{ properties }}</div>
 </template>
 
 <script lang="ts">
@@ -135,12 +136,27 @@ import ThemeManagementDescriptor from './ThemeManagementDescriptor.json'
 export default defineComponent({
     name: 'theme-management-examples',
     components: { Button, Card, Column, DataTable, FabButton, Message, TabPanel, TabView },
+    props: { properties: Object },
     data() {
         return {
             examples: ThemeManagementDescriptor.examples
         }
     },
-    mounted() {},
-    methods: {}
+    updated() {
+        this.updateStyle(this.properties)
+    },
+    methods: {
+        updateStyle(properties) {
+            for (let key in properties) {
+                // @ts-ignore
+                this.$refs.example.style.setProperty(key, properties[key])
+            }
+        }
+    }
 })
 </script>
+<style lang="scss" scoped>
+.hiddenProperties {
+    display: none;
+}
+</style>

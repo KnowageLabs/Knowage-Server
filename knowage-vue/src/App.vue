@@ -77,27 +77,18 @@ export default defineComponent({
         await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/user-configs').then((response) => {
             store.commit('setConfigurations', response.data)
         })
-        if (Object.keys(this.theme).length === 0) {
-            this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement/current`)
-                .then((response) => {
-                    store.commit('setTheme', response.data.config)
-                    themeHelper.setTheme(response.data.config)
-                })
-                .catch(() => {
-                    store.commit('setTheme', { '--kn-mainmenu-background-color': '#cb2162', '--kn-mainmenu-hover-background-color': '#92ceb3' })
-                    themeHelper.setTheme({ '--kn-mainmenu-background-color': '#cb2162', '--kn-mainmenu-hover-background-color': '#92ceb3' })
-                })
-        } else {
-            themeHelper.setTheme(this.theme)
-        }
         if (this.isEnterprise) {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license').then((response) => {
                 store.commit('setLicenses', response.data)
             })
-            /* TODO 
-            /  Write the code here for enterprise only functionality
-            */
+            if (Object.keys(this.theme).length === 0) {
+                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement/current`).then((response) => {
+                    store.commit('setTheme', response.data.config)
+                    themeHelper.setTheme(response.data.config)
+                })
+            } else {
+                themeHelper.setTheme(this.theme)
+            }
         }
     },
     mounted() {

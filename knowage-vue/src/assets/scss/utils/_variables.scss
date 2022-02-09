@@ -6,7 +6,7 @@
     --kn-color-fab: #ce0651;
     --kn-color-disabled: #a0a0a0;
     --kn-color-selected: #deecf8;
-    --kn-color-borders: #ccc;
+    --kn-color-borders: #cccccc;
     --kn-color-success: #74a748;
     --kn-color-info: #329ef4;
     --kn-color-warning: #fbc53d;
@@ -16,23 +16,25 @@
     --kn-font-family: Roboto, 'Helvetica Neue', Arial, sans-serif;
 
     // APP
-    --kn-app-background-color: #fff;
+    --kn-app-background-color: #ffffff;
 
     // BUTTONS
-    --kn-button-text-color: #fff;
-    --kn-button-primary-background-color: #43749e;
+    --kn-button-text-color: #ffffff;
+    --kn-button-primary-background-color: var(--kn-color-primary);
+    --kn-button-primary-color: #ffffff;
     --kn-button-primary-hover-background-color: #6191bb;
+    --kn-button-primary-hover-color: #ffffff;
     --kn-button-secondary-background-color: #a7a7a7;
     --kn-button-secondary-hover-background-color: #bfbfbf;
     --kn-button-icon-color-default: #a7a7a7;
     --kn-button-dark-color: #43749e;
-    --kn-button-light-color: #fff;
+    --kn-button-light-color: #ffffff;
     --kn-button-fab-button-background-color: var(--kn-color-fab);
-    --kn-button-fab-button-color: #fff;
+    --kn-button-fab-button-color: #ffffff;
     --kn-button-fab-button-hover-color: #d14b7c;
 
     // LIST
-    --kn-list-border-color: #ccc;
+    --kn-list-border-color: #cccccc;
     --kn-list-item-selected-background-color: #bbd6ed;
     --kn-list-item-text-secondary-color: #a7a7a7;
     --kn-list-item-text-secondary-font-size: 0.8rem;
@@ -52,7 +54,7 @@
 
     // PROGRESS BAR
     --kn-progress-bar-background-color: rgba(#bbd6ed, 0.3);
-    --kn-progress-bar-foreground-color: #ce0651;
+    --kn-progress-bar-foreground-color: var(--kn-color-fab);
 
     // TOOLBAR
     --kn-toolbar-height: 2.5rem;
@@ -61,22 +63,25 @@
     --kn-toolbar-font-size: 1rem;
 
     --kn-toolbar-default-background-color: #a7a7a7;
-    --kn-toolbar-default-color: white;
+    --kn-toolbar-default-color: #ffffff;
 
     --kn-toolbar-primary-background-color: #43749e;
-    --kn-toolbar-primary-color: white;
-    --kn-toolbar-primary-icon-color: white;
+    --kn-toolbar-primary-color: #ffffff;
+    --kn-toolbar-primary-icon-color: #ffffff;
     --kn-toolbar-primary-icon-hover-color: #42739e;
 
     --kn-toolbar-secondary-background-color: #bbd6ed;
-    --kn-toolbar-secondary-color: white;
-    --kn-toolbar-secondary-icon-color: white;
+    --kn-toolbar-secondary-color: #ffffff;
+    --kn-toolbar-secondary-icon-color: #ffffff;
     --kn-toolbar-secondary-icon-hover-color: #769dbe;
 
     // TREE
-    --kn-tree-border-color: #ccc;
+    --kn-tree-border-color: #cccccc;
 
-    //MESSAGE
+    //MESSAGES
+    --kn-message-success-background-color: #c8e6c9;
+    --kn-message-success-color: #1b5e20;
     --kn-message-padding: 0.3rem 0.5rem;
     --kn-message-font-size: 0.9rem;
+    --kn-message-border-radius: 4px;
 }
