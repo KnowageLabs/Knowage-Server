@@ -64,9 +64,11 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 /**
  * @authors
  *
+ * TODO Could be deleted
  */
 
 @Path("/1.0/chart/pages")
+@Deprecated
 public class PageResource extends AbstractChartEngineResource {
 
 	private static final String OUTPUT_TYPE = "outputType";
