@@ -31,7 +31,7 @@ export function visualDependencyCheck(parameter: iParameter, changedParameter: a
             })
             const parentParameter = parameter.dependsOnParameters[index]
 
-            for (let i = 0; i < parentParameter?.parameterValue.length; i++) {
+            for (let i = 0; i < parentParameter?.parameterValue?.length; i++) {
                 if (parentParameter.parameterValue[i].value === visualDependency.compareValue) {
                     if (changedParameter.urlName === visualDependency.parFatherUrlName) {
                         parameter.label = visualDependency.viewLabel
