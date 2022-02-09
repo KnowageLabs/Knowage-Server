@@ -282,6 +282,10 @@ export default defineComponent({
                 this.toolbarMenuItems[3].items.unshift({ icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() })
             }
 
+            if (this.isOrganizerEnabled()) {
+                this.toolbarMenuItems[3].items.unshift({ icon: 'fa fa-suitcase ', label: this.$t('documentExecution.main.addToWorkspace'), command: () => this.addToWorkspace() })
+            }
+
             if (this.mode === 'olap') {
                 this.toolbarMenuItems[3].items.unshift({ icon: '', label: this.$t('documentExecution.main.showOLAPCustomView'), command: () => this.showOLAPCustomView() })
             }
@@ -869,6 +873,27 @@ export default defineComponent({
             if (this.$route.name === 'olap-designer') {
                 this.olapDesignerMode = true
             }
+        },
+        isOrganizerEnabled() {
+            return this.user.isSuperadmin || this.user.functionalities.includes('SaveIntoFolderFunctionality')
+        },
+        async addToWorkspace() {
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/${this.document.id}`, {}, { headers: { 'X-Disable-Errors': 'true' } })
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                })
+                .catch((error) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: error.message === 'sbi.workspace.organizer.document.addtoorganizer.error.duplicateentry' ? this.$t('documentExecution.main.addToWorkspaceError') : error.message
+                    })
+                })
+            this.loading = false
         }
     }
 })
