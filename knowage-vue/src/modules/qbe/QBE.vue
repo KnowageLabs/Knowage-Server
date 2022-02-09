@@ -228,7 +228,6 @@ export default defineComponent({
     methods: {
         async loadPage() {
             this.loading = true
-            console.log('LOADED PROP DATASET: ', this.dataset)
             if (this.dataset && !this.dataset.dataSourceId) {
                 await this.loadDataset()
             } else {
@@ -253,7 +252,6 @@ export default defineComponent({
         async loadDataset() {
             // HARDCODED Dataset label/name
             // console.log('datasetLabel', this.datasetLabel)
-            console.log('CAAAAAAAAAAAAAAALED')
             if (!this.dataset) {
                 return
             }
@@ -263,9 +261,6 @@ export default defineComponent({
                 this.qbe = response.data[0]
                 if (this.qbe && this.qbe.qbeJSONQuery) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
-            console.log('LOADED QBE Dataset: ', this.qbe)
-            console.log('MAIN QUERY q1 : ', this.qbe?.qbeJSONQuery?.catalogue?.queries[0])
-            console.log('SUBQUERIES of q1: ', this.qbe?.qbeJSONQuery?.catalogue?.queries[0].subqueries)
             this.mainQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
             this.selectedQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
         },
@@ -314,7 +309,6 @@ export default defineComponent({
                     this.filtersData.filterStatus = this.filtersData.filterStatus.filter((filter: any) => filter.id)
                 }
             })
-            console.log('LOADED DRIVERS: ', this.filtersData)
             this.formatDrivers()
         },
         formatDrivers() {
@@ -383,11 +377,9 @@ export default defineComponent({
         },
         async loadCustomizedDatasetFunctions() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${this.qbe?.qbeDataSourceId}`).then((response: AxiosResponse<any>) => (this.customizedDatasetFunctions = response.data))
-            // console.log('LOADED CUSTOMIZED DATASET FUNCTIONS: ', this.customizedDatasetFunctions)
         },
         async loadExportLimit() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/EXPORT.LIMITATION`).then((response: AxiosResponse<any>) => (this.exportLimit = response.data))
-            // console.log('LOADED EXPORT LIMIT: ', this.exportLimit)
         },
         async loadEntities() {
             // HARDCODED SBI_EXECUTION_ID
@@ -396,7 +388,6 @@ export default defineComponent({
                 // .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.qbeId}&datamartName=null`)
                 .then((response: AxiosResponse<any>) => (this.entities = response.data))
                 .catch((error: any) => console.log('ERROR: ', error))
-            console.log('LOADED ENTITIES: ', this.entities)
         },
         async executeQBEQuery() {
             this.loading = true
@@ -411,11 +402,9 @@ export default defineComponent({
                     this.pagination.size = response.data.results
                 })
                 .catch(() => {})
-            // console.log('QUERY RESULT : ', this.queryPreviewData)
             this.loading = false
         },
         async updatePagination(lazyParams: any) {
-            console.log('pagination', lazyParams)
             this.pagination.start = lazyParams.paginationStart
             this.pagination.limit = lazyParams.paginationLimit
             await this.executeQBEQuery()
@@ -443,7 +432,6 @@ export default defineComponent({
             if (this.qbe) {
                 this.hiddenColumnsExist = false
                 for (let i = 0; i < this.selectedQuery.fields.length; i++) {
-                    console.log(' >>> FIELD: ', this.selectedQuery.fields[i])
                     if (!this.selectedQuery.fields[i].visible) {
                         this.hiddenColumnsExist = true
                         break
@@ -459,26 +447,19 @@ export default defineComponent({
             this.hiddenColumnsExist = false
         },
         openFilterDialog(field: iField) {
-            console.log('PAYLOAD FOR OPEN FILTER: ', { field: field, query: this.selectedQuery })
             this.filterDialogData = { field: field, query: this.selectedQuery }
             this.filterDialogVisible = true
         },
         openHavingDialog(payload: { field: iField; query: iQuery }) {
-            console.log('QBE - PAYLOAD FOR OPEN HAVING DIALOG: ', payload)
             this.havingDialogData = payload
             this.havingDialogVisible = true
         },
         onFiltersSave(filters: iFilter[], field: iField, parameters: any[], expression: any) {
-            console.log('ON FILTERS SAVE: ', filters)
-            console.log('ON FILTERS SAVE PARAMETERS: ', parameters)
-            console.log('QBE QUERY BEFORE FILTERS SAVED: ', this.selectedQuery)
-            console.log('FIELD ON FILTER SAVE: ', field)
             if (!this.qbe) return
 
             for (let i = 0; i < filters.length; i++) {
                 const tempFilter = filters[i]
                 const index = this.selectedQuery.filters.findIndex((el: iFilter) => el.filterId === tempFilter.filterId)
-                console.log('INDEX: ', index)
                 if (index !== -1) {
                     this.selectedQuery.filters[index] = tempFilter
                 } else {
@@ -500,14 +481,10 @@ export default defineComponent({
             if (this.smartView) {
                 this.executeQBEQuery()
             }
-            console.log('QBE QUERY AFTER FILTERS SAVED: ', this.selectedQuery)
         },
         refresh(filters: iFilter[], expression: any) {
-            console.log('REFRESH FILTERS: ', filters)
-            console.log('REFRESH expression: ', expression)
             if (!this.qbe) return
             for (let filter of filters) {
-                // var newConst = new Const('NODE_CONST', filter)
                 var newConst = {
                     value: '$F{' + filter.filterId + '}',
                     childNodes: [],
@@ -524,35 +501,25 @@ export default defineComponent({
                 replace(expression, newConst, oldConst)
             }
             this.selectedQuery.expression = expression
-            console.log('AFTER NEW SAVE: ', this.selectedQuery)
             this.filterDialogVisible = false
         },
         removeDeletedFilters(filters: iFilter[], field: iField, expression: any) {
             if (!this.qbe) return
 
-            // console.log(' >>> BLA: ', this.qbe.qbeJSONQuery.catalogue.queries[0].filters)
-
             for (let i = this.selectedQuery.filters.length - 1; i >= 0; i--) {
                 const tempFilter = this.selectedQuery.filters[i]
-                console.log(' >>> TEMP FILTER: ', tempFilter)
                 if (tempFilter.leftOperandValue === field.id) {
-                    console.log(' >>> FILTER FOR DELETE CHECK: ', tempFilter)
                     const index = filters.findIndex((el: iFilter) => el.filterId === tempFilter.filterId)
-                    console.log('  >>> INDEX: ', index)
                     if (index === -1) {
                         this.selectedQuery.filters.splice(i, 1)
                         removeInPlace(expression, '$F{' + tempFilter.filterId + '}')
                     }
-                    // this.deleteFilterByProperty('filterId', tempFilter.filterId, this.selectedQuery.filters, expression)
                 }
             }
-
-            console.log('SELECTED QUERY: ', this.selectedQuery)
         },
         onAdvancedFiltersSave(expression: any) {
             this.selectedQuery.expression = expression
             this.advancedFilterDialogVisible = false
-            console.log('NEW SELECTED QUERY: ', this.selectedQuery)
         },
         showMenu(event) {
             this.createMenuItems()
@@ -561,7 +528,6 @@ export default defineComponent({
             this.$refs.optionsMenu.toggle(event)
         },
         showRelationDialog(entity) {
-            console.log(entity)
             this.relationEntity = entity
             this.relationDialogVisible = true
         },
@@ -644,7 +610,6 @@ export default defineComponent({
             }
         },
         onGroupingChanged(field: iField) {
-            console.log('ON GROUPING CHANGED: ', field)
             if (field.group && this.selectedQuery) {
                 this.selectedQuery.havings = this.selectedQuery.havings.filter((having: any) => having.letOperandValue !== field.id)
             }
@@ -675,15 +640,12 @@ export default defineComponent({
         },
         //#region ===================== TODO: sve sto se tice ovoga mora da se uradi bolje ====================================================
         async showSQLQuery() {
-            //TODO: moramo da njih pitamo sta i cemu sluzi ovo je odvratno
             var item = {} as any
             item.catalogue = JSON.stringify(this.qbe?.qbeJSONQuery?.catalogue?.queries)
-            item.currentQueryId = 'q1' //hardkoded i kod njih u source dode
-            item.ambiguousFieldsPaths = [] //hardkoded i kod njih u source dode
-            item.ambiguousRoles = [] //hardkoded i kod njih u source dode
-            item.pars = this.qbe?.pars //hardcoded, ovo su dataset parametri VALJDA neam pojma
-
-            console.log('QUERY SEND DATA: ', this.qbe?.qbeJSONQuery?.catalogue?.queries)
+            item.currentQueryId = 'q1'
+            item.ambiguousFieldsPaths = []
+            item.ambiguousRoles = []
+            item.pars = this.qbe?.pars
 
             let conf = {} as any
             conf.headers = { 'Content-Type': 'application/x-www-form-urlencoded' } as any
@@ -696,13 +658,11 @@ export default defineComponent({
 
             await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=SET_CATALOGUE_ACTION&SBI_EXECUTION_ID=${this.qbeId}`, item, conf)
-                .then((response: AxiosResponse<any>) => {
-                    console.log('SET CATALOGUE ACTION - showSQLQuery', response.data)
+                .then(() => {
                     this.getSQL()
                 })
                 .catch((error) => {
                     this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error.errors[0].message })
-                    console.log('showSQLQuery ---- ERROR', error)
                 })
         },
         async getSQL() {
@@ -722,13 +682,11 @@ export default defineComponent({
             await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_SQL_QUERY_ACTION&SBI_EXECUTION_ID=${this.qbeId}`, item, conf)
                 .then((response: AxiosResponse<any>) => {
-                    console.log('GET_SQL_QUERY_ACTION - getSQL', response.data)
                     this.sqlData = response.data
                     this.sqlDialogVisible = true
                 })
                 .catch((error) => {
                     this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error.errors[0].message })
-                    console.log('getSQL ---- ERROR', error)
                 })
         },
         //#endregion ===============================================================================================
@@ -827,7 +785,6 @@ export default defineComponent({
             this.updateSmartView()
         },
         selectMainQuery() {
-            console.log(this.selectedQuery)
             if (this.selectedQuery.fields.length < 1) {
                 this.$store.commit('setInfo', { title: this.$t('common.toast.error'), msg: 'Sub entities must have one and one only field' })
             } else {
@@ -836,7 +793,6 @@ export default defineComponent({
             this.updateSmartView()
         },
         deleteSubquery(index, subquery) {
-            console.log(index, subquery)
             subquery.id === this.selectedQuery.id ? (this.selectedQuery = this.mainQuery) : ''
             this.mainQuery.subqueries.splice(index, 1)
             this.updateSmartView()
@@ -862,7 +818,6 @@ export default defineComponent({
 
         // #region Sidebar and parameter
         async onExecute(qbeParameters: any[]) {
-            console.log('QBE - onExecute() - qBE PAREMETERS: ', qbeParameters)
             if (this.qbe) {
                 this.qbe.pars = [...qbeParameters]
                 await this.loadQBE()
