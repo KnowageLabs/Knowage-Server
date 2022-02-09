@@ -378,6 +378,8 @@ export default defineComponent({
                     this.qbeId = response.data
                 })
             console.log('LOADED ID: ', this.qbeId)
+            // HARDCODED ID
+            this.qbeId = 'd889c33a898711ecb56627a24f2aab3b'
         },
         async loadCustomizedDatasetFunctions() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${this.qbe?.qbeDataSourceId}`).then((response: AxiosResponse<any>) => (this.customizedDatasetFunctions = response.data))
@@ -390,7 +392,7 @@ export default defineComponent({
         async loadEntities() {
             // HARDCODED SBI_EXECUTION_ID
             await this.$http
-                .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.qbeId}&datamartName=Inventory`)
+                .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.qbeId}&datamartName=null`)
                 // .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.qbeId}&datamartName=null`)
                 .then((response: AxiosResponse<any>) => (this.entities = response.data))
                 .catch((error: any) => console.log('ERROR: ', error))
