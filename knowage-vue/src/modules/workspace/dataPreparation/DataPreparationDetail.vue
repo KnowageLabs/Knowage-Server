@@ -1,5 +1,6 @@
 <template>
     <div class="kn-page kn-data-preparation">
+        <KnCalculatedField v-model:visibility="showCFDialog" @save="saveCFDialog" @cancel="cancelCFDialog" :fields="columns" />
         <DataPreparationDialog v-model:transformation="selectedTransformation" @send-transformation="handleTransformation" :columns="columns" v-model:col="col" />
         <DataPreparationSaveDialog v-model:visibility="showSaveDialog" v-model:dataset="dataset" />
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
@@ -134,9 +135,9 @@ import Menu from 'primevue/menu'
 import DataPreparationDialog from '@/modules/workspace/dataPreparation/DataPreparationDialog.vue'
 import DataPreparationSaveDialog from '@/modules/workspace/dataPreparation/DataPreparationSaveDialog.vue'
 import { IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
-
+import KnCalculatedField from '@/components/functionalities/KnCalculatedField/KnCalculatedField.vue'
 import DataPreparationSimpleDescriptor from '@/modules/workspace/dataPreparation/DataPreparationSimple/DataPreparationSimpleDescriptor.json'
-import DataPreparationCustomDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationCustomDescriptor.json'
+import DataPreparationSplitDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationSplitDescriptor.json'
 
 import { Client } from '@stomp/stompjs'
 
@@ -145,7 +146,7 @@ export default defineComponent({
     props: {
         id: Object
     },
-    components: { Badge, Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Dropdown, OverlayPanel, Sidebar, Menu },
+    components: { KnCalculatedField, Badge, Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Dropdown, OverlayPanel, Sidebar, Menu },
 
     data() {
         return {
@@ -158,12 +159,13 @@ export default defineComponent({
             visibility: false as boolean,
             selectedTransformation: null,
             showSaveDialog: false as boolean,
+            showCFDialog: false as boolean,
             columns: [] as IDataPreparationColumn[],
             col: null,
             descriptorTransformations: Array<any>(),
             dataset: {} as any,
             simpleDescriptor: DataPreparationSimpleDescriptor,
-            customDescriptor: DataPreparationCustomDescriptor,
+            splitDescriptor: DataPreparationSplitDescriptor,
             client: {} as any
         }
     },
@@ -224,6 +226,25 @@ export default defineComponent({
         }
     },
     methods: {
+        cancelCFDialog(): void {
+            this.selectedTransformation = null
+            this.showCFDialog = false
+        },
+        saveCFDialog(t): void {
+            let convertedTransformation = this.convertCFTransformation(t)
+            this.handleTransformation(convertedTransformation)
+            this.showCFDialog = false
+        },
+        convertCFTransformation(t) {
+            let transformation = { parameters: [] as Array<any>, type: 'calculatedField' }
+            let par = { columns: [] as Array<any> }
+            Object.keys(t).forEach((key) => {
+                if (key === 'column') par.columns.push(t[key].header)
+                else par[key] = t[key]
+            })
+            transformation.parameters.push(par)
+            return transformation
+        },
         calculateDisabledProperty(menu): Boolean {
             let disabled = false
             if (menu.type === 'advancedFilter') {
@@ -286,7 +307,7 @@ export default defineComponent({
         },
         callFunction(transformation: any, col): void {
             if (transformation.name === 'changeType' || transformation.name === 'split') {
-                let parsArray = transformation.name === 'changeType' ? this.simpleDescriptor[transformation.name].parameters : this.customDescriptor[transformation.name].parameters
+                let parsArray = transformation.name === 'changeType' ? this.simpleDescriptor[transformation.name].parameters : this.splitDescriptor.parameters
                 for (var i = 0; i < parsArray.length; i++) {
                     let element = parsArray[i]
                     if (element.name === 'destType' || element.name === 'destType1' || element.name === 'destType2') {
@@ -323,16 +344,12 @@ export default defineComponent({
             } else {
                 this.selectedTransformation = transformation
                 if (col) this.col = col.header
+                if (transformation.name === 'calculatedField') this.showCFDialog = true
             }
         },
         handleTransformation(t: any): void {
             if (!this.dataset.config) this.dataset.config = {}
             if (!this.dataset.config.transformations) this.dataset.config.transformations = []
-
-            if (t.type === 'addColumn') {
-                t.parameters[0].columns = [t.parameters[0].columns]
-            }
-
             this.dataset.config.transformations.push(t)
             this.loading = true
             this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
@@ -344,9 +361,6 @@ export default defineComponent({
         },
         getCompatibilityType(col: IDataPreparationColumn): void {
             return this.descriptor.compatibilityMap[col.Type].values
-        },
-        addColumn(item): void {
-            console.log(item)
         },
         toggle(event: Event, trOp: string): void {
             // eslint-disable-next-line

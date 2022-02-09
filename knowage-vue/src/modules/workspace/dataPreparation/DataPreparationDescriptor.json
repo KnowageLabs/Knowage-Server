@@ -191,14 +191,14 @@
     "transformations": [
         {
             "category": "tableStructure",
-            "description": "managers.workspaceManagement.dataPreparation.transformations.addColumn.description",
+            "description": "managers.workspaceManagement.dataPreparation.transformations.calculatedField.description",
             "editColumn": false,
             "icon": "pi pi-plus-circle",
-            "label": "managers.workspaceManagement.dataPreparation.transformations.addColumn.label",
-            "name": "addColumn",
+            "label": "managers.workspaceManagement.dataPreparation.transformations.calculatedField.label",
+            "name": "calculatedField",
             "position": 0,
             "toolbar": true,
-            "type": "custom"
+            "type": "calculatedField"
         },
         {
             "category": "tableStructure",

@@ -178,6 +178,15 @@
         "visible": "Visible",
         "yes": "Yes"
     },
+    "components": {
+        "KnCalculatedField": {
+            "columnName": "Column Name",
+            "description": "Write the formula to create a new column using the allowed functions",
+            "formula": "Formula",
+            "title": "Calculated Field",
+            "type": "Type"
+        }
+    },
     "cron": {
         "advanced": "Advanced",
         "april": "April",
@@ -1657,8 +1666,7 @@
                 },
                 "savePreparedDataset": "Save prepared dataset",
                 "transformations": {
-                    "addColumn": {
-                        "description": "TODO",
+                    "calculatedField": {
                         "label": "Add column"
                     },
                     "changeRole": {
