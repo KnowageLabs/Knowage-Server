@@ -14,7 +14,7 @@
                     <span>{{ $t('managers.rolesManagement.detail.title') }}</span>
                 </template>
 
-                <RoleDetailTab :selectedRole="selectedRole" @fieldChanged="onFieldChange" @roleTypeChanged="onRoleTypeChange" />
+                <RoleDetailTab :selectedRole="selectedRole" :publicRole="publicRole" @fieldChanged="onFieldChange" @roleTypeChanged="onRoleTypeChange" />
             </TabPanel>
 
             <TabPanel>
@@ -71,12 +71,7 @@ export default defineComponent({
         TabPanel,
         RoleAuthorizationsTab
     },
-    props: {
-        id: {
-            type: String,
-            required: false
-        }
-    },
+    props: { id: { type: String, required: false }, publicRole: { type: Object, required: false } },
     emits: ['touched', 'closed', 'inserted'],
     data() {
         return {

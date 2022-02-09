@@ -23,14 +23,14 @@
                 {{ $t('common.info.noDataFound') }}
             </div>
         </template>
-        <Column class="kn-truncated" :style="datasetPreviewTableDescriptor.columnStyle" v-for="col of columns" :field="col.field" :key="col.field" :sortable="true">
+        <Column class="kn-truncated" :style="datasetPreviewTableDescriptor.columnStyle" v-for="col of columns" :field="col.field" :key="col.field" :sortable="previewType === 'dataset' ? false : true">
             <template #header>
                 <div class="dropdown">
                     <div clas="p-d-flex p-flex-column">
                         <p class="p-m-0">{{ col.header }}</p>
                         <small>{{ col.type }}</small>
                     </div>
-                    <div class="dropdown-icon-container">
+                    <div v-if="previewType !== 'dataset'" class="dropdown-icon-container">
                         <i class="pi pi-filter-icon pi-filter p-ml-5" :class="{ 'filter-icon-active': searchInput[col.field] }" @click="searchVisible[col.field] = !searchVisible[col.field]" />
                         <div class="dropdown-content" v-if="searchVisible[col.field]">
                             <InputText v-model="searchInput[col.field]" class="p-inputtext-sm p-column-filter" @input="onFilter(col)"></InputText>
@@ -56,7 +56,7 @@ import datasetPreviewTableDescriptor from './DatasetPreviewTableDescriptor.json'
 export default defineComponent({
     name: 'function-catalog-preview-table',
     components: { Column, DataTable },
-    props: { previewColumns: { type: Array }, previewRows: { type: Array }, pagination: { type: Object } },
+    props: { previewColumns: { type: Array }, previewRows: { type: Array }, pagination: { type: Object }, previewType: String },
     emits: ['pageChanged', 'sort', 'filter'],
     data() {
         return {

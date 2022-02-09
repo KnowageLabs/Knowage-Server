@@ -1,0 +1,484 @@
+{
+    "businessModels": [
+        {
+            "calculatedBusinessColumns": [],
+            "columns": [
+                {
+                    "description": null,
+                    "filteredByProfileAttribute": false,
+                    "filteredByRoleVisibility": false,
+                    "id": null,
+                    "identifier": false,
+                    "name": "Segment id",
+                    "partOfCompositeIdentifier": false,
+                    "physicalColumn": {
+                        "comment": "",
+                        "dataType": "INTEGER",
+                        "decimalDigits": 0,
+                        "defaultValue": null,
+                        "description": null,
+                        "id": null,
+                        "markedDeleted": false,
+                        "name": "segment_id",
+                        "nullable": true,
+                        "octectLength": 0,
+                        "partOfCompositePrimaryKey": false,
+                        "position": 31,
+                        "primaryKey": false,
+                        "properties": [
+                            {
+                                "structural.deleted": {
+                                    "propertyType": {
+                                        "admissibleValues": [],
+                                        "defaultValue": "false",
+                                        "description": "Specify if this column was deleted after a db update",
+                                        "id": "structural.deleted",
+                                        "name": "Deleted"
+                                    },
+                                    "value": "false"
+                                }
+                            }
+                        ],
+                        "radix": 10,
+                        "size": 10,
+                        "tableName": "customer",
+                        "typeName": "INT",
+                        "uniqueName": null
+                    },
+                    "properties": [
+                        {
+                            "structural.timeformat": {
+                                "propertyType": {
+                                    "admissibleValues": ["LT", "LTS"],
+                                    "defaultValue": "LT",
+                                    "description": "The date format to use if the value is time",
+                                    "id": "structural.timeformat",
+                                    "name": "Format Time"
+                                },
+                                "value": "LT"
+                            }
+                        }
+                    ],
+                    "uniqueName": "segment_id"
+                }
+            ],
+            "name": "Customer",
+            "physicalTable": {
+                "physicalTableIndex": 3
+            },
+            "properties": [
+                {
+                    "structural.visible": {
+                        "propertyType": {
+                            "admissibleValues": ["true", "false"],
+                            "defaultValue": "true",
+                            "description": "Specify if this column is visible in the query editor",
+                            "id": "structural.visible",
+                            "name": "Visible"
+                        },
+                        "value": "true"
+                    }
+                },
+                {
+                    "structural.tabletype": {
+                        "propertyType": {
+                            "admissibleValues": ["generic", "cube", "dimension", "geographic dimension"],
+                            "defaultValue": "generic",
+                            "description": "The role played by this table in the data model (generic, cube or dimension)",
+                            "id": "structural.tabletype",
+                            "name": "Type"
+                        },
+                        "value": "dimension"
+                    }
+                }
+            ],
+            "relationships": [
+                {
+                    "description": null,
+                    "destinationColumns": [
+                        {
+                            "description": null,
+                            "filteredByProfileAttribute": false,
+                            "filteredByRoleVisibility": false,
+                            "id": null,
+                            "identifier": true,
+                            "name": "Region id",
+                            "partOfCompositeIdentifier": false,
+                            "physicalColumn": {
+                                "comment": "",
+                                "dataType": "INTEGER",
+                                "decimalDigits": 0,
+                                "defaultValue": null,
+                                "description": null,
+                                "id": null,
+                                "markedDeleted": false,
+                                "name": "region_id",
+                                "nullable": false,
+                                "octectLength": 0,
+                                "partOfCompositePrimaryKey": false,
+                                "position": 1,
+                                "primaryKey": true,
+                                "properties": [
+                                    {
+                                        "structural.deleted": {
+                                            "propertyType": {
+                                                "admissibleValues": [],
+                                                "defaultValue": "false",
+                                                "description": "Specify if this column was deleted after a db update",
+                                                "id": "structural.deleted",
+                                                "name": "Deleted"
+                                            },
+                                            "value": "false"
+                                        }
+                                    }
+                                ],
+                                "radix": 10,
+                                "size": 10,
+                                "tableName": "region",
+                                "typeName": "INT",
+                                "uniqueName": null
+                            },
+                            "properties": [
+                                {
+                                    "structural.visible": {
+                                        "propertyType": {
+                                            "admissibleValues": ["true", "false"],
+                                            "defaultValue": "true",
+                                            "description": "Specify if this column is visible in the query editor",
+                                            "id": "structural.visible",
+                                            "name": "Visible"
+                                        },
+                                        "value": "true"
+                                    }
+                                }
+                            ],
+                            "uniqueName": "region_id"
+                        }
+                    ],
+                    "destinationSimpleBusinessColumns": [
+                        {
+                            "description": null,
+                            "filteredByProfileAttribute": false,
+                            "filteredByRoleVisibility": false,
+                            "id": null,
+                            "identifier": true,
+                            "name": "Region id",
+                            "partOfCompositeIdentifier": false,
+                            "physicalColumn": {
+                                "comment": "",
+                                "dataType": "INTEGER",
+                                "decimalDigits": 0,
+                                "defaultValue": null,
+                                "description": null,
+                                "id": null,
+                                "markedDeleted": false,
+                                "name": "region_id",
+                                "nullable": false,
+                                "octectLength": 0,
+                                "partOfCompositePrimaryKey": false,
+                                "position": 1,
+                                "primaryKey": true,
+                                "properties": [
+                                    {
+                                        "structural.deleted": {
+                                            "propertyType": {
+                                                "admissibleValues": [],
+                                                "defaultValue": "false",
+                                                "description": "Specify if this column was deleted after a db update",
+                                                "id": "structural.deleted",
+                                                "name": "Deleted"
+                                            },
+                                            "value": "false"
+                                        }
+                                    }
+                                ],
+                                "radix": 10,
+                                "size": 10,
+                                "tableName": "region",
+                                "typeName": "INT",
+                                "uniqueName": null
+                            },
+                            "properties": [
+                                {
+                                    "structural.timeformat": {
+                                        "propertyType": {
+                                            "admissibleValues": ["LT", "LTS"],
+                                            "defaultValue": "LT",
+                                            "description": "The date format to use if the value is time",
+                                            "id": "structural.timeformat",
+                                            "name": "Format Time"
+                                        },
+                                        "value": "LT"
+                                    }
+                                }
+                            ],
+                            "uniqueName": "region_id"
+                        }
+                    ],
+                    "destinationTableName": "region",
+                    "id": null,
+                    "name": "rid",
+                    "physicalForeignKeyName": "rid",
+                    "properties": [
+                        {
+                            "structural.destinationRole": {
+                                "propertyType": {
+                                    "admissibleValues": [],
+                                    "defaultValue": "role name",
+                                    "description": "Role name of the destination table",
+                                    "id": "structural.destinationRole",
+                                    "name": "Destination Role"
+                                },
+                                "value": "Region"
+                            }
+                        }
+                    ],
+                    "sourceColumns": [
+                        {
+                            "description": null,
+                            "filteredByProfileAttribute": false,
+                            "filteredByRoleVisibility": false,
+                            "id": null,
+                            "identifier": false,
+                            "name": "Customer region id",
+                            "partOfCompositeIdentifier": false,
+                            "physicalColumn": {
+                                "comment": "",
+                                "dataType": "INTEGER",
+                                "decimalDigits": 0,
+                                "defaultValue": null,
+                                "description": null,
+                                "id": null,
+                                "markedDeleted": false,
+                                "name": "customer_region_id",
+                                "nullable": false,
+                                "octectLength": 0,
+                                "partOfCompositePrimaryKey": false,
+                                "position": 14,
+                                "primaryKey": false,
+                                "properties": [
+                                    {
+                                        "structural.deleted": {
+                                            "propertyType": {
+                                                "admissibleValues": [],
+                                                "defaultValue": "false",
+                                                "description": "Specify if this column was deleted after a db update",
+                                                "id": "structural.deleted",
+                                                "name": "Deleted"
+                                            },
+                                            "value": "false"
+                                        }
+                                    }
+                                ],
+                                "radix": 10,
+                                "size": 10,
+                                "tableName": "customer",
+                                "typeName": "INT",
+                                "uniqueName": null
+                            },
+                            "properties": [
+                                {
+                                    "structural.timeformat": {
+                                        "propertyType": {
+                                            "admissibleValues": ["LT", "LTS"],
+                                            "defaultValue": "LT",
+                                            "description": "The date format to use if the value is time",
+                                            "id": "structural.timeformat",
+                                            "name": "Format Time"
+                                        },
+                                        "value": "LT"
+                                    }
+                                }
+                            ],
+                            "uniqueName": "customer_region_id"
+                        },
+                        {
+                            "description": null,
+                            "filteredByProfileAttribute": false,
+                            "filteredByRoleVisibility": false,
+                            "id": null,
+                            "identifier": false,
+                            "name": "Customer region id",
+                            "partOfCompositeIdentifier": false,
+                            "physicalColumn": {
+                                "comment": "",
+                                "dataType": "INTEGER",
+                                "decimalDigits": 0,
+                                "defaultValue": null,
+                                "description": null,
+                                "id": null,
+                                "markedDeleted": false,
+                                "name": "customer_region_id",
+                                "nullable": false,
+                                "octectLength": 0,
+                                "partOfCompositePrimaryKey": false,
+                                "position": 14,
+                                "primaryKey": false,
+                                "properties": [
+                                    {
+                                        "structural.deleted": {
+                                            "propertyType": {
+                                                "admissibleValues": [],
+                                                "defaultValue": "false",
+                                                "description": "Specify if this column was deleted after a db update",
+                                                "id": "structural.deleted",
+                                                "name": "Deleted"
+                                            },
+                                            "value": "false"
+                                        }
+                                    }
+                                ],
+                                "radix": 10,
+                                "size": 10,
+                                "tableName": "customer",
+                                "typeName": "INT",
+                                "uniqueName": null
+                            },
+                            "properties": [
+                                {
+                                    "structural.timeformat": {
+                                        "propertyType": {
+                                            "admissibleValues": ["LT", "LTS"],
+                                            "defaultValue": "LT",
+                                            "description": "The date format to use if the value is time",
+                                            "id": "structural.timeformat",
+                                            "name": "Format Time"
+                                        },
+                                        "value": "LT"
+                                    }
+                                }
+                            ],
+                            "uniqueName": "customer_region_id"
+                        }
+                    ],
+                    "sourceSimpleBusinessColumns": [
+                        {
+                            "description": null,
+                            "filteredByProfileAttribute": false,
+                            "filteredByRoleVisibility": false,
+                            "id": null,
+                            "identifier": false,
+                            "name": "Customer region id",
+                            "partOfCompositeIdentifier": false,
+                            "physicalColumn": {
+                                "comment": "",
+                                "dataType": "INTEGER",
+                                "decimalDigits": 0,
+                                "defaultValue": null,
+                                "description": null,
+                                "id": null,
+                                "markedDeleted": false,
+                                "name": "customer_region_id",
+                                "nullable": false,
+                                "octectLength": 0,
+                                "partOfCompositePrimaryKey": false,
+                                "position": 14,
+                                "primaryKey": false,
+                                "properties": [
+                                    {
+                                        "structural.deleted": {
+                                            "propertyType": {
+                                                "admissibleValues": [],
+                                                "defaultValue": "false",
+                                                "description": "Specify if this column was deleted after a db update",
+                                                "id": "structural.deleted",
+                                                "name": "Deleted"
+                                            },
+                                            "value": "false"
+                                        }
+                                    }
+                                ],
+                                "radix": 10,
+                                "size": 10,
+                                "tableName": "customer",
+                                "typeName": "INT",
+                                "uniqueName": null
+                            },
+                            "properties": [
+                                {
+                                    "structural.timeformat": {
+                                        "propertyType": {
+                                            "admissibleValues": ["LT", "LTS"],
+                                            "defaultValue": "LT",
+                                            "description": "The date format to use if the value is time",
+                                            "id": "structural.timeformat",
+                                            "name": "Format Time"
+                                        },
+                                        "value": "LT"
+                                    }
+                                }
+                            ],
+                            "uniqueName": "customer_region_id"
+                        }
+                    ],
+                    "sourceTableName": "customer",
+                    "uniqueName": "rid"
+                }
+            ],
+            "simpleBusinessColumns": [
+                {
+                    "description": null,
+                    "filteredByProfileAttribute": false,
+                    "filteredByRoleVisibility": false,
+                    "id": null,
+                    "identifier": false,
+                    "name": "Segment id",
+                    "partOfCompositeIdentifier": false,
+                    "physicalColumn": {
+                        "comment": "",
+                        "dataType": "INTEGER",
+                        "decimalDigits": 0,
+                        "defaultValue": null,
+                        "description": null,
+                        "id": null,
+                        "markedDeleted": false,
+                        "name": "segment_id",
+                        "nullable": true,
+                        "octectLength": 0,
+                        "partOfCompositePrimaryKey": false,
+                        "position": 31,
+                        "primaryKey": false,
+                        "properties": [
+                            {
+                                "structural.deleted": {
+                                    "propertyType": {
+                                        "admissibleValues": [],
+                                        "defaultValue": "false",
+                                        "description": "Specify if this column was deleted after a db update",
+                                        "id": "structural.deleted",
+                                        "name": "Deleted"
+                                    },
+                                    "value": "false"
+                                }
+                            }
+                        ],
+                        "radix": 10,
+                        "size": 10,
+                        "tableName": "customer",
+                        "typeName": "INT",
+                        "uniqueName": null
+                    },
+                    "properties": [
+                        {
+                            "structural.timeformat": {
+                                "propertyType": {
+                                    "admissibleValues": ["LT", "LTS"],
+                                    "defaultValue": "LT",
+                                    "description": "The date format to use if the value is time",
+                                    "id": "structural.timeformat",
+                                    "name": "Format Time"
+                                },
+                                "value": "LT"
+                            }
+                        }
+                    ],
+                    "uniqueName": "segment_id"
+                }
+            ],
+            "uniqueName": "customer"
+        }
+    ],
+    "businessViews": [],
+    "olapModels": [],
+    "physicalModels": []
+}

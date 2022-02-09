@@ -1,5 +1,9 @@
 {
     "style": {
+        "dialog": {
+            "font-size": "13px",
+            "width": "600px"
+        },
         "maxWidth": {
             "width": "100%"
         }
