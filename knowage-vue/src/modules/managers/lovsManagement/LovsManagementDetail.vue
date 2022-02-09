@@ -38,7 +38,7 @@ import { defineComponent } from 'vue'
 import { iDatasource, iDomain, iLov, iFixedValue, iProfileAttribute } from './LovsManagement'
 import { decode } from 'js-base64'
 import X2JS from 'x2js'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import LovsManagementDetailCard from './cards/LovsManagementDetailCard/LovsManagementDetailCard.vue'
 import LovsManagementWizardCard from './cards/LovsManagementWizardCard/LovsManagementWizardCard.vue'
 import useValidate from '@vuelidate/core'
@@ -116,23 +116,23 @@ export default defineComponent({
             this.loading = false
         },
         async loadLov() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/lovs/${this.id}`).then((response) => (this.selectedLov = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/lovs/${this.id}`).then((response: AxiosResponse<any>) => (this.selectedLov = response.data))
             this.selectedLov.lovProviderJSON = JSON.parse(this.selectedLov.lovProviderJSON)
             this.decode()
             this.formatLov()
         },
         async loadDomainsData() {
-            await this.loadDomainsByType('INPUT_TYPE').then((response) => (this.listOfInputTypes = response.data))
-            await this.loadDomainsByType('SCRIPT_TYPE').then((response) => (this.listOfScriptTypes = response.data))
+            await this.loadDomainsByType('INPUT_TYPE').then((response: AxiosResponse<any>) => (this.listOfInputTypes = response.data))
+            await this.loadDomainsByType('SCRIPT_TYPE').then((response: AxiosResponse<any>) => (this.listOfScriptTypes = response.data))
         },
         loadDomainsByType(type: string) {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`)
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`)
         },
         async loadDatasources() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources/`).then((response) => (this.datasources = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources/`).then((response: AxiosResponse<any>) => (this.datasources = response.data))
         },
         async loadProfileAttributes() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/attributes/`).then((response) => (this.profileAttributes = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/attributes/`).then((response: AxiosResponse<any>) => (this.profileAttributes = response.data))
         },
         decode() {
             if (this.selectedLov.lovProviderJSON.SCRIPTLOV) {
@@ -158,7 +158,7 @@ export default defineComponent({
             } else if (lovProviderEnum.JAVA_CLASS in this.selectedLov.lovProviderJSON) {
                 this.selectedJavaClass.name = this.selectedLov.lovProviderJSON.JAVACLASSLOV.JAVA_CLASS_NAME
             } else if (lovProviderEnum.DATASET in this.selectedLov.lovProviderJSON) {
-                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.selectedLov.lovProviderJSON.DATASET.ID}`).then((response) => {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.selectedLov.lovProviderJSON.DATASET.ID}`).then((response: AxiosResponse<any>) => {
                     this.selectedDataset = response.data[0]
                 })
             }

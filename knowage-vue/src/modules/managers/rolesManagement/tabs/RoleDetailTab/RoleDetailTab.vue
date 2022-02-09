@@ -109,7 +109,7 @@
 
                 <div class="p-field">
                     <span class="p-field-checkbox">
-                        <Checkbox id="isPublic" name="isPublic" v-model="role.isPublic" @change="onFieldChange('isPublic', role.isPublic)" :binary="true" data-test="is-public-checkbox" />
+                        <Checkbox id="isPublic" name="isPublic" v-model="role.isPublic" @change="onPublicChange" :binary="true" data-test="is-public-checkbox" />
                         <label for="isPublic">
                             {{ $t('managers.rolesManagement.detail.isPublic') }}
                         </label>
@@ -123,7 +123,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 import Checkbox from 'primevue/checkbox'
@@ -142,6 +142,10 @@ export default defineComponent({
     },
     props: {
         selectedRole: {
+            type: Object,
+            requried: false
+        },
+        publicRole: {
             type: Object,
             requried: false
         }
@@ -176,7 +180,7 @@ export default defineComponent({
     },
     methods: {
         async loadRoleTypes() {
-            await this.loadDomains('ROLE_TYPE').then((response) => {
+            await this.loadDomains('ROLE_TYPE').then((response: AxiosResponse<any>) => {
                 this.roleTypes = response.data
                 this.translatedRoleTypes = response.data.map((roleType) => {
                     return {
@@ -190,7 +194,7 @@ export default defineComponent({
             this.$emit('fieldChanged', { fieldName, value })
         },
         loadDomains(type: string) {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`)
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`)
         },
         onRoleTypeChange(roleTypeIDField: string, roleTypeCDField: string, event) {
             const selRoleType = this.roleTypes.find((roleType) => roleType.VALUE_ID === event.value)
@@ -200,6 +204,26 @@ export default defineComponent({
             const ID = event.value
             const CD = this.role.roleTypeCD
             this.$emit('roleTypeChanged', { roleTypeIDField, roleTypeCDField, ID, CD })
+        },
+        onPublicChange() {
+            if (this.publicRole && this.publicRole.id != this.role.id && this.role.isPublic) {
+                let warningMessage = this.$t('managers.rolesManagement.publicRoleWarning1') + `< ${this.publicRole.name} >` + this.$t('managers.rolesManagement.publicRoleWarning2')
+                this.$confirm.require({
+                    message: warningMessage,
+                    header: this.$t('common.warning'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.role.isPublic = true
+                        this.onFieldChange('isPublic', true)
+                    },
+                    reject: () => {
+                        this.role.isPublic = false
+                        this.onFieldChange('isPublic', false)
+                    }
+                })
+            } else {
+                this.onFieldChange('isPublic', this.role.isPublic)
+            }
         }
     }
 })

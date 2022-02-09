@@ -17,18 +17,6 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.schema.MondrianSchemaManager;
-import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
-import it.eng.spagobi.services.proxy.ArtifactServiceProxy;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.writeback4j.mondrian.MondrianDriver;
-import it.eng.spagobi.writeback4j.mondrian.MondrianSchemaRetriver;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,9 +34,22 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.schema.MondrianSchemaManager;
+import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
+import it.eng.spagobi.services.proxy.ArtifactServiceProxy;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.writeback4j.mondrian.MondrianDriver;
+import it.eng.spagobi.writeback4j.mondrian.MondrianSchemaRetriver;
 
 /**
  * @author spetrovic
@@ -161,11 +162,9 @@ public class DesignerResource extends AbstractWhatIfEngineService {
 	@GET
 	@Path("/cubes/start")
 	@Produces("text/html")
-	public void redirect() throws SpagoBIEngineException, ServletException, IOException {
+	public View redirect() throws SpagoBIEngineException, ServletException, IOException {
 		logger.debug("IN");
-//		HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-//		HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
-		request.getRequestDispatcher(SUCCESS_REQUEST_DISPATCHER_URL).forward(request, response);
+		return new View(SUCCESS_REQUEST_DISPATCHER_URL);
 	}
 
 	@GET

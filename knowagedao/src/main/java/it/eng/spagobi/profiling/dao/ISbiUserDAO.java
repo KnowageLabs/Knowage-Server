@@ -66,11 +66,13 @@ public interface ISbiUserDAO extends ISpagoBIDao {
 	public void checkUserId(String userId, Integer id);
 
 	public Integer isUserIdAlreadyInUse(String userId);
-	
+
 	public int getFailedLoginAttempts(String userId);
 
 	public void incrementFailedLoginAttempts(String userId);
 
 	public void resetFailedLoginAttempts(String userId);
+
+	public boolean thereIsAnyUsers();
 
 }

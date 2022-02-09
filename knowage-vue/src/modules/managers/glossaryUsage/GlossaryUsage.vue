@@ -66,7 +66,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iGlossary, iNode } from './GlossaryUsage'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Dropdown from 'primevue/dropdown'
 import glossaryUsageDescriptor from './GlossaryUsageDescriptor.json'
 import GlossaryUsageInfoDialog from './GlossaryUsageInfoDialog.vue'
@@ -108,9 +108,9 @@ export default defineComponent({
     methods: {
         async loadGlossary() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/listGlossary')
-                .then((response) => (this.glossaryList = response.data))
+                .then((response: AxiosResponse<any>) => (this.glossaryList = response.data))
                 .finally(() => (this.loading = false))
         },
         async listContents(glossaryId: number, parent: any) {
@@ -118,6 +118,7 @@ export default defineComponent({
 
             if (!parent) {
                 this.selectedWords = []
+                this.selectedKeys = []
             }
 
             if (parent?.WORD_ID || this.searchWord) {
@@ -127,7 +128,7 @@ export default defineComponent({
 
             const parentId = parent ? parent.id : null
             let content = [] as iNode[]
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listContents?GLOSSARY_ID=${glossaryId}&PARENT_ID=${parentId}`).then((response) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listContents?GLOSSARY_ID=${glossaryId}&PARENT_ID=${parentId}`).then((response: AxiosResponse<any>) => {
                 response.data.forEach((el: any) => content.push(this.createNode(el)))
                 content.sort((a: iNode, b: iNode) => (a.label > b.label ? 1 : -1))
             })
@@ -147,9 +148,9 @@ export default defineComponent({
         async showInfo(content: any) {
             this.loading = true
             const url = content.CONTENT_ID ? `1.0/glossary/getContent?CONTENT_ID=${content.CONTENT_ID}` : `1.0/glossary/getWord?WORD_ID=${content.WORD_ID}`
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.contentInfo = response.data
                     this.infoDialogVisible = true
                 })
@@ -163,9 +164,9 @@ export default defineComponent({
             let tempData = []
             this.timer = setTimeout(() => {
                 this.loading = true
-                axios
+                this.$http
                     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/glosstreeLike?WORD=${this.searchWord}&GLOSSARY_ID=${this.selectedGlossaryId}`)
-                    .then((response) => (tempData = response.data))
+                    .then((response: AxiosResponse<any>) => (tempData = response.data))
                     .finally(() => {
                         this.createGlossaryTree(tempData)
                         this.loading = false

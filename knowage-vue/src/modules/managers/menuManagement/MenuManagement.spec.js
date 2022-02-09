@@ -16,6 +16,16 @@ const $store = {
     commit: jest.fn()
 }
 
+jest.mock('axios')
+
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: []
+        })
+    )
+}
+
 const factory = () => {
     return mount(MenuConfiguration, {
         attachToDocument: true,
@@ -25,7 +35,8 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $store,
-                $confirm
+                $confirm,
+                $http
             }
         }
     })

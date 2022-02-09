@@ -81,11 +81,13 @@ const expectedConfiguration = [
     }
 ]
 
-jest.mock('axios', () => ({
-    get: jest.fn(() => Promise.resolve({ data: mockedDatasets })),
-    put: jest.fn(() => Promise.resolve()),
-    delete: jest.fn(() => Promise.resolve())
-}))
+jest.mock('axios')
+
+const $http = {
+    get: axios.get.mockImplementation(() => Promise.resolve({ data: mockedDatasets })),
+    put: axios.put.mockImplementation(() => Promise.resolve()),
+    delete: axios.delete.mockImplementation(() => Promise.resolve())
+}
 
 const $store = {
     commit: jest.fn()
@@ -103,7 +105,8 @@ const factory = (item, datasources, selectedDatasource) => {
             stubs: { Button, Card, Dropdown, InputNumber, InputText, Toolbar },
             mocks: {
                 $t: (msg) => msg,
-                $store
+                $store,
+                $http
             }
         }
     })

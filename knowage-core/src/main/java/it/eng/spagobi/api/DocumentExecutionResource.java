@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -120,8 +121,12 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
+/**
+ * @deprecated Replaced by {@link it.eng.spagobi.api.v2.DocumentExecutionResource}
+ */
 @Path("/1.0/documentexecution")
 @ManageAuthorization
+@Deprecated
 public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	// GENERAL METADATA NAMES
@@ -522,7 +527,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		String role = requestVal.getString("role");
 		JSONObject jsonCrossParameters = requestVal.getJSONObject("parameters");
 
-		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
+		Map<String, Object> resultAsMap = new LinkedHashMap<>();
 
 		boolean driversCacheEnabled = false;
 		Map<String, JSONObject> sessionParametersMap = new HashMap<String, JSONObject>();
@@ -532,7 +537,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		}
 
 		// keep track of par coming from cross to get descriptions from admissible values
-		List<String> parsFromCross = new ArrayList<String>();
+		List<String> parsFromCross = new ArrayList<>();
 
 		IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
 		BIObject biObject = DriversRuntimeLoaderFactory.getDriversRuntimeLoader().loadBIObjectForExecutionByLabelAndRole(label, role);
@@ -624,8 +629,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 								}
 							} catch (UnsupportedEncodingException e) {
-								// TODO Auto-generated catch block
-								// e.printStackTrace();
 								logger.debug("An error occured while decoding parameter with value[" + itemVal + "]" + e);
 							}
 						}
@@ -662,7 +665,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					} else {
 						parameterAsMap.put("defaultValues", new ArrayList<>());
 					}
-					parameterAsMap.put("defaultValuesMeta", objParameter.getLovColumnsNames());
+					parameterAsMap.put("defaultValuesMeta", objParameter.getLovVisibleColumnsNames());
 					parameterAsMap.put(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA, objParameter.getLovValueColumnName());
 					parameterAsMap.put(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA, objParameter.getLovDescriptionColumnName());
 
@@ -829,7 +832,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	// private List<AbstractDriverRuntime<AbstractDriver>>
 
-	private JSONObject decodeRequestParameters(JSONObject requestValParams) throws JSONException, IOException {
+	protected JSONObject decodeRequestParameters(JSONObject requestValParams) throws JSONException, IOException {
 		JSONObject toReturn = new JSONObject();
 
 		Iterator keys = requestValParams.keys();
@@ -914,7 +917,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	private Map<String, JSONObject> getSessionParameters(JSONObject requestVal) {
+	protected Map<String, JSONObject> getSessionParameters(JSONObject requestVal) {
 
 		Map<String, JSONObject> sessionParametersMap = new HashMap<String, JSONObject>();
 
@@ -1170,7 +1173,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 
 		Boolean toReturn = false;
-		Boolean noPublicRoleError = false;
+
 		JSONObject results = new JSONObject();
 		try {
 			BIObject biObj;
@@ -1184,17 +1187,13 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			if (biObj != null) {
 				SpagoBIUserProfile publicProfile = PublicProfile.createPublicUserProfile(PublicProfile.PUBLIC_USER_PREFIX + tenant);
 
-				if (publicProfile == null) {
-					noPublicRoleError = true;
-					toReturn = false;
-				} else {
+				if (publicProfile != null) {
 					UserProfile publicUserProfile = new UserProfile(publicProfile);
 					boolean canExec = ObjectsAccessVerifier.canExec(biObj, publicUserProfile);
 					toReturn = canExec;
 				}
 
 				results.put("isPublic", toReturn);
-				results.put("noPublicRoleError", noPublicRoleError);
 
 			} else {
 				logger.error("Object with label " + label + " not found");
@@ -1681,7 +1680,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				} else {
 					parameterAsMap.put("defaultValues", new ArrayList<>());
 				}
-				parameterAsMap.put("defaultValuesMeta", objParameter.getLovColumnsNames());
+				parameterAsMap.put("defaultValuesMeta", objParameter.getLovVisibleColumnsNames());
 				parameterAsMap.put(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA, objParameter.getLovValueColumnName());
 				parameterAsMap.put(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA, objParameter.getLovDescriptionColumnName());
 

@@ -28,10 +28,12 @@ const mockedNews = [
     }
 ]
 
-jest.mock('axios', () => ({
-    get: jest.fn(() => Promise.resolve({ data: mockedNews })),
-    delete: jest.fn(() => Promise.resolve())
-}))
+jest.mock('axios')
+
+const $http = {
+    get: axios.get.mockImplementation(() => Promise.resolve({ data: mockedNews })),
+    delete: axios.delete.mockImplementation(() => Promise.resolve())
+}
 
 const $confirm = {
     require: jest.fn()
@@ -60,7 +62,8 @@ const factory = () => {
                 $t: (msg) => msg,
                 $store,
                 $confirm,
-                $router
+                $router,
+                $http
             }
         }
     })
@@ -100,7 +103,9 @@ describe('News Management', () => {
 
         expect($confirm.require).toHaveBeenCalledTimes(1)
 
-        await wrapper.vm.deleteNews(1)
+        await flushPromises()
+
+        await wrapper.vm.deleteNews(mockedNews[0])
         expect(axios.delete).toHaveBeenCalledTimes(1)
         expect(axios.delete).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news/' + 1)
     })

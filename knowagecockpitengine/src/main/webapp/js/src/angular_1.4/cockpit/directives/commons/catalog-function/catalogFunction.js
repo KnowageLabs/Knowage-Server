@@ -74,7 +74,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if (columns[c].aggregationSelected) {
 					columns[c].name = columns[c].alias+"_"+columns[c].aggregationSelected;
 				}
-				columnsArray.push(columns[c]);				
+				columnsArray.push(columns[c]);
 			}
 			return columnsArray;
 		}
@@ -217,7 +217,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.callbackUpdateAlias = callbackUpdateAlias;
 		$scope.callbackAddTo = callbackAddTo;
 		$scope.selectedFunction = actualItem ? angular.copy(actualItem) : {};
-		var style = {'display': 'inline-flex', 'justify-content':'center', 'align-items':'center'};
+		var style = {'display': 'inline-flex', 'align-items': 'center'};
 		var typesMap = {'STRING': "fa fa-quote-right", 'NUMBER': "fa fa-hashtag", 'DATE': 'fa fa-calendar'};
 		$scope.rEnvironments = cockpitModule_catalogFunctionService.rEnvironments;
 		$scope.pythonEnvironments = cockpitModule_catalogFunctionService.pythonEnvironments;
@@ -256,7 +256,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        pagination: true,
 		        paginationAutoPageSize: true,
 		        columnDefs: [
-		        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.function.name'), field:'name', headerTooltip:'description'},
+		        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.function.name'), field:'name', headerTooltip:'description', resizable: true},
 		        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.function.language'), field:'language', cellRenderer: languageRenderer, cellStyle: style}],
 		        rowData: cockpitModule_catalogFunctionService.allCatalogFunctions
 		}

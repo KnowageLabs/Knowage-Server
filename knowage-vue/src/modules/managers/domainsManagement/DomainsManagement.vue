@@ -77,7 +77,7 @@ import { defineComponent } from 'vue'
 import { iDomain } from './DomainsManagement'
 import { FilterOperator } from 'primevue/api'
 import { filterDefault } from '@/helpers/commons/filterHelper'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import domainsManagementDescriptor from './DomainsManagementDescriptor.json'
@@ -130,9 +130,9 @@ export default defineComponent({
     methods: {
         async loadAllDomains() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.domains = response.data
                 })
                 .finally(() => (this.loading = false))
@@ -146,7 +146,7 @@ export default defineComponent({
             })
         },
         async deleteDomain(domainId: number) {
-            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains/' + domainId).then(() => {
+            await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains/' + domainId).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')

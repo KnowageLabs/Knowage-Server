@@ -12,7 +12,7 @@
 				to="/datasource-management" />
 			<ITEM id="1003" label="menu.DataSetMan"
 				requiredFunctionality="DatasetManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=datasetManagement" />
+				to="/dataset-management" />
 
 		</GROUP_ITEM>
 		<GROUP_ITEM id="2000" label="menu.ProfileMenu"
@@ -56,7 +56,7 @@
 
 			<ITEM id="4001" label="menu.MetaModelsCatalogue"
 				requiredFunctionality="MetaModelsCatalogueManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=businessModelCatalogue" />
+				to="/business-model-catalogue" />
 			<ITEM id="4002" label="menu.MondrianCatalogue"
 				requiredFunctionality="ArtifactCatalogueManagement"
 				to="/mondrian-schemas-management" />
@@ -89,7 +89,7 @@
 			<ITEM id="4011" label="menu.FunctionsCatalog"
 				toBeLicensed="KnowagePA"
 				requiredFunctionality="FunctionsCatalogManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=functionsCatalog" />
+				to="/functions-catalog" />
 			<ITEM id="4012" label="menu.WidgetGalleryManagement"
 				toBeLicensed="KnowageSI"
 				requiredFunctionality="WidgetGalleryManagement"
@@ -101,10 +101,10 @@
 
 			<ITEM id="5001" label="menu.Scheduler"
 				requiredFunctionality="SchedulerManagement"
-				to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_SCHEDULER_ACTION_ANGULARJS&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" />
+				to="/scheduler" />
 			<ITEM id="5002" label="menu.SchedulerMonitor"
 				requiredFunctionality="SchedulerManagement"
-				to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_SCHEDULER_MONITOR_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" />
+				to="/schedulation-agenda" />
 			<ITEM id="5003" label="menu.HierarchiesEditor"
 				requiredFunctionality="HierarchiesManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=hierarchiesEditor" />
@@ -123,7 +123,7 @@
 			<ITEM id="5008" label="menu.modelCatalogResourceManagement"
 				to="/models-management" toBeLicensed="KnowagePA"/>
 			<ITEM id="5009" label="menu.resourceManagement" requiredFunctionality="ResourceManagement,ResourceManagementDev"
-				to="/resource-management" />
+				to="/resource-management" toBeLicensed="KnowageSI"/>
 		</GROUP_ITEM>
 
 		<GROUP_ITEM id="6000" label="menu.KpiModel"
@@ -270,7 +270,7 @@
 		<ITEM id="11006" label="menu.FunctionsCatalog"
 			requiredFunctionality="FunctionsCatalogUsage"
 			iconCls="fa fa-cubes"
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=functionsCatalog" />
+			to="/functions-catalog" />
 	
 		<ITEM id="11007" label="menu.glossary.technical"
 			requiredFunctionality="ManageGlossaryTechnical"

@@ -53,6 +53,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.geotools.data.DataSourceException;
+import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -657,12 +658,11 @@ public class DataSetResource extends AbstractDataSetResource {
 
 	@GET
 	@Path("/preview")
-	public void openPreview() {
+	public View openPreview() {
 		logger.debug("IN");
 		try {
 			response.setContentType(MediaType.TEXT_HTML);
-			request.getRequestDispatcher("/WEB-INF/jsp/commons/preview.jsp").forward(request, response);
-			response.flushBuffer();
+			return new View("/WEB-INF/jsp/commons/preview.jsp");
 		} catch (Exception e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} finally {
@@ -1092,7 +1092,7 @@ public class DataSetResource extends AbstractDataSetResource {
 				} else {
 					parameterAsMap.put("defaultValues", new ArrayList<>());
 				}
-				parameterAsMap.put("defaultValuesMeta", objParameter.getLovColumnsNames());
+				parameterAsMap.put("defaultValuesMeta", objParameter.getLovVisibleColumnsNames());
 				parameterAsMap.put(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA, objParameter.getLovValueColumnName());
 				parameterAsMap.put(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA, objParameter.getLovDescriptionColumnName());
 

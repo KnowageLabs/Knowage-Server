@@ -14,7 +14,7 @@
                     <span>{{ $t('managers.rolesManagement.detail.title') }}</span>
                 </template>
 
-                <RoleDetailTab :selectedRole="selectedRole" @fieldChanged="onFieldChange" @roleTypeChanged="onRoleTypeChange" />
+                <RoleDetailTab :selectedRole="selectedRole" :publicRole="publicRole" @fieldChanged="onFieldChange" @roleTypeChanged="onRoleTypeChange" />
             </TabPanel>
 
             <TabPanel>
@@ -54,7 +54,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iCategory, iRole } from './RolesManagement'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import rolesManagementTabViewDescriptor from './RolesManagementTabViewDescriptor.json'
@@ -71,12 +71,7 @@ export default defineComponent({
         TabPanel,
         RoleAuthorizationsTab
     },
-    props: {
-        id: {
-            type: String,
-            required: false
-        }
-    },
+    props: { id: { type: String, required: false }, publicRole: { type: Object, required: false } },
     emits: ['touched', 'closed', 'inserted'],
     data() {
         return {
@@ -130,7 +125,7 @@ export default defineComponent({
                 url += this.selectedRole.id
             }
 
-            await axios.post(url, this.selectedRole).then(() => {
+            await this.$http.post(url, this.selectedRole).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t(this.rolesManagementTabViewDescriptor.operation[this.operation].toastTitle),
                     msg: this.$t(this.rolesManagementTabViewDescriptor.operation.success)
@@ -140,16 +135,16 @@ export default defineComponent({
             })
         },
         loadCategories(id: string) {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles/categories/${id}`).finally(() => (this.loading = false))
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles/categories/${id}`).finally(() => (this.loading = false))
         },
         loadDomains(type: string) {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`).finally(() => (this.loading = false))
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`).finally(() => (this.loading = false))
         },
         async loadAuthorizations() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'authorizations')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.authorizationList = response.data.root
                     this.rolesManagementTabViewDescriptor.authorizations.forEach((authorization) => {
                         authorization.visible = this.authorizationList.findIndex((auth) => authorization.dbname === auth.name) >= 0
@@ -164,7 +159,7 @@ export default defineComponent({
         },
         async loadAllDomainsData() {
             this.loading = true
-            await this.loadDomains('BM_CATEGORY').then((response) => {
+            await this.loadDomains('BM_CATEGORY').then((response: AxiosResponse<any>) => {
                 response.data.map((category: any) => {
                     this.businessModelList.push({
                         categoryId: category.VALUE_ID,
@@ -172,7 +167,7 @@ export default defineComponent({
                     } as iCategory)
                 })
             })
-            await this.loadDomains('CATEGORY_TYPE').then((response) => {
+            await this.loadDomains('CATEGORY_TYPE').then((response: AxiosResponse<any>) => {
                 response.data.map((category: any) => {
                     this.dataSetList.push({
                         categoryId: category.VALUE_ID,
@@ -180,7 +175,7 @@ export default defineComponent({
                     } as iCategory)
                 })
             })
-            await this.loadDomains('KPI_KPI_CATEGORY').then((response) => {
+            await this.loadDomains('KPI_KPI_CATEGORY').then((response: AxiosResponse<any>) => {
                 response.data.map((category: any) => {
                     this.kpiCategoriesList.push({
                         categoryId: category.VALUE_ID,
@@ -193,9 +188,9 @@ export default defineComponent({
         async loadSelectedRole() {
             this.loading = true
             if (this.id) {
-                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles/${this.id}`).then((response) => (this.selectedRole = response.data))
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles/${this.id}`).then((response: AxiosResponse<any>) => (this.selectedRole = response.data))
 
-                await this.loadCategories(this.id).then((response) => {
+                await this.loadCategories(this.id).then((response: AxiosResponse<any>) => {
                     this.clearSelectedLists()
 
                     response.data.map((category: any) => {

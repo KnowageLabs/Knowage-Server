@@ -1,0 +1,145 @@
+{
+    "metaSourceResource": [
+        {
+            "location": null,
+            "name": "foodmart",
+            "role": null,
+            "sourceCatalogue": null,
+            "sourceId": 2,
+            "sourceSchema": "FOODMART",
+            "type": "database",
+            "url": "url"
+        },
+        {
+            "location": null,
+            "name": "foodmart_demo",
+            "role": null,
+            "sourceCatalogue": "foodmart_demo",
+            "sourceId": 5,
+            "sourceSchema": null,
+            "type": "database",
+            "url": "url"
+        }
+    ],
+    "newDocument": {
+        "engine": "",
+        "functionalities": [],
+        "label": "",
+        "lockedByUser": false,
+        "name": "",
+        "refreshSeconds": 0,
+        "stateCode": "",
+        "typeCode": "",
+        "visible": true
+    },
+    "savedTables": [
+        {
+            "deleted": false,
+            "name": "warehouse",
+            "tableId": 212
+        },
+        {
+            "deleted": false,
+            "name": "employee_closure",
+            "tableId": 214
+        },
+        {
+            "deleted": false,
+            "name": "TEST_02",
+            "tableId": 52
+        },
+        {
+            "deleted": false,
+            "name": "foodmap",
+            "tableId": 213
+        },
+        {
+            "deleted": false,
+            "name": "SALARY",
+            "tableId": 51
+        },
+        {
+            "deleted": false,
+            "name": "sales_segment_ly",
+            "tableId": 215
+        },
+        {
+            "deleted": false,
+            "name": "PROMOTION",
+            "tableId": 50
+        }
+    ],
+    "states": [
+        {
+            "domainCode": "STATE",
+            "domainName": "Object state",
+            "translatedValueDescription": "Document temporanlly not in use",
+            "translatedValueName": "Suspended",
+            "valueCd": "SUSP",
+            "valueDescription": "sbidomains.ds.susp",
+            "valueId": 36,
+            "valueName": "sbidomains.nm.susp"
+        },
+        {
+            "domainCode": "STATE",
+            "domainName": "Object state",
+            "translatedValueDescription": "Document in development phase",
+            "translatedValueName": "Development",
+            "valueCd": "DEV",
+            "valueDescription": "sbidomains.ds.dev",
+            "valueId": 40,
+            "valueName": "sbidomains.nm.dev"
+        },
+        {
+            "domainCode": "STATE",
+            "domainName": "Object state",
+            "translatedValueDescription": "Document in testing phase",
+            "translatedValueName": "Test",
+            "valueCd": "TEST",
+            "valueDescription": "sbidomains.ds.test",
+            "valueId": 41,
+            "valueName": "sbidomains.nm.test"
+        },
+        {
+            "domainCode": "STATE",
+            "domainName": "Object state",
+            "translatedValueDescription": "Document released for end users use",
+            "translatedValueName": "Released",
+            "valueCd": "REL",
+            "valueDescription": "sbidomains.ds.rel",
+            "valueId": 42,
+            "valueName": "sbidomains.nm.rel"
+        }
+    ],
+    "style": {
+        "absoluteScroll": {
+            "height": "100%",
+            "left": 0,
+            "overflow-x": "hidden",
+            "overflow-y": "auto",
+            "position": "absolute",
+            "top": 0,
+            "width": "100%"
+        },
+        "driverDetailsContainer": {
+            "display": "flex",
+            "flex": 3,
+            "flex-direction": "column"
+        },
+        "flex": {
+            "display": "flex",
+            "flex": 1,
+            "flex-direction": "column"
+        },
+        "previewImage": "175",
+        "spinnerStyle": {
+            "z-index": "9999"
+        },
+        "tableHeader": {
+            "width": "3em"
+        },
+        "width90": {
+            "width": "98%"
+        }
+    }
+}
