@@ -148,6 +148,7 @@ import { formatDate } from '@/helpers/commons/localeHelper'
 import { iDocument, iParameter, iAdmissibleValues } from './KnParameterSidebar'
 import { setVisualDependency, updateVisualDependency } from './KnParameterSidebarVisualDependency'
 import { setDataDependency, updateDataDependency } from './KnParameterSidebarDataDependency'
+import { setLovsDependency, updateLovDependency } from './KnParameterSidebarLovsDependency'
 import Calendar from 'primevue/calendar'
 import Chip from 'primevue/chip'
 import Checkbox from 'primevue/checkbox'
@@ -159,6 +160,7 @@ import KnParameterSavedParametersDialog from './dialogs/KnParameterSavedParamete
 import Menu from 'primevue/menu'
 import MultiSelect from 'primevue/multiselect'
 import RadioButton from 'primevue/radiobutton'
+
 export default defineComponent({
     name: 'kn-parameter-sidebar',
     components: { Calendar, Chip, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton },
@@ -236,6 +238,7 @@ export default defineComponent({
             })
             this.parameters?.filterStatus.forEach((el: any) => setVisualDependency(this.parameters, el))
             this.parameters?.filterStatus.forEach((el: any) => setDataDependency(this.parameters, el))
+            this.parameters?.filterStatus.forEach((el: any) => setLovsDependency(this.parameters, el))
             this.parameters?.filterStatus.forEach((el: any) => this.updateVisualDependency(el))
         },
         resetParameterValue(parameter: any) {
@@ -346,7 +349,7 @@ export default defineComponent({
                 if (!parameter.multivalue) {
                     parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
                 } else {
-                    parameters.push({ label: parameter.label, value: parameter.parameterValue, description: parameter.parameterDescription ?? '' })
+                    parameters.push({ label: parameter.label, value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription ?? '' })
                 }
             })
             return parameters
@@ -384,6 +387,7 @@ export default defineComponent({
         updateDependency(parameter: iParameter) {
             this.updateVisualDependency(parameter)
             updateDataDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http)
+            updateLovDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http)
         },
         openSaveParameterDialog() {
             this.parameterSaveDialogVisible = true
