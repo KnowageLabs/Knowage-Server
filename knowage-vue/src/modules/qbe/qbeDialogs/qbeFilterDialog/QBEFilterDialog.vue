@@ -147,7 +147,7 @@ export default defineComponent({
             }
             if (field) {
                 this.filters.push(filter)
-                this.nextFilterIndex++
+                this.nextFilterIndex = crypto.randomBytes(16).toString('hex')
             }
             this.push(filter)
         },

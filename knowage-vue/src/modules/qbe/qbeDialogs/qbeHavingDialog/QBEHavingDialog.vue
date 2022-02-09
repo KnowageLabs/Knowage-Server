@@ -104,7 +104,7 @@ export default defineComponent({
                     color: '',
                     entity: field.entity
                 })
-                this.nextHavingIndex++
+                this.nextHavingIndex = crypto.randomBytes(16).toString('hex')
             }
         },
         removeHaving(having: iFilter) {
