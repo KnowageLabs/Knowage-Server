@@ -1,6 +1,4 @@
 <template>
-    <!-- <h4>QBE Group</h4> -->
-    <!-- {{ node }} -->
     <div class="qbe-filter-group">
         <div class="filter-group-container" draggable="true" @dragstart="onDragStart" :class="{ 'qbe-group-selected': selected }" @click.stop="select(node)">
             <span v-show="dropzoneTopVisible" class="qbe-group-tooltip qbe-group-tooltip-top">{{ $t('qbe.advancedFilters.replaceTooltip') }}</span>
@@ -51,17 +49,13 @@ export default defineComponent({
     methods: {
         loadNode() {
             this.node = this.propNode as any
-            console.log('QBEGroup loaded node: ', this.node)
         },
         onDragStart(event: any) {
             event.dataTransfer.setData('text/plain', JSON.stringify(this.node))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
-
-            console.log('QBEFilter - onDragStart() - event dataTransfer: ', event.dataTransfer)
         },
         select(node) {
-            console.log('GROUP CLICKED!')
             addOrRemove(node)
             this.selected = this.isSelected()
             this.$emit('selectedChanged')
@@ -73,18 +67,11 @@ export default defineComponent({
             return isSelectable(this.node)
         },
         onDropComplete(event) {
-            console.log('QBEFilter - onDropComplete() - EVENT: ', event)
             this.hideDropzone('top')
             const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
-            console.log('TEEEEEEEEEST: ', eventData)
-            console.log('TEEEEEEEEEST: ', deepEqual(eventData, this.node))
             if (!deepEqual(eventData, this.node)) {
-                console.log('EVENT DATA: ', eventData)
-                console.log('SELECTED NODE: ', this.node)
-                console.log('FILTER TREE: ', getFilterTree())
                 swap(getFilterTree(), eventData, this.node)
                 this.$emit('treeUpdated')
-                console.log('TREE AFTER SWAP: ', getFilterTree())
             }
         },
         onDropMove(event) {
@@ -94,7 +81,6 @@ export default defineComponent({
                 if (!deepEqual(eventData, this.node)) {
                     move(getFilterTree(), eventData, this.node)
                     this.$emit('treeUpdated')
-                    console.log('TREE AFTER MOVE: ', getFilterTree())
                 }
             }
         },
@@ -105,7 +91,6 @@ export default defineComponent({
                 this.dropzoneBottomVisible = true
             }
             const id = `group-${position}-${this.groupId}` as string
-            console.log('THIS REFS:', this.$refs)
             ;(this.$refs as any)[id].classList.add('filter-dropzone-active')
         },
         hideDropzone(position: string) {
@@ -115,7 +100,6 @@ export default defineComponent({
                 this.dropzoneBottomVisible = false
             }
             const id = `group-${position}-${this.groupId}` as string
-            console.log('THIS REFS:', this.$refs)
             ;(this.$refs as any)[id].classList.remove('filter-dropzone-active')
         }
     }

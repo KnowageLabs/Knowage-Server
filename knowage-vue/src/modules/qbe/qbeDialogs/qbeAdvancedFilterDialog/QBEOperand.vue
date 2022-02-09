@@ -1,7 +1,5 @@
 <template>
     <div>
-        <!-- <h4>QBE Operand</h4> -->
-        <!-- {{ node }} -->
         <QBEOperator v-if="node?.type !== 'NODE_CONST' && node?.value !== 'PAR'" :propNode="node" @selectedChanged="$emit('selectedChanged')" @treeUpdated="$emit('treeUpdated')"></QBEOperator>
         <QBEGroup v-else-if="node?.value === 'PAR'" :propNode="node" @selectedChanged="$emit('selectedChanged')" @treeUpdated="$emit('treeUpdated')"></QBEGroup>
         <QBEFilter v-else-if="node?.type === 'NODE_CONST'" :propNode="node" @selectedChanged="$emit('selectedChanged')" @treeUpdated="$emit('treeUpdated')"></QBEFilter>
@@ -39,7 +37,6 @@ export default defineComponent({
     methods: {
         loadNode() {
             this.node = this.propNode as any
-            console.log('QBEOperand Loaded node: ', this.node)
         }
     }
 })

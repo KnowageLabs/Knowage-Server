@@ -122,12 +122,10 @@ export default defineComponent({
             this.$emit('openHavingDialog', { field: field, query: this.selectedQuery })
         },
         onDrop(event) {
-            var data = JSON.parse(event.dataTransfer.getData('text/plain'))
-            console.log('EVENT DATA TRANSFER:  ', event.dataTransfer)
+            const data = JSON.parse(event.dataTransfer.getData('text/plain'))
             this.$emit('entityDropped', data)
         },
         onGroupingChanged(field: iField) {
-            console.log('TEMP: ', field)
             field['funct'] = 'NONE'
             this.$emit('groupingChanged', field)
         },

@@ -1,6 +1,4 @@
 <template>
-    {{ filter }}
-
     <div v-if="filter">
         <div class="p-grid p-m-2">
             <div class="p-col-4">
@@ -32,7 +30,6 @@
             <div class="p-col-4">
                 <label class="kn-material-input-label" v-show="!(filter.rightType === 'manual' && ['BETWEEN', 'NOT BETWEEN', 'IN', 'NOT IN'].includes(filter.operator))"> {{ $t('qbe.filters.target') }} </label>
                 <div class="p-d-flex p-flex-row p-ai-center">
-                    <!-- MANUAL BETWEEN-->
                     <div v-if="filter.rightType === 'manual' && ['BETWEEN', 'NOT BETWEEN'].includes(filter.operator) && field.dataType !== 'java.sql.Timestamp' && field.dataType !== 'java.sql.Date'" class="p-d-flex p-flex-row p-ai-center p-mt-3">
                         <div class="p-float-label">
                             <InputText class="kn-material-input" v-model="firstOperand" @input="onManualBetweenChange" />
@@ -44,34 +41,30 @@
                             <label class="kn-material-input-label"> {{ $t('qbe.filters.highLimit') }} </label>
                         </div>
                     </div>
-                    <!-- MANUAL IN-->
+
                     <div v-else-if="filter.rightType === 'manual' && ['IN', 'NOT IN'].includes(filter.operator) && field.dataType !== 'java.sql.Timestamp' && field.dataType !== 'java.sql.Date'" class="kn-width-full">
                         <label class="kn-material-input-label"> {{ $t('qbe.filters.enterValue') }} </label>
                         <Chips v-model="multiManualValues" @add="onManualMultivalueChanged" @remove="onManualMultivalueChanged" />
                     </div>
-                    <!-- MANUAL REGULAR-->
+
                     <InputText v-else-if="filter.rightType === 'manual' && field.dataType !== 'java.sql.Timestamp' && field.dataType !== 'java.sql.Date'" class="kn-material-input" v-model="filter.rightOperandDescription" @input="onManualValueChange" />
 
-                    <!-- TIMESTAMP -->
                     <div v-else-if="filter.rightType === 'manual' && (field.dataType === 'java.sql.Timestamp' || field.dataType === 'java.sql.Date')">
-                        <!-- TIMESTAMP REGULAR-->
                         <div class="kn-flex p-d-flex p-flex-row p-m-1">
                             <Calendar class="kn-flex p-mr-2" v-model="targetDate" @input="onManualTimestampChange" @dateSelect="onManualTimestampChange"></Calendar>
                             <Calendar v-if="field.dataType === 'java.sql.Timestamp'" class="qbe-filter-time-input" v-model="targetDate" :manualInput="true" :timeOnly="true" hourFormat="24" @input="onManualTimestampChange" @dateSelect="onManualTimestampChange" />
                         </div>
-                        <!-- TIMESTAMP BETWEEN-->
+
                         <div v-if="['BETWEEN', 'NOT BETWEEN'].includes(filter.operator)" class="kn-flex p-d-flex p-flex-row p-m-1">
                             <Calendar class="kn-flex p-mr-2" v-model="targetEndDate" @input="onManualTimestampChange" @dateSelect="onManualTimestampEndDateChange"></Calendar>
                             <Calendar v-if="field.dataType === 'java.sql.Timestamp'" class="qbe-filter-time-input" v-model="targetEndDate" :manualInput="true" :timeOnly="true" hourFormat="24" @input="onManualTimestampEndDateChange" @dateSelect="onManualTimestampChange" />
                         </div>
                     </div>
 
-                    <!-- VALUE OF FIELD-->
                     <div class="qbe-filter-chip-container p-d-flex p-flex-row p-ai-center p-flex-wrap kn-flex" v-else-if="filter.rightType === 'valueOfField'">
                         <Chip v-for="(selectedValue, index) in selectedValues" :key="index" class="p-mr-1">{{ selectedValue }}</Chip>
                     </div>
 
-                    <!-- ANOTHER ENTITY -->
                     <CascadeSelect
                         v-if="filter.rightType === 'anotherEntity'"
                         class="kn-flex"
@@ -84,10 +77,8 @@
                         @change="onEntityTypeChanged"
                     ></CascadeSelect>
 
-                    <!-- SUBQUERY -->
                     <Dropdown class="kn-material-input kn-flex" v-if="filter.rightType === 'subquery'" v-model="filter.rightOperandDescription" :options="subqueries" optionValue="name" optionLabel="name" @change="onSubqeryTargetChange" />
 
-                    <!-- PARAMETER -->
                     <Dropdown class="kn-material-input kn-flex" v-if="filter.rightType === 'parameter'" v-model="filter.rightOperandDescription" :options="parameters" optionValue="name" optionLabel="name" @change="onParameterTargetChange" />
 
                     <i v-if="filter.rightType === 'valueOfField'" class="fa fa-check kn-cursor-pointer p-ml-2" @click="loadFilterValues"></i>
@@ -178,7 +169,6 @@ export default defineComponent({
         },
         loadEntities() {
             this.entities = this.propEntities ? [...this.propEntities] : []
-            // console.log(' >>> LOADED ENTITIES: ', this.entities)
         },
         loadParameters() {
             this.parameters = this.propParameters as any[]
@@ -296,7 +286,6 @@ export default defineComponent({
             this.loading = true
             await this.$http.get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_VALUES_FOR_QBE_FILTER_LOOKUP_ACTION&ENTITY_ID=${this.filter?.leftOperandValue}&SBI_EXECUTION_ID=${this.id}`).then((response: AxiosResponse<any>) => (this.filterValuesData = response.data))
             this.loading = false
-            // console.log('LOADED FILTER VALUES DATA: ', this.filterValuesData)
         },
         setSelectedValues(selected: string[]) {
             this.selectedValues = selected
@@ -308,10 +297,7 @@ export default defineComponent({
         },
         onEntityTypeChanged() {
             if (this.filter) {
-                console.log('FILTER CHANGED: ', this.filter)
                 const selectedField = this.findSelectedField(this.filter.rightOperandDescription) as any
-
-                console.log('SELECETED FIELD: ', selectedField)
 
                 this.filter.rightOperandValue = [selectedField?.id]
                 this.filter.rightOperandLongDescription = this.filter.rightOperandDescription
@@ -333,11 +319,9 @@ export default defineComponent({
             return tempField
         },
         onSubqeryTargetChange() {
-            // console.log(' >>> FILTER SUB ID: ', this.filter?.rightOperandDescription)
             if (!this.filter || !this.subqueries) return
 
             const index = this.subqueries.findIndex((subquery: any) => subquery.name === this.filter?.rightOperandDescription)
-            // console.log('INDEX: ', index)
             if (index !== -1) {
                 const subquery = this.subqueries[index] as any
                 this.filter.rightOperandValue = [subquery.id]
@@ -345,7 +329,6 @@ export default defineComponent({
             }
         },
         onManualTimestampChange() {
-            console.log('TIME CHANGED!: ', this.targetDate)
             const format = this.field.dataType === 'java.sql.Date' ? 'DD/MM/YYYY' : 'DD/MM/YYYY hh:mm'
             if (this.filter) {
                 this.filter.rightOperandDescription = this.targetDate instanceof Date ? moment(this.targetDate).format(format) : ''
@@ -353,7 +336,6 @@ export default defineComponent({
             }
         },
         onManualTimestampEndDateChange() {
-            console.log('TIME CHANGED!: ', this.targetEndDate)
             const format = this.field.dataType === 'java.sql.Date' ? 'DD/MM/YYYY' : 'DD/MM/YYYY hh:mm'
             if (this.filter) {
                 this.filter.rightOperandValue[1] = this.targetDate instanceof Date ? moment(this.targetEndDate).format(format) : ''

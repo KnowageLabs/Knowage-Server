@@ -57,7 +57,6 @@ export default defineComponent({
     methods: {
         loadTemporalFilters() {
             this.filters = this.temporalFilters
-            console.log('LOADED TEMPORAL FILTERS: ', this.filters)
         },
         closeDialog() {
             this.$emit('close')

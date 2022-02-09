@@ -21,7 +21,6 @@ import QBEFilterDetail from './QBEFilterDetail.vue'
 
 const crypto = require('crypto')
 const deepEqual = require('deep-equal')
-const selectedOperandService = require('./selectedOperandService')
 
 export default defineComponent({
     name: 'qbe-filter',
@@ -51,48 +50,37 @@ export default defineComponent({
     methods: {
         loadNode() {
             this.node = this.propNode as any
-            console.log('QBEFilter Loaded node: ', this.node)
         },
         onDragStart(event: any) {
             event.dataTransfer.setData('text/plain', JSON.stringify(this.node))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
-
-            console.log('QBEFilter - onDragStart() - event dataTransfer: ', event.dataTransfer)
         },
         select(node) {
             addOrRemove(node)
-            console.log('SELECTED service: ', selectedOperandService)
-            console.log('SELECTED: ', selectedOperandService.getSelected())
             this.selected = this.isSelected()
             this.$emit('selectedChanged')
         },
         isSelected() {
-            console.log('IS SELECTED: ', contains(this.node))
             return contains(this.node)
         },
         isSelectable() {
             return isSelectable(this.node)
         },
         onDropComplete(event) {
-            console.log(' ccc - ON DROP COMPLETE CALLLED: ')
             this.hideDropzone('left')
             const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
-            console.log('QBEFilter - onDropComplete() - EVENT DATA: ', eventData)
-            console.log('TEEEEEEEEEST: ', eventData)
             if (!deepEqual(eventData, this.node)) {
                 swap(getFilterTree(), eventData, this.node)
                 this.$emit('treeUpdated')
             }
         },
         onDropMove(event) {
-            console.log(' ccc - ON DROP MOVE CALLLED: ')
             this.hideDropzone('right')
             const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
             if (isMovable(eventData)) {
                 if (!deepEqual(eventData, this.node)) {
                     move(getFilterTree(), eventData, this.node)
-                    console.log(' ccc - GOT HERE!')
                     this.$emit('treeUpdated')
                 }
             }
@@ -104,7 +92,6 @@ export default defineComponent({
                 this.dropzoneRightVisible = true
             }
             const id = `filter-${position}-${this.filterId}` as string
-            console.log('THIS REFS:', this.$refs)
             ;(this.$refs as any)[id].classList.add('filter-dropzone-active')
         },
         hideDropzone(position: string) {
@@ -114,7 +101,6 @@ export default defineComponent({
                 this.dropzoneRightVisible = false
             }
             const id = `filter-${position}-${this.filterId}` as string
-            console.log('THIS REFS:', this.$refs)
             ;(this.$refs as any)[id].classList.remove('filter-dropzone-active')
         }
     }

@@ -13,10 +13,6 @@
             <Button class="kn-button kn-button--primary qbe-advanced-filter-button p-m-2" :disabled="!singleGroupSelected" @click="ungroup"> {{ $t('qbe.advancedFilters.ungroup') }}</Button>
         </div>
 
-        {{ sel() }}
-        <hr />
-        {{ root }}
-
         <QBEOperator v-if="expression" :propNode="root" @selectedChanged="onSelectedChanged" @treeUpdated="onTreeUpdated"></QBEOperator>
 
         <template #footer>
@@ -72,7 +68,6 @@ export default defineComponent({
     },
     methods: {
         loadData() {
-            console.log('THIS QUERY: ', this.query?.expression)
             if (this.query) {
                 this.expression = this.query.expression ? deepcopy(this.query?.expression) : {}
                 this.filters = this.query.filters ? [...this.query.filters] : []
@@ -80,34 +75,22 @@ export default defineComponent({
 
             treeService.setFilterTree(deepcopy(this.expression))
             this.root = treeService.getFilterTree()
-            console.log('LOADED FILTER TREE: ', treeService.getFilterTree())
-            console.log('QBEAdvancedFItlerDialog - loadData() - Loaded expression: ', this.expression)
-            console.log('QBEAdvancedFItlerDialog - loadData() - Loaded filters: ', this.filters)
-
-            console.log('QBEAdvancedFItlerDialog - loadData() - getSelectedCount(): ', this.getSelectedCount())
         },
         onSelectedChanged() {
-            console.log('ON SELECTEEEEEEEEEEEEEEEED CHANGEEEEEED!')
-            console.log('GET SELECTED COUNT: ', this.getSelectedCount())
-            console.log('IS SINGLE GROUP SELECTED: ', this.isSingleGroupSelected())
             this.selectedCount = this.getSelectedCount()
             this.singleGroupSelected = this.isSingleGroupSelected()
         },
         group() {
-            console.log('GROUP CALLED!')
             advancedFilterservice.group(treeService.getFilterTree(), selectedOperandService.getSelected())
             selectedOperandService.unSelectAll()
-            console.log('NEW FILTER TREE!', treeService.getFilterTree())
             this.root = treeService.getFilterTree()
         },
         ungroup() {
             advancedFilterservice.ungroup(treeService.getFilterTree(), selectedOperandService.getSelected()[0])
-            console.log('NEW FILTER TREE!', treeService.getFilterTree())
             selectedOperandService.unSelectAll()
             this.root = treeService.getFilterTree()
         },
         onTreeUpdated() {
-            console.log(' ccc - TREE UPDATE CALLED')
             this.root = treeService.getFilterTree()
         },
         closeDialog() {

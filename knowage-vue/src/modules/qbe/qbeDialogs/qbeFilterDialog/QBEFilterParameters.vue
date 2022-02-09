@@ -52,7 +52,6 @@ export default defineComponent({
                 parameter.value = parameter.defaultValue
                 this.parameters.push(parameter)
             })
-            console.log('PARAMETERS LOADED INSIDE TABLE :', this.parameters)
         }
     }
 })

@@ -183,11 +183,11 @@ export default defineComponent({
             exportLimit: null as number | null,
             entities: {} as any,
             queryPreviewData: {} as iQueryResult,
-            selectedQuery: {} as any, //editQueryObj u njihovom appu
-            mainQuery: {} as any, //scope.query u njihovom appu
+            selectedQuery: {} as any,
+            mainQuery: {} as any,
             loading: false,
             showEntitiesLists: true,
-            smartView: true, // Don't know how it is set initialy
+            smartView: true,
             hiddenColumnsExist: false,
             filterDialogVisible: false,
             sqlDialogVisible: false,
@@ -257,7 +257,6 @@ export default defineComponent({
             }
 
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.dataset.label}`).then((response: AxiosResponse<any>) => {
-                // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Darko%20QBE%20Test`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
                 if (this.qbe && this.qbe.qbeJSONQuery) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
@@ -373,7 +372,7 @@ export default defineComponent({
                 })
             console.log('LOADED ID: ', this.qbeId)
             // HARDCODED ID
-            this.qbeId = 'f5ef5d63899511ecb56627a24f2aab3b'
+            this.qbeId = '0b99a68789a911ecb56627a24f2aab3b'
         },
         async loadCustomizedDatasetFunctions() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${this.qbe?.qbeDataSourceId}`).then((response: AxiosResponse<any>) => (this.customizedDatasetFunctions = response.data))
@@ -382,16 +381,14 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/EXPORT.LIMITATION`).then((response: AxiosResponse<any>) => (this.exportLimit = response.data))
         },
         async loadEntities() {
-            // HARDCODED SBI_EXECUTION_ID
             await this.$http
                 .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.qbeId}&datamartName=null`)
-                // .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.qbeId}&datamartName=null`)
                 .then((response: AxiosResponse<any>) => (this.entities = response.data))
                 .catch((error: any) => console.log('ERROR: ', error))
         },
         async executeQBEQuery() {
             this.loading = true
-            // HARDCODED a lot
+
             if (!this.qbe) return
 
             const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
@@ -469,7 +466,6 @@ export default defineComponent({
 
             this.removeDeletedFilters(filters, field, expression)
 
-            // this.selectedQuery.expression = this.createExpression()
             this.refresh(this.selectedQuery.filters, expression)
 
             if (this.selectedQuery.expression.childNodes?.length === 0) {
@@ -581,7 +577,6 @@ export default defineComponent({
                 this.executeQBEQuery()
             }
         },
-        // #region Havings
         onHavingsSave(havings: iFilter[], field: iField) {
             if (!this.qbe) return
 
@@ -614,13 +609,11 @@ export default defineComponent({
                 this.selectedQuery.havings = this.selectedQuery.havings.filter((having: any) => having.letOperandValue !== field.id)
             }
         },
-        // #endregion
-        // #region Advanced Filters
+
         showAdvancedFilters() {
             this.advancedFilterDialogVisible = true
         },
-        // #endregion
-        // #region Join Definitions
+
         showJoinDefinitions() {
             this.joinDefinitionDialogVisible = true
         },
@@ -630,7 +623,7 @@ export default defineComponent({
                 this.executeQBEQuery()
             }
         },
-        // #endregion
+
         deleteAllFilters() {
             if (this.qbe) {
                 this.qbe.qbeJSONQuery.catalogue.queries[0].filters = []
@@ -638,7 +631,7 @@ export default defineComponent({
                 if (this.smartView) this.executeQBEQuery()
             }
         },
-        //#region ===================== TODO: sve sto se tice ovoga mora da se uradi bolje ====================================================
+
         async showSQLQuery() {
             var item = {} as any
             item.catalogue = JSON.stringify(this.qbe?.qbeJSONQuery?.catalogue?.queries)
@@ -650,7 +643,6 @@ export default defineComponent({
             let conf = {} as any
             conf.headers = { 'Content-Type': 'application/x-www-form-urlencoded' } as any
             conf.transformRequest = function(obj) {
-                //ne znam sta radi ovo niti cemu sluzi, pitati voju
                 var str = [] as any
                 for (var p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
                 return str.join('&')
@@ -673,7 +665,6 @@ export default defineComponent({
             let conf = {} as any
             conf.headers = { 'Content-Type': 'application/x-www-form-urlencoded' } as any
             conf.transformRequest = function(obj) {
-                //ne znam sta radi ovo niti cemu sluzi, pitati voju
                 var str = [] as any
                 for (var p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
                 return str.join('&')
@@ -689,9 +680,6 @@ export default defineComponent({
                     this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error.errors[0].message })
                 })
         },
-        //#endregion ===============================================================================================
-
-        //#region ===================== Drag&Drop za entitete  ====================================================
         onDropComplete(field) {
             if (field.connector) return
             if (field.children) {
@@ -777,9 +765,6 @@ export default defineComponent({
         isInLineCalculatedField(field) {
             return field.attributes.type === 'inLineCalculatedField'
         },
-        // #endregion
-
-        //#region ===================== Subquery logic  ====================================================
         selectSubquery(subquery) {
             this.selectedQuery = subquery
             this.updateSmartView()
@@ -814,9 +799,6 @@ export default defineComponent({
             }
             return lastcount + 1
         },
-        // #endregion
-
-        // #region Sidebar and parameter
         async onExecute(qbeParameters: any[]) {
             if (this.qbe) {
                 this.qbe.pars = [...qbeParameters]
@@ -825,7 +807,6 @@ export default defineComponent({
                 this.parameterSidebarVisible = false
             }
         },
-        // #endregion
         async openPreviewDialog() {
             this.pagination.limit = 20
             await this.executeQBEQuery()

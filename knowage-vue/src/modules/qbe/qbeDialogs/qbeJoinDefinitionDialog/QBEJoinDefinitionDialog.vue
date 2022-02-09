@@ -120,9 +120,7 @@ export default defineComponent({
                 await this.$http
                     .post(`/knowageqbeengine/restful-services/qbequery/queryEntities/?SBI_EXECUTION_ID=${this.id}&currentQueryId=${this.query?.id}`, postData)
                     .then((response: AxiosResponse<any>) => (this.entityNames = response.data))
-                    .catch((error) => {
-                        console.log(error)
-                    })
+                    .catch(() => {})
             }
         },
         formatQbeMeta() {

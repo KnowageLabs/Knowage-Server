@@ -68,13 +68,6 @@ export default defineComponent({
             this.havings = this.havingDialogData.query.havings ? [...this.havingDialogData.query.havings] : []
             this.nextHavingIndex = crypto.randomBytes(16).toString('hex')
         },
-        // getHavingNextIndex() {
-        //     let maxIndex = 0
-        //     this.havings.forEach((having: iFilter) => {
-        //         if (having.filterInd > maxIndex) maxIndex = having.filterInd
-        //     })
-        //     return maxIndex + 1
-        // },
         addNewHaving() {
             const field = this.havingDialogData?.field
             if (field) {

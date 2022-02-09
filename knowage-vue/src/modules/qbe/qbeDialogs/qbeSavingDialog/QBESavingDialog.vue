@@ -82,7 +82,7 @@ export default defineComponent({
             this.getDomainByType('DS_SCOPE').then((response: AxiosResponse<any>) => (this.scopeTypes = response.data))
             this.getDomainByType('CATEGORY_TYPE').then((response: AxiosResponse<any>) => (this.categoryTypes = response.data))
         },
-        //#region TODO: Ove 2 metode su potrebne da bi se sacuvao scheduling, importovati dje god budemo cuvali dataset
+
         async saveDataset() {
             let dsToSave = { ...this.selectedDataset } as any
             let restRequestHeadersTemp = {}
@@ -109,19 +109,17 @@ export default defineComponent({
                 })
                 .then((response: AxiosResponse<any>) => {
                     this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
-                    // TODO: dodati sta se radi nakon save-a
                     this.selectedDataset.id ? this.$emit('updated') : this.$emit('created', response)
                     this.$emit('close')
                 })
                 .catch()
         },
         async manageDatasetFieldMetadata(fieldsColumns) {
-            //Temporary workaround because fieldsColumns is now an object with a new structure after changing DataSetJSONSerializer
             if (fieldsColumns.columns != undefined && fieldsColumns.columns != null) {
                 var columnsArray = new Array()
 
                 var columnsNames = new Array()
-                //create columns list
+
                 for (var i = 0; i < fieldsColumns.columns.length; i++) {
                     var element = fieldsColumns.columns[i]
                     columnsNames.push(element.column)
@@ -132,7 +130,7 @@ export default defineComponent({
                 for (i = 0; i < columnsNames.length; i++) {
                     var columnObject = { displayedName: '', name: '', fieldType: '', type: '' }
                     var currentColumnName = columnsNames[i]
-                    //this will remove the part before the double dot if the column is in the format ex: it.eng.spagobi.Customer:customerId
+
                     if (currentColumnName.indexOf(':') != -1) {
                         var arr = currentColumnName.split(':')
                         columnObject.displayedName = arr[1]
@@ -155,7 +153,6 @@ export default defineComponent({
                 }
 
                 return columnsArray
-                // end workaround ---------------------------------------------------
             }
         },
         removeDuplicates(array) {
@@ -209,7 +206,6 @@ export default defineComponent({
                 return stringValue
             }
         }
-        //#endregion ===============================================================================================
     }
 })
 </script>

@@ -69,8 +69,6 @@ export default defineComponent({
 
                 this.selectedValues = []
                 this.loadedSelectedValues?.forEach((el: any) => this.selectedValues.push({ column_1: el }))
-                console.log('loaded columns', this.columns)
-                console.log('loaded rows', this.rows)
             }
         },
         onSelect() {

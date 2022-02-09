@@ -38,8 +38,7 @@
             </template>
             <Column class="kn-truncated" v-for="col of columns" :field="col.dataIndex" :header="col.header" :key="col.field" :sortable="true">
                 <template #body="slotProps">
-                    <!-- {{ col.type === 'date' ? getFormattedDate(slotProps.data[col.dataIndex], col.dateFormat) : slotProps.data[col.dataIndex] }} -->
-                    {{ slotProps.data[col.dataIndex] }}
+                    {{ col.type === 'date' ? getFormattedDate(slotProps.data[col.dataIndex], col.dateFormat) : slotProps.data[col.dataIndex] }}
                 </template>
             </Column>
         </DataTable>

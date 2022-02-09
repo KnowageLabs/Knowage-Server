@@ -113,9 +113,6 @@ export default defineComponent({
     },
     created() {
         this.loadPagination()
-        // console.log('QUERY ++++++++++', this.query)
-        // console.log('PREVIEW DATA ++++++++++', this.previewData)
-        // console.log('PAGINATION ++++++++++', this.pagination)
     },
     methods: {
         showMenu(event, col) {

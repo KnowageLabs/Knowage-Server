@@ -2,12 +2,10 @@ const operatorUtilService = require('./operatorUtilService')
 const treeService = require('./treeService')
 const filterTreeFactoryService = require('./filterTreeFactoryService')
 const groupUtilService = require('./groupUtilService')
-// const deepEqual = require('deep-equal')
+
 const deepcopy = require('deepcopy');
 
 export function getSibilng(filterTree, operand) {
-    console.log("operandUtilService - getSibling() - filterTree ", filterTree, ', operand ', operand)
-
     const operator = getExpressionOperator(filterTree, operand)
 
     if (operatorUtilService.getLeftOperand(operator) === operand) {
@@ -18,14 +16,11 @@ export function getSibilng(filterTree, operand) {
 }
 
 export function getNextOperand(filterTree, operand) {
-    console.log("operandUtilService - getNextOperand() - filterTree ", filterTree, ', operand ', operand)
-
     let nextOperand;
     const operator = treeService.getParent(filterTree, operand)
 
     treeService.traverseDF(filterTree,
         function (node) {
-            // if (deepEqual(operatorUtilService.getOperator(filterTree, node), operator)) {
             if (operatorUtilService.getOperator(filterTree, node) === operator) {
                 nextOperand = node;
             }
@@ -35,8 +30,7 @@ export function getNextOperand(filterTree, operand) {
 }
 
 export function insertAfter(filterTree, operand, operator, beforeOperand) {
-    console.log("operandUtilService - insertAfter() - filterTree ", filterTree, ', operand ', operand, ', operator ', operator, ', beforeOperand ', beforeOperand)
-    var beforeOperandCopy = deepcopy(beforeOperand)
+    const beforeOperandCopy = deepcopy(beforeOperand)
     treeService.replace(
         filterTree,
         createInsertExpression(filterTree, deepcopy(operand), operator, beforeOperand),
@@ -48,7 +42,6 @@ export function insertAfter(filterTree, operand, operator, beforeOperand) {
 }
 
 export function createInsertExpression(filterTree, operand, operator, beforeOperand) {
-    console.log("operandUtilService - createInsertExpression() - filterTree ", filterTree, ', operand ', operand, ', operator ', operator, ', beforeOperand ', beforeOperand)
     return filterTreeFactoryService.expression(
         deepcopy(beforeOperand),
         operator,
@@ -58,7 +51,6 @@ export function createInsertExpression(filterTree, operand, operator, beforeOper
 
 export function getInsertExpressionRightOperator(filterTree,
     operand, beforeOperand) {
-    console.log("operandUtilService - getInsertExpressionRightOperator() - filterTree ", filterTree, ', operand ', operand, ', beforeOperand ', beforeOperand)
     if (!isInSimpleExpression(filterTree, beforeOperand)) {
         return subexpression(
             filterTree,
@@ -71,7 +63,6 @@ export function getInsertExpressionRightOperator(filterTree,
 }
 
 export function getInsertPosition(filterTree, beforeOperand) {
-    console.log("operandUtilService - getInsertPosition() - filterTree ", filterTree, ', beforeOperand ', beforeOperand)
     if (!isInSimpleExpression(filterTree, beforeOperand)) {
         return getExpressionOperator(filterTree, beforeOperand);
     }
@@ -79,7 +70,6 @@ export function getInsertPosition(filterTree, beforeOperand) {
 }
 
 export function subexpression(filterTree, operand, nextOperand) {
-    console.log("operandUtilService - subexpression() - filterTree ", filterTree, ', operand ', operand, ', nextOperand ', nextOperand)
     const leftOperand = operand;
     const tempOperator = filterTreeFactoryService.operator(operatorUtilService.getOperator(filterTree, nextOperand).value);
     let rightOperand = nextOperand;
@@ -90,7 +80,6 @@ export function subexpression(filterTree, operand, nextOperand) {
 }
 
 export function remove(filterTree, operand) {
-    console.log("operandUtilService - remove() - filterTree ", filterTree, ', operand ', operand)
     if (!getSibilng(filterTree, operand)) {
         treeService.removeNode(filterTree, operand)
         return;
@@ -111,25 +100,21 @@ export function remove(filterTree, operand) {
 
 
 export function getExpressionOperator(filterTree, operand) {
-    console.log("operandUtilService - getExpressionOperator() - filterTree ", filterTree, ', operand ', operand)
     return treeService.getParent(filterTree, operand)
 }
 
 export function swapOperands(filterTree, operand1, operand2) {
-    console.log("operandUtilService - swapOperands() - filterTree ", filterTree, ', operand1 ', operand1, ', operand2 ', operand2)
     treeService.swapNodes(operand1, operand2);
     operatorUtilService.swapOperators(filterTree, operand1, operand2);
 }
 
 export function isInSimpleExpression(filterTree, operand) {
-    console.log("operandUtilService - swapOperands() - filterTree ", filterTree, ', operand ', operand)
     return operatorUtilService.isOperatorFromSimple(
         operatorUtilService.getOperator(filterTree, operand),
         operand)
 }
 
 export function getFirstLevelOperands(filterTree) {
-    console.log("operandUtilService - getFirstLevelOperands() - filterTree ", filterTree)
     const operands = [] as any[];
     treeService.traverseDF(filterTree, function (node) {
         if (!groupUtilService.getGroup(filterTree, node) && !operatorUtilService.isOperator(node)) {
