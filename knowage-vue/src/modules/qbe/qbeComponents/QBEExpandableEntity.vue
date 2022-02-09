@@ -49,7 +49,6 @@ export default defineComponent({
         setupEntities() {
             let usedColorIndex = 0
             this.entities?.forEach((entity) => {
-                //set colors property
                 if (!this.colors[usedColorIndex]) usedColorIndex = 0
                 var color = this.colors[usedColorIndex]
                 usedColorIndex++
@@ -60,7 +59,6 @@ export default defineComponent({
                     })
                 }
 
-                //set expanded property used for displaying children
                 entity.expanded = false
             })
         },
@@ -86,7 +84,6 @@ export default defineComponent({
             }
         },
         onDragStart(event, entity) {
-            console.log('DRAG EVENT: ', event, 'DRAG ENTITY: ', entity)
             event.dataTransfer.setData('text', JSON.stringify(entity))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'

@@ -64,7 +64,6 @@ export default defineComponent({
             }
         },
         onDragStart(event, entity) {
-            console.log('DRAG EVENT: ', event, 'DRAG ENTITY: ', entity)
             event.dataTransfer.setData('text', JSON.stringify(entity))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
