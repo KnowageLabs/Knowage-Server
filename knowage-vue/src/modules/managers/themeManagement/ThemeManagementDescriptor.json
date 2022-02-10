@@ -89,15 +89,15 @@
                 "label": "common.delete"
             }
         ],
-        "defaultSortField": "name",
-        "filterFields": ["name"],
+        "defaultSortField": "themeName",
+        "filterFields": ["themeName"],
         "interaction": {
             "parameterLabel": "id",
             "parameterValue": "id",
             "type": "event"
         },
         "textField": false,
-        "titleField": "name"
+        "titleField": "themeName"
     },
     "list": {
         "buttons": {

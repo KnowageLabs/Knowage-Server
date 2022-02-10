@@ -20,12 +20,12 @@
         <div class="kn-list--column kn-page p-col-2 p-sm-2 p-md-2 p-p-0">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #start>
-                    {{ selectedTheme.name }}
+                    {{ selectedTheme.themeName }}
                 </template>
             </Toolbar>
             <div class="p-p-2 p-mt-2 p-d-flex p-ai-center">
                 <span class="p-float-label kn-flex">
-                    <InputText id="themeName" class="kn-material-input" type="text" v-model="selectedTheme.name" />
+                    <InputText id="themeName" class="kn-material-input" type="text" v-model="selectedTheme.themeName" />
                     <label for="themeName" class="kn-material-input-label"> Theme name </label>
                 </span>
                 <InputSwitch v-model="selectedTheme.active" v-tooltip="'active'"></InputSwitch>
@@ -57,78 +57,79 @@
 </template>
 
 <script lang="ts">
-import { AxiosResponse } from 'axios'
-import { defineComponent } from 'vue'
-import FabButton from '@/components/UI/KnFabButton.vue'
-import ThemeManagementDescriptor from '@/modules/managers/themeManagement/ThemeManagementDescriptor.json'
-import ThemeManagementExamples from '@/modules/managers/themeManagement/ThemeManagementExamples.vue'
-import themeHelper from '@/helpers/commons/themeHelper'
-import Divider from 'primevue/divider'
-import Fieldset from 'primevue/fieldset'
-import InputSwitch from 'primevue/inputswitch'
-import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
+    import { AxiosResponse } from 'axios'
+    import { defineComponent } from 'vue'
+    import FabButton from '@/components/UI/KnFabButton.vue'
+    import ThemeManagementDescriptor from '@/modules/managers/themeManagement/ThemeManagementDescriptor.json'
+    import ThemeManagementExamples from '@/modules/managers/themeManagement/ThemeManagementExamples.vue'
+    import themeHelper from '@/helpers/commons/themeHelper'
+    import Divider from 'primevue/divider'
+    import Fieldset from 'primevue/fieldset'
+    import InputSwitch from 'primevue/inputswitch'
+    import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 
-export default defineComponent({
-    name: 'theme-management',
-    components: { Divider, FabButton, Fieldset, InputSwitch, KnListBox, ThemeManagementExamples },
-    data() {
-        return {
-            descriptor: ThemeManagementDescriptor,
-            currentTheme: {},
-            selectedTheme: { config: {} } as any,
-            availableThemes: [
-                { name: 'default theme', active: true, config: { '--kn-color-primary': '#aaaaaa' } },
-                { name: 'default theme2', active: false, config: { '--kn-color-primary': 'red' } }
-            ] as any[]
-        }
-    },
-    async mounted() {
-        this.getCurrentThemeProperties()
-        await this.$http
-            .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement`)
-            .then((response: AxiosResponse<any>) => {
-                this.availableThemes = response.data.themes
-            })
-            .catch(() => {
-                this.overrideDefaultValues(this.availableThemes.filter((item) => item.active === true)[0])
-            })
-    },
-    methods: {
-        getCurrentThemeProperties() {
-            for (let k in ThemeManagementDescriptor.list) {
-                for (let property of ThemeManagementDescriptor.list[k].properties) {
-                    this.currentTheme[property.key] = getComputedStyle(document.documentElement)
-                        .getPropertyValue(property.key)
-                        .trim()
-                }
+    export default defineComponent({
+        name: 'theme-management',
+        components: { Divider, FabButton, Fieldset, InputSwitch, KnListBox, ThemeManagementExamples },
+        data() {
+            return {
+                descriptor: ThemeManagementDescriptor,
+                currentTheme: {},
+                selectedTheme: { config: {} } as any,
+                availableThemes: [
+                    { name: 'default theme', active: true, config: { '--kn-color-primary': '#aaaaaa' } },
+                    { name: 'default theme2', active: false, config: { '--kn-color-primary': 'red' } }
+                ] as any[]
             }
         },
-        overrideDefaultValues(newValues) {
-            this.selectedTheme.name = newValues.name
-            this.selectedTheme.active = newValues.active
-            this.selectedTheme.config = { ...this.currentTheme, ...newValues.config }
+        async mounted() {
+            this.getCurrentThemeProperties()
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement`)
+                .then((response: AxiosResponse<any>) => {
+                    this.availableThemes = response.data
+                    this.overrideDefaultValues(this.availableThemes.filter((item) => item.active === true)[0])
+                })
+                .catch(() => {
+                    this.overrideDefaultValues(this.availableThemes.filter((item) => item.active === true)[0])
+                })
         },
-        selectTheme(event) {
-            this.overrideDefaultValues(event.item)
-        },
-        setActiveTheme() {
-            this.$store.commit('setTheme', this.selectedTheme)
-            themeHelper.setTheme(this.selectedTheme)
+        methods: {
+            getCurrentThemeProperties() {
+                for (let k in ThemeManagementDescriptor.list) {
+                    for (let property of ThemeManagementDescriptor.list[k].properties) {
+                        this.currentTheme[property.key] = getComputedStyle(document.documentElement)
+                            .getPropertyValue(property.key)
+                            .trim()
+                    }
+                }
+            },
+            overrideDefaultValues(newValues) {
+                this.selectedTheme.themeName = newValues.themeName
+                this.selectedTheme.active = newValues.active
+                this.selectedTheme.config = { ...this.currentTheme, ...newValues.config }
+            },
+            selectTheme(event) {
+                this.overrideDefaultValues(event.item)
+            },
+            setActiveTheme() {
+                this.$store.commit('setTheme', this.selectedTheme)
+                themeHelper.setTheme(this.selectedTheme)
+            }
         }
-    }
-})
+    })
 </script>
 
 <style lang="scss">
-.kn-theme-management {
-    .p-fieldset-content {
-        padding: 0;
-    }
-    .p-float-label {
-        display: flex;
-        .kn-material-input {
-            flex: 1;
+    .kn-theme-management {
+        .p-fieldset-content {
+            padding: 0;
+        }
+        .p-float-label {
+            display: flex;
+            .kn-material-input {
+                flex: 1;
+            }
         }
     }
-}
 </style>
