@@ -625,6 +625,7 @@ export default defineComponent({
         onTestDialogClose() {
             this.testDialogVisible = false
             this.dependenciesReady = false
+
         }
     }
 })
