@@ -60,16 +60,16 @@
 </template>
 
 <script lang="ts">
-    import { AxiosResponse } from 'axios'
-    import { defineComponent } from 'vue'
-    import FabButton from '@/components/UI/KnFabButton.vue'
-    import ThemeManagementDescriptor from '@/modules/managers/themeManagement/ThemeManagementDescriptor.json'
-    import ThemeManagementExamples from '@/modules/managers/themeManagement/ThemeManagementExamples.vue'
-    import themeHelper from '@/helpers/commons/themeHelper'
-    import Divider from 'primevue/divider'
-    import Fieldset from 'primevue/fieldset'
-    import InputSwitch from 'primevue/inputswitch'
-    import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
+import { AxiosResponse } from 'axios'
+import { defineComponent } from 'vue'
+import FabButton from '@/components/UI/KnFabButton.vue'
+import ThemeManagementDescriptor from '@/modules/managers/themeManagement/ThemeManagementDescriptor.json'
+import ThemeManagementExamples from '@/modules/managers/themeManagement/ThemeManagementExamples.vue'
+import themeHelper from '@/helpers/commons/themeHelper'
+import Divider from 'primevue/divider'
+import Fieldset from 'primevue/fieldset'
+import InputSwitch from 'primevue/inputswitch'
+import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 
 export default defineComponent({
     name: 'theme-management',
@@ -135,19 +135,20 @@ export default defineComponent({
         updateModelToSend(key) {
             this.themeToSend.config[key] = this.selectedTheme.config[key]
         }
-    })
+    }
+})
 </script>
 
 <style lang="scss">
-    .kn-theme-management {
-        .p-fieldset-content {
-            padding: 0;
-        }
-        .p-float-label {
-            display: flex;
-            .kn-material-input {
-                flex: 1;
-            }
+.kn-theme-management {
+    .p-fieldset-content {
+        padding: 0;
+    }
+    .p-float-label {
+        display: flex;
+        .kn-material-input {
+            flex: 1;
         }
     }
+}
 </style>
