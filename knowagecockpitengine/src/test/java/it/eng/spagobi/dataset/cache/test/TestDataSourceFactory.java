@@ -37,22 +37,22 @@ public class TestDataSourceFactory {
 			if (isWritingDatasource) {
 				dataSource = createDataSource(TestConstants.MYSQL_LABEL_WRITING, TestConstants.MYSQL_URL_WRITING, TestConstants.MYSQL_USER_WRITING,
 						TestConstants.MYSQL_PWD_WRITING, TestConstants.MYSQL_DRIVER, TestConstants.MYSQL_DIALECT_CLASS, TestConstants.MYSQL_DIALECT_NAME, false,
-						true);
+						true, false);
 			} else {
 				dataSource = createDataSource(TestConstants.MYSQL_LABEL_READING, TestConstants.MYSQL_URL_READING, TestConstants.MYSQL_USER_READING,
 						TestConstants.MYSQL_PWD_READING, TestConstants.MYSQL_DRIVER, TestConstants.MYSQL_DIALECT_CLASS, TestConstants.MYSQL_DIALECT_NAME, true,
-						false);
+						false, false);
 			}
 			break;
 		case POSTGRES:
 			if (isWritingDatasource) {
 				dataSource = createDataSource(TestConstants.POSTGRES_LABEL_WRITING, TestConstants.POSTGRES_URL_WRITING, TestConstants.POSTGRES_USER_WRITING,
 						TestConstants.POSTGRES_PWD_WRITING, TestConstants.POSTGRES_DRIVER, TestConstants.POSTGRES_DIALECT_CLASS,
-						TestConstants.POSTGRES_DIALECT_NAME, false, true);
+						TestConstants.POSTGRES_DIALECT_NAME, false, true, false);
 			} else {
 				dataSource = createDataSource(TestConstants.POSTGRES_LABEL_READING, TestConstants.POSTGRES_URL_READING, TestConstants.POSTGRES_USER_READING,
 						TestConstants.POSTGRES_PWD_READING, TestConstants.POSTGRES_DRIVER, TestConstants.POSTGRES_DIALECT_CLASS,
-						TestConstants.POSTGRES_DIALECT_NAME, true, false);
+						TestConstants.POSTGRES_DIALECT_NAME, true, false, false);
 			}
 			break;
 
@@ -60,22 +60,22 @@ public class TestDataSourceFactory {
 			if (isWritingDatasource) {
 				dataSource = createDataSource(TestConstants.ORACLE_LABEL_WRITING, TestConstants.ORACLE_URL_WRITING, TestConstants.ORACLE_USER_WRITING,
 						TestConstants.ORACLE_PWD_WRITING, TestConstants.ORACLE_DRIVER, TestConstants.ORACLE_DIALECT_CLASS, TestConstants.ORACLE_DIALECT_NAME,
-						false, true);
+						false, true, false);
 			} else {
 				dataSource = createDataSource(TestConstants.ORACLE_LABEL_READING, TestConstants.ORACLE_URL_READING, TestConstants.ORACLE_USER_READING,
 						TestConstants.ORACLE_PWD_READING, TestConstants.ORACLE_DRIVER, TestConstants.ORACLE_DIALECT_CLASS, TestConstants.ORACLE_DIALECT_NAME,
-						true, false);
+						true, false, false);
 			}
 			break;
 		case SQLSERVER:
 			if (isWritingDatasource) {
 				dataSource = createDataSource(TestConstants.SQLSERVER_LABEL_WRITING, TestConstants.SQLSERVER_URL_WRITING, TestConstants.SQLSERVER_USER_WRITING,
 						TestConstants.SQLSERVER_PWD_WRITING, TestConstants.SQLSERVER_DRIVER, TestConstants.SQLSERVER_DIALECT_CLASS,
-						TestConstants.SQLSERVER_DIALECT_NAME, false, true);
+						TestConstants.SQLSERVER_DIALECT_NAME, false, true, false);
 			} else {
 				dataSource = createDataSource(TestConstants.SQLSERVER_LABEL_READING, TestConstants.SQLSERVER_URL_READING, TestConstants.SQLSERVER_USER_READING,
 						TestConstants.SQLSERVER_PWD_READING, TestConstants.SQLSERVER_DRIVER, TestConstants.SQLSERVER_DIALECT_CLASS,
-						TestConstants.SQLSERVER_DIALECT_NAME, true, false);
+						TestConstants.SQLSERVER_DIALECT_NAME, true, false, false);
 			}
 			break;
 		}
@@ -84,7 +84,7 @@ public class TestDataSourceFactory {
 	}
 
 	public static IDataSource createDataSource(String label, String url, String user, String password, String driver, String hibDialectClass,
-			String hibDialectName, boolean isReadOnly, boolean isWriteDefault) {
+			String hibDialectName, boolean isReadOnly, boolean isWriteDefault, boolean useForDataprep) {
 		IDataSource dataSource = DataSourceFactory.getDataSource();
 		Random rand = new Random();
 
@@ -102,6 +102,7 @@ public class TestDataSourceFactory {
 		dataSource.setHibDialectClass(hibDialectClass);
 		dataSource.setReadOnly(isReadOnly);
 		dataSource.setWriteDefault(isWriteDefault);
+		dataSource.setUseForDataprep(useForDataprep);
 
 		/*
 		 * //EXAMPLE for reference dataSourceFoodmart = new DataSource();

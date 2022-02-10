@@ -246,6 +246,24 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		return toReturn;
 	}
 
+	@Override
+	public IDataSource loadDataSourceUseForDataprep(Session aSession) throws EMFUserError {
+		logger.debug("IN");
+		IDataSource toReturn = null;
+		try {
+			SbiDataSource hibDataSource = loadSbiDataSourceUseForDataprep(aSession);
+			if (hibDataSource == null)
+				return null;
+			toReturn = toDataSource(hibDataSource);
+			logger.debug("Datasource write default found in session: " + toReturn);
+		} catch (HibernateException he) {
+			logger.error("Error while loading the data source with write default = true: check there are no more than one (incorrect situation)", he);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+
 	/**
 	 * Load all data sources.
 	 *
@@ -526,6 +544,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 			hibDataSource.setWriteDefault(aDataSource.checkIsWriteDefault());
 
+			hibDataSource.setUseForDataprep(aDataSource.checkUseForDataprep());
+
 			hibDataSource.setSchemaAttribute(aDataSource.getSchemaAttribute());
 			updateSbiCommonInfo4Update(hibDataSource);
 
@@ -569,8 +589,37 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		logger.debug("OUT");
 	}
 
+	private void disableOtherUseForDataprep(IDataSource aDataSource, SbiDataSource hibDataSource, Session aSession) {
+		// if writeDefault is going to be set to true than must be disabled in
+		// others
+		logger.debug("IN");
+		if (aDataSource.checkUseForDataprep() == true) {
+			logger.debug("searching for write default datasource to delete flag");
+			SbiDataSource hibModify = loadSbiDataSourceUseForDataprep(aSession);
+			if (hibModify != null && !hibModify.getLabel().equals(hibDataSource.getLabel())) {
+				logger.debug("previous write default data source was " + hibModify.getLabel());
+				hibModify.setUseForDataprep(false);
+				aSession.update(hibModify);
+
+				logger.debug("previous write default modified");
+			} else {
+				logger.debug("No previous write default datasource found");
+			}
+		}
+		logger.debug("OUT");
+	}
+
 	private SbiDataSource loadSbiDataSourceWriteDefault(Session aSession) {
 		Criterion labelCriterrion = Expression.eq("writeDefault", true);
+		Criteria criteria = aSession.createCriteria(SbiDataSource.class);
+		criteria.add(labelCriterrion);
+		SbiDataSource hibDataSource = (SbiDataSource) criteria.uniqueResult();
+		logger.debug("Hibernate datasource write default found in session: " + hibDataSource);
+		return hibDataSource;
+	}
+
+	private SbiDataSource loadSbiDataSourceUseForDataprep(Session aSession) {
+		Criterion labelCriterrion = Expression.eq("useForDataprep", true);
 		Criteria criteria = aSession.createCriteria(SbiDataSource.class);
 		criteria.add(labelCriterrion);
 		SbiDataSource hibDataSource = (SbiDataSource) criteria.uniqueResult();
@@ -613,7 +662,10 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 			disableOtherWriteDefault(aDataSource, hibDataSource, aSession);
 
+			disableOtherUseForDataprep(aDataSource, hibDataSource, aSession);
+
 			hibDataSource.setWriteDefault(aDataSource.checkIsWriteDefault());
+			hibDataSource.setUseForDataprep(aDataSource.checkUseForDataprep());
 
 			hibDataSource.getCommonInfo().setOrganization(organization);
 
@@ -735,6 +787,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			ds.setMultiSchema(hibDataSource.getMultiSchema());
 			ds.setReadOnly(hibDataSource.getReadOnly());
 			ds.setWriteDefault(hibDataSource.getWriteDefault());
+			ds.setUseForDataprep(hibDataSource.getUseForDataprep());
 
 			if (!ds.checkIsJndi()) {
 				if (jdbcAdvancedOptions != null) {

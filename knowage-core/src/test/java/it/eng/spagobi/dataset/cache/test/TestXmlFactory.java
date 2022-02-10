@@ -73,7 +73,7 @@ public class TestXmlFactory {
 			String hibDialectClass = jsonDataset.getString("hibDialectClass");
 			String hibDialectName = jsonDataset.getString("hibDialectName");
 			dataSourceList.add(
-					TestDataSourceFactory.createDataSource(label, url, user, password, driver, hibDialectClass, hibDialectName, isReadOnly, isWriteDefault));
+					TestDataSourceFactory.createDataSource(label, url, user, password, driver, hibDialectClass, hibDialectName, isReadOnly, isWriteDefault, false));
 		}
 
 		return dataSourceList;
@@ -103,7 +103,7 @@ public class TestXmlFactory {
 		String hibDialectClass = jsonDataset.getString("hibDialectClass");
 		String hibDialectName = jsonDataset.getString("hibDialectName");
 
-		return TestDataSourceFactory.createDataSource(label, url, user, password, driver, hibDialectClass, hibDialectName, isReadOnly, isWriteDefault);
+		return TestDataSourceFactory.createDataSource(label, url, user, password, driver, hibDialectClass, hibDialectName, isReadOnly, isWriteDefault, false);
 	}
 
 	public static SQLDBCacheConfiguration createCacheConfiguration(String xmlFileAbsolutePath, IDataSource dataSourceWriting) throws Exception {

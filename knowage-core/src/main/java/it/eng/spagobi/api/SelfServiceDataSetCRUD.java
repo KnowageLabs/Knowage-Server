@@ -88,7 +88,7 @@ import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.PreparedDataset;
+import it.eng.spagobi.tools.dataset.bo.PreparedDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.dataproxy.CkanDataProxy;
@@ -1359,7 +1359,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 				toReturn = this.getCkanDataSet(selfServiceDataSetDTO, savingDataset);
 			}
 		} else if (type.equals(DataSetConstants.PREPARED_DATASET)) {
-			toReturn = new PreparedDataset();
+			toReturn = new PreparedDataSet();
 		} else {
 			if (checkMaxResults) {
 				toReturn = this.getFileDataSet(selfServiceDataSetDTO, savingDataset, maxResults);

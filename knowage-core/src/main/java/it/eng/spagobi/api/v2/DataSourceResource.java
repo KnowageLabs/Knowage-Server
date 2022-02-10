@@ -204,6 +204,10 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 				oldDataSource.setWriteDefault(false);
 				dataSourceDAO.modifyDataSource(oldDataSource);
 			}
+			if (oldDataSource != null && dataSource.checkUseForDataprep() && oldDataSource.getDsId() != dataSource.getDsId()) {
+				oldDataSource.setUseForDataprep(false);
+				dataSourceDAO.modifyDataSource(oldDataSource);
+			}
 			dataSourceDAO.modifyDataSource(dataSource);
 			return DAOFactory.getDataSourceDAO().loadAllDataSources();
 		} catch (Exception e) {

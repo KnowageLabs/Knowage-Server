@@ -111,6 +111,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	private Boolean readOnly;
 	private Boolean writeDefault;
+	private Boolean useForDataprep;
 
 	// Advanced Options - JDBCPoolConfiguration
 	private JDBCDataSourcePoolConfiguration jdbcPoolConfiguration;
@@ -124,6 +125,10 @@ public class DataSource implements Serializable, IDataSource {
 
 	public Boolean getWriteDefault() {
 		return writeDefault;
+	}
+
+	public Boolean getUseForDataprep() {
+		return useForDataprep;
 	}
 
 	@Override
@@ -167,6 +172,8 @@ public class DataSource implements Serializable, IDataSource {
 		sbd.setSchemaAttribute(schemaAttribute);
 		sbd.setReadOnly(readOnly);
 		sbd.setWriteDefault(writeDefault);
+		sbd.setUseForDataprep(useForDataprep);
+
 		if (jdbcPoolConfiguration != null) {
 			sbd.setJdbcPoolConfiguration((String) new JDBCDataSourcePoolConfigurationJSONSerializer().serialize(jdbcPoolConfiguration));
 		}
@@ -523,10 +530,22 @@ public class DataSource implements Serializable, IDataSource {
 	}
 
 	@Override
+	public void setUseForDataprep(Boolean useForDataprep) {
+		this.useForDataprep = useForDataprep;
+	}
+
+	@Override
 	public Boolean checkIsReadOnly() {
 		if (readOnly == null)
 			readOnly = true;
 		return readOnly;
+	}
+
+	@Override
+	public Boolean checkUseForDataprep() {
+		if (useForDataprep == null)
+			useForDataprep = false;
+		return useForDataprep;
 	}
 
 	@Override
@@ -598,6 +617,7 @@ public class DataSource implements Serializable, IDataSource {
 		result = prime * result + ((urlConnection == null) ? 0 : urlConnection.hashCode());
 		result = prime * result + ((user == null) ? 0 : user.hashCode());
 		result = prime * result + ((writeDefault == null) ? 0 : writeDefault.hashCode());
+		result = prime * result + ((useForDataprep == null) ? 0 : useForDataprep.hashCode());
 		return result;
 	}
 

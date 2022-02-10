@@ -43,12 +43,14 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	private java.lang.Boolean writeDefault;
 
+	private java.lang.Boolean useForDataprep;
+
 	public SpagoBiDataSource() {
 	}
 
 	public SpagoBiDataSource(java.lang.String driver, java.lang.String hibDialectClass, int id, java.lang.String jdbcPoolConfiguration,
 			java.lang.String jndiName, java.lang.String label, java.lang.Boolean multiSchema, java.lang.String password, java.lang.Boolean readOnly,
-			java.lang.String schemaAttribute, java.lang.String url, java.lang.String user, java.lang.Boolean writeDefault) {
+			java.lang.String schemaAttribute, java.lang.String url, java.lang.String user, java.lang.Boolean writeDefault, java.lang.Boolean useForDataprep) {
 		this.driver = driver;
 		this.hibDialectClass = hibDialectClass;
 		this.id = id;
@@ -62,11 +64,12 @@ public class SpagoBiDataSource implements java.io.Serializable {
 		this.url = url;
 		this.user = user;
 		this.writeDefault = writeDefault;
+		this.useForDataprep = useForDataprep;
 	}
 
 	/**
 	 * Gets the driver value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @return driver
 	 */
 	public java.lang.String getDriver() {
@@ -75,7 +78,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Sets the driver value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @param driver
 	 */
 	public void setDriver(java.lang.String driver) {
@@ -84,7 +87,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Gets the hibDialectClass value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @return hibDialectClass
 	 */
 	public java.lang.String getHibDialectClass() {
@@ -93,7 +96,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Sets the hibDialectClass value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @param hibDialectClass
 	 */
 	public void setHibDialectClass(java.lang.String hibDialectClass) {
@@ -102,7 +105,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Gets the id value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @return id
 	 */
 	public int getId() {
@@ -111,7 +114,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Sets the id value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @param id
 	 */
 	public void setId(int id) {
@@ -120,7 +123,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Gets the jdbcPoolConfiguration value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @return jdbcPoolConfiguration
 	 */
 	public java.lang.String getJdbcPoolConfiguration() {
@@ -129,7 +132,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Sets the jdbcPoolConfiguration value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @param jdbcPoolConfiguration
 	 */
 	public void setJdbcPoolConfiguration(java.lang.String jdbcPoolConfiguration) {
@@ -138,7 +141,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Gets the jndiName value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @return jndiName
 	 */
 	public java.lang.String getJndiName() {
@@ -147,7 +150,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Sets the jndiName value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @param jndiName
 	 */
 	public void setJndiName(java.lang.String jndiName) {
@@ -156,7 +159,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Gets the label value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @return label
 	 */
 	public java.lang.String getLabel() {
@@ -165,7 +168,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Sets the label value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @param label
 	 */
 	public void setLabel(java.lang.String label) {
@@ -174,7 +177,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Gets the multiSchema value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @return multiSchema
 	 */
 	public java.lang.Boolean getMultiSchema() {
@@ -183,7 +186,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Sets the multiSchema value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @param multiSchema
 	 */
 	public void setMultiSchema(java.lang.Boolean multiSchema) {
@@ -192,7 +195,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Gets the password value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @return password
 	 */
 	public java.lang.String getPassword() {
@@ -201,7 +204,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Sets the password value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @param password
 	 */
 	public void setPassword(java.lang.String password) {
@@ -210,7 +213,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Gets the readOnly value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @return readOnly
 	 */
 	public java.lang.Boolean getReadOnly() {
@@ -219,7 +222,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Sets the readOnly value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @param readOnly
 	 */
 	public void setReadOnly(java.lang.Boolean readOnly) {
@@ -228,7 +231,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Gets the schemaAttribute value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @return schemaAttribute
 	 */
 	public java.lang.String getSchemaAttribute() {
@@ -237,7 +240,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Sets the schemaAttribute value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @param schemaAttribute
 	 */
 	public void setSchemaAttribute(java.lang.String schemaAttribute) {
@@ -246,7 +249,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Gets the url value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @return url
 	 */
 	public java.lang.String getUrl() {
@@ -255,7 +258,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Sets the url value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @param url
 	 */
 	public void setUrl(java.lang.String url) {
@@ -264,7 +267,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Gets the user value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @return user
 	 */
 	public java.lang.String getUser() {
@@ -273,7 +276,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Sets the user value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @param user
 	 */
 	public void setUser(java.lang.String user) {
@@ -281,8 +284,26 @@ public class SpagoBiDataSource implements java.io.Serializable {
 	}
 
 	/**
+	 * Sets the useForDataprep value for this SpagoBiDataSource.
+	 *
+	 * @param useForDataprep
+	 */
+	public void setUseForDataprep(java.lang.Boolean useForDataprep) {
+		this.useForDataprep = useForDataprep;
+	}
+
+	/**
+	 * Gets the useForDataprep value for this SpagoBiDataSource.
+	 *
+	 * @return useForDataprep
+	 */
+	public java.lang.Boolean getUseForDataprep() {
+		return useForDataprep;
+	}
+
+	/**
 	 * Gets the writeDefault value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @return writeDefault
 	 */
 	public java.lang.Boolean getWriteDefault() {
@@ -291,7 +312,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Sets the writeDefault value for this SpagoBiDataSource.
-	 * 
+	 *
 	 * @param writeDefault
 	 */
 	public void setWriteDefault(java.lang.Boolean writeDefault) {
@@ -331,7 +352,9 @@ public class SpagoBiDataSource implements java.io.Serializable {
 				&& ((this.url == null && other.getUrl() == null) || (this.url != null && this.url.equals(other.getUrl())))
 				&& ((this.user == null && other.getUser() == null) || (this.user != null && this.user.equals(other.getUser())))
 				&& ((this.writeDefault == null && other.getWriteDefault() == null)
-						|| (this.writeDefault != null && this.writeDefault.equals(other.getWriteDefault())));
+						|| (this.writeDefault != null && this.writeDefault.equals(other.getWriteDefault())))
+				&& ((this.useForDataprep == null && other.getUseForDataprep() == null)
+						|| (this.useForDataprep != null && this.useForDataprep.equals(other.getUseForDataprep())));
 		__equalsCalc = null;
 		return _equals;
 	}
@@ -381,6 +404,9 @@ public class SpagoBiDataSource implements java.io.Serializable {
 		}
 		if (getWriteDefault() != null) {
 			_hashCode += getWriteDefault().hashCode();
+		}
+		if (getUseForDataprep() != null) {
+			_hashCode += getUseForDataprep().hashCode();
 		}
 		__hashCodeCalc = false;
 		return _hashCode;
@@ -469,6 +495,12 @@ public class SpagoBiDataSource implements java.io.Serializable {
 		elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "boolean"));
 		elemField.setNillable(true);
 		typeDesc.addFieldDesc(elemField);
+		elemField = new org.apache.axis.description.ElementDesc();
+		elemField.setFieldName("useForDataprep");
+		elemField.setXmlName(new javax.xml.namespace.QName("", "useForDataprep"));
+		elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "boolean"));
+		elemField.setNillable(true);
+		typeDesc.addFieldDesc(elemField);
 	}
 
 	/**
@@ -498,12 +530,9 @@ public class SpagoBiDataSource implements java.io.Serializable {
 	 *
 	 * @return the connection
 	 *
-	 * @throws NamingException
-	 *             the naming exception
-	 * @throws SQLException
-	 *             the SQL exception
-	 * @throws ClassNotFoundException
-	 *             the class not found exception
+	 * @throws NamingException        the naming exception
+	 * @throws SQLException           the SQL exception
+	 * @throws ClassNotFoundException the class not found exception
 	 */
 	public Connection readConnection(String schema) throws NamingException, SQLException, ClassNotFoundException {
 		Connection connection = null;
@@ -533,8 +562,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 	/**
 	 * Get the connection from JNDI
 	 *
-	 * @param connectionConfig
-	 *            SourceBean describing data connection
+	 * @param connectionConfig SourceBean describing data connection
 	 * @return Connection to database
 	 * @throws NamingException
 	 * @throws SQLException
@@ -558,8 +586,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 	/**
 	 * Get the connection using jdbc
 	 *
-	 * @param connectionConfig
-	 *            SpagoBiDataSource describing data connection
+	 * @param connectionConfig SpagoBiDataSource describing data connection
 	 * @return Connection to database
 	 * @throws ClassNotFoundException
 	 * @throws SQLException

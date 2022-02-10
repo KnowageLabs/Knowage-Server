@@ -857,7 +857,8 @@
                 "testOk": "Tested parameters are correct!",
                 "urlConnection": "URL",
                 "user": "User",
-                "writeDefault": "Use as cache"
+                "writeDefault": "Use as cache",
+                "useForDataprep": "Use for data preparation"
             },
             "hint": "The datasources allows you to define an 'access point' for your document data. It's possible to change the type, the dialect and to set the url or settings. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "title": "Data Source Management"
