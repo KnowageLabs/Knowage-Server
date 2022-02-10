@@ -1,27 +1,27 @@
 <template>
-    <div class="kn-page-content p-m-0 p-p-4" ref="example">
+    <div class="kn-page-content p-m-0 p-p-4" ref="example" id="example">
         <Card class="p-mt-4">
             <template #content>
                 <form class="p-fluid p-m-5 p-grid">
-                    <div class="p-field p-col-3">
+                    <div class="p-field p-col-3 p-md-4">
                         <span class="p-float-label">
                             <InputText id="exampleTextInput" class="kn-material-input" type="text" v-model="examples.input.text" />
                             <label for="exampleTextInput" class="kn-material-input-label"> Example Text Input </label>
                         </span>
                     </div>
-                    <div class="p-field p-col-3">
+                    <div class="p-field p-col-3 p-md-4">
                         <span class="p-float-label">
                             <InputText id="exampleTextInputDisabled" class="kn-material-input" type="text" disabled v-model="examples.input.disabled" />
                             <label for="exampleTextInputDisabled" class="kn-material-input-label"> Example Text Input disabled</label>
                         </span>
                     </div>
-                    <div class="p-field p-col-3">
+                    <div class="p-field p-col-3 p-md-4">
                         <span class="p-float-label">
                             <InputText id="exampleTextInputInvalid" class="kn-material-input p-invalid" type="text" v-model="examples.input.invalid" />
                             <label for="exampleTextInputInvalid" class="kn-material-input-label"> Example Text Input invalid</label>
                         </span>
                     </div>
-                    <div class="p-field p-col-3">
+                    <div class="p-field p-col-3 p-md-4">
                         <span class="p-float-label">
                             <InputText id="exampleNumberInput" class="kn-material-input" type="number" v-model="examples.input.number" />
                             <label for="exampleNumberInput" class="kn-material-input-label"> Example Number Input </label>
@@ -156,6 +156,9 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
+#example {
+    font-size: var(--kn-font-size);
+}
 .hiddenProperties {
     display: none;
 }

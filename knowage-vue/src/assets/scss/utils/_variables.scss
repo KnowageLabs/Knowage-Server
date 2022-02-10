@@ -14,24 +14,29 @@
 
     // FONTS
     --kn-font-family: Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --kn-font-size: 14px;
+    --kn-font-text-light-color: #ffffff;
 
     // APP
     --kn-app-background-color: #ffffff;
 
     // BUTTONS
-    --kn-button-text-color: #ffffff;
+    --kn-button-border-radius: 2px;
     --kn-button-primary-background-color: var(--kn-color-primary);
     --kn-button-primary-color: #ffffff;
     --kn-button-primary-hover-background-color: #6191bb;
     --kn-button-primary-hover-color: #ffffff;
     --kn-button-secondary-background-color: #a7a7a7;
+    --kn-button-secondary-color: #ffffff;
     --kn-button-secondary-hover-background-color: #bfbfbf;
+    --kn-button-secondary-hover-color: #43749e;
     --kn-button-icon-color-default: #a7a7a7;
     --kn-button-dark-color: #43749e;
     --kn-button-light-color: #ffffff;
-    --kn-button-fab-button-background-color: var(--kn-color-fab);
-    --kn-button-fab-button-color: #ffffff;
-    --kn-button-fab-button-hover-color: #d14b7c;
+    --kn-button-fab-background-color: #ce0651;
+    --kn-button-fab-color: #ffffff;
+    --kn-button-fab-hover-background-color: #d14b7c;
+    --kn-button-fab-hover-color: #ffffff;
 
     // LIST
     --kn-list-border-color: #cccccc;
@@ -81,6 +86,12 @@
     //MESSAGES
     --kn-message-success-background-color: #c8e6c9;
     --kn-message-success-color: #1b5e20;
+    --kn-message-info-background-color: #b3e5fc;
+    --kn-message-info-color: #01579b;
+    --kn-message-warning-background-color: #ffecb3;
+    --kn-message-warning-color: #7f6003;
+    --kn-message-error-background-color: #ffcdd2;
+    --kn-message-error-color: #b71c1c;
     --kn-message-padding: 0.3rem 0.5rem;
     --kn-message-font-size: 0.9rem;
     --kn-message-border-radius: 4px;

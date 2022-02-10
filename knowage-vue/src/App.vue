@@ -215,6 +215,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+html {
+    font-size: var(--kn-font-size);
+}
 body {
     padding: 0;
     margin: 0;

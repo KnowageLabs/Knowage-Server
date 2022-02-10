@@ -104,6 +104,11 @@
             "label": "buttons",
             "properties": [
                 {
+                    "key": "--kn-button-border-radius",
+                    "label": "Border Radius",
+                    "type": "text"
+                },
+                {
                     "key": "--kn-button-primary-background-color",
                     "label": "Primary Background",
                     "type": "color"
@@ -182,12 +187,47 @@
                     "key": "--kn-message-success-color",
                     "label": "Success Text Color",
                     "type": "color"
+                },
+                {
+                    "key": "--kn-message-info-background-color",
+                    "label": "Info Background",
+                    "type": "color"
+                },
+                {
+                    "key": "--kn-message-info-color",
+                    "label": "Info Text Color",
+                    "type": "color"
+                },
+                {
+                    "key": "--kn-message-warning-background-color",
+                    "label": "Warning Background",
+                    "type": "color"
+                },
+                {
+                    "key": "--kn-message-warning-color",
+                    "label": "Warning Text Color",
+                    "type": "color"
+                },
+                {
+                    "key": "--kn-message-error-background-color",
+                    "label": "Error Background",
+                    "type": "color"
+                },
+                {
+                    "key": "--kn-message-error-color",
+                    "label": "Error Text Color",
+                    "type": "color"
                 }
             ]
         },
         "toolbars": {
             "label": "toolbars",
             "properties": [
+                {
+                    "key": "--kn-toolbar-font-size",
+                    "label": "Font Size",
+                    "type": "text"
+                },
                 {
                     "key": "--kn-toolbar-default-background-color",
                     "label": "Default Background",
@@ -226,6 +266,11 @@
                 {
                     "key": "--kn-font-family",
                     "label": "Font Family",
+                    "type": "text"
+                },
+                {
+                    "key": "--kn-font-size",
+                    "label": "Base Font Size",
                     "type": "text"
                 }
             ]

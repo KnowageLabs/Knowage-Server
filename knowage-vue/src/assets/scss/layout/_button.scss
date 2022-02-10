@@ -3,7 +3,7 @@
     background-color: var(--kn-color-secondary);
     color: white;
     text-transform: uppercase;
-    border-radius: 2px;
+    border-radius: var(--kn-button-border-radius);
     padding: 0.75rem 2rem;
     &:hover:enabled {
         color: var(--kn-color-secondary);
@@ -11,25 +11,28 @@
     &--primary {
         @extend .kn-button;
         background-color: var(--kn-button-primary-background-color);
+        color: var(--kn-button-primary-color);
         &:hover:enabled {
-            color: var(--kn-button-text-color);
+            color: var(--kn-button-primary-text-color);
             background-color: var(--kn-button-primary-hover-background-color);
         }
     }
     &--secondary {
         @extend .kn-button;
         background-color: var(--kn-button-secondary-background-color);
+        color: var(--kn-button-secondary-color);
         &:hover:enabled {
-            color: var(--kn-button-text-color);
+            color: var(--kn-button-secondary-hover-color);
             background-color: var(--kn-button-secondary-hover-background-color);
         }
     }
     &--warning {
         @extend .kn-button;
-        background-color: var(--kn-button-fab-button-background-color);
+        background-color: var(--kn-button-fab-background-color);
+        color: var(--kn-button-fab-color);
         &:hover:enabled {
-            color: var(--kn-button-fab-button-color);
-            background-color: var(--kn-button-secondary-hover-background-color);
+            color: var(--kn-button-fab-color);
+            background-color: var(--kn-button-fab-hover-background-color);
         }
     }
 
