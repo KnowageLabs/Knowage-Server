@@ -23,9 +23,9 @@
     </Card>
     <LovsManagementInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :infoTitle="infoTitle" :lovType="lov.itypeCd" @close="infoDialogVisible = false"></LovsManagementInfoDialog>
     <LovsManagementProfileAttributesList v-show="profileAttributesDialogVisible" :visible="profileAttributesDialogVisible" :profileAttributes="profileAttributes" @selected="setCodeInput($event)" @close="profileAttributesDialogVisible = false"></LovsManagementProfileAttributesList>
-    <LovsManagementParamsDialog v-show="paramsDialogVisible" :visible="paramsDialogVisible" :dependenciesList="dependenciesList" @preview="onPreview" @close="onParamsDialogClose"></LovsManagementParamsDialog>
+    <LovsManagementParamsDialog v-show="paramsDialogVisible" :visible="paramsDialogVisible" :dependenciesList="dependenciesList" :mode="paramsDialogMode" @preview="onPreview" @close="onParamsDialogClose" @test="onTest"></LovsManagementParamsDialog>
     <LovsManagementPreviewDialog v-show="previewDialogVisible" :visible="previewDialogVisible" :dataForPreview="dataForPreview" :pagination="pagination" @close="onPreviewClose" @pageChanged="previewLov($event, false, true)"></LovsManagementPreviewDialog>
-    <LovsManagementTestDialog v-show="testDialogVisible" :visible="testDialogVisible" :selectedLov="lov" :testModel="treeListTypeModel" :testLovModel="testLovModel" :testLovTreeModel="testLovTreeModel" @close="testDialogVisible = false" @save="onTestSave($event)"></LovsManagementTestDialog>
+    <LovsManagementTestDialog v-show="testDialogVisible" :visible="testDialogVisible" :selectedLov="lov" :testModel="treeListTypeModel" :testLovModel="testLovModel" :testLovTreeModel="testLovTreeModel" @close="onTestDialogClose()" @save="onTestSave($event)"></LovsManagementTestDialog>
 </template>
 
 <script lang="ts">
@@ -104,7 +104,8 @@ export default defineComponent({
             sendSave: false,
             dependenciesReady: false,
             touchedForTest: false,
-            x2js: new X2JS()
+            x2js: new X2JS(),
+            paramsDialogMode: 'preview'
         }
     },
     watch: {
@@ -262,6 +263,7 @@ export default defineComponent({
                         type: listOfEmptyDependencies[i].type
                     })
                 }
+                this.paramsDialogMode = showPreview ? 'preview' : 'test'
                 this.paramsDialogVisible = true
             } else {
                 await this.previewLov(this.pagination, false, showPreview)
@@ -584,6 +586,7 @@ export default defineComponent({
 
             this.handleSubmit(this.sendSave)
             this.testDialogVisible = false
+            this.dependenciesReady = false
         },
         onTestButtonClick() {
             this.sendSave = false
@@ -613,6 +616,16 @@ export default defineComponent({
             this.paramsDialogVisible = false
             this.dependenciesList = []
             this.dependenciesReady = false
+        },
+        async onTest() {
+            this.dependenciesReady = true
+            await this.previewLov(this.pagination, false, false)
+            this.buildTestTable()
+        },
+        onTestDialogClose() {
+            this.testDialogVisible = false
+            this.dependenciesReady = false
+
         }
     }
 })

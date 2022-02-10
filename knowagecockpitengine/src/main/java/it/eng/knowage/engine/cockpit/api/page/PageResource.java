@@ -315,7 +315,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 		return Response.ok(data, mimeType)
 				.header("Content-length", Integer.toString(data.length))
-				.header("Content-Disposition", "attachment; fileName=" + documentLabel + "." + outputType)
+				.header("Content-Disposition", "attachment; fileName=" + documentLabel + ".xlsx")
 				.build();
 	}
 
