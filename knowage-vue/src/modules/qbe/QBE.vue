@@ -233,19 +233,19 @@ export default defineComponent({
             } else {
                 this.qbe = this.getQBEFromModel()
             }
-            await this.loadDatasetDrivers()
-            if (this.qbe?.pars.length === 0 && this.filtersData?.isReadyForExecution) {
-                await this.loadQBE()
-                this.qbeLoaded = true
-            } else {
-                this.parameterSidebarVisible = true
-            }
+            // await this.loadDatasetDrivers()
+            // if (this.qbe?.pars.length === 0 && this.filtersData?.isReadyForExecution) {
+            await this.loadQBE()
+            this.qbeLoaded = true
+            //} else {
+            //this.parameterSidebarVisible = true
+            //}
             this.loading = false
         },
         async loadQBE() {
             await this.initializeQBE()
-            await this.loadCustomizedDatasetFunctions()
-            await this.loadExportLimit()
+            // await this.loadCustomizedDatasetFunctions()
+            // await this.loadExportLimit()
             await this.loadEntities()
             await this.executeQBEQuery()
         },
@@ -362,11 +362,7 @@ export default defineComponent({
         },
         async initializeQBE() {
             await this.$http
-                .get(process.env.VUE_APP_QBE_PATH + `start-qbe?datamart=Inventory`, {
-                    headers: {
-                        Authorization: 'Direct eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGVtb191c2VyIiwiZXhwIjoxNjQzODQzMDg0fQ.JDSoutSGxqgkviTwSfe9aZ2TMFaefNbrjAIpmoqZhMo'
-                    }
-                })
+                .get(process.env.VUE_APP_QBE_PATH + `start-qbe?datamart=Expenses&user_id=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGVtb191c2VyIiwiZXhwIjoxNjQ0NTQ0MTE0fQ.WcpLr7RuPJpk4wFws21fY_ya2EO4b9tL8-LD6pgehFU&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=Foodmart`)
                 .then((response: AxiosResponse<any>) => {
                     this.qbeId = response.data
                 })
@@ -382,7 +378,7 @@ export default defineComponent({
         },
         async loadEntities() {
             await this.$http
-                .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.qbeId}&datamartName=null`)
+                .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.uniqueID}&datamartName=Expenses`)
                 .then((response: AxiosResponse<any>) => (this.entities = response.data))
                 .catch((error: any) => console.log('ERROR: ', error))
         },
