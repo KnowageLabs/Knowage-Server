@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -117,7 +118,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 			ProcessBuilder processBuilder = new ProcessBuilder("node", exportScriptFullPath.toString(), encodedUserId, outputDir.toString(), url.toString());
 			Process exec = processBuilder.start();
-			exec.waitFor();
+			exec.waitFor(2, TimeUnit.MINUTES);
 			// the script creates the resulting xls and saves it to outputFile
 			Path outputFile = outputDir.resolve(documentLabel + ".xlsx");
 			return getByteArrayFromFile(outputFile, outputDir);

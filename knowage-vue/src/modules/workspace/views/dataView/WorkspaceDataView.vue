@@ -452,7 +452,7 @@ export default defineComponent({
                     this.filteredDatasets = [...this.datasetList] as any[]
                 } else {
                     this.filteredDatasets = this.datasetList.filter((el: any) => {
-                        return el.label?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.dsTypeCd?.toLowerCase().includes(this.searchWord.toLowerCase())
+                        return el.label?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.dsTypeCd?.toLowerCase().includes(this.searchWord.toLowerCase()) || this.datasetTagFound(el)
                     })
                 }
             }, 250)
@@ -460,6 +460,17 @@ export default defineComponent({
         closeQbe() {
             this.qbeVisible = false
             this.selectedQbeDataset = null
+        },
+        datasetTagFound(dataset: any) {
+            let tagFound = false
+            for (let i = 0; i < dataset.tags.length; i++) {
+                const tempTag = dataset.tags[i]
+                if (tempTag.name.toLowerCase() === this.searchWord.toLowerCase()) {
+                    tagFound = true
+                    break
+                }
+            }
+            return tagFound
         }
     }
 })

@@ -508,29 +508,34 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		Boolean isLicensed = true;
 
 		String requiredLicensesString = (String) itemSB.getAttribute(TO_BE_LICENSED);
-		if (isEnterpriseEdition() && requiredLicensesString != null) {
-			if (requiredLicensesString.isEmpty()) {
-				try {
-					Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
+		if (requiredLicensesString != null) {
 
-					isLicensed = !DocumentUtilities.getValidLicenses().isEmpty();
-				} catch (ClassNotFoundException e) {
-					isLicensed = false;
+			if (isEnterpriseEdition()) {
+				if (requiredLicensesString.isEmpty()) {
+					try {
+						Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
+
+						isLicensed = !DocumentUtilities.getValidLicenses().isEmpty();
+					} catch (ClassNotFoundException e) {
+						isLicensed = false;
+					}
+				} else {
+					try {
+						String[] requiredLicenses = requiredLicensesString.split(",", -1);
+						Class productProfilerEE = Class.forName("it.eng.knowage.enterprise.security.ProductProfiler");
+						Method getActiveProductsMethod = productProfilerEE.getMethod("getActiveProducts");
+						List<String> activeProducts = (List<String>) getActiveProductsMethod.invoke(productProfilerEE);
+						for (String lic : requiredLicenses) {
+							isLicensed = activeProducts.contains(lic);
+							if (isLicensed)
+								break;
+						}
+					} catch (Exception e) {
+						isLicensed = false;
+					}
 				}
 			} else {
-				try {
-					String[] requiredLicenses = requiredLicensesString.split(",", -1);
-					Class productProfilerEE = Class.forName("it.eng.knowage.enterprise.security.ProductProfiler");
-					Method getActiveProductsMethod = productProfilerEE.getMethod("getActiveProducts");
-					List<String> activeProducts = (List<String>) getActiveProductsMethod.invoke(productProfilerEE);
-					for (String lic : requiredLicenses) {
-						isLicensed = activeProducts.contains(lic);
-						if (isLicensed)
-							break;
-					}
-				} catch (Exception e) {
-					isLicensed = false;
-				}
+				isLicensed = false;
 			}
 		}
 
