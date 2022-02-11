@@ -246,4 +246,8 @@ public interface IDataSource {
 
 	public String getSignature(IEngUserProfile profile);
 
+	void setUseForDataprep(Boolean useForDataprep);
+
+	Boolean checkUseForDataprep();
+
 }

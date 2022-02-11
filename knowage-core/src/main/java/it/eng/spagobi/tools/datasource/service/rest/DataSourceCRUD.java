@@ -18,6 +18,26 @@
 
 package it.eng.spagobi.tools.datasource.service.rest;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -45,19 +65,6 @@ import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -93,11 +100,11 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 				dataSources = dataSourceDao.loadAllDataSources();
 			}
 
-			if(onlySqlLike) {
+			if (onlySqlLike) {
 				Iterator<IDataSource> dataSourceIterator = dataSources.iterator();
 				while (dataSourceIterator.hasNext()) {
 					DatabaseDialect dialect = DataBaseFactory.getDataBase(dataSourceIterator.next()).getDatabaseDialect();
-					if(!dialect.isSqlLike()) {
+					if (!dialect.isSqlLike()) {
 						dataSourceIterator.remove();
 					}
 
@@ -305,6 +312,8 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 
 		Boolean writeDefault = requestBodyJSON.optBoolean("WRITE_DEFAULT");
 
+		Boolean useForDataprep = requestBodyJSON.optBoolean("USE_FOR_DATAPREP");
+
 		Boolean isMultiSchema = false;
 		if (multiSchema != null && (multiSchema.equals("on") || multiSchema.equals("true"))) {
 			isMultiSchema = true;
@@ -323,6 +332,7 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 		ds.setMultiSchema(isMultiSchema);
 		ds.setReadOnly(readOnly);
 		ds.setWriteDefault(writeDefault);
+		ds.setUseForDataprep(useForDataprep);
 
 		return ds;
 	}

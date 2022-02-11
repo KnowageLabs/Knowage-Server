@@ -24,5 +24,68 @@
                 "label": "managers.workspaceManagement.dataPreparation.transformations.useNumberOfChars"
             }
         ]
-    }
+    },
+    "parameters": [
+        {
+            "name": "columns",
+            "optionLabel": "header",
+            "optionValue": "header",
+            "type": "dropdown",
+            "validationRules": "required"
+        },
+        {
+            "name": "column1",
+            "type": "string",
+            "validationRules": "required|alpha_dash"
+        },
+        {
+            "availableOptions": [],
+            "name": "destType1",
+            "placeholder": "managers.workspaceManagement.dataPreparation.transformations.destType",
+            "type": "dropdown",
+            "validationRules": "required|alpha_dash"
+        },
+        {
+            "name": "column2",
+            "type": "string",
+            "validationRules": "required|alpha_dash"
+        },
+        {
+            "availableOptions": [],
+            "name": "destType2",
+            "placeholder": "managers.workspaceManagement.dataPreparation.transformations.destType",
+            "type": "dropdown",
+            "validationRules": "required|alpha_dash"
+        },
+        {
+            "availableOptions": [
+                {
+                    "code": "split_separator",
+                    "label": "managers.workspaceManagement.dataPreparation.transformations.useSeparator"
+                },
+                {
+                    "code": "split_numberOfChars",
+                    "label": "managers.workspaceManagement.dataPreparation.transformations.useNumberOfChars"
+                }
+            ],
+            "name": "splitMethod",
+            "placeholder": "managers.workspaceManagement.dataPreparation.transformations.condition",
+            "type": "dropdown",
+            "validationRules": "required|alpha_dash"
+        },
+        {
+            "dependsFromField": "splitMethod",
+            "dependsFromOptions": "split_separator",
+            "name": "separator",
+            "type": "string",
+            "validationRules": "alpha"
+        },
+        {
+            "dependsFromField": "splitMethod",
+            "dependsFromOptions": "split_numberOfChars",
+            "name": "numberOfChars",
+            "type": "string",
+            "validationRules": "numeric"
+        }
+    ]
 }

@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.dataset.constants;
 import java.util.HashMap;
 import java.util.Map;
 
+import it.eng.spagobi.tools.dataset.bo.PreparedDataSet;
 import it.eng.spagobi.tools.dataset.bo.PythonDataSet;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
@@ -112,11 +113,12 @@ public class DataSetConstants {
 	public static final String DS_FEDERATED = "SbiFederatedDataSet";
 	public static final String DS_CUSTOM = "SbiCustomDataSet";
 	public static final String DS_FLAT = "SbiFlatDataSet";
+	public static final String DS_PREPARED = "SbiPreparedDataSet";
 	public static final String DS_REST_TYPE = RESTDataSet.DATASET_TYPE;
 	public static final String DS_PYTHON_TYPE = PythonDataSet.DATASET_TYPE;
 	public static final String DS_SOLR_TYPE = SolrDataSet.DATASET_TYPE;
 	public static final String DS_SPARQL = "SbiSPARQLDataSet";
-	public static final String PREPARED_DATASET = "PreparedDataset";
+	public static final String PREPARED_DATASET = PreparedDataSet.DS_TYPE;
 
 	public static final String QBE_DATA_SOURCE = "qbeDataSource";
 	public static final String QBE_DATAMARTS = "qbeDatamarts";
@@ -173,6 +175,7 @@ public class DataSetConstants {
 		name2Code.put(DS_REST_NAME, DS_REST_TYPE);
 		name2Code.put(DS_PYTHON_NAME, DS_PYTHON_TYPE);
 		name2Code.put("SPARQL", DataSetConstants.DS_SPARQL);
+		name2Code.put("Prepared", DataSetConstants.DS_PREPARED);
 
 		// add all REST attributes
 		int curr = 0;
@@ -213,6 +216,7 @@ public class DataSetConstants {
 		code2name.put(DataSetConstants.DS_SOLR_TYPE, "Solr");
 		code2name.put(DS_PYTHON_TYPE, DS_PYTHON_NAME);
 		code2name.put(DataSetConstants.DS_SPARQL, "SPARQL");
+		code2name.put(DataSetConstants.DS_PREPARED, "Prepared");
 	}
 
 }

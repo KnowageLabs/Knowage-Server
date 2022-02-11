@@ -1,8 +1,7 @@
 <template>
     <Dialog
         class="kn-dialog--toolbar--primary dataPreparationDialog"
-        v-bind:visible="transformation"
-        footer="footer"
+        v-bind:visible="transformation && transformation.type != 'calculatedField'"
         :header="(localCopy && localCopy.type ? $t('managers.workspaceManagement.dataPreparation.transformations.' + localCopy.name + '.label') + ' - ' : '') + $t('managers.workspaceManagement.dataPreparation.parametersConfiguration')"
         :closable="false"
         modal
@@ -11,7 +10,6 @@
         <Message severity="info" :closable="false" v-if="localCopy && localCopy.description">{{ $t(localCopy.description) }}</Message>
 
         <DataPreparationSimple v-if="localCopy.type === 'simple'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" />
-        <DataPreparationCustom v-if="localCopy.type === 'custom'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" />
         <DataPreparationFilter v-if="localCopy.type === 'filter'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" />
         <DataPreparationSplit v-if="localCopy.type === 'split'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" />
 
@@ -32,8 +30,6 @@ import { ITransformation, IDataPreparationColumn, ITransformationParameter } fro
 import DataPreparationValidationDescriptor from './DataPreparationValidationDescriptor.json'
 import DataPreparationSimple from './DataPreparationSimple/DataPreparationSimple.vue'
 import DataPreparationSimpleDescriptor from '@/modules/workspace/dataPreparation/DataPreparationSimple/DataPreparationSimpleDescriptor.json'
-import DataPreparationCustom from './DataPreparationCustom/DataPreparationCustom.vue'
-import DataPreparationCustomDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationCustomDescriptor.json'
 import DataPreparationFilter from './DataPreparationCustom/DataPreparationFilterTransformation.vue'
 import DataPreparationSplit from './DataPreparationCustom/DataPreparationSplitTransformation.vue'
 
@@ -44,9 +40,9 @@ export default defineComponent({
         columns: { type: Array as PropType<Array<IDataPreparationColumn>> },
         col: String
     },
-    components: { DataPreparationSimple, Dialog, Message, DataPreparationCustom, DataPreparationFilter, DataPreparationSplit },
+    components: { DataPreparationSimple, Dialog, Message, DataPreparationFilter, DataPreparationSplit },
     data() {
-        return { localCopy: {} as ITransformation<ITransformationParameter> | undefined, v$: useValidate() as any, validationDescriptor: DataPreparationValidationDescriptor, simpleDescriptor: DataPreparationSimpleDescriptor, customDescriptor: DataPreparationCustomDescriptor }
+        return { localCopy: {} as ITransformation<ITransformationParameter> | undefined, v$: useValidate() as any, validationDescriptor: DataPreparationValidationDescriptor, simpleDescriptor: DataPreparationSimpleDescriptor }
     },
     validations() {
         return {
@@ -57,7 +53,6 @@ export default defineComponent({
 
     created() {
         this.simpleDescriptor = { ...DataPreparationSimpleDescriptor } as any
-        this.customDescriptor = { ...DataPreparationCustomDescriptor } as any
     },
 
     methods: {

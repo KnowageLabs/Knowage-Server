@@ -40,7 +40,7 @@ if(mimeType != null){
 	
 	response.setHeader("Content-length", Integer.toString(data.length));
 	response.setHeader("Content-Type", mimeType);
-	response.setHeader("Content-Disposition", "attachment; fileName=" + documentLabel + "."+outputType);
+	response.setHeader("Content-Disposition", "attachment; fileName=" + documentLabel + ".xlsx");
 	
 	response.getOutputStream().write(data, 0, data.length);
 	response.getOutputStream().flush();
