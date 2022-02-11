@@ -23,7 +23,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.eng.knowage.boot.context.BusinessRequestContext;
-import it.eng.knowage.boot.dao.dto.AbstractEntity;
+import it.eng.knowage.boot.dao.dto.IEntity;
 
 /**
  * @author Marco Libanori
@@ -36,7 +36,7 @@ public abstract class AbstractDaoImpl {
 	/**
 	 * Update *_IN columns keeping old values if present
 	 */
-	protected final void preInsert(AbstractEntity entity) {
+	protected final void preInsert(IEntity entity) {
 		String version = Optional.ofNullable(entity.getSbiVersionIn())
 				.orElse(businessRequestContext.getVersion());
 		Instant now = Optional.ofNullable(entity.getTimeIn())
@@ -49,13 +49,13 @@ public abstract class AbstractDaoImpl {
 		entity.setUserIn(username);
 	}
 
-	protected final void preUpdate(AbstractEntity entity) {
+	protected final void preUpdate(IEntity entity) {
 		entity.setSbiVersionUp(businessRequestContext.getVersion());
 		entity.setTimeUp(Instant.now());
 		entity.setUserUp(businessRequestContext.getUsername());
 	}
 
-	protected final void preDelete(AbstractEntity entity) {
+	protected final void preDelete(IEntity entity) {
 		entity.setSbiVersionDe(businessRequestContext.getVersion());
 		entity.setTimeDe(Instant.now());
 		entity.setUserDe(businessRequestContext.getUsername());

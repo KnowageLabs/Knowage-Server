@@ -24,105 +24,125 @@ import javax.persistence.MappedSuperclass;
 
 /**
  * @author Marco Libanori
+ * @deprecated Prefer {@link IEntity}
  */
+@Deprecated
 @MappedSuperclass
-public abstract class AbstractEntity {
+public abstract class AbstractEntity implements IEntity {
 
+	@Column(name = "SBI_VERSION_IN", insertable = true, updatable = false)
 	private String sbiVersionIn;
 
+	@Column(name = "TIME_IN", insertable = true, updatable = false)
 	private Instant timeIn;
 
+	@Column(name = "USER_IN", insertable = true, updatable = false)
 	private String userIn;
 
+	@Column(name = "SBI_VERSION_UP", insertable = true, updatable = true)
 	private String sbiVersionUp;
 
+	@Column(name = "TIME_UP", insertable = true, updatable = true)
 	private Instant timeUp;
 
+	@Column(name = "USER_UP", insertable = true, updatable = true)
 	private String userUp;
 
+	@Column(name = "SBI_VERSION_DE", insertable = true, updatable = true)
 	private String sbiVersionDe;
 
+	@Column(name = "TIME_DE", insertable = true, updatable = true)
 	private Instant timeDe;
 
+	@Column(name = "USER_DE", insertable = true, updatable = true)
 	private String userDe;
 
-	@Column(name = "SBI_VERSION_DE", insertable = true, updatable = true)
+	@Override
 	public String getSbiVersionDe() {
 		return sbiVersionDe;
 	}
 
+	@Override
 	public void setSbiVersionDe(String sbiVersionDe) {
 		this.sbiVersionDe = sbiVersionDe;
 	}
 
-	@Column(name = "SBI_VERSION_IN", insertable = true, updatable = false)
+	@Override
 	public String getSbiVersionIn() {
 		return sbiVersionIn;
 	}
 
+	@Override
 	public void setSbiVersionIn(String sbiVersionIn) {
 		this.sbiVersionIn = sbiVersionIn;
 	}
 
-	@Column(name = "SBI_VERSION_UP", insertable = true, updatable = true)
+	@Override
 	public String getSbiVersionUp() {
 		return sbiVersionUp;
 	}
 
+	@Override
 	public void setSbiVersionUp(String sbiVersionUp) {
 		this.sbiVersionUp = sbiVersionUp;
 	}
 
-	@Column(name = "TIME_DE", insertable = true, updatable = true)
+	@Override
 	public Instant getTimeDe() {
 		return timeDe;
 	}
 
+	@Override
 	public void setTimeDe(Instant timeDe) {
 		this.timeDe = timeDe;
 	}
 
-	@Column(name = "TIME_IN", insertable = true, updatable = false)
+	@Override
 	public Instant getTimeIn() {
 		return timeIn;
 	}
 
+	@Override
 	public void setTimeIn(Instant timeIn) {
 		this.timeIn = timeIn;
 	}
 
-	@Column(name = "TIME_UP", insertable = true, updatable = true)
+	@Override
 	public Instant getTimeUp() {
 		return timeUp;
 	}
 
+	@Override
 	public void setTimeUp(Instant timeUp) {
 		this.timeUp = timeUp;
 	}
 
-	@Column(name = "USER_DE", insertable = true, updatable = true)
+	@Override
 	public String getUserDe() {
 		return userDe;
 	}
 
+	@Override
 	public void setUserDe(String userDe) {
 		this.userDe = userDe;
 	}
 
-	@Column(name = "USER_IN", insertable = true, updatable = false)
+	@Override
 	public String getUserIn() {
 		return userIn;
 	}
 
+	@Override
 	public void setUserIn(String userIn) {
 		this.userIn = userIn;
 	}
 
-	@Column(name = "USER_UP", insertable = true, updatable = true)
+	@Override
 	public String getUserUp() {
 		return userUp;
 	}
 
+	@Override
 	public void setUserUp(String userUp) {
 		this.userUp = userUp;
 	}
