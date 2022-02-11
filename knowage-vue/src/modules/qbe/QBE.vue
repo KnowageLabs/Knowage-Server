@@ -107,15 +107,15 @@
             <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="document" :userRole="userRole" :propMode="'qbeView'" :propQBEParameters="qbe.pars" @execute="onExecute"></KnParameterSidebar>
         </div>
 
-        <QBEPreviewDialog v-show="!loading && qbePreviewDialogVisible" :id="qbeId" :queryPreviewData="queryPreviewData" :pagination="pagination" @close="closePreview" @pageChanged="updatePagination($event)"></QBEPreviewDialog>
-        <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="qbeId" :entities="entities?.entities" :propParameters="qbe?.pars" :propExpression="selectedQuery?.expression" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
+        <QBEPreviewDialog v-show="!loading && qbePreviewDialogVisible" :id="uniqueID" :queryPreviewData="queryPreviewData" :pagination="pagination" @close="closePreview" @pageChanged="updatePagination($event)"></QBEPreviewDialog>
+        <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="uniqueID" :entities="entities?.entities" :propParameters="qbe?.pars" :propExpression="selectedQuery?.expression" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
         <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" />
         <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" :entities="selectedQuery?.fields" @close="havingDialogVisible = false" @save="onHavingsSave"></QBEHavingDialog>
         <QBEAdvancedFilterDialog :visible="advancedFilterDialogVisible" :query="selectedQuery" @close="advancedFilterDialogVisible = false" @save="onAdvancedFiltersSave"></QBEAdvancedFilterDialog>
         <QBESavingDialog v-if="savingDialogVisible" :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" />
-        <QBEJoinDefinitionDialog :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="qbeId" :selectedQuery="selectedQuery" @close="onJoinDefinitionDialogClose"></QBEJoinDefinitionDialog>
+        <QBEJoinDefinitionDialog :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="uniqueID" :selectedQuery="selectedQuery" @close="onJoinDefinitionDialogClose"></QBEJoinDefinitionDialog>
 
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     </Dialog>
@@ -178,7 +178,6 @@ export default defineComponent({
     data() {
         return {
             qbe: null as iQBE | null,
-            qbeId: '' as string,
             customizedDatasetFunctions: {} as any,
             exportLimit: null as number | null,
             entities: {} as any,
@@ -233,6 +232,7 @@ export default defineComponent({
             } else {
                 this.qbe = this.getQBEFromModel()
             }
+            this.loadQuery()
             // await this.loadDatasetDrivers()
             // if (this.qbe?.pars.length === 0 && this.filtersData?.isReadyForExecution) {
             await this.loadQBE()
@@ -244,8 +244,8 @@ export default defineComponent({
         },
         async loadQBE() {
             await this.initializeQBE()
-            // await this.loadCustomizedDatasetFunctions()
-            // await this.loadExportLimit()
+            await this.loadCustomizedDatasetFunctions()
+            await this.loadExportLimit()
             await this.loadEntities()
             await this.executeQBEQuery()
         },
@@ -260,6 +260,8 @@ export default defineComponent({
                 this.qbe = response.data[0]
                 if (this.qbe && this.qbe.qbeJSONQuery) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
+        },
+        loadQuery() {
             this.mainQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
             this.selectedQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
         },
@@ -361,17 +363,14 @@ export default defineComponent({
             return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
         },
         async initializeQBE() {
-            await this.$http
-                .get(process.env.VUE_APP_QBE_PATH + `start-qbe?datamart=Expenses&user_id=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGVtb191c2VyIiwiZXhwIjoxNjQ0NTQ0MTE0fQ.WcpLr7RuPJpk4wFws21fY_ya2EO4b9tL8-LD6pgehFU&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=Foodmart`)
-                .then((response: AxiosResponse<any>) => {
-                    this.qbeId = response.data
-                })
-            console.log('LOADED ID: ', this.qbeId)
-            // HARDCODED ID
-            this.qbeId = '0b99a68789a911ecb56627a24f2aab3b'
+            // console.log('DATASET: ', this.dataset)
+            if (this.dataset) {
+                await this.$http.get(process.env.VUE_APP_QBE_PATH + `start-qbe?datamart=${this.dataset.name}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${this.dataset.dataSourceLabel}`).then(() => {})
+            }
         },
         async loadCustomizedDatasetFunctions() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${this.qbe?.qbeDataSourceId}`).then((response: AxiosResponse<any>) => (this.customizedDatasetFunctions = response.data))
+            const id = this.dataset?.dataSourceId
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${id}`).then((response: AxiosResponse<any>) => (this.customizedDatasetFunctions = response.data))
         },
         async loadExportLimit() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/EXPORT.LIMITATION`).then((response: AxiosResponse<any>) => (this.exportLimit = response.data))
@@ -389,7 +388,7 @@ export default defineComponent({
 
             const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
-                .post(process.env.VUE_APP_QBE_PATH + `qbequery/executeQuery/?SBI_EXECUTION_ID=${this.qbeId}&currentQueryId=${this.selectedQuery.id}&start=${this.pagination.start}&limit=${this.pagination.limit}`, postData)
+                .post(process.env.VUE_APP_QBE_PATH + `qbequery/executeQuery/?SBI_EXECUTION_ID=${this.uniqueID}&currentQueryId=${this.selectedQuery.id}&start=${this.pagination.start}&limit=${this.pagination.limit}`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.queryPreviewData = response.data
                     this.pagination.size = response.data.results
@@ -560,7 +559,7 @@ export default defineComponent({
             }
             const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
-                .post(process.env.VUE_APP_QBE_PATH + `qbequery/export/?SBI_EXECUTION_ID=${this.qbeId}&currentQueryId=${this.selectedQuery.id}&outputType=${mimeType}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .post(process.env.VUE_APP_QBE_PATH + `qbequery/export/?SBI_EXECUTION_ID=${this.uniqueID}&currentQueryId=${this.selectedQuery.id}&outputType=${mimeType}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then((response: AxiosResponse<any>) => {
                     downloadDirect(response.data, fileName, fileType)
                 })
@@ -645,7 +644,7 @@ export default defineComponent({
             }
 
             await this.$http
-                .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=SET_CATALOGUE_ACTION&SBI_EXECUTION_ID=${this.qbeId}`, item, conf)
+                .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=SET_CATALOGUE_ACTION&SBI_EXECUTION_ID=${this.uniqueID}`, item, conf)
                 .then(() => {
                     this.getSQL()
                 })
@@ -667,7 +666,7 @@ export default defineComponent({
             }
 
             await this.$http
-                .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_SQL_QUERY_ACTION&SBI_EXECUTION_ID=${this.qbeId}`, item, conf)
+                .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_SQL_QUERY_ACTION&SBI_EXECUTION_ID=${this.uniqueID}`, item, conf)
                 .then((response: AxiosResponse<any>) => {
                     this.sqlData = response.data
                     this.sqlDialogVisible = true

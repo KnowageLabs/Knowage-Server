@@ -92,7 +92,7 @@ export default defineComponent({
             this.$emit('openFilterDialog', field)
         },
         fieldHasFilters(field: any) {
-            for (let i = 0; i < this.query.filters.length; i++) {
+            for (let i = 0; i < this.query.filters?.length; i++) {
                 const tempFilter = this.query.filters[i]
                 if (tempFilter.leftOperandValue === field.id) {
                     return true
