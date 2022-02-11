@@ -59,7 +59,7 @@
         "eslint": "^6.7.2",
         "eslint-plugin-vue": "^7.7.0",
         "flush-promises": "^1.0.2",
-        "node-sass": "^5.0.0",
+        "node-sass": "^7.0.0",
         "pug": "^3.0.2",
         "pug-plain-loader": "^1.1.0",
         "sass": "^1.42.1",
