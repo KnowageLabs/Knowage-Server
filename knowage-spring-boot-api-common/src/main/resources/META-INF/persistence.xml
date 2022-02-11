@@ -21,10 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	version="2.2">
 
 	<persistence-unit name="knowage-config" transaction-type="RESOURCE_LOCAL">
-		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-		
+
 		<non-jta-data-source>java:comp/env/jdbc/knowage</non-jta-data-source>
-		
+
 		<class>it.eng.knowage.knowageapi.dao.dto.SbiConfig</class>
 		<class>it.eng.knowage.knowageapi.dao.dto.SbiDomains</class>
 
