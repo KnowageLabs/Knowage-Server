@@ -6,7 +6,7 @@
                     {{ $t('managers.themeManagement.title') }}
                 </template>
                 <template #end>
-                    <FabButton icon="fas fa-plus" @click="showForm" />
+                    <FabButton icon="fas fa-plus" @click="addTheme" />
                 </template>
             </Toolbar>
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
@@ -20,7 +20,7 @@
         <div class="kn-list--column kn-page p-col-2 p-sm-2 p-md-3 p-p-0" v-if="selectedTheme">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #start>
-                    {{ selectedTheme.themeName }}
+                    {{ themeToSend.themeName }}
                 </template>
                 <template #end>
                     <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSave" />
@@ -28,10 +28,10 @@
             </Toolbar>
             <div class="p-p-2 p-mt-2 p-d-flex p-ai-center">
                 <span class="p-float-label kn-flex">
-                    <InputText id="themeName" class="kn-material-input" type="text" v-model="selectedTheme.themeName" />
+                    <InputText id="themeName" class="kn-material-input" type="text" v-model="themeToSend.themeName" />
                     <label for="themeName" class="kn-material-input-label"> Theme name </label>
                 </span>
-                <InputSwitch v-model="selectedTheme.active" v-tooltip="'active'"></InputSwitch>
+                <InputSwitch v-model="themeToSend.active" v-tooltip="'active'"></InputSwitch>
             </div>
             <Divider class="p-my-2" />
             <div class="p-p-2 kn-page-content" v-if="selectedTheme.config">
@@ -88,9 +88,17 @@ export default defineComponent({
         this.getAllThemes()
     },
     methods: {
+        addTheme() {
+            this.selectTheme({ themeName: 'New Custom Theme', config: {}, active: false })
+        },
+        deleteTheme(id) {
+            this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement/id=${id}`).then(() => {
+                this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+            })
+        },
         getAllThemes() {
             this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement`).then((response: AxiosResponse<any>) => {
-                this.availableThemes = response.data.themes
+                this.availableThemes = response.data
                 if (this.availableThemes.length === 0) {
                     this.availableThemes = [
                         {
@@ -100,7 +108,7 @@ export default defineComponent({
                         }
                     ]
                 }
-                this.overrideDefaultValues(this.availableThemes.filter((item) => item.active === true)[0])
+                if (!this.selectedTheme.themeName) this.overrideDefaultValues(this.availableThemes.filter((item) => item.active === true)[0])
             })
         },
         getCurrentThemeProperties() {
@@ -113,7 +121,12 @@ export default defineComponent({
             }
         },
         async handleSave() {
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement`, this.themeToSend)
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement`, this.themeToSend).then((newId) => {
+                this.$store.commit('setInfo', { title: this.$t('common.toast.updateTitle'), msg: this.$t('common.toast.updateSuccess') })
+                if (!this.themeToSend.id) {
+                    this.themeToSend.id = newId
+                }
+            })
             if (this.selectedTheme.active) {
                 this.setActiveTheme(this.selectedTheme)
             }

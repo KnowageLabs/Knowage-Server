@@ -47,6 +47,7 @@ The service returns an array of items with all the available themes and names. E
 ```json
 [
     {
+        "id": 1,
         "themeName": "test theme name",
         "config": {
             "--kn-primary-color": "#aaaaaa",
@@ -67,6 +68,7 @@ The payload should contain a json object with the selected theme like in the exa
 
 ```json
 {
+    "id": 1, // optional, if missing a new theme will be created.
     "themeName": "test theme name",
     "config": {
         "--kn-primary-color": "#aaaaaa",
@@ -80,7 +82,7 @@ The payload should contain a json object with the selected theme like in the exa
 
 To delete the theme:
 
-`DELETE /knowage/restful-services/thememanagement?theme=personalized_theme`
+`DELETE /knowage/restful-services/thememanagement?id=4`
 
 The query attribute with the theme name is mandatory to select the theme to delete.
 
