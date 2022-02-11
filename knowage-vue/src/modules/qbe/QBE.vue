@@ -247,7 +247,7 @@ export default defineComponent({
             await this.loadCustomizedDatasetFunctions()
             await this.loadExportLimit()
             await this.loadEntities()
-            console.log(' >>> LOADED DATASET: ', this.dataset)
+
             if (!this.dataset?.dataSourceLabel) {
                 await this.executeQBEQuery()
             }
