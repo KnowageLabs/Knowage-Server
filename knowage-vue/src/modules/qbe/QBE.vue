@@ -115,7 +115,7 @@
         <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" :entities="selectedQuery?.fields" @close="havingDialogVisible = false" @save="onHavingsSave"></QBEHavingDialog>
         <QBEAdvancedFilterDialog :visible="advancedFilterDialogVisible" :query="selectedQuery" @close="advancedFilterDialogVisible = false" @save="onAdvancedFiltersSave"></QBEAdvancedFilterDialog>
         <QBESavingDialog v-if="savingDialogVisible" :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" />
-        <QBEJoinDefinitionDialog :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="uniqueID" :selectedQuery="selectedQuery" @close="onJoinDefinitionDialogClose"></QBEJoinDefinitionDialog>
+        <QBEJoinDefinitionDialog v-if="joinDefinitionDialogVisible" :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="uniqueID" :selectedQuery="selectedQuery" @close="onJoinDefinitionDialogClose"></QBEJoinDefinitionDialog>
 
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     </Dialog>
@@ -247,11 +247,12 @@ export default defineComponent({
             await this.loadCustomizedDatasetFunctions()
             await this.loadExportLimit()
             await this.loadEntities()
-            await this.executeQBEQuery()
+            console.log(' >>> LOADED DATASET: ', this.dataset)
+            if (!this.dataset?.dataSourceLabel) {
+                await this.executeQBEQuery()
+            }
         },
         async loadDataset() {
-            // HARDCODED Dataset label/name
-            // console.log('datasetLabel', this.datasetLabel)
             if (!this.dataset) {
                 return
             }
@@ -353,7 +354,6 @@ export default defineComponent({
                 }
             })
         },
-
         formatParameterDataOptions(parameter: any, data: any) {
             const valueColumn = parameter.metadata.valueColumn
             const descriptionColumn = parameter.metadata.descriptionColumn
@@ -363,21 +363,25 @@ export default defineComponent({
             return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
         },
         async initializeQBE() {
-            // console.log('DATASET: ', this.dataset)
+            console.log(' --- init --- DATASET: ', this.dataset)
+            console.log(' --- init --- QBE: ', this.qbe)
+            const label = this.dataset?.dataSourceLabel ? this.dataset.dataSourceLabel : this.qbe?.qbeDatamarts
+            const datamart = this.dataset?.dataSourceLabel ? this.dataset.name : this.qbe?.qbeDatamarts
             if (this.dataset) {
-                await this.$http.get(process.env.VUE_APP_QBE_PATH + `start-qbe?datamart=${this.dataset.name}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${this.dataset.dataSourceLabel}`).then(() => {})
+                await this.$http.get(process.env.VUE_APP_QBE_PATH + `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}`).then(() => {})
             }
         },
         async loadCustomizedDatasetFunctions() {
-            const id = this.dataset?.dataSourceId
+            const id = this.dataset?.dataSourceId ? this.dataset.dataSourceId : this.qbe?.qbeDataSourceId
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${id}`).then((response: AxiosResponse<any>) => (this.customizedDatasetFunctions = response.data))
         },
         async loadExportLimit() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/EXPORT.LIMITATION`).then((response: AxiosResponse<any>) => (this.exportLimit = response.data))
         },
         async loadEntities() {
+            const datamartName = this.dataset?.dataSourceId ? this.dataset.name : this.qbe?.qbeDatamarts
             await this.$http
-                .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.uniqueID}&datamartName=Expenses`)
+                .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.uniqueID}&datamartName=${datamartName}`)
                 .then((response: AxiosResponse<any>) => (this.entities = response.data))
                 .catch((error: any) => console.log('ERROR: ', error))
         },
