@@ -34,6 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BigIntegerNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.DecimalNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.LongNode;
@@ -410,6 +411,8 @@ public class JSONObject extends AbstractJSONObject implements ICommonObject, Ser
 				} else if (node instanceof ObjectNode) {
 					ObjectNode v = ((ObjectNode) node);
 					value = new JSONObject(v);
+				} else if (node instanceof DecimalNode) {
+					value = ((DecimalNode) node).decimalValue();
 				} else {
 					logger.debug(node.getClass().getName());
 				}
