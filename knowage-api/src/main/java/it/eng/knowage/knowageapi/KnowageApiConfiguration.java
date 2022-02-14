@@ -17,11 +17,15 @@
  */
 package it.eng.knowage.knowageapi;
 
+import javax.naming.Context;
+
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.transaction.ChainedTransactionManager;
@@ -29,8 +33,11 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import it.eng.knowage.boot.context.BusinessRequestContext;
+import it.eng.knowage.boot.filter.JWTSecurityFilter;
 import it.eng.knowage.knowageapi.service.FunctionCatalogAPI;
 import it.eng.knowage.knowageapi.service.impl.FunctionCatalogAPIImpl;
+import it.eng.spagobi.services.security.SecurityServiceService;
 
 @Configuration
 @EnableAutoConfiguration(exclude = { DataSourceAutoConfiguration.class })
@@ -68,4 +75,20 @@ public class KnowageApiConfiguration {
 		return new FunctionCatalogAPIImpl();
 	}
 
+
+
+	@Bean
+	public FilterRegistrationBean<JWTSecurityFilter> jwtSecurityFilter(@Lazy SecurityServiceService securityServiceService, BusinessRequestContext businessRequestContext, Context ctx) {
+		FilterRegistrationBean<JWTSecurityFilter> filter = new FilterRegistrationBean<>();
+
+		filter.setFilter(new JWTSecurityFilter(securityServiceService, businessRequestContext, ctx));
+		filter.setOrder(2);
+
+		/*
+		 * Add all filter's patterns here.
+		 */
+		filter.addUrlPatterns("/api/*");
+
+		return filter;
+	}
 }

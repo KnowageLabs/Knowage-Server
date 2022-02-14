@@ -179,7 +179,6 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.jboss.resteasy/resteasy-multipart-provider -->
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-multipart-provider</artifactId>
