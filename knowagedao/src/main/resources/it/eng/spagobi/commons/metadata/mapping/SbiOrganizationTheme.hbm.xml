@@ -6,15 +6,24 @@
 	<class
 		name="it.eng.spagobi.commons.metadata.SbiOrganizationTheme"
 		table="SBI_ORGANIZATION_THEME">
-		<composite-id name="id"
-			class="it.eng.spagobi.commons.metadata.SbiOrganizationThemeId">
-			<key-property name="themeName" type="string">
-				<column name="THEME_NAME" length="200" />
-			</key-property>
-			<key-property name="organizationId" type="int">
-				<column name="ORGANIZATION_ID" />
-			</key-property>
-		</composite-id>
+
+		<id name="id" type="int">
+			<column name="ID" />
+			<generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">SBI_ORGANIZATION_THEME</param>
+				<param name="initial_value">1</param>
+			</generator>
+		</id>
+
+		<property name="themeName" type="string">
+			<column name="THEME_NAME" not-null="true" length="200" />
+		</property>
+		<property name="organizationId" type="int">
+			<column name="ORGANIZATION_ID" not-null="true" />
+		</property>
+
+
 		<property name="config" type="string">
 			<column name="CONFIG" not-null="false" />
 		</property>

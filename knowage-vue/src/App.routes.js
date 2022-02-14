@@ -8,7 +8,6 @@ import documentBrowserRoutes from '@/modules/documentBrowser/DocumentBrowser.rou
 import workspaceRoutes from '@/modules/workspace/workspace.routes.js'
 import overlayRoutes from '@/overlay/Overlay.routes.js'
 import authHelper from '@/helpers/commons/authHelper'
-import store from '@/App.store.js'
 
 const baseRoutes = [
     {
@@ -80,9 +79,7 @@ router.beforeEach((to, from, next) => {
     if (checkRequired && !loggedIn) {
         authHelper.handleUnauthorized()
     } else {
-        if (to.meta.enterprise && !store.state.user.isEnterprise) {
-            next({ name: 'home' })
-        } else next()
+        next()
     }
 })
 

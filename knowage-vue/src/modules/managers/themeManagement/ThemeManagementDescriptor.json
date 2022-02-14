@@ -1,4 +1,9 @@
 {
+    "emptyTheme": {
+        "active": false,
+        "config": {},
+        "themeName": "New Custom Theme"
+    },
     "examples": {
         "dataTable": [
             {
@@ -89,7 +94,7 @@
                 "label": "common.delete"
             }
         ],
-        "defaultSortField": "themeName",
+        "defaultSortField": "id",
         "filterFields": ["themeName"],
         "interaction": {
             "parameterLabel": "id",

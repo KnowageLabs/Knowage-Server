@@ -75,95 +75,98 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Avatar from 'primevue/avatar'
-import Badge from 'primevue/badge'
-import Listbox from 'primevue/listbox'
-import KnListButtonRenderer from './KnListButtonRenderer.vue'
-import Menu from 'primevue/menu'
-import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
+    import { defineComponent } from 'vue'
+    import Avatar from 'primevue/avatar'
+    import Badge from 'primevue/badge'
+    import Listbox from 'primevue/listbox'
+    import KnListButtonRenderer from './KnListButtonRenderer.vue'
+    import Menu from 'primevue/menu'
+    import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 
-export default defineComponent({
-    name: 'gallery-management',
-    components: {
-        Avatar,
-        Badge,
-        KnListButtonRenderer,
-        Listbox,
-        Menu
-    },
-    props: {
-        settings: {
-            type: Object,
-            required: true
+    export default defineComponent({
+        name: 'kn-list-box',
+        components: {
+            Avatar,
+            Badge,
+            KnListButtonRenderer,
+            Listbox,
+            Menu
         },
-        options: Array,
-        selected: Object
-    },
-    data() {
-        return {
-            selectedSort: 'label',
-            selectedDirection: 'desc'
-        }
-    },
-    emits: ['click'],
-    created() {
-        this.selectedSort = this.settings.defaultSortField || 'label'
-    },
-    computed: {
-        getTime(ms) {
-            return formatDateWithLocale(ms)
-        }
-    },
-    methods: {
-        clickedButton(e, item) {
-            const emits = e.item && e.item.emits
-            e.item = item
-            this.$emit(emits || 'click', e)
+        props: {
+            settings: {
+                type: Object,
+                required: true
+            },
+            options: Array,
+            selected: Object
         },
-        getBorderClass(item): string {
-            if (this.settings.statusBorder) {
-                return 'kn-list-item-' + this.settings.statusBorder.values[item[this.settings.statusBorder.property]]
-            } else return ''
-        },
-        toggleSort(e) {
-            // eslint-disable-next-line
-            // @ts-ignore
-            this.$refs.sortMenu.toggle(e)
-        },
-        sort(e, item) {
-            if (this.selectedSort === item) this.selectedDirection = this.selectedDirection === 'desc' ? 'asc' : 'desc'
-            else {
-                this.selectedSort = item
-                this.selectedDirection = 'desc'
+        data() {
+            return {
+                selectedSort: 'label',
+                selectedDirection: 'desc'
             }
-            if (this.selectedDirection === 'desc') this.options?.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? 1 : -1))
-            else this.options?.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? -1 : 1))
+        },
+        emits: ['click'],
+        created() {
+            this.selectedSort = this.settings.defaultSortField || 'label'
+        },
+        mounted() {
+            this.sort(null, this.selectedSort)
+        },
+        computed: {
+            getTime(ms) {
+                return formatDateWithLocale(ms)
+            }
+        },
+        methods: {
+            clickedButton(e, item) {
+                const emits = e.item && e.item.emits
+                e.item = item
+                this.$emit(emits || 'click', e)
+            },
+            getBorderClass(item): string {
+                if (this.settings.statusBorder) {
+                    return 'kn-list-item-' + this.settings.statusBorder.values[item[this.settings.statusBorder.property]]
+                } else return ''
+            },
+            toggleSort(e) {
+                // eslint-disable-next-line
+                // @ts-ignore
+                this.$refs.sortMenu.toggle(e)
+            },
+            sort(e, item) {
+                if (this.selectedSort === item) this.selectedDirection = this.selectedDirection === 'desc' ? 'asc' : 'desc'
+                else {
+                    this.selectedSort = item
+                    this.selectedDirection = 'desc'
+                }
+                if (this.selectedDirection === 'desc') this.options?.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? 1 : -1))
+                else this.options?.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? -1 : 1))
+            }
         }
-    }
-})
+    })
 </script>
 <style lang="scss">
-.knListBox {
-    position: relative;
-    flex: 1;
-    overflow-y: auto;
-    .headerButton {
-        position: absolute;
-        right: 8px;
-        top: 16px;
-    }
-    &.noSorting {
+    .knListBox {
+        position: relative;
+        flex: 1;
+        overflow-y: auto;
+        .headerButton {
+            position: absolute;
+            right: 8px;
+            top: 16px;
+        }
+        &.noSorting {
+            .p-listbox-header {
+                .p-listbox-filter-container {
+                    width: 100%;
+                }
+            }
+        }
         .p-listbox-header {
             .p-listbox-filter-container {
-                width: 100%;
+                width: calc(100% - 36px);
             }
         }
     }
-    .p-listbox-header {
-        .p-listbox-filter-container {
-            width: calc(100% - 36px);
-        }
-    }
-}
 </style>

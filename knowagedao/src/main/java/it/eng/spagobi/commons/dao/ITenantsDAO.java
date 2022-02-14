@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
 import it.eng.spagobi.commons.metadata.SbiOrganizationProductType;
 import it.eng.spagobi.commons.metadata.SbiTenant;
@@ -60,5 +61,13 @@ public interface ITenantsDAO extends ISpagoBIDao {
 	 * @throws EMFUserError
 	 */
 	public Set loadThemesByTenantName(String name) throws EMFUserError;
+
+	/**
+	 *
+	 */
+
+	public int updateThemes(IEngUserProfile profile, String id, String themeName, String newThemeConfig, boolean isActive) throws EMFUserError;
+
+	public void deleteTheme(IEngUserProfile profile, Integer id) throws EMFUserError;
 
 }

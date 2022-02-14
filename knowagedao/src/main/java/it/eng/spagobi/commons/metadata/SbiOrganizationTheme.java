@@ -34,7 +34,9 @@ public class SbiOrganizationTheme extends SbiHibernateModel {
 	 */
 	private static final long serialVersionUID = 1895036383390787978L;
 
-	private SbiOrganizationThemeId id;
+	private Integer id;
+	private String themeName;
+	private int organizationId;
 	private String config;
 	private boolean active;
 	private String userIn;
@@ -52,20 +54,17 @@ public class SbiOrganizationTheme extends SbiHibernateModel {
 
 	}
 
-	/**
-	 * @param id
-	 * @param config
-	 * @param active
-	 */
-	public SbiOrganizationTheme(SbiOrganizationThemeId id, String config, boolean active) {
-		super();
-		this.id = id;
+	public SbiOrganizationTheme(String themeName, int organizationId, String config, boolean active) {
+		this.themeName = themeName;
+		this.organizationId = organizationId;
 		this.config = config;
 		this.active = active;
 	}
 
 	/**
 	 * @param id
+	 * @param themeName
+	 * @param organizationId
 	 * @param config
 	 * @param active
 	 * @param userIn
@@ -79,10 +78,12 @@ public class SbiOrganizationTheme extends SbiHibernateModel {
 	 * @param sbiVersionDe
 	 * @param metaVersion
 	 */
-	public SbiOrganizationTheme(SbiOrganizationThemeId id, String config, boolean active, String userIn, String userUp, String userDe, Date timeIn, Date timeUp,
-			Date timeDe, String sbiVersionIn, String sbiVersionUp, String sbiVersionDe, String metaVersion) {
+	public SbiOrganizationTheme(Integer id, String themeName, int organizationId, String config, boolean active, String userIn, String userUp, String userDe,
+			Date timeIn, Date timeUp, Date timeDe, String sbiVersionIn, String sbiVersionUp, String sbiVersionDe, String metaVersion) {
 		super();
 		this.id = id;
+		this.themeName = themeName;
+		this.organizationId = organizationId;
 		this.config = config;
 		this.active = active;
 		this.userIn = userIn;
@@ -100,15 +101,43 @@ public class SbiOrganizationTheme extends SbiHibernateModel {
 	/**
 	 * @return the id
 	 */
-	public SbiOrganizationThemeId getId() {
+	public Integer getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(SbiOrganizationThemeId id) {
+	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the themeName
+	 */
+	public String getThemeName() {
+		return themeName;
+	}
+
+	/**
+	 * @param themeName the themeName to set
+	 */
+	public void setThemeName(String themeName) {
+		this.themeName = themeName;
+	}
+
+	/**
+	 * @return the organizationId
+	 */
+	public int getOrganizationId() {
+		return organizationId;
+	}
+
+	/**
+	 * @param organizationId the organizationId to set
+	 */
+	public void setOrganizationId(int organizationId) {
+		this.organizationId = organizationId;
 	}
 
 	/**
@@ -139,82 +168,142 @@ public class SbiOrganizationTheme extends SbiHibernateModel {
 		this.active = active;
 	}
 
+	/**
+	 * @return the userIn
+	 */
 	public String getUserIn() {
 		return userIn;
 	}
 
+	/**
+	 * @param userIn the userIn to set
+	 */
 	public void setUserIn(String userIn) {
 		this.userIn = userIn;
 	}
 
+	/**
+	 * @return the userUp
+	 */
 	public String getUserUp() {
 		return userUp;
 	}
 
+	/**
+	 * @param userUp the userUp to set
+	 */
 	public void setUserUp(String userUp) {
 		this.userUp = userUp;
 	}
 
+	/**
+	 * @return the userDe
+	 */
 	public String getUserDe() {
 		return userDe;
 	}
 
+	/**
+	 * @param userDe the userDe to set
+	 */
 	public void setUserDe(String userDe) {
 		this.userDe = userDe;
 	}
 
+	/**
+	 * @return the timeIn
+	 */
 	public Date getTimeIn() {
 		return timeIn;
 	}
 
+	/**
+	 * @param timeIn the timeIn to set
+	 */
 	public void setTimeIn(Date timeIn) {
 		this.timeIn = timeIn;
 	}
 
+	/**
+	 * @return the timeUp
+	 */
 	public Date getTimeUp() {
 		return timeUp;
 	}
 
+	/**
+	 * @param timeUp the timeUp to set
+	 */
 	public void setTimeUp(Date timeUp) {
 		this.timeUp = timeUp;
 	}
 
+	/**
+	 * @return the timeDe
+	 */
 	public Date getTimeDe() {
 		return timeDe;
 	}
 
+	/**
+	 * @param timeDe the timeDe to set
+	 */
 	public void setTimeDe(Date timeDe) {
 		this.timeDe = timeDe;
 	}
 
+	/**
+	 * @return the sbiVersionIn
+	 */
 	public String getSbiVersionIn() {
 		return sbiVersionIn;
 	}
 
+	/**
+	 * @param sbiVersionIn the sbiVersionIn to set
+	 */
 	public void setSbiVersionIn(String sbiVersionIn) {
 		this.sbiVersionIn = sbiVersionIn;
 	}
 
+	/**
+	 * @return the sbiVersionUp
+	 */
 	public String getSbiVersionUp() {
 		return sbiVersionUp;
 	}
 
+	/**
+	 * @param sbiVersionUp the sbiVersionUp to set
+	 */
 	public void setSbiVersionUp(String sbiVersionUp) {
 		this.sbiVersionUp = sbiVersionUp;
 	}
 
+	/**
+	 * @return the sbiVersionDe
+	 */
 	public String getSbiVersionDe() {
 		return sbiVersionDe;
 	}
 
+	/**
+	 * @param sbiVersionDe the sbiVersionDe to set
+	 */
 	public void setSbiVersionDe(String sbiVersionDe) {
 		this.sbiVersionDe = sbiVersionDe;
 	}
 
+	/**
+	 * @return the metaVersion
+	 */
 	public String getMetaVersion() {
 		return metaVersion;
 	}
 
+	/**
+	 * @param metaVersion the metaVersion to set
+	 */
 	public void setMetaVersion(String metaVersion) {
 		this.metaVersion = metaVersion;
 	}

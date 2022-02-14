@@ -40,7 +40,7 @@ public class SbiTenant extends SbiHibernateModel {
 
 	/**
 	 * constructor with id.
-	 * 
+	 *
 	 * @param valueId the value id
 	 */
 	public SbiTenant(Integer id) {

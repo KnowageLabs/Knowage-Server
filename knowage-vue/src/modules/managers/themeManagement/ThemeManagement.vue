@@ -10,14 +10,14 @@
                 </template>
             </Toolbar>
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-            <KnListBox :options="availableThemes" :settings="descriptor.knListSettings" @click="selectTheme" @delete.stop="deleteTheme" />
+            <KnListBox :options="availableThemes" :settings="descriptor.knListSettings" @click="selectTheme" @delete.stop="deleteThemeConfirm" />
         </div>
 
-        <div class="p-col p-p-0 p-m-0 kn-page">
+        <div class="p-col p-p-0 p-m-0 kn-page" v-if="selectedTheme.themeName">
             <ThemeManagementExamples :properties="selectedTheme.config"></ThemeManagementExamples>
         </div>
 
-        <div class="kn-list--column kn-page p-col-2 p-sm-2 p-md-3 p-p-0" v-if="selectedTheme">
+        <div class="kn-list--column kn-page p-col-2 p-sm-2 p-md-3 p-p-0" v-if="selectedTheme.themeName">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #start>
                     {{ themeToSend.themeName }}
@@ -34,10 +34,10 @@
                 <InputSwitch v-model="themeToSend.active" v-tooltip="'active'"></InputSwitch>
             </div>
             <Divider class="p-my-2" />
-            <div class="p-p-2 kn-page-content" v-if="selectedTheme.config">
+            <div class="p-p-2 kn-page-content" v-if="selectedTheme.themeName">
                 <div>
                     <template v-for="(value, key) in descriptor.list" :key="key">
-                        <Fieldset :legend="key" :toggleable="true">
+                        <Fieldset :legend="key" :toggleable="true" :collapsed="true">
                             <div v-for="property in value.properties" :key="property.key">
                                 <div class="p-field">
                                     <span class="p-float-label" v-if="property.type === 'text'">
@@ -60,108 +60,117 @@
 </template>
 
 <script lang="ts">
-import { AxiosResponse } from 'axios'
-import { defineComponent } from 'vue'
-import FabButton from '@/components/UI/KnFabButton.vue'
-import ThemeManagementDescriptor from '@/modules/managers/themeManagement/ThemeManagementDescriptor.json'
-import ThemeManagementExamples from '@/modules/managers/themeManagement/ThemeManagementExamples.vue'
-import themeHelper from '@/helpers/commons/themeHelper'
-import Divider from 'primevue/divider'
-import Fieldset from 'primevue/fieldset'
-import InputSwitch from 'primevue/inputswitch'
-import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
+    import { AxiosResponse } from 'axios'
+    import { defineComponent } from 'vue'
+    import FabButton from '@/components/UI/KnFabButton.vue'
+    import ThemeManagementDescriptor from '@/modules/managers/themeManagement/ThemeManagementDescriptor.json'
+    import ThemeManagementExamples from '@/modules/managers/themeManagement/ThemeManagementExamples.vue'
+    import themeHelper from '@/helpers/commons/themeHelper'
+    import Divider from 'primevue/divider'
+    import Fieldset from 'primevue/fieldset'
+    import InputSwitch from 'primevue/inputswitch'
+    import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 
-export default defineComponent({
-    name: 'theme-management',
-    components: { Divider, FabButton, Fieldset, InputSwitch, KnListBox, ThemeManagementExamples },
-    data() {
-        return {
-            descriptor: ThemeManagementDescriptor,
-            currentTheme: {},
-            selectedTheme: { config: {} } as any,
-            themeToSend: { config: {} } as any,
-            availableThemes: [] as any[]
-        }
-    },
-    mounted() {
-        this.getCurrentThemeProperties()
-        this.getAllThemes()
-    },
-    methods: {
-        addTheme() {
-            this.selectTheme({ themeName: 'New Custom Theme', config: {}, active: false })
-        },
-        deleteTheme(id) {
-            this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement/id=${id}`).then(() => {
-                this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
-            })
-        },
-        getAllThemes() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement`).then((response: AxiosResponse<any>) => {
-                this.availableThemes = response.data
-                if (this.availableThemes.length === 0) {
-                    this.availableThemes = [
-                        {
-                            themeName: 'Default Theme',
-                            config: {},
-                            active: true
-                        }
-                    ]
-                }
-                if (!this.selectedTheme.themeName) this.overrideDefaultValues(this.availableThemes.filter((item) => item.active === true)[0])
-            })
-        },
-        getCurrentThemeProperties() {
-            for (let k in ThemeManagementDescriptor.list) {
-                for (let property of ThemeManagementDescriptor.list[k].properties) {
-                    this.currentTheme[property.key] = getComputedStyle(document.documentElement)
-                        .getPropertyValue(property.key)
-                        .trim()
-                }
+    export default defineComponent({
+        name: 'theme-management',
+        components: { Divider, FabButton, Fieldset, InputSwitch, KnListBox, ThemeManagementExamples },
+        data() {
+            return {
+                descriptor: ThemeManagementDescriptor,
+                currentTheme: {},
+                selectedTheme: { config: {} } as any,
+                themeToSend: { config: {} } as any,
+                availableThemes: [] as any[]
             }
         },
-        async handleSave() {
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement`, this.themeToSend).then((newId) => {
-                this.$store.commit('setInfo', { title: this.$t('common.toast.updateTitle'), msg: this.$t('common.toast.updateSuccess') })
-                if (!this.themeToSend.id) {
-                    this.themeToSend.id = newId
-                }
-            })
-            if (this.selectedTheme.active) {
-                this.setActiveTheme(this.selectedTheme)
-            }
+        mounted() {
+            this.getCurrentThemeProperties()
             this.getAllThemes()
         },
-        overrideDefaultValues(newValues) {
-            this.selectedTheme.themeName = newValues.themeName
-            this.selectedTheme.active = newValues.active
-            this.selectedTheme.config = { ...this.currentTheme, ...newValues.config }
-        },
-        selectTheme(event) {
-            this.themeToSend = event.item
-            this.overrideDefaultValues(event.item)
-        },
-        setActiveTheme(theme) {
-            this.$store.commit('setTheme', theme)
-            themeHelper.setTheme(theme)
-        },
-        updateModelToSend(key) {
-            this.themeToSend.config[key] = this.selectedTheme.config[key]
+        methods: {
+            addTheme() {
+                this.themeToSend = { ...this.descriptor.emptyTheme }
+                this.overrideDefaultValues(this.descriptor.emptyTheme)
+            },
+            deleteThemeConfirm(event: any) {
+                this.$confirm.require({
+                    message: this.$t('common.toast.deleteMessage'),
+                    header: this.$t('common.toast.deleteTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.deleteTheme(event)
+                })
+            },
+            deleteTheme(event) {
+                this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement/${event.item.id}`).then(() => {
+                    this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                    this.themeToSend = { config: {} }
+                    this.selectedTheme = { config: {} }
+                    this.getAllThemes(true)
+                })
+            },
+            getAllThemes(fullRefresh?: Boolean) {
+                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement`).then((response: AxiosResponse<any>) => {
+                    this.availableThemes = response.data
+                    if (this.availableThemes.length === 0) {
+                        this.availableThemes = [{ ...this.descriptor.emptyTheme }]
+                    }
+                    if (!fullRefresh) this.overrideDefaultValues(this.availableThemes.filter((item) => item.active === true)[0])
+                })
+            },
+            getCurrentThemeProperties() {
+                for (let k in ThemeManagementDescriptor.list) {
+                    for (let property of ThemeManagementDescriptor.list[k].properties) {
+                        this.currentTheme[property.key] = getComputedStyle(document.documentElement)
+                            .getPropertyValue(property.key)
+                            .trim()
+                    }
+                }
+            },
+            async handleSave() {
+                await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement`, this.themeToSend).then((response) => {
+                    this.$store.commit('setInfo', { title: this.$t('common.toast.updateTitle'), msg: this.$t('common.toast.updateSuccess') })
+                    if (!this.themeToSend.id) {
+                        this.themeToSend.id = response.data
+                    }
+                    this.getAllThemes(true)
+                })
+                if (this.themeToSend.active) {
+                    this.setActiveTheme(this.themeToSend)
+                }
+            },
+            overrideDefaultValues(newValues) {
+                // no default theme
+                if (newValues) {
+                    this.themeToSend = { ...newValues }
+                    this.selectedTheme.themeName = newValues.themeName
+                    this.selectedTheme.active = newValues.active
+                    this.selectedTheme.config = { ...this.currentTheme, ...newValues.config }
+                }
+            },
+            selectTheme(event) {
+                this.overrideDefaultValues(event.item)
+            },
+            setActiveTheme(theme) {
+                this.$store.commit('setTheme', theme.config)
+                themeHelper.setTheme(theme.config)
+            },
+            updateModelToSend(key) {
+                this.themeToSend.config[key] = this.selectedTheme.config[key]
+            }
         }
-    }
-})
+    })
 </script>
 
 <style lang="scss">
-.kn-theme-management {
-    .p-fieldset-content {
-        padding: 0;
-    }
-    .p-float-label {
-        display: flex;
-        .kn-material-input {
-            flex: 1;
+    .kn-theme-management {
+        .p-fieldset-content {
+            padding: 0;
+        }
+        .p-float-label {
+            display: flex;
+            .kn-material-input {
+                flex: 1;
+            }
         }
     }
-}
 </style>
