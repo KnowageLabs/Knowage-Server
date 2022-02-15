@@ -62,6 +62,9 @@
         &.kn-list-item-info {
             border-left: 6px solid var(--kn-color-info);
         }
+        &.router-link-active {
+            background-color: var(--kn-list-item-selected-background-color);
+        }
 
         .kn-list-item-text {
             display: flex;

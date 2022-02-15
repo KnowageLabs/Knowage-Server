@@ -4,7 +4,7 @@
             <Card>
                 <template #header>
                     <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                        <template #left>
+                        <template #start>
                             {{ $t('managers.usersManagement.roles') }}
                         </template>
                     </Toolbar>
@@ -55,84 +55,84 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Card from 'primevue/card'
-import Dropdown from 'primevue/dropdown'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
-import Message from 'primevue/message'
-import rolesTabDescriptor from './RolesTabDescriptor.json'
-import { iRole } from '../UsersManagement'
+    import { defineComponent } from 'vue'
+    import Card from 'primevue/card'
+    import Dropdown from 'primevue/dropdown'
+    import Column from 'primevue/column'
+    import DataTable from 'primevue/datatable'
+    import Message from 'primevue/message'
+    import rolesTabDescriptor from './RolesTabDescriptor.json'
+    import { iRole } from '../UsersManagement'
 
-export default defineComponent({
-    name: 'roles-tab',
-    components: {
-        Card,
-        Column,
-        DataTable,
-        Dropdown,
-        Message
-    },
-    props: {
-        defRole: Number,
-        rolesList: Array,
-        selected: Array
-    },
-    emits: ['changed', 'setDefaultRole'],
-    data() {
-        return {
-            defaultRole: null as null | iRole,
-            rolesTabDescriptor,
-            selectedRoles: [] as iRole[],
-            emptyOption: { id: null, name: this.$t('managers.usersManagement.emptyRolesOption'), value: '' }
+    export default defineComponent({
+        name: 'roles-tab',
+        components: {
+            Card,
+            Column,
+            DataTable,
+            Dropdown,
+            Message
+        },
+        props: {
+            defRole: Number,
+            rolesList: Array,
+            selected: Array
+        },
+        emits: ['changed', 'setDefaultRole'],
+        data() {
+            return {
+                defaultRole: null as null | iRole,
+                rolesTabDescriptor,
+                selectedRoles: [] as iRole[],
+                emptyOption: { id: null, name: this.$t('managers.usersManagement.emptyRolesOption'), value: '' }
+            }
+        },
+        mounted() {},
+        watch: {
+            selected: {
+                handler: function(selected: iRole[]) {
+                    this.selectedRoles = selected
+                    this.setDefaultRole(this.defRole)
+                }
+            },
+            defRole: {
+                handler: function(defRole) {
+                    this.setDefaultRole(defRole)
+                }
+            }
+        },
+        methods: {
+            setDefaultRole(defRole) {
+                if (this.selectedRoles) {
+                    const defaultRoleObj = this.selectedRoles.find((role) => role.id === defRole)
+                    this.defaultRole = defaultRoleObj ? defaultRoleObj : this.emptyOption
+                }
+            },
+            onRowSelect() {
+                this.$emit('changed', this.selectedRoles)
+            },
+            onRowUnselect() {
+                this.$emit('changed', this.selectedRoles)
+                if (this.selectedRoles?.length <= 1) {
+                    this.defaultRole = null
+                    this.onSelectDefaultRole()
+                }
+            },
+            onSelectDefaultRole() {
+                this.$emit('setDefaultRole', this.defaultRole ? this.defaultRole.id : null)
+            },
+            onSelectAll() {
+                this.$emit('changed', this.selectedRoles)
+                if (this.selectedRoles?.length <= 1) {
+                    this.defaultRole = null
+                    this.onSelectDefaultRole()
+                }
+            },
+            selectedRolesWithEmpty() {
+                const selecteRolesArray: iRole[] = this.selectedRoles ? [...this.selectedRoles] : []
+                selecteRolesArray.unshift(this.emptyOption)
+                return selecteRolesArray
+            }
         }
-    },
-    mounted() {},
-    watch: {
-        selected: {
-            handler: function(selected: iRole[]) {
-                this.selectedRoles = selected
-                this.setDefaultRole(this.defRole)
-            }
-        },
-        defRole: {
-            handler: function(defRole) {
-                this.setDefaultRole(defRole)
-            }
-        }
-    },
-    methods: {
-        setDefaultRole(defRole) {
-            if (this.selectedRoles) {
-                const defaultRoleObj = this.selectedRoles.find((role) => role.id === defRole)
-                this.defaultRole = defaultRoleObj ? defaultRoleObj : this.emptyOption
-            }
-        },
-        onRowSelect() {
-            this.$emit('changed', this.selectedRoles)
-        },
-        onRowUnselect() {
-            this.$emit('changed', this.selectedRoles)
-            if (this.selectedRoles?.length <= 1) {
-                this.defaultRole = null
-                this.onSelectDefaultRole()
-            }
-        },
-        onSelectDefaultRole() {
-            this.$emit('setDefaultRole', this.defaultRole ? this.defaultRole.id : null)
-        },
-        onSelectAll() {
-            this.$emit('changed', this.selectedRoles)
-            if (this.selectedRoles?.length <= 1) {
-                this.defaultRole = null
-                this.onSelectDefaultRole()
-            }
-        },
-        selectedRolesWithEmpty() {
-            const selecteRolesArray: iRole[] = this.selectedRoles ? [...this.selectedRoles] : []
-            selecteRolesArray.unshift(this.emptyOption)
-            return selecteRolesArray
-        }
-    }
-})
+    })
 </script>

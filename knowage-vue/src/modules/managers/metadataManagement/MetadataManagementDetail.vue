@@ -1,6 +1,6 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0">
-        <template #right>
+        <template #end>
             <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" :disabled="buttonDisabled" @click="handleSubmit" />
             <Button class="kn-button p-button-text p-button-rounded" icon="pi pi-times" @click="closeTemplate" />
         </template>

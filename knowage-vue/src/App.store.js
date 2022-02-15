@@ -26,7 +26,8 @@ const store = createStore({
                 cpuNumber: -1
             },
             documentExecution: {},
-            theme: {}
+            theme: {},
+            defaultTheme: {}
         }
     },
     actions: {
@@ -99,6 +100,9 @@ const store = createStore({
         },
         setTheme(state, theme) {
             state.theme = theme
+        },
+        setDefaultTheme(state, defaultTheme) {
+            state.defaultTheme = defaultTheme
         }
     }
 })

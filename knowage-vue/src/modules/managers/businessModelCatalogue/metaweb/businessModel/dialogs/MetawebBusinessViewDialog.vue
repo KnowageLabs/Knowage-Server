@@ -2,7 +2,7 @@
     <Dialog class="bsdialog" :style="bsDescriptor.style.bsDialog" :visible="showBusinessViewDialog" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary kn-width-full">
-                <template #left>
+                <template #start>
                     {{ $t('metaweb.businessModel.newView') }}
                 </template>
             </Toolbar>
@@ -29,10 +29,10 @@
 
         <div v-if="wizardStep === 2" id="summary-container" class="p-m-3 p-d-flex p-flex-column kn-flex-05">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('metaweb.businessModel.summary') }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button v-if="!expandSummary" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandSummary = true" />
                     <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandSummary = false" />
                 </template>
@@ -71,186 +71,186 @@
 </template>
 
 <script lang="ts">
-import { AxiosResponse } from 'axios'
-import { defineComponent } from 'vue'
-import useValidate from '@vuelidate/core'
-import Dialog from 'primevue/dialog'
-import bsDescriptor from '../MetawebBusinessModelDescriptor.json'
-import StepOne from './businessViewWizard/MetawebBusinessViewWizardStepOne.vue'
-import TableAssociator from '@/modules/managers/businessModelCatalogue/metaweb/businessModel/tableAssociator/MetawebTableAssociator.vue'
-import Dropdown from 'primevue/dropdown'
-import Listbox from 'primevue/listbox'
+    import { AxiosResponse } from 'axios'
+    import { defineComponent } from 'vue'
+    import useValidate from '@vuelidate/core'
+    import Dialog from 'primevue/dialog'
+    import bsDescriptor from '../MetawebBusinessModelDescriptor.json'
+    import StepOne from './businessViewWizard/MetawebBusinessViewWizardStepOne.vue'
+    import TableAssociator from '@/modules/managers/businessModelCatalogue/metaweb/businessModel/tableAssociator/MetawebTableAssociator.vue'
+    import Dropdown from 'primevue/dropdown'
+    import Listbox from 'primevue/listbox'
 
-const { generate, applyPatch } = require('fast-json-patch')
+    const { generate, applyPatch } = require('fast-json-patch')
 
-export default defineComponent({
-    components: { Dialog, StepOne, TableAssociator, Dropdown, Listbox },
-    emits: ['closeDialog'],
-    props: { showBusinessViewDialog: Boolean, meta: { type: Object, required: true }, observer: { type: Object }, selectedBusinessModel: { type: Object, required: true }, editMode: Boolean },
-    computed: {
-        buttonDisabled(): boolean {
-            if (this.v$.$invalid || this.tmpBnssView.physicalModels.length < 2) {
-                return true
-            } else return false
-        }
-    },
-    data() {
-        return {
-            bsDescriptor,
-            v$: useValidate() as any,
-            tmpBnssView: { physicalModels: [], name: '', description: '' } as any,
-            metaObserve: {} as any,
-            wizardStep: 1,
-            expandSummary: true,
-            summary: [] as any,
-            sourceTable: { columns: [] } as any,
-            targetTable: { columns: [] } as any,
-            physicalModels: [] as any
-        }
-    },
-    created() {
-        this.loadMeta()
-        this.setEditModeData()
-    },
-    watch: {
-        meta() {
+    export default defineComponent({
+        components: { Dialog, StepOne, TableAssociator, Dropdown, Listbox },
+        emits: ['closeDialog'],
+        props: { showBusinessViewDialog: Boolean, meta: { type: Object, required: true }, observer: { type: Object }, selectedBusinessModel: { type: Object, required: true }, editMode: Boolean },
+        computed: {
+            buttonDisabled(): boolean {
+                if (this.v$.$invalid || this.tmpBnssView.physicalModels.length < 2) {
+                    return true
+                } else return false
+            }
+        },
+        data() {
+            return {
+                bsDescriptor,
+                v$: useValidate() as any,
+                tmpBnssView: { physicalModels: [], name: '', description: '' } as any,
+                metaObserve: {} as any,
+                wizardStep: 1,
+                expandSummary: true,
+                summary: [] as any,
+                sourceTable: { columns: [] } as any,
+                targetTable: { columns: [] } as any,
+                physicalModels: [] as any
+            }
+        },
+        created() {
             this.loadMeta()
             this.setEditModeData()
-        }
-    },
-    methods: {
-        async loadMeta() {
-            this.meta ? (this.metaObserve = this.meta) : ''
-            this.meta ? (this.physicalModels = JSON.parse(JSON.stringify(this.meta.physicalModels))) : ''
         },
-        closeDialog() {
-            this.tmpBnssView = null as any
-            this.targetTable = null
-            this.sourceTable = null
-            this.$emit('closeDialog')
-        },
-        nextStep() {
-            this.wizardStep++
-        },
-        previousStep() {
-            this.wizardStep--
-        },
-        getItemIndex(list, name) {
-            for (var i = 0; i < list.length; i++) {
-                if (list[i].name === name) {
-                    return i
-                }
+        watch: {
+            meta() {
+                this.loadMeta()
+                this.setEditModeData()
             }
-            return -1
         },
-        setEditModeData() {
-            if (this.editMode == true) {
-                this.wizardStep = 2
-                for (var pti = 0; pti < this.selectedBusinessModel.physicalTables.length; pti++) {
-                    var tmppt = {}
-                    tmppt = JSON.parse(JSON.stringify(this.meta.physicalModels[this.selectedBusinessModel.physicalTables[pti].physicalTableIndex]))
-                    this.tmpBnssView.physicalModels.push(tmppt)
-                }
-
-                for (var x = 0; x < this.tmpBnssView.physicalModels.length; x++) {
-                    for (var y = 0; y < this.tmpBnssView.physicalModels[x].columns.length; y++) {
-                        this.tmpBnssView.physicalModels[x].columns[y].$parent = this.tmpBnssView.physicalModels[x]
+        methods: {
+            async loadMeta() {
+                this.meta ? (this.metaObserve = this.meta) : ''
+                this.meta ? (this.physicalModels = JSON.parse(JSON.stringify(this.meta.physicalModels))) : ''
+            },
+            closeDialog() {
+                this.tmpBnssView = null as any
+                this.targetTable = null
+                this.sourceTable = null
+                this.$emit('closeDialog')
+            },
+            nextStep() {
+                this.wizardStep++
+            },
+            previousStep() {
+                this.wizardStep--
+            },
+            getItemIndex(list, name) {
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].name === name) {
+                        return i
                     }
                 }
+                return -1
+            },
+            setEditModeData() {
+                if (this.editMode == true) {
+                    this.wizardStep = 2
+                    for (var pti = 0; pti < this.selectedBusinessModel.physicalTables.length; pti++) {
+                        var tmppt = {}
+                        tmppt = JSON.parse(JSON.stringify(this.meta.physicalModels[this.selectedBusinessModel.physicalTables[pti].physicalTableIndex]))
+                        this.tmpBnssView.physicalModels.push(tmppt)
+                    }
 
-                for (var i = 0; i < this.selectedBusinessModel.joinRelationships.length; i++) {
-                    var rel = this.selectedBusinessModel.joinRelationships[i]
-                    var destTab = this.tmpBnssView.physicalModels[this.getItemIndex(this.tmpBnssView.physicalModels, rel.destinationTable.name)]
-                    var sourceTab = this.tmpBnssView.physicalModels[this.getItemIndex(this.tmpBnssView.physicalModels, rel.sourceTable.name)]
-                    for (var dc = 0; dc < rel.destinationColumns.length; dc++) {
-                        var destCol = destTab.columns[this.getItemIndex(destTab.columns, rel.destinationColumns[dc].name)]
-                        var sourceCol = sourceTab.columns[this.getItemIndex(sourceTab.columns, rel.sourceColumns[dc].name)]
-                        // eslint-disable-next-line no-prototype-builtins
-                        if (!destCol.hasOwnProperty('links')) {
-                            destCol.links = []
+                    for (var x = 0; x < this.tmpBnssView.physicalModels.length; x++) {
+                        for (var y = 0; y < this.tmpBnssView.physicalModels[x].columns.length; y++) {
+                            this.tmpBnssView.physicalModels[x].columns[y].$parent = this.tmpBnssView.physicalModels[x]
                         }
-                        destCol.links.push(sourceCol)
+                    }
+
+                    for (var i = 0; i < this.selectedBusinessModel.joinRelationships.length; i++) {
+                        var rel = this.selectedBusinessModel.joinRelationships[i]
+                        var destTab = this.tmpBnssView.physicalModels[this.getItemIndex(this.tmpBnssView.physicalModels, rel.destinationTable.name)]
+                        var sourceTab = this.tmpBnssView.physicalModels[this.getItemIndex(this.tmpBnssView.physicalModels, rel.sourceTable.name)]
+                        for (var dc = 0; dc < rel.destinationColumns.length; dc++) {
+                            var destCol = destTab.columns[this.getItemIndex(destTab.columns, rel.destinationColumns[dc].name)]
+                            var sourceCol = sourceTab.columns[this.getItemIndex(sourceTab.columns, rel.sourceColumns[dc].name)]
+                            // eslint-disable-next-line no-prototype-builtins
+                            if (!destCol.hasOwnProperty('links')) {
+                                destCol.links = []
+                            }
+                            destCol.links.push(sourceCol)
+                        }
+                    }
+
+                    this.updateSummary()
+                }
+            },
+            updateSummary() {
+                this.summary = []
+                for (var i = 0; i < this.tmpBnssView.physicalModels.length; i++) {
+                    for (var col = 0; col < this.tmpBnssView.physicalModels[i].columns.length; col++) {
+                        // eslint-disable-next-line no-prototype-builtins
+                        if (this.tmpBnssView.physicalModels[i].columns[col].hasOwnProperty('links') && this.tmpBnssView.physicalModels[i].columns[col].links.length > 0) {
+                            this.summary.push(this.tmpBnssView.physicalModels[i].columns[col])
+                            // eslint-disable-next-line no-prototype-builtins
+                        } else if (this.tmpBnssView.physicalModels[i].columns[col].hasOwnProperty('links') && this.tmpBnssView.physicalModels[i].columns[col].links.length > 0) {
+                            delete this.tmpBnssView.physicalModels[i].columns[col].links
+                        }
                     }
                 }
+            },
+            async saveBusinessView() {
+                var tmpData = {} as any
+                if (this.editMode) {
+                    tmpData.viewUniqueName = this.selectedBusinessModel.uniqueName
+                } else {
+                    tmpData.name = this.tmpBnssView.name
+                    tmpData.description = this.tmpBnssView.description
+                    tmpData.sourceBusinessClass = this.tmpBnssView.sourceBusinessClass
+                    tmpData.physicaltable = []
+                }
 
+                tmpData.relationships = {}
+
+                for (var i = 0; i < this.tmpBnssView.physicalModels.length; i++) {
+                    var tmpDataObj = this.tmpBnssView.physicalModels[i]
+                    this.editMode ? '' : tmpData.physicaltable.push(tmpDataObj.name)
+                    for (var col = 0; col < this.tmpBnssView.physicalModels[i].columns.length; col++) {
+                        // eslint-disable-next-line no-prototype-builtins
+                        if (this.tmpBnssView.physicalModels[i].columns[col].hasOwnProperty('links') && this.tmpBnssView.physicalModels[i].columns[col].links.length > 0) {
+                            // eslint-disable-next-line no-prototype-builtins
+                            if (!tmpData.relationships.hasOwnProperty(tmpDataObj.name)) {
+                                tmpData.relationships[tmpDataObj.name] = {}
+                            }
+                            var tabObj = tmpData.relationships[tmpDataObj.name]
+                            var tmpColObj = this.tmpBnssView.physicalModels[i].columns[col]
+                            // eslint-disable-next-line no-prototype-builtins
+                            if (!tabObj.hasOwnProperty(tmpColObj.name)) {
+                                tabObj[tmpColObj.name] = {}
+                            }
+                            var colObj = tabObj[tmpColObj.name]
+                            for (var rel = 0; rel < tmpColObj.links.length; rel++) {
+                                // eslint-disable-next-line no-prototype-builtins
+                                if (!colObj.hasOwnProperty(tmpColObj.links[rel].tableName)) {
+                                    colObj[tmpColObj.links[rel].tableName] = []
+                                }
+                                var targetTableObj = colObj[tmpColObj.links[rel].tableName]
+                                targetTableObj.push(tmpColObj.links[rel].name)
+                            }
+                        }
+                    }
+                }
+                const postData = { data: tmpData, diff: [] }
+                await this.$http
+                    .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/addBusinessView`, postData)
+                    .then(async (response: AxiosResponse<any>) => {
+                        this.metaObserve = applyPatch(this.metaObserve, response.data)
+                        generate(this.observer)
+                    })
+                    .catch(() => {})
+                    .finally(() => this.closeDialog())
+            },
+            deleteRelationship(item, rel?) {
+                rel == undefined ? (item.links = []) : item.links.splice(rel, 1)
                 this.updateSummary()
             }
-        },
-        updateSummary() {
-            this.summary = []
-            for (var i = 0; i < this.tmpBnssView.physicalModels.length; i++) {
-                for (var col = 0; col < this.tmpBnssView.physicalModels[i].columns.length; col++) {
-                    // eslint-disable-next-line no-prototype-builtins
-                    if (this.tmpBnssView.physicalModels[i].columns[col].hasOwnProperty('links') && this.tmpBnssView.physicalModels[i].columns[col].links.length > 0) {
-                        this.summary.push(this.tmpBnssView.physicalModels[i].columns[col])
-                        // eslint-disable-next-line no-prototype-builtins
-                    } else if (this.tmpBnssView.physicalModels[i].columns[col].hasOwnProperty('links') && this.tmpBnssView.physicalModels[i].columns[col].links.length > 0) {
-                        delete this.tmpBnssView.physicalModels[i].columns[col].links
-                    }
-                }
-            }
-        },
-        async saveBusinessView() {
-            var tmpData = {} as any
-            if (this.editMode) {
-                tmpData.viewUniqueName = this.selectedBusinessModel.uniqueName
-            } else {
-                tmpData.name = this.tmpBnssView.name
-                tmpData.description = this.tmpBnssView.description
-                tmpData.sourceBusinessClass = this.tmpBnssView.sourceBusinessClass
-                tmpData.physicaltable = []
-            }
-
-            tmpData.relationships = {}
-
-            for (var i = 0; i < this.tmpBnssView.physicalModels.length; i++) {
-                var tmpDataObj = this.tmpBnssView.physicalModels[i]
-                this.editMode ? '' : tmpData.physicaltable.push(tmpDataObj.name)
-                for (var col = 0; col < this.tmpBnssView.physicalModels[i].columns.length; col++) {
-                    // eslint-disable-next-line no-prototype-builtins
-                    if (this.tmpBnssView.physicalModels[i].columns[col].hasOwnProperty('links') && this.tmpBnssView.physicalModels[i].columns[col].links.length > 0) {
-                        // eslint-disable-next-line no-prototype-builtins
-                        if (!tmpData.relationships.hasOwnProperty(tmpDataObj.name)) {
-                            tmpData.relationships[tmpDataObj.name] = {}
-                        }
-                        var tabObj = tmpData.relationships[tmpDataObj.name]
-                        var tmpColObj = this.tmpBnssView.physicalModels[i].columns[col]
-                        // eslint-disable-next-line no-prototype-builtins
-                        if (!tabObj.hasOwnProperty(tmpColObj.name)) {
-                            tabObj[tmpColObj.name] = {}
-                        }
-                        var colObj = tabObj[tmpColObj.name]
-                        for (var rel = 0; rel < tmpColObj.links.length; rel++) {
-                            // eslint-disable-next-line no-prototype-builtins
-                            if (!colObj.hasOwnProperty(tmpColObj.links[rel].tableName)) {
-                                colObj[tmpColObj.links[rel].tableName] = []
-                            }
-                            var targetTableObj = colObj[tmpColObj.links[rel].tableName]
-                            targetTableObj.push(tmpColObj.links[rel].name)
-                        }
-                    }
-                }
-            }
-            const postData = { data: tmpData, diff: [] }
-            await this.$http
-                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/addBusinessView`, postData)
-                .then(async (response: AxiosResponse<any>) => {
-                    this.metaObserve = applyPatch(this.metaObserve, response.data)
-                    generate(this.observer)
-                })
-                .catch(() => {})
-                .finally(() => this.closeDialog())
-        },
-        deleteRelationship(item, rel?) {
-            rel == undefined ? (item.links = []) : item.links.splice(rel, 1)
-            this.updateSummary()
         }
-    }
-})
+    })
 </script>
 <style lang="scss">
-.data-condition-list {
-    border: 1px solid var(--kn-color-borders) !important;
-    border-top: none;
-}
+    .data-condition-list {
+        border: 1px solid var(--kn-color-borders) !important;
+        border-top: none;
+    }
 </style>

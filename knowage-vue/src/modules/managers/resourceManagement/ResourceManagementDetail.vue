@@ -1,11 +1,11 @@
 <template>
     <div class="kn-page">
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-            <template #left
+            <template #start
                 ><span class="cleanText">{{ folder.label }}</span></template
             >
 
-            <template #right>
+            <template #end>
                 <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeDetail()" />
             </template>
         </Toolbar>
@@ -13,8 +13,8 @@
         <Breadcrumb :home="home" :model="items"> </Breadcrumb>
         <div class="kn-page-content">
             <Toolbar v-if="selectedFiles.length > 0" class="kn-toolbar kn-toolbar--default p-m-0">
-                <template #left>{{ $tc('managers.resourceManagement.selectedFiles', selectedFiles.length, { num: selectedFiles.length }) }}</template>
-                <template #right>
+                <template #start>{{ $tc('managers.resourceManagement.selectedFiles', selectedFiles.length, { num: selectedFiles.length }) }}</template>
+                <template #end>
                     <Button icon="fas fa-download" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="downloadFiles" />
                     <Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="showDeleteDialog" />
                 </template>
@@ -82,123 +82,72 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { AxiosResponse } from 'axios'
-import descriptor from './ResourceManagementDescriptor.json'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
-import { IFileTemplate } from '@/modules/managers/resourceManagement/ResourceManagement'
-import { FilterMatchMode, FilterOperator } from 'primevue/api'
-import { byteToHumanFriendlyFormat } from '@/helpers/commons/fileHelper'
-import { ITableColumn } from '../../commons/ITableColumn'
-import { formatDate } from '@/helpers/commons/localeHelper'
-import Breadcrumb from 'primevue/breadcrumb'
-import ResourceManagementImportFileDialog from './ResourceManagementImportFileDialog.vue'
-import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
+    import { defineComponent } from 'vue'
+    import { AxiosResponse } from 'axios'
+    import descriptor from './ResourceManagementDescriptor.json'
+    import Column from 'primevue/column'
+    import DataTable from 'primevue/datatable'
+    import { IFileTemplate } from '@/modules/managers/resourceManagement/ResourceManagement'
+    import { FilterMatchMode, FilterOperator } from 'primevue/api'
+    import { byteToHumanFriendlyFormat } from '@/helpers/commons/fileHelper'
+    import { ITableColumn } from '../../commons/ITableColumn'
+    import { formatDate } from '@/helpers/commons/localeHelper'
+    import Breadcrumb from 'primevue/breadcrumb'
+    import ResourceManagementImportFileDialog from './ResourceManagementImportFileDialog.vue'
+    import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
 
-export default defineComponent({
-    components: { Breadcrumb, Column, DataTable, ResourceManagementImportFileDialog },
-    props: {
-        folder: Object
-    },
-    emits: ['touched', 'closed', 'inserted', 'folderCreated', 'fileUploaded'],
-    data() {
-        return {
-            descriptor,
-            loading: false,
-            touched: false,
-            files: [] as Array<IFileTemplate>,
-            selectedFiles: [] as Array<IFileTemplate>,
-            filters: {
-                global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-                name: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-                size: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-                lastModified: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] }
-            },
-            home: { icon: 'pi pi-home' },
-            items: [] as Array<{ label: String }>,
-            folderName: '',
-            importFile: false,
-            selectedFolder: {} as any
-        }
-    },
-    computed: {},
-    beforeRouteUpdate() {
-        this.loadSelectedFolder()
-    },
-    created() {
-        this.loadSelectedFolder()
-    },
-    mounted() {},
-
-    methods: {
-        closeDetail() {
-            this.$emit('closed')
+    export default defineComponent({
+        components: { Breadcrumb, Column, DataTable, ResourceManagementImportFileDialog },
+        props: {
+            folder: Object
         },
-        downloadFiles() {
-            this.$http
-                .post(process.env.VUE_APP_API_PATH + `2.0/resources/files/download`, this.getKeyAndFilenamesObj(), {
-                    responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
-
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/zip; charset=utf-8'
-                    }
-                })
-                .then((response: AxiosResponse<any>) => {
-                    downloadDirectFromResponse(response)
-                    this.selectedFiles = []
-                })
-                .catch((error) => {
-                    this.$store.commit('setError', {
-                        title: this.$t('common.error.downloading'),
-                        msg: this.$t(error)
-                    })
-                })
-                .finally(() => (this.loading = false))
-        },
-        getBreadcrumbs() {
-            this.items = []
-            let relativePath = this.getCurrentFolderPath()
-            if (relativePath) {
-                let pathFolders = relativePath.split('\\')
-                pathFolders.forEach((element) => {
-                    let obj = { label: element, to: null }
-                    this.items.push(obj)
-                })
+        emits: ['touched', 'closed', 'inserted', 'folderCreated', 'fileUploaded'],
+        data() {
+            return {
+                descriptor,
+                loading: false,
+                touched: false,
+                files: [] as Array<IFileTemplate>,
+                selectedFiles: [] as Array<IFileTemplate>,
+                filters: {
+                    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+                    name: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+                    size: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+                    lastModified: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] }
+                },
+                home: { icon: 'pi pi-home' },
+                items: [] as Array<{ label: String }>,
+                folderName: '',
+                importFile: false,
+                selectedFolder: {} as any
             }
         },
-        getCurrentFolderPath() {
-            return this.folder ? this.folder.relativePath : undefined
+        computed: {},
+        beforeRouteUpdate() {
+            this.loadSelectedFolder()
         },
-        getCurrentFolderKey() {
-            return this.folder ? '' + this.folder.key : undefined
+        created() {
+            this.loadSelectedFolder()
         },
-        getOrderedColumns(): Array<ITableColumn> {
-            let columns = this.descriptor['column']
-            columns.sort(function(a, b) {
-                if (a.position > b.position) return 1
-                if (a.position < b.position) return -1
-                return 0
-            })
-            return columns
-        },
-        getDataValue(data) {
-            return byteToHumanFriendlyFormat(data)
-        },
-        getDate(date) {
-            return formatDate(date, 'LLL')
-        },
-        async loadSelectedFolder() {
-            this.loading = true
-            this.files = []
-            this.selectedFiles = []
-            if (this.folder) {
-                await this.$http
-                    .get(process.env.VUE_APP_API_PATH + `2.0/resources/files` + '?key=' + this.folder.key)
+        mounted() {},
+
+        methods: {
+            closeDetail() {
+                this.$emit('closed')
+            },
+            downloadFiles() {
+                this.$http
+                    .post(process.env.VUE_APP_API_PATH + `2.0/resources/files/download`, this.getKeyAndFilenamesObj(), {
+                        responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
+
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Accept: 'application/zip; charset=utf-8'
+                        }
+                    })
                     .then((response: AxiosResponse<any>) => {
-                        this.files = response.data
-                        this.getBreadcrumbs()
+                        downloadDirectFromResponse(response)
+                        this.selectedFiles = []
                     })
                     .catch((error) => {
                         this.$store.commit('setError', {
@@ -207,93 +156,144 @@ export default defineComponent({
                         })
                     })
                     .finally(() => (this.loading = false))
-            }
-        },
-        openImportFileDialog() {
-            this.importFile = !this.importFile
-        },
-        setDirty() {
-            this.touched = true
-            this.$emit('touched')
-        },
-        showDeleteDialog() {
-            this.$confirm.require({
-                message: this.$t('common.toast.deleteMessage'),
-                header: this.$t('common.toast.deleteConfirmTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => this.deleteFiles()
-            })
-        },
-        deleteFiles() {
-            this.loading = true
-
-            this.$http
-                .delete(process.env.VUE_APP_API_PATH + `2.0/resources/files`, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    data: this.getKeyAndFilenamesObj()
-                })
-                .then(() => {
-                    this.selectedFiles = []
-                    this.loadSelectedFolder()
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.deleteTitle'),
-                        msg: this.$t('common.toast.deleteSuccess')
+            },
+            getBreadcrumbs() {
+                this.items = []
+                let relativePath = this.getCurrentFolderPath()
+                if (relativePath) {
+                    let pathFolders = relativePath.split('\\')
+                    pathFolders.forEach((element) => {
+                        let obj = { label: element, to: null }
+                        this.items.push(obj)
                     })
-                })
-                .catch(() => {
-                    this.$store.commit('setError', {
-                        title: this.$t('common.toast.deleteTitle'),
-                        msg: this.$t('common.error.deleting')
-                    })
-                })
-                .finally(() => (this.loading = false))
-        },
-        getKeyAndFilenamesObj() {
-            let obj = {} as JSON
-            if (this.folder) {
-                obj['key'] = this.folder.key
-                obj['selectedFilesNames'] = []
-                for (var idx in this.selectedFiles) {
-                    obj['selectedFilesNames'].push(this.selectedFiles[idx].name)
                 }
+            },
+            getCurrentFolderPath() {
+                return this.folder ? this.folder.relativePath : undefined
+            },
+            getCurrentFolderKey() {
+                return this.folder ? '' + this.folder.key : undefined
+            },
+            getOrderedColumns(): Array<ITableColumn> {
+                let columns = this.descriptor['column']
+                columns.sort(function(a, b) {
+                    if (a.position > b.position) return 1
+                    if (a.position < b.position) return -1
+                    return 0
+                })
+                return columns
+            },
+            getDataValue(data) {
+                return byteToHumanFriendlyFormat(data)
+            },
+            getDate(date) {
+                return formatDate(date, 'LLL')
+            },
+            async loadSelectedFolder() {
+                this.loading = true
+                this.files = []
+                this.selectedFiles = []
+                if (this.folder) {
+                    await this.$http
+                        .get(process.env.VUE_APP_API_PATH + `2.0/resources/files` + '?key=' + this.folder.key)
+                        .then((response: AxiosResponse<any>) => {
+                            this.files = response.data
+                            this.getBreadcrumbs()
+                        })
+                        .catch((error) => {
+                            this.$store.commit('setError', {
+                                title: this.$t('common.error.downloading'),
+                                msg: this.$t(error)
+                            })
+                        })
+                        .finally(() => (this.loading = false))
+                }
+            },
+            openImportFileDialog() {
+                this.importFile = !this.importFile
+            },
+            setDirty() {
+                this.touched = true
+                this.$emit('touched')
+            },
+            showDeleteDialog() {
+                this.$confirm.require({
+                    message: this.$t('common.toast.deleteMessage'),
+                    header: this.$t('common.toast.deleteConfirmTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.deleteFiles()
+                })
+            },
+            deleteFiles() {
+                this.loading = true
+
+                this.$http
+                    .delete(process.env.VUE_APP_API_PATH + `2.0/resources/files`, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        data: this.getKeyAndFilenamesObj()
+                    })
+                    .then(() => {
+                        this.selectedFiles = []
+                        this.loadSelectedFolder()
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.deleteTitle'),
+                            msg: this.$t('common.toast.deleteSuccess')
+                        })
+                    })
+                    .catch(() => {
+                        this.$store.commit('setError', {
+                            title: this.$t('common.toast.deleteTitle'),
+                            msg: this.$t('common.error.deleting')
+                        })
+                    })
+                    .finally(() => (this.loading = false))
+            },
+            getKeyAndFilenamesObj() {
+                let obj = {} as JSON
+                if (this.folder) {
+                    obj['key'] = this.folder.key
+                    obj['selectedFilesNames'] = []
+                    for (var idx in this.selectedFiles) {
+                        obj['selectedFilesNames'].push(this.selectedFiles[idx].name)
+                    }
+                }
+                return obj
+            },
+            fileUploaded() {
+                this.loadSelectedFolder()
+                this.$emit('fileUploaded')
             }
-            return obj
         },
-        fileUploaded() {
-            this.loadSelectedFolder()
-            this.$emit('fileUploaded')
+        watch: {
+            id(oldId, newId) {
+                if (oldId != newId) this.loadSelectedFolder()
+            },
+            folder() {
+                this.loading = true
+                /* this.v$.$reset() */
+                this.selectedFolder = { ...this.folder }
+                this.loadSelectedFolder()
+                this.loading = false
+            }
         }
-    },
-    watch: {
-        id(oldId, newId) {
-            if (oldId != newId) this.loadSelectedFolder()
-        },
-        folder() {
-            this.loading = true
-            /* this.v$.$reset() */
-            this.selectedFolder = { ...this.folder }
-            this.loadSelectedFolder()
-            this.loading = false
-        }
-    }
-})
+    })
 </script>
 
 <style scoped lang="scss">
-.p-breadcrumb {
-    border: none;
-    border-radius: 0;
-    border-bottom: 1px solid var(--kn-list-border-color);
+    .p-breadcrumb {
+        border: none;
+        border-radius: 0;
+        border-bottom: 1px solid var(--kn-list-border-color);
 
-    cursor: default !important;
-
-    &:deep(.p-menuitem-link) {
         cursor: default !important;
+
+        &:deep(.p-menuitem-link) {
+            cursor: default !important;
+        }
     }
-}
-.cleanText {
-    text-transform: none;
-}
+    .cleanText {
+        text-transform: none;
+    }
 </style>

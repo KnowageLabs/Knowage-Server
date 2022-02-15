@@ -2,10 +2,10 @@
     <Card :style="newsDetailCardDescriptor.card.style">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.newsManagement.settings') }}
                 </template>
-                <template #right>
+                <template #end>
                     <InputSwitch id="active" v-model="news.active" @change="onActiveChange" data-test="active-input" />
                     <label for="active" class="kn-material-input-label p-ml-3"> {{ $t('managers.newsManagement.active') }}</label>
                 </template>
@@ -136,89 +136,89 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { createValidations } from '@/helpers/commons/validationHelper'
-import { iNews } from '../../NewsManagement'
-import moment from 'moment'
-import Calendar from 'primevue/calendar'
-import Card from 'primevue/card'
-import Dropdown from 'primevue/dropdown'
-import Editor from 'primevue/editor'
-import InputSwitch from 'primevue/inputswitch'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import newsDetailCardDescriptor from './NewsDetailCardDescriptor.json'
-import newsDetailCardValidationDescriptor from './NewsDetailValidationDescriptor.json'
-import Textarea from 'primevue/textarea'
-import useValidate from '@vuelidate/core'
+    import { defineComponent } from 'vue'
+    import { createValidations } from '@/helpers/commons/validationHelper'
+    import { iNews } from '../../NewsManagement'
+    import moment from 'moment'
+    import Calendar from 'primevue/calendar'
+    import Card from 'primevue/card'
+    import Dropdown from 'primevue/dropdown'
+    import Editor from 'primevue/editor'
+    import InputSwitch from 'primevue/inputswitch'
+    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+    import newsDetailCardDescriptor from './NewsDetailCardDescriptor.json'
+    import newsDetailCardValidationDescriptor from './NewsDetailValidationDescriptor.json'
+    import Textarea from 'primevue/textarea'
+    import useValidate from '@vuelidate/core'
 
-export default defineComponent({
-    name: 'news-detail-card',
-    components: {
-        Calendar,
-        Card,
-        Dropdown,
-        Editor,
-        InputSwitch,
-        KnValidationMessages,
-        Textarea
-    },
-    props: {
-        selectedNews: {
-            type: Object,
-            requried: false
-        }
-    },
-    emits: ['fieldChanged'],
-    data() {
-        return {
-            moment,
-            newsDetailCardDescriptor,
-            newsDetailCardValidationDescriptor,
-            news: {} as iNews,
-            v$: useValidate() as any
-        }
-    },
-    validations() {
-        return {
-            news: createValidations('news', newsDetailCardValidationDescriptor.validations.news)
-        }
-    },
-    computed: {
-        descriptionHelp(): any {
-            return (this.news.description?.length ?? '0') + ' / 140'
-        }
-    },
-    async created() {
-        this.loadNews()
-    },
-    watch: {
-        selectedNews() {
-            this.v$.$reset()
-            this.loadNews()
-        }
-    },
-    methods: {
-        onFieldChange(fieldName: string, value: any) {
-            this.$emit('fieldChanged', { fieldName, value })
+    export default defineComponent({
+        name: 'news-detail-card',
+        components: {
+            Calendar,
+            Card,
+            Dropdown,
+            Editor,
+            InputSwitch,
+            KnValidationMessages,
+            Textarea
         },
-        onActiveChange() {
-            this.$emit('fieldChanged', { fieldName: 'active', value: this.news.active })
-        },
-        loadNews() {
-            this.news = { ...this.selectedNews } as iNews
-            if (!this.news?.type) {
-                this.news.type = 1
+        props: {
+            selectedNews: {
+                type: Object,
+                requried: false
             }
         },
-        onManualDateChange() {
-            setTimeout(() => this.$emit('fieldChanged', { fieldName: 'expirationDate', value: this.news.expirationDate }), 250)
+        emits: ['fieldChanged'],
+        data() {
+            return {
+                moment,
+                newsDetailCardDescriptor,
+                newsDetailCardValidationDescriptor,
+                news: {} as iNews,
+                v$: useValidate() as any
+            }
+        },
+        validations() {
+            return {
+                news: createValidations('news', newsDetailCardValidationDescriptor.validations.news)
+            }
+        },
+        computed: {
+            descriptionHelp(): any {
+                return (this.news.description?.length ?? '0') + ' / 140'
+            }
+        },
+        async created() {
+            this.loadNews()
+        },
+        watch: {
+            selectedNews() {
+                this.v$.$reset()
+                this.loadNews()
+            }
+        },
+        methods: {
+            onFieldChange(fieldName: string, value: any) {
+                this.$emit('fieldChanged', { fieldName, value })
+            },
+            onActiveChange() {
+                this.$emit('fieldChanged', { fieldName: 'active', value: this.news.active })
+            },
+            loadNews() {
+                this.news = { ...this.selectedNews } as iNews
+                if (!this.news?.type) {
+                    this.news.type = 1
+                }
+            },
+            onManualDateChange() {
+                setTimeout(() => this.$emit('fieldChanged', { fieldName: 'expirationDate', value: this.news.expirationDate }), 250)
+            }
         }
-    }
-})
+    })
 </script>
 
 <style lang="scss" scoped>
-#calendar-label {
-    color: var(--kn-color-primary);
-}
+    #calendar-label {
+        color: var(--kn-color-primary);
+    }
 </style>

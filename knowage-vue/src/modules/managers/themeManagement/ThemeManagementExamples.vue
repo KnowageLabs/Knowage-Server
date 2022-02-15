@@ -38,7 +38,7 @@
                 <Button icon="fas fa-bookmark" class="p-button-text p-button-rounded p-button-plain" />
                 <Button icon="pi pi-briefcase" class="p-button-text p-button-rounded p-button-plain" />
                 <Button icon="fas fa-box" class="p-button-text p-button-rounded p-button-plain" disabled />
-                <FabButton icon="fas fa-plus" />
+                <FabButton icon="fas fa-plus" style="z-index:10" />
             </template>
         </Toolbar>
 
@@ -122,44 +122,47 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Button from 'primevue/button'
-import Card from 'primevue/card'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
-import FabButton from '@/components/UI/KnFabButton.vue'
-import Message from 'primevue/message'
-import TabPanel from 'primevue/tabpanel'
-import TabView from 'primevue/tabview'
-import ThemeManagementDescriptor from './ThemeManagementDescriptor.json'
+    import { defineComponent } from 'vue'
+    import Button from 'primevue/button'
+    import Card from 'primevue/card'
+    import Column from 'primevue/column'
+    import DataTable from 'primevue/datatable'
+    import FabButton from '@/components/UI/KnFabButton.vue'
+    import Message from 'primevue/message'
+    import TabPanel from 'primevue/tabpanel'
+    import TabView from 'primevue/tabview'
+    import ThemeManagementDescriptor from './ThemeManagementDescriptor.json'
 
-export default defineComponent({
-    name: 'theme-management-examples',
-    components: { Button, Card, Column, DataTable, FabButton, Message, TabPanel, TabView },
-    props: { properties: Object },
-    data() {
-        return {
-            examples: ThemeManagementDescriptor.examples
-        }
-    },
-    updated() {
-        this.updateStyle(this.properties)
-    },
-    methods: {
-        updateStyle(properties) {
-            for (let key in properties) {
-                // @ts-ignore
-                this.$refs.example.style.setProperty(key, properties[key])
+    export default defineComponent({
+        name: 'theme-management-examples',
+        components: { Button, Card, Column, DataTable, FabButton, Message, TabPanel, TabView },
+        props: { properties: Object },
+        data() {
+            return {
+                examples: ThemeManagementDescriptor.examples
+            }
+        },
+        mounted() {
+            this.updateStyle(this.properties)
+        },
+        updated() {
+            this.updateStyle(this.properties)
+        },
+        methods: {
+            updateStyle(properties) {
+                for (let key in properties) {
+                    // @ts-ignore
+                    this.$refs.example.style.setProperty(key, properties[key])
+                }
             }
         }
-    }
-})
+    })
 </script>
 <style lang="scss" scoped>
-#example {
-    font-size: var(--kn-font-size);
-}
-.hiddenProperties {
-    display: none;
-}
+    #example {
+        font-size: var(--kn-font-size);
+    }
+    .hiddenProperties {
+        display: none;
+    }
 </style>

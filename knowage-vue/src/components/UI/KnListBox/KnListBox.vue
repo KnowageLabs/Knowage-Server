@@ -49,7 +49,7 @@
                 v-tooltip="slotProps.option[settings.tooltipField || 'description']"
                 v-if="!settings.interaction || settings.interaction.type === 'event'"
                 @click="clickedButton($event, slotProps.option)"
-                :class="[{ 'router-link-active': selected && selected == slotProps.option }, getBorderClass(slotProps.option)]"
+                :class="[{ 'router-link-active': isItemSelected(slotProps.option) }, getBorderClass(slotProps.option)]"
                 data-test="list-item"
             >
                 <Avatar
@@ -110,8 +110,8 @@
         created() {
             this.selectedSort = this.settings.defaultSortField || 'label'
         },
-        mounted() {
-            this.sort(null, this.selectedSort)
+        updated() {
+            this.sort(null, this.selectedSort, true)
         },
         computed: {
             getTime(ms) {
@@ -129,18 +129,28 @@
                     return 'kn-list-item-' + this.settings.statusBorder.values[item[this.settings.statusBorder.property]]
                 } else return ''
             },
+            isItemSelected(option) {
+                if (this.selected) {
+                    if (this.settings.selectProperty && this.selected[this.settings.selectProperty]) {
+                        return this.selected[this.settings.selectProperty] == option[this.settings.selectProperty]
+                    } else {
+                        return this.selected == option
+                    }
+                } else return false
+            },
             toggleSort(e) {
                 // eslint-disable-next-line
                 // @ts-ignore
                 this.$refs.sortMenu.toggle(e)
             },
-            sort(e, item) {
+            sort(e, item, desc?) {
                 if (this.selectedSort === item) this.selectedDirection = this.selectedDirection === 'desc' ? 'asc' : 'desc'
                 else {
                     this.selectedSort = item
                     this.selectedDirection = 'desc'
                 }
-                if (this.selectedDirection === 'desc') this.options?.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? 1 : -1))
+
+                if (desc || this.selectedDirection === 'desc') this.options?.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? 1 : -1))
                 else this.options?.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? -1 : 1))
             }
         }
@@ -151,6 +161,7 @@
         position: relative;
         flex: 1;
         overflow-y: auto;
+
         .headerButton {
             position: absolute;
             right: 8px;

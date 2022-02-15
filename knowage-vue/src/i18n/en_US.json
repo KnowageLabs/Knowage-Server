@@ -1757,6 +1757,7 @@
         }
     },
     "menu": {
+        "ThemeManagement": "Themes",
         "group": {
             "ImportExport": "Import/Export",
             "ServerManager": "Server manager"
