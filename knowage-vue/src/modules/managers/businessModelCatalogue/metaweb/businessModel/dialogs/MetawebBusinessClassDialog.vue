@@ -2,7 +2,7 @@
     <Dialog class="bsdialog" :style="bsDescriptor.style.bsDialog" :visible="showBusinessClassDialog" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary kn-width-full">
-                <template #left>
+                <template #start>
                     {{ $t('metaweb.businessModel.newBusiness') }}
                 </template>
             </Toolbar>
@@ -75,103 +75,103 @@
 </template>
 
 <script lang="ts">
-import { AxiosResponse } from 'axios'
-import { defineComponent } from 'vue'
-import { filterDefault } from '@/helpers/commons/filterHelper'
-import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import useValidate from '@vuelidate/core'
-import Dialog from 'primevue/dialog'
-import Dropdown from 'primevue/dropdown'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import bsDescriptor from '../MetawebBusinessModelDescriptor.json'
+    import { AxiosResponse } from 'axios'
+    import { defineComponent } from 'vue'
+    import { filterDefault } from '@/helpers/commons/filterHelper'
+    import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
+    import useValidate from '@vuelidate/core'
+    import Dialog from 'primevue/dialog'
+    import Dropdown from 'primevue/dropdown'
+    import DataTable from 'primevue/datatable'
+    import Column from 'primevue/column'
+    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+    import bsDescriptor from '../MetawebBusinessModelDescriptor.json'
 
-const { generate, applyPatch } = require('fast-json-patch')
+    const { generate, applyPatch } = require('fast-json-patch')
 
-export default defineComponent({
-    name: 'document-drivers',
-    components: { Dialog, Dropdown, DataTable, Column, KnValidationMessages },
-    emits: ['closeDialog'],
-    props: { physicalModels: Array, showBusinessClassDialog: Boolean, meta: Object, observer: { type: Object } },
-    computed: {
-        buttonDisabled(): boolean {
-            if (this.v$.$invalid || this.tmpBusinessModel.selectedColumns.length === 0) {
-                return true
-            } else return false
-        }
-    },
-    data() {
-        return {
-            bsDescriptor,
-            v$: useValidate() as any,
-            metaObserve: {} as any,
-            tmpBusinessModel: { physicalModel: null, selectedColumns: [], name: '', description: '' } as any,
-            filters: {
-                global: [filterDefault]
-            } as Object
-        }
-    },
-    created() {
-        this.loadMeta()
-    },
-    watch: {
-        meta() {
+    export default defineComponent({
+        name: 'document-drivers',
+        components: { Dialog, Dropdown, DataTable, Column, KnValidationMessages },
+        emits: ['closeDialog'],
+        props: { physicalModels: Array, showBusinessClassDialog: Boolean, meta: Object, observer: { type: Object } },
+        computed: {
+            buttonDisabled(): boolean {
+                if (this.v$.$invalid || this.tmpBusinessModel.selectedColumns.length === 0) {
+                    return true
+                } else return false
+            }
+        },
+        data() {
+            return {
+                bsDescriptor,
+                v$: useValidate() as any,
+                metaObserve: {} as any,
+                tmpBusinessModel: { physicalModel: null, selectedColumns: [], name: '', description: '' } as any,
+                filters: {
+                    global: [filterDefault]
+                } as Object
+            }
+        },
+        created() {
             this.loadMeta()
-        }
-    },
-    validations() {
-        const bmRequired = (value) => {
-            return !this.showBusinessClassDialog || value
-        }
-        const customValidators: ICustomValidatorMap = {
-            'bm-dialog-required': bmRequired
-        }
-        const validationObject = {
-            tmpBusinessModel: createValidations('tmpBusinessModel', bsDescriptor.validations.tmpBusinessModel, customValidators)
-        }
-        return validationObject
-    },
-    methods: {
-        async loadMeta() {
-            this.meta ? (this.metaObserve = this.meta) : ''
         },
-        resetPhModel() {
-            this.tmpBusinessModel.selectedColumns = []
+        watch: {
+            meta() {
+                this.loadMeta()
+            }
         },
-        closeDialog() {
-            this.$emit('closeDialog')
-            this.tmpBusinessModel = { physicalModel: { columns: [] }, selectedColumns: [], name: '', description: '' } as any
+        validations() {
+            const bmRequired = (value) => {
+                return !this.showBusinessClassDialog || value
+            }
+            const customValidators: ICustomValidatorMap = {
+                'bm-dialog-required': bmRequired
+            }
+            const validationObject = {
+                tmpBusinessModel: createValidations('tmpBusinessModel', bsDescriptor.validations.tmpBusinessModel, customValidators)
+            }
+            return validationObject
         },
-        async saveBusinessClass() {
-            let objToSend = { selectedColumns: [] } as any
-            objToSend.name = this.tmpBusinessModel.name
-            objToSend.description = this.tmpBusinessModel.description
-            objToSend.physicalModel = this.tmpBusinessModel.physicalModel.name
-            this.tmpBusinessModel.selectedColumns.forEach((element) => {
-                objToSend.selectedColumns.push(element.name)
-            })
-            const postData = { data: objToSend, diff: generate(this.observer) }
-            await this.$http
-                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/addBusinessClass`, postData)
-                .then(async (response: AxiosResponse<any>) => {
-                    this.metaObserve = applyPatch(this.metaObserve, response.data)
-                    generate(this.observer)
-                    this.closeDialog()
+        methods: {
+            async loadMeta() {
+                this.meta ? (this.metaObserve = this.meta) : ''
+            },
+            resetPhModel() {
+                this.tmpBusinessModel.selectedColumns = []
+            },
+            closeDialog() {
+                this.$emit('closeDialog')
+                this.tmpBusinessModel = { physicalModel: { columns: [] }, selectedColumns: [], name: '', description: '' } as any
+            },
+            async saveBusinessClass() {
+                let objToSend = { selectedColumns: [] } as any
+                objToSend.name = this.tmpBusinessModel.name
+                objToSend.description = this.tmpBusinessModel.description
+                objToSend.physicalModel = this.tmpBusinessModel.physicalModel.name
+                this.tmpBusinessModel.selectedColumns.forEach((element) => {
+                    objToSend.selectedColumns.push(element.name)
                 })
-                .catch(() => {})
+                const postData = { data: objToSend, diff: generate(this.observer) }
+                await this.$http
+                    .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/addBusinessClass`, postData)
+                    .then(async (response: AxiosResponse<any>) => {
+                        this.metaObserve = applyPatch(this.metaObserve, response.data)
+                        generate(this.observer)
+                        this.closeDialog()
+                    })
+                    .catch(() => {})
+            }
         }
-    }
-})
+    })
 </script>
 <style lang="scss">
-.bsdialog.p-dialog .p-dialog-header,
-.bsdialog.p-dialog .p-dialog-content {
-    padding: 0;
-}
-.bsdialog.p-dialog .p-dialog-content {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-}
+    .bsdialog.p-dialog .p-dialog-header,
+    .bsdialog.p-dialog .p-dialog-content {
+        padding: 0;
+    }
+    .bsdialog.p-dialog .p-dialog-content {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
 </style>

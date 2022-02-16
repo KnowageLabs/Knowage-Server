@@ -1,7 +1,7 @@
 <template>
     <div id="kn-parameter-sidebar">
         <Toolbar id="kn-parameter-sidebar-toolbar" class="kn-toolbar kn-toolbar--secondary">
-            <template #left>
+            <template #start>
                 <div id="kn-parameter-sidebar-toolbar-icons-container" class="p-d-flex p-flex-row p-jc-around">
                     <i class="fa fa-eraser kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.resetParametersTooltip')" @click="resetAllParameters"></i>
                     <i class="pi pi-pencil kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.savedParametersTooltip')" @click="openSavedParametersDialog"></i>
@@ -192,7 +192,30 @@ export default defineComponent({
             this.role = ''
             this.parameters = { isReadyForExecution: false, filterStatus: [] }
         },
-        filtersData() {
+        watch: {
+            sessionRole() {
+                this.role = ''
+                this.parameters = { isReadyForExecution: false, filterStatus: [] }
+            },
+            filtersData() {
+                this.loadDocument()
+                this.loadParameters()
+            },
+            userRole() {
+                this.role = this.userRole as string
+            }
+        },
+        computed: {
+            sessionRole(): string {
+                return (this.$store.state as any).user.sessionRole
+            },
+            buttonsDisabled(): boolean {
+                return this.requiredFiledMissing()
+            }
+        },
+        created() {
+            this.user = (this.$store.state as any).user
+            this.role = this.userRole as string
             this.loadDocument()
             this.loadParameters()
         },
@@ -266,17 +289,11 @@ export default defineComponent({
                         this.selectedParameterCheckbox[parameter.id].push(temp[valueIndex])
                     }
                 }
-            } else if (parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true' && parameter.multivalue) {
-                parameter.parameterValue = [...parameter.driverDefaultValue]
-            } else if ((parameter.selectionType === 'COMBOBOX' || parameter.selectionType === 'LOOKUP') && parameter.showOnPanel === 'true' && !parameter.multivalue) {
-                parameter.parameterValue[0] = { value: parameter.driverDefaultValue[0][valueIndex], description: parameter.driverDefaultValue[0][descriptionIndex] }
-            } else if (parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true' && parameter.multivalue) {
-                parameter.parameterValue = parameter.driverDefaultValue.map((el: any) => {
-                    return { value: valueIndex ? el[valueIndex] : '', description: descriptionIndex ? el[descriptionIndex] : '' }
-                })
-            } else {
-                if (!parameter.parameterValue[0]) {
+            },
+            resetParameterValue(parameter: any) {
+                if (!parameter.driverDefaultValue) {
                     parameter.parameterValue[0] = { value: '', description: '' }
+                    return
                 }
                 parameter.parameterValue[0].value = parameter.driverDefaultValue[0].value ?? parameter.driverDefaultValue[0][valueIndex]
             }
@@ -308,70 +325,44 @@ export default defineComponent({
                             }
                         }
                     }
-                }
-            }
-            return false
-        },
-        setCheckboxValue(parameter: iParameter) {
-            parameter.parameterValue = this.selectedParameterCheckbox[parameter.id].map((el: any) => {
-                return { value: el, description: el }
-            })
-            this.updateDependency(parameter)
-        },
-        openPopupDialog(parameter: iParameter) {
-            this.selectedParameter = parameter
-            this.getParameterPopupInfo(parameter)
-            this.popupDialogVisible = true
-        },
-        openTreeDialog(parameter: iParameter) {
-            this.selectedParameter = parameter
-            this.formatedParameterValues = this.getFormattedParameters()
-            this.treeDialogVisible = true
-        },
-        onTreeClose() {
-            this.selectedParameter = null
-            this.formatedParameterValues = null
-            this.treeDialogVisible = false
-        },
-        async getParameterPopupInfo(parameter: iParameter) {
-            this.loading = true
-            const postData = { label: this.document?.label, parameters: this.getFormattedParameters(), paramId: parameter.urlName, role: this.sessionRole }
-            await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentExeParameters/admissibleValues`, postData)
-                .then((response: AxiosResponse<any>) => (this.parameterPopUpData = response.data))
-                .catch((error: any) => console.log('ERROR: ', error))
-            this.loading = false
-        },
-        getFormattedParameters() {
-            let parameters = [] as any[]
-            Object.keys(this.parameters.filterStatus).forEach((key: any) => {
-                const parameter = this.parameters.filterStatus[key]
-                if (!parameter.multivalue) {
-                    parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
+                } else if (parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true' && parameter.multivalue) {
+                    parameter.parameterValue = [...parameter.driverDefaultValue]
+                } else if ((parameter.selectionType === 'COMBOBOX' || parameter.selectionType === 'LOOKUP') && parameter.showOnPanel === 'true' && !parameter.multivalue) {
+                    parameter.parameterValue[0] = { value: parameter.driverDefaultValue[0][valueIndex], description: parameter.driverDefaultValue[0][descriptionIndex] }
+                } else if (parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true' && parameter.multivalue) {
+                    parameter.parameterValue = parameter.driverDefaultValue.map((el: any) => {
+                        return { value: valueIndex ? el[valueIndex] : '', description: descriptionIndex ? el[descriptionIndex] : '' }
+                    })
                 } else {
                     parameters.push({ label: parameter.label, value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription ?? '' })
                 }
-            })
-            return parameters
-        },
-        getParameterValues() {
-            let parameters = {} as any
-            Object.keys(this.parameters.filterStatus).forEach((key: any) => {
-                const parameter = this.parameters.filterStatus[key]
-                if (parameter.type === 'DATE') {
-                    parameters[parameter.urlName] = parameter.parameterValue[0].value
-                    parameters[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].value
-                } else if (parameter.valueSelection === 'man_in' && !parameter.multivalue) {
-                    parameters[parameter.urlName] = parameter.type === 'NUM' ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
-                    parameters[parameter.urlName + '_field_visible_description'] = parameter.type === 'NUM' ? +parameter.parameterValue[0].description : parameter.parameterValue[0].description
-                } else if (parameter.selectionType === 'TREE' || parameter.selectionType === 'LOOKUP' || parameter.multivalue) {
-                    parameters[parameter.urlName] = parameter.parameterValue.map((el: any) => el.value)
-                    let tempString = ''
-                    for (let i = 0; i < parameter.parameterValue.length; i++) {
-                        tempString += parameter.parameterValue[i].description
-                        tempString += i === parameter.parameterValue.length - 1 ? '' : ';'
+            },
+            resetAllParameters() {
+                this.parameters.filterStatus.forEach((el: any) => this.resetParameterValue(el))
+            },
+            toggle(event: Event) {
+                this.createMenuItems()
+                const menu = this.$refs.executeButtonMenu as any
+                menu.toggle(event)
+            },
+            createMenuItems() {
+                this.executeMenuItems = []
+                this.executeMenuItems.push({ label: this.$t('common.exportCSV'), command: () => this.$emit('exportCSV') })
+            },
+            requiredFiledMissing() {
+                for (let i = 0; i < this.parameters.filterStatus.length; i++) {
+                    const parameter = this.parameters.filterStatus[i]
+                    if (parameter.mandatory && parameter.showOnPanel == 'true') {
+                        if (!parameter.parameterValue || parameter.parameterValue.length === 0) {
+                            return true
+                        } else {
+                            for (let i = 0; i < parameter.parameterValue.length; i++) {
+                                if (!parameter.parameterValue[i].value) {
+                                    return true
+                                }
+                            }
+                        }
                     }
-                    parameters[parameter.urlName + '_field_visible_description'] = tempString
                 }
             })
             return parameters
@@ -404,161 +395,248 @@ export default defineComponent({
                     })
                     this.parameterSaveDialogVisible = false
                 })
-                .catch(() => {})
-            this.loading = false
-        },
-        async openSavedParametersDialog() {
-            this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/getViewpoints?label=${this.document?.label}&role=${this.sessionRole}`).then((response: AxiosResponse<any>) => {
-                this.viewpoints = response.data.viewpoints
-                this.savedParametersDialogVisible = true
-            })
-            this.loading = false
-        },
-        fillParameterForm(viewpoint: any) {
-            const tempParameters = this.decodeViewpointPrameterValues(viewpoint.vpValueParams)
-            Object.keys(tempParameters)?.forEach((key: any) => {
-                const index = this.parameters.filterStatus.findIndex((el: any) => el.urlName === key)
-                if (index !== -1) {
-                    const parameter = this.parameters.filterStatus[index]
+                this.updateDependency(parameter)
+            },
+            openPopupDialog(parameter: iParameter) {
+                this.selectedParameter = parameter
+                this.getParameterPopupInfo(parameter)
+                this.popupDialogVisible = true
+            },
+            openTreeDialog(parameter: iParameter) {
+                this.selectedParameter = parameter
+                this.formatedParameterValues = this.getFormattedParameters()
+                this.treeDialogVisible = true
+            },
+            onTreeClose() {
+                this.selectedParameter = null
+                this.formatedParameterValues = null
+                this.treeDialogVisible = false
+            },
+            async getParameterPopupInfo(parameter: iParameter) {
+                this.loading = true
+                const postData = { label: this.document?.label, parameters: this.getFormattedParameters(), paramId: parameter.urlName, role: this.sessionRole }
+                await this.$http
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentExeParameters/admissibleValues`, postData)
+                    .then((response: AxiosResponse<any>) => (this.parameterPopUpData = response.data))
+                    .catch((error: any) => console.log('ERROR: ', error))
+                this.loading = false
+            },
+            getFormattedParameters() {
+                let parameters = [] as any[]
+                Object.keys(this.parameters.filterStatus).forEach((key: any) => {
+                    const parameter = this.parameters.filterStatus[key]
+                    if (!parameter.multivalue) {
+                        parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
+                    } else {
+                        parameters.push({ label: parameter.label, value: parameter.parameterValue, description: parameter.parameterDescription ?? '' })
+                    }
+                })
+                return parameters
+            },
+            getParameterValues() {
+                let parameters = {} as any
+                Object.keys(this.parameters.filterStatus).forEach((key: any) => {
+                    const parameter = this.parameters.filterStatus[key]
                     if (parameter.type === 'DATE') {
-                        parameter.parameterValue[0].value = this.getFormattedDate(tempParameters[key], 'MM/DD/YYYY')
-                    } else if ((parameter.valueSelection === 'man_in' || parameter.selectionType === 'COMBOBOX') && !parameter.multivalue) {
-                        parameter.parameterValue[0].value = tempParameters[key]
-                        parameter.parameterValue[0].description = tempParameters[key + '_field_visible_description']
+                        parameters[parameter.urlName] = parameter.parameterValue[0].value
+                        parameters[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].value
+                    } else if (parameter.valueSelection === 'man_in' && !parameter.multivalue) {
+                        parameters[parameter.urlName] = parameter.type === 'NUM' ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
+                        parameters[parameter.urlName + '_field_visible_description'] = parameter.type === 'NUM' ? +parameter.parameterValue[0].description : parameter.parameterValue[0].description
                     } else if (parameter.selectionType === 'TREE' || parameter.selectionType === 'LOOKUP' || parameter.multivalue) {
-                        const tempArrayValues = JSON.parse(tempParameters[key])
-                        const tempArrayDescriptions = tempParameters[key + '_field_visible_description'].split(';')
-                        parameter.parameterValue = []
-                        for (let i = 0; i < tempArrayValues.length; i++) {
-                            parameter.parameterValue[i] = { value: tempArrayValues[i], description: tempArrayDescriptions[i] ?? '' }
+                        parameters[parameter.urlName] = parameter.parameterValue.map((el: any) => el.value)
+                        let tempString = ''
+                        for (let i = 0; i < parameter.parameterValue.length; i++) {
+                            tempString += parameter.parameterValue[i].description
+                            tempString += i === parameter.parameterValue.length - 1 ? '' : ';'
                         }
-                        if (parameter.selectionType === 'LIST') {
-                            this.selectedParameterCheckbox[parameter.id] = parameter.parameterValue?.map((parameterValue: any) => parameterValue.value)
+                        parameters[parameter.urlName + '_field_visible_description'] = tempString
+                    }
+                })
+                return parameters
+            },
+            onPopupSave(parameter: iParameter) {
+                this.updateDependency(parameter)
+                this.popupDialogVisible = false
+            },
+            onTreeSave(parameter: iParameter) {
+                this.updateVisualDependency(parameter)
+                this.treeDialogVisible = false
+            },
+            updateDependency(parameter: iParameter) {
+                this.updateVisualDependency(parameter)
+                updateDataDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http)
+            },
+            openSaveParameterDialog() {
+                this.parameterSaveDialogVisible = true
+            },
+            async saveViewpoint(viewpoint: any) {
+                const postData = { ...viewpoint, OBJECT_LABEL: this.document?.label, ROLE: this.sessionRole, VIEWPOINT: this.getParameterValues() }
+                this.loading = true
+                await this.$http
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/addViewpoint`, postData)
+                    .then(() => {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.createTitle'),
+                            msg: this.$t('common.toast.success')
+                        })
+                        this.parameterSaveDialogVisible = false
+                    })
+                    .catch(() => {})
+                this.loading = false
+            },
+            async openSavedParametersDialog() {
+                this.loading = true
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/getViewpoints?label=${this.document?.label}&role=${this.sessionRole}`).then((response: AxiosResponse<any>) => {
+                    this.viewpoints = response.data.viewpoints
+                    this.savedParametersDialogVisible = true
+                })
+                this.loading = false
+            },
+            fillParameterForm(viewpoint: any) {
+                const tempParameters = this.decodeViewpointPrameterValues(viewpoint.vpValueParams)
+                Object.keys(tempParameters)?.forEach((key: any) => {
+                    const index = this.parameters.filterStatus.findIndex((el: any) => el.urlName === key)
+                    if (index !== -1) {
+                        const parameter = this.parameters.filterStatus[index]
+                        if (parameter.type === 'DATE') {
+                            parameter.parameterValue[0].value = this.getFormattedDate(tempParameters[key], 'MM/DD/YYYY')
+                        } else if ((parameter.valueSelection === 'man_in' || parameter.selectionType === 'COMBOBOX') && !parameter.multivalue) {
+                            parameter.parameterValue[0].value = tempParameters[key]
+                            parameter.parameterValue[0].description = tempParameters[key + '_field_visible_description']
+                        } else if (parameter.selectionType === 'TREE' || parameter.selectionType === 'LOOKUP' || parameter.multivalue) {
+                            const tempArrayValues = JSON.parse(tempParameters[key])
+                            const tempArrayDescriptions = tempParameters[key + '_field_visible_description'].split(';')
+                            parameter.parameterValue = []
+                            for (let i = 0; i < tempArrayValues.length; i++) {
+                                parameter.parameterValue[i] = { value: tempArrayValues[i], description: tempArrayDescriptions[i] ?? '' }
+                            }
+                            if (parameter.selectionType === 'LIST') {
+                                this.selectedParameterCheckbox[parameter.id] = parameter.parameterValue?.map((parameterValue: any) => parameterValue.value)
+                            }
                         }
                     }
-                }
-                this.savedParametersDialogVisible = false
-            })
-        },
-        getFormattedDate(date: any, format: any) {
-            return formatDate(date, format)
-        },
-        decodeViewpointPrameterValues(string: string) {
-            const parametersJson = {}
-            const parameterArray = string.split('%26')
-            for (let i = 0; i < parameterArray.length; i++) {
-                const temp = parameterArray[i].split('%3D')
-                parametersJson[temp[0]] = temp[1]
-            }
-            return parametersJson
-        },
-        executeViewpoint(viewpoint: any) {
-            this.fillParameterForm(viewpoint)
-            this.$emit('execute')
-            this.savedParametersDialogVisible = false
-        },
-        async deleteViewpoint(viewpoint: any) {
-            this.loading = true
-            await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/deleteViewpoint`, { VIEWPOINT: '' + viewpoint.vpId })
-                .then(async () => {
-                    this.removeViewpoint(viewpoint)
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.deleteTitle'),
-                        msg: this.$t('common.toast.deleteSuccess')
-                    })
+                    this.savedParametersDialogVisible = false
                 })
-                .catch(() => {})
-            this.loading = false
-        },
-        removeViewpoint(viewpoint: any) {
-            const index = this.viewpoints.findIndex((el: any) => el.vpId === viewpoint.vpId)
-            if (index !== -1) this.viewpoints.splice(index, 1)
+            },
+            getFormattedDate(date: any, format: any) {
+                return formatDate(date, format)
+            },
+            decodeViewpointPrameterValues(string: string) {
+                const parametersJson = {}
+                const parameterArray = string.split('%26')
+                for (let i = 0; i < parameterArray.length; i++) {
+                    const temp = parameterArray[i].split('%3D')
+                    parametersJson[temp[0]] = temp[1]
+                }
+                return parametersJson
+            },
+            executeViewpoint(viewpoint: any) {
+                this.fillParameterForm(viewpoint)
+                this.$emit('execute')
+                this.savedParametersDialogVisible = false
+            },
+            async deleteViewpoint(viewpoint: any) {
+                this.loading = true
+                await this.$http
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/deleteViewpoint`, { VIEWPOINT: '' + viewpoint.vpId })
+                    .then(async () => {
+                        this.removeViewpoint(viewpoint)
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.deleteTitle'),
+                            msg: this.$t('common.toast.deleteSuccess')
+                        })
+                    })
+                    .catch(() => {})
+                this.loading = false
+            },
+            removeViewpoint(viewpoint: any) {
+                const index = this.viewpoints.findIndex((el: any) => el.vpId === viewpoint.vpId)
+                if (index !== -1) this.viewpoints.splice(index, 1)
+            }
         }
-    }
-})
+    })
 </script>
 <style lang="scss">
-#kn-parameter-sidebar-toolbar .p-toolbar-group-left {
-    width: 100%;
-}
-#kn-parameter-sidebar-toolbar-icons-container {
-    width: 100%;
-}
-#kn-parameter-sidebar {
-    z-index: 100;
-    background-color: white;
-    height: 100%;
-    width: 350px;
-    position: absolute;
-    top: 0;
-    right: 0;
-    display: flex;
-    flex-direction: column;
-    font-size: 0.9rem;
-}
-.parameter-clear-icon {
-    margin-left: auto;
-}
-.kn-parameter-sidebar-content {
-    height: 80vh;
-    overflow: auto;
-    position: relative;
-}
-.kn-parameter-sidebar-buttons {
-    margin-top: auto;
-    margin-bottom: 15px;
-}
-.p-calendar {
-    background-color: transparent;
-}
-.p-field-radiobutton {
-    font-size: 1rem;
-    margin: 0.1rem;
-    width: 15px;
-    height: 15px;
-    .p-radiobutton {
+    #kn-parameter-sidebar-toolbar .p-toolbar-group-left {
+        width: 100%;
+    }
+    #kn-parameter-sidebar-toolbar-icons-container {
+        width: 100%;
+    }
+    #kn-parameter-sidebar {
+        z-index: 100;
+        background-color: white;
+        height: 100%;
+        width: 350px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        font-size: 0.9rem;
+    }
+    .parameter-clear-icon {
+        margin-left: auto;
+    }
+    .kn-parameter-sidebar-content {
+        height: 80vh;
+        overflow: auto;
+        position: relative;
+    }
+    .kn-parameter-sidebar-buttons {
+        margin-top: auto;
+        margin-bottom: 15px;
+    }
+    .p-calendar {
+        background-color: transparent;
+    }
+    .p-field-radiobutton {
+        font-size: 1rem;
+        margin: 0.1rem;
         width: 15px;
         height: 15px;
-        .p-radiobutton-box {
+        .p-radiobutton {
             width: 15px;
             height: 15px;
-            .p-radiobutton-icon {
-                width: 5px;
-                height: 5px;
+            .p-radiobutton-box {
+                width: 15px;
+                height: 15px;
+                .p-radiobutton-icon {
+                    width: 5px;
+                    height: 5px;
+                }
             }
         }
-    }
-    .p-checkbox {
-        width: 15px;
-        height: 15px;
-        .p-checkbox-box {
+        .p-checkbox {
             width: 15px;
             height: 15px;
-            .p-checkbox-icon {
-                width: 5px;
-                height: 5px;
-                &.pi-check::before {
-                    top: 4px;
-                    left: -1px;
+            .p-checkbox-box {
+                width: 15px;
+                height: 15px;
+                .p-checkbox-icon {
+                    width: 5px;
+                    height: 5px;
+                    &.pi-check::before {
+                        top: 4px;
+                        left: -1px;
+                    }
                 }
             }
         }
     }
-}
-.p-dropdown {
-    background-color: transparent;
-    font-size: 0.9rem;
-}
-.p-inputtext {
-    padding: 0.5rem 0.5rem;
-    background-color: transparent;
-    &.p-inputtext-sm {
-        padding: 0.5rem 0.5rem;
+    .p-dropdown {
+        background-color: transparent;
+        font-size: 0.9rem;
     }
-}
-.parameterValueChip {
-    font-size: 0.9rem;
-}
+    .p-inputtext {
+        padding: 0.5rem 0.5rem;
+        background-color: transparent;
+        &.p-inputtext-sm {
+            padding: 0.5rem 0.5rem;
+        }
+    }
+    .parameterValueChip {
+        font-size: 0.9rem;
+    }
 </style>

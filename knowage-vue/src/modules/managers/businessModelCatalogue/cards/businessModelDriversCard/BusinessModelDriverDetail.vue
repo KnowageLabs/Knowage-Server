@@ -2,7 +2,7 @@
     <Card>
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.businessModelManager.driversDetails') }}
                 </template>
             </Toolbar>
@@ -116,10 +116,10 @@
     <Card v-if="selectedDriver">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.businessModelManager.driverDataConditions') }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button class="kn-button p-button-text" @click="showForm" :disabled="modes.length === 0 || readonly">{{ $t('managers.businessModelManager.addCondition') }}</Button>
                 </template>
             </Toolbar>
@@ -224,360 +224,360 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iBusinessModelDriver } from '../../BusinessModelCatalogue'
-import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import { AxiosResponse } from 'axios'
-import businessModelDriverDetailDescriptor from './BusinessModelDriverDetailDescriptor.json'
-import businessModelDriverDetailValidationDescriptor from './BusinessModelDriverDetailValidationDescriptor.json'
-import Card from 'primevue/card'
-import Checkbox from 'primevue/checkbox'
-import Dialog from 'primevue/dialog'
-import Dropdown from 'primevue/dropdown'
-import InputSwitch from 'primevue/inputswitch'
-import KnHint from '@/components/UI/KnHint.vue'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import Listbox from 'primevue/listbox'
-import useValidate from '@vuelidate/core'
+    import { defineComponent } from 'vue'
+    import { iBusinessModelDriver } from '../../BusinessModelCatalogue'
+    import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
+    import { AxiosResponse } from 'axios'
+    import businessModelDriverDetailDescriptor from './BusinessModelDriverDetailDescriptor.json'
+    import businessModelDriverDetailValidationDescriptor from './BusinessModelDriverDetailValidationDescriptor.json'
+    import Card from 'primevue/card'
+    import Checkbox from 'primevue/checkbox'
+    import Dialog from 'primevue/dialog'
+    import Dropdown from 'primevue/dropdown'
+    import InputSwitch from 'primevue/inputswitch'
+    import KnHint from '@/components/UI/KnHint.vue'
+    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+    import Listbox from 'primevue/listbox'
+    import useValidate from '@vuelidate/core'
 
-export default defineComponent({
-    name: 'business-model-driver-detail-card',
-    components: {
-        Card,
-        Checkbox,
-        Dialog,
-        Dropdown,
-        InputSwitch,
-        KnHint,
-        KnValidationMessages,
-        Listbox
-    },
-    props: {
-        businessModelId: {
-            type: Number
+    export default defineComponent({
+        name: 'business-model-driver-detail-card',
+        components: {
+            Card,
+            Checkbox,
+            Dialog,
+            Dropdown,
+            InputSwitch,
+            KnHint,
+            KnValidationMessages,
+            Listbox
         },
-        selectedDriver: {
-            value: [Object, null],
-            required: true
-        },
-        formVisible: {
-            type: Boolean
-        },
-        driverOptions: {
-            type: Array,
-            required: true
-        },
-        businessModelDrivers: {
-            type: Array,
-            required: true
-        },
-        readonly: {
-            type: Boolean
-        }
-    },
-    emits: ['touched'],
-    watch: {
-        async selectedDriver() {
-            this.loadSelectedDriver()
-            if (this.driver) {
-                await this.loadDataDependencies()
-                if (this.driver.parameter) {
-                    await this.loadModes()
-                    await this.loadLovs()
-                }
+        props: {
+            businessModelId: {
+                type: Number
+            },
+            selectedDriver: {
+                value: [Object, null],
+                required: true
+            },
+            formVisible: {
+                type: Boolean
+            },
+            driverOptions: {
+                type: Array,
+                required: true
+            },
+            businessModelDrivers: {
+                type: Array,
+                required: true
+            },
+            readonly: {
+                type: Boolean
             }
         },
-        driverOptions() {
-            this.loadAnalyticalDrivers()
-        },
-        businessModelDrivers() {
-            this.loadBusinessModelDrivers()
-        }
-    },
-    async created() {
-        this.loadSelectedDriver()
-        this.loadAnalyticalDrivers()
-        this.loadBusinessModelDrivers()
-        if (this.selectedDriver) {
-            await this.loadDataDependencies()
-            await this.loadModes()
-            await this.loadLovs()
-        }
-    },
-    data() {
-        return {
-            businessModelDriverDetailDescriptor,
-            businessModelDriverDetailValidationDescriptor,
-            driver: null as iBusinessModelDriver | null,
-            drivers: [] as iBusinessModelDriver[],
-            oldDropdownValue: null as any,
-            analyticalDrivers: [] as any[],
-            condition: {} as any,
-            conditions: [] as any[],
-            originalModalities: [] as any[],
-            lovs: [] as any[],
-            modes: [] as any[],
-            selectedModes: [] as any,
-            modesToDelete: [] as any,
-            modalities: {} as any,
-            touched: false,
-            conditionFormVisible: false,
-            operation: 'insert',
-            errorMessage: '',
-            displayWarning: false,
-            v$: useValidate() as any
-        }
-    },
-    validations() {
-        const customValidators: ICustomValidatorMap = {
-            'custom-unique': (value: string) => {
-                return this.urlNotUnique(value)
-            }
-        }
-
-        const validationObject = {
-            driver: createValidations('driver', businessModelDriverDetailValidationDescriptor.validations.driver, customValidators)
-        }
-
-        return validationObject
-    },
-    methods: {
-        loadSelectedDriver() {
-            this.oldDropdownValue = null
-            this.driver = this.selectedDriver as iBusinessModelDriver
-
-            if (this.driver) {
-                if (this.driver.parameter) {
-                    this.oldDropdownValue = this.driver.parameter
-                }
-                if (!this.driver.id) {
-                    this.v$.driver.label.$touch()
-                    this.v$.driver.parameter.$touch()
-                    this.v$.driver.parameterUrlName.$touch()
-                }
-            }
-        },
-        loadAnalyticalDrivers() {
-            this.analyticalDrivers = this.driverOptions as any[]
-        },
-        loadBusinessModelDrivers() {
-            this.drivers = this.businessModelDrivers as any[]
-        },
-        async loadDataDependencies() {
-            this.conditions = []
-            if (this.driver && this.driver.id) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies?driverId=${this.driver.id}`).then((response: AxiosResponse<any>) =>
-                    response.data.forEach((condition: any) => {
-                        const index = this.conditions.findIndex((cond) => cond.parFatherId === condition.parFatherId && cond.filterOperation == condition.filterOperation && cond.logicOperator == condition.logicOperator)
-                        condition.modalities = []
-                        condition.modalities.push({ conditionId: condition.id, useModeId: condition.useModeId, filterColumn: condition.filterColumn })
-                        if (index > -1) {
-                            this.conditions[index].modalities.push({ conditionId: condition.id, useModeId: condition.useModeId, filterColumn: condition.filterColumn })
-                        } else {
-                            this.conditions.push(condition)
-                        }
-                    })
-                )
-            }
-        },
-        async loadModes() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.driver?.parameter?.id}/modes`).then((response: AxiosResponse<any>) => (this.modes = response.data))
-        },
-        async loadLovs() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.driver?.parameter?.id}/lovs`).then((response: AxiosResponse<any>) => (this.lovs = response.data))
-        },
-        getLovs(lovId: number) {
-            const index = this.lovs.findIndex((lov) => lov.id === lovId)
-            if (index > -1) {
-                const lov = JSON.parse(this.lovs[index].lovProviderJSON)
-                return lov.QUERY['VISIBLE-COLUMNS'].split(',')
-            }
-        },
-        isModeActive(modeId: number) {
-            const index = this.selectedModes.findIndex((id: any) => {
-                return id === modeId
-            })
-            return index === -1
-        },
-        urlNotUnique(url: string) {
-            const index = this.drivers.findIndex((driver) => driver.parameterUrlName === url && driver.id != this.driver?.id)
-            return index === -1
-        },
-        showAnalyticalDropdownConfirm() {
-            if (this.oldDropdownValue) {
-                this.$confirm.require({
-                    message: this.$t('managers.businessModelManager.analyticalDropdownConfirm'),
-                    header: this.$t('common.toast.deleteTitle'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.deleteAllConditions(),
-                    reject: () => this.resetDrodpwonValue()
-                })
-            }
-            this.setChanged()
-        },
-        resetDrodpwonValue() {
-            if (this.driver) {
-                this.driver.parameter = this.oldDropdownValue
-            }
-        },
-        async saveCondition(condition: any) {
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies`, condition).finally(() => (this.conditionFormVisible = false))
-        },
-        async handleSubmit() {
-            if (this.condition.id) {
-                this.operation = 'update'
-            }
-
-            const modalityKeys = Object.keys(this.modalities)
-            for (let i = 0; i < this.selectedModes.length; i++) {
-                for (let j = 0; j < modalityKeys.length; j++) {
-                    if (this.selectedModes[i] === +modalityKeys[j]) {
-                        const conditionForPost = {
-                            ...this.condition,
-                            parFatherId: this.condition.parFather.id,
-                            parFatherUrlName: (this.selectedDriver as iBusinessModelDriver).parameterUrlName,
-                            parId: (this.selectedDriver as iBusinessModelDriver).id,
-                            useModeId: +modalityKeys[j],
-                            filterColumn: this.modalities[this.selectedModes[i]]
-                        }
-
-                        if (this.operation === 'update') {
-                            const index = this.originalModalities.findIndex((modality) => {
-                                return modality.conditionId === conditionForPost.id
-                            })
-                            if (index > -1) {
-                                this.originalModalities.splice(index, 1)
-                            }
-                        }
-
-                        if (!conditionForPost.prog) {
-                            conditionForPost.prog = 0
-                        }
-                        conditionForPost.prog++
-                        delete conditionForPost.parFather
-                        delete conditionForPost.modalities
-                        await this.sendRequest(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies`, conditionForPost).then((response: AxiosResponse<any>) => {
-                            if (response.data.errors) {
-                                this.errorMessage = response.data.errors[0].message
-                                this.displayWarning = true
-                            } else {
-                                this.$store.commit('setInfo', {
-                                    title: this.$t(this.businessModelDriverDetailDescriptor.operation[this.operation].toastTitle),
-                                    msg: this.$t(this.businessModelDriverDetailDescriptor.operation.success)
-                                })
-                            }
-                        })
+        emits: ['touched'],
+        watch: {
+            async selectedDriver() {
+                this.loadSelectedDriver()
+                if (this.driver) {
+                    await this.loadDataDependencies()
+                    if (this.driver.parameter) {
+                        await this.loadModes()
+                        await this.loadLovs()
                     }
                 }
-            }
-
-            this.originalModalities.forEach((modality) => {
-                this.deleteCondition({
-                    ...this.condition,
-                    id: modality.conditionId,
-                    parFatherId: this.condition.parFatherId,
-                    parFatherUrlName: (this.selectedDriver as iBusinessModelDriver).parameterUrlName,
-                    parId: (this.selectedDriver as iBusinessModelDriver).id,
-                    useModeId: modality.useModeId,
-                    filterColumn: modality.filterColumn
-                })
-            })
-            this.originalModalities = []
-
-            this.loadData()
-        },
-        sendRequest(url: string, condition: any) {
-            if (this.operation === 'insert') {
-                return this.$http.post(url, condition)
-            } else {
-                return this.$http.put(url, condition)
+            },
+            driverOptions() {
+                this.loadAnalyticalDrivers()
+            },
+            businessModelDrivers() {
+                this.loadBusinessModelDrivers()
             }
         },
-        showForm(event: any) {
-            this.originalModalities = []
-            this.selectedModes = []
-            if (event.value) {
-                this.condition = { ...event.value, parFather: this.selectedDriver }
-                this.condition.modalities.forEach((modality: any) => {
-                    this.originalModalities.push(modality)
-                    this.selectedModes.push(modality.useModeId)
-                    this.modalities[modality.useModeId] = modality.filterColumn
-                })
-            } else {
-                this.condition = {
-                    parFather: this.drivers[0],
-                    filterOperation: 'equal',
-                    logicOperator: 'AND'
+        async created() {
+            this.loadSelectedDriver()
+            this.loadAnalyticalDrivers()
+            this.loadBusinessModelDrivers()
+            if (this.selectedDriver) {
+                await this.loadDataDependencies()
+                await this.loadModes()
+                await this.loadLovs()
+            }
+        },
+        data() {
+            return {
+                businessModelDriverDetailDescriptor,
+                businessModelDriverDetailValidationDescriptor,
+                driver: null as iBusinessModelDriver | null,
+                drivers: [] as iBusinessModelDriver[],
+                oldDropdownValue: null as any,
+                analyticalDrivers: [] as any[],
+                condition: {} as any,
+                conditions: [] as any[],
+                originalModalities: [] as any[],
+                lovs: [] as any[],
+                modes: [] as any[],
+                selectedModes: [] as any,
+                modesToDelete: [] as any,
+                modalities: {} as any,
+                touched: false,
+                conditionFormVisible: false,
+                operation: 'insert',
+                errorMessage: '',
+                displayWarning: false,
+                v$: useValidate() as any
+            }
+            this.setChanged()
+        },
+        validations() {
+            const customValidators: ICustomValidatorMap = {
+                'custom-unique': (value: string) => {
+                    return this.urlNotUnique(value)
                 }
             }
-            this.conditionFormVisible = true
-        },
-        setChanged() {
-            if (this.driver) {
-                this.driver.status = 'CHANGED'
-                this.driver.numberOfErrors = this.v$.$errors.length
+
+            const validationObject = {
+                driver: createValidations('driver', businessModelDriverDetailValidationDescriptor.validations.driver, customValidators)
             }
+
+            return validationObject
         },
-        closeForm() {
-            this.conditionFormVisible = false
-        },
-        showConditionDeleteDialog(condition) {
-            this.$confirm.require({
-                message: this.$t('common.toast.deleteMessage'),
-                header: this.$t('common.toast.deleteConfirmTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => this.deleteConditions(condition)
-            })
-        },
-        async deleteConditions(condition: any) {
-            condition.modalities.forEach((mode: any) => {
-                this.deleteCondition({ ...condition, id: mode.conditionId, useModeId: mode.useModeId, filterColumn: mode.filterColumn })
-            })
-        },
-        async deleteCondition(condition: any) {
-            delete condition.parFather
-            delete condition.modalities
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies/delete`, condition).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.deleteTitle'),
-                    msg: this.$t('common.toast.deleteSuccess')
+        methods: {
+            loadSelectedDriver() {
+                this.oldDropdownValue = null
+                this.driver = this.selectedDriver as iBusinessModelDriver
+
+                if (this.driver) {
+                    if (this.driver.parameter) {
+                        this.oldDropdownValue = this.driver.parameter
+                    }
+                    if (!this.driver.id) {
+                        this.v$.driver.label.$touch()
+                        this.v$.driver.parameter.$touch()
+                        this.v$.driver.parameterUrlName.$touch()
+                    }
+                }
+            },
+            loadAnalyticalDrivers() {
+                this.analyticalDrivers = this.driverOptions as any[]
+            },
+            loadBusinessModelDrivers() {
+                this.drivers = this.businessModelDrivers as any[]
+            },
+            async loadDataDependencies() {
+                this.conditions = []
+                if (this.driver && this.driver.id) {
+                    await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies?driverId=${this.driver.id}`).then((response: AxiosResponse<any>) =>
+                        response.data.forEach((condition: any) => {
+                            const index = this.conditions.findIndex((cond) => cond.parFatherId === condition.parFatherId && cond.filterOperation == condition.filterOperation && cond.logicOperator == condition.logicOperator)
+                            condition.modalities = []
+                            condition.modalities.push({ conditionId: condition.id, useModeId: condition.useModeId, filterColumn: condition.filterColumn })
+                            if (index > -1) {
+                                this.conditions[index].modalities.push({ conditionId: condition.id, useModeId: condition.useModeId, filterColumn: condition.filterColumn })
+                            } else {
+                                this.conditions.push(condition)
+                            }
+                        })
+                    )
+                }
+            },
+            async loadModes() {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.driver?.parameter?.id}/modes`).then((response: AxiosResponse<any>) => (this.modes = response.data))
+            },
+            async loadLovs() {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.driver?.parameter?.id}/lovs`).then((response: AxiosResponse<any>) => (this.lovs = response.data))
+            },
+            getLovs(lovId: number) {
+                const index = this.lovs.findIndex((lov) => lov.id === lovId)
+                if (index > -1) {
+                    const lov = JSON.parse(this.lovs[index].lovProviderJSON)
+                    return lov.QUERY['VISIBLE-COLUMNS'].split(',')
+                }
+            },
+            isModeActive(modeId: number) {
+                const index = this.selectedModes.findIndex((id: any) => {
+                    return id === modeId
                 })
+                return index === -1
+            },
+            urlNotUnique(url: string) {
+                const index = this.drivers.findIndex((driver) => driver.parameterUrlName === url && driver.id != this.driver?.id)
+                return index === -1
+            },
+            showAnalyticalDropdownConfirm() {
+                if (this.oldDropdownValue) {
+                    this.$confirm.require({
+                        message: this.$t('managers.businessModelManager.analyticalDropdownConfirm'),
+                        header: this.$t('common.toast.deleteTitle'),
+                        icon: 'pi pi-exclamation-triangle',
+                        accept: () => this.deleteAllConditions(),
+                        reject: () => this.resetDrodpwonValue()
+                    })
+                }
+            },
+            resetDrodpwonValue() {
+                if (this.driver) {
+                    this.driver.parameter = this.oldDropdownValue
+                }
+            },
+            async saveCondition(condition: any) {
+                await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies`, condition).finally(() => (this.conditionFormVisible = false))
+            },
+            async handleSubmit() {
+                if (this.condition.id) {
+                    this.operation = 'update'
+                }
+
+                const modalityKeys = Object.keys(this.modalities)
+                for (let i = 0; i < this.selectedModes.length; i++) {
+                    for (let j = 0; j < modalityKeys.length; j++) {
+                        if (this.selectedModes[i] === +modalityKeys[j]) {
+                            const conditionForPost = {
+                                ...this.condition,
+                                parFatherId: this.condition.parFather.id,
+                                parFatherUrlName: (this.selectedDriver as iBusinessModelDriver).parameterUrlName,
+                                parId: (this.selectedDriver as iBusinessModelDriver).id,
+                                useModeId: +modalityKeys[j],
+                                filterColumn: this.modalities[this.selectedModes[i]]
+                            }
+
+                            if (this.operation === 'update') {
+                                const index = this.originalModalities.findIndex((modality) => {
+                                    return modality.conditionId === conditionForPost.id
+                                })
+                                if (index > -1) {
+                                    this.originalModalities.splice(index, 1)
+                                }
+                            }
+
+                            if (!conditionForPost.prog) {
+                                conditionForPost.prog = 0
+                            }
+                            conditionForPost.prog++
+                            delete conditionForPost.parFather
+                            delete conditionForPost.modalities
+                            await this.sendRequest(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies`, conditionForPost).then((response: AxiosResponse<any>) => {
+                                if (response.data.errors) {
+                                    this.errorMessage = response.data.errors[0].message
+                                    this.displayWarning = true
+                                } else {
+                                    this.$store.commit('setInfo', {
+                                        title: this.$t(this.businessModelDriverDetailDescriptor.operation[this.operation].toastTitle),
+                                        msg: this.$t(this.businessModelDriverDetailDescriptor.operation.success)
+                                    })
+                                }
+                            })
+                        }
+                    }
+                }
+
+                this.originalModalities.forEach((modality) => {
+                    this.deleteCondition({
+                        ...this.condition,
+                        id: modality.conditionId,
+                        parFatherId: this.condition.parFatherId,
+                        parFatherUrlName: (this.selectedDriver as iBusinessModelDriver).parameterUrlName,
+                        parId: (this.selectedDriver as iBusinessModelDriver).id,
+                        useModeId: modality.useModeId,
+                        filterColumn: modality.filterColumn
+                    })
+                })
+                this.originalModalities = []
+
                 this.loadData()
-            })
-        },
-        deleteAllConditions() {
-            this.setChanged()
-            this.oldDropdownValue = this.driver?.parameter
-            this.conditions.forEach((condition) => this.deleteCondition(condition))
-        },
-        loadData() {
-            this.loadDataDependencies()
-            this.loadModes()
-            this.loadLovs()
-            this.selectedModes = []
-            this.condition = {}
-            this.operation = 'insert'
-            this.conditionFormVisible = false
+            },
+            sendRequest(url: string, condition: any) {
+                if (this.operation === 'insert') {
+                    return this.$http.post(url, condition)
+                } else {
+                    return this.$http.put(url, condition)
+                }
+            },
+            showForm(event: any) {
+                this.originalModalities = []
+                this.selectedModes = []
+                if (event.value) {
+                    this.condition = { ...event.value, parFather: this.selectedDriver }
+                    this.condition.modalities.forEach((modality: any) => {
+                        this.originalModalities.push(modality)
+                        this.selectedModes.push(modality.useModeId)
+                        this.modalities[modality.useModeId] = modality.filterColumn
+                    })
+                } else {
+                    this.condition = {
+                        parFather: this.drivers[0],
+                        filterOperation: 'equal',
+                        logicOperator: 'AND'
+                    }
+                }
+                this.conditionFormVisible = true
+            },
+            setChanged() {
+                if (this.driver) {
+                    this.driver.status = 'CHANGED'
+                    this.driver.numberOfErrors = this.v$.$errors.length
+                }
+            },
+            closeForm() {
+                this.conditionFormVisible = false
+            },
+            showConditionDeleteDialog(condition) {
+                this.$confirm.require({
+                    message: this.$t('common.toast.deleteMessage'),
+                    header: this.$t('common.toast.deleteConfirmTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.deleteConditions(condition)
+                })
+            },
+            async deleteConditions(condition: any) {
+                condition.modalities.forEach((mode: any) => {
+                    this.deleteCondition({ ...condition, id: mode.conditionId, useModeId: mode.useModeId, filterColumn: mode.filterColumn })
+                })
+            },
+            async deleteCondition(condition: any) {
+                delete condition.parFather
+                delete condition.modalities
+                await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies/delete`, condition).then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                    this.loadData()
+                })
+            },
+            deleteAllConditions() {
+                this.setChanged()
+                this.oldDropdownValue = this.driver?.parameter
+                this.conditions.forEach((condition) => this.deleteCondition(condition))
+            },
+            loadData() {
+                this.loadDataDependencies()
+                this.loadModes()
+                this.loadLovs()
+                this.selectedModes = []
+                this.condition = {}
+                this.operation = 'insert'
+                this.conditionFormVisible = false
+            }
         }
-    }
-})
+    })
 </script>
 
 <style lang="scss" scoped>
-.mode-inputs {
-    flex: 0.5;
-}
-#operationInfo {
-    margin-top: 2rem;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    display: flex;
-    justify-content: center;
-    border: 1px solid rgba(59, 103, 140, 0.1);
-    background-color: #eaf0f6;
-
-    p {
-        margin: 0.3rem;
+    .mode-inputs {
+        flex: 0.5;
     }
-}
+    #operationInfo {
+        margin-top: 2rem;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: center;
+        border: 1px solid rgba(59, 103, 140, 0.1);
+        background-color: #eaf0f6;
+
+        p {
+            margin: 0.3rem;
+        }
+    }
 </style>

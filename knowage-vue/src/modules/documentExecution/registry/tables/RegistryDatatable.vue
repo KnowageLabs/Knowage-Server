@@ -2,7 +2,7 @@
     <Card class="p-m-2 kn-card no-padding">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #right>
+                <template #end>
                     <div class="p-d-flex p-flex-row">
                         <Button class="kn-button p-button-text" :label="$t('managers.businessModelManager.add')" v-if="buttons.enableButtons || buttons.enableAddRecords" @click="addNewRow" data-test="new-row-button" />
                     </div>

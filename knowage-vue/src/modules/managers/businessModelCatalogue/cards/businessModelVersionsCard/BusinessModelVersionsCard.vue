@@ -2,7 +2,7 @@
     <Card class="p-m-2">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.businessModelManager.savedVersions') }}
                 </template>
             </Toolbar>
@@ -30,140 +30,140 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iBusinessModelVersion } from '../../BusinessModelCatalogue'
-import { formatDate } from '@/helpers/commons/localeHelper'
-import { downloadDirect } from '@/helpers/commons/fileHelper'
-import { AxiosResponse } from 'axios'
-import Card from 'primevue/card'
-import Listbox from 'primevue/listbox'
-import Menu from 'primevue/menu'
-import RadioButton from 'primevue/radiobutton'
+    import { defineComponent } from 'vue'
+    import { iBusinessModelVersion } from '../../BusinessModelCatalogue'
+    import { formatDate } from '@/helpers/commons/localeHelper'
+    import { downloadDirect } from '@/helpers/commons/fileHelper'
+    import { AxiosResponse } from 'axios'
+    import Card from 'primevue/card'
+    import Listbox from 'primevue/listbox'
+    import Menu from 'primevue/menu'
+    import RadioButton from 'primevue/radiobutton'
 
-export default defineComponent({
-    name: 'business-models-versions-card',
-    components: {
-        Card,
-        Listbox,
-        Menu,
-        RadioButton
-    },
-    props: {
-        id: {
-            type: Number
+    export default defineComponent({
+        name: 'business-models-versions-card',
+        components: {
+            Card,
+            Listbox,
+            Menu,
+            RadioButton
         },
-        versions: {
-            type: Array,
-            required: true
+        props: {
+            id: {
+                type: Number
+            },
+            versions: {
+                type: Array,
+                required: true
+            },
+            readonly: {
+                type: Boolean
+            }
         },
-        readonly: {
-            type: Boolean
-        }
-    },
-    emits: ['touched', 'deleted'],
-    watch: {
-        versions() {
+        emits: ['touched', 'deleted'],
+        watch: {
+            versions() {
+                this.loadVersions()
+            }
+        },
+        created() {
             this.loadVersions()
-        }
-    },
-    created() {
-        this.loadVersions()
-    },
-    data() {
-        return {
-            businessModelVersions: [] as iBusinessModelVersion[],
-            items: [] as { label: string; icon: string; command: Function }[],
-            previousActiveVersion: { active: false },
-            activeVersion: { active: false }
-        }
-    },
-    methods: {
-        loadVersions() {
-            this.businessModelVersions = [] as iBusinessModelVersion[]
-            this.versions.forEach((version: any) => {
-                if (version.active) {
-                    this.previousActiveVersion = version
-                    this.activeVersion = version
-                }
-                this.businessModelVersions.push(version)
-            })
         },
-        creationDate(date: string) {
-            return formatDate(date, 'DD/MM/yyyy HH:mm:ss')
+        data() {
+            return {
+                businessModelVersions: [] as iBusinessModelVersion[],
+                items: [] as { label: string; icon: string; command: Function }[],
+                previousActiveVersion: { active: false },
+                activeVersion: { active: false }
+            }
         },
-        toggle(event: any, version: iBusinessModelVersion) {
-            this.createMenuItems(version)
+        methods: {
+            loadVersions() {
+                this.businessModelVersions = [] as iBusinessModelVersion[]
+                this.versions.forEach((version: any) => {
+                    if (version.active) {
+                        this.previousActiveVersion = version
+                        this.activeVersion = version
+                    }
+                    this.businessModelVersions.push(version)
+                })
+            },
+            creationDate(date: string) {
+                return formatDate(date, 'DD/MM/yyyy HH:mm:ss')
+            },
+            toggle(event: any, version: iBusinessModelVersion) {
+                this.createMenuItems(version)
 
-            const menu = this.$refs.menu as any
-            menu.toggle(event)
-        },
-        createMenuItems(version: iBusinessModelVersion) {
-            this.items = []
-            if (version.hasContent && !version.hasLog) {
-                this.items.push({ label: this.$t('managers.businessModelManager.downloadJar'), icon: 'fa fa-file-archive-o', command: () => this.downloadFile(version.id, 'JAR') })
-            }
-            if (version.hasLog) {
-                this.items.push({ label: this.$t('managers.businessModelManager.downloadLog'), icon: 'fa fa-file-text-o', command: () => this.downloadFile(version.id, 'LOG') })
-            }
-            if (version.hasFileModel) {
-                this.items.push({ label: this.$t('managers.businessModelManager.downloadModel'), icon: 'fa fa-file-code-o', command: () => this.downloadFile(version.id, 'SBIMODEL') })
-            }
-            if (!this.readonly) {
-                this.items.push({ label: this.$t('common.delete'), icon: 'far fa-trash-alt', command: () => this.deleteVersionConfirm(version.id) })
-            }
-        },
-        setActive() {
-            this.previousActiveVersion.active = false
-            this.previousActiveVersion = this.activeVersion
-            this.activeVersion.active = true
-            this.$emit('touched')
-        },
-        async downloadFile(versionId: number, filetype: string) {
-            await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/versions/${versionId}/${filetype}/file`, {
-                    headers: {
-                        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
-                    }
-                })
-                .then((response: AxiosResponse<any>) => {
-                    if (response.data.errors) {
-                        this.$store.commit('setError', {
-                            title: this.$t('common.error.downloading'),
-                            msg: this.$t('common.error.errorCreatingPackage')
-                        })
-                    } else {
-                        if (response.headers) {
-                            var contentDisposition = response.headers['content-disposition']
-                            var contentDispositionMatches = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)
-                            if (contentDispositionMatches && contentDispositionMatches.length > 1) {
-                                var fileAndExtension = contentDispositionMatches[1]
-                                var completeFileName = fileAndExtension.replaceAll('"', '')
-                                downloadDirect(response.data, completeFileName, 'application/zip; charset=utf-8')
-                            }
-                        }
-                        this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
-                    }
-                })
-        },
-        deleteVersionConfirm(versionId: number) {
-            this.$confirm.require({
-                message: this.$t('common.toast.deleteMessage'),
-                header: this.$t('common.toast.deleteTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => {
-                    this.deleteVersion(versionId)
+                const menu = this.$refs.menu as any
+                menu.toggle(event)
+            },
+            createMenuItems(version: iBusinessModelVersion) {
+                this.items = []
+                if (version.hasContent && !version.hasLog) {
+                    this.items.push({ label: this.$t('managers.businessModelManager.downloadJar'), icon: 'fa fa-file-archive-o', command: () => this.downloadFile(version.id, 'JAR') })
                 }
-            })
-        },
-        async deleteVersion(versionId: number) {
-            await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/versions/${versionId}/`).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.deleteTitle'),
-                    msg: this.$t('common.toast.deleteSuccess')
+                if (version.hasLog) {
+                    this.items.push({ label: this.$t('managers.businessModelManager.downloadLog'), icon: 'fa fa-file-text-o', command: () => this.downloadFile(version.id, 'LOG') })
+                }
+                if (version.hasFileModel) {
+                    this.items.push({ label: this.$t('managers.businessModelManager.downloadModel'), icon: 'fa fa-file-code-o', command: () => this.downloadFile(version.id, 'SBIMODEL') })
+                }
+                if (!this.readonly) {
+                    this.items.push({ label: this.$t('common.delete'), icon: 'far fa-trash-alt', command: () => this.deleteVersionConfirm(version.id) })
+                }
+            },
+            setActive() {
+                this.previousActiveVersion.active = false
+                this.previousActiveVersion = this.activeVersion
+                this.activeVersion.active = true
+                this.$emit('touched')
+            },
+            async downloadFile(versionId: number, filetype: string) {
+                await this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/versions/${versionId}/${filetype}/file`, {
+                        headers: {
+                            Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+                        }
+                    })
+                    .then((response: AxiosResponse<any>) => {
+                        if (response.data.errors) {
+                            this.$store.commit('setError', {
+                                title: this.$t('common.error.downloading'),
+                                msg: this.$t('common.error.errorCreatingPackage')
+                            })
+                        } else {
+                            if (response.headers) {
+                                var contentDisposition = response.headers['content-disposition']
+                                var contentDispositionMatches = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)
+                                if (contentDispositionMatches && contentDispositionMatches.length > 1) {
+                                    var fileAndExtension = contentDispositionMatches[1]
+                                    var completeFileName = fileAndExtension.replaceAll('"', '')
+                                    downloadDirect(response.data, completeFileName, 'application/zip; charset=utf-8')
+                                }
+                            }
+                            this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
+                        }
+                    })
+            },
+            deleteVersionConfirm(versionId: number) {
+                this.$confirm.require({
+                    message: this.$t('common.toast.deleteMessage'),
+                    header: this.$t('common.toast.deleteTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.deleteVersion(versionId)
+                    }
                 })
-                this.$emit('deleted')
-            })
+            },
+            async deleteVersion(versionId: number) {
+                await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/versions/${versionId}/`).then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                    this.$emit('deleted')
+                })
+            }
         }
-    }
-})
+    })
 </script>

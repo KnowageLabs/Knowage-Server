@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-        <template #left> Template {{ template.label }} </template>
-        <template #right>
+        <template #start> Template {{ template.label }} </template>
+        <template #end>
             <Button icon="pi pi-download" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.download')" @click="downloadTemplate" :disabled="!template.id" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" :disabled="!dirty" @click="saveTemplate" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeTemplate($event)" />

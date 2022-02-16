@@ -2,7 +2,7 @@
     <Card :style="dataSourceDescriptor.card.style">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left> {{ $t('managers.dataSourceManagement.form.advancedOptions.title') }} </template>
+                <template #start> {{ $t('managers.dataSourceManagement.form.advancedOptions.title') }} </template>
             </Toolbar>
         </template>
 
@@ -174,67 +174,67 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { createValidations } from '@/helpers/commons/validationHelper'
-import useValidate from '@vuelidate/core'
-import dataSourceDetailValidationDescriptor from '../DataSourceTabView/DataSourceDetailValidationDescriptor.json'
-import dataSourceDescriptor from '../../dataSourceManagement/DataSourceDescriptor.json'
-import Card from 'primevue/card'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import Tooltip from 'primevue/tooltip'
-import Checkbox from 'primevue/checkbox'
+    import { defineComponent } from 'vue'
+    import { createValidations } from '@/helpers/commons/validationHelper'
+    import useValidate from '@vuelidate/core'
+    import dataSourceDetailValidationDescriptor from '../DataSourceTabView/DataSourceDetailValidationDescriptor.json'
+    import dataSourceDescriptor from '../../dataSourceManagement/DataSourceDescriptor.json'
+    import Card from 'primevue/card'
+    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+    import Tooltip from 'primevue/tooltip'
+    import Checkbox from 'primevue/checkbox'
 
-export default defineComponent({
-    name: 'detail-tab',
-    components: {
-        Card,
-        KnValidationMessages,
-        Checkbox
-    },
-    props: {
-        advancedOptions: {
-            type: Object,
-            requried: false
+    export default defineComponent({
+        name: 'detail-tab',
+        components: {
+            Card,
+            KnValidationMessages,
+            Checkbox
         },
-        isReadOnly: Boolean
-    },
-    directives: {
-        tooltip: Tooltip
-    },
-    emits: ['fieldChanged'],
-    data() {
-        return {
-            v$: useValidate() as any,
-            dataSourceDetailValidationDescriptor,
-            dataSourceDescriptor,
-            jdbcPoolConfiguration: {} as any,
-            readOnly: false
-        }
-    },
-    validations() {
-        return {
-            jdbcPoolConfiguration: createValidations('jdbcPoolConfiguration', dataSourceDetailValidationDescriptor.validations.jdbcPoolConfiguration)
-        }
-    },
-    async created() {
-        if (this.advancedOptions) {
-            this.jdbcPoolConfiguration = { ...this.advancedOptions } as any
-        }
-        this.readOnly = this.isReadOnly
-    },
-    watch: {
-        advancedOptions() {
-            this.v$.$reset()
-            this.jdbcPoolConfiguration = { ...this.advancedOptions } as any
+        props: {
+            advancedOptions: {
+                type: Object,
+                requried: false
+            },
+            isReadOnly: Boolean
         },
-        isReadOnly() {
+        directives: {
+            tooltip: Tooltip
+        },
+        emits: ['fieldChanged'],
+        data() {
+            return {
+                v$: useValidate() as any,
+                dataSourceDetailValidationDescriptor,
+                dataSourceDescriptor,
+                jdbcPoolConfiguration: {} as any,
+                readOnly: false
+            }
+        },
+        validations() {
+            return {
+                jdbcPoolConfiguration: createValidations('jdbcPoolConfiguration', dataSourceDetailValidationDescriptor.validations.jdbcPoolConfiguration)
+            }
+        },
+        async created() {
+            if (this.advancedOptions) {
+                this.jdbcPoolConfiguration = { ...this.advancedOptions } as any
+            }
             this.readOnly = this.isReadOnly
+        },
+        watch: {
+            advancedOptions() {
+                this.v$.$reset()
+                this.jdbcPoolConfiguration = { ...this.advancedOptions } as any
+            },
+            isReadOnly() {
+                this.readOnly = this.isReadOnly
+            }
+        },
+        methods: {
+            onFieldChange(fieldName: string, value: any) {
+                this.$emit('fieldChanged', { fieldName, value })
+            }
         }
-    },
-    methods: {
-        onFieldChange(fieldName: string, value: any) {
-            this.$emit('fieldChanged', { fieldName, value })
-        }
-    }
-})
+    })
 </script>

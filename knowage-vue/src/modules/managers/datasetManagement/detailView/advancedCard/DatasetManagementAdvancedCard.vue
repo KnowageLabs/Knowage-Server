@@ -1,6 +1,6 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary">
-        <template #left>
+        <template #start>
             <InputSwitch v-model="isTransformable" @change="setTransformationType" class="p-mr-2" />
             <span>{{ $t('managers.datasetManagement.pivotTransformer') }}</span>
         </template>
@@ -69,7 +69,7 @@
     </Card>
 
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
-        <template #left>
+        <template #start>
             <InputSwitch v-model="dataset.isPersistedHDFS" class="p-mr-2" @change="$emit('touched')" />
             <span>{{ $t('managers.datasetManagement.isPersistedHDFS') }}</span>
         </template>
@@ -77,7 +77,7 @@
 
     <div v-if="dataset.dsTypeCd != 'Flat'">
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
-            <template #left>
+            <template #start>
                 <InputSwitch v-model="dataset.isPersisted" :disabled="disablePersist" class="p-mr-2" @change="$emit('touched')" />
                 <span>{{ $t('managers.datasetManagement.isPersisted') }}</span>
             </template>
@@ -104,7 +104,7 @@
                     </div>
                 </form>
                 <Toolbar class="kn-toolbar kn-toolbar--default p-mt-3" v-if="dataset.isPersisted">
-                    <template #left>
+                    <template #start>
                         <InputSwitch v-model="dataset.isScheduled" class="p-mr-2" @change="$emit('touched')" />
                         <span>{{ $t('managers.datasetManagement.isScheduled') }}</span>
                     </template>
@@ -116,87 +116,87 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import useValidate from '@vuelidate/core'
-import advancedCardDescriptor from './DatasetManagementAdvancedCardDescriptor.json'
-import DatasetScheduler from './DatasetManagementScheduler.vue'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import Card from 'primevue/card'
-import Checkbox from 'primevue/checkbox'
-import InputSwitch from 'primevue/inputswitch'
+    import { defineComponent } from 'vue'
+    import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
+    import useValidate from '@vuelidate/core'
+    import advancedCardDescriptor from './DatasetManagementAdvancedCardDescriptor.json'
+    import DatasetScheduler from './DatasetManagementScheduler.vue'
+    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+    import Card from 'primevue/card'
+    import Checkbox from 'primevue/checkbox'
+    import InputSwitch from 'primevue/inputswitch'
 
-export default defineComponent({
-    components: { Card, InputSwitch, Checkbox, KnValidationMessages, DatasetScheduler },
-    props: {
-        selectedDataset: { type: Object as any },
-        transformationDataset: { type: Object as any },
-        schedulingData: { type: Object as any }
-    },
-    computed: {
-        disablePersist() {
-            if (this.dataset['pars'] && this.dataset['pars'].length > 0) {
-                return true
-            }
-            return false
-        }
-    },
-    emits: ['touched'],
-    data() {
-        return {
-            v$: useValidate() as any,
-            advancedCardDescriptor,
-            dataset: {} as any,
-            testInput: 'testinput',
-            testCheckbox: true,
-            isTransformable: false
-        }
-    },
-    created() {
-        this.dataset = this.selectedDataset
-        this.isDatasetTransformable()
-    },
-    watch: {
-        selectedDataset() {
-            this.dataset = this.selectedDataset
-            this.isDatasetTransformable()
-        }
-    },
-    validations() {
-        const transformationFieldsRequired = (value) => {
-            return !this.isTransformable || value
-        }
-        const persistFieldsRequired = (value) => {
-            return !this.dataset.isPersisted || value
-        }
-        const customValidators: ICustomValidatorMap = {
-            'transformable-field-required': transformationFieldsRequired,
-            'persist-field-required': persistFieldsRequired
-        }
-        const validationObject = {
-            dataset: createValidations('dataset', advancedCardDescriptor.validations.advancedTab, customValidators)
-        }
-        return validationObject
-    },
-    methods: {
-        isDatasetTransformable() {
-            if (this.dataset.trasfTypeCd && this.dataset.trasfTypeCd == this.transformationDataset.VALUE_CD) {
-                this.isTransformable = true
-            } else {
-                this.isTransformable = false
+    export default defineComponent({
+        components: { Card, InputSwitch, Checkbox, KnValidationMessages, DatasetScheduler },
+        props: {
+            selectedDataset: { type: Object as any },
+            transformationDataset: { type: Object as any },
+            schedulingData: { type: Object as any }
+        },
+        computed: {
+            disablePersist() {
+                if (this.dataset['pars'] && this.dataset['pars'].length > 0) {
+                    return true
+                }
+                return false
             }
         },
-        setTransformationType() {
-            if (this.isTransformable) {
-                this.dataset.trasfTypeCd = this.transformationDataset.VALUE_CD
-            } else {
-                this.dataset.trasfTypeCd ? (this.dataset.trasfTypeCd = '') : null
-                this.dataset.pivotColName ? (this.dataset.pivotColName = '') : null
-                this.dataset.pivotColValue ? (this.dataset.pivotColValue = '') : null
-                this.dataset.pivotIsNumRows ? (this.dataset.pivotIsNumRows = '') : null
-                this.dataset.pivotRowName ? (this.dataset.pivotRowName = '') : null
+        emits: ['touched'],
+        data() {
+            return {
+                v$: useValidate() as any,
+                advancedCardDescriptor,
+                dataset: {} as any,
+                testInput: 'testinput',
+                testCheckbox: true,
+                isTransformable: false
+            }
+        },
+        created() {
+            this.dataset = this.selectedDataset
+            this.isDatasetTransformable()
+        },
+        watch: {
+            selectedDataset() {
+                this.dataset = this.selectedDataset
+                this.isDatasetTransformable()
+            }
+        },
+        validations() {
+            const transformationFieldsRequired = (value) => {
+                return !this.isTransformable || value
+            }
+            const persistFieldsRequired = (value) => {
+                return !this.dataset.isPersisted || value
+            }
+            const customValidators: ICustomValidatorMap = {
+                'transformable-field-required': transformationFieldsRequired,
+                'persist-field-required': persistFieldsRequired
+            }
+            const validationObject = {
+                dataset: createValidations('dataset', advancedCardDescriptor.validations.advancedTab, customValidators)
+            }
+            return validationObject
+        },
+        methods: {
+            isDatasetTransformable() {
+                if (this.dataset.trasfTypeCd && this.dataset.trasfTypeCd == this.transformationDataset.VALUE_CD) {
+                    this.isTransformable = true
+                } else {
+                    this.isTransformable = false
+                }
+            },
+            setTransformationType() {
+                if (this.isTransformable) {
+                    this.dataset.trasfTypeCd = this.transformationDataset.VALUE_CD
+                } else {
+                    this.dataset.trasfTypeCd ? (this.dataset.trasfTypeCd = '') : null
+                    this.dataset.pivotColName ? (this.dataset.pivotColName = '') : null
+                    this.dataset.pivotColValue ? (this.dataset.pivotColValue = '') : null
+                    this.dataset.pivotIsNumRows ? (this.dataset.pivotIsNumRows = '') : null
+                    this.dataset.pivotRowName ? (this.dataset.pivotRowName = '') : null
+                }
             }
         }
-    }
-})
+    })
 </script>
