@@ -124,9 +124,7 @@
                 this.loading = true
                 await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement`).then((response: AxiosResponse<any>) => {
                     this.availableThemes = response.data
-                    if (this.availableThemes.length === 0) {
-                        this.availableThemes = [{ ...this.descriptor.emptyTheme }]
-                    }
+
                     if (fullRefresh) this.overrideDefaultValues(this.availableThemes.filter((item) => item.active === true)[0])
 
                     if (this.availableThemes.filter((item) => item.active === true).length == 0) {
