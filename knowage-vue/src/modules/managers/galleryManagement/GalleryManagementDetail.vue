@@ -268,7 +268,7 @@ export default defineComponent({
         cursor: pointer;
         user-select: none;
         &:hover {
-            background-color: $color-secondary;
+            background-color: var(--kn-color-secondary);
         }
     }
     &:deep(.p-tabview) {
@@ -314,7 +314,7 @@ export default defineComponent({
     .imageContainer {
         height: 100%;
         .icon {
-            color: $color-secondary;
+            color: var(--kn-color-secondary);
         }
         img {
             height: auto;

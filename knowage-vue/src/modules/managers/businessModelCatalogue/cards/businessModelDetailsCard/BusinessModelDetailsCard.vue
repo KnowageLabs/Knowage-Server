@@ -73,12 +73,10 @@
                             :options="categories"
                             :placeholder="$t('common.category')"
                             :disabled="readonly"
-                            optionLabel="VALUE_NM"
-                            optionValue="VALUE_ID"
                             @before-show="v$.businessModel.category.$touch()"
-                            @change="onFieldChange('category', $event.value)"
+                            @change="onFieldChange('category', $event.value.VALUE_ID)"
                         >
-                            <!-- <template #value="slotProps">
+                            <template #value="slotProps">
                                 <div v-if="slotProps.value">
                                     <span>{{ slotProps.value.VALUE_NM }}</span>
                                 </div>
@@ -87,7 +85,7 @@
                                 <div>
                                     <span>{{ slotProps.option.VALUE_NM }}</span>
                                 </div>
-                            </template> -->
+                            </template>
                         </Dropdown>
                     </span>
                     <KnValidationMessages
@@ -245,83 +243,72 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent, PropType } from 'vue'
-    import { iBusinessModel } from '../../BusinessModelCatalogue'
-    import { createValidations } from '@/helpers/commons/validationHelper'
-    import { AxiosResponse } from 'axios'
-    import businessModelDetailsCardDescriptor from './BusinessModelDetailsCardDescriptor.json'
-    import businessModelDetailsCardValidation from './BusinessModelDetailsCardValidation.json'
-    import Card from 'primevue/card'
-    import Dropdown from 'primevue/dropdown'
-    import GenerateDatamartCard from './GenerateDatamartCard.vue'
-    import InputSwitch from 'primevue/inputswitch'
-    import KnInputFile from '@/components/UI/KnInputFile.vue'
-    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-    import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
-    import MetawebSelectDialog from '../../metaweb/metawebSelectDialog/MetawebSelectDialog.vue'
-    import Metaweb from '@/modules/managers/businessModelCatalogue/metaweb/Metaweb.vue'
-    import useValidate from '@vuelidate/core'
+import { defineComponent, PropType } from 'vue'
+import { iBusinessModel } from '../../BusinessModelCatalogue'
+import { createValidations } from '@/helpers/commons/validationHelper'
+import { AxiosResponse } from 'axios'
+import businessModelDetailsCardDescriptor from './BusinessModelDetailsCardDescriptor.json'
+import businessModelDetailsCardValidation from './BusinessModelDetailsCardValidation.json'
+import Card from 'primevue/card'
+import Dropdown from 'primevue/dropdown'
+import GenerateDatamartCard from './GenerateDatamartCard.vue'
+import InputSwitch from 'primevue/inputswitch'
+import KnInputFile from '@/components/UI/KnInputFile.vue'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
+import MetawebSelectDialog from '../../metaweb/metawebSelectDialog/MetawebSelectDialog.vue'
+import Metaweb from '@/modules/managers/businessModelCatalogue/metaweb/Metaweb.vue'
+import useValidate from '@vuelidate/core'
 
-    export default defineComponent({
-        name: 'business-model-details-card',
-        components: {
-            Card,
-            Dropdown,
-            GenerateDatamartCard,
-            InputSwitch,
-            KnInputFile,
-            KnValidationMessages,
-            KnOverlaySpinnerPanel,
-            MetawebSelectDialog,
-            Metaweb
+export default defineComponent({
+    name: 'business-model-details-card',
+    components: {
+        Card,
+        Dropdown,
+        GenerateDatamartCard,
+        InputSwitch,
+        KnInputFile,
+        KnValidationMessages,
+        KnOverlaySpinnerPanel,
+        MetawebSelectDialog,
+        Metaweb
+    },
+    props: {
+        selectedBusinessModel: {
+            type: Object,
+            required: true
         },
-        props: {
-            selectedBusinessModel: {
-                type: Object,
-                required: true
-            },
-            domainCategories: {
-                type: Array,
-                required: true
-            },
-            datasourcesMeta: {
-                type: Array,
-                required: true
-            },
-            user: {
-                type: Object as PropType<Object | null>
-            },
-            toGenerate: {
-                type: Boolean
-            },
-            readonly: {
-                type: Boolean
-            },
-            businessModelVersions: {
-                type: Array
-            }
+        domainCategories: {
+            type: Array,
+            required: true
         },
-        emits: ['fieldChanged', 'fileUploaded', 'datamartGenerated', 'modelGenerated'],
-        watch: {
-            selectedBusinessModel() {
-                this.v$.$reset()
-                this.loadBusinessModel()
-            },
-            domainCategories() {
-                this.loadCategories()
-            },
-            datasourcesMeta() {
-                this.loadDatasources()
-            }
+        datasourcesMeta: {
+            type: Array,
+            required: true
         },
-        computed: {
-            metaModelUrl(): any {
-                return `/knowagemeta/restful-services/1.0/pages/edit?datasourceId=${this.businessModel.dataSourceId}&user_id=${(this.user as any)?.userUniqueIdentifier}&bmId=${this.businessModel.id}&bmName=${this.businessModel.name}`
-            }
+        user: {
+            type: Object as PropType<Object | null>
         },
-        created() {
+        toGenerate: {
+            type: Boolean
+        },
+        readonly: {
+            type: Boolean
+        },
+        businessModelVersions: {
+            type: Array
+        }
+    },
+    emits: ['fieldChanged', 'fileUploaded', 'datamartGenerated', 'modelGenerated'],
+    watch: {
+        selectedBusinessModel() {
+            this.v$.$reset()
             this.loadBusinessModel()
+        },
+        domainCategories() {
             this.loadCategories()
+        },
+        datasourcesMeta() {
             this.loadDatasources()
         }
     },
@@ -360,111 +347,84 @@
     methods: {
         loadBusinessModel() {
             this.businessModel = { ...this.selectedBusinessModel } as iBusinessModel
-            if (this.businessModel.category?.VALUE_ID) this.businessModel.category = this.businessModel.category.VALUE_ID
         },
-        data() {
-            return {
-                businessModelDetailsCardDescriptor,
-                businessModelDetailsCardValidation,
-                businessModel: {} as iBusinessModel,
-                categories: [] as any[],
-                datasources: [] as any[],
-                metaWebVisible: false,
-                generateDatamartVisible: false,
-                metawebSelectDialogVisible: false,
-                metawebDialogVisible: false,
-                meta: null as any,
-                touched: false,
-                v$: useValidate() as any,
-                loading: false
-            }
+        loadCategories() {
+            this.categories = this.domainCategories as any[]
         },
-        validations() {
-            return {
-                businessModel: createValidations('businessModel', businessModelDetailsCardValidation.validations.businessModel)
-            }
+        loadDatasources() {
+            this.datasources = this.datasourcesMeta as any[]
         },
-        methods: {
-            loadBusinessModel() {
-                this.businessModel = { ...this.selectedBusinessModel } as iBusinessModel
-            },
-            loadCategories() {
-                this.categories = this.domainCategories as any[]
-            },
-            loadDatasources() {
-                this.datasources = this.datasourcesMeta as any[]
-            },
-            uploadFile(event) {
-                this.$emit('fileUploaded', event.target.files[0])
-            },
-            onFieldChange(fieldName: string, value: any) {
-                this.$emit('fieldChanged', { fieldName, value })
-            },
-            onLockedChange() {
-                this.$emit('fieldChanged', { fieldName: 'modelLocked', value: this.businessModel.modelLocked })
-            },
-            onSmartViewChange() {
-                this.$emit('fieldChanged', { fieldName: 'smartView', value: this.businessModel.smartView })
-            },
-            async goToMetaWeb() {
-                this.loading = true
-                await this.createSession()
-                if (this.businessModelVersions?.length === 0) {
-                    this.metawebSelectDialogVisible = true
-                } else {
-                    await this.loadModelFromSession()
-                }
-                this.loading = false
-            },
-            onDatamartGenerated() {
-                this.$emit('datamartGenerated')
-            },
-            onMetaSelect(meta: any) {
-                this.meta = meta
-                this.metawebSelectDialogVisible = false
-                this.metawebDialogVisible = true
-            },
-            async loadModelFromSession() {
-                await this.$http
-                    .get(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/model`)
-                    .then((response: AxiosResponse<any>) => {
-                        this.meta = response.data
-                        this.metawebDialogVisible = true
-                    })
-                    .catch(() => {})
-            },
-            async createSession() {
-                let url = `/1.0/pages/edit?datasourceId=${this.businessModel?.dataSourceId}&user_id=${(this.$store.state as any).user.userUniqueIdentifier}&bmId=${this.businessModel?.id}&bmName=${this.businessModel?.name}`
-                if (this.businessModel.tablePrefixLike) url += `&tablePrefixLike=${this.businessModel.tablePrefixLike}`
-                if (this.businessModel.tablePrefixNotLike) url += `&tablePrefixNotLike=${this.businessModel.tablePrefixNotLike}`
-                await this.$http
-                    .get(process.env.VUE_APP_META_API_URL + url, {
-                        headers: {
-                            Accept: 'application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
-                        }
-                    })
-                    .then(() => {})
-                    .catch(() => {})
+        uploadFile(event) {
+            this.$emit('fileUploaded', event.target.files[0])
+        },
+        onFieldChange(fieldName: string, value: any) {
+            this.$emit('fieldChanged', { fieldName, value })
+        },
+        onLockedChange() {
+            this.$emit('fieldChanged', { fieldName: 'modelLocked', value: this.businessModel.modelLocked })
+        },
+        onSmartViewChange() {
+            this.$emit('fieldChanged', { fieldName: 'smartView', value: this.businessModel.smartView })
+        },
+        async goToMetaWeb() {
+            this.loading = true
+            await this.createSession()
+            if (this.businessModelVersions?.length === 0) {
+                this.metawebSelectDialogVisible = true
+            } else {
+                await this.loadModelFromSession()
             }
+            this.loading = false
+        },
+        onDatamartGenerated() {
+            this.$emit('datamartGenerated')
+        },
+        onMetaSelect(meta: any) {
+            this.meta = meta
+            this.metawebSelectDialogVisible = false
+            this.metawebDialogVisible = true
+        },
+        async loadModelFromSession() {
+            await this.$http
+                .get(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/model`)
+                .then((response: AxiosResponse<any>) => {
+                    this.meta = response.data
+                    this.metawebDialogVisible = true
+                })
+                .catch(() => {})
+        },
+        async createSession() {
+            let url = `/1.0/pages/edit?datasourceId=${this.businessModel?.dataSourceId}&user_id=${(this.$store.state as any).user.userUniqueIdentifier}&bmId=${this.businessModel?.id}&bmName=${this.businessModel?.name}`
+            if (this.businessModel.tablePrefixLike) url += `&tablePrefixLike=${this.businessModel.tablePrefixLike}`
+            if (this.businessModel.tablePrefixNotLike) url += `&tablePrefixNotLike=${this.businessModel.tablePrefixNotLike}`
+            await this.$http
+                .get(process.env.VUE_APP_META_API_URL + url, {
+                    headers: {
+                        Accept: 'application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+                    }
+                })
+                .then(() => {})
+                .catch(() => {})
         }
-    })
+    }
+})
 </script>
 
 <style lang="scss">
-    .full-screen-dialog.p-dialog {
-        max-height: 100%;
-    }
-    .full-screen-dialog.p-dialog .p-dialog-content {
-        padding: 0;
-    }
+.full-screen-dialog.p-dialog {
+    max-height: 100%;
+}
+.full-screen-dialog.p-dialog .p-dialog-content {
+    padding: 0;
+}
 
-    .pi-upload {
-        display: none;
-    }
+.pi-upload {
+    display: none;
+}
 
-    #metaweb-spinner {
-        position: fixed;
-        top: 0;
-        left: 0;
-    }
+#metaweb-spinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+}
 </style>
