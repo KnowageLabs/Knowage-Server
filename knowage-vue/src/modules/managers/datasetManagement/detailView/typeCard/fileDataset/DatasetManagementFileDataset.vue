@@ -129,9 +129,47 @@
                 this.dataset.id ? this.getPreviewData() : ''
             }
         },
-        validations() {
-            const fileFieldsRequired = (value) => {
-                return this.dataset.dsTypeCd != 'File' || value
+        async startUpload(uploadedFile) {
+            var formData = new FormData()
+            formData.append('file', uploadedFile)
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `selfservicedatasetupload/fileupload`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryFYwjkDOpT85ZFN3L'
+                    }
+                })
+                .then((response: AxiosResponse<any>) => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.uploading'),
+                        msg: this.$t('importExport.import.successfullyCompleted')
+                    })
+                    this.dataset.fileType = response.data.fileType
+                    this.dataset.fileName = response.data.fileName
+                    this.$emit('fileUploaded')
+                    this.resetFields()
+                    this.getPreviewData()
+                })
+                .catch()
+                .finally(() => {
+                    this.triggerUpload = false
+                })
+        },
+        resetFields() {
+            this.dataset.csvEncoding = 'UTF-8'
+            this.dataset.csvDelimiter = ','
+            this.dataset.dateFormat = 'dd/MM/yyyy'
+            this.dataset.timestampFormat = 'dd/MM/yyyy HH:mm:ss'
+            this.dataset.csvQuote = '"'
+            this.dataset.skipRows = 0
+            this.dataset.limitRows = null
+            this.dataset.xslSheetNumber = 1
+
+            if (this.dataset.fileType == 'XLS' || this.dataset.fileType == 'XLSX') {
+                this.dataset.limitRows = ''
+                this.dataset.csvDelimiter = ''
+                this.dataset.dateFormat = ''
+                this.dataset.timestampFormat = ''
+                this.dataset.csvQuote = ''
             }
             const customValidators: ICustomValidatorMap = { 'file-fields-required': fileFieldsRequired }
             const validationObject = { dataset: createValidations('dataset', fileDescriptor.validations.dataset, customValidators) }

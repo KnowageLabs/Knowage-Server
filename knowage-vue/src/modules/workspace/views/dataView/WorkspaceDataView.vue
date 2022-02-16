@@ -392,8 +392,40 @@
                             title: this.$t('common.toast.deleteTitle'),
                             msg: this.$t('common.toast.success')
                         })
-                        this.showDetailSidebar = false
-                        this.getDatasetsByFilter()
+                        .finally(() => (this.loading = false))
+                    break
+                case 'Enterprise':
+                    this.datasetList = this.getDatasets('enterprise')
+                        .then((response: AxiosResponse<any>) => {
+                            this.datasetList = [...response.data.root]
+                            this.filteredDatasets = [...this.datasetList]
+                        })
+                        .finally(() => (this.loading = false))
+                    break
+                case 'Shared':
+                    this.datasetList = this.getDatasets('shared')
+                        .then((response: AxiosResponse<any>) => {
+                            this.datasetList = [...response.data.root]
+                            this.filteredDatasets = [...this.datasetList]
+                        })
+                        .finally(() => (this.loading = false))
+                    break
+                case 'All Datasets':
+                    this.datasetList = this.getDatasets('mydata')
+                        .then((response: AxiosResponse<any>) => {
+                            this.datasetList = [...response.data.root]
+                            this.filteredDatasets = [...this.datasetList]
+                        })
+                        .finally(() => (this.loading = false))
+            }
+        },
+        searchItems() {
+            setTimeout(() => {
+                if (!this.searchWord.trim().length) {
+                    this.filteredDatasets = [...this.datasetList] as any[]
+                } else {
+                    this.filteredDatasets = this.datasetList.filter((el: any) => {
+                        return el.label?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.dsTypeCd?.toLowerCase().includes(this.searchWord.toLowerCase()) || this.datasetTagFound(el)
                     })
                     .catch(() => {})
                 this.loading = false
@@ -441,18 +473,18 @@
                             })
                             .finally(() => (this.loading = false))
                 }
-            },
-            searchItems() {
-                setTimeout(() => {
-                    if (!this.searchWord.trim().length) {
-                        this.filteredDatasets = [...this.datasetList] as any[]
-                    } else {
-                        this.filteredDatasets = this.datasetList.filter((el: any) => {
-                            return el.label?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.dsTypeCd?.toLowerCase().includes(this.searchWord.toLowerCase())
-                        })
-                    }
-                }, 250)
+            }, 250)
+        },
+        datasetTagFound(dataset: any) {
+            let tagFound = false
+            for (let i = 0; i < dataset.tags.length; i++) {
+                const tempTag = dataset.tags[i]
+                if (tempTag.name.toLowerCase() === this.searchWord.toLowerCase()) {
+                    tagFound = true
+                    break
+                }
             }
+            return tagFound
         }
     })
 </script>

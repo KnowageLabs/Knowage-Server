@@ -135,55 +135,62 @@
             <Button class="kn-button kn-button--primary p-ml-1" icon="fa fa-chevron-down" :disabled="buttonsDisabled" @click="toggle($event)" />
             <Menu ref="executeButtonMenu" :model="executeMenuItems" :popup="true" />
         </div>
-        <KnParameterPopupDialog :visible="popupDialogVisible" :selectedParameter="selectedParameter" :propLoading="loading" :parameterPopUpData="parameterPopUpData" @close="popupDialogVisible = false" @save="onPopupSave"></KnParameterPopupDialog>
-        <KnParameterTreeDialog :visible="treeDialogVisible" :selectedParameter="selectedParameter" :formatedParameterValues="formatedParameterValues" :document="document" @close="onTreeClose" @save="onTreeSave"></KnParameterTreeDialog>
+        <KnParameterPopupDialog v-if="popupDialogVisible" :visible="popupDialogVisible" :selectedParameter="selectedParameter" :propLoading="loading" :parameterPopUpData="parameterPopUpData" @close="popupDialogVisible = false" @save="onPopupSave"></KnParameterPopupDialog>
+        <KnParameterTreeDialog v-if="treeDialogVisible" :visible="treeDialogVisible" :selectedParameter="selectedParameter" :formatedParameterValues="formatedParameterValues" :document="document" @close="onTreeClose" @save="onTreeSave"></KnParameterTreeDialog>
         <KnParameterSaveDialog :visible="parameterSaveDialogVisible" :propLoading="loading" @close="parameterSaveDialogVisible = false" @saveViewpoint="saveViewpoint"></KnParameterSaveDialog>
         <KnParameterSavedParametersDialog :visible="savedParametersDialogVisible" :propViewpoints="viewpoints" @close="savedParametersDialogVisible = false" @fillForm="fillParameterForm" @executeViewpoint="executeViewpoint" @deleteViewpoint="deleteViewpoint"></KnParameterSavedParametersDialog>
     </div>
 </template>
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { AxiosResponse } from 'axios'
-    import { formatDate } from '@/helpers/commons/localeHelper'
-    import { iDocument, iParameter, iAdmissibleValues } from './KnParameterSidebar'
-    import { setVisualDependency, updateVisualDependency } from './KnParameterSidebarVisualDependency'
-    import { setDataDependency, updateDataDependency } from './KnParameterSidebarDataDependency'
-    import Calendar from 'primevue/calendar'
-    import Chip from 'primevue/chip'
-    import Checkbox from 'primevue/checkbox'
-    import Dropdown from 'primevue/dropdown'
-    import KnParameterPopupDialog from './dialogs/KnParameterPopupDialog.vue'
-    import KnParameterTreeDialog from './dialogs/KnParameterTreeDialog.vue'
-    import KnParameterSaveDialog from './dialogs/KnParameterSaveDialog.vue'
-    import KnParameterSavedParametersDialog from './dialogs/KnParameterSavedParametersDialog.vue'
-    import Menu from 'primevue/menu'
-    import MultiSelect from 'primevue/multiselect'
-    import RadioButton from 'primevue/radiobutton'
-    export default defineComponent({
-        name: 'kn-parameter-sidebar',
-        components: { Calendar, Chip, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton },
-        props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String } },
-        emits: ['execute', 'exportCSV', 'roleChanged'],
-        data() {
-            return {
-                document: null as iDocument | null,
-                parameters: { isReadyForExecution: false, filterStatus: [] } as { filterStatus: iParameter[]; isReadyForExecution: boolean },
-                executeMenuItems: [] as { label: string; command: Function }[],
-                selectedParameterCheckbox: {} as any,
-                popupDialogVisible: false,
-                selectedParameter: null as iParameter | null,
-                parameterPopUpData: null as iAdmissibleValues | null,
-                treeDialogVisible: false,
-                formatedParameterValues: null as any,
-                parameterSaveDialogVisible: false,
-                savedParametersDialogVisible: false,
-                viewpoints: [],
-                user: null as any,
-                role: null as string | null,
-                loading: false,
-                updateVisualDependency,
-                primary: true
-            }
+import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
+import { formatDate } from '@/helpers/commons/localeHelper'
+import { iDocument, iParameter, iAdmissibleValues } from './KnParameterSidebar'
+import { setVisualDependency, updateVisualDependency } from './KnParameterSidebarVisualDependency'
+import { setDataDependency, updateDataDependency } from './KnParameterSidebarDataDependency'
+import { setLovsDependency, updateLovDependency } from './KnParameterSidebarLovsDependency'
+import Calendar from 'primevue/calendar'
+import Chip from 'primevue/chip'
+import Checkbox from 'primevue/checkbox'
+import Dropdown from 'primevue/dropdown'
+import KnParameterPopupDialog from './dialogs/KnParameterPopupDialog.vue'
+import KnParameterTreeDialog from './dialogs/KnParameterTreeDialog.vue'
+import KnParameterSaveDialog from './dialogs/KnParameterSaveDialog.vue'
+import KnParameterSavedParametersDialog from './dialogs/KnParameterSavedParametersDialog.vue'
+import Menu from 'primevue/menu'
+import MultiSelect from 'primevue/multiselect'
+import RadioButton from 'primevue/radiobutton'
+
+export default defineComponent({
+    name: 'kn-parameter-sidebar',
+    components: { Calendar, Chip, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton },
+    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String } },
+    emits: ['execute', 'exportCSV', 'roleChanged'],
+    data() {
+        return {
+            document: null as iDocument | null,
+            parameters: { isReadyForExecution: false, filterStatus: [] } as { filterStatus: iParameter[]; isReadyForExecution: boolean },
+            executeMenuItems: [] as { label: string; command: Function }[],
+            selectedParameterCheckbox: {} as any,
+            popupDialogVisible: false,
+            selectedParameter: null as iParameter | null,
+            parameterPopUpData: null as iAdmissibleValues | null,
+            treeDialogVisible: false,
+            formatedParameterValues: null as any,
+            parameterSaveDialogVisible: false,
+            savedParametersDialogVisible: false,
+            viewpoints: [],
+            user: null as any,
+            role: null as string | null,
+            loading: false,
+            updateVisualDependency,
+            primary: true
+        }
+    },
+    watch: {
+        sessionRole() {
+            this.role = ''
+            this.parameters = { isReadyForExecution: false, filterStatus: [] }
         },
         watch: {
             sessionRole() {
@@ -212,44 +219,75 @@
             this.loadDocument()
             this.loadParameters()
         },
-        methods: {
-            applyFieldClass(cssClass: string): string {
-                let cssCompleteClass = this.primary ? cssClass + ' fieldBackgroundColorPrimary' : cssClass + ' fieldBackgroundColorSecondary'
-                this.primary = !this.primary
-                return cssCompleteClass
-            },
-            setNewSessionRole() {
-                this.$emit('roleChanged', this.role)
-                this.parameters = { isReadyForExecution: false, filterStatus: [] }
-            },
-            loadDocument() {
-                this.document = this.propDocument as iDocument
-            },
-            loadParameters() {
-                this.parameters.isReadyForExecution = this.filtersData?.isReadyForExecution
-                this.parameters.filterStatus = []
-                this.filtersData?.filterStatus?.forEach((el: iParameter) => {
-                    if (el.selectionType == 'LIST' && el.showOnPanel == 'true' && el.multivalue) {
-                        this.selectedParameterCheckbox[el.id] = el.parameterValue?.map((parameterValue: any) => parameterValue.value)
+        userRole() {
+            this.role = this.userRole as string
+        }
+    },
+    computed: {
+        sessionRole(): string {
+            return (this.$store.state as any).user.sessionRole
+        },
+        buttonsDisabled(): boolean {
+            return this.requiredFiledMissing()
+        }
+    },
+    created() {
+        this.user = (this.$store.state as any).user
+        this.role = this.userRole as string
+        this.loadDocument()
+        this.loadParameters()
+    },
+    methods: {
+        applyFieldClass(cssClass: string): string {
+            let cssCompleteClass = this.primary ? cssClass + ' fieldBackgroundColorPrimary' : cssClass + ' fieldBackgroundColorSecondary'
+            this.primary = !this.primary
+            return cssCompleteClass
+        },
+        setNewSessionRole() {
+            this.$emit('roleChanged', this.role)
+            this.parameters = { isReadyForExecution: false, filterStatus: [] }
+        },
+        loadDocument() {
+            this.document = this.propDocument as iDocument
+        },
+        loadParameters() {
+            this.parameters.isReadyForExecution = this.filtersData?.isReadyForExecution
+            this.parameters.filterStatus = []
+            this.filtersData?.filterStatus?.forEach((el: iParameter) => {
+                if (el.selectionType == 'LIST' && el.showOnPanel == 'true' && el.multivalue) {
+                    this.selectedParameterCheckbox[el.id] = el.parameterValue?.map((parameterValue: any) => parameterValue.value)
+                }
+                this.parameters.filterStatus.push(el)
+            })
+            this.parameters?.filterStatus.forEach((el: any) => setVisualDependency(this.parameters, el))
+            this.parameters?.filterStatus.forEach((el: any) => setDataDependency(this.parameters, el))
+            this.parameters?.filterStatus.forEach((el: any) => setLovsDependency(this.parameters, el))
+            this.parameters?.filterStatus.forEach((el: any) => this.updateVisualDependency(el))
+        },
+        resetParameterValue(parameter: any) {
+            if (!parameter.driverDefaultValue) {
+                parameter.parameterValue[0] = { value: '', description: '' }
+                return
+            }
+            const valueColumn = parameter.metadata.valueColumn
+            const descriptionColumn = parameter.metadata.descriptionColumn
+            let valueIndex = null as any
+            if (parameter.metadata.colsMap) {
+                valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
+            }
+            let descriptionIndex = null as any
+            if (parameter.metadata.colsMap) {
+                descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
+            }
+            if ((parameter.selectionType === 'LIST' || parameter.selectionType === 'COMBOBOX') && parameter.showOnPanel === 'true' && parameter.multivalue) {
+                parameter.parameterValue = [] as { value: string; description: string }[]
+                this.selectedParameterCheckbox[parameter.id] = []
+                for (let i = 0; i < parameter.driverDefaultValue.length; i++) {
+                    const temp = parameter.driverDefaultValue[i]
+                    parameter.parameterValue.push({ value: valueIndex ? temp[valueIndex] : '', description: descriptionIndex ? temp[descriptionIndex] : '' })
+                    if (valueIndex) {
+                        this.selectedParameterCheckbox[parameter.id].push(temp[valueIndex])
                     }
-                    this.parameters.filterStatus.push(el)
-                })
-                this.parameters?.filterStatus.forEach((el: any) => setVisualDependency(this.parameters, el))
-                this.parameters?.filterStatus.forEach((el: any) => setDataDependency(this.parameters, el))
-                this.parameters?.filterStatus.forEach((el: any) => this.updateVisualDependency(el))
-            },
-            setDataDependency(parameter: iParameter) {
-                if (parameter.dependencies.data.length !== 0) {
-                    parameter.dependencies.data.forEach((dependency: any) => {
-                        const index = this.parameters.filterStatus.findIndex((param: any) => {
-                            return param.urlName === dependency.parFatherUrlName
-                        })
-                        if (index !== -1) {
-                            const tempParameter = this.parameters.filterStatus[index]
-                            parameter.dataDependsOnParameters ? parameter.dataDependsOnParameters.push(tempParameter) : (parameter.dataDependsOnParameters = [tempParameter])
-                            tempParameter.dataDependentParameters ? tempParameter.dataDependentParameters.push(parameter) : (tempParameter.dataDependentParameters = [parameter])
-                        }
-                    })
                 }
             },
             resetParameterValue(parameter: any) {
@@ -257,24 +295,34 @@
                     parameter.parameterValue[0] = { value: '', description: '' }
                     return
                 }
-                const valueColumn = parameter.metadata.valueColumn
-                const descriptionColumn = parameter.metadata.descriptionColumn
-                let valueIndex = null as any
-                if (parameter.metadata.colsMap) {
-                    valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
-                }
-                let descriptionIndex = null as any
-                if (parameter.metadata.colsMap) {
-                    descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
-                }
-                if ((parameter.selectionType === 'LIST' || parameter.selectionType === 'COMBOBOX') && parameter.showOnPanel === 'true' && parameter.multivalue) {
-                    parameter.parameterValue = [] as { value: string; description: string }[]
-                    this.selectedParameterCheckbox[parameter.id] = []
-                    for (let i = 0; i < parameter.driverDefaultValue.length; i++) {
-                        const temp = parameter.driverDefaultValue[i]
-                        parameter.parameterValue.push({ value: valueIndex ? temp[valueIndex] : '', description: descriptionIndex ? temp[descriptionIndex] : '' })
-                        if (valueIndex) {
-                            this.selectedParameterCheckbox[parameter.id].push(temp[valueIndex])
+                parameter.parameterValue[0].value = parameter.driverDefaultValue[0].value ?? parameter.driverDefaultValue[0][valueIndex]
+            }
+            this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
+        },
+        resetAllParameters() {
+            this.parameters.filterStatus.forEach((el: any) => this.resetParameterValue(el))
+            this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
+        },
+        toggle(event: Event) {
+            this.createMenuItems()
+            const menu = this.$refs.executeButtonMenu as any
+            menu.toggle(event)
+        },
+        createMenuItems() {
+            this.executeMenuItems = []
+            this.executeMenuItems.push({ label: this.$t('common.exportCSV'), command: () => this.$emit('exportCSV') })
+        },
+        requiredFiledMissing() {
+            for (let i = 0; i < this.parameters.filterStatus.length; i++) {
+                const parameter = this.parameters.filterStatus[i]
+                if (parameter.mandatory && parameter.showOnPanel == 'true') {
+                    if (!parameter.parameterValue || parameter.parameterValue.length === 0) {
+                        return true
+                    } else {
+                        for (let i = 0; i < parameter.parameterValue.length; i++) {
+                            if (!parameter.parameterValue[i].value) {
+                                return true
+                            }
                         }
                     }
                 } else if (parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true' && parameter.multivalue) {
@@ -286,10 +334,7 @@
                         return { value: valueIndex ? el[valueIndex] : '', description: descriptionIndex ? el[descriptionIndex] : '' }
                     })
                 } else {
-                    if (!parameter.parameterValue[0]) {
-                        parameter.parameterValue[0] = { value: '', description: '' }
-                    }
-                    parameter.parameterValue[0].value = parameter.driverDefaultValue[0].value ?? parameter.driverDefaultValue[0][valueIndex]
+                    parameters.push({ label: parameter.label, value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription ?? '' })
                 }
             },
             resetAllParameters() {
@@ -319,11 +364,36 @@
                         }
                     }
                 }
-                return false
-            },
-            setCheckboxValue(parameter: iParameter) {
-                parameter.parameterValue = this.selectedParameterCheckbox[parameter.id].map((el: any) => {
-                    return { value: el, description: el }
+            })
+            return parameters
+        },
+        onPopupSave(parameter: iParameter) {
+            this.updateDependency(parameter)
+            this.popupDialogVisible = false
+        },
+        onTreeSave(parameter: iParameter) {
+            this.updateVisualDependency(parameter)
+            this.treeDialogVisible = false
+        },
+        updateDependency(parameter: iParameter) {
+            this.updateVisualDependency(parameter)
+            updateDataDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http)
+            updateLovDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http)
+        },
+        openSaveParameterDialog() {
+            this.parameterSaveDialogVisible = true
+        },
+        async saveViewpoint(viewpoint: any) {
+            const postData = { ...viewpoint, OBJECT_LABEL: this.document?.label, ROLE: this.sessionRole, VIEWPOINT: this.getParameterValues() }
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/addViewpoint`, postData)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.createTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.parameterSaveDialogVisible = false
                 })
                 this.updateDependency(parameter)
             },

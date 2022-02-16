@@ -23,9 +23,9 @@
     </Card>
     <LovsManagementInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :infoTitle="infoTitle" :lovType="lov.itypeCd" @close="infoDialogVisible = false"></LovsManagementInfoDialog>
     <LovsManagementProfileAttributesList v-show="profileAttributesDialogVisible" :visible="profileAttributesDialogVisible" :profileAttributes="profileAttributes" @selected="setCodeInput($event)" @close="profileAttributesDialogVisible = false"></LovsManagementProfileAttributesList>
-    <LovsManagementParamsDialog v-show="paramsDialogVisible" :visible="paramsDialogVisible" :dependenciesList="dependenciesList" @preview="onPreview" @close="onParamsDialogClose"></LovsManagementParamsDialog>
+    <LovsManagementParamsDialog v-show="paramsDialogVisible" :visible="paramsDialogVisible" :dependenciesList="dependenciesList" :mode="paramsDialogMode" @preview="onPreview" @close="onParamsDialogClose" @test="onTest"></LovsManagementParamsDialog>
     <LovsManagementPreviewDialog v-show="previewDialogVisible" :visible="previewDialogVisible" :dataForPreview="dataForPreview" :pagination="pagination" @close="onPreviewClose" @pageChanged="previewLov($event, false, true)"></LovsManagementPreviewDialog>
-    <LovsManagementTestDialog v-show="testDialogVisible" :visible="testDialogVisible" :selectedLov="lov" :testModel="treeListTypeModel" :testLovModel="testLovModel" :testLovTreeModel="testLovTreeModel" @close="testDialogVisible = false" @save="onTestSave($event)"></LovsManagementTestDialog>
+    <LovsManagementTestDialog v-show="testDialogVisible" :visible="testDialogVisible" :selectedLov="lov" :testModel="treeListTypeModel" :testLovModel="testLovModel" :testLovTreeModel="testLovTreeModel" @close="onTestDialogClose()" @save="onTestSave($event)"></LovsManagementTestDialog>
 </template>
 
 <script lang="ts">
@@ -47,20 +47,70 @@
     import LovsManagementParamsDialog from './LovsManagementParamsDialog/LovsManagementParamsDialog.vue'
     import LovsManagementDataset from './LovsManagementDataset/LovsManagementDataset.vue'
 
-    export default defineComponent({
-        name: 'lovs-management-wizard-card',
-        components: {
-            Card,
-            LovsManagementParamsDialog,
-            LovsManagementInfoDialog,
-            LovsManagementQuery,
-            LovsManagementScript,
-            LovsManagementFixedLovsTable,
-            LovsManagementJavaClassInput,
-            LovsManagementDataset,
-            LovsManagementPreviewDialog,
-            LovsManagementProfileAttributesList,
-            LovsManagementTestDialog
+export default defineComponent({
+    name: 'lovs-management-wizard-card',
+    components: {
+        Card,
+        LovsManagementParamsDialog,
+        LovsManagementInfoDialog,
+        LovsManagementQuery,
+        LovsManagementScript,
+        LovsManagementFixedLovsTable,
+        LovsManagementJavaClassInput,
+        LovsManagementDataset,
+        LovsManagementPreviewDialog,
+        LovsManagementProfileAttributesList,
+        LovsManagementTestDialog
+    },
+    props: {
+        selectedLov: { type: Object, required: true },
+        selectedQuery: { type: Object },
+        datasources: { type: Array, required: true },
+        selectedScript: { type: Object },
+        listOfScriptTypes: { type: Array },
+        listForFixLov: { type: Array },
+        selectedJavaClass: { type: Object },
+        selectedDataset: { type: Object },
+        profileAttributes: { type: Array },
+        save: { type: Boolean },
+        previewDisabled: { type: Boolean }
+    },
+    emits: ['touched', 'save', 'created', 'selectedDataset'],
+    data() {
+        return {
+            lovsManagementWizardCardDescriptor,
+            lov: {} as iLov,
+            toolbarTitle: '',
+            infoTitle: '',
+            previewDialogVisible: false,
+            infoDialogVisible: false,
+            profileAttributesDialogVisible: false,
+            codeInput: { code: null, changed: false } as any,
+            dependenciesList: [] as any[],
+            pagination: lovsManagementWizardCardDescriptor.defaultPagination as any,
+            dataForPreview: {} as any,
+            tableModelForTest: {} as any,
+            testDialogVisible: false,
+            testLovModel: [] as any,
+            treeListTypeModel: {} as any,
+            formatedValues: [],
+            formatedDescriptionValues: [],
+            formatedVisibleValues: [] as any[],
+            formatedInvisibleValues: [] as any[],
+            testLovTreeModel: [] as any[],
+            paramsDialogVisible: false,
+            operation: 'create',
+            testValid: false,
+            sendSave: false,
+            dependenciesReady: false,
+            touchedForTest: false,
+            x2js: new X2JS(),
+            paramsDialogMode: 'preview'
+        }
+    },
+    watch: {
+        lovType() {
+            this.onLovTypeChanged()
         },
         props: {
             selectedLov: { type: Object, required: true },
@@ -267,17 +317,23 @@
                     await this.previewLov(this.pagination, false, showPreview)
                     this.buildTestTable()
                 }
-            },
-            async previewLov(value: any, hasDependencies: boolean, showPreview: boolean) {
-                this.pagination = value
-                const postData = {
-                    data: {
-                        ...this.lov,
-                        lovProviderJSON: JSON.stringify(this.lov.lovProviderJSON),
-                        lovProvider: this.x2js.js2xml(this.lov.lovProviderJSON)
-                    },
-                    pagination: this.pagination
-                } as any
+                this.paramsDialogMode = showPreview ? 'preview' : 'test'
+                this.paramsDialogVisible = true
+            } else {
+                await this.previewLov(this.pagination, false, showPreview)
+                this.buildTestTable()
+            }
+        },
+        async previewLov(value: any, hasDependencies: boolean, showPreview: boolean) {
+            this.pagination = value
+            const postData = {
+                data: {
+                    ...this.lov,
+                    lovProviderJSON: JSON.stringify(this.lov.lovProviderJSON),
+                    lovProvider: this.x2js.js2xml(this.lov.lovProviderJSON)
+                },
+                pagination: this.pagination
+            } as any
 
                 if (hasDependencies || this.dependenciesReady) {
                     postData.dependencies = this.dependenciesList
@@ -576,44 +632,54 @@
                 this.testLovModel = payload.model
                 this.testLovTreeModel = payload.treeModel
 
-                this.treeListTypeModel['VISIBLE-COLUMNS'] = ''
-                for (let i = 0; i < this.testLovModel.length; i++) {
-                    this.treeListTypeModel['VISIBLE-COLUMNS'] += this.testLovModel[i].name
-                    this.treeListTypeModel['VISIBLE-COLUMNS'] += i === this.testLovModel.length - 1 ? '' : ','
-                }
-
-                this.handleSubmit(this.sendSave)
-                this.testDialogVisible = false
-            },
-            onTestButtonClick() {
-                this.sendSave = false
-                this.checkForDependencies(false)
-            },
-            async onPreview() {
-                await this.previewLov(lovsManagementWizardCardDescriptor.defaultPagination, true, true)
-                this.dependenciesReady = this.dependenciesSet()
-            },
-            dependenciesSet() {
-                let ready = true
-                this.dependenciesList.forEach((el: any) => {
-                    if (!el.value) {
-                        ready = false
-                    }
-                })
-                return ready
-            },
-            onTouched() {
-                this.touchedForTest = true
-                this.$emit('touched')
-            },
-            onPreviewClose() {
-                this.previewDialogVisible = false
-            },
-            onParamsDialogClose() {
-                this.paramsDialogVisible = false
-                this.dependenciesList = []
-                this.dependenciesReady = false
+            this.treeListTypeModel['VISIBLE-COLUMNS'] = ''
+            for (let i = 0; i < this.testLovModel.length; i++) {
+                this.treeListTypeModel['VISIBLE-COLUMNS'] += this.testLovModel[i].name
+                this.treeListTypeModel['VISIBLE-COLUMNS'] += i === this.testLovModel.length - 1 ? '' : ','
             }
+
+            this.handleSubmit(this.sendSave)
+            this.testDialogVisible = false
+            this.dependenciesReady = false
+        },
+        onTestButtonClick() {
+            this.sendSave = false
+            this.checkForDependencies(false)
+        },
+        async onPreview() {
+            await this.previewLov(lovsManagementWizardCardDescriptor.defaultPagination, true, true)
+            this.dependenciesReady = this.dependenciesSet()
+        },
+        dependenciesSet() {
+            let ready = true
+            this.dependenciesList.forEach((el: any) => {
+                if (!el.value) {
+                    ready = false
+                }
+            })
+            return ready
+        },
+        onTouched() {
+            this.touchedForTest = true
+            this.$emit('touched')
+        },
+        onPreviewClose() {
+            this.previewDialogVisible = false
+        },
+        onParamsDialogClose() {
+            this.paramsDialogVisible = false
+            this.dependenciesList = []
+            this.dependenciesReady = false
+        },
+        async onTest() {
+            this.dependenciesReady = true
+            await this.previewLov(this.pagination, false, false)
+            this.buildTestTable()
+        },
+        onTestDialogClose() {
+            this.testDialogVisible = false
+            this.dependenciesReady = false
+
         }
     })
 </script>

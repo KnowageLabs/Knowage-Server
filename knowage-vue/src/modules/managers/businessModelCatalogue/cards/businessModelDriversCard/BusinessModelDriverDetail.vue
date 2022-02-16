@@ -327,6 +327,7 @@
                 displayWarning: false,
                 v$: useValidate() as any
             }
+            this.setChanged()
         },
         validations() {
             const customValidators: ICustomValidatorMap = {

@@ -7,6 +7,7 @@
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+
     <TabView class="tabview-custom kn-page-content" v-else>
         <TabPanel>
             <template #header>
@@ -68,16 +69,46 @@
     import TabPanel from 'primevue/tabpanel'
     import useValidate from '@vuelidate/core'
 
-    export default defineComponent({
-        name: 'business-model-catalogue-detail',
-        components: {
-            Badge,
-            BusinessModelDetailsCard,
-            BusinessModelDriversCard,
-            BusinessModelVersionsCard,
-            MetadataCard,
-            TabView,
-            TabPanel
+export default defineComponent({
+    name: 'business-model-catalogue-detail',
+    components: {
+        Badge,
+        BusinessModelDetailsCard,
+        BusinessModelDriversCard,
+        BusinessModelVersionsCard,
+        MetadataCard,
+        TabView,
+        TabPanel
+    },
+    props: {
+        id: {
+            type: Number,
+            required: false
+        }
+    },
+    emits: ['touched', 'closed', 'inserted'],
+    data() {
+        return {
+            user: null as any,
+            selectedBusinessModel: {} as iBusinessModel,
+            businessModelVersions: [] as iBusinessModelVersion[],
+            analyticalDrivers: [],
+            drivers: [] as any[],
+            driversForDelete: [] as any[],
+            categories: [] as any[],
+            datasources: [] as any[],
+            toGenerate: false,
+            uploadedFile: null as any,
+            loading: false,
+            touched: false,
+            uploadingError: false,
+            businessModelSavingError: false,
+            v$: useValidate() as any
+        }
+    },
+    computed: {
+        buttonDisabled(): any {
+            return this.invalidDrivers > 0 || !this.selectedBusinessModel.name || !this.selectedBusinessModel.category || !this.selectedBusinessModel.dataSourceLabel || this.readonly
         },
         props: {
             id: {
@@ -104,15 +135,16 @@
                 v$: useValidate() as any
             }
         },
-        computed: {
-            buttonDisabled(): any {
-                return this.invalidDrivers > 0 || !this.selectedBusinessModel.name || !this.selectedBusinessModel.category || !this.selectedBusinessModel.dataSourceLabel || this.readonly
-            },
-            invalidDrivers(): number {
-                return this.drivers.filter((driver: any) => driver.numberOfErrors > 0).length
-            },
-            readonly(): any {
-                return this.selectedBusinessModel.id && this.selectedBusinessModel.modelLocked && this.user && this.selectedBusinessModel.modelLocked && this.selectedBusinessModel.modelLocker && this.selectedBusinessModel.modelLocker !== this.user.userId
+        async loadSelectedBusinessModelData() {
+            if (this.id) {
+                await this.loadSelectedBusinessModel()
+                await this.loadVersions()
+                await this.loadDrivers()
+            } else {
+                this.selectedBusinessModel = { modelLocked: false, smartView: false } as iBusinessModel
+                this.businessModelVersions = []
+                this.drivers = []
+                this.analyticalDrivers = []
             }
         },
         watch: {
@@ -184,9 +216,15 @@
                     await this.saveBusinessModel()
                 }
 
-                if (this.selectedBusinessModel.id && this.uploadedFile && !this.uploadingError) {
-                    await this.uploadFile()
-                }
+            if (this.businessModelSavingError) {
+                this.businessModelSavingError = false
+                this.loading = false
+                return
+            }
+
+            if (this.selectedBusinessModel.id && this.uploadedFile && !this.uploadingError) {
+                await this.uploadFile()
+            }
 
                 if (this.businessModelVersions.length > 0 && !this.uploadingError) {
                     const activeBusinessModelVersion = this.businessModelVersions.find((version) => version.active === true)
@@ -236,24 +274,41 @@
                         this.selectedBusinessModel = response.data
                     }
                 })
-            },
-            async updateBusinessModel() {
-                if (this.selectedBusinessModel.category.VALUE_ID) {
-                    this.selectedBusinessModel.category = this.selectedBusinessModel.category.VALUE_ID
-                }
-                await this.$http
-                    .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.selectedBusinessModel.id}`, { ...this.selectedBusinessModel, modelLocker: this.user.userId })
-                    .then((response: AxiosResponse<any>) => {
-                        if (response.data.errors) {
-                            this.setUploadingError('updateTitle', response.data.errors[0].message)
-                        } else {
-                            this.selectedBusinessModel = response.data
-                        }
-                    })
-                    .finally(() => this.formatBusinessModelAnalyticalDriver())
-            },
-            saveActiveVersion(businessModelVersion) {
-                this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/versions/${businessModelVersion.id}/`).then((response: AxiosResponse<any>) => {
+                this.$router.replace(`/business-model-catalogue/${this.selectedBusinessModel.id}`)
+            }
+            this.loadPage()
+            this.touched = false
+            this.$emit('inserted')
+            this.uploadingError = false
+            this.loading = false
+        },
+        setUploadingError(title: string, message: string) {
+            this.uploadingError = true
+            this.$store.commit('setError', { title: this.$t('common.toast.' + title), msg: message })
+        },
+        async saveBusinessModel() {
+            if (this.selectedBusinessModel.category.VALUE_ID) {
+                this.selectedBusinessModel.category = this.selectedBusinessModel.category.VALUE_ID
+            }
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/', { ...this.selectedBusinessModel, modelLocker: this.user.userId })
+                .then((response: AxiosResponse<any>) => {
+                    if (response.data.errors) {
+                        this.setUploadingError('createTitle', response.data.errors[0].message)
+                    } else {
+                        this.selectedBusinessModel = response.data
+                    }
+                })
+                .catch(() => (this.businessModelSavingError = true))
+                .finally(() => this.formatBusinessModelAnalyticalDriver())
+        },
+        async updateBusinessModel() {
+            if (this.selectedBusinessModel.category.VALUE_ID) {
+                this.selectedBusinessModel.category = this.selectedBusinessModel.category.VALUE_ID
+            }
+            await this.$http
+                .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.selectedBusinessModel.id}`, { ...this.selectedBusinessModel, modelLocker: this.user.userId })
+                .then((response: AxiosResponse<any>) => {
                     if (response.data.errors) {
                         this.setUploadingError('updateTitle', response.data.errors[0].message)
                     }
@@ -270,40 +325,13 @@
                         this.uploadedFile = null
                     }
                 })
-            },
-            saveDriver(driver: any) {
-                this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/drivers`, { ...driver, parID: driver.parameter.id }).then((response: AxiosResponse<any>) => {
-                    if (response.data.errors) {
-                        this.setUploadingError('saveTitle', response.data.errors[0].message)
-                    }
-                })
-            },
-            updateDriver(driver: any) {
-                this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/drivers/${driver.id}`, { ...driver, parID: driver.parameter.id }).then((response: AxiosResponse<any>) => {
-                    if (response.data.errors) {
-                        this.setUploadingError('updateTitle', response.data.errors[0].message)
-                    }
-                })
-            },
-            deleteDriver(driverId: number) {
-                this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/drivers/${driverId}`).then((response: AxiosResponse<any>) => {
-                    if (response.data.errors) {
-                        this.setUploadingError('deleteTitle', response.data.errors[0].message)
-                    }
-                })
-            },
-            async loadPage() {
-                this.loading = true
-                await this.loadAnalyticalDrivers()
-                await this.loadCategories()
-                await this.loadDatasources()
-                await this.loadSelectedBusinessModelData()
-                this.loading = false
-            },
-            onFieldChange(event: any) {
-                this.selectedBusinessModel[event.fieldName] = event.value
-                if (event.fieldName === 'modelLocked') {
-                    this.selectedBusinessModel.modelLocker = this.user.userId
+                .catch(() => (this.businessModelSavingError = true))
+                .finally(() => this.formatBusinessModelAnalyticalDriver())
+        },
+        saveActiveVersion(businessModelVersion) {
+            this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/versions/${businessModelVersion.id}/`).then((response: AxiosResponse<any>) => {
+                if (response.data.errors) {
+                    this.setUploadingError('updateTitle', response.data.errors[0].message)
                 }
                 this.touched = true
                 this.$emit('touched')

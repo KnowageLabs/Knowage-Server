@@ -282,9 +282,13 @@
                     this.toolbarMenuItems[3].items.unshift({ icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() })
                 }
 
-                if (this.mode === 'olap') {
-                    this.toolbarMenuItems[3].items.unshift({ icon: '', label: this.$t('documentExecution.main.showOLAPCustomView'), command: () => this.showOLAPCustomView() })
-                }
+            if (this.isOrganizerEnabled()) {
+                this.toolbarMenuItems[3].items.unshift({ icon: 'fa fa-suitcase ', label: this.$t('documentExecution.main.addToWorkspace'), command: () => this.addToWorkspace() })
+            }
+
+            if (this.mode === 'olap') {
+                this.toolbarMenuItems[3].items.unshift({ icon: '', label: this.$t('documentExecution.main.showOLAPCustomView'), command: () => this.showOLAPCustomView() })
+            }
 
                 if (this.user.functionalities.includes('EnableToCopyAndEmbed')) {
                     this.toolbarMenuItems[3].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.copyLink'), command: () => this.copyLink(false) })
@@ -491,11 +495,20 @@
                     })
                     .catch(() => {})
 
-                const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
-                if (index !== -1) {
-                    this.breadcrumbs[index].urlData = this.urlData
+            if (this.sbiExecutionId) {
+                postData.SBI_EXECUTION_ID = this.sbiExecutionId
+            }
+
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData, { headers: { 'X-Disable-Interceptor': 'true' } })
+                .then((response: AxiosResponse<any>) => {
+                    this.urlData = response.data
                     this.sbiExecutionId = this.urlData?.sbiExecutionId as string
-                }
+                })
+                .catch((response: AxiosResponse<any>) => {
+                    this.urlData = response.data
+                    this.sbiExecutionId = this.urlData?.sbiExecutionId as string
+                })
 
                 await this.sendForm()
             },
@@ -870,6 +883,27 @@
                     this.olapDesignerMode = true
                 }
             }
+        },
+        isOrganizerEnabled() {
+            return this.user.isSuperadmin || this.user.functionalities.includes('SaveIntoFolderFunctionality')
+        },
+        async addToWorkspace() {
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/${this.document.id}`, {}, { headers: { 'X-Disable-Errors': 'true' } })
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                })
+                .catch((error) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: error.message === 'sbi.workspace.organizer.document.addtoorganizer.error.duplicateentry' ? this.$t('documentExecution.main.addToWorkspaceError') : error.message
+                    })
+                })
+            this.loading = false
         }
     })
 </script>

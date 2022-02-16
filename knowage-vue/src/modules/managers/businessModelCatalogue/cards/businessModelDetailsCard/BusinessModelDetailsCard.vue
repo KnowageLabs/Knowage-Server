@@ -73,10 +73,12 @@
                             :options="categories"
                             :placeholder="$t('common.category')"
                             :disabled="readonly"
+                            optionLabel="VALUE_NM"
+                            optionValue="VALUE_ID"
                             @before-show="v$.businessModel.category.$touch()"
-                            @change="onFieldChange('category', $event.value.VALUE_ID)"
+                            @change="onFieldChange('category', $event.value)"
                         >
-                            <template #value="slotProps">
+                            <!-- <template #value="slotProps">
                                 <div v-if="slotProps.value">
                                     <span>{{ slotProps.value.VALUE_NM }}</span>
                                 </div>
@@ -85,7 +87,7 @@
                                 <div>
                                     <span>{{ slotProps.option.VALUE_NM }}</span>
                                 </div>
-                            </template>
+                            </template> -->
                         </Dropdown>
                     </span>
                     <KnValidationMessages
@@ -321,6 +323,44 @@
             this.loadBusinessModel()
             this.loadCategories()
             this.loadDatasources()
+        }
+    },
+    computed: {
+        metaModelUrl(): any {
+            return `/knowagemeta/restful-services/1.0/pages/edit?datasourceId=${this.businessModel.dataSourceId}&user_id=${(this.user as any)?.userUniqueIdentifier}&bmId=${this.businessModel.id}&bmName=${this.businessModel.name}`
+        }
+    },
+    created() {
+        this.loadBusinessModel()
+        this.loadCategories()
+        this.loadDatasources()
+    },
+    data() {
+        return {
+            businessModelDetailsCardDescriptor,
+            businessModelDetailsCardValidation,
+            businessModel: {} as iBusinessModel,
+            categories: [] as any[],
+            datasources: [] as any[],
+            metaWebVisible: false,
+            generateDatamartVisible: false,
+            metawebSelectDialogVisible: false,
+            metawebDialogVisible: false,
+            meta: null as any,
+            touched: false,
+            v$: useValidate() as any,
+            loading: false
+        }
+    },
+    validations() {
+        return {
+            businessModel: createValidations('businessModel', businessModelDetailsCardValidation.validations.businessModel)
+        }
+    },
+    methods: {
+        loadBusinessModel() {
+            this.businessModel = { ...this.selectedBusinessModel } as iBusinessModel
+            if (this.businessModel.category?.VALUE_ID) this.businessModel.category = this.businessModel.category.VALUE_ID
         },
         data() {
             return {
