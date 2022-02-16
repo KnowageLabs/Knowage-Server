@@ -34,9 +34,8 @@ public class SbiOrganizationTheme extends SbiHibernateModel {
 	 */
 	private static final long serialVersionUID = 1895036383390787978L;
 
-	private Integer id;
+	private SbiOrganizationThemeId id;
 	private String themeName;
-	private int organizationId;
 	private String config;
 	private boolean active;
 	private String userIn;
@@ -54,9 +53,8 @@ public class SbiOrganizationTheme extends SbiHibernateModel {
 
 	}
 
-	public SbiOrganizationTheme(String themeName, int organizationId, String config, boolean active) {
+	public SbiOrganizationTheme(String themeName, String config, boolean active) {
 		this.themeName = themeName;
-		this.organizationId = organizationId;
 		this.config = config;
 		this.active = active;
 	}
@@ -78,12 +76,11 @@ public class SbiOrganizationTheme extends SbiHibernateModel {
 	 * @param sbiVersionDe
 	 * @param metaVersion
 	 */
-	public SbiOrganizationTheme(Integer id, String themeName, int organizationId, String config, boolean active, String userIn, String userUp, String userDe,
+	public SbiOrganizationTheme(SbiOrganizationThemeId id, String themeName, String config, boolean active, String userIn, String userUp, String userDe,
 			Date timeIn, Date timeUp, Date timeDe, String sbiVersionIn, String sbiVersionUp, String sbiVersionDe, String metaVersion) {
 		super();
 		this.id = id;
 		this.themeName = themeName;
-		this.organizationId = organizationId;
 		this.config = config;
 		this.active = active;
 		this.userIn = userIn;
@@ -101,14 +98,14 @@ public class SbiOrganizationTheme extends SbiHibernateModel {
 	/**
 	 * @return the id
 	 */
-	public Integer getId() {
+	public SbiOrganizationThemeId getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(Integer id) {
+	public void setId(SbiOrganizationThemeId id) {
 		this.id = id;
 	}
 
@@ -124,20 +121,6 @@ public class SbiOrganizationTheme extends SbiHibernateModel {
 	 */
 	public void setThemeName(String themeName) {
 		this.themeName = themeName;
-	}
-
-	/**
-	 * @return the organizationId
-	 */
-	public int getOrganizationId() {
-		return organizationId;
-	}
-
-	/**
-	 * @param organizationId the organizationId to set
-	 */
-	public void setOrganizationId(int organizationId) {
-		this.organizationId = organizationId;
 	}
 
 	/**

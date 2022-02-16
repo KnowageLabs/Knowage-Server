@@ -84,7 +84,7 @@
                 store.commit('setConfigurations', response.data)
             })
             if (this.isEnterprise) {
-                store.commit('setDefaultTheme', this.themeHelper.getDefaultKnowageTheme())
+                if (Object.keys(this.defaultTheme.length === 0)) store.commit('setDefaultTheme', await this.themeHelper.getDefaultKnowageTheme())
 
                 await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license').then((response) => {
                     store.commit('setLicenses', response.data)
@@ -190,7 +190,8 @@
                 loading: 'loading',
                 isEnterprise: 'isEnterprise',
                 documentExecution: 'documentExecution',
-                theme: 'theme'
+                theme: 'theme',
+                defaultTheme: 'defaultTheme'
             })
         },
         watch: {
