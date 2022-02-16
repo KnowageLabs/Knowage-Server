@@ -21,15 +21,13 @@
  */
 package it.eng.knowage.boot.utils;
 
+import java.util.Optional;
+
 public class ConfigSingleton {
 
 	private static final String KNOWAGE_AUTHORIZATION_HEADER_NAME = "KNOWAGE_AUTHORIZATION_HEADER_NAME";
 
 	private static final ConfigSingleton INSTANCE = new ConfigSingleton();
-
-	private static String _rootPath = null;
-
-	private static final String AF_ROOT_PATH = "";
 
 	private String authorizationHeaderName;
 
@@ -39,11 +37,9 @@ public class ConfigSingleton {
 
 	public String getAuthorizationHeaderName() {
 		if (authorizationHeaderName == null) {
-			if (System.getenv().containsKey(KNOWAGE_AUTHORIZATION_HEADER_NAME)) {
-				authorizationHeaderName = System.getenv(KNOWAGE_AUTHORIZATION_HEADER_NAME);
-			} else {
-				authorizationHeaderName = "X-Kn-Authorization";
-			}
+			authorizationHeaderName = Optional
+					.ofNullable(System.getenv(KNOWAGE_AUTHORIZATION_HEADER_NAME))
+					.orElse("X-Kn-Authorization");
 		}
 		return authorizationHeaderName;
 	}
