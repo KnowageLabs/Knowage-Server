@@ -2,7 +2,7 @@
     <Dialog id="query-help-dialog" class="p-fluid kn-dialog--toolbar--primary" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left> {{ $t('common.help') }} </template>
+                <template #start> {{ $t('common.help') }} </template>
             </Toolbar>
         </template>
 
@@ -22,18 +22,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Dialog from 'primevue/dialog'
-import queryDescriptor from './DatasetManagementQueryDataset.json'
+    import { defineComponent } from 'vue'
+    import Dialog from 'primevue/dialog'
+    import queryDescriptor from './DatasetManagementQueryDataset.json'
 
-export default defineComponent({
-    components: { Dialog },
-    props: {},
-    emits: ['close'],
-    data() {
-        return {
-            queryDescriptor
+    export default defineComponent({
+        components: { Dialog },
+        props: {},
+        emits: ['close'],
+        data() {
+            return {
+                queryDescriptor
+            }
         }
-    }
-})
+    })
 </script>

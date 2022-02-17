@@ -3,7 +3,7 @@
         <Card v-for="(kpiName, index) in kpiNames" :key="index" class="p-mt-2">
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
-                    <template #left>
+                    <template #start>
                         {{ kpiName }}
                     </template>
                 </Toolbar>
@@ -18,38 +18,38 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iFilter, iLov } from '../../KpiScheduler'
-import Card from 'primevue/card'
-import KpiSchedulerFilterDetailCard from './KpiSchedulerFilterDetailCard.vue'
+    import { defineComponent } from 'vue'
+    import { iFilter, iLov } from '../../KpiScheduler'
+    import Card from 'primevue/card'
+    import KpiSchedulerFilterDetailCard from './KpiSchedulerFilterDetailCard.vue'
 
-export default defineComponent({
-    name: 'kpi-scheduler-filters-card',
-    components: { Card, KpiSchedulerFilterDetailCard },
-    props: { formatedFilters: { type: Object, required: true }, placeholderType: { type: Array }, temporalType: { type: Array }, lovs: { type: Array, required: true } },
-    emits: ['touched'],
-    data() {
-        return {
-            filters: [] as iFilter[],
-            kpiNames: [] as string[],
-            filteredLovs: [] as iLov[]
-        }
-    },
-    watch: {
-        formatedFilters() {
+    export default defineComponent({
+        name: 'kpi-scheduler-filters-card',
+        components: { Card, KpiSchedulerFilterDetailCard },
+        props: { formatedFilters: { type: Object, required: true }, placeholderType: { type: Array }, temporalType: { type: Array }, lovs: { type: Array, required: true } },
+        emits: ['touched'],
+        data() {
+            return {
+                filters: [] as iFilter[],
+                kpiNames: [] as string[],
+                filteredLovs: [] as iLov[]
+            }
+        },
+        watch: {
+            formatedFilters() {
+                this.loadFilters()
+            }
+        },
+        created() {
             this.loadFilters()
-        }
-    },
-    created() {
-        this.loadFilters()
-    },
-    methods: {
-        loadFilters() {
-            this.filters = this.formatedFilters as any[]
-            if (this.filters) {
-                this.kpiNames = Object.keys(this.filters)
+        },
+        methods: {
+            loadFilters() {
+                this.filters = this.formatedFilters as any[]
+                if (this.filters) {
+                    this.kpiNames = Object.keys(this.filters)
+                }
             }
         }
-    }
-})
+    })
 </script>

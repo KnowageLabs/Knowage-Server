@@ -72,7 +72,7 @@
 
     <div id="preview-container" v-if="rows.length > 0">
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
-            <template #left>
+            <template #start>
                 <Button v-if="!expandTableCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = true" />
                 <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = false" />
                 {{ $t('managers.lovsManagement.preview') }}
