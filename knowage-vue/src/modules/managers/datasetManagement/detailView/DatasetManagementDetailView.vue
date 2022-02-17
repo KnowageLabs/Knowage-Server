@@ -178,7 +178,6 @@ export default defineComponent({
                 icon: 'pi pi-exclamation-triangle',
                 message: this.$t('kpi.kpiDefinition.confirmClone'),
                 header: this.$t(' '),
-                datasetId,
                 accept: () => this.cloneDataset(datasetId)
             })
         },
