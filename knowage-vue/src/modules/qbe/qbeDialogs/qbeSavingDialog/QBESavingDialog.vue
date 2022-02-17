@@ -68,6 +68,7 @@ export default defineComponent({
     created() {
         this.getDomainData()
         this.selectedDataset = this.propDataset
+        console.log(this.selectedDataset)
     },
     watch: {
         propDataset() {
@@ -85,18 +86,10 @@ export default defineComponent({
 
         async saveDataset() {
             let dsToSave = { ...this.selectedDataset } as any
-            let restRequestHeadersTemp = {}
-            if (dsToSave.dsTypeCd.toLowerCase() == 'rest' || dsToSave.dsTypeCd.toLowerCase() == 'solr') {
-                for (let i = 0; i < dsToSave.restRequestHeaders.length; i++) {
-                    restRequestHeadersTemp[dsToSave.restRequestHeaders[i]['name']] = dsToSave.restRequestHeaders[i]['value']
-                }
-            }
-            dsToSave['restRequestHeaders'] && dsToSave['restRequestHeaders'].length > 0 ? (dsToSave.restRequestHeaders = JSON.stringify(restRequestHeadersTemp)) : (dsToSave.restRequestHeaders = '')
-            dsToSave['restJsonPathAttributes'] && dsToSave['restJsonPathAttributes'].length > 0 ? (dsToSave.restJsonPathAttributes = JSON.stringify(dsToSave.restJsonPathAttributes)) : (dsToSave.restJsonPathAttributes = '')
             dsToSave.pars ? '' : (dsToSave.pars = [])
             dsToSave.pythonEnvironment ? (dsToSave.pythonEnvironment = JSON.stringify(dsToSave.pythonEnvironment)) : ''
             dsToSave.meta ? (dsToSave.meta = await this.manageDatasetFieldMetadata(dsToSave.meta)) : (dsToSave.meta = [])
-            dsToSave.recalculateMetadata = true
+            dsToSave.id ? '' : (dsToSave.meta = [])
 
             dsToSave.isScheduled ? (dsToSave.schedulingCronLine = await this.formatCronForSave()) : ''
 
