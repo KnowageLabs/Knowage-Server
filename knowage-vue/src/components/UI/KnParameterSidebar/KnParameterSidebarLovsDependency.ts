@@ -1,30 +1,31 @@
 import { AxiosResponse } from 'axios'
 import { iParameter, } from './KnParameterSidebar'
 
-export function setDataDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter) {
-    if (parameter.dependencies.data.length !== 0) {
-        parameter.dependencies.data.forEach((dependency: any) => {
+
+export function setLovsDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter) {
+    if (parameter.dependencies.lov.length !== 0) {
+        parameter.dependencies.lov.forEach((dependency: any) => {
             const index = loadedParameters.filterStatus.findIndex((param: any) => {
-                return param.urlName === dependency.parFatherUrlName
+                return param.urlName === dependency
             })
             if (index !== -1) {
                 const tempParameter = loadedParameters.filterStatus[index]
-                parameter.dataDependsOnParameters ? parameter.dataDependsOnParameters.push(tempParameter) : (parameter.dataDependsOnParameters = [tempParameter])
-                tempParameter.dataDependentParameters ? tempParameter.dataDependentParameters.push(parameter) : (tempParameter.dataDependentParameters = [parameter])
+                parameter.lovDependsOnParameters ? parameter.lovDependsOnParameters.push(tempParameter) : (parameter.lovDependsOnParameters = [tempParameter])
+                tempParameter.lovDependentParameters ? tempParameter.lovDependentParameters.push(parameter) : (tempParameter.lovDependentParameters = [parameter])
             }
         })
     }
 }
 
-export async function updateDataDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any) {
-    if (parameter && parameter.dataDependentParameters) {
-        for (let i = 0; i < parameter.dataDependentParameters.length; i++) {
-            await dataDependencyCheck(loadedParameters, parameter.dataDependentParameters[i], loading, document, sessionRole, $http)
+export async function updateLovDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any) {
+    if (parameter && parameter.lovDependentParameters) {
+        for (let i = 0; i < parameter.lovDependentParameters.length; i++) {
+            await lovDependencyCheck(loadedParameters, parameter.lovDependentParameters[i], loading, document, sessionRole, $http)
         }
     }
 }
 
-export async function dataDependencyCheck(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any) {
+export async function lovDependencyCheck(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any) {
     loading = true
     if (parameter.parameterValue[0]) {
         parameter.parameterValue[0] = { value: '', description: '' }
