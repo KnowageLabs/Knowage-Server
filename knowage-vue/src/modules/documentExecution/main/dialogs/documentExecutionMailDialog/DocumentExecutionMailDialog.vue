@@ -2,7 +2,7 @@
     <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="documentExecutionMailDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left>
+                <template #start>
                     {{ $t('common.sendMail') }}
                 </template>
             </Toolbar>
@@ -69,50 +69,50 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iMail } from '../../DocumentExecution'
-import Dialog from 'primevue/dialog'
-import Editor from 'primevue/editor'
-import documentExecutionMailDialogDescriptor from './DocumentExecutionMailDialogDescriptor.json'
+    import { defineComponent } from 'vue'
+    import { iMail } from '../../DocumentExecution'
+    import Dialog from 'primevue/dialog'
+    import Editor from 'primevue/editor'
+    import documentExecutionMailDialogDescriptor from './DocumentExecutionMailDialogDescriptor.json'
 
-export default defineComponent({
-    name: 'document-execution-help-dialog',
-    components: { Dialog, Editor },
-    props: { visible: { type: Boolean } },
-    emits: ['close', 'sendMail'],
-    data() {
-        return {
-            documentExecutionMailDialogDescriptor,
-            mail: {} as iMail,
-            mailToDirty: false
-        }
-    },
-    computed: {
-        ccHelp(): string {
-            return (this.mail.CC?.length ?? '0') + ' / ' + this.documentExecutionMailDialogDescriptor.ccMaxLength
+    export default defineComponent({
+        name: 'document-execution-help-dialog',
+        components: { Dialog, Editor },
+        props: { visible: { type: Boolean } },
+        emits: ['close', 'sendMail'],
+        data() {
+            return {
+                documentExecutionMailDialogDescriptor,
+                mail: {} as iMail,
+                mailToDirty: false
+            }
         },
-        objectHelp(): string {
-            return (this.mail.OBJECT?.length ?? '0') + ' / ' + this.documentExecutionMailDialogDescriptor.objectMaxLength
+        computed: {
+            ccHelp(): string {
+                return (this.mail.CC?.length ?? '0') + ' / ' + this.documentExecutionMailDialogDescriptor.ccMaxLength
+            },
+            objectHelp(): string {
+                return (this.mail.OBJECT?.length ?? '0') + ' / ' + this.documentExecutionMailDialogDescriptor.objectMaxLength
+            },
+            saveButtonDisabled(): boolean {
+                return !this.mail.TO || this.mail.TO.length === 0
+            }
         },
-        saveButtonDisabled(): boolean {
-            return !this.mail.TO || this.mail.TO.length === 0
+        created() {},
+        methods: {
+            closeDialog() {
+                this.mail = {} as iMail
+                this.$emit('close')
+            },
+            save() {
+                this.$emit('sendMail', this.mail)
+            }
         }
-    },
-    created() {},
-    methods: {
-        closeDialog() {
-            this.mail = {} as iMail
-            this.$emit('close')
-        },
-        save() {
-            this.$emit('sendMail', this.mail)
-        }
-    }
-})
+    })
 </script>
 
 <style lang="scss" scoped>
-.max-length-help {
-    font-size: smaller;
-}
+    .max-length-help {
+        font-size: smaller;
+    }
 </style>

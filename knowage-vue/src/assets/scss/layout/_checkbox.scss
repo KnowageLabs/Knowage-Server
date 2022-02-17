@@ -1,8 +1,8 @@
 .p-checkbox {
     .p-checkbox-box {
         &.p-highlight {
-            border-color:$color-primary !important;
-            background-color: $color-primary !important;
+            border-color: var(--kn-color-primary) !important;
+            background-color: var(--kn-color-primary) !important;
         }
     }
 }

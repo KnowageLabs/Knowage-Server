@@ -173,13 +173,15 @@
 			<ITEM id="8002" label="menu.TemplateManagement"
 				requiredFunctionality="TemplateManagement"
 				to="/template-pruning" />
-			
-			<ITEM id="8011" label="menu.InstallConf"
+			<ITEM id="8003" label="menu.ThemeManagement"
+				requiredFunctionality="ThemeManagement"
+				to="/theme-management" />
+			<ITEM id="8004" label="menu.InstallConf"
 				requiredFunctionality="InstallConfig"
 				to="${SPAGOBI_CONTEXT}/restful-services/2.0/installconfig" />
-			<ITEM id="8012" label="menu.license"
+			<ITEM id="8005" label="menu.license"
 				requiredFunctionality="LicenseManagement" command="licenseSelection"/>
-			<ITEM id="8013" label="menu.event"
+			<ITEM id="8006" label="menu.event"
 				requiredFunctionality="EventsManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=eventLogsApp" />
 		</GROUP_ITEM>

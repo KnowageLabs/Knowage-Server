@@ -112,7 +112,7 @@ export default defineComponent({
             justify-content: flex-start;
             height: 40px;
             &:nth-child(even) {
-                background-color: $list-item-alternated-background-color;
+                background-color: var(--kn-list-item-alternated-background-color);
             }
             span {
                 height: 40px;
