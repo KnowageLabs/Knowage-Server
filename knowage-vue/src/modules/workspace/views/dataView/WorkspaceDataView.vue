@@ -286,7 +286,7 @@ export default defineComponent({
             this.showDatasetDialog = true
         },
         isAvroReady(dataset: any) {
-            if (dataset && this.preparedDatasets.indexOf(dataset.label) > 0) return true
+            if (dataset && this.preparedDatasets.indexOf(dataset.label) >= 0) return true
             else return false
         },
         async prepareData(dataset: any) {
