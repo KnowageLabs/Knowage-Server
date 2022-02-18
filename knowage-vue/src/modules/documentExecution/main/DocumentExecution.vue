@@ -773,7 +773,7 @@ export default defineComponent({
             if (index !== -1) this.schedulations.splice(index, 1)
         },
         getFormattedDate(date: any) {
-            return moment(date).format('DD/MM/YYYY')
+            return moment(date).format('DDMMYYYY')
         },
         onBreadcrumbClick(item: any) {
             this.document = item.document
