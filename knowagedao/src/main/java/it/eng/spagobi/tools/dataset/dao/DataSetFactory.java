@@ -66,6 +66,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCSynapseDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCVerticaDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
+import it.eng.spagobi.tools.dataset.bo.PreparedDataSet;
 import it.eng.spagobi.tools.dataset.bo.PythonDataSet;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.SPARQLDataSet;
@@ -107,6 +108,7 @@ public class DataSetFactory {
 	public static final String CUSTOM_DS_TYPE = "Custom";
 	public static final String FEDERATED_DS_TYPE = "Federated";
 	public static final String FLAT_DS_TYPE = "Flat";
+	public static final String PREPARED_DS_TYPE = "Prepared";
 	public static final String SPARQL_DS_TYPE = "SPARQL";
 
 	static private Logger logger = Logger.getLogger(DataSetFactory.class);
@@ -464,6 +466,19 @@ public class DataSetFactory {
 				((FlatDataSet) ds).setDataSource(dataSource);
 				((FlatDataSet) ds).setTableName(jsonConf.getString(DataSetConstants.FLAT_TABLE_NAME));
 				ds.setDsType(FLAT_DS_TYPE);
+			} else if (type.equalsIgnoreCase(DataSetConstants.DS_PREPARED)) {
+				ds = new PreparedDataSet();
+				ds.setConfiguration(sbiDataSet.getConfiguration());
+				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
+				if (userProfile != null)
+					dataSourceDao.setUserProfile(userProfile);
+
+				String dataSourceName = jsonConf.getString(DataSetConstants.DATA_SOURCE);
+				IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(dataSourceName);
+				((PreparedDataSet) ds).setDataSource(dataSource);
+				((PreparedDataSet) ds).setTableName(jsonConf.getString(DataSetConstants.TABLE_NAME));
+				((PreparedDataSet) ds).setDataPreparationInstance(jsonConf.getString(DataSetConstants.DATA_PREPARATION_INSTANCE_ID));
+				ds.setDsType(PREPARED_DS_TYPE);
 			}
 
 		} catch (SpagoBIRuntimeException ex) {
@@ -550,7 +565,6 @@ public class DataSetFactory {
 			} catch (Exception e) {
 				throw new SpagoBIRuntimeException("Error while defining dataset configuration.", e);
 			}
-
 
 			managePersistedDataset(ds);
 		}

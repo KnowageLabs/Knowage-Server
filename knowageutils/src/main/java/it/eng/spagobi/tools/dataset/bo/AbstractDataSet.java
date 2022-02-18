@@ -773,6 +773,11 @@ public abstract class AbstractDataSet implements IDataSet {
 		return this instanceof FlatDataSet;
 	}
 
+	@Override
+	public boolean isPreparedDataSet() {
+		return this instanceof PreparedDataSet;
+	}
+
 	/**
 	 * @return the flatTableName
 	 */
@@ -782,6 +787,15 @@ public abstract class AbstractDataSet implements IDataSet {
 			throw new SpagoBIRuntimeException("This dataset is not a flat dataset!!!");
 		}
 		FlatDataSet thisDataSet = (FlatDataSet) this;
+		return thisDataSet.getTableName();
+	}
+
+	@Override
+	public String getPreparedTableName() {
+		if (!this.isPreparedDataSet()) {
+			throw new SpagoBIRuntimeException("This dataset is not a prepared dataset!!!");
+		}
+		PreparedDataSet thisDataSet = (PreparedDataSet) this;
 		return thisDataSet.getTableName();
 	}
 
@@ -900,6 +914,8 @@ public abstract class AbstractDataSet implements IDataSet {
 			return getPersistTableName();
 		} else if (isFlatDataset()) {
 			return getFlatTableName();
+		} else if (isPreparedDataSet()) {
+			return getPreparedTableName();
 		} else {
 			return null;
 			// throw new RuntimeException("Dataset is not persisted");
@@ -948,7 +964,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	 */
 	@Override
 	public IDataStore getDomainValues(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
-		if (this.isPersisted() || this.isFlatDataset()) {
+		if (this.isPersisted() || this.isFlatDataset() || this.isPreparedDataSet()) {
 			return getDomainValuesFromPersistenceTable(fieldName, start, limit, filter);
 		} else {
 			return getDomainValuesFromTemporaryTable(fieldName, start, limit, filter);
@@ -1157,7 +1173,7 @@ public abstract class AbstractDataSet implements IDataSet {
 
 	@Override
 	public boolean isCachingSupported() {
-		return !isPersisted() && !isFlatDataset();
+		return !isPersisted() && !isFlatDataset() && !isPreparedDataSet();
 	}
 
 	@Override
@@ -1168,7 +1184,7 @@ public abstract class AbstractDataSet implements IDataSet {
 			strategy = DatasetEvaluationStrategyType.REALTIME;
 		} else if (isPersisted()) {
 			strategy = DatasetEvaluationStrategyType.PERSISTED;
-		} else if (isFlatDataset()) {
+		} else if (isFlatDataset() || isPreparedDataSet()) {
 			strategy = DatasetEvaluationStrategyType.FLAT;
 		} else {
 			IDataSource dataSource = getDataSource();

@@ -131,6 +131,8 @@ public class DataSetConstants {
 	public static final String IS_PERSISTED = "isPersisted";
 	public static final String IS_PERSISTED_HDFS = "isPersistedHDFS";
 	public static final String IS_SCHEDULED = "isScheduled";
+	public static final String TABLE_NAME = "tableName";
+	public static final String DATA_PREPARATION_INSTANCE_ID = "dataPrepInstanceId";
 	public static final String FLAT_TABLE_NAME = "flatTableName";
 	public static final String DATA_SOURCE_FLAT = "dataSourceFlat";
 	public static final String IS_PUBLIC = "isPublic";

@@ -1066,6 +1066,8 @@ public class DataSetResource extends AbstractDataSetResource {
 					tableName = dataSet.getTableNameForReading();
 				} else if (dataSet.isFlatDataset() && dataSet.getDataSource().getDsId() == cache.getDataSource().getDsId()) {
 					tableName = dataSet.getTableNameForReading();
+				} else if (dataSet.isPreparedDataSet() && dataSet.getDataSource().getDsId() == cache.getDataSource().getDsId()) {
+					tableName = dataSet.getTableNameForReading();
 				} else {
 					DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
 					dataSetManagementAPI.setUserProfile(getUserProfile());

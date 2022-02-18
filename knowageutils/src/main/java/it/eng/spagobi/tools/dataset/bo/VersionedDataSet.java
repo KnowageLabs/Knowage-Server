@@ -428,6 +428,11 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	@Override
+	public boolean isPreparedDataSet() {
+		return wrappedDataset.isPreparedDataSet();
+	}
+
+	@Override
 	public String getFlatTableName() {
 		return wrappedDataset.getFlatTableName();
 	}

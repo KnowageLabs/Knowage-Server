@@ -80,6 +80,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
+import it.eng.spagobi.tools.dataset.bo.PreparedDataSet;
 import it.eng.spagobi.tools.dataset.bo.PythonDataSet;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.SPARQLDataSet;
@@ -479,6 +480,8 @@ public class ManageDataSetsForREST {
 			toReturn = manageFederatedDataSet(savingDataset, jsonDsConfig, json, userProfile);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FLAT)) {
 			toReturn = manageFlatDataSet(savingDataset, jsonDsConfig, json);
+		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_PREPARED)) {
+			toReturn = managePreparedDataSet(savingDataset, jsonDsConfig, json);
 		} else {
 			throw new SpagoBIRuntimeException("Cannot find a match with dataset type " + datasetTypeName);
 		}
@@ -954,6 +957,21 @@ public class ManageDataSetsForREST {
 		dataSet.setTableName(tableName);
 		IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
 		dataSet.setDataSource(dataSource);
+		return dataSet;
+	}
+
+	private PreparedDataSet managePreparedDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException, EMFUserError {
+		PreparedDataSet dataSet = new PreparedDataSet();
+		String tableName = json.optString(DataSetConstants.TABLE_NAME);
+		String dataSourceLabel = json.optString(DataSetConstants.DATA_SOURCE);
+		String dataPrepInstanceId = json.optString(DataSetConstants.DATA_PREPARATION_INSTANCE_ID);
+		jsonDsConfig.put(DataSetConstants.TABLE_NAME, tableName);
+		jsonDsConfig.put(DataSetConstants.DATA_SOURCE, dataSourceLabel);
+		jsonDsConfig.put(DataSetConstants.DATA_PREPARATION_INSTANCE_ID, dataPrepInstanceId);
+		dataSet.setTableName(tableName);
+		IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
+		dataSet.setDataSource(dataSource);
+		dataSet.setDataPreparationInstance(dataPrepInstanceId);
 		return dataSet;
 	}
 

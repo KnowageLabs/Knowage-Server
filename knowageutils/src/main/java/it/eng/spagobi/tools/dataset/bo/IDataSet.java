@@ -206,7 +206,11 @@ public interface IDataSet extends Iterable<IRecord> {
 
 	boolean isFlatDataset();
 
+	boolean isPreparedDataSet();
+
 	String getFlatTableName();
+
+	String getPreparedTableName();
 
 	List getNoActiveVersions();
 

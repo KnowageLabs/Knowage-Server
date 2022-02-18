@@ -523,6 +523,18 @@ public class DataStoreListenerOperatorTest extends TestCase {
 		}
 
 		@Override
+		public boolean isPreparedDataSet() {
+
+			return false;
+		}
+
+		@Override
+		public String getPreparedTableName() {
+
+			return null;
+		}
+
+		@Override
 		@SuppressWarnings("rawtypes")
 		public List getNoActiveVersions() {
 
