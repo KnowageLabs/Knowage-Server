@@ -44,9 +44,15 @@ public abstract class AbstractDaoImpl {
 		String username = Optional.ofNullable(entity.getUserIn())
 				.orElse(businessRequestContext.getUsername());
 
-		entity.setSbiVersionIn(version);
-		entity.setTimeIn(now);
-		entity.setUserIn(username);
+		if (entity.getSbiVersionIn() == null) {
+			entity.setSbiVersionIn(version);
+		}
+		if (entity.getTimeIn() == null) {
+			entity.setTimeIn(now);
+		}
+		if (entity.getUserIn() == null) {
+			entity.setUserIn(username);
+		}
 	}
 
 	protected final void preUpdate(IEntity entity) {
