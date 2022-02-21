@@ -330,7 +330,7 @@ public class DataSetResource {
 
 	}
 
-	@GET
+	@POST
 	@Path("/{dsLabel}/filters")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
