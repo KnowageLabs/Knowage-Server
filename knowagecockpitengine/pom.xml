@@ -22,6 +22,8 @@
 				<configuration>
 					<attachClasses>true</attachClasses>
 					<classesClassifier>classes</classesClassifier>
+					<!-- The following is the default value but watch out that is referenced in exec-maven-plugin -->
+					<webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -30,22 +32,8 @@
 				<version>1.6.0</version>
 				<executions>
 					<execution>
-						<id>npm-package-install</id>
-						<phase>process-sources</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>npm</executable>
-							<arguments>
-								<argument>install</argument>
-							</arguments>
-							<workingDirectory>${basedir}/src/main/webapp</workingDirectory>
-						</configuration>
-					</execution>
-					<execution>
 						<id>npm-update-version</id>
-						<phase>process-sources</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>exec</goal>
 						</goals>
@@ -56,12 +44,28 @@
 								<argument>${project.version}</argument>
 								<argument>--allow-same-version</argument>
 							</arguments>
-							<workingDirectory>${basedir}/src/main/webapp</workingDirectory>
+							<!-- See maven-war-plugin -->
+							<workingDirectory>${project.build.directory}/${project.build.finalName}</workingDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm-package-install</id>
+						<phase>package</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>npm</executable>
+							<arguments>
+								<argument>install</argument>
+							</arguments>
+							<!-- See maven-war-plugin -->
+							<workingDirectory>${project.build.directory}/${project.build.finalName}</workingDirectory>
 						</configuration>
 					</execution>
 					<execution>
 						<id>grunt-concat-dist</id>
-						<phase>process-resources</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>exec</goal>
 						</goals>
@@ -70,7 +74,8 @@
 							<arguments>
 								<argument>knowagecockpit-concat</argument>
 							</arguments>
-							<workingDirectory>${basedir}/src/main/webapp</workingDirectory>
+							<!-- See maven-war-plugin -->
+							<workingDirectory>${project.build.directory}/${project.build.finalName}</workingDirectory>
 						</configuration>
 					</execution>
 				</executions>
