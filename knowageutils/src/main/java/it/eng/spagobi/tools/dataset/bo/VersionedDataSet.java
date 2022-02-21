@@ -438,6 +438,11 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	@Override
+	public String getPreparedTableName() {
+		return wrappedDataset.getPreparedTableName();
+	}
+
+	@Override
 	public String getOwner() {
 		return wrappedDataset.getOwner();
 	}

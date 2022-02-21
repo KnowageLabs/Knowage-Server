@@ -305,7 +305,11 @@ public class ManageDataSetsForREST {
 
 				IMetaData currentMetadata = null;
 				try {
-					currentMetadata = getDatasetTestMetadata(dsRecalc, parametersMap, profile, meta);
+					if (ds.getDsType().equals(DataSetConstants.DS_PREPARED)) {
+						currentMetadata = getPreparedDsMeta(meta);
+					} else {
+						currentMetadata = getDatasetTestMetadata(dsRecalc, parametersMap, profile, meta);
+					}
 				} catch (Exception e) {
 					logger.error("Error while recovering dataset metadata: check dataset definition ", e);
 					throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.test.error.metadata", e);
@@ -426,6 +430,49 @@ public class ManageDataSetsForREST {
 
 		}
 		return ds;
+	}
+
+	private IMetaData getPreparedDsMeta(String sparkMetadata) throws JSONException {
+		IMetaData toReturn = new MetaData();
+		JSONArray metaArray = new JSONArray(sparkMetadata);
+		for (int i = 0; i < metaArray.length(); i++) {
+			JSONObject metaObj = metaArray.getJSONObject(i);
+			String alias = metaObj.optString("displayedName");
+			String name = metaObj.optString("name");
+			FieldType fieldType = getFieldType(metaObj.optString("fieldType"));
+			Class type = getType(metaObj.optString("type"));
+			FieldMetadata newMeta = new FieldMetadata();
+			newMeta.setName(name);
+			newMeta.setAlias(alias);
+			newMeta.setType(type);
+			newMeta.setFieldType(fieldType);
+			toReturn.addFiedMeta(newMeta);
+		}
+		return toReturn;
+	}
+
+	private Class getType(String type) {
+		Class toReturn = null;
+		try {
+			toReturn = Class.forName(type);
+		} catch (ClassNotFoundException e) {
+			logger.error("Cannot instantiate class {" + type + "}, returning String.class by default");
+			toReturn = String.class;
+		}
+		return toReturn;
+	}
+
+	private FieldType getFieldType(String fieldType) {
+		FieldType toReturn;
+		if (fieldType.equalsIgnoreCase("ATTRIBUTE"))
+			toReturn = IFieldMetaData.FieldType.ATTRIBUTE;
+		else if (fieldType.equalsIgnoreCase("SPATIAL_ATTRIBUTE"))
+			toReturn = IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE;
+		else if (fieldType.equalsIgnoreCase("MEASURE"))
+			toReturn = IFieldMetaData.FieldType.MEASURE;
+		else
+			throw new SpagoBIRuntimeException("Cannot map fieldType {" + fieldType + "}");
+		return toReturn;
 	}
 
 	private String getDatasetTypeName(String datasetTypeCode, UserProfile userProfile) throws SpagoBIException {
