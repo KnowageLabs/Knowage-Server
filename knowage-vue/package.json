@@ -12,7 +12,7 @@
     },
     "main": "main.ts",
     "dependencies": {
-        "@fortawesome/fontawesome-free": "^5.15.2",
+        "@fortawesome/fontawesome-free": "^6.0.0",
         "@vuelidate/core": "^2.0.0-alpha.18",
         "@vuelidate/validators": "^2.0.0-alpha.15",
         "axios": "0.23.0",

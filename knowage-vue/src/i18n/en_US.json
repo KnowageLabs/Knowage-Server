@@ -1895,9 +1895,9 @@
             "selectedDatasetsMessage": "Click to remove from federation",
             "title": "Federation definition"
         },
-        "hint": "Please change the hint to your liking in the i18 files.",
+        "hint": "Workspace is your personal space where you can find your documents and datasets. Click one of the items categories in the left list to select and interact with them.",
         "menuLabels": {
-            "advanced": "My Advanced Data",
+            "advanced": "Data Preparation",
             "menuTitle": "My Workspace",
             "myAnalysis": "My Analysis",
             "myData": "My Data",
