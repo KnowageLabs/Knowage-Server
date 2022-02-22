@@ -537,6 +537,7 @@ export default defineComponent({
                 if (inputElement) {
                     inputElement.value = decodeURIComponent(postObject.params[k])
                     inputElement.value = inputElement.value.replace(/\+/g, ' ')
+
                     this.hiddenFormData.set(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
                 } else {
                     const element = document.createElement('input')
@@ -545,16 +546,17 @@ export default defineComponent({
                     element.name = k
                     element.value = decodeURIComponent(postObject.params[k])
                     element.value = element.value.replace(/\+/g, ' ')
-                    postForm.appendChild(element)
 
+                    postForm.appendChild(element)
                     this.hiddenFormData.append(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
                 }
             }
 
             for (let i = postForm.elements.length - 1; i >= 0; i--) {
-                const postFormElement = postForm.elements[i].id.replace('postForm_', '')
+                const postFormElement = postForm.elements[i].id.replace('postForm_' + postObject.params.document, '')
 
                 if (!(postFormElement in postObject.params)) {
+                    postForm.removeChild(postForm.elements[i])
                     this.hiddenFormData.delete(postFormElement)
                 }
             }
@@ -619,7 +621,7 @@ export default defineComponent({
                         parameters[parameter.urlName + '_field_visible_description'] = this.getFormattedDate(parameter.parameterValue[0].value)
                     } else if (parameter.valueSelection === 'man_in') {
                         parameters[parameter.urlName] = parameter.type === 'NUM' ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
-                        parameters[parameter.urlName + '_field_visible_description'] = parameter.type === 'NUM' ? +parameter.parameterValue[0].description : parameter.parameterValue[0].description
+                        parameters[parameter.urlName + '_field_visible_description'] = parameter.type === 'NUM' ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
                     } else if (parameter.selectionType === 'TREE' || parameter.selectionType === 'LOOKUP' || parameter.multivalue) {
                         parameters[parameter.urlName] = parameter.parameterValue.map((el: any) => el.value)
                         let tempString = ''
