@@ -56,7 +56,8 @@ export default defineComponent({
             errorMessage: '',
             parameterSidebarVisible: false,
             loading: false,
-            filtersData: {} as any
+            filtersData: {} as any,
+            userRole: null
         }
     },
     watch: {
@@ -68,6 +69,7 @@ export default defineComponent({
         }
     },
     async created() {
+        this.userRole = (this.$store.state as any).user.sessionRole !== 'No default role selected' ? (this.$store.state as any).user.sessionRole : null
         await this.loadPreview()
     },
     methods: {
@@ -132,7 +134,7 @@ export default defineComponent({
         async loadDatasetDrivers() {
             if (this.dataset.label) {
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${this.dataset.label}/filters `)
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${this.dataset.label}/filters`, { role: this.userRole })
                     .then((response: AxiosResponse<any>) => {
                         this.filtersData = response.data
                         if (this.filtersData.filterStatus) {
@@ -140,7 +142,7 @@ export default defineComponent({
                         }
                     })
                     .catch(() => {})
-                console.log('LOADED FILTERS DATA: ', this.filtersData)
+
                 this.formatDrivers()
             }
         },
@@ -195,11 +197,9 @@ export default defineComponent({
             return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
         },
         formatDriversForPreviewData() {
-            console.log(' format drivers: ', this.filtersData.filterStatus)
             let formattedDrivers = {}
 
             this.filtersData?.filterStatus.forEach((filter: any) => {
-                console.log(' format driver current: ', filter)
                 formattedDrivers[filter.urlName] = filter.parameterValue
             })
 
@@ -236,7 +236,6 @@ export default defineComponent({
             this.$emit('close')
         },
         async onExecute(datasetParameters: any[]) {
-            console.log('WorkspaceDataPreviewDialog - onExecute() - DATASET PARAMETERS: ', datasetParameters)
             this.dataset.pars = datasetParameters
             await this.loadPreviewData()
             this.parameterSidebarVisible = false

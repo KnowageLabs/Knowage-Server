@@ -42,7 +42,7 @@ import Tree from 'primevue/tree'
 export default defineComponent({
     name: 'kn-parameter-tree-dialog',
     components: { Dialog, Tree },
-    props: { visible: { type: Boolean }, selectedParameter: { type: Object }, formatedParameterValues: { type: Object }, document: { type: Object } },
+    props: { visible: { type: Boolean }, selectedParameter: { type: Object }, formatedParameterValues: { type: Object }, document: { type: Object }, mode: { type: String } },
     emits: ['close', 'save'],
     data() {
         return {
@@ -85,11 +85,12 @@ export default defineComponent({
                 this.loading = false
                 return
             }
+            const url = this.mode === 'execution' ? `2.0/documentexecution/admissibleValuesTree` : `/3.0/datasets/${this.document?.label}/admissibleValuesTree`
             const postData = { label: this.document?.label, role: (this.$store.state as any).user.sessionRole, parameterId: this.parameter?.urlName, mode: 'complete', treeLovNode: parent ? parent.id : 'lovroot', parameters: this.formatedParameterValues }
 
             let content = [] as any[]
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/admissibleValuesTree`, postData)
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)
                 .then((response: AxiosResponse<any>) =>
                     response.data.rows.forEach((el: any) => {
                         content.push(this.createNode(el, parent))
@@ -126,7 +127,7 @@ export default defineComponent({
                 id: el.id,
                 label: el.label,
                 children: [] as iNode[],
-                data: { value: el.data, description: '' },
+                data: { value: el.data, description: el.label },
                 style: this.knParameterTreeDialogDescriptor.node.style,
                 leaf: el.leaf,
                 selectable: el.leaf,

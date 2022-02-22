@@ -148,7 +148,7 @@
             <Menu ref="executeButtonMenu" :model="executeMenuItems" :popup="true" />
         </div>
         <KnParameterPopupDialog v-if="popupDialogVisible" :visible="popupDialogVisible" :selectedParameter="selectedParameter" :propLoading="loading" :parameterPopUpData="parameterPopUpData" @close="popupDialogVisible = false" @save="onPopupSave"></KnParameterPopupDialog>
-        <KnParameterTreeDialog v-if="treeDialogVisible" :visible="treeDialogVisible" :selectedParameter="selectedParameter" :formatedParameterValues="formatedParameterValues" :document="document" @close="onTreeClose" @save="onTreeSave"></KnParameterTreeDialog>
+        <KnParameterTreeDialog v-if="treeDialogVisible" :visible="treeDialogVisible" :selectedParameter="selectedParameter" :formatedParameterValues="formatedParameterValues" :document="document" :mode="mode" @close="onTreeClose" @save="onTreeSave"></KnParameterTreeDialog>
         <KnParameterSaveDialog :visible="parameterSaveDialogVisible" :propLoading="loading" @close="parameterSaveDialogVisible = false" @saveViewpoint="saveViewpoint"></KnParameterSaveDialog>
         <KnParameterSavedParametersDialog :visible="savedParametersDialogVisible" :propViewpoints="viewpoints" @close="savedParametersDialogVisible = false" @fillForm="fillParameterForm" @executeViewpoint="executeViewpoint" @deleteViewpoint="deleteViewpoint"></KnParameterSavedParametersDialog>
     </div>
@@ -359,8 +359,9 @@ export default defineComponent({
         async getParameterPopupInfo(parameter: iParameter) {
             this.loading = true
             const postData = { label: this.document?.label, parameters: this.getFormattedParameters(), paramId: parameter.urlName, role: this.sessionRole }
+            const url = this.mode === 'execution' ? '2.0/documentExeParameters/admissibleValues' : `/3.0/datasets/${this.document?.label}/admissibleValues`
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentExeParameters/admissibleValues`, postData)
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)
                 .then((response: AxiosResponse<any>) => (this.parameterPopUpData = response.data))
                 .catch((error: any) => console.log('ERROR: ', error))
             this.loading = false
@@ -501,7 +502,6 @@ export default defineComponent({
         },
         loadMode() {
             this.mode = this.propMode ? this.propMode : 'execution'
-            console.log('KnParameterSidebar - loadMode() - LOADED MODE: ', this.mode)
         },
         loadQBEParameters() {
             this.qbeParameters = []
@@ -509,7 +509,6 @@ export default defineComponent({
                 if (!parameter.value) parameter.value = parameter.defaultValue
                 this.qbeParameters.push(parameter)
             })
-            console.log('KnParameterSidebar - loadMode() - LOADED QBE PARAMETERS: ', this.qbeParameters)
         }
     }
 })

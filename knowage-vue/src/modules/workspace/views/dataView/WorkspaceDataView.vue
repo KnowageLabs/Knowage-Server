@@ -278,13 +278,12 @@ export default defineComponent({
             this.$router.push({ name: 'data-preparation', params: { id: dataset.id } })
         },
         openDatasetInQBE(dataset: any) {
-            console.log('DATASET', dataset)
             this.selectedQbeDataset = dataset
             this.qbeVisible = true
         },
         async exportDataset(dataset: any, format: string) {
             this.loading = true
-            //  { 'Content-Type': 'application/x-www-form-urlencoded' }
+
             await this.$http
                 .post(
                     process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/dataset/${dataset.id}/${format}`,

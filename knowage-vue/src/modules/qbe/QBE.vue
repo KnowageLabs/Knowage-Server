@@ -104,7 +104,7 @@
                     </div>
                 </div>
             </div>
-            <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="document" :userRole="userRole" :propMode="'qbeView'" :propQBEParameters="qbe.pars" @execute="onExecute"></KnParameterSidebar>
+            <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="dataset" :userRole="userRole" :propMode="'qbeView'" :propQBEParameters="qbe.pars" @execute="onExecute"></KnParameterSidebar>
         </div>
 
         <QBEPreviewDialog v-show="!loading && qbePreviewDialogVisible" :id="uniqueID" :queryPreviewData="queryPreviewData" :pagination="pagination" @close="closePreview" @pageChanged="updatePagination($event)"></QBEPreviewDialog>
@@ -233,13 +233,13 @@ export default defineComponent({
                 this.qbe = this.getQBEFromModel()
             }
             this.loadQuery()
-            // await this.loadDatasetDrivers()
-            // if (this.qbe?.pars.length === 0 && this.filtersData?.isReadyForExecution) {
-            await this.loadQBE()
-            this.qbeLoaded = true
-            //} else {
-            //this.parameterSidebarVisible = true
-            //}
+            await this.loadDatasetDrivers()
+            if (this.qbe?.pars.length === 0 && this.filtersData?.isReadyForExecution) {
+                await this.loadQBE()
+                this.qbeLoaded = true
+            } else {
+                this.parameterSidebarVisible = true
+            }
             this.loading = false
         },
         async loadQBE() {
@@ -305,7 +305,7 @@ export default defineComponent({
             if (!this.qbe) return
             const label = this.qbe.label ? this.qbe.label : this.qbe.qbeDatamarts
 
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${label}/filters`).then((response: AxiosResponse<any>) => {
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${label}/filters`, { role: this.userRole }).then((response: AxiosResponse<any>) => {
                 this.filtersData = response.data
                 if (this.filtersData.filterStatus) {
                     this.filtersData.filterStatus = this.filtersData.filterStatus.filter((filter: any) => filter.id)
