@@ -53,7 +53,7 @@
 
             <KnParameterSidebar
                 class="document-execution-parameter-sidebar kn-overflow-y"
-                v-if="true"
+                v-if="parameterSidebarVisible"
                 :filtersData="filtersData"
                 :propDocument="document"
                 :userRole="userRole"
