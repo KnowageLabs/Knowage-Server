@@ -44,6 +44,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentDriverRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.DriversValidationAPI;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
@@ -61,6 +62,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.JSONStoreFeedTransformer;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.tools.catalogue.metadata.IDrivableBIResource;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheInterface;
@@ -242,20 +244,15 @@ public class DocumentExecutionUtils {
 		return url;
 	}
 
-	public static List handleNormalExecutionError(UserProfile profile, BIObject obj, HttpServletRequest req, String env, String role, String modality,
+	public static <T extends IDrivableBIResource<? extends AbstractDriver>> List handleNormalExecutionError(UserProfile profile, T obj, HttpServletRequest req, String env, String role, String modality,
 			JSONObject parametersJson, Locale locale) { // isFromCross,
 		Monitor handleNormalExecutionErrorMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.handleNormalExecutionError");
 
-		HashMap<String, String> logParam = new HashMap<String, String>();
-		logParam.put("NAME", obj.getName());
-		logParam.put("ENGINE", obj.getEngine().getName());
-		logParam.put("PARAMS", parametersJson.toString()); // this.getAttributeAsString(PARAMETERS)
 		DocumentRuntime dum = new DocumentRuntime(profile, locale);
 		DriversValidationAPI validation = new DriversValidationAPI(profile, locale);
 		List errors = null;
 		try {
 			errors = validation.getParametersErrors(obj, role, dum);
-
 		} catch (Exception e) {
 			logger.debug("Error in handleNormalExecutionError", e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot evaluate errors on parameters validation", e);
@@ -468,7 +465,9 @@ public class DocumentExecutionUtils {
 	 * @param treeLovNodeValue
 	 * @param locale
 	 * @return
+	 * @deprecated Where possible, prefer {@link #getLovDefaultValues(String, List, BIObjectParameter, JSONObject, Integer, String, Locale)}
 	 */
+	@Deprecated
 	public static Map<String, Object> getLovDefaultValues(
 			String executionRole,
 			BIObject biObject,
@@ -477,7 +476,12 @@ public class DocumentExecutionUtils {
 			Integer treeLovNodeLevel,
 			String treeLovNodeValue,
 			Locale locale) {
+		List<BIObjectParameter> drivers = biObject.getDrivers();
+		return getLovDefaultValues(executionRole, drivers, objParameter, requestVal, treeLovNodeLevel, treeLovNodeValue, locale);
+	}
 
+	public static Map<String, Object> getLovDefaultValues(String executionRole, List<? extends AbstractDriver> drivers, AbstractDriver objParameter,
+			JSONObject requestVal, Integer treeLovNodeLevel, String treeLovNodeValue, Locale locale) {
 		ArrayList<HashMap<String, Object>> defaultValues = new ArrayList<HashMap<String, Object>>();
 		String lovResult = null;
 		ILovDetail lovProvDet = null;
@@ -499,7 +503,7 @@ public class DocumentExecutionUtils {
 				selectedParameterValuesJSON = (JSONArray) requestVal.opt("parameters");
 
 				if (selectedParameterValuesJSON != null) {
-					dum.refreshParametersValues(selectedParameterValuesJSON, false, biObject);
+					dum.refreshParametersValues(selectedParameterValuesJSON, false, drivers);
 				}
 
 				if (selectedParameterValuesJSON != null) {
@@ -511,7 +515,7 @@ public class DocumentExecutionUtils {
 
 			biParameterExecDependencies = getBiObjectDependencies(executionRole, objParameter);
 
-			lovResult = getLovResult(profile, lovProvDet, biParameterExecDependencies, biObject, locale, true);
+			lovResult = getLovResult(profile, lovProvDet, biParameterExecDependencies, drivers, locale, true);
 			Assert.assertNotNull(lovResult, "Impossible to get parameter's values");
 
 			LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
@@ -597,7 +601,6 @@ public class DocumentExecutionUtils {
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("Impossible to get parameter's values", e);
 		}
-
 	}
 
 
@@ -701,7 +704,7 @@ public class DocumentExecutionUtils {
 		}
 	}
 
-	public static List<ObjParuse> getBiObjectDependencies(String executionRole, BIObjectParameter biobjParameter) {
+	public static List<ObjParuse> getBiObjectDependencies(String executionRole, AbstractDriver biobjParameter) {
 		List<ObjParuse> biParameterExecDependencies = new ArrayList<ObjParuse>();
 		try {
 			IParameterUseDAO parusedao = DAOFactory.getParameterUseDAO();
@@ -746,14 +749,23 @@ public class DocumentExecutionUtils {
 		return lovResult;
 	}
 
+	/**
+	 * @deprecated Where possible, prefer #getLovResult
+	 */
+	@Deprecated
 	public static String getLovResult(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, BIObject biObject,
 			Locale locale, boolean retrieveIfNotcached) throws Exception {
+		List<BIObjectParameter> drivers = biObject.getDrivers();
+		return getLovResult(profile, lovDefinition, dependencies, drivers, locale, retrieveIfNotcached);
+	}
 
+	private static String getLovResult(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, List<? extends AbstractDriver> drivers,
+			Locale locale, boolean retrieveIfNotcached) throws Exception {
 		String lovResult = null;
 
 		if (lovDefinition instanceof QueryDetail) {
 			// queries are cached
-			String cacheKey = getCacheKey(profile, lovDefinition, dependencies, biObject);
+			String cacheKey = getCacheKey(profile, lovDefinition, dependencies, drivers);
 
 			CacheInterface cache = ParameterCache.getCache();
 
@@ -761,14 +773,14 @@ public class DocumentExecutionUtils {
 				// lov provider is present, so read the DATA in cache
 				lovResult = (String) cache.get(cacheKey);
 			} else if (retrieveIfNotcached) {
-				lovResult = lovDefinition.getLovResult(profile, dependencies, biObject.getDrivers(), locale);
+				lovResult = lovDefinition.getLovResult(profile, dependencies, drivers, locale);
 				// insert the data in cache
 				if (lovResult != null)
 					cache.put(cacheKey, lovResult);
 			}
 		} else {
 			// scrips, fixed list and java classes are not cached, and returned without considering retrieveIfNotcached input
-			lovResult = lovDefinition.getLovResult(profile, dependencies, biObject.getDrivers(), locale);
+			lovResult = lovDefinition.getLovResult(profile, dependencies, drivers, locale);
 		}
 
 		return lovResult;
@@ -789,8 +801,16 @@ public class DocumentExecutionUtils {
 	 *            The document object
 	 * @return The key to be used in cache
 	 * @throws Exception
+	 * @deprecated Where possible, prefer {@link #getCacheKey(IEngUserProfile, ILovDetail, List, List)}
 	 */
+	@Deprecated
 	private static String getCacheKey(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, BIObject biObject) throws Exception {
+		List<BIObjectParameter> drivers = biObject.getDrivers();
+		return getCacheKey(profile, lovDefinition, dependencies, drivers);
+	}
+
+	public static String getCacheKey(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, List<? extends AbstractDriver> drivers)
+			throws Exception {
 		String toReturn = null;
 		String userID = (String) ((UserProfile) profile).getUserId();
 		if (lovDefinition instanceof QueryDetail) {
@@ -799,11 +819,11 @@ public class DocumentExecutionUtils {
 			// clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, biObject.getDrivers()));
 			// toReturn = userID + ";" + clone.toXML();
 
-			Map<String, String> parameters = queryDetail.getParametersNameToValueMap(biObject.getDrivers());
-			String statement = queryDetail.getWrappedStatement(dependencies, biObject.getDrivers());
+			Map<String, String> parameters = queryDetail.getParametersNameToValueMap(drivers);
+			String statement = queryDetail.getWrappedStatement(dependencies, drivers);
 			statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
 			if (parameters != null && !parameters.isEmpty()) {
-				Map<String, String> types = queryDetail.getParametersNameToTypeMap(biObject.getDrivers());
+				Map<String, String> types = queryDetail.getParametersNameToTypeMap(drivers);
 				statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
 			}
 			clone.setQueryDefinition(statement);

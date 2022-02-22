@@ -43,10 +43,22 @@
 #set($crossNavigation = '')
 #set($crossNavigation = $chart.DRILL)
 
+#set($range = $datasettransformer.getRange($rows, $dataColumnsMapper, $seriesMap))
+
+#set($categoriesCardinality = $datasettransformer.getCategoriesCardinality($rows, $chart.VALUES.CATEGORY, $dataColumnsMapper))
 
 {
 	chart: 
 	{
+    
+    	## Additional data needed for cross navigation paramteres	
+			
+		additionalData:
+		{
+			categoriesCardinality: $categoriesCardinality,
+			range: $range
+		},
+		
 		type: '$chart.type',
 		opacMouseOver: '$chart.opacMouseOver',	
 		#if($chart.scale)
@@ -415,4 +427,5 @@
 	 	$result
 	 	
 	]
+	
 }

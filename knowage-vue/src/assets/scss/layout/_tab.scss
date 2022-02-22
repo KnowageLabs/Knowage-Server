@@ -24,11 +24,11 @@
                 text-transform: capitalize;
             }
             .p-tabview-ink-bar {
-                background-color: $color-primary;
+                background-color: var(--kn-color-primary);
             }
             li.p-highlight {
                 .p-tabview-nav-link {
-                    color: $color-primary;
+                    color: var(--kn-color-primary);
                 }
             }
         }

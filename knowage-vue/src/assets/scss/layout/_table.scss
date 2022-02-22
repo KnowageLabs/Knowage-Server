@@ -20,7 +20,7 @@
         &.p-button-icon-only {
             padding: 0;
             .p-button-icon {
-                color: $button-icon-color-default;
+                color: var(--kn-button-icon-color-default);
                 padding: 4px;
             }
         }

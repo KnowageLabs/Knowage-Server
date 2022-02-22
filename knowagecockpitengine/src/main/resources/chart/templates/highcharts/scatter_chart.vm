@@ -39,10 +39,13 @@
 	#end
 #end
 
+#set($range = $datasettransformer.getRange($rows, $dataColumnsMapper, $seriesMap))
+#set($categoriesCardinality = $datasettransformer.getCategoriesCardinality($rows, $chart.VALUES.CATEGORY, $dataColumnsMapper))
+
 {
     chart: {
     
-    	## Additional data needed for cross navigation paramteres	
+    	## Additional data needed for cross navigation parameters	
 			
 		additionalData:
 		{
@@ -52,6 +55,9 @@
 			categoryName: '$categorieColumns.name',
 			categoryOrderColumn: '$categorieColumns.orderColumn',
 			categoryOrderType: '$categorieColumns.orderType',
+						
+			categoriesCardinality: $categoriesCardinality,
+			range: $range,
 		},
         
         type: 'scatter',

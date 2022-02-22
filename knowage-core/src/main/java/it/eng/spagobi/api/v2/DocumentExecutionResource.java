@@ -1175,10 +1175,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		if (result != null && result.size() > 0) {
 			resultAsMap.put("rows", result);
-			resultAsMap.put("errors", new ArrayList<>());
 		} else {
-			resultAsMap.put("rows", new ArrayList<>());
-
 			List errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), biObject, req,
 					this.getAttributeAsString("SBI_ENVIRONMENT"), role, biObjectParameter.getParameter().getModalityValue().getSelectionType(), null, locale);
 
