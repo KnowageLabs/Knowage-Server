@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
@@ -144,19 +145,27 @@ public class LovResultCacheManager {
 		return toReturn;
 	}
 
-	/*
+	/**
 	 * GET LOV RESULT FROM DOCUMENT_URL_MANAGER
+	 *
+	 * @deprecated Where possible, prefer {@link #getLovResultDum(IEngUserProfile, ILovDetail, List, List, boolean, Locale)}
 	 */
-
+	@Deprecated
 	public String getLovResultDum(IEngUserProfile profile, ILovDetail lovDefinition, List<? extends AbstractParuse> dependencies, IDrivableBIResource object,
 			boolean retrieveIfNotcached, Locale locale) throws Exception {
+		List<? extends AbstractDriver> drivers = object.getDrivers();
+
+		return getLovResultDum(profile, lovDefinition, dependencies, drivers, retrieveIfNotcached, locale);
+	}
+
+	public String getLovResultDum(IEngUserProfile profile, ILovDetail lovDefinition, List<? extends AbstractParuse> dependencies,
+			List<? extends AbstractDriver> drivers, boolean retrieveIfNotcached, Locale locale) throws Exception {
 		logger.debug("IN");
 
 		String lovResult = null;
-
 		if (lovDefinition instanceof QueryDetail) {
 			// queries are cached
-			String cacheKey = getCacheKeyDum(profile, lovDefinition, dependencies, object);
+			String cacheKey = getCacheKeyDum(profile, lovDefinition, dependencies, drivers);
 			logger.info("Cache key : " + cacheKey);
 			if (cache.contains(cacheKey)) {
 				logger.info("Retrieving lov result from cache...");
@@ -165,7 +174,7 @@ public class LovResultCacheManager {
 				logger.debug(lovResult);
 			} else if (retrieveIfNotcached) {
 				logger.info("Executing lov to get result ...");
-				lovResult = lovDefinition.getLovResult(profile, dependencies, object.getDrivers(), locale);
+				lovResult = lovDefinition.getLovResult(profile, dependencies, drivers, locale);
 				logger.debug(lovResult);
 				// insert the data in cache
 				if (lovResult != null)
@@ -174,19 +183,27 @@ public class LovResultCacheManager {
 		} else {
 			// scrips, fixed list and java classes are not cached, and returned without considering retrieveIfNotcached input
 			logger.info("Executing lov (NOT QUERY TYPE) to get result ...");
-			lovResult = lovDefinition.getLovResult(profile, dependencies, object.getDrivers(), locale);
+			lovResult = lovDefinition.getLovResult(profile, dependencies, drivers, locale);
 			logger.debug(lovResult);
 		}
 
 		logger.debug("OUT");
 		return lovResult;
 	}
-	
-	/*
-	 * GET LOV RESULT FROM BUSINESS MODELS
-	 */
 
+	/**
+	 * GET LOV RESULT FROM BUSINESS MODELS
+	 *
+	 * @deprecated Where possible, prefer {@link #getLovResultBum(IEngUserProfile, ILovDetail, List, List, boolean, Locale)}
+	 */
+	@Deprecated
 	public String getLovResultBum(IEngUserProfile profile, ILovDetail lovDefinition, List<? extends AbstractParuse> dependencies, IDrivableBIResource object,
+			boolean retrieveIfNotcached, Locale locale) throws Exception {
+		List<? extends AbstractDriver> metamodelDrivers = object.getMetamodelDrivers();
+		return getLovResultBum(profile, lovDefinition, dependencies, metamodelDrivers, retrieveIfNotcached, locale);
+	}
+
+	public String getLovResultBum(IEngUserProfile profile, ILovDetail lovDefinition, List<? extends AbstractParuse> dependencies, List metamodelDrivers,
 			boolean retrieveIfNotcached, Locale locale) throws Exception {
 		logger.debug("IN");
 
@@ -194,7 +211,7 @@ public class LovResultCacheManager {
 
 		if (lovDefinition instanceof QueryDetail) {
 			// queries are cached
-			String cacheKey = getCacheKeyBum(profile, lovDefinition, dependencies, object);
+			String cacheKey = getCacheKeyBum(profile, lovDefinition, dependencies, metamodelDrivers);
 			logger.info("Cache key : " + cacheKey);
 			if (cache.contains(cacheKey)) {
 				logger.info("Retrieving lov result from cache...");
@@ -203,7 +220,7 @@ public class LovResultCacheManager {
 				logger.debug(lovResult);
 			} else if (retrieveIfNotcached) {
 				logger.info("Executing lov to get result ...");
-				lovResult = lovDefinition.getLovResult(profile, dependencies, object.getMetamodelDrivers(), locale);
+				lovResult = lovDefinition.getLovResult(profile, dependencies, metamodelDrivers, locale);
 				logger.debug(lovResult);
 				// insert the data in cache
 				if (lovResult != null)
@@ -212,7 +229,7 @@ public class LovResultCacheManager {
 		} else {
 			// scrips, fixed list and java classes are not cached, and returned without considering retrieveIfNotcached input
 			logger.info("Executing lov (NOT QUERY TYPE) to get result ...");
-			lovResult = lovDefinition.getLovResult(profile, dependencies, object.getMetamodelDrivers(), locale);
+			lovResult = lovDefinition.getLovResult(profile, dependencies, metamodelDrivers, locale);
 			logger.debug(lovResult);
 		}
 
@@ -220,45 +237,25 @@ public class LovResultCacheManager {
 		return lovResult;
 	}
 
-	private String getCacheKeyDum(IEngUserProfile profile, ILovDetail lovDefinition, List<? extends AbstractParuse> dependencies, IDrivableBIResource objetc) throws Exception {
-		logger.debug("IN");
-		String toReturn = null;
-		String userID = (String) ((UserProfile) profile).getUserId();
-		if (lovDefinition instanceof QueryDetail) {
-			QueryDetail queryDetail = (QueryDetail) lovDefinition;
-			QueryDetail clone = queryDetail.clone();
-			// clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, objetc.getDrivers()));
-			Map<String, String> parameters = queryDetail.getParametersNameToValueMap(objetc.getDrivers());
-			String statement = queryDetail.getWrappedStatement(dependencies, objetc.getDrivers());
-			statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
-			if (parameters != null && !parameters.isEmpty()) {
-				Map<String, String> types = queryDetail.getParametersNameToTypeMap(objetc.getDrivers());
-				statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
-			}
-			clone.setQueryDefinition(statement);
-			toReturn = userID + ";" + clone.toXML();
-
-		} else {
-			toReturn = userID + ";" + lovDefinition.toXML();
-		}
-		logger.debug("OUT: returning [" + toReturn + "]");
-		return toReturn;
+	private String getCacheKeyDum(IEngUserProfile profile, ILovDetail lovDefinition, List<? extends AbstractParuse> dependencies,
+			List<? extends AbstractDriver> drivers) throws Exception {
+		return getCacheKeyBum(profile, lovDefinition, dependencies, drivers);
 	}
-	
 
-	private String getCacheKeyBum(IEngUserProfile profile, ILovDetail lovDefinition, List<? extends AbstractParuse> dependencies, IDrivableBIResource objetc) throws Exception {
+	private String getCacheKeyBum(IEngUserProfile profile, ILovDetail lovDefinition, List<? extends AbstractParuse> dependencies,
+			List<? extends AbstractDriver> metamodelDrivers) throws Exception {
 		logger.debug("IN");
 		String toReturn = null;
 		String userID = (String) ((UserProfile) profile).getUserId();
 		if (lovDefinition instanceof QueryDetail) {
 			QueryDetail queryDetail = (QueryDetail) lovDefinition;
 			QueryDetail clone = queryDetail.clone();
-			// clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, objetc.getDrivers()));
-			Map<String, String> parameters = queryDetail.getParametersNameToValueMap(objetc.getMetamodelDrivers());
-			String statement = queryDetail.getWrappedStatement(dependencies, objetc.getMetamodelDrivers());
+			// clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, metamodelDrivers));
+			Map<String, String> parameters = queryDetail.getParametersNameToValueMap(metamodelDrivers);
+			String statement = queryDetail.getWrappedStatement(dependencies, metamodelDrivers);
 			statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
 			if (parameters != null && !parameters.isEmpty()) {
-				Map<String, String> types = queryDetail.getParametersNameToTypeMap(objetc.getMetamodelDrivers());
+				Map<String, String> types = queryDetail.getParametersNameToTypeMap(metamodelDrivers);
 				statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
 			}
 			clone.setQueryDefinition(statement);

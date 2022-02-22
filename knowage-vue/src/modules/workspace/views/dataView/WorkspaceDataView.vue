@@ -1,10 +1,10 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary" :style="mainDescriptor.style.maxWidth">
-        <template #left>
+        <template #start>
             <Button id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
             {{ $t('workspace.myData.title') }}
         </template>
-        <template #right>
+        <template #end>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
             <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
             <KnFabButton v-if="tableMode === 'My Datasets'" icon="fas fa-plus" data-test="new-folder-button" @click="showCreationMenu" />
@@ -448,21 +448,10 @@ export default defineComponent({
                     this.filteredDatasets = [...this.datasetList] as any[]
                 } else {
                     this.filteredDatasets = this.datasetList.filter((el: any) => {
-                        return el.label?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.dsTypeCd?.toLowerCase().includes(this.searchWord.toLowerCase()) || this.datasetTagFound(el)
+                        return el.label?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.dsTypeCd?.toLowerCase().includes(this.searchWord.toLowerCase())
                     })
                 }
             }, 250)
-        },
-        datasetTagFound(dataset: any) {
-            let tagFound = false
-            for (let i = 0; i < dataset.tags.length; i++) {
-                const tempTag = dataset.tags[i]
-                if (tempTag.name.toLowerCase() === this.searchWord.toLowerCase()) {
-                    tagFound = true
-                    break
-                }
-            }
-            return tagFound
         }
     }
 })

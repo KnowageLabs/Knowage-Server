@@ -2,7 +2,7 @@
     <div class="kn-page p-d-flex p-flex-row custom-kn-page-width">
         <div id="sideMenu" class="kn-list--column" :style="workspaceDescriptor.style.menuWidth">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('workspace.menuLabels.menuTitle') }}
                 </template>
             </Toolbar>
@@ -52,7 +52,7 @@
 
     <Sidebar class="mySidebar" v-model:visible="sidebarVisible" :showCloseIcon="false">
         <Toolbar class="kn-toolbar kn-toolbar--primary">
-            <template #left>
+            <template #start>
                 {{ $t('workspace.menuLabels.menuTitle') }}
             </template>
         </Toolbar>
@@ -238,7 +238,7 @@ export default defineComponent({
                     value: 'schedulation'
                 })
             }
-            this.menuItems.push({ icon: 'fas fa-filter', key: '6', label: 'workspace.menuLabels.advanced', value: 'advanced' })
+            this.menuItems.push({ icon: 'fas fa-cogs', key: '6', label: 'workspace.menuLabels.advanced', value: 'advanced' })
         },
         executeDocument(document: any) {
             const routeType = this.getRouteDocumentType(document)
@@ -290,7 +290,7 @@ export default defineComponent({
     width: 33.3333%;
 }
 .custom-kn-page-width {
-    width: calc(100vw - #{$mainmenu-width});
+    width: calc(100vw - var(--kn-mainmenu-width));
 }
 @media screen and (max-width: 1024px) {
     #sideMenu {

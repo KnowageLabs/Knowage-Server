@@ -1,7 +1,7 @@
 <template>
     <div id="kn-parameter-sidebar">
         <Toolbar id="kn-parameter-sidebar-toolbar" class="kn-toolbar kn-toolbar--secondary">
-            <template #left>
+            <template #start>
                 <div id="kn-parameter-sidebar-toolbar-icons-container" class="p-d-flex p-flex-row p-jc-around">
                     <i class="fa fa-eraser kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.resetParametersTooltip')" @click="resetAllParameters"></i>
                     <i class="pi pi-pencil kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.savedParametersTooltip')" @click="openSavedParametersDialog"></i>
@@ -69,7 +69,7 @@
                     </div>
                     <div class="p-d-flex p-flex-column">
                         <div class="p-field-radiobutton" v-for="(option, index) in parameter.data" :key="index" :data-test="'parameter-list-' + parameter.id">
-                            <RadioButton v-if="!parameter.multivalue && parameter.parameterValue" :value="option.value" v-model="parameter.parameterValue[0].value" @change="updateDependency(parameter)" />
+                            <RadioButton v-if="!parameter.multivalue && parameter.parameterValue" :value="option.value" v-model="parameter.parameterValue[0].value" @change="setRadioButtonValue(parameter)" />
                             <Checkbox v-if="parameter.multivalue && parameter.parameterValue" :value="option.value" v-model="selectedParameterCheckbox[parameter.id]" @change="setCheckboxValue(parameter)" />
                             <label>{{ option.description }}</label>
                         </div>
@@ -135,8 +135,8 @@
             <Button class="kn-button kn-button--primary p-ml-1" icon="fa fa-chevron-down" :disabled="buttonsDisabled" @click="toggle($event)" />
             <Menu ref="executeButtonMenu" :model="executeMenuItems" :popup="true" />
         </div>
-        <KnParameterPopupDialog v-if="popupDialogVisible" :visible="popupDialogVisible" :selectedParameter="selectedParameter" :propLoading="loading" :parameterPopUpData="parameterPopUpData" @close="popupDialogVisible = false" @save="onPopupSave"></KnParameterPopupDialog>
-        <KnParameterTreeDialog v-if="treeDialogVisible" :visible="treeDialogVisible" :selectedParameter="selectedParameter" :formatedParameterValues="formatedParameterValues" :document="document" @close="onTreeClose" @save="onTreeSave"></KnParameterTreeDialog>
+        <KnParameterPopupDialog :visible="popupDialogVisible" :selectedParameter="selectedParameter" :propLoading="loading" :parameterPopUpData="parameterPopUpData" @close="popupDialogVisible = false" @save="onPopupSave"></KnParameterPopupDialog>
+        <KnParameterTreeDialog :visible="treeDialogVisible" :selectedParameter="selectedParameter" :formatedParameterValues="formatedParameterValues" :document="document" @close="onTreeClose" @save="onTreeSave"></KnParameterTreeDialog>
         <KnParameterSaveDialog :visible="parameterSaveDialogVisible" :propLoading="loading" @close="parameterSaveDialogVisible = false" @saveViewpoint="saveViewpoint"></KnParameterSaveDialog>
         <KnParameterSavedParametersDialog :visible="savedParametersDialogVisible" :propViewpoints="viewpoints" @close="savedParametersDialogVisible = false" @fillForm="fillParameterForm" @executeViewpoint="executeViewpoint" @deleteViewpoint="deleteViewpoint"></KnParameterSavedParametersDialog>
     </div>
@@ -148,7 +148,6 @@ import { formatDate } from '@/helpers/commons/localeHelper'
 import { iDocument, iParameter, iAdmissibleValues } from './KnParameterSidebar'
 import { setVisualDependency, updateVisualDependency } from './KnParameterSidebarVisualDependency'
 import { setDataDependency, updateDataDependency } from './KnParameterSidebarDataDependency'
-import { setLovsDependency, updateLovDependency } from './KnParameterSidebarLovsDependency'
 import Calendar from 'primevue/calendar'
 import Chip from 'primevue/chip'
 import Checkbox from 'primevue/checkbox'
@@ -160,7 +159,6 @@ import KnParameterSavedParametersDialog from './dialogs/KnParameterSavedParamete
 import Menu from 'primevue/menu'
 import MultiSelect from 'primevue/multiselect'
 import RadioButton from 'primevue/radiobutton'
-
 export default defineComponent({
     name: 'kn-parameter-sidebar',
     components: { Calendar, Chip, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton },
@@ -238,8 +236,21 @@ export default defineComponent({
             })
             this.parameters?.filterStatus.forEach((el: any) => setVisualDependency(this.parameters, el))
             this.parameters?.filterStatus.forEach((el: any) => setDataDependency(this.parameters, el))
-            this.parameters?.filterStatus.forEach((el: any) => setLovsDependency(this.parameters, el))
             this.parameters?.filterStatus.forEach((el: any) => this.updateVisualDependency(el))
+        },
+        setDataDependency(parameter: iParameter) {
+            if (parameter.dependencies.data.length !== 0) {
+                parameter.dependencies.data.forEach((dependency: any) => {
+                    const index = this.parameters.filterStatus.findIndex((param: any) => {
+                        return param.urlName === dependency.parFatherUrlName
+                    })
+                    if (index !== -1) {
+                        const tempParameter = this.parameters.filterStatus[index]
+                        parameter.dataDependsOnParameters ? parameter.dataDependsOnParameters.push(tempParameter) : (parameter.dataDependsOnParameters = [tempParameter])
+                        tempParameter.dataDependentParameters ? tempParameter.dataDependentParameters.push(parameter) : (tempParameter.dataDependentParameters = [parameter])
+                    }
+                })
+            }
         },
         resetParameterValue(parameter: any) {
             if (!parameter.driverDefaultValue) {
@@ -280,11 +291,9 @@ export default defineComponent({
                 }
                 parameter.parameterValue[0].value = parameter.driverDefaultValue[0].value ?? parameter.driverDefaultValue[0][valueIndex]
             }
-            this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
         },
         resetAllParameters() {
             this.parameters.filterStatus.forEach((el: any) => this.resetParameterValue(el))
-            this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
         },
         toggle(event: Event) {
             this.createMenuItems()
@@ -311,6 +320,11 @@ export default defineComponent({
                 }
             }
             return false
+        },
+        setRadioButtonValue(parameter: iParameter) {
+            const index = parameter.data?.findIndex((el: any) => el.value === parameter.parameterValue[0].value)
+            if (index !== -1) parameter.parameterValue[0].description = parameter.data[index].description
+            this.updateDependency(parameter)
         },
         setCheckboxValue(parameter: iParameter) {
             parameter.parameterValue = this.selectedParameterCheckbox[parameter.id].map((el: any) => {
@@ -349,7 +363,7 @@ export default defineComponent({
                 if (!parameter.multivalue) {
                     parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
                 } else {
-                    parameters.push({ label: parameter.label, value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription ?? '' })
+                    parameters.push({ label: parameter.label, value: parameter.parameterValue, description: parameter.parameterDescription ?? '' })
                 }
             })
             return parameters
@@ -387,7 +401,6 @@ export default defineComponent({
         updateDependency(parameter: iParameter) {
             this.updateVisualDependency(parameter)
             updateDataDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http)
-            updateLovDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http)
         },
         openSaveParameterDialog() {
             this.parameterSaveDialogVisible = true

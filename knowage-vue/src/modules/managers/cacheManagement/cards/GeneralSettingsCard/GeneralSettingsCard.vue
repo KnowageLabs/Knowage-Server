@@ -2,10 +2,10 @@
     <Card class="p-m-2">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-toolbar-group-right">
-                <template #left>
+                <template #start>
                     {{ $t('managers.cacheManagement.generalSettings') }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button class="kn-button p-button-text p-button-rounded" @click="save" data-test="save-button">{{ $t('common.save') }}</Button>
                     <Button class="kn-button p-button-text p-button-rounded" @click="discardChanges" data-test="reset-button">{{ $t('managers.cacheManagement.discard') }}</Button>
                 </template>
