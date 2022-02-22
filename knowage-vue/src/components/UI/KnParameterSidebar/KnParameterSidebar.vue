@@ -1,7 +1,7 @@
 <template>
     <div id="kn-parameter-sidebar">
         <Toolbar id="kn-parameter-sidebar-toolbar" class="kn-toolbar kn-toolbar--secondary">
-            <template #start>
+            <template #left>
                 <div id="kn-parameter-sidebar-toolbar-icons-container" class="p-d-flex p-flex-row p-jc-around">
                     <i class="fa fa-eraser kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.resetParametersTooltip')" @click="resetAllParameters"></i>
                     <i class="pi pi-pencil kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.savedParametersTooltip')" @click="openSavedParametersDialog"></i>
@@ -386,6 +386,9 @@ export default defineComponent({
                         tempString += i === parameter.parameterValue.length - 1 ? '' : ';'
                     }
                     parameters[parameter.urlName + '_field_visible_description'] = tempString
+                } else {
+                    parameters[parameter.urlName] = parameter.parameterValue[0].value
+                    parameters[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].description
                 }
             })
             return parameters
@@ -449,6 +452,9 @@ export default defineComponent({
                         if (parameter.selectionType === 'LIST') {
                             this.selectedParameterCheckbox[parameter.id] = parameter.parameterValue?.map((parameterValue: any) => parameterValue.value)
                         }
+                    } else {
+                        parameter.parameterValue[0].value = tempParameters[key]
+                        parameter.parameterValue[0].description = tempParameters[key + '_field_visible_description']
                     }
                 }
                 this.savedParametersDialogVisible = false
