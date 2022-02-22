@@ -46,8 +46,21 @@
                 @reloadRepositoryMenu="getAllFolders"
                 @breadcrumbClicked="setSelectedBreadcrumb($event)"
                 @execute="executeDocument($event)"
+                @showQbeDialog="openQbeDialog"
             />
         </div>
+
+        <Dialog class="metaweb-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="workspaceDescriptor.style.flex" :visible="qbeDialogVisible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
+            <template #header>
+                <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
+                    <template #end>
+                        <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="metadataSave" />
+                        <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeMetawebConfirm" />
+                    </template>
+                </Toolbar>
+            </template>
+            <iframe :src="qbeUrl" style="width:100%;height:100%"></iframe>
+        </Dialog>
     </div>
 
     <Sidebar class="mySidebar" v-model:visible="sidebarVisible" :showCloseIcon="false">
@@ -95,10 +108,11 @@ import Listbox from 'primevue/listbox'
 import WorkspaceDocumentTree from './genericComponents/WorkspaceDocumentTree.vue'
 import workspaceDescriptor from './WorkspaceDescriptor.json'
 import WorkspaceNewFolderDialog from './views/repositoryView/dialogs/WorkspaceNewFolderDialog.vue'
+import Dialog from 'primevue/dialog'
 
 export default defineComponent({
     name: 'dataset-management',
-    components: { Sidebar, Listbox, Accordion, AccordionTab, WorkspaceDocumentTree, WorkspaceNewFolderDialog },
+    components: { Sidebar, Listbox, Accordion, AccordionTab, WorkspaceDocumentTree, WorkspaceNewFolderDialog, Dialog },
     computed: {
         showRepository(): any {
             return (this.$store.state as any).user.functionalities.includes('SaveIntoFolderFunctionality')
@@ -123,7 +137,9 @@ export default defineComponent({
             selectedBreadcrumb: null as any,
             accordionIcon: true,
             loading: false,
-            menuItems: [] as any
+            qbeDialogVisible: false,
+            menuItems: [] as any,
+            qbeUrl: ''
         }
     },
     created() {
@@ -281,6 +297,14 @@ export default defineComponent({
             }
 
             return routeDocumentType
+        },
+        openQbeDialog(url) {
+            // this.qbeUrl = process.env.VUE_APP_HOST_URL + url
+            console.log(url)
+            this.qbeUrl =
+                process.env.VUE_APP_HOST_URL +
+                '/knowageqbeengine/servlet/AdapterHTTP?NEW_SESSION=TRUE&SBI_LANGUAGE=en&SBI_SCRIPT=&user_id=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGVtb19hZG1pbiIsImV4cCI6MTY0NTU2MzE4Nn0.yplpxXw2GlbqhLLJvnUsSteXmKrfLFMkdg_1k7FgQuI&DEFAULT_DATASOURCE_FOR_WRITING_LABEL=CacheDS&SBI_COUNTRY=US&SBI_EXECUTION_ID=ecbf3ee693db11ec8719dd970cd03e2f&ACTION_NAME=QBE_ENGINE_START_ACTION_FROM_BM&MODEL_NAME=Expenses&DATA_SOURCE_LABEL=Foodmart&DATA_SOURCE_ID=1&isTechnicalUser=true&&DRIVERS=%7B%22DarkoTest2%22:%5B%7B%22value%22:%22carCategory%22,%22description%22:%22carCategory%22%7D%5D%7D'
+            this.qbeDialogVisible = true
         }
     }
 })
@@ -347,5 +371,18 @@ export default defineComponent({
     #showSidenavIcon {
         display: none;
     }
+}
+
+.metaweb-dialog.p-dialog {
+    max-height: 100%;
+    height: 100vh;
+    width: calc(100vw - var(--kn-mainmenu-width));
+    margin: 0;
+}
+.remove-padding.p-dialog .p-dialog-header,
+.remove-padding.p-dialog .p-dialog-content {
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
 }
 </style>
