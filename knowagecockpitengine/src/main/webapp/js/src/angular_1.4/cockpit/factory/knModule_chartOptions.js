@@ -100,8 +100,12 @@ angular.module('cockpitModule').factory('knModule_chartOptions',function(sbiModu
 				groupedSeries: [false],
 			}
 		},
-		checkRanges(ranges){
-			return true;
+		rangeCheck(ranges){
+			var max=[];
+			for(var range of ranges){
+				max.push(range.max);
+			}
+			return Math.max(max) < (Math.min(max)*10)
 		},
 		getAvailableCharts(model){
 			var chartsToReturn = [];
