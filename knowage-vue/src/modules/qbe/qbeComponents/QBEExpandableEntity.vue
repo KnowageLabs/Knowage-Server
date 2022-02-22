@@ -119,7 +119,7 @@ export default defineComponent({
             justify-content: flex-start;
             padding: 4px 0px 4px 20px;
             font-size: 0.8rem;
-            border-bottom: 1px solid $color-borders;
+            border-bottom: 1px solid #cccccc;
             height: 24px;
             cursor: grab;
             button {
