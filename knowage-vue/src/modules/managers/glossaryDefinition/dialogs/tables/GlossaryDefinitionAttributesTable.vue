@@ -2,10 +2,10 @@
     <Card style="width:100%">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     <span>{{ $t('managers.glossary.common.attributes') }}</span>
                 </template>
-                <template #right>
+                <template #end>
                     <Button :label="$t('managers.glossary.common.add')" class="p-button-text p-button-rounded p-button-plain" @click="showDialog" />
                 </template>
             </Toolbar>
@@ -30,35 +30,35 @@
     </Card>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import glossaryDefinitionDialogDescriptor from '../GlossaryDefinitionDialogDescriptor.json'
-export default defineComponent({
-    name: 'attributes-table',
-    components: { DataTable, Column },
-    props: {},
-    data() {
-        return {
-            mockedAtributes: [
-                { name: 'mock1', value: 0 },
-                { name: 'mock2', value: 0 }
-            ],
-            glossaryDefinitionDialogDescriptor
-        }
-    },
-    computed: {},
-    watch: {
-        propWord() {}
-    },
-    mounted() {},
-    methods: {
-        showDialog() {
-            console.log('DIALOG')
+    import { defineComponent } from 'vue'
+    import DataTable from 'primevue/datatable'
+    import Column from 'primevue/column'
+    import glossaryDefinitionDialogDescriptor from '../GlossaryDefinitionDialogDescriptor.json'
+    export default defineComponent({
+        name: 'attributes-table',
+        components: { DataTable, Column },
+        props: {},
+        data() {
+            return {
+                mockedAtributes: [
+                    { name: 'mock1', value: 0 },
+                    { name: 'mock2', value: 0 }
+                ],
+                glossaryDefinitionDialogDescriptor
+            }
         },
-        deleteAttribute(attribute: any) {
-            console.log(attribute)
+        computed: {},
+        watch: {
+            propWord() {}
+        },
+        mounted() {},
+        methods: {
+            showDialog() {
+                console.log('DIALOG')
+            },
+            deleteAttribute(attribute: any) {
+                console.log(attribute)
+            }
         }
-    }
-})
+    })
 </script>

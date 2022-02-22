@@ -87,7 +87,6 @@ export default defineComponent({
             }
             const url = this.mode === 'execution' ? `2.0/documentexecution/admissibleValuesTree` : `/3.0/datasets/${this.document?.label}/admissibleValuesTree`
             const postData = { label: this.document?.label, role: (this.$store.state as any).user.sessionRole, parameterId: this.parameter?.urlName, mode: 'complete', treeLovNode: parent ? parent.id : 'lovroot', parameters: this.formatedParameterValues }
-
             let content = [] as any[]
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)
@@ -98,7 +97,6 @@ export default defineComponent({
                 )
                 .catch((error: any) => console.log('ERROR: ', error))
             content.forEach((el: any) => this.checkIfNodeIsSelected(el))
-
             this.attachContentToTree(parent, content)
             this.loading = false
             if (parent) this.setOpenFolderIcon(parent)
@@ -165,7 +163,6 @@ export default defineComponent({
         },
         save() {
             if (!this.parameter) return
-
             if (!this.multivalue) {
                 this.parameter.parameterValue = this.selectedValue ? [{ value: this.selectedValue.value, description: this.selectedValue.description ?? '' }] : []
                 this.selectedValuesKeys = {}
@@ -175,14 +172,12 @@ export default defineComponent({
                 this.multipleSelectedValues?.forEach((el: any) => this.parameter?.parameterValue.push({ value: el.value, description: el.description ?? '' }))
                 this.multipleSelectedValues = []
             }
-
             this.nodes = []
             this.$emit('save', this.parameter)
         }
     }
 })
 </script>
-
 <style lang="scss" scoped>
 #kn-parameter-tree {
     border: none;

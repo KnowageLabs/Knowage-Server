@@ -1,11 +1,11 @@
 <template>
     <div class="kn-height-full detail-page-container">
         <Toolbar v-if="!embed && !olapDesignerMode" class="kn-toolbar kn-toolbar--primary p-col-12">
-            <template #left>
+            <template #start>
                 <span>{{ document?.label }}</span>
             </template>
 
-            <template #right>
+            <template #end>
                 <div class="p-d-flex p-jc-around">
                     <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'VIEW'" class="pi pi-pencil kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocumentConfirm"></i>
                     <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'" class="fa fa-eye kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocumentConfirm"></i>
@@ -282,10 +282,6 @@ export default defineComponent({
                 this.toolbarMenuItems[3].items.unshift({ icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() })
             }
 
-            if (this.isOrganizerEnabled()) {
-                this.toolbarMenuItems[3].items.unshift({ icon: 'fa fa-suitcase ', label: this.$t('documentExecution.main.addToWorkspace'), command: () => this.addToWorkspace() })
-            }
-
             if (this.mode === 'olap') {
                 this.toolbarMenuItems[3].items.unshift({ icon: '', label: this.$t('documentExecution.main.showOLAPCustomView'), command: () => this.showOLAPCustomView() })
             }
@@ -488,12 +484,15 @@ export default defineComponent({
             }
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData)
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData, { headers: { 'X-Disable-Interceptor': 'true' } })
                 .then((response: AxiosResponse<any>) => {
                     this.urlData = response.data
                     this.sbiExecutionId = this.urlData?.sbiExecutionId as string
                 })
-                .catch(() => {})
+                .catch((response: AxiosResponse<any>) => {
+                    this.urlData = response.data
+                    this.sbiExecutionId = this.urlData?.sbiExecutionId as string
+                })
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) {
@@ -770,7 +769,7 @@ export default defineComponent({
             if (index !== -1) this.schedulations.splice(index, 1)
         },
         getFormattedDate(date: any) {
-            return moment(date).format('DD/MM/YYYY')
+            return moment(date).format('DDMMYYYY')
         },
         onBreadcrumbClick(item: any) {
             this.document = item.document
@@ -873,27 +872,6 @@ export default defineComponent({
             if (this.$route.name === 'olap-designer') {
                 this.olapDesignerMode = true
             }
-        },
-        isOrganizerEnabled() {
-            return this.user.isSuperadmin || this.user.functionalities.includes('SaveIntoFolderFunctionality')
-        },
-        async addToWorkspace() {
-            this.loading = true
-            await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/${this.document.id}`, {}, { headers: { 'X-Disable-Errors': 'true' } })
-                .then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.updateTitle'),
-                        msg: this.$t('common.toast.success')
-                    })
-                })
-                .catch((error) => {
-                    this.$store.commit('setError', {
-                        title: this.$t('common.toast.updateTitle'),
-                        msg: error.message === 'sbi.workspace.organizer.document.addtoorganizer.error.duplicateentry' ? this.$t('documentExecution.main.addToWorkspaceError') : error.message
-                    })
-                })
-            this.loading = false
         }
     }
 })

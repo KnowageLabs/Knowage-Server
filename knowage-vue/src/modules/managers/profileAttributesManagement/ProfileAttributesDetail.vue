@@ -1,9 +1,9 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary">
-        <template #left>
+        <template #start>
             {{ attribute.attributeName }}
         </template>
-        <template #right>
+        <template #end>
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="save" :disabled="formValid" />
             <Button class="p-button-text p-button-rounded p-button-plain" icon="pi pi-times" @click="closeForm" />
         </template>

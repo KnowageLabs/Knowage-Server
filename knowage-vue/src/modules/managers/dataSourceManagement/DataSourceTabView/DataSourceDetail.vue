@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-        <template #left>{{ datasource.label }}</template>
-        <template #right>
+        <template #start>{{ datasource.label }}</template>
+        <template #end>
             <Button icon="pi pi-info" class="p-button-text p-button-rounded p-button-plain" :disabled="readOnly" @click="testDataSource" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="readOnly || buttonDisabled" @click="handleSubmit" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
@@ -202,288 +202,288 @@
 </template>
 
 <script lang="ts">
-/* eslint-disable no-prototype-builtins */
-import { defineComponent } from 'vue'
-import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import { AxiosResponse } from 'axios'
-import useValidate from '@vuelidate/core'
-import dataSourceDescriptor from '../DataSourceDescriptor.json'
-import dataSourceDetailValidationDescriptor from './DataSourceDetailValidationDescriptor.json'
-import DataSourceAdvancedOptions from '../DataSourceAdvancedOptions/DataSourceAdvancedOptions.vue'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import Dropdown from 'primevue/dropdown'
-import RadioButton from 'primevue/radiobutton'
-import Checkbox from 'primevue/checkbox'
-import Card from 'primevue/card'
-import Tooltip from 'primevue/tooltip'
-import Message from 'primevue/message'
+    /* eslint-disable no-prototype-builtins */
+    import { defineComponent } from 'vue'
+    import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
+    import { AxiosResponse } from 'axios'
+    import useValidate from '@vuelidate/core'
+    import dataSourceDescriptor from '../DataSourceDescriptor.json'
+    import dataSourceDetailValidationDescriptor from './DataSourceDetailValidationDescriptor.json'
+    import DataSourceAdvancedOptions from '../DataSourceAdvancedOptions/DataSourceAdvancedOptions.vue'
+    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+    import Dropdown from 'primevue/dropdown'
+    import RadioButton from 'primevue/radiobutton'
+    import Checkbox from 'primevue/checkbox'
+    import Card from 'primevue/card'
+    import Tooltip from 'primevue/tooltip'
+    import Message from 'primevue/message'
 
-export default defineComponent({
-    emits: ['touched', 'closed', 'inserted'],
+    export default defineComponent({
+        emits: ['touched', 'closed', 'inserted'],
 
-    directives: {
-        tooltip: Tooltip
-    },
-
-    components: {
-        Card,
-        KnValidationMessages,
-        Dropdown,
-        RadioButton,
-        Checkbox,
-        Message,
-        DataSourceAdvancedOptions
-    },
-
-    props: {
-        selectedDatasource: {
-            type: Object,
-            required: false
+        directives: {
+            tooltip: Tooltip
         },
-        user: {
-            type: Object,
-            required: false
-        },
-        databases: Array,
-        id: String
-    },
 
-    mounted() {
-        this.currentUser = { ...this.user } as any
-        this.availableDatabases = this.databases
-        if (this.selectedDatasource) {
-            this.loadExistingDataSourceValues()
-        } else {
-            this.createNewDataSourceValues()
-        }
-    },
+        components: {
+            Card,
+            KnValidationMessages,
+            Dropdown,
+            RadioButton,
+            Checkbox,
+            Message,
+            DataSourceAdvancedOptions
+        },
 
-    watch: {
-        id() {
-            if (this.id == undefined) {
-                this.createNewDataSourceValues()
-            } else {
-                this.loadExistingDataSourceValues()
-            }
-            this.touched = false
+        props: {
+            selectedDatasource: {
+                type: Object,
+                required: false
+            },
+            user: {
+                type: Object,
+                required: false
+            },
+            databases: Array,
+            id: String
         },
-        databases() {
-            this.availableDatabases = this.databases
-            this.selectDatabase(this.datasource.dialectName)
-            this.checkIfReadOnly()
-        },
-        user() {
+
+        mounted() {
             this.currentUser = { ...this.user } as any
-        }
-    },
-
-    computed: {
-        operation() {
-            if (this.id) {
-                return 'update'
-            }
-            return 'insert'
-        },
-        buttonDisabled(): any {
-            if (this.v$.$invalid) {
-                return true
-            }
-            return false
-        }
-    },
-
-    data() {
-        return {
-            v$: useValidate() as any,
-            dataSourceDescriptor,
-            datasource: {} as any,
-            availableDatabases: [] as any,
-            selectedDatabase: {} as any,
-            jdbcOrJndi: {} as any,
-            jdbcPoolConfiguration: {} as any,
-            currentUser: {} as any,
-            ownerMessage: '',
-            showOwnerMessage: false,
-            loading: false,
-            touched: false,
-            readOnly: false,
-            disableLabelField: false
-        }
-    },
-
-    validations() {
-        const jndiTypeRequired = (jndiType) => (value) => {
-            return this.jdbcOrJndi.type != jndiType || value
-        }
-        const customValidators: ICustomValidatorMap = {
-            'jndi-name-required': jndiTypeRequired('JNDI'),
-            'jdbc-data-required': jndiTypeRequired('JDBC')
-        }
-        const validationObject = {
-            datasource: createValidations('datasource', dataSourceDetailValidationDescriptor.validations.datasource, customValidators)
-        }
-        return validationObject
-    },
-
-    methods: {
-        setConnetionType() {
-            if (this.datasource.driver) {
-                this.jdbcOrJndi.type = 'JDBC'
-            }
-            if (this.datasource.jndi != undefined && this.datasource.jndi != '') {
-                this.jdbcOrJndi.type = 'JNDI'
-            }
-        },
-
-        createNewDataSourceValues() {
-            this.jdbcOrJndi.type = 'JDBC'
-            this.jdbcPoolConfiguration = { ...dataSourceDescriptor.newDataSourceValues.jdbcPoolConfiguration }
-            this.datasource = { ...dataSourceDescriptor.newDataSourceValues }
-            this.disableLabelField = false
-            this.checkIfReadOnly()
-        },
-
-        loadExistingDataSourceValues() {
-            this.datasource = { ...this.selectedDatasource } as any
-            this.jdbcPoolConfiguration = { ...this.datasource.jdbcPoolConfiguration } as any
-            this.disableLabelField = true
-            this.setConnetionType()
-            this.selectDatabase(this.datasource.dialectName)
-            this.checkIfReadOnly()
-        },
-
-        convertToMili(dsToSave) {
-            dsToSave.jdbcPoolConfiguration.maxWait *= 1000
-            dsToSave.jdbcPoolConfiguration.timeBetweenEvictionRuns *= 1000
-            dsToSave.jdbcPoolConfiguration.minEvictableIdleTimeMillis *= 1000
-        },
-
-        selectDatabase(selectedDatabaseDialect) {
-            this.availableDatabases.forEach((database) => {
-                if (database.databaseDialect.value == selectedDatabaseDialect) {
-                    this.selectedDatabase = database
-                }
-            })
-            if (!this.selectedDatabase.cacheSupported) {
-                this.datasource.writeDefault = false
-                this.datasource.readOnly = true
-            }
-        },
-
-        clearType() {
-            if (!this.datasource.hasOwnProperty('dsId')) {
-                if (this.jdbcOrJndi.type == 'JDBC') {
-                    this.datasource.jndi = ''
-                    this.datasource.jdbcPoolConfiguration = { ...dataSourceDescriptor.newDataSourceValues.jdbcPoolConfiguration }
-                } else {
-                    this.datasource.urlConnection = ''
-                    this.datasource.user = ''
-                    this.datasource.pwd = ''
-                    this.datasource.driver = ''
-                    delete this.datasource.jdbcPoolConfiguration
-                }
-            } else {
-                if (this.jdbcOrJndi.type == 'JDBC') {
-                    this.datasource.jndi = ''
-                    if (!this.datasource.hasOwnProperty('jdbcPoolConfiguration')) {
-                        this.jdbcPoolConfiguration = { ...dataSourceDescriptor.newDataSourceValues.jdbcPoolConfiguration }
-                        this.datasource.jdbcPoolConfiguration = { ...dataSourceDescriptor.newDataSourceValues.jdbcPoolConfiguration }
-                    }
-                }
-            }
-        },
-
-        checkIfReadOnly() {
+            this.availableDatabases = this.databases
             if (this.selectedDatasource) {
-                if (this.currentUser.isSuperadmin || (this.currentUser.userId == this.datasource.owner && (!this.datasource.hasOwnProperty('jndi') || this.datasource.jndi == ''))) {
-                    this.showOwnerMessage = false
-                    this.readOnly = false
-                } else {
-                    this.ownerMessage = this.$t('managers.dataSourceManagement.form.notOwner')
-                    this.showOwnerMessage = true
-                    this.readOnly = true
-                }
+                this.loadExistingDataSourceValues()
             } else {
-                this.readOnly = false
+                this.createNewDataSourceValues()
             }
         },
 
-        async testDataSource() {
-            var url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'datasourcestest/2.0/test/'
-            var dsToTest = {} as any
-            dsToTest = { ...this.datasource }
-            dsToTest.type = this.jdbcOrJndi.type
-
-            await this.$http.post(url, dsToTest).then((response: AxiosResponse<any>) => {
-                if (response.data.error) {
-                    this.$store.commit('setError', { title: this.$t('managers.dataSourceManagement.form.errorTitle'), msg: response.data.error })
+        watch: {
+            id() {
+                if (this.id == undefined) {
+                    this.createNewDataSourceValues()
                 } else {
-                    this.$store.commit('setInfo', { msg: this.$t('managers.dataSourceManagement.form.testOk') })
+                    this.loadExistingDataSourceValues()
                 }
-            })
+                this.touched = false
+            },
+            databases() {
+                this.availableDatabases = this.databases
+                this.selectDatabase(this.datasource.dialectName)
+                this.checkIfReadOnly()
+            },
+            user() {
+                this.currentUser = { ...this.user } as any
+            }
         },
 
-        async createOrUpdate(url, dsToSave) {
-            return this.operation === 'update' ? this.$http.put(url, dsToSave) : this.$http.post(url, dsToSave)
-        },
-
-        async handleSubmit() {
-            if (this.v$.$invalid) {
-                return
-            }
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/'
-            let dsToSave = {} as any
-            dsToSave = { ...this.datasource }
-
-            if (dsToSave.hasOwnProperty('jdbcPoolConfiguration')) {
-                this.convertToMili(dsToSave)
-            }
-
-            await this.createOrUpdate(url, dsToSave).then((response: AxiosResponse<any>) => {
-                if (response.data.errors) {
-                    this.$store.commit('setError', { title: 'Error', msg: response.data.error })
-                } else {
-                    this.$store.commit('setInfo', { title: 'Ok', msg: 'Saved OK' })
+        computed: {
+            operation() {
+                if (this.id) {
+                    return 'update'
                 }
-            })
-            this.$emit('inserted')
-            this.touched = false
+                return 'insert'
+            },
+            buttonDisabled(): any {
+                if (this.v$.$invalid) {
+                    return true
+                }
+                return false
+            }
         },
 
-        closeTemplateConfirm() {
-            if (!this.touched) {
-                this.closeTemplate()
-            } else {
-                this.$confirm.require({
-                    message: this.$t('common.toast.unsavedChangesMessage'),
-                    header: this.$t('common.toast.unsavedChangesHeader'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => {
-                        this.touched = false
-                        this.closeTemplate()
+        data() {
+            return {
+                v$: useValidate() as any,
+                dataSourceDescriptor,
+                datasource: {} as any,
+                availableDatabases: [] as any,
+                selectedDatabase: {} as any,
+                jdbcOrJndi: {} as any,
+                jdbcPoolConfiguration: {} as any,
+                currentUser: {} as any,
+                ownerMessage: '',
+                showOwnerMessage: false,
+                loading: false,
+                touched: false,
+                readOnly: false,
+                disableLabelField: false
+            }
+        },
+
+        validations() {
+            const jndiTypeRequired = (jndiType) => (value) => {
+                return this.jdbcOrJndi.type != jndiType || value
+            }
+            const customValidators: ICustomValidatorMap = {
+                'jndi-name-required': jndiTypeRequired('JNDI'),
+                'jdbc-data-required': jndiTypeRequired('JDBC')
+            }
+            const validationObject = {
+                datasource: createValidations('datasource', dataSourceDetailValidationDescriptor.validations.datasource, customValidators)
+            }
+            return validationObject
+        },
+
+        methods: {
+            setConnetionType() {
+                if (this.datasource.driver) {
+                    this.jdbcOrJndi.type = 'JDBC'
+                }
+                if (this.datasource.jndi != undefined && this.datasource.jndi != '') {
+                    this.jdbcOrJndi.type = 'JNDI'
+                }
+            },
+
+            createNewDataSourceValues() {
+                this.jdbcOrJndi.type = 'JDBC'
+                this.jdbcPoolConfiguration = { ...dataSourceDescriptor.newDataSourceValues.jdbcPoolConfiguration }
+                this.datasource = { ...dataSourceDescriptor.newDataSourceValues }
+                this.disableLabelField = false
+                this.checkIfReadOnly()
+            },
+
+            loadExistingDataSourceValues() {
+                this.datasource = { ...this.selectedDatasource } as any
+                this.jdbcPoolConfiguration = { ...this.datasource.jdbcPoolConfiguration } as any
+                this.disableLabelField = true
+                this.setConnetionType()
+                this.selectDatabase(this.datasource.dialectName)
+                this.checkIfReadOnly()
+            },
+
+            convertToMili(dsToSave) {
+                dsToSave.jdbcPoolConfiguration.maxWait *= 1000
+                dsToSave.jdbcPoolConfiguration.timeBetweenEvictionRuns *= 1000
+                dsToSave.jdbcPoolConfiguration.minEvictableIdleTimeMillis *= 1000
+            },
+
+            selectDatabase(selectedDatabaseDialect) {
+                this.availableDatabases.forEach((database) => {
+                    if (database.databaseDialect.value == selectedDatabaseDialect) {
+                        this.selectedDatabase = database
                     }
                 })
+                if (!this.selectedDatabase.cacheSupported) {
+                    this.datasource.writeDefault = false
+                    this.datasource.readOnly = true
+                }
+            },
+
+            clearType() {
+                if (!this.datasource.hasOwnProperty('dsId')) {
+                    if (this.jdbcOrJndi.type == 'JDBC') {
+                        this.datasource.jndi = ''
+                        this.datasource.jdbcPoolConfiguration = { ...dataSourceDescriptor.newDataSourceValues.jdbcPoolConfiguration }
+                    } else {
+                        this.datasource.urlConnection = ''
+                        this.datasource.user = ''
+                        this.datasource.pwd = ''
+                        this.datasource.driver = ''
+                        delete this.datasource.jdbcPoolConfiguration
+                    }
+                } else {
+                    if (this.jdbcOrJndi.type == 'JDBC') {
+                        this.datasource.jndi = ''
+                        if (!this.datasource.hasOwnProperty('jdbcPoolConfiguration')) {
+                            this.jdbcPoolConfiguration = { ...dataSourceDescriptor.newDataSourceValues.jdbcPoolConfiguration }
+                            this.datasource.jdbcPoolConfiguration = { ...dataSourceDescriptor.newDataSourceValues.jdbcPoolConfiguration }
+                        }
+                    }
+                }
+            },
+
+            checkIfReadOnly() {
+                if (this.selectedDatasource) {
+                    if (this.currentUser.isSuperadmin || (this.currentUser.userId == this.datasource.owner && (!this.datasource.hasOwnProperty('jndi') || this.datasource.jndi == ''))) {
+                        this.showOwnerMessage = false
+                        this.readOnly = false
+                    } else {
+                        this.ownerMessage = this.$t('managers.dataSourceManagement.form.notOwner')
+                        this.showOwnerMessage = true
+                        this.readOnly = true
+                    }
+                } else {
+                    this.readOnly = false
+                }
+            },
+
+            async testDataSource() {
+                var url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'datasourcestest/2.0/test/'
+                var dsToTest = {} as any
+                dsToTest = { ...this.datasource }
+                dsToTest.type = this.jdbcOrJndi.type
+
+                await this.$http.post(url, dsToTest).then((response: AxiosResponse<any>) => {
+                    if (response.data.error) {
+                        this.$store.commit('setError', { title: this.$t('managers.dataSourceManagement.form.errorTitle'), msg: response.data.error })
+                    } else {
+                        this.$store.commit('setInfo', { msg: this.$t('managers.dataSourceManagement.form.testOk') })
+                    }
+                })
+            },
+
+            async createOrUpdate(url, dsToSave) {
+                return this.operation === 'update' ? this.$http.put(url, dsToSave) : this.$http.post(url, dsToSave)
+            },
+
+            async handleSubmit() {
+                if (this.v$.$invalid) {
+                    return
+                }
+                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/'
+                let dsToSave = {} as any
+                dsToSave = { ...this.datasource }
+
+                if (dsToSave.hasOwnProperty('jdbcPoolConfiguration')) {
+                    this.convertToMili(dsToSave)
+                }
+
+                await this.createOrUpdate(url, dsToSave).then((response: AxiosResponse<any>) => {
+                    if (response.data.errors) {
+                        this.$store.commit('setError', { title: 'Error', msg: response.data.error })
+                    } else {
+                        this.$store.commit('setInfo', { title: 'Ok', msg: 'Saved OK' })
+                    }
+                })
+                this.$emit('inserted')
+                this.touched = false
+            },
+
+            closeTemplateConfirm() {
+                if (!this.touched) {
+                    this.closeTemplate()
+                } else {
+                    this.$confirm.require({
+                        message: this.$t('common.toast.unsavedChangesMessage'),
+                        header: this.$t('common.toast.unsavedChangesHeader'),
+                        icon: 'pi pi-exclamation-triangle',
+                        accept: () => {
+                            this.touched = false
+                            this.closeTemplate()
+                        }
+                    })
+                }
+            },
+            onAdvancedOptionsChange(event) {
+                this.datasource.jdbcPoolConfiguration[event.fieldName] = event.value
+                this.touched = true
+                this.$emit('touched')
+            },
+            onFieldChange() {
+                this.touched = true
+                this.$emit('touched')
+            },
+            closeTemplate() {
+                this.$router.push('/datasource')
+                this.$emit('closed')
             }
-        },
-        onAdvancedOptionsChange(event) {
-            this.datasource.jdbcPoolConfiguration[event.fieldName] = event.value
-            this.touched = true
-            this.$emit('touched')
-        },
-        onFieldChange() {
-            this.touched = true
-            this.$emit('touched')
-        },
-        closeTemplate() {
-            this.$router.push('/datasource')
-            this.$emit('closed')
         }
-    }
-})
+    })
 </script>
 
 <style lang="scss" scoped>
-::v-deep(.p-toolbar-group-right) {
-    height: 100%;
-}
+    ::v-deep(.p-toolbar-group-right) {
+        height: 100%;
+    }
 </style>

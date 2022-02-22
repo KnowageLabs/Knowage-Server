@@ -63,7 +63,6 @@ import SelectButton from 'primevue/selectbutton'
 import WorkspaceModelsTable from './tables/WorkspaceModelsTable.vue'
 import { AxiosResponse } from 'axios'
 import QBE from '@/modules/qbe/QBE.vue'
-
 export default defineComponent({
     name: 'workspace-models-view',
     components: { DetailSidebar, KnFabButton, Message, SelectButton, WorkspaceModelsTable, WorkspaceCard, QBE },
@@ -225,7 +224,6 @@ export default defineComponent({
 #model-select-buttons {
     margin: 2rem 2rem 2rem auto;
 }
-
 #model-search {
     flex: 0.3;
 }

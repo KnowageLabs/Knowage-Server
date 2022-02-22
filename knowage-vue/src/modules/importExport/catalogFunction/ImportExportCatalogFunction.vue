@@ -45,83 +45,83 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { AxiosResponse } from 'axios'
-    import Column from 'primevue/column'
-    import DataTable from 'primevue/datatable'
-    import { FilterMatchMode, FilterOperator } from 'primevue/api'
-    import InputText from 'primevue/inputtext'
+import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
+import { FilterMatchMode, FilterOperator } from 'primevue/api'
+import InputText from 'primevue/inputtext'
 
-    import Tag from 'primevue/tag'
-    import importExportDescriptor from '../ImportExportDescriptor.json'
-    import { ICatalogFunctionTemplate } from '@/modules/importExport/catalogFunction/ICatalogFunctionTemplate'
+import Tag from 'primevue/tag'
+import importExportDescriptor from '../ImportExportDescriptor.json'
+import { ICatalogFunctionTemplate } from '@/modules/importExport/catalogFunction/ICatalogFunctionTemplate'
 
-    export default defineComponent({
-        name: 'import-export-catalog-function',
-        components: { Column, DataTable, InputText, Tag },
-        props: { selectedItems: Object },
-        data() {
-            return {
-                filters: {},
-                importExportDescriptor: importExportDescriptor,
-                product: {},
-                selectedCatalogFunctionItems: [],
-                functions: [] as Array<ICatalogFunctionTemplate>,
-                FUNCTIONALITY: 'catalogFunction'
-            }
-        },
-        created() {
-            this.filters = {
-                global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-                name: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-                type: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-                tags: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] }
-            }
-            this.loadAllFunctions()
-        },
-        emits: ['onItemSelected', 'update:loading'],
-        methods: {
-            loadAllFunctions(): void {
-                this.$emit('update:loading', true)
-                this.$http
-                    .get(process.env.VUE_APP_API_PATH + '1.0/functioncatalog')
-                    .then((response: AxiosResponse<any>) => {
-                        this.functions = response.data
+export default defineComponent({
+    name: 'import-export-catalog-function',
+    components: { Column, DataTable, InputText, Tag },
+    props: { selectedItems: Object },
+    data() {
+        return {
+            filters: {},
+            importExportDescriptor: importExportDescriptor,
+            product: {},
+            selectedCatalogFunctionItems: [],
+            functions: [] as Array<ICatalogFunctionTemplate>,
+            FUNCTIONALITY: 'catalogFunction'
+        }
+    },
+    created() {
+        this.filters = {
+            global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+            name: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+            type: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+            tags: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] }
+        }
+        this.loadAllFunctions()
+    },
+    emits: ['onItemSelected', 'update:loading'],
+    methods: {
+        loadAllFunctions(): void {
+            this.$emit('update:loading', true)
+            this.$http
+                .get(process.env.VUE_APP_API_PATH + '1.0/functioncatalog')
+                .then((response: AxiosResponse<any>) => {
+                    this.functions = response.data
 
-                        if (this.selectedItems) {
-                            this.selectedCatalogFunctionItems = this.selectedItems[this.FUNCTIONALITY].filter((element) => {
-                                return this.functions.filter((el) => el.id === element.id).length == 1
-                            })
-                        }
-                    })
-                    .catch((error) => console.error(error))
-                    .finally(() => {
-                        this.$emit('update:loading', false)
-                    })
-            }
-        },
-        watch: {
-            selectedCatalogFunctionItems(newSelectedCatalogFunctionItems, oldSelectedCatalogFunctionItems) {
-                if (oldSelectedCatalogFunctionItems != newSelectedCatalogFunctionItems) {
-                    this.$emit('onItemSelected', { items: this.selectedCatalogFunctionItems, functionality: this.FUNCTIONALITY })
-                }
+                    if (this.selectedItems) {
+                        this.selectedCatalogFunctionItems = this.selectedItems[this.FUNCTIONALITY].filter((element) => {
+                            return this.functions.filter((el) => el.id === element.id).length == 1
+                        })
+                    }
+                })
+                .catch((error) => console.error(error))
+                .finally(() => {
+                    this.$emit('update:loading', false)
+                })
+        }
+    },
+    watch: {
+        selectedCatalogFunctionItems(newSelectedCatalogFunctionItems, oldSelectedCatalogFunctionItems) {
+            if (oldSelectedCatalogFunctionItems != newSelectedCatalogFunctionItems) {
+                this.$emit('onItemSelected', { items: this.selectedCatalogFunctionItems, functionality: this.FUNCTIONALITY })
             }
         }
-    })
+    }
+})
 </script>
 
 <style lang="scss" scoped>
-    .imageOverlayPanel {
-        position: absolute !important;
-        top: 0px !important;
-        left: 0px !important;
-    }
+.imageOverlayPanel {
+    position: absolute !important;
+    top: 0px !important;
+    left: 0px !important;
+}
 
-    .importExportTags {
-        background-color: $color-default;
-    }
+.importExportTags {
+    background-color: var(--kn-color-default);
+}
 
-    .p-paginator p-component p-paginator-bottom {
-        height: 50px;
-    }
+.p-paginator p-component p-paginator-bottom {
+    height: 50px;
+}
 </style>
