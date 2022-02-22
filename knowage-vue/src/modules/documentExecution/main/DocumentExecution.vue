@@ -1,11 +1,11 @@
 <template>
     <div class="kn-height-full detail-page-container">
         <Toolbar v-if="!embed && !olapDesignerMode" class="kn-toolbar kn-toolbar--primary p-col-12">
-            <template #left>
+            <template #start>
                 <span>{{ document?.label }}</span>
             </template>
 
-            <template #right>
+            <template #end>
                 <div class="p-d-flex p-jc-around">
                     <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'VIEW'" class="pi pi-pencil kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocumentConfirm"></i>
                     <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'" class="fa fa-eye kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocumentConfirm"></i>
@@ -488,12 +488,15 @@ export default defineComponent({
             }
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData)
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData, { headers: { 'X-Disable-Interceptor': 'true' } })
                 .then((response: AxiosResponse<any>) => {
                     this.urlData = response.data
                     this.sbiExecutionId = this.urlData?.sbiExecutionId as string
                 })
-                .catch(() => {})
+                .catch((response: AxiosResponse<any>) => {
+                    this.urlData = response.data
+                    this.sbiExecutionId = this.urlData?.sbiExecutionId as string
+                })
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) {
@@ -770,7 +773,7 @@ export default defineComponent({
             if (index !== -1) this.schedulations.splice(index, 1)
         },
         getFormattedDate(date: any) {
-            return moment(date).format('DD/MM/YYYY')
+            return moment(date).format('DDMMYYYY')
         },
         onBreadcrumbClick(item: any) {
             this.document = item.document

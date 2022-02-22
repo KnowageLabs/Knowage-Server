@@ -2,7 +2,7 @@
     <Card>
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('kpi.targetDefinition.applyTargetonKPI') }}
                 </template>
             </Toolbar>
@@ -38,59 +38,59 @@
     </Card>
 </template>
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { iValues } from './TargetDefinition'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
-import InputNumber from 'primevue/inputnumber'
-import targetDefinitionDetailDecriptor from './TargetDefinitionDetailDescriptor.json'
-export default defineComponent({
-    name: 'apply-target-card',
-    components: {
-        DataTable,
-        Column,
-        InputNumber
-    },
-    props: {
-        loadingKpi: {
-            type: Boolean,
-            default: false
+    import { defineComponent, PropType } from 'vue'
+    import { iValues } from './TargetDefinition'
+    import Column from 'primevue/column'
+    import DataTable from 'primevue/datatable'
+    import InputNumber from 'primevue/inputnumber'
+    import targetDefinitionDetailDecriptor from './TargetDefinitionDetailDescriptor.json'
+    export default defineComponent({
+        name: 'apply-target-card',
+        components: {
+            DataTable,
+            Column,
+            InputNumber
         },
-        kpi: {
-            type: Array as PropType<iValues[]>,
-            required: true
-        }
-    },
-    data() {
-        return {
-            selectedKpi: [] as iValues[],
-            targetDefinitionDetailDecriptor: targetDefinitionDetailDecriptor
-        }
-    },
-    watch: {
-        kpi() {
-            this.selectedKpi = this.kpi
-        }
-    },
-    methods: {
-        addKpiDialog() {
-            this.$emit('showDialog')
+        props: {
+            loadingKpi: {
+                type: Boolean,
+                default: false
+            },
+            kpi: {
+                type: Array as PropType<iValues[]>,
+                required: true
+            }
         },
-        deleteKpi(selected: iValues) {
-            const index = this.selectedKpi.findIndex((selectedKpi) => {
-                return selectedKpi.kpiId === selected.kpiId
-            })
-            if (index >= 0) {
-                this.selectedKpi.splice(index, 1)
-                this.$emit('kpiChanged', this.selectedKpi)
+        data() {
+            return {
+                selectedKpi: [] as iValues[],
+                targetDefinitionDetailDecriptor: targetDefinitionDetailDecriptor
+            }
+        },
+        watch: {
+            kpi() {
+                this.selectedKpi = this.kpi
+            }
+        },
+        methods: {
+            addKpiDialog() {
+                this.$emit('showDialog')
+            },
+            deleteKpi(selected: iValues) {
+                const index = this.selectedKpi.findIndex((selectedKpi) => {
+                    return selectedKpi.kpiId === selected.kpiId
+                })
+                if (index >= 0) {
+                    this.selectedKpi.splice(index, 1)
+                    this.$emit('kpiChanged', this.selectedKpi)
+                }
             }
         }
-    }
-})
+    })
 </script>
 <style scoped>
-::v-deep(.editable-cells-table td.p-cell-editing) {
-    padding-top: 0;
-    padding-bottom: 0;
-}
+    ::v-deep(.editable-cells-table td.p-cell-editing) {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
 </style>

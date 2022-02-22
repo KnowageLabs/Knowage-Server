@@ -1,7 +1,7 @@
 <template>
     <div id="kn-parameter-sidebar">
         <Toolbar id="kn-parameter-sidebar-toolbar" class="kn-toolbar kn-toolbar--secondary">
-            <template #left>
+            <template #start>
                 <div id="kn-parameter-sidebar-toolbar-icons-container" class="p-d-flex p-flex-row p-jc-around">
                     <i class="fa fa-eraser kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.resetParametersTooltip')" @click="resetAllParameters"></i>
                     <i class="pi pi-pencil kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.savedParametersTooltip')" @click="openSavedParametersDialog"></i>
@@ -69,7 +69,7 @@
                     </div>
                     <div class="p-d-flex p-flex-column">
                         <div class="p-field-radiobutton" v-for="(option, index) in parameter.data" :key="index" :data-test="'parameter-list-' + parameter.id">
-                            <RadioButton v-if="!parameter.multivalue && parameter.parameterValue" :value="option.value" v-model="parameter.parameterValue[0].value" @change="updateDependency(parameter)" />
+                            <RadioButton v-if="!parameter.multivalue && parameter.parameterValue" :value="option.value" v-model="parameter.parameterValue[0].value" @change="setRadioButtonValue(parameter)" />
                             <Checkbox v-if="parameter.multivalue && parameter.parameterValue" :value="option.value" v-model="selectedParameterCheckbox[parameter.id]" @change="setCheckboxValue(parameter)" />
                             <label>{{ option.description }}</label>
                         </div>
@@ -320,6 +320,11 @@ export default defineComponent({
                 }
             }
             return false
+        },
+        setRadioButtonValue(parameter: iParameter) {
+            const index = parameter.data?.findIndex((el: any) => el.value === parameter.parameterValue[0].value)
+            if (index !== -1) parameter.parameterValue[0].description = parameter.data[index].description
+            this.updateDependency(parameter)
         },
         setCheckboxValue(parameter: iParameter) {
             parameter.parameterValue = this.selectedParameterCheckbox[parameter.id].map((el: any) => {

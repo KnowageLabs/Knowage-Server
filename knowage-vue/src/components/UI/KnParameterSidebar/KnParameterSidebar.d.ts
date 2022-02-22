@@ -30,6 +30,8 @@ export interface iParameter {
     dependsOnParameters?: iParameter[]
     dataDependentParameters?: iParameter[]
     dataDependsOnParameters?: iParameter[],
+    lovDependsOnParameters?: iParameter[],
+    lovDependentParameters?: iParameter[]
 }
 
 

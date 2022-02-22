@@ -1,11 +1,11 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
-        <template #left>
+        <template #start>
             <Button v-if="!expandTableCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = true" />
             <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = false" />
             {{ $t('managers.datasetManagement.jsonPathAttributes') }}
         </template>
-        <template #right>
+        <template #end>
             <Button icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain" @click="addNewParam" />
             <Button icon="fas fa-info-circle" class="p-button-text p-button-rounded p-button-plain" @click="helpDialogVisible = true" />
             <Button icon="fas fa-eraser" class="p-button-text p-button-rounded p-button-plain" :disabled="disableDeleteAll" @click="removeAllParams" />
@@ -53,69 +53,69 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import tableDescriptor from './DatasetManagementTablesDescriptor.json'
-import HelpDialog from '../infoDialogs/DatasetManagementJsonPathAttributesInfoDialog.vue'
-import Card from 'primevue/card'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import Dropdown from 'primevue/dropdown'
+    import { defineComponent } from 'vue'
+    import tableDescriptor from './DatasetManagementTablesDescriptor.json'
+    import HelpDialog from '../infoDialogs/DatasetManagementJsonPathAttributesInfoDialog.vue'
+    import Card from 'primevue/card'
+    import DataTable from 'primevue/datatable'
+    import Column from 'primevue/column'
+    import Dropdown from 'primevue/dropdown'
 
-export default defineComponent({
-    components: { Card, DataTable, Column, Dropdown, HelpDialog },
-    props: {
-        selectedDataset: { type: Object as any }
-    },
-    computed: {
-        disableDeleteAll() {
-            if (!this.dataset.restJsonPathAttributes || this.dataset['restJsonPathAttributes'].length == 0) {
-                return true
-            } else {
-                return false
+    export default defineComponent({
+        components: { Card, DataTable, Column, Dropdown, HelpDialog },
+        props: {
+            selectedDataset: { type: Object as any }
+        },
+        computed: {
+            disableDeleteAll() {
+                if (!this.dataset.restJsonPathAttributes || this.dataset['restJsonPathAttributes'].length == 0) {
+                    return true
+                } else {
+                    return false
+                }
+            }
+        },
+        emits: ['touched'],
+        data() {
+            return {
+                tableDescriptor,
+                dataset: {} as any,
+                expandTableCard: false,
+                datasetParamTypes: tableDescriptor.datasetParamTypes,
+                jsonPathTypes: tableDescriptor.jsonPathTypes,
+                helpDialogVisible: false
+            }
+        },
+        created() {
+            this.dataset = this.selectedDataset
+        },
+        watch: {
+            selectedDataset() {
+                this.dataset = this.selectedDataset
+            }
+        },
+        methods: {
+            addNewParam() {
+                this.dataset.restJsonPathAttributes ? '' : (this.dataset.restJsonPathAttributes = [])
+                const newParam = { ...tableDescriptor.newJsonPathAttr }
+                this.dataset.restJsonPathAttributes.push(newParam)
+            },
+            deleteParam(removedParam) {
+                this.$confirm.require({
+                    message: this.$t('common.toast.deleteMessage'),
+                    header: this.$t('common.uppercaseDelete'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => (this.dataset.restJsonPathAttributes = this.dataset.restJsonPathAttributes.filter((paramToRemove) => removedParam.data.name !== paramToRemove.name))
+                })
+            },
+            removeAllParams() {
+                this.$confirm.require({
+                    message: this.$t('managers.datasetManagement.deleteAllRequestHeaderMsg'),
+                    header: this.$t('managers.datasetManagement.deleteAllRequestHeaderTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => (this.dataset.restJsonPathAttributes = [])
+                })
             }
         }
-    },
-    emits: ['touched'],
-    data() {
-        return {
-            tableDescriptor,
-            dataset: {} as any,
-            expandTableCard: false,
-            datasetParamTypes: tableDescriptor.datasetParamTypes,
-            jsonPathTypes: tableDescriptor.jsonPathTypes,
-            helpDialogVisible: false
-        }
-    },
-    created() {
-        this.dataset = this.selectedDataset
-    },
-    watch: {
-        selectedDataset() {
-            this.dataset = this.selectedDataset
-        }
-    },
-    methods: {
-        addNewParam() {
-            this.dataset.restJsonPathAttributes ? '' : (this.dataset.restJsonPathAttributes = [])
-            const newParam = { ...tableDescriptor.newJsonPathAttr }
-            this.dataset.restJsonPathAttributes.push(newParam)
-        },
-        deleteParam(removedParam) {
-            this.$confirm.require({
-                message: this.$t('common.toast.deleteMessage'),
-                header: this.$t('common.uppercaseDelete'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => (this.dataset.restJsonPathAttributes = this.dataset.restJsonPathAttributes.filter((paramToRemove) => removedParam.data.name !== paramToRemove.name))
-            })
-        },
-        removeAllParams() {
-            this.$confirm.require({
-                message: this.$t('managers.datasetManagement.deleteAllRequestHeaderMsg'),
-                header: this.$t('managers.datasetManagement.deleteAllRequestHeaderTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => (this.dataset.restJsonPathAttributes = [])
-            })
-        }
-    }
-})
+    })
 </script>

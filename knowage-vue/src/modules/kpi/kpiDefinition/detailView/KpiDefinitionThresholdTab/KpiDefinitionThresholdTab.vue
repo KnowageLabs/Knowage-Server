@@ -124,7 +124,7 @@
 
     <Sidebar class="mySidebar" v-model:visible="thresholdListVisible" :showCloseIcon="false" position="right">
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
-            <template #left>{{ $t('kpi.kpiDefinition.thresholdsListTitle') }}</template>
+            <template #start>{{ $t('kpi.kpiDefinition.thresholdsListTitle') }}</template>
         </Toolbar>
         <Listbox class="kn-list--column" :options="thresholdsList" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="tabViewDescriptor.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')" @change="confirmToLoadThreshold">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
@@ -152,143 +152,143 @@
 </template>
 
 <script lang="ts">
-import { AxiosResponse } from 'axios'
-import { defineComponent } from 'vue'
-import { createValidations } from '@/helpers/commons/validationHelper'
-import useValidate from '@vuelidate/core'
-import tabViewDescriptor from '../KpiDefinitionDetailDescriptor.json'
-import tresholdTabDescriptor from './KpiDefinitionThresholdTabDescriptor.json'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import Card from 'primevue/card'
-import Sidebar from 'primevue/sidebar'
-import Listbox from 'primevue/listbox'
-import Message from 'primevue/message'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import Checkbox from 'primevue/checkbox'
-import Dropdown from 'primevue/dropdown'
-import ColorPicker from 'primevue/colorpicker'
-import Dialog from 'primevue/dialog'
+    import { AxiosResponse } from 'axios'
+    import { defineComponent } from 'vue'
+    import { createValidations } from '@/helpers/commons/validationHelper'
+    import useValidate from '@vuelidate/core'
+    import tabViewDescriptor from '../KpiDefinitionDetailDescriptor.json'
+    import tresholdTabDescriptor from './KpiDefinitionThresholdTabDescriptor.json'
+    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+    import Card from 'primevue/card'
+    import Sidebar from 'primevue/sidebar'
+    import Listbox from 'primevue/listbox'
+    import Message from 'primevue/message'
+    import DataTable from 'primevue/datatable'
+    import Column from 'primevue/column'
+    import Checkbox from 'primevue/checkbox'
+    import Dropdown from 'primevue/dropdown'
+    import ColorPicker from 'primevue/colorpicker'
+    import Dialog from 'primevue/dialog'
 
-export default defineComponent({
-    components: { KnValidationMessages, Card, Sidebar, Listbox, Message, DataTable, Column, Checkbox, Dropdown, ColorPicker, Dialog },
-    props: { selectedKpi: { type: Object as any }, thresholdsList: Array, severityOptions: { type: Array as any, required: false }, thresholdTypeList: { type: Array as any, required: false }, loading: Boolean },
-    emits: ['touched'],
+    export default defineComponent({
+        components: { KnValidationMessages, Card, Sidebar, Listbox, Message, DataTable, Column, Checkbox, Dropdown, ColorPicker, Dialog },
+        props: { selectedKpi: { type: Object as any }, thresholdsList: Array, severityOptions: { type: Array as any, required: false }, thresholdTypeList: { type: Array as any, required: false }, loading: Boolean },
+        emits: ['touched'],
 
-    data() {
-        return {
-            v$: useValidate() as any,
-            tabViewDescriptor,
-            tresholdTabDescriptor,
-            kpi: {} as any,
-            threshold: {} as any,
-            thresholdToClone: {} as any,
-            thresholdListVisible: false,
-            overrideDialogVisible: false
-        }
-    },
-
-    watch: {
-        selectedKpi() {
-            this.kpi = this.selectedKpi as any
-            this.threshold = this.kpi.threshold
-        }
-    },
-
-    validations() {
-        return {
-            threshold: createValidations('threshold', tresholdTabDescriptor.validations.kpi)
-        }
-    },
-
-    methods: {
-        setPositionOnReorder(event) {
-            this.kpi.threshold.thresholdValues = event.value
-            this.kpi.threshold.thresholdValues.forEach((_, index) => {
-                this.kpi.threshold.thresholdValues[index].position = index + 1
-            })
+        data() {
+            return {
+                v$: useValidate() as any,
+                tabViewDescriptor,
+                tresholdTabDescriptor,
+                kpi: {} as any,
+                threshold: {} as any,
+                thresholdToClone: {} as any,
+                thresholdListVisible: false,
+                overrideDialogVisible: false
+            }
         },
 
-        setSeverityCd(event, data) {
-            const index = this.severityOptions.findIndex((SO: any) => SO.valueId === event.value)
-            data.severityCd = index >= 0 ? this.severityOptions[index].valueCd : ''
+        watch: {
+            selectedKpi() {
+                this.kpi = this.selectedKpi as any
+                this.threshold = this.kpi.threshold
+            }
         },
 
-        setTypeCd(event) {
-            const index = this.thresholdTypeList.findIndex((SO: any) => SO.valueId === event.value)
-            this.threshold.type = index >= 0 ? this.thresholdTypeList[index].translatedValueName : ''
+        validations() {
+            return {
+                threshold: createValidations('threshold', tresholdTabDescriptor.validations.kpi)
+            }
         },
 
-        addNewThresholdItem() {
-            const newThreshold = { ...tresholdTabDescriptor.newThreshold }
-            newThreshold.position = this.kpi.threshold.thresholdValues.length + 1
-            this.kpi.threshold.thresholdValues.push(newThreshold)
-        },
-
-        deleteThresholdItemConfirm(index) {
-            this.$confirm.require({
-                message: this.$t('common.toast.deleteMessage'),
-                header: this.$t('common.toast.deleteTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => this.deleteThresholdItem(index)
-            })
-        },
-        deleteThresholdItem(index) {
-            this.kpi.threshold.thresholdValues.splice(index, 1)
-        },
-
-        confirmToLoadThreshold(event) {
-            if (this.kpi.threshold.thresholdValues.length == 0 || this.kpi.threshold === tresholdTabDescriptor.newThreshold) {
-                this.loadSelectedThreshold(event)
-            } else {
-                this.$confirm.require({
-                    message: this.$t('kpi.kpiDefinition.confirmOverride'),
-                    header: this.$t('kpi.kpiDefinition.thresholdAlreadyPresent'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.loadSelectedThreshold(event)
+        methods: {
+            setPositionOnReorder(event) {
+                this.kpi.threshold.thresholdValues = event.value
+                this.kpi.threshold.thresholdValues.forEach((_, index) => {
+                    this.kpi.threshold.thresholdValues[index].position = index + 1
                 })
-            }
-        },
-        loadSelectedThreshold(event) {
-            this.thresholdToClone = []
-            let url = ''
-            this.kpi.id ? (url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${event.value.id}/loadThreshold?kpiId=${this.selectedKpi.id}`) : (url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${event.value.id}/loadThreshold`)
+            },
 
-            return this.$http.get(url).then((response: AxiosResponse<any>) => {
-                this.thresholdToClone = { ...response.data }
-                this.thresholdToClone.usedByKpi ? (this.overrideDialogVisible = true) : this.cloneSelectedThreshold()
-            })
-        },
-        cloneSelectedThreshold(operation?) {
-            if (this.thresholdToClone.usedByKpi) {
-                if (operation === 'clone') {
-                    this.thresholdToClone.name += ' (' + this.$t('kpi.kpiDefinition.clone') + ')'
-                    this.thresholdToClone.id = undefined
-                    this.thresholdToClone.usedByKpi = false
-                } else if (operation === 'use') {
-                    this.thresholdToClone.usedByKpi = true
+            setSeverityCd(event, data) {
+                const index = this.severityOptions.findIndex((SO: any) => SO.valueId === event.value)
+                data.severityCd = index >= 0 ? this.severityOptions[index].valueCd : ''
+            },
+
+            setTypeCd(event) {
+                const index = this.thresholdTypeList.findIndex((SO: any) => SO.valueId === event.value)
+                this.threshold.type = index >= 0 ? this.thresholdTypeList[index].translatedValueName : ''
+            },
+
+            addNewThresholdItem() {
+                const newThreshold = { ...tresholdTabDescriptor.newThreshold }
+                newThreshold.position = this.kpi.threshold.thresholdValues.length + 1
+                this.kpi.threshold.thresholdValues.push(newThreshold)
+            },
+
+            deleteThresholdItemConfirm(index) {
+                this.$confirm.require({
+                    message: this.$t('common.toast.deleteMessage'),
+                    header: this.$t('common.toast.deleteTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.deleteThresholdItem(index)
+                })
+            },
+            deleteThresholdItem(index) {
+                this.kpi.threshold.thresholdValues.splice(index, 1)
+            },
+
+            confirmToLoadThreshold(event) {
+                if (this.kpi.threshold.thresholdValues.length == 0 || this.kpi.threshold === tresholdTabDescriptor.newThreshold) {
+                    this.loadSelectedThreshold(event)
+                } else {
+                    this.$confirm.require({
+                        message: this.$t('kpi.kpiDefinition.confirmOverride'),
+                        header: this.$t('kpi.kpiDefinition.thresholdAlreadyPresent'),
+                        icon: 'pi pi-exclamation-triangle',
+                        accept: () => this.loadSelectedThreshold(event)
+                    })
                 }
+            },
+            loadSelectedThreshold(event) {
+                this.thresholdToClone = []
+                let url = ''
+                this.kpi.id ? (url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${event.value.id}/loadThreshold?kpiId=${this.selectedKpi.id}`) : (url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${event.value.id}/loadThreshold`)
+
+                return this.$http.get(url).then((response: AxiosResponse<any>) => {
+                    this.thresholdToClone = { ...response.data }
+                    this.thresholdToClone.usedByKpi ? (this.overrideDialogVisible = true) : this.cloneSelectedThreshold()
+                })
+            },
+            cloneSelectedThreshold(operation?) {
+                if (this.thresholdToClone.usedByKpi) {
+                    if (operation === 'clone') {
+                        this.thresholdToClone.name += ' (' + this.$t('kpi.kpiDefinition.clone') + ')'
+                        this.thresholdToClone.id = undefined
+                        this.thresholdToClone.usedByKpi = false
+                    } else if (operation === 'use') {
+                        this.thresholdToClone.usedByKpi = true
+                    }
+                }
+                this.kpi.threshold = this.thresholdToClone
+                this.threshold = this.kpi.threshold
+                this.thresholdListVisible = false
+                this.overrideDialogVisible = false
+            },
+            cloneExistingThreshold() {
+                this.kpi.threshold.name += ' (' + this.$t('kpi.kpiDefinition.clone') + ')'
+                this.kpi.threshold.id = undefined
+                this.kpi.threshold.usedByKpi = false
             }
-            this.kpi.threshold = this.thresholdToClone
-            this.threshold = this.kpi.threshold
-            this.thresholdListVisible = false
-            this.overrideDialogVisible = false
-        },
-        cloneExistingThreshold() {
-            this.kpi.threshold.name += ' (' + this.$t('kpi.kpiDefinition.clone') + ')'
-            this.kpi.threshold.id = undefined
-            this.kpi.threshold.usedByKpi = false
         }
-    }
-})
+    })
 </script>
 <style lang="scss">
-// vdeep not working correctly,need to find a working solution for the thresholds list padding...
-.mySidebar.p-sidebar .p-sidebar-header,
-.mySidebar.p-sidebar .p-sidebar-content {
-    padding: 0 !important;
-}
-.mySidebar .p-listbox {
-    height: calc(100% - 2.5rem);
-}
+    // vdeep not working correctly,need to find a working solution for the thresholds list padding...
+    .mySidebar.p-sidebar .p-sidebar-header,
+    .mySidebar.p-sidebar .p-sidebar-content {
+        padding: 0 !important;
+    }
+    .mySidebar .p-listbox {
+        height: calc(100% - 2.5rem);
+    }
 </style>
