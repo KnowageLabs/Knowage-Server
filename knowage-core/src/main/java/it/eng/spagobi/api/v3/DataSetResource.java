@@ -347,7 +347,6 @@ public class DataSetResource {
 
 		SbiDataSet ds = DAOFactory.getSbiDataSetDAO().loadSbiDataSetByLabel(dsLabel);
 
-		Integer dsId = ds.getId().getDsId();
 		String dsType = ds.getType();
 
 		getParametersFromDataSet(ret, ds);
@@ -355,10 +354,7 @@ public class DataSetResource {
 		if ("SbiQbeDataSet".equals(dsType)) {
 			String qbeDatamart = getDatamartFromDataSet(ds);
 
-			DriversRuntimeLoader driversRuntimeLoader = DriversRuntimeLoaderFactory.getDriversRuntimeLoader();
-			List<BIMetaModelParameter> drivers = driversRuntimeLoader.getDatasetDrivers(dsId, role);
-
-			getDriversFromQbeDataSet(ret, qbeDatamart);
+			getDriversFromQbeDataSet(role, ret, qbeDatamart);
 
 		}
 
@@ -773,21 +769,13 @@ public class DataSetResource {
 		return qbeDatamart;
 	}
 
-	private Response getDriversFromQbeDataSet(final Map<String, Object> resultAsMap, String businessModelName) {
-		JSONArray driversList = null;
+	private Response getDriversFromQbeDataSet(final String role, final Map<String, Object> resultAsMap, String businessModelName) {
 		final List<HashMap<String, Object>> parametersArrayList = (List<HashMap<String, Object>>) resultAsMap.get("filterStatus");
 		final List<BusinessModelDriverRuntime> parameters = new ArrayList<>();
 		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
 		IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
 		ParameterUse parameterUse;
-		String role;
 
-		try {
-			role = getUserProfile().getRoles().contains("admin") ? "admin" : (String) getUserProfile().getRoles().iterator().next();
-		} catch (EMFInternalError e2) {
-			logger.debug(e2.getCause(), e2);
-			throw new SpagoBIRuntimeException(e2.getMessage(), e2);
-		}
 		MetaModel businessModel = dao.loadMetaModelForExecutionByNameAndRole(businessModelName, role, false);
 		BusinessModelOpenParameters bmop = new BusinessModelOpenParameters();
 		try {
