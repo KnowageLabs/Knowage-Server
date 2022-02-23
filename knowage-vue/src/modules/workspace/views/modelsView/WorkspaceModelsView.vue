@@ -64,7 +64,7 @@ import { AxiosResponse } from 'axios'
 export default defineComponent({
     name: 'workspace-models-view',
     components: { DetailSidebar, KnFabButton, Message, SelectButton, WorkspaceModelsTable, WorkspaceCard },
-    emits: ['showMenu', 'toggleDisplayView', 'showQbeDialog'],
+    emits: ['showMenu', 'toggleDisplayView', 'showQbeDialog', 'setDatasetName'],
     props: { toggleCardDisplay: { type: Boolean } },
     data() {
         return {
@@ -79,7 +79,9 @@ export default defineComponent({
             searchWord: '' as string,
             showDetailSidebar: false,
             user: null as any,
-            loading: false
+            loading: false,
+            datasetDrivers: null as any,
+            datasetName: ''
         }
     },
     computed: {
@@ -150,14 +152,67 @@ export default defineComponent({
         resetSearch() {
             this.searchWord = ''
         },
-        openDatasetInQBE(dataset) {
-            this.buildQbeUrl(dataset)
+        async openDatasetInQBE(dataset) {
             console.log(dataset)
+            await this.loadDatasetDrivers(dataset)
+            await this.buildQbeUrl(dataset)
         },
-        buildQbeUrl(dataset) {
-            let qbeUrl = `/knowageqbeengine/servlet/AdapterHTTP?NEW_SESSION=TRUE&SBI_LANGUAGE=en&SBI_SCRIPT=&user_id=${
+        async loadDatasetDrivers(dataset) {
+            let userRole = (this.$store.state as any).user.sessionRole !== 'No default role selected' ? (this.$store.state as any).user.sessionRole : null
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/businessModelOpening/filters`, { name: dataset.name, role: userRole })
+                .then((response: AxiosResponse<any>) => {
+                    console.log('FILTERS SERVICE ---------', response.data.filterStatus)
+                    this.prepareDriversForSending(response.data.filterStatus)
+                })
+                .catch(() => {})
+        },
+        prepareDriversForSending(drivers) {
+            var transformedDrivers = {} as any
+            if (drivers) {
+                for (var i = 0; i < drivers.length; i++) {
+                    var tempDriver = [] as any
+                    var urlName = drivers[i].urlName
+                    if (drivers[i].parameterValue && Array.isArray(drivers[i].parameterValue)) {
+                        for (var j = 0; j < drivers[i].parameterValue.length; j++) {
+                            if (drivers[i].parameterValue[j].value && drivers[i].parameterValue[j].description) {
+                                var val = drivers[i].parameterValue[j]
+                            } else {
+                                val = { value: drivers[i].parameterValue[j] }
+                                if (drivers[i].parameterDescription && Array.isArray(drivers[i].parameterDescription)) {
+                                    val.description = drivers[i].parameterDescription[j]
+                                } else {
+                                    val.description = drivers[i].parameterDescription[drivers[i].parameterValue[j]]
+                                }
+                            }
+                            tempDriver.push(val)
+                        }
+                    } else {
+                        val = { value: drivers[i].parameterValue }
+                        if (drivers[i].parameterDescription) {
+                            val.description = drivers[i].parameterDescription
+                        } else {
+                            val.description = drivers[i].parameterValue
+                        }
+                        tempDriver.push(val)
+                    }
+                    transformedDrivers[urlName] = tempDriver
+                }
+            }
+            console.log('TRANSFORMED DRIVERS', transformedDrivers)
+            this.datasetDrivers = encodeURI(JSON.stringify(transformedDrivers))
+            // return encodeURI(JSON.stringify(transformedDrivers))
+        },
+        async buildQbeUrl(dataset) {
+            console.log('STRINGIFIED DRIVERS', this.datasetDrivers)
+            let language = (this.$store.state as any).user.locale.split('_')[0]
+            let country = (this.$store.state as any).user.locale.split('_')[1]
+            let qbeUrl = `/knowageqbeengine/servlet/AdapterHTTP?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&SBI_SCRIPT=&user_id=${
                 (this.$store.state as any).user.userUniqueIdentifier
-            }&DEFAULT_DATASOURCE_FOR_WRITING_LABEL=CacheDS&SBI_COUNTRY=US&SBI_EXECUTION_ID=&ACTION_NAME=QBE_ENGINE_START_ACTION_FROM_BM&MODEL_NAME=${dataset.name}&DATA_SOURCE_LABEL=${dataset.dataSourceLabel}&DATA_SOURCE_ID=${dataset.dataSourceId}&isTechnicalUser=true&DRIVERS=`
+            }&DEFAULT_DATASOURCE_FOR_WRITING_LABEL=CacheDS&SBI_COUNTRY=${country}&SBI_EXECUTION_ID=4ad654bf93fa11ecb2f9cfa89135aed9&ACTION_NAME=QBE_ENGINE_START_ACTION_FROM_BM&MODEL_NAME=${dataset.name}&DATA_SOURCE_LABEL=${dataset.dataSourceLabel}&DATA_SOURCE_ID=${
+                dataset.dataSourceId
+            }&isTechnicalUser=true&DRIVERS=${this.datasetDrivers}`
+            this.$emit('setDatasetName', dataset.name)
             this.$emit('showQbeDialog', qbeUrl)
         },
         createNewFederation() {

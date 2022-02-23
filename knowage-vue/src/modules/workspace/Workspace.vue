@@ -47,19 +47,24 @@
                 @breadcrumbClicked="setSelectedBreadcrumb($event)"
                 @execute="executeDocument($event)"
                 @showQbeDialog="openQbeDialog"
+                @setDatasetName="setDatasetName"
             />
         </div>
 
-        <Dialog class="metaweb-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="workspaceDescriptor.style.flex" :visible="qbeDialogVisible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
+        <Dialog class="metaweb-dialog remove-padding p-fluid" :contentStyle="workspaceDescriptor.style.flex" :visible="qbeDialogVisible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
+                    <template #start>
+                        {{ qbeDatasetName }}
+                    </template>
                     <template #end>
-                        <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="metadataSave" />
-                        <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeMetawebConfirm" />
+                        <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="logRefs" />
+                        <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveQbeDataset" />
+                        <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="qbeDialogVisible = false" />
                     </template>
                 </Toolbar>
             </template>
-            <iframe :src="qbeUrl" style="width:100%;height:100%"></iframe>
+            <iframe id="qbeIframe" ref="qbeIframe" :src="qbeUrl" style="width:100%;height:100%"></iframe>
         </Dialog>
     </div>
 
@@ -139,7 +144,8 @@ export default defineComponent({
             loading: false,
             qbeDialogVisible: false,
             menuItems: [] as any,
-            qbeUrl: ''
+            qbeUrl: '',
+            qbeDatasetName: ''
         }
     },
     created() {
@@ -299,12 +305,20 @@ export default defineComponent({
             return routeDocumentType
         },
         openQbeDialog(url) {
-            // this.qbeUrl = process.env.VUE_APP_HOST_URL + url
+            this.qbeUrl = process.env.VUE_APP_HOST_URL + url
             console.log(url)
-            this.qbeUrl =
-                process.env.VUE_APP_HOST_URL +
-                '/knowageqbeengine/servlet/AdapterHTTP?NEW_SESSION=TRUE&SBI_LANGUAGE=en&SBI_SCRIPT=&user_id=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGVtb19hZG1pbiIsImV4cCI6MTY0NTU2MzE4Nn0.yplpxXw2GlbqhLLJvnUsSteXmKrfLFMkdg_1k7FgQuI&DEFAULT_DATASOURCE_FOR_WRITING_LABEL=CacheDS&SBI_COUNTRY=US&SBI_EXECUTION_ID=ecbf3ee693db11ec8719dd970cd03e2f&ACTION_NAME=QBE_ENGINE_START_ACTION_FROM_BM&MODEL_NAME=Expenses&DATA_SOURCE_LABEL=Foodmart&DATA_SOURCE_ID=1&isTechnicalUser=true&&DRIVERS=%7B%22DarkoTest2%22:%5B%7B%22value%22:%22carCategory%22,%22description%22:%22carCategory%22%7D%5D%7D'
+            // this.qbeUrl =
+            //     process.env.VUE_APP_HOST_URL +
+            //     '/knowageqbeengine/servlet/AdapterHTTP?NEW_SESSION=TRUE&SBI_LANGUAGE=en&SBI_SCRIPT=&user_id=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGVtb19hZG1pbiIsImV4cCI6MTY0NTU4MDk1MX0.HkVW-8SyaBnykSqBX5O2-6_UjV9jsK256i6zPB41AkA&DEFAULT_DATASOURCE_FOR_WRITING_LABEL=CacheDS&SBI_COUNTRY=US&SBI_EXECUTION_ID=4ad654bf93fa11ecb2f9cfa89135aed9&ACTION_NAME=QBE_ENGINE_START_ACTION_FROM_BM&MODEL_NAME=Inventory&DATA_SOURCE_LABEL=Foodmart&DATA_SOURCE_ID=1&isTechnicalUser=true&DRIVERS=%7B%22test%22:%5B%7B%22value%22:%22Colony%22,%22description%22:%5B%22Colony%22%5D%7D%5D%7D'
             this.qbeDialogVisible = true
+        },
+        saveQbeDataset() {
+            let iframe = this.$refs.qbeIframe as any
+            iframe.contentWindow.postMessage('saveDS', '*')
+            console.log(this.$refs)
+        },
+        setDatasetName(event) {
+            this.qbeDatasetName = event
         }
     }
 })
