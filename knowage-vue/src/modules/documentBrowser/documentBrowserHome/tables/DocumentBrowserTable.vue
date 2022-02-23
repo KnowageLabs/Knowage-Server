@@ -18,6 +18,7 @@
             :rows="documentBrowserTableDescriptor.rows"
             v-model:filters="filters"
             filterDisplay="menu"
+            selectionMode="single"
             class="p-datatable-sm kn-table"
             dataKey="id"
             :responsiveLayout="documentBrowserTableDescriptor.responsiveLayout"
