@@ -1,5 +1,5 @@
 <template>
-    <DataTable class="p-datatable-sm kn-table p-m-2 kn-height-full" :value="rows" editMode="cell" responsiveLayout="stack" breakpoint="960px" :scrollable="true" @rowReorder="onRowReorder" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
+    <DataTable class="p-datatable-sm kn-table p-m-2 kn-height-full" :value="rows" editMode="cell" responsiveLayout="stack" breakpoint="960px" :scrollable="true" @rowReorder="onRowReorder" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent @cell-edit-complete="onCellEditComplete">
         <Column :rowReorder="true" :headerStyle="QBESimpleTableDescriptor.headerStyle" />
         <Column v-for="column in QBESimpleTableDescriptor.columns" :key="column.header" :field="column.field" :style="column.style">
             <template #header>
@@ -131,6 +131,10 @@ export default defineComponent({
         },
         deleteColumn(index: number) {
             this.rows.splice(index, 1)
+        },
+        onCellEditComplete(event: any) {
+            console.log('CAAAAAAAAAAAAAALED', event)
+            this.rows[event.index] = event.newData
         }
     }
 })

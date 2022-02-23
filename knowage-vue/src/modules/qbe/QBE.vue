@@ -18,10 +18,10 @@
             <div v-show="showEntitiesLists && qbeLoaded" class="entities-lists">
                 <div class="p-d-flex p-flex-column kn-flex kn-overflow-hidden">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary kn-flex-0">
-                        <template #left>
+                        <template #start>
                             <span>Entities</span>
                         </template>
-                        <template #right>
+                        <template #end>
                             <Chip style="background-color:white"> {{ entities?.entities?.length }} </Chip>
                         </template>
                     </Toolbar>
@@ -33,10 +33,10 @@
                 </div>
                 <div class="p-d-flex p-flex-column kn-overflow-hidden" :class="{ 'derived-entities-toggle': showDerivedList }">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary kn-flex-0">
-                        <template #left>
+                        <template #start>
                             <span>Derived Entities</span>
                         </template>
-                        <template #right>
+                        <template #end>
                             <Button v-if="showEntitiesLists" icon="fas fa-plus-circle" class="p-button-text p-button-rounded p-button-plain" v-tooltip.top="$t('common.add')" @click="createSubquery" />
                             <Chip style="background-color:white"> {{ mainQuery.subqueries?.length }} </Chip>
                             <Button v-if="showDerivedList" icon="pi pi-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="collapseDerivedList" />
@@ -52,7 +52,7 @@
             </div>
             <div class="detail-view p-m-1" v-if="qbe && qbeLoaded">
                 <Toolbar class="kn-toolbar kn-toolbar--primary kn-width-full">
-                    <template #left>
+                    <template #start>
                         <Button v-if="showEntitiesLists" icon="pi pi-chevron-left" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('qbe.detailView.hideList')" @click="toggleEntitiesLists" />
                         <Button v-else icon="pi pi-chevron-right" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('qbe.detailView.showList')" @click="toggleEntitiesLists" />
                         <span v-if="selectedQuery.id !== 'q1'">
@@ -61,7 +61,7 @@
                             <Button :label="selectedQuery?.name" class="p-button-text p-button-plain kn-uppercase" />
                         </span>
                     </template>
-                    <template #right>
+                    <template #end>
                         <i v-if="selectedQuery.fields.length > 0" class="fas fa-eraser kn-cursor-pointer p-mx-2" v-tooltip.top="$t('qbe.viewToolbar.deleteAllSelectedFields')" @click="deleteAllSelectedFields"></i>
                         <i v-if="hiddenColumnsExist" class="pi pi-eye kn-cursor-pointer p-mx-2" v-tooltip.top="$t('qbe.viewToolbar.showHiddenColumns')" @click="showHiddenColumns"></i>
                         <span v-if="selectedQuery.filters.length > 0" class="fa-stack p-mx-2">
