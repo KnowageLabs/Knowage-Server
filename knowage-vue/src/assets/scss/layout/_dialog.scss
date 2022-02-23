@@ -10,8 +10,8 @@
             @extend .kn-dialog--toolbar;
 
             .p-dialog-header {
-                background-color: var(--kn-toolbar-background-color-primary) !important;
-                color: var(--kn-toolbar-color-primary) !important;
+                background-color: var(--kn-toolbar-primary-background-color) !important;
+                color: var(--kn-toolbar-primary-color) !important;
 
                 .p-dialog-title {
                     font-weight: var(--kn-toolbar-font-weight) !important;
@@ -24,8 +24,8 @@
             @extend .kn-dialog--toolbar;
 
             .p-dialog-header {
-                background-color: var(--kn-toolbar-background-color-secondary) !important;
-                color: var(--kn-toolbar-color-secondary) !important;
+                background-color: var(--kn-toolbar-secondary-background-color) !important;
+                color: var(--kn-toolbar-secondary-color) !important;
 
                 .p-dialog-title {
                     font-weight: var(--kn-toolbar-font-weight) !important;
