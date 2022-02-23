@@ -360,6 +360,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 				IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
 				String datasetLabel = dataset.getLabel();
 				JSONObject cockpitSelections = getMultiCockpitSelectionsFromBody(widget, datasetId);
+				if (isEmptyLayer(cockpitSelections))
+					continue;
 
 				if (getRealtimeFromWidget(datasetId, configuration))
 					map.put("nearRealtime", true);
@@ -382,6 +384,21 @@ public class ExcelExporter extends AbstractFormatExporter {
 			throw new SpagoBIRuntimeException("Unable to get multi datastore for map widget: ", e);
 		}
 		return multiDataStore;
+	}
+
+	private boolean isEmptyLayer(JSONObject cockpitSelections) {
+		try {
+			JSONObject aggregations = cockpitSelections.getJSONObject("aggregations");
+			JSONArray measures = aggregations.getJSONArray("measures");
+			JSONArray categories = aggregations.getJSONArray("categories");
+			if (measures.length() > 0 || categories.length() > 0)
+				return false;
+			else
+				return true;
+		} catch (Exception e) {
+			logger.warn("Error while checking if layer is empty", e);
+			return false;
+		}
 	}
 
 	public JSONObject getDataStoreForWidget(JSONObject template, JSONObject widget) {
