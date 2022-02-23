@@ -13,7 +13,7 @@
     </Toolbar>
     <Card v-show="expandTableCard">
         <template #content>
-            <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.restJsonPathAttributes" :scrollable="true" scrollHeight="250px" dataKey="versNum" responsiveLayout="stack" breakpoint="960px">
+            <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.restJsonPathAttributes" :scrollable="true" scrollHeight="250px" dataKey="versNum" responsiveLayout="stack" breakpoint="960px" @cell-edit-complete="onCellEditComplete">
                 <template #empty>
                     {{ $t('managers.datasetManagement.tableEmpty') }}
                 </template>
@@ -35,11 +35,6 @@
                         <Dropdown id="scope" class="kn-material-input" :style="tableDescriptor.style.columnStyle" :options="jsonPathTypes" v-model="data.jsonPathType" />
                     </template>
                 </Column>
-                <!-- <Column field="typeOrJsonPathValue" :header="$t('managers.datasetManagement.typeOrJsonPathValue')" :sortable="true">
-                    <template #editor="{data}">
-                        <Dropdown id="scope" class="kn-material-input" :style="tableDescriptor.style.columnStyle" :options="jsonPathTypes" v-model="data.jsonPathType" />
-                    </template>
-                </Column> -->
                 <Column @rowClick="false">
                     <template #body="slotProps">
                         <Button icon="pi pi-trash" class="p-button-link" @click="deleteParam(slotProps)" />
@@ -53,69 +48,72 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import tableDescriptor from './DatasetManagementTablesDescriptor.json'
-    import HelpDialog from '../infoDialogs/DatasetManagementJsonPathAttributesInfoDialog.vue'
-    import Card from 'primevue/card'
-    import DataTable from 'primevue/datatable'
-    import Column from 'primevue/column'
-    import Dropdown from 'primevue/dropdown'
+import { defineComponent } from 'vue'
+import tableDescriptor from './DatasetManagementTablesDescriptor.json'
+import HelpDialog from '../infoDialogs/DatasetManagementJsonPathAttributesInfoDialog.vue'
+import Card from 'primevue/card'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Dropdown from 'primevue/dropdown'
 
-    export default defineComponent({
-        components: { Card, DataTable, Column, Dropdown, HelpDialog },
-        props: {
-            selectedDataset: { type: Object as any }
-        },
-        computed: {
-            disableDeleteAll() {
-                if (!this.dataset.restJsonPathAttributes || this.dataset['restJsonPathAttributes'].length == 0) {
-                    return true
-                } else {
-                    return false
-                }
-            }
-        },
-        emits: ['touched'],
-        data() {
-            return {
-                tableDescriptor,
-                dataset: {} as any,
-                expandTableCard: false,
-                datasetParamTypes: tableDescriptor.datasetParamTypes,
-                jsonPathTypes: tableDescriptor.jsonPathTypes,
-                helpDialogVisible: false
-            }
-        },
-        created() {
-            this.dataset = this.selectedDataset
-        },
-        watch: {
-            selectedDataset() {
-                this.dataset = this.selectedDataset
-            }
-        },
-        methods: {
-            addNewParam() {
-                this.dataset.restJsonPathAttributes ? '' : (this.dataset.restJsonPathAttributes = [])
-                const newParam = { ...tableDescriptor.newJsonPathAttr }
-                this.dataset.restJsonPathAttributes.push(newParam)
-            },
-            deleteParam(removedParam) {
-                this.$confirm.require({
-                    message: this.$t('common.toast.deleteMessage'),
-                    header: this.$t('common.uppercaseDelete'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => (this.dataset.restJsonPathAttributes = this.dataset.restJsonPathAttributes.filter((paramToRemove) => removedParam.data.name !== paramToRemove.name))
-                })
-            },
-            removeAllParams() {
-                this.$confirm.require({
-                    message: this.$t('managers.datasetManagement.deleteAllRequestHeaderMsg'),
-                    header: this.$t('managers.datasetManagement.deleteAllRequestHeaderTitle'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => (this.dataset.restJsonPathAttributes = [])
-                })
+export default defineComponent({
+    components: { Card, DataTable, Column, Dropdown, HelpDialog },
+    props: {
+        selectedDataset: { type: Object as any }
+    },
+    computed: {
+        disableDeleteAll() {
+            if (!this.dataset.restJsonPathAttributes || this.dataset['restJsonPathAttributes'].length == 0) {
+                return true
+            } else {
+                return false
             }
         }
-    })
+    },
+    emits: ['touched'],
+    data() {
+        return {
+            tableDescriptor,
+            dataset: {} as any,
+            expandTableCard: false,
+            datasetParamTypes: tableDescriptor.datasetParamTypes,
+            jsonPathTypes: tableDescriptor.jsonPathTypes,
+            helpDialogVisible: false
+        }
+    },
+    created() {
+        this.dataset = this.selectedDataset
+    },
+    watch: {
+        selectedDataset() {
+            this.dataset = this.selectedDataset
+        }
+    },
+    methods: {
+        addNewParam() {
+            this.dataset.restJsonPathAttributes ? '' : (this.dataset.restJsonPathAttributes = [])
+            const newParam = { ...tableDescriptor.newJsonPathAttr }
+            this.dataset.restJsonPathAttributes.push(newParam)
+        },
+        deleteParam(removedParam) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.uppercaseDelete'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => (this.dataset.restJsonPathAttributes = this.dataset.restJsonPathAttributes.filter((paramToRemove) => removedParam.data.name !== paramToRemove.name))
+            })
+        },
+        removeAllParams() {
+            this.$confirm.require({
+                message: this.$t('managers.datasetManagement.deleteAllRequestHeaderMsg'),
+                header: this.$t('managers.datasetManagement.deleteAllRequestHeaderTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => (this.dataset.restJsonPathAttributes = [])
+            })
+        },
+        onCellEditComplete(event) {
+            this.dataset.restJsonPathAttributes[event.index] = event.newData
+        }
+    }
+})
 </script>
