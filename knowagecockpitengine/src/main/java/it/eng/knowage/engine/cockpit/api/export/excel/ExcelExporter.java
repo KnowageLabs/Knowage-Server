@@ -73,6 +73,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 	private int uniqueId = 0;
 	private String requestURL = "";
 
+	private Map<String, CellStyle> format2CellStyle = new HashMap<String, CellStyle>();
+
 	private static final String[] WIDGETS_TO_IGNORE = { "image", "text", "selector", "selection", "html" };
 	private static final String SCRIPT_NAME = "cockpit-export-xls.js";
 	private static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
@@ -640,15 +642,27 @@ public class ExcelExporter extends AbstractFormatExporter {
 						format += "0";
 					}
 				}
-				CellStyle cellStyle = wb.createCellStyle();
-				cellStyle.setDataFormat(helper.createDataFormat().getFormat(format));
-				toReturn = cellStyle;
+				toReturn = getCellStyleByFormat(wb, helper, format);
 			}
 			return toReturn;
 		} catch (Exception e) {
 			logger.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
 			return defaultStyle;
 		}
+	}
+
+	/*
+	 * This method avoids cell style objects number to increase by rows number (see https://production.eng.it/jira/browse/KNOWAGE-6692 and
+	 * https://production.eng.it/jira/browse/KNOWAGE-6693)
+	 */
+	protected CellStyle getCellStyleByFormat(Workbook wb, CreationHelper helper, String format) {
+		if (!format2CellStyle.containsKey(format)) {
+			// if cell style does not exist
+			CellStyle cellStyle = wb.createCellStyle();
+			cellStyle.setDataFormat(helper.createDataFormat().getFormat(format));
+			format2CellStyle.put(format, cellStyle);
+		}
+		return format2CellStyle.get(format);
 	}
 
 	private Row createHeaderColumnNames(Sheet sheet, Map<String, String> mapGroupsAndColumns, JSONArray columnsOrdered, int startRowOffset) {
