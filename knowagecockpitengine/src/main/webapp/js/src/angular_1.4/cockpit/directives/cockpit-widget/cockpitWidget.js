@@ -1700,7 +1700,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 				categoriesNumber: cockpitModule_widgetServices.checkNumOfCategory($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY),
 				seriesNumber: $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE.length,
 				seriesStacking: $scope.ngModel.content.chartTemplate.CHART.seriesStacking,
-				groupSeries: $scope.ngModel.content.chartTemplate.CHART.groupSeries,
+				groupedSeries: $scope.ngModel.content.chartTemplate.CHART.groupSeries,
 				numericalCategory: isCategoryNumerical($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY),
 				range:range,
 				categoriesCardinality:categoriesCardinality

@@ -1,5 +1,17 @@
 <template>
-    <Tree id="folders-tree" :value="nodes" selectionMode="single" v-model:selectionKeys="selectedFolderKey" :filter="true" filterMode="lenient" :expandedKeys="expandedKeys" @node-select="setSelectedFolder" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)"></Tree>
+    <Tree
+        id="folders-tree"
+        class="kn-tree"
+        :value="nodes"
+        selectionMode="single"
+        v-model:selectionKeys="selectedFolderKey"
+        :filter="true"
+        filterMode="lenient"
+        :expandedKeys="expandedKeys"
+        @node-select="setSelectedFolder"
+        @node-expand="setOpenFolderIcon($event)"
+        @node-collapse="setClosedFolderIcon($event)"
+    ></Tree>
 </template>
 
 <script lang="ts">

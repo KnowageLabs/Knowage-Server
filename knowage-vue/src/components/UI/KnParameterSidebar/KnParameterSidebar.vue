@@ -386,6 +386,9 @@ export default defineComponent({
                         tempString += i === parameter.parameterValue.length - 1 ? '' : ';'
                     }
                     parameters[parameter.urlName + '_field_visible_description'] = tempString
+                } else {
+                    parameters[parameter.urlName] = parameter.parameterValue[0].value
+                    parameters[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].description
                 }
             })
             return parameters
@@ -449,6 +452,9 @@ export default defineComponent({
                         if (parameter.selectionType === 'LIST') {
                             this.selectedParameterCheckbox[parameter.id] = parameter.parameterValue?.map((parameterValue: any) => parameterValue.value)
                         }
+                    } else {
+                        parameter.parameterValue[0].value = tempParameters[key]
+                        parameter.parameterValue[0].description = tempParameters[key + '_field_visible_description']
                     }
                 }
                 this.savedParametersDialogVisible = false
