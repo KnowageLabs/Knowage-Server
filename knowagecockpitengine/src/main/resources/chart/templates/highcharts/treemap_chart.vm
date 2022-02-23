@@ -47,9 +47,9 @@
 
 #set($crossNavigation = '')
 #set($crossNavigation = $chart.DRILL)
-#set($range = $datasettransformer.getRange($rows, $dataColumnsMapper, $seriesMap))
+#set($range = $datasettransformer.getRange($dataRows, $dataColumnsMapper, $seriesMap))
 
-#set($categoriesCardinality = $datasettransformer.getCategoriesCardinality($rows, $chart.VALUES.CATEGORY, $dataColumnsMapper))
+#set($categoriesCardinality = $datasettransformer.getCategoriesCardinality($dataRows, $chart.VALUES.CATEGORY, $dataColumnsMapper))
 
 {
  	chart: 
