@@ -1,5 +1,5 @@
 <template>
-    <Breadcrumb :home="home" :model="items">
+    <Breadcrumb :home="home" :model="items" class="kn-breadcrumb border-bottom">
         <template #item="{item}">
             <span class="breadcrumbs-item" @click="selectBreadcrumb" :data-test="'breadcrumb-' + item.label">{{ item.label }}</span>
         </template>
@@ -46,10 +46,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.breadcrumbs-item:hover {
-    cursor: pointer;
-}
-
 .p-breadcrumb ul li:nth-child(2) {
     display: none;
 }

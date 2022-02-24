@@ -20,6 +20,9 @@
     // APP
     --kn-app-background-color: #ffffff;
 
+    // BREADCRUMBS
+    --kn-breadcrumb-border-color: #cccccc;
+
     // BUTTONS
     --kn-button-border-radius: 2px;
     --kn-button-primary-background-color: var(--kn-color-primary);
@@ -60,6 +63,9 @@
     // PROGRESS BAR
     --kn-progress-bar-background-color: rgba(#bbd6ed, 0.3);
     --kn-progress-bar-foreground-color: var(--kn-color-fab);
+
+    // TABLE
+    --kn-table-selected-background-color: #0000000a;
 
     // TOOLBAR
     --kn-toolbar-height: 2.5rem;

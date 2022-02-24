@@ -9,6 +9,35 @@
         }
     }
 
+    &.p-datatable-hoverable-rows {
+        .p-datatable-tbody {
+            tr:not(.p-highlight) {
+                &:hover {
+                    background-color: var(--kn-table-selected-background-color);
+                }
+            }
+        }
+    }
+
+    &.p-datatable-sm {
+        .p-datatable-tbody {
+            tr {
+                td {
+                    padding: 0.2rem;
+                    .fa-stack {
+                        height: 1em;
+                        line-height: 1em;
+                        .fa-stack-2x {
+                            font-size: 1.6rem;
+                            height: 1rem;
+                            line-height: 1rem;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     .p-datatable-wrapper {
         height: 100%;
         .p-paginator-bottom {
