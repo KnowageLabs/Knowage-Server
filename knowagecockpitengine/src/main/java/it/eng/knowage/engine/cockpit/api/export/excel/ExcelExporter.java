@@ -764,6 +764,9 @@ public class ExcelExporter {
 					toReturn = "string";
 				}
 			}
+			if ("date".equals(toReturn) && column.has("subtype")) {
+				toReturn = column.getString("subtype");
+			}
 			return toReturn;
 		} catch (Exception e) {
 			logger.error("Error while retrieving column {" + colName + "} type. It will be treated as string.", e);
