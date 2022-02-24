@@ -10,6 +10,10 @@
                     &.p-highlight {
                         background-color: var(--kn-tree-selected-background-color);
                         color: var(--kn-tree-selected-color);
+                        .p-treenode-icon,
+                        .p-tree-toggler {
+                            color: var(--kn-tree-selected-color);
+                        }
                     }
                 }
             }
