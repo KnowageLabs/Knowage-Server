@@ -123,8 +123,6 @@ import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
 import RegistryDatatableEditableField from './RegistryDatatableEditableField.vue'
 import RegistryDatatableWarningDialog from './RegistryDatatableWarningDialog.vue'
 
-// Date format is fixed to MM/DD/YYYY hh:mm:ss for compatibility with Primevue Calendar with Davide Vernassa approval
-
 const deepcopy = require('deepcopy')
 
 export default defineComponent({
