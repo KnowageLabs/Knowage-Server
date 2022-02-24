@@ -305,8 +305,7 @@ export default defineComponent({
                     )
                     .then(() => {
                         this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.updateTitle'),
-                            msg: this.$t('workspace.myData.isPreparing')
+                            title: this.$t('workspace.myData.isPreparing')
                         })
                     })
                     .catch(() => {})

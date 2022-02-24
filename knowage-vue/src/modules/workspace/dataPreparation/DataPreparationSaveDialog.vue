@@ -2,169 +2,128 @@
     <Dialog class="kn-dialog--toolbar--primary dataPreparationSaveDialog" v-bind:visible="visibility" footer="footer" :header="$t('managers.workspaceManagement.dataPreparation.savePreparedDataset')" :closable="false" modal>
         <div class="p-d-flex p-mt-5">
             <span class="p-float-label p-field p-ml-2 kn-flex">
-                <InputText
-                    class="kn-material-input"
-                    type="text"
-                    v-model="localDataset.name"
-                    v-model.trim="v$.localDataset.name.$model"
-                    :class="{
-                        'p-invalid': v$.localDataset.name.$invalid && v$.localDataset.name.$dirty
-                    }"
-                    maxLength="100"/>
+                <InputText class="kn-material-input" type="text" v-model="preparedDataset.name" maxLength="100" />
                 <label class="kn-material-input-label" for="label">{{ $t('managers.workspaceManagement.dataPreparation.dataset.name') }}</label>
-                <KnValidationMessages
-                    :vComp="v$.localDataset.name"
-                    :additionalTranslateParams="{
-                        fieldName: $t('managers.configurationManagement.headers.name')
-                    }"
-                ></KnValidationMessages
-            ></span>
+            </span>
             <span class="p-float-label p-field p-ml-2 kn-flex">
-                <InputText
-                    class="kn-material-input"
-                    type="text"
-                    v-model="localDataset.label"
-                    v-model.trim="v$.localDataset.label.$model"
-                    :class="{
-                        'p-invalid': v$.localDataset.label.$invalid && v$.localDataset.label.$dirty
-                    }"
-                    maxLength="100"/>
+                <InputText class="kn-material-input" type="text" v-model="preparedDataset.label" maxLength="100" />
                 <label class="kn-material-input-label" for="label">{{ $t('managers.workspaceManagement.dataPreparation.dataset.label') }}</label>
-                <KnValidationMessages
-                    :vComp="v$.localDataset.label"
-                    :additionalTranslateParams="{
-                        fieldName: $t('managers.configurationManagement.headers.label')
-                    }"
-                ></KnValidationMessages
-            ></span>
+            </span>
         </div>
         <div class="p-d-flex">
             <span class="p-float-label p-field p-ml-2 kn-flex">
-                <InputText
-                    class="kn-material-input"
-                    type="text"
-                    v-model="localDataset.description"
-                    v-model.trim="v$.localDataset.description.$model"
-                    :class="{
-                        'p-invalid': v$.localDataset.description.$invalid && v$.localDataset.description.$dirty
-                    }"
-                    maxLength="100"/>
+                <InputText class="kn-material-input" type="text" v-model="preparedDataset.description" maxLength="100" />
                 <label class="kn-material-input-label" for="label">{{ $t('managers.workspaceManagement.dataPreparation.dataset.description') }}</label>
-                <KnValidationMessages
-                    :vComp="v$.localDataset.description"
-                    :additionalTranslateParams="{
-                        fieldName: $t('managers.configurationManagement.headers.description')
-                    }"
-                ></KnValidationMessages
-            ></span>
+            </span>
         </div>
         <div class="p-d-flex">
             <span class="p-float-label p-field p-ml-2 kn-flex">
-                <InputText
-                    class="kn-material-input"
-                    type="text"
-                    v-model="localDataset.visibility"
-                    v-model.trim="v$.localDataset.visibility.$model"
-                    :class="{
-                        'p-invalid': v$.localDataset.visibility.$invalid && v$.localDataset.visibility.$dirty
-                    }"
-                    maxLength="100"/>
+                <InputText class="kn-material-input" type="text" v-model="preparedDataset.dataSource" maxLength="100" />
+                <label class="kn-material-input-label" for="label">{{ $t('managers.workspaceManagement.dataPreparation.dataset.dataSource') }}</label>
+            </span>
+        </div>
+        <div class="p-d-flex">
+            <span class="p-float-label p-field p-ml-2 kn-flex">
+                <InputText class="kn-material-input" type="text" v-model="preparedDataset.visibility" maxLength="100" />
                 <label class="kn-material-input-label" for="label">{{ $t('managers.workspaceManagement.dataPreparation.dataset.visibility') }}</label>
-                <KnValidationMessages
-                    :vComp="v$.localDataset.visibility"
-                    :additionalTranslateParams="{
-                        fieldName: $t('managers.configurationManagement.headers.visibility')
-                    }"
-                ></KnValidationMessages
-            ></span>
+            </span>
 
             <span class="p-float-label p-field p-ml-2 kn-flex">
                 <Dropdown
                     id="type"
                     class="kn-material-input"
-                    v-model="localDataset.refreshRate"
+                    v-model="preparedDataset.refreshRate"
                     dataKey="id"
                     optionLabel="name"
                     optionValue="code"
                     :options="descriptor.dataPreparation.refreshRate.options"
                     :placeholder="$t('managers.workspaceManagement.dataPreparation.dataset.refreshRate.label')"
-                    v-model.trim="v$.localDataset.refreshRate.$model"
-                    :class="{
-                        'p-invalid': v$.localDataset.refreshRate.$invalid && v$.localDataset.refreshRate.$dirty
-                    }"
-                    maxLength="100"/>
-                <KnValidationMessages
-                    :vComp="v$.localDataset.refreshRate"
-                    :additionalTranslateParams="{
-                        fieldName: $t('managers.configurationManagement.headers.refreshRate')
-                    }"
-                ></KnValidationMessages
-            ></span>
+                    maxLength="100"
+                />
+            </span>
         </div>
 
         <template #footer>
             <Button class="p-button-text kn-button thirdButton" :label="$t('common.cancel')" @click="resetAndClose" />
 
-            <Button class="kn-button kn-button--primary" v-t="'common.save'" :disabled="buttonDisabled" @click="handleTransformation()" />
+            <Button class="kn-button kn-button--primary" v-t="'common.save'" :disabled="buttonDisabled" @click="savePreparedDataset()" />
         </template>
     </Dialog>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { createValidations } from '@/helpers/commons/validationHelper'
 
 import { AxiosResponse } from 'axios'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import DataPreparationDescriptor from './DataPreparationDescriptor.json'
-import DataPreparationValidationDescriptor from './DataPreparationValidationDescriptor.json'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import useValidate from '@vuelidate/core'
 
-import { IDataPreparationDataset } from '@/modules/workspace/dataPreparation/DataPreparation'
+import { IDataPreparationDataset, IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
 
 export default defineComponent({
     name: 'data-preparation-detail-save-dialog',
     props: {
-        dataset: {} as PropType<IDataPreparationDataset>,
+        originalDataset: {} as any,
+        config: {} as any,
+        columns: [] as PropType<IDataPreparationColumn[]>,
         visibility: Boolean
     },
-    components: { Dialog, Dropdown, KnValidationMessages },
+    components: { Dialog, Dropdown },
     data() {
-        return { descriptor: DataPreparationDescriptor, localDataset: {} as any, v$: useValidate() as any, validationDescriptor: DataPreparationValidationDescriptor }
-    },
-    validations() {
-        return {
-            localDataset: createValidations('localDataset', this.validationDescriptor.validations.configuration)
-        }
+        return { descriptor: DataPreparationDescriptor, preparedDataset: {} as IDataPreparationDataset }
     },
     emits: ['update:visibility'],
 
     methods: {
-        handleTransformation(): void {
-            let data = this.createDataToSend()
-            this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'selfservicedataset/save?SBI_EXECUTION_ID=-1&isTech=false&showDerivedDataset=false&showOnlyOwner=true', data, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded' } })
-                .then((response: AxiosResponse<any>) => {
-                    console.log(response)
-                })
+        savePreparedDataset(): void {
+            let processDefinition = this.createProcessDefinition()
+            this.$http.post(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process', processDefinition).then(
+                (response: AxiosResponse<any>) => {
+                    let processId = response.data.id
+                    let datasetDefinition = this.createDatasetDefinition()
+                    this.$http.patch(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/' + processId + '/instance', datasetDefinition).then(
+                        () => {
+                            this.$store.commit('setInfo', { title: 'Saved successfully' })
+                        },
+                        () => {
+                            this.$store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
+                        }
+                    )
+                },
+                () => {
+                    this.$store.commit('setError', { title: 'Save error', msg: 'Cannot add process instance' })
+                }
+            )
+            this.resetAndClose()
         },
-        createDataToSend(): URLSearchParams {
-            let ds = this.localDataset
-            if (ds.config) ds.config = JSON.stringify(ds.config)
-            ds.id = null
-            ds.type = 'PreparedDataset'
-
-            var data = new URLSearchParams()
-            const keys = Object.keys(ds)
-            keys.forEach((key) => {
-                let value = ds[key]
-                if (!value) value = ''
-                if (value instanceof Object) value = JSON.stringify(value)
-                data.append(key, value)
+        createDatasetDefinition() {
+            let toReturn = {}
+            toReturn['config'] = {}
+            toReturn['dataSetLabel'] = this.originalDataset.label
+            toReturn['destinationDataSetLabel'] = this.preparedDataset.label
+            toReturn['destinationDataSetName'] = this.preparedDataset.name
+            toReturn['destinationDataSetDescription'] = this.preparedDataset.description
+            toReturn['destinationDataSource'] = this.preparedDataset.dataSource
+            toReturn['meta'] = this.createMetaDefinition()
+            return toReturn
+        },
+        createMetaDefinition() {
+            let meta = [] as Array<any>
+            this.columns?.forEach((col) => {
+                let item = {}
+                item['displayedName'] = col.fieldAlias
+                item['name'] = col.header
+                item['fieldType'] = col.fieldType
+                item['type'] = col.Type
+                meta.push(item)
             })
-            return data
+            return meta
+        },
+        createProcessDefinition() {
+            let toReturn = {}
+            toReturn['definition'] = this.config.transformations
+            return toReturn
         },
         resetAndClose(): void {
             this.closeDialog()
@@ -181,11 +140,6 @@ export default defineComponent({
 
     created() {
         this.loadTranslations()
-    },
-    updated() {
-        if (this.dataset) {
-            this.localDataset = this.dataset
-        }
     }
 })
 </script>

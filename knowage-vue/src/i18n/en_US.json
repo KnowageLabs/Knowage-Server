@@ -856,9 +856,9 @@
                 "schemaAttribute": "Multischema Attribute",
                 "testOk": "Tested parameters are correct!",
                 "urlConnection": "URL",
+                "useForDataprep": "Use for data preparation",
                 "user": "User",
-                "writeDefault": "Use as cache",
-                "useForDataprep": "Use for data preparation"
+                "writeDefault": "Use as cache"
             },
             "hint": "The datasources allows you to define an 'access point' for your document data. It's possible to change the type, the dialect and to set the url or settings. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "title": "Data Source Management"
@@ -1642,6 +1642,7 @@
         "workspaceManagement": {
             "dataPreparation": {
                 "dataset": {
+                    "dataSource": "Data Source",
                     "description": "Description",
                     "label": "Label",
                     "name": "Name",

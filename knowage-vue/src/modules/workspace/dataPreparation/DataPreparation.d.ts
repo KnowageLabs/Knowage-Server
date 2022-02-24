@@ -26,6 +26,7 @@ export interface IDataPreparationDataset {
     name: string
     label: string
     description: string
+    dataSource: string
     visibility: string
     refreshRate: {}
 }
