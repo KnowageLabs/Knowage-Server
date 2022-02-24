@@ -39,6 +39,7 @@
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <Column class="kn-truncated" :style="registryDatatableDescriptor.numerationColumn.style" :field="columns[0].field" :header="columns[0].title"></Column>
+
                     <template v-for="col of columns.slice(1)" :key="col.field">
                         <Column
                             class="kn-truncated"
@@ -123,6 +124,8 @@ import RegistryDatatableEditableField from './RegistryDatatableEditableField.vue
 import RegistryDatatableWarningDialog from './RegistryDatatableWarningDialog.vue'
 
 // Date format is fixed to MM/DD/YYYY hh:mm:ss for compatibility with Primevue Calendar with Davide Vernassa approval
+
+const deepcopy = require('deepcopy')
 
 export default defineComponent({
     name: 'registry-datatable',
@@ -225,7 +228,7 @@ export default defineComponent({
             })
         },
         loadRows() {
-            this.rows = [...(this.propRows as any[])]
+            this.rows = deepcopy(this.propRows)
         },
         loadConfiguration() {
             this.configuration = this.propConfiguration
