@@ -130,8 +130,14 @@ public class AvroExportJob extends AbstractExportJob {
 				value = dateFormatter.format(value);
 			} else if (isTimestamp(type)) {
 				value = timestampFormatter.format(value);
-			} else if (isNumber(type)) {
+			} else if (Double.class.isAssignableFrom(type) || BigDecimal.class.isAssignableFrom(type)) {
 				value = Double.valueOf(value.toString());
+			} else if (Integer.class.isAssignableFrom(type)) {
+				value = Integer.valueOf(value.toString());
+			} else if (Long.class.isAssignableFrom(type)) {
+				value = Long.valueOf(value.toString());
+			} else if (Float.class.isAssignableFrom(type)) {
+				value = Float.valueOf(value.toString());
 			} else if (String.class.isAssignableFrom(type)) {
 				value = String.valueOf(value);
 			}
@@ -182,11 +188,6 @@ public class AvroExportJob extends AbstractExportJob {
 		return (Date.class.isAssignableFrom(fieldType) || fieldType.getName().equalsIgnoreCase("oracle.sql.date"));
 	}
 
-	private boolean isNumber(Class<?> fieldType) {
-		return (Integer.class.isAssignableFrom(fieldType) || Double.class.isAssignableFrom(fieldType) || Float.class.isAssignableFrom(fieldType)
-				|| Long.class.isAssignableFrom(fieldType) || BigDecimal.class.isAssignableFrom(fieldType));
-	}
-
 	private Schema getSchema(IDataSet dataSet) throws JSONException {
 		FieldAssembler<Schema> fieldAssembler = SchemaBuilder.record("DataSet").namespace("it.eng.spagobi.api.v2.export.AvroExportJob").fields();
 
@@ -205,13 +206,13 @@ public class AvroExportJob extends AbstractExportJob {
 
 	private FieldAssembler<Schema> setType(BaseFieldTypeBuilder<Schema> builder, Class<?> fieldType) {
 		if (Integer.class.isAssignableFrom(fieldType)) {
-			return builder.doubleType().noDefault();
+			return builder.intType().noDefault();
 		} else if (BigDecimal.class.isAssignableFrom(fieldType)) {
 			return builder.doubleType().noDefault();
 		} else if (Float.class.isAssignableFrom(fieldType)) {
-			return builder.doubleType().noDefault();
+			return builder.floatType().noDefault();
 		} else if (Long.class.isAssignableFrom(fieldType)) {
-			return builder.doubleType().noDefault();
+			return builder.longType().noDefault();
 		} else if (Double.class.isAssignableFrom(fieldType)) {
 			return builder.doubleType().noDefault();
 		} else {
