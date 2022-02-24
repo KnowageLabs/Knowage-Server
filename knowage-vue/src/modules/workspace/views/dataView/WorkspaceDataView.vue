@@ -260,7 +260,7 @@ export default defineComponent({
                 { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: () => this.downloadDatasetFile(clickedDocument), visible: this.selectedDataset.dsTypeCd == 'File' },
                 { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.shareDataset(), visible: this.canLoadData && this.isDatasetOwner },
                 { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: () => this.cloneDataset(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' },
-                { key: '7', label: this.$t('workspace.myData.prepareData'), icon: 'fas fa-cogs', command: () => this.prepareData(clickedDocument), visible: !this.isAvroReady(this.selectedDataset) && this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' },
+                { key: '7', label: this.$t('workspace.myData.prepareData'), icon: 'fas fa-cogs', command: () => this.prepareData(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' },
                 { key: '8', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: this.isAvroReady(this.selectedDataset) && this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' },
                 { key: '9', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
             )
