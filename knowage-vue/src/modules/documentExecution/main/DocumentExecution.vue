@@ -402,6 +402,22 @@ export default defineComponent({
             }
         },
         async loadFilters() {
+            if (this.sessionEnabled) {
+                console.log('TEEEEEEEEEEEST: ', sessionStorage.getItem(this.document.label))
+                const tempFilters = sessionStorage.getItem(this.document.label)
+                if (tempFilters) {
+                    this.filtersData = JSON.parse(tempFilters) as { filterStatus: iParameter[]; isReadyForExecution: boolean }
+                    this.filtersData.filterStatus?.forEach((filter: any) => {
+                        if (filter.type === 'DATE' && filter.parameterValue[0].value) {
+                            filter.parameterValue[0].value = new Date(filter.parameterValue[0].value)
+                            console.log('HMMMMMMMMMMMMMM', filter)
+                        }
+                    })
+                    console.log('EEEEEENTERED BLA', this.filtersData)
+                    return
+                }
+            }
+
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, { label: this.document.label, role: this.userRole, parameters: this.document.navigationParams ?? {} })
                 .then((response: AxiosResponse<any>) => (this.filtersData = response.data))
@@ -460,6 +476,8 @@ export default defineComponent({
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) this.breadcrumbs[index].filtersData = this.filtersData
+
+            console.log('LOADED FILTERS REGULARY: ', this.filtersData)
         },
         loadNavigationParamsInitialValue() {
             Object.keys(this.document.navigationParams).forEach((key: string) => {
@@ -593,6 +611,11 @@ export default defineComponent({
             await this.loadURL(null)
             this.parameterSidebarVisible = false
             this.reloadTrigger = !this.reloadTrigger
+
+            // console.log('SESSION ENABLED INSIDE SIDEBAR: ', this.sessionEnabled)
+            if (this.sessionEnabled) {
+                this.saveParametersInSession()
+            }
             this.loading = false
         },
         async onExportCSV() {
@@ -882,13 +905,19 @@ export default defineComponent({
         async loadUserConfig() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
                 if (response.data) {
-                    console.log('loadUserConfig RESPONSE DATA: ', response.data)
+                    // console.log('loadUserConfig RESPONSE DATA: ', response.data)
                     this.sessionEnabled = response.data['SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled'] === 'false' ? false : true
                 }
             })
-            console.log('LOADED SESSION ENABLED: ', this.sessionEnabled)
+            // console.log('LOADED SESSION ENABLED: ', this.sessionEnabled)
             // TODO Harcoded
             this.sessionEnabled = true
+        },
+        saveParametersInSession() {
+            console.log('PARAMS FOR SAVE: ', this.filtersData)
+            sessionStorage.setItem(this.document.label, JSON.stringify(this.filtersData))
+
+            // console.log('TEEEEEEEEEEEST: ', sessionStorage.getItem(this.document.label))
         }
     }
 })

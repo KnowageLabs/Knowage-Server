@@ -476,7 +476,6 @@ export default defineComponent({
             this.fillParameterForm(viewpoint)
             this.$emit('execute')
             this.savedParametersDialogVisible = false
-            console.log('SESSION ENABLED INSIDE SIDEBAR: ', this.sessionEnabled)
         },
         async deleteViewpoint(viewpoint: any) {
             this.loading = true
