@@ -327,7 +327,7 @@ export default defineComponent({
             this.loading = true
             this.searchWord = ''
             this.preparedDatasets = this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/mydata/`)
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced`)
                 .then((response: AxiosResponse<any>) => {
                     this.datasetList = [...response.data.root]
                     this.preparedDatasets = [...this.datasetList]

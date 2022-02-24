@@ -58,6 +58,7 @@ import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
@@ -253,6 +254,27 @@ public class DataSetResource {
 			// TODO
 			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadMyDataSets(offset, fetchSize, getUserProfile()).stream()
 					.map(DataSetForWorkspaceDTO::new).collect(toList());
+
+			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
+
+			return new DataSetResourceResponseRoot<>(dataSets);
+
+		} catch (Exception t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		}
+
+	}
+
+	@GET
+	@Path("/advanced")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getAdvancedDataSets(@DefaultValue("-1") @QueryParam("offset") int offset,
+			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
+
+		try {
+			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadMyDataSets(offset, fetchSize, getUserProfile()).stream()
+					.filter(e -> e.getType().equals(DataSetConstants.DS_PREPARED)).map(DataSetForWorkspaceDTO::new).collect(toList());
 
 			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
 
