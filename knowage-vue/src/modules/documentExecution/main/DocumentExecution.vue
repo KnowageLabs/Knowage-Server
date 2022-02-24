@@ -57,6 +57,7 @@
                 :filtersData="filtersData"
                 :propDocument="document"
                 :userRole="userRole"
+                :sessionEnabled="sessionEnabled"
                 @execute="onExecute"
                 @exportCSV="onExportCSV"
                 @roleChanged="onRoleChange"
@@ -145,7 +146,8 @@ export default defineComponent({
             olapCustomViewVisible: false,
             userRole: null,
             loading: false,
-            olapDesignerMode: false
+            olapDesignerMode: false,
+            sessionEnabled: false
         }
     },
     async activated() {
@@ -196,6 +198,8 @@ export default defineComponent({
 
         this.user = (this.$store.state as any).user
         this.userRole = this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
+
+        await this.loadUserConfig()
 
         this.isOlapDesignerMode()
         this.setMode()
@@ -874,6 +878,17 @@ export default defineComponent({
             if (this.$route.name === 'olap-designer') {
                 this.olapDesignerMode = true
             }
+        },
+        async loadUserConfig() {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
+                if (response.data) {
+                    console.log('loadUserConfig RESPONSE DATA: ', response.data)
+                    this.sessionEnabled = response.data['SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled'] === 'false' ? false : true
+                }
+            })
+            console.log('LOADED SESSION ENABLED: ', this.sessionEnabled)
+            // TODO Harcoded
+            this.sessionEnabled = true
         }
     }
 })
