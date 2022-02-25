@@ -87,12 +87,12 @@ export default defineComponent({
                             this.$store.commit('setInfo', { title: 'Saved successfully' })
                         },
                         () => {
-                            this.$store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
+                            this.$store.commit('setError', { title: 'Save error', msg: 'Cannot add process instance' })
                         }
                     )
                 },
                 () => {
-                    this.$store.commit('setError', { title: 'Save error', msg: 'Cannot add process instance' })
+                    this.$store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
                 }
             )
             this.resetAndClose()
