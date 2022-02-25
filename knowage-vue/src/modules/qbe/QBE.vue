@@ -3,7 +3,7 @@
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
                 <template #start>
-                    <span>{{ qbe?.label }}</span>
+                    <span v-if="qbe">{{ qbe.label ? qbe.label : qbe.qbeDatamarts }}</span>
                 </template>
                 <template #end>
                     <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
