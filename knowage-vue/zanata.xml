@@ -5,7 +5,7 @@
   <project>knowage-json</project>
   <project-version>master</project-version>
   <project-type>file</project-type>
-  <src-dir>.</src-dir>
+  <src-dir>./src/i18n/</src-dir>
   <trans-dir>./src/i18n/</trans-dir>
-  <includes>src/i18n/messages*.json</includes>
+  <includes>messages*.json</includes>
 </config>
