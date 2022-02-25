@@ -126,28 +126,21 @@ public class DriversRuntimeLoader {
 	}
 
 	/**
-	 * @deprecated Where possible, prefer {@link #getDatasetMetaModel(Integer, String)}
+	 * @deprecated Where possible, prefer {@link #getDatasetMetaModel(Integer, String)} or {@link #getBusinessModelDrivers(String, String)}
 	 */
 	@Deprecated
 	public List<BIMetaModelParameter> getDatasetDrivers(Integer dsId, String role) {
 		final List<BIMetaModelParameter> ret = new ArrayList<>();
-		List<BIMetaModelParameter> toAdd = null;
-		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
-		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
-		IBIMetaModelParameterDAO driversDao = DAOFactory.getBIMetaModelParameterDAO();
-		List<BIMetaModelParameter> qbeDatasetDrivers = new ArrayList<BIMetaModelParameter>();
+		List<BIMetaModelParameter> toAdd = new ArrayList<>();
 
 		try {
+			IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
 			IDataSet dataset = datasetDao.loadDataSetById(dsId);
 			dataset = dataset instanceof VersionedDataSet ? ((VersionedDataSet) dataset).getWrappedDataset() : dataset;
 			if (dataset != null && dataset.getDsType() == "SbiQbeDataSet") {
 				JSONObject jsonConfig = new JSONObject(dataset.getConfiguration());
 				String businessModelName = jsonConfig.getString("qbeDatamarts");
-				MetaModel businessModel = businessModelsDAO.loadMetaModelByName(businessModelName);
-				qbeDatasetDrivers = driversDao.loadBIMetaModelParameterByMetaModelId(businessModel.getId());
-				if (qbeDatasetDrivers != null && !qbeDatasetDrivers.isEmpty()) {
-					toAdd = toMetamodelDrivers(qbeDatasetDrivers, role);
-				}
+				toAdd.addAll(getBusinessModelDrivers(businessModelName, role));
 			}
 
 			ret.addAll(toAdd);
@@ -156,6 +149,18 @@ public class DriversRuntimeLoader {
 		}
 
 		return ret;
+	}
+
+	public List<BIMetaModelParameter> getBusinessModelDrivers(String businessModelName, String role) {
+		List<BIMetaModelParameter> toAdd2 = new ArrayList<>();
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
+		MetaModel businessModel = businessModelsDAO.loadMetaModelByName(businessModelName);
+		IBIMetaModelParameterDAO driversDao = DAOFactory.getBIMetaModelParameterDAO();
+		List<BIMetaModelParameter> qbeDatasetDrivers = driversDao.loadBIMetaModelParameterByMetaModelId(businessModel.getId());
+		if (qbeDatasetDrivers != null && !qbeDatasetDrivers.isEmpty()) {
+			toAdd2.addAll(toMetamodelDrivers(qbeDatasetDrivers, role));
+		}
+		return toAdd2;
 	}
 
 	public MetaModel getDatasetMetaModel(Integer dsId, String role) {

@@ -40,56 +40,56 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { filterDefault } from '@/helpers/commons/filterHelper'
-    import Column from 'primevue/column'
-    import DataTable from 'primevue/datatable'
-    import Dialog from 'primevue/dialog'
-    import Message from 'primevue/message'
-    import knParameterSavedParametersDialogDescriptor from './KnParameterSavedParametersDialogDescriptor.json'
+import { defineComponent } from 'vue'
+import { filterDefault } from '@/helpers/commons/filterHelper'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
+import Dialog from 'primevue/dialog'
+import Message from 'primevue/message'
+import knParameterSavedParametersDialogDescriptor from './KnParameterSavedParametersDialogDescriptor.json'
 
-    export default defineComponent({
-        name: 'kn-parameter-saved-parameters-dialog',
-        components: { Column, DataTable, Dialog, Message },
-        props: { visible: { type: Boolean }, propViewpoints: { type: Array } },
-        emits: ['close', 'fillForm', 'executeViewpoint', 'deleteViewpoint'],
-        data() {
-            return {
-                knParameterSavedParametersDialogDescriptor,
-                viewpoints: [] as any[],
-                filters: { global: [filterDefault] } as Object
-            }
-        },
-        computed: {},
-        watch: {
-            propViewpoints() {
-                this.loadViewpoints()
-            }
-        },
-        created() {
-            this.loadViewpoints()
-        },
-        methods: {
-            loadViewpoints() {
-                this.viewpoints = this.propViewpoints as any[]
-            },
-            closeDialog() {
-                this.$emit('close')
-            },
-            deleteViewpointConfirm(viewpoint: any) {
-                this.$confirm.require({
-                    message: this.$t('documentExecution.dossier.deleteConfirm'),
-                    header: this.$t('documentExecution.dossier.deleteTitle'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.$emit('deleteViewpoint', viewpoint)
-                })
-            }
+export default defineComponent({
+    name: 'kn-parameter-saved-parameters-dialog',
+    components: { Column, DataTable, Dialog, Message },
+    props: { visible: { type: Boolean }, propViewpoints: { type: Array } },
+    emits: ['close', 'fillForm', 'executeViewpoint', 'deleteViewpoint'],
+    data() {
+        return {
+            knParameterSavedParametersDialogDescriptor,
+            viewpoints: [] as any[],
+            filters: { global: [filterDefault] } as Object
         }
-    })
+    },
+    computed: {},
+    watch: {
+        propViewpoints() {
+            this.loadViewpoints()
+        }
+    },
+    created() {
+        this.loadViewpoints()
+    },
+    methods: {
+        loadViewpoints() {
+            this.viewpoints = this.propViewpoints as any[]
+        },
+        closeDialog() {
+            this.$emit('close')
+        },
+        deleteViewpointConfirm(viewpoint: any) {
+            this.$confirm.require({
+                message: this.$t('documentExecution.dossier.deleteConfirm'),
+                header: this.$t('documentExecution.dossier.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.$emit('deleteViewpoint', viewpoint)
+            })
+        }
+    }
+})
 </script>
 
 <style lang="scss" scoped>
-    #saved-parameters-dialog-close-button {
-        font-size: 0.75rem;
-    }
+#saved-parameters-dialog-close-button {
+    font-size: 0.75rem;
+}
 </style>

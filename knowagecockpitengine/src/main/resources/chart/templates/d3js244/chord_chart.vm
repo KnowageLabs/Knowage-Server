@@ -54,9 +54,9 @@
 		#set($workAroundNoPrint = $seriesMap.put($serie.name , $serie))
 	#end
 #end
-#set($range = $datasettransformer.getRange($data.rows, $dataColumnsMapper, $seriesMap))
+#set($range = $datasettransformer.getRange($results, $dataColumnsMapper, $seriesMap))
 
-#set($categoriesCardinality = $datasettransformer.getCategoriesCardinality($data.rows, $chart.VALUES.CATEGORY, $dataColumnsMapper))
+#set($categoriesCardinality = $datasettransformer.getCategoriesCardinality($results, $chart.VALUES.CATEGORY, $dataColumnsMapper))
 
 {
 	chart:
