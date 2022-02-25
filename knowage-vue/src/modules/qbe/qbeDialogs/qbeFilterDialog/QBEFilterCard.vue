@@ -284,7 +284,11 @@ export default defineComponent({
         },
         async loadFilterValues() {
             this.loading = true
-            await this.$http.get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_VALUES_FOR_QBE_FILTER_LOOKUP_ACTION&ENTITY_ID=${this.filter?.leftOperandValue}&SBI_EXECUTION_ID=${this.id}`).then((response: AxiosResponse<any>) => (this.filterValuesData = response.data))
+            await this.$http
+                .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_VALUES_FOR_QBE_FILTER_LOOKUP_ACTION&ENTITY_ID=${this.filter?.leftOperandValue}&SBI_EXECUTION_ID=${this.id}`, {
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' }
+                })
+                .then((response: AxiosResponse<any>) => (this.filterValuesData = response.data))
             this.loading = false
         },
         setSelectedValues(selected: string[]) {
