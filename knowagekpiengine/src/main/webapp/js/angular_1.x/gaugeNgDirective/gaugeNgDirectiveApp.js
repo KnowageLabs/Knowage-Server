@@ -18,7 +18,7 @@
 			} else {
 				sizeSuffix = fontSize.indexOf("em");
 				if(sizeSuffix !== -1) {
-					return fontSize.substr(0, sizeSuffix);
+					return fontSize.substr(0, sizeSuffix).replaceAll("r", "") * 14;
 				} else {
 					// NO SUFFIX FOUND
 					return fontSize;
