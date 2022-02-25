@@ -438,6 +438,7 @@ export default defineComponent({
         },
         deleteAllSelectedFields() {
             this.selectedQuery.fields = []
+            this.selectedQuery.havings = []
             if (this.smartView) this.executeQBEQuery()
         },
         checkIfHiddenColumnsExist() {
@@ -641,8 +642,9 @@ export default defineComponent({
 
         deleteAllFilters() {
             if (this.qbe) {
-                this.qbe.qbeJSONQuery.catalogue.queries[0].filters = []
-                this.qbe.qbeJSONQuery.catalogue.queries[0].expression = {}
+                this.selectedQuery.filters = []
+                this.selectedQuery.havings = []
+                this.selectedQuery.expression = {}
                 if (this.smartView) this.executeQBEQuery()
             }
         },
