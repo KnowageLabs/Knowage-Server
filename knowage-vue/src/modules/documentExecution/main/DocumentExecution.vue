@@ -94,6 +94,8 @@ import Dossier from '../dossier/Dossier.vue'
 import Olap from '../olap/Olap.vue'
 import moment from 'moment'
 
+const deepcopy = require('deepcopy')
+
 export default defineComponent({
     name: 'document-execution',
     components: {
@@ -403,17 +405,14 @@ export default defineComponent({
         },
         async loadFilters() {
             if (this.sessionEnabled) {
-                console.log('TEEEEEEEEEEEST: ', sessionStorage.getItem(this.document.label))
                 const tempFilters = sessionStorage.getItem(this.document.label)
                 if (tempFilters) {
                     this.filtersData = JSON.parse(tempFilters) as { filterStatus: iParameter[]; isReadyForExecution: boolean }
                     this.filtersData.filterStatus?.forEach((filter: any) => {
                         if (filter.type === 'DATE' && filter.parameterValue[0].value) {
                             filter.parameterValue[0].value = new Date(filter.parameterValue[0].value)
-                            console.log('HMMMMMMMMMMMMMM', filter)
                         }
                     })
-                    console.log('EEEEEENTERED BLA', this.filtersData)
                     return
                 }
             }
@@ -476,8 +475,6 @@ export default defineComponent({
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) this.breadcrumbs[index].filtersData = this.filtersData
-
-            console.log('LOADED FILTERS REGULARY: ', this.filtersData)
         },
         loadNavigationParamsInitialValue() {
             Object.keys(this.document.navigationParams).forEach((key: string) => {
@@ -612,7 +609,6 @@ export default defineComponent({
             this.parameterSidebarVisible = false
             this.reloadTrigger = !this.reloadTrigger
 
-            // console.log('SESSION ENABLED INSIDE SIDEBAR: ', this.sessionEnabled)
             if (this.sessionEnabled) {
                 this.saveParametersInSession()
             }
@@ -905,19 +901,22 @@ export default defineComponent({
         async loadUserConfig() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
                 if (response.data) {
-                    // console.log('loadUserConfig RESPONSE DATA: ', response.data)
                     this.sessionEnabled = response.data['SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled'] === 'false' ? false : true
                 }
             })
-            // console.log('LOADED SESSION ENABLED: ', this.sessionEnabled)
-            // TODO Harcoded
-            this.sessionEnabled = true
         },
         saveParametersInSession() {
-            console.log('PARAMS FOR SAVE: ', this.filtersData)
-            sessionStorage.setItem(this.document.label, JSON.stringify(this.filtersData))
+            const tempFilters = deepcopy(this.filtersData)
+            tempFilters.filterStatus?.forEach((filter: any) => {
+                delete filter.dataDependsOnParameters
+                delete filter.dataDependentParameters
+                delete filter.dependsOnParameters
+                delete filter.dependentParameters
+                delete filter.lovDependsOnParameters
+                delete filter.lovDependentParameters
+            })
 
-            // console.log('TEEEEEEEEEEEST: ', sessionStorage.getItem(this.document.label))
+            sessionStorage.setItem(this.document.label, JSON.stringify(tempFilters))
         }
     }
 })
