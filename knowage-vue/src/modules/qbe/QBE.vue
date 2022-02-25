@@ -6,7 +6,7 @@
                     <span v-if="qbe">{{ qbe.label ? qbe.label : qbe.qbeDatamarts }}</span>
                 </template>
                 <template #end>
-                    <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
+                    <Button v-if="isParameterSidebarVisible" icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
                     <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="savingDialogVisible = true" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('close')" />
                 </template>
@@ -213,6 +213,20 @@ export default defineComponent({
             qbeLoaded: false
         }
     },
+    computed: {
+        isParameterSidebarVisible(): boolean {
+            let parameterVisible = false
+            for (let i = 0; i < this.filtersData?.filterStatus?.length; i++) {
+                const tempFilter = this.filtersData.filterStatus[i]
+                if (tempFilter.showOnPanel === 'true') {
+                    parameterVisible = true
+                    break
+                }
+            }
+
+            return parameterVisible || this.qbe?.pars.length !== 0
+        }
+    },
     watch: {
         async dataset() {
             await this.loadPage()
@@ -237,7 +251,7 @@ export default defineComponent({
             if (this.qbe?.pars.length === 0 && this.filtersData?.isReadyForExecution) {
                 await this.loadQBE()
                 this.qbeLoaded = true
-            } else {
+            } else if (this.qbe?.pars.length !== 0 || !this.filtersData?.isReadyForExecution) {
                 this.parameterSidebarVisible = true
             }
             this.loading = false
@@ -367,7 +381,10 @@ export default defineComponent({
             const label = this.dataset?.dataSourceLabel ? this.dataset.dataSourceLabel : this.qbe?.qbeDataSource
             const datamart = this.dataset?.dataSourceLabel ? this.dataset.name : this.qbe?.qbeDatamarts
             if (this.dataset) {
-                await this.$http.get(process.env.VUE_APP_QBE_PATH + `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}`).then(() => {})
+                await this.$http
+                    .get(process.env.VUE_APP_QBE_PATH + `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}`)
+                    .then(() => {})
+                    .catch(() => {})
             }
         },
         async loadCustomizedDatasetFunctions() {
