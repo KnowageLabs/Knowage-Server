@@ -2,24 +2,80 @@
     <Dialog class="kn-dialog--toolbar--primary dataPreparationSaveDialog" v-bind:visible="visibility" footer="footer" :header="$t('managers.workspaceManagement.dataPreparation.savePreparedDataset')" :closable="false" modal>
         <div class="p-d-flex p-mt-5">
             <span class="p-float-label p-field p-ml-2 kn-flex">
-                <InputText class="kn-material-input" type="text" v-model="preparedDataset.name" maxLength="100" />
+                <InputText
+                    class="kn-material-input"
+                    type="text"
+                    v-model.trim="v$.preparedDataset.name.$model"
+                    :class="{
+                        'p-invalid': v$.preparedDataset.name.$invalid
+                    }"
+                    maxLength="100"
+                />
                 <label class="kn-material-input-label" for="label">{{ $t('managers.workspaceManagement.dataPreparation.dataset.name') }}</label>
+                <KnValidationMessages
+                    :vComp="v$.preparedDataset.name"
+                    :additionalTranslateParams="{
+                        fieldName: $t('managers.configurationManagement.headers.name')
+                    }"
+                ></KnValidationMessages>
             </span>
             <span class="p-float-label p-field p-ml-2 kn-flex">
-                <InputText class="kn-material-input" type="text" v-model="preparedDataset.label" maxLength="100" />
+                <InputText
+                    class="kn-material-input"
+                    type="text"
+                    v-model.trim="v$.preparedDataset.label.$model"
+                    :class="{
+                        'p-invalid': v$.preparedDataset.label.$invalid
+                    }"
+                    maxLength="100"
+                />
                 <label class="kn-material-input-label" for="label">{{ $t('managers.workspaceManagement.dataPreparation.dataset.label') }}</label>
+                <KnValidationMessages
+                    :vComp="v$.preparedDataset.label"
+                    :additionalTranslateParams="{
+                        fieldName: $t('managers.configurationManagement.headers.label')
+                    }"
+                ></KnValidationMessages>
             </span>
         </div>
         <div class="p-d-flex">
             <span class="p-float-label p-field p-ml-2 kn-flex">
-                <InputText class="kn-material-input" type="text" v-model="preparedDataset.description" maxLength="100" />
+                <InputText
+                    class="kn-material-input"
+                    type="text"
+                    v-model.trim="v$.preparedDataset.description.$model"
+                    :class="{
+                        'p-invalid': v$.preparedDataset.description.$invalid
+                    }"
+                    maxLength="100"
+                />
                 <label class="kn-material-input-label" for="label">{{ $t('managers.workspaceManagement.dataPreparation.dataset.description') }}</label>
+                <KnValidationMessages
+                    :vComp="v$.preparedDataset.description"
+                    :additionalTranslateParams="{
+                        fieldName: $t('managers.configurationManagement.headers.description')
+                    }"
+                ></KnValidationMessages>
             </span>
         </div>
         <div class="p-d-flex">
             <span class="p-float-label p-field p-ml-2 kn-flex">
-                <InputText class="kn-material-input" type="text" v-model="preparedDataset.dataSource" maxLength="100" />
+                <InputText
+                    class="kn-material-input"
+                    type="text"
+                    v-model.trim="v$.preparedDataset.dataSource.$model"
+                    :class="{
+                        'p-invalid': v$.preparedDataset.dataSource.$invalid
+                    }"
+                    maxLength="100"
+                />
                 <label class="kn-material-input-label" for="label">{{ $t('managers.workspaceManagement.dataPreparation.dataset.dataSource') }}</label>
+                <KnValidationMessages
+                    :vComp="v$.preparedDataset.dataSource"
+                    :additionalTranslateParams="{
+                        fieldName: $t('managers.configurationManagement.headers.dataSource')
+                    }"
+                ></KnValidationMessages>
             </span>
         </div>
         <div class="p-d-flex">
@@ -54,11 +110,14 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 
+import { createValidations } from '@/helpers/commons/validationHelper'
 import { AxiosResponse } from 'axios'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import DataPreparationDescriptor from './DataPreparationDescriptor.json'
-
+import useValidate from '@vuelidate/core'
+import DataPreparationValidationDescriptor from './DataPreparationValidationDescriptor.json'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import { IDataPreparationDataset, IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
 
 export default defineComponent({
@@ -69,12 +128,17 @@ export default defineComponent({
         columns: [] as PropType<IDataPreparationColumn[]>,
         visibility: Boolean
     },
-    components: { Dialog, Dropdown },
+    components: { Dialog, Dropdown, KnValidationMessages },
     data() {
-        return { descriptor: DataPreparationDescriptor, preparedDataset: {} as IDataPreparationDataset }
+        return { descriptor: DataPreparationDescriptor, preparedDataset: {} as IDataPreparationDataset, v$: useValidate() as any, validationDescriptor: DataPreparationValidationDescriptor }
     },
     emits: ['update:visibility'],
 
+    validations() {
+        return {
+            preparedDataset: createValidations('preparedDataset', this.validationDescriptor.validations.configuration)
+        }
+    },
     methods: {
         savePreparedDataset(): void {
             let processDefinition = this.createProcessDefinition()
@@ -122,7 +186,7 @@ export default defineComponent({
         },
         createProcessDefinition() {
             let toReturn = {}
-            toReturn['definition'] = this.config.transformations
+            if (this.config && this.config.transformations) toReturn['definition'] = this.config.transformations
             return toReturn
         },
         resetAndClose(): void {

@@ -2,6 +2,14 @@
     "validations": {
         "configuration": [
             {
+                "fieldName": "dataSource",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
                 "fieldName": "label",
                 "validators": [
                     {
