@@ -6,6 +6,6 @@
   <project-version>master</project-version>
   <project-type>file</project-type>
   <src-dir>.</src-dir>
-  <trans-dir>.</trans-dir>
+  <trans-dir>./src/i18n/</trans-dir>
   <includes>src/i18n/messages*.json</includes>
 </config>
