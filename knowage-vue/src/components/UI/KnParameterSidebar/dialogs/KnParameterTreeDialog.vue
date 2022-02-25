@@ -81,12 +81,19 @@ export default defineComponent({
         async loadLeaf(parent: any) {
             this.loading = true
 
+            if (!this.document) return
+
             if (parent && parent.leaf) {
                 this.loading = false
                 return
             }
-            const url = this.mode === 'execution' ? `2.0/documentexecution/admissibleValuesTree` : `/3.0/datasets/${this.document?.label}/admissibleValuesTree`
-            const postData = { label: this.document?.label, role: (this.$store.state as any).user.sessionRole, parameterId: this.parameter?.urlName, mode: 'complete', treeLovNode: parent ? parent.id : 'lovroot', parameters: this.formatedParameterValues }
+
+            let url = '2.0/documentexecution/admissibleValuesTree'
+            if (this.mode !== 'execution') {
+                url = this.document.type === 'businessModel' ? `1.0/businessmodel/${this.document.name}/admissibleValuesTree` : `/3.0/datasets/${this.document.label}/admissibleValuesTree`
+            }
+
+            const postData = { label: this.document.label ?? this.document.name, role: (this.$store.state as any).user.sessionRole, parameterId: this.parameter?.urlName, mode: 'complete', treeLovNode: parent ? parent.id : 'lovroot', parameters: this.formatedParameterValues }
             let content = [] as any[]
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)

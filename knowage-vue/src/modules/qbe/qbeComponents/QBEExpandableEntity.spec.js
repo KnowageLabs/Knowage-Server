@@ -668,7 +668,6 @@ describe('QBE Expandable Entity', () => {
     it('adds a field to the list when clicking on a field in the list', async () => {
         const wrapper = factory(mockedQuery, mockedEntities)
 
-        // console.log(wrapper.html())
         await wrapper.find('[data-test="entity-it.eng.knowage.inventory.Product_class::Product_class"]').trigger('click')
         expect(wrapper.emitted()).toHaveProperty('entityChildClicked')
         expect(wrapper.emitted()['entityChildClicked'][0][0]).toStrictEqual({

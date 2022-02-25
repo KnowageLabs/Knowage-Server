@@ -68,7 +68,6 @@ export default defineComponent({
     created() {
         this.getDomainData()
         this.selectedDataset = this.propDataset
-        console.log(this.selectedDataset)
     },
     watch: {
         propDataset() {

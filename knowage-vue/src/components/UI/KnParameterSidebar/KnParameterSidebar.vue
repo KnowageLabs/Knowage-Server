@@ -373,7 +373,12 @@ export default defineComponent({
         async getParameterPopupInfo(parameter: iParameter) {
             this.loading = true
             const postData = { label: this.document?.label, parameters: this.getFormattedParameters(), paramId: parameter.urlName, role: this.sessionRole }
-            const url = this.mode === 'execution' ? '2.0/documentExeParameters/admissibleValues' : `/3.0/datasets/${this.document?.label}/admissibleValues`
+
+            let url = '2.0/documentExeParameters/admissibleValues'
+            if (this.mode !== 'execution' && this.document) {
+                url = this.document.type === 'businessModel' ? `1.0/businessmodel/${this.document.name}/admissibleValues` : `/3.0/datasets/${this.document.label}/admissibleValues`
+            }
+
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)
                 .then((response: AxiosResponse<any>) => (this.parameterPopUpData = response.data))

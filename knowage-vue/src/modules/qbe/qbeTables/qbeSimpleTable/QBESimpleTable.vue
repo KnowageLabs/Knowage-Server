@@ -133,7 +133,6 @@ export default defineComponent({
             this.rows.splice(index, 1)
         },
         onCellEditComplete(event: any) {
-            console.log('CAAAAAAAAAAAAAALED', event)
             this.rows[event.index] = event.newData
         }
     }

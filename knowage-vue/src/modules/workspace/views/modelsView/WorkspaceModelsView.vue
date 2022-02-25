@@ -155,7 +155,6 @@ export default defineComponent({
             this.searchWord = ''
         },
         openDatasetInQBE(dataset: any) {
-            console.log('DATASET', dataset)
             this.selectedQbeDataset = dataset
             this.qbeVisible = true
         },
