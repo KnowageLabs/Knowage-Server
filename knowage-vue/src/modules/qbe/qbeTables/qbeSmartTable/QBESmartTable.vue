@@ -56,7 +56,7 @@
     <Dialog v-if="aliasDialogVisible" class="alias-dialog" :visible="aliasDialogVisible" :modal="true" :closable="false" :baseZIndex="1" :autoZIndex="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
-                <template #left>
+                <template #start>
                     {{ $t('common.alias') }}
                 </template>
             </Toolbar>

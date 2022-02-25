@@ -2,11 +2,11 @@
     <Dialog id="qbe-filter-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="QBEFilterDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-2 p-col-12">
-                <template #left>
+                <template #start>
                     {{ $t('common.filters') }}
                 </template>
 
-                <template #right>
+                <template #end>
                     <i v-show="temporalFiltersEnabled()" class="fa fa-calendar kn-cursor-pointer p-mr-4" @click="openTemporalFilterDialog"></i>
                     <KnFabButton icon="fas fa-plus" @click="addNewFilter"></KnFabButton>
                 </template>

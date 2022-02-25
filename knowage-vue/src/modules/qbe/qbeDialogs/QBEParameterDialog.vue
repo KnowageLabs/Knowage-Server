@@ -2,10 +2,10 @@
     <Dialog id="qbe-filter-dialog" :style="descriptor.entityRelation.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary kn-width-full">
-                <template #left>
+                <template #start>
                     {{ $t('common.parameters') }}
                 </template>
-                <template #right>
+                <template #end>
                     <KnFabButton icon="fas fa-plus" @click="addNewParam" />
                 </template>
             </Toolbar>

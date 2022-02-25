@@ -2,7 +2,7 @@
     <Dialog id="qbe-filter-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="relationDescriptor.entityRelation.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ propEntity.text }}
                 </template>
             </Toolbar>

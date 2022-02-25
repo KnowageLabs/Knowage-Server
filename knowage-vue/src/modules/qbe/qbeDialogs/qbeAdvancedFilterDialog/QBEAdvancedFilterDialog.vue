@@ -2,7 +2,7 @@
     <Dialog id="qbe-advanced-filter-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="QBEAdvancedFilterDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-2 p-col-12">
-                <template #left>
+                <template #start>
                     {{ $t('qbe.advancedFilters.advancedFilterVisualisation') }}
                 </template>
             </Toolbar>

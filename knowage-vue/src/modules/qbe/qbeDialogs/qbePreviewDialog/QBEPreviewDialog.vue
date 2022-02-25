@@ -1,10 +1,10 @@
 <template>
     <div id="qbe-preview-dialog" class="p-fluid kn-dialog--toolbar--primary">
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0 p-col-12">
-            <template #left>
+            <template #start>
                 {{ $t('common.preview') }}
             </template>
-            <template #right>
+            <template #end>
                 <i class="fa fa-times kn-cursor-pointer" @click="close"></i>
             </template>
         </Toolbar>

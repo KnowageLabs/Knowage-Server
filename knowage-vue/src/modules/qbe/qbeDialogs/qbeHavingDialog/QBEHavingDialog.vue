@@ -2,11 +2,11 @@
     <Dialog id="qbe-having-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="QBEHavingDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-2 p-col-12">
-                <template #left>
+                <template #start>
                     {{ $t('qbe.having.title') }}
                 </template>
 
-                <template #right>
+                <template #end>
                     <KnFabButton icon="fas fa-plus" @click="addNewHaving"></KnFabButton>
                 </template>
             </Toolbar>

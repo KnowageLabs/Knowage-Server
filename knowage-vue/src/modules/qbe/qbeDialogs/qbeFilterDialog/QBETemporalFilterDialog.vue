@@ -2,7 +2,7 @@
     <Dialog id="qbe-filter-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="QBEFilterDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false" :base-z-index="4203">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-2 p-col-12">
-                <template #left>
+                <template #start>
                     {{ $t('qbe.filters.temporalFilter') }}
                 </template>
             </Toolbar>
