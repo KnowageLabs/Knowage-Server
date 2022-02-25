@@ -8,7 +8,7 @@
             </Toolbar>
         </template>
 
-        <div v-html="sqlFormats.jpqlFormatted"></div>
+        <div v-html="sqlFormats.sqlFormatted"></div>
 
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="$emit('close')"> {{ $t('common.ok') }}</Button>
