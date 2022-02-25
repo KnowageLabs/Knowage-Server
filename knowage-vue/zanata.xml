@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config xmlns="http://zanata.org/namespace/config/">
+  <!-- <url>https://www.knowage-suite.com/zanata/</url> -->
+  <url>http://161.27.213.102:10080/zanata/</url>
+  <project>Knowage-json</project>
+  <project-version>master</project-version>
+  <project-type>file</project-type>
+  <src-dir>.</src-dir>
+  <trans-dir>.</trans-dir>
+  <includes>src/i18n/messages.json</includes>
+</config>
