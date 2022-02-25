@@ -162,7 +162,7 @@ import RadioButton from 'primevue/radiobutton'
 export default defineComponent({
     name: 'kn-parameter-sidebar',
     components: { Calendar, Chip, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton },
-    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String } },
+    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String }, sessionEnabled: { type: Boolean } },
     emits: ['execute', 'exportCSV', 'roleChanged'],
     data() {
         return {
