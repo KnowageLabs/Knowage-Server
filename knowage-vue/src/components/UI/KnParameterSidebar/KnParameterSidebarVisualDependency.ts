@@ -1,7 +1,6 @@
 import { iParameter, } from './KnParameterSidebar'
 
 export function setVisualDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter) {
-    console.log("PARAMETER: ", parameter)
     if (parameter.dependencies?.visual.length !== 0) {
         parameter.dependencies?.visual.forEach((dependency: any) => {
             const index = loadedParameters.filterStatus.findIndex((param: any) => {

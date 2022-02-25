@@ -304,8 +304,9 @@ export default defineComponent({
         async loadDatasetDrivers() {
             if (!this.qbe) return
             const label = this.qbe.label ? this.qbe.label : this.qbe.qbeDatamarts
+            const url = this.qbe.label ? `3.0/datasets/${label}/filters` : `1.0/businessmodel/${this.qbe.qbeDatamarts}/filters`
 
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${label}/filters`, { role: this.userRole }).then((response: AxiosResponse<any>) => {
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, { role: this.userRole }).then((response: AxiosResponse<any>) => {
                 this.filtersData = response.data
                 if (this.filtersData.filterStatus) {
                     this.filtersData.filterStatus = this.filtersData.filterStatus.filter((filter: any) => filter.id)
