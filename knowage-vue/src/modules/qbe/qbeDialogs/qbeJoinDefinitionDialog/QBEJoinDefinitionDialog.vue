@@ -77,13 +77,14 @@ export default defineComponent({
         },
         propEntities() {
             this.loadEntities()
+            this.loadData()
         }
     },
     async created() {
         this.loadQuery()
         await this.loadEntityNames()
-        this.loadData()
         this.loadEntities()
+        this.loadData()
     },
     methods: {
         loadData() {
