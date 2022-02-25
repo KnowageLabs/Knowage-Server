@@ -35,7 +35,7 @@
                 {{ $t('common.info.noDataFound') }}
             </div>
         </template>
-        <Column v-for="(col, index) of filteredVisibleFields" :hidden="!col.visible" :field="`column_${index + 1}`" :key="index" style="flex-grow:1; flex-basis:200px">
+        <Column v-for="(col, index) of filteredVisibleFields" :hidden="!col.visible" :field="`column_${index + 1}`" :key="index" :style="qbeSimpleTableDescriptor.style.column">
             <template #header>
                 <div class="customHeader">
                     <div class="qbeCustomTopColor" :style="`background-color: ${col.color}`" :title="col.entity"></div>
@@ -82,7 +82,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Menu from 'primevue/contextmenu'
 import Dialog from 'primevue/dialog'
-import QBESimpleTableDescriptor from './QBESmartTableDescriptor.json'
+import qbeSimpleTableDescriptor from './QBESmartTableDescriptor.json'
 
 export default defineComponent({
     name: 'qbe-simple-table',
@@ -91,7 +91,7 @@ export default defineComponent({
     emits: ['removeFieldFromQuery', 'orderChanged', 'fieldHidden', 'fieldGrouped', 'fieldAggregated', 'aliasChanged', 'entityDropped', 'reordered', 'pageChanged', 'openFilterDialog'],
     data() {
         return {
-            QBESimpleTableDescriptor,
+            qbeSimpleTableDescriptor,
             aliasDialogVisible: false,
             alias: '',
             menuButtons: [] as any,

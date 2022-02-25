@@ -3,7 +3,7 @@
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-2 p-col-12">
                 <template #left>
-                    SQL Query
+                    <span>{{ $t('qbe.detailView.toolbarMenu.sql') }}</span>
                 </template>
             </Toolbar>
         </template>

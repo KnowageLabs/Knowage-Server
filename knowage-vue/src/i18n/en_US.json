@@ -1906,6 +1906,9 @@
             }
         },
         "entities": {
+            "title": "Entities",
+            "derived": "Derived Entities",
+
             "relationDialog": {
                 "joinType": "Join type",
                 "noRelations": "There is no relation going out from this entity",

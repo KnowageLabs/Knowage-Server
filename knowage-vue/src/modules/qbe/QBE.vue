@@ -19,7 +19,7 @@
                 <div class="p-d-flex p-flex-column kn-flex kn-overflow-hidden">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary kn-flex-0">
                         <template #start>
-                            <span>Entities</span>
+                            <span>{{ $t('qbe.entities.title') }}</span>
                         </template>
                         <template #end>
                             <Chip style="background-color:white"> {{ entities?.entities?.length }} </Chip>
@@ -34,7 +34,7 @@
                 <div class="p-d-flex p-flex-column kn-overflow-hidden" :class="{ 'derived-entities-toggle': showDerivedList }">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary kn-flex-0">
                         <template #start>
-                            <span>Derived Entities</span>
+                            <span>{{ $t('qbe.entities.derived') }}</span>
                         </template>
                         <template #end>
                             <Button v-if="showEntitiesLists" icon="fas fa-plus-circle" class="p-button-text p-button-rounded p-button-plain" v-tooltip.top="$t('common.add')" @click="createSubquery" />
