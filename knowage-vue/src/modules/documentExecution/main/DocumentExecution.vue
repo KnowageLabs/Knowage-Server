@@ -57,6 +57,7 @@
                 :filtersData="filtersData"
                 :propDocument="document"
                 :userRole="userRole"
+                :sessionEnabled="sessionEnabled"
                 @execute="onExecute"
                 @exportCSV="onExportCSV"
                 @roleChanged="onRoleChange"
@@ -92,6 +93,8 @@ import Registry from '../registry/Registry.vue'
 import Dossier from '../dossier/Dossier.vue'
 import Olap from '../olap/Olap.vue'
 import moment from 'moment'
+
+const deepcopy = require('deepcopy')
 
 export default defineComponent({
     name: 'document-execution',
@@ -145,7 +148,8 @@ export default defineComponent({
             olapCustomViewVisible: false,
             userRole: null,
             loading: false,
-            olapDesignerMode: false
+            olapDesignerMode: false,
+            sessionEnabled: false
         }
     },
     async activated() {
@@ -196,6 +200,8 @@ export default defineComponent({
 
         this.user = (this.$store.state as any).user
         this.userRole = this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
+
+        await this.loadUserConfig()
 
         this.isOlapDesignerMode()
         this.setMode()
@@ -398,6 +404,19 @@ export default defineComponent({
             }
         },
         async loadFilters() {
+            if (this.sessionEnabled) {
+                const tempFilters = sessionStorage.getItem(this.document.label)
+                if (tempFilters) {
+                    this.filtersData = JSON.parse(tempFilters) as { filterStatus: iParameter[]; isReadyForExecution: boolean }
+                    this.filtersData.filterStatus?.forEach((filter: any) => {
+                        if (filter.type === 'DATE' && filter.parameterValue[0].value) {
+                            filter.parameterValue[0].value = new Date(filter.parameterValue[0].value)
+                        }
+                    })
+                    return
+                }
+            }
+
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, { label: this.document.label, role: this.userRole, parameters: this.document.navigationParams ?? {} })
                 .then((response: AxiosResponse<any>) => (this.filtersData = response.data))
@@ -589,6 +608,10 @@ export default defineComponent({
             await this.loadURL(null)
             this.parameterSidebarVisible = false
             this.reloadTrigger = !this.reloadTrigger
+
+            if (this.sessionEnabled) {
+                this.saveParametersInSession()
+            }
             this.loading = false
         },
         async onExportCSV() {
@@ -874,6 +897,26 @@ export default defineComponent({
             if (this.$route.name === 'olap-designer') {
                 this.olapDesignerMode = true
             }
+        },
+        async loadUserConfig() {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
+                if (response.data) {
+                    this.sessionEnabled = response.data['SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled'] === 'false' ? false : true
+                }
+            })
+        },
+        saveParametersInSession() {
+            const tempFilters = deepcopy(this.filtersData)
+            tempFilters.filterStatus?.forEach((filter: any) => {
+                delete filter.dataDependsOnParameters
+                delete filter.dataDependentParameters
+                delete filter.dependsOnParameters
+                delete filter.dependentParameters
+                delete filter.lovDependsOnParameters
+                delete filter.lovDependentParameters
+            })
+
+            sessionStorage.setItem(this.document.label, JSON.stringify(tempFilters))
         }
     }
 })

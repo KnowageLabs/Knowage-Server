@@ -52,7 +52,7 @@
     --kn-mainmenu-background-color: #43749e;
     --kn-mainmenu-hover-background-color: #78a9d4;
     --kn-adminmenu-hover-background-color: #cbdeef;
-    --kn-mainmenu-box-shadow: 0px 4px 8px rgb(72, 72, 72);
+    --kn-mainmenu-box-shadow: 0px 4px 8px #484848;
     --kn-mainmenu-highlight-color: #ce0651;
     --kn-mainmenu-icon-color: #fff;
     --kn-mainmenu-panel-color: #f0f8ff;
@@ -88,6 +88,9 @@
 
     // TREE
     --kn-tree-border-color: #cccccc;
+    --kn-tree-border-radius: 4px;
+    --kn-tree-selected-background-color: #bbd6ed90;
+    --kn-tree-selected-color: var(--kn-color-primary);
 
     //MESSAGES
     --kn-message-success-background-color: #c8e6c9;

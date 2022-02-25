@@ -12,7 +12,7 @@
     </Toolbar>
     <Card v-show="expandParamsCard">
         <template #content>
-            <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.pars" :scrollable="true" scrollHeight="250px" dataKey="versNum" responsiveLayout="stack" breakpoint="960px">
+            <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.pars" :scrollable="true" scrollHeight="250px" dataKey="versNum" responsiveLayout="stack" breakpoint="960px" @cell-edit-complete="onCellEditComplete">
                 <template #empty>
                     {{ $t('managers.datasetManagement.tableEmpty') }}
                 </template>
@@ -50,83 +50,86 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import tableDescriptor from './DatasetManagementTablesDescriptor.json'
-    import Dropdown from 'primevue/dropdown'
-    import Card from 'primevue/card'
-    import DataTable from 'primevue/datatable'
-    import Column from 'primevue/column'
-    import Checkbox from 'primevue/checkbox'
+import { defineComponent } from 'vue'
+import tableDescriptor from './DatasetManagementTablesDescriptor.json'
+import Dropdown from 'primevue/dropdown'
+import Card from 'primevue/card'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Checkbox from 'primevue/checkbox'
 
-    export default defineComponent({
-        components: { Card, Dropdown, DataTable, Column, Checkbox },
-        props: {
-            selectedDataset: { type: Object as any }
-        },
-        computed: {
-            disableDeleteAll() {
-                if (!this.dataset.pars || this.dataset['pars'].length == 0) {
-                    return true
-                } else {
-                    return false
-                }
-            }
-        },
-        emits: ['touched'],
-        data() {
-            return {
-                tableDescriptor,
-                dataset: {} as any,
-                expandParamsCard: true,
-                datasetParamTypes: tableDescriptor.datasetParamTypes
-            }
-        },
-        created() {
-            this.dataset = this.selectedDataset
-        },
-        watch: {
-            selectedDataset() {
-                this.dataset = this.selectedDataset
-            }
-        },
-        methods: {
-            addNewParam() {
-                if (this.dataset.isPersisted) {
-                    this.$confirm.require({
-                        message: this.$t('managers.datasetManagement.disablePersistenceMsg'),
-                        header: this.$t('managers.datasetManagement.disablePersistence'),
-                        icon: 'pi pi-exclamation-triangle',
-                        accept: () => {
-                            this.dataset.isPersisted = false
-                            this.dataset.persistTableName = null
-                            this.insertParameter()
-                        }
-                    })
-                } else {
-                    this.insertParameter()
-                }
-            },
-            insertParameter() {
-                this.dataset.pars ? '' : (this.dataset.pars = [])
-                const newParam = { ...tableDescriptor.newParam }
-                this.dataset.pars.push(newParam)
-            },
-            deleteParam(removedParam) {
-                this.$confirm.require({
-                    message: this.$t('common.toast.deleteMessage'),
-                    header: this.$t('common.uppercaseDelete'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => (this.dataset.pars = this.dataset.pars.filter((paramToRemove) => removedParam.data.name !== paramToRemove.name))
-                })
-            },
-            removeAllParams() {
-                this.$confirm.require({
-                    message: this.$t('managers.datasetManagement.deleteAllParamsMsg'),
-                    header: this.$t('managers.datasetManagement.deleteAllParams'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => (this.dataset.pars = [])
-                })
+export default defineComponent({
+    components: { Card, Dropdown, DataTable, Column, Checkbox },
+    props: {
+        selectedDataset: { type: Object as any }
+    },
+    computed: {
+        disableDeleteAll() {
+            if (!this.dataset.pars || this.dataset['pars'].length == 0) {
+                return true
+            } else {
+                return false
             }
         }
-    })
+    },
+    emits: ['touched'],
+    data() {
+        return {
+            tableDescriptor,
+            dataset: {} as any,
+            expandParamsCard: true,
+            datasetParamTypes: tableDescriptor.datasetParamTypes
+        }
+    },
+    created() {
+        this.dataset = this.selectedDataset
+    },
+    watch: {
+        selectedDataset() {
+            this.dataset = this.selectedDataset
+        }
+    },
+    methods: {
+        addNewParam() {
+            if (this.dataset.isPersisted) {
+                this.$confirm.require({
+                    message: this.$t('managers.datasetManagement.disablePersistenceMsg'),
+                    header: this.$t('managers.datasetManagement.disablePersistence'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.dataset.isPersisted = false
+                        this.dataset.persistTableName = null
+                        this.insertParameter()
+                    }
+                })
+            } else {
+                this.insertParameter()
+            }
+        },
+        insertParameter() {
+            this.dataset.pars ? '' : (this.dataset.pars = [])
+            const newParam = { ...tableDescriptor.newParam }
+            this.dataset.pars.push(newParam)
+        },
+        deleteParam(removedParam) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.uppercaseDelete'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => (this.dataset.pars = this.dataset.pars.filter((paramToRemove) => removedParam.data.name !== paramToRemove.name))
+            })
+        },
+        removeAllParams() {
+            this.$confirm.require({
+                message: this.$t('managers.datasetManagement.deleteAllParamsMsg'),
+                header: this.$t('managers.datasetManagement.deleteAllParams'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => (this.dataset.pars = [])
+            })
+        },
+        onCellEditComplete(event) {
+            this.dataset.pars[event.index] = event.newData
+        }
+    }
+})
 </script>

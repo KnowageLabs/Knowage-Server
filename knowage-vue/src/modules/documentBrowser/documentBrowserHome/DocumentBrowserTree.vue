@@ -1,7 +1,9 @@
 <template>
     <Tree
         id="folders-tree"
-        class="kn-tree"
+        class="kn-tree kn-column-tree kn-flex p-p-0"
+        scrollHeight="calc(100vh - 127px)"
+        maximizable
         :value="nodes"
         selectionMode="single"
         v-model:selectionKeys="selectedFolderKey"
