@@ -1111,5 +1111,9 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
     }
 
-    $scope.getEntityTree();
+	$scope.getEntityTree();
+
+	// Fix consistency of the three
+	filters_service.fix($scope.query.expression, $scope.query.filters);
+
 }
