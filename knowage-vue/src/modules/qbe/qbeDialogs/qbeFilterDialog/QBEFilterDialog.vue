@@ -20,7 +20,7 @@
             <QBEFilterCard v-for="filter in filters" :key="filter.filterId" :propFilter="filter" :id="id" :propEntities="entities" :subqueries="filterDialogData?.query.subqueries" :field="filterDialogData?.field" :propParameters="parameters" @removeFilter="removeFilter"></QBEFilterCard>
         </div>
 
-        <QBEFilterParameters v-else-if="parameterTableVisible" :propParameters="propParameters"></QBEFilterParameters>
+        <QBEFilterParameters v-else-if="parameterTableVisible" :propParameters="parameters" @parametersUpdated="onParametersUpdated"></QBEFilterParameters>
 
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
@@ -44,12 +44,13 @@ import QBETemporalFilterDialog from './QBETemporalFilterDialog.vue'
 import QBEFilterParameters from './QBEFilterParameters.vue'
 
 const crypto = require('crypto')
+const deepcopy = require('deepcopy')
 
 export default defineComponent({
     name: 'qbe-filter-dialog',
     components: { Dialog, KnFabButton, Message, QBEFilterCard, QBETemporalFilterDialog, QBEFilterParameters },
     props: { visible: { type: Boolean }, filterDialogData: { type: Object as PropType<{ field: iField; query: iQuery }> }, id: { type: String }, entities: { type: Array }, propParameters: { type: Array, required: true }, propExpression: { type: Object } },
-    emits: ['save', 'close'],
+    emits: ['save', 'close', 'parametersUpdated'],
     data() {
         return {
             QBEFilterDialogDescriptor,
@@ -59,7 +60,8 @@ export default defineComponent({
             temporalFilterDialogVisible: false,
             parameters: [] as any[],
             parameterTableVisible: false,
-            expression: {} as any
+            expression: {} as any,
+            updatedParameters: [] as any[]
         }
     },
     watch: {
@@ -95,6 +97,7 @@ export default defineComponent({
         },
         loadParameters() {
             this.parameters = this.propParameters ? [...this.propParameters] : []
+            this.updatedParameters = deepcopy(this.parameters)
         },
         loadExpression() {
             this.expression = this.propExpression as any
@@ -221,20 +224,23 @@ export default defineComponent({
             }
             return from + ' ---- ' + to
         },
-
         closeDialog() {
             this.$emit('close')
-            this.nextFilterIndex = -1
+            this.nextFilterIndex = crypto.randomBytes(16).toString('hex')
             this.parameters = []
+            this.updatedParameters = []
             this.parameterTableVisible = false
         },
         save() {
             if (this.propParameters.length > 0 && !this.parameterTableVisible) {
                 this.parameterTableVisible = true
             } else {
-                this.$emit('save', this.filters, this.filterDialogData?.field, this.parameters, this.expression)
+                this.$emit('save', this.filters, this.filterDialogData?.field, this.updatedParameters, this.expression)
                 this.parameterTableVisible = false
             }
+        },
+        onParametersUpdated(updatedParameters: any[]) {
+            this.updatedParameters = updatedParameters
         }
     }
 })

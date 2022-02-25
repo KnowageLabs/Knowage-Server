@@ -1,5 +1,5 @@
 <template>
-    <DataTable class="p-datatable-sm kn-table p-m-4" :value="parameters" editMode="cell" responsiveLayout="stack" breakpoint="960px">
+    <DataTable class="p-datatable-sm kn-table p-m-4" :value="parameters" editMode="cell" responsiveLayout="stack" breakpoint="960px" @cell-edit-complete="onCellEditComplete">
         <template #empty>
             <div>
                 {{ $t('common.info.noDataFound') }}
@@ -31,7 +31,7 @@ export default defineComponent({
     name: 'qbe-filter-parameters',
     components: { Column, DataTable },
     props: { visible: { type: Boolean }, propParameters: { type: Array } },
-    emits: ['save', 'close'],
+    emits: ['save', 'close', 'parametersUpdated'],
     data() {
         return {
             parameters: [] as any[]
@@ -52,6 +52,10 @@ export default defineComponent({
                 parameter.value = parameter.defaultValue
                 this.parameters.push(parameter)
             })
+        },
+        onCellEditComplete(event: any) {
+            this.parameters[event.index] = event.newData
+            this.$emit('parametersUpdated', this.parameters)
         }
     }
 })

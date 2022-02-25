@@ -487,6 +487,7 @@ export default defineComponent({
             if (this.selectedQuery.expression.childNodes?.length === 0) {
                 this.selectedQuery.expression = {}
             }
+
             this.qbe.pars = parameters ? [...parameters] : []
             this.filterDialogVisible = false
 
