@@ -7,5 +7,5 @@
   <project-type>file</project-type>
   <src-dir>.</src-dir>
   <trans-dir>.</trans-dir>
-  <includes>src/i18n/messages.json</includes>
+  <includes>src/i18n/messages*.json</includes>
 </config>
