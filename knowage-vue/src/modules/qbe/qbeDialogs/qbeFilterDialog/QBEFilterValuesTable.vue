@@ -7,6 +7,7 @@
         :loading="loading"
         v-model:filters="filters"
         v-model:selection="selectedValues"
+        :selectionMode="['IN', 'NOT IN'].includes(filterOperator) ? false : 'single'"
         filterDisplay="menu"
         responsiveLayout="stack"
         breakpoint="960px"
@@ -20,7 +21,7 @@
                 {{ $t('common.info.noDataFound') }}
             </div>
         </template>
-        <Column selectionMode="multiple" :headerStyle="QBEFilterDialogDescriptor.selectionColumnHeaderStyle"></Column>
+        <Column :selectionMode="['IN', 'NOT IN'].includes(filterOperator) ? 'multiple' : 'single'" :headerStyle="QBEFilterDialogDescriptor.selectionColumnHeaderStyle"></Column>
         <Column v-for="column in columns" :key="column.header" :field="column.dataIndex" :header="column.header" :sortable="true">
             <template #filter="{filterModel}">
                 <InputText v-model="filterModel.value" class="p-column-filter"></InputText>
@@ -40,7 +41,7 @@ import QBEFilterDialogDescriptor from './QBEFilterDialogDescriptor.json'
 export default defineComponent({
     name: 'qbe-filter-values-table',
     components: { Column, DataTable },
-    props: { filterValuesData: { type: Object }, loading: { type: Boolean }, loadedSelectedValues: { type: Array } },
+    props: { filterValuesData: { type: Object }, loading: { type: Boolean }, loadedSelectedValues: { type: Array }, filterOperator: { type: String, required: true } },
     emits: ['selected'],
     data() {
         return {
@@ -54,6 +55,9 @@ export default defineComponent({
     watch: {
         filterValuesData() {
             this.loadData()
+        },
+        filterOperator() {
+            this.selectedValues = []
         }
     },
     created() {
@@ -72,10 +76,17 @@ export default defineComponent({
             }
         },
         onSelect() {
-            this.$emit(
-                'selected',
-                this.selectedValues.map((value: any) => value.column_1)
-            )
+            let tempSelectedValues = [] as string[]
+            if (['IN', 'NOT IN'].includes(this.filterOperator)) {
+                tempSelectedValues = this.selectedValues.map((value: any) => value.column_1)
+            } else {
+                tempSelectedValues = []
+                Object.keys(this.selectedValues).forEach((key: string) => {
+                    tempSelectedValues.push(this.selectedValues[key])
+                })
+            }
+
+            this.$emit('selected', tempSelectedValues)
         }
     }
 })

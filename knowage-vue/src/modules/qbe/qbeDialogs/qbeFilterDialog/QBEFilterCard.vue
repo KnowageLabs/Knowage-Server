@@ -86,7 +86,7 @@
                 </div>
             </div>
         </div>
-        <QBEFilterValuesTable v-show="filter.rightType === 'valueOfField'" class="p-m-2" :filterValuesData="filterValuesData" :loadedSelectedValues="selectedValues" :loading="loading" @selected="setSelectedValues"></QBEFilterValuesTable>
+        <QBEFilterValuesTable v-show="filter.rightType === 'valueOfField'" class="p-m-2" :filterValuesData="filterValuesData" :loadedSelectedValues="selectedValues" :loading="loading" :filterOperator="filter.operator" @selected="setSelectedValues"></QBEFilterValuesTable>
     </div>
 </template>
 
@@ -239,8 +239,10 @@ export default defineComponent({
                 this.secondOperand = ''
                 this.targetDate = null
                 this.targetEndDate = null
-                this.resetFilterRightOperandValues()
+            } else if (this.filter && this.filter.rightType === 'valueOfField') {
+                this.selectedValues = []
             }
+            this.resetFilterRightOperandValues()
         },
         onManualValueChange() {
             if (this.filter) {
