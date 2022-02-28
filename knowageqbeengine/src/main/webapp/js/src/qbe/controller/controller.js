@@ -92,6 +92,10 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			$scope.editQueryObj = qbeJsonObj.catalogue.queries[0];
 			$scope.query = $scope.editQueryObj;
 			$scope.subqueriesModel.subqueries = $scope.editQueryObj.subqueries;
+
+			// Fix consistency of the three
+			filters_service.fix($scope.query.expression, $scope.query.filters);
+
 		}
 		if(message.smartView != undefined) {
 			query_service.smartView = message.smartView;
@@ -1125,8 +1129,5 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
     }
 
 	$scope.getEntityTree();
-
-	// Fix consistency of the three
-	filters_service.fix($scope.query.expression, $scope.query.filters);
 
 }
