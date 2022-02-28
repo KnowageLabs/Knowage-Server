@@ -126,7 +126,8 @@ import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
 import { iQBE, iQuery, iField, iQueryResult, iFilter } from './QBE'
-import { findByName, replace, removeInPlace } from './qbeDialogs/qbeAdvancedFilterDialog/treeService'
+// import { findByName, replace, removeInPlace } from './qbeDialogs/qbeAdvancedFilterDialog/treeService'
+import { onFiltersSaveCallback } from './QBEFilterService'
 import Dialog from 'primevue/dialog'
 import Chip from 'primevue/chip'
 import InputSwitch from 'primevue/inputswitch'
@@ -468,67 +469,8 @@ export default defineComponent({
             this.havingDialogVisible = true
         },
         onFiltersSave(filters: iFilter[], field: iField, parameters: any[], expression: any) {
-            if (!this.qbe) return
-
-            for (let i = 0; i < filters.length; i++) {
-                const tempFilter = filters[i]
-                const index = this.selectedQuery.filters.findIndex((el: iFilter) => el.filterId === tempFilter.filterId)
-                if (index !== -1) {
-                    this.selectedQuery.filters[index] = tempFilter
-                } else {
-                    this.selectedQuery.filters.push(tempFilter)
-                }
-            }
-
-            this.removeDeletedFilters(filters, field, expression)
-
-            this.refresh(this.selectedQuery.filters, expression)
-
-            if (this.selectedQuery.expression.childNodes?.length === 0) {
-                this.selectedQuery.expression = {}
-            }
-
-            this.qbe.pars = parameters ? [...parameters] : []
+            onFiltersSaveCallback(filters, field, parameters, expression, this.qbe, this.selectedQuery, this.smartView, this.executeQBEQuery)
             this.filterDialogVisible = false
-
-            if (this.smartView) {
-                this.executeQBEQuery()
-            }
-        },
-        refresh(filters: iFilter[], expression: any) {
-            if (!this.qbe) return
-            for (let filter of filters) {
-                var newConst = {
-                    value: '$F{' + filter.filterId + '}',
-                    childNodes: [],
-                    details: {
-                        leftOperandAlias: filter.leftOperandAlias,
-                        operator: filter.operator,
-                        entity: filter.entity,
-                        rightOperandValue: filter.rightOperandValue.join(', ')
-                    },
-                    type: 'NODE_CONST'
-                }
-                var oldConst = findByName(expression, newConst.value)
-
-                replace(expression, newConst, oldConst)
-            }
-            this.selectedQuery.expression = expression
-            this.filterDialogVisible = false
-        },
-        removeDeletedFilters(filters: iFilter[], field: iField, expression: any) {
-            if (!this.qbe) return
-
-            for (let i = this.selectedQuery.filters.length - 1; i >= 0; i--) {
-                const tempFilter = this.selectedQuery.filters[i]
-                if (tempFilter.leftOperandValue === field.id) {
-                    const index = filters.findIndex((el: iFilter) => el.filterId === tempFilter.filterId)
-                    if (index === -1) {
-                        this.selectedQuery.filters.splice(i, 1)
-                        removeInPlace(expression, '$F{' + tempFilter.filterId + '}')
-                    }
-                }
-            }
         },
         onAdvancedFiltersSave(expression: any) {
             this.selectedQuery.expression = expression
