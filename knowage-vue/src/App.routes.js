@@ -8,6 +8,7 @@ import documentBrowserRoutes from '@/modules/documentBrowser/DocumentBrowser.rou
 import workspaceRoutes from '@/modules/workspace/workspace.routes.js'
 import overlayRoutes from '@/overlay/Overlay.routes.js'
 import authHelper from '@/helpers/commons/authHelper'
+import { loadLanguageAsync } from '@/App.i18n.js'
 
 const baseRoutes = [
     {
@@ -73,6 +74,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
+    if (localStorage.getItem('locale')) loadLanguageAsync(localStorage.getItem('locale')).then(() => next())
     const checkRequired = !('/' == to.fullPath && '/' == from.fullPath)
     const loggedIn = localStorage.getItem('token')
 
