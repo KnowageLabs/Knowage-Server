@@ -686,34 +686,47 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
     	queryEntitiesService.getQueryEntitiesUniqueNames($scope.query.id,$scope.bodySend).then(function(response){
     		var selectedEntities = response.data;
 
-    		$mdDialog.show({
-                controller: function ($scope, $mdDialog) {
+			$mdDialog.show({
+				controller: function ($scope, $mdDialog) {
 
-                	$scope.filteredRelations = $scope.selectedRelationsService.getRelationships(selectedEntities,$scope.entityModel.entities)
-                	$scope.previousVersionRelations = angular.copy($scope.filteredRelations);
-                    $scope.ok= function(){
-                		$scope.editQueryObj.graph = angular.copy($scope.filteredRelations);
+					$scope.filteredRelations = $scope.selectedRelationsService.getRelationships(selectedEntities,$scope.entityModel.entities)
+					$scope.previousVersionRelations = angular.copy($scope.filteredRelations);
+					
+					// Reset values from a previous selection
+					var currentGraph = $scope.query.graph;
+					if (currentGraph.length > 0) {
+						for (i of currentGraph) {
+							for (j of $scope.filteredRelations) {
+								if (i.id == j.id) {
+									j.joinType = i.joinType;
+								}
+							}
+						}
+					}
+					
+					$scope.ok= function(){
+						$scope.editQueryObj.graph = angular.copy($scope.filteredRelations);
 
-                        $mdDialog.hide();
-                    }
+						$mdDialog.hide();
+					}
 
-                	$scope.cancel= function(){
-                		console.log($scope.joinForm.FormController)
-                		//$scope.joinForm.$setPristine();
-                        $mdDialog.hide();
-                    }
-                },
+					$scope.cancel= function(){
+						console.log($scope.joinForm.FormController)
+						//$scope.joinForm.$setPristine();
+						$mdDialog.hide();
+					}
+				},
 
-                scope: $scope,
-                preserveScope:true,
-                templateUrl:  sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/joinDefinitionsDialog.html',
+				scope: $scope,
+				preserveScope:true,
+				templateUrl:  sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/joinDefinitionsDialog.html',
 
-                clickOutsideToClose:true
-            })
+				clickOutsideToClose:true
+			})
 
-    	})
+		})
 
-    }
+	}
 
 	$scope.openDialogForParams = function(pars,filters,expression,advancedFilters){
     	var finishEdit=$q.defer();
