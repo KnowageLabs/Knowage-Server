@@ -1,16 +1,33 @@
 <template>
-    <iframe :src="`${baseUrl}${url}`"></iframe>
+    <iframe :src="`${completeUrl}`"></iframe>
 </template>
 
 <script>
     export default {
         name: 'IframeRenderer',
         props: {
-            url: String
+            url: String,
+            externalLink: Boolean
         },
         data() {
             return {
-                baseUrl: process.env.VUE_APP_HOST_URL || window.location.origin
+                completeUrl: ''
+            }
+        },
+        created() {
+            this.createBaseUrl()
+        },
+
+        updated() {
+            this.createBaseUrl()
+        },
+        methods: {
+            createBaseUrl() {
+                if (!this.url) {
+                    this.$router.push('/')
+                } else {
+                    this.completeUrl = (this.externalLink ? '' : process.env.VUE_APP_HOST_URL || window.location.origin) + this.url
+                }
             }
         }
     }
