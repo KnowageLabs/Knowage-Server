@@ -65,6 +65,10 @@
     flex: 0;
 }
 
+.kn-absolute {
+    position: absolute;
+}
+
 .kn-flex-05 {
     flex: 0.5;
 }
@@ -79,6 +83,14 @@
 
 .kn-overflow {
     overflow: auto;
+}
+
+.kn-overflow-hidden {
+    overflow: hidden;
+}
+
+.kn-uppercase {
+    text-transform: uppercase;
 }
 
 .kn-remove-card-padding {
