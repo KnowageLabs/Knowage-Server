@@ -13,9 +13,9 @@
             </Toolbar>
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
-        <div v-if="!loading && !qbePreviewDialogVisible" class="qbe-view-container  p-d-flex p-flex-row kn-height-full">
-            <div v-if="parameterSidebarVisible" id="qbe-backdrop" @click="parameterSidebarVisible = false"></div>
-            <div v-show="showEntitiesLists && qbeLoaded" class="entities-lists">
+        <div v-if="!loading && !qbePreviewDialogVisible" class="kn-relative p-d-flex p-flex-row kn-height-full kn-width-full">
+            <div v-if="parameterSidebarVisible" :style="qbeDescriptor.style.backdrop" @click="parameterSidebarVisible = false"></div>
+            <div v-show="showEntitiesLists && qbeLoaded" :style="qbeDescriptor.style.entitiesLists">
                 <div class="p-d-flex p-flex-column kn-flex kn-overflow-hidden">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary kn-flex-0">
                         <template #start>
@@ -26,7 +26,7 @@
                         </template>
                     </Toolbar>
                     <div class="kn-flex kn-overflow-hidden">
-                        <ScrollPanel class="kn-height-full olap-scroll-panel">
+                        <ScrollPanel class="kn-height-full qbe-scroll-panel">
                             <ExpandableEntity :availableEntities="entities.entities" :query="mainQuery" @showRelationDialog="showRelationDialog" @entityClicked="onDropComplete($event, false)" @entityChildClicked="onDropComplete($event, false)" @openFilterDialog="openFilterDialog" />
                         </ScrollPanel>
                     </div>
@@ -44,13 +44,13 @@
                         </template>
                     </Toolbar>
                     <div v-show="showDerivedList" class="kn-flex kn-overflow-hidden">
-                        <ScrollPanel class="kn-height-full olap-scroll-panel">
+                        <ScrollPanel class="kn-height-full qbe-scroll-panel">
                             <SubqueryEntity :availableEntities="mainQuery.subqueries" @editSubquery="selectSubquery" @deleteSubquery="deleteSubquery" />
                         </ScrollPanel>
                     </div>
                 </div>
             </div>
-            <div class="detail-view p-m-1" v-if="qbe && qbeLoaded">
+            <div class="qbe-detail-view p-m-1" v-if="qbe && qbeLoaded">
                 <Toolbar class="kn-toolbar kn-toolbar--primary kn-width-full">
                     <template #start>
                         <Button v-if="showEntitiesLists" icon="pi pi-chevron-left" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('qbe.detailView.hideList')" @click="toggleEntitiesLists" />
@@ -148,7 +148,7 @@ import Menu from 'primevue/contextmenu'
 import QBEJoinDefinitionDialog from './qbeDialogs/qbeJoinDefinitionDialog/QBEJoinDefinitionDialog.vue'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 import QBEPreviewDialog from './qbeDialogs/qbePreviewDialog/QBEPreviewDialog.vue'
-
+import qbeDescriptor from './QBEDescriptor.json'
 const crypto = require('crypto')
 
 export default defineComponent({
@@ -211,7 +211,8 @@ export default defineComponent({
             pagination: { start: 0, limit: 25 } as any,
             uniqueID: null,
             filtersData: {} as any,
-            qbeLoaded: false
+            qbeLoaded: false,
+            qbeDescriptor
         }
     },
     computed: {
@@ -711,28 +712,19 @@ export default defineComponent({
     height: 100vh;
     width: calc(100vw - #{54px});
     margin: 0;
+    .p-dialog-content {
+        padding: 0;
+        margin: 0;
+        flex: 1;
+        overflow: hidden;
+    }
+    .p-dialog-header {
+        padding: 0;
+        margin: 0;
+    }
 }
 
-.full-screen-dialog.p-dialog .p-dialog-header,
-.full-screen-dialog.p-dialog .p-dialog-content {
-    padding: 0;
-    margin: 0;
-}
-
-.full-screen-dialog.p-dialog .p-dialog-content {
-    flex: 1;
-    overflow: hidden;
-}
-
-.entities-lists {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    border-right: 1px solid #ccc;
-    height: 100%;
-}
-
-.detail-view {
+.qbe-detail-view {
     display: flex;
     flex-direction: column;
     flex: 3;
@@ -742,28 +734,11 @@ export default defineComponent({
     height: 25%;
 }
 
-.olap-scroll-panel .p-scrollpanel-content {
+.qbe-scroll-panel .p-scrollpanel-content {
     padding: 0 !important;
 }
-.olap-scroll-panel .p-scrollpanel-bar {
+.qbe-scroll-panel .p-scrollpanel-bar {
     background-color: #43749eb6;
     width: 5px;
-}
-
-#qbe-backdrop {
-    background-color: rgba(33, 33, 33, 1);
-    opacity: 0.48;
-    z-index: 50;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-}
-
-.qbe-view-container {
-    position: relative;
-    height: 100%;
-    width: 100%;
 }
 </style>
