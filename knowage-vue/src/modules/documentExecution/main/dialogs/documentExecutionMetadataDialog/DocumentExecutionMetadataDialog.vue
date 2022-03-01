@@ -26,23 +26,23 @@
             <div v-if="metadata.shortText.length > 0 || metadata.longText.length > 0">
                 <h2>{{ $t('common.documentDetails') }}</h2>
 
-                <div v-if="metadata.shortText.length > 0" class="p-grid p-ai-centerp-d-flex p-flex-row">
-                    <div v-for="(meta, index) in metadata.shortText" :key="index" class="metadata-small-text-input p-col-4">
+                <div v-show="metadata.shortText.length > 0" class="p-grid">
+                    <div v-for="(meta, index) in metadata.shortText" :key="index" class="p-col-4">
                         <label class="kn-material-input-label">{{ meta.name }}</label>
                         <InputText class="kn-material-input p-inputtext-sm" v-model="meta.value" :disabled="!canModify" />
                     </div>
                 </div>
-
-                <TabView v-if="metadata.longText.length > 0">
-                    <TabPanel v-for="(meta, index) in metadata.longText" :key="index">
-                        <template #header>
-                            <span class="p-text-uppercase">{{ meta.name }}</span>
-                        </template>
-
-                        <Editor v-model="meta.value" :readonly="!canModify" :editorStyle="documentExecutionMetadataDialogDescriptor.editor.style"></Editor>
-                    </TabPanel>
-                </TabView>
             </div>
+
+            <TabView v-if="(metadata.shortText.length > 0 || metadata.longText.length > 0) && metadata.longText.length > 0" scrollable>
+                <TabPanel v-for="(meta, index) in metadata.longText" :key="index">
+                    <template #header>
+                        <span class="p-text-uppercase">{{ meta.name }}</span>
+                    </template>
+
+                    <Editor v-model="meta.value" :readonly="!canModify" :editorStyle="documentExecutionMetadataDialogDescriptor.editor.style"></Editor>
+                </TabPanel>
+            </TabView>
 
             <div v-show="metadata.file.length > 0">
                 <h2>{{ $t('common.attachments') }}</h2>
@@ -71,125 +71,121 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { iMetadata } from '../../DocumentExecution'
-    import Dialog from 'primevue/dialog'
-    import Editor from 'primevue/editor'
-    import documentExecutionMetadataDialogDescriptor from './DocumentExecutionMetadataDialogDescriptor.json'
-    import KnInputFile from '@/components/UI/KnInputFile.vue'
-    import TabView from 'primevue/tabview'
-    import TabPanel from 'primevue/tabpanel'
-    import Textarea from 'primevue/textarea'
+import { defineComponent } from 'vue'
+import { iMetadata } from '../../DocumentExecution'
+import Dialog from 'primevue/dialog'
+import Editor from 'primevue/editor'
+import documentExecutionMetadataDialogDescriptor from './DocumentExecutionMetadataDialogDescriptor.json'
+import KnInputFile from '@/components/UI/KnInputFile.vue'
+import TabView from 'primevue/tabview'
+import TabPanel from 'primevue/tabpanel'
+import Textarea from 'primevue/textarea'
 
-    export default defineComponent({
-        name: 'document-execution-metadata-dialog',
-        components: { Dialog, Editor, KnInputFile, TabView, TabPanel, Textarea },
-        props: { visible: { type: Boolean }, propDocument: { type: Object }, propMetadata: { type: Object, required: true }, propLoading: { type: Boolean } },
-        emits: ['close', 'saveMetadata'],
-        data() {
-            return {
-                documentExecutionMetadataDialogDescriptor,
-                document: null as any,
-                metadata: null as iMetadata | null,
-                uploadedFiles: {} as any,
-                loading: false
-            }
-        },
-        watch: {
-            propMetadata() {
-                this.loadDocument()
-                this.loadMetadata()
-            },
-            propLoading() {
-                this.setLoading()
-            }
-        },
-        computed: {
-            canModify(): boolean {
-                return (this.$store.state as any).user.functionalities.includes('SaveMetadataFunctionality')
-            }
-        },
-        created() {
-            this.setLoading()
+export default defineComponent({
+    name: 'document-execution-metadata-dialog',
+    components: { Dialog, Editor, KnInputFile, TabView, TabPanel, Textarea },
+    props: { visible: { type: Boolean }, propDocument: { type: Object }, propMetadata: { type: Object, required: true }, propLoading: { type: Boolean } },
+    emits: ['close', 'saveMetadata'],
+    data() {
+        return {
+            documentExecutionMetadataDialogDescriptor,
+            document: null as any,
+            metadata: null as iMetadata | null,
+            uploadedFiles: {} as any,
+            loading: false
+        }
+    },
+    watch: {
+        propMetadata() {
             this.loadDocument()
             this.loadMetadata()
         },
-        methods: {
-            loadDocument() {
-                this.document = this.propDocument
-            },
-            loadMetadata() {
-                if (this.propMetadata) {
-                    this.metadata = {
-                        generalMetadata: this.propMetadata.GENERAL_META ? [...this.propMetadata.GENERAL_META] : [],
-                        shortText: this.propMetadata.SHORT_TEXT ? [...this.propMetadata.SHORT_TEXT] : [],
-                        longText: this.propMetadata.LONG_TEXT ? [...this.propMetadata.LONG_TEXT] : [],
-                        file: this.propMetadata.FILE ? [...this.propMetadata.FILE] : []
-                    }
-                }
-            },
-            setLoading() {
-                this.loading = this.propLoading
-            },
-            uploadFile(event: any) {
-                this.uploadedFiles[event.target.id] = event.target.files[0]
-            },
-            async uploadMetaFile(meta: any) {
-                if (!this.uploadedFiles[meta.id]) {
-                    this.$store.commit('setError', {
-                        title: this.$t('common.error.generic'),
-                        msg: this.$t('documentExecution.main.selectFileError')
-                    })
-                } else {
-                    this.loading = true
-
-                    const formData = new FormData()
-                    formData.append('file', this.uploadedFiles[meta.id])
-                    formData.append('fileName', this.uploadedFiles[meta.id].name)
-                    await this.$http
-                        .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/uploadfilemetadata`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-                        .then(() => {
-                            this.$store.commit('setInfo', {
-                                title: this.$t('common.uploadFile'),
-                                msg: this.$t('common.uploadFileSuccess')
-                            })
-                        })
-                        .catch((error: any) =>
-                            this.$store.commit('setError', {
-                                title: this.$t('common.error.generic'),
-                                msg: error
-                            })
-                        )
-                    this.loading = false
-                }
-            },
-            cleanFile(meta: any) {
-                const temp = this.$refs[meta.id] as any
-                if (temp) {
-                    temp.resetInput()
-                }
-            },
-            closeDialog() {
-                this.metadata = null
-                this.$emit('close')
-            },
-            save() {
-                this.$emit('saveMetadata', this.metadata)
-            }
+        propLoading() {
+            this.setLoading()
         }
-    })
+    },
+    computed: {
+        canModify(): boolean {
+            return (this.$store.state as any).user.functionalities.includes('SaveMetadataFunctionality')
+        }
+    },
+    created() {
+        this.setLoading()
+        this.loadDocument()
+        this.loadMetadata()
+    },
+    methods: {
+        loadDocument() {
+            this.document = this.propDocument
+        },
+        loadMetadata() {
+            if (this.propMetadata) {
+                this.metadata = {
+                    generalMetadata: this.propMetadata.GENERAL_META ? [...this.propMetadata.GENERAL_META] : [],
+                    shortText: this.propMetadata.SHORT_TEXT ? [...this.propMetadata.SHORT_TEXT] : [],
+                    longText: this.propMetadata.LONG_TEXT ? [...this.propMetadata.LONG_TEXT] : [],
+                    file: this.propMetadata.FILE ? [...this.propMetadata.FILE] : []
+                }
+            }
+        },
+        setLoading() {
+            this.loading = this.propLoading
+        },
+        uploadFile(event: any) {
+            this.uploadedFiles[event.target.id] = event.target.files[0]
+        },
+        async uploadMetaFile(meta: any) {
+            if (!this.uploadedFiles[meta.id]) {
+                this.$store.commit('setError', {
+                    title: this.$t('common.error.generic'),
+                    msg: this.$t('documentExecution.main.selectFileError')
+                })
+            } else {
+                this.loading = true
+
+                const formData = new FormData()
+                formData.append('file', this.uploadedFiles[meta.id])
+                formData.append('fileName', this.uploadedFiles[meta.id].name)
+                await this.$http
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/uploadfilemetadata`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+                    .then(() => {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.uploadFile'),
+                            msg: this.$t('common.uploadFileSuccess')
+                        })
+                    })
+                    .catch((error: any) =>
+                        this.$store.commit('setError', {
+                            title: this.$t('common.error.generic'),
+                            msg: error
+                        })
+                    )
+                this.loading = false
+            }
+        },
+        cleanFile(meta: any) {
+            const temp = this.$refs[meta.id] as any
+            if (temp) {
+                temp.resetInput()
+            }
+        },
+        closeDialog() {
+            this.metadata = null
+            this.$emit('close')
+        },
+        save() {
+            this.$emit('saveMetadata', this.metadata)
+        }
+    }
+})
 </script>
 
 <style lang="scss">
-    .metadata-small-text-input {
-        flex: 0.3;
-    }
+.pi-upload {
+    display: none;
+}
 
-    .pi-upload {
-        display: none;
-    }
-
-    .document-execution-metadata-dialog-upload-button {
-        width: auto !important;
-    }
+.document-execution-metadata-dialog-upload-button {
+    width: auto !important;
+}
 </style>
