@@ -5,6 +5,7 @@
             "exceededSize": "Uploaded file exceedes max size {size}"
         },
         "loggedUser": "utente loggato",
+        "name": "nome",
         "search": "ricerca",
         "tenant": "tenant",
         "toast": {
