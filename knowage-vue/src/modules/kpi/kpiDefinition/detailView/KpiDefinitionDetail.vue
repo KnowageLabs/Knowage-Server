@@ -308,6 +308,9 @@
                 this.showSaveDialog = false
                 this.touched = false
                 this.kpiToSave = { ...this.selectedKpi }
+
+                if (typeof this.kpiToSave.category !== 'object') this.kpiToSave.category = { valueCd: this.kpiToSave.category }
+
                 this.correctColors(this.kpiToSave.threshold.thresholdValues)
                 if (typeof this.kpiToSave.definition === 'object') {
                     this.kpiToSave.definition.formula = this.formulaToSave
