@@ -53,7 +53,7 @@
 
     <div v-else class="kn-height-full kn-width-full" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>{{ $t('common.info.noDataFound') }}</div>
 
-    <Dialog v-if="aliasDialogVisible" class="alias-dialog" :visible="aliasDialogVisible" :modal="true" :closable="false" :baseZIndex="1" :autoZIndex="true">
+    <Dialog v-if="aliasDialogVisible" class="qbe-smart-table-alias-dialog" :visible="aliasDialogVisible" :modal="true" :closable="false" :baseZIndex="1" :autoZIndex="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
                 <template #start>
@@ -238,8 +238,8 @@ export default defineComponent({
         }
     }
 }
-.alias-dialog .p-dialog-header,
-.alias-dialog .p-dialog-content {
+.qbe-smart-table-alias-dialog .p-dialog-header,
+.qbe-smart-table-alias-dialog .p-dialog-content {
     padding: 0;
     margin: 0;
 }
