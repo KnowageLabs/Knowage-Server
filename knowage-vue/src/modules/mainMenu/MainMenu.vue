@@ -9,12 +9,12 @@
         <MainMenuAdmin :openedPanelEvent="adminMenuOpened" :model="technicalUserFunctionalities" v-if="technicalUserFunctionalities && technicalUserFunctionalities.length > 0" @click="itemClick"></MainMenuAdmin>
         <TieredMenu :class="['kn-tieredMenu', tieredMenuClass]" ref="menu" :model="selectedCustomMenu" :popup="true" @blur="hideItemMenu">
             <template #item="{item}">
-                <router-link class="p-menuitem-link" v-if="item.to" :to="cleanTo(item)" exact>
+                <router-link class="p-menuitem-link" v-if="item.to" :to="cleanTo(item)" @click="itemClick(item)" exact>
                     <span v-if="item.descr" class="p-menuitem-text">{{ $internationalization($t(item.descr)) }}</span>
                     <span v-else class="p-menuitem-text">{{ $internationalization($t(item.label)) }}</span>
                     <span v-if="item.items" class="p-submenu-icon pi pi-angle-right"></span>
                 </router-link>
-                <a v-else class="p-menuitem-link" :target="item.target" role="menuitem" :tabindex="item.disabled ? null : '0'">
+                <a v-else class="p-menuitem-link" :target="item.target" role="menuitem" @click="itemClick(item)" :tabindex="item.disabled ? null : '0'">
                     <span v-if="item.descr" class="p-menuitem-text">{{ $internationalization($t(item.descr)) }}</span>
                     <span v-else class="p-menuitem-text">{{ $internationalization($t(item.label)) }}</span>
                     <span v-if="item.items" class="p-submenu-icon pi pi-angle-right"></span>
@@ -143,7 +143,7 @@
                 this.licenseDisplay = !this.licenseDisplay
             },
             itemClick(event) {
-                const item = event.item
+                const item = event.item ? event.item : event
                 if (item.command) {
                     this[item.command]()
                 } else if (item.to && event.navigate) {
