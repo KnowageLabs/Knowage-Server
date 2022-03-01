@@ -187,34 +187,38 @@ export default defineComponent({
             this.temporalFilterDialogVisible = true
         },
         addTemporalFilter(temporalFilter: any) {
-            for (let i = 0; i < temporalFilter.definition.length; i++) {
-                this.filters.push({
-                    filterId: 'Filter' + this.nextFilterIndex,
-                    filterDescripion: 'Filter' + this.nextFilterIndex,
-                    filterInd: this.nextFilterIndex,
-                    promptable: false,
-                    leftOperandValue: this.filterDialogData?.field.id,
-                    leftOperandDescription: this.filterDialogData?.field.longDescription,
-                    leftOperandLongDescription: this.filterDialogData?.field.longDescription,
-                    leftOperandType: 'Field Content',
-                    leftOperandDefaultValue: null,
-                    leftOperandLastValue: null,
-                    leftOperandAlias: this.filterDialogData?.field.alias,
-                    leftOperandDataType: '',
-                    operator: 'BETWEEN',
-                    rightType: 'manual',
-                    rightOperandValue: [temporalFilter.definition[i].from, temporalFilter.definition[i].to],
-                    rightOperandDescription: this.createRightOperandDescription(temporalFilter.definition[i].from, temporalFilter.definition[i].to, this.filterDialogData?.field.dataType),
-                    rightOperandLongDescription: this.createRightOperandDescription(temporalFilter.definition[i].from, temporalFilter.definition[i].to, this.filterDialogData?.field.dataType),
-                    rightOperandType: 'Static Content',
-                    rightOperandDefaultValue: [''],
-                    rightOperandLastValue: [''],
-                    rightOperandAlias: null,
-                    rightOperandDataType: '',
-                    booleanConnector: 'OR',
-                    deleteButton: false
-                } as any)
-                this.nextFilterIndex++
+            if (temporalFilter) {
+                for (let i = 0; i < temporalFilter.definition.length; i++) {
+                    const tempFilter = {
+                        filterId: 'Filter' + this.nextFilterIndex,
+                        filterDescripion: 'Filter' + this.nextFilterIndex,
+                        filterInd: this.nextFilterIndex,
+                        promptable: false,
+                        leftOperandValue: this.filterDialogData?.field.id,
+                        leftOperandDescription: this.filterDialogData?.field.longDescription,
+                        leftOperandLongDescription: this.filterDialogData?.field.longDescription,
+                        leftOperandType: 'Field Content',
+                        leftOperandDefaultValue: null,
+                        leftOperandLastValue: null,
+                        leftOperandAlias: this.filterDialogData?.field.alias,
+                        leftOperandDataType: '',
+                        operator: 'BETWEEN',
+                        rightType: 'manual',
+                        rightOperandValue: [temporalFilter.definition[i].from, temporalFilter.definition[i].to],
+                        rightOperandDescription: this.createRightOperandDescription(temporalFilter.definition[i].from, temporalFilter.definition[i].to, this.filterDialogData?.field.dataType),
+                        rightOperandLongDescription: this.createRightOperandDescription(temporalFilter.definition[i].from, temporalFilter.definition[i].to, this.filterDialogData?.field.dataType),
+                        rightOperandType: 'Static Content',
+                        rightOperandDefaultValue: [''],
+                        rightOperandLastValue: [''],
+                        rightOperandAlias: null,
+                        rightOperandDataType: '',
+                        booleanConnector: 'OR',
+                        deleteButton: false
+                    } as any
+                    this.filters.push(tempFilter)
+                    this.push(tempFilter)
+                    this.nextFilterIndex = crypto.randomBytes(16).toString('hex')
+                }
             }
             this.temporalFilterDialogVisible = false
         },

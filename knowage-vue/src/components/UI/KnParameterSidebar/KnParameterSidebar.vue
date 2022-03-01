@@ -160,6 +160,7 @@ import { formatDate } from '@/helpers/commons/localeHelper'
 import { iDocument, iParameter, iAdmissibleValues } from './KnParameterSidebar'
 import { setVisualDependency, updateVisualDependency } from './KnParameterSidebarVisualDependency'
 import { setDataDependency, updateDataDependency } from './KnParameterSidebarDataDependency'
+import { setLovsDependency, updateLovDependency } from './KnParameterSidebarLovsDependency'
 import Calendar from 'primevue/calendar'
 import Chip from 'primevue/chip'
 import Checkbox from 'primevue/checkbox'
@@ -259,6 +260,7 @@ export default defineComponent({
             })
             this.parameters?.filterStatus.forEach((el: any) => setVisualDependency(this.parameters, el))
             this.parameters?.filterStatus.forEach((el: any) => setDataDependency(this.parameters, el))
+            this.parameters?.filterStatus.forEach((el: any) => setLovsDependency(this.parameters, el))
             this.parameters?.filterStatus.forEach((el: any) => this.updateVisualDependency(el))
         },
         setDataDependency(parameter: iParameter) {
@@ -375,6 +377,7 @@ export default defineComponent({
             const postData = { label: this.document?.label, parameters: this.getFormattedParameters(), paramId: parameter.urlName, role: this.sessionRole }
 
             let url = '2.0/documentExeParameters/admissibleValues'
+
             if (this.mode !== 'execution' && this.document) {
                 url = this.document.type === 'businessModel' ? `1.0/businessmodel/${this.document.name}/admissibleValues` : `/3.0/datasets/${this.document.label}/admissibleValues`
             }
@@ -432,7 +435,8 @@ export default defineComponent({
         },
         updateDependency(parameter: iParameter) {
             this.updateVisualDependency(parameter)
-            updateDataDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http)
+            updateDataDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode)
+            updateLovDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode)
         },
         openSaveParameterDialog() {
             this.parameterSaveDialogVisible = true
