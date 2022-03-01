@@ -1,5 +1,5 @@
 <template>
-    <DataTable v-if="!metadataError" class="p-datatable-sm kn-table" :value="rule.ruleOutputs" editMode="cell" dataKey="id" responsiveLayout="stack" breakpoint="960px" data-test="metadata-table">
+    <DataTable v-if="!metadataError" class="p-datatable-sm kn-table" :value="rule.ruleOutputs" editMode="cell" dataKey="id" responsiveLayout="stack" breakpoint="960px" @cell-edit-complete="onCellEditComplete" data-test="metadata-table">
         <Column :style="metadataCardDescriptor.table.iconColumn.style">
             <template #body="slotProps">
                 <i v-if="slotProps.data.aliasIcon" :class="slotProps.data.aliasIcon" v-tooltip.top="alisIconTooltip(slotProps.data.aliasIcon)"></i>
@@ -131,6 +131,9 @@ export default defineComponent({
         },
         setRuleCategory(category: any, alias: any) {
             alias.category.valueCd = category.valueCd
+        },
+        onCellEditComplete(event: any) {
+            if (this.rule) this.rule.ruleOutputs[event.index] = event.newData
         }
     }
 })

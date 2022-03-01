@@ -797,7 +797,7 @@ public class DataSetTransformer {
 	public JSONArray getRange(List<Object> dataRows, Map<String, String> dataColumnsMapper, LinkedHashMap<String, LinkedHashMap> serieMap) {
 
 		JSONArray ranges = new JSONArray();
-		if (dataRows.size() > 0) {
+		if (dataRows != null && dataRows.size() > 0) {
 
 			serieMap.keySet().stream().forEach(
 

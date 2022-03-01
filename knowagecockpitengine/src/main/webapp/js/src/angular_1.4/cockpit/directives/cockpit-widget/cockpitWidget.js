@@ -1699,15 +1699,19 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 				type: $scope.ngModel.content.chartTemplate.CHART.type.toLowerCase(),
 				categoriesNumber: cockpitModule_widgetServices.checkNumOfCategory($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY),
 				seriesNumber: $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE.length,
-				seriesStacking: $scope.ngModel.content.chartTemplate.CHART.seriesStacking,
-				groupedSeries: $scope.ngModel.content.chartTemplate.CHART.groupSeries,
+				seriesStacking: $scope.ngModel.content.chartTemplate.CHART.seriesStacking || false,
+				groupedSeries: $scope.ngModel.content.chartTemplate.CHART.groupSeries || false,
 				numericalCategory: isCategoryNumerical($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY),
 				range:range,
 				categoriesCardinality:categoriesCardinality
 		};
 		
 		if(cockpitModule_widgetServices.checkNumOfCategory($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY) === 1){
-			var javaType = $scope.ngModel.content.columnSelectedOfDatasetAggregations.filter(x=>x.name === $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.column)[0].type;
+			if(Array.isArray($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY)){
+				var javaType = $scope.ngModel.content.columnSelectedOfDatasetAggregations.filter(x=>x.name === $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY[0].column)[0].type;
+			}else {
+				var javaType = $scope.ngModel.content.columnSelectedOfDatasetAggregations.filter(x=>x.name === $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.column)[0].type;
+			}
 			tempObject.typeOfCategory = cockpitModule_generalOptions.fieldsTypes.filter(x=>x.value === javaType)[0].label;
 		}
 		

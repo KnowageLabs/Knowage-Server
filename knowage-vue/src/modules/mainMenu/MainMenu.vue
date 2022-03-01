@@ -7,7 +7,7 @@
         <NewsDialog v-model:visibility="newsDisplay"></NewsDialog>
         <LicenseDialog v-model:visibility="licenseDisplay" v-if="user && user.isSuperadmin && isEnterprise"></LicenseDialog>
         <MainMenuAdmin :openedPanelEvent="adminMenuOpened" :model="technicalUserFunctionalities" v-if="technicalUserFunctionalities && technicalUserFunctionalities.length > 0" @click="itemClick"></MainMenuAdmin>
-        <TieredMenu :class="['kn-tieredMenu', tieredMenuClass]" ref="menu" :model="selectedCustomMenu" :popup="true" @blur="hideItemMenu">
+        <TieredMenu :class="['kn-tieredMenu', tieredMenuClass]" ref="menu" :model="selectedCustomMenu" :popup="true" @blur="hideItemMenu" @mouseleave="checkTimer">
             <template #item="{item}">
                 <router-link class="p-menuitem-link" v-if="item.to" :to="item.to" exact>
                     <span v-if="item.descr" class="p-menuitem-text">{{ $internationalization($t(item.descr)) }}</span>
@@ -105,7 +105,8 @@ export default defineComponent({
             downloadsDisplay: false,
             newsDisplay: false,
             licenseDisplay: false,
-            selectedCustomMenu: {}
+            selectedCustomMenu: {},
+            hoverTimer: false as any
         }
     },
     emits: ['update:visibility'],
@@ -134,6 +135,13 @@ export default defineComponent({
         },
         languageSelection() {
             this.languageDisplay = !this.languageDisplay
+        },
+        checkTimer() {
+            clearTimeout(this.hoverTimer)
+            this.hoverTimer = setTimeout(() => {
+                // @ts-ignore
+                this.$refs.menu.hide()
+            }, process.env.VUE_APP_MENU_FADE_TIMER)
         },
         newsSelection() {
             console.log('ALLOWED: ', this.allowedUserFunctionalities)
@@ -202,6 +210,7 @@ export default defineComponent({
         },
         toggleMenu(event, item) {
             if (item.items) {
+                clearTimeout(this.hoverTimer)
                 this.selectedCustomMenu = item.items
                 if (event.target.getBoundingClientRect().bottom + Object.keys(this.selectedCustomMenu).length * 40 > window.innerHeight) {
                     this.tieredMenuClass = 'smallScreen'
