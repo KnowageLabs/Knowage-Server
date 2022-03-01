@@ -63,7 +63,8 @@ export interface iDocument {
     stateCodeStr: string
     tenant: string
     typeCode: string
-    visible: boolean
+    visible: boolean,
+    type?: string
 }
 
 export interface iAdmissibleValues {

@@ -153,9 +153,9 @@ export default defineComponent({
             this.searchWord = ''
         },
         async openDatasetInQBE(dataset) {
-            console.log(dataset)
-            await this.loadDatasetDrivers(dataset)
-            await this.buildQbeUrl(dataset)
+            this.$emit('showQbeDialog', dataset)
+            // await this.loadDatasetDrivers(dataset)
+            // await this.buildQbeUrl(dataset)
         },
         async loadDatasetDrivers(dataset) {
             let userRole = (this.$store.state as any).user.sessionRole !== 'No default role selected' ? (this.$store.state as any).user.sessionRole : null

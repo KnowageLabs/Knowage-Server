@@ -46,7 +46,7 @@
                 @reloadRepositoryMenu="getAllFolders"
                 @breadcrumbClicked="setSelectedBreadcrumb($event)"
                 @execute="executeDocument($event)"
-                @showQbeDialog="openQbeDialog"
+                @showQbeDialog="prepareDataForQbe"
                 @setDatasetName="setDatasetName"
             />
         </div>
@@ -67,6 +67,8 @@
             <iframe id="qbeIframe" ref="qbeIframe" :src="qbeUrl" style="width:100%;height:100%"></iframe>
         </Dialog>
     </div>
+
+    <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="qbeDataset" :userRole="userRole" :propQBEParameters="qbeParameters" :propMode="'qbeView'" @execute="onExecute"></KnParameterSidebar>
 
     <Sidebar class="mySidebar" v-model:visible="sidebarVisible" :showCloseIcon="false">
         <Toolbar class="kn-toolbar kn-toolbar--primary">
@@ -114,10 +116,14 @@ import WorkspaceDocumentTree from './genericComponents/WorkspaceDocumentTree.vue
 import workspaceDescriptor from './WorkspaceDescriptor.json'
 import WorkspaceNewFolderDialog from './views/repositoryView/dialogs/WorkspaceNewFolderDialog.vue'
 import Dialog from 'primevue/dialog'
+import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
+import moment from 'moment'
+
+const crypto = require('crypto')
 
 export default defineComponent({
     name: 'dataset-management',
-    components: { Sidebar, Listbox, Accordion, AccordionTab, WorkspaceDocumentTree, WorkspaceNewFolderDialog, Dialog },
+    components: { Sidebar, Listbox, Accordion, AccordionTab, WorkspaceDocumentTree, WorkspaceNewFolderDialog, Dialog, KnParameterSidebar },
     computed: {
         showRepository(): any {
             return (this.$store.state as any).user.functionalities.includes('SaveIntoFolderFunctionality')
@@ -125,6 +131,9 @@ export default defineComponent({
         storeFunctionalitiesExist(): any {
             this.createMenuItems()
             return (this.$store.state as any).user.functionalities.length > 0
+        },
+        userRole(): any {
+            return (this.$store.state as any).user.sessionRole !== 'No default role selected' ? (this.$store.state as any).user.sessionRole : null
         }
     },
     data() {
@@ -143,12 +152,20 @@ export default defineComponent({
             accordionIcon: true,
             loading: false,
             qbeDialogVisible: false,
+            parameterSidebarVisible: false,
+            uniqueID: null as any,
+            qbeDataset: null as any,
+            datasetDrivers: null as any,
+            qbeParameters: [] as any,
             menuItems: [] as any,
+            filtersData: null as any,
+            initialUrl: '',
             qbeUrl: '',
             qbeDatasetName: ''
         }
     },
     created() {
+        this.uniqueID = crypto.randomBytes(16).toString('hex')
         this.getAllRepositoryData()
     },
     mounted() {
@@ -304,13 +321,95 @@ export default defineComponent({
 
             return routeDocumentType
         },
-        openQbeDialog(url) {
-            this.qbeUrl = process.env.VUE_APP_HOST_URL + url
-            console.log(url)
-            // this.qbeUrl =
-            //     process.env.VUE_APP_HOST_URL +
-            //     '/knowageqbeengine/servlet/AdapterHTTP?NEW_SESSION=TRUE&SBI_LANGUAGE=en&SBI_SCRIPT=&user_id=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGVtb19hZG1pbiIsImV4cCI6MTY0NTU4MDk1MX0.HkVW-8SyaBnykSqBX5O2-6_UjV9jsK256i6zPB41AkA&DEFAULT_DATASOURCE_FOR_WRITING_LABEL=CacheDS&SBI_COUNTRY=US&SBI_EXECUTION_ID=4ad654bf93fa11ecb2f9cfa89135aed9&ACTION_NAME=QBE_ENGINE_START_ACTION_FROM_BM&MODEL_NAME=Inventory&DATA_SOURCE_LABEL=Foodmart&DATA_SOURCE_ID=1&isTechnicalUser=true&DRIVERS=%7B%22test%22:%5B%7B%22value%22:%22Colony%22,%22description%22:%5B%22Colony%22%5D%7D%5D%7D'
-            this.qbeDialogVisible = true
+        async loadQBEDataset(dataset) {
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${dataset.label}`)
+                .then((response: AxiosResponse<any>) => {
+                    console.log('FULL DATASET SERVICE ---------', response.data)
+                    this.qbeDataset = response.data
+                })
+                .catch(() => {})
+        },
+        async loadDatasetDrivers(dataset) {
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/businessmodel/${dataset.name}/filters`, { name: dataset.name, role: this.userRole })
+                .then((response: AxiosResponse<any>) => {
+                    console.log('FILTERS SERVICE - DRIVERS ---------', response.data.filterStatus)
+                    this.filtersData = response.data
+                    if (response.data.isReadyForExecution) {
+                        console.log('READY FOR EXECUTION')
+                        this.parameterSidebarVisible = true
+                    } else {
+                        console.log('NOT READY - SHOW SIDEBAR')
+                        this.parameterSidebarVisible = true
+                    }
+                    this.formatDrivers()
+                })
+                .catch(() => {})
+        },
+        formatDrivers() {
+            this.filtersData?.filterStatus?.forEach((el: any) => {
+                el.parameterValue = el.multivalue ? [] : [{ value: '', description: '' }]
+                if (el.driverDefaultValue?.length > 0) {
+                    let valueIndex = '_col0'
+                    let descriptionIndex = 'col1'
+                    if (el.metadata?.colsMap) {
+                        valueIndex = Object.keys(el.metadata?.colsMap).find((key: string) => el.metadata.colsMap[key] === el.metadata.valueColumn) as any
+                        descriptionIndex = Object.keys(el.metadata?.colsMap).find((key: string) => el.metadata.colsMap[key] === el.metadata.descriptionColumn) as any
+                    }
+
+                    el.parameterValue = el.driverDefaultValue.map((defaultValue: any) => {
+                        return { value: defaultValue.value ?? defaultValue[valueIndex], description: defaultValue.desc ?? defaultValue[descriptionIndex] }
+                    })
+
+                    if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true') {
+                        el.parameterValue[0].value = moment(el.parameterValue[0].description?.split('#')[0]).toDate() as any
+                    }
+                }
+                if (el.data) {
+                    el.data = el.data.map((data: any) => {
+                        return this.formatParameterDataOptions(el, data)
+                    })
+
+                    if (el.data.length === 1) {
+                        el.parameterValue = [...el.data]
+                    }
+                }
+                if ((el.selectionType === 'COMBOBOX' || el.selectionType === 'LIST') && el.multivalue && el.mandatory && el.data.length === 1) {
+                    el.showOnPanel = 'false'
+                }
+
+                if (!el.parameterValue) {
+                    el.parameterValue = [{ value: '', description: '' }]
+                }
+
+                if (el.parameterValue[0] && !el.parameterValue[0].description) {
+                    el.parameterValue[0].description = el.parameterDescription ? el.parameterDescription[0] : ''
+                }
+            })
+        },
+        formatParameterDataOptions(parameter: any, data: any) {
+            const valueColumn = parameter.metadata.valueColumn
+            const descriptionColumn = parameter.metadata.descriptionColumn
+            const valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
+            const descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
+
+            return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
+        },
+        async buildQbeUrl(dataset) {
+            console.log('STRINGIFIED DRIVERS', this.datasetDrivers)
+            let language = (this.$store.state as any).user.locale.split('_')[0]
+            let country = (this.$store.state as any).user.locale.split('_')[1]
+            let drivers = encodeURI(JSON.stringify(this.datasetDrivers))
+            this.initialUrl = `/knowageqbeengine/servlet/AdapterHTTP?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&SBI_SCRIPT=&user_id=${(this.$store.state as any).user.userUniqueIdentifier}&DEFAULT_DATASOURCE_FOR_WRITING_LABEL=CacheDS&SBI_COUNTRY=${country}&SBI_EXECUTION_ID=${
+                this.uniqueID
+            }&ACTION_NAME=QBE_ENGINE_START_ACTION_FROM_BM&MODEL_NAME=${dataset.name}&DATA_SOURCE_LABEL=${dataset.dataSourceLabel}&DATA_SOURCE_ID=${dataset.dataSourceId}&isTechnicalUser=true&DRIVERS=${drivers}`
+        },
+        async prepareDataForQbe(dataset) {
+            this.qbeDataset = dataset
+            console.log('CLICKED DATASET', dataset)
+            await this.loadDatasetDrivers(dataset)
+            this.buildQbeUrl(dataset)
         },
         saveQbeDataset() {
             let iframe = this.$refs.qbeIframe as any
@@ -319,6 +418,30 @@ export default defineComponent({
         },
         setDatasetName(event) {
             this.qbeDatasetName = event
+        },
+        onExecute() {
+            console.log('OON EXECUTE FILTER DATA', this.filtersData)
+            this.datasetDrivers = this.getFormattedParameters(this.filtersData)
+            console.log(this.datasetDrivers)
+            this.buildQbeUrl(this.qbeDataset)
+            this.qbeUrl = process.env.VUE_APP_HOST_URL + this.initialUrl
+            console.log('URL FOR SENDING', this.qbeUrl)
+            this.qbeDialogVisible = true //OVO SETOVATI NA TRUE
+        },
+        getFormattedParameters(loadedParameters: { filterStatus: any[]; isReadyForExecution: boolean }) {
+            let parameters = {} as any
+
+            Object.keys(loadedParameters.filterStatus).forEach((key: any) => {
+                const parameter = loadedParameters.filterStatus[key]
+
+                if (!parameter.multivalue) {
+                    parameters[parameter.urlName] = { value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description }
+                } else {
+                    parameters[parameter.urlName] = { value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription }
+                }
+            })
+
+            return parameters
         }
     }
 })
