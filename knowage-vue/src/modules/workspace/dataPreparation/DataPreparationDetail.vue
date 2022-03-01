@@ -118,7 +118,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 
 import { AxiosResponse } from 'axios'
 import Badge from 'primevue/badge'
@@ -144,7 +144,8 @@ import { Client } from '@stomp/stompjs'
 export default defineComponent({
     name: 'data-preparation-detail',
     props: {
-        id: Object
+        id: String,
+        transformations: Array as PropType<any[]>
     },
     components: { KnCalculatedField, Badge, Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Dropdown, OverlayPanel, Sidebar, Menu },
 
@@ -178,13 +179,10 @@ export default defineComponent({
             this.dataset = response.data[0]
         })
         if (this.dataset) {
-            await this.initWebsocket()
+            this.initTransformations()
+            this.initWebsocket()
 
-            this.client.onConnect = (frame) => {
-                // Do something, all subscribes must be done is this callback
-                // This is needed because this will be executed after a (re)connect
-                console.log(frame)
-
+            this.client.onConnect = () => {
                 this.client.subscribe(
                     '/user/queue/preview',
                     (message) => {
@@ -212,16 +210,13 @@ export default defineComponent({
                     this.dataset.config.transformations.splice(-1)
                     this.loading = false
                 })
+
+                if (this.transformations) {
+                    this.loading = true
+                    this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
+                }
             }
 
-            this.client.onStompError = function(frame) {
-                // Will be invoked in case of error encountered at Broker
-                // Bad login/passcode typically will cause an error
-                // Complaint brokers will set `message` header with a brief message. Body may contain details.
-                // Compliant brokers will terminate the connection after any error
-                console.log('Broker reported error: ' + frame.headers['message'])
-                console.log('Additional details: ' + frame.body)
-            }
             this.client.activate()
         }
     },
@@ -290,6 +285,12 @@ export default defineComponent({
                     if (x.incompatibleDataTypes) return !x.incompatibleDataTypes?.includes(col.Type)
                     return true
                 })
+        },
+        initTransformations(): void {
+            if (this.transformations) {
+                if (!this.dataset.config) this.dataset.config = {}
+                this.dataset.config.transformations = this.transformations
+            }
         },
         initWebsocket(): void {
             let url = process.env.VUE_APP_HOST_URL.replace('http', 'ws') + '/knowage-data-preparation/ws?' + process.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')

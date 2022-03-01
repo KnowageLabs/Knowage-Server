@@ -258,10 +258,10 @@ export default defineComponent({
                 { key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable },
                 { key: '3', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.exportDataset(clickedDocument, 'csv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' },
                 { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: () => this.downloadDatasetFile(clickedDocument), visible: this.selectedDataset.dsTypeCd == 'File' },
-                { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.shareDataset(), visible: this.canLoadData && this.isDatasetOwner },
+                { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.shareDataset(), visible: this.canLoadData && this.isDatasetOwner && this.selectedDataset.dsTypeCd != 'Prepared' },
                 { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: () => this.cloneDataset(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' },
-                { key: '7', label: this.$t('workspace.myData.prepareData'), icon: 'fas fa-cogs', command: () => this.prepareData(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' },
-                { key: '8', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: this.isAvroReady(this.selectedDataset) && this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' },
+                { key: '7', label: this.$t('workspace.myData.prepareData'), icon: 'fas fa-cogs', command: () => this.prepareData(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' && this.selectedDataset.dsTypeCd != 'Prepared' },
+                { key: '8', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: (this.isAvroReady(this.selectedDataset) || this.selectedDataset.dsTypeCd == 'Prepared') && this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' },
                 { key: '9', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
             )
 
@@ -357,7 +357,30 @@ export default defineComponent({
             }
         },
         openDataPreparation(dataset: any) {
-            this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
+            if (dataset.dsTypeCd == 'Prepared') {
+                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.label}`).then(
+                    (response: AxiosResponse<any>) => {
+                        let instanceId = response.data.configuration.dataPrepInstanceId
+                        this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
+                            (response: AxiosResponse<any>) => {
+                                let transformations = response.data.definition
+                                let datasetLabel = response.data.instances[0].dataSetLabel
+                                this.$router.push({ name: 'data-preparation', params: { id: datasetLabel, transformations: JSON.stringify(transformations) } })
+                            },
+                            () => {
+                                this.$store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
+                            }
+                        )
+                    },
+                    () => {
+                        this.$store.commit('setError', {
+                            title: 'Cannot open data preparation'
+                        })
+                    }
+                )
+            } else {
+                this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
+            }
         },
         openDatasetInQBE() {
             this.$store.commit('setInfo', {

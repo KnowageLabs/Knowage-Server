@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -279,6 +280,22 @@ public class DataSetResource {
 			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
 
 			return new DataSetResourceResponseRoot<>(dataSets);
+
+		} catch (Exception t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		}
+
+	}
+
+	@GET
+	@Path("/advanced/{label}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public SbiDataSet getAdvancedDataSet(@PathParam("label") String label) {
+
+		try {
+			SbiDataSet dataSet = DAOFactory.getSbiDataSetDAO().loadSbiDataSetByLabel(label);
+			return dataSet;
 
 		} catch (Exception t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);

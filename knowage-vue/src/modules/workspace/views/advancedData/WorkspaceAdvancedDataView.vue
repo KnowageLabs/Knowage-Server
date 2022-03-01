@@ -2,7 +2,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary">
         <template #start>
             <Button id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
-            {{ $t('workspace.myData.title') }}
+            {{ $t('workspace.advancedData.title') }}
         </template>
         <template #end>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
@@ -11,6 +11,11 @@
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
+
+    <div class="p-d-flex p-flex-row p-ai-center">
+        <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
+        <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" @click="getDatasetsByFilter" data-test="dataset-select" />
+    </div>
 
     <div class="p-mx-2 kn-overflow">
         <DataTable v-if="!toggleCardDisplay" style="width:100%" class="p-datatable-sm kn-table" :value="preparedDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
@@ -77,8 +82,8 @@
         data-test="detail-sidebar"
     />
 
-    <!--Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
-    <Menu id="creationMenu" ref="creationMenu" :model="creationMenuButtons" /-->
+    <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
+    <Menu id="creationMenu" ref="creationMenu" :model="creationMenuButtons" />
 
     <WorkspaceDataCloneDialog :visible="cloneDialogVisible" :propDataset="selectedDataset" @close="cloneDialogVisible = false" @clone="handleDatasetClone"></WorkspaceDataCloneDialog>
     <WorkspaceDataPreviewDialog :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false"></WorkspaceDataPreviewDialog>
@@ -94,6 +99,7 @@ import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.v
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Chip from 'primevue/chip'
+import Menu from 'primevue/contextmenu'
 import { IDataset } from '@/modules/workspace/Workspace'
 import Message from 'primevue/message'
 import WorkspaceDataCloneDialog from '@/modules/workspace/views/dataView/dialogs/WorkspaceDataCloneDialog.vue'
@@ -102,7 +108,7 @@ import WorkspaceWarningDialog from '@/modules/workspace/genericComponents/Worksp
 import { AxiosResponse } from 'axios'
 
 export default defineComponent({
-    components: { DataTable, Column, Chip, DetailSidebar, WorkspaceCard, KnFabButton, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataPreviewDialog, Message },
+    components: { DataTable, Column, Chip, DetailSidebar, WorkspaceCard, KnFabButton, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataPreviewDialog, Message, Menu },
     emits: ['toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
@@ -166,42 +172,33 @@ export default defineComponent({
             this.showDetailSidebar = true
         },
         showCreationMenu(event) {
-            //this.createCreationMenuButtons()
+            this.createCreationMenuButtons()
             // eslint-disable-next-line
             // @ts-ignore
             this.$refs.creationMenu.toggle(event)
         },
         showMenu(event, clickedDocument) {
             this.selectedDataset = clickedDocument
-            //this.createMenuItems(clickedDocument)
+            this.createMenuItems(clickedDocument)
             // eslint-disable-next-line
             // @ts-ignore
             this.$refs.optionsMenu.toggle(event)
         },
         // prettier-ignore
-        /*createMenuItems(clickedDocument: any) {
+        createMenuItems(clickedDocument: any) {
             this.menuButtons = []
             this.menuButtons.push(
-                { key: '0', label: this.$t('workspace.myAnalysis.menuItems.showDsDetails'), icon: 'fas fa-pen', command: this.editFileDataset, visible: this.isDatasetOwner && this.selectedDataset.dsTypeCd == 'File' },
-                { key: '1', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: this.openDatasetInQBE, visible: this.showQbeEditButton },
-                { key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable },
-                { key: '3', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.exportDataset(clickedDocument, 'csv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' },
-                { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: () => this.downloadDatasetFile(clickedDocument), visible: this.selectedDataset.dsTypeCd == 'File' },
-                { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.shareDataset(), visible: this.canLoadData && this.isDatasetOwner },
-                { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: () => this.cloneDataset(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' },
-                { key: '7', label: this.$t('workspace.myData.prepareData'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' },
-                { key: '8', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
+                { key: '0', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls'), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'File' },
+                { key: '1', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.exportDataset(clickedDocument, 'csv'), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'File' },
+                { key: '2', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: this.isDatasetOwner },
+                { key: '3', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
             )
 
         },
         createCreationMenuButtons() {
             this.creationMenuButtons = []
-            this.creationMenuButtons.push(
-                { key: '0', label: this.$t('managers.businessModelManager.uploadFile'), command: this.toggleDatasetDialog, visible: true },
-                { key: '1', label: this.$t('workspace.myData.prepareData'), command: this.openDatasetInQBE, visible: true },
-                { key: '2', label: this.$t('workspace.myData.openData'), command: this.openDatasetInQBE, visible: this.showCkanIntegration }
-            )
-        },*/
+            this.creationMenuButtons.push({ key: '0', label: this.$t('workspace.myData.prepareData'), visible: true })
+        },
         toggleDatasetDialog() {
             this.selectedDataset = {}
             this.showDatasetDialog = true
@@ -214,7 +211,30 @@ export default defineComponent({
             this.showDatasetDialog = true
         },
         openDataPreparation(dataset: any) {
-            this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
+            if (dataset.dsTypeCd == 'Prepared') {
+                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.label}`).then(
+                    (response: AxiosResponse<any>) => {
+                        let instanceId = response.data.configuration.dataPrepInstanceId
+                        this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
+                            (response: AxiosResponse<any>) => {
+                                let transformations = response.data.definition
+                                let datasetLabel = response.data.instances[0].dataSetLabel
+                                this.$router.push({ name: 'data-preparation', params: { id: datasetLabel, transformations: JSON.stringify(transformations) } })
+                            },
+                            () => {
+                                this.$store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
+                            }
+                        )
+                    },
+                    () => {
+                        this.$store.commit('setError', {
+                            title: 'Cannot open data preparation'
+                        })
+                    }
+                )
+            } else {
+                this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
+            }
         },
         async exportDataset(dataset: any, format: string) {
             this.loading = true
