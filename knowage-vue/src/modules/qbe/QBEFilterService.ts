@@ -16,6 +16,10 @@ export function onFiltersSaveCallback(filters: iFilter[], field: iField, paramet
 
     removeDeletedFilters(filters, field, expression, qbe, selectedQuery)
 
+    console.log("FILTERS: ", filters)
+    console.log("SELECTED QUERY FITLERS: ", selectedQuery.filters)
+    console.log("EXPRESSION: ", expression)
+
     refresh(selectedQuery.filters, expression, qbe, selectedQuery)
 
     if (selectedQuery.expression.childNodes?.length === 0) {
