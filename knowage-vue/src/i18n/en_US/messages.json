@@ -1864,6 +1864,127 @@
         "title": "Knowage news",
         "warnings": "warnings"
     },
+    "qbe": {
+        "advancedFilters": {
+            "advancedFilterVisualisation": "Advanced filter visualization",
+            "group": "Group",
+            "moveTooltip": "Move to the right",
+            "replaceTooltip": "Replace element",
+            "title": "Advanced filter",
+            "ungroup": "Ungroup"
+        },
+        "detailView": {
+            "hideList": "Hide List",
+            "noPreview": "Nothing to preview",
+            "parameterDuplicates": "There are parameters with a duplicate name!",
+            "showList": "Show List",
+            "smartViewMenu": {
+                "aggregation": {
+                    "avg": "Avg",
+                    "count": "Count",
+                    "distinct": "Count disctinct",
+                    "max": "Max",
+                    "min": "Min",
+                    "sum": "Sum",
+                    "title": "Aggregation"
+                },
+                "group": "Group",
+                "rename": "Rename Alias",
+                "showField": "Show field"
+            },
+            "toolbarMenu": {
+                "exportTo": "Export to",
+                "repetitions": "Discard Repetitions",
+                "sql": "SQL Query"
+            }
+        },
+        "entities": {
+            "derived": "Derived Entities",
+            "relationDialog": {
+                "joinType": "Join type",
+                "noRelations": "There is no relation going out from this entity",
+                "relationName": "Relation name",
+                "sourceFields": "Source fields",
+                "targetEntity": "Target entity",
+                "targetFields": "Target fields"
+            },
+            "relations": "Relations",
+            "title": "Entities",
+            "types": {
+                "attribute": "Attribute",
+                "calculation": "Calculation",
+                "cube": "Cube",
+                "dimension": "Dimension",
+                "generic": "Generic",
+                "measure": "Measure"
+            }
+        },
+        "filters": {
+            "and": "And",
+            "applyParameters": "Apply parameters",
+            "condition": "Condition",
+            "conditionTooltip": "For not/between and not/in operator use \" ---- \" as separator.",
+            "enterValue": "Enter a value...",
+            "highLimit": "High limit",
+            "lowLimit": "Low limit",
+            "operators": {
+                "between": "Between",
+                "contains": "Contains",
+                "endsWith": "Ends with",
+                "equalsOrGreaterThan": "Equals or greater than",
+                "equalsOrLessThan": "Equals or less than",
+                "equalsTo": "Equals to",
+                "greaterThan": "Greater than",
+                "in": "In",
+                "isNull": "Is null",
+                "lessThan": "Less than",
+                "notBetween": "Not between",
+                "notContains": "Not contains",
+                "notEndsWith": "Not ends with",
+                "notEqualsTo": "Not equals to",
+                "notIn": "Not in",
+                "notNull": "Not null",
+                "notStartsWith": "Not starts with",
+                "startsWith": "Starts with"
+            },
+            "target": "Target",
+            "targetType": "Target type",
+            "targets": {
+                "entity": "Another entity",
+                "manual": "Manual set value",
+                "subquery": "Subquery",
+                "value": "Value of the field"
+            },
+            "temporalFilter": "Temporal filter"
+        },
+        "having": {
+            "infoMessage": "This page is containing HAVINGS, that are criterias to be applied on aggregated values",
+            "noHavings": "No havings present, add one with the plus button on the right corner.",
+            "title": "Filters on aggregations"
+        },
+        "joinDefinitions": {
+            "dialogTitle": "Relations between entities",
+            "title": "Join Definitions"
+        },
+        "savingDialog": {
+            "persistence": "Persistence",
+            "title": "Saving QBE Dataset"
+        },
+        "simpleTable": {
+            "aggregation": "Aggregation",
+            "aggregationShort": "Aggr.",
+            "entity": "Entity",
+            "havings": "Havings",
+            "showField": "Show field"
+        },
+        "title": "QBE",
+        "viewToolbar": {
+            "deleteAllFilters": "Delete all filters",
+            "deleteAllSelectedFields": "Delete all selected fields",
+            "showHiddenColumns": "Show hidden columns",
+            "smartView": "Smart View"
+        }
+    },
     "role": {
         "defaultRolePlaceholder": "No default role selected",
         "roleSelection": "Role Selection"
