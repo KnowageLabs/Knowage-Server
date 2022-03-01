@@ -78,8 +78,9 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 		try {
 			String authorizationHeaderName = getAuthorizationHeaderName();
 
-			if(servletRequest.getHeader(authorizationHeaderName) != null) {
+			if (servletRequest.getHeader(authorizationHeaderName) != null) {
 				String token = servletRequest.getHeader(authorizationHeaderName);
+				token = token.replaceFirst("Bearer ", "");
 				ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
 
 				SpagoBIUserProfile spagoBIUserProfile = supplier.checkAuthenticationToken(token);
@@ -192,9 +193,7 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 	 */
 	public String getAuthorizationHeaderName() {
 		if (authorizationHeaderName == null) {
-			authorizationHeaderName = Optional
-					.ofNullable(System.getenv(KNOWAGE_AUTHORIZATION_HEADER_NAME))
-					.orElse("X-Kn-Authorization");
+			authorizationHeaderName = Optional.ofNullable(System.getenv(KNOWAGE_AUTHORIZATION_HEADER_NAME)).orElse("X-Kn-Authorization");
 		}
 		return authorizationHeaderName;
 	}
