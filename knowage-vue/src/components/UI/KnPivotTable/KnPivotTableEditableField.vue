@@ -11,10 +11,10 @@
     <Calendar
         :style="knPivotTableDescriptor.pivotStyles.inputFields"
         class="pivot-calendar"
-        v-else-if="column.columnInfo.type === 'date'"
+        v-else-if="column.columnInfo.type === 'date' || column.columnInfo.type === 'timestamp'"
         v-model="row[column.field].data"
-        :showTime="column.columnInfo.subtype === 'timestamp'"
-        :showSeconds="column.columnInfo.subtype === 'timestamp'"
+        :showTime="column.columnInfo.type === 'timestamp'"
+        :showSeconds="column.columnInfo.type === 'timestamp'"
         :showButtonBar="true"
         @date-select="$emit('rowChanged', row)"
     />
