@@ -267,10 +267,9 @@ public class PageResource extends AbstractCockpitEngineResource {
 	}
 
 	private URI createNewLocation(String suffix) throws URISyntaxException {
-		String requestURI = request.getRequestURI();
 		String queryString = request.getQueryString();
 
-		StringBuilder sb = new StringBuilder(requestURI.toString());
+		StringBuilder sb = new StringBuilder("");
 		sb.append(suffix);
 		if (Objects.nonNull(queryString)) {
 			sb.append("?");
