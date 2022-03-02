@@ -247,6 +247,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 						if(tempCol.fieldType == 'float' || tempCol.fieldType == 'integer' ) {
 							tempCol.valueFormatter = numberFormatter;
+							if (typeof fields[f].scale !== 'undefined') {
+								tempCol.scale = fields[f].scale;
+							}
 							// When server-side pagination is disabled
 							tempCol.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
 								return valueA - valueB;
@@ -457,8 +460,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 * In case of a returning empty string that one will be displayed.
 		 */
 		function numberFormatter(params){
+			var tempScale = typeof params.colDef.scale !== 'undefined' ? params.colDef.scale : 2;
 			if(params.value != "" && (!params.colDef.style || (params.colDef.style && !params.colDef.style.asString))) {
-				var defaultPrecision = (params.colDef.fieldType == 'float') ? 2 : 0;
+				var defaultPrecision = (params.colDef.fieldType == 'float') ? tempScale : 0;
 				return $filter('number')(params.value, (params.colDef.style && typeof params.colDef.style.precision != 'undefined') ? params.colDef.style.precision : defaultPrecision);
 			}else return params.value;
 		}
