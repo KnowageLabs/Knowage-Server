@@ -47,7 +47,6 @@
                 @breadcrumbClicked="setSelectedBreadcrumb($event)"
                 @execute="executeDocument($event)"
                 @showQbeDialog="prepareDataForQbe"
-                @setDatasetName="setDatasetName"
             />
         </div>
 
@@ -55,20 +54,21 @@
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                     <template #start>
-                        {{ qbeDatasetName }}
+                        {{ qbeDataset.name }}
                     </template>
                     <template #end>
-                        <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="logRefs" />
+                        <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
                         <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveQbeDataset" />
-                        <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="qbeDialogVisible = false" />
+                        <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeQbeIframe" />
                     </template>
                 </Toolbar>
             </template>
-            <iframe id="qbeIframe" ref="qbeIframe" :src="qbeUrl" style="width:100%;height:100%"></iframe>
+            <div id="qbe-iframe-container" class="p-d-flex p-flex-row kn-flex">
+                <iframe v-if="qbeIframeVisible" id="qbeIframe" ref="qbeIframe" class="kn-width-full kn-height-full" :src="qbeUrl"></iframe>
+                <KnParameterSidebar style="position:inherit;margin-left:auto" v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="qbeDataset" :userRole="userRole" :propQBEParameters="qbeParameters" :propMode="'qbeView'" @execute="initiateQbeIframe"></KnParameterSidebar>
+            </div>
         </Dialog>
     </div>
-
-    <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="qbeDataset" :userRole="userRole" :propQBEParameters="qbeParameters" :propMode="'qbeView'" @execute="onExecute"></KnParameterSidebar>
 
     <Sidebar class="mySidebar" v-model:visible="sidebarVisible" :showCloseIcon="false">
         <Toolbar class="kn-toolbar kn-toolbar--primary">
@@ -151,6 +151,7 @@ export default defineComponent({
             selectedBreadcrumb: null as any,
             accordionIcon: true,
             loading: false,
+            qbeIframeVisible: false,
             qbeDialogVisible: false,
             parameterSidebarVisible: false,
             uniqueID: null as any,
@@ -159,9 +160,7 @@ export default defineComponent({
             qbeParameters: [] as any,
             menuItems: [] as any,
             filtersData: null as any,
-            initialUrl: '',
-            qbeUrl: '',
-            qbeDatasetName: ''
+            qbeUrl: ''
         }
     },
     created() {
@@ -259,7 +258,6 @@ export default defineComponent({
             this.$router.push(`/workspace/repository/${this.selectedBreadcrumb.node.id}`)
         },
         createMenuItems() {
-            console.log('STORE @MOUNTED: ', (this.$store.state as any).user)
             this.menuItems = []
             this.menuItems.push({ icon: 'fas fa-history', key: '0', label: 'workspace.menuLabels.recent', value: 'recent' }, { icon: 'fas fa-folder', key: '1', label: 'workspace.menuLabels.myRepository', value: 'repository' })
             if ((this.$store.state as any).user.functionalities.includes('SeeMyData')) {
@@ -325,7 +323,6 @@ export default defineComponent({
             await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${dataset.label}`)
                 .then((response: AxiosResponse<any>) => {
-                    console.log('FULL DATASET SERVICE ---------', response.data)
                     this.qbeDataset = response.data
                 })
                 .catch(() => {})
@@ -334,16 +331,14 @@ export default defineComponent({
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/businessmodel/${dataset.name}/filters`, { name: dataset.name, role: this.userRole })
                 .then((response: AxiosResponse<any>) => {
-                    console.log('FILTERS SERVICE - DRIVERS ---------', response.data.filterStatus)
                     this.filtersData = response.data
+                    this.formatDrivers()
                     if (response.data.isReadyForExecution) {
-                        console.log('READY FOR EXECUTION')
-                        this.parameterSidebarVisible = true
+                        this.parameterSidebarVisible = false
+                        this.initiateQbeIframe()
                     } else {
-                        console.log('NOT READY - SHOW SIDEBAR')
                         this.parameterSidebarVisible = true
                     }
-                    this.formatDrivers()
                 })
                 .catch(() => {})
         },
@@ -397,36 +392,14 @@ export default defineComponent({
             return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
         },
         async buildQbeUrl(dataset) {
-            console.log('STRINGIFIED DRIVERS', this.datasetDrivers)
+            let initialUrl = ''
             let language = (this.$store.state as any).user.locale.split('_')[0]
             let country = (this.$store.state as any).user.locale.split('_')[1]
             let drivers = encodeURI(JSON.stringify(this.datasetDrivers))
-            this.initialUrl = `/knowageqbeengine/servlet/AdapterHTTP?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&SBI_SCRIPT=&user_id=${(this.$store.state as any).user.userUniqueIdentifier}&DEFAULT_DATASOURCE_FOR_WRITING_LABEL=CacheDS&SBI_COUNTRY=${country}&SBI_EXECUTION_ID=${
+            initialUrl = `/knowageqbeengine/servlet/AdapterHTTP?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&SBI_SCRIPT=&user_id=${(this.$store.state as any).user.userUniqueIdentifier}&DEFAULT_DATASOURCE_FOR_WRITING_LABEL=CacheDS&SBI_COUNTRY=${country}&SBI_EXECUTION_ID=${
                 this.uniqueID
             }&ACTION_NAME=QBE_ENGINE_START_ACTION_FROM_BM&MODEL_NAME=${dataset.name}&DATA_SOURCE_LABEL=${dataset.dataSourceLabel}&DATA_SOURCE_ID=${dataset.dataSourceId}&isTechnicalUser=true&DRIVERS=${drivers}`
-        },
-        async prepareDataForQbe(dataset) {
-            this.qbeDataset = dataset
-            console.log('CLICKED DATASET', dataset)
-            await this.loadDatasetDrivers(dataset)
-            this.buildQbeUrl(dataset)
-        },
-        saveQbeDataset() {
-            let iframe = this.$refs.qbeIframe as any
-            iframe.contentWindow.postMessage('saveDS', '*')
-            console.log(this.$refs)
-        },
-        setDatasetName(event) {
-            this.qbeDatasetName = event
-        },
-        onExecute() {
-            console.log('OON EXECUTE FILTER DATA', this.filtersData)
-            this.datasetDrivers = this.getFormattedParameters(this.filtersData)
-            console.log(this.datasetDrivers)
-            this.buildQbeUrl(this.qbeDataset)
-            this.qbeUrl = process.env.VUE_APP_HOST_URL + this.initialUrl
-            console.log('URL FOR SENDING', this.qbeUrl)
-            this.qbeDialogVisible = true //OVO SETOVATI NA TRUE
+            this.qbeUrl = process.env.VUE_APP_HOST_URL + initialUrl
         },
         getFormattedParameters(loadedParameters: { filterStatus: any[]; isReadyForExecution: boolean }) {
             let parameters = {} as any
@@ -442,6 +415,29 @@ export default defineComponent({
             })
 
             return parameters
+        },
+        async prepareDataForQbe(dataset) {
+            this.qbeDataset = dataset
+            this.qbeDialogVisible = true
+            await this.loadDatasetDrivers(dataset)
+        },
+        initiateQbeIframe() {
+            this.datasetDrivers = this.getFormattedParameters(this.filtersData)
+            this.buildQbeUrl(this.qbeDataset)
+            this.qbeIframeVisible = true
+            this.parameterSidebarVisible = false
+        },
+        closeQbeIframe() {
+            this.qbeDialogVisible = false
+            this.qbeIframeVisible = false
+            this.parameterSidebarVisible = false
+            this.datasetDrivers = null
+            this.qbeUrl = ''
+            this.qbeDataset = {}
+        },
+        saveQbeDataset() {
+            let iframe = this.$refs.qbeIframe as any
+            iframe.contentWindow.postMessage('saveDS', '*')
         }
     }
 })
