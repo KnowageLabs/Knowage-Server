@@ -7,7 +7,7 @@
                     <span>{{ dataset.label }}</span>
                 </template>
                 <template #end>
-                    <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
+                    <Button v-if="dataset.pars.length !== 0 || filtersData?.isReadyForExecution === false" icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
                     <Button class="kn-button p-button-text p-button-rounded p-button-plain" :label="$t('common.close')" @click="closeDialog"></Button>
                 </template>
             </Toolbar>
@@ -61,10 +61,14 @@ export default defineComponent({
     },
     watch: {
         async propDataset() {
-            await this.loadPreview()
+            if (this.visible) {
+                await this.loadPreview()
+            }
         },
-        async visible() {
-            await this.loadPreview()
+        async visible(value) {
+            if (value) {
+                await this.loadPreview()
+            }
         }
     },
     async created() {
@@ -75,7 +79,7 @@ export default defineComponent({
         async loadPreview() {
             this.loadDataset()
             await this.loadDatasetDrivers()
-            if (this.dataset.label && this.visible && this.dataset.pars.length === 0 && this.filtersData?.isReadyForExecution) {
+            if (this.dataset.label && this.dataset.pars.length === 0 && (this.filtersData.isReadyForExecution === undefined || this.filtersData.isReadyForExecution)) {
                 await this.loadPreviewData()
             } else {
                 this.parameterSidebarVisible = true
@@ -220,6 +224,7 @@ export default defineComponent({
             this.filter = null
             this.errorMessageVisible = false
             this.errorMessage = ''
+            this.parameterSidebarVisible = false
             this.$emit('close')
         },
         async onExecute(datasetParameters: any[]) {
