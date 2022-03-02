@@ -10,14 +10,14 @@
         <TieredMenu :class="['kn-tieredMenu', tieredMenuClass]" ref="menu" :model="selectedCustomMenu" :popup="true" @blur="hideItemMenu">
             <template #item="{item}">
                 <router-link class="p-menuitem-link" v-if="item.to" :to="cleanTo(item)" @click="itemClick(item)" exact>
-                    <span v-if="item.descr" class="p-menuitem-text">{{ $internationalization($t(item.descr)) }}</span>
-                    <span v-else class="p-menuitem-text">{{ $internationalization($t(item.label)) }}</span>
-                    <span v-if="item.items" class="p-submenu-icon pi pi-angle-right"></span>
+                    <span v-if="item.descr" class="p-menuitem-text kn-truncated" v-tooltip.top="item.descr">{{ $internationalization($t(item.descr)) }}</span>
+                    <span v-else class="p-menuitem-text kn-truncated" v-tooltip.top="$internationalization($t(item.label))">{{ $internationalization($t(item.label)) }}</span>
+                    <span v-if="item.items" class="p-submenu-icon pi pi-angle-right kn-truncated"></span>
                 </router-link>
                 <a v-else class="p-menuitem-link" :target="item.target" role="menuitem" @click="itemClick(item)" :tabindex="item.disabled ? null : '0'">
-                    <span v-if="item.descr" class="p-menuitem-text">{{ $internationalization($t(item.descr)) }}</span>
-                    <span v-else class="p-menuitem-text">{{ $internationalization($t(item.label)) }}</span>
-                    <span v-if="item.items" class="p-submenu-icon pi pi-angle-right"></span>
+                    <span v-if="item.descr" class="p-menuitem-text kn-truncated" v-tooltip.top="item.descr">{{ $internationalization($t(item.descr)) }}</span>
+                    <span v-else class="p-menuitem-text kn-truncated" v-tooltip.top="$internationalization($t(item.label))">{{ $internationalization($t(item.label)) }}</span>
+                    <span v-if="item.items" class="p-submenu-icon pi pi-angle-right kn-truncated"></span>
                 </a>
             </template>
         </TieredMenu>
