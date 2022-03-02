@@ -211,13 +211,13 @@ public class PageResource extends AbstractCockpitEngineResource {
 			if ("execute".equals(pageName)) {
 				String outputType = request.getParameter(OUTPUT_TYPE);
 				if ("xls".equalsIgnoreCase(outputType) || "xlsx".equalsIgnoreCase(outputType)) {
-					return createReirect(PATH + "/spreadsheet");
+					return createRedirect(PATH + "/spreadsheet");
 				} else if ("pdf".equalsIgnoreCase(outputType)) {
-					return createReirect(PATH + "/pdf");
+					return createRedirect(PATH + "/pdf");
 				} else if ("JPG".equalsIgnoreCase(outputType)) {
 					throw new UnsupportedOperationException("This method is not implemented anymore");
 				} else if ("PNG".equalsIgnoreCase(outputType)) {
-					return createReirect(PATH + "/png");
+					return createRedirect(PATH + "/png");
 				} else {
 					engineInstance = CockpitEngine.createInstance(getIOManager().getTemplateAsString(), getIOManager().getEnv());
 					getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
@@ -262,23 +262,25 @@ public class PageResource extends AbstractCockpitEngineResource {
 		}
 	}
 
-	private Response createReirect(String suffix) throws URISyntaxException {
+	private Response createRedirect(String suffix) throws URISyntaxException {
 		URI newLocation = createNewLocation(suffix);
 
 		return Response.temporaryRedirect(newLocation).build();
 	}
 
 	private URI createNewLocation(String suffix) throws URISyntaxException {
+		StringBuffer requestURL = request.getRequestURL();
 		String queryString = request.getQueryString();
 
-		StringBuilder sb = new StringBuilder("");
-		sb.append(suffix);
+		StringBuilder sb = new StringBuilder(requestURL.toString());
+		sb.append("/spreadsheet");
 		if (Objects.nonNull(queryString)) {
 			sb.append("?");
 			sb.append(queryString);
 		}
 
 		URI newLocation = new URI(sb.toString());
+
 		return newLocation;
 	}
 
