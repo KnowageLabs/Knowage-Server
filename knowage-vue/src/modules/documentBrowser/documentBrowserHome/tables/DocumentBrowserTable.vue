@@ -13,6 +13,7 @@
     <div class="kn-overflow-y last-flex-container kn-flex">
         <DataTable
             id="documents-datatable"
+            v-model:first="first"
             :value="documents"
             :paginator="documents.length > documentBrowserTableDescriptor.rows"
             :rows="documentBrowserTableDescriptor.rows"
@@ -102,12 +103,14 @@ export default defineComponent({
                     constraints: [filterDefault]
                 }
             } as any,
-            user: null as any
+            user: null as any,
+            first: 0
         }
     },
     watch: {
         propDocuments() {
             this.loadDocuments()
+            this.first = 0
         }
     },
     computed: {
@@ -117,6 +120,7 @@ export default defineComponent({
     },
     created() {
         this.loadDocuments()
+        this.first = 0
         this.user = (this.$store.state as any).user
     },
     methods: {
