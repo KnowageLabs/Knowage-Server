@@ -16,9 +16,9 @@
             }
         },
         created() {
+            window.addEventListener('message', this.receiveMessage)
             this.createBaseUrl()
         },
-
         updated() {
             this.createBaseUrl()
         },
@@ -30,11 +30,7 @@
                     this.completeUrl = (this.externalLink ? '' : process.env.VUE_APP_HOST_URL || window.location.origin) + this.url
                 }
             }
-        },
-        created() {
-            window.addEventListener('message', this.receiveMessage)
-        },
-        methods: {
+            
             receiveMessage(event) {
                 if (event && event.data && event.data.status === 401) {
                     authHelper.handleUnauthorized()
