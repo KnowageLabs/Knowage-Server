@@ -27,6 +27,8 @@
             @rowClick="$emit('selected', $event.data)"
             data-test="documents-datatable"
             style="width:100%;"
+            :scrollable="true"
+            scrollHeight="70vh"
         >
             <template #empty>
                 <Message class="p-m-2" severity="info" :closable="false" :style="documentBrowserTableDescriptor.styles.message" data-test="no-documents-hint">
@@ -142,17 +144,5 @@ export default defineComponent({
 <style lang="scss">
 #documents-found-hint {
     flex: 0.5;
-}
-
-#documents-datatable .p-paginator {
-    position: fixed;
-    bottom: 0;
-    right: 20px;
-}
-
-#documents-datatable .p-datatable-wrapper {
-    @media screen and (height: 300px) {
-        margin-bottom: 50px;
-    }
 }
 </style>

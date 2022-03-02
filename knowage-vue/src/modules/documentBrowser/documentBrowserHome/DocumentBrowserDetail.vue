@@ -110,7 +110,6 @@ export default defineComponent({
     width: 100%;
     height: 100%;
     position: relative;
-    max-height: 75vh;
 }
 
 #document-detail-backdrop {
