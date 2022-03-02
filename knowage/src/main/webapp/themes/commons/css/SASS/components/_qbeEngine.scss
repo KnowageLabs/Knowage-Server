@@ -6,6 +6,11 @@
         border: 1px solid $bordersColor;
     }
 
+    .smaller-dialog {
+        width: 400px;
+        height: 500px;
+    }
+
     expression-panel {
         padding: 16px;
         margin: 16px;
