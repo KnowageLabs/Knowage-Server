@@ -29,7 +29,7 @@
                     :viewType="document && document.federation_id ? 'federationDataset' : 'businessModel'"
                     :document="document"
                     @openSidebar="setSelectedModel"
-                    @openDatasetInQBE="openDatasetInQBE"
+                    @openDatasetInQBE="openDatasetInQBE($event)"
                     @editDataset="editDataset"
                     @deleteDataset="deleteDatasetConfirm"
                 />
@@ -41,12 +41,14 @@
         :visible="showDetailSidebar"
         :viewType="selectedModel && selectedModel.federation_id ? 'federationDataset' : 'businessModel'"
         :document="selectedModel"
-        @openDatasetInQBE="openDatasetInQBE"
+        @openDatasetInQBE="openDatasetInQBE($event)"
         @editDataset="editDataset"
         @deleteDataset="deleteDatasetConfirm"
         @close="showDetailSidebar = false"
         data-test="detail-sidebar"
     />
+
+    <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="selectedQbeDataset" @close="closeQbe" />
 </template>
 
 <script lang="ts">
@@ -81,7 +83,10 @@ export default defineComponent({
             user: null as any,
             loading: false,
             datasetDrivers: null as any,
-            datasetName: ''
+            datasetName: '',
+            qbeVisible: false,
+            selectedQbeDataset: null,
+            qbeType: 'iFrame' //variable used to change if iframe or the new qbe is being shown
         }
     },
     computed: {
@@ -152,21 +157,6 @@ export default defineComponent({
         resetSearch() {
             this.searchWord = ''
         },
-        async openDatasetInQBE(dataset) {
-            this.$emit('showQbeDialog', dataset)
-            // await this.loadDatasetDrivers(dataset)
-            // await this.buildQbeUrl(dataset)
-        },
-        async loadDatasetDrivers(dataset) {
-            let userRole = (this.$store.state as any).user.sessionRole !== 'No default role selected' ? (this.$store.state as any).user.sessionRole : null
-            await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/businessModelOpening/filters`, { name: dataset.name, role: userRole })
-                .then((response: AxiosResponse<any>) => {
-                    console.log('FILTERS SERVICE ---------', response.data.filterStatus)
-                    this.prepareDriversForSending(response.data.filterStatus)
-                })
-                .catch(() => {})
-        },
         prepareDriversForSending(drivers) {
             var transformedDrivers = {} as any
             if (drivers) {
@@ -203,17 +193,13 @@ export default defineComponent({
             this.datasetDrivers = encodeURI(JSON.stringify(transformedDrivers))
             // return encodeURI(JSON.stringify(transformedDrivers))
         },
-        async buildQbeUrl(dataset) {
-            console.log('STRINGIFIED DRIVERS', this.datasetDrivers)
-            let language = (this.$store.state as any).user.locale.split('_')[0]
-            let country = (this.$store.state as any).user.locale.split('_')[1]
-            let qbeUrl = `/knowageqbeengine/servlet/AdapterHTTP?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&SBI_SCRIPT=&user_id=${
-                (this.$store.state as any).user.userUniqueIdentifier
-            }&DEFAULT_DATASOURCE_FOR_WRITING_LABEL=CacheDS&SBI_COUNTRY=${country}&SBI_EXECUTION_ID=4ad654bf93fa11ecb2f9cfa89135aed9&ACTION_NAME=QBE_ENGINE_START_ACTION_FROM_BM&MODEL_NAME=${dataset.name}&DATA_SOURCE_LABEL=${dataset.dataSourceLabel}&DATA_SOURCE_ID=${
-                dataset.dataSourceId
-            }&isTechnicalUser=true&DRIVERS=${this.datasetDrivers}`
-            this.$emit('setDatasetName', dataset.name)
-            this.$emit('showQbeDialog', qbeUrl)
+        openDatasetInQBE(dataset: any) {
+            if (this.qbeType === 'iFrame') {
+                this.$emit('showQbeDialog', dataset)
+            } else {
+                this.selectedQbeDataset = dataset
+                this.qbeVisible = true
+            }
         },
         createNewFederation() {
             this.$router.push('models/federation-definition/new-federation')
@@ -267,6 +253,10 @@ export default defineComponent({
                 case 'All':
                     this.filteredItems = [...this.allItems]
             }
+        },
+        closeQbe() {
+            this.qbeVisible = false
+            this.selectedQbeDataset = null
         }
     }
 })

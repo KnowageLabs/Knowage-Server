@@ -1447,6 +1447,11 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 		wconf.chartTemplate = {"CHART":wconf.chartTemplate};
 	}
 	var chartTemplate = wconf.chartTemplate;
+	
+	if(chartTemplate.CHART.type.toUpperCase() === "WORDCLOUD" && !chartTemplate.CHART.sizeCriteria){
+		chartTemplate.CHART.sizeCriteria = "serie";
+	}
+	
 	if(chartTemplate && chartTemplate.CHART && chartTemplate.CHART.VALUES) {
 
 		if(chartTemplate.CHART.VALUES.SERIE) {

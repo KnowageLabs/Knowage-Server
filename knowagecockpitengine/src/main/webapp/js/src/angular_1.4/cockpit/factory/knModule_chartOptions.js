@@ -113,9 +113,9 @@ angular.module('cockpitModule').factory('knModule_chartOptions',function(sbiModu
 				var chartType = this.chartBindings[k];
 				if(model.categoriesNumber < chartType.categories[0] || model.categoriesNumber > chartType.categories[1]) continue;
 				if(chartType.numericalCategory && !model.numericalCategory) continue;
-				if(model.seriesNumber < chartType.series[0] || model.categoriesNumber > chartType.series[1]) continue;
+				if(model.seriesNumber < chartType.series[0] || model.seriesNumber > chartType.series[1]) continue;
 				if(!chartType.seriesStacking.includes(model.seriesStacking)) continue;
-				if(!chartType.groupedSeries.includes(model.groupSeries)) continue;
+				if(!chartType.groupedSeries.includes(model.groupedSeries)) continue;
 				chartsToReturn.push(k)
 			}
 			return chartsToReturn;

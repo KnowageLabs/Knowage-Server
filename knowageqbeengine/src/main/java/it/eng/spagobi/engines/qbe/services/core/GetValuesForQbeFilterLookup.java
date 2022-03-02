@@ -192,8 +192,8 @@ public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 				logger.debug("Executing query ...");
 				dataSet = getActiveQueryAsDataSet(filteredQuery);
 
-				Map<String, Object> envs = getEnv();
-				String stringDrivers = envs.get(DRIVERS).toString();
+				Map<String, String> envs = getEnv();
+				String stringDrivers = envs.get(DRIVERS);
 				Map<String, Object> drivers = null;
 				try {
 					drivers = JSONObjectDeserializator.getHashMapFromString(stringDrivers);
