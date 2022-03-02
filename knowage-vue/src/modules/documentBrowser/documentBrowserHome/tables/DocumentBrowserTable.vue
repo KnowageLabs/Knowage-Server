@@ -20,7 +20,7 @@
             v-model:filters="filters"
             filterDisplay="menu"
             selectionMode="single"
-            class="p-datatable-sm kn-table"
+            class="p-datatable-sm"
             dataKey="id"
             :responsiveLayout="documentBrowserTableDescriptor.responsiveLayout"
             :breakpoint="documentBrowserTableDescriptor.breakpoint"
@@ -144,14 +144,6 @@ export default defineComponent({
     flex: 0.5;
 }
 
-.overflow {
-    overflow: auto;
-}
-
-.last-flex-container {
-    position: relative;
-}
-
 #documents-datatable .p-paginator {
     position: fixed;
     bottom: 0;
@@ -159,6 +151,8 @@ export default defineComponent({
 }
 
 #documents-datatable .p-datatable-wrapper {
-    margin-bottom: 50px;
+    @media screen and (height: 300px) {
+        margin-bottom: 50px;
+    }
 }
 </style>
