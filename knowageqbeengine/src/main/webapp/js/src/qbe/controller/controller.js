@@ -92,6 +92,10 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			$scope.editQueryObj = qbeJsonObj.catalogue.queries[0];
 			$scope.query = $scope.editQueryObj;
 			$scope.subqueriesModel.subqueries = $scope.editQueryObj.subqueries;
+
+			// Fix consistency of the three
+			filters_service.fix($scope.query.expression, $scope.query.filters);
+
 		}
 		if(message.smartView != undefined) {
 			query_service.smartView = message.smartView;
@@ -147,7 +151,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 				finalPromise.then(function(response){
 					$scope.addToQueryModelWithoutExecutingQuery($scope.editQueryObj, $scope.queryModel);
 					exportService.setBody($scope.bodySend);
-					window.parent.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
+					window.qbe.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
 				},function(){
 					angular.copy(oldCatalogue,$scope.editQueryObj);
 					for(var i in $scope.previousVersionRelations){
@@ -165,12 +169,12 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			}else{
 				$scope.addToQueryModelWithoutExecutingQuery($scope.editQueryObj, $scope.queryModel);
 				exportService.setBody($scope.bodySend);
-				window.parent.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
+				window.qbe.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
 			}
 		} else {
 			$scope.addToQueryModelWithoutExecutingQuery($scope.editQueryObj, $scope.queryModel);
 			exportService.setBody($scope.bodySend);
-			window.parent.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
+			window.qbe.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
 		}
 
 
@@ -210,9 +214,9 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	    }
 	    return false;
 	}
-	window.parent.openPanelForSavingQbeDataset = function (){
+		$scope.openPanelForSavingQbeDataset = function (){
 		if(checkForDuplicatedAliases()){
-			sbiModule_messaging.showWarningMessage("Your query contains dupicate aliases", "Worning")
+			sbiModule_messaging.showWarningMessage("Your query contains dupicate aliases", "Warning")
 			return;
 		}
 		var bodySend = angular.copy($scope.bodySend);
@@ -686,34 +690,47 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
     	queryEntitiesService.getQueryEntitiesUniqueNames($scope.query.id,$scope.bodySend).then(function(response){
     		var selectedEntities = response.data;
 
-    		$mdDialog.show({
-                controller: function ($scope, $mdDialog) {
+			$mdDialog.show({
+				controller: function ($scope, $mdDialog) {
 
-                	$scope.filteredRelations = $scope.selectedRelationsService.getRelationships(selectedEntities,$scope.entityModel.entities)
-                	$scope.previousVersionRelations = angular.copy($scope.filteredRelations);
-                    $scope.ok= function(){
-                		$scope.editQueryObj.graph = angular.copy($scope.filteredRelations);
+					$scope.filteredRelations = $scope.selectedRelationsService.getRelationships(selectedEntities,$scope.entityModel.entities)
+					$scope.previousVersionRelations = angular.copy($scope.filteredRelations);
+					
+					// Reset values from a previous selection
+					var currentGraph = $scope.query.graph;
+					if (currentGraph.length > 0) {
+						for (i of currentGraph) {
+							for (j of $scope.filteredRelations) {
+								if (i.id == j.id) {
+									j.joinType = i.joinType;
+								}
+							}
+						}
+					}
+					
+					$scope.ok= function(){
+						$scope.editQueryObj.graph = angular.copy($scope.filteredRelations);
 
-                        $mdDialog.hide();
-                    }
+						$mdDialog.hide();
+					}
 
-                	$scope.cancel= function(){
-                		console.log($scope.joinForm.FormController)
-                		//$scope.joinForm.$setPristine();
-                        $mdDialog.hide();
-                    }
-                },
+					$scope.cancel= function(){
+						console.log($scope.joinForm.FormController)
+						//$scope.joinForm.$setPristine();
+						$mdDialog.hide();
+					}
+				},
 
-                scope: $scope,
-                preserveScope:true,
-                templateUrl:  sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/joinDefinitionsDialog.html',
+				scope: $scope,
+				preserveScope:true,
+				templateUrl:  sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/joinDefinitionsDialog.html',
 
-                clickOutsideToClose:true
-            })
+				clickOutsideToClose:true
+			})
 
-    	})
+		})
 
-    }
+	}
 
 	$scope.openDialogForParams = function(pars,filters,expression,advancedFilters){
     	var finishEdit=$q.defer();
@@ -1104,5 +1121,6 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
     }
 
-    $scope.getEntityTree();
+	$scope.getEntityTree();
+
 }

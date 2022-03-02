@@ -2,7 +2,7 @@
     <Card class="p-m-2">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('documentExecution.registry.filters') }}
                 </template>
             </Toolbar>
@@ -27,50 +27,50 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Card from 'primevue/card'
-import RegistryFilterCard from './RegistryFilterCard.vue'
-import registryDescriptor from './RegistryDescriptor.json'
+    import { defineComponent } from 'vue'
+    import Card from 'primevue/card'
+    import RegistryFilterCard from './RegistryFilterCard.vue'
+    import registryDescriptor from './RegistryDescriptor.json'
 
-export default defineComponent({
-    name: 'registry-filters-card',
-    components: { Card, RegistryFilterCard },
-    props: {
-        propFilters: { type: Array },
-        entity: { type: String },
-        id: { type: String }
-    },
-    emits: ['filter'],
-    data() {
-        return {
-            registryDescriptor,
-            filters: [] as any[],
-            clearFiltersTrigger: false
-        }
-    },
-    watch: {
-        propFilters() {
+    export default defineComponent({
+        name: 'registry-filters-card',
+        components: { Card, RegistryFilterCard },
+        props: {
+            propFilters: { type: Array },
+            entity: { type: String },
+            id: { type: String }
+        },
+        emits: ['filter'],
+        data() {
+            return {
+                registryDescriptor,
+                filters: [] as any[],
+                clearFiltersTrigger: false
+            }
+        },
+        watch: {
+            propFilters() {
+                this.loadFilters()
+            }
+        },
+        async created() {
             this.loadFilters()
+        },
+        methods: {
+            loadFilters() {
+                this.filters = [...(this.propFilters as any[])]
+            },
+            setFilterValue(value: string, index: number) {
+                this.filters[index].filterValue = value
+            },
+            clearAllFilters() {
+                this.filters.forEach((el: any) => (el.filterValue = ''))
+                this.clearFiltersTrigger = !this.clearFiltersTrigger
+                this.$emit('filter', this.filters)
+            },
+            filterRegistry() {
+                this.$emit('filter', this.filters)
+            }
         }
-    },
-    async created() {
-        this.loadFilters()
-    },
-    methods: {
-        loadFilters() {
-            this.filters = [...(this.propFilters as any[])]
-        },
-        setFilterValue(value: string, index: number) {
-            this.filters[index].filterValue = value
-        },
-        clearAllFilters() {
-            this.filters.forEach((el: any) => (el.filterValue = ''))
-            this.clearFiltersTrigger = !this.clearFiltersTrigger
-            this.$emit('filter', this.filters)
-        },
-        filterRegistry() {
-            this.$emit('filter', this.filters)
-        }
-    }
-})
+    })
 </script>

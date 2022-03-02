@@ -89,7 +89,7 @@ li {
         text-align: center;
         padding: 12px 15px;
         padding-left: 12px;
-        color: $mainmenu-icon-color;
+        color: var(--kn-mainmenu-icon-color);
         display: block;
         width: 100%;
         transition: background-color 0.3s, border-left-color 0.3s;
@@ -108,10 +108,10 @@ li {
             display: none;
         }
         &:hover {
-            background-color: lighten($mainmenu-background-color, 10%);
+            background-color: var(--kn-mainmenu-hover-background-color);
         }
         &.router-link-active {
-            border-left: 3px solid $mainmenu-highlight-color;
+            border-left: 3px solid var(--kn-mainmenu-highlight-color);
         }
         img {
             width: 20px;
@@ -122,8 +122,8 @@ li {
         margin: 0;
         padding: 0;
         list-style: none;
-        box-shadow: $mainmenu-box-shadow;
-        background-color: lighten($mainmenu-background-color, 15%);
+        box-shadow: var(--kn-mainmenu-box-shadow);
+        background-color: var(--kn-mainmenu-hover-background-color);
         position: absolute;
         top: 0;
         left: 100%;
@@ -136,10 +136,10 @@ li {
                 display: inline-flex;
                 align-items: center;
                 padding: 10px 5px 10px 10px;
-                background-color: $mainmenu-panel-color;
-                color: $mainmenu-panel-text-color;
+                background-color: var(--kn-mainmenu-panel-color);
+                color: var(--kn-mainmenu-panel-text-color);
                 &:hover {
-                    background-color: darken($mainmenu-panel-color, 10%);
+                    background-color: var(--kn-mainmenu-hover-background-color);
                 }
                 .p-menuitem-text {
                     display: inline-block;

@@ -2,7 +2,7 @@
     <Card>
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.businessModelManager.driversDetails') }}
                 </template>
             </Toolbar>
@@ -73,12 +73,10 @@
                             :options="categories"
                             :placeholder="$t('common.category')"
                             :disabled="readonly"
-                            optionLabel="VALUE_NM"
-                            optionValue="VALUE_ID"
                             @before-show="v$.businessModel.category.$touch()"
-                            @change="onFieldChange('category', $event.value)"
+                            @change="onFieldChange('category', $event.value.VALUE_ID)"
                         >
-                            <!-- <template #value="slotProps">
+                            <template #value="slotProps">
                                 <div v-if="slotProps.value">
                                     <span>{{ slotProps.value.VALUE_NM }}</span>
                                 </div>
@@ -87,7 +85,7 @@
                                 <div>
                                     <span>{{ slotProps.option.VALUE_NM }}</span>
                                 </div>
-                            </template> -->
+                            </template>
                         </Dropdown>
                     </span>
                     <KnValidationMessages
@@ -168,10 +166,10 @@
 
                 <div class="p-mt-5" v-if="metaWebVisible">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                        <template #left>
+                        <template #start>
                             {{ $t('managers.businessModelManager.configurationTablePrefixTitle') }}
                         </template>
-                        <template #right>
+                        <template #end>
                             <i class="fa fa-info-circle" v-tooltip.bottom="$t('managers.businessModelManager.prefixTooltip')"></i>
                         </template>
                     </Toolbar>
@@ -349,7 +347,6 @@ export default defineComponent({
     methods: {
         loadBusinessModel() {
             this.businessModel = { ...this.selectedBusinessModel } as iBusinessModel
-            if (this.businessModel.category?.VALUE_ID) this.businessModel.category = this.businessModel.category.VALUE_ID
         },
         loadCategories() {
             this.categories = this.domainCategories as any[]

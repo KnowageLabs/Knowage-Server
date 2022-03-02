@@ -55,7 +55,19 @@
                 </div>
             </form>
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-            <DataTable v-if="!loading" :value="kpi.threshold.thresholdValues" :loading="loading" editMode="cell" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" @rowReorder="setPositionOnReorder" data-test="messages-table">
+            <DataTable
+                v-if="!loading"
+                :value="kpi.threshold.thresholdValues"
+                :loading="loading"
+                editMode="cell"
+                class="p-datatable-sm kn-table"
+                dataKey="id"
+                responsiveLayout="stack"
+                breakpoint="960px"
+                @rowReorder="setPositionOnReorder"
+                data-test="messages-table"
+                @cell-edit-complete="onCellEditComplete"
+            >
                 <Column :rowReorder="true" headerStyle="width: 3rem" :reorderableColumn="false" />
 
                 <Column field="label" :header="$t('common.label')">
@@ -124,7 +136,7 @@
 
     <Sidebar class="mySidebar" v-model:visible="thresholdListVisible" :showCloseIcon="false" position="right">
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
-            <template #left>{{ $t('kpi.kpiDefinition.thresholdsListTitle') }}</template>
+            <template #start>{{ $t('kpi.kpiDefinition.thresholdsListTitle') }}</template>
         </Toolbar>
         <Listbox class="kn-list--column" :options="thresholdsList" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="tabViewDescriptor.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')" @change="confirmToLoadThreshold">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
@@ -278,6 +290,10 @@ export default defineComponent({
             this.kpi.threshold.name += ' (' + this.$t('kpi.kpiDefinition.clone') + ')'
             this.kpi.threshold.id = undefined
             this.kpi.threshold.usedByKpi = false
+        },
+
+        onCellEditComplete(event) {
+            this.kpi.threshold.thresholdValues[event.index] = event.newData
         }
     }
 })

@@ -141,7 +141,7 @@
         "restNGSI": "",
         "restOffset": "",
         "restRequestAdditionalParameters": [],
-        "restRequestBody": "",
+        "restRequestBody": "*:*",
         "restRequestHeaders": [],
         "scopeCd": "",
         "scopeId": "",

@@ -1,20 +1,20 @@
 <template>
     <div class="kn-height-full detail-page-container">
         <Toolbar v-if="!embed && !olapDesignerMode" class="kn-toolbar kn-toolbar--primary p-col-12">
-            <template #left>
+            <template #start>
                 <span>{{ document?.label }}</span>
             </template>
 
-            <template #right>
+            <template #end>
                 <div class="p-d-flex p-jc-around">
-                    <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'VIEW'" class="pi pi-pencil kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocumentConfirm"></i>
-                    <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'" class="fa fa-eye kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocumentConfirm"></i>
-                    <i class="pi pi-book kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></i>
-                    <i class="pi pi-refresh kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.refresh')" @click="refresh"></i>
-                    <i v-if="isParameterSidebarVisible" class="fa fa-filter kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible" data-test="parameter-sidebar-icon"></i>
-                    <i class="fa fa-ellipsis-v kn-cursor-pointer  p-mx-4" v-tooltip.left="$t('common.menu')" @click="toggle"></i>
+                    <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'VIEW'" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocumentConfirm"></Button>
+                    <Button icon="fa fa-eye" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocumentConfirm"></Button>
+                    <Button icon="pi pi-book" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></Button>
+                    <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.refresh')" @click="refresh"></Button>
+                    <Button icon="fa fa-filter" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="isParameterSidebarVisible" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible" data-test="parameter-sidebar-icon"></Button>
+                    <Button icon="fa fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
                     <Menu ref="menu" :model="toolbarMenuItems" :popup="true" />
-                    <i class="fa fa-times kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.close')" @click="closeDocument"></i>
+                    <Button icon="fa fa-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.close')" @click="closeDocument"></Button>
                 </div>
             </template>
         </Toolbar>
@@ -57,6 +57,7 @@
                 :filtersData="filtersData"
                 :propDocument="document"
                 :userRole="userRole"
+                :sessionEnabled="sessionEnabled"
                 @execute="onExecute"
                 @exportCSV="onExportCSV"
                 @roleChanged="onRoleChange"
@@ -92,6 +93,8 @@ import Registry from '../registry/Registry.vue'
 import Dossier from '../dossier/Dossier.vue'
 import Olap from '../olap/Olap.vue'
 import moment from 'moment'
+
+const deepcopy = require('deepcopy')
 
 export default defineComponent({
     name: 'document-execution',
@@ -145,7 +148,8 @@ export default defineComponent({
             olapCustomViewVisible: false,
             userRole: null,
             loading: false,
-            olapDesignerMode: false
+            olapDesignerMode: false,
+            sessionEnabled: false
         }
     },
     async activated() {
@@ -196,6 +200,8 @@ export default defineComponent({
 
         this.user = (this.$store.state as any).user
         this.userRole = this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
+
+        await this.loadUserConfig()
 
         this.isOlapDesignerMode()
         this.setMode()
@@ -280,10 +286,6 @@ export default defineComponent({
 
             if (this.user.functionalities.includes('SeeSnapshotsFunctionality')) {
                 this.toolbarMenuItems[3].items.unshift({ icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() })
-            }
-
-            if (this.isOrganizerEnabled()) {
-                this.toolbarMenuItems[3].items.unshift({ icon: 'fa fa-suitcase ', label: this.$t('documentExecution.main.addToWorkspace'), command: () => this.addToWorkspace() })
             }
 
             if (this.mode === 'olap') {
@@ -402,6 +404,19 @@ export default defineComponent({
             }
         },
         async loadFilters() {
+            if (this.sessionEnabled) {
+                const tempFilters = sessionStorage.getItem(this.document.label)
+                if (tempFilters) {
+                    this.filtersData = JSON.parse(tempFilters) as { filterStatus: iParameter[]; isReadyForExecution: boolean }
+                    this.filtersData.filterStatus?.forEach((filter: any) => {
+                        if (filter.type === 'DATE' && filter.parameterValue[0].value) {
+                            filter.parameterValue[0].value = new Date(filter.parameterValue[0].value)
+                        }
+                    })
+                    return
+                }
+            }
+
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, { label: this.document.label, role: this.userRole, parameters: this.document.navigationParams ?? {} })
                 .then((response: AxiosResponse<any>) => (this.filtersData = response.data))
@@ -488,12 +503,15 @@ export default defineComponent({
             }
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData)
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData, { headers: { 'X-Disable-Interceptor': 'true' } })
                 .then((response: AxiosResponse<any>) => {
                     this.urlData = response.data
                     this.sbiExecutionId = this.urlData?.sbiExecutionId as string
                 })
-                .catch(() => {})
+                .catch((response: AxiosResponse<any>) => {
+                    this.urlData = response.data
+                    this.sbiExecutionId = this.urlData?.sbiExecutionId as string
+                })
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) {
@@ -538,6 +556,7 @@ export default defineComponent({
                 if (inputElement) {
                     inputElement.value = decodeURIComponent(postObject.params[k])
                     inputElement.value = inputElement.value.replace(/\+/g, ' ')
+
                     this.hiddenFormData.set(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
                 } else {
                     const element = document.createElement('input')
@@ -546,16 +565,17 @@ export default defineComponent({
                     element.name = k
                     element.value = decodeURIComponent(postObject.params[k])
                     element.value = element.value.replace(/\+/g, ' ')
-                    postForm.appendChild(element)
 
+                    postForm.appendChild(element)
                     this.hiddenFormData.append(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
                 }
             }
 
             for (let i = postForm.elements.length - 1; i >= 0; i--) {
-                const postFormElement = postForm.elements[i].id.replace('postForm_', '')
+                const postFormElement = postForm.elements[i].id.replace('postForm_' + postObject.params.document, '')
 
                 if (!(postFormElement in postObject.params)) {
+                    postForm.removeChild(postForm.elements[i])
                     this.hiddenFormData.delete(postFormElement)
                 }
             }
@@ -588,6 +608,10 @@ export default defineComponent({
             await this.loadURL(null)
             this.parameterSidebarVisible = false
             this.reloadTrigger = !this.reloadTrigger
+
+            if (this.sessionEnabled) {
+                this.saveParametersInSession()
+            }
             this.loading = false
         },
         async onExportCSV() {
@@ -770,7 +794,7 @@ export default defineComponent({
             if (index !== -1) this.schedulations.splice(index, 1)
         },
         getFormattedDate(date: any) {
-            return moment(date).format('DD/MM/YYYY')
+            return moment(date).format('DDMMYYYY')
         },
         onBreadcrumbClick(item: any) {
             this.document = item.document
@@ -874,26 +898,25 @@ export default defineComponent({
                 this.olapDesignerMode = true
             }
         },
-        isOrganizerEnabled() {
-            return this.user.isSuperadmin || this.user.functionalities.includes('SaveIntoFolderFunctionality')
+        async loadUserConfig() {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
+                if (response.data) {
+                    this.sessionEnabled = response.data['SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled'] === 'false' ? false : true
+                }
+            })
         },
-        async addToWorkspace() {
-            this.loading = true
-            await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/${this.document.id}`, {}, { headers: { 'X-Disable-Errors': 'true' } })
-                .then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.updateTitle'),
-                        msg: this.$t('common.toast.success')
-                    })
-                })
-                .catch((error) => {
-                    this.$store.commit('setError', {
-                        title: this.$t('common.toast.updateTitle'),
-                        msg: error.message === 'sbi.workspace.organizer.document.addtoorganizer.error.duplicateentry' ? this.$t('documentExecution.main.addToWorkspaceError') : error.message
-                    })
-                })
-            this.loading = false
+        saveParametersInSession() {
+            const tempFilters = deepcopy(this.filtersData)
+            tempFilters.filterStatus?.forEach((filter: any) => {
+                delete filter.dataDependsOnParameters
+                delete filter.dataDependentParameters
+                delete filter.dependsOnParameters
+                delete filter.dependentParameters
+                delete filter.lovDependsOnParameters
+                delete filter.lovDependentParameters
+            })
+
+            sessionStorage.setItem(this.document.label, JSON.stringify(tempFilters))
         }
     }
 })

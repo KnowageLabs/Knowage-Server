@@ -2,7 +2,7 @@
     <Card>
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.businessModelManager.driversDetails') }}
                 </template>
             </Toolbar>
@@ -116,10 +116,10 @@
     <Card v-if="selectedDriver">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.businessModelManager.driverDataConditions') }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button class="kn-button p-button-text" @click="showForm" :disabled="modes.length === 0 || readonly">{{ $t('managers.businessModelManager.addCondition') }}</Button>
                 </template>
             </Toolbar>
