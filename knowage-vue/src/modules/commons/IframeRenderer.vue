@@ -29,7 +29,7 @@
                 } else {
                     this.completeUrl = (this.externalLink ? '' : process.env.VUE_APP_HOST_URL || window.location.origin) + this.url
                 }
-            }
+            },
             
             receiveMessage(event) {
                 if (event && event.data && event.data.status === 401) {
