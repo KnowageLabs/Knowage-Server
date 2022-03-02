@@ -66,7 +66,7 @@ import { AxiosResponse } from 'axios'
 export default defineComponent({
     name: 'workspace-models-view',
     components: { DetailSidebar, KnFabButton, Message, SelectButton, WorkspaceModelsTable, WorkspaceCard },
-    emits: ['showMenu', 'toggleDisplayView', 'showQbeDialog', 'setDatasetName'],
+    emits: ['showMenu', 'toggleDisplayView', 'showQbeDialog'],
     props: { toggleCardDisplay: { type: Boolean } },
     data() {
         return {
@@ -156,42 +156,6 @@ export default defineComponent({
         },
         resetSearch() {
             this.searchWord = ''
-        },
-        prepareDriversForSending(drivers) {
-            var transformedDrivers = {} as any
-            if (drivers) {
-                for (var i = 0; i < drivers.length; i++) {
-                    var tempDriver = [] as any
-                    var urlName = drivers[i].urlName
-                    if (drivers[i].parameterValue && Array.isArray(drivers[i].parameterValue)) {
-                        for (var j = 0; j < drivers[i].parameterValue.length; j++) {
-                            if (drivers[i].parameterValue[j].value && drivers[i].parameterValue[j].description) {
-                                var val = drivers[i].parameterValue[j]
-                            } else {
-                                val = { value: drivers[i].parameterValue[j] }
-                                if (drivers[i].parameterDescription && Array.isArray(drivers[i].parameterDescription)) {
-                                    val.description = drivers[i].parameterDescription[j]
-                                } else {
-                                    val.description = drivers[i].parameterDescription[drivers[i].parameterValue[j]]
-                                }
-                            }
-                            tempDriver.push(val)
-                        }
-                    } else {
-                        val = { value: drivers[i].parameterValue }
-                        if (drivers[i].parameterDescription) {
-                            val.description = drivers[i].parameterDescription
-                        } else {
-                            val.description = drivers[i].parameterValue
-                        }
-                        tempDriver.push(val)
-                    }
-                    transformedDrivers[urlName] = tempDriver
-                }
-            }
-            console.log('TRANSFORMED DRIVERS', transformedDrivers)
-            this.datasetDrivers = encodeURI(JSON.stringify(transformedDrivers))
-            // return encodeURI(JSON.stringify(transformedDrivers))
         },
         openDatasetInQBE(dataset: any) {
             if (this.qbeType === 'iFrame') {
