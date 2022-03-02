@@ -265,11 +265,11 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private Response createRedirect(String suffix) throws URISyntaxException {
 		URI newLocation = createNewLocation(suffix);
 
-		return Response.temporaryRedirect(newLocation).build();
+		return Response.status(307).header("Location", newLocation).build();
 	}
 
 	private URI createNewLocation(String suffix) throws URISyntaxException {
-		StringBuffer requestURL = request.getRequestURL();
+		String requestURL = request.getRequestURI();
 		String queryString = request.getQueryString();
 
 		StringBuilder sb = new StringBuilder(requestURL.toString());
