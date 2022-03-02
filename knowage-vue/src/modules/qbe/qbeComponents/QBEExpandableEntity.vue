@@ -58,8 +58,6 @@ export default defineComponent({
                         child.color = color
                     })
                 }
-
-                entity.expanded = false
             })
         },
 
