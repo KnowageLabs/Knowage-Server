@@ -13,19 +13,22 @@
     <div class="kn-overflow-y last-flex-container kn-flex">
         <DataTable
             id="documents-datatable"
+            v-model:first="first"
             :value="documents"
             :paginator="documents.length > documentBrowserTableDescriptor.rows"
             :rows="documentBrowserTableDescriptor.rows"
             v-model:filters="filters"
             filterDisplay="menu"
             selectionMode="single"
-            class="p-datatable-sm kn-table"
+            class="p-datatable-sm"
             dataKey="id"
             :responsiveLayout="documentBrowserTableDescriptor.responsiveLayout"
             :breakpoint="documentBrowserTableDescriptor.breakpoint"
             @rowClick="$emit('selected', $event.data)"
             data-test="documents-datatable"
             style="width:100%;"
+            :scrollable="true"
+            scrollHeight="70vh"
         >
             <template #empty>
                 <Message class="p-m-2" severity="info" :closable="false" :style="documentBrowserTableDescriptor.styles.message" data-test="no-documents-hint">
@@ -102,12 +105,14 @@ export default defineComponent({
                     constraints: [filterDefault]
                 }
             } as any,
-            user: null as any
+            user: null as any,
+            first: 0
         }
     },
     watch: {
         propDocuments() {
             this.loadDocuments()
+            this.first = 0
         }
     },
     computed: {
@@ -117,6 +122,7 @@ export default defineComponent({
     },
     created() {
         this.loadDocuments()
+        this.first = 0
         this.user = (this.$store.state as any).user
     },
     methods: {
@@ -138,23 +144,5 @@ export default defineComponent({
 <style lang="scss">
 #documents-found-hint {
     flex: 0.5;
-}
-
-.overflow {
-    overflow: auto;
-}
-
-.last-flex-container {
-    position: relative;
-}
-
-#documents-datatable .p-paginator {
-    position: fixed;
-    bottom: 0;
-    right: 20px;
-}
-
-#documents-datatable .p-datatable-wrapper {
-    margin-bottom: 50px;
 }
 </style>
