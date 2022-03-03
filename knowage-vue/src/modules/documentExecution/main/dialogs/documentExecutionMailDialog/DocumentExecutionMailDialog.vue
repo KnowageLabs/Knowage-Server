@@ -66,12 +66,9 @@
 
                         <div class="p-field p-col-12">
                             <label class="kn-material-input-label">{{ $t('common.replyTo') }}</label>
-                            <InputText class="kn-material-input p-inputtext-sm" v-model="mail.REPLAYTO" :maxLength="documentExecutionMailDialogDescriptor.objectMaxLength" />
+                            <InputText class="kn-material-input p-inputtext-sm" v-model="mail.REPLAYTO" :maxLength="documentExecutionMailDialogDescriptor.objectMaxLength" aria-describedby="reply-to-help" />
+                            <small id="reply-to-help">{{ $t('documentExecution.main.replyToHint') }}</small>
                         </div>
-
-                        <Message class="p-m-2 p-col-12" severity="info" :closable="false" :style="documentExecutionMailDialogDescriptor.styles.message">
-                            {{ $t('documentExecution.main.replyToHint') }}
-                        </Message>
                     </div>
                 </AccordionTab>
             </Accordion>
