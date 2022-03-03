@@ -106,6 +106,7 @@
         "notes": "Notes",
         "notesList": "Notes list",
         "object": "Object",
+        "of": "of",
         "ok": "ok",
         "onlineHelp": "Help Online",
         "order": "Order",
@@ -163,7 +164,7 @@
         "test": "test",
         "time": "Time",
         "title": "Title",
-        "to": "To",
+        "to": "to",
         "toast": {
             "cloneConfirmTitle": "Confirm item clone?",
             "createTitle": "Created",

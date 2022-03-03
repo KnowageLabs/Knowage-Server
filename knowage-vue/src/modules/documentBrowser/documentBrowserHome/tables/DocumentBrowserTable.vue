@@ -16,11 +16,13 @@
             v-model:first="first"
             :value="documents"
             :paginator="documents.length > documentBrowserTableDescriptor.rows"
+            paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+            :currentPageReportTemplate="`{first} ${$t('common.to')} {last} ${$t('common.of')} {totalRecords}`"
             :rows="documentBrowserTableDescriptor.rows"
             v-model:filters="filters"
             filterDisplay="menu"
             selectionMode="single"
-            class="p-datatable-sm"
+            class="p-datatable-sm kn-table"
             dataKey="id"
             :responsiveLayout="documentBrowserTableDescriptor.responsiveLayout"
             :breakpoint="documentBrowserTableDescriptor.breakpoint"
@@ -28,7 +30,7 @@
             data-test="documents-datatable"
             style="width:100%;"
             :scrollable="true"
-            scrollHeight="70vh"
+            scrollHeight="100%"
         >
             <template #empty>
                 <Message class="p-m-2" severity="info" :closable="false" :style="documentBrowserTableDescriptor.styles.message" data-test="no-documents-hint">
@@ -40,15 +42,15 @@
                     <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
                 </template>
             </Column>
-            <Column v-if="isSuperAdmin" class="kn-truncated" :header="$t('common.status')" field="stateCodeStr" sortField="stateCodeStr" :sortable="true">
+            <Column v-if="isSuperAdmin" class="kn-truncated" :header="$t('common.status')" field="stateCodeStr" sortField="stateCodeStr" :sortable="true" :style="documentBrowserTableDescriptor.table.smallmessage">
                 <template #filter="{filterModel}">
                     <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
                 </template>
-                <template #body="slotProps">
+                <template #body="slotProps" :style="documentBrowserTableDescriptor.table.iconColumn.smallmessage">
                     <span data-test="document-status"> {{ slotProps.data['stateCodeStr'] }}</span>
                 </template></Column
             >
-            <Column v-if="isSuperAdmin" :style="documentBrowserTableDescriptor.table.iconColumn.style" :header="$t('common.visible')" field="visible" sortField="visible" :sortable="true">
+            <Column v-if="isSuperAdmin" :header="$t('common.visible')" field="visible" sortField="visible" :sortable="true" :style="documentBrowserTableDescriptor.table.iconColumn.style">
                 <template #body="slotProps">
                     <span class="fa-stack">
                         <i class="fa fa-eye fa-stack-1x"></i>
@@ -128,6 +130,7 @@ export default defineComponent({
     methods: {
         loadDocuments() {
             this.documents = this.propDocuments?.map((el: any) => {
+                if (el.field === 'status') el.style = documentBrowserTableDescriptor.table.smallmessage
                 return { ...el, stateCodeStr: this.getTranslatedStatus(el.stateCodeStr) }
             }) as any[]
         },
