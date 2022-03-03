@@ -263,8 +263,6 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private Response createRedirect(String suffix) throws URISyntaxException {
 		URI newLocation = createNewLocation(suffix);
 
-		System.out.println("New location: " + newLocation);
-
 		return Response.status(307).header("Location", newLocation).build();
 	}
 
