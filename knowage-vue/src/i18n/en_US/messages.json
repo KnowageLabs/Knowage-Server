@@ -754,6 +754,9 @@
         "weekHeader": "Wk"
     },
     "managers": {
+        "bml": {
+            "title": "Behavioural Model Lineage"
+        },
         "businessModelManager": {
             "add": "Add",
             "addCondition": "Add Condition",
