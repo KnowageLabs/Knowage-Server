@@ -377,7 +377,6 @@ export default defineComponent({
             const postData = { label: this.document?.label, parameters: this.getFormattedParameters(), paramId: parameter.urlName, role: this.sessionRole }
 
             let url = '2.0/documentExeParameters/admissibleValues'
-
             if (this.mode !== 'execution' && this.document) {
                 url = this.document.type === 'businessModel' ? `1.0/businessmodel/${this.document.name}/admissibleValues` : `/3.0/datasets/${this.document.label}/admissibleValues`
             }

@@ -105,6 +105,21 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	}
 	comunicator.addMessageHandler(consoleHandler);
 
+	window.addEventListener(
+	        'message',
+	        (event) => {
+	            if (event.data === 'saveDS') {
+	                var saveObj = {}
+	                saveObj.name = 'workspace'
+	                saveObj.qbeQuery = { catalogue: { queries: [$scope.editQueryObj] } }
+	                saveObj.meta = $scope.meta
+	                saveObj.pars = $scope.pars
+	                $scope.openPanelForSavingQbeDataset(false)
+	                comunicator.sendMessage(saveObj)
+	            }
+	        },
+	        false
+	    )
 
 	formulaService.getCustomFormulas().then(function(response) {
 		$scope.customFormulas = [];
@@ -214,31 +229,31 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	    }
 	    return false;
 	}
-		$scope.openPanelForSavingQbeDataset = function (){
-		if(checkForDuplicatedAliases()){
-			sbiModule_messaging.showWarningMessage("Your query contains dupicate aliases", "Warning")
-			return;
-		}
-		var bodySend = angular.copy($scope.bodySend);
-		var finishEdit=$q.defer();
-		var config = {
-				attachTo:  angular.element(document.body),
-				templateUrl: sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/saveTemplate.html',
-				position: $mdPanel.newPanelPosition().absolute().center(),
-				fullscreen :true,
-				controller: function($scope,mdPanelRef){
-					$scope.model ={ bodySend:bodySend,"mdPanelRef":mdPanelRef};
-				},
-				locals: {bodySend: bodySend},
-				hasBackdrop: true,
-				clickOutsideToClose: true,
-				escapeToClose: true,
-				focusOnOpen: true,
-				preserveScope: true,
-		};
-		$mdPanel.open(config);
-		return finishEdit.promise;
-	}
+	$scope.openPanelForSavingQbeDataset = function (isFromAngular = true) {
+        if (checkForDuplicatedAliases()) {
+            sbiModule_messaging.showWarningMessage('Your query contains dupicate aliases', 'Warning')
+            return
+        }
+        var bodySend = angular.copy($scope.bodySend)
+        var finishEdit = $q.defer()
+        var config = {
+            attachTo: angular.element(document.body),
+            templateUrl: sbiModule_config.dynamicResourcesEnginePath + '/qbe/templates/saveTemplate.html',
+            position: $mdPanel.newPanelPosition().absolute().center(),
+            fullscreen: isFromAngular,
+            controller: function ($scope, mdPanelRef) {
+                $scope.model = { bodySend: bodySend, mdPanelRef: mdPanelRef, isFromAngular: isFromAngular }
+            },
+            locals: { bodySend: bodySend, isFromAngular: isFromAngular },
+            hasBackdrop: true,
+            clickOutsideToClose: true,
+            escapeToClose: true,
+            focusOnOpen: true,
+            preserveScope: true
+        }
+        $mdPanel.open(config)
+        return finishEdit.promise
+    }
 
 	window.qbe ={};
 	window.qbe.openPanelForSavingQbeDataset = $scope.openPanelForSavingQbeDataset;
