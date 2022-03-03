@@ -17,7 +17,13 @@
             :value="documents"
             :paginator="documents.length > documentBrowserTableDescriptor.rows"
             paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-            :currentPageReportTemplate="`{first} ${$t('common.to')} {last} ${$t('common.of')} {totalRecords}`"
+            :currentPageReportTemplate="
+                $t('common.table.footer.paginated', {
+                    first: '{first}',
+                    last: '{last}',
+                    totalRecords: '{totalRecords}'
+                })
+            "
             :rows="documentBrowserTableDescriptor.rows"
             v-model:filters="filters"
             filterDisplay="menu"
@@ -41,8 +47,11 @@
                 <template #filter="{filterModel}">
                     <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
                 </template>
+                <template #body="slotProps">
+                    <span class="kn-truncated" v-tooltip.top="slotProps.data[col.field]">{{ slotProps.data[col.field] }}</span>
+                </template>
             </Column>
-            <Column v-if="isSuperAdmin" class="kn-truncated" :header="$t('common.status')" field="stateCodeStr" sortField="stateCodeStr" :sortable="true" :style="documentBrowserTableDescriptor.table.smallmessage">
+            <Column v-if="isSuperAdmin" :header="$t('common.status')" field="stateCodeStr" sortField="stateCodeStr" :sortable="true" :style="documentBrowserTableDescriptor.table.smallmessage">
                 <template #filter="{filterModel}">
                     <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
                 </template>
@@ -52,14 +61,14 @@
             >
             <Column v-if="isSuperAdmin" :header="$t('common.visible')" field="visible" sortField="visible" :sortable="true" :style="documentBrowserTableDescriptor.table.iconColumn.style">
                 <template #body="slotProps">
-                    <span class="fa-stack">
+                    <span class="fa-stack" v-tooltip="slotProps.data['visible'] ? $t('common.visible') : $t('common.notVisible')">
                         <i class="fa fa-eye fa-stack-1x"></i>
                         <i v-if="!slotProps.data['visible']" class="fa fa-ban fa-stack-2x"></i>
                     </span> </template
             ></Column>
             <Column :style="documentBrowserTableDescriptor.table.iconColumn.style">
                 <template #body="slotProps">
-                    <Button icon="fa fa-play-circle" class="p-button-link" @click.stop="executeDocument(slotProps.data)" />
+                    <Button icon="fa fa-play-circle" class="p-button-link" v-tooltip.left="$t('documentBrowser.executeDocument')" @click.stop="executeDocument(slotProps.data)" />
                 </template>
             </Column>
         </DataTable>
