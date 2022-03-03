@@ -4,7 +4,7 @@
             <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
                     <template #start>
-                        {{ $t('managers.scheduler.title') }}
+                        {{ $t('managers.timespan.title') }}
                     </template>
                     <template #end>
                         <FabButton icon="fas fa-plus" @click="showTimespanDetails(null, false)" />
@@ -15,7 +15,7 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
-                <router-view />
+                <router-view :categories="categories" />
             </div>
         </div>
     </div>
@@ -83,9 +83,42 @@ export default defineComponent({
         },
         showTimespanDetails(event: any, clone: boolean) {
             console.log('showTimespanDetails() - event: ', event, ', colne: ', clone)
+            const url = event ? `/timespan/edit-timespan?id=${event.item?.id}&clone=${clone}` : '/timespan/new-timespan'
+            this.$router.push(url)
         },
         deleteTimespanConfirm(event: any) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: async () => {
+                    await this.deleteTimespan(event.item.id)
+                }
+            })
             console.log('deleteTimespanConfirm() - event: ', event)
+        },
+        async deleteTimespan(id: number) {
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/deleteTimespan?ID=${id}`)
+                .then((response: AxiosResponse<any>) => {
+                    if (response.data?.Status === 'OK') {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.deleteTitle'),
+                            msg: this.$t('common.toast.deleteSuccess')
+                        })
+                        this.removeTimespan(id)
+                    }
+                })
+                .catch((error) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: error?.message
+                    })
+                })
+        },
+        removeTimespan(id: number) {
+            const index = this.timespans.findIndex((timespan: iTimespan) => timespan.id === id)
+            if (index !== -1) this.timespans.splice(index, 1)
         }
     }
 })

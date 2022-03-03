@@ -1,11 +1,12 @@
 export interface iTimespan {
     name: string,
-    id: number,
+    id?: number,
     type: "time" | "temporal",
     definition: { from: string, to: string, fromLocalized?: string, toLocalized?: string }[],
     category: string,
-    staticFilter: boolean,
-    commonInfo: string
+    staticFilter?: boolean,
+    commonInfo?: string,
+    isnew?: boolean
 }
 
 export interface iCategory {

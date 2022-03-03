@@ -20,7 +20,17 @@
             "type": "event"
         },
         "sortFields": ["name", "category"],
-        "titleField": "name",
-        "tooltipField": "name"
-    }
+        "textField": "category",
+        "titleField": "name"
+    },
+    "typeValues": [
+        {
+            "label": "common.time",
+            "value": "time"
+        },
+        {
+            "label": "common.temporal",
+            "value": "temporal"
+        }
+    ]
 }
