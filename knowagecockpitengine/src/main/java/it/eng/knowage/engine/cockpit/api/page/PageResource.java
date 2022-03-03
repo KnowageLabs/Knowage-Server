@@ -75,7 +75,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  *
  */
 
-@Path("/1.0/pages/execute")
+@Path("/1.0/pages")
 public class PageResource extends AbstractCockpitEngineResource {
 
 	private static final String OUTPUT_TYPE = "outputType";
@@ -262,6 +262,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	private Response createRedirect(String suffix) throws URISyntaxException {
 		URI newLocation = createNewLocation(suffix);
+
+		System.out.println("New location: " + newLocation);
 
 		return Response.status(307).header("Location", newLocation).build();
 	}
