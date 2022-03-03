@@ -75,10 +75,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  *
  */
 
-@Path(PageResource.PATH)
+@Path("/1.0/pages/execute")
 public class PageResource extends AbstractCockpitEngineResource {
-
-	public static final String PATH = "/1.0/pages/execute";
 
 	private static final String OUTPUT_TYPE = "outputType";
 	private static final String PDF_PAGE_ORIENTATION = "pdfPageOrientation";
@@ -211,13 +209,13 @@ public class PageResource extends AbstractCockpitEngineResource {
 			if ("execute".equals(pageName)) {
 				String outputType = request.getParameter(OUTPUT_TYPE);
 				if ("xls".equalsIgnoreCase(outputType) || "xlsx".equalsIgnoreCase(outputType)) {
-					return createRedirect(PATH + "/spreadsheet");
+					return createRedirect("/spreadsheet");
 				} else if ("pdf".equalsIgnoreCase(outputType)) {
-					return createRedirect(PATH + "/pdf");
+					return createRedirect("/pdf");
 				} else if ("JPG".equalsIgnoreCase(outputType)) {
 					throw new UnsupportedOperationException("This method is not implemented anymore");
 				} else if ("PNG".equalsIgnoreCase(outputType)) {
-					return createRedirect(PATH + "/png");
+					return createRedirect("/png");
 				} else {
 					engineInstance = CockpitEngine.createInstance(getIOManager().getTemplateAsString(), getIOManager().getEnv());
 					getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
