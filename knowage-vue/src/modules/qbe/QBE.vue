@@ -226,7 +226,7 @@ export default defineComponent({
                     break
                 }
             }
-            return parameterVisible || this.qbe?.pars.length !== 0
+            return parameterVisible || this.qbe?.pars?.length !== 0
         }
     },
     watch: {
