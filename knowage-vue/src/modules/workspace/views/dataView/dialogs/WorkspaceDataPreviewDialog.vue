@@ -7,7 +7,7 @@
                     <span>{{ dataset.label }}</span>
                 </template>
                 <template #end>
-                    <Button v-if="dataset.pars.length !== 0 || filtersData?.isReadyForExecution === false" icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
+                    <Button v-if="isParameterSidebarVisible" icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
                     <Button class="kn-button p-button-text p-button-rounded p-button-plain" :label="$t('common.close')" @click="closeDialog"></Button>
                 </template>
             </Toolbar>
@@ -39,7 +39,7 @@ import moment from 'moment'
 export default defineComponent({
     name: 'kpi-scheduler-save-dialog',
     components: { Dialog, DatasetPreviewTable, Message, KnParameterSidebar },
-    props: { visible: { type: Boolean }, propDataset: { type: Object }, previewType: String },
+    props: { visible: { type: Boolean }, propDataset: { type: Object }, previewType: String, loadFromDatasetManagement: Boolean },
     emits: ['close'],
     data() {
         return {
@@ -57,6 +57,19 @@ export default defineComponent({
             loading: false,
             filtersData: {} as any,
             userRole: null
+        }
+    },
+    computed: {
+        isParameterSidebarVisible(): boolean {
+            let parameterVisible = false
+            for (let i = 0; i < this.filtersData?.filterStatus?.length; i++) {
+                const tempFilter = this.filtersData.filterStatus[i]
+                if (tempFilter.showOnPanel === 'true') {
+                    parameterVisible = true
+                    break
+                }
+            }
+            return parameterVisible || this.dataset.pars.length !== 0
         }
     },
     watch: {
@@ -80,7 +93,8 @@ export default defineComponent({
             this.loadDataset()
             await this.loadDatasetDrivers()
             if (this.dataset.label && this.dataset.pars.length === 0 && (this.filtersData.isReadyForExecution === undefined || this.filtersData.isReadyForExecution)) {
-                await this.loadPreviewData()
+                this.loadFromDatasetManagement && !this.dataset.id ? await this.loadPreSavePreview() : await this.loadPreviewData()
+                this.parameterSidebarVisible = false
             } else {
                 this.parameterSidebarVisible = true
             }
@@ -133,7 +147,7 @@ export default defineComponent({
             this.loading = false
         },
         async loadDatasetDrivers() {
-            if (this.dataset.label) {
+            if (this.dataset.label && this.dataset.id) {
                 await this.$http
                     .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${this.dataset.label}/filters`, { role: this.userRole })
                     .then((response: AxiosResponse<any>) => {
@@ -199,15 +213,16 @@ export default defineComponent({
         async updatePagination(lazyParams: any) {
             this.pagination.start = lazyParams.paginationStart
             this.pagination.limit = lazyParams.paginationLimit
-            await this.loadPreview()
+            this.loadFromDatasetManagement && !this.dataset.id ? await this.loadPreSavePreview() : await this.loadPreviewData()
+            this.parameterSidebarVisible = false
         },
         async onSort(event: any) {
             this.sort = event
-            await this.loadPreviewData()
+            this.loadFromDatasetManagement && !this.dataset.id ? await this.loadPreSavePreview() : await this.loadPreviewData()
         },
         async onFilter(event: any) {
             this.filter = event
-            await this.loadPreviewData()
+            this.loadFromDatasetManagement && !this.dataset.id ? await this.loadPreSavePreview() : await this.loadPreviewData()
         },
         setPreviewColumns(data: any) {
             this.columns = []
@@ -229,7 +244,7 @@ export default defineComponent({
         },
         async onExecute(datasetParameters: any[]) {
             this.dataset.pars = datasetParameters
-            await this.loadPreviewData()
+            this.loadFromDatasetManagement && !this.dataset.id ? await this.loadPreSavePreview() : await this.loadPreviewData()
             this.parameterSidebarVisible = false
         }
     }
