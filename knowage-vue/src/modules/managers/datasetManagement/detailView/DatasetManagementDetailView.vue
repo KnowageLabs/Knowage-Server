@@ -8,7 +8,7 @@
         </template>
     </Toolbar>
     <div class="datasetDetail">
-        <TabView class="tabview-custom" v-model:activeIndex="activeTab" data-test="tab-view">
+        <TabView class="tabview-custom kn-tab" v-model:activeIndex="activeTab" data-test="tab-view">
             <TabPanel>
                 <template #header>
                     <span>{{ $t('managers.mondrianSchemasManagement.detail.title') }}</span>
@@ -178,7 +178,6 @@ export default defineComponent({
                 icon: 'pi pi-exclamation-triangle',
                 message: this.$t('kpi.kpiDefinition.confirmClone'),
                 header: this.$t(' '),
-                datasetId,
                 accept: () => this.cloneDataset(datasetId)
             })
         },

@@ -12,7 +12,7 @@
     },
     "main": "main.ts",
     "dependencies": {
-        "@fortawesome/fontawesome-free": "^5.15.2",
+        "@fortawesome/fontawesome-free": "^6.0.0",
         "@vuelidate/core": "^2.0.0-alpha.18",
         "@vuelidate/validators": "^2.0.0-alpha.15",
         "axios": "0.23.0",
@@ -20,6 +20,7 @@
         "codemirror": "5.59.4",
         "core-js": "^3.9.1",
         "crypto-js": "^4.0.0",
+        "deepcopy": "^2.1.0",
         "fast-json-patch": "^3.1.0",
         "js-base64": "3.6.1",
         "mitt": "^2.1.0",

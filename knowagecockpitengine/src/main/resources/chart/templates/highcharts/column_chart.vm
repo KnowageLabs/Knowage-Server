@@ -117,6 +117,10 @@
 		
 	#end
 #end
+
+#set($range = $datasettransformer.getRange($rows, $dataColumnsMapper, $seriesMap))
+#set($categoriesCardinality = $datasettransformer.getCategoriesCardinality($rows, $chart.VALUES.CATEGORY, $dataColumnsMapper))
+
 #set($seriesMapGroupingFunction = {}) 
 #foreach($serie in $series)
 	
@@ -179,6 +183,9 @@
 			#if($orderColumnDataValues && $orderColumnDataValuesEscaped)
 			orderColumnDataValues: '$orderColumnDataValuesEscaped',
 			#end
+			
+			categoriesCardinality: $categoriesCardinality,
+			range: $range
 			 
 		},
     
@@ -2201,7 +2208,7 @@
 			return result;
 		}
     },
-    
+       
     #if($enableDrilldown)
     drilldown: {
         series: [],
