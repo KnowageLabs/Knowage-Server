@@ -113,11 +113,7 @@ export default defineComponent({
     updated() {
         this.sort(null, this.selectedSort, true)
     },
-    computed: {
-        getTime(ms) {
-            return formatDateWithLocale(ms)
-        }
-    },
+    computed: {},
     methods: {
         clickedButton(e, item) {
             const emits = e.item && e.item.emits
@@ -152,6 +148,9 @@ export default defineComponent({
 
             if (desc || this.selectedDirection === 'desc') this.options?.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? 1 : -1))
             else this.options?.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? -1 : 1))
+        },
+        getTime(ms) {
+            return formatDateWithLocale(ms)
         }
     }
 })
