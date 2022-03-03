@@ -271,7 +271,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String queryString = request.getQueryString();
 
 		StringBuilder sb = new StringBuilder(requestURL.toString());
-		sb.append("/spreadsheet");
+		sb.append(suffix);
 		if (Objects.nonNull(queryString)) {
 			sb.append("?");
 			sb.append(queryString);
