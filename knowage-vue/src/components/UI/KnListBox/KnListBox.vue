@@ -75,109 +75,108 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import Avatar from 'primevue/avatar'
-    import Badge from 'primevue/badge'
-    import Listbox from 'primevue/listbox'
-    import KnListButtonRenderer from './KnListButtonRenderer.vue'
-    import Menu from 'primevue/menu'
-    import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
+import { defineComponent } from 'vue'
+import Avatar from 'primevue/avatar'
+import Badge from 'primevue/badge'
+import Listbox from 'primevue/listbox'
+import KnListButtonRenderer from './KnListButtonRenderer.vue'
+import Menu from 'primevue/menu'
+import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 
-    export default defineComponent({
-        name: 'kn-list-box',
-        components: {
-            Avatar,
-            Badge,
-            KnListButtonRenderer,
-            Listbox,
-            Menu
+export default defineComponent({
+    name: 'kn-list-box',
+    components: {
+        Avatar,
+        Badge,
+        KnListButtonRenderer,
+        Listbox,
+        Menu
+    },
+    props: {
+        settings: {
+            type: Object,
+            required: true
         },
-        props: {
-            settings: {
-                type: Object,
-                required: true
-            },
-            options: Array,
-            selected: Object
-        },
-        data() {
-            return {
-                selectedSort: 'label',
-                selectedDirection: 'desc'
-            }
-        },
-        emits: ['click'],
-        created() {
-            this.selectedSort = this.settings.defaultSortField || 'label'
-        },
-        updated() {
-            this.sort(null, this.selectedSort, true)
-        },
-        computed: {
-            getTime(ms) {
-                return formatDateWithLocale(ms)
-            }
-        },
-        methods: {
-            clickedButton(e, item) {
-                const emits = e.item && e.item.emits
-                e.item = item
-                this.$emit(emits || 'click', e)
-            },
-            getBorderClass(item): string {
-                if (this.settings.statusBorder) {
-                    return 'kn-list-item-' + this.settings.statusBorder.values[item[this.settings.statusBorder.property]]
-                } else return ''
-            },
-            isItemSelected(option) {
-                if (this.selected) {
-                    if (this.settings.selectProperty && this.selected[this.settings.selectProperty]) {
-                        return this.selected[this.settings.selectProperty] == option[this.settings.selectProperty]
-                    } else {
-                        return this.selected == option
-                    }
-                } else return false
-            },
-            toggleSort(e) {
-                // eslint-disable-next-line
-                // @ts-ignore
-                this.$refs.sortMenu.toggle(e)
-            },
-            sort(e, item, desc?) {
-                if (this.selectedSort === item) this.selectedDirection = this.selectedDirection === 'desc' ? 'asc' : 'desc'
-                else {
-                    this.selectedSort = item
-                    this.selectedDirection = 'desc'
-                }
-
-                if (desc || this.selectedDirection === 'desc') this.options?.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? 1 : -1))
-                else this.options?.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? -1 : 1))
-            }
+        options: Array,
+        selected: Object
+    },
+    data() {
+        return {
+            selectedSort: 'label',
+            selectedDirection: 'desc'
         }
-    })
+    },
+    emits: ['click'],
+    created() {
+        this.selectedSort = this.settings.defaultSortField || 'label'
+    },
+    updated() {
+        this.sort(null, this.selectedSort, true)
+    },
+    computed: {},
+    methods: {
+        clickedButton(e, item) {
+            const emits = e.item && e.item.emits
+            e.item = item
+            this.$emit(emits || 'click', e)
+        },
+        getBorderClass(item): string {
+            if (this.settings.statusBorder) {
+                return 'kn-list-item-' + this.settings.statusBorder.values[item[this.settings.statusBorder.property]]
+            } else return ''
+        },
+        isItemSelected(option) {
+            if (this.selected) {
+                if (this.settings.selectProperty && this.selected[this.settings.selectProperty]) {
+                    return this.selected[this.settings.selectProperty] == option[this.settings.selectProperty]
+                } else {
+                    return this.selected == option
+                }
+            } else return false
+        },
+        toggleSort(e) {
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs.sortMenu.toggle(e)
+        },
+        sort(e, item, desc?) {
+            if (this.selectedSort === item) this.selectedDirection = this.selectedDirection === 'desc' ? 'asc' : 'desc'
+            else {
+                this.selectedSort = item
+                this.selectedDirection = 'desc'
+            }
+
+            if (desc || this.selectedDirection === 'desc') this.options?.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? 1 : -1))
+            else this.options?.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? -1 : 1))
+        },
+        getTime(ms) {
+            return formatDateWithLocale(ms)
+        }
+    }
+})
 </script>
 <style lang="scss">
-    .knListBox {
-        position: relative;
-        flex: 1;
-        overflow-y: auto;
+.knListBox {
+    position: relative;
+    flex: 1;
+    overflow-y: auto;
 
-        .headerButton {
-            position: absolute;
-            right: 8px;
-            top: 16px;
-        }
-        &.noSorting {
-            .p-listbox-header {
-                .p-listbox-filter-container {
-                    width: 100%;
-                }
-            }
-        }
+    .headerButton {
+        position: absolute;
+        right: 8px;
+        top: 16px;
+    }
+    &.noSorting {
         .p-listbox-header {
             .p-listbox-filter-container {
-                width: calc(100% - 36px);
+                width: 100%;
             }
         }
     }
+    .p-listbox-header {
+        .p-listbox-filter-container {
+            width: calc(100% - 36px);
+        }
+    }
+}
 </style>
