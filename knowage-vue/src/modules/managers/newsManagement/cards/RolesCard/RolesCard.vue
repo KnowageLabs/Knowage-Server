@@ -2,7 +2,7 @@
     <Card :style="rolesCardDescriptor.card.style">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.newsManagement.roles') }}
                 </template>
             </Toolbar>
@@ -35,46 +35,46 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iRole } from '../../NewsManagement'
-import Card from 'primevue/card'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
-import rolesCardDescriptor from './RolesCardDescriptor.json'
+    import { defineComponent } from 'vue'
+    import { iRole } from '../../NewsManagement'
+    import Card from 'primevue/card'
+    import Column from 'primevue/column'
+    import DataTable from 'primevue/datatable'
+    import rolesCardDescriptor from './RolesCardDescriptor.json'
 
-export default defineComponent({
-    name: 'roles-card',
-    components: {
-        Card,
-        Column,
-        DataTable
-    },
-    props: {
-        categoryList: Array,
-        selected: Array
-    },
-    emits: ['changed'],
-    data() {
-        return {
-            rolesCardDescriptor,
-            selectedCategories: [] as iRole[]
-        }
-    },
-    watch: {
-        selected() {
-            this.loadSelectedCategories()
-        }
-    },
-    created() {
-        this.loadSelectedCategories()
-    },
-    methods: {
-        setDirty() {
-            this.$emit('changed', this.selectedCategories)
+    export default defineComponent({
+        name: 'roles-card',
+        components: {
+            Card,
+            Column,
+            DataTable
         },
-        loadSelectedCategories() {
-            this.selectedCategories = this.selected as iRole[]
+        props: {
+            categoryList: Array,
+            selected: Array
+        },
+        emits: ['changed'],
+        data() {
+            return {
+                rolesCardDescriptor,
+                selectedCategories: [] as iRole[]
+            }
+        },
+        watch: {
+            selected() {
+                this.loadSelectedCategories()
+            }
+        },
+        created() {
+            this.loadSelectedCategories()
+        },
+        methods: {
+            setDirty() {
+                this.$emit('changed', this.selectedCategories)
+            },
+            loadSelectedCategories() {
+                this.selectedCategories = this.selected as iRole[]
+            }
         }
-    }
-})
+    })
 </script>

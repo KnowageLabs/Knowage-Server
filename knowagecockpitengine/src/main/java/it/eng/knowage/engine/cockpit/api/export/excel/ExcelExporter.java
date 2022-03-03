@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -71,6 +72,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 	private final boolean isSingleWidgetExport;
 	private int uniqueId = 0;
 	private String requestURL = "";
+
+	private Map<String, CellStyle> format2CellStyle = new HashMap<String, CellStyle>();
 
 	private static final String[] WIDGETS_TO_IGNORE = { "image", "text", "selector", "selection", "html" };
 	private static final String SCRIPT_NAME = "cockpit-export-xls.js";
@@ -117,7 +120,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 			ProcessBuilder processBuilder = new ProcessBuilder("node", exportScriptFullPath.toString(), encodedUserId, outputDir.toString(), url.toString());
 			Process exec = processBuilder.start();
-			exec.waitFor();
+			exec.waitFor(2, TimeUnit.MINUTES);
 			// the script creates the resulting xls and saves it to outputFile
 			Path outputFile = outputDir.resolve(documentLabel + ".xlsx");
 			return getByteArrayFromFile(outputFile, outputDir);
@@ -357,6 +360,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 				IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
 				String datasetLabel = dataset.getLabel();
 				JSONObject cockpitSelections = getMultiCockpitSelectionsFromBody(widget, datasetId);
+				if (isEmptyLayer(cockpitSelections))
+					continue;
 
 				if (getRealtimeFromWidget(datasetId, configuration))
 					map.put("nearRealtime", true);
@@ -379,6 +384,21 @@ public class ExcelExporter extends AbstractFormatExporter {
 			throw new SpagoBIRuntimeException("Unable to get multi datastore for map widget: ", e);
 		}
 		return multiDataStore;
+	}
+
+	private boolean isEmptyLayer(JSONObject cockpitSelections) {
+		try {
+			JSONObject aggregations = cockpitSelections.getJSONObject("aggregations");
+			JSONArray measures = aggregations.getJSONArray("measures");
+			JSONArray categories = aggregations.getJSONArray("categories");
+			if (measures.length() > 0 || categories.length() > 0)
+				return false;
+			else
+				return true;
+		} catch (Exception e) {
+			logger.warn("Error while checking if layer is empty", e);
+			return false;
+		}
 	}
 
 	public JSONObject getDataStoreForWidget(JSONObject template, JSONObject widget) {
@@ -639,15 +659,27 @@ public class ExcelExporter extends AbstractFormatExporter {
 						format += "0";
 					}
 				}
-				CellStyle cellStyle = wb.createCellStyle();
-				cellStyle.setDataFormat(helper.createDataFormat().getFormat(format));
-				toReturn = cellStyle;
+				toReturn = getCellStyleByFormat(wb, helper, format);
 			}
 			return toReturn;
 		} catch (Exception e) {
 			logger.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
 			return defaultStyle;
 		}
+	}
+
+	/*
+	 * This method avoids cell style objects number to increase by rows number (see https://production.eng.it/jira/browse/KNOWAGE-6692 and
+	 * https://production.eng.it/jira/browse/KNOWAGE-6693)
+	 */
+	protected CellStyle getCellStyleByFormat(Workbook wb, CreationHelper helper, String format) {
+		if (!format2CellStyle.containsKey(format)) {
+			// if cell style does not exist
+			CellStyle cellStyle = wb.createCellStyle();
+			cellStyle.setDataFormat(helper.createDataFormat().getFormat(format));
+			format2CellStyle.put(format, cellStyle);
+		}
+		return format2CellStyle.get(format);
 	}
 
 	private Row createHeaderColumnNames(Sheet sheet, Map<String, String> mapGroupsAndColumns, JSONArray columnsOrdered, int startRowOffset) {

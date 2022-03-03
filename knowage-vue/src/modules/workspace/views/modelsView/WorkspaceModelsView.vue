@@ -1,10 +1,10 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-d-flex p-flex-row">
-        <template #left>
+        <template #start>
             <Button id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
             {{ $t('workspace.myModels.title') }}
         </template>
-        <template #right>
+        <template #end>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
             <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
             <KnFabButton v-if="tableMode === 'Federated'" icon="fas fa-plus" @click="createNewFederation" />
@@ -29,7 +29,7 @@
                     :viewType="document && document.federation_id ? 'federationDataset' : 'businessModel'"
                     :document="document"
                     @openSidebar="setSelectedModel"
-                    @openDatasetInQBE="openDatasetInQBE"
+                    @openDatasetInQBE="openDatasetInQBE($event)"
                     @editDataset="editDataset"
                     @deleteDataset="deleteDatasetConfirm"
                 />
@@ -41,12 +41,14 @@
         :visible="showDetailSidebar"
         :viewType="selectedModel && selectedModel.federation_id ? 'federationDataset' : 'businessModel'"
         :document="selectedModel"
-        @openDatasetInQBE="openDatasetInQBE"
+        @openDatasetInQBE="openDatasetInQBE($event)"
         @editDataset="editDataset"
         @deleteDataset="deleteDatasetConfirm"
         @close="showDetailSidebar = false"
         data-test="detail-sidebar"
     />
+
+    <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="selectedQbeDataset" @close="closeQbe" />
 </template>
 
 <script lang="ts">
@@ -64,7 +66,7 @@ import { AxiosResponse } from 'axios'
 export default defineComponent({
     name: 'workspace-models-view',
     components: { DetailSidebar, KnFabButton, Message, SelectButton, WorkspaceModelsTable, WorkspaceCard },
-    emits: ['showMenu', 'toggleDisplayView'],
+    emits: ['showMenu', 'toggleDisplayView', 'showQbeDialog'],
     props: { toggleCardDisplay: { type: Boolean } },
     data() {
         return {
@@ -79,7 +81,12 @@ export default defineComponent({
             searchWord: '' as string,
             showDetailSidebar: false,
             user: null as any,
-            loading: false
+            loading: false,
+            datasetDrivers: null as any,
+            datasetName: '',
+            qbeVisible: false,
+            selectedQbeDataset: null,
+            qbeType: 'iFrame' //variable used to change if iframe or the new qbe is being shown
         }
     },
     computed: {
@@ -150,11 +157,13 @@ export default defineComponent({
         resetSearch() {
             this.searchWord = ''
         },
-        openDatasetInQBE() {
-            this.$store.commit('setInfo', {
-                title: 'Todo',
-                msg: 'Functionality not in this sprint'
-            })
+        openDatasetInQBE(dataset: any) {
+            if (this.qbeType === 'iFrame') {
+                this.$emit('showQbeDialog', dataset)
+            } else {
+                this.selectedQbeDataset = dataset
+                this.qbeVisible = true
+            }
         },
         createNewFederation() {
             this.$router.push('models/federation-definition/new-federation')
@@ -208,6 +217,10 @@ export default defineComponent({
                 case 'All':
                     this.filteredItems = [...this.allItems]
             }
+        },
+        closeQbe() {
+            this.qbeVisible = false
+            this.selectedQbeDataset = null
         }
     }
 })

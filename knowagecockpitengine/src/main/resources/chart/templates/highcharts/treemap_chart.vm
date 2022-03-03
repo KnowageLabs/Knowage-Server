@@ -48,6 +48,19 @@
 #set($crossNavigation = '')
 #set($crossNavigation = $chart.DRILL)
 
+#set($seriesMap = {}) ## conversion series metadata to map object
+#if($serie.class.name == 'java.util.LinkedHashMap')
+	#set($workAroundNoPrint = $seriesMap.put($series.name , $serie))
+#else
+	#foreach($s in $series)
+		#set($workAroundNoPrint = $seriesMap.put($serie.name , $s))
+	#end
+#end
+
+#set($range = $datasettransformer.getRange($dataRows, $dataColumnsMapper, $seriesMap))
+
+#set($categoriesCardinality = $datasettransformer.getCategoriesCardinality($dataRows, $chart.VALUES.CATEGORY, $dataColumnsMapper))
+
 {
  	chart: 
  	{
@@ -364,6 +377,8 @@
 				ttFontSize: '$serie.TOOLTIP.style.fontSize' ,
 			#end
 		},
+		categoriesCardinality: $categoriesCardinality,
+		range: $range
 	},
 	plotOptions:
 	{

@@ -1,6 +1,6 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--primary">
-        <template #left>
+        <template #start>
             <i class="fa fa-ellipsis-v p-mr-3" id="sidebar-button" @click="toggleSidebarView" />
             <span>{{ searchMode ? $t('documentBrowser.documentsSearch') : $t('documentBrowser.title') }}</span>
             <span v-show="searchMode" class="p-mx-4">
@@ -11,7 +11,7 @@
             </span>
         </template>
 
-        <template #right>
+        <template #end>
             <span v-if="!searchMode" class="p-mx-4">
                 <i class="pi pi-search search-pointer" @click="openSearchBar()" />
             </span>
@@ -24,7 +24,7 @@
     <div id="document-browser-detail" class="p-d-flex p-flex-row kn-flex p-m-0">
         <div v-if="sidebarVisible && windowWidth < 1024" id="document-browser-sidebar-backdrop" @click="sidebarVisible = false"></div>
 
-        <div v-show="!searchMode" class="document-sidebar kn-flex kn-overflow-y" :class="{ 'sidebar-hidden': isSidebarHidden, 'document-sidebar-absolute': sidebarVisible && windowWidth < 1024 }">
+        <div v-show="!searchMode" class="document-sidebar kn-flex" style="width:350px" :class="{ 'sidebar-hidden': isSidebarHidden, 'document-sidebar-absolute': sidebarVisible && windowWidth < 1024 }">
             <DocumentBrowserTree :propFolders="folders" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder"></DocumentBrowserTree>
         </div>
 
@@ -44,7 +44,7 @@
         </div>
     </div>
 
-    <DocumentDetails v-if="showDocumentDetails" :docId="documentId" :selectedDocument="selectedDocument" :selectedFolder="selectedFolder" :visible="showDocumentDetails" @closeDetails="showDocumentDetails = false" @reloadDocument="getSelectedDocument" />
+    <DocumentDetails v-if="showDocumentDetails" :docId="documentId" :selectedDocument="selectedDocument" :selectedFolder="selectedFolder" :visible="showDocumentDetails" @closeDetails="onCloseDetails" @reloadDocument="getSelectedDocument" />
 </template>
 
 <script lang="ts">
@@ -191,6 +191,10 @@ export default defineComponent({
                 // @ts-ignore
                 this.$refs.searchBar.$el.focus()
             }, 0)
+        },
+        onCloseDetails() {
+            this.showDocumentDetails = false
+            this.loadDocuments()
         }
     }
 })
@@ -249,7 +253,7 @@ export default defineComponent({
 
 #document-search {
     min-width: 500px;
-    background-color: $color-primary;
+    background-color: var(--kn-color-primary);
     color: white;
     border-bottom-color: white;
 }

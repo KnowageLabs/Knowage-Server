@@ -10,10 +10,10 @@
 
             <div v-if="rule.placeholders && rule.placeholders.length > 0" class="p-col-3">
                 <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-                    <template #left>
+                    <template #start>
                         {{ $t('kpi.measureDefinition.filters') }}
                     </template>
-                    <template #right>
+                    <template #end>
                         <Button class="kn-button p-button-text p-button-rounded" @click="loadPreview">{{ $t('common.run') }}</Button>
                     </template>
                 </Toolbar>
@@ -36,61 +36,61 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iRule } from '../../MeasureDefinition'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
-import Dialog from 'primevue/dialog'
-import previewDialogDescriptor from './MeasureDefinitionPreviewDialogDescriptor.json'
+    import { defineComponent } from 'vue'
+    import { iRule } from '../../MeasureDefinition'
+    import Column from 'primevue/column'
+    import DataTable from 'primevue/datatable'
+    import Dialog from 'primevue/dialog'
+    import previewDialogDescriptor from './MeasureDefinitionPreviewDialogDescriptor.json'
 
-export default defineComponent({
-    name: 'measure-definition-preview-dialog',
-    components: { Column, DataTable, Dialog },
-    props: {
-        currentRule: {
-            type: Object,
-            required: true
+    export default defineComponent({
+        name: 'measure-definition-preview-dialog',
+        components: { Column, DataTable, Dialog },
+        props: {
+            currentRule: {
+                type: Object,
+                required: true
+            },
+            placeholders: {
+                type: Array,
+                required: true
+            },
+            columns: { type: Array },
+            propRows: { type: Array }
         },
-        placeholders: {
-            type: Array,
-            required: true
+        emits: ['close', 'loadPreview'],
+        watch: {
+            propRows() {
+                this.loadRows()
+            },
+            currentRule() {
+                this.loadRule()
+            }
         },
-        columns: { type: Array },
-        propRows: { type: Array }
-    },
-    emits: ['close', 'loadPreview'],
-    watch: {
-        propRows() {
+        data() {
+            return {
+                previewDialogDescriptor,
+                rule: {} as iRule,
+                rows: [] as any[]
+            }
+        },
+        async created() {
+            this.loadRule()
             this.loadRows()
         },
-        currentRule() {
-            this.loadRule()
+        methods: {
+            loadRule() {
+                this.rule = this.currentRule as iRule
+            },
+            loadPreview() {
+                this.$emit('loadPreview')
+            },
+            loadRows() {
+                this.rows = this.propRows as any[]
+            },
+            closeTemplate() {
+                this.$emit('close')
+            }
         }
-    },
-    data() {
-        return {
-            previewDialogDescriptor,
-            rule: {} as iRule,
-            rows: [] as any[]
-        }
-    },
-    async created() {
-        this.loadRule()
-        this.loadRows()
-    },
-    methods: {
-        loadRule() {
-            this.rule = this.currentRule as iRule
-        },
-        loadPreview() {
-            this.$emit('loadPreview')
-        },
-        loadRows() {
-            this.rows = this.propRows as any[]
-        },
-        closeTemplate() {
-            this.$emit('close')
-        }
-    }
-})
+    })
 </script>

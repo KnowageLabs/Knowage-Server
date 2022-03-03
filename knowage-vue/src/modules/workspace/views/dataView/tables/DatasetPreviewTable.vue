@@ -171,6 +171,6 @@ export default defineComponent({
 }
 
 .filter-icon-active {
-    color: $color-primary;
+    color: var(--kn-color-primary);
 }
 </style>

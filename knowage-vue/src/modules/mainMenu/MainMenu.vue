@@ -9,15 +9,15 @@
         <MainMenuAdmin :openedPanelEvent="adminMenuOpened" :model="technicalUserFunctionalities" v-if="technicalUserFunctionalities && technicalUserFunctionalities.length > 0" @click="itemClick"></MainMenuAdmin>
         <TieredMenu :class="['kn-tieredMenu', tieredMenuClass]" ref="menu" :model="selectedCustomMenu" :popup="true" @blur="hideItemMenu">
             <template #item="{item}">
-                <router-link class="p-menuitem-link" v-if="item.to" :to="item.to" exact>
-                    <span v-if="item.descr" class="p-menuitem-text">{{ $internationalization($t(item.descr)) }}</span>
-                    <span v-else class="p-menuitem-text">{{ $internationalization($t(item.label)) }}</span>
-                    <span v-if="item.items" class="p-submenu-icon pi pi-angle-right"></span>
+                <router-link class="p-menuitem-link" v-if="item.to" :to="cleanTo(item)" @click="itemClick(item)" exact>
+                    <span v-if="item.descr" class="p-menuitem-text kn-truncated" v-tooltip.top="item.descr">{{ $internationalization($t(item.descr)) }}</span>
+                    <span v-else class="p-menuitem-text kn-truncated" v-tooltip.top="$internationalization($t(item.label))">{{ $internationalization($t(item.label)) }}</span>
+                    <span v-if="item.items" class="p-submenu-icon pi pi-angle-right kn-truncated"></span>
                 </router-link>
-                <a v-else class="p-menuitem-link" :href="item.url" :target="item.target" role="menuitem" :tabindex="item.disabled ? null : '0'">
-                    <span v-if="item.descr" class="p-menuitem-text">{{ $internationalization($t(item.descr)) }}</span>
-                    <span v-else class="p-menuitem-text">{{ $internationalization($t(item.label)) }}</span>
-                    <span v-if="item.items" class="p-submenu-icon pi pi-angle-right"></span>
+                <a v-else class="p-menuitem-link" :target="item.target" role="menuitem" @click="itemClick(item)" :tabindex="item.disabled ? null : '0'">
+                    <span v-if="item.descr" class="p-menuitem-text kn-truncated" v-tooltip.top="item.descr">{{ $internationalization($t(item.descr)) }}</span>
+                    <span v-else class="p-menuitem-text kn-truncated" v-tooltip.top="$internationalization($t(item.label))">{{ $internationalization($t(item.label)) }}</span>
+                    <span v-if="item.items" class="p-submenu-icon pi pi-angle-right kn-truncated"></span>
                 </a>
             </template>
         </TieredMenu>
@@ -143,14 +143,23 @@ export default defineComponent({
             this.licenseDisplay = !this.licenseDisplay
         },
         itemClick(event) {
-            const item = event.item
+            const item = event.item ? event.item : event
             if (item.command) {
                 this[item.command]()
-            }
-            if (item.to && event.navigate) {
+            } else if (item.to && event.navigate) {
                 event.navigate(event.originalEvent)
-            }
+            } else if (item.url && (!item.target || item.target === 'insideKnowage')) this.$router.push({ name: 'externalUrl', params: { url: item.url } })
+
             if (this.adminMenuOpened) this.adminMenuOpened = false
+        },
+        getHref(item) {
+            let to = item.to
+            if (to) {
+                to = to.replace(/\\\//g, '/')
+
+                if (to.startsWith('/')) to = to.substring(1)
+                return process.env.VUE_APP_PUBLIC_PATH + to
+            }
         },
         toggleProfile() {
             this.showProfileMenu = !this.showProfileMenu
@@ -200,6 +209,7 @@ export default defineComponent({
             }
             return toRet
         },
+
         toggleMenu(event, item) {
             if (item.items) {
                 this.selectedCustomMenu = item.items
@@ -221,6 +231,9 @@ export default defineComponent({
             if (this.$refs && this.$refs.mainMenu)
                 //@ts-ignore
                 this.menuDimensions = this.$refs.mainMenu.getBoundingClientRect().height - this.$refs.menuProfile.getBoundingClientRect().height - this.$refs.menuProfileSlide.getBoundingClientRect().height + 'px'
+        },
+        cleanTo(item): any {
+            return item.to.replace(/\\\//g, '/')
         }
     },
     async mounted() {
@@ -320,19 +333,16 @@ export default defineComponent({
 .slide-down-leave-to {
     max-height: 0;
 }
-
 .p-scrollpanel:deep(.p-scrollpanel-content) {
     padding: 0 0 18px 0;
 }
-
 .layout-menu-container {
     z-index: 100;
-    width: $mainmenu-width;
+    width: var(--kn-mainmenu-width);
     top: 0;
-    background-color: $mainmenu-background-color;
+    background-color: var(--kn-mainmenu-background-color);
     height: 100%;
     position: fixed;
-
     .menu-scroll-content {
         height: 100%;
         display: flex;
@@ -341,19 +351,19 @@ export default defineComponent({
     .profile {
         height: 60px;
         padding: 8px;
-        box-shadow: $mainmenu-profile-box-shadow;
+        box-shadow: var(--kn-mainmenu-profile-box-shadow);
         & > button {
             cursor: pointer;
             width: 100%;
             font-size: 14px;
-            font-family: $font-family;
+            font-family: var(--kn-font-family);
             .profile-image {
                 width: 45px;
                 height: 45px;
                 float: right;
                 margin-left: 4px;
                 border-radius: 50%;
-                border: 2px solid $mainmenu-highlight-color;
+                border: 2px solid var(--kn-mainmenu-highlight-color);
                 background-color: white;
             }
             .profile-name,
@@ -364,7 +374,7 @@ export default defineComponent({
         }
     }
     .profile-menu {
-        border-bottom: 1px solid lighten($mainmenu-background-color, 10%);
+        border-bottom: 1px solid var(--kn-mainmenu-hover-background-color);
     }
     .layout-menu {
         margin: 0;
@@ -380,7 +390,7 @@ export default defineComponent({
             & > a {
                 text-align: center;
                 padding: 15px;
-                color: $mainmenu-icon-color;
+                color: var(--kn-mainmenu-icon-color);
                 display: block;
                 width: 100%;
                 transition: background-color 0.3s, border-left-color 0.3s;
@@ -393,7 +403,7 @@ export default defineComponent({
                     display: none;
                 }
                 &:hover {
-                    background-color: lighten($mainmenu-background-color, 10%);
+                    background-color: var(--kn-mainmenu-hover-background-color);
                 }
             }
             & > span {
@@ -401,7 +411,7 @@ export default defineComponent({
                 text-align: center;
                 padding: 15px;
                 padding-left: 12px;
-                color: $mainmenu-icon-color;
+                color: var(--kn-mainmenu-icon-color);
                 display: block;
                 width: 100%;
                 transition: background-color 0.3s, border-left-color 0.3s;
@@ -411,10 +421,10 @@ export default defineComponent({
                 cursor: pointer;
                 user-select: none;
                 &:hover {
-                    background-color: lighten($mainmenu-background-color, 10%);
+                    background-color: var(--kn-mainmenu-hover-background-color);
                 }
                 &.router-link-active {
-                    border-left: 3px solid $mainmenu-highlight-color;
+                    border-left: 3px solid var(--kn-mainmenu-highlight-color);
                 }
             }
         }

@@ -2,10 +2,10 @@
     <Dialog id="metaweb-select-dialog" class="metaweb-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="metawebSelectDialogDescriptor.dialog.style" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left>
+                <template #start>
                     {{ businessModel?.name }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button class="metaweb-select-dialog-button kn-button p-button-text p-m-2" :label="$t('common.close')" @click="closeDialog"></Button>
                     <Button class="metaweb-select-dialog-button kn-button p-button-text" :label="$t('common.continue')" @click="onContinue"></Button>
                 </template>
@@ -13,7 +13,7 @@
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
-        <DataTable v-else :value="rows" class="p-datatable-sm kn-table p-ml-1" :scrollable="true" scrollHeight="100%" v-model:filters="filters" :globalFilterFields="metawebSelectDialogDescriptor.globalFilterFields">
+        <DataTable :value="rows" class="p-datatable-sm kn-table p-ml-1" :scrollable="true" scrollHeight="100%" v-model:filters="filters" :globalFilterFields="metawebSelectDialogDescriptor.globalFilterFields">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -83,13 +83,8 @@ export default defineComponent({
         async businessModel() {
             await this.loadData()
         },
-        async visible(value: boolean) {
-            if (value) {
-                this.loading = true
-                await this.loadDatasourceStructure()
-                this.loadRows()
-                this.loading = false
-            }
+        visible() {
+            this.loadRows()
         }
     },
     async created() {
@@ -97,16 +92,15 @@ export default defineComponent({
     },
     methods: {
         async loadData() {
-            this.loading = true
             this.loadBusinessModel()
             await this.loadDatasourceStructure()
             this.loadRows()
-            this.loading = false
         },
         loadBusinessModel() {
             this.businessModel = this.selectedBusinessModel as iBusinessModel
         },
         async loadDatasourceStructure() {
+            this.loading = true
             if (this.businessModel?.dataSourceId) {
                 let url = `2.0/datasources/structure/${this.businessModel.dataSourceId}?`
                 const urlParams = {} as any
@@ -114,6 +108,7 @@ export default defineComponent({
                 if (this.businessModel.tablePrefixNotLike) urlParams.tablePrefixNotLike = this.businessModel.tablePrefixNotLike
                 await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, { params: urlParams }).then((response: AxiosResponse<any>) => (this.datasourceStructure = response.data))
             }
+            this.loading = false
         },
         loadRows() {
             this.rows = []
@@ -208,7 +203,7 @@ export default defineComponent({
 .full-screen-dialog.p-dialog {
     max-height: 100%;
     height: 100vh;
-    width: calc(100vw - #{$mainmenu-width});
+    width: calc(100vw - var(--kn-mainmenu-width));
     margin: 0;
 }
 .full-screen-dialog.p-dialog .p-dialog-content {
