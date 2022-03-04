@@ -53,7 +53,6 @@ export default defineComponent({
     methods: {
         loadTimespan() {
             this.timespan = this.propTimespan as iTimespan
-            console.log('loadTimespan() - LOADED TIMESPAN: ', this.timespan)
         }
     }
 })

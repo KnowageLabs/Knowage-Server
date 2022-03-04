@@ -1713,6 +1713,8 @@
         },
         "timespan": {
             "invalidDatesError": "The dates are not valid",
+            "cloneAlreadyDefined": "The next timespan is already defiend",
+            "noIntervalError": "Please define at least one interval",
             "startDateGreaterError": "Start date greater than end date",
             "startTimeGreaterError": "Start time greater than end time",
             "temporalOverlapError": "The date interval overlaps with an existing one",

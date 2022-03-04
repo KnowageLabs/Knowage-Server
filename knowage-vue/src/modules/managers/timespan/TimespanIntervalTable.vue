@@ -1,5 +1,5 @@
 <template>
-    <DataTable v-if="timespan" class="p-datatable-sm kn-table p-m-2 kn-height-full" :value="timespan.definition" responsiveLayout="stack" breakpoint="960px">
+    <DataTable v-if="timespan" class="p-datatable-sm kn-table p-m-2" :value="timespan.definition" responsiveLayout="stack" breakpoint="960px" :scrollable="true" scrollHeight="60vh">
         <Column v-for="column in columns" :key="column.header" :field="column.field" :header="$t(column.header)" :style="column.style"> </Column>
         <Column :style="timespanDescriptor.iconColumnStyle">
             <template #body="slotProps">
@@ -42,10 +42,8 @@ export default defineComponent({
     methods: {
         loadTimespan() {
             this.timespan = this.propTimespan as iTimespan
-            console.log('loadTimespan() - LOADED TIMESPAN IN TABLE: ', this.timespan)
         },
         deleteInterval(interval: iInterval) {
-            console.log('deleteInterval() - interval: ', interval)
             if (this.timespan) {
                 const index = this.timespan.definition.findIndex((tempInterval: iInterval) => interval.from === tempInterval.from && interval.to === tempInterval.to)
                 if (index !== -1) this.timespan.definition.splice(index, 1)

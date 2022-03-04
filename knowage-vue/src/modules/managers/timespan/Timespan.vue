@@ -14,8 +14,8 @@
                 <KnListBox :options="timespans" :settings="timespanDescriptor.knListSettings" @click="showTimespanDetails($event, false)" @clone.stop="showTimespanDetails($event, true)" @delete.stop="deleteTimespanConfirm" />
             </div>
 
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
-                <router-view :categories="categories" />
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0  kn-router-view">
+                <router-view :categories="categories" :timespans="timespans" @timespanCreated="onTimespanCreated" />
             </div>
         </div>
     </div>
@@ -49,40 +49,13 @@ export default defineComponent({
             this.loading = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/listDynTimespan`).then((response: AxiosResponse<any>) => (this.timespans = response.data))
             this.loading = false
-
-            console.log('loadTimespans() - LOADED TIMESPANS: ', this.timespans)
         },
         async loadCategories() {
             this.loading = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=TIMESPAN_CATEGORY`).then((response: AxiosResponse<any>) => (this.categories = response.data))
             this.loading = false
-
-            console.log('loadCategories() - LOADED CATEGORIES: ', this.categories)
-
-            // TODO - Remove harcoded possible categories
-            this.categories.push(
-                {
-                    VALUE_NM: 'Date',
-                    VALUE_DS: 'Date',
-                    VALUE_ID: 43,
-                    VALUE_CD: 'DATE'
-                },
-                {
-                    VALUE_NM: 'Regexp',
-                    VALUE_DS: 'Regular Expression',
-                    VALUE_ID: 44,
-                    VALUE_CD: 'REGEXP'
-                },
-                {
-                    VALUE_NM: 'Max Length',
-                    VALUE_DS: 'Max Length',
-                    VALUE_ID: 45,
-                    VALUE_CD: 'MAXLENGTH'
-                }
-            )
         },
         showTimespanDetails(event: any, clone: boolean) {
-            console.log('showTimespanDetails() - event: ', event, ', colne: ', clone)
             const url = event ? `/timespan/edit-timespan?id=${event.item?.id}&clone=${clone}` : '/timespan/new-timespan'
             this.$router.push(url)
         },
@@ -95,9 +68,9 @@ export default defineComponent({
                     await this.deleteTimespan(event.item.id)
                 }
             })
-            console.log('deleteTimespanConfirm() - event: ', event)
         },
         async deleteTimespan(id: number) {
+            this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/deleteTimespan?ID=${id}`)
                 .then((response: AxiosResponse<any>) => {
@@ -115,10 +88,14 @@ export default defineComponent({
                         msg: error?.message
                     })
                 })
+            this.loading = false
         },
         removeTimespan(id: number) {
             const index = this.timespans.findIndex((timespan: iTimespan) => timespan.id === id)
             if (index !== -1) this.timespans.splice(index, 1)
+        },
+        onTimespanCreated() {
+            this.loadTimespans()
         }
     }
 })

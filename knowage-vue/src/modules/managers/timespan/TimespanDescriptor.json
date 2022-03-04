@@ -1,6 +1,7 @@
 {
     "iconColumnStyle": {
-        "text-align": "end"
+        "flex": 1,
+        "justify-content": "end"
     },
     "knListSettings": {
         "buttons": [
@@ -30,24 +31,24 @@
         {
             "field": "fromLocalized",
             "header": "common.from",
-            "style": "width: 45%"
+            "style": "flex: 3"
         },
         {
             "field": "toLocalized",
             "header": "common.to",
-            "style": "width: 45%"
+            "style": "flex: 3"
         }
     ],
     "timeColumns": [
         {
             "field": "from",
             "header": "common.from",
-            "style": "width: 45%"
+            "style": "flex: 3"
         },
         {
             "field": "to",
             "header": "common.to",
-            "style": "width: 45%"
+            "style": "flex: 3"
         }
     ],
     "typeValues": [

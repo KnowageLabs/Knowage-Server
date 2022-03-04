@@ -1,13 +1,12 @@
 <template>
-    {{ interval }}
     <div v-if="timespan" class="p-fluid p-formgrid  p-grid p-ai-center p-m-2">
         <div class="p-field p-col-5">
             <label class="kn-material-input-label"> {{ $t('common.from') }} </label>
-            <Calendar class="timespan-interval-calendar kn-flex p-mr-2" v-model="interval.from" :manualInput="true" :timeOnly="timespan.type === 'time'" hourFormat="24" @input="onManualDateChange"></Calendar>
+            <Calendar class="timespan-interval-calendar kn-flex p-mr-2" v-model="interval.from" :manualInput="true" :timeOnly="timespan.type === 'time'" hourFormat="24"></Calendar>
         </div>
         <div class="p-field p-col-5">
             <label class="kn-material-input-label"> {{ $t('common.to') }} </label>
-            <Calendar class="timespan-interval-calendar kn-flex p-mr-2" v-model="interval.to" :manualInput="true" :timeOnly="timespan.type === 'time'" hourFormat="24" @input="onManualDateChange"></Calendar>
+            <Calendar class="timespan-interval-calendar kn-flex p-mr-2" v-model="interval.to" :manualInput="true" :timeOnly="timespan.type === 'time'" hourFormat="24"></Calendar>
         </div>
         <div id="timespan-interval-add-button-container" class="p-field p-col-2">
             <Button id="timespan-interval-add-button" class="kn-button kn-button--primary" :disabled="addButtonDisabled" @click="onAddInterval"> {{ $t('common.add') }}</Button>
@@ -42,33 +41,28 @@ export default defineComponent({
             return !this.interval.from || !this.interval.to
         }
     },
-    async created() {},
+    created() {
+        this.loadTimespan()
+    },
     methods: {
         loadTimespan() {
             this.timespan = this.propTimespan as iTimespan
             this.initializeInterval()
-            console.log('loadTimespan() - LOADED TIMESPAN: ', this.timespan)
         },
         initializeInterval() {
-            this.interval = {}
-        },
-        onManualDateChange() {
-            console.log('ON MANUAL DATE CHANGE', this.interval)
+            this.interval = {
+                to: new Date(),
+                from: new Date()
+            }
         },
         onAddInterval() {
-            console.log('onAddInterval() - interval: ')
             const tempInterval = deepcopy(this.interval)
             this.timespan?.type === 'temporal' ? this.addNewTemporalInterval(tempInterval) : this.addNewTimeInterval(tempInterval)
         },
         addNewTimeInterval(interval: iInterval) {
-            console.log('addNewTimeInterval() - interval: ', interval)
-
             if (interval.from instanceof Date && interval.to instanceof Date) {
                 const from = this.padTo2Digits(interval.from.getHours()) + ':' + this.padTo2Digits(interval.from.getMinutes())
                 const to = this.padTo2Digits(interval.to.getHours()) + ':' + this.padTo2Digits(interval.to.getMinutes())
-
-                console.log(' >>> FROM: ', from)
-                console.log(' >>> TO: ', to)
 
                 const fromTime = Date.parse('01/01/2011 ' + from)
                 const toTime = Date.parse('01/01/2011 ' + to)
@@ -97,9 +91,6 @@ export default defineComponent({
                     const diffTime = toTime - fromTime
                     this.interval.to = new Date(toTime + millsHour + diffTime)
                     this.interval = deepcopy(this.interval)
-
-                    console.log(' >>> INTERVAL ADDED: ', this.timespan.definition)
-                    console.log(' >>> INTERVAL UPDATED: ', this.interval)
                 }
             } else {
                 this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.invalidDatesError') })
@@ -107,7 +98,6 @@ export default defineComponent({
         },
 
         addNewTemporalInterval(interval: iInterval) {
-            console.log('addNewTemporalInterval() - interval: ', interval)
             if (interval.from instanceof Date && interval.to instanceof Date) {
                 const fromDate = interval.from
                 const toDate = interval.to
@@ -140,7 +130,6 @@ export default defineComponent({
                     this.interval.to = new Date()
                     this.interval.to.setTime(this.interval.from.getTime() + toDate.getTime() - fromDate.getTime() - millsDay)
                     this.interval = deepcopy(this.interval)
-                    console.log(' >>> INTERVAL UPDATED: ', this.interval)
                 }
             } else {
                 this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.invalidDatesError') })
