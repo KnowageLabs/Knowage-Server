@@ -1,0 +1,48 @@
+{
+    "aggregationOptions": ["NONE", "SUM", "MIN", "MAX", "AVG", "COUNT", "COUNT_DISTINCT"],
+    "attributeAggregationOptions": ["NONE", "MIN", "MAX", "COUNT", "COUNT_DISTINCT"],
+    "columns": [
+        {
+            "field": "entity",
+            "header": "qbe.simpleTable.entity",
+            "style": "width: 10%"
+        },
+        {
+            "field": "field",
+            "header": "common.field",
+            "style": "width: 33%"
+        },
+        {
+            "field": "alias",
+            "header": "common.alias",
+            "style": "width: 16%"
+        },
+        {
+            "field": "group",
+            "header": "common.group",
+            "style": "width: 8%"
+        },
+        {
+            "field": "order",
+            "header": "common.order",
+            "style": "width: 9%"
+        },
+        {
+            "field": "funct",
+            "header": "qbe.simpleTable.aggregationShort",
+            "style": "width: 9%"
+        },
+        {
+            "field": "visible",
+            "header": "common.show",
+            "style": "width: 9%"
+        },
+        {
+            "field": "inUse",
+            "header": "common.inUse",
+            "style": "width: 9%"
+        }
+    ],
+    "headerStyle": "width: 3rem",
+    "orderingOptions": ["NONE", "ASC", "DESC"]
+}

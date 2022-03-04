@@ -1,7 +1,6 @@
 <template>
     <Card>
         <template #content>
-            start: {{ dataset.startDate }}
             <div class="date-picker-container p-ml-2 p-mb-5">
                 <div class="p-field p-grid">
                     <label for="startDate" class="kn-material-input-label p-col-12  p-md-1 p-mb-md-0"> {{ $t('cron.startDate') }}: </label>
@@ -255,7 +254,6 @@ export default defineComponent({
             }
         },
         setDate(event, type) {
-            console.log(event, type)
             var date = moment(event)
             type === 'startDate' ? (this.dataset.startDate = date.format('YYYY-MM-DD[T]HH:mm:ss[Z]')) : (this.dataset.endDate = date.format('YYYY-MM-DD[T]HH:mm:ss[Z]'))
         }

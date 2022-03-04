@@ -20,6 +20,7 @@ import it.eng.LightNavigationConstants;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
@@ -34,7 +35,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
-import it.eng.spagobi.engines.drivers.generic.GenericDriver;
 import it.eng.spagobi.engines.drivers.kpi.KpiDriver;
 import it.eng.spagobi.monitoring.dao.AuditManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -110,7 +110,6 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 			}
 			// get the map of the parameters
 			Map mapPars = aEngineDriver.getParameterMap(obj, this.getUserProfile(), role);
-			mapPars.remove(GenericDriver.DOCUMENT_DESCRIPTION);
 			// adding "system" parameters
 			addSystemParametersForExternalEngines(mapPars, this.getLocale(), obj, executionModality, role);
 			url = GeneralUtilities.getUrl(engine.getUrl(), mapPars);
@@ -183,7 +182,7 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 	}
 
 	@Override
-	public List<ObjParuse> getDependencies(BIObjectParameter driver, String role) {
+	public List<ObjParuse> getDependencies(AbstractDriver driver, String role) {
 
 		List<ObjParuse> biParameterExecDependencies = new ArrayList<ObjParuse>();
 		try {

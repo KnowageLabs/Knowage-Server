@@ -142,6 +142,13 @@ public class JWTSsoService implements SsoServiceInterface {
 			throw new SpagoBIRuntimeException(message);
 	}
 
+	/**
+	 * Creates a JWT token with the input user id as {@link SsoServiceInterface#USER_ID} claim; the JWT token will expire at the input date.
+	 *
+	 * @param userId    the user id
+	 * @param expiresAt the expiration date
+	 * @return The JWT token with the input user id and expiration date.
+	 */
 	public static String userId2jwtToken(String userId, Date expiresAt) {
 		LogMF.debug(logger, "User id in input is [{0}]", userId);
 		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
@@ -149,6 +156,26 @@ public class JWTSsoService implements SsoServiceInterface {
 		String token = JWT.create()
 				.withClaim(SsoServiceInterface.USER_ID, userId)
 				.withExpiresAt(expiresAt) // token will expire at the desired expire date
+				.sign(algorithm);
+		// @formatter:on
+		LogMF.debug(logger, "JWT token is [{0}]", token);
+		return token;
+	}
+
+	/**
+	 * Creates a JWT token with the input user id as {@link SsoServiceInterface#USER_ID} claim; the token DOES NOT EXPIRE!!! Use this method carefully. This
+	 * method was designed for the public user, in that case the JWT token is not intended to expire. Use this method carefully: in case you need a JWT token
+	 * with an expiration date, use the method {@link #userId2jwtToken(String userId, Date expiresAt)}
+	 *
+	 * @param userId the user id
+	 * @return The JWT token with the input user id: this token will last forever.
+	 */
+	public static String userId2jwtToken(String userId) {
+		LogMF.debug(logger, "User id in input is [{0}]", userId);
+		logger.debug("Expire date not set, JWT token will last forever");
+		// @formatter:off
+		String token = JWT.create()
+				.withClaim(SsoServiceInterface.USER_ID, userId)
 				.sign(algorithm);
 		// @formatter:on
 		LogMF.debug(logger, "JWT token is [{0}]", token);

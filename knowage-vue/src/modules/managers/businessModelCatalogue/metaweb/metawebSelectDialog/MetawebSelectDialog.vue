@@ -2,10 +2,10 @@
     <Dialog id="metaweb-select-dialog" class="metaweb-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="metawebSelectDialogDescriptor.dialog.style" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left>
+                <template #start>
                     {{ businessModel?.name }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button class="metaweb-select-dialog-button kn-button p-button-text p-m-2" :label="$t('common.close')" @click="closeDialog"></Button>
                     <Button class="metaweb-select-dialog-button kn-button p-button-text" :label="$t('common.continue')" @click="onContinue"></Button>
                 </template>
@@ -203,7 +203,7 @@ export default defineComponent({
 .full-screen-dialog.p-dialog {
     max-height: 100%;
     height: 100vh;
-    width: calc(100vw - #{$mainmenu-width});
+    width: calc(100vw - var(--kn-mainmenu-width));
     margin: 0;
 }
 .full-screen-dialog.p-dialog .p-dialog-content {

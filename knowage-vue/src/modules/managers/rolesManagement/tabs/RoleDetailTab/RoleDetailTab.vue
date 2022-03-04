@@ -109,7 +109,7 @@
 
                 <div class="p-field">
                     <span class="p-field-checkbox">
-                        <Checkbox id="isPublic" name="isPublic" v-model="role.isPublic" @change="onFieldChange('isPublic', role.isPublic)" :binary="true" data-test="is-public-checkbox" />
+                        <Checkbox id="isPublic" name="isPublic" v-model="role.isPublic" @change="onPublicChange" :binary="true" data-test="is-public-checkbox" />
                         <label for="isPublic">
                             {{ $t('managers.rolesManagement.detail.isPublic') }}
                         </label>
@@ -142,6 +142,10 @@ export default defineComponent({
     },
     props: {
         selectedRole: {
+            type: Object,
+            requried: false
+        },
+        publicRole: {
             type: Object,
             requried: false
         }
@@ -200,6 +204,26 @@ export default defineComponent({
             const ID = event.value
             const CD = this.role.roleTypeCD
             this.$emit('roleTypeChanged', { roleTypeIDField, roleTypeCDField, ID, CD })
+        },
+        onPublicChange() {
+            if (this.publicRole && this.publicRole.id != this.role.id && this.role.isPublic) {
+                let warningMessage = this.$t('managers.rolesManagement.publicRoleWarning1') + `< ${this.publicRole.name} >` + this.$t('managers.rolesManagement.publicRoleWarning2')
+                this.$confirm.require({
+                    message: warningMessage,
+                    header: this.$t('common.warning'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.role.isPublic = true
+                        this.onFieldChange('isPublic', true)
+                    },
+                    reject: () => {
+                        this.role.isPublic = false
+                        this.onFieldChange('isPublic', false)
+                    }
+                })
+            } else {
+                this.onFieldChange('isPublic', this.role.isPublic)
+            }
         }
     }
 })

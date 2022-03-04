@@ -2,7 +2,7 @@
     <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="documentExecutionMailDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left>
+                <template #start>
                     {{ $t('common.sendMail') }}
                 </template>
             </Toolbar>
@@ -43,20 +43,35 @@
                 <Editor v-model="mail.MESSAGE" class="p-m-2" :editorStyle="documentExecutionMailDialogDescriptor.editor.style"></Editor>
             </div>
 
-            <div class="p-field p-col-6">
-                <label class="kn-material-input-label">{{ $t('common.login') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="mail.LOGIN" :maxLength="documentExecutionMailDialogDescriptor.objectMaxLength" />
-            </div>
+            <Accordion class="p-col-12">
+                <AccordionTab>
+                    <template #header>
+                        <span>{{ $t('common.advanced') }}</span>
+                    </template>
 
-            <div class="p-field p-col-6">
-                <label class="kn-material-input-label">{{ $t('common.password') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" type="password" v-model="mail.PASSWORD" :maxLength="documentExecutionMailDialogDescriptor.objectMaxLength" />
-            </div>
+                    <Message class="p-m-2" severity="info" :closable="false" :style="documentExecutionMailDialogDescriptor.styles.message">
+                        {{ $t('documentExecution.main.sendEmailMessage') }}
+                    </Message>
 
-            <div class="p-field p-col-12">
-                <label class="kn-material-input-label">{{ $t('common.replyTo') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="mail.REPLAYTO" :maxLength="documentExecutionMailDialogDescriptor.objectMaxLength" />
-            </div>
+                    <div class="p-grid p-mt-4">
+                        <div class="p-field p-col-6">
+                            <label class="kn-material-input-label">{{ $t('common.login') }}</label>
+                            <InputText class="kn-material-input p-inputtext-sm" v-model="mail.LOGIN" :maxLength="documentExecutionMailDialogDescriptor.objectMaxLength" />
+                        </div>
+
+                        <div class="p-field p-col-6">
+                            <label class="kn-material-input-label">{{ $t('common.password') }}</label>
+                            <InputText class="kn-material-input p-inputtext-sm" type="password" v-model="mail.PASSWORD" :maxLength="documentExecutionMailDialogDescriptor.objectMaxLength" />
+                        </div>
+
+                        <div class="p-field p-col-12">
+                            <label class="kn-material-input-label">{{ $t('common.replyTo') }}</label>
+                            <InputText class="kn-material-input p-inputtext-sm" v-model="mail.REPLAYTO" :maxLength="documentExecutionMailDialogDescriptor.objectMaxLength" aria-describedby="reply-to-help" />
+                            <small id="reply-to-help">{{ $t('documentExecution.main.replyToHint') }}</small>
+                        </div>
+                    </div>
+                </AccordionTab>
+            </Accordion>
         </div>
 
         <template #footer>
@@ -71,13 +86,16 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iMail } from '../../DocumentExecution'
+import Accordion from 'primevue/accordion'
+import AccordionTab from 'primevue/accordiontab'
 import Dialog from 'primevue/dialog'
 import Editor from 'primevue/editor'
 import documentExecutionMailDialogDescriptor from './DocumentExecutionMailDialogDescriptor.json'
+import Message from 'primevue/message'
 
 export default defineComponent({
     name: 'document-execution-help-dialog',
-    components: { Dialog, Editor },
+    components: { Accordion, AccordionTab, Dialog, Editor, Message },
     props: { visible: { type: Boolean } },
     emits: ['close', 'sendMail'],
     data() {

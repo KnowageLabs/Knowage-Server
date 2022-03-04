@@ -198,6 +198,7 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 			window.parent.angular.element(window.frameElement).scope().closeConfirm(true,true);
 		}
 		this.isFromNewCockpit=function(){
+			if(!window.parent.angular) return false;
 			return (window.parent.angular.element(window.frameElement).scope()!=undefined && window.parent.angular.element(window.frameElement).scope().closeConfirm!=undefined);
 		}
 

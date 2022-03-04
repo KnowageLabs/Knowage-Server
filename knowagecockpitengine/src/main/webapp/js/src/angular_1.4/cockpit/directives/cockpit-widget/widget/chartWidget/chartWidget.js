@@ -190,6 +190,7 @@ function cockpitChartWidgetControllerFunction(
 		$scope.refreshWidget(undefined,'init', true);
 	});
 	$scope.refresh=function(element,width,height,data,nature, undefined, changedChartType,dataAndChartConf){
+		$scope.tempChartConf = dataAndChartConf.chartConf;
 		if ($scope.ngModel.dataset){
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 			var aggregations = cockpitModule_widgetSelection.getAggregation($scope.ngModel,dataset);
@@ -1446,6 +1447,11 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 		wconf.chartTemplate = {"CHART":wconf.chartTemplate};
 	}
 	var chartTemplate = wconf.chartTemplate;
+	
+	if(chartTemplate.CHART.type.toUpperCase() === "WORDCLOUD" && !chartTemplate.CHART.sizeCriteria){
+		chartTemplate.CHART.sizeCriteria = "serie";
+	}
+	
 	if(chartTemplate && chartTemplate.CHART && chartTemplate.CHART.VALUES) {
 
 		if(chartTemplate.CHART.VALUES.SERIE) {

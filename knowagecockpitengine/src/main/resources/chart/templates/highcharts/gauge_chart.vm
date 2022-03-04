@@ -42,6 +42,9 @@
 	#end
 #end
 
+#set($range = $datasettransformer.getRange($rows, $dataColumnsMapper, $seriesMap))
+#set($categoriesCardinality = $datasettransformer.getCategoriesCardinality($rows, $chart.VALUES.CATEGORY, $dataColumnsMapper))
+
 #set($type = 'gauge')
 #set($subtype = 'simple')
 #if($chart.subtype && $chart.subtype=="vumetar")
@@ -78,6 +81,15 @@
 
 {
     chart: {
+    
+    	## Additional data needed for cross navigation paramteres	
+			 
+		additionalData:
+		{
+			categoriesCardinality: $categoriesCardinality,
+			range: $range
+    	},
+    
     	type: '$type',
     	subtype: "$subtype",
 		#*
@@ -1136,4 +1148,5 @@
     credits: { ##remove bottom credits text
     	enabled: false
     },
+    
 }
