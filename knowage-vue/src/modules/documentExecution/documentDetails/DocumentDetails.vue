@@ -164,6 +164,8 @@ export default defineComponent({
                 await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${id}`).then((response: AxiosResponse<any>) => (this.selectedDocument = response.data))
             } else {
                 this.selectedDocument = { ...this.mainDescriptor.newDocument }
+                this.selectedDocument.functionalities = []
+                this.selectedDocument.functionalities.push(this.selectedFolder.path)
             }
         },
         async getFunctionalities() {
