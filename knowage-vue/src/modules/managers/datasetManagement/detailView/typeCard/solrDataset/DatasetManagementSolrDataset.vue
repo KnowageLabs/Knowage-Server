@@ -1,5 +1,5 @@
 <template>
-    <Card class="p-mt-3">
+    <Card class="p-m-2">
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-6">
@@ -39,12 +39,6 @@
                 <div class="p-field p-col-12 p-float-label">
                     <InputText id="restRequestBody" class="kn-material-input" type="text" maxLength="2000" v-model.trim="dataset.restRequestBody" @change="$emit('touched')" />
                     <label for="restRequestBody" class="kn-material-input-label"> {{ $t('kpi.measureDefinition.query') }} </label>
-                </div>
-                <div class="p-field-radiobutton p-col-12 p-mt-2">
-                    <RadioButton name="DOCUMENTS" value="DOCUMENTS" v-model="dataset.solrType" />
-                    <label for="DOCUMENTS">DOCUMENTS</label>
-                    <RadioButton name="FACETS" class="p-ml-3" value="FACETS" v-model="dataset.solrType" />
-                    <label for="FACETS">FACETS</label>
                 </div>
                 <div class="p-field p-col-12 p-float-label" v-if="dataset.solrType == 'DOCUMENTS'">
                     <InputText
@@ -98,10 +92,9 @@ import FacetInfoDialog from '../infoDialogs/DatasetManagementFacetInfoDialog.vue
 import RequestHeadersTable from '../tables/DatasetManagementRequestHeadersTable.vue'
 import QueryParamTable from '../tables/DatasetManagementQueryParamTable.vue'
 import Card from 'primevue/card'
-import RadioButton from 'primevue/radiobutton'
 
 export default defineComponent({
-    components: { Card, KnValidationMessages, RadioButton, FacetInfoDialog, RequestHeadersTable, QueryParamTable },
+    components: { Card, KnValidationMessages, FacetInfoDialog, RequestHeadersTable, QueryParamTable },
     props: {
         parentValid: { type: Boolean },
         selectedDataset: { type: Object as any },
@@ -120,6 +113,7 @@ export default defineComponent({
     },
     created() {
         this.dataset = this.selectedDataset
+        if (!this.dataset.solrType || this.dataset.solrType === 'FACETS') this.dataset.solrType = 'DOCUMENTS'
     },
     watch: {
         selectedDataset() {
