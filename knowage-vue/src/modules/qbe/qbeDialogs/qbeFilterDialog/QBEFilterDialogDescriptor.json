@@ -84,6 +84,52 @@
     "selectionColumnHeaderStyle": {
         "width": "3em"
     },
+    "spatialOperatorValues": [
+        {
+            "label": "qbe.filters.operators.spatialContains",
+            "value": "SPATIAL_CONTAINS"
+        },
+        {
+            "label": "qbe.filters.operators.spatialNN",
+            "value": "SPATIAL_NN"
+        },
+        {
+            "label": "qbe.filters.operators.spatialCoveredBy",
+            "value": "SPATIAL_COVERED_BY"
+        },
+        {
+            "label": "qbe.filters.operators.spatialCovers",
+            "value": "SPATIAL_COVERS"
+        },
+        {
+            "label": "qbe.filters.operators.spatialDisjoint",
+            "value": "SPATIAL_DISJOINT"
+        },
+        {
+            "label": "qbe.filters.operators.spatialEqualsTo",
+            "value": "SPATIAL_EQUALS_TO"
+        },
+        {
+            "label": "qbe.filters.operators.spatialFilter",
+            "value": "SPATIAL_FILTER"
+        },
+        {
+            "label": "qbe.filters.operators.spatialIntersects",
+            "value": "SPATIAL_INTERSECTS"
+        },
+        {
+            "label": "qbe.filters.operators.spatialOverlaps",
+            "value": "SPATIAL_OVERLAPS"
+        },
+        {
+            "label": "qbe.filters.operators.spatialTouches",
+            "value": "SPATIAL_TOUCHES"
+        },
+        {
+            "label": "qbe.filters.operators.spatialInside",
+            "value": "SPATIAL_INSIDE"
+        }
+    ],
     "styles": {
         "message": {
             "align-items": "center",

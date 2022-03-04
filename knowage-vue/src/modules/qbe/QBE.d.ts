@@ -127,5 +127,6 @@ export interface iFilter {
     hasParam?: boolean,
     paramName?: string,
     leftOperandAggregator?: string,
-    rightOperandAggregator?: string
+    rightOperandAggregator?: string,
+    operatorParameter?: string
 }
