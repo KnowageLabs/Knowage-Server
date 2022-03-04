@@ -28,9 +28,9 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
+import org.apache.avro.LogicalTypes;
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
-import org.apache.avro.SchemaBuilder.BaseFieldTypeBuilder;
 import org.apache.avro.SchemaBuilder.FieldAssembler;
 import org.apache.avro.file.DataFileWriter;
 import org.apache.avro.generic.GenericData;
@@ -96,6 +96,7 @@ public class AvroExportJob extends AbstractExportJob {
 
 							for (int i = 0; i <= dataSetRecord.getFields().size() - 1; i++) {
 								Object value = getAvroValue(dataSetRecord, i);
+
 								avroRecord.put(i, value);
 							}
 							writer.append(avroRecord);
@@ -130,7 +131,9 @@ public class AvroExportJob extends AbstractExportJob {
 				value = dateFormatter.format(value);
 			} else if (isTimestamp(type)) {
 				value = timestampFormatter.format(value);
-			} else if (Double.class.isAssignableFrom(type) || BigDecimal.class.isAssignableFrom(type)) {
+			} else if (BigDecimal.class.isAssignableFrom(type)) {
+				value = value.toString();
+			} else if (Double.class.isAssignableFrom(type)) {
 				value = Double.valueOf(value.toString());
 			} else if (Integer.class.isAssignableFrom(type)) {
 				value = Integer.valueOf(value.toString());
@@ -189,35 +192,50 @@ public class AvroExportJob extends AbstractExportJob {
 	}
 
 	private Schema getSchema(IDataSet dataSet) throws JSONException {
-		FieldAssembler<Schema> fieldAssembler = SchemaBuilder.record("DataSet").namespace("it.eng.spagobi.api.v2.export.AvroExportJob").fields();
+		FieldAssembler<Schema> fieldAssembler = SchemaBuilder.record("DataSet")
+				.namespace("it.eng.spagobi.api.v2.export.AvroExportJob")
+				.fields();
 
 		for (int i = 0; i <= dsMeta.getFieldCount() - 1; i++) {
 			JSONObject metadata = new JSONObject();
 			metadata.put("knColumnAlias", dsMeta.getFieldAlias(i));
 			metadata.put("knJavaType", dsMeta.getFieldType(i).getName());
-			BaseFieldTypeBuilder<Schema> builder = fieldAssembler.name(dsMeta.getFieldName(i)).prop("knColumnAlias", dsMeta.getFieldAlias(i))
-					.prop("knJavaType", dsMeta.getFieldType(i).getName()).prop("knFieldType", dsMeta.getFieldMeta(i).getFieldType().toString()).type()
-					.nullable();
-			fieldAssembler = setType(builder, dsMeta.getFieldType(i));
+
+			fieldAssembler.name(dsMeta.getFieldName(i))
+					.prop("knColumnAlias", dsMeta.getFieldAlias(i))
+					.prop("knJavaType", dsMeta.getFieldType(i).getName())
+					.prop("knFieldType", dsMeta.getFieldMeta(i).getFieldType().toString())
+					.type()
+					.unionOf()
+					.nullType()
+					.and()
+					.type(getType(dsMeta.getFieldType(i)))
+					.endUnion()
+					.noDefault();
+
 		}
 
-		return fieldAssembler.endRecord();
+		Schema schema = fieldAssembler.endRecord();
+
+		return schema;
 	}
 
-	private FieldAssembler<Schema> setType(BaseFieldTypeBuilder<Schema> builder, Class<?> fieldType) {
+	private Schema getType(Class fieldType) {
+		Schema ret = null;
 		if (Integer.class.isAssignableFrom(fieldType)) {
-			return builder.intType().noDefault();
-		} else if (BigDecimal.class.isAssignableFrom(fieldType)) {
-			return builder.doubleType().noDefault();
+			ret = Schema.create(Schema.Type.INT);
+		}else if (BigDecimal.class.isAssignableFrom(fieldType)) {
+			ret = LogicalTypes.decimal(20, 8).addToSchema(Schema.create(Schema.Type.BYTES));
 		} else if (Float.class.isAssignableFrom(fieldType)) {
-			return builder.floatType().noDefault();
+			ret = Schema.create(Schema.Type.FLOAT);
 		} else if (Long.class.isAssignableFrom(fieldType)) {
-			return builder.longType().noDefault();
+			ret = Schema.create(Schema.Type.LONG);
 		} else if (Double.class.isAssignableFrom(fieldType)) {
-			return builder.doubleType().noDefault();
+			ret = Schema.create(Schema.Type.DOUBLE);
 		} else {
-			return builder.stringType().noDefault();
+			ret = Schema.create(Schema.Type.STRING);
 		}
+		return ret;
 	}
 
 	@Override
