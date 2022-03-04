@@ -7,7 +7,7 @@ const routes = [
             {
                 path: 'new-dashboard',
                 name: 'new-dashboard',
-                component: () => import('@/modules/documentBrowser/DocumentExecutionConatiner.vue'),
+                component: () => import('@/modules/documentBrowser/DocumentBrowserCockpitContainer.vue'),
                 props: true
             },
             {
