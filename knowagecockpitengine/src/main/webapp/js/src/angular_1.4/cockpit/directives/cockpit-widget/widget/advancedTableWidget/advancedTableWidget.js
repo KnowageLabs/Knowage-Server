@@ -149,6 +149,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}else{
 							tempCol.headerTooltip = $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias;
 						}
+						if(tempCol.measure === 'MEASURE') tempCol.aggregationSelected = $scope.ngModel.content.columnSelectedOfDataset[c].aggregationSelected;
 						tempCol.pinned = $scope.ngModel.content.columnSelectedOfDataset[c].pinned;
 
 						if ($scope.ngModel.content.columnSelectedOfDataset[c].isCalculated){
@@ -245,7 +246,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							tempCol.valueFormatter = dateTimeFormatter;
 							tempCol.comparator = dateComparator;
 						}
-						if(tempCol.fieldType == 'float' || tempCol.fieldType == 'integer' ) {
+						if(tempCol.fieldType == 'float' || tempCol.fieldType == 'integer' || (tempCol.fieldType == 'string' && tempCol.measure == 'MEASURE' && ["COUNT","COUNT_DISTINCT"].indexOf(tempCol.aggregationSelected) != -1) ) {
 							tempCol.valueFormatter = numberFormatter;
 							if (typeof fields[f].scale !== 'undefined') {
 								tempCol.scale = fields[f].scale;
