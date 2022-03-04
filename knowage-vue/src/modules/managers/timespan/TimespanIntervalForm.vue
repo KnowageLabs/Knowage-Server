@@ -1,16 +1,8 @@
 <template>
-    <div v-if="timespan" class="p-fluid p-formgrid  p-grid p-ai-center p-m-2">
-        <div class="p-field p-col-5">
-            <label class="kn-material-input-label"> {{ $t('common.from') }} </label>
-            <Calendar class="timespan-interval-calendar kn-flex p-mr-2" v-model="interval.from" :manualInput="true" :timeOnly="timespan.type === 'time'" hourFormat="24"></Calendar>
-        </div>
-        <div class="p-field p-col-5">
-            <label class="kn-material-input-label"> {{ $t('common.to') }} </label>
-            <Calendar class="timespan-interval-calendar kn-flex p-mr-2" v-model="interval.to" :manualInput="true" :timeOnly="timespan.type === 'time'" hourFormat="24"></Calendar>
-        </div>
-        <div id="timespan-interval-add-button-container" class="p-field p-col-2">
-            <Button id="timespan-interval-add-button" class="kn-button kn-button--primary" :disabled="addButtonDisabled" @click="onAddInterval"> {{ $t('common.add') }}</Button>
-        </div>
+    <div v-if="timespan" class="p-d-flex kn-flex">
+        <Calendar class="timespan-interval-calendar kn-flex " v-model="interval.from" :manualInput="true" :timeOnly="timespan.type === 'time'" hourFormat="24"></Calendar>
+        <Calendar class="timespan-interval-calendar kn-flex p-mx-auto" v-model="interval.to" :manualInput="true" :timeOnly="timespan.type === 'time'" hourFormat="24"></Calendar>
+        <Button id="timespan-interval-add-button" class="kn-button kn-button--primary p-ml-auto" :disabled="addButtonDisabled" @click="onAddInterval"> {{ $t('common.add') }}</Button>
     </div>
 </template>
 

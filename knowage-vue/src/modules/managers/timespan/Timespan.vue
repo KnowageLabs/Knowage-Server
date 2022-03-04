@@ -14,7 +14,7 @@
                 <KnListBox :options="timespans" :settings="timespanDescriptor.knListSettings" @click="showTimespanDetails($event, false)" @clone.stop="showTimespanDetails($event, true)" @delete.stop="deleteTimespanConfirm" />
             </div>
 
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0  kn-router-view">
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
                 <router-view :categories="categories" :timespans="timespans" @timespanCreated="onTimespanCreated" />
             </div>
         </div>

@@ -1,29 +1,37 @@
 <template>
-    <div v-if="timespan" class="p-fluid p-formgrid  p-grid p-ai-center p-m-2">
-        <div class="p-field p-float-label p-col-6 p-mt-4">
-            <InputText class="kn-material-input" v-model="timespan.name" maxLength="100" />
-            <label class="kn-material-input-label"> {{ $t('common.name') }} </label>
-        </div>
-        <div class="p-field  p-col-6">
-            <label class="kn-material-input-label"> {{ $t('common.type') }} </label>
-            <Dropdown class="kn-material-input" v-model="timespan.type" :options="timespanDescriptor.typeValues" optionValue="value" optionLabel="label">
-                <template #value="slotProps">
-                    <div v-if="slotProps.value">
-                        <span class="timespan-type-value">{{ slotProps.value }}</span>
-                    </div>
-                </template>
-                <template #option="slotProps">
-                    <div>
-                        <span>{{ $t(slotProps.option.label) }}</span>
-                    </div>
-                </template></Dropdown
-            >
-        </div>
-        <div class="p-col-6">
-            <label class="kn-material-input-label"> {{ $t('common.category') }} </label>
-            <Dropdown class="kn-material-input" v-model="timespan.category" :options="categories" optionValue="VALUE_ID" optionLabel="VALUE_NM"> </Dropdown>
-        </div>
-    </div>
+    <Card class="p-m-2">
+        <template #content>
+            <form v-if="timespan" class="p-fluid p-formgrid p-grid">
+                <div class="p-field p-col-4">
+                    <span class="p-float-label">
+                        <InputText class="kn-material-input" v-model="timespan.name" maxLength="100" />
+                        <label class="kn-material-input-label"> {{ $t('common.name') }} *</label>
+                    </span>
+                </div>
+                <div class="p-field p-col-4">
+                    <span class="p-float-label">
+                        <Dropdown class="kn-material-input" v-model="timespan.type" :options="timespanDescriptor.typeValues" optionValue="value" optionLabel="label">
+                            <template #value="slotProps">
+                                <div v-if="slotProps.value">
+                                    <span class="timespan-type-value">{{ slotProps.value }}</span>
+                                </div>
+                            </template>
+                            <template #option="slotProps">
+                                <span>{{ $t(slotProps.option.label) }}</span>
+                            </template>
+                        </Dropdown>
+                        <label class="kn-material-input-label"> {{ $t('common.type') }} *</label>
+                    </span>
+                </div>
+                <div class="p-field p-col-4">
+                    <span class="p-float-label">
+                        <Dropdown class="kn-material-input" v-model="timespan.category" :options="categories" optionValue="VALUE_ID" optionLabel="VALUE_NM"> </Dropdown>
+                        <label class="kn-material-input-label"> {{ $t('common.category') }} </label>
+                    </span>
+                </div>
+            </form>
+        </template>
+    </Card>
 </template>
 
 <script lang="ts">
@@ -31,10 +39,11 @@ import { defineComponent, PropType } from 'vue'
 import { iTimespan, iCategory } from './Timespan'
 import Dropdown from 'primevue/dropdown'
 import timespanDescriptor from './TimespanDescriptor.json'
+import Card from 'primevue/card'
 
 export default defineComponent({
     name: 'timespan-form',
-    components: { Dropdown },
+    components: { Dropdown, Card },
     props: { propTimespan: { type: Object as PropType<iTimespan | null> }, categories: { type: Array as PropType<iCategory[]> } },
     data() {
         return {
