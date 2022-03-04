@@ -10,7 +10,7 @@
                 </div>
                 <div class="p-field p-col-4">
                     <span class="p-float-label">
-                        <Dropdown class="kn-material-input" v-model="timespan.type" :options="timespanDescriptor.typeValues" optionValue="value" optionLabel="label">
+                        <Dropdown class="kn-material-input" v-model="timespan.type" :options="timespanDescriptor.typeValues" optionValue="value" optionLabel="label" @change="onTypeChange">
                             <template #value="slotProps">
                                 <div v-if="slotProps.value">
                                     <span class="timespan-type-value">{{ slotProps.value }}</span>
@@ -62,6 +62,9 @@ export default defineComponent({
     methods: {
         loadTimespan() {
             this.timespan = this.propTimespan as iTimespan
+        },
+        onTypeChange() {
+            if (this.timespan) this.timespan.definition = []
         }
     }
 })
