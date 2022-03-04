@@ -55,23 +55,6 @@
                     <label for="solrFieldList" class="kn-material-input-label"> {{ $t('managers.datasetManagement.solrFieldList') }} * </label>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.solrFieldList" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.solrFieldList') }" />
                 </div>
-                <div id="facet-container" class="p-col-12 p-fluid p-formgrid p-grid" v-if="dataset.solrType == 'FACETS'">
-                    <div class="p-col-11 p-field" :style="restDescriptor.style.infoColumnsContainer">
-                        <span class="p-float-label" :style="restDescriptor.style.maxWidth">
-                            <InputText id="solrFacetQuery" class="kn-material-input" :style="restDescriptor.style.maxWidth" v-model.trim="dataset.solrFacetQuery" @change="$emit('touched')" />
-                            <label for="solrFacetQuery" class="kn-material-input-label"> {{ $t('managers.datasetManagement.solrFacetQuery') }} </label>
-                        </span>
-                    </div>
-                    <Button icon="fas fa-info-circle" class="p-button-text p-button-rounded p-button-plain p-col-1" @click="facetQueryHelpVisible = true" />
-                    <div class="p-field p-col-6 p-float-label">
-                        <InputText id="solrFacetField" class="kn-material-input" type="text" v-model.trim="dataset.solrFacetField" @change="$emit('touched')" />
-                        <label for="solrFacetField" class="kn-material-input-label"> {{ $t('managers.datasetManagement.solrFacetField') }} </label>
-                    </div>
-                    <div class="p-field p-col-6 p-float-label">
-                        <InputText id="solrFacetPrefix" class="kn-material-input" type="text" v-model.trim="dataset.solrFacetPrefix" @change="$emit('touched')" />
-                        <label for="solrFacetPrefix" class="kn-material-input-label"> {{ $t('managers.datasetManagement.solrFacetPrefix') }} </label>
-                    </div>
-                </div>
             </form>
         </template>
     </Card>
@@ -113,7 +96,7 @@ export default defineComponent({
     },
     created() {
         this.dataset = this.selectedDataset
-        if (!this.dataset.solrType || this.dataset.solrType === 'FACETS') this.dataset.solrType = 'DOCUMENTS'
+        if (this.dataset.dsTypeCd === 'Solr' && (!this.dataset.solrType || this.dataset.solrType === 'FACETS')) this.dataset.solrType = 'DOCUMENTS'
     },
     watch: {
         selectedDataset() {
