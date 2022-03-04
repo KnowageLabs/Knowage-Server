@@ -2,7 +2,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #start>{{ timespan?.name }}</template>
         <template #end>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveDisabled" @click="saveTimespan(null)" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveDisabled" @click="saveTimespan(null)" data-test="save-button" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTimespanDetails" />
         </template>
     </Toolbar>
