@@ -1712,6 +1712,11 @@
             "title": "Theme Management"
         },
         "timespan": {
+            "invalidDatesError": "The dates are not valid",
+            "startDateGreaterError": "Start date greater than end date",
+            "startTimeGreaterError": "Start time greater than end time",
+            "temporalOverlapError": "The date interval overlaps with an existing one",
+            "timeOverlapError": "The time interval overlaps with an existing one",
             "title": "Timespan"
         },
         "usersManagement": {

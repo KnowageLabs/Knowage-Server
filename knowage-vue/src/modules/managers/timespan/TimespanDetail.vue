@@ -12,14 +12,14 @@
         {{ timespan }}
 
         <TimespanForm class="p-my-4" :propTimespan="timespan" :categories="categories"></TimespanForm>
-        <TimespanIntervalForm class="p-my-4" :propTimespan="timespan" @addInterval="onAddInterval"></TimespanIntervalForm>
+        <TimespanIntervalForm class="p-my-4" :propTimespan="timespan"></TimespanIntervalForm>
         <TimespanIntervalTable class="p-mt-4" :propTimespan="timespan"></TimespanIntervalTable>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iTimespan, iCategory, iInterval } from './Timespan'
+import { iTimespan, iCategory } from './Timespan'
 import { AxiosResponse } from 'axios'
 import TimespanForm from './TimespanForm.vue'
 import TimespanIntervalForm from './TimespanIntervalForm.vue'
@@ -60,16 +60,6 @@ export default defineComponent({
             this.loading = false
 
             console.log('loadTimespan() - LOADED TIMESPAN: ', this.timespan)
-        },
-        onAddInterval(interval: iInterval) {
-            console.log('onAddInterval() - interval: ', interval)
-            this.timespan?.type === 'temporal' ? this.addNewTemporalInterval(interval) : this.addNewTimeInterval(interval)
-        },
-        addNewTemporalInterval(interval: iInterval) {
-            console.log('addNewTemporalInterval() - interval: ', interval)
-        },
-        addNewTimeInterval(interval: iInterval) {
-            console.log('addNewTimeInterval() - interval: ', interval)
         }
     }
 })
