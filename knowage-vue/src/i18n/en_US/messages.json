@@ -755,7 +755,9 @@
     },
     "managers": {
         "bml": {
-            "title": "Behavioural Model Lineage"
+            "title": "Behavioural Model Lineage",
+            "lovsTitle": "Lovs",
+            "drivers": "Analytical Drivers"
         },
         "businessModelManager": {
             "add": "Add",
