@@ -10,8 +10,8 @@ export interface iTimespan {
 }
 
 export interface iInterval {
-    from: string | Date,
-    to: string | Date,
+    from: any,
+    to: any,
     fromLocalized?: string,
     toLocalized?: string
 }
