@@ -35,7 +35,7 @@ import timespanDescriptor from './TimespanDescriptor.json'
 export default defineComponent({
     name: 'timespan-form',
     components: { Dropdown },
-    props: { selectedTimespan: { type: Object as PropType<iTimespan | null> }, categories: { type: Array as PropType<iCategory[]> } },
+    props: { propTimespan: { type: Object as PropType<iTimespan | null> }, categories: { type: Array as PropType<iCategory[]> } },
     data() {
         return {
             timespanDescriptor,
@@ -43,7 +43,7 @@ export default defineComponent({
         }
     },
     watch: {
-        selectedTimespan() {
+        propTimespan() {
             this.loadTimespan()
         }
     },
@@ -52,7 +52,7 @@ export default defineComponent({
     },
     methods: {
         loadTimespan() {
-            this.timespan = this.selectedTimespan as iTimespan
+            this.timespan = this.propTimespan as iTimespan
             console.log('loadTimespan() - LOADED TIMESPAN: ', this.timespan)
         }
     }

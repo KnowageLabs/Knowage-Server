@@ -1,4 +1,7 @@
 {
+    "iconColumnStyle": {
+        "text-align": "end"
+    },
     "knListSettings": {
         "buttons": [
             {
@@ -23,6 +26,30 @@
         "textField": "category",
         "titleField": "name"
     },
+    "temporalColumns": [
+        {
+            "field": "fromLocalized",
+            "header": "common.from",
+            "style": "width: 45%"
+        },
+        {
+            "field": "toLocalized",
+            "header": "common.to",
+            "style": "width: 45%"
+        }
+    ],
+    "timeColumns": [
+        {
+            "field": "from",
+            "header": "common.from",
+            "style": "width: 45%"
+        },
+        {
+            "field": "to",
+            "header": "common.to",
+            "style": "width: 45%"
+        }
+    ],
     "typeValues": [
         {
             "label": "common.time",

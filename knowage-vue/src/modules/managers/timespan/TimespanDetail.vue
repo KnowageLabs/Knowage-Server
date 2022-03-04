@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="p-m-2">
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
             <template #start>{{ timespan?.name }}</template>
             <template #end>
@@ -11,15 +11,15 @@
 
         {{ timespan }}
 
-        <TimespanForm :selectedTimespan="timespan" :categories="categories"></TimespanForm>
-        <TimespanIntervalForm></TimespanIntervalForm>
-        <TimespanIntervalTable></TimespanIntervalTable>
+        <TimespanForm class="p-my-4" :propTimespan="timespan" :categories="categories"></TimespanForm>
+        <TimespanIntervalForm class="p-my-4" :propTimespan="timespan" @addInterval="onAddInterval"></TimespanIntervalForm>
+        <TimespanIntervalTable class="p-mt-4" :propTimespan="timespan"></TimespanIntervalTable>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iTimespan, iCategory } from './Timespan'
+import { iTimespan, iCategory, iInterval } from './Timespan'
 import { AxiosResponse } from 'axios'
 import TimespanForm from './TimespanForm.vue'
 import TimespanIntervalForm from './TimespanIntervalForm.vue'
@@ -60,6 +60,16 @@ export default defineComponent({
             this.loading = false
 
             console.log('loadTimespan() - LOADED TIMESPAN: ', this.timespan)
+        },
+        onAddInterval(interval: iInterval) {
+            console.log('onAddInterval() - interval: ', interval)
+            this.timespan?.type === 'temporal' ? this.addNewTemporalInterval(interval) : this.addNewTimeInterval(interval)
+        },
+        addNewTemporalInterval(interval: iInterval) {
+            console.log('addNewTemporalInterval() - interval: ', interval)
+        },
+        addNewTimeInterval(interval: iInterval) {
+            console.log('addNewTimeInterval() - interval: ', interval)
         }
     }
 })

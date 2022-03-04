@@ -1,17 +1,56 @@
 <template>
-    <h1>TIMESPAN INTERVAL TABLE</h1>
+    <DataTable v-if="timespan" class="p-datatable-sm kn-table p-m-2 kn-height-full" :value="timespan.definition" responsiveLayout="stack" breakpoint="960px">
+        <Column v-for="column in columns" :key="column.header" :field="column.field" :header="$t(column.header)" :style="column.style"> </Column>
+        <Column :style="timespanDescriptor.iconColumnStyle">
+            <template #body="slotProps">
+                <Button icon="pi pi-trash" class="p-button-link" @click="deleteInterval(slotProps.data)" />
+            </template>
+        </Column>
+    </DataTable>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
+import { iTimespan, iInterval } from './Timespan'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
+import timespanDescriptor from './TimespanDescriptor.json'
 
 export default defineComponent({
     name: 'timespan-interval-table',
-    components: {},
+    props: { propTimespan: { type: Object as PropType<iTimespan | null> } },
+    components: { Column, DataTable },
     data() {
-        return {}
+        return {
+            timespanDescriptor,
+            timespan: null as iTimespan | null
+        }
     },
-    async created() {},
-    methods: {}
+    watch: {
+        propTimespan() {
+            this.loadTimespan()
+        }
+    },
+    computed: {
+        columns(): { field: string; header: string; style: string }[] {
+            return this.timespan?.type === 'temporal' ? this.timespanDescriptor.temporalColumns : this.timespanDescriptor.timeColumns
+        }
+    },
+    created() {
+        this.loadTimespan()
+    },
+    methods: {
+        loadTimespan() {
+            this.timespan = this.propTimespan as iTimespan
+            console.log('loadTimespan() - LOADED TIMESPAN IN TABLE: ', this.timespan)
+        },
+        deleteInterval(interval: iInterval) {
+            console.log('deleteInterval() - interval: ', interval)
+            if (this.timespan) {
+                const index = this.timespan.definition.findIndex((tempInterval: iInterval) => interval.from === tempInterval.from && interval.to === tempInterval.to)
+                if (index !== -1) this.timespan.definition.splice(index, 1)
+            }
+        }
+    }
 })
 </script>
