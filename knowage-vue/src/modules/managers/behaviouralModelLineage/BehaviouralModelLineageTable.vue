@@ -9,11 +9,15 @@
         :globalFilterFields="filterFields"
         :paginator="true"
         :rows="25"
+        :loading="loading"
         paginatorTemplate="PrevPageLink PageLinks NextPageLink"
         stripedRows
-        @rowSelect="$emit('rowSelected', $event)"
-        @rowUnselect="$emit('rowUnselected', $event)"
+        @rowSelect="$emit('rowSelected', $event, dataType)"
+        @rowUnselect="$emit('rowUnselected', $event, dataType)"
     >
+        <template #empty>
+            {{ $t('common.info.noDataFound') }}
+        </template>
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #start>
@@ -25,8 +29,11 @@
                 <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
             </span>
         </template>
-        <Column field="label" :header="$t('common.label')" :sortable="true" :headerStyle="descriptor.style.uppercase" />
-        <Column field="name" :header="$t('common.name')" :sortable="true" :headerStyle="descriptor.style.uppercase" />
+        <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" :headerStyle="descriptor.style.uppercase">
+            <template #body="slotProps">
+                <span class="kn-truncated" v-tooltip.top="slotProps.data.label">{{ slotProps.data.label }}</span>
+            </template>
+        </Column>
     </DataTable>
 </template>
 <script lang="ts">
@@ -39,12 +46,15 @@ import Column from 'primevue/column'
 export default defineComponent({
     name: 'behavioural-model-lineage',
     components: { DataTable, Column },
-    props: { tableData: { type: Array as any, required: true }, headerTitle: String },
+    props: { tableData: { type: Array as any, required: true }, headerTitle: String, dataType: String, loading: Boolean },
     data() {
         return {
             descriptor,
-            loading: false,
             filterFields: ['name', 'label'],
+            columns: [
+                { field: 'name', header: 'common.label' },
+                { field: 'label', header: 'common.name' }
+            ],
             filters: { global: [filterDefault] } as Object,
             selectedRow: {} as any
         }

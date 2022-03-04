@@ -9,40 +9,11 @@
                 <Button icon="fa-solid fa-arrows-rotate" class="p-button-text p-button-rounded p-button-plain" @click="loadAllData" />
             </template>
         </Toolbar>
-        <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
 
         <div id="table-container" class="p-d-flex p-flex-row kn-height-full">
-            <BMLTable :tableData="allLovs" :headerTitle="$t('managers.bml.lovsTitle')" @rowSelected="logEvent" @rowUnselected="logEvent" />
-            <BMLTable :tableData="allDrivers" :headerTitle="$t('managers.bml.drivers')" @rowSelected="logEvent" @rowUnselected="logEvent" />
-            <BMLTable :tableData="allDocuments" :headerTitle="$t('managers.datasetManagement.documents')" @rowSelected="logEvent" @rowUnselected="logEvent" />
-            <!-- <DataTable
-                class="p-datatable-sm kn-table bml-table"
-                :value="allLovs"
-                selectionMode="single"
-                v-model:selection="selectedLov"
-                dataKey="id"
-                responsiveLayout="stack"
-                breakpoint="360px"
-                v-model:filters="filters"
-                :globalFilterFields="filterFields"
-                stripedRows
-                @rowSelect="logEvent"
-                @rowUnselect="logEvent"
-            >
-                <template #header>
-                    <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                        <template #start>
-                            {{ $t('managers.bml.lovsTitle') }}
-                        </template>
-                    </Toolbar>
-                    <span id="search-container" class="p-input-icon-left p-m-2">
-                        <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
-                    </span>
-                </template>
-                <Column field="label" :header="$t('common.label')" :sortable="true" :headerStyle="descriptor.style.uppercase" />
-                <Column field="name" :header="$t('common.name')" :sortable="true" :headerStyle="descriptor.style.uppercase" />
-            </DataTable> -->
+            <BMLTable :tableData="allLovs" :headerTitle="$t('managers.bml.lovsTitle')" :loading="loading" dataType="lovs" @rowSelected="onRowSelect" @rowUnselected="onRowSelect" />
+            <BMLTable :tableData="allDrivers" :headerTitle="$t('managers.bml.drivers')" :loading="loading" dataType="analyticalDrivers" @rowSelected="onRowSelect" @rowUnselected="onRowSelect" />
+            <BMLTable :tableData="allDocuments" :headerTitle="$t('managers.datasetManagement.documents')" :loading="loading" dataType="documents" @rowSelected="onRowSelect" @rowUnselected="onRowSelect" />
         </div>
     </div>
 </template>
@@ -53,18 +24,12 @@ import { filterDefault } from '@/helpers/commons/filterHelper'
 import { iLov, iAnalyticalDriver, iDocument } from './BehaviouralModelLineage'
 import descriptor from './BehaviouralModelLineageDescriptor.json'
 import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
-import ProgressBar from 'primevue/progressbar'
-// import DataTable from 'primevue/datatable'
-// import Column from 'primevue/column'
 import BMLTable from './BehaviouralModelLineageTable.vue'
 
 export default defineComponent({
     name: 'behavioural-model-lineage',
     components: {
         KnOverlaySpinnerPanel,
-        ProgressBar,
-        // DataTable,
-        // Column
         BMLTable
     },
     data() {
@@ -88,22 +53,51 @@ export default defineComponent({
             await Promise.all([this.loadAllLovs(), this.loadAllDrivers(), this.loadAllDocuments()]).then(() => (this.loading = false))
         },
         async loadAllLovs() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all/').then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all/').then((response: AxiosResponse<any>) => {
                 this.allLovs = response.data
             })
         },
         async loadAllDrivers() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers').then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers').then((response: AxiosResponse<any>) => {
                 this.allDrivers = response.data
             })
         },
         async loadAllDocuments() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents').then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents').then((response: AxiosResponse<any>) => {
                 this.allDocuments = response.data
             })
         },
-        logEvent(data) {
-            console.log('logme', data)
+        onRowSelect(event, dataType) {
+            console.log('logme', event.data, dataType)
+            switch (dataType) {
+                case 'lovs':
+                    this.filterByLovs(event.data)
+                    break
+                case 'analyticalDrivers':
+                    this.filterByDrivers(event.data)
+                    break
+                case 'documents':
+                    this.filterByDocuments(event.data)
+                    break
+            }
+        },
+        async filterByLovs(lov) {
+            this.loading = true
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/lovs/${lov.id}/analyticalDrivers/`).then((response: AxiosResponse<any>) => (this.allDrivers = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/lovs/${lov.id}/documents/`).then((response: AxiosResponse<any>) => (this.allDocuments = response.data))
+            this.loading = false
+        },
+        async filterByDrivers(driver) {
+            this.loading = true
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${driver.id}/lovs/`).then((response: AxiosResponse<any>) => (this.allLovs = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${driver.id}/documents/`).then((response: AxiosResponse<any>) => (this.allDocuments = response.data))
+            this.loading = false
+        },
+        async filterByDocuments(doc) {
+            this.loading = true
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${doc.label}/lovs/`).then((response: AxiosResponse<any>) => (this.allLovs = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${doc.label}/analyticalDrivers/`).then((response: AxiosResponse<any>) => (this.allDrivers = response.data))
+            this.loading = false
         }
     }
 })
