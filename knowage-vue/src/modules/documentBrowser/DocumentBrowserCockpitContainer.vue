@@ -6,17 +6,17 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-    name: 'document-execution-container',
+    name: 'document-browser-cockpit-container',
     components: {},
-    props: { id: { type: String } },
+    props: { id: { type: String }, functionalityId: { type: String } },
     data() {
         return {
-            url:
-                process.env.VUE_APP_HOST_URL +
-                '/knowagecockpitengine/api/1.0/pages/edit?NEW_SESSION=TRUE&SBI_LANGUAGE=en&user_id=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGVtb19hZG1pbiIsImV4cCI6MTY0NjQzNTAxNn0.3HhqSCMfJslCbXxMw3HPtYjC9rhSMIdLpyuZDOshNVA&SBI_COUNTRY=US&SBI_EXECUTION_ID=095e7ac39bc211ec90095bb127e68384&SBI_ENVIRONMENT=DOCBROWSER&IS_TECHNICAL_USER=true&documentMode=EDIT&FUNCTIONALITY_ID=601'
+            url: ''
         }
     },
-    created() {},
+    created() {
+        this.createUrl()
+    },
     methods: {
         createUrl() {
             const user = (this.$store.state as any).user
@@ -24,10 +24,12 @@ export default defineComponent({
             const uniqueID = user.userUniqueIdentifier
             const country = user.locale.split('_')[1]
 
-            return (
+            this.url =
                 process.env.VUE_APP_HOST_URL +
-                `/knowagecockpitengine/api/1.0/pages/edit?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&user_id=${uniqueID}&SBI_COUNTRY=${country}&SBI_EXECUTION_ID=095e7ac39bc211ec90095bb127e68384&SBI_ENVIRONMENT=DOCBROWSER&IS_TECHNICAL_USER=true&documentMode=EDIT&FUNCTIONALITY_ID=601`
-            )
+                `/knowagecockpitengine/api/1.0/pages/edit?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&user_id=${uniqueID}&SBI_COUNTRY=${country}&SBI_EXECUTION_ID=095e7ac39bc211ec90095bb127e68384&SBI_ENVIRONMENT=DOCBROWSER&IS_TECHNICAL_USER=true&documentMode=EDIT&FUNCTIONALITY_ID=${this.functionalityId}`
+
+            console.log('functionalityId: ', this.functionalityId)
+            console.log('NEW URL: ', this.url)
         }
     }
 })
