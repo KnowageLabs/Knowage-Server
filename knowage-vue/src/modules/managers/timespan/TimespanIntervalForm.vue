@@ -9,6 +9,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { iTimespan, iInterval } from './Timespan'
+import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 import Calendar from 'primevue/calendar'
 
 const deepcopy = require('deepcopy')
@@ -123,9 +124,13 @@ export default defineComponent({
 
                 const from = ('0' + fromDate.getDate()).slice(-2) + '/' + ('0' + (fromDate.getMonth() + 1)).slice(-2) + '/' + fromDate.getFullYear()
                 const to = ('0' + toDate.getDate()).slice(-2) + '/' + ('0' + (toDate.getMonth() + 1)).slice(-2) + '/' + toDate.getFullYear()
-                const fromLocalized = this.formatDate(fromDate, this.parseDateTemp('d/m/Y'))
-                const toLocalized = this.formatDate(toDate, this.parseDateTemp('d/m/Y'))
-                this.timespan.definition.push({ from: from, to: to, fromLocalized: fromLocalized, toLocalized: toLocalized })
+                // TODO
+                // const fromLocalized = this.formatDate(fromDate, this.parseDateTemp('d/m/Y'))
+                // const fromLocalized = this.getFormattedDate(fromDate, this.parseDateTemp('d/m/Y'))
+                // const toLocalized = this.formatDate(toDate, this.parseDateTemp('d/m/Y'))
+                // const toLocalized = this.getFormattedDate(toDate, this.parseDateTemp('d/m/Y'))
+                // this.timespan.definition.push({ from: from, to: to, fromLocalized: fromLocalized, toLocalized: toLocalized })
+                this.timespan.definition.push({ from: from, to: to })
                 this.refreshTimespanInterval(fromDate, toDate)
             }
         },
@@ -225,6 +230,10 @@ export default defineComponent({
         },
         LZ(x) {
             return (x < 0 || x > 9 ? '' : '0') + x
+        },
+        getFormattedDate(date: any, format: any) {
+            console.log('format', format)
+            return formatDateWithLocale(date)
         }
     }
 })
