@@ -1,21 +1,28 @@
 <template>
-    <iframe class="kn-width-full kn-height-full" :src="url"></iframe>
+    <iframe v-if="mode === 'cockpit'" class="kn-width-full kn-height-full" :src="url"></iframe>
+    <DocumentExecution :id="id" v-else></DocumentExecution>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import DocumentExecution from '@/modules/documentExecution/main/DocumentExecution.vue'
 
 export default defineComponent({
     name: 'document-browser-cockpit-container',
-    components: {},
+    components: { DocumentExecution },
     props: { id: { type: String }, functionalityId: { type: String } },
     data() {
         return {
-            url: ''
+            url: '',
+            mode: 'document-execution'
         }
     },
     created() {
+        console.log('CREATED!!!')
         this.createUrl()
+        if (this.$route.name !== 'document-browser-document-execution') {
+            this.mode = 'cockpit'
+        }
     },
     methods: {
         createUrl() {
