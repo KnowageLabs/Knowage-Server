@@ -50,9 +50,9 @@ export default defineComponent({
         },
         onAddInterval() {
             const tempInterval = deepcopy(this.interval)
-            this.timespan?.type === 'temporal' ? this.createNewTemporalInterval(tempInterval) : this.createNewTimeInterval(tempInterval)
+            this.timespan?.type === 'temporal' ? this.addNewTemporalInterval(tempInterval) : this.addNewTimeInterval(tempInterval)
         },
-        createNewTimeInterval(interval: iInterval) {
+        addNewTimeInterval(interval: iInterval) {
             if (interval.from instanceof Date && interval.to instanceof Date) {
                 const from = this.padTo2Digits(interval.from.getHours()) + ':' + this.padTo2Digits(interval.from.getMinutes())
                 const to = this.padTo2Digits(interval.to.getHours()) + ':' + this.padTo2Digits(interval.to.getMinutes())
@@ -65,37 +65,32 @@ export default defineComponent({
                     return
                 }
 
-                this.addNewTimeInterval(interval, from, to, fromTime, toTime)
+                if (this.timespan) {
+                    for (let i in this.timespan.definition) {
+                        const tempStart = Date.parse('01/01/2011 ' + this.timespan.definition[i].from)
+                        const tempEnd = Date.parse('01/01/2011 ' + this.timespan.definition[i].to)
+
+                        if (fromTime <= tempEnd && toTime >= tempStart) {
+                            this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.timeOverlapError') })
+                            return
+                        }
+                    }
+
+                    interval.from = from
+                    interval.to = to
+                    this.timespan.definition.push(interval)
+                    const millsHour = 60 * 1000
+                    this.interval.from = new Date(toTime + millsHour)
+                    const diffTime = toTime - fromTime
+                    this.interval.to = new Date(toTime + millsHour + diffTime)
+                    this.interval = deepcopy(this.interval)
+                }
             } else {
                 this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.invalidDatesError') })
             }
         },
-        addNewTimeInterval(interval: iInterval, from: string, to: string, fromTime: number, toTime: number) {
-            if (this.timespan) {
-                for (let i in this.timespan.definition) {
-                    const tempStart = Date.parse('01/01/2011 ' + this.timespan.definition[i].from)
-                    const tempEnd = Date.parse('01/01/2011 ' + this.timespan.definition[i].to)
 
-                    if (fromTime <= tempEnd && toTime >= tempStart) {
-                        this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.timeOverlapError') })
-                        return
-                    }
-                }
-
-                interval.from = from
-                interval.to = to
-                this.timespan.definition.push(interval)
-                this.refreshTimeInterval(fromTime, toTime)
-            }
-        },
-        refreshTimeInterval(fromTime: number, toTime: number) {
-            const millsHour = 60 * 1000
-            this.interval.from = new Date(toTime + millsHour)
-            const diffTime = toTime - fromTime
-            this.interval.to = new Date(toTime + millsHour + diffTime)
-            this.interval = deepcopy(this.interval)
-        },
-        createNewTemporalInterval(interval: iInterval) {
+        addNewTemporalInterval(interval: iInterval) {
             if (interval.from instanceof Date && interval.to instanceof Date) {
                 const fromDate = interval.from
                 const toDate = interval.to
@@ -105,6 +100,7 @@ export default defineComponent({
                     return
                 }
 
+<<<<<<< HEAD
                 this.addNewTemporalInterval(fromDate, toDate)
             } else {
                 this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.invalidDatesError') })
@@ -119,20 +115,40 @@ export default defineComponent({
                     if (fromDate <= tempEnd && toDate >= tempStart) {
                         this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.temporalOverlapError') })
                         return
-                    }
-                }
+=======
+                if (this.timespan) {
+                    for (let i in this.timespan.definition) {
+                        const tempStart = new Date(this.timespan.definition[i].from.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3'))
+                        const tempEnd = new Date(this.timespan.definition[i].to.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3'))
 
+                        if (fromDate <= tempEnd && toDate >= tempStart) {
+                            this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.temporalOverlapError') })
+                            return
+                        }
+>>>>>>> parent of 867aa3542b (Code changes)
+                    }
+
+<<<<<<< HEAD
                 this.timespan.definition.push({ from: this.getFormattedDate(fromDate), to: this.getFormattedDate(toDate) })
                 this.refreshTimespanInterval(fromDate, toDate)
+=======
+                    const from = ('0' + fromDate.getDate()).slice(-2) + '/' + ('0' + (fromDate.getMonth() + 1)).slice(-2) + '/' + fromDate.getFullYear()
+                    const to = ('0' + toDate.getDate()).slice(-2) + '/' + ('0' + (toDate.getMonth() + 1)).slice(-2) + '/' + toDate.getFullYear()
+                    const fromLocalized = this.formatDate(fromDate, this.parseDateTemp('d/m/Y'))
+                    const toLocalized = this.formatDate(toDate, this.parseDateTemp('d/m/Y'))
+                    this.timespan.definition.push({ from: from, to: to, fromLocalized: fromLocalized, toLocalized: toLocalized })
+
+                    const millsDay = 86400000
+                    this.interval.from = toDate
+                    this.interval.from.setTime(toDate.getTime() + millsDay)
+                    this.interval.to = new Date()
+                    this.interval.to.setTime(this.interval.from.getTime() + toDate.getTime() - fromDate.getTime() - millsDay)
+                    this.interval = deepcopy(this.interval)
+                }
+            } else {
+                this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.invalidDatesError') })
+>>>>>>> parent of 867aa3542b (Code changes)
             }
-        },
-        refreshTimespanInterval(fromDate: Date, toDate: Date) {
-            const millsDay = 86400000
-            this.interval.from = toDate
-            this.interval.from.setTime(toDate.getTime() + millsDay)
-            this.interval.to = new Date()
-            this.interval.to.setTime(this.interval.from.getTime() + toDate.getTime() - fromDate.getTime() - millsDay)
-            this.interval = deepcopy(this.interval)
         },
         padTo2Digits(num) {
             return String(num).padStart(2, '0')
