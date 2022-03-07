@@ -212,7 +212,8 @@ export default defineComponent({
             uniqueID: null,
             filtersData: {} as any,
             qbeLoaded: false,
-            qbeDescriptor
+            qbeDescriptor,
+            colors: ['#D7263D', '#F46036', '#2E294E', '#1B998B', '#C5D86D', '#3F51B5', '#8BC34A', '#009688', '#F44336']
         }
     },
     computed: {
@@ -225,7 +226,7 @@ export default defineComponent({
                     break
                 }
             }
-            return parameterVisible || this.qbe?.pars.length !== 0
+            return parameterVisible || this.qbe?.pars?.length !== 0
         }
     },
     watch: {
@@ -336,8 +337,16 @@ export default defineComponent({
             const datamartName = this.dataset?.dataSourceId ? this.dataset.name : this.qbe?.qbeDatamarts
             await this.$http
                 .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.uniqueID}&datamartName=${datamartName}`)
-                .then((response: AxiosResponse<any>) => (this.entities = response.data))
+                .then((response: AxiosResponse<any>) => {
+                    this.addExpandedProperty(response.data.entities)
+                    this.entities = response.data
+                })
                 .catch((error: any) => console.log('ERROR: ', error))
+        },
+        addExpandedProperty(entities) {
+            entities.forEach((entity) => {
+                entity.expanded = false
+            })
         },
         async executeQBEQuery() {
             this.loading = true
