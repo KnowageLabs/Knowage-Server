@@ -8,32 +8,22 @@ import PrimeVue from 'primevue/config'
 import Toolbar from 'primevue/toolbar'
 
 const mockedTimespan = {
-    name: 'Temporal Test',
-    id: 82,
-    type: 'temporal',
-    definition: [
-        {
-            from: '04/03/2022',
-            to: '05/03/2022',
-            fromLocalized: '3/4/22',
-            toLocalized: '3/5/22'
-        },
-        {
-            from: '17/03/2022',
-            to: '31/03/2022',
-            fromLocalized: '17/3/22',
-            toLocalized: '31/3/22'
-        },
-        {
-            from: '01/04/2022',
-            to: '14/04/2022',
-            fromLocalized: '1/4/22',
-            toLocalized: '14/04/22'
-        }
-    ],
     category: '',
     staticFilter: false,
-    commonInfo: 'it.eng.spagobi.commons.metadata.SbiCommonInfo@3485798'
+    name: 'Time Test 2 edited twice',
+    id: 27,
+    type: 'time',
+    definition: [
+        {
+            from: '08:50',
+            to: '10:51'
+        },
+        {
+            from: '12:54',
+            to: '14:55'
+        }
+    ],
+    commonInfo: 'it.eng.spagobi.commons.metadata.SbiCommonInfo@28141a3d'
 }
 
 const $confirm = {
@@ -83,9 +73,9 @@ describe('Timespan Interval Table', () => {
         const wrapper = factory()
 
         expect(wrapper.vm.timespan).toStrictEqual(mockedTimespan)
-        expect(wrapper.html()).toContain('3/4/22')
-        expect(wrapper.html()).toContain('3/5/22')
-        expect(wrapper.html()).toContain('17/3/22')
-        expect(wrapper.html()).toContain('31/3/22')
+        expect(wrapper.html()).toContain('08:50')
+        expect(wrapper.html()).toContain('10:51')
+        expect(wrapper.html()).toContain('12:54')
+        expect(wrapper.html()).toContain('14:55')
     })
 })

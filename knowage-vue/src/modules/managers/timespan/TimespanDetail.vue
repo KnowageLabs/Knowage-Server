@@ -16,10 +16,12 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iTimespan, iCategory } from './Timespan'
+import { iTimespan, iCategory, iInterval } from './Timespan'
+import { formatDate } from '@/helpers/commons/localeHelper'
 import { AxiosResponse } from 'axios'
 import TimespanForm from './TimespanForm.vue'
 import TimespanIntervalTable from './TimespanIntervalTable.vue'
+import moment from 'moment'
 
 const deepcopy = require('deepcopy')
 
@@ -60,13 +62,24 @@ export default defineComponent({
             if (this.id) {
                 await this.$http
                     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/loadTimespan?ID=${this.id}`)
-                    .then((response: AxiosResponse<any>) => (this.timespan = response.data))
+                    .then((response: AxiosResponse<any>) => {
+                        this.timespan = response.data
+                        if (this.timespan?.type === 'temporal') this.formatIntervalDates()
+                    })
                     .catch(() => {})
                 if (this.clone === 'true') await this.cloneTimespan()
             } else {
                 this.timespan = this.getDefautTimespan()
             }
             this.loading = false
+        },
+        formatIntervalDates() {
+            if (this.timespan) {
+                this.timespan.definition.forEach((interval: iInterval) => {
+                    interval.from = this.getFormattedDate(interval.from)
+                    interval.to = this.getFormattedDate(interval.to)
+                })
+            }
         },
         getDefautTimespan(): iTimespan {
             return {
@@ -151,6 +164,10 @@ export default defineComponent({
             firstInterval.to = tempInterval.to.getDate() + '/' + (tempInterval.to.getMonth() + 1) + '/' + tempInterval.to.getFullYear()
             tempTimespan.definition = [firstInterval]
             await this.saveTimespan(tempTimespan)
+        },
+        getFormattedDate(date: string) {
+            const tempDate = moment(date, 'DD/MM/YYYY').toDate()
+            return formatDate(moment(tempDate).format('MM/DD/YYYY'))
         }
     }
 })
