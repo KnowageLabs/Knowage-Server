@@ -130,6 +130,10 @@ describe('Timespan loading', () => {
 
         await flushPromises()
 
-        expect(wrapper.vm.timespans).toStrictEqual(mockedTimespans)
+        expect(wrapper.vm.timespans).toStrictEqual(
+            mockedTimespans.map((timespan) => {
+                return { ...timespan, isCloneable: timespan.type === 'temporal' }
+            })
+        )
     })
 })
