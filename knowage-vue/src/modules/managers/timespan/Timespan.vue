@@ -47,7 +47,12 @@ export default defineComponent({
     methods: {
         async loadTimespans() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/listDynTimespan`).then((response: AxiosResponse<any>) => (this.timespans = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/listDynTimespan`).then(
+                (response: AxiosResponse<any>) =>
+                    (this.timespans = response.data?.map((timespan: iTimespan) => {
+                        return { ...timespan, isCloneable: timespan.type === 'temporal' }
+                    }))
+            )
             this.loading = false
         },
         async loadCategories() {

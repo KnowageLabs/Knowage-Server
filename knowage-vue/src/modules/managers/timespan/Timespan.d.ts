@@ -6,7 +6,8 @@ export interface iTimespan {
     category: string,
     staticFilter?: boolean,
     commonInfo?: string,
-    isnew?: boolean
+    isnew?: boolean,
+    isCloneable?: boolean
 }
 
 export interface iInterval {

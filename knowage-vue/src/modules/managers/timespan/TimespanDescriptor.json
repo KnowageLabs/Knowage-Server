@@ -6,6 +6,7 @@
     "knListSettings": {
         "buttons": [
             {
+                "condition": "isCloneable",
                 "emits": "clone",
                 "icon": "far fa-copy",
                 "label": "common.clone"
