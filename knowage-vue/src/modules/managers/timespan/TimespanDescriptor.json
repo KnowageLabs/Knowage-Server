@@ -30,12 +30,12 @@
     },
     "temporalColumns": [
         {
-            "field": "from",
+            "field": "fromLocalized",
             "header": "common.from",
             "style": "flex: 3"
         },
         {
-            "field": "to",
+            "field": "toLocalized",
             "header": "common.to",
             "style": "flex: 3"
         }
