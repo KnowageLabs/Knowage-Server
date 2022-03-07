@@ -160,6 +160,7 @@ export default defineComponent({
             if (process.env.VUE_APP_USE_OLD_QBE_IFRAME == 'true') {
                 this.$emit('showQbeDialog', dataset)
             } else {
+                console.log('ENTERED!')
                 this.selectedQbeDataset = dataset
                 this.qbeVisible = true
             }
