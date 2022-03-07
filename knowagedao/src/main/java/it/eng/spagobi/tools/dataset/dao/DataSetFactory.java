@@ -511,6 +511,7 @@ public class DataSetFactory {
 
 				ds.setParameters(sbiDataSet.getParameters());
 				ds.setDsMetadata(sbiDataSet.getDsMetadata());
+				ds.setMetadata(sbiDataSet.getMetadata());
 				ds.setOrganization(sbiDataSet.getId().getOrganization());
 
 				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
