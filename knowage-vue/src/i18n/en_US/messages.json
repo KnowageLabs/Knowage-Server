@@ -1271,6 +1271,8 @@
             }
         },
         "layersManagement": {
+            "baseLayer": "Base Layer",
+            "fileLocation": "File Location",
             "filterTitle": "Filter",
             "hint": "Change the hint to your liking inside the messages.json.",
             "layerIdentify": "Layer ID",
@@ -1278,14 +1280,14 @@
             "layerName": "Layer name",
             "layerOrder": "Layer Order",
             "layerTitle": "Layer",
-            "title": "Layers Management",
             "layerTypes": {
-                "wfs": "WFS",
-                "wms": "WMS",
-                "tms": "TMS",
                 "google": "Google",
-                "osm": "OSM"
-            }
+                "osm": "OSM",
+                "tms": "TMS",
+                "wfs": "WFS",
+                "wms": "WMS"
+            },
+            "title": "Layers Management"
         },
         "lovsManagement": {
             "add": "Add",

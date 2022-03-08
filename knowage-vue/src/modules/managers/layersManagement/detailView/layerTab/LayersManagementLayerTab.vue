@@ -107,7 +107,13 @@
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.layer.layerName" :additionalTranslateParams="{ fieldName: $t('managers.layersManagement.layerName') }" />
                 </div>
-                <div class="p-field p-col-12 p-lg-6">
+                <div class="p-col-12 p-lg-4 p-mt-3">
+                    <span class="p-as-center">
+                        <InputSwitch id="baseLayer" v-model="layer.baseLayer" />
+                        <label for="baseLayer" class="kn-material-input-label p-ml-2"> {{ $t('managers.layersManagement.baseLayer') }}</label>
+                    </span>
+                </div>
+                <div class="p-field p-col-12 p-lg-4">
                     <span class="p-float-label">
                         <InputText
                             id="name"
@@ -125,7 +131,7 @@
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.layer.layerIdentify" :additionalTranslateParams="{ fieldName: $t('managers.layersManagement.layerIdentify') }" />
                 </div>
-                <div class="p-field p-col-12 p-lg-6">
+                <div class="p-field p-col-12 p-lg-4">
                     <span class="p-float-label">
                         <InputText
                             id="name"
@@ -156,11 +162,21 @@
     <Card id="layer-type-card" class="p-mt-2">
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
-                <div class="p-col-12">
+                <div class="p-field p-col-12">
                     <span class="p-float-label">
-                        <Dropdown id="layerType" class="kn-material-input" v-model="layer.type" :options="layerTypes" optionLabel="label" optionValue="value" />
+                        <Dropdown id="layerType" class="kn-material-input" v-model="layer.type" :options="layerTypes" :disabled="layer.layerId" optionLabel="label" optionValue="value" />
                         <label for="layerType" class="kn-material-input-label"> {{ $t('common.type') }} </label>
                     </span>
+                </div>
+                <div v-if="layer.type == 'File'" class="p-field p-col-12 p-d-flex">
+                    <div class="kn-flex">
+                        <span class="p-float-label">
+                            <InputText id="fileName" class="kn-material-input" v-model="layer.pathFile" :disabled="true" />
+                            <label for="fileName" class="kn-material-input-label"> {{ $t('managers.layersManagement.fileLocation') }} </label>
+                        </span>
+                    </div>
+                    <Button icon="fas fa-upload" class="p-button-text p-button-plain p-ml-2" @click="setUploadType" />
+                    <KnInputFile v-if="!uploading" :changeFunction="uploadLayerFile" accept=".json" :triggerInput="triggerUpload" />
                 </div>
             </form>
         </template>
@@ -176,9 +192,11 @@ import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import Textarea from 'primevue/textarea'
 import MultiSelect from 'primevue/multiselect'
 import Dropdown from 'primevue/dropdown'
+import KnInputFile from '@/components/UI/KnInputFile.vue'
+import InputSwitch from 'primevue/inputswitch'
 
 export default defineComponent({
-    components: { KnValidationMessages, Textarea, MultiSelect, Dropdown },
+    components: { KnValidationMessages, Textarea, MultiSelect, Dropdown, KnInputFile, InputSwitch },
     props: { selectedLayer: { type: Object, required: true }, allRoles: { type: Array, required: true } },
     computed: {},
     emits: [],
@@ -187,6 +205,8 @@ export default defineComponent({
             v$: useValidate() as any,
             descriptor,
             layer: {} as any,
+            triggerUpload: false,
+            uploading: false,
             layerTypes: [
                 {
                     label: this.$t('common.file'),
@@ -227,6 +247,19 @@ export default defineComponent({
         const validationObject = { layer: createValidations('layer', descriptor.validations.layer) }
         return validationObject
     },
-    methods: {}
+    methods: {
+        setUploadType() {
+            this.triggerUpload = false
+            setTimeout(() => (this.triggerUpload = true), 200)
+        },
+        uploadLayerFile(event) {
+            this.uploading = true
+            let uploadedFile = event.target.files[0]
+            console.log('UPLOADED ----------------', uploadedFile)
+            // this.startUpload(uploadedFile)
+            this.triggerUpload = false
+            setTimeout(() => (this.uploading = false), 200)
+        }
+    }
 })
 </script>
