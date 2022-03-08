@@ -1,5 +1,5 @@
 <template>
-    <div class="workflow">
+    <div class="layers-management-filters">
         <div v-if="layer" class="p-grid">
             <div class="p-col">
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
@@ -8,7 +8,7 @@
                     </template>
                 </Toolbar>
                 <Listbox
-                    class="kn-list workflowContainer"
+                    class="kn-list property-container"
                     :options="filters"
                     :filter="true"
                     :filterPlaceholder="$t('common.search')"
@@ -34,7 +34,7 @@
                     </template>
                 </Toolbar>
                 <Listbox
-                    class="kn-list workflowContainer"
+                    class="kn-list property-container"
                     :options="layer.properties"
                     :filter="true"
                     :filterPlaceholder="$t('common.search')"
@@ -117,22 +117,16 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.workflow {
+.layers-management-filters {
     :deep(.p-card-body) {
         padding: 0;
         .p-card-content {
             padding: 0;
         }
     }
-    .workflowContainer {
+    .property-container {
         border: 1px solid var(--kn-color-borders);
         border-top: none;
     }
-}
-.disableCursor {
-    cursor: not-allowed;
-}
-::v-deep(.p-toolbar-group-right) {
-    height: 100%;
 }
 </style>
