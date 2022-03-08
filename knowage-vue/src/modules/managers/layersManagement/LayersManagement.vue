@@ -29,6 +29,8 @@ import FabButton from '@/components/UI/KnFabButton.vue'
 import descriptor from './LayersManagementDescriptor.json'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 
+const deepcopy = require('deepcopy')
+
 export default defineComponent({
     name: 'roles-management',
     components: { FabButton, KnListBox },
@@ -60,7 +62,7 @@ export default defineComponent({
         showDetail(event) {
             const path = event.item ? `/layers-management/${event.item.layerId}` : '/layers-management/new-layer'
             if (!this.touched) {
-                this.selectedLayer = { ...event.item } as iLayer
+                this.selectedLayer = deepcopy(event.item) as iLayer
                 this.$router.push(path)
             } else {
                 this.$confirm.require({
