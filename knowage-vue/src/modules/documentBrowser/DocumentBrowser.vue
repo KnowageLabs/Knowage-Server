@@ -17,7 +17,12 @@
                 </TabPanel>
             </TabView>
 
-            <DocumentBrowserTab v-show="selectedItem" :item="selectedItem?.item" :mode="selectedItem?.mode" :functionalityId="selectedItem?.functionalityId" @close="closeDocument('current')"></DocumentBrowserTab>
+            <DocumentBrowserTab v-show="selectedItem" :item="selectedItem?.item" :mode="selectedItem?.mode" :functionalityId="selectedItem?.functionalityId" @close="closeDocument('current')" @iframeCreated="onIFrameCreated"></DocumentBrowserTab>
+            {{ iFrameContainers }}
+            {{ selectedItem }}
+            <div v-for="(iframe, index) in iFrameContainers" :key="index">
+                <iframe v-show="iframe.item?.routerId === selectedItem?.routerId" ref="iframe" class="kn-width-full kn-height-full" :src="iframe.iframe"></iframe>
+            </div>
             <div id="document-browser-tab-icon-container" v-if="activeIndex !== 0">
                 <i id="document-browser-tab-icon" class="fa fa-times-circle" @click="toggle($event)"></i>
                 <Menu ref="menu" :model="menuItems" :popup="true" />
@@ -46,7 +51,8 @@ export default defineComponent({
             activeIndex: 0,
             menuItems: [] as any[],
             selectedItem: null as any,
-            id: 0
+            id: 0,
+            iFrameContainers: [] as any[]
         }
     },
     async created() {
@@ -183,6 +189,13 @@ export default defineComponent({
                     this.tabs = []
                     this.activeIndex = 0
             }
+        },
+        onIFrameCreated(payload: any) {
+            const index = this.iFrameContainers.findIndex((iframe: any) => iframe.item?.routerId === this.selectedItem?.routerId)
+            console.log('INDEX: ', index)
+            if (index === -1) this.iFrameContainers.push(payload)
+            console.log('SELECTED ITEM: ', this.selectedItem)
+            console.log('payload: ', payload)
         }
     }
 })
