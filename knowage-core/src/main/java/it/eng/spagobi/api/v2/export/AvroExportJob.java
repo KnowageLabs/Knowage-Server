@@ -28,6 +28,9 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
+import org.apache.avro.Conversion;
+import org.apache.avro.Conversions;
+import org.apache.avro.LogicalType;
 import org.apache.avro.LogicalTypes;
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
@@ -132,7 +135,11 @@ public class AvroExportJob extends AbstractExportJob {
 			} else if (isTimestamp(type)) {
 				value = timestampFormatter.format(value);
 			} else if (BigDecimal.class.isAssignableFrom(type)) {
-				value = value.toString();
+				BigDecimal bigDecimalValue = (BigDecimal) value;
+				LogicalType decimal = LogicalTypes.decimal(bigDecimalValue.precision(), bigDecimalValue.scale());
+				Schema bytesSchema = Schema.create(Schema.Type.BYTES);
+				Conversion<BigDecimal> conversion = new Conversions.DecimalConversion();
+				value = conversion.toBytes(bigDecimalValue, bytesSchema, decimal);
 			} else if (Double.class.isAssignableFrom(type)) {
 				value = Double.valueOf(value.toString());
 			} else if (Integer.class.isAssignableFrom(type)) {
@@ -224,7 +231,7 @@ public class AvroExportJob extends AbstractExportJob {
 		Schema ret = null;
 		if (Integer.class.isAssignableFrom(fieldType)) {
 			ret = Schema.create(Schema.Type.INT);
-		}else if (BigDecimal.class.isAssignableFrom(fieldType)) {
+		} else if (BigDecimal.class.isAssignableFrom(fieldType)) {
 			ret = LogicalTypes.decimal(20, 8).addToSchema(Schema.create(Schema.Type.BYTES));
 		} else if (Float.class.isAssignableFrom(fieldType)) {
 			ret = Schema.create(Schema.Type.FLOAT);
