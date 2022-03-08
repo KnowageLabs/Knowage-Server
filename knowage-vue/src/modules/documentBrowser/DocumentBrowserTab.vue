@@ -1,5 +1,4 @@
 <template>
-    {{ key }}
     <router-view v-if="item" v-slot="{ Component }" :functionalityId="functionalityId" :item="item" @close="$emit('close', item)" @iframeCreated="onIframeCreated">
         <keep-alive>
             <component :is="Component" :key="key"></component>

@@ -18,8 +18,6 @@
             </TabView>
 
             <DocumentBrowserTab v-show="selectedItem" :item="selectedItem?.item" :mode="selectedItem?.mode" :functionalityId="selectedItem?.functionalityId" @close="closeDocument('current')" @iframeCreated="onIFrameCreated"></DocumentBrowserTab>
-            {{ iFrameContainers }}
-            {{ selectedItem }}
             <div v-for="(iframe, index) in iFrameContainers" :key="index">
                 <iframe v-show="iframe.item?.routerId === selectedItem?.item.routerId" ref="iframe" class="document-browser-cockpit-iframe" :src="iframe.iframe"></iframe>
             </div>
@@ -192,7 +190,7 @@ export default defineComponent({
             }
         },
         onIFrameCreated(payload: any) {
-            const index = this.iFrameContainers.findIndex((iframe: any) => iframe.item?.routerId === this.selectedItem?.routerId)
+            const index = this.iFrameContainers.findIndex((iframe: any) => iframe.item?.routerId === this.selectedItem?.item.routerId)
             console.log('INDEX: ', index)
             if (index === -1) this.iFrameContainers.push(payload)
             console.log('SELECTED ITEM: ', this.selectedItem)
@@ -234,7 +232,7 @@ export default defineComponent({
 
 .document-browser-cockpit-iframe {
     position: absolute;
-    top: 35px;
+    top: 39px;
     width: 100%;
     height: 100%;
 }
