@@ -1,5 +1,5 @@
 <template>
-    <Card class="p-mt-3">
+    <Card class="p-m-2">
         <template #content>
             <div class="p-field">
                 <span class="p-float-label">
@@ -64,97 +64,97 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-    import { VCodeMirror } from 'vue3-code-mirror'
-    import useValidate from '@vuelidate/core'
-    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-    import queryDescriptor from './DatasetManagementQueryDataset.json'
-    import Dropdown from 'primevue/dropdown'
-    import Card from 'primevue/card'
-    import HelpDialog from './DatasetManagementQueryHelpDialog.vue'
+import { defineComponent } from 'vue'
+import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
+import { VCodeMirror } from 'vue3-code-mirror'
+import useValidate from '@vuelidate/core'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import queryDescriptor from './DatasetManagementQueryDataset.json'
+import Dropdown from 'primevue/dropdown'
+import Card from 'primevue/card'
+import HelpDialog from './DatasetManagementQueryHelpDialog.vue'
 
-    export default defineComponent({
-        components: { Card, Dropdown, KnValidationMessages, VCodeMirror, HelpDialog },
-        props: { selectedDataset: { type: Object as any }, dataSources: { type: Array as any }, scriptTypes: { type: Array as any } },
-        emits: ['touched'],
-        data() {
-            return {
-                queryDescriptor,
-                dataset: {} as any,
-                codeMirror: {} as any,
-                codeMirrorScript: {} as any,
-                v$: useValidate() as any,
-                expandQueryCard: true,
-                helpDialogVisible: false,
-                expandScriptCard: false,
-                codemirrorOptions: {
-                    mode: 'text/x-sql',
-                    lineWrapping: true,
-                    indentWithTabs: true,
-                    smartIndent: true,
-                    matchBrackets: true,
-                    theme: 'eclipse',
-                    lineNumbers: true
-                },
-                scriptOptions: {
-                    mode: '',
-                    indentWithTabs: true,
-                    smartIndent: true,
-                    lineWrapping: true,
-                    matchBrackets: true,
-                    autofocus: true,
-                    theme: 'eclipse',
-                    lineNumbers: true
-                }
-            }
-        },
-        created() {
-            this.loadDataset()
-            this.setupCodeMirror()
-            this.loadScriptMode()
-        },
-        watch: {
-            selectedDataset() {
-                this.loadDataset()
-                this.loadScriptMode()
-            }
-        },
-        validations() {
-            const queryFieldsRequired = (value) => {
-                return this.dataset.dsTypeCd != 'Query' || value
-            }
-            const customValidators: ICustomValidatorMap = { 'query-fields-required': queryFieldsRequired }
-            const validationObject = { dataset: createValidations('dataset', queryDescriptor.validations.dataset, customValidators) }
-            return validationObject
-        },
-        methods: {
-            setupCodeMirror() {
-                const interval = setInterval(() => {
-                    if (!this.$refs.codeMirror || !this.$refs.codeMirrorScript) return
-                    this.codeMirror = (this.$refs.codeMirror as any).editor as any
-                    this.codeMirrorScript = (this.$refs.codeMirrorScript as any).editor as any
-                    clearInterval(interval)
-                }, 200)
+export default defineComponent({
+    components: { Card, Dropdown, KnValidationMessages, VCodeMirror, HelpDialog },
+    props: { selectedDataset: { type: Object as any }, dataSources: { type: Array as any }, scriptTypes: { type: Array as any } },
+    emits: ['touched'],
+    data() {
+        return {
+            queryDescriptor,
+            dataset: {} as any,
+            codeMirror: {} as any,
+            codeMirrorScript: {} as any,
+            v$: useValidate() as any,
+            expandQueryCard: true,
+            helpDialogVisible: false,
+            expandScriptCard: false,
+            codemirrorOptions: {
+                mode: 'text/x-sql',
+                lineWrapping: true,
+                indentWithTabs: true,
+                smartIndent: true,
+                matchBrackets: true,
+                theme: 'eclipse',
+                lineNumbers: true
             },
-            loadDataset() {
-                this.dataset = this.selectedDataset
-                this.dataset.query ? '' : (this.dataset.query = '')
-                this.dataset.queryScript ? '' : (this.dataset.queryScript = '')
-            },
-            loadScriptMode() {
-                if (this.dataset.queryScriptLanguage) {
-                    this.scriptOptions.mode = this.dataset.queryScriptLanguage === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
-                }
-            },
-            onLanguageChanged(value: string) {
-                const mode = value === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
-                setTimeout(() => {
-                    this.setupCodeMirror()
-                    this.codeMirrorScript.setOption('mode', mode)
-                }, 250)
-                this.$emit('touched')
+            scriptOptions: {
+                mode: '',
+                indentWithTabs: true,
+                smartIndent: true,
+                lineWrapping: true,
+                matchBrackets: true,
+                autofocus: true,
+                theme: 'eclipse',
+                lineNumbers: true
             }
         }
-    })
+    },
+    created() {
+        this.loadDataset()
+        this.setupCodeMirror()
+        this.loadScriptMode()
+    },
+    watch: {
+        selectedDataset() {
+            this.loadDataset()
+            this.loadScriptMode()
+        }
+    },
+    validations() {
+        const queryFieldsRequired = (value) => {
+            return this.dataset.dsTypeCd != 'Query' || value
+        }
+        const customValidators: ICustomValidatorMap = { 'query-fields-required': queryFieldsRequired }
+        const validationObject = { dataset: createValidations('dataset', queryDescriptor.validations.dataset, customValidators) }
+        return validationObject
+    },
+    methods: {
+        setupCodeMirror() {
+            const interval = setInterval(() => {
+                if (!this.$refs.codeMirror || !this.$refs.codeMirrorScript) return
+                this.codeMirror = (this.$refs.codeMirror as any).editor as any
+                this.codeMirrorScript = (this.$refs.codeMirrorScript as any).editor as any
+                clearInterval(interval)
+            }, 200)
+        },
+        loadDataset() {
+            this.dataset = this.selectedDataset
+            this.dataset.query ? '' : (this.dataset.query = '')
+            this.dataset.queryScript ? '' : (this.dataset.queryScript = '')
+        },
+        loadScriptMode() {
+            if (this.dataset.queryScriptLanguage) {
+                this.scriptOptions.mode = this.dataset.queryScriptLanguage === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
+            }
+        },
+        onLanguageChanged(value: string) {
+            const mode = value === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
+            setTimeout(() => {
+                this.setupCodeMirror()
+                this.codeMirrorScript.setOption('mode', mode)
+            }, 250)
+            this.$emit('touched')
+        }
+    }
+})
 </script>

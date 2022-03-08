@@ -6,20 +6,27 @@
                 <InputText class="kn-material-input" v-model="filter.leftOperandDescription" :disabled="true" />
             </div>
 
-            <div class="p-col-2">
-                <label class="kn-material-input-label" v-tooltip.top="$t('qbe.filters.conditionTooltip')"> {{ $t('qbe.filters.condition') }} </label>
-                <Dropdown class="kn-material-input" v-model="filter.operator" :options="QBEFilterDialogDescriptor.operatorValues" optionValue="value" @change="onFilterOperatorChange">
-                    <template #value="slotProps">
-                        <div v-if="slotProps.value">
-                            <span class="qbe-filter-option-value">{{ slotProps.value.toLowerCase() }}</span>
-                        </div>
-                    </template>
-                    <template #option="slotProps">
-                        <div>
-                            <span>{{ $t(slotProps.option.label) }}</span>
-                        </div>
-                    </template>
-                </Dropdown>
+            <div class="p-col-2 p-d-flex p-flex-row p-ai-center">
+                <div class="kn-flex">
+                    <label class="kn-material-input-label" v-tooltip.top="$t('qbe.filters.conditionTooltip')"> {{ $t('qbe.filters.condition') }} </label>
+                    <Dropdown class="kn-material-input" v-model="filter.operator" :options="filterOperatorOptions" optionValue="value" @change="onFilterOperatorChange">
+                        <template #value="slotProps">
+                            <div v-if="slotProps.value">
+                                <span class="qbe-filter-option-value">{{ getFilterOperatorLabel(slotProps.value) }}</span>
+                            </div>
+                        </template>
+                        <template #option="slotProps">
+                            <div>
+                                <span>{{ $t(slotProps.option.label) }}</span>
+                            </div>
+                        </template>
+                    </Dropdown>
+                </div>
+
+                <div v-show="filter.operator === 'SPATIAL_NN'" class=" p-ml-2">
+                    <label class="kn-material-input-label"> {{ $t('common.parameter') }} </label>
+                    <InputText class="kn-material-input" v-model="filter.operatorParameter" />
+                </div>
             </div>
 
             <div class="p-col-2">
@@ -136,7 +143,8 @@ export default defineComponent({
             targetDate: null as Date | null,
             targetEndDate: null as Date | null,
             parameters: [] as any[],
-            loading: false
+            loading: false,
+            filterOperatorOptions: [] as { label: string; value: string }[]
         }
     },
     watch: {
@@ -151,8 +159,8 @@ export default defineComponent({
         }
     },
     created() {
-        this.loadFilter()
         this.loadEntities()
+        this.loadFilter()
         this.loadParameters()
     },
     methods: {
@@ -166,6 +174,25 @@ export default defineComponent({
             }
 
             this.formatFilter()
+
+            this.filterOperatorOptions = this.QBEFilterDialogDescriptor.operatorValues
+            const tempEntity = this.getEntity() as any
+            if (tempEntity?.iconCls === 'geographic_dimension') {
+                this.filterOperatorOptions = this.filterOperatorOptions.concat(this.QBEFilterDialogDescriptor.spatialOperatorValues)
+            }
+        },
+        getEntity() {
+            let entity = null
+            for (let i = 0; i < this.entities.length && !entity; i++) {
+                for (let j = 0; j < this.entities[i].children.length; j++) {
+                    if (this.entities[i].children[j].id === this.field.id) {
+                        entity = this.entities[i]
+                        break
+                    }
+                }
+            }
+
+            return entity
         },
         loadEntities() {
             this.entities = this.propEntities ? [...this.propEntities] : []
@@ -241,6 +268,10 @@ export default defineComponent({
                 this.targetEndDate = null
             } else if (this.filter && this.filter.rightType === 'valueOfField') {
                 this.selectedValues = []
+            }
+
+            if (this.filter && this.filter.operator !== 'SPATIAL_NN') {
+                delete this.filter.operatorParameter
             }
             this.resetFilterRightOperandValues()
         },
@@ -354,6 +385,14 @@ export default defineComponent({
                 this.filter.rightOperandValue = ['$P{' + this.filter.rightOperandDescription + '}']
                 this.filter.rightOperandLongDescription = 'Static Content ' + '$P{' + this.filter.rightOperandDescription + '}'
             }
+        },
+        getFilterOperatorLabel(value: string) {
+            for (let i = 0; i < this.filterOperatorOptions.length; i++) {
+                if (this.filterOperatorOptions[i].value === value) {
+                    return this.$t(this.filterOperatorOptions[i].label)
+                }
+            }
+            return ''
         }
     }
 })
