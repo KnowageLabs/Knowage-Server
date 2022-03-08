@@ -90,8 +90,6 @@ export default defineComponent({
 
             this.selectedItem = tempItem
 
-            console.log('SELECTED ITEM: ', this.selectedItem)
-
             const id = payload.item ? payload.item.label : 'new-dashboard'
             if (payload.item) {
                 let routeDocumentType = this.getRouteDocumentType(payload.item)
@@ -170,31 +168,35 @@ export default defineComponent({
             }
         },
         closeDocument(mode: string) {
+            let index = -1
             switch (mode) {
                 case 'current':
                     this.tabs.splice(this.activeIndex - 1, 1)
                     this.activeIndex = 0
+                    index = this.iFrameContainers.findIndex((iframe: any) => iframe.item?.routerId === this.selectedItem?.item.routerId)
+                    if (index !== -1) this.iFrameContainers.splice(index, 1)
                     this.$router.push('/document-browser')
                     break
                 case 'other':
                     this.tabs = [this.tabs[this.activeIndex - 1]]
                     this.activeIndex = 1
+                    this.iFrameContainers = this.iFrameContainers.filter((iframe: any) => iframe.item?.routerId === this.selectedItem?.item.routerId)
                     break
                 case 'right':
                     this.tabs.splice(this.activeIndex)
+                    index = this.iFrameContainers.findIndex((iframe: any) => iframe.item?.routerId === this.selectedItem?.item.routerId)
+                    if (index !== -1) this.iFrameContainers.splice(index + 1)
                     break
                 case 'all':
                     this.$router.push('/document-browser')
                     this.tabs = []
                     this.activeIndex = 0
+                    this.iFrameContainers = []
             }
         },
         onIFrameCreated(payload: any) {
             const index = this.iFrameContainers.findIndex((iframe: any) => iframe.item?.routerId === this.selectedItem?.item.routerId)
-            console.log('INDEX: ', index)
             if (index === -1) this.iFrameContainers.push(payload)
-            console.log('SELECTED ITEM: ', this.selectedItem)
-            console.log('payload: ', payload)
         }
     }
 })
