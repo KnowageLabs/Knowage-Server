@@ -182,6 +182,7 @@
         "KnCalculatedField": {
             "columnName": "Column Name",
             "description": "Write the formula to create a new column using the allowed functions",
+            "fields": "Fields",
             "formula": "Formula",
             "title": "Calculated Field",
             "type": "Type"

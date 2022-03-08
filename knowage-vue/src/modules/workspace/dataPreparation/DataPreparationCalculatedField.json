@@ -1,0 +1,114 @@
+{
+    "availableFunctions": [
+        {
+            "category": "math",
+            "formula": "AVG(field1,field2,...)",
+            "help": "Returns the mean calculated from values of a group.",
+            "label": "average",
+            "name": "average"
+        },
+        {
+            "category": "text",
+            "formula": "CONCAT(field1,field2,...)",
+            "help": "concat help",
+            "label": "concat",
+            "name": "concat"
+        },
+        {
+            "category": "math",
+            "formula": "MIN(field1,field2)",
+            "help": "min help",
+            "label": "min",
+            "name": "min"
+        },
+        {
+            "category": "math",
+            "formula": "MAX(expr)",
+            "help": "Returns the minimum value of expr",
+            "label": "max",
+            "name": "max"
+        },
+        {
+            "category": "math",
+            "formula": "REVERSE(array)",
+            "help": "Returns a reversed string or an array with reverse order of elements",
+            "label": "reverse",
+            "name": "reverse"
+        },
+        {
+            "category": "math",
+            "formula": "CONV(num, from_base, to_base)",
+            "help": "Convert num from from_base to to_base",
+            "label": "conv",
+            "name": "conv"
+        },
+        {
+            "category": "math",
+            "formula": "POWER(expr1, expr2)",
+            "help": "Raises expr1 to the power of expr2",
+            "label": "power",
+            "name": "power"
+        },
+        {
+            "category": "lorem",
+            "formula": "L_IPSUM(expr1, expr2)",
+            "help": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+            "label": "lipsum",
+            "name": "lipsum"
+        },
+        {
+            "category": "casuale",
+            "formula": "CAS(expr1, expr2)",
+            "help": "Casual function",
+            "label": "casual",
+            "name": "casual"
+        }
+    ],
+    "category": {
+        "label": "category"
+    },
+    "hint": "Click on one of the listed functions to get more information about it",
+    "validationServiceUrl": "/knowage/restful-services/2.0/currentuser",
+    "validations": [
+        {
+            "fieldName": "colName",
+            "validators": [
+                {
+                    "key": "required"
+                },
+                {
+                    "key": "maximumCharacters",
+                    "validator": {
+                        "params": {
+                            "max": 100
+                        },
+                        "type": "maxLength"
+                    }
+                },
+                {
+                    "key": "regex",
+                    "validator": {
+                        "type": "extendedAlphanumericRegex"
+                    }
+                }
+            ]
+        },
+        {
+            "fieldName": "formula",
+            "validators": [
+                {
+                    "key": "required"
+                },
+                {
+                    "key": "maximumCharacters",
+                    "validator": {
+                        "params": {
+                            "max": 1000
+                        },
+                        "type": "maxLength"
+                    }
+                }
+            ]
+        }
+    ]
+}
