@@ -10,9 +10,11 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +22,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.SimpleThreadScope;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
+import org.springframework.web.client.RestTemplate;
 
 import it.eng.knowage.boot.context.BusinessRequestContext;
 import it.eng.knowage.boot.factory.SecurityServiceFactory;
@@ -107,6 +110,15 @@ public class MainConfigurationTest {
 		businessRequestContext.setOrganization("DEFAULT_TENANT");
 		businessRequestContext.setUserProfile(userProfile);
 		return businessRequestContext;
+	}
+
+	@Bean
+	@Qualifier("perUserBe2Be")
+	public RestTemplate perUserBe2BeRestTemplate(RestTemplateBuilder builder, Context context, PerUserBe2BeRequestCustomizer customizer) throws NamingException, MalformedURLException {
+
+		// TODO
+
+		return builder.build();
 	}
 
 }
