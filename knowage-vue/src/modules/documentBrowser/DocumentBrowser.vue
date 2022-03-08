@@ -21,7 +21,7 @@
             {{ iFrameContainers }}
             {{ selectedItem }}
             <div v-for="(iframe, index) in iFrameContainers" :key="index">
-                <iframe v-show="iframe.item?.routerId === selectedItem?.routerId" ref="iframe" class="kn-width-full kn-height-full" :src="iframe.iframe"></iframe>
+                <iframe v-show="iframe.item?.routerId === selectedItem?.item.routerId" ref="iframe" class="document-browser-cockpit-iframe" :src="iframe.iframe"></iframe>
             </div>
             <div id="document-browser-tab-icon-container" v-if="activeIndex !== 0">
                 <i id="document-browser-tab-icon" class="fa fa-times-circle" @click="toggle($event)"></i>
@@ -69,6 +69,7 @@ export default defineComponent({
     methods: {
         onTabChange() {
             if (this.activeIndex === 0) {
+                this.selectedItem = null
                 this.$router.push('/document-browser')
                 return
             }
@@ -229,5 +230,12 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     flex: 1;
+}
+
+.document-browser-cockpit-iframe {
+    position: absolute;
+    top: 35px;
+    width: 100%;
+    height: 100%;
 }
 </style>
