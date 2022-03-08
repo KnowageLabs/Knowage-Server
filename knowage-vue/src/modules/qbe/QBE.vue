@@ -323,9 +323,6 @@ export default defineComponent({
             const drivers = encodeURI(JSON.stringify(temp))
             if (this.dataset) {
                 await this.$http
-                    // .get(
-                    //     process.env.VUE_APP_QBE_PATH + `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}&DRIVERS=%7B%22Test%22:%5B%7B%22value%22:%22Canada+West%22,%22description%22:%5B%22Canada+West%22%5D%7D%5D%7D`
-                    // )
                     .get(process.env.VUE_APP_QBE_PATH + `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}&drivers=${drivers}`)
                     .then(() => {})
                     .catch(() => {})
@@ -697,8 +694,12 @@ export default defineComponent({
         },
         async onExecute(qbeParameters: any[]) {
             if (this.qbe) {
-                console.log('ON EXECUTE: ')
                 this.qbe.pars = [...qbeParameters]
+                if (this.dataset && !this.dataset.dataSourceId) {
+                    await this.loadDataset()
+                } else {
+                    this.qbe = this.getQBEFromModel()
+                }
                 await this.loadQBE()
                 this.loadQuery()
                 this.qbeLoaded = true
