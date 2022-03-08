@@ -13,7 +13,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Checkbox from 'primevue/checkbox'
-import documentBrowserTreeDescriptor from '@/modules/documentBrowser/documentBrowserHome/DocumentBrowserTreeDescriptor.json'
 import Tree from 'primevue/tree'
 export default defineComponent({
     name: 'scheduler-document-accordion-tree',
@@ -21,7 +20,6 @@ export default defineComponent({
     props: { propFunctionalities: { type: Array }, propSelectedFolders: { type: Array } },
     data() {
         return {
-            documentBrowserTreeDescriptor,
             functionalities: [] as any[],
             selectedFolders: [] as any[],
             nodes: [] as any[],
@@ -62,7 +60,6 @@ export default defineComponent({
                     label: folder.name,
                     children: [] as any[],
                     data: folder,
-                    style: this.documentBrowserTreeDescriptor.node.style,
                     path: folder.path,
                     customIcon: folder.childs ? 'pi pi-folder-open' : 'pi pi-folder',
                     selectable: folder.codType === 'USER_FUNCT' || folder.parentId
