@@ -1273,19 +1273,22 @@
         "layersManagement": {
             "filterTitle": "Filter",
             "hint": "Change the hint to your liking inside the messages.json.",
+            "layerFilter": "Layer Filter",
+            "layerFilterAdded": "Layer Filter Added",
             "layerIdentify": "Layer ID",
             "layerLabel": "Layer label",
             "layerName": "Layer name",
             "layerOrder": "Layer Order",
             "layerTitle": "Layer",
-            "title": "Layers Management",
             "layerTypes": {
-                "wfs": "WFS",
-                "wms": "WMS",
-                "tms": "TMS",
                 "google": "Google",
-                "osm": "OSM"
-            }
+                "osm": "OSM",
+                "tms": "TMS",
+                "wfs": "WFS",
+                "wms": "WMS"
+            },
+            "noFilterSelected": "No filter selected, click on an item from the left list to add them",
+            "title": "Layers Management"
         },
         "lovsManagement": {
             "add": "Add",
