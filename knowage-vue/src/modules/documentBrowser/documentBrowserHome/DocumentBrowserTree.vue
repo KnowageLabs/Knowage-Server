@@ -19,7 +19,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iNode } from '../DocumentBrowser'
-import documentBrowserTreeDescriptor from './DocumentBrowserTreeDescriptor.json'
 import Tree from 'primevue/tree'
 
 export default defineComponent({
@@ -29,7 +28,6 @@ export default defineComponent({
     emits: ['folderSelected'],
     data() {
         return {
-            documentBrowserTreeDescriptor,
             folders: [] as any[],
             nodes: [] as iNode[],
             selectedFolderKey: {},
@@ -78,7 +76,7 @@ export default defineComponent({
             this.nodes = [personalFolder]
             const foldersWithMissingParent = [] as iNode[]
             this.folders.forEach((folder: any) => {
-                const node = { key: folder.name, icon: 'pi pi-folder', id: folder.id, parentId: folder.parentId, label: folder.name, children: [] as iNode[], data: folder, style: this.documentBrowserTreeDescriptor.node.style }
+                const node = { key: folder.name, icon: 'pi pi-folder', id: folder.id, parentId: folder.parentId, label: folder.name, children: [] as iNode[], data: folder }
                 node.children = foldersWithMissingParent.filter((folder: iNode) => node.id === folder.parentId)
                 this.attachFolderToTree(node, foldersWithMissingParent, personalFolder)
             })
