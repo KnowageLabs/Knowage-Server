@@ -67,6 +67,7 @@ export default defineComponent({
     name: 'layers-management-filter-tab',
     components: { Listbox },
     props: { selectedLayer: { type: Object as PropType<iLayer>, required: true }, propFilters: { type: Array as PropType<iFilter[]> } },
+    emits: ['touched'],
     data() {
         return {
             layersManagementFilterTabDescriptor,
@@ -108,6 +109,7 @@ export default defineComponent({
             if (index !== -1) {
                 targetList.push(filter)
                 sourceList.splice(index, 1)
+                this.$emit('touched')
             }
         }
     }
