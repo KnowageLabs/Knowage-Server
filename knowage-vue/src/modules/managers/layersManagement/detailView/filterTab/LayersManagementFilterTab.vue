@@ -23,7 +23,6 @@
                             <div class="kn-list-item-text">
                                 <span>{{ slotProps.option.property }}</span>
                             </div>
-                            <Button icon="pi pi-arrow-circle-right" class="p-button-link" @click.stop="addProperty(slotProps.option)" />
                         </div>
                     </template>
                 </Listbox>
@@ -47,7 +46,6 @@
                     <template #empty>{{ $t('managers.layersManagement.noFilterSelected') }}</template>
                     <template #option="slotProps">
                         <div class="kn-list-item" @click="removeProperty(slotProps.option)">
-                            <Button icon="pi pi-arrow-circle-left" class="p-button-link" @click.stop="removeProperty(slotProps.option)" />
                             <div class="kn-list-item-text">
                                 <span>{{ slotProps.option.property }}</span>
                             </div>
@@ -91,7 +89,6 @@ export default defineComponent({
     methods: {
         loadLayer() {
             this.layer = this.selectedLayer
-            console.log('LOADED LAYER: ', this.layer)
         },
         loadFilters() {
             this.filters = []
@@ -99,15 +96,11 @@ export default defineComponent({
                 const index = this.layer?.properties.findIndex((property: iFilter) => property.property === filter.property)
                 if (index === -1) this.filters.push(filter)
             })
-            //this.filters = this.propFilters as iFilter[]
-            console.log('LOADED FILTERS IN TAB: ', this.filters)
         },
         addProperty(filter: iFilter) {
-            console.log('addProperty: ', filter)
             this.moveProperty(filter, this.filters, this.layer?.properties)
         },
         removeProperty(filter: iFilter) {
-            console.log('removeProperty: ', filter)
             this.moveProperty(filter, this.layer?.properties, this.filters)
         },
         moveProperty(filter: iFilter, sourceList, targetList) {
