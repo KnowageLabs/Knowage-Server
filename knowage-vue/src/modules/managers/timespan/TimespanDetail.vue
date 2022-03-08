@@ -16,8 +16,9 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iTimespan, iCategory } from './Timespan'
+import { iTimespan, iCategory, iInterval } from './Timespan'
 import { AxiosResponse } from 'axios'
+import { formatDate } from '@/helpers/commons/localeHelper'
 import TimespanForm from './TimespanForm.vue'
 import TimespanIntervalTable from './TimespanIntervalTable.vue'
 
@@ -60,13 +61,27 @@ export default defineComponent({
             if (this.id) {
                 await this.$http
                     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/loadTimespan?ID=${this.id}`)
-                    .then((response: AxiosResponse<any>) => (this.timespan = response.data))
+                    .then((response: AxiosResponse<any>) => {
+                        this.timespan = response.data
+                        if (this.timespan?.type === 'temporal') this.formatIntervalDates()
+                    })
                     .catch(() => {})
                 if (this.clone === 'true') await this.cloneTimespan()
             } else {
                 this.timespan = this.getDefautTimespan()
             }
             this.loading = false
+        },
+        formatIntervalDates() {
+            if (this.timespan) {
+                this.timespan.definition.forEach((interval: iInterval) => {
+                    interval.fromLocalized = this.getFormattedDate(interval.from)
+                    interval.toLocalized = this.getFormattedDate(interval.to)
+                })
+            }
+        },
+        getFormattedDate(date: string) {
+            return formatDate(date, '', 'DD/MM/yyyy')
         },
         getDefautTimespan(): iTimespan {
             return {

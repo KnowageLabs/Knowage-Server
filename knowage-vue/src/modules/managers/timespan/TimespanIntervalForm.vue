@@ -9,7 +9,8 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { iTimespan, iInterval } from './Timespan'
-import { parseDateTemp, formatDate } from './timespanService'
+// import { parseDateTemp, formatDate } from './timespanService'
+import { formatDate } from '@/helpers/commons/localeHelper'
 import Calendar from 'primevue/calendar'
 
 const deepcopy = require('deepcopy')
@@ -113,6 +114,7 @@ export default defineComponent({
                 for (let i in this.timespan.definition) {
                     const tempStart = new Date(this.timespan.definition[i].from.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3'))
                     const tempEnd = new Date(this.timespan.definition[i].to.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3'))
+
                     if (fromDate <= tempEnd && toDate >= tempStart) {
                         this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.temporalOverlapError') })
                         return
@@ -120,8 +122,8 @@ export default defineComponent({
                 }
                 const from = ('0' + fromDate.getDate()).slice(-2) + '/' + ('0' + (fromDate.getMonth() + 1)).slice(-2) + '/' + fromDate.getFullYear()
                 const to = ('0' + toDate.getDate()).slice(-2) + '/' + ('0' + (toDate.getMonth() + 1)).slice(-2) + '/' + toDate.getFullYear()
-                const fromLocalized = formatDate(fromDate, parseDateTemp('d/m/Y'))
-                const toLocalized = formatDate(toDate, parseDateTemp('d/m/Y'))
+                const fromLocalized = this.getFormattedDate(from)
+                const toLocalized = this.getFormattedDate(to)
                 this.timespan.definition.push({ from: from, to: to, fromLocalized: fromLocalized, toLocalized: toLocalized })
                 this.refreshTimespanInterval(fromDate, toDate)
             }
@@ -136,6 +138,9 @@ export default defineComponent({
         },
         padTo2Digits(num) {
             return String(num).padStart(2, '0')
+        },
+        getFormattedDate(date: string) {
+            return formatDate(date, '', 'DD/MM/yyyy')
         }
     }
 })

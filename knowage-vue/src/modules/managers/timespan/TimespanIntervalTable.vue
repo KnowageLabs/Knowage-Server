@@ -23,7 +23,6 @@ import DataTable from 'primevue/datatable'
 import timespanDescriptor from './TimespanDescriptor.json'
 import Card from 'primevue/card'
 import TimespanIntervalForm from './TimespanIntervalForm.vue'
-
 export default defineComponent({
     name: 'timespan-interval-table',
     props: { propTimespan: { type: Object as PropType<iTimespan | null> } },
