@@ -1,0 +1,26 @@
+{
+    "knListSettings": {
+        "buttons": [
+            {
+                "emits": "download",
+                "icon": "fas fa-download",
+                "label": "common.download"
+            },
+            {
+                "emits": "delete",
+                "icon": "far fa-trash-alt",
+                "label": "common.delete"
+            }
+        ],
+        "defaultSortField": "label",
+        "filterFields": ["label", "type"],
+        "interaction": {
+            "parameterLabel": "id",
+            "parameterValue": "id",
+            "type": "event"
+        },
+        "sortFields": ["label", "type"],
+        "textField": "type",
+        "titleField": "label"
+    }
+}
