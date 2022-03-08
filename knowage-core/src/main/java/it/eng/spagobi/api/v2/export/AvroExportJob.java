@@ -68,6 +68,8 @@ public class AvroExportJob extends AbstractExportJob {
 
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
 	private static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.S";
+	private static final int BIG_DECIMAL_PRECISION = 10;
+	private static final int BIG_DECIMAL_SCALE = 6;
 
 	private IDataSet dataSet;
 	private IMetaData dsMeta;
@@ -136,7 +138,8 @@ public class AvroExportJob extends AbstractExportJob {
 				value = timestampFormatter.format(value);
 			} else if (BigDecimal.class.isAssignableFrom(type)) {
 				BigDecimal bigDecimalValue = (BigDecimal) value;
-				LogicalType decimal = LogicalTypes.decimal(bigDecimalValue.precision(), bigDecimalValue.scale());
+				bigDecimalValue.setScale(BIG_DECIMAL_SCALE);
+				LogicalType decimal = LogicalTypes.decimal(BIG_DECIMAL_PRECISION, BIG_DECIMAL_SCALE);
 				Schema bytesSchema = Schema.create(Schema.Type.BYTES);
 				Conversion<BigDecimal> conversion = new Conversions.DecimalConversion();
 				value = conversion.toBytes(bigDecimalValue, bytesSchema, decimal);
@@ -199,26 +202,16 @@ public class AvroExportJob extends AbstractExportJob {
 	}
 
 	private Schema getSchema(IDataSet dataSet) throws JSONException {
-		FieldAssembler<Schema> fieldAssembler = SchemaBuilder.record("DataSet")
-				.namespace("it.eng.spagobi.api.v2.export.AvroExportJob")
-				.fields();
+		FieldAssembler<Schema> fieldAssembler = SchemaBuilder.record("DataSet").namespace("it.eng.spagobi.api.v2.export.AvroExportJob").fields();
 
 		for (int i = 0; i <= dsMeta.getFieldCount() - 1; i++) {
 			JSONObject metadata = new JSONObject();
 			metadata.put("knColumnAlias", dsMeta.getFieldAlias(i));
 			metadata.put("knJavaType", dsMeta.getFieldType(i).getName());
 
-			fieldAssembler.name(dsMeta.getFieldName(i))
-					.prop("knColumnAlias", dsMeta.getFieldAlias(i))
-					.prop("knJavaType", dsMeta.getFieldType(i).getName())
-					.prop("knFieldType", dsMeta.getFieldMeta(i).getFieldType().toString())
-					.type()
-					.unionOf()
-					.nullType()
-					.and()
-					.type(getType(dsMeta.getFieldType(i)))
-					.endUnion()
-					.noDefault();
+			fieldAssembler.name(dsMeta.getFieldName(i)).prop("knColumnAlias", dsMeta.getFieldAlias(i)).prop("knJavaType", dsMeta.getFieldType(i).getName())
+					.prop("knFieldType", dsMeta.getFieldMeta(i).getFieldType().toString()).type().unionOf().nullType().and()
+					.type(getType(dsMeta.getFieldType(i))).endUnion().noDefault();
 
 		}
 
@@ -232,7 +225,7 @@ public class AvroExportJob extends AbstractExportJob {
 		if (Integer.class.isAssignableFrom(fieldType)) {
 			ret = Schema.create(Schema.Type.INT);
 		} else if (BigDecimal.class.isAssignableFrom(fieldType)) {
-			ret = LogicalTypes.decimal(20, 8).addToSchema(Schema.create(Schema.Type.BYTES));
+			ret = LogicalTypes.decimal(BIG_DECIMAL_PRECISION, BIG_DECIMAL_SCALE).addToSchema(Schema.create(Schema.Type.BYTES));
 		} else if (Float.class.isAssignableFrom(fieldType)) {
 			ret = Schema.create(Schema.Type.FLOAT);
 		} else if (Long.class.isAssignableFrom(fieldType)) {
