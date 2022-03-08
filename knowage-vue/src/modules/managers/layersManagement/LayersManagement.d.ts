@@ -20,3 +20,7 @@ export interface iLayer {
     properties: any
     filebody: any
 }
+
+export interface iFilter {
+    property: string
+}
