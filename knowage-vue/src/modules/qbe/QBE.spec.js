@@ -1,4 +1,4 @@
-import { mount, flushPromises } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import axios from 'axios'
 import Button from 'primevue/button'
 import Chip from 'primevue/chip'

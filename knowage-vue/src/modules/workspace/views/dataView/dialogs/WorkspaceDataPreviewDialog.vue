@@ -7,7 +7,7 @@
                     <span>{{ dataset.label }}</span>
                 </template>
                 <template #end>
-                    <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
+                    <Button v-if="isParameterSidebarVisible" icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
                     <Button class="kn-button p-button-text p-button-rounded p-button-plain" :label="$t('common.close')" @click="closeDialog"></Button>
                 </template>
             </Toolbar>
@@ -16,7 +16,7 @@
         <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
 
         <div class="p-d-flex p-flex-column kn-flex col-12 workspace-scrollable-table">
-            <Message v-if="errorMessageVisible" class="kn-flex p-m-2" severity="warn" :closable="false" :style="mainDescriptor.style.message">
+            <Message v-if="errorMessageVisible" class="p-m-2" severity="warn" :closable="false" :style="mainDescriptor.style.message">
                 {{ errorMessage }}
             </Message>
 
@@ -39,7 +39,7 @@ import moment from 'moment'
 export default defineComponent({
     name: 'kpi-scheduler-save-dialog',
     components: { Dialog, DatasetPreviewTable, Message, KnParameterSidebar },
-    props: { visible: { type: Boolean }, propDataset: { type: Object }, previewType: String },
+    props: { visible: { type: Boolean }, propDataset: { type: Object }, previewType: String, loadFromDatasetManagement: Boolean },
     emits: ['close'],
     data() {
         return {
@@ -59,12 +59,29 @@ export default defineComponent({
             userRole: null
         }
     },
+    computed: {
+        isParameterSidebarVisible(): boolean {
+            let parameterVisible = false
+            for (let i = 0; i < this.filtersData?.filterStatus?.length; i++) {
+                const tempFilter = this.filtersData.filterStatus[i]
+                if (tempFilter.showOnPanel === 'true') {
+                    parameterVisible = true
+                    break
+                }
+            }
+            return parameterVisible || this.dataset.pars.length !== 0
+        }
+    },
     watch: {
         async propDataset() {
-            await this.loadPreview()
+            if (this.visible) {
+                await this.loadPreview()
+            }
         },
-        async visible() {
-            await this.loadPreview()
+        async visible(value) {
+            if (value) {
+                await this.loadPreview()
+            }
         }
     },
     async created() {
@@ -75,8 +92,9 @@ export default defineComponent({
         async loadPreview() {
             this.loadDataset()
             await this.loadDatasetDrivers()
-            if (this.dataset.label && this.visible && this.dataset.pars.length === 0 && this.filtersData?.isReadyForExecution) {
-                await this.loadPreviewData()
+            if (this.dataset.label && this.dataset.pars.length === 0 && (this.filtersData.isReadyForExecution === undefined || this.filtersData.isReadyForExecution)) {
+                this.loadFromDatasetManagement && !this.dataset.id ? await this.loadPreSavePreview() : await this.loadPreviewData()
+                this.parameterSidebarVisible = false
             } else {
                 this.parameterSidebarVisible = true
             }
@@ -129,7 +147,7 @@ export default defineComponent({
             this.loading = false
         },
         async loadDatasetDrivers() {
-            if (this.dataset.label) {
+            if (this.dataset.label && this.dataset.id) {
                 await this.$http
                     .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${this.dataset.label}/filters`, { role: this.userRole })
                     .then((response: AxiosResponse<any>) => {
@@ -195,15 +213,16 @@ export default defineComponent({
         async updatePagination(lazyParams: any) {
             this.pagination.start = lazyParams.paginationStart
             this.pagination.limit = lazyParams.paginationLimit
-            await this.loadPreview()
+            this.loadFromDatasetManagement && !this.dataset.id ? await this.loadPreSavePreview() : await this.loadPreviewData()
+            this.parameterSidebarVisible = false
         },
         async onSort(event: any) {
             this.sort = event
-            await this.loadPreviewData()
+            this.loadFromDatasetManagement && !this.dataset.id ? await this.loadPreSavePreview() : await this.loadPreviewData()
         },
         async onFilter(event: any) {
             this.filter = event
-            await this.loadPreviewData()
+            this.loadFromDatasetManagement && !this.dataset.id ? await this.loadPreSavePreview() : await this.loadPreviewData()
         },
         setPreviewColumns(data: any) {
             this.columns = []
@@ -220,11 +239,12 @@ export default defineComponent({
             this.filter = null
             this.errorMessageVisible = false
             this.errorMessage = ''
+            this.parameterSidebarVisible = false
             this.$emit('close')
         },
         async onExecute(datasetParameters: any[]) {
             this.dataset.pars = datasetParameters
-            await this.loadPreviewData()
+            this.loadFromDatasetManagement && !this.dataset.id ? await this.loadPreSavePreview() : await this.loadPreviewData()
             this.parameterSidebarVisible = false
         }
     }

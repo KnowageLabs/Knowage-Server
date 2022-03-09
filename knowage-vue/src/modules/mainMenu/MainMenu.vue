@@ -9,15 +9,15 @@
         <MainMenuAdmin :openedPanelEvent="adminMenuOpened" :model="technicalUserFunctionalities" v-if="technicalUserFunctionalities && technicalUserFunctionalities.length > 0" @click="itemClick"></MainMenuAdmin>
         <TieredMenu :class="['kn-tieredMenu', tieredMenuClass]" ref="menu" :model="selectedCustomMenu" :popup="true" @blur="hideItemMenu" @mouseleave="checkTimer">
             <template #item="{item}">
-                <router-link class="p-menuitem-link" v-if="item.to" :to="item.to" exact>
-                    <span v-if="item.descr" class="p-menuitem-text">{{ $internationalization($t(item.descr)) }}</span>
-                    <span v-else class="p-menuitem-text">{{ $internationalization($t(item.label)) }}</span>
-                    <span v-if="item.items" class="p-submenu-icon pi pi-angle-right"></span>
+                <router-link class="p-menuitem-link" v-if="item.to" :to="cleanTo(item)" @click="itemClick(item)" exact>
+                    <span v-if="item.descr" class="p-menuitem-text kn-truncated" v-tooltip.top="item.descr">{{ $internationalization($t(item.descr)) }}</span>
+                    <span v-else class="p-menuitem-text kn-truncated" v-tooltip.top="$internationalization($t(item.label))">{{ $internationalization($t(item.label)) }}</span>
+                    <span v-if="item.items" class="p-submenu-icon pi pi-angle-right kn-truncated"></span>
                 </router-link>
-                <a v-else class="p-menuitem-link" :href="item.url" :target="item.target" role="menuitem" :tabindex="item.disabled ? null : '0'">
-                    <span v-if="item.descr" class="p-menuitem-text">{{ $internationalization($t(item.descr)) }}</span>
-                    <span v-else class="p-menuitem-text">{{ $internationalization($t(item.label)) }}</span>
-                    <span v-if="item.items" class="p-submenu-icon pi pi-angle-right"></span>
+                <a v-else class="p-menuitem-link" :target="item.target" role="menuitem" @click="itemClick(item)" :tabindex="item.disabled ? null : '0'">
+                    <span v-if="item.descr" class="p-menuitem-text kn-truncated" v-tooltip.top="item.descr">{{ $internationalization($t(item.descr)) }}</span>
+                    <span v-else class="p-menuitem-text kn-truncated" v-tooltip.top="$internationalization($t(item.label))">{{ $internationalization($t(item.label)) }}</span>
+                    <span v-if="item.items" class="p-submenu-icon pi pi-angle-right kn-truncated"></span>
                 </a>
             </template>
         </TieredMenu>
@@ -151,14 +151,23 @@ export default defineComponent({
             this.licenseDisplay = !this.licenseDisplay
         },
         itemClick(event) {
-            const item = event.item
+            const item = event.item ? event.item : event
             if (item.command) {
                 this[item.command]()
-            }
-            if (item.to && event.navigate) {
+            } else if (item.to && event.navigate) {
                 event.navigate(event.originalEvent)
-            }
+            } else if (item.url && (!item.target || item.target === 'insideKnowage')) this.$router.push({ name: 'externalUrl', params: { url: item.url } })
+
             if (this.adminMenuOpened) this.adminMenuOpened = false
+        },
+        getHref(item) {
+            let to = item.to
+            if (to) {
+                to = to.replace(/\\\//g, '/')
+
+                if (to.startsWith('/')) to = to.substring(1)
+                return process.env.VUE_APP_PUBLIC_PATH + to
+            }
         },
         toggleProfile() {
             this.showProfileMenu = !this.showProfileMenu
@@ -208,6 +217,7 @@ export default defineComponent({
             }
             return toRet
         },
+
         toggleMenu(event, item) {
             if (item.items) {
                 clearTimeout(this.hoverTimer)
@@ -230,6 +240,9 @@ export default defineComponent({
             if (this.$refs && this.$refs.mainMenu)
                 //@ts-ignore
                 this.menuDimensions = this.$refs.mainMenu.getBoundingClientRect().height - this.$refs.menuProfile.getBoundingClientRect().height - this.$refs.menuProfileSlide.getBoundingClientRect().height + 'px'
+        },
+        cleanTo(item): any {
+            return item.to.replace(/\\\//g, '/')
         }
     },
     async mounted() {
@@ -329,11 +342,9 @@ export default defineComponent({
 .slide-down-leave-to {
     max-height: 0;
 }
-
 .p-scrollpanel:deep(.p-scrollpanel-content) {
     padding: 0 0 18px 0;
 }
-
 .layout-menu-container {
     z-index: 100;
     width: var(--kn-mainmenu-width);
@@ -341,7 +352,6 @@ export default defineComponent({
     background-color: var(--kn-mainmenu-background-color);
     height: 100%;
     position: fixed;
-
     .menu-scroll-content {
         height: 100%;
         display: flex;

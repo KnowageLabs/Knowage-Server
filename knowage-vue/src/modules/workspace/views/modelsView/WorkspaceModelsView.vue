@@ -63,10 +63,11 @@ import SelectButton from 'primevue/selectbutton'
 import WorkspaceModelsTable from './tables/WorkspaceModelsTable.vue'
 import { AxiosResponse } from 'axios'
 import QBE from '@/modules/qbe/QBE.vue'
+
 export default defineComponent({
     name: 'workspace-models-view',
     components: { DetailSidebar, KnFabButton, Message, SelectButton, WorkspaceModelsTable, WorkspaceCard, QBE },
-    emits: ['showMenu', 'toggleDisplayView'],
+    emits: ['showMenu', 'toggleDisplayView', 'showQbeDialog'],
     props: { toggleCardDisplay: { type: Boolean } },
     data() {
         return {
@@ -82,6 +83,8 @@ export default defineComponent({
             showDetailSidebar: false,
             user: null as any,
             loading: false,
+            datasetDrivers: null as any,
+            datasetName: '',
             qbeVisible: false,
             selectedQbeDataset: null
         }
@@ -155,8 +158,12 @@ export default defineComponent({
             this.searchWord = ''
         },
         openDatasetInQBE(dataset: any) {
-            this.selectedQbeDataset = dataset
-            this.qbeVisible = true
+            if (process.env.VUE_APP_USE_OLD_QBE_IFRAME == 'true') {
+                this.$emit('showQbeDialog', dataset)
+            } else {
+                this.selectedQbeDataset = dataset
+                this.qbeVisible = true
+            }
         },
         createNewFederation() {
             this.$router.push('models/federation-definition/new-federation')
@@ -223,6 +230,7 @@ export default defineComponent({
 #model-select-buttons {
     margin: 2rem 2rem 2rem auto;
 }
+
 #model-search {
     flex: 0.3;
 }

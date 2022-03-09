@@ -64,7 +64,7 @@
                                 </div>
 
                                 <div class="p-field p-col-12 p-lg-6">
-                                    <img id="image-preview" :src="getImageUrl" :height="mainDescriptor.style.previewImage" />
+                                    <img v-if="selectedDocument?.previewFile" id="image-preview" :src="getImageUrl" :height="mainDescriptor.style.previewImage" />
                                 </div>
 
                                 <div class="p-field p-col-12 p-lg-6">

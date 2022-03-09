@@ -8,7 +8,7 @@
         </template>
     </Toolbar>
     <div class="datasetDetail">
-        <TabView class="tabview-custom" v-model:activeIndex="activeTab" data-test="tab-view">
+        <TabView class="tabview-custom kn-tab" v-model:activeIndex="activeTab" data-test="tab-view">
             <TabPanel>
                 <template #header>
                     <span>{{ $t('managers.mondrianSchemasManagement.detail.title') }}</span>
@@ -67,7 +67,7 @@
             </TabPanel>
         </TabView>
 
-        <WorkspaceDataPreviewDialog :visible="showPreviewDialog" :propDataset="previewDataset" @close="showPreviewDialog = false" :previewType="'dataset'"></WorkspaceDataPreviewDialog>
+        <WorkspaceDataPreviewDialog :visible="showPreviewDialog" :propDataset="previewDataset" @close="showPreviewDialog = false" :previewType="'dataset'" :loadFromDatasetManagement="true"></WorkspaceDataPreviewDialog>
     </div>
 </template>
 

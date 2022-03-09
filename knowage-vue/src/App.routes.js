@@ -22,6 +22,12 @@ const baseRoutes = [
         component: () => import('@/views/About.vue')
     },
     {
+        path: '/externalUrl/',
+        name: 'externalUrl',
+        component: IframeRenderer,
+        props: (route) => ({ url: route.params.url, externalLink: true })
+    },
+    {
         path: '/knowage/servlet/:catchAll(.*)',
         name: 'knowageUrl',
         component: IframeRenderer,
