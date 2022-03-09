@@ -22,5 +22,21 @@
         "sortFields": ["label", "type"],
         "textField": "type",
         "titleField": "label"
+    },
+    "newLayer": {
+        "baseLayer": false,
+        "category_id": null,
+        "descr": null,
+        "icon": null,
+        "label": null,
+        "layerId2": null,
+        "layerIdentify": null,
+        "layerLabel": null,
+        "layerName": null,
+        "layerOrder": null,
+        "name": null,
+        "properties": [],
+        "roles": [],
+        "type": null
     }
 }
