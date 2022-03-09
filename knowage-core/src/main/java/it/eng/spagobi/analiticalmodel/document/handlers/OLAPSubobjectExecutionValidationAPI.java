@@ -74,7 +74,8 @@ public class OLAPSubobjectExecutionValidationAPI {
 		}
 		// subobject is executable if user is admin or subobject is public or user is owner of the subobject
 		if (!isAdmin && !subobject.getIsPublic() && !subobject.getOwner().equals(profile.getUserId())) {
-			throw new SecurityException("Current user [" + profile + "] cannot see required subobject [" + subobject + "]");
+			throw new SecurityException(
+					"Current user [" + profile + "] cannot see required subobject [id : " + subobject.getId() + ", name : " + subobject.getName() + "]");
 		}
 	}
 
