@@ -85,6 +85,7 @@ export default defineComponent({
                             msg: this.$t('common.toast.deleteSuccess')
                         })
                         this.removeTimespan(id)
+                        this.$router.push('/timespan')
                     }
                 })
                 .catch((error) => {
