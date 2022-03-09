@@ -15,7 +15,7 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
-                <LayersManagementDetailView v-if="selectedLayer" :selectedLayer="selectedLayer" :allRoles="allRoles" :allCategories="allCategories" @closed="onDetailClose"></LayersManagementDetailView>
+                <LayersManagementDetailView v-if="selectedLayer" :selectedLayer="selectedLayer" :allRoles="allRoles" :allCategories="allCategories" @closed="onDetailClose" @saved="loadPage"></LayersManagementDetailView>
                 <LayersManagementHint v-else></LayersManagementHint>
             </div>
 
@@ -59,6 +59,7 @@ export default defineComponent({
     methods: {
         async loadPage() {
             this.loading = true
+            this.touched = false
             await Promise.all([await this.getAllLayers(), await this.getAllRoles(), await this.getAllCategories()])
             this.loading = false
         },
@@ -73,7 +74,7 @@ export default defineComponent({
         },
         showDetail(event) {
             if (!this.touched) {
-                this.selectedLayer = event.item ? (deepcopy(event.item) as iLayer) : ({} as iLayer)
+                this.selectedLayer = event.item ? (deepcopy(event.item) as iLayer) : (deepcopy(this.descriptor.newLayer) as iLayer)
             } else {
                 this.$confirm.require({
                     message: this.$t('common.toast.unsavedChangesMessage'),
@@ -81,7 +82,7 @@ export default defineComponent({
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
                         this.touched = false
-                        this.selectedLayer = event.item ? (deepcopy(event.item) as iLayer) : ({} as iLayer)
+                        this.selectedLayer = event.item ? (deepcopy(event.item) as iLayer) : (deepcopy(this.descriptor.newLayer) as iLayer)
                     }
                 })
             }

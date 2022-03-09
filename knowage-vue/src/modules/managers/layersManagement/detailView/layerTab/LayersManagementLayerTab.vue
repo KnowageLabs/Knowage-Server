@@ -276,8 +276,7 @@ export default defineComponent({
         uploadLayerFile(event) {
             this.uploading = true
             let uploadedFile = event.target.files[0]
-            console.log('UPLOADED ----------------', uploadedFile)
-            // this.startUpload(uploadedFile)
+            this.layer.layerFile = { file: uploadedFile, fileName: uploadedFile.name }
             this.triggerUpload = false
             setTimeout(() => (this.uploading = false), 200)
         },
