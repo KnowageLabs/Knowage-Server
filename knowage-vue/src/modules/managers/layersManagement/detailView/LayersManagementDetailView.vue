@@ -64,11 +64,13 @@ export default defineComponent({
     methods: {
         loadLayer() {
             this.layer = this.selectedLayer
-            this.layer.properties = this.layer.properties?.map((property: string) => {
-                return {
-                    property: property
-                }
-            })
+            this.layer.properties = this.layer.properties
+                ? this.layer.properties.map((property: string) => {
+                      return {
+                          property: property
+                      }
+                  })
+                : []
         },
         async getRolesForLayer() {
             if (this.layer.layerId) {

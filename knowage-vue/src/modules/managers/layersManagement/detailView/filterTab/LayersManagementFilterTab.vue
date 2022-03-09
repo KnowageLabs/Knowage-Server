@@ -80,6 +80,7 @@ export default defineComponent({
     watch: {
         selectedLayer() {
             this.loadLayer()
+            this.loadFilters()
         },
         propFilters() {
             this.loadFilters()
