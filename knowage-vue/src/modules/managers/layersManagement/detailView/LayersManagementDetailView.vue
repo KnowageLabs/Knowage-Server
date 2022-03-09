@@ -61,7 +61,6 @@ export default defineComponent({
     async created() {
         this.loadLayer()
         this.getRolesForLayer()
-        console.log('layerChanged: ', this.selectedLayer)
     },
     watch: {
         selectedLayer() {

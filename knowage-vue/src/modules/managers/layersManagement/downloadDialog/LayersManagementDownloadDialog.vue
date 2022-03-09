@@ -55,11 +55,15 @@ export default defineComponent({
             this.$emit('close')
         },
         async download() {
-            console.log('DOWNLOAD')
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `layers/getDownload?id=95%2CtypeWFS=${this.downloadMode}`, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `layers/getDownload?id=${this.layer.layerId}%2CtypeWFS=${this.downloadMode}`, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then((response: AxiosResponse<any>) => {
-                    downloadDirect(response.data, this.layer.name, 'application/json')
+                    if (this.downloadMode === 'geojson') {
+                        downloadDirect(JSON.stringify(response.data), this.layer.name, 'application/json')
+                    } else {
+                        window.open(response.data.url)
+                    }
+                    this.$emit('close')
                 })
                 .catch(() => {})
         }
