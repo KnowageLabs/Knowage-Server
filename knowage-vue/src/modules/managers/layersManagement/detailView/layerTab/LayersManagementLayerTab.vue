@@ -1,5 +1,6 @@
 <template>
     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="logValid" />
+    {{ v$.$invalid }}
 
     <Card id="basic-info-card">
         <template #content>
@@ -55,8 +56,7 @@
             </form>
         </template>
     </Card>
-
-    <Card id="basic-layer-options-card" class="p-mt-2">
+    <Card id="basic-layer-options-card" class="p-mt-3">
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-12 p-lg-6">
@@ -146,8 +146,7 @@
             </form>
         </template>
     </Card>
-    {{ v$.$invalid }}
-    <Card id="layer-type-card" class="p-mt-2">
+    <Card id="layer-type-card" class="p-mt-3">
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-12">
