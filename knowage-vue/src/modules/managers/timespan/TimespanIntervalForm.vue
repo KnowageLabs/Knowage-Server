@@ -28,11 +28,17 @@ export default defineComponent({
     watch: {
         propTimespan() {
             this.loadTimespan()
+        },
+        timespanType() {
+            this.loadTimespan()
         }
     },
     computed: {
         addButtonDisabled(): boolean {
             return !this.interval.from || !this.interval.to
+        },
+        timespanType(): any {
+            return this.timespan?.type
         }
     },
     created() {
