@@ -18,14 +18,6 @@
                 ]
             },
             {
-                "fieldName": "type",
-                "validators": [
-                    {
-                        "key": "required"
-                    }
-                ]
-            },
-            {
                 "fieldName": "layerLabel",
                 "validators": [
                     {
@@ -58,7 +50,7 @@
                 ]
             },
             {
-                "layerOrder": "type",
+                "fieldName": "type",
                 "validators": [
                     {
                         "key": "required"
