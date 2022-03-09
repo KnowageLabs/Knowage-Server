@@ -3,14 +3,14 @@
         <template #start>{{ timespan?.name }}</template>
         <template #end>
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveDisabled" @click="saveTimespan(null)" data-test="save-button" />
-            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTimespanDetails" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTimespanDetailsConfirm" />
         </template>
     </Toolbar>
     <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
 
     <div class="p-d-flex p-flex-column kn-flex kn-overflow">
-        <TimespanForm :propTimespan="timespan" :categories="categories"></TimespanForm>
-        <TimespanIntervalTable :propTimespan="timespan"></TimespanIntervalTable>
+        <TimespanForm :propTimespan="timespan" :categories="categories" @touched="touched = true"></TimespanForm>
+        <TimespanIntervalTable :propTimespan="timespan" @touched="touched = true"></TimespanIntervalTable>
     </div>
 </template>
 
@@ -33,7 +33,8 @@ export default defineComponent({
         return {
             timespan: null as iTimespan | null,
             operation: 'create',
-            loading: false
+            loading: false,
+            touched: false
         }
     },
     computed: {
@@ -57,6 +58,7 @@ export default defineComponent({
     methods: {
         async loadTimespan() {
             this.loading = true
+            this.touched = false
 
             if (this.id) {
                 await this.$http
@@ -92,7 +94,22 @@ export default defineComponent({
                 isnew: true
             }
         },
+        closeTimespanDetailsConfirm() {
+            if (this.touched) {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.closeTimespanDetails()
+                    }
+                })
+            } else {
+                this.closeTimespanDetails()
+            }
+        },
         closeTimespanDetails() {
+            this.touched = false
             this.timespan = null
             this.$router.push('/timespan')
         },

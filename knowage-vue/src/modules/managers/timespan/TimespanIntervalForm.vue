@@ -9,7 +9,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { iTimespan, iInterval } from './Timespan'
-// import { parseDateTemp, formatDate } from './timespanService'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import Calendar from 'primevue/calendar'
 
@@ -19,6 +18,7 @@ export default defineComponent({
     name: 'timespan-interval-form',
     components: { Calendar },
     props: { propTimespan: { type: Object as PropType<iTimespan | null> } },
+    emits: ['touched'],
     data() {
         return {
             interval: {} as any,
@@ -52,6 +52,7 @@ export default defineComponent({
         onAddInterval() {
             const tempInterval = deepcopy(this.interval)
             this.timespan?.type === 'temporal' ? this.createNewTemporalInterval(tempInterval) : this.createNewTimeInterval(tempInterval)
+            this.$emit('touched')
         },
         createNewTimeInterval(interval: iInterval) {
             if (interval.from instanceof Date && interval.to instanceof Date) {
