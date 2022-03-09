@@ -18,6 +18,8 @@
                 <LayersManagementDetailView v-if="selectedLayer" :selectedLayer="selectedLayer" :allRoles="allRoles" :allCategories="allCategories" @closed="onDetailClose" @saved="loadPage"></LayersManagementDetailView>
                 <LayersManagementHint v-else></LayersManagementHint>
             </div>
+
+            <LayersManagementDownloadDialog :visible="downloadDialogVisible" :layer="selectedLayerForDownload" @close="downloadDialogVisible = false"></LayersManagementDownloadDialog>
         </div>
     </div>
 </template>
@@ -31,12 +33,13 @@ import descriptor from './LayersManagementDescriptor.json'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import LayersManagementDetailView from './detailView/LayersManagementDetailView.vue'
 import LayersManagementHint from './LayersManagementHint.vue'
+import LayersManagementDownloadDialog from './downloadDialog/LayersManagementDownloadDialog.vue'
 
 const deepcopy = require('deepcopy')
 
 export default defineComponent({
     name: 'roles-management',
-    components: { FabButton, KnListBox, LayersManagementDetailView, LayersManagementHint },
+    components: { FabButton, KnListBox, LayersManagementDetailView, LayersManagementHint, LayersManagementDownloadDialog },
     data() {
         return {
             descriptor,
@@ -45,7 +48,9 @@ export default defineComponent({
             allCategories: [] as any,
             selectedLayer: null as iLayer | null,
             touched: false,
-            loading: false
+            loading: false,
+            downloadDialogVisible: false,
+            selectedLayerForDownload: null
         }
     },
     async created() {
@@ -102,6 +107,11 @@ export default defineComponent({
         onDetailClose() {
             this.touched = false
             this.selectedLayer = null
+        },
+        downloadLayerFile(event: any) {
+            console.log('DOWNLOAD layer: ', event.item)
+            this.selectedLayerForDownload = event.item
+            this.downloadDialogVisible = true
         }
     }
 })

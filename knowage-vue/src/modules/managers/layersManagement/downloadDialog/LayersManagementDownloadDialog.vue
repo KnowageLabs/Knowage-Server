@@ -1,0 +1,83 @@
+<template>
+    <Dialog id="qbe-join-definition-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="layersManagementDownloadDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+        <template #header>
+            <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-2 p-col-12">
+                <template #start>
+                    {{ $t('managers.layersManagement.downloadDialogTitle') }}
+                </template>
+            </Toolbar>
+        </template>
+
+        <div v-if="layer" class="p-d-flex p-flex-row p-jc-center p-m-5">
+            <div>
+                <div class="p-field-radiobutton" v-for="(mode, index) in modes" :key="index">
+                    <RadioButton name="downloadMode" :value="mode" v-model="downloadMode" />
+                    <label>{{ $t(`managers.layersManagement.downloadTypes.${mode}`) }}</label>
+                </div>
+            </div>
+        </div>
+
+        <template #footer>
+            <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
+            <Button class="kn-button kn-button--primary" @click="download"> {{ $t('common.download') }}</Button>
+        </template>
+    </Dialog>
+</template>
+
+<script lang="ts">
+import { defineComponent, PropType } from 'vue'
+import { iLayer } from '../LayersManagement.d'
+import { AxiosResponse } from 'axios'
+import { downloadDirect } from '@/helpers/commons/fileHelper'
+import Dialog from 'primevue/dialog'
+import layersManagementDownloadDialogDescriptor from './LayersManagementDownloadDialogDescriptor.json'
+import RadioButton from 'primevue/radiobutton'
+
+export default defineComponent({
+    name: 'qbe-join-definition-dialog',
+    components: { Dialog, RadioButton },
+    props: { visible: { type: Boolean }, layer: { type: Object as PropType<iLayer>, required: true } },
+    emits: ['close'],
+    data() {
+        return {
+            layersManagementDownloadDialogDescriptor,
+            downloadMode: 'geojson'
+        }
+    },
+    computed: {
+        modes(): string[] {
+            return this.layer.type === 'WFS' ? this.layersManagementDownloadDialogDescriptor.downloadModesWFS : this.layersManagementDownloadDialogDescriptor.downloadModes
+        }
+    },
+    created() {},
+    methods: {
+        closeDialog() {
+            this.$emit('close')
+        },
+        async download() {
+            console.log('DOWNLOAD')
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `layers/getDownload?id=95%2CtypeWFS=${this.downloadMode}`, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .then((response: AxiosResponse<any>) => {
+                    downloadDirect(response.data, this.layer.name, 'application/json')
+                })
+                .catch(() => {})
+        }
+    }
+})
+</script>
+
+<style lang="scss">
+#qbe-join-definition-dialog .p-dialog-header,
+#qbe-join-definition-dialog .p-dialog-content {
+    padding: 0;
+}
+#qbe-join-definition-dialog .p-dialog-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.qbe-advanced-filter-button {
+    max-width: 150px;
+}
+</style>
