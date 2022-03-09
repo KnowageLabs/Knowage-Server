@@ -1086,7 +1086,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 						hasVueParent = window.parent.parent
 					}
 					
-					if(!parent && hasVueParent){
+					if(hasVueParent){
 						hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameter,"inputParameters":{},"targetCrossNavigation":crossSettings,"docLabel":null, "otherOutputParameters":otherOutputParameters}, '*')
 					}else{
 						// if destination document is specified don't ask
