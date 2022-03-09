@@ -8,7 +8,7 @@
     </Toolbar>
 
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <TabView v-model:activeIndex="activeIndex" @tab-change="onTabChange">
+    <TabView v-model:activeIndex="activeIndex" @tab-change="onTabChange" class="kn-overflow">
         <TabPanel>
             <template #header>
                 <span>{{ $t('managers.layersManagement.layerTitle') }}</span>
