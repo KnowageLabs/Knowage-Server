@@ -17,7 +17,7 @@
                 </TabPanel>
             </TabView>
 
-            <DocumentBrowserTab v-show="selectedItem" :item="selectedItem?.item" :mode="selectedItem?.mode" :functionalityId="selectedItem?.functionalityId" @close="closeDocument('current')" @iframeCreated="onIFrameCreated"></DocumentBrowserTab>
+            <DocumentBrowserTab v-show="selectedItem" :item="selectedItem?.item" :mode="selectedItem?.mode" :functionalityId="selectedItem?.functionalityId" @close="closeDocument('current')" @iframeCreated="onIFrameCreated" @closeIframe="closeIframe"></DocumentBrowserTab>
             <div v-for="(iframe, index) in iFrameContainers" :key="index">
                 <iframe v-show="iframe.item?.routerId === selectedItem?.item.routerId" ref="iframe" class="document-browser-cockpit-iframe" :src="iframe.iframe"></iframe>
             </div>
@@ -197,6 +197,11 @@ export default defineComponent({
         onIFrameCreated(payload: any) {
             const index = this.iFrameContainers.findIndex((iframe: any) => iframe.item?.routerId === this.selectedItem?.item.routerId)
             if (index === -1) this.iFrameContainers.push(payload)
+        },
+        closeIframe() {
+            const index = this.iFrameContainers.findIndex((iframe: any) => iframe.item?.routerId === this.selectedItem?.item.routerId)
+            console.log('closeIframe INDEX: ', index)
+            if (index !== -1) this.iFrameContainers.splice(index, 1)
         }
     }
 })

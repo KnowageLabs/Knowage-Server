@@ -1,12 +1,10 @@
 <template>
-    <DocumentExecution :id="id" v-if="mode === 'document-execution'"></DocumentExecution>
+    <DocumentExecution :id="name" v-if="mode === 'document-execution'"></DocumentExecution>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import DocumentExecution from '@/modules/documentExecution/main/DocumentExecution.vue'
-
-// const crypto = require('crypto')
 
 export default defineComponent({
     name: 'document-browser-cockpit-container',
@@ -14,17 +12,26 @@ export default defineComponent({
         DocumentExecution
     },
     props: { id: { type: String }, functionalityId: { type: String }, item: { type: Object } },
-    emits: ['iframeCreated'],
+    emits: ['iframeCreated', 'closeIframe'],
     data() {
         return {
             url: '',
             mode: '',
-            testIFrame: null as any
+            testIFrame: null as any,
+            name: '' as string
+        }
+    },
+    watch: {
+        id() {
+            this.name = this.id as string
         }
     },
     created() {
+        this.name = this.id as string
         this.createUrl()
         this.setMode()
+
+        // setTimeout(() => this.loadCockpit('TC_1581'), 5000)
     },
     activated() {
         this.setMode()
@@ -54,6 +61,14 @@ export default defineComponent({
                 this.mode = 'cockpit'
                 this.$emit('iframeCreated', { iframe: this.url, item: this.item })
             }
+        },
+        loadCockpit(name: string) {
+            // TC_1581
+            console.log('NAME: ', name)
+            this.name = name
+            this.mode = 'document-execution'
+            this.$router.push(`/document-browser/document-composite/${name}`)
+            this.$emit('closeIframe')
         }
     }
 })

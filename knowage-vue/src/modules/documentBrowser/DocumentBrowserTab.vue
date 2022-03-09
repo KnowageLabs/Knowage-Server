@@ -1,5 +1,5 @@
 <template>
-    <router-view v-if="item" v-slot="{ Component }" :functionalityId="functionalityId" :item="item" @close="$emit('close', item)" @iframeCreated="onIframeCreated">
+    <router-view v-if="item" v-slot="{ Component }" :functionalityId="functionalityId" :item="item" @close="$emit('close', item)" @iframeCreated="onIframeCreated" @closeIframe="$emit('closeIframe')">
         <keep-alive>
             <component :is="Component" :key="key"></component>
         </keep-alive>
@@ -12,7 +12,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({
     name: 'document-browser-tab',
     components: {},
-    emits: ['close', 'iframeCreated'],
+    emits: ['close', 'iframeCreated', 'closeIframe'],
     props: { item: { type: Object }, mode: { type: String }, functionalityId: { type: String } },
     data() {
         return {}
