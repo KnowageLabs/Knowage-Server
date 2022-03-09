@@ -68,7 +68,6 @@ export default defineComponent({
             })
         },
         onRowSelect(event, dataType) {
-            console.log('logme', event.data, dataType)
             switch (dataType) {
                 case 'lovs':
                     this.filterByLovs(event.data)
