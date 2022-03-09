@@ -135,12 +135,13 @@ export default defineComponent({
         async saveLayer() {
             this.layer.roles === null ? (this.layer.roles = []) : ''
             await this.saveOrUpdateMessage(this.layer)
-                .then(() => {
+                .then((response: AxiosResponse<any>) => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.success'),
                         msg: this.$t('common.toast.success')
                     })
-                    this.$emit('saved')
+                    let id = this.layer.layerId ? this.layer.layerId : response.data.id
+                    this.$emit('saved', id)
                 })
                 .catch((response) => {
                     this.$toast.add({ severity: 'error', summary: this.$t('common.error.generic'), detail: response.message, life: 3000 })
