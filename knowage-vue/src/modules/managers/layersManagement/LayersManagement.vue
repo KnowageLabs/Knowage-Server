@@ -15,7 +15,8 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
-                <router-view :selectedLayer="selectedLayer" :allRoles="allRoles" :allCategories="allCategories" @closed="onDetailClose" />
+                <LayersManagementDetailView v-if="selectedLayer" :selectedLayer="selectedLayer" :allRoles="allRoles" :allCategories="allCategories" @closed="onDetailClose"></LayersManagementDetailView>
+                <LayersManagementHint v-else></LayersManagementHint>
             </div>
         </div>
     </div>
@@ -28,19 +29,21 @@ import { iLayer } from './LayersManagement'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import descriptor from './LayersManagementDescriptor.json'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
+import LayersManagementDetailView from './detailView/LayersManagementDetailView.vue'
+import LayersManagementHint from './LayersManagementHint.vue'
 
 const deepcopy = require('deepcopy')
 
 export default defineComponent({
     name: 'roles-management',
-    components: { FabButton, KnListBox },
+    components: { FabButton, KnListBox, LayersManagementDetailView, LayersManagementHint },
     data() {
         return {
             descriptor,
             allLayers: [] as iLayer[],
             allRoles: [] as any,
             allCategories: [] as any,
-            selectedLayer: {} as iLayer,
+            selectedLayer: null as iLayer | null,
             touched: false,
             loading: false
         }
@@ -64,10 +67,8 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=GEO_CATEGORY`).then((response: AxiosResponse<any>) => (this.allCategories = response.data))
         },
         showDetail(event) {
-            const path = event.item ? `/layers-management/${event.item.layerId}` : '/layers-management/new-layer'
             if (!this.touched) {
-                this.selectedLayer = deepcopy(event.item) as iLayer
-                this.$router.push(path)
+                this.selectedLayer = event.item ? (deepcopy(event.item) as iLayer) : ({} as iLayer)
             } else {
                 this.$confirm.require({
                     message: this.$t('common.toast.unsavedChangesMessage'),
@@ -75,8 +76,7 @@ export default defineComponent({
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
                         this.touched = false
-                        this.selectedLayer = deepcopy(event.item) as iLayer
-                        this.$router.push(path)
+                        this.selectedLayer = event.item ? (deepcopy(event.item) as iLayer) : ({} as iLayer)
                     }
                 })
             }
@@ -95,12 +95,12 @@ export default defineComponent({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })
-                this.$router.push('/layers-management')
                 this.getAllLayers()
             })
         },
         onDetailClose() {
             this.touched = false
+            this.selectedLayer = null
         }
     }
 })
