@@ -165,12 +165,6 @@
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.layer.type" :additionalTranslateParams="{ fieldName: $t('common.type') }" />
                 </div>
-                <!-- <div class="p-field p-col-12">
-                    <span class="p-float-label">
-                        <Dropdown id="layerType" class="kn-material-input" v-model="layer.type" :options="layerTypes" optionLabel="label" optionValue="value" />
-                        <label for="layerType" class="kn-material-input-label"> {{ $t('common.type') }} *</label>
-                    </span>
-                </div> -->
                 <div v-if="layer.type == 'File'" class="p-field p-col-12 p-d-flex">
                     <div class="kn-flex">
                         <span class="p-float-label">

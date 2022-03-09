@@ -42,9 +42,7 @@ export default defineComponent({
     props: { selectedLayer: { type: Object, required: true }, allRoles: { type: Array, required: true }, allCategories: { type: Array, required: true } },
     computed: {
         buttonDisabled(): boolean {
-            if (this.v$.$invalid) {
-                return true
-            } else return false
+            return this.v$.$invalid
         }
     },
     emits: ['touched', 'closed', 'saved'],
