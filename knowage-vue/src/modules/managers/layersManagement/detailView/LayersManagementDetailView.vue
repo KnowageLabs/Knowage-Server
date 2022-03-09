@@ -13,7 +13,7 @@
             <template #header>
                 <span>{{ $t('managers.layersManagement.layerTitle') }}</span>
             </template>
-            <LayerTab :selectedLayer="selectedLayer" :allRoles="allRoles" :allCategories="allCategories" />
+            <LayerTab :selectedLayer="selectedLayer" :allRoles="allRoles" :allCategories="allCategories" @touched="$emit('touched')" />
         </TabPanel>
 
         <TabPanel v-if="layer.layerId">

@@ -15,7 +15,7 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
-                <LayersManagementDetailView v-if="selectedLayer" :selectedLayer="selectedLayer" :allRoles="allRoles" :allCategories="allCategories" @closed="onDetailClose" @saved="reloadPageOnSave"></LayersManagementDetailView>
+                <LayersManagementDetailView v-if="selectedLayer" :selectedLayer="selectedLayer" :allRoles="allRoles" :allCategories="allCategories" @closed="onDetailClose" @saved="reloadPageOnSave" @touched="touched = true"></LayersManagementDetailView>
                 <LayersManagementHint v-else></LayersManagementHint>
             </div>
 
@@ -109,6 +109,7 @@ export default defineComponent({
             this.selectedLayer = null
         },
         downloadLayerFile(event: any) {
+            console.log('DOWNLOAD layer: ', event.item)
             this.selectedLayerForDownload = event.item
             this.downloadDialogVisible = true
         },

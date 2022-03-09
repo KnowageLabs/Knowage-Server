@@ -12,16 +12,16 @@
                 "label": "common.delete"
             }
         ],
-        "defaultSortField": "label",
-        "filterFields": ["label", "type"],
+        "defaultSortField": "type",
+        "filterFields": ["name", "type"],
         "interaction": {
             "parameterLabel": "id",
             "parameterValue": "id",
             "type": "event"
         },
-        "sortFields": ["label", "type"],
+        "sortFields": ["name", "type"],
         "textField": "type",
-        "titleField": "label"
+        "titleField": "name"
     },
     "newLayer": {
         "baseLayer": false,

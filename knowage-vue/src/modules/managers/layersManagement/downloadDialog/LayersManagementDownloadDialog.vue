@@ -1,5 +1,5 @@
 <template>
-    <Dialog id="qbe-join-definition-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="layersManagementDownloadDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog id="qbe-join-definition-dialog" class="p-fluid kn-dialog--toolbar--primary" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-2 p-col-12">
                 <template #start>
@@ -8,17 +8,15 @@
             </Toolbar>
         </template>
 
-        <div v-if="layer" class="p-d-flex p-flex-row p-jc-center p-m-5">
-            <div>
-                <div class="p-field-radiobutton" v-for="(mode, index) in modes" :key="index">
-                    <RadioButton name="downloadMode" :value="mode" v-model="downloadMode" />
-                    <label>{{ $t(`managers.layersManagement.downloadTypes.${mode}`) }}</label>
-                </div>
+        <div v-if="layer" class="p-m-5">
+            <div class="p-field-radiobutton p-d-flex p-flex-row" v-for="(mode, index) in modes" :key="index">
+                <RadioButton name="downloadMode" :value="mode" v-model="downloadMode" />
+                <label>{{ $t(`managers.layersManagement.downloadTypes.${mode}`) }}</label>
             </div>
         </div>
 
         <template #footer>
-            <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
+            <Button class="kn-button kn-button--secondary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
             <Button class="kn-button kn-button--primary" @click="download"> {{ $t('common.download') }}</Button>
         </template>
     </Dialog>
