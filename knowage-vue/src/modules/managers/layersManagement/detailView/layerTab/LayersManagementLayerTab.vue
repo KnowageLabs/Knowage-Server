@@ -1,7 +1,4 @@
 <template>
-    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="logValid" />
-    {{ v$.$invalid }}
-
     <Card id="basic-info-card">
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
@@ -262,7 +259,8 @@ export default defineComponent({
     },
     validations() {
         const urlRequried = (value) => {
-            return this.layer.type != 'WFS' || 'WMS' || 'TMS' || value
+            let types = ['WFS', 'WMS', 'TMS']
+            return !types.includes(this.layer.type) || value
         }
         const customValidators: ICustomValidatorMap = { 'url-required': urlRequried }
         const validationObject = { layer: createValidations('layer', this.descriptor.validations.layer as any, customValidators) }
@@ -279,9 +277,6 @@ export default defineComponent({
             this.layer.layerFile = { file: uploadedFile, fileName: uploadedFile.name }
             this.triggerUpload = false
             setTimeout(() => (this.uploading = false), 200)
-        },
-        logValid() {
-            console.log(this.v$)
         }
     }
 })

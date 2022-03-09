@@ -2,7 +2,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
         <template #start>{{ selectedLayer.label }}</template>
         <template #end>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="saveLayer" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="saveLayer" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
     </Toolbar>
@@ -30,6 +30,7 @@
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import { iFilter } from '../LayersManagement'
+import useValidate from '@vuelidate/core'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import LayerTab from './layerTab/LayersManagementLayerTab.vue'
@@ -39,10 +40,17 @@ import Toast from 'primevue/toast'
 export default defineComponent({
     components: { TabView, TabPanel, LayerTab, FilterTab, Toast },
     props: { selectedLayer: { type: Object, required: true }, allRoles: { type: Array, required: true }, allCategories: { type: Array, required: true } },
-    computed: {},
+    computed: {
+        buttonDisabled(): boolean {
+            if (this.v$.$invalid) {
+                return true
+            } else return false
+        }
+    },
     emits: ['touched', 'closed', 'saved'],
     data() {
         return {
+            v$: useValidate() as any,
             touched: false,
             layer: {} as any,
             loading: false,
