@@ -8,7 +8,7 @@
                     </template>
                 </Toolbar>
                 <Listbox
-                    class="kn-list property-container"
+                    class="kn-list layers-management-property-container"
                     :options="filters"
                     :filter="true"
                     :filterPlaceholder="$t('common.search')"
@@ -16,12 +16,13 @@
                     filterMatchMode="contains"
                     :filterFields="layersManagementFilterTabDescriptor.filterFields"
                     :emptyFilterMessage="$t('common.info.noDataFound')"
+                    data-test="available-properties-list"
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
                         <div class="kn-list-item" @click="addProperty(slotProps.option)">
                             <div class="kn-list-item-text">
-                                <span>{{ slotProps.option.property }}</span>
+                                <span :data-test="'available-property-' + slotProps.option.property">{{ slotProps.option.property }}</span>
                             </div>
                         </div>
                     </template>
@@ -34,7 +35,7 @@
                     </template>
                 </Toolbar>
                 <Listbox
-                    class="kn-list property-container"
+                    class="kn-list layers-management-property-container"
                     :options="layer.properties"
                     :filter="true"
                     :filterPlaceholder="$t('common.search')"
@@ -42,6 +43,7 @@
                     filterMatchMode="contains"
                     :filterFields="layersManagementFilterTabDescriptor.filterFields"
                     :emptyFilterMessage="$t('common.info.noDataFound')"
+                    data-test="selected-properties-list"
                 >
                     <template #empty>{{ $t('managers.layersManagement.noFilterSelected') }}</template>
                     <template #option="slotProps">
@@ -124,7 +126,7 @@ export default defineComponent({
             padding: 0;
         }
     }
-    .property-container {
+    .layers-management-property-container {
         border: 1px solid var(--kn-color-borders);
         border-top: none;
     }
