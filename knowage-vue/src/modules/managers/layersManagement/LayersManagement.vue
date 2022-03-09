@@ -15,7 +15,7 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
-                <router-view :selectedLayer="selectedLayer" :allRoles="allRoles" @closed="onDetailClose" />
+                <router-view :selectedLayer="selectedLayer" :allRoles="allRoles" :allCategories="allCategories" @closed="onDetailClose" />
             </div>
         </div>
     </div>
@@ -39,6 +39,7 @@ export default defineComponent({
             descriptor,
             allLayers: [] as iLayer[],
             allRoles: [] as any,
+            allCategories: [] as any,
             selectedLayer: {} as iLayer,
             touched: false,
             loading: false
@@ -50,7 +51,7 @@ export default defineComponent({
     methods: {
         async loadPage() {
             this.loading = true
-            await Promise.all([await this.getAllLayers(), await this.getAllRoles()])
+            await Promise.all([await this.getAllLayers(), await this.getAllRoles(), await this.getAllCategories()])
             this.loading = false
         },
         async getAllLayers() {
@@ -58,6 +59,9 @@ export default defineComponent({
         },
         async getAllRoles() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `layers/getroles?`).then((response: AxiosResponse<any>) => (this.allRoles = response.data))
+        },
+        async getAllCategories() {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=GEO_CATEGORY`).then((response: AxiosResponse<any>) => (this.allCategories = response.data))
         },
         showDetail(event) {
             const path = event.item ? `/layers-management/${event.item.layerId}` : '/layers-management/new-layer'
@@ -71,7 +75,7 @@ export default defineComponent({
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
                         this.touched = false
-                        this.selectedLayer = { ...event.item } as iLayer
+                        this.selectedLayer = deepcopy(event.item) as iLayer
                         this.$router.push(path)
                     }
                 })

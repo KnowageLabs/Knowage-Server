@@ -13,7 +13,7 @@
             <template #header>
                 <span>{{ $t('managers.layersManagement.layerTitle') }}</span>
             </template>
-            <LayerTab :selectedLayer="selectedLayer" :allRoles="allRoles" />
+            <LayerTab :selectedLayer="selectedLayer" :allRoles="allRoles" :allCategories="allCategories" />
         </TabPanel>
 
         <TabPanel>
@@ -36,7 +36,7 @@ import FilterTab from './filterTab/LayersManagementFilterTab.vue'
 
 export default defineComponent({
     components: { TabView, TabPanel, LayerTab, FilterTab },
-    props: { id: { type: String, required: false }, selectedLayer: { type: Object, required: true }, allRoles: { type: Array, required: true } },
+    props: { id: { type: String, required: false }, selectedLayer: { type: Object, required: true }, allRoles: { type: Array, required: true }, allCategories: { type: Array, required: true } },
     computed: {},
     emits: ['touched', 'closed'],
     data() {

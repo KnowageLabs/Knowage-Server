@@ -64,6 +64,17 @@
                         "key": "required"
                     }
                 ]
+            },
+            {
+                "fieldName": "layerURL",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "url-required"
+                        }
+                    }
+                ]
             }
         ]
     }

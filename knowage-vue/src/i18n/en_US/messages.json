@@ -1280,7 +1280,9 @@
             "layerIdentify": "Layer ID",
             "layerLabel": "Layer label",
             "layerName": "Layer name",
+            "layerOptions": "Options",
             "layerOrder": "Layer Order",
+            "layerParams": "Params",
             "layerTitle": "Layer",
             "layerTypes": {
                 "google": "Google",
@@ -1289,6 +1291,7 @@
                 "wfs": "WFS",
                 "wms": "WMS"
             },
+            "layerURL": "URL",
             "noFilterSelected": "No filter selected, click on an item from the left list to add them",
             "title": "Layers Management"
         },
