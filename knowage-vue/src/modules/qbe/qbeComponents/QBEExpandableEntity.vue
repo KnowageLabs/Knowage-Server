@@ -77,6 +77,8 @@ export default defineComponent({
                     return 'fas fa-font'
                 case 'generic':
                     return 'fas fa-layer-group'
+                case 'geographic_dimension':
+                    return 'fas fa-globe'
                 default:
                     return 'fas fa-cube'
             }
