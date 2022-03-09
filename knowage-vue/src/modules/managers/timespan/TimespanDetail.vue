@@ -153,22 +153,34 @@ export default defineComponent({
             delete tempTimespan.id
             tempTimespan.isnew = true
 
+            this.genereateClonedTimespanName(tempTimespan)
+            if (this.checkIfCloneAlreadyDefined(tempTimespan)) return
+
+            this.createFirstIntervalForClonedTimespan(tempTimespan)
+            await this.saveTimespan(tempTimespan)
+        },
+        genereateClonedTimespanName(tempTimespan: iTimespan) {
             const pattern = new RegExp(/.*#.*\d/gi)
             if (pattern.test(tempTimespan.name)) {
                 tempTimespan.name = tempTimespan.name.substring(0, tempTimespan.name.length - 1) + '' + (parseInt(tempTimespan.name[tempTimespan.name.length - 1]) + 1)
             } else {
                 tempTimespan.name = tempTimespan.name + ' #2'
             }
-
+        },
+        checkIfCloneAlreadyDefined(tempTimespan: iTimespan) {
+            let alreadyDefined = false
             for (let i = 0; i < this.timespans.length; i++) {
                 if (this.timespans[i].name === tempTimespan.name) {
                     this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.cloneAlreadyDefined') })
                     this.$router.push('/timespan')
                     this.timespan = this.getDefautTimespan()
-                    return
+                    alreadyDefined = true
+                    break
                 }
             }
-
+            return alreadyDefined
+        },
+        createFirstIntervalForClonedTimespan(tempTimespan: iTimespan) {
             const firstInterval = tempTimespan.definition[tempTimespan.definition.length - 1]
 
             const fromDate = new Date(firstInterval.from.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3'))
@@ -182,7 +194,6 @@ export default defineComponent({
             firstInterval.from = tempInterval.from.getDate() + '/' + (tempInterval.from.getMonth() + 1) + '/' + tempInterval.from.getFullYear()
             firstInterval.to = tempInterval.to.getDate() + '/' + (tempInterval.to.getMonth() + 1) + '/' + tempInterval.to.getFullYear()
             tempTimespan.definition = [firstInterval]
-            await this.saveTimespan(tempTimespan)
         }
     }
 })
