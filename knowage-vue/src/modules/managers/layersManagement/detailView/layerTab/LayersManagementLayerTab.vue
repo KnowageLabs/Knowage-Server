@@ -158,6 +158,7 @@
                             :class="{
                                 'p-invalid': v$.layer.type.$invalid && v$.layer.type.$dirty
                             }"
+                            :disabled="layer.layerId"
                             @blur="v$.layer.type.$touch()"
                             @change="$emit('touched')"
                         />
