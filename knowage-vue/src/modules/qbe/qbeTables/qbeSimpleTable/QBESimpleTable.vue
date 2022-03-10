@@ -1,5 +1,5 @@
 <template>
-    <DataTable class="p-datatable-sm kn-table p-m-2 kn-height-full" :value="rows" editMode="cell" responsiveLayout="stack" breakpoint="960px" :scrollable="true" @rowReorder="onRowReorder" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
+    <DataTable class="p-datatable-sm kn-table p-m-2 kn-height-full" :value="rows" responsiveLayout="stack" breakpoint="600px" :scrollable="true" @rowReorder="onRowReorder" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
         <Column :rowReorder="true" :headerStyle="QBESimpleTableDescriptor.headerStyle" />
         <Column v-for="column in QBESimpleTableDescriptor.columns" :key="column.header" :field="column.field" :style="column.style">
             <template #header>
