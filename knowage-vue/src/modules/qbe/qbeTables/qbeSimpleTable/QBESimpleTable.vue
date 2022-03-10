@@ -1,7 +1,7 @@
 <template>
-    <DataTable class="p-datatable-sm kn-table p-m-2 kn-height-full" :value="rows" responsiveLayout="scroll" @rowReorder="onRowReorder" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
+    <DataTable class="p-datatable-sm kn-table  kn-height-full" :value="rows" responsiveLayout="scroll" @rowReorder="onRowReorder" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
         <Column :rowReorder="true" :style="QBESimpleTableDescriptor.style.firstColumn" />
-        <Column v-for="column in QBESimpleTableDescriptor.columns" :key="column.header" :field="column.field" :style="column.style">
+        <Column v-for="column in QBESimpleTableDescriptor.columns" :key="column.header" :field="column.field" :style="column.style" :sortable="true">
             <template #header>
                 <span v-tooltip.top="getHeaderTooltip(column)">{{ $t(column.header) }}</span>
             </template>

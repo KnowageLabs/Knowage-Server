@@ -20,7 +20,7 @@
         {
             "field": "group",
             "header": "common.group",
-            "style": "width: 5%"
+            "style": "width: 8%"
         },
         {
             "field": "order",
@@ -35,12 +35,12 @@
         {
             "field": "visible",
             "header": "common.show",
-            "style": "width: 5%"
+            "style": "width: 8%"
         },
         {
             "field": "inUse",
             "header": "common.inUse",
-            "style": "width: 5%"
+            "style": "width: 8%"
         }
     ],
     "headerStyle": "width: 3rem",
