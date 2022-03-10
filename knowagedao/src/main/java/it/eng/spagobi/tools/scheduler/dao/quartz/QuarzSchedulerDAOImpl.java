@@ -336,7 +336,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 			// Reply: no need to delete trigger because deleteJob(...) loops through all the triggers having a reference to this job,
 			// to unschedule them and removes the job from the jobstore
 			String actualJobGroupName = this.applyTenant(jobGroupName);
-			JobKey jobKey = JobKey.jobKey(jobGroupName, actualJobGroupName);
+			JobKey jobKey = JobKey.jobKey(jobName, actualJobGroupName);
 			scheduler.deleteJob(jobKey);
 		} catch (Throwable t) {
 			throw new SpagoBIDAOException("An unexpected error occured while deleting job [" + jobName + "] of job group [" + jobGroupName + "]", t);
@@ -352,7 +352,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 
 		try {
 			Assert.assertNotNull(spagobiJob, "Input parameter [spagobiJob] cannot be null");
-			JobDetail quartzJob = QuartzNativeObjectsConverter.convertJobToNativeObject(tenant, spagobiJob);
+			JobDetail quartzJob = QuartzNativeObjectsConverter.convertJobToNativeObject(getTenant(), spagobiJob);
 			scheduler.addJob(quartzJob, true);
 		} catch (Throwable t) {
 			throw new SpagoBIDAOException("An unexpected error occured while inserting job [" + spagobiJob + "]", t);
@@ -482,7 +482,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 		try {
 			Assert.assertNotNull(spagobiTrigger, "Input parameter [spagobiTrigger] cannot be null");
 
-			org.quartz.Trigger quartzTrigger = QuartzNativeObjectsConverter.convertTriggerToNativeObject(tenant, spagobiTrigger);
+			org.quartz.Trigger quartzTrigger = QuartzNativeObjectsConverter.convertTriggerToNativeObject(getTenant(), spagobiTrigger);
 
 			if (triggerExists(spagobiTrigger)) {
 				TriggerKey triggerKey = quartzTrigger.getKey();
@@ -517,7 +517,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 			if (triggerExists(spagobiTrigger)) {
 				throw new DAOException("Trigger [" + spagobiTrigger + "] already exists");
 			}
-			org.quartz.Trigger quartzTrigger = QuartzNativeObjectsConverter.convertTriggerToNativeObject(tenant, spagobiTrigger);
+			org.quartz.Trigger quartzTrigger = QuartzNativeObjectsConverter.convertTriggerToNativeObject(getTenant(), spagobiTrigger);
 			scheduler.scheduleJob(quartzTrigger);
 		} catch (DAOException t) {
 			throw t;
@@ -537,7 +537,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 			if (!triggerExists(spagobiTrigger)) {
 				throw new DAOException("Trigger [" + spagobiTrigger + "] does not exist");
 			}
-			org.quartz.Trigger quartzTrigger = QuartzNativeObjectsConverter.convertTriggerToNativeObject(tenant, spagobiTrigger);
+			org.quartz.Trigger quartzTrigger = QuartzNativeObjectsConverter.convertTriggerToNativeObject(getTenant(), spagobiTrigger);
 			TriggerKey key = quartzTrigger.getKey();
 			scheduler.rescheduleJob(key, quartzTrigger);
 		} catch (DAOException t) {
